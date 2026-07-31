@@ -13,6 +13,9 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {AccountPreferencesEvent} from '@habbo/communication/messages/incoming/preferences/AccountPreferencesEvent';
 import type {AccountPreferencesParser} from '@habbo/communication/messages/parser/preferences/AccountPreferencesParser';
 import {SetChatStylePreferenceComposer} from '@habbo/communication/messages/outgoing/preferences/SetChatStylePreferenceComposer';
+import {
+    SetChatPreferencesMessageComposer
+} from '@habbo/communication/messages/outgoing/room/chat/SetChatPreferencesMessageComposer';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
@@ -199,6 +202,84 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return value < 0 ? 0 : (value > 4 ? 4 : value);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatMode()
+    get chatMode(): number
+    {
+        return this._chatMode;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::set chatMode()
+    set chatMode(value: number)
+    {
+        this.updateChatPreferences(value, this._chatBubbleWidth, this._chatScrollSpeed);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatBubbleWidth()
+    get chatBubbleWidth(): number
+    {
+        return this._chatBubbleWidth;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::set chatBubbleWidth()
+    set chatBubbleWidth(value: number)
+    {
+        this.updateChatPreferences(this._chatMode, value, this._chatScrollSpeed);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatScrollSpeed()
+    get chatScrollSpeed(): number
+    {
+        return this._chatScrollSpeed;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::set chatScrollSpeed()
+    set chatScrollSpeed(value: number)
+    {
+        this.updateChatPreferences(this._chatMode, this._chatBubbleWidth, value);
+    }
+
+    /**
+	 * Apply the three room-chat display preferences together.
+	 *
+	 * The three setters above all route through here with the other two unchanged — none of them
+	 * sends on its own. Sanitising happens *before* the equality check, so a value that sanitises
+	 * back to the current one is correctly treated as no change and sends nothing.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::updateChatPreferences()
+    updateChatPreferences(chatMode: number, chatBubbleWidth: number, chatScrollSpeed: number): void
+    {
+        chatMode = this.sanitizeChatMode(chatMode);
+        chatBubbleWidth = this.sanitizeChatBubbleWidth(chatBubbleWidth);
+        chatScrollSpeed = this.sanitizeChatScrollSpeed(chatScrollSpeed);
+
+        if(this._chatMode === chatMode && this._chatBubbleWidth === chatBubbleWidth && this._chatScrollSpeed === chatScrollSpeed)
+        {
+            return;
+        }
+
+        this._chatMode = chatMode;
+        this._chatBubbleWidth = chatBubbleWidth;
+        this._chatScrollSpeed = chatScrollSpeed;
+
+        this.refreshEffectiveChatSettings();
+        this.refreshChatSettings();
+        this.sendChatPreferences();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::refreshChatSettings()
+    private refreshChatSettings(): void
+    {
+        if(this._isInRoom) this._chatFlowStage?.refreshSettings();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::sendChatPreferences()
+    private sendChatPreferences(): void
+    {
+        this._communication?.connection?.send(
+            new SetChatPreferencesMessageComposer(this._chatMode, this._chatBubbleWidth, this._chatScrollSpeed)
+        );
+    }
+
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::onAccountPreferences()
     // TODO(AS3): onRoomChatSettings()/onGuestRoomData() (the two other AS3 call sites that
     // also touch refreshEffectiveChatSettings()) aren't wired - both only ever update
@@ -357,15 +438,15 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._isDisabledInPreferences;
     }
 
+    /**
+	 * Note this deliberately sends nothing. The TODO that used to sit here claimed
+	 * SetChatPreferencesMessageComposer belonged in this setter, taking the boolean — it does not.
+	 * That composer carries (chatMode, chatBubbleWidth, chatScrollSpeed) and is only ever sent
+	 * from updateChatPreferences(); AS3 has no wire traffic on this flag at all.
+	 */
     set isDisabledInPreferences(value: boolean)
     {
         this._isDisabledInPreferences = value;
-
-        // TODO: Send SetChatPreferencesMessageComposer when composer is implemented
-        // if (this._communication?.connection)
-        // {
-        //     this._communication.connection.send(new SetChatPreferencesMessageComposer(value));
-        // }
     }
 
     /**

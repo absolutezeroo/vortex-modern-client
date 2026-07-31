@@ -74,6 +74,9 @@ import {PetFigureData} from '@habbo/avatar/pets/PetFigureData';
 import {
     PetSelectedMessageComposer
 } from '@habbo/communication/messages/outgoing/room/pet/PetSelectedMessageComposer';
+import {
+    SetObjectDataMessageComposer
+} from '@habbo/communication/messages/outgoing/room/furniture/SetObjectDataMessageComposer';
 import {RoomWidgetInfostandExtraParamEnum} from '@habbo/ui/widget/enums/RoomWidgetInfostandExtraParamEnum';
 import {Vector3d} from '@room/utils/Vector3d';
 import type {IUserData} from '@habbo/session/IUserData';
@@ -447,10 +450,24 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         }
     }
 
-    // same ad-furni branding feature as RWFAM_SAVE_STUFF_DATA above.
-    public setObjectData(_data: Map<string, string>): void 
+    /**
+	 * Write the currently-inspected furni's stuff data — the same ad-furni branding feature as
+	 * RWFAM_SAVE_STUFF_DATA above, entered from InfoStandFurniView instead of a widget message.
+	 *
+	 * Staff-only: AS3 gates the whole body on `hasSecurity(5)` and silently does nothing
+	 * otherwise.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::setObjectData()
+    public setObjectData(data: Map<string, string>): void
     {
-        log.debug('TODO(AS3): setObjectData not wired yet');
+        const container = this._container;
+
+        if(!container?.connection || !container.sessionDataManager || !this._widget) return;
+
+        if(container.sessionDataManager.hasSecurity(5))
+        {
+            container.connection.send(new SetObjectDataMessageComposer(this._widget.furniData.id, data));
+        }
     }
 
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectNameMessage()
@@ -827,11 +844,29 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
                 // IRoomEngine doesn't expose a link-event/context accessor yet.
                 log.debug('TODO(AS3): RWFAM_WIRED_INSPECT not wired yet');
                 break;
-            case RoomWidgetFurniActionMessage.SAVE_STUFF_DATA:
-                // TODO(AS3): ad-furni branding save — needs SetObjectDataMessageComposer,
-                // which doesn't exist yet. Low value without the branding widget itself.
-                log.debug('TODO(AS3): RWFAM_SAVE_STUFF_DATA not wired yet');
+            // AS3: InfoStandWidgetHandler.as::processWidgetMessage() "RWFAM_SAVE_STUFF_DATA" —
+            // objectData arrives as a flat "key=value" list joined by tabs and is rebuilt into the
+            // map the composer serialises. `split('=', 2)` is AS3's own limit: a value containing
+            // '=' is truncated there too, so it is kept rather than "fixed".
+            case RoomWidgetFurniActionMessage.SAVE_STUFF_DATA: {
+                const objectData = message.objectData;
+
+                if(objectData === null) break;
+
+                const data = new Map<string, string>();
+
+                for(const entry of objectData.split('\t'))
+                {
+                    const pair = entry.split('=', 2);
+
+                    if(pair.length === 2) data.set(pair[0], pair[1]);
+                }
+
+                container.roomEngine.modifyRoomObjectDataWithMap(
+                    message.furniId, message.furniCategory, 'OBJECT_SAVE_STUFF_DATA', data
+                );
                 break;
+            }
         }
     }
 
@@ -1048,9 +1083,6 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         container.desktopEvents.emit(event.type, event);
     }
-
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::setObjectData()
-    // TODO(AS3): sends SetObjectDataMessageComposer, which doesn't exist yet —
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage() (RWOPEM_OPEN_USER_PROFILE case)
     private handleOpenProfileMessage(message: RoomWidgetOpenProfileMessage): void 

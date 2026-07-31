@@ -5,3 +5,4 @@ export {PlaceObjectMessageComposer} from './PlaceObjectMessageComposer';
 export {MoveObjectMessageComposer} from './MoveObjectMessageComposer';
 export {PickupObjectMessageComposer} from './PickupObjectMessageComposer';
 export {ClickFurniMessageComposer} from './ClickFurniMessageComposer';
+export {PlacePostItMessageComposer} from './PlacePostItMessageComposer';

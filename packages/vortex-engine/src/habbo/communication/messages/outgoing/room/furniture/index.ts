@@ -18,3 +18,6 @@ export * from './SetItemDataMessageComposer';
 export * from './RemoveItemMessageComposer';
 export * from './SetRoomBackgroundColorDataMessageComposer';
 export * from './OpenMysteryTrophyMessageComposer';
+export * from './SetObjectDataMessageComposer';
+export * from './SetRandomStateMessageComposer';
+export * from './UseWallItemMessageComposer';

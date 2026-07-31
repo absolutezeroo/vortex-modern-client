@@ -584,6 +584,7 @@ import {
     MoveObjectMessageComposer,
     PickupObjectMessageComposer,
     PlaceObjectMessageComposer,
+    PlacePostItMessageComposer,
 } from './messages/outgoing/room/engine';
 
 // Outgoing Composers - Room Chat
@@ -591,6 +592,7 @@ import {
     CancelTypingMessageComposer,
     ChatMessageComposer,
     Game2GameChatMessageComposer,
+    SetChatPreferencesMessageComposer,
     ShoutMessageComposer,
     StartTypingMessageComposer,
     WhisperMessageComposer,
@@ -680,8 +682,17 @@ import {
     SpinWheelOfFortuneMessageComposer,
     ThrowDiceMessageComposer,
     UpdateClothingChangeFurnitureComposer,
+    SetObjectDataMessageComposer,
+    SetRandomStateMessageComposer,
     UseFurnitureMessageComposer,
+    UseWallItemMessageComposer,
 } from './messages/outgoing/room/furniture';
+
+// Outgoing Composers - Room Rentable Bots
+import {
+    PlaceBotMessageComposer,
+    RemoveBotFromFlatMessageComposer
+} from './messages/outgoing/room/bot';
 
 // Outgoing Composers - Room Pet
 import {
@@ -823,6 +834,7 @@ import {
     GetHabboGroupBadgesMessageComposer,
     GetHabboGroupDetailsMessageComposer,
     GetIgnoredUsersMessageComposer,
+    GetDailyTasksComposer,
     GetSelectedBadgesMessageComposer,
     GetUserNftChatStylesMessageComposer,
     IgnoreUserMessageComposer,
@@ -1770,6 +1782,13 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3894, RoomDimmerChangeStateComposer);
         this._composers.set(1220, UpdateClothingChangeFurnitureComposer);
         this._composers.set(3353, UseFurnitureMessageComposer);
+        // AS3: _SafeCls_1821.as::changeRoomObjectState() — the three siblings of UseFurniture
+        // above. Floor items split on the isRandom flag (3353 / 1942); wall items take 3590.
+        this._composers.set(1942, SetRandomStateMessageComposer);
+        // 3590 disagrees with the emulator, which listens on 1540 — see the composer's own note.
+        this._composers.set(3590, UseWallItemMessageComposer);
+        // AS3: _SafeCls_1821.as::modifyRoomObjectData() "OBJECT_SAVE_STUFF_DATA"
+        this._composers.set(246, SetObjectDataMessageComposer);
         // AS3: MysteryTrophyOpenDialogView.as::onMouseClick() "ok"
         this._composers.set(2242, OpenMysteryTrophyMessageComposer);
 
@@ -1817,6 +1836,14 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3899, GetPetInfoMessageComposer);
         this._composers.set(2757, PetSelectedMessageComposer);
         this._composers.set(1996, MountPetComposer); // Also used for dismount — AS3 sends an explicit `mount` boolean, same message ID for both
+
+        // === RENTABLE BOTS ===
+        // AS3: _SafeCls_1821.as::placeObject() category 100 / typeId 4 — the sibling of PlacePet
+        // (1018) one branch up. RoomEngine's TODO named 1295 for this; 1295 is the user-move
+        // composer. See PlaceBotMessageComposer's own note.
+        this._composers.set(2102, PlaceBotMessageComposer);
+        // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_PICKUP_BOT" — takes webID, not objectId.
+        this._composers.set(2743, RemoveBotFromFlatMessageComposer);
         this._composers.set(3713, TogglePetRidingPermissionComposer);
         this._composers.set(2884, RemoveSaddleFromPetComposer);
         this._composers.set(2425, GetPetCommandsComposer);
@@ -1895,6 +1922,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1026, GetIgnoredUsersMessageComposer);
         this._composers.set(3726, GetSelectedBadgesMessageComposer);
         this._composers.set(3642, GetUserNftChatStylesMessageComposer);
+        // AS3: SessionDataManager.as::initSessionData() sends this immediately after 3642 above.
+        this._composers.set(4100, GetDailyTasksComposer);
+        // AS3: HabboFreeFlowChat.as::sendChatPreferences()
+        this._composers.set(1149, SetChatPreferencesMessageComposer);
         this._composers.set(2070, IgnoreUserMessageComposer);
         this._composers.set(1469, JoinHabboGroupMessageComposer);
         this._composers.set(1111, ScrGetKickbackInfoMessageComposer);
@@ -1935,6 +1966,9 @@ export class HabboMessages implements IMessageConfiguration
         // HabboCatalog.as placement send), but field shape may also need re-verification - the
         // AS3 composer takes 6 params, the TS constructor only 4 (itemId, x, y, rotation).
         this._composers.set(1974, PlaceObjectMessageComposer);
+        // AS3: _SafeCls_1821.as::placeObject() — the "furniture_is_stickie" branch, checked
+        // before the generic PlaceObject fallback above.
+        this._composers.set(1122, PlacePostItMessageComposer);
         this._composers.set(1482, MoveObjectMessageComposer);
         // AS3: ClickFurniMessageComposer header 443 (win63 registry); sent on a plain furni click.
         this._composers.set(443, ClickFurniMessageComposer);

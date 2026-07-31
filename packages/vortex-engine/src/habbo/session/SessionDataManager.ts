@@ -173,6 +173,9 @@ import {
     GetUserNftChatStylesMessageComposer
 } from '../communication/messages/outgoing/users/GetUserNftChatStylesMessageComposer';
 import {
+    GetDailyTasksComposer
+} from '../communication/messages/outgoing/users/GetDailyTasksComposer';
+import {
     ReplenishRespectMessageComposer
 } from '../communication/messages/outgoing/users/ReplenishRespectMessageComposer';
 
@@ -1350,7 +1353,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         this._ignoredUsersManager.initIgnoreList();
         this._blockedUsersManager.initBlockList();
         this.send(new GetUserNftChatStylesMessageComposer());
-        // TODO(AS3): Port GetDailyTasksComposer from the WIN63 package_78 source and send it here, matching SessionDataManager.initSessionData().
+        this.send(new GetDailyTasksComposer());
 
         this.registerMessageEvents();
 

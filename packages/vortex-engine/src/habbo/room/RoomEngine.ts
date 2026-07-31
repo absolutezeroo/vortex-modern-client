@@ -104,7 +104,20 @@ import {
 import {
     PlaceObjectMessageComposer
 } from '@habbo/communication/messages/outgoing/room/engine/PlaceObjectMessageComposer';
+import {
+    SetObjectDataMessageComposer
+} from '@habbo/communication/messages/outgoing/room/furniture/SetObjectDataMessageComposer';
+import {
+    SetRandomStateMessageComposer
+} from '@habbo/communication/messages/outgoing/room/furniture/SetRandomStateMessageComposer';
+import {
+    UseWallItemMessageComposer
+} from '@habbo/communication/messages/outgoing/room/furniture/UseWallItemMessageComposer';
 import {PlacePetComposer} from '@habbo/communication/messages/outgoing/room/pet/PlacePetComposer';
+import {PlaceBotMessageComposer} from '@habbo/communication/messages/outgoing/room/bot/PlaceBotMessageComposer';
+import {
+    RemoveBotFromFlatMessageComposer
+} from '@habbo/communication/messages/outgoing/room/bot/RemoveBotFromFlatMessageComposer';
 import {MoveObjectMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveObjectMessageComposer';
 import {
     PickupObjectMessageComposer
@@ -1702,12 +1715,20 @@ export class RoomEngine extends Component implements IRoomEngine,
             // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_PICKUP_BOT" case — connection.send(
             // new _SafeCls_3108(webID)) (id 2743).
             case 'OBJECT_PICKUP_BOT': {
-                // TODO(AS3): the rentable-bot pickup composer (_SafeCls_3108, id 2743) is not ported,
-                // and the Turbo server has no bots (docs/CLIENT-SERVER-ARCHITECTURE.md §"Bots — Do
-                // Not Exist"). Gesture is recognised; the send is a documented gap.
-                log.warn('modifyRoomObject: OBJECT_PICKUP_BOT not wired — bot-pickup composer not ported (server has no bots)');
+                // Mirrors the pet branch above: AS3 resolves the user data and sends its webID,
+                // not the room-object id. The Turbo server will not act on it — it has no bot
+                // entity at all (docs/CLIENT-SERVER-ARCHITECTURE.md §18 "Bots — Do Not Exist") —
+                // but the client side is now the faithful port rather than a warning.
+                if(this._connection === null) return false;
 
-                return false;
+                const session = this._roomSessionManager?.getSession(this._activeRoomId) ?? null;
+                const userData = session?.userDataManager?.getUserDataByIndex(objectId) ?? null;
+
+                if(session === null || userData === null) return false;
+
+                this._connection.send(new RemoveBotFromFlatMessageComposer(userData.webID));
+
+                return true;
             }
             case 'OBJECT_PICKUP':
             case 'OBJECT_EJECT': {
@@ -1763,11 +1784,34 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // doesn't exist yet. Low value without the branding widget itself.
-    modifyRoomObjectDataWithMap(_objectId: number, _category: number, _action: string, _data: Map<string, string>): boolean 
+    /**
+	 * Save a floor furniture's stuff data — the ad-furni branding path.
+	 *
+	 * Two AS3 methods collapsed into one here, matching how this port already folds the
+	 * RoomObjectEventHandler into the engine: `_SafeCls_90.as` gates on category 10 and forwards,
+	 * `_SafeCls_1821.as` resolves the object, rejects any operation other than
+	 * OBJECT_SAVE_STUFF_DATA, and sends. The unknown-operation branch logs rather than returning
+	 * false — AS3 returns true either way once the object resolves.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::modifyRoomObjectDataWithMap()
+    modifyRoomObjectDataWithMap(objectId: number, category: number, action: string, data: Map<string, string>): boolean
     {
-        log.warn('modifyRoomObjectDataWithMap: not implemented yet');
+        if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) return false;
 
-        return false;
+        const object = this.getRoomObject(this._activeRoomId, objectId, category);
+
+        if(object === null) return false;
+
+        if(action !== 'OBJECT_SAVE_STUFF_DATA')
+        {
+            log.warn(`could not modify room object data, unknown operation ${action}`);
+        }
+        else if(this._connection !== null)
+        {
+            this._connection.send(new SetObjectDataMessageComposer(objectId, data));
+        }
+
+        return true;
     }
 
     updateRoomObjectUser(
@@ -4536,9 +4580,12 @@ export class RoomEngine extends Component implements IRoomEngine,
 
             if(sentId < 0 && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) sentId *= -1;
 
-            // TODO(AS3): the stickie-note branch (PlacePostItMessageComposer) and
-            // category===OBJECT_CATEGORY_WALL's wall-location-string variant are still missing —
-            // see PlaceObjectMessageComposer.ts's own TODO for the wall case specifically.
+            // TODO(AS3): the stickie-note branch sits between the bot case and the fallback below.
+            // PlacePostItMessageComposer (1122) is now ported, but its wall-location argument is
+            // not reachable: AS3 builds it with `getLegacyGeometry(roomId).getOldLocationString()`
+            // and this port has no LegacyWallGeometry at all (same gap as the category-20 variant —
+            // see PlaceObjectMessageComposer.ts). Stickies therefore still fall through to the
+            // generic composer below.
             if(this._connection !== null && this._objectPlacementSource === 'inventory')
             {
                 if(data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER && data.typeId === USER_TYPE_PET)
@@ -4550,10 +4597,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                 }
                 else if(data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER && data.typeId === USER_TYPE_RENTABLE_BOT)
                 {
-                    // TODO(AS3): AS3 sends PlaceBotMessageComposer (_SafeCls_3369, header 1295) here.
-                    // No port equivalent exists yet, so the bot ghost places locally and the server
-                    // is never told — visible as a TODO rather than a silently wrong composer.
-                    log.warn('TODO(AS3): PlaceBotMessageComposer is not ported — bot placement not sent');
+                    this._connection.send(new PlaceBotMessageComposer(sentId, Math.trunc(x), Math.trunc(y)));
                 }
                 else
                 {
@@ -5492,7 +5536,10 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const session = this._roomSessionManager?.getSession(roomId) ?? null;
 
-        if(session !== null && session.playTestMode)
+        // The `activeRoomHasFreeFurniMovementsMode` half of this guard was missing: AS3 skips the
+        // usage-policy check entirely in free-furni-movement rooms, so without it a play-test room
+        // in that mode refused to use its own furni.
+        if(session !== null && !this.activeRoomHasFreeFurniMovementsMode && session.playTestMode)
         {
             const object = this.getRoomObject(roomId, objectId, category);
 
@@ -5512,11 +5559,15 @@ export class RoomEngine extends Component implements IRoomEngine,
                 {
                     this._connection.send(new UseFurnitureMessageComposer(objectId, state));
                 }
-                // TODO(AS3): else SetRandomStateMessageComposer(objectId, state) — composer not ported.
+                else
+                {
+                    this._connection.send(new SetRandomStateMessageComposer(objectId, state));
+                }
             }
-            // TODO(AS3): category OBJECT_CATEGORY_WALL → UseWallItemMessageComposer(objectId, state) —
-            // composer not ported; wired furni are floor items (category 10) so this is not on the
-            // wired open path.
+            else if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+            {
+                this._connection.send(new UseWallItemMessageComposer(objectId, state));
+            }
         }
 
         // TODO(AS3): session.trackEventLogOncePerSession('Achievements', 'interaction', 'furniture.use').

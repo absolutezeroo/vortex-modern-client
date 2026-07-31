@@ -28,3 +28,4 @@ export {UpdateGuildBadgeMessageComposer} from './UpdateGuildBadgeMessageComposer
 export {UpdateGuildColorsMessageComposer} from './UpdateGuildColorsMessageComposer';
 export {UpdateGuildIdentityMessageComposer} from './UpdateGuildIdentityMessageComposer';
 export {UpdateGuildSettingsMessageComposer} from './UpdateGuildSettingsMessageComposer';
+export {GetDailyTasksComposer} from './GetDailyTasksComposer';
