@@ -20,6 +20,19 @@ const log = Logger.getLogger('client.changelog.ChangelogWindow');
 /** localStorage key tracking the newest commit sha the user has already seen. */
 const LAST_SEEN_KEY = 'changelog_last_seen_sha';
 
+/**
+ * localStorage key holding the last list fetched.
+ *
+ * Mounting used to fetch, which cost two GitHub requests per page load — the unauthenticated API
+ * allows 60 an hour per IP, so roughly thirty reloads exhausted it, and a dev session reloads far
+ * more than that. The list is now fetched when the panel is opened, and this cache is what keeps
+ * the unread dot working across reloads without a request.
+ */
+const CACHE_KEY = 'changelog_cache_v1';
+
+/** How long a cached list is served before an open goes back to GitHub for a fresher one. */
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
 export class ChangelogWindow
 {
     private _fab: HTMLButtonElement | null = null;
@@ -29,11 +42,13 @@ export class ChangelogWindow
     private _listElement: HTMLDivElement | null = null;
     private _commits: IChangelogCommit[] | null = null;
     private _loading: Promise<IChangelogCommit[]> | null = null;
+    private _fetchedAt: number = 0;
     private _disposed: boolean = false;
 
     /**
-	 * Mounts the floating "What's New" button and kicks off a background fetch
-	 * so the unread indicator is accurate before the user ever opens the panel.
+	 * Mounts the floating "What's New" button. Nothing is fetched here — the list
+	 * is loaded when the panel is first opened, and the unread indicator is lit
+	 * from the cached list instead. See CACHE_KEY.
 	 */
     public mount(): void
     {
@@ -65,13 +80,16 @@ export class ChangelogWindow
         this._fab.addEventListener('click', this._onOpen);
         container.appendChild(this._fab);
 
-        this.ensureCommitsLoaded().catch(() => { /* unread dot just won't light up */ });
+        this.restoreFromCache();
     }
 
-    /** Fetches commits once and caches them; safe to call repeatedly. */
+    /**
+	 * Fetches commits, unless the ones in hand are still fresh. Safe to call
+	 * repeatedly: concurrent calls share the one in-flight request.
+	 */
     private ensureCommitsLoaded(): Promise<IChangelogCommit[]>
     {
-        if(this._commits) return Promise.resolve(this._commits);
+        if(this._commits && !this.isStale()) return Promise.resolve(this._commits);
 
         if(!this._loading)
         {
@@ -79,6 +97,12 @@ export class ChangelogWindow
                 .then((commits) =>
                 {
                     this._commits = commits;
+                    this._fetchedAt = Date.now();
+
+                    // Cleared on success too, not just on failure: the promise is no longer a cache
+                    // of its own now that a later open is allowed to refresh a stale list.
+                    this._loading = null;
+                    this.storeCache(commits);
                     this.updateUnreadIndicator();
 
                     return commits;
@@ -92,6 +116,53 @@ export class ChangelogWindow
         }
 
         return this._loading;
+    }
+
+    /** Whether the list in hand has aged past the TTL. */
+    private isStale(): boolean
+    {
+        return (Date.now() - this._fetchedAt) > CACHE_TTL_MS;
+    }
+
+    /**
+	 * Loads the last fetched list off localStorage. This is the whole point of the
+	 * cache: the unread dot stays accurate across a reload without spending a
+	 * request, and an open has something to paint immediately.
+	 */
+    private restoreFromCache(): void
+    {
+        try
+        {
+            const raw = localStorage.getItem(CACHE_KEY);
+
+            if(!raw) return;
+
+            const parsed = JSON.parse(raw) as {fetchedAt?: number; commits?: IChangelogCommit[]};
+
+            if(!parsed || !Array.isArray(parsed.commits) || parsed.commits.length === 0) return;
+
+            this._commits = parsed.commits;
+            this._fetchedAt = typeof parsed.fetchedAt === 'number' ? parsed.fetchedAt : 0;
+            this.updateUnreadIndicator();
+        }
+        catch (error)
+        {
+            // A cache written by an older shape, or storage that is unavailable. Neither is worth
+            // more than a line: the next open fetches as if there had been no cache at all.
+            log.debug('Ignoring an unreadable changelog cache', error);
+        }
+    }
+
+    private storeCache(commits: IChangelogCommit[]): void
+    {
+        try
+        {
+            localStorage.setItem(CACHE_KEY, JSON.stringify({fetchedAt: this._fetchedAt, commits}));
+        }
+        catch (error)
+        {
+            log.debug('Could not cache the changelog', error);
+        }
     }
 
     private updateUnreadIndicator(): void
@@ -121,12 +192,9 @@ export class ChangelogWindow
 
         this._overlay!.classList.add('is-open');
 
-        if(this._commits)
-        {
-            this.renderCommits(this._commits);
-            this.markAsSeen();
-        }
-        else
+        // Nothing in hand — first open of a fresh browser, or a cache that could not be read. The
+        // skeletons stand in while GitHub answers; this is the only path that ever shows them.
+        if(!this._commits)
         {
             this.renderLoading();
             this.ensureCommitsLoaded()
@@ -138,7 +206,26 @@ export class ChangelogWindow
                     this.markAsSeen();
                 })
                 .catch(() => this.renderError());
+
+            return;
         }
+
+        this.renderCommits(this._commits);
+        this.markAsSeen();
+
+        if(!this.isStale()) return;
+
+        // Aged out: the cached list is already on screen, so the refresh happens underneath it —
+        // no skeleton, no flicker, and a failure simply leaves what is displayed alone.
+        this.ensureCommitsLoaded()
+            .then((commits) =>
+            {
+                if(this._disposed || !this._overlay?.classList.contains('is-open')) return;
+
+                this.renderCommits(commits);
+                this.markAsSeen();
+            })
+            .catch(() => { /* the cached list stays up */ });
     };
 
     private _onClose = (): void =>

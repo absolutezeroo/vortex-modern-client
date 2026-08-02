@@ -7,14 +7,17 @@
  * an in-game "What's New" window. Uses the public, unauthenticated GitHub REST
  * API (https://docs.github.com/en/rest/commits/commits#list-commits).
  *
- * vortex-modern-client itself is a *private* repo, so it's deliberately left out
- * of SOURCES below — an unauthenticated request to a private repo's API just
- * 404s, and the only way to make it work is a GitHub token, which must never be
- * embedded in code that ships to every player's browser (anyone can pull it out
- * of devtools and get read access to the repo). To add it back:
- *   - make the repo public and add it to SOURCES as-is, or
- *   - stand up a small server-side proxy endpoint that holds the token securely
- *     and re-serves the commit list, and point fetchRepo() at that instead.
+ * This header used to say vortex-modern-client was left out of SOURCES for being
+ * a private repo. It is in SOURCES, and both entries answer 200 unauthenticated
+ * (checked 2026-08-02) — the repo is public now. Should either one go private
+ * again, its requests 404 and `fetchAll()` silently drops that source, and the
+ * fix is NOT to embed a GitHub token: anything shipped to the browser can be
+ * pulled out of devtools. Stand up a server-side proxy that holds the token and
+ * re-serves the list, then point fetchRepo() at it.
+ *
+ * Rate limit: 60 requests an hour per IP, unauthenticated, and one call here
+ * spends one per source. That is why ChangelogWindow fetches on open and caches
+ * the result rather than fetching on every page load.
  */
 
 export interface IChangelogCommit
