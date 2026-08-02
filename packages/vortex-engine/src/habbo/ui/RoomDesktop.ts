@@ -65,6 +65,7 @@ import {FurnitureStickieWidgetHandler} from './handler/FurnitureStickieWidgetHan
 import {FurnitureDimmerWidgetHandler} from './handler/FurnitureDimmerWidgetHandler';
 import {FurniturePresentWidgetHandler} from './handler/FurniturePresentWidgetHandler';
 import {MannequinWidgetHandler} from './handler/MannequinWidgetHandler';
+import {FriendFurniEngravingWidgetHandler} from './handler/FriendFurniEngravingWidgetHandler';
 import {PlaceholderWidgetHandler} from './handler/PlaceholderWidgetHandler';
 import {FurnitureBackgroundColorWidgetHandler} from './handler/FurnitureBackgroundColorWidgetHandler';
 import {FurnitureCreditWidgetHandler} from './handler/FurnitureCreditWidgetHandler';
@@ -796,6 +797,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case 'RWE_MANNEQUIN':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new MannequinWidgetHandler();
+                break;
+            case 'RWE_FRIEND_FURNI_ENGRAVING':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
+                handler = new FriendFurniEngravingWidgetHandler();
                 break;
             case 'RWE_FURNITURE_CONTEXT_MENU': {
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:853-857
