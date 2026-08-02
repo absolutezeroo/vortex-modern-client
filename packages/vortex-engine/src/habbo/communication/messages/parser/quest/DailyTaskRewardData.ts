@@ -21,6 +21,7 @@ export class DailyTaskRewardData
         this._amount = wrapper.readInt();
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_4416.as::productItemTypeId
     private _productItemTypeId: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_4416.as::get productItemTypeId()
@@ -29,6 +30,7 @@ export class DailyTaskRewardData
         return this._productItemTypeId;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_4416.as::rewardTypeId
     private _rewardTypeId: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_4416.as::get rewardTypeId()
@@ -37,6 +39,7 @@ export class DailyTaskRewardData
         return this._rewardTypeId;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_4416.as::extraParams
     private _extraParams: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_4416.as::get extraParams()
@@ -45,6 +48,7 @@ export class DailyTaskRewardData
         return this._extraParams;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_4416.as::amount
     private _amount: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_4416.as::get amount()

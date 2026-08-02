@@ -52,6 +52,7 @@ export class DailyTaskData
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::taskId
     private _taskId: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::get taskId()
@@ -60,6 +61,7 @@ export class DailyTaskData
         return this._taskId;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::taskCode
     private _taskCode: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::get taskCode()
@@ -68,6 +70,7 @@ export class DailyTaskData
         return this._taskCode;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::questTypeCode
     private _questTypeCode: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::get questTypeCode()
@@ -76,6 +79,7 @@ export class DailyTaskData
         return this._questTypeCode;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::isBonus
     private _isBonus: boolean = false;
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::get isBonus()
@@ -84,6 +88,7 @@ export class DailyTaskData
         return this._isBonus;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::imageVersion
     private _imageVersion: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::get imageVersion()
@@ -92,6 +97,7 @@ export class DailyTaskData
         return this._imageVersion;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::catalogName
     private _catalogName: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::get catalogName()
@@ -100,6 +106,7 @@ export class DailyTaskData
         return this._catalogName;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::requiredRepeats
     private _requiredRepeats: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::get requiredRepeats()
@@ -108,6 +115,7 @@ export class DailyTaskData
         return this._requiredRepeats;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::repeats
     private _repeats: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::get repeats()
@@ -122,6 +130,7 @@ export class DailyTaskData
         this._repeats = value;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::status
     private _status: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::get status()
@@ -136,6 +145,7 @@ export class DailyTaskData
         this._status = value;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::secondsLeft
     private _secondsLeft: number = 0;
 
     /**
@@ -163,6 +173,7 @@ export class DailyTaskData
         return this._secondsLeft < 0 && this._status !== DailyTaskData.STATUS_ACTIVE;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::rewards
     private _rewards: DailyTaskRewardData[] = [];
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::get rewards()
@@ -171,13 +182,11 @@ export class DailyTaskData
         return this._rewards;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as — the
+    // `Date` field stamped at construction and read only by `secondsLeft`. Its identifier is
+    // obfuscated in every tree (`_SafeStr_7817` here, `var_2926` in win63_version) and AS3 exposes
+    // no accessor for it, so `_receiveTime` is a derived name for a member that stays private.
     private _receiveTime: Date;
-
-    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::_SafeStr_7817
-    get receiveTime(): Date
-    {
-        return this._receiveTime;
-    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2992/_SafeCls_2991.as::get nameLocalizationKey()
     get nameLocalizationKey(): string

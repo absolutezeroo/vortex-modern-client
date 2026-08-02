@@ -116,6 +116,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // Accumulates pets across a fragmented PetInventory response (AS3 buffers by fragment like furni).
     private _petListFragments: Map<number, Pet> = new Map();
     private _petMessageEvents: IMessageEvent[] = [];
+    // TS-only: no AS3 counterpart; the dump's inventory message handler keeps one flat
+    // `_messageEvents` vector, where this port already splits it per feature (furni/pet/effect).
     private _badgeMessageEvents: IMessageEvent[] = [];
     private _initializedCategories: Set<string> = new Set();
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::_SafeStr_4983
