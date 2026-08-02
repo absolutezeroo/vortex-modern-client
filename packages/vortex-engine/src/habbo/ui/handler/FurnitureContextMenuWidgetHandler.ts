@@ -20,6 +20,8 @@ import type {IRoomObject} from '@room/object/IRoomObject';
 import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
+import {RoomWidgetUseProductMessage} from '@habbo/ui/widget/messages/RoomWidgetUseProductMessage';
+import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import type {IRoomWidgetHandlerContainer} from '@habbo/ui/IRoomWidgetHandlerContainer';
 import type {FurnitureContextMenuWidget} from '@habbo/ui/widget/furniture/contextmenu/FurnitureContextMenuWidget';
 import {MysteryBoxToolbarExtension} from '@habbo/ui/widget/furniture/mysterybox/MysteryBoxToolbarExtension';
@@ -176,17 +178,21 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
     // AS3: FurnitureContextMenuWidgetHandler.as::getWidgetMessages()
     public getWidgetMessages(): string[]
     {
-        // TODO(AS3): AS3 returns ["RWUPM_MONSTERPLANT_SEED"], handled in processWidgetMessage()
-        // below. `RoomWidgetUseProductMessage` is not ported, so nothing can send it yet.
-        return [];
+        return [RoomWidgetUseProductMessage.MONSTERPLANT_SEED];
     }
 
     // AS3: FurnitureContextMenuWidgetHandler.as::processWidgetMessage()
-    public processWidgetMessage(_message: unknown): unknown
+    public processWidgetMessage(message: unknown): unknown
     {
-        // TODO(AS3): the "RWUPM_MONSTERPLANT_SEED" case casts to RoomWidgetUseProductMessage and
-        // calls `container.roomSession.plantSeed(roomObjectId)` (both sides exist; the message
-        // class does not).
+        const widgetMessage = message as RoomWidgetUseProductMessage | null;
+
+        if(widgetMessage === null) return null;
+
+        if(widgetMessage.type === RoomWidgetUseProductMessage.MONSTERPLANT_SEED)
+        {
+            this._container?.roomSession?.plantSeed(widgetMessage.roomObjectId);
+        }
+
         return null;
     }
 
@@ -197,6 +203,18 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
             RoomEngineToWidgetEvent.REQUEST_OPEN_FURNI_CONTEXT_MENU,
             RoomEngineToWidgetEvent.REQUEST_CLOSE_FURNI_CONTEXT_MENU
         ];
+    }
+
+    /** The floor-item data behind a room object — the confirmation dialogs read name and category off it. */
+    // AS3: FurnitureContextMenuWidgetHandler.as::getFurniData()
+    public getFurniData(roomObject: IRoomObject | null): {id: number; category: number; localizedName: string; customParams: string} | null
+    {
+        if(roomObject === null) return null;
+
+        const typeId = roomObject.getModel()?.getNumber(RoomObjectVariableEnum.FURNITURE_TYPE_ID) ?? 0;
+
+        return (this._container?.sessionDataManager?.getFloorItemData(typeId) ?? null) as
+            {id: number; category: number; localizedName: string; customParams: string} | null;
     }
 
     // AS3: FurnitureContextMenuWidgetHandler.as::processEvent()
@@ -227,11 +245,16 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
                         this._widget.showRandomTeleportContextMenu(object, widgetEvent.category);
                         break;
                     case CONTEXT_MENU_MONSTERPLANT_SEED:
+                        // AS3 gates this one on ownership: a visitor gets no seed menu.
+                        if(this._container?.isOwnerOfFurniture(object) ?? false)
+                        {
+                            this._widget.showMonsterPlantSeedContextMenu(object, widgetEvent.category);
+                        }
+                        break;
                     case CONTEXT_MENU_PURCHASABLE_CLOTHING:
                         // TODO(AS3): FurnitureContextMenuWidgetHandler.as::processEvent() routes
-                        // these to showMonsterPlantSeedContextMenu() (owner-gated) and
-                        // showUsableFurnitureContextMenu() for purchasable clothing. Both wait on
-                        // their confirmation dialogs, which are not ported.
+                        // purchasable clothing to showPurchasableClothingConfirmationDialog();
+                        // `PurchasableClothingConfirmationView` (217 l.) is not ported.
                         log.warn(`Unported furniture context menu: ${widgetEvent.contextMenu}`);
                         break;
                 }

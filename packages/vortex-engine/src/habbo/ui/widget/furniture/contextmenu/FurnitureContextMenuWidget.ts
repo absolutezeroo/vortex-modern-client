@@ -31,6 +31,8 @@ import type {IContextMenuParentWidget} from '@habbo/ui/widget/contextmenu/IConte
 import {FriendFurniContextMenuView} from '@habbo/ui/widget/furniture/friendfurni/FriendFurniContextMenuView';
 import {GenericUsableFurnitureContextMenuView} from './GenericUsableFurnitureContextMenuView';
 import {RandomTeleportContextMenuView} from './RandomTeleportContextMenuView';
+import {MonsterPlantSeedContextMenuView} from './MonsterPlantSeedContextMenuView';
+import {MonsterPlantSeedConfirmationView} from './MonsterPlantSeedConfirmationView';
 import {MysteryBoxContextMenuView} from '@habbo/ui/widget/furniture/mysterybox/MysteryBoxContextMenuView';
 import {MysteryBoxOpenDialogView} from '@habbo/ui/widget/furniture/mysterybox/MysteryBoxOpenDialogView';
 import {MysteryTrophyOpenDialogView} from '@habbo/ui/widget/furniture/mysterytrophy/MysteryTrophyOpenDialogView';
@@ -60,6 +62,12 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
 
     // AS3: FurnitureContextMenuWidget.as::_SafeStr_6679
     private _randomTeleportContextMenuView: RandomTeleportContextMenuView | null = null;
+
+    // AS3: FurnitureContextMenuWidget.as::_SafeStr_6908
+    private _monsterPlantSeedContextMenuView: MonsterPlantSeedContextMenuView | null = null;
+
+    // AS3: FurnitureContextMenuWidget.as::_SafeStr_5512
+    private _monsterPlantSeedConfirmationView: MonsterPlantSeedConfirmationView | null = null;
 
     // AS3: FurnitureContextMenuWidget.as::_SafeStr_6960
     private _mysteryBoxOpenDialogView: MysteryBoxOpenDialogView | null = null;
@@ -93,14 +101,14 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
         this._friendFurniContextMenuView = new FriendFurniContextMenuView(this);
         this._genericUsableContextMenuView = new GenericUsableFurnitureContextMenuView(this);
         this._randomTeleportContextMenuView = new RandomTeleportContextMenuView(this);
+        this._monsterPlantSeedContextMenuView = new MonsterPlantSeedContextMenuView(this);
+        this._monsterPlantSeedConfirmationView = new MonsterPlantSeedConfirmationView(this);
         this._mysteryBoxOpenDialogView = new MysteryBoxOpenDialogView(this);
         this._mysteryTrophyOpenDialogView = new MysteryTrophyOpenDialogView(this);
 
         // TODO(AS3): FurnitureContextMenuWidget.as::FurnitureContextMenuWidget() also builds
-        // GuildFurnitureContextMenuView, MonsterPlantSeedContextMenuView,
-        // MonsterPlantSeedConfirmationView, EffectBoxOpenDialogView and
-        // PurchasableClothingConfirmationView. None of those is ported; the seed menu waits on
-        // its confirmation dialog, which is the same slice.
+        // GuildFurnitureContextMenuView, EffectBoxOpenDialogView and
+        // PurchasableClothingConfirmationView. None of those three is ported.
 
         this.handler.widget = this;
 
@@ -176,6 +184,47 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
         FurnitureContextInfoView.setup(this._activeView, object);
 
         this.registerUpdateReceiver();
+    }
+
+    /** Owner-gated by the handler, not here — AS3 checks before calling. */
+    // AS3: FurnitureContextMenuWidget.as::showMonsterPlantSeedContextMenu()
+    public showMonsterPlantSeedContextMenu(object: IRoomObject, category: number): void
+    {
+        this._selectedObject = object;
+
+        if(this._activeView !== null) this.removeView(this._activeView, false);
+
+        if(this._monsterPlantSeedContextMenuView === null)
+        {
+            this._monsterPlantSeedContextMenuView = new MonsterPlantSeedContextMenuView(this);
+        }
+
+        this._monsterPlantSeedContextMenuView.objectCategory = category;
+
+        this._activeView = this._monsterPlantSeedContextMenuView;
+
+        FurnitureContextInfoView.setup(this._activeView, object);
+
+        this.registerUpdateReceiver();
+    }
+
+    /**
+     * Not a bubble: the confirmation is its own window, so the active view is dismissed and
+     * nothing replaces it.
+     */
+    // AS3: FurnitureContextMenuWidget.as::showPlantSeedConfirmationDialog()
+    public showPlantSeedConfirmationDialog(object: IRoomObject): void
+    {
+        this._selectedObject = object;
+
+        if(this._activeView !== null) this.removeView(this._activeView, false);
+
+        if(this._monsterPlantSeedConfirmationView === null)
+        {
+            this._monsterPlantSeedConfirmationView = new MonsterPlantSeedConfirmationView(this);
+        }
+
+        this._monsterPlantSeedConfirmationView.open(object.getId());
     }
 
     // AS3: FurnitureContextMenuWidget.as::showUsableFurnitureContextMenu()
