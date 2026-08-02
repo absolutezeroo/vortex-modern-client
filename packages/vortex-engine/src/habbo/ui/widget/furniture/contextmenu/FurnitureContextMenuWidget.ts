@@ -29,6 +29,8 @@ import {RoomWidgetBase} from '@habbo/ui/widget/RoomWidgetBase';
 import type {ContextInfoView} from '@habbo/ui/widget/contextmenu/ContextInfoView';
 import type {IContextMenuParentWidget} from '@habbo/ui/widget/contextmenu/IContextMenuParentWidget';
 import {FriendFurniContextMenuView} from '@habbo/ui/widget/furniture/friendfurni/FriendFurniContextMenuView';
+import {GenericUsableFurnitureContextMenuView} from './GenericUsableFurnitureContextMenuView';
+import {RandomTeleportContextMenuView} from './RandomTeleportContextMenuView';
 import {MysteryBoxContextMenuView} from '@habbo/ui/widget/furniture/mysterybox/MysteryBoxContextMenuView';
 import {MysteryBoxOpenDialogView} from '@habbo/ui/widget/furniture/mysterybox/MysteryBoxOpenDialogView';
 import {MysteryTrophyOpenDialogView} from '@habbo/ui/widget/furniture/mysterytrophy/MysteryTrophyOpenDialogView';
@@ -52,6 +54,12 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
 
     // AS3: FurnitureContextMenuWidget.as::_SafeStr_5807
     private _friendFurniContextMenuView: FriendFurniContextMenuView | null = null;
+
+    // AS3: FurnitureContextMenuWidget.as::_SafeStr_5639
+    private _genericUsableContextMenuView: GenericUsableFurnitureContextMenuView | null = null;
+
+    // AS3: FurnitureContextMenuWidget.as::_SafeStr_6679
+    private _randomTeleportContextMenuView: RandomTeleportContextMenuView | null = null;
 
     // AS3: FurnitureContextMenuWidget.as::_SafeStr_6960
     private _mysteryBoxOpenDialogView: MysteryBoxOpenDialogView | null = null;
@@ -83,14 +91,16 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
 
         this._mysteryBoxContextMenuView = new MysteryBoxContextMenuView(this);
         this._friendFurniContextMenuView = new FriendFurniContextMenuView(this);
+        this._genericUsableContextMenuView = new GenericUsableFurnitureContextMenuView(this);
+        this._randomTeleportContextMenuView = new RandomTeleportContextMenuView(this);
         this._mysteryBoxOpenDialogView = new MysteryBoxOpenDialogView(this);
         this._mysteryTrophyOpenDialogView = new MysteryTrophyOpenDialogView(this);
 
         // TODO(AS3): FurnitureContextMenuWidget.as::FurnitureContextMenuWidget() also builds
-        // GuildFurnitureContextMenuView, RandomTeleportContextMenuView,
-        // MonsterPlantSeedContextMenuView, MonsterPlantSeedConfirmationView,
-        // GenericUsableFurnitureContextMenuView, EffectBoxOpenDialogView and
-        // PurchasableClothingConfirmationView. None of those is ported.
+        // GuildFurnitureContextMenuView, MonsterPlantSeedContextMenuView,
+        // MonsterPlantSeedConfirmationView, EffectBoxOpenDialogView and
+        // PurchasableClothingConfirmationView. None of those is ported; the seed menu waits on
+        // its confirmation dialog, which is the same slice.
 
         this.handler.widget = this;
 
@@ -162,6 +172,50 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
         this._mysteryBoxContextMenuView.show();
 
         this._activeView = this._mysteryBoxContextMenuView;
+
+        FurnitureContextInfoView.setup(this._activeView, object);
+
+        this.registerUpdateReceiver();
+    }
+
+    // AS3: FurnitureContextMenuWidget.as::showUsableFurnitureContextMenu()
+    public showUsableFurnitureContextMenu(object: IRoomObject, category: number): void
+    {
+        this._selectedObject = object;
+
+        if(this._activeView !== null) this.removeView(this._activeView, false);
+
+        if(this._genericUsableContextMenuView === null)
+        {
+            this._genericUsableContextMenuView = new GenericUsableFurnitureContextMenuView(this);
+        }
+
+        this._genericUsableContextMenuView.show();
+        this._genericUsableContextMenuView.objectCategory = category;
+
+        this._activeView = this._genericUsableContextMenuView;
+
+        FurnitureContextInfoView.setup(this._activeView, object);
+
+        this.registerUpdateReceiver();
+    }
+
+    /** Unlike its siblings this one never calls `show()` — AS3 does not either. */
+    // AS3: FurnitureContextMenuWidget.as::showRandomTeleportContextMenu()
+    public showRandomTeleportContextMenu(object: IRoomObject, category: number): void
+    {
+        this._selectedObject = object;
+
+        if(this._activeView !== null) this.removeView(this._activeView, false);
+
+        if(this._randomTeleportContextMenuView === null)
+        {
+            this._randomTeleportContextMenuView = new RandomTeleportContextMenuView(this);
+        }
+
+        this._randomTeleportContextMenuView.objectCategory = category;
+
+        this._activeView = this._randomTeleportContextMenuView;
 
         FurnitureContextInfoView.setup(this._activeView, object);
 
