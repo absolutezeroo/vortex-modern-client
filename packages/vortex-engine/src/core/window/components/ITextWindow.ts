@@ -34,7 +34,10 @@ export interface ITextFormat
 export interface ITextWindow extends IWindow, IScrollableWindow
 {
     readonly bold: boolean;
-    readonly italic: boolean;
+    // TextController has had a setter all along; the interface declared it read-only, so
+    // callers that need it (the mannequin's name field, SearchView's placeholder) had to
+    // cast around the type.
+    italic: boolean;
     underline: boolean;
     readonly fontFace: string;
     // AS3 ITextWindow exposes fontSize as read/write; TextController already implements the setter.

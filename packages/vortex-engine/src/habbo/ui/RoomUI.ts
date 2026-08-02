@@ -13,6 +13,7 @@ import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import {Logger} from '@core/utils/Logger';
 
 // DI identifiers
+import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
@@ -43,6 +44,7 @@ import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocaliza
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
+import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IHabboFurniEditor} from '@habbo/vortex/furnieditor/IHabboFurniEditor';
 import type {IHabboHelp} from '@habbo/help/IHabboHelp';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
@@ -148,6 +150,9 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
     private _catalog: IHabboCatalog | null = null;
     private _inventory: IHabboInventory | null = null;
+
+    // AS3: RoomUI.as — the widget container exposes this to the mannequin and present widgets.
+    private _avatarRenderManager: IAvatarRenderManager | null = null;
 
     // NOT from AS3: Vortex-only furni editor.
     private _furniEditor: IHabboFurniEditor | null = null;
@@ -368,6 +373,19 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 false
             ),
             new ComponentDependency(
+                IID_AvatarRenderManager,
+                (avatarRenderManager: IAvatarRenderManager | null) =>
+                {
+                    this._avatarRenderManager = avatarRenderManager;
+
+                    for(const desktop of this._desktops.values())
+                    {
+                        desktop.avatarRenderManager = avatarRenderManager;
+                    }
+                },
+                false
+            ),
+            new ComponentDependency(
                 IID_HabboFurniEditor,
                 (furniEditor: IHabboFurniEditor | null) =>
                 {
@@ -530,6 +548,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         desktop.roomWidgetFactory = this._widgetFactory;
         desktop.catalog = this._catalog;
         desktop.inventory = this._inventory;
+        desktop.avatarRenderManager = this._avatarRenderManager;
         desktop.furniEditor = this._furniEditor;
         desktop.habboHelp = this._habboHelp;
         desktop.userDefinedRoomEvents = this._userDefinedRoomEvents;
@@ -882,6 +901,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_FURNI_TROPHY_WIDGET');
                     desktop.createWidget('RWE_ROOM_DIMMER');
                     desktop.createWidget('RWE_FURNI_PRESENT_WIDGET');
+                    desktop.createWidget('RWE_MANNEQUIN');
 
                     this._isInRoom = true;
 

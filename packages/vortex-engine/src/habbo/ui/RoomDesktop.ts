@@ -28,6 +28,7 @@ import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfig
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
 import type {IHabboFurniEditor} from '@habbo/vortex/furnieditor/IHabboFurniEditor';
 import type {IHabboHelp} from '@habbo/help/IHabboHelp';
@@ -63,6 +64,7 @@ import {FurnitureTrophyWidgetHandler} from './handler/FurnitureTrophyWidgetHandl
 import {FurnitureStickieWidgetHandler} from './handler/FurnitureStickieWidgetHandler';
 import {FurnitureDimmerWidgetHandler} from './handler/FurnitureDimmerWidgetHandler';
 import {FurniturePresentWidgetHandler} from './handler/FurniturePresentWidgetHandler';
+import {MannequinWidgetHandler} from './handler/MannequinWidgetHandler';
 import {PlaceholderWidgetHandler} from './handler/PlaceholderWidgetHandler';
 import {FurnitureBackgroundColorWidgetHandler} from './handler/FurnitureBackgroundColorWidgetHandler';
 import {FurnitureCreditWidgetHandler} from './handler/FurnitureCreditWidgetHandler';
@@ -249,6 +251,19 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     }
 
     private _catalog: IHabboCatalog | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get avatarRenderManager()
+    private _avatarRenderManager: IAvatarRenderManager | null = null;
+
+    public get avatarRenderManager(): IAvatarRenderManager | null
+    {
+        return this._avatarRenderManager;
+    }
+
+    public set avatarRenderManager(value: IAvatarRenderManager | null)
+    {
+        this._avatarRenderManager = value;
+    }
 
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get catalog()
     public get catalog(): IHabboCatalog | null 
@@ -778,6 +793,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new FurniturePresentWidgetHandler();
                 break;
+            case 'RWE_MANNEQUIN':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
+                handler = new MannequinWidgetHandler();
+                break;
             case 'RWE_FURNITURE_CONTEXT_MENU': {
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:853-857
                 const contextMenuHandler = new FurnitureContextMenuWidgetHandler();
@@ -1021,6 +1040,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 ));
 
                 return;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_MANNEQUIN" — unlike the
+            // others this one is not translated into a widget message: the mannequin handler
+            // subscribes to the engine event itself (`getProcessedEvents()`), so it only has to
+            // reach the handler list, which the generic path below does.
             // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_PRESENT"
             case RoomEngineToWidgetEvent.REQUEST_PRESENT:
                 this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(

@@ -204,6 +204,70 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         return new AvatarFigureContainer(figureString);
     }
 
+    /**
+     * The highest club level any part of a figure requires — what the mannequin checks
+     * before letting somebody wear an outfit.
+     *
+     * The second loop is the non-obvious half: a part type the figure *omits* can still cost
+     * club level, because `optionalFromClubLevel()` is what makes "no hat" a club-only look
+     * for a gender that has a mandatory default. Passing `partTypes` restricts the check to
+     * the six clothing slots the mannequin cares about; null means the whole body.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/_SafeCls_582.as::resolveClubLevel()
+    public resolveClubLevel(container: IAvatarFigureContainer, gender: string, partTypes: string[] | null = null): number
+    {
+        if(!this._structureReady) return 0;
+
+        const figureData = this._structure.figureData;
+        const containerPartTypes = container.getPartTypeIds();
+
+        let clubLevel = 0;
+
+        for(const partType of containerPartTypes)
+        {
+            const setType = figureData.getSetType(partType);
+
+            if(!setType) continue;
+
+            const partSet = setType.getPartSet(container.getPartSetId(partType));
+
+            if(!partSet) continue;
+
+            clubLevel = Math.max(partSet.clubLevel, clubLevel);
+
+            const palette = figureData.getPalette(setType.paletteID);
+
+            if(!palette) continue;
+
+            for(const colorId of container.getPartColorIds(partType) ?? [])
+            {
+                const color = palette.getColor(colorId);
+
+                if(color)
+                {
+                    clubLevel = Math.max(color.clubLevel, clubLevel);
+                }
+            }
+        }
+
+        const checkedTypes = partTypes ?? this._structure.getBodyPartsUnordered('full');
+
+        for(const partType of checkedTypes)
+        {
+            if(containerPartTypes.indexOf(partType) !== -1) continue;
+
+            const setType = figureData.getSetType(partType);
+
+            // AS3 dereferences this unguarded and throws on an unknown part type; skipped
+            // here, which leaves the level unchanged exactly as a zero would.
+            if(!setType) continue;
+
+            clubLevel = Math.max(setType.optionalFromClubLevel(gender), clubLevel);
+        }
+
+        return clubLevel;
+    }
+
     public isFigureReady(figure: IAvatarFigureContainer): boolean 
     {
         if(!this._avatarAssetDownloadManager) return false;

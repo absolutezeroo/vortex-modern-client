@@ -36,6 +36,9 @@ export interface IAvatarRenderManager
 
     createFigureContainer(figureString: string): IAvatarFigureContainer;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/_SafeCls_581.as::resolveClubLevel()
+    resolveClubLevel(container: IAvatarFigureContainer, gender: string, partTypes?: string[] | null): number;
+
     isFigureReady(figure: IAvatarFigureContainer): boolean;
 
     downloadFigure(figure: IAvatarFigureContainer, listener: IAvatarImageListener | null): void;

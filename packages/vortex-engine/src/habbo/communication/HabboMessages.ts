@@ -675,6 +675,12 @@ import {
 
 // Outgoing Composers - Sound
 import {
+    SetMannequinFigureMessageComposer,
+    SetMannequinNameMessageComposer,
+} from './messages/outgoing/room/furniture';
+
+// Outgoing Composers - Sound
+import {
     GetSoundSettingsComposer,
     SetSoundSettingsComposer,
 } from './messages/outgoing/sound';
@@ -2042,6 +2048,10 @@ export class HabboMessages implements IMessageConfiguration
 
         // === SOUND ===
         this._composers.set(541, GetSoundSettingsComposer);
+        // Mannequin (widget/furniture/mannequin) — 606 is also a *server*-side id for
+        // Game2UserLeftGame in the emulator, which is a different direction and so not a clash.
+        this._composers.set(2301, SetMannequinFigureMessageComposer);
+        this._composers.set(606, SetMannequinNameMessageComposer);
         this._composers.set(3662, SetSoundSettingsComposer);
 
         // === ROOM ENGINE ===
