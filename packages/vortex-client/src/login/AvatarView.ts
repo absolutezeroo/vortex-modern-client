@@ -42,6 +42,9 @@ export class AvatarView extends Sprite
     // AS3: _cancelButton
     private _cancelButton: ColouredButton | null = null;
 
+    // TS-only: adds an avatar to the account; see `addButtons()`.
+    private _newAvatarButton: ColouredButton | null = null;
+
     // AS3: _initialized
     private _initialized: boolean = false;
 
@@ -156,6 +159,21 @@ export class AvatarView extends Sprite
         );
         this._saveButton.active = false;
         this.addChild(this._saveButton);
+
+        // TS-only: the only way to add an avatar to an account in this project — there is no website
+        // to do it on. It posts the AS3 route (`POST /api/user/avatars`); only the button is new.
+        // Green would read as a second Play next to the real one, and red is Cancel's on this
+        // screen, so it takes the yellow skin — which carries the `hc_small` badge, the one visual
+        // wart of having no free skin left.
+        this._newAvatarButton = new ColouredButton(
+            'yellow',
+            'New avatar',
+            new Rectangle(0, 300, 0, 40),
+            true,
+            this._onNewAvatar,
+            14211288
+        );
+        this.addChild(this._newAvatarButton);
     }
 
     /**
@@ -165,8 +183,23 @@ export class AvatarView extends Sprite
      */
     public populateAvatars(avatars: AvatarData[]): void
     {
+        // TS-only: AS3 empties the array and leaves the sprites on the display list, which is
+        // harmless there because the screen is populated once. Creating an avatar repopulates it, so
+        // the previous holders have to go or every pass stacks another row of avatars on the old one.
+        for(const holder of this._avatarImages)
+        {
+            holder.removeEventListener('click', this._onAvatarClick);
+            this.removeChild(holder);
+        }
+
         this._avatarImages = [];
         this._avatars = avatars;
+
+        // TS-only: the list is here, so whatever the New avatar button was waiting for has landed.
+        if(this._newAvatarButton)
+        {
+            this._newAvatarButton.active = true;
+        }
 
         let index = 0;
 
@@ -305,10 +338,38 @@ export class AvatarView extends Sprite
         LoaderUI.lineUpVerticallyRevers(this._saveButton, 20, this._informationPanel);
         LoaderUI.alignAnchors(this._informationPanel, 0, 'r', this._saveButton);
         LoaderUI.lineUpHorizontallyRevers(this._saveButton, 20, this._cancelButton);
+
+        // TS-only: one more link in the AS3 chain, placed the same way — to the left of the last.
+        if(this._newAvatarButton)
+        {
+            LoaderUI.lineUpHorizontallyRevers(this._cancelButton, 20, this._newAvatarButton);
+        }
+
         log.debug(
             '(avatar) Information panel: '
             + `${[this._informationPanel.x, this._informationPanel.y, this._informationPanel.width, this._informationPanel.height]}`
         );
+    };
+
+    /**
+     * TS-only: asks the flow for one more avatar.
+     *
+     * The button is disabled for the round trip: the answer repopulates this very screen, and a
+     * second click before it lands would create an avatar nobody asked for — one that cannot be
+     * deleted from here. `populateAvatars()` re-enables it.
+     *
+     * A failed creation therefore leaves it disabled, because the failure arm does not repopulate.
+     * That is the lesser evil: the two answers to expect are the account's avatar cap and a dead
+     * web session, and clicking again fixes neither.
+     */
+    private _onNewAvatar = (): void =>
+    {
+        if(this._newAvatarButton)
+        {
+            this._newAvatarButton.active = false;
+        }
+
+        this._context.createAvatar();
     };
 
     // AS3: onAvatarClick(_arg_1:MouseEvent)
@@ -359,5 +420,6 @@ export class AvatarView extends Sprite
     {
         this._saveButton?.dispose();
         this._cancelButton?.dispose();
+        this._newAvatarButton?.dispose();
     }
 }

@@ -368,6 +368,32 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
     }
 
     /**
+     * TS-only: adds an avatar to the account already signed in on the web session.
+     *
+     * Same route and same reasoning as the one `showSelectAvatar()` posts after a registration, and
+     * the name is left empty for the same reason: the onboarding step the server asks for on the
+     * first connection owns naming, and it owns the look editor with it. A brand-new avatar has no
+     * `NuxCompletedAt`, so it gets that step exactly like the account's first one did.
+     *
+     * The answer is the refreshed avatar list, which the provider routes back to
+     * `populateCharacterList()` — so the picker simply repopulates with the new avatar on it.
+     */
+    public createAvatar(): void
+    {
+        const session = this._communication?.getHabboWebApiSession() ?? null;
+
+        if(!session)
+        {
+            log.warn('No web API session to create an avatar on');
+
+            return;
+        }
+
+        log.debug('Creating an additional avatar');
+        session.createAvatar('');
+    }
+
+    /**
      * AS3: initLoginWithSsoToken(_arg_1:String, _arg_2:String)
      *
      * Commits the ticket's environment first (`false` = not a preview), then finishes immediately —

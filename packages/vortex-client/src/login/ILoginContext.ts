@@ -22,6 +22,11 @@ export interface ILoginContext extends IUIContext
     // there ever needed to ask the flow for it. See `RegisterView`'s header.
     initRegister(email: string, password: string): void;
 
+    // TS-only: adds an avatar to the signed-in account. `createAvatar()` IS an AS3 web-api route
+    // (`POST /api/user/avatars`); what AS3 has no screen for is asking for one, because habbo.com's
+    // website does it. Called from `AvatarView`.
+    createAvatar(): void;
+
     // AS3: function initLoginWithSsoToken(_arg_1:String, _arg_2:String):void
     initLoginWithSsoToken(environmentId: string, token: string): void;
 

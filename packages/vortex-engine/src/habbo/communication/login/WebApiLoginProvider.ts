@@ -379,16 +379,22 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
                     avatars.push(new AvatarData(entry));
                 }
 
-                // A single avatar is selected outright — no picker for an account with one
-                // character.
+                // DELIBERATE DIVERGENCE: AS3 selects a lone avatar outright and never shows the
+                // picker for it (`if(_loc7_.length == 1) { ...; selectAvatar(...); break; }`). That
+                // shortcut costs nothing on habbo.com, where avatars are managed on the website —
+                // but this project has no CMS, and the picker is the only screen from which an
+                // account can gain a second avatar. Keeping the shortcut makes that screen
+                // unreachable for precisely the accounts that need it: the ones with one avatar.
+                //
+                // To restore the AS3 behaviour, put the block back — nothing else depends on this.
+                // `_autoLogin` is false in this build and never set true, so dropping it here cannot
+                // strand the auto-login path either: `populateCharacterList()` below always runs.
                 if(avatars.length === 1)
                 {
                     CommunicationUtils.writeProperty(
                         CommunicationUtils.SOL_PROPERTY_CHARACTER_UNIQUE_ID,
                         avatars[0].uniqueId
                     );
-                    session.selectAvatar(avatars[0].uniqueId);
-                    break;
                 }
 
                 if(!this._autoLogin)

@@ -636,6 +636,15 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     would ask twice. Two lines of emulator: `CreateAvatarRequest.IsValid` no longer requires a name,
     and `CreateAvatarAsync` assigns a GUID-bearing placeholder when it is blank (`Player.Name` is
     uniquely indexed, so a counter would race).
+  - **Additional avatars, from the picker.** There is no CMS in this project, so `AvatarView` is the
+    only surface an account can ever gain a second avatar from — and AS3's shortcut for a lone avatar
+    (`if(_loc7_.length == 1) selectAvatar(...)`, `WebApiLoginProvider`) made that screen unreachable
+    for exactly the accounts that need it. The shortcut is dropped (deliberate divergence, restorable
+    in one block; `_autoLogin` is false in this build, so nothing is stranded), and a New avatar
+    button posts the same nameless `createAvatar()`. Two port-side consequences handled: the picker
+    now repopulates, so `populateAvatars()` removes the previous holders instead of stacking rows,
+    and the button is disabled for the round trip since a double click would create an avatar that
+    cannot be deleted from here.
   - Captions are English literals: no registration key exists in the `default_localizations*` embeds.
     The two field prompts reuse `${connection.login.email}` / `${connection.login.password}`.
   - **Not runtime-verified.** Both sides compile and lint; the chain was traced call by call, not run.
