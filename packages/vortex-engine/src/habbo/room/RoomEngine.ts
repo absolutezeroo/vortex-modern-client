@@ -127,6 +127,7 @@ import {
 } from '@habbo/communication/messages/outgoing/room/engine/PickupObjectMessageComposer';
 import {RoomEngineObjectPlacedEvent} from './events/RoomEngineObjectPlacedEvent';
 import {RoomObjectRoomMaskUpdateMessage} from './messages/RoomObjectRoomMaskUpdateMessage';
+import {RoomObjectModelDataUpdateMessage} from '@habbo/room/messages/RoomObjectModelDataUpdateMessage';
 import {RoomObjectDataUpdateMessage} from './messages/RoomObjectDataUpdateMessage';
 import {RoomObjectItemDataUpdateMessage} from './messages/RoomObjectItemDataUpdateMessage';
 import {RoomObjectRoomFloorHoleUpdateMessage} from './messages/RoomObjectRoomFloorHoleUpdateMessage';
@@ -2616,6 +2617,42 @@ export class RoomEngine extends Component implements IRoomEngine,
             RoomEngineObjectEvent.REOE_ADDED,
             new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_ADDED, roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
         );
+
+        return true;
+    }
+
+    /**
+     * Pushes one numeric model variable into a live room object, through its own event
+     * handler — the same route `updateObjectFurniture()` takes, and for the same reason: the
+     * logic classes intercept the update message rather than reading the model back.
+     *
+     * The present widget is what needs it: opening a gift sets
+     * `furniture_disable_picking_animation` so the box does not replay its pickup animation
+     * while the contents dialog is up.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::changeObjectModelData()
+    changeObjectModelData(roomId: number, objectId: number, category: number, key: string, value: number): boolean
+    {
+        const room = this.getRoomInstance(roomId);
+
+        if(!room)
+        {
+            return false;
+        }
+
+        const object = room.getObject(objectId, category) as IRoomObjectController | null;
+
+        if(!object)
+        {
+            return false;
+        }
+
+        const eventHandler = object.getEventHandler();
+
+        if(eventHandler)
+        {
+            eventHandler.processUpdateMessage(new RoomObjectModelDataUpdateMessage(key, value));
+        }
 
         return true;
     }
@@ -6219,7 +6256,9 @@ export class RoomEngine extends Component implements IRoomEngine,
      * AS3: sources/win63_version/habbo/ui/RoomDesktop.as::roomObjectEventHandler()
      * ("REOE_SELECTED" case) is what ultimately consumes this on the UI side.
      */
-    private selectRoomObject(roomId: number, id: number, category: number): void 
+    // AS3 declares this on IRoomEngine (public); the port had it private, which is why
+    // no widget could highlight an object. Made public with the interface declaration.
+    selectRoomObject(roomId: number, id: number, category: number): void 
     {
         if(this._selectedObject && (this._selectedObject.id !== id || this._selectedObject.category !== category)) 
         {

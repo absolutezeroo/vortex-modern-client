@@ -164,6 +164,18 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         return this._catalog;
     }
 
+    // TS-only: RoomWidgetFactory needs these two to construct the present widget, which AS3
+    // builds with the same eight arguments.
+    public get inventory(): IHabboInventory | null
+    {
+        return this._inventory;
+    }
+
+    public get roomEngine(): IRoomEngine | null
+    {
+        return this._roomEngine;
+    }
+
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomUI.as::get chatStyleLibrary()
     public get chatStyleLibrary(): IChatStyleLibrary | null
     {
@@ -869,6 +881,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_FURNI_STICKIE_WIDGET');
                     desktop.createWidget('RWE_FURNI_TROPHY_WIDGET');
                     desktop.createWidget('RWE_ROOM_DIMMER');
+                    desktop.createWidget('RWE_FURNI_PRESENT_WIDGET');
 
                     this._isInRoom = true;
 

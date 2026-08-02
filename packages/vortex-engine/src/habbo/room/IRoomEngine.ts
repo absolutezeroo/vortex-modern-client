@@ -58,6 +58,18 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureIcon()
     getFurnitureIcon(type: number, listener: IGetImageListener, param?: string | null, stuffData?: unknown): ImageResult;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::selectRoomObject()
+    selectRoomObject(roomId: number, id: number, category: number): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getRoomObjectCount()
+    getRoomObjectCount(roomId: number, category: number): number;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getRoomObjectWithIndex()
+    getRoomObjectWithIndex(roomId: number, index: number, category: number): IRoomObject | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::changeObjectModelData()
+    changeObjectModelData(roomId: number, objectId: number, category: number, key: string, value: number): boolean;
+
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getWallItemIcon()
     getWallItemIcon(type: number, listener: IGetImageListener, param?: string | null): ImageResult;
 

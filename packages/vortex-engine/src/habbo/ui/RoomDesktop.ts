@@ -62,6 +62,7 @@ import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
 import {FurnitureTrophyWidgetHandler} from './handler/FurnitureTrophyWidgetHandler';
 import {FurnitureStickieWidgetHandler} from './handler/FurnitureStickieWidgetHandler';
 import {FurnitureDimmerWidgetHandler} from './handler/FurnitureDimmerWidgetHandler';
+import {FurniturePresentWidgetHandler} from './handler/FurniturePresentWidgetHandler';
 import {PlaceholderWidgetHandler} from './handler/PlaceholderWidgetHandler';
 import {FurnitureBackgroundColorWidgetHandler} from './handler/FurnitureBackgroundColorWidgetHandler';
 import {FurnitureCreditWidgetHandler} from './handler/FurnitureCreditWidgetHandler';
@@ -773,6 +774,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new FurnitureDimmerWidgetHandler();
                 break;
+            case 'RWE_FURNI_PRESENT_WIDGET':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
+                handler = new FurniturePresentWidgetHandler();
+                break;
             case 'RWE_FURNITURE_CONTEXT_MENU': {
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:853-857
                 const contextMenuHandler = new FurnitureContextMenuWidgetHandler();
@@ -1012,6 +1017,14 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case RoomEngineToWidgetEvent.REQUEST_PLACEHOLDER:
                 this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
                     RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_PLACEHOLDER_WIDGET,
+                    event.objectId, event.category, event.roomId
+                ));
+
+                return;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_PRESENT"
+            case RoomEngineToWidgetEvent.REQUEST_PRESENT:
+                this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
+                    RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_PRESENT_WIDGET,
                     event.objectId, event.category, event.roomId
                 ));
 
