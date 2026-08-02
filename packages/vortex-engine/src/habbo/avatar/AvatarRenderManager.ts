@@ -116,10 +116,10 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
     public createAvatarImage(
         figureString: string,
         scale: string,
-        gender: string,
+        gender: string | null = null,
         listener: IAvatarImageListener | null = null,
         effectListener: IAvatarEffectListener | null = null
-    ): IAvatarImage | null 
+    ): IAvatarImage | null
     {
         const figureContainer = new AvatarFigureContainer(figureString);
 

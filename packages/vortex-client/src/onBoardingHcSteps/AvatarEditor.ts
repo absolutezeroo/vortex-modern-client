@@ -19,6 +19,7 @@ import {Texture} from 'pixi.js';
 import {Logger} from '@core/utils/Logger';
 import {AvatarFigurePartType} from '@habbo/avatar/enum/AvatarFigurePartType';
 import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
+import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IPartColor} from '@habbo/avatar/structure/figure/IPartColor';
 import {UpdateFigureDataMessageComposer} from '@habbo/communication/messages/outgoing/avatar/UpdateFigureDataMessageComposer';
 import {Bitmap} from '../onBoardingHcUi/display/Bitmap';
@@ -197,6 +198,20 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
     // AS3: _multiColorParts — part-set id -> its colour list, for parts that take two colours
     private _multiColorParts: Map<string, string[]> = new Map();
 
+    /**
+     * TS-only: rendered thumbnail per figure string.
+     *
+     * `updateGrids()` composites 25 avatars, and `avatarImageReady()` calls it again for every part
+     * whose assets finish downloading — so a cold cache used to mean 25 rebuilds of 25 avatars, each
+     * one compositing body parts into a fresh OffscreenCanvas and uploading a Texture that nothing
+     * ever destroyed. The work is quadratic in the number of thumbnails and none of it changes
+     * between passes: a figure string renders to the same icon every time.
+     */
+    private _thumbIcons: Map<string, BitmapData> = new Map();
+
+    /** TS-only: pending coalesced grid rebuild — see `avatarImageReady()`. */
+    private _gridRebuildHandle: number = 0;
+
     // AS3: AvatarEditor(_arg_1:OnBoardingHcFlow)
     constructor(context: OnBoardingHcFlow)
     {
@@ -356,7 +371,10 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
 
         if(figure === this.getFigure() || figure.replace('-25', '') === this.getFigure())
         {
-            const image = manager.createAvatarImage(figure, 'h', this._gender, null, null);
+            // No gender here either — AS3 calls `createAvatarImage(param1, "h")` and stops there.
+            // The figure is already the full worn one, so validation would add nothing, but it is
+            // the same call and it stays the same call.
+            const image = manager.createAvatarImage(figure, 'h', null, null, null);
 
             if(!image) return;
 
@@ -372,7 +390,21 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
             return;
         }
 
-        this.updateGrids(false);
+        // TS-only: AS3 rebuilds the grids on every callback. The assets arrive in a burst — one
+        // callback per part library — and each rebuild is 25 avatar composites, so the passes pile
+        // up on the main thread while the browser is still delivering the rest of the burst. The
+        // rebuild is coalesced into the next frame instead: the burst produces one rebuild, and the
+        // result is identical because a rebuild reads the current state, not the callback's.
+        if(this._gridRebuildHandle !== 0) return;
+
+        this._gridRebuildHandle = window.requestAnimationFrame(() =>
+        {
+            this._gridRebuildHandle = 0;
+
+            if(this._disposed) return;
+
+            this.updateGrids(false);
+        });
     }
 
     // AS3: nameChangeCompleted(_arg_1:Boolean=false)
@@ -734,12 +766,11 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
                 }
 
                 const figure = segments.concat(categoryColors ?? []).join('-');
-                const image = manager.createAvatarImage(figure, 'h', this._gender, withListener ? this : null, null);
-                const cropped = image?.getCroppedImage(partType === 'hd' ? 'head' : 'full');
+                const icon = this.thumbIcon(manager, figure, partType, withListener);
 
-                if(cropped)
+                if(icon)
                 {
-                    button.addIcon(AvatarEditor.toBitmapData(cropped));
+                    button.addIcon(icon);
                 }
 
                 button.name = `${partType}_${setId}`;
@@ -775,12 +806,11 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
                 this._gridButtons.push(button);
 
                 const figure = categoryColors != null ? segments.concat(categoryColors).join('-') : thumb;
-                const image = manager.createAvatarImage(figure, 'h', this._gender, withListener ? this : null, null);
-                const cropped = image?.getCroppedImage(partType === 'hd' ? 'head' : 'full');
+                const icon = this.thumbIcon(manager, figure, partType, withListener);
 
-                if(cropped)
+                if(icon)
                 {
-                    button.addIcon(AvatarEditor.toBitmapData(cropped));
+                    button.addIcon(icon);
                 }
 
                 button.name = `${partType}_${setId}`;
@@ -1124,6 +1154,47 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
         this._context.submitName();
     };
 
+    /**
+     * TS-only: the grid icon for a figure, composited once and kept.
+     *
+     * A miss registers as an avatar-image listener when asked to, exactly as the inline call it
+     * replaces did — that is how a part still downloading comes back through `avatarImageReady()`.
+     * A hit does not: an icon that rendered is proof its assets are already there.
+     *
+     * The cropped Texture is destroyed once its pixels are in the BitmapData. `getCroppedImage()`
+     * builds a fresh one on every call and caches nothing, so each thumbnail was leaking a GPU
+     * texture per rebuild — the one thing here that a long session would have kept paying for.
+     */
+    private thumbIcon(
+        manager: IAvatarRenderManager,
+        figure: string,
+        partType: string,
+        withListener: boolean
+    ): BitmapData | null
+    {
+        const cached = this._thumbIcons.get(figure);
+
+        if(cached) return cached;
+
+        // The gender is null, as in AS3 (`createAvatarImage(..., "h", null, this)`), and that is the
+        // whole point of the call: a gender makes the manager run `validateAvatarFigure()`, which
+        // fills the figure in with every mandatory part. These figures are ONE garment — "hr-891" —
+        // so passing the gender rendered a whole dressed avatar in every thumbnail and cropped to
+        // its body, instead of the hair on its own. It also means the icon depends on the figure
+        // string alone, which is why the cache is keyed on nothing else.
+        const image = manager.createAvatarImage(figure, 'h', null, withListener ? this : null, null);
+        const cropped = image?.getCroppedImage(partType === 'hd' ? 'head' : 'full');
+
+        if(!cropped) return null;
+
+        const icon = AvatarEditor.toBitmapData(cropped);
+
+        cropped.destroy(true);
+        this._thumbIcons.set(figure, icon);
+
+        return icon;
+    }
+
     // TS-only: the per-gender selection map, created on first use as AS3 does.
     private selectionsForGender(): Map<string, string>
     {
@@ -1209,6 +1280,14 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
     public dispose(): void
     {
         this._disposed = true;
+
+        if(this._gridRebuildHandle !== 0)
+        {
+            window.cancelAnimationFrame(this._gridRebuildHandle);
+            this._gridRebuildHandle = 0;
+        }
+
+        this._thumbIcons.clear();
 
         while(this.numChildren > 0)
         {

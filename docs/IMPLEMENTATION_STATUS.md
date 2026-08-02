@@ -153,6 +153,39 @@ only reading the AS3 registry (`.../habbo/communication/_SafeCls_2046.as`) settl
 messages that were *written and registered* yet never subscribed, and 42 more registered-but-unused —
 they counted as ported in every table above and did nothing at runtime. See "Recent Work Recorded".
 
+### Header cross-check against the emulator (2026-08-02)
+
+Three-way diff of `HabboMessages.ts` ↔ `vortex-emulator`'s `Revision20260701/Headers.cs`, arbitrated
+by the WIN63 registry (`.../habbo/communication/_SafeCls_2046.as`). Recipe: parse
+`this._events.set(id, Class)` / `this._composers.set(id, Class)` on our side (skip commented lines)
+and `public const int Name = id;` per class on theirs — our `_events` ↔ their `MessageComposer`,
+our `_composers` ↔ their `MessageEvent` — match on the name with the `Message`/`Event`/`Composer`
+suffixes stripped, then resolve every disagreement by finding the id in `_SafeCls_2046.as` and
+identifying the obfuscated class from its parser members and its call site.
+
+Result: 21 wrong headers, all fixed. **5 were ours** — `NoobnessLevel` and
+`AccountSafetyLockStatusChange` were swapped (70 ↔ 3913), `NavigatorSavedSearches` 866→432 (866 is
+the unread-forums count), `ChangeEmailResult` 3909→2050 (3909 is `onTalentTrack`), and
+`HabboGroupDeactivated` 2087→1948 (2087 is `onMembershipRequested`). **16 were the emulator's**,
+including four id collisions where an invented header sat on a real one: NFT constants over
+`GuildBaseSearch` (3744), `DeselectFavouriteHabboGroup` (306) and `PickupObject` (1919), plus
+`CustomStackingHeightUpdate` over the wired `FurniAction` event (2552) — that last one was live,
+serialized and sent by `RoomMap.cs`.
+
+Two lessons for the next pass:
+
+- **A name-based diff finds what a shape-based one cannot, and vice versa.** `RespectUser`/
+  `Game2GetAccountGameStatus` had been resolved backwards by an earlier emulator-side pass, which
+  parked `Game2GetAccountGameStatus` on a 9xxx placeholder. The WIN63 registry settles it in one
+  line: it keeps `Game2GetAccountGameStatusMessageComposer` *unobfuscated* at 3377.
+- **An id absent from `_SafeCls_2046.as` is a guess, wherever it comes from.** Every emulator error
+  found here pointed at an id with no registry entry at all. Ours are worth the same check: 1935
+  (`GetHeightMapMessageComposer`) has no registry entry and no sender — a dead registration.
+
+Two same-named messages are *not* a conflict: `ChangeUserName` is 879 for the onboarding
+`claimName()` (`NameChangeDialog.as:302`) and 1703 for the paid rename
+(`NameChangeController.as:167`). We only implement 879, filed under `outgoing/help/`.
+
 ---
 
 ## Current Priorities

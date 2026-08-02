@@ -999,7 +999,9 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(297, GenericErrorMessageEvent);
         this._events.set(3599, UserRightsMessageEvent);
         this._events.set(3985, UserObjectMessageEvent);
-        this._events.set(3913, NoobnessLevelMessageEvent);
+        // AS3: header corrected 3913 -> 70 - was swapped with AccountSafetyLockStatusChangeMessageEvent.
+        // _SafeCls_2046.as: _SafeStr_4546[70] = _SafeCls_2080, whose only member is `get noobnessLevel():int`.
+        this._events.set(70, NoobnessLevelMessageEvent);
 
         // === AVAILABILITY ===
         this._events.set(1350, AvailabilityStatusMessageEvent);
@@ -1128,7 +1130,9 @@ export class HabboMessages implements IMessageConfiguration
         // === NEW NAVIGATOR ===
         this._events.set(24, NavigatorMetaDataMessageEvent);
         this._events.set(3708, NavigatorSearchResultSetMessageEvent);
-        this._events.set(866, NavigatorSavedSearchesMessageEvent);
+        // AS3: header corrected 866 -> 432 - _SafeCls_2046.as: _SafeStr_4546[432] = _SafeCls_3072, whose parser
+        // reads `savedSearches:Vector`. 866 is the unread-forums count (parser exposes `unreadForumsCount:int`).
+        this._events.set(432, NavigatorSavedSearchesMessageEvent);
         this._events.set(1761, NavigatorLiftedRoomsMessageEvent);
         this._events.set(1754, NavigatorCollapsedCategoriesMessageEvent);
         this._events.set(3937, NavigatorWindowSettingsMessageEvent);
@@ -1366,16 +1370,14 @@ export class HabboMessages implements IMessageConfiguration
 
         // === USERS ===
         this._events.set(1879, ApproveNameMessageEvent);
-        // TODO(AS3): header 3909 really belongs to onTalentTrack (_SafeCls_2633,
-        // com/sulake/habbo/friendbar/talent/TalentTrackController.as:133), an unrelated,
-        // unported message - left unchanged since this class appears to be a dead
-        // duplicate: its shape (a single int "result", EMAIL_STATUS_OK=0) matches no
-        // AS3 message found in sources/WIN63-202607011411-782849652, and the real
-        // onEmailStatus message (_SafeCls_2315/_SafeCls_1994: email, isVerified,
-        // allowChange) is already correctly ported as EmailStatusResultEvent at 2343
-        // (see USERS section below) and live-wired in SessionDataManager.ts. This class
-        // has no other callers in the engine.
-        this._events.set(3909, ChangeEmailResultEvent);
+        // AS3: header corrected 3909 -> 2050. The earlier note here claimed this shape (a single
+        // int "result") matched no AS3 message; it does - TalentTrackController.as:132 registers
+        // `new _SafeCls_2618(onChangeEmailResult)`, and _SafeCls_2046.as maps _SafeStr_4546[2050]
+        // to _SafeCls_2618 (parser _SafeCls_4028: `result:int`). 3909 is that controller's *other*
+        // event, onTalentTrack (_SafeCls_2633, TalentTrackController.as:133), still unported.
+        // The unrelated onEmailStatus message (email, isVerified, allowChange) stays at 2343 as
+        // EmailStatusResultEvent (see USERS section below).
+        this._events.set(2050, ChangeEmailResultEvent);
         this._events.set(1400, HabboGroupBadgesMessageEvent);
         // AS3-verified (vortex-emulator Turbo.Revisions/Revision20260701/Headers.cs:1014,
         // "GuildMembershipsMessageComposer = 3994 ... onGuildMemberships @ HabboCatalog"):
@@ -1383,7 +1385,11 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(3994, GuildMembershipsMessageEvent);
         this._events.set(2847, HabboGroupDetailsMessageEvent);
         this._events.set(12, GroupDetailsChangedMessageEvent);
-        this._events.set(2087, HabboGroupDeactivatedMessageEvent);
+        // AS3: header corrected 2087 -> 1948 - HabboGroupsManager.as:199 registers
+        // `new _SafeCls_2104(onGroupDeactivated)` and _SafeCls_2046.as maps _SafeStr_4546[1948] to
+        // _SafeCls_2104 (parser: `groupId:int` only). 2087 is onMembershipRequested
+        // (_SafeCls_2076, HabboGroupsManager.as:203 - parser adds a `requester` block), unported.
+        this._events.set(1948, HabboGroupDeactivatedMessageEvent);
         this._events.set(3356, HabboGroupJoinFailedMessageEvent);
         // Group creation / edit. Headers read from WIN63's own registry
         // (habbo/communication/_SafeCls_2046.as lines 1761/1192/1352/1219/1681) and
@@ -1509,7 +1515,10 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2619, ModeratorCautionEvent);
         this._events.set(1023, ClubGiftNotificationEvent);
         this._events.set(3345, RestoreClientMessageEvent);
-        this._events.set(70, AccountSafetyLockStatusChangeMessageEvent);
+        // AS3: header corrected 70 -> 3913 - was swapped with NoobnessLevelMessageEvent.
+        // _SafeCls_2046.as: _SafeStr_4546[3913] = _SafeCls_1995, parser _SafeCls_2001 (`status:int`
+        // plus the two status constants); 70 carries `noobnessLevel`.
+        this._events.set(3913, AccountSafetyLockStatusChangeMessageEvent);
         this._events.set(1692, PetReceivedMessageEvent);
         this._events.set(31, PetRespectFailedEvent);
         this._events.set(1784, PetRespectNotificationEvent);

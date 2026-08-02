@@ -32,6 +32,9 @@ export class Stage extends DisplayObjectContainer
     private _focus: TextField | null = null;
     private _disposed: boolean = false;
 
+    /** TEMPORARY PROBE — hit tests run between two slow-frame reports; mousemove drives them. */
+    private _hitTestsSinceReport: number = 0;
+
     constructor(container: HTMLElement)
     {
         super();
@@ -185,6 +188,11 @@ export class Stage extends DisplayObjectContainer
 
         this._frameHandle = window.requestAnimationFrame(this._onFrame);
 
+        // TEMPORARY PROBE — remove once the AvatarView slowness is understood. A frame this long is
+        // not jank, it is a stall, and the breakdown says which half owns it: the enterFrame walk
+        // (per-object listeners) or the repaint (the display list itself).
+        const probeStart = performance.now();
+
         this.dispatchEnterFrame(this);
 
         if(this._focus)
@@ -205,10 +213,40 @@ export class Stage extends DisplayObjectContainer
             }
         }
 
+        const probeAfterEnterFrame = performance.now();
+
         this._context.setTransform(1, 0, 0, 1, 0, 0);
         this._context.clearRect(0, 0, this._stageWidth, this._stageHeight);
         this.render(this._context);
+
+        const probeEnd = performance.now();
+
+        if((probeEnd - probeStart) > 100)
+        {
+            log.warn(
+                `Slow frame: ${Math.round(probeEnd - probeStart)}ms `
+                + `(enterFrame ${Math.round(probeAfterEnterFrame - probeStart)}ms, `
+                + `render ${Math.round(probeEnd - probeAfterEnterFrame)}ms, `
+                + `${Stage.countNodes(this)} nodes, ${this._hitTestsSinceReport} hit tests since last report)`
+            );
+            this._hitTestsSinceReport = 0;
+        }
     };
+
+    /** TEMPORARY PROBE — display-list size, to tell a heavy tree from a heavy node. */
+    private static countNodes(node: DisplayObject): number
+    {
+        if(!(node instanceof DisplayObjectContainer)) return 1;
+
+        let total = 1;
+
+        for(let i = 0; i < node.numChildren; i++)
+        {
+            total += Stage.countNodes(node.getChildAt(i));
+        }
+
+        return total;
+    }
 
     /**
      * TS-only: Flash broadcasts `enterFrame` to every display object; the login tree is a few
@@ -325,6 +363,10 @@ export class Stage extends DisplayObjectContainer
     private _onMouseMove = (event: MouseEvent): void =>
     {
         const point = this.toStagePoint(event);
+
+        // TEMPORARY PROBE — a hit test walks the whole tree and measures every node it touches.
+        this._hitTestsSinceReport++;
+
         const target = this.hitTest(point.x, point.y);
 
         if(target === this._hovered)

@@ -20,6 +20,17 @@ interface IGraphicsCommand
     width: number;
     height: number;
     fill: IGraphicsFill | null;
+
+    /**
+     * TS-only: the paint style built for this command, kept because it was being rebuilt on every
+     * frame. Both users of a bitmap fill — the login `Background`'s tile and `Dimmer`'s 2x2 — cover
+     * the whole stage, so each frame was calling `createPattern()` on a `willReadFrequently` canvas
+     * (system memory, by construction) and handing the result straight to a full-screen `fillRect`.
+     * The gradient was rebuilt stop by stop the same way. Nothing about either can change without a
+     * `clear()`, which drops these commands and the cache with them: the fill is fixed when the
+     * command is recorded, and both bitmaps are fully painted before that happens.
+     */
+    style?: CanvasPattern | CanvasGradient | null;
 }
 
 /** TS-only: the active fill when a shape is recorded. */
@@ -113,8 +124,20 @@ export class Graphics
         }
     }
 
-    /** TS-only: turns a recorded fill into a canvas paint style. */
+    /** TS-only: turns a recorded fill into a canvas paint style, once per recorded command. */
     private createFillStyle(
+        context: CanvasRenderingContext2D,
+        command: IGraphicsCommand
+    ): CanvasPattern | CanvasGradient | null
+    {
+        if(command.style !== undefined) return command.style;
+
+        command.style = this.buildFillStyle(context, command);
+
+        return command.style;
+    }
+
+    private buildFillStyle(
         context: CanvasRenderingContext2D,
         command: IGraphicsCommand
     ): CanvasPattern | CanvasGradient | null

@@ -12,10 +12,16 @@ import type {IFigureData} from './structure/IFigureData';
  */
 export interface IAvatarRenderManager
 {
+    /**
+     * `gender` is `param3:String = null` in the AS3 (`_SafeCls_581.as`), and passing nothing is a
+     * meaningful choice, not an omission: a gender makes the manager run `validateAvatarFigure()`,
+     * which completes the figure with every mandatory part. A caller rendering a single garment —
+     * `AvatarEditor`'s thumbnails — wants the garment alone and passes null.
+     */
     createAvatarImage(
         figureString: string,
         scale: string,
-        gender: string,
+        gender: string | null,
         listener: IAvatarImageListener | null,
         effectListener: IAvatarEffectListener | null
     ): IAvatarImage | null;
