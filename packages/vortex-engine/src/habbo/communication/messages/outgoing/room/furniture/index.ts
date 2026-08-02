@@ -1,3 +1,4 @@
+export * from './FriendFurniConfirmLockMessageComposer';
 export * from './CreditFurniRedeemMessageComposer';
 export * from './PresentOpenMessageComposer';
 export * from './OpenPetPackageMessageComposer';

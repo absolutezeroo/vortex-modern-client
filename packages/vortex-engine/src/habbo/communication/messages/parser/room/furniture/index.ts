@@ -1,3 +1,6 @@
+export * from './FriendFurniStartConfirmationParser';
+export * from './FriendFurniOtherLockConfirmedParser';
+export * from './FriendFurniCancelLockParser';
 export * from './RoomDimmerPresetsMessageEventParser';
 export * from './PresentOpenedMessageEventParser';
 export * from './OpenPetPackageRequestedMessageEventParser';

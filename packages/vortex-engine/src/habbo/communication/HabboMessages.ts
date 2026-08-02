@@ -675,9 +675,17 @@ import {
 
 // Outgoing Composers - Sound
 import {
+    FriendFurniConfirmLockMessageComposer,
     SetMannequinFigureMessageComposer,
     SetMannequinNameMessageComposer,
 } from './messages/outgoing/room/furniture';
+
+// Incoming Events - Friendship furni (love lock and friends)
+import {
+    FriendFurniCancelLockEvent,
+    FriendFurniOtherLockConfirmedEvent,
+    FriendFurniStartConfirmationEvent,
+} from './messages/incoming/room/furniture';
 
 // Outgoing Composers - Sound
 import {
@@ -1500,6 +1508,11 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(3194, RoomInviteEvent);
         // Registered by `HabboMessenger` only behind `client.minimail.embed.enabled`, as
         // AS3 does; the registry entries themselves are unconditional.
+        // Friendship furni. The emulator sends none of these three yet — it only has the
+        // client->server side (3318) — so the confirm panel stays shut against it.
+        this._events.set(2716, FriendFurniStartConfirmationEvent);
+        this._events.set(3451, FriendFurniOtherLockConfirmedEvent);
+        this._events.set(267, FriendFurniCancelLockEvent);
         this._events.set(3884, MiniMailNewMessageEvent);
         this._events.set(74, MiniMailUnreadCountEvent);
         this._events.set(2641, FriendListFragmentMessageEvent);
@@ -2050,6 +2063,7 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(541, GetSoundSettingsComposer);
         // Mannequin (widget/furniture/mannequin) — 606 is also a *server*-side id for
         // Game2UserLeftGame in the emulator, which is a different direction and so not a clash.
+        this._composers.set(3318, FriendFurniConfirmLockMessageComposer);
         this._composers.set(2301, SetMannequinFigureMessageComposer);
         this._composers.set(606, SetMannequinNameMessageComposer);
         this._composers.set(3662, SetSoundSettingsComposer);

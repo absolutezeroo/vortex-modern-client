@@ -66,6 +66,7 @@ import {FurnitureDimmerWidgetHandler} from './handler/FurnitureDimmerWidgetHandl
 import {FurniturePresentWidgetHandler} from './handler/FurniturePresentWidgetHandler';
 import {MannequinWidgetHandler} from './handler/MannequinWidgetHandler';
 import {FriendFurniEngravingWidgetHandler} from './handler/FriendFurniEngravingWidgetHandler';
+import {FriendFurniConfirmWidgetHandler} from './handler/FriendFurniConfirmWidgetHandler';
 import {PlaceholderWidgetHandler} from './handler/PlaceholderWidgetHandler';
 import {FurnitureBackgroundColorWidgetHandler} from './handler/FurnitureBackgroundColorWidgetHandler';
 import {FurnitureCreditWidgetHandler} from './handler/FurnitureCreditWidgetHandler';
@@ -802,6 +803,16 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new FriendFurniEngravingWidgetHandler();
                 break;
+            case 'RWE_FRIEND_FURNI_CONFIRM': {
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:876-878
+                // — this one is handed the connection at construction, because it registers its
+                // three incoming messages itself rather than waiting on a room-engine event.
+                const confirmHandler = new FriendFurniConfirmWidgetHandler();
+
+                confirmHandler.connection = this._connection;
+                handler = confirmHandler;
+                break;
+            }
             case 'RWE_FURNITURE_CONTEXT_MENU': {
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:853-857
                 const contextMenuHandler = new FurnitureContextMenuWidgetHandler();
