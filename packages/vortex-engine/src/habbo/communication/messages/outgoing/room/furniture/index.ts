@@ -1,3 +1,4 @@
+export * from './RedeemPurchasableClothingMessageComposer';
 export * from './MoveFurnitureToAdjacentHeightMessageComposer';
 export * from './SetCustomStackingHeightMessageComposer';
 export * from './FriendFurniConfirmLockMessageComposer';

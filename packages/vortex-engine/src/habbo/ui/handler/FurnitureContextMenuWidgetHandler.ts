@@ -12,7 +12,6 @@
  * monsterplant paths are carried through as TODO(AS3) stubs — their messages and views are not
  * ported, and the room engine does not emit their requests yet either.
  */
-import {Logger} from '@core/utils/Logger';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
@@ -21,12 +20,21 @@ import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEven
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
 import {RoomWidgetUseProductMessage} from '@habbo/ui/widget/messages/RoomWidgetUseProductMessage';
+import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import {FigureSetIdsMessageEvent} from '@habbo/communication/messages/incoming/inventory/FigureSetIdsMessageEvent';
+import type {
+    FigureSetIdsMessageParser
+} from '@habbo/communication/messages/parser/inventory/FigureSetIdsMessageParser';
+import {
+    RedeemPurchasableClothingMessageComposer
+} from '@habbo/communication/messages/outgoing/room/furniture/RedeemPurchasableClothingMessageComposer';
+import {
+    UpdateFigureDataMessageComposer
+} from '@habbo/communication/messages/outgoing/avatar/UpdateFigureDataMessageComposer';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import type {IRoomWidgetHandlerContainer} from '@habbo/ui/IRoomWidgetHandlerContainer';
 import type {FurnitureContextMenuWidget} from '@habbo/ui/widget/furniture/contextmenu/FurnitureContextMenuWidget';
 import {MysteryBoxToolbarExtension} from '@habbo/ui/widget/furniture/mysterybox/MysteryBoxToolbarExtension';
-
-const log = Logger.getLogger('habbo.ui.handler.FurnitureContextMenuWidgetHandler');
 
 /**
  * AS3: FurnitureContextMenuWidgetHandler.as::PENDING_PURCHASABLE_CLOTHING_TIMEOUT_MS
@@ -64,6 +72,15 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
 
     // AS3: FurnitureContextMenuWidgetHandler.as::_pendingPurchasableClothingFurniName
     private _pendingPurchasableClothingFurniName: string | null = null;
+
+    // AS3: FurnitureContextMenuWidgetHandler.as::_SafeStr_7014
+    private _pendingPurchasableClothingFigure: string | null = null;
+
+    // AS3: FurnitureContextMenuWidgetHandler.as::_SafeStr_7270
+    private _pendingPurchasableClothingGender: string | null = null;
+
+    // TS-only: kept so the listener survives the setter; AS3 uses a local.
+    private _figureSetIdsEvent: IMessageEvent | null = null;
 
     // AS3: FurnitureContextMenuWidgetHandler.as::_SafeStr_7268 (request timestamp, -1 = none)
     private _pendingPurchasableClothingTime: number = -1;
@@ -164,10 +181,16 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
     {
         this._connection = value;
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/FurnitureContextMenuWidgetHandler.as::set connection()
-        // adds `_SafeCls_2773` (GuildFurniContextMenuInfoMessageEvent → onGuildFurniContextMenuInfo)
-        // and `_SafeCls_3295` (FigureSetIdsMessageEvent → onFigureSetIds). Neither message is
-        // ported, and neither view they feed (guild menu, purchasable clothing) exists yet.
+        if(this._connection !== null && this._figureSetIdsEvent === null)
+        {
+            this._figureSetIdsEvent = new FigureSetIdsMessageEvent(this.onFigureSetIds);
+
+            this._connection.addMessageEvent(this._figureSetIdsEvent);
+        }
+
+        // TODO(AS3): AS3 also adds `_SafeCls_2773`
+        // (GuildFurniContextMenuInfoMessageEvent → onGuildFurniContextMenuInfo); that message and
+        // the guild menu view it feeds are both unported.
     }
 
     public get connection(): IConnection | null
@@ -252,10 +275,7 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
                         }
                         break;
                     case CONTEXT_MENU_PURCHASABLE_CLOTHING:
-                        // TODO(AS3): FurnitureContextMenuWidgetHandler.as::processEvent() routes
-                        // purchasable clothing to showPurchasableClothingConfirmationDialog();
-                        // `PurchasableClothingConfirmationView` (217 l.) is not ported.
-                        log.warn(`Unported furniture context menu: ${widgetEvent.contextMenu}`);
+                        this._widget.showPurchasableClothingConfirmationDialog(object);
                         break;
                 }
                 break;
@@ -350,18 +370,51 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
     }
 
     /**
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/FurnitureContextMenuWidgetHandler.as::redeemPurchasableClothing()
-     * sends `_SafeCls_3394` (redeem-clothing-furniture) and arms a pending request that
-     * `onFigureSetIds()` completes if the reply naming this furni arrives within
-     * PENDING_PURCHASABLE_CLOTHING_TIMEOUT_MS. Neither message is ported; the fields are recorded
-     * so the timeout logic has somewhere to land.
+     * First half of the outfit purchase: ask the server to redeem the furni, and remember what
+     * to wear if it says yes. The figure is *not* applied here — `onFigureSetIds()` does that
+     * once the reply names this furni, within PENDING_PURCHASABLE_CLOTHING_TIMEOUT_MS.
      */
     // AS3: FurnitureContextMenuWidgetHandler.as::redeemPurchasableClothing()
-    public redeemPurchasableClothing(_objectId: number, furniName: string, _figureSetId: string, _gender: string): void
+    public redeemPurchasableClothing(objectId: number, furniName: string, figure: string, gender: string): void
     {
+        if(this._connection === null) return;
+
         this._pendingPurchasableClothingFurniName = furniName;
+        this._pendingPurchasableClothingFigure = figure;
+        this._pendingPurchasableClothingGender = gender;
         this._pendingPurchasableClothingTime = performance.now();
+
+        this._connection.send(new RedeemPurchasableClothingMessageComposer(objectId));
     }
+
+    /**
+     * Second half: the reply lists every furni whose figure sets the player owns. The outfit is
+     * applied only if the one just redeemed is in it — otherwise the redeem failed and the
+     * pending request is dropped.
+     */
+    // AS3: FurnitureContextMenuWidgetHandler.as::onFigureSetIds()
+    private onFigureSetIds = (event: IMessageEvent): void =>
+    {
+        const isFresh = this.hasFreshPendingPurchasableClothingRequest();
+
+        if(this._connection === null || !isFresh)
+        {
+            if(!isFresh) this.clearPendingPurchasableClothingRequest();
+
+            return;
+        }
+
+        const boundNames = (event.parser as FigureSetIdsMessageParser).boundFurnitureNames;
+
+        if(boundNames === null || boundNames.indexOf(this._pendingPurchasableClothingFurniName ?? '') === -1) return;
+
+        this._connection.send(new UpdateFigureDataMessageComposer(
+            this._pendingPurchasableClothingFigure ?? '',
+            this._pendingPurchasableClothingGender ?? ''
+        ));
+
+        this.clearPendingPurchasableClothingRequest();
+    };
 
     // AS3: FurnitureContextMenuWidgetHandler.as::hasFreshPendingPurchasableClothingRequest()
     private hasFreshPendingPurchasableClothingRequest(): boolean
@@ -378,6 +431,8 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
     private clearPendingPurchasableClothingRequest(): void
     {
         this._pendingPurchasableClothingFurniName = null;
+        this._pendingPurchasableClothingFigure = null;
+        this._pendingPurchasableClothingGender = null;
         this._pendingPurchasableClothingTime = -1;
     }
 

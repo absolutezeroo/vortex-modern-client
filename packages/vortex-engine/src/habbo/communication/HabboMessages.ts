@@ -676,6 +676,7 @@ import {
 // Outgoing Composers - Sound
 import {
     FriendFurniConfirmLockMessageComposer,
+    RedeemPurchasableClothingMessageComposer,
     MoveFurnitureToAdjacentHeightMessageComposer,
     SetCustomStackingHeightMessageComposer,
     SetMannequinFigureMessageComposer,
@@ -2067,6 +2068,7 @@ export class HabboMessages implements IMessageConfiguration
         // Game2UserLeftGame in the emulator, which is a different direction and so not a clash.
         this._composers.set(3318, FriendFurniConfirmLockMessageComposer);
         this._composers.set(3045, SetCustomStackingHeightMessageComposer);
+        this._composers.set(3637, RedeemPurchasableClothingMessageComposer);
         // 3315 has no emulator counterpart — the two nudge-height arrows send into the void.
         this._composers.set(3315, MoveFurnitureToAdjacentHeightMessageComposer);
         this._composers.set(2301, SetMannequinFigureMessageComposer);
