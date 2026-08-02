@@ -30,6 +30,12 @@ import {
 } from '@habbo/communication/messages/incoming/friendlist/ConsoleMessageHistoryEvent';
 import {InstantMessageErrorEvent} from '@habbo/communication/messages/incoming/friendlist/InstantMessageErrorEvent';
 import {RoomInviteEvent} from '@habbo/communication/messages/incoming/friendlist/RoomInviteEvent';
+import {
+    MiniMailNewMessageEvent
+} from '@habbo/communication/messages/incoming/friendlist/MiniMailNewMessageEvent';
+import {
+    MiniMailUnreadCountEvent
+} from '@habbo/communication/messages/incoming/friendlist/MiniMailUnreadCountEvent';
 import {AccountPreferencesEvent} from '@habbo/communication/messages/incoming/preferences/AccountPreferencesEvent';
 import {HabboGroupDetailsMessageEvent} from '@habbo/communication/messages/incoming/users/HabboGroupDetailsMessageEvent';
 import {
@@ -46,6 +52,9 @@ import type {
     InstantMessageErrorEventParser
 } from '@habbo/communication/messages/parser/friendlist/InstantMessageErrorEventParser';
 import type {RoomInviteEventParser} from '@habbo/communication/messages/parser/friendlist/RoomInviteEventParser';
+import type {
+    MiniMailUnreadCountParser
+} from '@habbo/communication/messages/parser/friendlist/MiniMailUnreadCountParser';
 import type {AccountPreferencesParser} from '@habbo/communication/messages/parser/preferences/AccountPreferencesParser';
 
 import type {IHabboMessenger} from './IHabboMessenger';
@@ -53,6 +62,7 @@ import type {ChatEntry} from './ChatEntry';
 import {DummyFriend} from './DummyFriend';
 import {MainView} from './MainView';
 import {ActiveConversationEvent} from './events/ActiveConversationEvent';
+import {MiniMailMessageEvent} from './events/MiniMailMessageEvent';
 
 const log = Logger.getLogger('habbo.messenger.HabboMessenger');
 
@@ -203,12 +213,41 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
         this.addMessageEvent(new AccountPreferencesEvent(this.onAccountPreferences.bind(this)));
         this.addMessageEvent(new HabboGroupDetailsMessageEvent(this.onHabboGroupDetails.bind(this)));
 
-        // TODO(AS3): AS3 also registers the two MiniMail events here, behind
-        // `getBoolean("client.minimail.embed.enabled")` — `_SafeCls_1958` (a new message)
-        // and `_SafeCls_2214` (the unread count). Neither is in this port's message set,
-        // so `_unseenMiniMailMessageCount` never moves and `MMME_new`/`MMME_unread` are
-        // never dispatched.
+        if(this.getBoolean('client.minimail.embed.enabled'))
+        {
+            this.addMessageEvent(new MiniMailNewMessageEvent(this.onMiniMailMessage.bind(this)));
+            this.addMessageEvent(new MiniMailUnreadCountEvent(this.onMiniMailUnreadCount.bind(this)));
+        }
+
         this.context.addLinkEventTracker(this);
+    }
+
+    /**
+     * The notification carries no payload — the arrival *is* the increment. The count is
+     * only ever reconciled by `onMiniMailUnreadCount()`.
+     */
+    // AS3: .../messenger/HabboMessenger.as::onMiniMailMessage()
+    private onMiniMailMessage(_event: IMessageEvent): void
+    {
+        this._unseenMiniMailMessageCount++;
+
+        this.playMessageReceivedSound();
+
+        this.events.emit(
+            MiniMailMessageEvent.NEW_MESSAGE_NOTIFICATION,
+            new MiniMailMessageEvent(MiniMailMessageEvent.NEW_MESSAGE_NOTIFICATION, this._unseenMiniMailMessageCount)
+        );
+    }
+
+    // AS3: .../messenger/HabboMessenger.as::onMiniMailUnreadCount()
+    private onMiniMailUnreadCount(event: IMessageEvent): void
+    {
+        this._unseenMiniMailMessageCount = (event.parser as MiniMailUnreadCountParser).unreadMessageCount;
+
+        this.events.emit(
+            MiniMailMessageEvent.UNREAD_MESSAGE_COUNT,
+            new MiniMailMessageEvent(MiniMailMessageEvent.UNREAD_MESSAGE_COUNT, this._unseenMiniMailMessageCount)
+        );
     }
 
     // AS3: .../messenger/HabboMessenger.as::onAccountPreferences()

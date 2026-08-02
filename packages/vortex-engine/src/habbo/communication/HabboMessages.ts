@@ -488,6 +488,8 @@ import {
     InstantMessageErrorEvent,
     MessengerErrorEvent,
     MessengerInitEvent,
+    MiniMailNewMessageEvent,
+    MiniMailUnreadCountEvent,
     NewConsoleMessageEvent,
     NewFriendRequestMessageEvent,
     RoomInviteErrorMessageEvent,
@@ -1484,6 +1486,10 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(3501, InstantMessageErrorEvent);
         this._events.set(358, MessengerErrorEvent);
         this._events.set(3194, RoomInviteEvent);
+        // Registered by `HabboMessenger` only behind `client.minimail.embed.enabled`, as
+        // AS3 does; the registry entries themselves are unconditional.
+        this._events.set(3884, MiniMailNewMessageEvent);
+        this._events.set(74, MiniMailUnreadCountEvent);
         this._events.set(2641, FriendListFragmentMessageEvent);
         this._events.set(3611, FriendListUpdateMessageEvent);
         this._events.set(1120, FriendRequestsMessageEvent);

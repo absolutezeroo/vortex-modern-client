@@ -14,6 +14,8 @@ export * from './HabboSearchResultMessageParser';
 export * from './InstantMessageErrorEventParser';
 export * from './MessengerErrorMessageParser';
 export * from './MessengerInitParser';
+export * from './MiniMailNewMessageParser';
+export * from './MiniMailUnreadCountParser';
 export * from './NewConsoleMessageEventParser';
 export * from './NewFriendRequestMessageParser';
 export * from './RoomInviteErrorMessageParser';

@@ -10,6 +10,8 @@ export * from './HabboSearchResultMessageEvent';
 export * from './InstantMessageErrorEvent';
 export * from './MessengerErrorEvent';
 export * from './MessengerInitEvent';
+export * from './MiniMailNewMessageEvent';
+export * from './MiniMailUnreadCountEvent';
 export * from './NewConsoleMessageEvent';
 export * from './NewFriendRequestMessageEvent';
 export * from './RoomInviteErrorMessageEvent';
