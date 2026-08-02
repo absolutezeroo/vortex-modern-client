@@ -1177,12 +1177,27 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
      * @param name - The asset name
      * @param url - The URL to fetch the image from
      */
-    public registerAssetUrl(name: string, url: string): void 
+    public registerAssetUrl(name: string, url: string): void
     {
-        if(this._resourceManager) 
+        if(this._resourceManager)
         {
             this._resourceManager.registerAssetUrl(name, url);
         }
+    }
+
+    /**
+     * Probe whether an image asset name is known, without requesting it.
+     *
+     * Equivalent to AS3's `assets.getAssetByName(name) != null` pre-check against the
+     * window manager's own asset library - the port keeps images in the ResourceManager
+     * instead, so callers that pick between a preferred and a fallback asset name (e.g.
+     * WiredUIPreset.resolveAssetFullName) ask here.
+     *
+     * @param name - The asset name
+     */
+    public hasAsset(name: string): boolean
+    {
+        return this._resourceManager?.hasAsset(name) ?? false;
     }
 
     /**

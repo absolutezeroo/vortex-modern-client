@@ -228,6 +228,11 @@ export interface IHabboWindowManager extends IDisposable {
     // TS-only
     registerAssetUrl(name: string, url: string): void;
 
+    // TS-only: stands in for AS3's `assets.getAssetByName(name) != null` pre-check, which
+    // the port cannot make for images - they live in the ResourceManager, not in a
+    // component asset library.
+    hasAsset(name: string): boolean;
+
     // TS-only
     loadSkinAssets(skins: Map<string, ISkinData>, atlases: Map<string, ImageBitmap>): void;
 

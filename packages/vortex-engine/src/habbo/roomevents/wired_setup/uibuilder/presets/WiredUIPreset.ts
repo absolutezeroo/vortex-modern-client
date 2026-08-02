@@ -305,11 +305,17 @@ export class WiredUIPreset implements IWiredUIPreset
     {
         const full = 'wired_styles_' + this._wiredStyle.name + '_' + name;
 
-        // TODO(AS3): AS3 resolves against `windowManager.assets`; the port's IHabboWindowManager does
-        // not expose an asset library, so the component's own asset library is consulted instead.
-        const assets = (this._roomEvents as unknown as { assets?: { getAssetByName(n: string): unknown } }).assets;
-
-        if(assets != null && assets.getAssetByName(full) != null)
+        // AS3 asks `_roomEvents.windowManager.assets.getAssetByName(full)`. The port's window
+        // manager has no asset library for images - they are registered with its ResourceManager -
+        // so the same question is asked through hasAsset().
+        //
+        // This is not a cosmetic difference. The `wired_` fallback below exists in AS3 too, but no
+        // asset library in the client declares a single `wired_<icon>` name: every styled icon is
+        // only ever declared as `wired_styles_<style>_<icon>` (HabboWindowManagerCom.as). Probing
+        // the wrong library therefore made the fallback fire for all of them, and each one resolved
+        // to a name that exists nowhere - the wired action forms rendered every direction/rotation
+        // radio button with a blank icon.
+        if(this._roomEvents.windowManager?.hasAsset(full) === true)
         {
             return full;
         }

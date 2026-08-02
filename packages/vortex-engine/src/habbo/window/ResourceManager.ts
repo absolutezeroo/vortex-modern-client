@@ -140,6 +140,19 @@ export class ResourceManager implements IResourceManager
         }
     }
 
+    // TS-only: probe whether a name can ever resolve, without requesting it.
+    //
+    // Stands in for AS3's `assets.getAssetByName(name) != null` pre-check on the window
+    // manager's asset library: the port has no such library for images, they live here as
+    // a decoded bitmap or a registered URL. Same intent - answer "is this asset known"
+    // without queueing a receiver or logging a miss.
+    public hasAsset(name: string): boolean
+    {
+        const resolvedName = this.resolveAssetName(name);
+
+        return this._assets.has(resolvedName) || this._assetUrls.has(resolvedName);
+    }
+
     // AS3: sources/win63_version/habbo/window/ResourceManager.as::isSameAsset()
     public isSameAsset(uri1: string, uri2: string): boolean 
     {

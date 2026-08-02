@@ -126,11 +126,52 @@ export function buildEmbedToFieldNames(comFiles, obfuscatedNameMap)
     return embedToFieldNames;
 }
 
+// Builds true field name -> Set(full embed linkage names, hash included) across every
+// *Com.as manifest.
+//
+// This is the same walk as buildEmbedToFieldNames() but keyed the other way round and,
+// crucially, WITHOUT collapsing the linkage name to its short form. Two embeds can share
+// a short name and hold completely different pixels - `move_0_png$15bdb80d...` (the
+// volter wired arrow) and `move_0_png$0ecb60e7...` (the illumina one) both strip to
+// `move_0`, so a short-name join picks whichever the caller happened to enumerate first
+// and silently ships one style's icon under the other style's name. There are 100 such
+// collisions in src/images alone. Join on the whole linkage name and the ambiguity is
+// gone (9 field names genuinely map to more than one embed; callers pick the first that
+// has pixel data).
+export function buildFieldNameToLinkages(comFiles, obfuscatedNameMap)
+{
+    const fieldNameToLinkages = new Map();
+
+    for(const comFile of comFiles)
+    {
+        const content = fs.readFileSync(comFile, 'utf8');
+        let match;
+
+        while((match = FIELD_RE.exec(content)) !== null)
+        {
+            const [, fieldName, refClass] = match;
+
+            let rawValue = null;
+
+            if(/_(png|gif|jpg|swf|mp3|ttf|xml)\$/.test(refClass)) rawValue = refClass;
+            else if(obfuscatedNameMap.has(refClass)) rawValue = obfuscatedNameMap.get(refClass);
+
+            if(!rawValue) continue;
+
+            if(!fieldNameToLinkages.has(fieldName)) fieldNameToLinkages.set(fieldName, new Set());
+
+            fieldNameToLinkages.get(fieldName).add(rawValue);
+        }
+    }
+
+    return fieldNameToLinkages;
+}
+
 /**
  * Computes the full crypted-tree name-resolution manifest once.
  *
  * @param {string} cryptedRoot - absolute path to sources/WIN63-202607011411-782849652
- * @returns {{obfuscatedNameMap: Map<string,string>, embedToFieldNames: Map<string,Set<string>>}}
+ * @returns {{obfuscatedNameMap: Map<string,string>, embedToFieldNames: Map<string,Set<string>>, fieldNameToLinkages: Map<string,Set<string>>}}
  */
 export function loadCryptedManifest(cryptedRoot)
 {
@@ -142,8 +183,15 @@ export function loadCryptedManifest(cryptedRoot)
 
     const comFiles = findComFiles(binaryDataDir);
     const embedToFieldNames = buildEmbedToFieldNames(comFiles, obfuscatedNameMap);
+    const fieldNameToLinkages = buildFieldNameToLinkages(comFiles, obfuscatedNameMap);
 
-    return {obfuscatedNameMap, embedToFieldNames, asFileCount: asFiles.length, comFileCount: comFiles.length};
+    return {
+        obfuscatedNameMap,
+        embedToFieldNames,
+        fieldNameToLinkages,
+        asFileCount: asFiles.length,
+        comFileCount: comFiles.length
+    };
 }
 
 // Raw dump filenames (both src/images and src/layouts) look like "<id>_<rest>.<ext>",
@@ -152,12 +200,22 @@ export function loadCryptedManifest(cryptedRoot)
 // values. Resolves one raw dump filename to its embedShortName, or null if unresolvable.
 export function resolveRawFileName(fileName, obfuscatedNameMap)
 {
+    const rawValue = resolveRawLinkageName(fileName, obfuscatedNameMap);
+
+    return rawValue ? stripTypeSuffix(rawValue) : null;
+}
+
+// Same resolution as resolveRawFileName(), stopping one step earlier: returns the embed's
+// WHOLE linkage name ("move_0_png$0ecb60e7...", hash included) instead of its short form.
+// That is what buildFieldNameToLinkages() joins against - see its comment for why the
+// short form is not safe to join on.
+export function resolveRawLinkageName(fileName, obfuscatedNameMap)
+{
     const match = /^\d+_(.+)\.\w+$/i.exec(fileName);
 
     if(!match) return null;
 
     const stem = match[1];
-    const rawValue = /_(png|gif|jpg|swf|mp3|ttf|xml)\$/.test(stem) ? stem : (obfuscatedNameMap.get(stem) ?? null);
 
-    return rawValue ? stripTypeSuffix(rawValue) : null;
+    return /_(png|gif|jpg|swf|mp3|ttf|xml)\$/.test(stem) ? stem : (obfuscatedNameMap.get(stem) ?? null);
 }

@@ -48,4 +48,16 @@ export interface IResourceManager extends IDisposable
 	 * @param url - The URL to fetch the image from
 	 */
     registerAssetUrl(name: string, url: string): void;
+
+    /**
+	 * Checks whether an asset name is known - registered as a decoded bitmap or as a
+	 * lazily-loadable URL - without requesting it.
+	 *
+	 * Stands in for AS3's `assets.getAssetByName(name) != null` pre-check, which the port
+	 * cannot make for images: they are not in a component asset library.
+	 *
+	 * @param name - The asset name
+	 * @returns True if `retrieveAsset()` would be able to resolve this name
+	 */
+    hasAsset(name: string): boolean;
 }

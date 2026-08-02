@@ -32,7 +32,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {loadCryptedManifest, resolveRawFileName} from './lib/cryptedManifest.mjs';
+import {loadCryptedManifest, resolveRawFileName, resolveRawLinkageName} from './lib/cryptedManifest.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -91,6 +91,29 @@ function buildEmbedToRawFile(dir, obfuscatedNameMap)
     return map;
 }
 
+// Builds fullLinkageName (hash included) -> absolute raw-dump file path. Unlike
+// buildEmbedToRawFile() above this never collapses two embeds that share a short name -
+// see lib/cryptedManifest.mjs::buildFieldNameToLinkages() for why that matters.
+function buildLinkageToRawFile(dir, obfuscatedNameMap)
+{
+    const map = new Map();
+
+    if(!fs.existsSync(dir)) return map;
+
+    for(const fileName of fs.readdirSync(dir))
+    {
+        if(!/\.(png|gif|jpg)$/i.test(fileName)) continue;
+
+        const linkage = resolveRawLinkageName(fileName, obfuscatedNameMap);
+
+        if(!linkage) continue;
+
+        if(!map.has(linkage)) map.set(linkage, path.join(dir, fileName));
+    }
+
+    return map;
+}
+
 function collectAssetUriReferences(dirs)
 {
     const refs = new Set();
@@ -131,7 +154,7 @@ function main()
     }
 
     console.log('Loading crypted-tree name manifest...');
-    const {obfuscatedNameMap, embedToFieldNames, asFileCount, comFileCount} = loadCryptedManifest(args.cryptedRoot);
+    const {obfuscatedNameMap, embedToFieldNames, fieldNameToLinkages, asFileCount, comFileCount} = loadCryptedManifest(args.cryptedRoot);
 
     console.log(`Scanned ${asFileCount} .as files, ${comFileCount} *Com.as manifests, resolved ${embedToFieldNames.size} embeds to true field names.`);
 
@@ -171,6 +194,89 @@ function main()
 
     console.log(`${args.write ? 'Base-populated' : '[dry-run] would base-populate'} ${basePopulated} image(s) under their own embed name.`);
 
+    const linkageToRawFile = buildLinkageToRawFile(cryptedImagesDir, obfuscatedNameMap);
+
+    // Resolves one true field name to the file its pixels should be copied from.
+    //
+    // The *Com.as linkage name (hash included) is tried first and is the only join that
+    // can tell two same-short-named embeds apart - `wired_styles_illumina_move_0` and
+    // `wired_styles_volter_move_0` are different arrows that both strip to `move_0`.
+    // The short-name scan below it stays as a fallback for the embeds whose raw file
+    // only resolves through the short form, and the local alias below that for the ones
+    // the raw dump does not carry at all.
+    // Linkage-only half of resolveSourceFor(). Never falls back to a short-name scan, and
+    // only accepts an image-typed linkage: a *Com.as manifest declares layouts, skins,
+    // sounds and fonts through the exact same field shape, and the short-name scan is
+    // blind to the type - it happily answers the XML field `facebook_piece_xml` with the
+    // pixels of an unrelated embed whose short name is `facebook`.
+    const resolveImageSourceFor = (name) =>
+    {
+        for(const linkage of fieldNameToLinkages.get(name) ?? [])
+        {
+            if(!/_(png|gif|jpg)\$/i.test(linkage)) continue;
+
+            if(linkageToRawFile.has(linkage))
+            {
+                return {kind: 'raw', path: linkageToRawFile.get(linkage), embedShortName: linkage};
+            }
+        }
+
+        return null;
+    };
+
+    const resolveSourceFor = (name) =>
+    {
+        const byLinkage = resolveImageSourceFor(name);
+
+        if(byLinkage) return byLinkage;
+
+        let source = null;
+
+        for(const [embedShortName, fieldNames] of embedToFieldNames)
+        {
+            if(!fieldNames.has(name)) continue;
+
+            if(embedToRawFile.has(embedShortName))
+            {
+                return {kind: 'raw', path: embedToRawFile.get(embedShortName), embedShortName};
+            }
+
+            if(existingImages.has(embedShortName.toLowerCase()) && !source)
+            {
+                source = {kind: 'alias', path: path.join(args.imagesDir, `${embedShortName}.png`), embedShortName};
+            }
+        }
+
+        return source;
+    };
+
+    const copyResolved = (entries, label) =>
+    {
+        let copied = 0;
+
+        for(const {name, source} of entries)
+        {
+            const targetPath = path.join(args.imagesDir, `${name}.png`);
+
+            if(fs.existsSync(targetPath)) continue;
+
+            if(args.write)
+            {
+                fs.copyFileSync(source.path, targetPath);
+                console.log(`Copied (${label}/${source.kind}) ${source.embedShortName} -> ${name}.png`);
+            }
+            else
+            {
+                console.log(`[dry-run] would copy (${label}/${source.kind}) ${source.embedShortName} -> ${name}.png`);
+            }
+
+            existingImages.add(name.toLowerCase());
+            copied++;
+        }
+
+        return copied;
+    };
+
     // Pass 2: true-name fill-in for asset_uri references.
     const referencedNames = collectAssetUriReferences([args.layoutsDir, args.skinsDir]);
 
@@ -188,26 +294,7 @@ function main()
             continue;
         }
 
-        // Is `name` itself a known true field name? Find an embed whose field-name set
-        // contains it, sourced either from the raw pixel dump (authoritative, preferred)
-        // or an existing locally-named copy (alias, only when the raw dump lacks it).
-        let source = null;
-
-        for(const [embedShortName, fieldNames] of embedToFieldNames)
-        {
-            if(!fieldNames.has(name)) continue;
-
-            if(embedToRawFile.has(embedShortName))
-            {
-                source = {kind: 'raw', path: embedToRawFile.get(embedShortName), embedShortName};
-                break;
-            }
-
-            if(existingImages.has(embedShortName.toLowerCase()) && !source)
-            {
-                source = {kind: 'alias', path: path.join(args.imagesDir, `${embedShortName}.png`), embedShortName};
-            }
-        }
+        const source = resolveSourceFor(name);
 
         if(source) toCopy.push({name, source});
         else unresolved++;
@@ -220,22 +307,50 @@ function main()
     console.log(`${toCopy.length} resolvable via *Com.as (${rawCount} from raw pixel dump, ${aliasCount} aliased from an existing differently-named PNG).`);
     console.log(`${unresolved} unresolved (no source found under any known name).`);
 
-    for(const {name, source} of toCopy)
+    copyResolved(toCopy, 'asset_uri');
+
+    // Pass 3: true-name fill-in for every REMAINING *Com.as image field.
+    //
+    // Pass 2 only sees names a compiled layout/skin spells out in an `asset_uri`. Plenty
+    // of asset names are never written in a layout at all - they are built in code, e.g.
+    // WiredUIPreset.resolveAssetFullName() composes "wired_styles_" + style.name + "_" +
+    // icon, so the whole wired icon set (`wired_styles_illumina_move_0` ... ) was never
+    // imported and every wired radio-button icon fell back to a name that exists in no
+    // asset library at all. Nothing about that failure is loud: the window renders, the
+    // icon is simply blank.
+    //
+    // So this pass takes the manifest at its word and imports every image field name that
+    // still has no local file. The one thing it skips is a `<base>_png` field whose
+    // `<base>` pass 1 already wrote from the same embed - that is the Flex linkage name
+    // showing through, not a second asset, and copying it would duplicate ~1.6 MB of
+    // identical pixels. See the ~"Asset names have no _png suffix" note: those lookups
+    // are a separate, name-side problem.
+    const remaining = [];
+    let skippedPngAlias = 0;
+    let unresolvedFields = 0;
+
+    for(const name of fieldNameToLinkages.keys())
     {
-        const targetPath = path.join(args.imagesDir, `${name}.png`);
+        if(existingImages.has(name.toLowerCase())) continue;
 
-        if(fs.existsSync(targetPath)) continue;
+        if(/_png$/.test(name) && existingImages.has(name.slice(0, -4).toLowerCase()))
+        {
+            skippedPngAlias++;
+            continue;
+        }
 
-        if(args.write)
-        {
-            fs.copyFileSync(source.path, targetPath);
-            console.log(`Copied (${source.kind}) ${source.embedShortName} -> ${name}.png`);
-        }
-        else
-        {
-            console.log(`[dry-run] would copy (${source.kind}) ${source.embedShortName} -> ${name}.png`);
-        }
+        const source = resolveImageSourceFor(name);
+
+        // Not an image field (xml/sound/font manifests share the same *Com.as shape), or
+        // an image the raw dump does not carry.
+        if(!source) { unresolvedFields++; continue; }
+
+        remaining.push({name, source});
     }
+
+    console.log(`\n${remaining.length} further *Com.as image field name(s) missing locally, ${skippedPngAlias} skipped as "_png" duplicates of an already-written embed, ${unresolvedFields} unresolved or non-image.`);
+
+    copyResolved(remaining, 'com-field');
 }
 
 main();
