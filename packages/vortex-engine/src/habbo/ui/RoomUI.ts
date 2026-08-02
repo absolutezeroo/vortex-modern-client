@@ -868,6 +868,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_FURNI_PLACEHOLDER');
                     desktop.createWidget('RWE_FURNI_STICKIE_WIDGET');
                     desktop.createWidget('RWE_FURNI_TROPHY_WIDGET');
+                    desktop.createWidget('RWE_ROOM_DIMMER');
 
                     this._isInRoom = true;
 

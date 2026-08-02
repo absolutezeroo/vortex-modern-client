@@ -595,14 +595,23 @@ export class RoomSession implements IRoomSession
         this._connection.send(new RoomDimmerGetPresetsComposer(itemId));
     }
 
-    sendRoomDimmerSavePresetMessage(itemId: number, presetId: number, type: number, color: number, light: boolean, brightness: number): void
+    sendRoomDimmerSavePresetMessage(
+        presetNumber: number,
+        effectTypeId: number,
+        color: number,
+        brightness: number,
+        apply: boolean,
+        objectId: number
+    ): void
     {
         if(this._connection === null) return;
 
         const hexPadded = '000000' + color.toString(16).toUpperCase();
         const colorHex = '#' + hexPadded.substring(hexPadded.length - 6);
 
-        this._connection.send(new RoomDimmerSavePresetComposer(presetId, type, colorHex, brightness, light, itemId));
+        this._connection.send(new RoomDimmerSavePresetComposer(
+            presetNumber, effectTypeId, colorHex, brightness, apply, objectId
+        ));
     }
 
     sendRoomDimmerChangeStateMessage(itemId: number): void

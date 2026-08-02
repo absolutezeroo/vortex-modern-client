@@ -61,6 +61,7 @@ import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
 import {FurnitureTrophyWidgetHandler} from './handler/FurnitureTrophyWidgetHandler';
 import {FurnitureStickieWidgetHandler} from './handler/FurnitureStickieWidgetHandler';
+import {FurnitureDimmerWidgetHandler} from './handler/FurnitureDimmerWidgetHandler';
 import {PlaceholderWidgetHandler} from './handler/PlaceholderWidgetHandler';
 import {FurnitureBackgroundColorWidgetHandler} from './handler/FurnitureBackgroundColorWidgetHandler';
 import {FurnitureCreditWidgetHandler} from './handler/FurnitureCreditWidgetHandler';
@@ -768,6 +769,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:786
                 handler = new FurnitureStickieWidgetHandler();
                 break;
+            case 'RWE_ROOM_DIMMER':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
+                handler = new FurnitureDimmerWidgetHandler();
+                break;
             case 'RWE_FURNITURE_CONTEXT_MENU': {
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:853-857
                 const contextMenuHandler = new FurnitureContextMenuWidgetHandler();
@@ -1007,6 +1012,14 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case RoomEngineToWidgetEvent.REQUEST_PLACEHOLDER:
                 this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
                     RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_PLACEHOLDER_WIDGET,
+                    event.objectId, event.category, event.roomId
+                ));
+
+                return;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_DIMMER" (line 1261)
+            case RoomEngineToWidgetEvent.REQUEST_DIMMER:
+                this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
+                    RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_DIMMER_WIDGET,
                     event.objectId, event.category, event.roomId
                 ));
 

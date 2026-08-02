@@ -99,7 +99,21 @@ export interface IRoomSession
 
     sendRoomDimmerGetPresetsMessage(itemId: number): void;
 
-    sendRoomDimmerSavePresetMessage(itemId: number, presetId: number, type: number, color: number, light: boolean, brightness: number): void;
+    /**
+     * Parameter order and names are AS3's: `(presetNumber, effectTypeId, color, brightness,
+     * apply, objectId)`. The port previously declared them as
+     * `(itemId, presetId, type, color, light, brightness)` — the body sent the right packet
+     * for *that* signature, but it had no callers, and a caller written against the AS3
+     * order would have sent the object id as the preset number.
+     */
+    sendRoomDimmerSavePresetMessage(
+        presetNumber: number,
+        effectTypeId: number,
+        color: number,
+        brightness: number,
+        apply: boolean,
+        objectId: number
+    ): void;
 
     sendRoomDimmerChangeStateMessage(itemId: number): void;
 
