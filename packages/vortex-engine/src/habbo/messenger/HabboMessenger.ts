@@ -14,6 +14,7 @@ import type {IFriend} from '@habbo/friendlist/IFriend';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboHelp} from '@habbo/help/IHabboHelp';
+import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
@@ -22,6 +23,7 @@ import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboHelp} from '@iid/IIDHabboHelp';
+import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
 
 import {MessengerInitEvent} from '@habbo/communication/messages/incoming/friendlist/MessengerInitEvent';
 import {NewConsoleMessageEvent} from '@habbo/communication/messages/incoming/friendlist/NewConsoleMessageEvent';
@@ -127,13 +129,8 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
     // AS3: .../messenger/HabboMessenger.as::_help
     private _help: IHabboHelp | null = null;
 
-    /**
-     * TODO(AS3): `_soundManager` is an `IIDHabboSoundManager` dependency in AS3.
-     * `habbo/sound` is 0/29 in this port and nothing is attached against that IID, so
-     * the two sound calls below are no-ops.
-     */
     // AS3: .../messenger/HabboMessenger.as::_soundManager
-    private _soundManager: {playSound(name: string): void} | null = null;
+    private _soundManager: IHabboSoundManager | null = null;
 
     /**
      * TODO(AS3): `_habbiconController` is an `IIDHabbiconController` dependency —
@@ -166,10 +163,11 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
     private _followingToGroupRoom: boolean = false;
 
     /**
-     * Sound, help and the habbicon controller are optional here where AS3 has the first
-     * two required: nothing in this port is attached against their IIDs, and a required
-     * dependency that never resolves would leave this component locked forever — which
-     * is exactly the hole that kept the friend bar from ever building.
+     * Sound and help are optional here where AS3 has them required. `IID_HabboSoundManager`
+     * is attached since 2026-08-02 and `IID_HabboHelp` is not, but both stay optional: a
+     * required dependency that never resolves leaves the component locked forever with no
+     * log — the hole that kept the friend bar from ever building — and nothing here needs
+     * either of them to exist before the console does.
      */
     // AS3: .../messenger/HabboMessenger.as::get dependencies()
     protected override get dependencies(): Array<ComponentDependency<unknown>>
@@ -202,6 +200,10 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
             new ComponentDependency(IID_HabboHelp, (help: IHabboHelp | null) =>
             {
                 this._help = help;
+            }, false),
+            new ComponentDependency(IID_HabboSoundManager, (soundManager: IHabboSoundManager | null) =>
+            {
+                this._soundManager = soundManager;
             }, false)
         ] as Array<ComponentDependency<unknown>>;
     }

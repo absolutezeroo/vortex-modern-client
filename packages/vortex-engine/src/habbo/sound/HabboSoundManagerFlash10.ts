@@ -1,0 +1,602 @@
+import type EventEmitter from 'eventemitter3';
+import {Component, type IContext} from '@core/runtime';
+import type {IAssetLibrary} from '@core/assets';
+import type {IUpdateReceiver} from '@core/runtime/IContext';
+import type {IConnection} from '@core/communication/connection/IConnection';
+import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import {Logger} from '@core/utils/Logger';
+
+import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
+import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
+import {RoomEngineObjectPlaySoundEvent} from '@habbo/room/events/RoomEngineObjectPlaySoundEvent';
+import {AccountPreferencesEvent} from '@habbo/communication/messages/incoming/preferences/AccountPreferencesEvent';
+import type {AccountPreferencesParser} from '@habbo/communication/messages/parser/preferences/AccountPreferencesParser';
+import {GetSoundSettingsComposer} from '@habbo/communication/messages/outgoing/sound/GetSoundSettingsComposer';
+import {SetSoundSettingsComposer} from '@habbo/communication/messages/outgoing/sound/SetSoundSettingsComposer';
+
+import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
+import {IID_RoomEngine} from '@iid/IIDRoomEngine';
+import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
+
+import type {IHabboSoundManager} from './IHabboSoundManager';
+import type {IHabboMusicController} from './IHabboMusicController';
+import type {IHabboSound} from './IHabboSound';
+import {HabboSoundBase} from './HabboSoundBase';
+import {HabboSoundWithPitch} from './HabboSoundWithPitch';
+
+const log = Logger.getLogger('habbo.sound.HabboSoundManagerFlash10');
+
+/**
+ * HabboSoundManagerFlash10
+ *
+ * The sound manager. Three volume channels, a cache of generic effects keyed by sound id,
+ * and — once ported — ownership of the music controller, the Trax sample manager and the
+ * furniture sample player.
+ *
+ * Two things about it are easy to misread:
+ *
+ * - **`genericVolume` starts at 0**, not 1, unlike trax and furni. Nothing is audible until
+ *   `AccountPreferences` arrives and `onSoundSettingsEvent()` sets the real value. That is
+ *   AS3's own initialiser, and it is why the manager asks for the settings in `init()`.
+ * - **the dependencies are queued, not required.** AS3 uses `queueInterface()` here rather
+ *   than the blocking dependency list, so the manager exists and answers immediately and
+ *   simply plays nothing while the room engine is still coming up.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/sound/HabboSoundManagerFlash10.as
+ */
+export class HabboSoundManagerFlash10 extends Component implements IHabboSoundManager, IUpdateReceiver
+{
+    // AS3: .../sound/HabboSoundManagerFlash10.as::HabboSoundManagerFlash10()
+    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null, queueDependencies: boolean = true)
+    {
+        super(context, flags, assetLibrary);
+
+        if(queueDependencies)
+        {
+            this.queueInterface(IID_HabboCommunicationManager, (_iid, communication: IHabboCommunicationManager) =>
+            {
+                this.onCommunicationManagerReady(communication);
+            });
+            this.queueInterface(IID_RoomEngine, (_iid, roomEngine: IRoomEngine) =>
+            {
+                this.onRoomEngineReady(roomEngine);
+            });
+            this.queueInterface(IID_HabboNotifications, (_iid, notifications: IHabboNotifications) =>
+            {
+                this.onNotificationsReady(notifications);
+            });
+        }
+
+        // TODO(AS3): AS3 also listens for "TSLE_TRAX_LOAD_COMPLETE" here
+        // (`onTraxLoadComplete`), which finishes a queued Trax download and tells the music
+        // controller the song is ready. `trax/` and `music/` are unported, so nothing
+        // dispatches that event yet.
+        this.registerUpdateReceiver(this, 1);
+
+        log.debug('Sound manager 10 init');
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::_communication
+    private _communication: IHabboCommunicationManager | null = null;
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::_SafeStr_4568
+    private _connection: IConnection | null = null;
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::_roomEngine
+    private _roomEngine: IRoomEngine | null = null;
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::_notifications
+    private _notifications: IHabboNotifications | null = null;
+
+    /** Zero until the server's stored settings arrive — see the class comment. */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::_genericVolume
+    private _genericVolume: number = 0;
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::_traxVolume
+    private _traxVolume: number = 1;
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::_furniVolume
+    private _furniVolume: number = 1;
+
+    /** Effect instances, cached by sound id so a repeat play reuses one buffer. */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::_genericSamples
+    private _genericSamples: Map<string, IHabboSound> = new Map();
+
+    /** Last play time per sound id, in ms — the 200 ms retrigger guard in `playSound()`. */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::_SafeStr_5953
+    private _lastPlayedAt: Map<string, number> = new Map();
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::_SafeStr_5008
+    private _musicController: IHabboMusicController | null = null;
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::_SafeStr_6112
+    private _loadingSongId: number = -1;
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::_SafeStr_9792
+    private _muted: boolean = false;
+
+    // TS-only: the sound-settings listener, kept so dispose() can unregister it.
+    private _accountPreferencesEvent: IMessageEvent | null = null;
+
+    // TS-only: bound room-engine listener, kept so dispose() removes the same reference.
+    private readonly _onRoomEngineObjectPlaySound = (event: RoomEngineObjectPlaySoundEvent): void =>
+    {
+        this.onRoomEngineObjectPlaySound(event);
+    };
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::get musicController()
+    get musicController(): IHabboMusicController | null
+    {
+        return this._musicController;
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::get genericVolume()
+    get genericVolume(): number
+    {
+        return this._genericVolume;
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::set genericVolume()
+    set genericVolume(value: number)
+    {
+        this.updateVolumeSetting(value, this._furniVolume, this._traxVolume);
+        this.storeVolumeSetting();
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::get traxVolume()
+    get traxVolume(): number
+    {
+        return this._traxVolume;
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::set traxVolume()
+    set traxVolume(value: number)
+    {
+        this.updateVolumeSetting(this._genericVolume, this._furniVolume, value);
+        this.storeVolumeSetting();
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::get furniVolume()
+    get furniVolume(): number
+    {
+        return this._furniVolume;
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::set furniVolume()
+    set furniVolume(value: number)
+    {
+        this.updateVolumeSetting(this._genericVolume, value, this._traxVolume);
+        this.storeVolumeSetting();
+    }
+
+    /** Applies volumes without persisting them — what the settings sliders drag against. */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::previewVolume()
+    previewVolume(generic: number, furni: number, trax: number): void
+    {
+        this.updateVolumeSetting(generic, furni, trax);
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::get loadingSongId()
+    get loadingSongId(): number
+    {
+        return this._loadingSongId;
+    }
+
+    /**
+     * Plays a generic effect, at most once every 200 ms per sound id — the guard exists
+     * because several of these fire off packet arrival and would otherwise stack.
+     */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::playSound()
+    playSound(soundId: string, loops: number = 0): void
+    {
+        const now = Date.now();
+        const lastPlayed = this._lastPlayedAt.get(soundId);
+
+        if(lastPlayed !== undefined && (now - lastPlayed) <= 200)
+        {
+            return;
+        }
+
+        let sound = this._genericSamples.get(soundId) ?? null;
+
+        if(sound === null)
+        {
+            const buffer = this.getSoundBySoundId(soundId);
+
+            if(buffer !== null)
+            {
+                sound = new HabboSoundBase(buffer, loops);
+
+                this._genericSamples.set(soundId, sound);
+            }
+        }
+
+        if(sound === null)
+        {
+            // AS3 dereferences `_loc4_` unguarded on the next line and throws when the sound
+            // is unknown; getSoundBySoundId() has already logged what was asked for.
+            return;
+        }
+
+        sound.volume = this._genericVolume;
+
+        this._lastPlayedAt.delete(soundId);
+        this._lastPlayedAt.set(soundId, now);
+
+        sound.play();
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::playSoundAtPitch()
+    playSoundAtPitch(soundId: string, pitch: number): IHabboSound | null
+    {
+        const buffer = this.getSoundBySoundId(soundId);
+
+        if(buffer === null)
+        {
+            return null;
+        }
+
+        const sound = new HabboSoundWithPitch(buffer, pitch);
+
+        sound.volume = this._genericVolume;
+        sound.play();
+
+        return sound;
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::stopSound()
+    stopSound(soundId: string): void
+    {
+        this._genericSamples.get(soundId)?.stop();
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::mute()
+    mute(muted: boolean): void
+    {
+        this._muted = muted;
+
+        this.updateVolumeSetting(this._genericVolume, this._furniVolume, this._traxVolume);
+    }
+
+    /**
+     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/sound/HabboSoundManagerFlash10.as::loadTraxSong()
+     * builds a `TraxSequencer` over a `TraxData`, queues its missing samples through
+     * `TraxSampleManager`, and returns it — queueing the whole song behind the one already
+     * downloading when there is one. `trax/` (1495 l.) and `music/TraxSampleManager` are
+     * unported, so this returns null and no Trax song can play.
+     */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::loadTraxSong()
+    loadTraxSong(songId: number, _songData: string): IHabboSound | null
+    {
+        log.warn(`loadTraxSong(${songId}): trax playback is not ported - the song stays silent`);
+
+        return null;
+    }
+
+    /**
+     * TODO(AS3): AS3 forwards to `IHabboNotifications.addSongPlayingNotification()`. Kept
+     * whole — the notification side is ported — but nothing calls it until the music
+     * controller exists.
+     */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::notifyPlayedSong()
+    notifyPlayedSong(songName: string, songAuthor: string): void
+    {
+        this._notifications?.addSongPlayingNotification(songName, songAuthor);
+    }
+
+    /**
+     * Frame tick. AS3 also drives `TraxSampleManager.update()` and `loadNextSong()` from
+     * here; both are unported (see `loadTraxSong()`).
+     */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::update()
+    update(_delta: number): void
+    {
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::get events()
+    override get events(): EventEmitter
+    {
+        return super.events;
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::onCommunicationManagerReady()
+    private onCommunicationManagerReady(communication: IHabboCommunicationManager | null): void
+    {
+        if(communication === null)
+        {
+            return;
+        }
+
+        this._communication = communication;
+
+        const connection = communication.connection;
+
+        if(connection !== null)
+        {
+            this.onConnectionReady(connection);
+            this.init();
+        }
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::onRoomEngineReady()
+    private onRoomEngineReady(roomEngine: IRoomEngine | null): void
+    {
+        if(roomEngine === null)
+        {
+            return;
+        }
+
+        this._roomEngine = roomEngine;
+
+        this.init();
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::onNotificationsReady()
+    private onNotificationsReady(notifications: IHabboNotifications | null): void
+    {
+        if(notifications === null)
+        {
+            return;
+        }
+
+        this._notifications = notifications;
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::onConnectionReady()
+    private onConnectionReady(connection: IConnection | null): void
+    {
+        if(this.disposed)
+        {
+            return;
+        }
+
+        if(connection !== null)
+        {
+            this._connection = connection;
+        }
+
+        this.init();
+    }
+
+    /**
+     * Runs once, when both the connection and the room engine are up — the guard is AS3's
+     * and is what makes the three `queueInterface` callbacks safe to fire in any order.
+     */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::init()
+    private init(): void
+    {
+        if(this._connection === null || this._roomEngine === null || this._musicController !== null)
+        {
+            return;
+        }
+
+        // TODO(AS3): AS3 constructs `HabboMusicController`, `TraxSampleManager` and
+        // `FurniSamplePlaybackManager` here. All three are unported (music/ 1688 l.,
+        // trax/ 1495 l., furni/ 206 l.), so `musicController` stays null, furniture samples
+        // do not play, and the `_musicController !== null` half of the guard above never
+        // becomes true — which is why this method also checks the room engine.
+        this._roomEngine.events.on(RoomEngineObjectPlaySoundEvent.PLAY_SOUND, this._onRoomEngineObjectPlaySound);
+        this._roomEngine.events.on(RoomEngineObjectPlaySoundEvent.PLAY_SOUND_AT_PITCH, this._onRoomEngineObjectPlaySound);
+
+        this._accountPreferencesEvent = new AccountPreferencesEvent(this.onSoundSettingsEvent.bind(this));
+
+        this._connection.addMessageEvent(this._accountPreferencesEvent);
+        this._connection.send(new GetSoundSettingsComposer());
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::setMusicController()
+    protected setMusicController(musicController: IHabboMusicController | null): void
+    {
+        this._musicController = musicController;
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::storeVolumeSetting()
+    private storeVolumeSetting(): void
+    {
+        this._connection?.send(new SetSoundSettingsComposer(
+            Math.trunc(this._traxVolume * 100),
+            Math.trunc(this._furniVolume * 100),
+            Math.trunc(this._genericVolume * 100)
+        ));
+    }
+
+    /**
+     * The single point where the three volumes change. Muting zeroes all three without
+     * touching what was stored, so unmuting restores them.
+     */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::updateVolumeSetting()
+    private updateVolumeSetting(generic: number, furni: number, trax: number): void
+    {
+        if(this._muted)
+        {
+            this._genericVolume = 0;
+            this._furniVolume = 0;
+            this._traxVolume = 0;
+
+            this._musicController?.updateVolume(0);
+
+            // TODO(AS3): AS3 also calls `_furniSamplePlaybackManager.updateVolume(0)` here.
+            return;
+        }
+
+        this._genericVolume = generic;
+        this._furniVolume = furni;
+        this._traxVolume = trax;
+
+        this._musicController?.updateVolume(trax);
+
+        // TODO(AS3): AS3 also calls `_furniSamplePlaybackManager.updateVolume(furni)` here.
+    }
+
+    /**
+     * The server stores each channel as 0-100. The `uiVolume == 1` branch is AS3's own
+     * workaround for accounts whose stored value is the old boolean-ish 1 rather than a
+     * percentage — it is read as "full", not as 1%.
+     */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::onSoundSettingsEvent()
+    private onSoundSettingsEvent(event: IMessageEvent): void
+    {
+        const parser = event.parser as AccountPreferencesParser;
+
+        let uiVolume = parser.uiVolume;
+
+        if(uiVolume === 1)
+        {
+            uiVolume = 100;
+        }
+
+        this.updateVolumeSetting(uiVolume / 100, parser.furniVolume / 100, parser.traxVolume / 100);
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::onRoomEngineObjectPlaySound()
+    private onRoomEngineObjectPlaySound(event: RoomEngineObjectPlaySoundEvent): void
+    {
+        if(event.type === RoomEngineObjectPlaySoundEvent.PLAY_SOUND)
+        {
+            this.playSound(event.soundId);
+        }
+
+        if(event.type === RoomEngineObjectPlaySoundEvent.PLAY_SOUND_AT_PITCH)
+        {
+            this.playSoundAtPitch(event.soundId, event.pitch);
+        }
+    }
+
+    /**
+     * Maps a sound id onto the asset the mp3 is registered under. Every id the client can
+     * ask for is listed; an unknown one is logged and plays nothing, as in AS3.
+     */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::getSoundBySoundId()
+    private getSoundBySoundId(soundId: string): AudioBuffer | null
+    {
+        // AS3 initialises this to "" and the `default:` returns before it is read; the
+        // empty initialiser is dropped here because every other branch assigns.
+        let assetName: string;
+
+        switch(soundId)
+        {
+            case 'HBST_call_for_help':
+                assetName = 'sound_call_for_help';
+                break;
+            case 'HBST_guide_invitation':
+                assetName = 'sound_guide_received_invitation';
+                break;
+            case 'HBST_guide_request':
+                assetName = 'sound_guide_help_requested';
+                break;
+            case 'HBST_message_received':
+                assetName = 'sound_console_new_message';
+                break;
+            case 'HBST_message_sent':
+                assetName = 'sound_console_message_sent';
+                break;
+            case 'HBST_pixels':
+                assetName = 'sound_catalogue_duckets';
+                break;
+            case 'HBST_purchase':
+                assetName = 'sound_catalogue_cash';
+                break;
+            case 'HBST_respect':
+                assetName = 'sound_respect_received';
+                break;
+            case 'CAMERA_shutter':
+                assetName = 'sound_camera_shutter';
+                break;
+            case 'HBSTG_snowwar_get_snowball':
+            case 'HBSTG_snowwar_hit1':
+            case 'HBSTG_snowwar_hit2':
+            case 'HBSTG_snowwar_hit3':
+            case 'HBSTG_snowwar_make_snowball':
+            case 'HBSTG_snowwar_miss':
+            case 'HBSTG_snowwar_throw':
+            case 'HBSTG_snowwar_walk':
+            case 'HBSTG_ig_countdown':
+            case 'HBSTG_ig_winning':
+            case 'HBSTG_ig_losing':
+                assetName = soundId;
+                break;
+            case 'FURNITURE_cuckoo_clock':
+                assetName = soundId;
+                break;
+            default:
+                log.warn(`Unknown sound request: ${soundId}`);
+
+                return null;
+        }
+
+        return this.getSoundByAssetName(assetName);
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::getSoundByAssetName()
+    private getSoundByAssetName(assetName: string): AudioBuffer | null
+    {
+        const asset = this.assets?.getAssetByName(assetName) ?? null;
+        const content = asset?.content ?? null;
+
+        if(!(content instanceof AudioBuffer))
+        {
+            log.warn(`Sound asset "${assetName}" is missing - run \`pnpm import:crypted-sounds\` in vortex-client`);
+
+            return null;
+        }
+
+        return content;
+    }
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::dispose()
+    override dispose(): void
+    {
+        if(this.disposed)
+        {
+            return;
+        }
+
+        if(this._connection !== null && this._accountPreferencesEvent !== null)
+        {
+            this._connection.removeMessageEvent(this._accountPreferencesEvent);
+        }
+
+        this._accountPreferencesEvent = null;
+        this._connection = null;
+
+        if(this._musicController !== null)
+        {
+            this._musicController.dispose();
+            this._musicController = null;
+        }
+
+        for(const sound of this._genericSamples.values())
+        {
+            sound.stop();
+        }
+
+        this._genericSamples.clear();
+        this._lastPlayedAt.clear();
+
+        // AS3 releases through the instance (`_communication.release(new IID...())`), which
+        // is `IUnknown.release()`. This port keeps the reference count on the *holder*, so
+        // the release goes through `this` — the same shape `HabboFriendBar.dispose()` uses.
+        if(this._communication !== null)
+        {
+            this.release(IID_HabboCommunicationManager);
+            this._communication = null;
+        }
+
+        if(this._roomEngine !== null)
+        {
+            this._roomEngine.events.off(RoomEngineObjectPlaySoundEvent.PLAY_SOUND, this._onRoomEngineObjectPlaySound);
+            this._roomEngine.events.off(RoomEngineObjectPlaySoundEvent.PLAY_SOUND_AT_PITCH, this._onRoomEngineObjectPlaySound);
+            this.release(IID_RoomEngine);
+            this._roomEngine = null;
+        }
+
+        if(this._notifications !== null)
+        {
+            this.release(IID_HabboNotifications);
+            this._notifications = null;
+        }
+
+        super.dispose();
+    }
+}

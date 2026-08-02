@@ -22,10 +22,11 @@ configurations/
 mockup/
 tools/flash2html/output/
 *.png
-# Window layouts/skins extracted from a Habbo dump by tools/build-window-assets.mjs.
-# Derived dump content, like sources/, configurations/ and *.png above: generated per
-# checkout, never committed.
+# Window layouts/skins extracted from a Habbo dump by tools/build-window-assets.mjs, and
+# the sound effects extracted by tools/import-crypted-sounds.mjs. Derived dump content,
+# like sources/, configurations/ and *.png above: generated per checkout, never committed.
 packages/vortex-client/src/assets/window-layouts/
 packages/vortex-client/src/assets/window-skins/
+packages/vortex-client/src/assets/sounds/
 NUL
 tmp/

@@ -2,6 +2,8 @@ import type {IVortexConfig, IVortexWindowAssets} from 'vortex-engine';
 import {Vortex} from 'vortex-engine';
 import {AssetTypeDeclaration} from '@core/assets/AssetTypeDeclaration';
 import {UnknownAsset} from '@core/assets/UnknownAsset';
+import {SoundAsset} from '@core/assets/SoundAsset';
+import {SoundContext} from '@habbo/sound/SoundContext';
 import {HabboToolbarEnum} from '@habbo/toolbar/HabboToolbarEnum';
 import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import type {ISkinData} from '@core/window';
@@ -360,7 +362,56 @@ async function registerChatStyleImageAssets(vortex: Vortex, imageBundle: AssetBu
     await Promise.all(tasks);
 }
 
-function readEmbeddedAvatarXmlAsset(bundle: AssetBundle, bundleKeys: string[], assetName: string): string | null 
+/**
+ * Registers the client's embedded sound effects, decoded, under the exact names
+ * `HabboSoundManagerFlash10.getSoundByAssetName()` asks for.
+ *
+ * The mp3s ride in the non-image bundle (like the webfonts above) and are extracted from
+ * the dump by `tools/import-crypted-sounds.mjs`, which names each file after its *Com.as
+ * field — so the bundle key's stem *is* the asset name, with no `_mp3` suffix. Decoding is
+ * done here rather than lazily because `SoundAsset.content` is read synchronously at the
+ * moment a sound plays; 21 short files is well under a frame's worth of work in parallel.
+ *
+ * AS3 has no equivalent: there the mp3s are `[Embed]`s inside HabboSoundManagerFlash10Com,
+ * already `flash.media.Sound` objects by the time the library is handed over.
+ */
+async function registerSoundAssets(vortex: Vortex, xmlBundle: AssetBundle): Promise<void>
+{
+    const keys = xmlBundle.listKeys('sounds/').filter((key) => key.endsWith('.mp3'));
+
+    if(keys.length === 0)
+    {
+        log.warn('No sound assets in the bundle - the client will be silent. Run `pnpm import:crypted-sounds`, then rebuild the bundle.');
+
+        return;
+    }
+
+    const declaration = vortex.assets.getAssetTypeDeclarationByMimeType('sound/mp3')
+        ?? new AssetTypeDeclaration('sound/mp3', SoundAsset);
+
+    await Promise.all(keys.map(async (key) =>
+    {
+        const bytes = xmlBundle.getBytes(key);
+
+        if(bytes === null) return;
+
+        // decodeAudioData() detaches the buffer it is given, and the bundle's bytes are a
+        // view onto one shared ArrayBuffer holding every asset - so it gets a copy.
+        const buffer = await SoundContext.decode(bytes.slice().buffer as ArrayBuffer);
+
+        if(buffer === null) return;
+
+        const assetName = key.slice('sounds/'.length, -'.mp3'.length);
+        const asset = new SoundAsset(declaration, assetName);
+
+        asset.setUnknownContent(buffer);
+        vortex.assets.setAsset(assetName, asset, true);
+    }));
+
+    log.debug(`Registered ${keys.length} sound assets`);
+}
+
+function readEmbeddedAvatarXmlAsset(bundle: AssetBundle, bundleKeys: string[], assetName: string): string | null
 {
     const candidates = [
         `configurations/${assetName}.xml`,
@@ -697,6 +748,10 @@ export class VortexApp
         // header comment for why. chatstyles_xml/regpoints text already went in above via
         // embeddedConfigurations.
         await registerChatStyleImageAssets(vortex, imageBundle, xmlBundle);
+
+        // The sound manager reads these synchronously through Component.assets the first
+        // time anything calls playSound().
+        await registerSoundAssets(vortex, xmlBundle);
 
         return vortex;
     }

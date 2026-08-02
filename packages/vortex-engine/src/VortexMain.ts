@@ -22,6 +22,7 @@ import {AdManager} from '@habbo/advertisement/AdManager';
 import {HabboTracking} from '@habbo/tracking/HabboTracking';
 import {HabboGroupsManager} from '@habbo/groups/HabboGroupsManager';
 import {HabboNotifications} from '@habbo/notifications/HabboNotifications';
+import {HabboSoundManagerFlash10} from '@habbo/sound/HabboSoundManagerFlash10';
 import {HabboToolbar} from '@habbo/toolbar/HabboToolbar';
 import {HabboQuestEngine} from '@habbo/quest/HabboQuestEngine';
 import {HabboFreeFlowChat} from '@habbo/freeflowchat/HabboFreeFlowChat';
@@ -48,6 +49,7 @@ import {IID_HabboAdManager} from '@iid/IIDHabboAdManager';
 import {IID_HabboCampaigns} from '@iid/IIDHabboCampaigns';
 import {IID_HabboGroupsManager} from '@iid/IIDHabboGroupsManager';
 import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
+import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboConfigurationManager} from '@iid/IIDHabboConfigurationManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
@@ -182,6 +184,7 @@ export class VortexMain implements IVortexMain
     private _tracking: HabboTracking | null = null;
     private _groupsManager: HabboGroupsManager | null = null;
     private _notifications: HabboNotifications | null = null;
+    private _soundManager: HabboSoundManagerFlash10 | null = null;
     private _freeFlowChat: HabboFreeFlowChat | null = null;
     private _friendBar: HabboFriendBar | null = null;
     private _messenger: HabboMessenger | null = null;
@@ -720,6 +723,16 @@ export class VortexMain implements IVortexMain
         // IID: HabboQuestEngine.ts:194, SessionDataManager.ts:715.
         this._notifications = new HabboNotifications(ctx);
         ctx.attachComponent(this._notifications, [IID_HabboNotifications]);
+
+        // 12f-bis. Sound manager
+        // AS3 registers this via the HabboSoundManagerFlash10Com SWF library, whose asset
+        // library is where the 21 embedded mp3s live — hence `this._assets`, without which
+        // every getAssetByName() below it returns null and the client is silent.
+        // Consumers waiting on the IID: HabboToolbar.ts:474, HabboMessenger's two playSound
+        // calls. It queues its own dependencies rather than declaring them, so the attach
+        // order does not matter here.
+        this._soundManager = new HabboSoundManagerFlash10(ctx, 0, this._assets);
+        ctx.attachComponent(this._soundManager, [IID_HabboSoundManager]);
 
         // 12g. Catalog
         this._catalog = new HabboCatalog(ctx, this._assets);

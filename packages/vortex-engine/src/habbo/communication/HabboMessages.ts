@@ -673,6 +673,12 @@ import {
     SetUIFlagsMessageComposer,
 } from './messages/outgoing/preferences';
 
+// Outgoing Composers - Sound
+import {
+    GetSoundSettingsComposer,
+    SetSoundSettingsComposer,
+} from './messages/outgoing/sound';
+
 // Outgoing Composers - Mystery Box
 import {MysteryBoxWaitingCanceledMessageComposer} from './messages/outgoing/mysterybox';
 
@@ -2033,6 +2039,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3653, SetUIFlagsMessageComposer);
         this._composers.set(1276, SetNewNavigatorWindowPreferencesMessageComposer);
         this._composers.set(2634, SetChatStylePreferenceComposer);
+
+        // === SOUND ===
+        this._composers.set(541, GetSoundSettingsComposer);
+        this._composers.set(3662, SetSoundSettingsComposer);
 
         // === ROOM ENGINE ===
         this._composers.set(1901, GetFurnitureAliasesMessageComposer);

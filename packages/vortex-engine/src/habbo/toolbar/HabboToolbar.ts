@@ -11,6 +11,7 @@ import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
 import {IID_HabboNavigator} from '@iid/IIDHabboNavigator';
 import {IID_HabboNewNavigator} from '@iid/IIDHabboNewNavigator';
 import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
+import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
 import {IID_HabboMessenger} from '@iid/IIDHabboMessenger';
 import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents';
@@ -102,9 +103,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
     // has them - see IHabboNewNavigator.
     private _newNavigator: IHabboNewNavigator | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::_soundManager
-    // No concrete HabboSoundManager exists in this port yet (no habbo/sound module) -
-    // this stays null until one is attached against IID_HabboSoundManager.
-    private _soundManager: unknown | null = null;
+    private _soundManager: IHabboSoundManager | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::_freeFlowChat
     private _freeFlowChat: IHabboFreeFlowChat | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::_messenger
@@ -271,7 +270,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::get soundManager()
-    get soundManager(): unknown | null
+    get soundManager(): IHabboSoundManager | null
     {
         return this._soundManager;
     }
@@ -468,11 +467,11 @@ export class HabboToolbar extends Component implements IHabboToolbar
                 },
                 false
             ),
-            // AS3: no concrete HabboSoundManager module exists in this port yet -
-            // optional and dormant until one is attached against this IID.
+            // Optional where AS3 has it required: an unresolved required dependency locks
+            // the toolbar forever, and it has nothing to do with sound.
             new ComponentDependency(
                 IID_HabboSoundManager,
-                (manager: unknown | null) =>
+                (manager: IHabboSoundManager | null) =>
                 {
                     this._soundManager = manager;
                 },

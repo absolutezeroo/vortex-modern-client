@@ -20,5 +20,6 @@ export * from './poll';
 export * from './quest';
 export * from './room';
 export * from './preferences';
+export * from './sound';
 export * from './tracking';
 export * from './users';

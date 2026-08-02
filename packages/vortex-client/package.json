@@ -11,6 +11,7 @@
     "build:window-data": "node ./tools/build-window-assets.mjs",
     "build:bundle": "node ./tools/bundle-assets.mjs",
     "import:crypted-images": "node ./tools/import-crypted-images.mjs --write",
+    "import:crypted-sounds": "node ./tools/import-crypted-sounds.mjs --write",
     "import:chatstyles": "node ./tools/import-chatstyles.mjs --write",
     "tools": "node ./tools/dashboard/server.ts"
   },
