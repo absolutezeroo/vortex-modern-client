@@ -610,6 +610,53 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **Three requested messages closed: BadgeReceived, the DailyTasks trio, and the user-move
+  composers**, 2026-08-02.
+  - **`BadgeReceived` (2840) had no client side at all** — the emulator sends it
+    (`BadgeReceivedEventMessageComposer`, from `InventoryGrain.Furni`'s badge grants) and the client
+    had no event, no parser and no registration, so every granted badge was dropped on the floor.
+    New `BadgeReceivedEvent` + `BadgeReceivedEventParser` (`int badgeId, string badgeCode, int
+    ownerCount, int badgeRarityId` — matches the emulator's serializer field for field), registered
+    at 2840, plus **both** AS3 consumers, which are two different classes registering the same
+    event: `HabboInventory.onBadgeReceived()` (`BadgesModel.updateBadge()` + `updateView()`) and
+    `NotificationMessageHandler.onBadgeReceived()` (the `notification.new.badge` toast, linking to
+    `inventory/open/badges`). The badge *bitmap* is still not attached to the toast: this port has
+    two representations of a badge image (`HTMLImageElement` from `BadgeImageManager`,
+    `ImageBitmap` on `HabboNotificationItemStyle.icon`) — `requestBadgeImage()` is still called
+    because it starts the load, and the icon rides on the badge-code parameter meanwhile
+    (`TODO(AS3)` at the call site).
+  - **Two of the emulator's three DailyTasks headers were wrong, and one of them collided.** WIN63's
+    own registry gives 1824 / **2506** / 1065 (ActiveList / TasksAdded / TaskUpdate);
+    `Headers.cs` had 2507 / **1762** / 1065, inherited from the pre-Vortex header table. 1762 is
+    really `CfhTopicsInit`, which the same file *also* declares correctly — two constants on one
+    wire id. Headers corrected with their provenance; client side now carries all three events,
+    their parsers, and the two DTOs the list messages nest (`long taskId, string taskCode, string
+    questTypeCode, bool isBonus, string imageVersion, string catalogName, int requiredRepeats, int
+    repeats, byte status, int secondsLeft`, then a reward array of `short productItemTypeId, string
+    rewardTypeId, string extraParams, int amount`). **`DailyTaskData`/`DailyTaskRewardData` and the
+    three status constants are derived names, said so at their declarations** — those types are
+    obfuscated in every available tree. `TODO(AS3)`: `habbo/quest/dailytasks/` (the controller and
+    its three views) is unported, so nothing subscribes yet; the emulator has no daily-task domain
+    logic and no composers either, so the ids are a corrected wire table, not a working feature.
+  - **`MovePetMessageComposer` was registered but constructed nowhere** — the real gap was
+    `sendMoveUserObjectMessage()`, which the port had left as a `TODO(AS3)` + `log.warn`. Ported for
+    real, including its asymmetry: the `rentable_bot` branch passes the raw room-object index to
+    the new `MoveBotMessageComposer` (**1295**, `_SafeCls_2801`), the `monsterplant` branch resolves
+    that index to the pet's `webID` through `userDataManager` first. Every category-100 path that
+    fed it is now open: `modifyRoomObject()`'s rotate case, `confirmObjectMove()`'s drop, the
+    SHIFT-rotate click and the ALT-drag mouse-down (AS3 gates that last one on *type*, not
+    category — `_SafeCls_1821.as:1063`). Wall furni (20) stays excluded: `confirmObjectMove` still
+    has no wall-move composer to finish a drag with.
+  - **A rotate would have been a silent no-op without a second fix.** `getValidRoomObjectDirection()`
+    had only the `furniture_allowed_directions` branch; AS3 picks the list by object type, reading
+    `pet_allowed_directions` for a monsterplant (already written by `PetLogic`) and a fixed
+    eight-way `USER_ALLOWED_DIRECTIONS` for a rentable bot. Without them a plant resolved to its
+    current direction and would have sent a rotation that changed nothing. Its no-model guard now
+    returns AS3's 0 instead of the current direction, and two orphaned comment fragments that
+    documented the old scope were removed.
+  - Not verified in a running client: the bot half cannot be — the server has no bot entity
+    (`docs/CLIENT-SERVER-ARCHITECTURE.md` §"Bots — Do Not Exist"). Typecheck and lint are clean.
+
 - ✅ **Account creation wired to the routes the dump already declares**, 2026-08-02. The investigation
   is most of the value here: **avatar creation was already complete on both sides** and needed
   nothing. `AuthenticationOK` carries `suggestedLoginActions`; `vortex-emulator`'s

@@ -25,6 +25,10 @@ import {EffectsModel} from './effects/EffectsModel';
 import {PetsModel} from './pets/PetsModel';
 import {Pet} from './pets/Pet';
 import {PetFigureData} from './pets/PetFigureData';
+import {BadgeReceivedEvent} from '../communication/messages/incoming/inventory/badges/BadgeReceivedEvent';
+import type {
+    BadgeReceivedEventParser
+} from '../communication/messages/parser/inventory/badges/BadgeReceivedEventParser';
 import {PetInventoryMessageEvent} from '../communication/messages/incoming/inventory/pets/PetInventoryMessageEvent';
 import type {PetInventoryMessageParser} from '../communication/messages/parser/inventory/pets/PetInventoryMessageParser';
 import {
@@ -112,6 +116,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // Accumulates pets across a fragmented PetInventory response (AS3 buffers by fragment like furni).
     private _petListFragments: Map<number, Pet> = new Map();
     private _petMessageEvents: IMessageEvent[] = [];
+    private _badgeMessageEvents: IMessageEvent[] = [];
     private _initializedCategories: Set<string> = new Set();
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::_SafeStr_4983
     private _purseTimer: ReturnType<typeof setInterval> | null = null;
@@ -432,8 +437,14 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication?.removeMessageEvent(event);
         }
 
+        for(const event of this._badgeMessageEvents)
+        {
+            this._communication?.removeMessageEvent(event);
+        }
+
         this._furniMessageEvents = [];
         this._effectMessageEvents = [];
+        this._badgeMessageEvents = [];
         this._furniModel?.dispose();
         this._badgesModel?.dispose();
         this._effectsModel?.dispose();
@@ -798,6 +809,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this.registerFurniMessageEvents();
         this.registerPetMessageEvents();
         this.registerEffectMessageEvents();
+        this.registerBadgeMessageEvents();
         log.debug('Inventory initialized');
     }
 
@@ -896,6 +908,39 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication.addMessageEvent(new GoToBreedingNestFailureEvent(this.onGoToBreedingNestFailure))
         );
     }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as:200
+    // — the badge branch of the same registration block the furni/pet ones above come from.
+    private registerBadgeMessageEvents(): void
+    {
+        if(!this._communication) return;
+
+        this._badgeMessageEvents.push(
+            this._communication.addMessageEvent(new BadgeReceivedEvent(this.onBadgeReceived))
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onBadgeReceived()
+    // The third argument is AS3's `badgeId:int` — this port named the parameter `slotId` because
+    // that is what initBadges() feeds it, but both trees write the same code->int map that the
+    // unseen tracker joins against (AS3 `isUnseen(4, badgeId)`), so the position is faithful.
+    // AS3 also passes ownerCount/badgeRarityId; BadgesModel.updateBadge() documents at its own
+    // declaration why they have no counterpart here (badge rarity is an unported feature).
+    private onBadgeReceived = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as BadgeReceivedEventParser | null;
+
+        if(!parser || !this._badgesModel) return;
+
+        this._badgesModel.updateBadge(
+            parser.badgeCode,
+            false,
+            parser.badgeId,
+            (id: string) => this._localization?.getBadgeName(id) ?? '',
+            (id: string) => this._localization?.getBadgeDesc(id) ?? ''
+        );
+        this._badgesModel.updateView();
+    };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onPetAdded()
     // AS3's `if(parser.openInventory()) {}` is an empty branch in the dump — the body was compiled

@@ -38,6 +38,7 @@ import {IID_RoomManager} from '@iid/IIDRoomManager';
 import {IID_RoomRendererFactory} from '@iid/IIDRoomRendererFactory';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
+import type {IRoomSession} from '@habbo/session/IRoomSession';
 import {RoomObjectCategoryEnum} from './object/RoomObjectCategoryEnum';
 import {RoomObjectUserTypes} from './object/RoomObjectUserTypes';
 import {RoomObjectVariableEnum} from './object/RoomObjectVariableEnum';
@@ -118,6 +119,8 @@ import {PlaceBotMessageComposer} from '@habbo/communication/messages/outgoing/ro
 import {
     RemoveBotFromFlatMessageComposer
 } from '@habbo/communication/messages/outgoing/room/bot/RemoveBotFromFlatMessageComposer';
+import {MoveBotMessageComposer} from '@habbo/communication/messages/outgoing/room/bot/MoveBotMessageComposer';
+import {MovePetMessageComposer} from '@habbo/communication/messages/outgoing/room/pet/MovePetMessageComposer';
 import {MoveObjectMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveObjectMessageComposer';
 import {
     PickupObjectMessageComposer
@@ -196,6 +199,11 @@ export class RoomEngine extends Component implements IRoomEngine,
     IRoomContentListener,
     IRoomRenderingCanvasMouseListener 
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::USER_ALLOWED_DIRECTIONS
+    // The eight-way rotation a rentable bot is allowed; unlike a plant or a piece of furniture it
+    // has no per-object direction list to read.
+    private static readonly USER_ALLOWED_DIRECTIONS: number[] = [0, 45, 90, 135, 180, 225, 270, 315];
+
     private _roomObjectFactory: RoomObjectFactory;
     private _visualizationFactory: RoomObjectVisualizationFactory;
     private _roomData: Map<string, unknown>;
@@ -748,9 +756,6 @@ export class RoomEngine extends Component implements IRoomEngine,
     {
         return this._moverIconSprite?.visible ?? false;
     }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::getValidRoomObjectDirection()
-    // TS scope: only the generic furniture_allowed_directions branch is ported (monsterplant/
 
     // of this codebase's two separate IStuffData interfaces (inventory vs room).
     getFurnitureIcon(type: number, listener: IGetImageListener, param: string | null = null, stuffData: unknown = null): ImageResult 
@@ -1674,20 +1679,6 @@ export class RoomEngine extends Component implements IRoomEngine,
 
                 const controller = object as IRoomObjectController;
 
-                // AS3: for a rentable_bot/monsterplant (cat 100) the rotation is sent through
-                // sendMoveUserObjectMessage (_SafeCls_2801 id 1295 for a bot / _SafeCls_2560 id 432
-                // for a plant), NOT the furniture MoveObject composer.
-                if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
-                {
-                    // TODO(AS3): sendMoveUserObjectMessage — the user-move composers (_SafeCls_2801/
-                    // _SafeCls_2560) are not ported, and the Turbo server has no bots (see
-                    // docs/CLIENT-SERVER-ARCHITECTURE.md §"Bots — Do Not Exist"); monsterplant move
-                    // support is likewise unconfirmed. Gesture is recognised; the send is a gap.
-                    log.warn('modifyRoomObject: OBJECT_ROTATE for cat 100 (bot/plant) not wired — user-move composer not ported');
-
-                    return false;
-                }
-
                 const forward = action === 'OBJECT_ROTATE_POSITIVE';
                 const nextDirection = this.getValidRoomObjectDirection(controller, forward);
                 const stackingMap = this.getFurniStackingHeightMap(this._activeRoomId);
@@ -1695,6 +1686,20 @@ export class RoomEngine extends Component implements IRoomEngine,
                 if(!this.validateFurnitureDirection(controller, new Vector3d(nextDirection), stackingMap)) return false;
 
                 const location = controller.getLocation();
+
+                // AS3: for a monsterplant/rentable_bot the rotation goes through
+                // sendMoveUserObjectMessage (MovePet 432 / MoveBot 1295), NOT the furniture
+                // MoveObject composer. The type is checked, not the category — AS3 tests
+                // getType() here even though only category 100 can carry those two types.
+                if(controller.getType() === 'monsterplant' || controller.getType() === 'rentable_bot')
+                {
+                    const session = this._roomSessionManager?.getSession(this._activeRoomId) ?? null;
+
+                    return this.sendMoveUserObjectMessage(
+                        session, controller, objectId,
+                        Math.trunc(location.x), Math.trunc(location.y), nextDirection / 45
+                    );
+                }
 
                 this._connection.send(new MoveObjectMessageComposer(objectId, Math.trunc(location.x), Math.trunc(location.y), nextDirection / 45));
 
@@ -1746,7 +1751,14 @@ export class RoomEngine extends Component implements IRoomEngine,
             }
             // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_MOVE" case
             case 'OBJECT_MOVE': {
-                if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) return false;
+                // AS3 puts no category condition on this case at all, because it can finish a move
+                // for all three. Floor furni (10) and bots/plants (100) now both have a working
+                // path — handleObjectMove() treats the two identically, as AS3 does
+                // (_SafeCls_1821.as:1112). Wall items (20) are still refused: confirmObjectMove()
+                // has no wall-move composer to end the drag with (its own TODO), so starting one
+                // would only strand the item ghosted. InfoStandWidgetHandler's move button is the
+                // caller that can reach here with category 20.
+                if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL) return false;
                 if(!object) return false;
 
                 const controller = object as IRoomObjectController;
@@ -4235,15 +4247,35 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
-    // rentable_bot special cases are category-100 avatar/pet features, out of scope here).
-    private getValidRoomObjectDirection(object: IRoomObjectController, forward: boolean): number 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::getValidRoomObjectDirection()
+    // Which list of allowed directions applies is chosen by object *type*: a monsterplant reads
+    // `pet_allowed_directions` (written by PetLogic from the pet's own definition), a rentable bot
+    // uses the fixed eight-way USER_ALLOWED_DIRECTIONS, and everything else reads
+    // `furniture_allowed_directions`. Only the last branch used to be ported, which meant rotating
+    // a plant or bot resolved to its current direction and sent a rotation that changed nothing.
+    private getValidRoomObjectDirection(object: IRoomObjectController, forward: boolean): number
     {
         const model = object.getModel();
+
+        // AS3 returns 0, not the current direction, when there is no model to read.
+        if(model === null) return 0;
+
         const currentDirection = object.getDirection().x;
+        const type = object.getType();
+        let allowedDirections: readonly number[] | null;
 
-        if(model === null) return currentDirection;
-
-        const allowedDirections = model.getNumberArray(RoomObjectVariableEnum.FURNITURE_ALLOWED_DIRECTIONS);
+        if(type === 'monsterplant')
+        {
+            allowedDirections = model.getNumberArray(RoomObjectVariableEnum.PET_ALLOWED_DIRECTIONS);
+        }
+        else if(type === 'rentable_bot')
+        {
+            allowedDirections = RoomEngine.USER_ALLOWED_DIRECTIONS;
+        }
+        else
+        {
+            allowedDirections = model.getNumberArray(RoomObjectVariableEnum.FURNITURE_ALLOWED_DIRECTIONS);
+        }
 
         if(allowedDirections === null || allowedDirections.length === 0) return currentDirection;
 
@@ -4268,6 +4300,50 @@ export class RoomEngine extends Component implements IRoomEngine,
             : (index - 1 + allowedDirections.length) % allowedDirections.length;
 
         return allowedDirections[index];
+    }
+
+    /**
+	 * The category-100 counterpart of the furniture MoveObject composer: how a monsterplant or a
+	 * rentable bot is repositioned/rotated.
+	 *
+	 * The two branches are not symmetric. The bot composer takes `objectId` — the room-object
+	 * index — straight through, while the pet one resolves that index to the pet's `webID` via
+	 * the session's user-data manager first, exactly as the pickup paths do.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::sendMoveUserObjectMessage()
+    private sendMoveUserObjectMessage(
+        session: IRoomSession | null,
+        object: IRoomObjectController | null,
+        objectId: number,
+        x: number,
+        y: number,
+        direction: number
+    ): boolean
+    {
+        if(this._connection === null || object === null) return false;
+
+        if(object.getType() === 'rentable_bot')
+        {
+            // The Turbo server has no bot entity, so nothing answers this — see
+            // MoveBotMessageComposer and docs/CLIENT-SERVER-ARCHITECTURE.md §"Bots — Do Not Exist".
+            this._connection.send(new MoveBotMessageComposer(objectId, x, y, direction));
+
+            return true;
+        }
+
+        if(object.getType() === 'monsterplant' && session !== null)
+        {
+            const userData = session.userDataManager?.getUserDataByIndex(objectId) ?? null;
+
+            if(userData !== null)
+            {
+                this._connection.send(new MovePetMessageComposer(userData.webID, x, y, direction));
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::validateFurnitureDirection()
@@ -4803,6 +4879,20 @@ export class RoomEngine extends Component implements IRoomEngine,
             const location = object.getLocation();
 
             this._connection.send(new MoveObjectMessageComposer(data.id, Math.trunc(location.x), Math.trunc(location.y), direction / 45));
+        }
+        // AS3: the `param3 == 100` branch of the same case (_SafeCls_1821.as:2392-2398) — a
+        // monsterplant or rentable bot dropped on a new tile goes out through the user-move
+        // composers instead of MoveObject.
+        else if(this._connection !== null && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
+        {
+            const direction = ((Math.trunc(object.getDirection().x) % 360) + 360) % 360;
+            const location = object.getLocation();
+            const session = this._roomSessionManager?.getSession(roomId) ?? null;
+
+            this.sendMoveUserObjectMessage(
+                session, object, data.id,
+                Math.trunc(location.x), Math.trunc(location.y), direction / 45
+            );
         }
 
         // TODO(AS3): AS3's modifyRoomObject() "OBJECT_MOVE_TO" case (_SafeCls_1821.as:2399-2416)
@@ -5803,14 +5893,22 @@ export class RoomEngine extends Component implements IRoomEngine,
             // ALT+drag move is a mouse-DOWN gesture — see handleObjectMouseDown().
         }
 
-        // AS3: _SafeCls_1821.as::handleRoomObjectMouseClick() cat-100 branch (lines 719-748).
+        // AS3: _SafeCls_1821.as::handleRoomObjectMouseClick() cat-100 branch (lines 700-748).
         // Modifier gestures on rentable bots / monsterplants call modifyRoomObject() directly
-        // (unlike furni, which dispatch REOE_REQUEST_*). Only CTRL-pickup is intercepted here:
-        // the monsterplant pickup fully works (roomSession.pickUpPet), the rentable-bot pickup is
-        // a documented composer/server gap. SHIFT-rotate for cat 100 is intentionally NOT
-        // intercepted — it needs the unported user-move composer and the Turbo server has no
-        // bots (docs/CLIENT-SERVER-ARCHITECTURE.md), so a modified click falls through to normal
-        // selection (InfoStand) rather than being swallowed as a no-op.
+        // (unlike furni, which dispatch REOE_REQUEST_*).
+        //
+        // SHIFT-only rotates. AS3 evaluates it *before* the selection step and skips selecting
+        // when it succeeds (line 700-708), which is why it is checked first here too. When it
+        // fails, AS3 selects the object and then repeats the very same call inside the cat-100
+        // block (line 726-730); the inputs are identical, so the retry can only fail again — it
+        // is noted rather than duplicated.
+        if(!this.isGameMode && category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
+            && (objType === 'monsterplant' || objType === 'rentable_bot')
+            && event.shiftKey && !event.ctrlKey && !event.altKey)
+        {
+            if(this.modifyRoomObject(objId, category, 'OBJECT_ROTATE_POSITIVE')) return;
+        }
+
         if(!this.isGameMode && category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
             && (objType === 'monsterplant' || objType === 'rentable_bot')
             && event.ctrlKey && !event.altKey && !event.shiftKey)
@@ -6051,9 +6149,10 @@ export class RoomEngine extends Component implements IRoomEngine,
     // ALT-only mouse-down (or, in decorate mode, a plain drag) on floor furniture starts a move,
     // dispatching REOE_REQUEST_MOVE → RoomDesktop.checkFurniManipulationRights → modifyRoomObject
     // OBJECT_MOVE (the ghost then follows the cursor and a click confirms via confirmObjectMove).
-    // AS3 also dispatches this for wall furni (cat 20) and bots/plants (cat 100), but this port's
-    // move machinery (handleObjectMove/confirmObjectMove) is floor-furni (cat 10) only — see the
-    // documented wall/user-move composer gaps in confirmObjectMove — so only cat 10 is enabled here.
+    // AS3 gates on `cat == 10 || cat == 20 || type == "monsterplant" || type == "rentable_bot"`
+    // (_SafeCls_1821.as:1063) — note the last two are matched by *type*, not by category. Wall
+    // furni (20) is still excluded here: confirmObjectMove has no wall-move composer to finish the
+    // drag with, so starting one would only ever be undone.
     private handleObjectMouseDown(event: RoomObjectMouseEvent): void
     {
         if(this._activeRoomId < 0 || this.isGameMode) return;
@@ -6068,8 +6167,12 @@ export class RoomEngine extends Component implements IRoomEngine,
         if(selectedObjectData !== null) return;
 
         const category = this.findObjectCategory(this._activeRoomId, obj);
+        const objType = obj.getType();
 
-        if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) return;
+        if(category === null) return;
+
+        if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE
+            && objType !== 'monsterplant' && objType !== 'rentable_bot') return;
 
         const altOnly = event.altKey && !event.ctrlKey && !event.shiftKey;
         // AS3 decorateModeMove(): decorate mode + neither CTRL nor SHIFT held.

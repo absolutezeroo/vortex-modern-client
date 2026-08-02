@@ -79,6 +79,13 @@ import {
     RestoreClientMessageEvent
 } from '@habbo/communication/messages/incoming/notifications/RestoreClientMessageEvent';
 import {UserObjectMessageEvent} from '@habbo/communication/messages/incoming/handshake/UserObjectMessageEvent';
+import {
+    BadgeReceivedEvent
+} from '@habbo/communication/messages/incoming/inventory/badges/BadgeReceivedEvent';
+import type {
+    BadgeReceivedEventParser
+} from '@habbo/communication/messages/parser/inventory/badges/BadgeReceivedEventParser';
+import {NotificationType} from './NotificationType';
 
 import type {
     ModeratorMessageEventParser
@@ -169,6 +176,48 @@ export class NotificationMessageHandler
     }
 
     /**
+	 * The "you received a badge" toast. Separate from, and independent of, the inventory-side
+	 * handler of the same message (HabboInventory.onBadgeReceived, which updates BadgesModel):
+	 * AS3 registers the same event twice, in two different classes.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onBadgeReceived()
+    private onBadgeReceived(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = (event as BadgeReceivedEvent).parser as BadgeReceivedEventParser | null;
+        const localization = this._notifications?.localizationManager;
+        const singularController = this._notifications?.singularController;
+
+        if(parser == null || localization == null || singularController == null) return;
+
+        const badgeName = localization.getBadgeName(parser.badgeCode);
+        // AS3 calls registerParameter() then getLocalization(); getLocalizationWithParamMap() is
+        // this port's single-call form of exactly that pair.
+        const message = localization.getLocalizationWithParamMap(
+            'notification.new.badge',
+            '',
+            new Map<string, string>([['badge_name', badgeName]])
+        );
+
+        // TODO(AS3): AS3 passes the resolved badge BitmapData as addItem()'s param3. This port
+        // keeps two representations of a badge image — BadgeImageManager hands back an
+        // HTMLImageElement, while HabboNotificationItemStyle.icon is an ImageBitmap — so the
+        // request is still made (it is what starts the badge load and fires BADGE_IMAGE_READY)
+        // but the icon travels on param5, the badge code, until the two are reconciled.
+        this._notifications?.sessionDataManager?.requestBadgeImage(parser.badgeCode);
+
+        singularController.addItem(
+            message,
+            NotificationType.BADGE_RECEIVED,
+            null,
+            null,
+            parser.badgeCode,
+            'inventory/open/badges'
+        );
+    }
+
+    /**
 	 * Register all message event listeners
 	 */
     private registerMessageEvents(): void
@@ -208,6 +257,7 @@ export class NotificationMessageHandler
         this.addMessageEvent(new RestoreClientMessageEvent(this.onRestoreClientMessageEvent.bind(this)));
         this.addMessageEvent(new AccountSafetyLockStatusChangeMessageEvent(this.onAccountSafetyLockStatusChanged.bind(this)));
         this.addMessageEvent(new RoomMessageNotificationMessageEvent(this.onRoomMessagesNotification.bind(this)));
+        this.addMessageEvent(new BadgeReceivedEvent(this.onBadgeReceived.bind(this)));
 
         log.debug('Notification message handlers registered');
     }

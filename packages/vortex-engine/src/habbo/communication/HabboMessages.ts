@@ -91,6 +91,7 @@ import {
     AvatarEffectAddedMessageEvent,
     AvatarEffectExpiredMessageEvent,
     AvatarEffectsMessageEvent,
+    BadgeReceivedEvent,
     BadgesMessageEvent,
     BotInventoryMessageEvent,
     ConfirmBreedingRequestEvent,
@@ -184,6 +185,9 @@ import {
     CommunityGoalHallOfFameMessageEvent,
     CommunityGoalProgressMessageEvent,
     ConcurrentUsersGoalProgressMessageEvent,
+    DailyTasksActiveListMessageEvent,
+    DailyTasksTaskUpdateMessageEvent,
+    DailyTasksTasksAddedMessageEvent,
     QuestCancelledMessageEvent,
     QuestCompletedMessageEvent,
     QuestDailyMessageEvent,
@@ -699,6 +703,7 @@ import {
 
 // Outgoing Composers - Room Rentable Bots
 import {
+    MoveBotMessageComposer,
     PlaceBotMessageComposer,
     RemoveBotFromFlatMessageComposer
 } from './messages/outgoing/room/bot';
@@ -1080,6 +1085,11 @@ export class HabboMessages implements IMessageConfiguration
         // catalog/clubcenter/HabboClubCenter.as:120). Header 1091 there is really
         // onCollectibleMintingEnabledMessage (_SafeCls_2669), an unrelated, unported message.
         this._events.set(2748, BadgesMessageEvent);
+        // AS3: _SafeStr_4546[2840] = _SafeCls_3204 in the registry
+        // com/sulake/habbo/communication/_SafeCls_2046.as:1467 (onBadgeReceived, registered twice —
+        // habbo/inventory/_SafeCls_1951.as:200 and habbo/notifications/_SafeCls_1951.as:129).
+        // Corroborated by the emulator's own BadgeReceivedComposer = 2840.
+        this._events.set(2840, BadgeReceivedEvent);
 
         // === INVENTORY - PETS ===
         this._events.set(1200, PetInventoryMessageEvent);
@@ -1580,6 +1590,21 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1272, QuestCompletedMessageEvent); // _SafeCls_3714 → onQuestCompleted
         this._events.set(1425, QuestCancelledMessageEvent); // _SafeCls_3681 → onQuestCancelled
 
+        // === DAILY TASKS ===
+        // The three events habbo/quest/dailytasks/DailyTasksController.as registers in its
+        // constructor, with the ids from WIN63's own registry _SafeCls_2046.as:
+        //   1824 -> _SafeCls_3179 → onActiveDailyTasks  (line 1295)
+        //   2506 -> _SafeCls_2859 → onTasksAdded        (line 1414)
+        //   1065 -> _SafeCls_3449 → onTaskUpdated       (line 1177)
+        // The emulator disagreed on two of the three (2507 and 1762), and 1762 is really
+        // CfhTopics — it declares that header twice. WIN63's registry wins; the emulator's
+        // Headers.cs has been corrected to match.
+        // TODO(AS3): habbo/quest/dailytasks/ (DailyTasksController + its three views) is not
+        // ported, so nothing subscribes to these yet — the wire table knows them, the UI does not.
+        this._events.set(1824, DailyTasksActiveListMessageEvent);
+        this._events.set(2506, DailyTasksTasksAddedMessageEvent);
+        this._events.set(1065, DailyTasksTaskUpdateMessageEvent);
+
         // === ACHIEVEMENTS ===
         this._events.set(1969, AchievementsMessageEvent);   // _SafeCls_2687 → onAchievements
         this._events.set(3981, AchievementMessageEvent);    // _SafeCls_2786 → onAchievement
@@ -1877,6 +1902,10 @@ export class HabboMessages implements IMessageConfiguration
         // (1018) one branch up. RoomEngine's TODO named 1295 for this; 1295 is the user-move
         // composer. See PlaceBotMessageComposer's own note.
         this._composers.set(2102, PlaceBotMessageComposer);
+        // AS3: _SafeCls_1821.as::sendMoveUserObjectMessage() "rentable_bot" branch — the sibling of
+        // MovePet (432) above. `_composers[1295] = _SafeCls_2801` in the registry; unanswered by the
+        // Turbo server, which has no bots. See MoveBotMessageComposer's own note.
+        this._composers.set(1295, MoveBotMessageComposer);
         // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_PICKUP_BOT" — takes webID, not objectId.
         this._composers.set(2743, RemoveBotFromFlatMessageComposer);
         this._composers.set(3713, TogglePetRidingPermissionComposer);
