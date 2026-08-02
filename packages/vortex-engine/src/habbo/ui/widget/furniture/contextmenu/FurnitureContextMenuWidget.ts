@@ -28,6 +28,7 @@ import type {FurnitureContextMenuWidgetHandler} from '@habbo/ui/handler/Furnitur
 import {RoomWidgetBase} from '@habbo/ui/widget/RoomWidgetBase';
 import type {ContextInfoView} from '@habbo/ui/widget/contextmenu/ContextInfoView';
 import type {IContextMenuParentWidget} from '@habbo/ui/widget/contextmenu/IContextMenuParentWidget';
+import {FriendFurniContextMenuView} from '@habbo/ui/widget/furniture/friendfurni/FriendFurniContextMenuView';
 import {MysteryBoxContextMenuView} from '@habbo/ui/widget/furniture/mysterybox/MysteryBoxContextMenuView';
 import {MysteryBoxOpenDialogView} from '@habbo/ui/widget/furniture/mysterybox/MysteryBoxOpenDialogView';
 import {MysteryTrophyOpenDialogView} from '@habbo/ui/widget/furniture/mysterytrophy/MysteryTrophyOpenDialogView';
@@ -48,6 +49,9 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
 
     // AS3: FurnitureContextMenuWidget.as::_SafeStr_5601
     private _mysteryBoxContextMenuView: MysteryBoxContextMenuView | null = null;
+
+    // AS3: FurnitureContextMenuWidget.as::_SafeStr_5807
+    private _friendFurniContextMenuView: FriendFurniContextMenuView | null = null;
 
     // AS3: FurnitureContextMenuWidget.as::_SafeStr_6960
     private _mysteryBoxOpenDialogView: MysteryBoxOpenDialogView | null = null;
@@ -78,14 +82,15 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
         this._catalog = catalog;
 
         this._mysteryBoxContextMenuView = new MysteryBoxContextMenuView(this);
+        this._friendFurniContextMenuView = new FriendFurniContextMenuView(this);
         this._mysteryBoxOpenDialogView = new MysteryBoxOpenDialogView(this);
         this._mysteryTrophyOpenDialogView = new MysteryTrophyOpenDialogView(this);
 
         // TODO(AS3): FurnitureContextMenuWidget.as::FurnitureContextMenuWidget() also builds
         // GuildFurnitureContextMenuView, RandomTeleportContextMenuView,
         // MonsterPlantSeedContextMenuView, MonsterPlantSeedConfirmationView,
-        // FriendFurniContextMenuView, GenericUsableFurnitureContextMenuView,
-        // EffectBoxOpenDialogView and PurchasableClothingConfirmationView. None is ported.
+        // GenericUsableFurnitureContextMenuView, EffectBoxOpenDialogView and
+        // PurchasableClothingConfirmationView. None of those is ported.
 
         this.handler.widget = this;
 
@@ -157,6 +162,27 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
         this._mysteryBoxContextMenuView.show();
 
         this._activeView = this._mysteryBoxContextMenuView;
+
+        FurnitureContextInfoView.setup(this._activeView, object);
+
+        this.registerUpdateReceiver();
+    }
+
+    // AS3: FurnitureContextMenuWidget.as::showFriendFurnitureContextMenu()
+    public showFriendFurnitureContextMenu(object: IRoomObject): void
+    {
+        this._selectedObject = object;
+
+        if(this._activeView !== null) this.removeView(this._activeView, false);
+
+        if(this._friendFurniContextMenuView === null)
+        {
+            this._friendFurniContextMenuView = new FriendFurniContextMenuView(this);
+        }
+
+        this._friendFurniContextMenuView.show();
+
+        this._activeView = this._friendFurniContextMenuView;
 
         FurnitureContextInfoView.setup(this._activeView, object);
 

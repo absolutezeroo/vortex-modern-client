@@ -221,13 +221,15 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
                         this._widget.showMysteryBoxContextMenu(object);
                         break;
                     case CONTEXT_MENU_FRIEND_FURNITURE:
+                        this._widget.showFriendFurnitureContextMenu(object);
+                        break;
                     case CONTEXT_MENU_MONSTERPLANT_SEED:
                     case CONTEXT_MENU_RANDOM_TELEPORT:
                     case CONTEXT_MENU_PURCHASABLE_CLOTHING:
                         // TODO(AS3): FurnitureContextMenuWidgetHandler.as::processEvent() routes
-                        // these to showFriendFurnitureContextMenu() / showMonsterPlantSeedContextMenu()
-                        // (owner-gated) / showRandomTeleportContextMenu() /
-                        // showUsableFurnitureContextMenu(). Those views are not ported.
+                        // these to showMonsterPlantSeedContextMenu() (owner-gated) /
+                        // showRandomTeleportContextMenu() / showUsableFurnitureContextMenu().
+                        // Those three views are not ported.
                         log.warn(`Unported furniture context menu: ${widgetEvent.contextMenu}`);
                         break;
                 }
