@@ -517,16 +517,20 @@ export class MainView implements IDisposable, IIlluminaInputHandler
         this.refreshChatCount(select);
     }
 
+    /**
+     * Parameter order is AS3's — `secondsSinceSent` fifth and `senderId` eighth, which is
+     * the order `HabboMessenger.onNewConsoleMessage()` reads them off the parser in.
+     */
     // AS3: .../messenger/MainView.as::addConsoleMessage()
     addConsoleMessage(
         chatId: number,
         messageType: number,
         message: string,
         habbiconId: number,
-        senderId: number,
+        secondsSinceSent: number,
         messageId: string,
         clientMessageId: number,
-        secondsSinceSent: number,
+        senderId: number,
         senderName: string,
         senderFigure: string
     ): void

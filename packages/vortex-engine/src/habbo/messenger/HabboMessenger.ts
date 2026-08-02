@@ -30,6 +30,23 @@ import {
 } from '@habbo/communication/messages/incoming/friendlist/ConsoleMessageHistoryEvent';
 import {InstantMessageErrorEvent} from '@habbo/communication/messages/incoming/friendlist/InstantMessageErrorEvent';
 import {RoomInviteEvent} from '@habbo/communication/messages/incoming/friendlist/RoomInviteEvent';
+import {AccountPreferencesEvent} from '@habbo/communication/messages/incoming/preferences/AccountPreferencesEvent';
+import {HabboGroupDetailsMessageEvent} from '@habbo/communication/messages/incoming/users/HabboGroupDetailsMessageEvent';
+import {
+    OpenFlatConnectionMessageComposer
+} from '@habbo/communication/messages/outgoing/room/session/OpenFlatConnectionMessageComposer';
+
+import type {
+    NewConsoleMessageEventParser
+} from '@habbo/communication/messages/parser/friendlist/NewConsoleMessageEventParser';
+import type {
+    ConsoleMessageHistoryEventParser
+} from '@habbo/communication/messages/parser/friendlist/ConsoleMessageHistoryEventParser';
+import type {
+    InstantMessageErrorEventParser
+} from '@habbo/communication/messages/parser/friendlist/InstantMessageErrorEventParser';
+import type {RoomInviteEventParser} from '@habbo/communication/messages/parser/friendlist/RoomInviteEventParser';
+import type {AccountPreferencesParser} from '@habbo/communication/messages/parser/preferences/AccountPreferencesParser';
 
 import type {IHabboMessenger} from './IHabboMessenger';
 import type {ChatEntry} from './ChatEntry';
@@ -48,13 +65,8 @@ const log = Logger.getLogger('habbo.messenger.HabboMessenger');
  *
  * Almost every method here is a guarded delegation to the view, and the guard is AS3's
  * own: the view is not built in the constructor but on `MessengerInit`, so everything
- * before that has to survive a null view. That is what lets this component exist and be
- * useful before `MainView` is ported — `IID_HabboMessenger` resolves, and callers get
- * the real no-op AS3 gives them rather than a crash.
- *
- * TODO(AS3): `MainView` (1,237 lines) and `habbicons/` are not ported yet, so the
- * console window never opens and `isOpen()` stays false. Everything that routes *into*
- * the view is wired and traced, so porting MainView is the only remaining step.
+ * before that has to survive a null view — the server sends that message once, after the
+ * friend list is initialised, and nothing in the console works until it lands.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/messenger/HabboMessenger.as
  */
@@ -127,8 +139,6 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
     /**
      * The console window. Built on `MessengerInit`, not in the constructor — every
      * delegation below guards on it because AS3 does.
-     *
-     * TODO(AS3): typed `MainView` in AS3; that class is unported, so this stays null.
      */
     // AS3: .../messenger/HabboMessenger.as::_SafeStr_4684
     private _mainView: MainView | null = null;
@@ -190,13 +200,49 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
     protected override initComponent(): void
     {
         this.addMessageEvent(new MessengerInitEvent(this.onMessengerInit.bind(this)));
+        this.addMessageEvent(new AccountPreferencesEvent(this.onAccountPreferences.bind(this)));
+        this.addMessageEvent(new HabboGroupDetailsMessageEvent(this.onHabboGroupDetails.bind(this)));
 
-        // TODO(AS3): AS3 also registers AccountPreferences (roomInvitesIgnored) and
-        // HabboGroupDetails (the follow-to-group-room hop) here, plus the two MiniMail
-        // events behind `client.minimail.embed.enabled`. Those five incoming events are
-        // not in this port's friendlist/users message set yet, so the corresponding
-        // handlers below are reachable only from their own callers.
+        // TODO(AS3): AS3 also registers the two MiniMail events here, behind
+        // `getBoolean("client.minimail.embed.enabled")` — `_SafeCls_1958` (a new message)
+        // and `_SafeCls_2214` (the unread count). Neither is in this port's message set,
+        // so `_unseenMiniMailMessageCount` never moves and `MMME_new`/`MMME_unread` are
+        // never dispatched.
         this.context.addLinkEventTracker(this);
+    }
+
+    // AS3: .../messenger/HabboMessenger.as::onAccountPreferences()
+    private onAccountPreferences(event: IMessageEvent): void
+    {
+        this._roomInvitesIgnored = (event.parser as AccountPreferencesParser).roomInvitesIgnored;
+    }
+
+    /**
+     * The second half of "follow a friend into their group's room": the friend bar asks
+     * for the group's details and sets `followingToGroupRoom`, and the room id only
+     * arrives with the answer — which is why the hop is completed here and not at the
+     * click.
+     */
+    // AS3: .../messenger/HabboMessenger.as::onHabboGroupDetails()
+    private onHabboGroupDetails(event: IMessageEvent): void
+    {
+        if(!this._followingToGroupRoom)
+        {
+            return;
+        }
+
+        this._followingToGroupRoom = false;
+
+        // AS3 dereferences `data` unguarded; the parser can hand back null here, so the
+        // flag is cleared first either way and only the hop is skipped.
+        const data = (event as HabboGroupDetailsMessageEvent).data;
+
+        if(data === null)
+        {
+            return;
+        }
+
+        this.send(new OpenFlatConnectionMessageComposer(data.roomId));
     }
 
     // AS3: .../messenger/HabboMessenger.as::onMessengerInit()
@@ -221,7 +267,7 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
     // AS3: .../messenger/HabboMessenger.as::isOpen()
     isOpen(): boolean
     {
-        return this._mainView !== null;
+        return this._mainView !== null && this._mainView.isOpen;
     }
 
     // AS3: .../messenger/HabboMessenger.as::toggleMessenger()
@@ -252,9 +298,8 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
     /**
      * Unlike its siblings this one is *not* guarded in AS3 — it dereferences the view
      * straight away, so it throws if anything closes a conversation before
-     * `MessengerInit`. Guarded here, because the view is null for the whole session
-     * until MainView is ported and `FriendCategories` calls this on every friend
-     * removal.
+     * `MessengerInit`. Guarded here, because `FriendCategories` calls it on every friend
+     * removal, which can happen before the console exists.
      */
     // AS3: .../messenger/HabboMessenger.as::closeConversation()
     closeConversation(userId: number): void
@@ -362,47 +407,78 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
     }
 
     // AS3: .../messenger/HabboMessenger.as::onNewConsoleMessage()
-    private onNewConsoleMessage(_event: IMessageEvent): void
+    private onNewConsoleMessage(event: IMessageEvent): void
     {
+        const parser = event.parser as NewConsoleMessageEventParser;
+
+        log.trace(`Received console msg: ${parser.messageText}, ${parser.chatId}`);
+
         if(this._mainView === null)
         {
             return;
         }
 
-        // AS3: _mainView.addConsoleMessage(...); if(!isOpen) playMessageReceivedSound();
+        this._mainView.addConsoleMessage(
+            parser.chatId,
+            parser.messageType,
+            parser.messageText,
+            parser.habbiconId,
+            parser.secondsSinceSent,
+            parser.messageId,
+            parser.confirmationId,
+            parser.senderId,
+            parser.senderName,
+            parser.senderFigure
+        );
+
+        if(!this._mainView.isOpen)
+        {
+            this.playMessageReceivedSound();
+        }
     }
 
     // AS3: .../messenger/HabboMessenger.as::onConsoleHistory()
-    private onConsoleHistory(_event: IMessageEvent): void
+    private onConsoleHistory(event: IMessageEvent): void
     {
+        const parser = event.parser as ConsoleMessageHistoryEventParser;
+
         if(this._mainView === null)
         {
             return;
         }
 
-        // AS3: _mainView.loadMessageHistory(chatId, historyFragment);
+        this._mainView.loadMessageHistory(parser.chatId, parser.historyFragment);
     }
 
     // AS3: .../messenger/HabboMessenger.as::onRoomInvite()
-    private onRoomInvite(_event: IMessageEvent): void
+    private onRoomInvite(event: IMessageEvent): void
     {
+        const parser = event.parser as RoomInviteEventParser;
+
         if(this._mainView === null)
         {
             return;
         }
 
-        // AS3: _mainView.addRoomInvite(senderId, text); if(!isOpen) playMessageReceivedSound();
+        this._mainView.addRoomInvite(parser.senderId, parser.messageText);
+
+        if(!this._mainView.isOpen)
+        {
+            this.playMessageReceivedSound();
+        }
     }
 
     // AS3: .../messenger/HabboMessenger.as::onInstantMessageError()
-    private onInstantMessageError(_event: IMessageEvent): void
+    private onInstantMessageError(event: IMessageEvent): void
     {
+        const parser = event.parser as InstantMessageErrorEventParser;
+
         if(this._mainView === null)
         {
             return;
         }
 
-        // AS3: _mainView.onInstantMessageError(userId, errorCode, message);
+        this._mainView.onInstantMessageError(parser.userId, parser.errorCode, parser.message);
     }
 
     // AS3: .../messenger/HabboMessenger.as::get linkPattern()
