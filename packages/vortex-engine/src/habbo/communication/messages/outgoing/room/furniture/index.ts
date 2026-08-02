@@ -1,3 +1,5 @@
+export * from './MoveFurnitureToAdjacentHeightMessageComposer';
+export * from './SetCustomStackingHeightMessageComposer';
 export * from './FriendFurniConfirmLockMessageComposer';
 export * from './CreditFurniRedeemMessageComposer';
 export * from './PresentOpenMessageComposer';

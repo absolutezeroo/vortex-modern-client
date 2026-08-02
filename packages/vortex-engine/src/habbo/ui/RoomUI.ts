@@ -905,6 +905,8 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_FRIEND_FURNI_ENGRAVING');
                     // AS3: RoomUI.as:964
                     desktop.createWidget('RWE_FRIEND_FURNI_CONFIRM');
+                    // AS3: RoomUI.as:968
+                    desktop.createWidget('RWE_CUSTOM_STACK_HEIGHT');
 
                     this._isInRoom = true;
 
