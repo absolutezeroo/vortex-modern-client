@@ -93,9 +93,23 @@ export class MenuItemView implements IDisposable
             this.selected = !this.selected;
         }
 
+        // Both the setter above and the callback below can close the wired dialog (e.g. the paste /
+        // reset menu entries call prepareForUpdate()), which disposes the frame preset, the menu and
+        // this view — leaving `_item` and `_menu` null. AS3 dereferences them regardless and lets the
+        // player swallow the error; re-check so the rest of the click is simply skipped.
+        if(this._disposed)
+        {
+            return;
+        }
+
         if(this._item.onClick != null)
         {
             this._item.onClick();
+        }
+
+        if(this._disposed)
+        {
+            return;
         }
 
         if(!this._item.hasCheckbox)

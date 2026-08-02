@@ -111,6 +111,17 @@ export class MenuPreset extends WiredUIPreset
     // AS3: MenuPreset.as::requestClose()
     requestClose(): void
     {
+        // AS3 dereferences `_roomEvents` unguarded here, but `dispose()` nulls it in `super.dispose()`
+        // *before* `_container.dispose()`, and disposing a still-active container deactivates it —
+        // which re-enters this method through the WE_DEACTIVATED listener installed in the ctor.
+        // Flash swallows the resulting null dereference; in TS it would abort the rest of dispose()
+        // and leave the menu attached to the desktop. Bail out instead: WindowController.dispose()
+        // detaches the container from its parent two steps later anyway.
+        if(this.disposing)
+        {
+            return;
+        }
+
         const desktop = this._roomEvents.windowManager?.getDesktop(1) ?? null;
 
         if(desktop != null)
