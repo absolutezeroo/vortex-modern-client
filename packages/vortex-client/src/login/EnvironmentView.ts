@@ -1,159 +1,121 @@
 /**
  * EnvironmentView
  *
- * @see sources/win63_2021_version/login/EnvironmentView.as
+ * AS3: sources/WIN63-202607011411-782849652/src/login/EnvironmentView.as
  *
- * Server/environment selection screen (SCREEN_ENVIRONMENT = 1).
- * Displays flag icons for each available hotel environment in a grid.
- * User selects a hotel, then proceeds to Login or SSO Token screen.
+ * The hotel picker (SCREEN_ENVIRONMENT = 1): ten flags at half scale in rows of nine, a selection
+ * marker behind the chosen one, the hotel's name underneath, and one button through to the ticket
+ * screen.
  *
- * AS3 constants:
- * - ITEMS_PER_ROW = 9
- * - THUMB_SIZE = 160
- * - THUMB_SCALE = 0.5
- * - SPACING = 10
+ * The flag list is fixed and positional — AS3 pushes the ten bitmaps in a hard-coded order and
+ * indexes them against `live.environment.list`, so the Nth flag IS the Nth environment id. Sorting
+ * or filtering either side would silently pair the wrong flag with the wrong hotel.
  *
- * AS3 properties:
- * - _SafeStr_4554: Vector.<Bitmap> (flag bitmaps)
- * - _SafeStr_4547: TextField (title)
- * - _SafeStr_4555: Bitmap (balloon)
- * - _environmentName: TextField
- * - _SafeStr_4556: int (selected index)
- * - _loginButton: Button
- * - _environmentImageContainers: Array (Sprite wrappers)
- * - _chosenIcon: Bitmap (flag_icon_selected_png)
- * - _SafeStr_4548: int = 10 (spacing)
- * - _SafeStr_4557: Array (env IDs)
- * - _SafeStr_527: Boolean (init guard)
- * - _SafeStr_4558: Sprite (highlight container with flag_icon_selected)
+ * This view takes `LoginFlow`, not `ILoginContext`: it calls `getProperty()` and
+ * `updateEnvironment()`, neither of which is on the interface.
  */
-import type {ILoginContext} from './ILoginContext';
+import {Logger} from '@core/utils/Logger';
+import {Bitmap} from '../onBoardingHcUi/display/Bitmap';
+import type {DisplayMouseEvent} from '../onBoardingHcUi/display/DisplayObject';
+import {Sprite} from '../onBoardingHcUi/display/DisplayObjectContainer';
+import {Rectangle} from '../onBoardingHcUi/display/Geom';
+import {Timer} from '../onBoardingHcUi/display/Timer';
+import type {Button} from '../onBoardingHcUi/Button';
+import {ColouredButton} from '../onBoardingHcUi/ColouredButton';
+import {LoaderUI} from '../onBoardingHcUi/LoaderUI';
+import type {LocalizedTextField} from '../onBoardingHcUi/LocalizedTextField';
+import {LoginAssets} from '../onBoardingHcUi/LoginAssets';
+import type {LoginFlow} from './LoginFlow';
 
-// Import flag icons
-import flagEnUrl from '../assets/images/flag_icons_en.png';
-import flagPtUrl from '../assets/images/flag_icons_pt.png';
-import flagDeUrl from '../assets/images/flag_icons_de.png';
-import flagEsUrl from '../assets/images/flag_icons_es.png';
-import flagFiUrl from '../assets/images/flag_icons_fi.png';
-import flagFrUrl from '../assets/images/flag_icons_fr.png';
-import flagItUrl from '../assets/images/flag_icons_it.png';
-import flagNlUrl from '../assets/images/flag_icons_nl.png';
-import flagTrUrl from '../assets/images/flag_icons_tr.png';
-import flagDevUrl from '../assets/images/flag_icons_dev.png';
-import flagSelectedUrl from '../assets/images/flags_icon_selected.png';
+const log = Logger.getLogger('client.login.EnvironmentView');
 
-/** AS3: ITEMS_PER_ROW = 9 */
+// AS3: ITEMS_PER_ROW
 const ITEMS_PER_ROW = 9;
 
-/** AS3: THUMB_SIZE = 160 */
-const THUMB_SIZE = 160;
-
-/** AS3: THUMB_SCALE = 0.5 */
-const THUMB_SCALE = 0.5;
-
-/** AS3: SPACING = 10 - declared but never actually read in the AS3 source either. */
-const _SPACING = 10;
-
-/**
- * Map of environment ID -> flag image URL.
- * Order matches AS3: en, pt, de, es, fi, fr, it, nl, tr, dev
- *
- * "s2" (Sandbox, see common_configuration_txt.txt's live.environment.list=en/s2) has no
- * dedicated flag asset — there was never a country to represent, it's a test hotel — so
- * it shares the "dev" icon rather than silently rendering with an empty src.
- */
-const FLAG_IMAGES: Record<string, string> = {
-    'en': flagEnUrl,
-    'pt': flagPtUrl,
-    'de': flagDeUrl,
-    'es': flagEsUrl,
-    'fi': flagFiUrl,
-    'fr': flagFrUrl,
-    'it': flagItUrl,
-    'nl': flagNlUrl,
-    'tr': flagTrUrl,
-    'dev': flagDevUrl,
-    's2': flagDevUrl,
-};
-
-export class EnvironmentView 
+export class EnvironmentView extends Sprite
 {
-    private _context: ILoginContext;
-    private _root: HTMLDivElement;
+    // AS3: _environmentImages
+    private _environmentImages: Bitmap[] = [];
 
-    /** AS3: _SafeStr_4547 — title TextField */
-    private _SafeStr_4547: HTMLDivElement | null = null;
+    // AS3: _context
+    private _context: LoginFlow | null;
 
-    /** AS3: _SafeStr_4555 — balloon (info area, initially hidden) */
-    private _SafeStr_4555: HTMLDivElement | null = null;
+    // AS3: _titleField
+    private _titleField: LocalizedTextField | null = null;
 
-    /** AS3: _environmentName — TextField for selected environment name */
-    private _environmentName: HTMLDivElement | null = null;
+    // AS3: _balloon
+    private _balloon: Bitmap | null = null;
 
-    /** AS3: _SafeStr_4556 — selected index */
-    private _SafeStr_4556: number = 0;
+    // AS3: _environmentName
+    private _environmentName: LocalizedTextField | null = null;
 
-    /** AS3: _loginButton */
-    private _loginButton: HTMLButtonElement;
+    // AS3: _selectedIndex
+    private _selectedIndex: number = 0;
 
-    /** AS3: _environmentImageContainers — array of Sprite wrappers */
-    private _environmentImageContainers: HTMLDivElement[] = [];
+    // AS3: _loginButton — declared but never constructed in the 701 source; see initView().
+    private _loginButton: Button | null = null;
 
-    /** AS3: _SafeStr_4558 — highlight sprite with flag_icon_selected */
-    private _SafeStr_4558: HTMLDivElement | null = null;
+    // AS3: _environmentImageContainers
+    private _environmentImageContainers: Sprite[] = [];
 
-    /** AS3: _SafeStr_4557 — array of environment IDs */
-    private _SafeStr_4557: string[] | null = null;
+    // AS3: _chosenIcon
+    private _chosenIcon: Bitmap | null = null;
 
-    /** AS3: _SafeStr_527 — init guard */
-    private _SafeStr_527: boolean = false;
+    // AS3: _spaceBetweenImages
+    private _spaceBetweenImages: number = 10;
 
-    private _disposed: boolean = false;
+    // AS3: _environmentTypes
+    private _environmentTypes: string[] | null = null;
 
-    /**
-     * AS3: EnvironmentView(_arg_1:LoginFlow)
-     */
-    constructor(context: ILoginContext) 
+    // AS3: _initialized
+    private _initialized: boolean = false;
+
+    // AS3: _ticketButton
+    private _ticketButton: ColouredButton | null = null;
+
+    // AS3: _selectionMarker
+    private _selectionMarker: Sprite | null = null;
+
+    // AS3: EnvironmentView(_arg_1:LoginFlow)
+    constructor(context: LoginFlow)
     {
+        super();
+
         this._context = context;
-        this._root = document.createElement('div');
-        this._loginButton = document.createElement('button');
+        this.addEventListener('addedToStage', this._onAddedToStage);
     }
 
-    get element(): HTMLDivElement 
+    // AS3: get disposed():Boolean
+    public get disposed(): boolean
     {
-        return this._root;
+        return this._context == null;
     }
 
-    /**
-     * AS3: get environmentId():String
-     */
-    get environmentId(): string 
+    // AS3: get environmentId():String
+    public get environmentId(): string
     {
-        return this._SafeStr_4557 ? this._SafeStr_4557[this._SafeStr_4556] : 'en';
+        return this._environmentTypes ? this._environmentTypes[this._selectedIndex] : '';
     }
 
-    /**
-     * AS3: get environmentAvailable():Boolean
-     */
-    get environmentAvailable(): boolean 
+    // AS3: get environmentAvailable():Boolean
+    public get environmentAvailable(): boolean
     {
-        const currentEnvId = this._context.getProperty('environment.id');
+        if(!this._context || !this._environmentTypes) return false;
 
-        return this._SafeStr_4557 ? this._SafeStr_4557.indexOf(currentEnvId ?? '') > -1 : false;
+        const current = this._context.getProperty('environment.id');
+
+        return this._environmentTypes.indexOf(current ?? '') > -1;
     }
 
-    /**
-     * AS3: init()
-     */
-    public init(): void 
+    // AS3: init()
+    public init(): void
     {
-        if(this._SafeStr_527) return;
+        if(this._initialized) return;
 
-        this._SafeStr_527 = true;
+        this._initialized = true;
+        this._environmentImages = [];
 
-        // AS3: _SafeStr_4554 = new Vector.<Bitmap>()
-        if(this._SafeStr_4557 === null) 
+        if(this._environmentTypes == null)
         {
             this.initEnvironmentImages();
         }
@@ -164,22 +126,25 @@ export class EnvironmentView
 
     /**
      * AS3: updateEnvironment()
-     * Reads current environment.id from config and selects it.
+     *
+     * An environment that is not in the list is not an error — AS3 logs it and falls back to the
+     * first entry, which is how a fresh install lands on a hotel at all.
      */
-    public updateEnvironment(): void 
+    public updateEnvironment(): void
     {
-        if(!this._SafeStr_4557) return;
+        if(!this._context || !this._environmentTypes) return;
 
-        const currentEnvId = this._context.getProperty('environment.id');
-        const index = this._SafeStr_4557.indexOf(currentEnvId ?? '');
+        const current = this._context.getProperty('environment.id') ?? '';
+        const index = this._environmentTypes.indexOf(current);
 
-        if(index === -1) 
+        if(index === -1)
         {
-            this._SafeStr_4556 = 0;
+            log.warn(`Missing environment, require hotel selection! ${current}`);
+            this._selectedIndex = 0;
         }
-        else 
+        else
         {
-            this._SafeStr_4556 = index;
+            this._selectedIndex = index;
         }
 
         this.chooseEnvironment();
@@ -187,285 +152,237 @@ export class EnvironmentView
 
     /**
      * AS3: initView()
-     * Builds the full DOM tree: title, highlight, flags grid, name label, buttons.
+     *
+     * AS3 never constructs `_loginButton` here, which makes the `if(_loginButton)` branches in
+     * `onAlignElements()` and `chooseEnvironment()` dead in the dump. The button is restored below
+     * — see the comment there — so those branches now run.
      */
-    public initView(): void 
+    public initView(): void
     {
-        if(!this._SafeStr_4557) return;
-
-        // AS3: addTitleField()
         this.addTitleField();
+        this._balloon = LoaderUI.createBalloon(640, 100, 0, false, 995918, 'none');
+        this._balloon.visible = false;
+        this.addChild(this._balloon);
+        this._selectionMarker = new Sprite();
+        this.addChild(this._selectionMarker);
+        this._chosenIcon = new Bitmap(LoginAssets.get('flags_icon_selected'));
+        this._selectionMarker.addChild(this._chosenIcon);
+        this._selectionMarker.scaleX = 0.5;
+        this._selectionMarker.scaleY = 0.5;
 
-        // AS3: _SafeStr_4555 = LoaderUI.createBalloon(640, 100, 0, false, 995918, "none")
-        // Hidden balloon — we create a hidden info area
-        this._SafeStr_4555 = document.createElement('div');
-        this._SafeStr_4555.style.display = 'none';
-        this._root.appendChild(this._SafeStr_4555);
-
-        // Grid container (relatively positioned so the absolute highlight below and
-        // the flag containers share the same coordinate space).
-        const gridContainer = document.createElement('div');
-
-        Object.assign(gridContainer.style, {
-            position: 'relative',
-            margin: '20px auto',
-        } as Partial<CSSStyleDeclaration>);
-
-        // AS3: _SafeStr_4558 = new Sprite(); _chosenIcon = new flag_icon_selected_png()
-        // Highlight overlay — positioned behind the selected flag. Must be a child of
-        // gridContainer (not _root): chooseEnvironment() computes its left/top from the
-        // flag containers' own left/top, which are relative to gridContainer. Appending
-        // it to _root instead put it in the wrong coordinate space entirely (it would
-        // position relative to the nearest positioned ancestor, which is nowhere near
-        // the flag grid), and the image also needs object-fit: contain — the global
-        // `img { object-fit: none }` reset (_index.scss) otherwise renders this 226x225
-        // source at native size instead of scaled to the 80x80 box.
-        // No explicit z-index: it must paint *behind* the flag icons, and since this is
-        // appended to gridContainer before the flag containers loop below, plain DOM
-        // order already puts it behind them — z-index:10 here previously forced it in
-        // front of every flag regardless of DOM order.
-        this._SafeStr_4558 = document.createElement('div');
-        Object.assign(this._SafeStr_4558.style, {
-            position: 'absolute',
-            pointerEvents: 'none',
-            display: 'none',
-        } as Partial<CSSStyleDeclaration>);
-
-        const chosenIcon = document.createElement('img');
-
-        chosenIcon.src = flagSelectedUrl;
-        chosenIcon.draggable = false;
-        // AS3: scaleX = scaleY = 0.5
-        Object.assign(chosenIcon.style, {
-            width: (THUMB_SIZE * THUMB_SCALE) + 'px',
-            height: (THUMB_SIZE * THUMB_SCALE) + 'px',
-            objectFit: 'contain',
-            pointerEvents: 'none',
-        } as Partial<CSSStyleDeclaration>);
-        this._SafeStr_4558.appendChild(chosenIcon);
-        gridContainer.appendChild(this._SafeStr_4558);
-
-        // AS3: while loop creating flag containers at scale 0.5
-        // _local_3 = 80 (thumb_size * scale), _local_2 = 5 (spacing/2)
-        const thumbDisplaySize = THUMB_SIZE * THUMB_SCALE; // 80px
-        const gap = 5;
-
-        for(let i = 0; i < this._SafeStr_4557.length; i++) 
+        for(let i = 0; i < this._environmentImages.length; i++)
         {
-            const envId = this._SafeStr_4557[i];
-            const container = document.createElement('div');
+            const holder = new Sprite();
+            const flag = this._environmentImages[i];
 
-            // AS3: _local_6 = _local_7 % 9; _local_9 = int(_local_7 / 9)
-            const col = i % ITEMS_PER_ROW;
-            const row = Math.floor(i / ITEMS_PER_ROW);
-            const xPos = (col * thumbDisplaySize) + (col * gap);
-            const yPos = (row * thumbDisplaySize) + (row * gap);
+            if(flag != null)
+            {
+                holder.addChild(flag);
+            }
 
-            Object.assign(container.style, {
-                position: 'absolute',
-                left: xPos + 'px',
-                top: yPos + 'px',
-                width: thumbDisplaySize + 'px',
-                height: thumbDisplaySize + 'px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-            } as Partial<CSSStyleDeclaration>);
+            this.addChild(holder);
+            this._environmentImageContainers.push(holder);
+            holder.name = String(i);
+            holder.addEventListener('click', this._onEnvironmentClick);
+            holder.scaleX = 0.5;
+            holder.scaleY = 0.5;
 
-            const img = document.createElement('img');
+            const size = 80;
+            const spacing = 5;
+            const column = i % ITEMS_PER_ROW;
+            const row = Math.trunc(i / ITEMS_PER_ROW);
 
-            img.src = FLAG_IMAGES[envId] ?? '';
-            img.alt = envId;
-            img.draggable = false;
-            Object.assign(img.style, {
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                pointerEvents: 'none',
-            } as Partial<CSSStyleDeclaration>);
-            container.appendChild(img);
-
-            container.dataset.index = String(i);
-            container.addEventListener('click', this._onEnvironmentClick);
-            gridContainer.appendChild(container);
-            this._environmentImageContainers.push(container);
+            holder.x = column * size + column * spacing;
+            holder.y = 100 + (row * size + row * spacing);
         }
 
-        // Calculate grid dimensions
-        const cols = Math.min(this._SafeStr_4557.length, ITEMS_PER_ROW);
-        const rows = Math.ceil(this._SafeStr_4557.length / ITEMS_PER_ROW);
+        this._environmentName = LoaderUI.createTextField('Title', 20, 16777215, false, true, false, false);
+        this._environmentName.width = 260;
+        this._environmentName.y = 300;
+        this.addChild(this._environmentName);
 
-        gridContainer.style.width = ((cols * thumbDisplaySize) + ((cols - 1) * gap)) + 'px';
-        gridContainer.style.height = ((rows * thumbDisplaySize) + ((rows - 1) * gap)) + 'px';
-        this._root.appendChild(gridContainer);
-
-        // AS3: _environmentName = LoaderUI.createTextField("Title", 20, 0xFFFFFF, false, true, false, false)
-        this._environmentName = document.createElement('div');
-        Object.assign(this._environmentName.style, {
-            fontSize: '20px',
-            fontWeight: 'bold',
-            color: '#FFFFFF',
-            fontFamily: "'Ubuntu', Arial, Helvetica, sans-serif",
-            textShadow: '0 1px 0 rgba(0, 0, 0, 0.35)',
-            textAlign: 'center',
-            marginBottom: '10px',
-        } as Partial<CSSStyleDeclaration>);
-        this._root.appendChild(this._environmentName);
-
-        // AS3: Buttons container
-        const buttons = document.createElement('div');
-
-        buttons.className = 'habbo-btn-row';
-        buttons.style.marginTop = '10px';
-
-        // AS3: _loginButton = new ColouredButton("gfreen", "${connection.login.login}", ...)
-        this._loginButton.className = 'habbo-btn habbo-btn--green habbo-btn--arrow';
-        this._loginButton.textContent = 'Login';
-        this._loginButton.addEventListener('click', this._onButtonSelect);
-        buttons.appendChild(this._loginButton);
-
-        this._root.appendChild(buttons);
-
-        // AS3: chooseEnvironment()
+        // DELIBERATE DIVERGENCE: the 701 source declares `_loginButton`, tests it in
+        // onAlignElements()/chooseEnvironment(), disposes it — and never constructs it. With only
+        // the ticket button built, SCREEN_LOGIN is unreachable by any click: the sole other way in
+        // is the provider's captcha path. Everything for the button is in the source (the field,
+        // `onButtonSelect()` which commits the environment and goes to SCREEN_LOGIN, the anchor
+        // branches) and its caption is still in the embedded texts, used nowhere else
+        // ("connection.login.environment.start"). So this restores what the dump lost rather than
+        // inventing a screen. Drop this block to get the dump's exact behaviour back.
+        //
+        // The field is declared `Button`, which says nothing about the skin — `_ticketButton` is
+        // declared the same way and is built as a ColouredButton. A bare `Button` wears the
+        // STYLE_ILLUMINA skin (`button`/`button_pressed`/`button_inactive` plus the yellow etching),
+        // which no other login screen uses; the login flow's own buttons are all hitch pills, so
+        // this one is green like every other confirm button here.
+        //
+        // It therefore matches the ticket button beside it, and that is on purpose: the two are both
+        // ways forward, and the only other hitch skins are the pink one (which is Cancel everywhere
+        // else in this flow) and the yellow one (which bakes in the `hc_small` badge). Repainting
+        // the ticket button to separate them would mean overriding a colour the AS3 does specify, to
+        // help a button the AS3 does not have.
+        this._loginButton = new ColouredButton(
+            ColouredButton.BUTTON_GREEN,
+            '${connection.login.environment.start}',
+            new Rectangle(0, 300, 0, 40),
+            true,
+            this._onButtonSelect
+        );
+        this.addChild(this._loginButton);
+        this._ticketButton = new ColouredButton(
+            'gfreen',
+            '${connection.login.useTicket}',
+            new Rectangle(0, 300, 0, 40),
+            true,
+            this._onButtonSelectToken
+        );
+        this.addChild(this._ticketButton);
         this.chooseEnvironment();
-    }
-
-    /**
-     * AS3: dispose()
-     */
-    public dispose(): void 
-    {
-        if(this._disposed) return;
-
-        this._disposed = true;
-
-        for(const item of this._environmentImageContainers) 
-        {
-            item.removeEventListener('click', this._onEnvironmentClick);
-        }
-
-        this._loginButton.removeEventListener('click', this._onButtonSelect);
-        this._environmentImageContainers.length = 0;
-        this._root.remove();
     }
 
     /**
      * AS3: initEnvironmentImages()
-     * Reads the environment list from config property "live.environment.list".
+     *
+     * The order here is the contract with `live.environment.list` — see the class header.
      */
-    private initEnvironmentImages(): void 
+    private initEnvironmentImages(): void
     {
-        const envListStr = this._context.getProperty('live.environment.list');
+        if(!this._context) return;
 
-        if(envListStr) 
-        {
-            this._SafeStr_4557 = envListStr.split('/');
-        }
-        else 
-        {
-            // Default environment list matching AS3 order
-            this._SafeStr_4557 = ['en', 'pt', 'de', 'es', 'fi', 'fr', 'it', 'nl', 'tr', 'dev'];
-        }
+        this._environmentTypes = (this._context.getProperty('live.environment.list') ?? '').split('/');
+        this._environmentImages.push(new Bitmap(LoginAssets.get('flag_icons_en')));
+        this._environmentImages.push(new Bitmap(LoginAssets.get('flag_icons_pt')));
+        this._environmentImages.push(new Bitmap(LoginAssets.get('flag_icons_de')));
+        this._environmentImages.push(new Bitmap(LoginAssets.get('flag_icons_es')));
+        this._environmentImages.push(new Bitmap(LoginAssets.get('flag_icons_fi')));
+        this._environmentImages.push(new Bitmap(LoginAssets.get('flag_icons_fr')));
+        this._environmentImages.push(new Bitmap(LoginAssets.get('flag_icons_it')));
+        this._environmentImages.push(new Bitmap(LoginAssets.get('flag_icons_nl')));
+        this._environmentImages.push(new Bitmap(LoginAssets.get('flag_icons_tr')));
+        this._environmentImages.push(new Bitmap(LoginAssets.get('flag_icons_dev')));
     }
 
-    /**
-     * AS3: addTitleField()
-     * Creates title: "${connection.login.environment.choose}" — white 40px bold
-     */
-    private addTitleField(): void 
+    // AS3: addTitleField()
+    private addTitleField(): void
     {
-        if(!this._SafeStr_4547) 
-        {
-            this._SafeStr_4547 = document.createElement('div');
-            this._SafeStr_4547.className = 'habbo-title';
-            // AS3: "${connection.login.environment.choose}"
-            this._SafeStr_4547.textContent = 'Choose your hotel';
-            this._root.appendChild(this._SafeStr_4547);
+        if(this._titleField) return;
 
-            const subtitle = document.createElement('div');
-
-            subtitle.className = 'habbo-subtitle-line';
-            subtitle.textContent = 'Pick the hotel you want to visit.';
-            this._root.appendChild(subtitle);
-        }
+        this._titleField = LoaderUI.createTextField(
+            '${connection.login.environment.choose}',
+            40,
+            16777215,
+            false,
+            true,
+            false,
+            false,
+            'left'
+        );
+        this._titleField.x = 0;
+        this._titleField.y = 0;
+        this._titleField.width = 500;
+        this._titleField.multiline = false;
+        this._titleField.thickness = 50;
+        this.addChild(this._titleField);
     }
 
-    /**
-     * AS3: onEnvironmentClick(_arg_1:Event)
-     * Selects the clicked environment.
-     */
-    private _onEnvironmentClick = (e: Event): void => 
+    // AS3: chooseEnvironment()
+    private chooseEnvironment(): void
     {
-        const target = e.currentTarget as HTMLDivElement;
-        const index = parseInt(target.dataset.index ?? '0', 10);
+        const holder = this._environmentImageContainers[this._selectedIndex];
 
-        this._SafeStr_4556 = index;
-        this.chooseEnvironment();
+        if(holder == null || !this._selectionMarker) return;
 
-        if(this._SafeStr_4557) 
+        this._selectionMarker.x = holder.x - (this._selectionMarker.width - holder.width) / 2 - 1;
+        this._selectionMarker.y = holder.y - (this._selectionMarker.height - holder.height) / 2 - 1;
+        this._selectionMarker.visible = true;
+
+        if(this._loginButton)
         {
-            this._context.updateEnvironment(this._SafeStr_4557[this._SafeStr_4556], true);
+            this._loginButton.active = true;
         }
-    };
-
-    /**
-     * AS3: chooseEnvironment()
-     * Positions the highlight sprite over the selected flag and updates description.
-     */
-    private chooseEnvironment(): void 
-    {
-        const container = this._environmentImageContainers[this._SafeStr_4556];
-
-        if(!container) return;
-
-        // AS3: Position _SafeStr_4558 centered over the selected container
-        if(this._SafeStr_4558) 
-        {
-            const containerX = parseInt(container.style.left, 10) || 0;
-            const containerY = parseInt(container.style.top, 10) || 0;
-            const containerW = container.offsetWidth || (THUMB_SIZE * THUMB_SCALE);
-            const containerH = container.offsetHeight || (THUMB_SIZE * THUMB_SCALE);
-            const highlightW = THUMB_SIZE * THUMB_SCALE;
-            const highlightH = THUMB_SIZE * THUMB_SCALE;
-
-            // AS3: _SafeStr_4558.x = (_local_1.x - ((_SafeStr_4558.width - _local_1.width) / 2)) - 1
-            this._SafeStr_4558.style.left = (containerX - ((highlightW - containerW) / 2) - 1) + 'px';
-            this._SafeStr_4558.style.top = (containerY - ((highlightH - containerH) / 2) - 1) + 'px';
-            this._SafeStr_4558.style.display = '';
-        }
-
-        // AS3: _loginButton.active = true
-        this._loginButton.disabled = false;
 
         this.updateDescription();
     }
 
-    /**
-     * AS3: onButtonSelect(_arg_1:DisplayObject)
-     * Commits environment selection and goes to Login screen.
-     */
-    private _onButtonSelect = (): void => 
+    // AS3: updateDescription()
+    private updateDescription(): void
     {
-        if(this._SafeStr_4557) 
+        if(!this._context || !this._environmentTypes || !this._environmentName) return;
+
+        const environment = this._environmentTypes[this._selectedIndex];
+
+        this._environmentName.text = this._context.getProperty(`connection.info.name.${environment}`) ?? '';
+    }
+
+    // AS3: onAddedToStage(_arg_1:Event)
+    private _onAddedToStage = (): void =>
+    {
+        const timer = new Timer(20, 1);
+
+        timer.addEventListener('timerComplete', this._onAlignElements);
+        timer.start();
+    };
+
+    // AS3: onAlignElements(_arg_1:TimerEvent=null)
+    private _onAlignElements = (): void =>
+    {
+        if(!this._balloon || !this._ticketButton) return;
+
+        LoaderUI.alignAnchors(this, 0, 'c', this._balloon);
+
+        if(this._loginButton)
         {
-            this._context.updateEnvironment(this._SafeStr_4557[this._SafeStr_4556], false);
+            LoaderUI.alignAnchors(this._balloon, 0, 'r', this._loginButton);
+            LoaderUI.lineUpHorizontallyRevers(this._loginButton, 20, this._ticketButton);
+
+            return;
         }
 
-        this._context.showScreen(2);
+        LoaderUI.alignAnchors(this._balloon, 0, 'r', this._ticketButton);
     };
 
     /**
-     * AS3: updateDescription()
-     * Updates the environment name label.
+     * AS3: onEnvironmentClick(_arg_1:Event)
+     *
+     * `true` is the preview flag — clicking a flag only reloads that hotel's texts; the choice is
+     * committed by the button.
      */
-    private updateDescription(): void 
+    private _onEnvironmentClick = (event: DisplayMouseEvent): void =>
     {
-        if(!this._SafeStr_4557 || !this._environmentName) return;
+        if(!this._context || !this._environmentTypes) return;
 
-        const envId = this._SafeStr_4557[this._SafeStr_4556];
+        this._selectedIndex = parseInt(String(event.currentTarget?.name ?? '0'), 10);
+        this.chooseEnvironment();
+        this._context.updateEnvironment(this._environmentTypes[this._selectedIndex], true);
+        this._onAlignElements();
+    };
 
-        // AS3: _environmentName.text = _context.getProperty("connection.info.name." + _local_1)
-        this._environmentName.textContent = this._context.getProperty('connection.info.name.' + envId) ?? envId;
+    // AS3: onButtonSelect(_arg_1:DisplayObject) — the "Let's get started!" button's action.
+    private _onButtonSelect = (): void =>
+    {
+        if(!this._context || !this._environmentTypes) return;
+
+        this._context.updateEnvironment(this._environmentTypes[this._selectedIndex], false);
+        this._context.showScreen(2);
+    };
+
+    // AS3: onButtonSelectToken(_arg_1:DisplayObject)
+    private _onButtonSelectToken = (): void =>
+    {
+        if(!this._context || !this._environmentTypes) return;
+
+        this._context.updateEnvironment(this._environmentTypes[this._selectedIndex], false);
+        this._context.showScreen(4);
+    };
+
+    // AS3: dispose()
+    public dispose(): void
+    {
+        if(this.disposed) return;
+
+        this._loginButton?.dispose();
+        this._ticketButton?.dispose();
+        this._environmentImages = [];
+        this._context = null;
     }
 }

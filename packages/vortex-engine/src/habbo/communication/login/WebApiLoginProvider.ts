@@ -1,472 +1,651 @@
 /**
  * WebApiLoginProvider
  *
- * @see sources/win63_2021_version/com/sulake/habbo/communication/login/WebApiLoginProvider.as
- * @see sources/win63_2021_version/com/sulake/habbo/communication/HabboWebApiSession.as
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/login/WebApiLoginProvider.as
  *
- * fetch()-based REST API client for the Habbo login endpoints.
- * Port of AS3's WebApiLoginProvider + HabboWebApiSession using the Fetch API.
+ * Drives the login half of the web API and translates its answers into `ILoginViewer` calls. It
+ * does not speak HTTP itself — `IHabboWebApiSession` does, and this class is the state machine
+ * around it: which endpoint was asked, what its answer means, and where the flow goes next.
  *
- * API endpoints (from AS3 HabboWebApiRoute annotations):
- * - GET /api/public/info/hello — Server status check
- * - POST /api/public/authentication/login — Email/password login
- * - GET /api/user/avatars — List user's avatars
- * - POST /api/user/avatars/select — Select avatar by uniqueId
- * - GET /api/ssotoken — Get SSO token for WebSocket
+ * Two pieces of that state matter and are easy to mistake for noise:
+ * - `_pocketSessionMode` starts at LOGIN_AND_REGISTER and flips to SSO once a token has been
+ *   issued. After the flip, `/api/user/avatars` and `/api/user/avatars/select` answers are ignored,
+ *   which is what stops a second avatar fetch from restarting a login that already succeeded.
+ * - `_autoLogin` is false in this build and never set true, so the branches that depend on it are
+ *   unreachable here. They are ported because they are what the source says, and because the flag
+ *   is the only thing separating "ask the user which avatar" from "reuse the stored one".
  */
 import {EventEmitter} from 'eventemitter3';
+import {Logger} from '@core/utils/Logger';
+import {CommunicationUtils} from '@habbo/utils/CommunicationUtils';
 import type {IHabboCommunicationManager} from '../IHabboCommunicationManager';
-import type {ILoginViewer} from './ILoginViewer';
-import type {ILoginProvider} from './ILoginProvider';
+import type {IHabboWebApiListener} from '../IHabboWebApiListener';
+import type {IHabboWebApiSession} from '../IHabboWebApiSession';
 import {AvatarData} from './AvatarData';
+import type {ICaptchaHandler} from './ICaptchaHandler';
+import type {ICaptchaView} from './ICaptchaView';
+import type {ILoginProvider} from './ILoginProvider';
+import type {ILoginViewer} from './ILoginViewer';
 
-export class WebApiLoginProvider extends EventEmitter implements ILoginProvider
+const log = Logger.getLogger('habbo.communication.login.WebApiLoginProvider');
+
+// AS3: POCKET_MODE_LOGIN_AND_REGISTER
+const POCKET_MODE_LOGIN_AND_REGISTER = 1;
+
+// AS3: POCKET_MODE_SSO — obfuscated as _SafeStr_11598 in the 701 tree; named from its use.
+const POCKET_MODE_SSO = 2;
+
+export class WebApiLoginProvider extends EventEmitter implements ILoginProvider, IHabboWebApiListener, ICaptchaHandler
 {
-    public static readonly SSO_TOKEN_AVAILABLE = 'SSO_TOKEN_AVAILABLE';
+    // AS3: ERROR_TYPE_IO_ERROR
+    public static readonly ERROR_TYPE_IO_ERROR: string = 'ioError';
 
-    private _viewer: ILoginViewer;
+    // AS3: ERROR_CODE_MAINTENANCE
+    public static readonly ERROR_CODE_MAINTENANCE: string = 'maintenance';
+
+    // AS3: SsoTokenAvailableEvent.SSO_TOKEN_AVAILABLE
+    public static readonly SSO_TOKEN_AVAILABLE: string = 'SSO_TOKEN_AVAILABLE';
+
+    // AS3: AUTO_RECONNECT — declared and unused in the 701 source.
+    private static readonly AUTO_RECONNECT: boolean = false;
+
+    // AS3: _communication
     private _communication: IHabboCommunicationManager | null = null;
-    private _serverUrl: string = '';
-    private _deviceId: string;
 
+    // AS3: _viewer
+    private _viewer: ILoginViewer;
+
+    // AS3: _pendingLoginError
+    private _pendingLoginError: unknown = null;
+
+    // AS3: _autoLogin
+    private _autoLogin: boolean = false;
+
+    // AS3: _pocketSessionMode
+    private _pocketSessionMode: number = POCKET_MODE_LOGIN_AND_REGISTER;
+
+    // AS3: _name
+    private _name: string = '';
+
+    // AS3: _password
+    private _password: string = '';
+
+    // AS3: _loginMode
+    private _loginMode: number = 0;
+
+    // AS3: _selectedUniqueId
+    private _selectedUniqueId: string = '';
+
+    // AS3: _ssoToken
+    private _ssoToken: string | null = null;
+
+    // AS3: _session
+    private _session: IHabboWebApiSession | null = null;
+
+    // AS3: _captchaView
+    private _captchaView: ICaptchaView | null = null;
+
+    // TS-only: the port disposes explicitly; the session skips disposed listeners.
+    private _disposed: boolean = false;
+
+    // AS3: WebApiLoginProvider(_arg_1:ILoginViewer)
     constructor(viewer: ILoginViewer)
     {
         super();
+
         this._viewer = viewer;
-        this._deviceId = this.generateDeviceId();
     }
 
-    private _ssoToken: string | null = null;
-
-    get ssoToken(): string | null
-    {
-        return this._ssoToken;
-    }
-
-    private _disposed: boolean = false;
-
-    get disposed(): boolean
+    /**
+     * AS3: get disposed():Boolean
+     *
+     * AS3 answers a hard `false` — the provider outlives every request. The port has a real
+     * lifecycle (`dispose()` is called when the login flow is torn down), and the session uses this
+     * to skip dead listeners, so it reports the truth.
+     */
+    public get disposed(): boolean
     {
         return this._disposed;
     }
 
-    /**
-	 * AS3: init(communication)
-	 * Initialize the provider with the communication manager.
-	 * In AS3, this calls communication.getHabboWebApiSession() to get the HTTP session.
-	 * In our port, we use fetch() directly but store the communication reference.
-	 */
-    public init(communication?: IHabboCommunicationManager | null): void
+    // TS-only: the token this provider obtained, for callers that keep it.
+    public get ssoToken(): string | null
     {
-        if(communication)
+        return this._ssoToken;
+    }
+
+    /**
+     * AS3: init(_arg_1:IHabboCommunicationManager)
+     *
+     * AS3 creates the session twice — once inline against `web.api`, once through
+     * `createHabboWebApiSession()`, which disposes the first. Only the second survives, so the port
+     * keeps the surviving call and drops the discarded one.
+     */
+    public init(communication: IHabboCommunicationManager | null): void
+    {
+        this._communication = communication;
+
+        const webApi = this.getProperty('web.api');
+
+        log.debug(`Init with: ${webApi}`);
+
+        this._session = this.createHabboWebApiSession();
+        this.initHabboWebApiSession();
+    }
+
+    // AS3: loginWithCredentials(_arg_1:String, _arg_2:String, _arg_3:int=0)
+    public loginWithCredentials(email: string, password: string, loginMode: number = 0): void
+    {
+        this._name = email;
+        this._password = password;
+        this._loginMode = loginMode;
+
+        if(this._session)
         {
-            this._communication = communication;
+            this._session.login(email, password);
+
+            return;
         }
 
-        const webApiUrl = this._viewer.getProperty('web.api');
+        log.warn('Login not available');
+    }
 
-        if(webApiUrl)
+    // AS3: loginWithCredentialsWeb(_arg_1:String)
+    public loginWithCredentialsWeb(uniqueId: string): void
+    {
+        this._selectedUniqueId = uniqueId;
+
+        if(this._session)
         {
-            this._serverUrl = webApiUrl;
+            this._session.selectAvatar(uniqueId);
+
+            return;
         }
-        else
-        {
-            // Fallback: use url.prefix with https
-            const urlPrefix = this._viewer.getProperty('url.prefix');
 
-            if(urlPrefix)
+        log.warn('Login not available');
+    }
+
+    // AS3: selectAvatar(_arg_1:int) — empty in the 701 source.
+    public selectAvatar(_id: number): void
+    {
+        // AS3 leaves this empty.
+    }
+
+    // AS3: selectAvatarUniqueid(_arg_1:String)
+    public selectAvatarUniqueid(uniqueId: string): void
+    {
+        if(this._session == null) return;
+
+        this._session.selectAvatar(uniqueId);
+    }
+
+    /**
+     * AS3: habboWebApiError(_arg_1:String, _arg_2:int, _arg_3:String, _arg_4:Object, _arg_5:Boolean=false)
+     *
+     * The 701 switch lists `/api/ssotoken` twice. Only the first arm can ever run, and it falls
+     * through into the hello arm — so an SSO-token failure shows the login screen. The second arm
+     * (which would have called `showInvalidLoginError`) is unreachable; ported as written rather
+     * than "corrected", since the reachable behaviour is what the client actually does.
+     */
+    public habboWebApiError(
+        uri: string,
+        _status: number,
+        errorType: string,
+        data: Record<string, unknown> | null,
+        isCaptcha: boolean = false
+    ): void
+    {
+        log.debug(`Api Error: id: ${uri} type: ${errorType} captcha: ${isCaptcha}`);
+
+        let keepAutoLogin = false;
+
+        if(errorType === WebApiLoginProvider.ERROR_TYPE_IO_ERROR)
+        {
+            keepAutoLogin = true;
+        }
+
+        const session = this._communication?.getHabboWebApiSession() ?? null;
+
+        switch(uri)
+        {
+            case '/api/ssotoken':
+                if(this._autoLogin)
+                {
+                    keepAutoLogin = true;
+                    session?.login(this._name, this._password);
+                }
+
+            // falls through — see the method comment.
+            case '/api/public/info/hello':
+                this._viewer.showLoginScreen();
+                break;
+
+            case '/api/public/registration/new':
+                this._viewer.showRegistrationError(data);
+                break;
+
+            case '/api/user/avatars':
+                log.debug('There was an error getting the Avatars');
+                this._viewer.showInvalidLoginError(data);
+                break;
+
+            case '/api/newuser/name/check':
+            case '/api/newuser/name/select':
+                log.debug('There was an error checking name');
+                this._viewer.nameCheckResponse(data, uri === '/api/newuser/name/check');
+                break;
+
+            case '/api/public/authentication/login':
+            case '/api/public/authentication/facebook':
+            case '/api/force/tos-accept':
             {
-                this._serverUrl = urlPrefix.replace('http://', 'https://');
+                log.debug('There was an error authorizing connection...');
+
+                const payload = data as {message?: unknown; error?: unknown; errors?: unknown; captcha?: unknown} | null;
+
+                if(payload != null && (payload.message != null || payload.error != null || payload.errors != null))
+                {
+                    if(isCaptcha)
+                    {
+                        const captchaOnly = payload.captcha === true && payload.message === 'invalid-captcha';
+
+                        if(!captchaOnly)
+                        {
+                            this._pendingLoginError = data;
+                        }
+
+                        this.showCaptchaView();
+                        break;
+                    }
+
+                    this._viewer.showInvalidLoginError(data);
+                    break;
+                }
+
+                if(isCaptcha)
+                {
+                    this.showCaptchaView();
+                    break;
+                }
+
+                this._viewer.showInvalidLoginError(null);
+                break;
+            }
+
+            case '/api/user/avatars/select':
+                log.debug('There was an error selecting avatar');
+
+                if(session)
+                {
+                    this._viewer.showAccountError(data);
+                    this._viewer.showLoadingScreen();
+                    session.avatars();
+                    break;
+                }
+
+                this._viewer.showInvalidLoginError(data);
+                break;
+
+            case '/api/newuser/room/select':
+                log.debug('There was an error selecting home room.');
+                break;
+
+            case '/api/user/look/save':
+                this._viewer.saveLooksError(data);
+                break;
+
+            default:
+                log.debug(`Did not process Habbo API message: ${uri}`);
+                break;
+        }
+
+        if(!keepAutoLogin)
+        {
+            this._autoLogin = false;
+        }
+    }
+
+    /**
+     * AS3: habboWebApiResponse(_arg_1:String, _arg_2:Object)
+     */
+    public habboWebApiResponse(uri: string, data: Record<string, unknown>): void
+    {
+        log.debug(`Got Habbo Web Api Response: ${uri}`, data);
+
+        const session = this._communication?.getHabboWebApiSession() ?? null;
+
+        if(session == null) return;
+
+        if(data != null && data.force != null && Array.isArray(data.force))
+        {
+            const forced = data.force as string[];
+
+            if(forced.indexOf('TOS') > -1)
+            {
+                this._viewer.showTOS();
+
+                return;
+            }
+
+            if(forced.indexOf('EMAIL') > -1 || forced.indexOf('PASSWORD') > -1)
+            {
+                this._viewer.showInvalidLoginError({errors: ['account_issue']});
+
+                return;
             }
         }
 
-        // AS3: initHabboWebApiSession → session.hello()
-        this.hello();
-    }
-
-    /**
-	 * AS3: loginWithCredentials()
-	 * Login with email and password via the Web API.
-	 *
-	 * @param email - User email
-	 * @param password - User password
-	 */
-    public loginWithCredentials(email: string, password: string): void
-    {
-        this.executeRequest('/api/public/authentication/login', 'POST', { email, password });
-    }
-
-    /**
-	 * AS3: loginWithCredentialsWeb()
-	 * Select an avatar by its unique ID after successful login.
-	 *
-	 * @param uniqueId - Avatar unique ID
-	 */
-    public loginWithCredentialsWeb(uniqueId: string): void
-    {
-        this.executeRequest('/api/user/avatars/select', 'POST', { uniqueId });
-    }
-
-    /**
-	 * AS3: session.selectAvatar()
-	 * Select an avatar — POST /api/user/avatars/select
-	 */
-    public selectAvatarUniqueid(uniqueId: string): void
-    {
-        this.executeRequest('/api/user/avatars/select', 'POST', { uniqueId });
-    }
-
-    /**
-	 * AS3: register() → session.register(email, password, day, month, year, termsOfServiceAccepted, captchaToken)
-	 * Register a new account — POST /api/public/registration/new
-	 */
-    public register(email: string, password: string): void
-    {
-        this.executeRequest('/api/public/registration/new', 'POST', {
-            email,
-            password,
-            passwordRepeated: password,
-            birthdate: { day: 0, month: 0, year: 0 },
-            termsOfServiceAccepted: true,
-        });
-    }
-
-    /**
-	 * AS3: createAvatar() → session.createAvatar(name, figure, gender)
-	 * Create an avatar for the current account — POST /api/user/avatars
-	 */
-    public createAvatar(name: string, figure: string, gender: string): void
-    {
-        const body: Record<string, unknown> = { name, gender };
-
-        if(figure && figure.length > 0)
+        switch(uri)
         {
-            body.figure = figure;
+            case '/api/public/info/hello':
+                if(this._autoLogin)
+                {
+                    session.ssoToken();
+                    break;
+                }
+
+                this._viewer.environmentReady();
+                break;
+
+            case '/api/user/avatars/select':
+                if(this._pocketSessionMode !== POCKET_MODE_SSO)
+                {
+                    session.ssoToken();
+                }
+
+                break;
+
+            case '/api/public/authentication/login':
+            case '/api/public/authentication/facebook':
+            case '/api/force/tos-accept':
+            {
+                const method = uri === '/api/public/authentication/login'
+                    ? CommunicationUtils.LOGIN_METHOD_HABBO
+                    : CommunicationUtils.LOGIN_METHOD_FACEBOOK;
+
+                CommunicationUtils.writeProperty(CommunicationUtils.SOL_PROPERTY_LOGIN_METHOD, method);
+                this.fetchAvatars();
+                break;
+            }
+
+            case '/api/user/avatars':
+            {
+                if(this._pocketSessionMode === POCKET_MODE_SSO) break;
+
+                const avatars: AvatarData[] = [];
+
+                for(const entry of WebApiLoginProvider.toAvatarArray(data))
+                {
+                    avatars.push(new AvatarData(entry));
+                }
+
+                // A single avatar is selected outright — no picker for an account with one
+                // character.
+                if(avatars.length === 1)
+                {
+                    CommunicationUtils.writeProperty(
+                        CommunicationUtils.SOL_PROPERTY_CHARACTER_UNIQUE_ID,
+                        avatars[0].uniqueId
+                    );
+                    session.selectAvatar(avatars[0].uniqueId);
+                    break;
+                }
+
+                if(!this._autoLogin)
+                {
+                    this._viewer.populateCharacterList(avatars);
+                }
+
+                break;
+            }
+
+            case '/api/ssotoken':
+                this._ssoToken = data['ssoToken'] as string;
+                this._pocketSessionMode = POCKET_MODE_SSO;
+                this.emit(WebApiLoginProvider.SSO_TOKEN_AVAILABLE, this._ssoToken);
+                break;
+
+            case '/api/public/registration/new':
+                if(data != null)
+                {
+                    const id = parseInt(String(data.id), 10);
+
+                    CommunicationUtils.writeProperty(CommunicationUtils.SOL_PROPERTY_CHARACTER_ID, id.toString());
+                }
+
+                this._viewer.showSelectAvatar(data);
+                break;
+
+            case '/api/public/lists/hotlooks':
+                this._viewer.showPromoHabbos(data);
+                break;
+
+            case '/api/newuser/name/select':
+            case '/api/newuser/name/check':
+                this._viewer.nameCheckResponse(data, uri === '/api/newuser/name/check');
+                break;
+
+            case '/api/user/look/save':
+                this._viewer.showSelectRoom();
+                break;
+
+            case '/api/newuser/room/select':
+                CommunicationUtils.writeProperty(
+                    CommunicationUtils.SOL_PROPERTY_LOGIN_METHOD,
+                    CommunicationUtils.LOGIN_METHOD_HABBO
+                );
+                this.fetchAvatars();
+                break;
+        }
+    }
+
+    // AS3: habboWebApiRawResponse(_arg_1:String, _arg_2:Object) — empty in the 701 source.
+    public habboWebApiRawResponse(_uri: string, _data: unknown): void
+    {
+        // AS3 leaves this empty.
+    }
+
+    /**
+     * AS3: onUserList(_arg_1:Vector.<AvatarData>)
+     *
+     * Not reached from the session in this build — the avatar list arrives through
+     * `habboWebApiResponse()`. Ported because it is part of the class and is what an auto-login
+     * would go through.
+     */
+    public onUserList(avatars: AvatarData[]): void
+    {
+        if(this._autoLogin)
+        {
+            const storedId = CommunicationUtils.readProperty(CommunicationUtils.SOL_PROPERTY_CHARACTER_UNIQUE_ID) ?? '';
+
+            if(!WebApiLoginProvider.userExists(avatars, storedId))
+            {
+                this._viewer.populateCharacterList(avatars);
+            }
+
+            return;
         }
 
-        this.executeRequest('/api/user/avatars', 'POST', body);
+        this._viewer.populateCharacterList(avatars);
+    }
+
+    // AS3: closeCaptcha()
+    public closeCaptcha(): void
+    {
+        this.removeCaptchaView();
+    }
+
+    // AS3: handleCaptchaError()
+    public handleCaptchaError(): void
+    {
+        this.removeCaptchaView();
+        this._viewer.showCaptchaError();
     }
 
     /**
-	 * AS3: checkName() → session.nameCheck(name)
-	 * Check avatar name availability — POST /api/newuser/name/check
-	 */
-    public checkName(name: string): void
+     * AS3: handleCaptchaResult(_arg_1:String)
+     *
+     * The pending error is shown BEFORE the token is applied: it is the failure that triggered the
+     * captcha in the first place, and the user has to see why they were challenged.
+     */
+    public handleCaptchaResult(token: string): void
     {
-        this.executeRequest('/api/newuser/name/check', 'POST', { name });
+        this.removeCaptchaView();
+        this._viewer.captchaReady();
+
+        if(this._pendingLoginError)
+        {
+            this._viewer.showInvalidLoginError(this._pendingLoginError);
+            this._pendingLoginError = null;
+        }
+
+        if(token == null || this._session == null)
+        {
+            this._viewer.showCaptchaError();
+
+            return;
+        }
+
+        this._session.setCaptchaToken(token);
     }
 
+    // AS3: getProperty(_arg_1:String, _arg_2:Dictionary=null):String
+    public getProperty(key: string): string | null
+    {
+        return this._viewer.getProperty(key);
+    }
+
+    /**
+     * AS3: createHabboWebApiSession():IHabboWebApiSession
+     *
+     * An existing session is disposed first, so a hotel switch does not keep talking to the old
+     * host. The `url.prefix` fallback is forced to https — the API refuses plaintext.
+     */
+    private createHabboWebApiSession(): IHabboWebApiSession | null
+    {
+        if(!this._communication) return null;
+
+        const existing = this._communication.getHabboWebApiSession();
+
+        if(existing != null)
+        {
+            existing.dispose();
+        }
+
+        let url = this.getProperty('web.api') ?? '';
+
+        if(url === '')
+        {
+            url = (this.getProperty('url.prefix') ?? '').replace('http:', 'https:');
+        }
+
+        return this._communication.createHabboWebApiSession(this, url);
+    }
+
+    // AS3: initHabboWebApiSession()
+    private initHabboWebApiSession(): void
+    {
+        if(this._session)
+        {
+            this._session.hello();
+
+            return;
+        }
+
+        throw new Error('Tried to init null IHabboWebApiSession');
+    }
+
+    // AS3: showCaptchaView()
+    private showCaptchaView(): void
+    {
+        this._captchaView = this._viewer.createCaptchaView();
+
+        if(this._captchaView == null)
+        {
+            this._viewer.showCaptchaError();
+        }
+    }
+
+    // AS3: removeCaptchaView()
+    private removeCaptchaView(): void
+    {
+        if(this._captchaView != null)
+        {
+            this._captchaView.dispose();
+            this._captchaView = null;
+        }
+    }
+
+    /**
+     * AS3: fetchAvatars()
+     */
+    private fetchAvatars(): void
+    {
+        if(this._session == null) return;
+
+        if(this._autoLogin)
+        {
+            const storedId = CommunicationUtils.readProperty(CommunicationUtils.SOL_PROPERTY_CHARACTER_UNIQUE_ID);
+
+            if(storedId)
+            {
+                this._session.selectAvatar(storedId);
+            }
+            else
+            {
+                this._session.avatars();
+            }
+
+            return;
+        }
+
+        if(this._pocketSessionMode === POCKET_MODE_LOGIN_AND_REGISTER)
+        {
+            this._session.avatars();
+        }
+    }
+
+    // AS3: userExists(_arg_1:Vector.<AvatarData>, _arg_2:String):Boolean
+    private static userExists(avatars: AvatarData[], uniqueId: string): boolean
+    {
+        for(const avatar of avatars)
+        {
+            if(avatar.uniqueId === uniqueId) return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * TS-only: AS3 iterates the decoded response with `for each`, which walks a JSON array and a
+     * JSON object's values alike. `fetch()` hands back one shape or the other depending on the
+     * server, so the array is picked out explicitly here.
+     */
+    private static toAvatarArray(data: unknown): Record<string, unknown>[]
+    {
+        if(Array.isArray(data)) return data as Record<string, unknown>[];
+
+        if(data && typeof data === 'object')
+        {
+            const record = data as Record<string, unknown>;
+
+            if(Array.isArray(record.avatars)) return record.avatars as Record<string, unknown>[];
+
+            if(Array.isArray(record.data)) return record.data as Record<string, unknown>[];
+        }
+
+        return [];
+    }
+
+    // TS-only: the login flow disposes the provider when it tears down; AS3 relies on collection.
     public dispose(): void
     {
         if(this._disposed) return;
 
         this._disposed = true;
+        this.removeCaptchaView();
+        this._session = null;
         this._communication = null;
         this.removeAllListeners();
-    }
-
-    /**
-	 * AS3: hello()
-	 * Server hello/status check — GET /api/public/info/hello
-	 */
-    private hello(): void
-    {
-        this.executeRequest('/api/public/info/hello', 'GET');
-    }
-
-    /**
-	 * AS3: fetchAvatars() → session.avatars()
-	 * Fetch the user's avatar list — GET /api/user/avatars
-	 */
-    private fetchAvatars(): void
-    {
-        this.executeRequest('/api/user/avatars', 'GET');
-    }
-
-    /**
-	 * AS3: session.ssoToken()
-	 * Request an SSO token — GET /api/ssotoken
-	 */
-    private requestSsoToken(): void
-    {
-        this.executeRequest('/api/ssotoken', 'GET');
-    }
-
-    /**
-	 * Generates a random device ID (replaces AS3's machine ID + SHA1 hash).
-	 */
-    private generateDeviceId(): string
-    {
-        const hex = Array.from({ length: 32 }, () =>
-            Math.floor(Math.random() * 16).toString(16)
-        ).join('');
-
-        return hex;
-    }
-
-    /**
-	 * Execute an HTTP request to the Web API.
-	 * Replaces AS3's HabboWebApiSession.executeRequest().
-	 *
-	 * @param path - API path (e.g., '/api/public/info/hello')
-	 * @param method - HTTP method ('GET' or 'POST')
-	 * @param body - Request body for POST requests
-	 */
-    private async executeRequest(path: string, method: string, body?: Record<string, unknown>): Promise<void>
-    {
-        const url = this._serverUrl + path;
-
-        const headers: Record<string, string> = {
-            'X-Habbo-Device-ID': this._deviceId,
-            'x-habbo-api-deviceid': this._deviceId,
-        };
-
-        const options: RequestInit = {
-            method,
-            headers,
-            credentials: 'include',
-        };
-
-        if(method === 'POST')
-        {
-            headers['Content-Type'] = 'application/json';
-            options.body = body ? JSON.stringify(body) : '{}';
-        }
-
-        try
-        {
-            const response = await fetch(url, options);
-
-            if(response.ok)
-            {
-                const data = await response.json().catch(() => ({}));
-
-                this.handleResponse(path, data);
-            }
-            else
-            {
-                let errorData: Record<string, unknown>;
-
-                try
-                {
-                    errorData = await response.json();
-                }
-                catch
-                {
-                    errorData = { error: response.statusText };
-                }
-
-                this.handleError(path, response.status, errorData);
-            }
-        }
-        catch (_error)
-        {
-            // Network error (CORS, connection refused, etc.)
-            this.handleError(path, 0, { error: 'ioError' });
-        }
-    }
-
-    /**
-	 * AS3: habboWebApiResponse()
-	 * Routes successful API responses to the appropriate handler.
-	 */
-    private handleResponse(path: string, data: Record<string, unknown>): void
-    {
-        // AS3: Check for force array (TOS, EMAIL, PASSWORD)
-        if(data.force && Array.isArray(data.force))
-        {
-            const forces = data.force as string[];
-
-            if(forces.includes('TOS'))
-            {
-                this._viewer.showErrorMessage('Terms of Service must be accepted');
-
-                return;
-            }
-
-            if(forces.includes('EMAIL') || forces.includes('PASSWORD'))
-            {
-                this._viewer.showErrorMessage('Account issue — please check your credentials');
-
-                return;
-            }
-        }
-
-        switch(path)
-        {
-            case '/api/public/info/hello':
-                // AS3: if _autoLogin, request SSO token; else environmentReady()
-                this._viewer.environmentReady();
-                break;
-
-            case '/api/public/authentication/login':
-                // Login successful — fetch avatar list
-                this.fetchAvatars();
-                break;
-
-            case '/api/user/avatars':
-            {
-                // Parse avatar list
-                const avatarList = this.parseAvatarList(data);
-
-                if(avatarList.length === 1)
-                {
-                    // AS3: Single avatar — auto-select
-                    this.selectAvatarUniqueid(avatarList[0].uniqueId);
-                }
-                else if(avatarList.length > 1)
-                {
-                    // AS3: Multiple avatars — show selection screen
-                    this._viewer.populateCharacterList(avatarList);
-                }
-                else
-                {
-                    this._viewer.showErrorMessage('No avatars found on this account');
-                }
-
-                break;
-            }
-
-            case '/api/user/avatars/select':
-                // Avatar selected — request SSO token
-                this.requestSsoToken();
-                break;
-
-            case '/api/ssotoken':
-            {
-                // SSO token received — dispatch event
-                const token = (data.ssoToken as string) ?? (data.sso_token as string) ?? null;
-
-                if(token)
-                {
-                    this._ssoToken = token;
-                    this.emit(WebApiLoginProvider.SSO_TOKEN_AVAILABLE, token);
-                }
-                else
-                {
-                    this._viewer.showErrorMessage('Failed to obtain SSO token');
-                }
-
-                break;
-            }
-
-            case '/api/public/registration/new':
-                // AS3: showSelectAvatar(response) — routes to the avatar creation screen
-                this._viewer.showSelectAvatar(data);
-                break;
-
-            case '/api/newuser/name/check':
-                // AS3: nameCheckResponse(response, path == "/api/newuser/name/check")
-                this._viewer.nameCheckResponse(data, true);
-                break;
-        }
-    }
-
-    /**
-	 * AS3: habboWebApiError()
-	 * Routes API errors to the appropriate error handler.
-	 */
-    private handleError(path: string, statusCode: number, data: Record<string, unknown>): void
-    {
-        // AS3: habboWebApiError() routes name-check failures back through nameCheckResponse()
-        // instead of the generic error balloon, so the AvatarCreate screen can show an
-        // inline "name taken" message.
-        if(path === '/api/newuser/name/check')
-        {
-            this._viewer.nameCheckResponse(data, true);
-
-            return;
-        }
-
-        // Extract error message from response
-        let errorMessage = 'Unknown error';
-
-        if(data.errors && Array.isArray(data.errors) && (data.errors as string[]).length > 0)
-        {
-            errorMessage = (data.errors as string[])[0];
-        }
-        else if(data.error)
-        {
-            errorMessage = data.error as string;
-        }
-        else if(data.message)
-        {
-            errorMessage = data.message as string;
-        }
-
-        // Map error codes to user-friendly messages (AS3 showError)
-        switch(errorMessage)
-        {
-            case 'login.user_banned':
-                this._viewer.showErrorMessage('Your account has been banned.');
-                break;
-
-            case 'login.blocked':
-                this._viewer.showErrorMessage('Too many login attempts. Please try again later.');
-                break;
-
-            case 'pocket.auth.login_failed':
-                this._viewer.showErrorMessage('Login failed. Please check your credentials.');
-                break;
-
-            case 'pocket.auth.no_avatars':
-                this._viewer.showErrorMessage('No avatars found on this account.');
-                break;
-
-            case 'pocket.auth.valid_email_required':
-            case 'pocket.auth.password_required':
-                this._viewer.showErrorMessage('Please enter valid credentials.');
-                break;
-
-            case 'ioError':
-                this._viewer.showErrorMessage('Connection error. Please check the server URL.');
-                break;
-
-            case 'invalid-captcha':
-                this._viewer.showErrorMessage('Captcha verification failed.');
-                break;
-
-            default:
-                this._viewer.showErrorMessage(errorMessage || `Error ${statusCode}`);
-                break;
-        }
-    }
-
-    /**
-	 * Parses the avatar list from the API response.
-	 * AS3 response format: array of objects with uniqueId, name, motto, figureString, etc.
-	 */
-    private parseAvatarList(data: Record<string, unknown>): AvatarData[]
-    {
-        const result: AvatarData[] = [];
-
-        // The response can be an array directly or nested under a property
-        let avatarArray: Record<string, unknown>[] = [];
-
-        if(Array.isArray(data))
-        {
-            avatarArray = data as Record<string, unknown>[];
-        }
-        else if(Array.isArray(data.avatars))
-        {
-            avatarArray = data.avatars as Record<string, unknown>[];
-        }
-        else if(Array.isArray(data.data))
-        {
-            avatarArray = data.data as Record<string, unknown>[];
-        }
-        else if(typeof data.uniqueId === 'string')
-        {
-            // POST /api/user/avatars (createAvatar) may return the created avatar as a
-            // single object rather than wrapped in an array.
-            avatarArray = [data];
-        }
-
-        for(const item of avatarArray)
-        {
-            result.push(new AvatarData(item));
-        }
-
-        return result;
     }
 }

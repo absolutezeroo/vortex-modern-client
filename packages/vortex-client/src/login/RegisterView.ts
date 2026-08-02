@@ -1,243 +1,204 @@
 /**
  * RegisterView
  *
- * @see vortex-client/src/onBoardingHc/steps/OnBoardingHcStepRegister.as
+ * TS-only: this screen has NO AS3 counterpart. `WIN63-202607011411-782849652/src/login/` holds ten
+ * files and none of them registers an account — in the real client that happens on the website, and
+ * a previous port of this project invented a `RegisterView` that traced to files in no dump, which
+ * is why the 2026-07-31 rebuild deleted it.
  *
- * Registration screen (SCREEN_REGISTER = 5), redesigned as the right-hand
- * column of the split-screen layout (see login-ui.scss). User enters email,
- * password and password confirmation and submits to create a new account via
- * WebApiLoginProvider.register(). On success the server routes back to
- * LoginFlow.showSelectAvatar() -> SCREEN_AVATAR_CREATE.
+ * What is NOT invented here is everything the screen drives. `/api/public/registration/new` is a
+ * declared AS3 route (`HabboWebApiMethod.REGISTER`, POST), `HabboWebApiSession.register()` is the
+ * AS3 method that posts to it, `WebApiLoginProvider` already routes both its success arm
+ * (`showSelectAvatar()`) and its failure arm (`showRegistrationError()`), and `vortex-emulator`
+ * already implements the endpoint. The only thing the dump has no code for is a widget that calls
+ * it — so that is all this file is, built from the same `onBoardingHcUi` widgets as `LoginView`,
+ * whose structure it mirrors exactly.
  *
- * AS3 properties (OnBoardingHcStepRegister):
- * - _context: IOnBoardingHcContext
- * - _titleField: TextField ("${connection.login.register.title}")
- * - _registerButton: ColouredButton ("gfreen", "${connection.login.register.submit}")
- * - _cancelButton: ColouredButton ("red", "${generic.cancel}")
- * - _fieldWidth: int = 640
- * - _emailField / _passwordField / _confirmField: InputField
- * - _initialized: Boolean
+ * Captions are literals because no registration key exists in the twelve `default_localizations*`
+ * embeds; the two field prompts reuse the keys that do (`connection.login.email` / `.password`).
  */
+import {Logger} from '@core/utils/Logger';
+import {Sprite} from '../onBoardingHcUi/display/DisplayObjectContainer';
+import {Rectangle} from '../onBoardingHcUi/display/Geom';
+import {Timer} from '../onBoardingHcUi/display/Timer';
+import {ColouredButton} from '../onBoardingHcUi/ColouredButton';
+import {InputField} from '../onBoardingHcUi/InputField';
+import {LoaderUI} from '../onBoardingHcUi/LoaderUI';
+import type {LocalizedTextField} from '../onBoardingHcUi/LocalizedTextField';
 import type {ILoginContext} from './ILoginContext';
 
-export class RegisterView
+const log = Logger.getLogger('client.login.RegisterView');
+
+export class RegisterView extends Sprite
 {
+    // TS-only: mirrors `LoginView._context`.
     private _context: ILoginContext;
-    private _root: HTMLFormElement;
 
-    /** AS3: _emailField */
-    private _emailField: HTMLInputElement;
+    // TS-only: mirrors `LoginView._titleField`.
+    private _titleField: LocalizedTextField | null = null;
 
-    /** AS3: _passwordField */
-    private _passwordField: HTMLInputElement;
+    // TS-only: mirrors `LoginView._saveButton`.
+    private _saveButton: ColouredButton | null = null;
 
-    /** AS3: _confirmField */
-    private _confirmField: HTMLInputElement;
+    // TS-only: mirrors `LoginView._cancelButton`.
+    private _cancelButton: ColouredButton | null = null;
 
-    /** Inline validation message shown above the buttons (AS3 has no equivalent — it just no-ops on invalid submit). */
-    private _statusField: HTMLDivElement;
+    // TS-only: mirrors `LoginView._emailField`.
+    private _emailField: InputField | null = null;
 
-    /** AS3: _registerButton — ColouredButton("gfreen", "${connection.login.register.submit}") */
-    private _registerButton: HTMLButtonElement;
+    // TS-only: mirrors `LoginView._passwordField`.
+    private _passwordField: InputField | null = null;
 
-    /** AS3: _cancelButton — ColouredButton("red", "${generic.cancel}") */
-    private _cancelButton: HTMLButtonElement;
+    // TS-only: mirrors `LoginView._loginAreaWidth`.
+    private _loginAreaWidth: number = 640;
 
-    /** AS3: _initialized */
+    // TS-only: mirrors `LoginView._initialized`.
     private _initialized: boolean = false;
 
-    private _disposed: boolean = false;
-
-    /**
-	 * AS3: OnBoardingHcStepRegister(context:IOnBoardingHcContext)
-	 */
     constructor(context: ILoginContext)
     {
+        super();
+
         this._context = context;
-        this._root = document.createElement('form');
-        this._root.autocomplete = 'on';
-        this._root.addEventListener('submit', this._onSubmit);
-        this._emailField = document.createElement('input');
-        this._passwordField = document.createElement('input');
-        this._confirmField = document.createElement('input');
-        this._statusField = document.createElement('div');
-        this._registerButton = document.createElement('button');
-        this._cancelButton = document.createElement('button');
+        this.addEventListener('addedToStage', this._onAddedToStage);
+        this.init();
     }
 
-    get element(): HTMLFormElement
-    {
-        return this._root;
-    }
-
-    /**
-	 * AS3: init()
-	 */
+    // TS-only: mirrors `LoginView.init()`.
     public init(): void
     {
         if(this._initialized) return;
 
         this._initialized = true;
-
         this.addTitleField();
         this.addInputFields();
         this.addButtons();
     }
 
-    /**
-	 * AS3: addTitleField() — "${connection.login.register.title}"
-	 */
-    private addTitleField(): void
-    {
-        const title = document.createElement('div');
-
-        title.className = 'habbo-title';
-        title.textContent = 'Create an account';
-        this._root.appendChild(title);
-
-        const subtitle = document.createElement('div');
-
-        subtitle.className = 'habbo-subtitle-line';
-        subtitle.textContent = "It only takes a moment — you'll pick your Habbo next.";
-        this._root.appendChild(subtitle);
-    }
-
-    /**
-	 * AS3: addInputFields()
-	 * AS3: _emailField = new InputField(_context, 640, "${connection.login.email}", "", "${connection.login.missing_credentials}", "")
-	 * AS3: _passwordField = new InputField(_context, 640, "${connection.login.password}", "", "", "", true)
-	 * AS3: _confirmField = new InputField(_context, 640, "${connection.login.register.confirm_password}", "", "", "", true)
-	 */
-    private addInputFields(): void
-    {
-        const emailGroup = document.createElement('div');
-
-        emailGroup.className = 'habbo-field';
-        this._emailField.className = 'habbo-input';
-        this._emailField.type = 'email';
-        this._emailField.placeholder = 'your@email.com';
-        this._emailField.autocomplete = 'email';
-        emailGroup.appendChild(this._emailField);
-        this._root.appendChild(emailGroup);
-
-        const pwdGroup = document.createElement('div');
-
-        pwdGroup.className = 'habbo-field';
-        this._passwordField.className = 'habbo-input';
-        this._passwordField.type = 'password';
-        this._passwordField.placeholder = 'Password (min. 6 characters)';
-        this._passwordField.autocomplete = 'new-password';
-        pwdGroup.appendChild(this._passwordField);
-        this._root.appendChild(pwdGroup);
-
-        const confirmGroup = document.createElement('div');
-
-        confirmGroup.className = 'habbo-field';
-        this._confirmField.className = 'habbo-input';
-        this._confirmField.type = 'password';
-        this._confirmField.placeholder = 'Confirm password';
-        this._confirmField.autocomplete = 'new-password';
-        confirmGroup.appendChild(this._confirmField);
-        this._root.appendChild(confirmGroup);
-
-        this._statusField.className = 'habbo-status';
-        this._root.appendChild(this._statusField);
-    }
-
-    /**
-	 * AS3: addButtons() — Cancel (red) and Submit (gfreen) buttons.
-	 */
+    // TS-only: mirrors `LoginView.addButtons()` — same skins, same rectangles, same glow colour.
     public addButtons(): void
     {
-        const container = document.createElement('div');
-
-        container.className = 'habbo-btn-row';
-
-        // AS3: _cancelButton = new ColouredButton("red", "${generic.cancel}", ...)
-        this._cancelButton.type = 'button';
-        this._cancelButton.className = 'habbo-btn habbo-btn--red';
-        this._cancelButton.textContent = 'Back';
-        this._cancelButton.addEventListener('click', this._onCancel);
-        container.appendChild(this._cancelButton);
-
-        // AS3: _registerButton = new ColouredButton("gfreen", "${connection.login.register.submit}", ...)
-        this._registerButton.type = 'submit';
-        this._registerButton.className = 'habbo-btn habbo-btn--green habbo-btn--arrow';
-        this._registerButton.textContent = 'Create account';
-        container.appendChild(this._registerButton);
-
-        this._root.appendChild(container);
+        this._cancelButton = new ColouredButton(
+            'red',
+            '${generic.cancel}',
+            new Rectangle(0, 300, 0, 40),
+            true,
+            this._onCancel,
+            14211288
+        );
+        this.addChild(this._cancelButton);
+        this._saveButton = new ColouredButton(
+            'gfreen',
+            'Create account',
+            new Rectangle(0, 300, 0, 40),
+            true,
+            this._onRegister,
+            14211288
+        );
+        this.addChild(this._saveButton);
     }
 
-    /** Native form submission (Enter key or Create-account button) validates and registers. */
-    private _onSubmit = (e: SubmitEvent): void =>
+    // TS-only: mirrors `LoginView.addTitleField()`.
+    private addTitleField(): void
     {
-        e.preventDefault();
-        this._onRegister();
+        if(this._titleField) return;
+
+        this._titleField = LoaderUI.createTextField(
+            'Create your account',
+            40,
+            16777215,
+            false,
+            true,
+            false,
+            false,
+            'left'
+        );
+        this._titleField.x = 0;
+        this._titleField.y = 0;
+        this._titleField.width = 500;
+        this._titleField.multiline = false;
+        this._titleField.thickness = 50;
+        this.addChild(this._titleField);
+    }
+
+    /**
+     * TS-only: mirrors `LoginView.addInputFields()`, minus the stored-credential pre-fill — there is
+     * nothing to restore for an account that does not exist yet.
+     */
+    private addInputFields(): void
+    {
+        this._emailField = new InputField(
+            this._context,
+            this._loginAreaWidth,
+            '${connection.login.email}',
+            '',
+            '',
+            ''
+        );
+        this.addChild(this._emailField);
+        this._emailField.x = 0;
+        this._emailField.y = 100;
+        this._passwordField = new InputField(
+            this._context,
+            this._loginAreaWidth,
+            '${connection.login.password}',
+            '',
+            '',
+            '',
+            true
+        );
+        this.addChild(this._passwordField);
+    }
+
+    // TS-only: mirrors `LoginView.onAddedToStage()` — the 20ms wait is what lets the anchors measure
+    // fields that have already built themselves.
+    private _onAddedToStage = (): void =>
+    {
+        const timer = new Timer(20, 1);
+
+        timer.addEventListener('timerComplete', this._onAlignElements);
+        timer.start();
+    };
+
+    // TS-only: mirrors `LoginView.onAlignElements()`.
+    private _onAlignElements = (): void =>
+    {
+        if(!this._emailField || !this._passwordField || !this._saveButton || !this._cancelButton) return;
+
+        LoaderUI.lineUpVertically(this._emailField, -20, this._passwordField);
+        LoaderUI.alignAnchors(this._emailField, 0, 'l', this._passwordField);
+        LoaderUI.alignAnchors(this._emailField, 0, 'r', this._saveButton);
+        LoaderUI.lineUpHorizontallyRevers(this._saveButton, 20, this._cancelButton);
     };
 
     /**
-	 * AS3: onRegister(registerButton:Button)
-	 * Validates email/password/confirm and delegates to context.registerAccount().
-	 */
+     * TS-only: the counterpart of `LoginView.saveOutfit()`.
+     *
+     * The password is sent once; AS3's `register()` fills `passwordRepeated` from the same value, so
+     * a confirmation box would have nothing to send.
+     */
     private _onRegister = (): void =>
     {
-        const email = this._emailField.value.trim();
-        const password = this._passwordField.value;
-        const confirmPassword = this._confirmField.value;
+        if(!this._emailField || !this._passwordField) return;
 
-        this._statusField.textContent = '';
-
-        if(!email || email.length === 0)
-        {
-            return;
-        }
-
-        if(!password || password.length < 6)
-        {
-            this._statusField.textContent = 'Password must be at least 6 characters.';
-
-            return;
-        }
-
-        if(password !== confirmPassword)
-        {
-            this._statusField.textContent = 'Passwords do not match.';
-
-            return;
-        }
-
-        this._context.registerAccount(email, password);
+        // An empty field is not screened here on purpose: the endpoint answers a missing address or
+        // password with `pocket.auth.missing_credentials`, which `LoginFlow.showError()` already
+        // maps to a localised message. A local check would have to invent a second wording, and
+        // `ILoginContext` deliberately does not expose `showErrorMessage()` to a view.
+        log.debug('Registering a new account');
+        this._context.initRegister(this._emailField.text, this._passwordField.text);
     };
 
-    /**
-	 * AS3: onCancel(cancelButton:Button)
-	 * Go back to the Login screen.
-	 */
+    // TS-only: mirrors `LoginView.onCancel()` — back to the login screen this was opened from.
     private _onCancel = (): void =>
     {
         this._context.showScreen(2);
     };
 
-    /**
-	 * Focus the email input when the view is shown.
-	 */
-    public focus(): void
-    {
-        setTimeout(() => this._emailField.focus(), 50);
-    }
-
-    /**
-	 * AS3: dispose()
-	 */
+    // TS-only: mirrors `LoginView.dispose()`.
     public dispose(): void
     {
-        if(this._disposed) return;
-
-        this._disposed = true;
-
-        this._root.removeEventListener('submit', this._onSubmit);
-        this._cancelButton.removeEventListener('click', this._onCancel);
-        this._root.remove();
+        this._saveButton?.dispose();
+        this._cancelButton?.dispose();
     }
 }

@@ -1,65 +1,78 @@
 /**
  * ImageLoader
  *
- * @see sources/win63_2021_version/login/ImageLoader.as
+ * AS3: sources/WIN63-202607011411-782849652/src/login/ImageLoader.as
  *
- * Loads an image from a URL and dispatches an ImageLoaderEvent on completion.
- * AS3 pattern: wraps a Loader and dispatches "complete" event.
+ * Loads one remote image into a display object and reports completion. The login flow uses it for
+ * the two landing illustrations (`landing.view.background_left.uri` / `.background_right.uri`).
+ *
+ * AS3 hands it a `flash.display.Loader`, which loads and displays in the same object; here the
+ * target is a `Bitmap` and the decoded pixels are pushed into it.
  */
-import {EventEmitter} from 'eventemitter3';
-import {ImageLoaderEvent} from './ImageLoaderEvent';
 import {Logger} from '@core/utils/Logger';
+import type {Bitmap} from '../onBoardingHcUi/display/Bitmap';
+import {BitmapData} from '../onBoardingHcUi/display/BitmapData';
+import {EventDispatcher} from '../onBoardingHcUi/display/DisplayObject';
+import {ImageLoaderEvent} from './ImageLoaderEvent';
 
 const log = Logger.getLogger('client.login.ImageLoader');
 
-export class ImageLoader extends EventEmitter
+export class ImageLoader extends EventDispatcher
 {
-    private _loader: HTMLImageElement;
-    private _url: string;
+    // AS3: _loader
+    private readonly _loader: Bitmap;
 
-    /**
-	 * AS3: ImageLoader(_arg_1:Loader, _arg_2:String)
-	 * Loads the image immediately.
-	 */
-    constructor(loader: HTMLImageElement, url: string)
+    // AS3: _url
+    private readonly _url: string;
+
+    // AS3: ImageLoader(_arg_1:Loader, _arg_2:String)
+    constructor(loader: Bitmap, url: string)
     {
         super();
 
         this._loader = loader;
         this._url = url;
 
-        loader.addEventListener('load', this._onComplete);
-        loader.addEventListener('error', this._onError);
-        loader.src = url;
+        const image = new Image();
+
+        image.crossOrigin = 'anonymous';
+        image.addEventListener('load', () =>
+        {
+            void createImageBitmap(image).then((bitmap) =>
+            {
+                this._loader.bitmapData = BitmapData.fromImage(bitmap);
+                this.avatarImageLoadCompleteHandler();
+            });
+        });
+        image.addEventListener('error', () => this.onImageError());
+        image.src = url;
+    }
+
+    // AS3: static CreateLoader(_arg_1:Loader, _arg_2:String, _arg_3:Function):ImageLoader
+    public static createLoader(loader: Bitmap, url: string, onComplete: (event: ImageLoaderEvent) => void): ImageLoader
+    {
+        const imageLoader = new ImageLoader(loader, url);
+
+        imageLoader.addEventListener('complete', onComplete as (event: unknown) => void);
+
+        return imageLoader;
+    }
+
+    // AS3: avatarImageLoadCompleteHandler(_arg_1:Event)
+    private avatarImageLoadCompleteHandler(): void
+    {
+        log.debug(`Loaded image ${this._url}`);
+        this.dispatchEvent(new ImageLoaderEvent('complete', this._loader, this._url));
     }
 
     /**
-	 * AS3: CreateLoader(_arg_1:Loader, _arg_2:String, _arg_3:Function):ImageLoader
-	 * Factory method — creates a loader and registers the callback.
-	 */
-    public static createLoader(img: HTMLImageElement, url: string, callback: (event: ImageLoaderEvent) => void): ImageLoader
+     * AS3: onImageError(_arg_1:ErrorEvent)
+     *
+     * A landing illustration that never arrives leaves the screen usable, so this stays a warning
+     * — but it has to be visible, since nothing else reports it.
+     */
+    private onImageError(): void
     {
-        const loader = new ImageLoader(img, url);
-
-        loader.on('complete', callback);
-
-        return loader;
+        log.warn(`Failed to load image ${this._url}`);
     }
-
-    /**
-	 * AS3: avatarImageLoadCompleteHandler(_arg_1:Event):void
-	 */
-    private _onComplete = (): void =>
-    {
-        log.debug('Loaded image ' + this._url);
-        this.emit('complete', new ImageLoaderEvent(this._loader, this._url));
-    };
-
-    /**
-	 * AS3: onImageError(_arg_1:ErrorEvent):void
-	 */
-    private _onError = (): void =>
-    {
-        log.warn('Failed to load image ' + this._url);
-    };
 }

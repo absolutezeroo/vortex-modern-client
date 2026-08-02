@@ -1,314 +1,363 @@
 /**
  * AvatarView
  *
- * @see sources/win63_2021_version/login/AvatarView.as
- * @see vortex-client/src/onBoardingHc/steps/OnBoardingHcStepAvatarSelect.as
+ * AS3: sources/WIN63-202607011411-782849652/src/login/AvatarView.as
  *
- * Avatar selection screen (SCREEN_AVATARS = 3).
- * Redesigned as a vertical list of character rows (name + small avatar icon +
- * a checkmark on the selected row) in the split-screen's right-hand column,
- * matching the modern habbo.com "Select a Character" screen — see
- * login-ui.scss header comment for why this replaced AS3's horizontal
- * thumbnail strip with glow/halo highlight bitmaps.
+ * The character picker (SCREEN_AVATARS = 3), shown when the account has more than one avatar. Up
+ * to seven avatars are laid out in a row as habbo-imaging renders, with a glow and a halo bitmap
+ * tracking the selected one and an information balloon underneath carrying its name and motto.
  *
- * Row thumbnails use AS3's original approach — a habbo-imaging HTTP endpoint
- * fetched via <img> — rather than client-side rendering through
- * avatarRenderManager. This was briefly replaced with client-side canvas
- * rendering because the emulator had no working habbo-imaging endpoint at
- * all; now that one exists (nitro-imager, proxied through the assets host —
- * see habbo.imaging.avatar.url in common_configuration_txt.txt), the
- * AS3-faithful approach is back and is simpler and lighter than composing a
- * full avatar client-side just for a 32px list icon.
- *
- * AS3 properties:
- * - _context: ILoginContext
- * - _SafeStr_4547: TextField (title)
- * - _saveButton: ColouredButton ("gfreen")
- * - _cancelButton: ColouredButton ("red")
- * - _SafeStr_527: Boolean (init guard)
- * - _SafeStr_1672: Vector.<AvatarData>
- * - _SafeStr_4550: int (selected index)
- * - _createButton: ColouredButton ("gfreen", "${login.select_avatar.create_avatar}")
+ * Each avatar starts as `placeholder_avatar` with the remote image loading behind it; the
+ * placeholder is removed when the image lands (`removeChildAt(0)`).
  */
-import type {ILoginContext} from './ILoginContext';
+import {Logger} from '@core/utils/Logger';
 import type {AvatarData} from '@habbo/communication/login/AvatarData';
+import {Bitmap} from '../onBoardingHcUi/display/Bitmap';
+import type {DisplayObject} from '../onBoardingHcUi/display/DisplayObject';
+import type {DisplayMouseEvent} from '../onBoardingHcUi/display/DisplayObject';
+import {Sprite} from '../onBoardingHcUi/display/DisplayObjectContainer';
+import {Rectangle} from '../onBoardingHcUi/display/Geom';
+import {Timer} from '../onBoardingHcUi/display/Timer';
+import {ColouredButton} from '../onBoardingHcUi/ColouredButton';
+import {LoaderUI} from '../onBoardingHcUi/LoaderUI';
+import type {LocalizedTextField} from '../onBoardingHcUi/LocalizedTextField';
+import {LoginAssets} from '../onBoardingHcUi/LoginAssets';
+import type {ILoginContext} from './ILoginContext';
+import {ImageLoader} from './ImageLoader';
+import type {ImageLoaderEvent} from './ImageLoaderEvent';
 
-export class AvatarView
+const log = Logger.getLogger('client.login.AvatarView');
+
+export class AvatarView extends Sprite
 {
+    // AS3: _context
     private _context: ILoginContext;
-    private _root: HTMLDivElement;
 
-    /** AS3: _saveButton — ColouredButton("gfreen") */
-    private _saveButton: HTMLButtonElement;
+    // AS3: _titleField
+    private _titleField: LocalizedTextField | null = null;
 
-    /** AS3: _cancelButton — ColouredButton("red") */
-    private _cancelButton: HTMLButtonElement;
+    // AS3: _saveButton
+    private _saveButton: ColouredButton | null = null;
 
-    /** AS3: _createButton — ColouredButton("gfreen", "${login.select_avatar.create_avatar}") */
-    private _createButton: HTMLButtonElement;
+    // AS3: _cancelButton
+    private _cancelButton: ColouredButton | null = null;
 
-    /** AS3: _SafeStr_527 — init guard */
-    private _SafeStr_527: boolean = false;
+    // AS3: _initialized
+    private _initialized: boolean = false;
 
-    /** AS3: _SafeStr_1672 — Vector.<AvatarData> */
-    private _SafeStr_1672: AvatarData[] = [];
+    // AS3: _avatars
+    private _avatars: AvatarData[] | null = null;
 
-    /** AS3: _SafeStr_4550 — selected avatar index */
-    private _SafeStr_4550: number = 0;
+    // AS3: _spaceBetweenImages
+    private _spaceBetweenImages: number = 10;
 
-    private _listElement: HTMLDivElement | null = null;
-    private _rowElements: HTMLButtonElement[] = [];
+    // AS3: _baseUrl
+    private _baseUrl: string = '';
 
-    private _disposed: boolean = false;
+    // AS3: _informationPanel
+    private _informationPanel: Sprite | null = null;
 
-    /**
-	 * AS3: AvatarView(_arg_1:ILoginContext)
-	 */
+    // AS3: _avatarMotto
+    private _avatarMotto: LocalizedTextField | null = null;
+
+    // AS3: _avatarName
+    private _avatarName: LocalizedTextField | null = null;
+
+    // AS3: _selectedIndex
+    private _selectedIndex: number = 0;
+
+    // AS3: _avatarImages
+    private _avatarImages: Sprite[] = [];
+
+    // AS3: _avatarHalo
+    private _avatarHalo: Bitmap | null = null;
+
+    // AS3: _avatarGlow
+    private _avatarGlow: Bitmap | null = null;
+
+    // AS3: AvatarView(_arg_1:ILoginContext)
     constructor(context: ILoginContext)
     {
+        super();
+
         this._context = context;
-        this._root = document.createElement('div');
-        this._saveButton = document.createElement('button');
-        this._cancelButton = document.createElement('button');
-        this._createButton = document.createElement('button');
+        this.init();
+        this.addEventListener('addedToStage', this._onAddedToStage);
     }
 
-    get element(): HTMLDivElement
+    // AS3: set baseUrl(_arg_1:String)
+    public set baseUrl(value: string)
     {
-        return this._root;
+        this._baseUrl = value;
     }
 
     /**
-	 * AS3: init()
-	 */
+     * AS3: init()
+     *
+     * Resets the selection on every call — the guard below only protects the construction.
+     */
     public init(): void
     {
-        if(this._SafeStr_527) return;
+        this._selectedIndex = 0;
 
-        this._SafeStr_527 = true;
+        if(this._initialized) return;
 
+        this._initialized = true;
+        this._informationPanel = new Sprite();
+        this.addChild(this._informationPanel);
+
+        const balloon = LoaderUI.createBalloon(640, 100, 0, false, 995918, 'none');
+
+        this._informationPanel.addChild(balloon);
+        this._informationPanel.y = 180;
+        this._avatarMotto = LoaderUI.createTextField('', 18, 8309486, false);
+        this._avatarName = LoaderUI.createTextField('', 20, 16777215, false, true, false, false);
+        this._avatarName.width = 260;
+        this._avatarName.x = 50;
+        this._avatarMotto.x = 50;
+        this._avatarMotto.width = 260;
+        this._informationPanel.addChild(this._avatarMotto);
+        this._informationPanel.addChild(this._avatarName);
+        LoaderUI.lineUpVertically(balloon, 15 - balloon.height, this._avatarName, 20, this._avatarMotto);
+
+        this._avatarGlow = new Bitmap(LoginAssets.get('avatar_glow'));
+
+        // AS3 blendMode "add" — Canvas2D spells additive blending "lighter".
+        this._avatarGlow.blendMode = 'lighter';
+        this._avatarGlow.visible = false;
+        this._avatarHalo = new Bitmap(LoginAssets.get('avatar_halo'));
+        this._avatarHalo.blendMode = 'overlay';
+        this._avatarHalo.visible = false;
         this.addTitleField();
-
-        this._listElement = document.createElement('div');
-        this._listElement.className = 'habbo-char-list';
-        this._root.appendChild(this._listElement);
-
+        this.addChild(this._avatarHalo);
+        this.addChild(this._avatarGlow);
         this.addButtons();
     }
 
-    /**
-	 * AS3: addTitleField()
-	 * Creates title: "${connection.login.account.choose}" — white 40px bold
-	 */
-    private addTitleField(): void
-    {
-        const title = document.createElement('div');
-
-        title.className = 'habbo-title';
-        // AS3: "${connection.login.account.choose}"
-        title.textContent = 'Select a Character';
-        this._root.appendChild(title);
-
-        const subtitle = document.createElement('div');
-
-        subtitle.className = 'habbo-subtitle-line';
-        subtitle.textContent = 'Choose from your list of characters to play.';
-        this._root.appendChild(subtitle);
-    }
-
-    /**
-	 * AS3: addButtons()
-	 */
+    // AS3: addButtons()
     public addButtons(): void
     {
-        const container = document.createElement('div');
-
-        container.className = 'habbo-btn-row';
-
-        // AS3: _cancelButton = new ColouredButton("red", "${generic.cancel}", ...)
-        this._cancelButton.className = 'habbo-btn habbo-btn--red';
-        this._cancelButton.textContent = 'Back';
-        this._cancelButton.addEventListener('click', this._onCancel);
-        container.appendChild(this._cancelButton);
-
-        // AS3: _createButton = new ColouredButton("gfreen", "${login.select_avatar.create_avatar}", ...)
-        this._createButton.className = 'habbo-link';
-        this._createButton.textContent = 'Create a new character';
-        this._createButton.addEventListener('click', this._onCreateAvatar);
-        container.appendChild(this._createButton);
-
-        // AS3: _saveButton = new ColouredButton("gfreen", "${connection.login.play}", ...)
-        this._saveButton.className = 'habbo-btn habbo-btn--green habbo-btn--arrow';
-        this._saveButton.textContent = 'Play!';
-        // AS3: _saveButton.active = false
-        this._saveButton.disabled = true;
-        this._saveButton.addEventListener('click', this._onChooseAvatar);
-        container.appendChild(this._saveButton);
-
-        this._root.appendChild(container);
+        this._cancelButton = new ColouredButton(
+            'red',
+            '${generic.cancel}',
+            new Rectangle(0, 300, 0, 40),
+            true,
+            this._onCancel,
+            14211288
+        );
+        this.addChild(this._cancelButton);
+        this._saveButton = new ColouredButton(
+            'gfreen',
+            '${connection.login.play}',
+            new Rectangle(0, 300, 0, 40),
+            true,
+            this._onChooseAvatar,
+            14211288
+        );
+        this._saveButton.active = false;
+        this.addChild(this._saveButton);
     }
 
     /**
-	 * AS3: populateAvatars(_arg_1:Vector.<AvatarData>)
-	 * Populates the character list.
-	 */
+     * AS3: populateAvatars(_arg_1:Vector.<AvatarData>)
+     *
+     * Seven at most — AS3 breaks on `index > 6`.
+     */
     public populateAvatars(avatars: AvatarData[]): void
     {
-        if(!this._listElement) return;
+        this._avatarImages = [];
+        this._avatars = avatars;
 
-        for(const row of this._rowElements)
+        let index = 0;
+
+        for(const avatar of avatars)
         {
-            row.removeEventListener('click', this._onAvatarClick);
+            if(index > 6) break;
+
+            log.debug(`Adding avatar: ${avatar.name}`);
+
+            const holder = new Sprite();
+            const placeholder = new Bitmap(LoginAssets.get('placeholder_avatar'));
+            const image = new Bitmap();
+
+            this._avatarImages.push(holder);
+            holder.addChild(placeholder);
+            holder.addChild(image);
+            this.addChild(holder);
+            holder.name = String(index);
+            holder.addEventListener('click', this._onAvatarClick);
+            holder.x = (index + 1) * this._spaceBetweenImages + index * 100;
+            holder.y = 50;
+            ImageLoader.createLoader(image, this.getAvatarUrl(avatar), this._avatarImageLoadCompleteHandler);
+            index++;
         }
 
-        this._rowElements = [];
-        this._listElement.innerHTML = '';
-        this._SafeStr_1672 = avatars;
-
-        avatars.forEach((avatar, index) =>
+        if(avatars.length > 0)
         {
-            const row = document.createElement('button');
+            this.updateDescription();
+            this._selectedIndex = 0;
 
-            row.className = 'habbo-char-row';
-            row.dataset.index = String(index);
+            if(this._saveButton)
+            {
+                this._saveButton.active = true;
+            }
 
-            const thumb = document.createElement('img');
+            if(this._avatarGlow) this._avatarGlow.visible = true;
 
-            thumb.className = 'habbo-char-row__thumb';
-            thumb.alt = '';
-            thumb.draggable = false;
-            thumb.src = this.getAvatarUrl(avatar);
-            row.appendChild(thumb);
+            if(this._avatarHalo) this._avatarHalo.visible = true;
 
-            const name = document.createElement('span');
+            this.hilightAvatar(this._avatarImages[this._selectedIndex]);
 
-            name.className = 'habbo-char-row__name';
-            name.textContent = avatar.name;
-            row.appendChild(name);
+            return;
+        }
 
-            const check = document.createElement('span');
+        if(this._saveButton)
+        {
+            this._saveButton.active = false;
+        }
+    }
 
-            check.className = 'habbo-char-row__check';
-            check.textContent = '✓';
-            check.style.visibility = 'hidden';
-            row.appendChild(check);
+    // AS3: addTitleField()
+    private addTitleField(): void
+    {
+        if(this._titleField) return;
 
-            row.addEventListener('click', this._onAvatarClick);
-            this._listElement!.appendChild(row);
-            this._rowElements.push(row);
-        });
-
-        this._SafeStr_4550 = 0;
-        this._saveButton.disabled = avatars.length === 0;
-        this.updateSelection();
+        this._titleField = LoaderUI.createTextField(
+            '${connection.login.account.choose}',
+            40,
+            16777215,
+            false,
+            true,
+            false,
+            false,
+            'left'
+        );
+        this._titleField.x = 0;
+        this._titleField.y = 0;
+        this._titleField.width = 500;
+        this._titleField.multiline = false;
+        this._titleField.thickness = 50;
+        this.addChild(this._titleField);
     }
 
     /**
-	 * AS3: onAvatarClick(_arg_1:MouseEvent)
-	 */
-    private _onAvatarClick = (e: Event): void =>
+     * AS3: getAvatarUrl(_arg_1:AvatarData):String
+     *
+     * Against a local web API there is no imaging endpoint to hit, so AS3 falls back to
+     * habbo.com's and renders the figure string instead of the user name.
+     */
+    private getAvatarUrl(avatar: AvatarData): string
     {
-        const target = e.currentTarget as HTMLButtonElement;
+        let url = `${this._baseUrl}/habbo-imaging/avatarimage?user=${avatar.name}`;
 
-        this._SafeStr_4550 = parseInt(target.dataset.index ?? '0', 10);
-        this._saveButton.disabled = false;
-        this.updateSelection();
+        if(this._baseUrl.indexOf('local') > -1 || this._baseUrl.indexOf('127.0.0.1') > -1)
+        {
+            url = `https://www.habbo.com/habbo-imaging/avatarimage?size=m&figure=${avatar.figure}&direction=2`;
+        }
+
+        return url;
+    }
+
+    // AS3: updateDescription()
+    private updateDescription(): void
+    {
+        if(this._avatars == null || this._avatars.length === 0) return;
+
+        const avatar = this._avatars[this._selectedIndex];
+
+        if(this._avatarName) this._avatarName.text = avatar.name;
+
+        if(this._avatarMotto) this._avatarMotto.text = avatar.motto;
+    }
+
+    /**
+     * AS3: hilightAvatar(_arg_1:DisplayObject)
+     *
+     * The glow sits centred on the avatar, the halo below its feet.
+     */
+    private hilightAvatar(target: DisplayObject | null): void
+    {
+        if(!target || !this._avatarGlow || !this._avatarHalo) return;
+
+        const centreX = Math.trunc(target.x + target.width / 2);
+        const centreY = Math.trunc(target.y + target.height / 2);
+
+        this._avatarGlow.x = centreX - this._avatarGlow.width / 2;
+        this._avatarGlow.y = centreY - this._avatarGlow.height / 2 + 15;
+        this._avatarHalo.x = centreX - this._avatarHalo.width / 2;
+        this._avatarHalo.y = centreY + this._avatarHalo.height - 40;
+    }
+
+    // AS3: onAddedToStage(_arg_1:Event)
+    private _onAddedToStage = (): void =>
+    {
+        const timer = new Timer(20, 1);
+
+        timer.addEventListener('timerComplete', this._onAlignElements);
+        timer.start();
+    };
+
+    // AS3: onAlignElements(_arg_1:TimerEvent)
+    private _onAlignElements = (): void =>
+    {
+        if(!this._saveButton || !this._cancelButton || !this._informationPanel) return;
+
+        LoaderUI.lineUpVerticallyRevers(this._saveButton, 20, this._informationPanel);
+        LoaderUI.alignAnchors(this._informationPanel, 0, 'r', this._saveButton);
+        LoaderUI.lineUpHorizontallyRevers(this._saveButton, 20, this._cancelButton);
+        log.debug(
+            '(avatar) Information panel: '
+            + `${[this._informationPanel.x, this._informationPanel.y, this._informationPanel.width, this._informationPanel.height]}`
+        );
+    };
+
+    // AS3: onAvatarClick(_arg_1:MouseEvent)
+    private _onAvatarClick = (event: DisplayMouseEvent): void =>
+    {
+        this._selectedIndex = parseInt(String(event.currentTarget?.name ?? '0'), 10);
+        this.updateDescription();
+        this.hilightAvatar(this._avatarImages[this._selectedIndex]);
+
+        if(this._saveButton)
+        {
+            this._saveButton.active = true;
+        }
     };
 
     /**
-	 * Highlights the selected row (AS3: hilightAvatar() positioned the glow/halo bitmaps;
-	 * the list redesign just toggles a selected-row style instead).
-	 */
-    private updateSelection(): void
+     * AS3: avatarImageLoadCompleteHandler(_arg_1:Event)
+     *
+     * `removeChildAt(0)` drops the placeholder now that the real image is under it.
+     */
+    private _avatarImageLoadCompleteHandler = (event: ImageLoaderEvent): void =>
     {
-        this._rowElements.forEach((row, index) =>
-        {
-            const selected = index === this._SafeStr_4550;
+        event.loader.parent?.removeChildAt(0);
 
-            row.classList.toggle('is-selected', selected);
+        if(this._avatarGlow) this._avatarGlow.visible = true;
 
-            const check = row.querySelector<HTMLSpanElement>('.habbo-char-row__check');
+        if(this._avatarHalo) this._avatarHalo.visible = true;
 
-            if(check)
-            {
-                check.style.visibility = selected ? 'visible' : 'hidden';
-            }
-        });
-    }
+        this.hilightAvatar(this._avatarImages[this._selectedIndex]);
+    };
 
-    /**
-	 * AS3: getAvatarUrl(_arg_1:AvatarData):String
-	 * Builds the habbo-imaging URL for a small head-only avatar icon.
-	 *
-	 * AS3 branched on baseUrl containing "local"/"127.0.0.1" to fall back to
-	 * real habbo.com, and used a "user="-keyed lookup against the live
-	 * production imaging service otherwise. Neither branch applies here: our
-	 * imaging service (nitro-imager) doesn't do server-side username lookups,
-	 * so this always builds a "figure="-keyed URL against our own endpoint.
-	 */
-    private getAvatarUrl(avatar: AvatarData): string
-    {
-        const baseUrl = this._context.getProperty('habbo.imaging.avatar.url') ?? '/habbo-imaging/avatarimage';
-        const params = new URLSearchParams({
-            figure: avatar.figure,
-            gender: avatar.gender || 'M',
-            direction: '2',
-            headonly: '1',
-            size: 's',
-        });
-
-        return `${baseUrl}?${params.toString()}`;
-    }
-
-    /**
-	 * AS3: onCancel(_arg_1:Button)
-	 * Go back to Login screen.
-	 */
+    // AS3: onCancel(_arg_1:Button)
     private _onCancel = (): void =>
     {
         this._context.showScreen(2);
     };
 
-    /**
-	 * AS3: onChooseAvatar(_arg_1:Button)
-	 * Confirms avatar selection and triggers login.
-	 */
+    // AS3: onChooseAvatar(_arg_1:Button)
     private _onChooseAvatar = (): void =>
     {
-        if(this._SafeStr_1672.length > 0)
-        {
-            this._context.loginWithAvatar(this._SafeStr_1672[this._SafeStr_4550]);
-        }
+        if(!this._avatars) return;
+
+        this._context.loginWithAvatar(this._avatars[this._selectedIndex]);
     };
 
-    /**
-	 * AS3: onCreateAvatar(createAvatarButton:Button) — OnBoardingHcStepAvatarSelect.as
-	 * Go to the AvatarCreate screen.
-	 */
-    private _onCreateAvatar = (): void =>
-    {
-        this._context.showScreen(6);
-    };
-
-    /**
-	 * AS3: dispose()
-	 */
+    // AS3: dispose()
     public dispose(): void
     {
-        if(this._disposed) return;
-
-        this._disposed = true;
-
-        for(const row of this._rowElements)
-        {
-            row.removeEventListener('click', this._onAvatarClick);
-        }
-
-        this._cancelButton.removeEventListener('click', this._onCancel);
-        this._saveButton.removeEventListener('click', this._onChooseAvatar);
-        this._createButton.removeEventListener('click', this._onCreateAvatar);
-        this._rowElements = [];
-        this._SafeStr_1672.length = 0;
-        this._root.remove();
+        this._saveButton?.dispose();
+        this._cancelButton?.dispose();
     }
 }

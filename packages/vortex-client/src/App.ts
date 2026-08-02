@@ -17,6 +17,9 @@ import type {RoomDesktop} from '@habbo/ui/RoomDesktop';
 import {VortexLoadingScreen} from './VortexLoadingScreen';
 import {AssetBundle} from './AssetBundle';
 import {LoginFlow} from './login/LoginFlow';
+import {OnBoardingHcFlow} from './onBoardingHc/OnBoardingHcFlow';
+import {Stage} from './onBoardingHcUi/display/Stage';
+import {LoginAssets} from './onBoardingHcUi/LoginAssets';
 import {ChangelogWindow} from './changelog/ChangelogWindow';
 import {installWindowDebugger} from './debugger/WindowDebuggerOverlay';
 import {
@@ -107,6 +110,27 @@ const EMBEDDED_AVATAR_XML_ASSET_NAMES = [
     'HabboAvatarFigure',
     'HabboAvatarGeometry',
     'HabboAvatarPartSets',
+];
+
+/**
+ * The `default_localizations*` embeds declared by `HabboLocalizationCom.as`, by asset name.
+ *
+ * `default_localizations` is the english-only global file; the rest are per-language and are
+ * layered on top of it (see HabboLocalizationManager.loadDefaultEmbedLocalizations()).
+ */
+const EMBEDDED_LOCALIZATION_ASSET_NAMES = [
+    'default_localizations',
+    'default_localizations_de',
+    'default_localizations_dk',
+    'default_localizations_en',
+    'default_localizations_es',
+    'default_localizations_fi',
+    'default_localizations_fr',
+    'default_localizations_it',
+    'default_localizations_nl',
+    'default_localizations_no',
+    'default_localizations_pt',
+    'default_localizations_tr',
 ];
 
 function parseJson<T>(value: string): T | null 
@@ -209,6 +233,20 @@ function readEmbeddedConfigurationAssets(bundle: AssetBundle): Record<string, st
     if(localizationConfiguration !== null)
     {
         assets.localization_configuration = localizationConfiguration;
+    }
+
+    // AS3: HabboLocalizationCom's default_localizations* embeds, read by
+    // HabboLocalizationManager.loadDefaultEmbedLocalizations(). These are the only texts the login
+    // flow has — it runs before any external text file is fetched — so without them every login
+    // caption renders as its raw ${key}.
+    for(const assetName of EMBEDDED_LOCALIZATION_ASSET_NAMES)
+    {
+        const content = bundle.getText(`configurations/${assetName}_txt.txt`);
+
+        if(content !== null)
+        {
+            assets[assetName] = content;
+        }
     }
 
     const bundleKeys = bundle.listKeys();
@@ -867,6 +905,61 @@ export class VortexApp
         // 12. Start input and render loop
         this.setupMouseEvents();
         this.startRenderLoop();
+
+        // 13. New-user flow, if the server asked for it.
+        this.startOnBoardingIfRequired(vortex);
+    }
+
+    /**
+     * Runs the onboarding flow when the server's login actions call for it.
+     *
+     * AS3: HabboLandingView.as::onAvatarRendererReady() — `isOnboardingRequired(suggestedLoginActions)`
+     * is `actions.indexOf(0) >= 0 || actions.indexOf(1) >= 0`, i.e. "change your name" or "pick a
+     * room". AS3 hangs this off the landing view because that is the component holding the avatar
+     * renderer; here it lives with the other client-side flows, since the flow is display code and
+     * the engine may not reach into it.
+     *
+     * The toolbar is hidden for the duration, as `HabboLandingView.activate()` does.
+     */
+    private startOnBoardingIfRequired(vortex: typeof Vortex.instance): void
+    {
+        const actions = (vortex.habboCommunication.suggestedLoginActions ?? []) as number[];
+
+        if(actions.indexOf(OnBoardingHcFlow.AVATAR_NAME_CHANGE) < 0
+            && actions.indexOf(OnBoardingHcFlow.NEW_ROOM_SELECT) < 0)
+        {
+            return;
+        }
+
+        const container = document.getElementById('vortex-ui');
+
+        if(!container)
+        {
+            log.warn('No #vortex-ui container to mount the onboarding flow in');
+
+            return;
+        }
+
+        void LoginAssets.load(this._imageBundle!).then(() =>
+        {
+            const stage = new Stage(container);
+            const flow = new OnBoardingHcFlow(
+                vortex.windowManager.avatarRenderer,
+                vortex.localization,
+                vortex.habboCommunication
+            );
+
+            vortex.toolbar.setToolbarState(HabboToolbarEnum.TOOLBAR_STATE_HIDDEN);
+            stage.addChild(flow);
+            flow.setHcVisibility(false);
+            flow.init(actions);
+            flow.flowEvents.once(OnBoardingHcFlow.NEW_USER_FLOW_FINISHED_EVENT, () =>
+            {
+                flow.dispose();
+                stage.dispose();
+                vortex.toolbar.setToolbarState(HabboToolbarEnum.TOOLBAR_STATE_HOTEL_VIEW);
+            });
+        });
     }
 
     /**
@@ -1037,16 +1130,33 @@ export class VortexApp
      * @see sources/win63_2021_version/login/LoginFlow.as
      * @returns Promise that resolves when the login flow finishes
      */
-    private showLoginFlow(vortexConfig: IVortexConfig): Promise<void>
+    private async showLoginFlow(vortexConfig: IVortexConfig): Promise<void>
     {
+        const container = document.getElementById('vortex-ui');
+
+        if(!container)
+        {
+            throw new Error('[VortexApp] No #vortex-ui container to mount the login flow in');
+        }
+
+        // AS3 reaches its login artwork through [Embed]ed classes, which are ready as soon as the
+        // SWF loads. Ours has to be decoded out of the image bundle first — the bundle is already
+        // downloaded by this point, so this only costs the decode.
+        if(this._imageBundle)
+        {
+            await LoginAssets.load(this._imageBundle);
+        }
+
+        const stage = new Stage(container);
+
         return new Promise((resolve, reject) =>
         {
-            const loginFlow = new LoginFlow(
-                vortexConfig.embeddedConfigurations ?? {},
-                () => this.bootstrapEngine(vortexConfig).then(() => undefined)
-            );
+            const loginFlow = new LoginFlow(vortexConfig.embeddedConfigurations ?? {}, container);
 
-            void loginFlow.init();
+            // AS3: HabboAir adds the flow to the stage, then calls init() — which reads `stage`.
+            stage.addChild(loginFlow);
+
+            void loginFlow.mount().then(() => loginFlow.init());
 
             loginFlow.loginEvents.once(LoginFlow.LOGIN_FLOW_FINISHED_EVENT, () =>
             {
@@ -1071,6 +1181,8 @@ export class VortexApp
                     window.VortexConfig.connection.ssoTicket = token;
 
                     loginFlow.dispose();
+                    stage.dispose();
+                    LoginAssets.dispose();
                     resolve();
                 }
                 catch (error)

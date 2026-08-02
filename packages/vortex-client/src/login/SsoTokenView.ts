@@ -1,331 +1,269 @@
 /**
  * SsoTokenView
  *
- * @see sources/win63_2021_version/login/SsoTokenView.as
+ * AS3: sources/WIN63-202607011411-782849652/src/login/SsoTokenView.as
  *
- * SSO token input screen (SCREEN_SSO_TOKEN = 4).
- * User pastes an SSO token in format "hh<env>.<uuid1>.<uuid2>".
- * Validates on keystroke, extracts environment ID, and triggers login.
+ * The screen the login flow opens on (SCREEN_SSO_TOKEN = 4): paste a ticket of the form
+ * `hh<env>.<uuid>.<uuid>` and play. Every keystroke re-validates it, and a valid one previews the
+ * ticket's environment (localisation only) before anything is committed.
  *
- * AS3 properties:
- * - _context: LoginFlow
- * - _SafeStr_4547: TextField (title)
- * - _saveButton: ColouredButton ("gfreen")
- * - _cancelButton: ColouredButton ("red")
- * - _loginAreaWidth: int = 640
- * - _SafeStr_4570: InputField (token input)
- * - _SafeStr_527: Boolean (init guard)
+ * Note this view takes `LoginFlow`, not `ILoginContext` — it calls `updateEnvironment()`, which is
+ * not part of the interface.
  */
-import type {ILoginContext} from './ILoginContext';
+import {Logger} from '@core/utils/Logger';
+import {Sprite} from '../onBoardingHcUi/display/DisplayObjectContainer';
+import type {DisplayKeyboardEvent} from '../onBoardingHcUi/display/DisplayObject';
+import {Rectangle} from '../onBoardingHcUi/display/Geom';
+import {Timer} from '../onBoardingHcUi/display/Timer';
+import {ColouredButton} from '../onBoardingHcUi/ColouredButton';
+import {InputField} from '../onBoardingHcUi/InputField';
+import {LoaderUI} from '../onBoardingHcUi/LoaderUI';
+import type {LocalizedTextField} from '../onBoardingHcUi/LocalizedTextField';
+import type {LoginFlow} from './LoginFlow';
 
-export class SsoTokenView
+const log = Logger.getLogger('client.login.SsoTokenView');
+
+export class SsoTokenView extends Sprite
 {
-    private _context: ILoginContext;
-    private _root: HTMLFormElement;
+    // AS3: _context
+    private _context: LoginFlow;
 
-    /** AS3: _SafeStr_4547 — title TextField */
-    private _SafeStr_4547: HTMLDivElement | null = null;
+    // AS3: _titleField
+    private _titleField: LocalizedTextField | null = null;
 
-    /** AS3: _saveButton — ColouredButton("gfreen", "${connection.login.play}") */
-    private _saveButton: HTMLButtonElement;
+    // AS3: _saveButton
+    private _saveButton: ColouredButton | null = null;
 
-    /** AS3: _cancelButton — ColouredButton("red", "${generic.cancel}") */
-    private _cancelButton: HTMLButtonElement;
+    // AS3: _cancelButton
+    private _cancelButton: ColouredButton | null = null;
 
-    /** AS3: _registerButton — ColouredButton("gfreen", "${connection.login.register}") (OnBoardingHcStepSsoToken.as) */
-    private _registerButton: HTMLButtonElement;
+    // AS3: _loginAreaWidth
+    private _loginAreaWidth: number = 640;
 
-    /** AS3: _SafeStr_4570 — InputField (token input) */
-    private _SafeStr_4570: HTMLInputElement;
+    // AS3: _tokenField
+    private _tokenField: InputField | null = null;
 
-    /** AS3: _SafeStr_527 — init guard */
-    private _SafeStr_527: boolean = false;
+    // AS3: _initialized
+    private _initialized: boolean = false;
 
-    private _disposed: boolean = false;
-
-    /**
-	 * AS3: SsoTokenView(_arg_1:LoginFlow)
-	 */
-    constructor(context: ILoginContext)
+    // AS3: SsoTokenView(_arg_1:LoginFlow)
+    constructor(context: LoginFlow)
     {
+        super();
+
         this._context = context;
-        this._root = document.createElement('form');
-        this._root.addEventListener('submit', this._onSubmit);
-        this._SafeStr_4570 = document.createElement('input');
-        this._saveButton = document.createElement('button');
-        this._cancelButton = document.createElement('button');
-        this._registerButton = document.createElement('button');
+        this.addEventListener('addedToStage', this._onAddedToStage);
+        this.init();
     }
 
-    get element(): HTMLFormElement
-    {
-        return this._root;
-    }
-
-    /**
-	 * AS3: init()
-	 * Guard prevents double initialization (_SafeStr_527 pattern).
-	 */
+    // AS3: init()
     public init(): void
     {
-        if(this._SafeStr_527) return;
+        if(this._initialized) return;
 
-        this._SafeStr_527 = true;
-
+        this._initialized = true;
         this.addTitleField();
         this.addInputFields();
-        this.addHelpLinks();
         this.addButtons();
     }
 
-    /**
-	 * AS3: addTitleField()
-	 * Creates title: "${connection.login.title}" — white 40px bold
-	 * AS3: LoaderUI.createTextField("${connection.login.title}", 40, 0xFFFFFF, false, true, false, false, "left")
-	 */
-    private addTitleField(): void
+    // AS3: addButtons()
+    public addButtons(): void
     {
-        if(!this._SafeStr_4547)
+        this._cancelButton = new ColouredButton(
+            'red',
+            '${generic.cancel}',
+            new Rectangle(0, 300, 0, 40),
+            true,
+            this._onCancel,
+            14211288
+        );
+        this.addChild(this._cancelButton);
+        this._saveButton = new ColouredButton(
+            'gfreen',
+            '${connection.login.play}',
+            new Rectangle(0, 300, 0, 40),
+            true,
+            this._onLogin,
+            14211288
+        );
+        this._saveButton.active = false;
+        this.addChild(this._saveButton);
+    }
+
+    // AS3: ready()
+    public ready(): void
+    {
+        if(this._saveButton)
         {
-            this._SafeStr_4547 = document.createElement('div');
-            this._SafeStr_4547.className = 'habbo-title';
-            // AS3: "${connection.login.title}"
-            this._SafeStr_4547.textContent = 'Login';
-            this._root.appendChild(this._SafeStr_4547);
-
-            const subtitle = document.createElement('div');
-
-            subtitle.className = 'habbo-subtitle-line';
-            subtitle.textContent = 'Paste your SSO ticket to jump back in.';
-            this._root.appendChild(subtitle);
+            this._saveButton.active = true;
         }
     }
 
-    /**
-	 * AS3: onRegister flow, surfaced as a "Need some help?" link instead of the
-	 * full-size ColouredButton AS3 uses — see login-ui.scss header comment.
-	 */
-    private addHelpLinks(): void
+    // AS3: addTitleField()
+    private addTitleField(): void
     {
-        const heading = document.createElement('div');
+        if(this._titleField) return;
 
-        heading.className = 'habbo-help-heading';
-        heading.textContent = 'Need some help?';
-        this._root.appendChild(heading);
-
-        const list = document.createElement('div');
-
-        list.className = 'habbo-link-list';
-
-        this._registerButton.type = 'button';
-        this._registerButton.className = 'habbo-link';
-        this._registerButton.textContent = "I don't have an account";
-        this._registerButton.addEventListener('click', this._onRegister);
-        list.appendChild(this._registerButton);
-
-        this._root.appendChild(list);
+        this._titleField = LoaderUI.createTextField(
+            '${connection.login.title}',
+            40,
+            16777215,
+            false,
+            true,
+            false,
+            false,
+            'left'
+        );
+        this._titleField.x = 0;
+        this._titleField.y = 0;
+        this._titleField.width = 500;
+        this._titleField.multiline = false;
+        this._titleField.thickness = 50;
+        this.addChild(this._titleField);
     }
 
-    /**
-	 * AS3: addInputFields()
-	 * Creates token input: InputField(_context, 640, "${connection.login.code.prompt}", "", "${connection.login.useTicket}", "", true)
-	 * The last param (true) = password mode
-	 */
+    // AS3: addInputFields()
     private addInputFields(): void
     {
-        const group = document.createElement('div');
-
-        group.className = 'habbo-field';
-
-        // Input — AS3: InputField with password=true, error="${connection.login.useTicket}"
-        this._SafeStr_4570.className = 'habbo-input';
-        this._SafeStr_4570.type = 'password';
-        this._SafeStr_4570.placeholder = 'SSO ticket';
-        this._SafeStr_4570.autocomplete = 'off';
-        this._SafeStr_4570.spellcheck = false;
-
-        // AS3: addEventListener("change", onInputChange) + addEventListener("keyDown", onInputKeyboardEvent)
-        // Enter-triggers-login (the AS3 keyDown behavior) is now handled by the
-        // form's native "submit" event (see constructor + _onSubmit) instead.
-        this._SafeStr_4570.addEventListener('input', this._onInputChange);
-
-        group.appendChild(this._SafeStr_4570);
-
-        // AS3: _SafeStr_4570.x = 0; _SafeStr_4570.y = 100;
-        this._root.appendChild(group);
+        this._tokenField = new InputField(
+            this._context,
+            this._loginAreaWidth,
+            '${connection.login.code.prompt}',
+            '',
+            '${connection.login.useTicket}',
+            '',
+            true
+        );
+        this.addChild(this._tokenField);
+        this._tokenField.addEventListener('change', this._onInputChange);
+        this._tokenField.addEventListener('keyDown', this._onInputKeyboardEvent);
+        this._tokenField.x = 0;
+        this._tokenField.y = 100;
     }
 
     /**
-	 * AS3: onInputKeyboardEvent(_arg_1:KeyboardEvent)
-	 * Native form submission (Enter key or Play button) triggers login if button is active.
-	 */
-    private _onSubmit = (e: SubmitEvent): void =>
+     * AS3: validateToken(_arg_1:Vector.<String>):Boolean
+     *
+     * A ticket is `<env>.<uuid>.<uuid>` with an optional fourth segment. The environment prefix
+     * has `hh` stripped and two aliases remapped (`br` → `pt`, `us` → `en`). On success the vector
+     * comes back as [environment, first, second].
+     */
+    private validateToken(parts: string[]): boolean
     {
-        e.preventDefault();
+        if(!this._tokenField) return false;
 
-        if(!this._saveButton.disabled)
+        const value = this._tokenField.text;
+
+        if(!value) return false;
+
+        if(value.length === 0) return false;
+
+        const segments = value.split('.');
+
+        if(segments.length !== 3 && segments.length !== 4) return false;
+
+        let environment = String(segments[0]).replace('hh', '');
+
+        environment = environment.replace('br', 'pt');
+        environment = environment.replace('us', 'en');
+        parts.push(environment);
+        parts.push(segments[1]);
+        parts.push(segments[2]);
+
+        return true;
+    }
+
+    // AS3: onAddedToStage(_arg_1:Event)
+    private _onAddedToStage = (): void =>
+    {
+        const timer = new Timer(20, 1);
+
+        timer.addEventListener('timerComplete', this._onAlignElements);
+        timer.start();
+    };
+
+    // AS3: onAlignElements(_arg_1:TimerEvent)
+    private _onAlignElements = (): void =>
+    {
+        if(!this._tokenField || !this._saveButton || !this._cancelButton) return;
+
+        LoaderUI.alignAnchors(this._tokenField, 0, 'r', this._saveButton);
+        LoaderUI.alignAnchors(this._saveButton, -20 - this._cancelButton.width, 'l', this._cancelButton);
+        log.debug(
+            `(login) Buttons: ${[this._saveButton.x, this._saveButton.y, this._cancelButton.x, this._cancelButton.y]}`
+        );
+    };
+
+    // AS3: onInputKeyboardEvent(_arg_1:KeyboardEvent)
+    private _onInputKeyboardEvent = (event: DisplayKeyboardEvent): void =>
+    {
+        if(event.charCode !== 13) return;
+
+        if(this._saveButton && this._saveButton.active)
         {
             this._onLogin();
         }
     };
 
     /**
-	 * AS3: onInputChange(_arg_1:Event)
-	 * Validates token on every keystroke, enables/disables Play button.
-	 */
+     * AS3: onInputChange(_arg_1:Event)
+     *
+     * The `true` on `updateEnvironment` is AS3's preview flag: only the localisation is reloaded,
+     * nothing is written to storage and no host parameters change.
+     */
     private _onInputChange = (): void =>
     {
-        const result: string[] = [];
+        const parts: string[] = [];
 
-        if(this.validateToken(result))
+        if(this.validateToken(parts))
         {
-            // AS3: _context.updateEnvironment(_local_2[0], true)
-            this._context.updateEnvironment(result[0], true);
-            this._saveButton.disabled = false;
+            this._context.updateEnvironment(parts[0], true);
+
+            if(this._saveButton)
+            {
+                this._saveButton.active = true;
+            }
+
+            return;
         }
-        else
+
+        if(this._saveButton)
         {
-            this._saveButton.disabled = true;
+            this._saveButton.active = false;
         }
     };
 
-    /**
-	 * AS3: addButtons()
-	 * Creates Cancel (red) and Play (gfreen) buttons.
-	 */
-    public addButtons(): void
-    {
-        const container = document.createElement('div');
-
-        container.className = 'habbo-btn-row';
-
-        // AS3: _cancelButton = new ColouredButton("red", "${generic.cancel}", new Rectangle(0, 300, 0, 40), true, onCancel, 0xD8D8D8)
-        this._cancelButton.type = 'button';
-        this._cancelButton.className = 'habbo-btn habbo-btn--red';
-        this._cancelButton.textContent = 'Back';
-        this._cancelButton.addEventListener('click', this._onCancel);
-        container.appendChild(this._cancelButton);
-
-        // AS3: _saveButton = new ColouredButton("gfreen", "${connection.login.play}", ..., true, onLogin, ...)
-        this._saveButton.type = 'submit';
-        this._saveButton.className = 'habbo-btn habbo-btn--green habbo-btn--arrow';
-        this._saveButton.textContent = "Let's Go!";
-        // AS3: _saveButton.active = false
-        this._saveButton.disabled = true;
-        container.appendChild(this._saveButton);
-
-        this._root.appendChild(container);
-    }
-
-    /**
-	 * AS3: onRegister(registerButton:Button) — OnBoardingHcStepSsoToken.as
-	 * Go to the Register screen.
-	 */
-    private _onRegister = (): void =>
-    {
-        this._context.showScreen(5);
-    };
-
-    /**
-	 * AS3: onLogin(_arg_1:Button)
-	 * Validates token and calls context.initLoginWithSsoToken().
-	 * AS3: token = _local_2[1] + "." + _local_2[2]
-	 */
+    // AS3: onLogin(_arg_1:Button)
     private _onLogin = (): void =>
     {
-        const result: string[] = [];
+        const parts: string[] = [];
 
-        if(this.validateToken(result))
+        if(this.validateToken(parts))
         {
-            // AS3: _context.initLoginWithSsoToken(_local_2[0], _local_2[1] + "." + _local_2[2])
-            this._context.initLoginWithSsoToken(result[0], result[1] + '.' + result[2]);
+            this._context.initLoginWithSsoToken(parts[0], `${parts[1]}.${parts[2]}`);
+
+            return;
         }
-        else
+
+        if(this._saveButton)
         {
-            this._saveButton.disabled = true;
+            this._saveButton.active = false;
         }
     };
 
-    /**
-	 * AS3: validateToken(_arg_1:Vector.<String>):Boolean
-	 *
-	 * Strictly validates: exactly 3 parts separated by "."
-	 * Extracts environment from prefix: strip "hh", replace "br"→"pt", "us"→"en"
-	 * Pushes [envId, uuid1, uuid2] into the result vector.
-	 *
-	 * @param result - Output array: [envId, uuid1, uuid2]
-	 * @returns true if valid
-	 */
-    private validateToken(result: string[]): boolean
-    {
-        const text = this._SafeStr_4570.value;
-
-        if(!text) return false;
-        if(text.length === 0) return false;
-
-        const parts = text.split('.');
-
-        // AS3: if(_local_3.length != 3) return false
-        if(parts.length !== 3) return false;
-
-        // AS3: _local_2 = _local_3[0].replace("hh", "")
-        let envId = parts[0].replace('hh', '');
-
-        // AS3: _local_2 = _local_2.replace("br", "pt")
-        envId = envId.replace('br', 'pt');
-
-        // AS3: _local_2 = _local_2.replace("us", "en")
-        envId = envId.replace('us', 'en');
-
-        result.push(envId);
-        result.push(parts[1]);
-        result.push(parts[2]);
-
-        return true;
-    }
-
-    /**
-	 * AS3: onCancel(_arg_1:Button)
-	 * Go back to Environment screen.
-	 */
+    // AS3: onCancel(_arg_1:Button)
     private _onCancel = (): void =>
     {
         this._context.showScreen(1);
     };
 
-    /**
-	 * AS3: ready()
-	 * Enable the Play button.
-	 */
-    public ready(): void
-    {
-        if(this._saveButton)
-        {
-            this._saveButton.disabled = false;
-        }
-    }
-
-    /**
-	 * Focus the token input when the view is shown.
-	 */
-    public focus(): void
-    {
-        setTimeout(() => this._SafeStr_4570.focus(), 50);
-    }
-
-    /**
-	 * AS3: dispose()
-	 */
+    // AS3: dispose()
     public dispose(): void
     {
-        if(this._disposed) return;
-
-        this._disposed = true;
-
-        this._SafeStr_4570.removeEventListener('input', this._onInputChange);
-        this._root.removeEventListener('submit', this._onSubmit);
-        this._cancelButton.removeEventListener('click', this._onCancel);
-        this._registerButton.removeEventListener('click', this._onRegister);
-        this._root.remove();
+        if(this._tokenField)
+        {
+            this._tokenField.removeEventListener('change', this._onInputChange);
+        }
     }
 }

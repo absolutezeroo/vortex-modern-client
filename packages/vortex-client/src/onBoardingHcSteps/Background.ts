@@ -1,15 +1,12 @@
 /**
- * Background
+ * Background (onboarding)
  *
- * AS3: sources/WIN63-202607011411-782849652/src/login/Background.as
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/onBoardingHcSteps/Background.as
  *
- * The login flow's backdrop: a vertical gradient with the hitch tile repeated over it.
- *
- * The gradient's shape comes entirely from Flash's gradient box. With `createGradientBox(50, 100)`
- * rotated a quarter turn and then scaled to the stage, the two colour stops (ratios 127 and 255)
- * land at a quarter and a half of the stage height — so the top quarter is flat `#0C5A7F`, it
- * gradates down to `#0C3A65` at mid-height, and the bottom half is flat again (spread "pad").
- * Reading that off the ratios alone would put the transition in the wrong place.
+ * The new-user flow's backdrop. Byte-for-byte the same drawing as the login flow's `Background`
+ * (same gradient, same hitch tile) — AS3 keeps two classes because they sit in different packages
+ * and embed the tile separately, so the port keeps two as well rather than sharing one and losing
+ * the trace on either side.
  */
 import type {BitmapData} from '../onBoardingHcUi/display/BitmapData';
 import {Sprite} from '../onBoardingHcUi/display/DisplayObjectContainer';
@@ -42,9 +39,7 @@ export class Background extends Sprite
         return this._disposed;
     }
 
-    /**
-     * AS3: resize()
-     */
+    // AS3: resize()
     public resize(): void
     {
         const stage = this.stage;

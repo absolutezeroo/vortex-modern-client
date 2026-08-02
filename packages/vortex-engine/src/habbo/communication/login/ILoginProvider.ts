@@ -1,70 +1,48 @@
 /**
  * ILoginProvider
  *
- * @see sources/win63_2021_version/com/sulake/habbo/communication/login/ILoginProvider.as
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/login/ILoginProvider.as
  *
- * Interface for the login provider (WebApiLoginProvider).
- * Extends EventEmitter for SSO_TOKEN_AVAILABLE event dispatch.
+ * What the login flow may ask of the provider. AS3 extends `IEventDispatcher` for the one event it
+ * emits, `SSO_TOKEN_AVAILABLE`; this port carries that through eventemitter3, as everywhere else.
  */
 import type {IHabboCommunicationManager} from '../IHabboCommunicationManager';
 
 export interface ILoginProvider
 {
-    /**
-	 * AS3: init(communication)
-	 * Initialize the provider with the communication manager.
-	 */
-    init(communication?: IHabboCommunicationManager | null): void;
+    // AS3: function closeCaptcha():void
+    closeCaptcha(): void;
+
+    // AS3: function init(_arg_1:IHabboCommunicationManager):void
+    init(communication: IHabboCommunicationManager | null): void;
 
     /**
-	 * AS3: loginWithCredentials(email, password, captchaToken)
-	 * Login with email and password.
-	 */
-    loginWithCredentials(email: string, password: string): void;
+     * AS3: function loginWithCredentials(_arg_1:String, _arg_2:String, _arg_3:int=0):void
+     *
+     * `_arg_3` is stored and never read by the 701 provider; kept because it is part of the
+     * interface's shape.
+     */
+    loginWithCredentials(email: string, password: string, loginMode?: number): void;
 
-    /**
-	 * AS3: loginWithCredentialsWeb(uniqueId)
-	 * Select an avatar by unique ID after login.
-	 */
+    // AS3: function loginWithCredentialsWeb(_arg_1:String):void
     loginWithCredentialsWeb(uniqueId: string): void;
 
     /**
-	 * AS3: selectAvatarUniqueid(uniqueId)
-	 * Select an avatar by unique ID.
-	 */
+     * AS3: function selectAvatar(_arg_1:int):void
+     *
+     * Empty in `WebApiLoginProvider` — id-based selection was superseded by the uniqueId one.
+     */
+    selectAvatar(id: number): void;
+
+    // AS3: function selectAvatarUniqueid(_arg_1:String):void
     selectAvatarUniqueid(uniqueId: string): void;
 
-    /**
-	 * AS3: register(email, password, day, month, year, termsOfServiceAccepted, captchaToken)
-	 * Register a new account. Our port omits the birthdate/captcha fields not surfaced
-	 * by the onboarding register step.
-	 */
-    register(email: string, password: string): void;
-
-    /**
-	 * AS3: createAvatar(name, figure, gender)
-	 * Create the first avatar for a freshly registered account.
-	 */
-    createAvatar(name: string, figure: string, gender: string): void;
-
-    /**
-	 * AS3: checkName(name)
-	 * Check whether an avatar name is available.
-	 */
-    checkName(name: string): void;
-
-    /**
-	 * Subscribe to events.
-	 */
+    // TS-only: eventemitter3 subscription, standing in for AS3's IEventDispatcher.
     on(event: string, fn: (...args: any[]) => void): this;
 
-    /**
-	 * Unsubscribe from events.
-	 */
+    // TS-only: eventemitter3 unsubscription, standing in for AS3's IEventDispatcher.
     off(event: string, fn: (...args: any[]) => void): this;
 
-    /**
-	 * Dispose the provider.
-	 */
+    // TS-only: the port disposes its managers explicitly; AS3's provider is garbage-collected.
     dispose(): void;
 }

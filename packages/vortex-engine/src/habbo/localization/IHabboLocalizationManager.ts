@@ -27,6 +27,12 @@ export interface IHabboLocalizationManager extends ICoreLocalizationManager
     loadDefaultEmbedLocalizations(language: string, fallback?: boolean): boolean;
 
     /**
+	 * TS-only: supplies the embedded `default_localizations*` texts that
+	 * loadDefaultEmbedLocalizations() reads. AS3 gets them from its own embedded asset library.
+	 */
+    setEmbeddedLocalizationAssets(assets: Record<string, string>): void;
+
+    /**
 	 * Request localization initialization (triggers loading)
 	 */
     requestLocalizationInit(): void;

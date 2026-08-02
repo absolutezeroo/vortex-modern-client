@@ -1,1119 +1,898 @@
 /**
  * LoginFlow
  *
- * @see sources/win63_2021_version/login/LoginFlow.as
+ * AS3: sources/WIN63-202607011411-782849652/src/login/LoginFlow.as
  *
- * Main orchestrator for the login flow.
- * Implements ILoginContext (views call into) and ILoginViewer (provider calls back).
- * Creates all 4 screens: SSO Token (default), Environment, Login, Avatar.
- * When complete, dispatches LOGIN_FLOW_FINISHED_EVENT with the SSO token.
+ * The whole pre-client experience: it stands up its own configuration, localisation and
+ * communication managers on a fake context, owns the four screens, and hands an SSO ticket back to
+ * the host once the user is through.
  *
- * Like AS3's LoginFlow (a standalone Sprite not part of the window hierarchy),
- * this is a DOM-based overlay that runs independently of the main canvas.
- *
- * AS3 pattern: constructor calls createFakeContext() which creates:
- * - createConfiguration() -> HabboConfigurationManager
- * - createLocalization() -> HabboLocalizationManager
- * - createCommunication() -> HabboCommunicationManager
- * - WebApiLoginProvider(this)
- *
- * AS3 properties:
- * - _background: Background
- * - _SafeStr_4559: Sprite (view container)
- * - _SafeStr_4560: EnvironmentView
- * - _SafeStr_596: LoginView
- * - _SafeStr_4561: SsoTokenView
- * - _SafeStr_4562: AvatarView
- * - _SafeStr_4563: IContext (FakeContext)
- * - _errorBalloon: Sprite
- * - _SafeStr_4564: Sprite (main container)
- * - _SafeStr_4565: Sprite (logo area)
- * - _configuration: HabboConfigurationManager
- * - _communication: HabboCommunicationManager
- * - _localization: HabboLocalizationManager
- * - _SafeStr_597: ILoginProvider
- * - _ssoToken: String
- * - _closeButton: ColouredButton("red", "X")
- * - _SafeStr_4566: Loader (left side image)
- * - _SafeStr_4567: Loader (right side image)
+ * Things worth knowing before changing anything here:
+ * - It runs with NO engine behind it. AS3 gates `startCoreInitializationIfPossible()` on the
+ *   loading screen, which only exists after login, so nothing of the game — including the
+ *   furnidata download — loads until this flow is finished. The managers below are built from the
+ *   embedded asset libraries alone for that reason.
+ * - `init()` opens on SCREEN_SSO_TOKEN, unconditionally. That is what the 701 source does; the
+ *   ticket screen is the way in, and the hotel picker is reachable from its Cancel button.
+ * - It is both `ILoginContext` (what the views call) and `ILoginViewer` (what the provider calls
+ *   back). The provider's fine-grained error callbacks all funnel into `showError()`, which is
+ *   where the error-code-to-localisation-key mapping lives.
  */
 import {EventEmitter} from 'eventemitter3';
-import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
-import {HabboConfigurationManager} from '@habbo/configuration/HabboConfigurationManager';
+import {Logger} from '@core/utils/Logger';
+import type {ICoreLocalizationManager} from '@core/localization/ICoreLocalizationManager';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import {HabboCommunicationManager} from '@habbo/communication/HabboCommunicationManager';
+import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
+import {HabboConfigurationManager} from '@habbo/configuration/HabboConfigurationManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import {HabboLocalizationManager} from '@habbo/localization/HabboLocalizationManager';
-import {Logger} from '@core/utils/Logger';
-import type {ILoginViewer} from '@habbo/communication/login/ILoginViewer';
-import type {ILoginProvider} from '@habbo/communication/login/ILoginProvider';
-import {WebApiLoginProvider} from '@habbo/communication/login/WebApiLoginProvider';
 import type {AvatarData} from '@habbo/communication/login/AvatarData';
-import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
-import {Vortex} from 'vortex-engine';
+import type {ICaptchaView} from '@habbo/communication/login/ICaptchaView';
+import type {ILoginProvider} from '@habbo/communication/login/ILoginProvider';
+import type {ILoginViewer} from '@habbo/communication/login/ILoginViewer';
+import {WebApiLoginProvider} from '@habbo/communication/login/WebApiLoginProvider';
+import {CommunicationUtils} from '@habbo/utils/CommunicationUtils';
+import {Bitmap} from '../onBoardingHcUi/display/Bitmap';
+import {Sprite} from '../onBoardingHcUi/display/DisplayObjectContainer';
+import {GlowFilter} from '../onBoardingHcUi/display/Filters';
+import {Rectangle} from '../onBoardingHcUi/display/Geom';
+import type {TextField} from '../onBoardingHcUi/display/TextField';
+import {Timer} from '../onBoardingHcUi/display/Timer';
+import {TweenUtils} from '../onBoardingHcUi/display/TweenUtils';
+import {ColouredButton} from '../onBoardingHcUi/ColouredButton';
+import {LoaderUI} from '../onBoardingHcUi/LoaderUI';
+import {LocalizedSprite} from '../onBoardingHcUi/LocalizedSprite';
+import {LocalizedTextField} from '../onBoardingHcUi/LocalizedTextField';
+import {LoginAssets} from '../onBoardingHcUi/LoginAssets';
+import {AvatarView} from './AvatarView';
+import {Background} from './Background';
+import {EnvironmentView} from './EnvironmentView';
 import {FakeContext} from './FakeContext';
 import type {ILoginContext} from './ILoginContext';
-import {Background} from './Background';
-import {SsoTokenView} from './SsoTokenView';
-import {EnvironmentView} from './EnvironmentView';
-import {LoginView} from './LoginView';
-import {AvatarView} from './AvatarView';
-import {RegisterView} from './RegisterView';
-import {AvatarCreateView} from './AvatarCreateView';
 import {ImageLoader} from './ImageLoader';
 import type {ImageLoaderEvent} from './ImageLoaderEvent';
-import './login-ui.scss';
-
-// Import logo
-import habboLogoUrl from '../assets/images/logo_new.png';
+import {LoginView} from './LoginView';
+import {RegisterView} from './RegisterView';
+import {SsoTokenView} from './SsoTokenView';
+import {WebCaptchaView} from './WebCaptchaView';
 
 const log = Logger.getLogger('client.login.LoginFlow');
 
-export class LoginFlow implements ILoginContext, ILoginViewer 
+export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
 {
-    static readonly LOGIN_FLOW_FINISHED_EVENT = 'LOGIN_FLOW_FINISHED_EVENT';
-    static readonly SCREEN_ENVIRONMENT = 1;
-    static readonly SCREEN_LOGIN = 2;
-    static readonly SCREEN_AVATARS = 3;
-    static readonly SCREEN_SSO_TOKEN = 4;
-    static readonly SCREEN_REGISTER = 5;
-    static readonly SCREEN_AVATAR_CREATE = 6;
+    // AS3: LOGIN_FLOW_FINISHED_EVENT
+    public static readonly LOGIN_FLOW_FINISHED_EVENT: string = 'LOGIN_FLOW_FINISHED_EVENT';
 
-    private _events: EventEmitter = new EventEmitter();
+    // AS3: SCREEN_ENVIRONMENT
+    public static readonly SCREEN_ENVIRONMENT: number = 1;
 
-    /** AS3: _SafeStr_4563 — FakeContext (stub IContext for standalone managers) */
+    // AS3: SCREEN_LOGIN
+    public static readonly SCREEN_LOGIN: number = 2;
+
+    // AS3: SCREEN_AVATARS
+    public static readonly SCREEN_AVATARS: number = 3;
+
+    // AS3: SCREEN_SSO_TOKEN
+    public static readonly SCREEN_SSO_TOKEN: number = 4;
+
+    // TS-only: no AS3 counterpart — the dump's screen ids stop at 4. See `RegisterView`'s header for
+    // why the screen exists at all and what of it is actually AS3.
+    public static readonly SCREEN_REGISTER: number = 5;
+
+    // AS3: ERROR_TYPE_IO_ERROR
+    private static readonly ERROR_TYPE_IO_ERROR: string = 'ioError';
+
+    // AS3: LOGO_AREA_HEIGHT
+    private static readonly LOGO_AREA_HEIGHT: number = 50;
+
+    // AS3: MAIN_AREA_MARGIN
+    private static readonly MAIN_AREA_MARGIN: number = 5;
+
+    // AS3: _background
+    private _background: Background | null = null;
+
+    // AS3: _viewContainer
+    private _viewContainer: Sprite | null = null;
+
+    // AS3: _environmentView
+    private _environmentView: EnvironmentView | null = null;
+
+    // AS3: _loginView
+    private _loginView: LoginView | null = null;
+
+    // TS-only: the registration screen — see `RegisterView`'s header.
+    private _registerView: RegisterView | null = null;
+
+    // AS3: _ssoTokenView
+    private _ssoTokenView: SsoTokenView | null = null;
+
+    // AS3: _avatarView
+    private _avatarView: AvatarView | null = null;
+
+    // AS3: _disposed
+    private _disposed: boolean = false;
+
+    // AS3: _context — FakeContext
     private _fakeContext: FakeContext | null = null;
 
-    /** AS3: _configuration — HabboConfigurationManager */
+    // AS3: _errorBalloon
+    private _errorBalloon: Sprite | null = null;
+
+    // AS3: _mainSprite
+    private _mainSprite: Sprite | null = null;
+
+    // AS3: _logoArea
+    private _logoArea: Sprite | null = null;
+
+    // AS3: _configuration
     private _configuration: IHabboConfigurationManager;
 
+    // AS3: _communication
+    private _communication: IHabboCommunicationManager | null = null;
+
+    // AS3: _localization
+    private _localization: IHabboLocalizationManager | null = null;
+
+    // AS3: _provider
+    private _provider: ILoginProvider;
+
+    // AS3: _ssoToken
+    private _ssoToken: string | null = null;
+
+    // AS3: _closeButton
+    private _closeButton: ColouredButton | null = null;
+
+    // AS3: _backgroundLeft
+    private _backgroundLeft: Bitmap | null = null;
+
+    // AS3: _backgroundRight
+    private _backgroundRight: Bitmap | null = null;
+
+    // AS3: _lastFrameTime
+    private _lastFrameTime: number = 0;
+
     /**
-     * AS3 embedded configuration TextAssets (common_configuration_txt & co), the only
-     * property source the login flow gets — see createConfiguration().
+     * TS-only: AS3 dispatches `LOGIN_FLOW_FINISHED_EVENT` on itself as a display-list event; the
+     * host listens through this emitter instead, since it is not part of the display list.
+     */
+    private readonly _loginEvents: EventEmitter = new EventEmitter();
+
+    /**
+     * TS-only: the embedded configuration TextAssets. AS3 reads them out of the embedded
+     * `HabboConfigurationCom` library; the port is handed the same content by the host.
      */
     private readonly _embeddedConfigurations: Record<string, string>;
 
-    /**
-     * Boots the engine on demand, for the one screen that needs it (see showAvatarCreate()).
-     * Null when the caller has no engine to offer.
-     */
-    private readonly _ensureEngine: (() => Promise<void>) | null;
+    /** TS-only: where DOM-side pieces (the captcha frame) are mounted. */
+    private readonly _domContainer: HTMLElement;
 
-    /** AS3: _localization — HabboLocalizationManager */
-    private _localization: IHabboLocalizationManager | null = null;
+    /** TS-only: the live captcha view, so `captchaReady()` can take it down. */
+    private _captchaView: WebCaptchaView | null = null;
 
-    /** AS3: _communication — HabboCommunicationManager */
-    private _communication: IHabboCommunicationManager | null = null;
-
-    /** AS3: _SafeStr_597 — WebApiLoginProvider (ILoginProvider) */
-    private _provider: ILoginProvider;
-
-    /** AS3: _background */
-    private _background: Background | null = null;
-
-    /** AS3: _SafeStr_4560 */
-    private _environmentView: EnvironmentView | null = null;
-
-    /** AS3: _SafeStr_596 */
-    private _loginView: LoginView | null = null;
-
-    /** AS3: _SafeStr_4561 */
-    private _ssoTokenView: SsoTokenView | null = null;
-
-    /** AS3: _SafeStr_4562 */
-    private _avatarView: AvatarView | null = null;
-
-    /** AS3: _stepRegister — OnBoardingHcStepRegister (vortex-client onBoardingHc source) */
-    private _registerView: RegisterView | null = null;
-
-    /** AS3: _stepAvatarCreate — OnBoardingHcStepAvatarCreate (vortex-client onBoardingHc source) */
-    private _avatarCreateView: AvatarCreateView | null = null;
-
-    private _root: HTMLDivElement | null = null;
-
-    /** Split-screen shell (.habbo-split) — not a literal AS3 element, see login-ui.scss header comment. */
-    private _splitRoot: HTMLDivElement | null = null;
-
-    /** Illustration column (.habbo-split__art) wrapping _heroImage. */
-    private _artWrap: HTMLDivElement | null = null;
-
-    /** AS3: _SafeStr_4567 — hero illustration, loaded from landing.view.background_right.uri */
-    private _heroImage: HTMLImageElement | null = null;
-
-    /** AS3: _SafeStr_4564 — main container (now the .habbo-split__content column) */
-    private _mainContainer: HTMLDivElement | null = null;
-
-    /** AS3: _SafeStr_4559 — view container */
-    private _viewContainer: HTMLDivElement | null = null;
-
-    /** AS3: _SafeStr_4565 — logo area */
-    private _logoArea: HTMLDivElement | null = null;
-
-    private _errorBalloon: HTMLDivElement | null = null;
-    private _errorTimer: number = 0;
-
-    /** AS3: _closeButton — ColouredButton("red", "X") */
-    private _closeButton: HTMLButtonElement | null = null;
-
-    /**
-     * AS3: LoginFlow(_arg_1:Dictionary)
-     * Constructor calls createFakeContext() which sets up all managers and the provider.
-     *
-     * Takes the embedded configuration assets rather than a live manager: AS3 builds the
-     * login flow's configuration out of the embedded HabboConfigurationCom library, so the
-     * flow runs with no engine behind it (HabboAir.as gates startCoreInitializationIfPossible()
-     * on the loading screen, which only exists once login is done).
-     */
-    constructor(embeddedConfigurations: Record<string, string>, ensureEngine: (() => Promise<void>) | null = null)
+    // AS3: LoginFlow(_arg_1:Dictionary)
+    constructor(embeddedConfigurations: Record<string, string>, domContainer: HTMLElement)
     {
-        this._embeddedConfigurations = embeddedConfigurations;
-        this._ensureEngine = ensureEngine;
+        super();
 
-        // AS3: createFakeContext(_arg_1)
+        this._embeddedConfigurations = embeddedConfigurations;
+        this._domContainer = domContainer;
         this.createFakeContext();
     }
 
-    private _ssoToken: string | null = null;
-
-    get ssoToken(): string | null 
+    // AS3: get ssoToken():String
+    public get ssoToken(): string | null
     {
         return this._ssoToken;
     }
 
-    private _disposed: boolean = false;
-
-    get disposed(): boolean 
+    // AS3: get disposed():Boolean
+    public get disposed(): boolean
     {
         return this._disposed;
     }
 
-    /**
-     * EventEmitter for login flow events.
-     * Listen for LOGIN_FLOW_FINISHED_EVENT.
-     */
-    get loginEvents(): EventEmitter 
+    // TS-only: the emitter carrying LOGIN_FLOW_FINISHED_EVENT to the host.
+    public get loginEvents(): EventEmitter
     {
-        return this._events;
+        return this._loginEvents;
+    }
+
+    // AS3: get debugText():TextField — null in the 701 source.
+    public get debugText(): TextField | null
+    {
+        return null;
     }
 
     /**
-     * AS3: get avatarRenderManager():IAvatarRenderManager — OnBoardingHc.as
+     * AS3: init()
      *
-     * AS3's own login screens never render an avatar locally: login/AvatarView.as pulls a
-     * finished PNG off habbo-imaging, and OnBoardingHc lives in habbo/friendbar — i.e. after
-     * login. Our AvatarCreateView is a real client-side editor with no AS3 counterpart, so it
-     * is the single screen that needs the engine; showAvatarCreate() boots it on demand and
-     * this getter reports null until then rather than touching an absent Vortex.instance.
+     * Builds the background, the logo, the four views and the captcha close button, kicks off the
+     * two landing images, and opens on the ticket screen.
      */
-    public get avatarRenderManager(): IAvatarRenderManager | null
+    public init(): void
     {
-        if(!Vortex.hasInstance)
+        this.stage?.addEventListener('resize', this._onStageResize);
+        this._background = new Background();
+        this.addChild(this._background);
+        this._backgroundLeft = new Bitmap();
+        this._backgroundLeft.visible = false;
+        this._backgroundLeft.alpha = 0;
+        this.addChild(this._backgroundLeft);
+        this._backgroundRight = new Bitmap();
+        this._backgroundRight.visible = false;
+        this._backgroundRight.alpha = 0;
+        this.addChild(this._backgroundRight);
+        this._logoArea = new Sprite();
+        this.addChild(this._logoArea);
+
+        const logo = new Bitmap(LoginAssets.get('logo_new'));
+
+        logo.x = 40;
+        logo.y = 40;
+        this._logoArea.addChild(logo);
+        this._mainSprite = new Sprite();
+        this.addChild(this._mainSprite);
+        this._mainSprite.y = LoginFlow.LOGO_AREA_HEIGHT;
+        this._mainSprite.x = LoginFlow.MAIN_AREA_MARGIN;
+        this._viewContainer = new Sprite();
+        this._viewContainer.x = 0;
+        this._viewContainer.y = 50;
+        this._viewContainer.visible = true;
+        this._mainSprite.addChild(this._viewContainer);
+        this._environmentView = new EnvironmentView(this);
+        this._loginView = new LoginView(this);
+        this._registerView = new RegisterView(this);
+        this._avatarView = new AvatarView(this);
+        this._ssoTokenView = new SsoTokenView(this);
+        this._closeButton = new ColouredButton(
+            'red',
+            'X',
+            new Rectangle(0, 0, 0, 40),
+            true,
+            this._onClose,
+            14211288
+        );
+        this._environmentView.init();
+        this.loadImages();
+        this.showScreen(LoginFlow.SCREEN_SSO_TOKEN);
+        this.layoutMainElements();
+        this.addEventListener('addedToStage', this._onAddedToStage);
+        this.addEventListener('enterFrame', this._onEnterFrame);
+
+        // The flow is normally already on the stage by the time init() runs, in which case
+        // `addedToStage` has fired and will not fire again.
+        if(this.stage)
         {
-            return null;
+            this._lastFrameTime = performance.now();
+            this.layoutMainElements();
+        }
+    }
+
+    /**
+     * AS3: showScreen(_arg_1:int)
+     */
+    public showScreen(screen: number): void
+    {
+        this.hideViews();
+
+        switch(screen)
+        {
+            case LoginFlow.SCREEN_ENVIRONMENT:
+                if(this._viewContainer && this._environmentView)
+                {
+                    this._viewContainer.addChild(this._environmentView);
+                    this._environmentView.init();
+                }
+
+                break;
+
+            case LoginFlow.SCREEN_LOGIN:
+                if(this._viewContainer && this._loginView)
+                {
+                    this._viewContainer.addChild(this._loginView);
+                    this._loginView.init();
+                    this._provider.init(this._communication);
+                }
+
+                break;
+
+            case LoginFlow.SCREEN_AVATARS:
+                if(this._viewContainer && this._avatarView)
+                {
+                    this._viewContainer.addChild(this._avatarView);
+                    this._avatarView.init();
+                    this._avatarView.baseUrl = this.getProperty('web.api') ?? '';
+                    this.layoutMainElements();
+                }
+
+                break;
+
+            case LoginFlow.SCREEN_SSO_TOKEN:
+                if(this._viewContainer && this._ssoTokenView)
+                {
+                    this._viewContainer.addChild(this._ssoTokenView);
+                    this._ssoTokenView.init();
+                }
+
+                break;
+
+            // TS-only: same shape as SCREEN_LOGIN — the provider is (re)initialised here too, since
+            // registration answers come back through it.
+            case LoginFlow.SCREEN_REGISTER:
+                if(this._viewContainer && this._registerView)
+                {
+                    this._viewContainer.addChild(this._registerView);
+                    this._registerView.init();
+                    this._provider.init(this._communication);
+                }
+
+                break;
         }
 
-        return Vortex.instance.windowManager.avatarRenderer;
+        this.layoutMainElements();
     }
 
-    /**
-     * AS3: initLogin(_arg_1:String, _arg_2:String)
-     * Delegates to WebApiLoginProvider.
-     */
-    public initLogin(email: string, password: string): void 
+    // AS3: initLogin(_arg_1:String, _arg_2:String)
+    public initLogin(email: string, password: string): void
     {
         this._provider.loginWithCredentials(email, password);
     }
 
     /**
-     * AS3: initLoginWithSsoToken(_arg_1:String, _arg_2:String)
-     * Direct SSO token login — skips Web API entirely.
+     * TS-only: posts the registration `RegisterView` collected.
+     *
+     * `HabboWebApiSession.register()` IS the AS3 method (`/api/public/registration/new`, declared
+     * POST in the web-api route interface); only the screen that calls it is missing from the dump.
+     * Its last three arguments are sent as AS3 sends them and are not collected: `vortex-emulator`'s
+     * endpoint reads the address and the password alone, so a birthdate form would be asking for
+     * something nothing stores. They are zeroes rather than a plausible-looking date, so the
+     * payload does not claim a birthday the user never gave; the captcha token is empty because no
+     * captcha is presented here (`WebCaptchaView` belongs to the login path).
+     *
+     * The answer comes back through `WebApiLoginProvider`: `showSelectAvatar()` on success,
+     * `showRegistrationError()` on failure — both already implemented below.
      */
-    public initLoginWithSsoToken(envId: string, token: string): void 
+    public initRegister(email: string, password: string): void
     {
-        if(envId && envId.length > 0) 
+        const session = this._communication?.getHabboWebApiSession() ?? null;
+
+        if(!session)
         {
-            this.updateEnvironment(envId, false);
+            log.warn('No web API session to register on');
+
+            return;
         }
 
-        this._ssoToken = token;
-        this._events.emit(LoginFlow.LOGIN_FLOW_FINISHED_EVENT);
+        session.register(email, password, 0, 0, 0, true, '');
     }
 
     /**
-     * AS3: loginWithAvatar(_arg_1:AvatarData)
-     * Delegates avatar selection to WebApiLoginProvider.
+     * AS3: initLoginWithSsoToken(_arg_1:String, _arg_2:String)
+     *
+     * Commits the ticket's environment first (`false` = not a preview), then finishes immediately —
+     * a ticket needs no web API round trip.
      */
-    public loginWithAvatar(avatar: AvatarData): void 
+    public initLoginWithSsoToken(environmentId: string, token: string): void
+    {
+        this.updateEnvironment(environmentId, false);
+        this._ssoToken = token;
+        this._loginEvents.emit(LoginFlow.LOGIN_FLOW_FINISHED_EVENT);
+    }
+
+    // AS3: loginWithAvatar(_arg_1:AvatarData)
+    public loginWithAvatar(avatar: AvatarData): void
     {
         this._provider.loginWithCredentialsWeb(avatar.uniqueId);
     }
 
-    /**
-     * AS3: registerAccount(email, password) — OnBoardingHc.as
-     * Delegates to WebApiLoginProvider which calls POST /api/public/registration/new.
-     */
-    public registerAccount(email: string, password: string): void 
+    // AS3: editorFinished()
+    public editorFinished(): void
     {
-        this._provider.register(email, password);
+        this._loginEvents.emit(LoginFlow.LOGIN_FLOW_FINISHED_EVENT);
     }
 
     /**
-     * AS3: createAvatar(name, figure, gender) — OnBoardingHc.as
-     * Delegates to WebApiLoginProvider which calls POST /api/user/avatars.
+     * AS3: getProperty(_arg_1:String, _arg_2:Dictionary=null):String
+     *
+     * A missing property is logged, not silently defaulted — AS3 prints "Add property:" for it.
      */
-    public createAvatar(name: string, figure: string, gender: string): void 
+    public getProperty(key: string): string | null
     {
-        this._provider.createAvatar(name, figure, gender);
-    }
+        const value = this._configuration ? this._configuration.getProperty(key) : '';
 
-    /**
-     * AS3: checkName(name) — OnBoardingHc.as
-     * Delegates to WebApiLoginProvider which calls POST /api/newuser/name/check.
-     */
-    public checkName(name: string): void 
-    {
-        this._provider.checkName(name);
-    }
-
-    /**
-     * AS3: showSelectAvatar(avatar:Object) — OnBoardingHc.as
-     * Called by WebApiLoginProvider after a successful registration.
-     */
-    public showSelectAvatar(_response: unknown): void 
-    {
-        this.showScreen(LoginFlow.SCREEN_AVATAR_CREATE);
-    }
-
-    /**
-     * AS3: nameCheckResponse(response:Object, isValid:Boolean) — OnBoardingHc.as
-     * Forwards the name-check result to the AvatarCreate screen.
-     */
-    public nameCheckResponse(response: unknown, isValid: boolean): void 
-    {
-        this._avatarCreateView?.onNameCheckResult(response, isValid);
-    }
-
-    /**
-     * AS3: showScreen(_arg_1:int)
-     * Switches between login screens.
-     */
-    public showScreen(screen: number): void 
-    {
-        this.hideViews();
-
-        // The avatar creator is a wide 3-column editor (looks / colours / preview) that
-        // doesn't fit the split-screen form layout — give it the full width and drop the
-        // illustration; every other screen keeps the illustration + narrow form column.
-        if(this._splitRoot) 
+        if(!value || value.length === 0)
         {
-            this._splitRoot.classList.toggle('habbo-split--full', screen === LoginFlow.SCREEN_AVATAR_CREATE);
+            log.debug(`[LoginFlow] Add property: ${key}`);
         }
 
-        switch(screen) 
-        {
-            case LoginFlow.SCREEN_ENVIRONMENT:
-                if(this._environmentView && this._viewContainer) 
-                {
-                    this._viewContainer.appendChild(this._environmentView.element);
-                    this._environmentView.init();
-                }
-                break;
-
-            case LoginFlow.SCREEN_LOGIN:
-                if(this._loginView && this._viewContainer) 
-                {
-                    this._viewContainer.appendChild(this._loginView.element);
-                    this._loginView.init();
-
-                    // AS3: _SafeStr_597.init(_communication)
-                    this._provider.init(this._communication);
-                    this._loginView.focus();
-                }
-                break;
-
-            case LoginFlow.SCREEN_SSO_TOKEN:
-                if(this._ssoTokenView && this._viewContainer) 
-                {
-                    this._viewContainer.appendChild(this._ssoTokenView.element);
-                    this._ssoTokenView.init();
-                    this._ssoTokenView.focus();
-                }
-                break;
-
-            case LoginFlow.SCREEN_AVATARS:
-                if(this._avatarView && this._viewContainer) 
-                {
-                    this._viewContainer.appendChild(this._avatarView.element);
-                    this._avatarView.init();
-                }
-
-                this.layoutMainElements();
-                break;
-
-            case LoginFlow.SCREEN_REGISTER:
-                if(this._registerView && this._viewContainer) 
-                {
-                    this._viewContainer.appendChild(this._registerView.element);
-                    this._registerView.init();
-                }
-
-                break;
-
-            case LoginFlow.SCREEN_AVATAR_CREATE:
-                void this.showAvatarCreate();
-                break;
-        }
-
-        this.layoutMainElements();
+        return value && value.length > 0 ? value : null;
     }
 
     /**
      * AS3: updateEnvironment(_arg_1:String, _arg_2:Boolean)
      *
-     * @see sources/win63_2021_version/login/LoginFlow.as lines 561-578
+     * `_arg_2` is the PREVIEW flag: true reloads only that hotel's texts and returns; false commits
+     * — stores the choice, repoints the configuration, re-reads the localisations, and re-resolves
+     * the connection host.
      */
-    public updateEnvironment(envId: string, previewOnly: boolean): void 
+    public updateEnvironment(environmentId: string, preview: boolean): void
     {
-        // AS3: previewOnly=true -> only reload localization
-        if(previewOnly) 
+        if(preview)
         {
-            if(this._localization) 
-            {
-                this._localization.loadDefaultEmbedLocalizations(envId);
-            }
+            this._localization?.loadDefaultEmbedLocalizations(environmentId);
 
             return;
         }
 
-        // AS3: CommunicationUtils.writeSOLProperty("environment", envId)
-        // (No SOL equivalent — skipped)
-
-        // AS3: _configuration.updateEnvironmentId(envId)
-        if(this._configuration && typeof (this._configuration as any).updateEnvironmentId === 'function') 
-        {
-            (this._configuration as any).updateEnvironmentId(envId);
-        }
-
-        if(this._environmentView) 
-        {
-            this._environmentView.updateEnvironment();
-        }
-
-        // AS3: _localization.loadDefaultEmbedLocalizations(_configuration.getProperty("environment.id"))
-        if(this._localization) 
-        {
-            const currentEnvId = this.getProperty('environment.id') ?? envId;
-
-            this._localization.loadDefaultEmbedLocalizations(currentEnvId);
-        }
-
-        log.info(`Updated environment to: ${envId}`);
-
-        // AS3: _communication.updateHostParameters()
-        if(this._communication) 
-        {
-            this._communication.updateHostParameters();
-        }
-
-        // AS3: _localization.requestLocalizationInit()
-        if(this._localization) 
-        {
-            this._localization.requestLocalizationInit();
-        }
-    }
-
-    /**
-     * AS3: getProperty(_arg_1:String, _arg_2:Dictionary=null):String
-     * Delegates to the configuration manager.
-     */
-    public getProperty(key: string): string | null 
-    {
-        try 
-        {
-            const value = this._configuration.getProperty(key);
-
-            return value && value.length > 0 ? value : null;
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
-    /**
-     * AS3: environmentReady()
-     * Called when /api/public/info/hello succeeds — enables login button.
-     */
-    public environmentReady(): void 
-    {
-        if(this._loginView) 
-        {
-            this._loginView.ready();
-        }
-    }
-
-    /**
-     * AS3: populateCharacterList(_arg_1:Vector.<AvatarData>)
-     * Called when multiple avatars need selection.
-     */
-    public populateCharacterList(avatars: AvatarData[]): void 
-    {
-        this.showScreen(LoginFlow.SCREEN_AVATARS);
-
-        if(this._avatarView) 
-        {
-            this._avatarView.populateAvatars(avatars);
-        }
+        CommunicationUtils.writeProperty(CommunicationUtils.SOL_PROPERTY_ENVIRONMENT, environmentId);
+        this._configuration.updateEnvironmentId(environmentId);
+        this._environmentView?.updateEnvironment();
+        this._localization?.loadDefaultEmbedLocalizations(this.getProperty('environment.id') ?? environmentId);
+        log.debug(`[LoginFlow] updated environment to: ${environmentId}`);
+        this._communication?.updateHostParameters();
+        this._localization?.requestLocalizationInit();
     }
 
     /**
      * AS3: showErrorMessage(_arg_1:String)
-     * Displays a temporary error balloon.
+     *
+     * The balloon is built once and reused; every call restarts the three-second timer.
      */
-    public showErrorMessage(message: string): void 
+    public showErrorMessage(message: string): void
     {
-        if(!this._mainContainer) return;
+        if(!this._mainSprite) return;
 
-        // Clear previous timer
-        if(this._errorTimer) 
+        if(this._errorBalloon == null)
         {
-            clearTimeout(this._errorTimer);
-            this._errorTimer = 0;
+            const messageField = LoaderUI.createTextField(message, 12, 16777215, true);
+
+            LoaderUI.addEtching(messageField, true);
+
+            const balloon = LoaderUI.createBalloon(
+                messageField.width + 30,
+                messageField.height + 17,
+                -1,
+                true,
+                11411485,
+                'down'
+            );
+
+            this._errorBalloon = new Sprite();
+            this._errorBalloon.addChild(balloon);
+            this._errorBalloon.addChild(messageField);
+            messageField.x = 15;
+            messageField.y = 14;
+            this._mainSprite.addChild(this._errorBalloon);
+            this._errorBalloon.x = 300;
+            this._errorBalloon.y = 300;
+            this._errorBalloon.filters = [new GlowFilter(0, 0.24, 6, 6)];
         }
 
-        // Create or reuse error balloon
-        // AS3: LoaderUI.createBalloon(...) tinted red + LoaderUI.addEtching(messageField, true)
-        if(!this._errorBalloon) 
-        {
-            this._errorBalloon = document.createElement('div');
-            Object.assign(this._errorBalloon.style, {
-                position: 'fixed',
-                top: '30px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                borderRadius: '10px',
-                background: '#A02942',
-                color: '#FFFFFF',
-                fontSize: '14px',
-                fontWeight: '700',
-                fontFamily: "'Ubuntu', Arial, Helvetica, sans-serif",
-                zIndex: '20000',
-                maxWidth: '400px',
-                padding: '12px 20px',
-                textAlign: 'center',
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)',
-            } as Partial<CSSStyleDeclaration>);
-            this._root?.appendChild(this._errorBalloon);
-        }
+        const timer = new Timer(3000, 1);
 
-        this._errorBalloon.textContent = message;
-        this._errorBalloon.style.display = '';
-
-        // AS3: Timer(3000, 1) -> hide after 3 seconds
-        this._errorTimer = window.setTimeout(() => 
-        {
-            if(this._errorBalloon) 
-            {
-                this._errorBalloon.style.display = 'none';
-            }
-        }, 3000);
+        timer.addEventListener('timerComplete', this._onHideError);
+        timer.start();
+        this._errorBalloon.visible = true;
     }
 
-    /**
-     * AS3: showRegistrationError(_arg_1:Object)
-     */
-    public showRegistrationError(error: any): void 
+    // AS3: showLoginScreen() — empty in the 701 source.
+    public showLoginScreen(): void
+    {
+        // AS3 leaves this empty.
+    }
+
+    // AS3: showRegistrationError(_arg_1:Object)
+    public showRegistrationError(error: unknown): void
     {
         this.showError(error);
     }
 
-    /**
-     * AS3: showInvalidLoginError(_arg_1:Object)
-     */
-    public showInvalidLoginError(error: any): void 
+    // AS3: showInvalidLoginError(_arg_1:Object)
+    public showInvalidLoginError(error: unknown): void
     {
         this.showError(error);
     }
 
-    /**
-     * AS3: showAccountError(_arg_1:Object)
-     */
-    public showAccountError(error: any): void 
+    // AS3: nameCheckResponse(_arg_1:Object, _arg_2:Boolean) — empty in the 701 source.
+    public nameCheckResponse(_response: unknown, _fromNameCheck: boolean): void
+    {
+        // AS3 leaves this empty — the desktop flow has no name-check screen.
+    }
+
+    // AS3: showAccountError(_arg_1:Object)
+    public showAccountError(error: unknown): void
     {
         this.showError(error);
     }
 
-    /**
-     * AS3: saveLooksError(_arg_1:Object)
-     */
-    public saveLooksError(error: any): void 
+    // AS3: showLoadingScreen() — empty in the 701 source.
+    public showLoadingScreen(): void
+    {
+        // AS3 leaves this empty.
+    }
+
+    // AS3: saveLooksError(_arg_1:Object)
+    public saveLooksError(error: unknown): void
     {
         this.showError(error);
     }
 
-    /**
-     * AS3: showTOS()
-     */
-    public showTOS(): void 
+    // AS3: showTOS()
+    public showTOS(): void
     {
         this.showErrorMessage('Need to show TOS');
     }
 
-    /**
-     * AS3: showCaptchaError()
-     */
-    public showCaptchaError(): void 
+    // AS3: environmentReady()
+    public environmentReady(): void
     {
-        this.showScreen(2);
+        this._loginView?.ready();
+    }
+
+    // AS3: populateCharacterList(_arg_1:Vector.<AvatarData>)
+    public populateCharacterList(avatars: AvatarData[]): void
+    {
+        this.showScreen(LoginFlow.SCREEN_AVATARS);
+        this._avatarView?.populateAvatars(avatars);
+    }
+
+    /**
+     * AS3: showSelectAvatar(_arg_1:Object) — empty in the 701 source.
+     *
+     * The provider calls this from one place only: the success arm of
+     * `/api/public/registration/new`. AS3 leaves the body empty because registration is a web flow
+     * there and the browser, not the client, carries on.
+     *
+     * TS-only from here: a fresh account owns no avatar (`RegisterAsync` inserts the account row
+     * alone), so `/api/user/avatars` would answer an empty list and the flow would stall on a
+     * chooser with nothing in it. `createAvatar()` is the other real AS3 route
+     * (`POST /api/user/avatars`) and is what creates the player. The name is left empty on purpose:
+     * naming the avatar is the job of the onboarding step the server is about to ask for —
+     * `AuthenticationOK` carries `AVATAR_NAME_CHANGE` for as long as the player has no
+     * `NuxCompletedAt`, and that step owns both the look editor and the name dialog. The emulator
+     * fills in a placeholder until then.
+     *
+     * Nothing further is needed here: the answer is the refreshed avatar list, which the provider
+     * routes to its `/api/user/avatars` arm — and that arm selects outright when the account owns
+     * exactly one avatar, which is precisely this case. Ticket, connection and onboarding follow on
+     * their own.
+     */
+    public showSelectAvatar(_response: unknown): void
+    {
+        const session = this._communication?.getHabboWebApiSession() ?? null;
+
+        if(!session)
+        {
+            log.warn('Registered, but there is no web API session to create the avatar on');
+
+            return;
+        }
+
+        log.debug('Account created; creating its avatar');
+        session.createAvatar('');
+    }
+
+    // AS3: showPromoHabbos(_arg_1:XML) — empty in the 701 source.
+    public showPromoHabbos(_looks: unknown): void
+    {
+        // AS3 leaves this empty.
+    }
+
+    // AS3: showSelectRoom() — empty in the 701 source.
+    public showSelectRoom(): void
+    {
+        // AS3 leaves this empty.
+    }
+
+    // AS3: showCaptchaError()
+    public showCaptchaError(): void
+    {
+        this.showScreen(LoginFlow.SCREEN_LOGIN);
         this.showErrorMessage('Error with captcha');
     }
 
     /**
-     * AS3: editorFinished()
-     * Dispatches LOGIN_FLOW_FINISHED_EVENT.
-     */
-    public editorFinished(): void 
-    {
-        this._events.emit(LoginFlow.LOGIN_FLOW_FINISHED_EVENT);
-    }
-
-    /**
      * AS3: createCaptchaView():ICaptchaView
-     * Stub — WebCaptchaView is not ported yet.
-     * In AS3: addChild(_closeButton); var _local_1 = new WebCaptchaView(...)
-     */
-    public createCaptchaView(): any 
-    {
-        // Show close button
-        if(this._closeButton && this._root) 
-        {
-            this._root.appendChild(this._closeButton);
-        }
-
-        this.layoutMainElements();
-
-        // Stub: WebCaptchaView not yet implemented
-        return null;
-    }
-
-    /**
-     * AS3: captchaReady()
-     * Removes the captcha and close button, shows login screen.
-     */
-    public captchaReady(): void 
-    {
-        if(this._closeButton && this._closeButton.parentNode) 
-        {
-            this._closeButton.remove();
-        }
-
-        this.showScreen(2);
-    }
-
-    /**
-     * AS3: init()
-     * Initializes the login flow DOM — background, logo, views, side images.
-     */
-    public async init(): Promise<void>
-    {
-        // The Component base defers initComponent to a microtask; wait for it so the
-        // embedded AS3 TextAsset configurations are parsed before any view reads a
-        // property (same wait VortexMain.init() does after setEmbeddedConfigurationAssets).
-        await Promise.resolve();
-
-        // AS3: _localization.loadDefaultEmbedLocalizations(_configuration.getProperty("environment.id"))
-        if(this._localization)
-        {
-            const envId = this.getProperty('environment.id') ?? 'en';
-
-            this._localization.loadDefaultEmbedLocalizations(envId);
-        }
-
-        // Root overlay.
-        this._root = document.createElement('div');
-        Object.assign(this._root.style, {
-            position: 'absolute',
-            top: '0',
-            left: '0',
-            width: '100%',
-            height: '100%',
-            zIndex: '10000',
-            overflow: 'hidden',
-            userSelect: 'none',
-            fontFamily: "'Ubuntu', Arial, Helvetica, sans-serif",
-        } as Partial<CSSStyleDeclaration>);
-
-        const container = document.getElementById('vortex-ui');
-
-        if(container) 
-        {
-            container.appendChild(this._root);
-        }
-
-        // AS3: _background = new Background(); addChild(_background)
-        this._background = new Background();
-        this._root.appendChild(this._background.element);
-        this._background.mount();
-
-        // AS3: _SafeStr_4565 = new Sprite(); habbo_logo_png at (40, 40)
-        this._logoArea = document.createElement('div');
-        Object.assign(this._logoArea.style, {
-            position: 'absolute',
-            left: '40px',
-            top: '40px',
-            zIndex: '2',
-        } as Partial<CSSStyleDeclaration>);
-
-        const logoImg = document.createElement('img');
-
-        logoImg.src = habboLogoUrl;
-        logoImg.alt = 'Habbo';
-        logoImg.draggable = false;
-        Object.assign(logoImg.style, {
-            display: 'block',
-            maxHeight: '50px',
-        } as Partial<CSSStyleDeclaration>);
-        this._logoArea.appendChild(logoImg);
-        this._root.appendChild(this._logoArea);
-
-        // Split-screen shell: illustration on the left, form content on the right.
-        // See login-ui.scss for why this replaced AS3's scattered absolute-positioned Sprites.
-        this._splitRoot = document.createElement('div');
-        this._splitRoot.className = 'habbo-split';
-        this._root.appendChild(this._splitRoot);
-
-        this._artWrap = document.createElement('div');
-        this._artWrap.className = 'habbo-split__art';
-        this._heroImage = document.createElement('img');
-        this._heroImage.alt = '';
-        this._heroImage.draggable = false;
-        this._artWrap.appendChild(this._heroImage);
-        this._splitRoot.appendChild(this._artWrap);
-
-        // AS3: _SafeStr_4564 = new Sprite() — the content column.
-        this._mainContainer = document.createElement('div');
-        this._mainContainer.className = 'habbo-split__content';
-        this._splitRoot.appendChild(this._mainContainer);
-
-        // AS3: _SafeStr_4559 = new Sprite(); y=50, visible=true
-        this._viewContainer = document.createElement('div');
-        this._viewContainer.style.width = '100%';
-        this._mainContainer.appendChild(this._viewContainer);
-
-        // AS3: Create all views
-        this._environmentView = new EnvironmentView(this);
-        this._loginView = new LoginView(this);
-        this._avatarView = new AvatarView(this);
-        this._ssoTokenView = new SsoTokenView(this);
-        this._registerView = new RegisterView(this);
-        this._avatarCreateView = new AvatarCreateView(this);
-
-        // AS3: _closeButton = new ColouredButton("red", "X", new Rectangle(0, 0, 0, 40), true, onClose, 0xD8D8D8)
-        this._closeButton = document.createElement('button');
-        this._closeButton.className = 'habbo-btn habbo-btn--red';
-        Object.assign(this._closeButton.style, {
-            position: 'fixed',
-            top: '30px',
-            right: '30px',
-            zIndex: '100',
-            minWidth: '0',
-            width: '44px',
-            height: '44px',
-            padding: '0',
-        } as Partial<CSSStyleDeclaration>);
-        this._closeButton.textContent = '✕';
-        this._closeButton.addEventListener('click', this._onClose);
-
-        // AS3: _SafeStr_4560.init(); — pre-init environment view
-        this._environmentView.init();
-
-        // AS3: loadImages()
-        this.loadImages();
-
-        // AS3: init() — if(isSsoTokenEnabled()) showScreen(SCREEN_SSO_TOKEN); else showScreen(SCREEN_LOGIN);
-        this.showScreen(this.isSsoTokenEnabled() ? LoginFlow.SCREEN_SSO_TOKEN : LoginFlow.SCREEN_LOGIN);
-
-        // Layout
-        this.layoutMainElements();
-
-        // Listen for resize
-        window.addEventListener('resize', this._onResize);
-    }
-
-    /**
-     * AS3: dispose()
-     */
-    public dispose(): void 
-    {
-        if(this._disposed) return;
-
-        this._disposed = true;
-
-        window.removeEventListener('resize', this._onResize);
-
-        if(this._errorTimer) 
-        {
-            clearTimeout(this._errorTimer);
-            this._errorTimer = 0;
-        }
-
-        this._provider.off(WebApiLoginProvider.SSO_TOKEN_AVAILABLE, this._onSsoTokenAvailable);
-        this._provider.dispose();
-
-        if(this._closeButton) 
-        {
-            this._closeButton.removeEventListener('click', this._onClose);
-
-            if(this._closeButton.parentNode) 
-            {
-                this._closeButton.remove();
-            }
-
-            this._closeButton = null;
-        }
-
-        this.hideViews();
-
-        if(this._environmentView) 
-        {
-            this._environmentView.dispose();
-            this._environmentView = null;
-        }
-
-        if(this._loginView) 
-        {
-            this._loginView.dispose();
-            this._loginView = null;
-        }
-
-        if(this._avatarView) 
-        {
-            this._avatarView.dispose();
-            this._avatarView = null;
-        }
-
-        if(this._ssoTokenView) 
-        {
-            this._ssoTokenView.dispose();
-            this._ssoTokenView = null;
-        }
-
-        if(this._registerView) 
-        {
-            this._registerView.dispose();
-            this._registerView = null;
-        }
-
-        if(this._avatarCreateView) 
-        {
-            this._avatarCreateView.dispose();
-            this._avatarCreateView = null;
-        }
-
-        if(this._background) 
-        {
-            this._background.dispose();
-            this._background = null;
-        }
-
-        if(this._root) 
-        {
-            this._root.remove();
-            this._root = null;
-        }
-
-        this._mainContainer = null;
-        this._viewContainer = null;
-        this._logoArea = null;
-        this._errorBalloon = null;
-        this._splitRoot = null;
-        this._artWrap = null;
-        this._heroImage = null;
-
-        // AS3: dispose context and managers
-        if(this._fakeContext) 
-        {
-            this._fakeContext.dispose();
-            this._fakeContext = null;
-        }
-
-        this._communication = null;
-        this._localization = null;
-    }
-
-    /**
-     * AS3: isSsoTokenEnabled():Boolean — OnBoardingHc.as
-     * Decides the default screen. common_configuration_txt.txt sets "use.sso=false",
-     * so this normally resolves to false and the flow opens on Login, not SSO Token.
-     */
-    private isSsoTokenEnabled(): boolean 
-    {
-        if(!this._configuration) return false;
-
-        if(this._configuration.propertyExists('use.sso')) 
-        {
-            return this._configuration.getBoolean('use.sso');
-        }
-
-        return this.getProperty('connection.info.login') === null;
-    }
-
-    /**
-     * AS3: showError(_arg_1:Object)
-     * Maps error codes to localization keys and displays the error.
      *
-     * @see sources/win63_2021_version/login/LoginFlow.as lines 461-527
+     * The close button is added to the flow itself, above every screen, so the captcha can be
+     * dismissed even though the view covers the stage.
      */
-    private showError(error: any): void 
+    public createCaptchaView(): ICaptchaView | null
     {
-        const errors: string[] | null = error?.errors;
-
-        let errorCode = (errors && errors.length > 0) ? errors[0] : '';
-
-        if(errorCode === '' && error != null) 
+        if(this._closeButton)
         {
-            if(error.error != null) 
-            {
-                errorCode = error.error;
-            }
-            else if(error.message != null) 
-            {
-                errorCode = error.message;
-            }
+            this.addChild(this._closeButton);
         }
 
-        let locKey = '';
+        const view = new WebCaptchaView(this._provider as unknown as WebApiLoginProvider);
 
-        switch(errorCode) 
+        view.mount(this._domContainer);
+        this._captchaView = view;
+        this.layoutMainElements();
+
+        return view;
+    }
+
+    // AS3: captchaReady()
+    public captchaReady(): void
+    {
+        if(this._closeButton)
         {
-            case 'invalid-captcha':
-                this.showCaptchaError();
-                return;
-
-            case 'login.user_banned':
-                locKey = 'connection.login.error.banned.desc';
-                break;
-
-            case 'login.blocked':
-                locKey = 'connection.login.error.blocked.desc';
-                break;
-
-            case 'unauthorized-staff-login':
-                locKey = 'connection.login.error.unauthorized.staff';
-                break;
-
-            case 'pocket.auth.login_failed':
-                locKey = 'connection.login.error.-3.desc';
-                break;
-
-            case 'pocket.auth.no_avatars':
-                locKey = 'connection.login.missing_avatars';
-                break;
-
-            case 'pocket.auth.valid_email_required':
-                locKey = 'connection.login.missing_credentials';
-                break;
-
-            case 'pocket.auth.password_required':
-                locKey = 'connection.login.missing_credentials';
-                break;
-
-            case 'pocket.auth.facebook_disabled':
-                locKey = 'connection.login.error.facebook_disabled.desc';
-                break;
-
-            case 'pocket.auth.facebook_not_connected':
-                break;
-
-            case 'pocket.auth.access_token_required':
-                locKey = 'connection.login.error.facebook_accesstoken.desc';
-                break;
-
-            case 'ioError':
-                locKey = 'connection.login.error.-400.desc';
-                break;
-
-            case 'account_issue':
-                locKey = 'generic.error';
-                break;
-
-            default:
-                locKey = 'generic.error';
-                break;
+            this.removeChild(this._closeButton);
         }
 
-        if(locKey && locKey.length > 0) 
-        {
-            // AS3: showErrorMessage(_localization.getLocalization(_local_3))
-            let message = locKey;
-
-            if(this._localization) 
-            {
-                const localized = (this._localization as any).getLocalization?.(locKey);
-
-                if(localized) message = localized;
-            }
-
-            this.showErrorMessage(message);
-        }
+        this._captchaView?.dispose();
+        this._captchaView = null;
+        this.showScreen(LoginFlow.SCREEN_LOGIN);
     }
 
     /**
-     * AS3: loadImages()
-     * Loads the hero illustration from config. AS3 loads a left AND right side image
-     * (peeking in from both bottom corners); the split-screen redesign shows a single,
-     * large illustration instead, so only the right one (the hotel building) is used.
+     * AS3: layoutMainElements()
+     *
+     * Centres the content column when the stage is wide enough, pins the close button to the top
+     * right, and hangs the two landing illustrations off the bottom corners — the right one
+     * clamped so it never crosses x=400.
      */
-    private loadImages(): void 
+    private layoutMainElements(): void
     {
-        const heroUri = this.getProperty('landing.view.background_right.uri');
+        const stage = this.stage;
 
-        if(heroUri && this._heroImage) 
+        if(this.disposed || !stage || !this._mainSprite) return;
+
+        this._background?.resize();
+
+        const contentWidth = this._mainSprite.width + 20;
+
+        if(stage.stageWidth > contentWidth)
         {
-            ImageLoader.createLoader(this._heroImage, heroUri, this._onImageComplete);
+            let offset = Math.trunc((stage.stageWidth - contentWidth) / 2);
+
+            if(offset < LoginFlow.MAIN_AREA_MARGIN)
+            {
+                offset = LoginFlow.MAIN_AREA_MARGIN;
+            }
+
+            this._mainSprite.x = offset;
+        }
+        else
+        {
+            this._mainSprite.x = LoginFlow.MAIN_AREA_MARGIN;
+        }
+
+        this._mainSprite.y = LoginFlow.LOGO_AREA_HEIGHT;
+
+        if(this._closeButton)
+        {
+            this._closeButton.y = 30;
+            this._closeButton.x = stage.stageWidth - this._closeButton.width - 30;
+        }
+
+        if(this._backgroundRight)
+        {
+            this._backgroundRight.x = Math.max(400, stage.stageWidth - this._backgroundRight.width + 50);
+            this._backgroundRight.y = stage.stageHeight - this._backgroundRight.height + 50;
+        }
+
+        if(this._backgroundLeft)
+        {
+            this._backgroundLeft.x = -50;
+            this._backgroundLeft.y = stage.stageHeight - this._backgroundLeft.height + 50;
+        }
+    }
+
+    // AS3: loadImages()
+    private loadImages(): void
+    {
+        if(!this._backgroundRight || !this._backgroundLeft) return;
+
+        const right = this.getProperty('landing.view.background_right.uri');
+        const left = this.getProperty('landing.view.background_left.uri');
+
+        if(right)
+        {
+            ImageLoader.createLoader(this._backgroundRight, right, this._onImageComplete);
+        }
+
+        if(left)
+        {
+            ImageLoader.createLoader(this._backgroundLeft, left, this._onImageComplete);
         }
     }
 
     /**
      * AS3: onImageComplete(_arg_1:ImageLoaderEvent)
-     * Shows the image with a fade-in effect.
-     * AS3: TweenUtils.alphaTweenVisible(_arg_1.loader, 0, 1.2)
      */
-    private _onImageComplete = (event: ImageLoaderEvent): void => 
+    private _onImageComplete = (event: ImageLoaderEvent): void =>
     {
-        log.debug('Image complete: ' + event.url);
+        log.debug(`Image complete: ${event.url}`);
+        event.loader.visible = true;
+        TweenUtils.alphaTweenVisible(event.loader, 0, TweenUtils.REALLY_SLOW_ALPHA_TWEEN_TIME);
+        this.layoutMainElements();
+    };
 
-        // CSS transition handles the fade-in (opacity 0 -> 1 over 1.2s)
-        event.loader.style.opacity = '1';
+    // AS3: onAddedToStage(_arg_1:Event)
+    private _onAddedToStage = (): void =>
+    {
+        this.removeEventListener('addedToStage', this._onAddedToStage);
+        this._lastFrameTime = performance.now();
+        this.layoutMainElements();
+    };
+
+    /**
+     * AS3: onEnterFrame(_arg_1:Event)
+     *
+     * Advances the shared tween juggler by the frame delta, in seconds.
+     */
+    private _onEnterFrame = (): void =>
+    {
+        const now = performance.now();
+
+        TweenUtils.JUGGLER.advanceTime((now - this._lastFrameTime) / 1000);
+        this._lastFrameTime = now;
+    };
+
+    // AS3: onStageResize(_arg_1:Event)
+    private _onStageResize = (): void =>
+    {
+        if(this.disposed) return;
+
+        this.layoutMainElements();
+    };
+
+    // AS3: onHideError(_arg_1:TimerEvent)
+    private _onHideError = (): void =>
+    {
+        if(this._errorBalloon)
+        {
+            this._errorBalloon.visible = false;
+        }
     };
 
     /**
      * AS3: onClose(_arg_1:Button)
-     * Closes the captcha and shows the login screen.
      */
-    private _onClose = (): void => 
+    private _onClose = (): void =>
     {
-        if(this._closeButton && this._closeButton.parentNode) 
+        if(this._closeButton)
         {
-            this._closeButton.remove();
+            this.removeChild(this._closeButton);
         }
 
-        // AS3: _SafeStr_597.closeCaptcha()
-        // closeCaptcha not yet in ILoginProvider — stub
-        this.showScreen(2);
+        this._provider.closeCaptcha();
+        this.showScreen(LoginFlow.SCREEN_LOGIN);
     };
 
-    /**
-     * AS3: hideViews()
-     * Removes all children from the view container.
-     */
-    private hideViews(): void 
+    // AS3: hideViews()
+    private hideViews(): void
     {
-        if(this._viewContainer) 
+        if(!this._viewContainer) return;
+
+        while(this._viewContainer.numChildren > 0)
         {
-            this._viewContainer.innerHTML = '';
+            this._viewContainer.removeChildAt(0);
         }
     }
 
     /**
-     * AS3: layoutMainElements()
-     * The split layout and close button are handled entirely by CSS (flexbox,
-     * position:fixed) — nothing left to compute on resize besides the background,
-     * which is itself a CSS no-op (see Background.resize()). Kept as a hook for
-     * loadImages()/resize to call into without needing to know that.
-     */
-    private layoutMainElements(): void 
-    {
-        if(this._disposed) return;
-
-        this._background?.resize();
-    }
-
-    /**
-     * AS3: onSsoTokenAvailable(_arg_1:SsoTokenAvailableEvent)
-     * Called when the Web API returns an SSO token.
-     */
-    private _onSsoTokenAvailable = (token: string): void => 
-    {
-        this._ssoToken = token;
-        this._events.emit(LoginFlow.LOGIN_FLOW_FINISHED_EVENT);
-    };
-
-    /** Bound resize handler. */
-    private _onResize = (): void => 
-    {
-        if(!this._disposed) 
-        {
-            this.layoutMainElements();
-        }
-    };
-
-    /**
-     * Opens the avatar creator, booting the engine first if it isn't up.
+     * AS3: showError(_arg_1:Object)
      *
-     * Every other login screen runs on the FakeContext alone. This one drives
-     * IAvatarRenderManager (figuredata, part downloads, live previews), so it is the only
-     * place the pre-login flow needs a real engine — see the avatarRenderManager getter for
-     * why AS3 has no equivalent. Booting here keeps the furnidata download out of the plain
-     * sign-in path, which is the whole point of gating the core behind login.
+     * Maps a web-API error code to a localisation key. The `default` arm is placed mid-switch in
+     * the AS3 (between `facebook_disabled` and `access_token_required`), which changes nothing:
+     * unmatched codes still fall to `generic.error`. The one code that does not produce a message
+     * is `pocket.auth.facebook_not_connected`, whose arm is empty.
      */
-    private async showAvatarCreate(): Promise<void>
+    private showError(error: unknown): void
     {
-        if(this._ensureEngine && !Vortex.hasInstance)
+        const payload = error as {errors?: string[]; error?: string; message?: string} | null;
+        const errors = payload?.errors;
+        let code = errors && errors.length > 0 ? errors[0] : '';
+
+        if(code === '' && payload != null)
         {
-            try
+            if(payload.error != null)
             {
-                await this._ensureEngine();
+                code = payload.error;
             }
-            catch (error)
+            else if(payload.message != null)
             {
-                log.error('Failed to boot the engine for the avatar creator', error);
+                code = payload.message;
             }
         }
 
-        if(this._disposed || !this._avatarCreateView || !this._viewContainer)
+        let key = '';
+
+        switch(code)
         {
-            return;
+            case 'invalid-captcha':
+                this.showCaptchaError();
+
+                return;
+
+            case 'login.user_banned':
+                key = 'connection.login.error.banned.desc';
+                break;
+
+            case 'login.blocked':
+                key = 'connection.login.error.blocked.desc';
+                break;
+
+            case 'unauthorized-staff-login':
+                key = 'connection.login.error.unauthorized.staff';
+                break;
+
+            case 'pocket.auth.login_failed':
+                key = 'connection.login.error.-3.desc';
+                break;
+
+            case 'pocket.auth.no_avatars':
+                key = 'connection.login.missing_avatars';
+                break;
+
+            case 'pocket.auth.valid_email_required':
+                key = 'connection.login.missing_credentials';
+                break;
+
+            case 'pocket.auth.password_required':
+                key = 'connection.login.missing_credentials';
+                break;
+
+            case 'pocket.auth.facebook_disabled':
+                key = 'connection.login.error.facebook_disabled.desc';
+                break;
+
+            case 'pocket.auth.access_token_required':
+                key = 'connection.login.error.facebook_accesstoken.desc';
+                break;
+
+            case LoginFlow.ERROR_TYPE_IO_ERROR:
+                key = 'connection.login.error.-400.desc';
+                break;
+
+            case 'account_issue':
+                key = 'generic.error';
+                break;
+
+            case 'pocket.auth.facebook_not_connected':
+                break;
+
+            default:
+                key = 'generic.error';
+                break;
         }
 
-        this._viewContainer.appendChild(this._avatarCreateView.element);
-        this._avatarCreateView.init();
-        this.layoutMainElements();
+        if(key && key.length > 0)
+        {
+            this.showErrorMessage(this._localization?.getLocalization(key) ?? key);
+        }
     }
 
     /**
      * AS3: createFakeContext(_arg_1:Dictionary)
      *
-     * @see sources/win63_2021_version/login/LoginFlow.as lines 160-174
+     * AS3 also calls `loadDefaultEmbedLocalizations()` here. The port's `Component` base defers its
+     * embedded-asset parse to a microtask, so no property is readable yet at this point — `mount()`
+     * does it once that has settled.
      */
-    private createFakeContext(): void 
+    private createFakeContext(): void
     {
         this._fakeContext = new FakeContext();
-
         this._configuration = this.createConfiguration();
         this._localization = this.createLocalization();
         this._communication = this.createCommunication();
-
-        // AS3 runs loadDefaultEmbedLocalizations() here, but our Component base defers
-        // initComponent (and with it the embedded-asset parse) to a microtask, so no
-        // property is readable yet — init() awaits that microtask and does it there.
-
-        // AS3: _SafeStr_597 = new WebApiLoginProvider(this)
+        LocalizedSprite.localizationManager = this._localization as unknown as ICoreLocalizationManager;
+        LocalizedTextField.localizationManager = this._localization as unknown as ICoreLocalizationManager;
         this._provider = new WebApiLoginProvider(this);
-
-        // AS3: _SafeStr_597.addEventListener("SSO_TOKEN_AVAILABLE", onSsoTokenAvailable)
         this._provider.on(WebApiLoginProvider.SSO_TOKEN_AVAILABLE, this._onSsoTokenAvailable);
     }
 
     /**
      * AS3: createConfiguration(_arg_1:IContext):HabboConfigurationManager
      *
-     * AS3 builds this one from the embedded HabboConfigurationCom asset library alone and
-     * never downloads external_variables — the login screen only needs properties that ship
-     * inside the client (web.api, url.prefix, use.sso, live.environment.list,
-     * landing.view.background_*.uri, habbo.imaging.avatar.url), all of which are in
-     * common_configuration_txt. Reusing the engine's manager instead would force the whole
-     * core — and with it the furnidata download — to boot before the user has authenticated.
+     * Built from the embedded configuration library alone — no external_variables download. The
+     * login screen only needs properties that ship inside the client (web.api, url.prefix,
+     * live.environment.list, landing.view.background_*.uri), and reusing the engine's manager would
+     * force the whole core to boot before the user has authenticated.
      */
     private createConfiguration(): IHabboConfigurationManager
     {
@@ -1126,25 +905,95 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 
     /**
      * AS3: createLocalization(_arg_1:IContext):HabboLocalizationManager
-     * Creates a standalone HabboLocalizationManager using the FakeContext.
+     *
+     * AS3 builds this one from the embedded HabboLocalizationCom library, which is also where
+     * `loadDefaultEmbedLocalizations()` finds its texts. The port is handed the same texts among
+     * the embedded assets, so they are forwarded here — without them the screens render raw keys.
      */
-    private createLocalization(): IHabboLocalizationManager 
+    private createLocalization(): IHabboLocalizationManager
     {
         const localization = new HabboLocalizationManager(this._fakeContext!);
 
         localization.setConfigurationManager(this._configuration);
+        localization.setEmbeddedLocalizationAssets(this._embeddedConfigurations);
 
         return localization;
     }
 
-    /**
-     * AS3: createCommunication(_arg_1:IContext):HabboCommunicationManager
-     * Creates a standalone HabboCommunicationManager using the FakeContext.
-     */
-    private createCommunication(): IHabboCommunicationManager 
+    // AS3: createCommunication(_arg_1:IContext):HabboCommunicationManager
+    private createCommunication(): IHabboCommunicationManager
     {
-        const communication = new HabboCommunicationManager(this._fakeContext!);
+        return new HabboCommunicationManager(this._fakeContext!);
+    }
 
-        return communication;
+    // AS3: onSsoTokenAvailable(_arg_1:SsoTokenAvailableEvent)
+    private _onSsoTokenAvailable = (token: string): void =>
+    {
+        this._ssoToken = token;
+        this._loginEvents.emit(LoginFlow.LOGIN_FLOW_FINISHED_EVENT);
+    };
+
+    /**
+     * TS-only: the deferred half of `createFakeContext()`.
+     *
+     * AS3 loads the embedded localisations inside the constructor because its asset libraries are
+     * ready synchronously. Here the `Component` base defers its embedded-asset parse to a
+     * microtask, so this runs after awaiting it — before any screen reads a property.
+     */
+    public async mount(): Promise<void>
+    {
+        await Promise.resolve();
+
+        this._localization?.loadDefaultEmbedLocalizations(this.getProperty('environment.id') ?? 'en');
+    }
+
+    /**
+     * AS3: dispose()
+     *
+     * The guard is AS3's: `dispose()` removes its frame listener, then returns early if it has
+     * already run.
+     */
+    public dispose(): void
+    {
+        this.removeEventListener('enterFrame', this._onEnterFrame);
+
+        if(this._disposed) return;
+
+        if(this._fakeContext)
+        {
+            this._fakeContext.dispose();
+            this._fakeContext = null;
+        }
+
+        if(this._background)
+        {
+            this.removeChild(this._background);
+            this._background.dispose();
+            this._background = null;
+        }
+
+        if(this._mainSprite != null)
+        {
+            this.removeChild(this._mainSprite);
+            this._mainSprite = null;
+        }
+
+        this.hideViews();
+        this._environmentView?.dispose();
+        this._loginView?.dispose();
+        this._registerView?.dispose();
+        this._avatarView?.dispose();
+        this._ssoTokenView?.dispose();
+        this._captchaView?.dispose();
+        this._captchaView = null;
+        this._provider.off(WebApiLoginProvider.SSO_TOKEN_AVAILABLE, this._onSsoTokenAvailable);
+        this._provider.dispose();
+        this.stage?.removeEventListener('resize', this._onStageResize);
+        this.stage?.removeChild(this);
+        this._disposed = true;
+        LocalizedSprite.localizationManager = null;
+        LocalizedTextField.localizationManager = null;
+        this._communication = null;
+        this._localization = null;
     }
 }

@@ -1,85 +1,33 @@
 /**
  * ILoginContext
  *
- * @see sources/win63_2021_version/login/ILoginContext.as
+ * AS3: sources/WIN63-202607011411-782849652/src/login/ILoginContext.as
  *
- * Interface for the login flow context, implemented by LoginFlow.
- * Views call these methods to trigger login actions and screen navigation.
+ * What a login view is allowed to ask of the flow. It extends `IUIContext`, so a view also gets
+ * the stage (which `InputField` needs for focus) and the debug text field.
+ *
+ * `EnvironmentView` and `SsoTokenView` do NOT take this interface in AS3 — they take `LoginFlow`
+ * itself, because they call `getProperty()` and `updateEnvironment()`, which are not part of it.
+ * The port keeps that split rather than widening the interface.
  */
 import type {AvatarData} from '@habbo/communication/login/AvatarData';
-import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
+import type {IUIContext} from '../onBoardingHcUi/IUIContext';
 
-export interface ILoginContext
+export interface ILoginContext extends IUIContext
 {
-    /**
-	 * Initiate login with email and password credentials.
-	 *
-	 * @param email - User email
-	 * @param password - User password
-	 */
+    // AS3: function initLogin(_arg_1:String, _arg_2:String):void
     initLogin(email: string, password: string): void;
 
-    /**
-	 * Initiate login with a direct SSO token.
-	 *
-	 * @param envId - Environment identifier (e.g., 'en', 'pt', 'de')
-	 * @param token - SSO token (uuid1.uuid2 format)
-	 */
-    initLoginWithSsoToken(envId: string, token: string): void;
+    // TS-only: no AS3 counterpart — the 701 dump has no screen that registers an account, so nothing
+    // there ever needed to ask the flow for it. See `RegisterView`'s header.
+    initRegister(email: string, password: string): void;
 
-    /**
-	 * Login with a selected avatar (for multi-avatar accounts).
-	 *
-	 * @param avatar - The selected avatar data
-	 */
+    // AS3: function initLoginWithSsoToken(_arg_1:String, _arg_2:String):void
+    initLoginWithSsoToken(environmentId: string, token: string): void;
+
+    // AS3: function loginWithAvatar(_arg_1:AvatarData):void
     loginWithAvatar(avatar: AvatarData): void;
 
-    /**
-	 * Switch to a different login screen.
-	 *
-	 * @param screen - Screen constant (1=Environment, 2=Login, 3=Avatars, 4=SsoToken)
-	 */
+    // AS3: function showScreen(_arg_1:int):void
     showScreen(screen: number): void;
-
-    /**
-	 * Update the current environment/hotel selection.
-	 *
-	 * @param envId - Environment identifier
-	 * @param previewOnly - If true, only preview (reload localization); if false, commit the change
-	 */
-    updateEnvironment(envId: string, previewOnly: boolean): void;
-
-    /**
-	 * Get a configuration property value.
-	 *
-	 * @param key - Property key
-	 * @returns The property value or null
-	 */
-    getProperty(key: string): string | null;
-
-    /**
-	 * AS3: registerAccount(email, password)
-	 * Register a new account, then advance to avatar creation.
-	 */
-    registerAccount(email: string, password: string): void;
-
-    /**
-	 * AS3: createAvatar(name, figure, gender)
-	 * Create the first avatar for a freshly registered account.
-	 */
-    createAvatar(name: string, figure: string, gender: string): void;
-
-    /**
-	 * AS3: checkName(name)
-	 * Check whether an avatar name is available.
-	 */
-    checkName(name: string): void;
-
-    /**
-	 * AS3: get avatarRenderManager():IAvatarRenderManager
-	 * The shared avatar render manager, used by the AvatarCreate screen to render
-	 * live figure previews. Already bootstrapped by the time the login flow shows
-	 * (Vortex.bootstrap() runs before showLoginFlow() in VortexApp.init()).
-	 */
-    readonly avatarRenderManager: IAvatarRenderManager | null;
 }

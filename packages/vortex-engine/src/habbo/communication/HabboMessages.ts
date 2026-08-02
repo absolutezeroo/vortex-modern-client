@@ -395,6 +395,15 @@ import {
     QuestionFinishedEvent,
 } from './messages/incoming/poll';
 
+// Onboarding (new user flow) — the starter-room pick and the figure save. Imported by path: the
+// nux/ barrels are generated and do not list these yet.
+import {SelectInitialRoomMessageEvent} from './messages/incoming/nux/SelectInitialRoomMessageEvent';
+import {SelectInitialRoomMessageComposer} from './messages/outgoing/nux/SelectInitialRoomMessageComposer';
+import {UpdateFigureDataMessageComposer} from './messages/outgoing/avatar/UpdateFigureDataMessageComposer';
+import {CheckUserNameResultMessageEvent} from './messages/incoming/help/CheckUserNameResultMessageEvent';
+import {ChangeUserNameMessageComposer} from './messages/outgoing/help/ChangeUserNameMessageComposer';
+import {CheckUserNameMessageComposer} from './messages/outgoing/help/CheckUserNameMessageComposer';
+
 // Incoming Events - Help (name change events)
 import {
     ChangeUserNameResultMessageEvent,
@@ -1399,6 +1408,14 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2319, UserNameChangedMessageEvent);
         this._events.set(1621, ChangeUserNameResultMessageEvent);
 
+        // === ONBOARDING (new user flow) ===
+        // ID from WIN63's registry (`_SafeStr_4546[3624] = _SafeCls_3056`), corroborated by the
+        // emulator as SelectInitialRoomComposer. Answers RoomPicker's starter-room pick.
+        this._events.set(3624, SelectInitialRoomMessageEvent);
+        // The name-check answer, `_SafeStr_4546[382] = _SafeCls_3600`. Without it the onboarding
+        // name dialog spins its wait indicator forever — the reply arrives and is dropped.
+        this._events.set(382, CheckUserNameResultMessageEvent);
+
         // === HELP (FAQ) ===
         // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/help/FaqTextMessageEvent.as
         // (name recovered via sources/PRODUCTION-201601012205-226667486/OriginalClassNames.txt; obfuscated in primary dump
@@ -1683,6 +1700,16 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(235, GetUserFlatCatsMessageComposer);
         this._composers.set(3018, GetUserEventCatsMessageComposer);
         this._composers.set(1817, UpdateHomeRoomMessageComposer);
+        // Onboarding: the starter-room pick sends a room TYPE, and the figure save sends
+        // gender-then-figure. IDs from WIN63's registry (`_composers[3267] = _SafeCls_3967`,
+        // `_composers[3339] = _SafeCls_3021`), corroborated by the emulator.
+        this._composers.set(3267, SelectInitialRoomMessageComposer);
+        this._composers.set(3339, UpdateFigureDataMessageComposer);
+        // Name check/claim. The onboarding dialog claims on 879 (`_composers[879] = _SafeCls_3401`);
+        // the paid rename in habbo/help/namechange uses 1703 and a different composer class, so the
+        // two are not interchangeable. The check is shared: `_composers[413] = _SafeCls_3569`.
+        this._composers.set(413, CheckUserNameMessageComposer);
+        this._composers.set(879, ChangeUserNameMessageComposer);
         this._composers.set(407, RateFlatMessageComposer);
         this._composers.set(2985, ToggleStaffPickMessageComposer);
         this._composers.set(3214, GetPopularRoomTagsMessageComposer);

@@ -32,6 +32,15 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
     private _skipExternals: boolean = false;
     private _boundOnLoginStep: ((step: HabboCommunicationEventType) => void) | null = null;
 
+    /**
+     * TS-only: the embedded `default_localizations*` texts, keyed by asset name.
+     *
+     * AS3 reads these off its own asset library (`assets.getAssetByName("default_localizations_en")`),
+     * which is populated from the embedded HabboLocalizationCom library. The port has no embedded
+     * SWF library, so the host hands the same texts in here — see `setEmbeddedLocalizationAssets()`.
+     */
+    private _embeddedLocalizations: Record<string, string> = {};
+
     // AS3: sources/win63_version/habbo/localization/HabboLocalizationManager.as constructor
     constructor(context: IContext, flags: number = 0)
     {
@@ -75,17 +84,53 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         }
     }
 
+    /**
+     * TS-only: supplies the embedded `default_localizations*` texts.
+     *
+     * These are what the login flow renders with — it runs before any external text file has been
+     * fetched, so without them every caption on the login screens shows its raw `${key}`.
+     */
+    setEmbeddedLocalizationAssets(assets: Record<string, string>): void
+    {
+        this._embeddedLocalizations = assets ?? {};
+    }
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/localization/HabboLocalizationManager.as::loadDefaultEmbedLocalizations()
+     *
+     * The global english-only file is ALWAYS parsed, then the language-specific one on top of it —
+     * so a key present in both takes the localised value. A missing language falls back to `en`
+     * once (`fallback` guards the recursion).
+     */
     loadDefaultEmbedLocalizations(language: string, fallback: boolean = true): boolean
     {
-        // In TypeScript version, embedded localizations would be imported modules
-        // For now, we log and return false as external loading is preferred
-        log.debug(`Loading default localizations for language: ${language}`);
+        const languageAssetName = `default_localizations_${language}`;
+        const languageData = this._embeddedLocalizations[languageAssetName];
 
-        if(fallback && language !== 'en')
+        if(!languageData && language !== 'en' && fallback)
         {
-            log.debug('Trying with default language: en');
+            log.debug(`Could not load default localizations ${languageAssetName} : Trying with default_localizations_en...`);
+
             return this.loadDefaultEmbedLocalizations('en', false);
         }
+
+        const globalData = this._embeddedLocalizations['default_localizations'];
+
+        if(globalData)
+        {
+            this.parseLocalizationData(globalData);
+        }
+
+        if(languageData)
+        {
+            this.parseLocalizationData(languageData);
+
+            return true;
+        }
+
+        // Nothing rendered before the external texts land, and nothing throws — so this has to be
+        // visible rather than a debug line.
+        log.warn(`Could not load ${languageAssetName}`);
 
         return false;
     }
