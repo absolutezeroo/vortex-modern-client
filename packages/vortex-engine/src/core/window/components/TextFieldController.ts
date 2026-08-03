@@ -417,11 +417,40 @@ export class TextFieldController extends TextController implements ITextFieldWin
                 return;
             }
 
+            // The window that owns the field can go away under it — a frame hidden by its
+            // close button, a parent disposed — and none of those paths reaches the field,
+            // so the DOM bridge kept its focus and the browser kept blinking a caret over
+            // an empty canvas. Checked here because this is the one place that already
+            // runs every frame for exactly as long as a caret exists.
+            if(!this.isEffectivelyVisible())
+            {
+                this.unfocus();
+
+                return;
+            }
+
             this.syncInputPosition();
             this._caretTrackRaf = requestAnimationFrame(tick);
         };
 
         this._caretTrackRaf = requestAnimationFrame(tick);
+    }
+
+    // TS-only: no AS3 counterpart. Flash hid a TextField with its parent for free; the DOM
+    // bridge behind this port's fields is a sibling of the canvas and is hidden by nothing,
+    // so its visibility has to be derived from the window chain by hand.
+    private isEffectivelyVisible(): boolean
+    {
+        let window: IWindow | null = this as unknown as IWindow;
+
+        while(window !== null)
+        {
+            if(window.disposed || !window.visible) return false;
+
+            window = window.parent;
+        }
+
+        return true;
     }
 
     private stopInputPositionTracking(): void
