@@ -38,20 +38,32 @@ const PREVIEW_POSTURE: string = 'std';
 
 export class BreedMonsterPlantsConfirmationView implements IDisposable, IGetImageListener
 {
+    // AS3: BreedMonsterPlantsConfirmationView.as::_window
     private _window: IFrameWindow | null = null;
+    // AS3: BreedMonsterPlantsConfirmationView.as::disposed (obfuscated `_SafeStr_5769`; named from its getter)
     private _disposed: boolean = false;
+    // AS3: BreedMonsterPlantsConfirmationView.as::_widget (obfuscated `_SafeStr_4549`)
     private _widget: AvatarInfoWidget;
+    // AS3: BreedMonsterPlantsConfirmationView.as::_windowManager
     private _windowManager: IHabboWindowManager;
+    // AS3: BreedMonsterPlantsConfirmationView.as::_assets
     private _assets: IAssetLibrary | null;
 
     // AS3: BreedMonsterPlantsConfirmationView.as::_SafeStr_6216 — pending image request id →
     // the preview window name it should land in.
     private _pendingImages: Map<number, string> = new Map();
 
+    // AS3: BreedMonsterPlantsConfirmationView.as::requestRoomObjectId (obfuscated `_SafeStr_7499`)
     private _requestRoomObjectId: number = 0;
+    // AS3: BreedMonsterPlantsConfirmationView.as::targetRoomObjectId (obfuscated `_SafeStr_6863`)
     private _targetRoomObjectId: number = 0;
+    // AS3: BreedMonsterPlantsConfirmationView.as::_petData (obfuscated `_SafeStr_4853`; the
+    // sibling field `_petData2` below keeps its readable AS3 name)
     private _petData: IUserData | null = null;
+    // AS3: BreedMonsterPlantsConfirmationView.as::_petData2
     private _petData2: IUserData | null = null;
+    // AS3: BreedMonsterPlantsConfirmationView.as::_state (obfuscated `_SafeStr_4597`; named from
+    // the STATE_NORMAL/STATE_REQUESTED pair it switches on)
     private _state: number = STATE_NORMAL;
 
     // AS3: BreedMonsterPlantsConfirmationView.as::BreedMonsterPlantsConfirmationView()

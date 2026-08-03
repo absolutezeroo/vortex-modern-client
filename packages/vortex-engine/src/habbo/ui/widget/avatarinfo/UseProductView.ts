@@ -47,7 +47,9 @@ const CATEGORY_FERTILIZE: number = 22;
 
 export class UseProductView extends AvatarContextInfoButtonView
 {
+    // AS3: UseProductView.as::_mode
     private _mode: number = MODE_NORMAL;
+    // AS3: UseProductView.as::_item (obfuscated `_SafeStr_5258`)
     private _item: UseProductItem | null = null;
 
     // AS3: UseProductView.as::UseProductView()

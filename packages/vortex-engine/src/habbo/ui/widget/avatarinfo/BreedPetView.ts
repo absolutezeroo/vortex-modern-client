@@ -25,8 +25,12 @@ const MODE_NORMAL: number = 0;
 
 export class BreedPetView extends AvatarContextInfoButtonView
 {
+    // AS3: BreedPetView.as::_mode
     private _mode: number = MODE_NORMAL;
+    // AS3: BreedPetView.as::_item (obfuscated `_SafeStr_5258`)
     private _item: UseProductItem | null = null;
+    // AS3: BreedPetView.as::_canBreed (obfuscated `_SafeStr_8845`; named from the setup()
+    // argument, which is the partner's IUserData.canBreed)
     private _canBreed: boolean = false;
 
     // AS3: BreedPetView.as::BreedPetView()

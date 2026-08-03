@@ -34,14 +34,23 @@ const PREVIEW_POSTURE: string = 'std';
 
 export class NestBreedingSuccessView implements IDisposable, IGetImageListener
 {
+    // AS3: NestBreedingSuccessView.as::_window
     private _window: IFrameWindow | null = null;
+    // AS3: NestBreedingSuccessView.as::disposed (obfuscated `_SafeStr_5769`; named from its getter)
     private _disposed: boolean = false;
+    // AS3: NestBreedingSuccessView.as::_widget (obfuscated `_SafeStr_4549`)
     private _widget: AvatarInfoWidget;
+    // AS3: NestBreedingSuccessView.as::_windowManager
     private _windowManager: IHabboWindowManager;
+    // AS3: NestBreedingSuccessView.as::_assets
     private _assets: IAssetLibrary | null;
 
+    // AS3: NestBreedingSuccessView.as::_petData (obfuscated `_SafeStr_4853`)
     private _petData: IUserData | null = null;
+    // AS3: NestBreedingSuccessView.as::_roomIndex (obfuscated `_SafeStr_7746`; named from the
+    // open() argument it stores, which is the new pet's room index)
     private _roomIndex: number = 0;
+    // AS3: NestBreedingSuccessView.as::_rarityCategory (obfuscated `_SafeStr_7578`)
     private _rarityCategory: number = 0;
 
     // AS3: NestBreedingSuccessView.as::_SafeStr_6216 — pending image request id → target name.

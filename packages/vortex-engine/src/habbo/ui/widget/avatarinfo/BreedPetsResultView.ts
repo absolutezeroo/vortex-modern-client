@@ -40,16 +40,24 @@ const OBJECT_PICKUP: string = 'OBJECT_PICKUP';
 
 export class BreedPetsResultView implements IDisposable, IGetImageListener
 {
+    // AS3: BreedPetsResultView.as::_window
     private _window: IFrameWindow | null = null;
+    // AS3: BreedPetsResultView.as::disposed (obfuscated `_SafeStr_5769`; named from its getter)
     private _disposed: boolean = false;
+    // AS3: BreedPetsResultView.as::_widget (obfuscated `_SafeStr_4549`)
     private _widget: AvatarInfoWidget;
+    // AS3: BreedPetsResultView.as::_windowManager
     private _windowManager: IHabboWindowManager;
+    // AS3: BreedPetsResultView.as::_assets
     private _assets: IAssetLibrary | null;
 
     // AS3: BreedPetsResultView.as::_SafeStr_6216 — pending image request id → target window name.
     private _pendingImages: Map<number, string> = new Map();
 
+    // AS3: BreedPetsResultView.as::_resultData (obfuscated `_SafeStr_4915`; the sibling
+    // `_resultData2` below keeps its readable AS3 name)
     private _resultData: BreedPetsResultData | null = null;
+    // AS3: BreedPetsResultView.as::_resultData2
     private _resultData2: BreedPetsResultData | null = null;
 
     // AS3: BreedPetsResultView.as::_SafeStr_6239 — set by the place buttons, cleared by show().
@@ -73,6 +81,8 @@ export class BreedPetsResultView implements IDisposable, IGetImageListener
         this.show();
     }
 
+    // TS-only: AS3 reads `_SafeStr_4549.handler.container.inventory` at each of the four call
+    // sites; folded into one accessor here.
     private get inventory(): IHabboInventory | null
     {
         return this._widget.handler?.container?.inventory ?? null;

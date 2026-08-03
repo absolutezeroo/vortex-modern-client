@@ -62,16 +62,27 @@ const MONSTERPLANT_GROWN_LEVEL: number = 7;
 
 export class UseProductConfirmationView implements IDisposable, IGetImageListener
 {
+    // AS3: UseProductConfirmationView.as::_window
     private _window: IFrameWindow | null = null;
+    // AS3: UseProductConfirmationView.as::disposed (obfuscated `_SafeStr_5769`; named from its getter)
     private _disposed: boolean = false;
+    // AS3: UseProductConfirmationView.as::_widget (obfuscated `_SafeStr_4549`)
     private _widget: AvatarInfoWidget;
+    // AS3: UseProductConfirmationView.as::_windowManager
     private _windowManager: IHabboWindowManager;
+    // AS3: UseProductConfirmationView.as::_assets
     private _assets: IAssetLibrary | null;
 
+    // AS3: UseProductConfirmationView.as::requestObjectId (obfuscated `_SafeStr_7216`)
     private _requestObjectId: number = -1;
+    // AS3: UseProductConfirmationView.as::targetRoomObjectId (obfuscated `_SafeStr_6863`)
     private _targetRoomObjectId: number = -1;
+    // AS3: UseProductConfirmationView.as::_pendingImageId (obfuscated `_SafeStr_7581`; named
+    // from imageReady(), which only accepts the id stored here)
     private _pendingImageId: number = 0;
+    // AS3: UseProductConfirmationView.as::_furnitureData (obfuscated `_SafeStr_5194`)
     private _furnitureData: IFurnitureData | null = null;
+    // AS3: UseProductConfirmationView.as::_petData (obfuscated `_SafeStr_4853`)
     private _petData: IUserData | null = null;
 
     // AS3: UseProductConfirmationView.as::UseProductConfirmationView()

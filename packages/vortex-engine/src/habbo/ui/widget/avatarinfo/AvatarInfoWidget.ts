@@ -83,6 +83,8 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     private _config: IHabboConfigurationManager | null;
     private _catalog: IHabboCatalog | null;
     private _data: AvatarInfoData = new AvatarInfoData();
+    // AS3: AvatarInfoWidget.as::_activeView (obfuscated `_SafeStr_4550`; named from removeView(),
+    // which clears it, and updatePetView(), which tests what it currently is)
     private _activeView: AvatarContextInfoButtonView | null = null;
     private _cachedOwnMenu: OwnAvatarMenuView | null = null;
     private _isDancing: boolean = false;
@@ -92,33 +94,46 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     // AS3: AvatarInfoWidget.as::_petData (obfuscated `_SafeStr_5133`) — the pet state kept
     // between RWPIUE_PET_INFO events; both pet bubbles read it.
     private _petData: PetInfoData = new PetInfoData();
+    // AS3: AvatarInfoWidget.as::_cachedOwnPetMenu (obfuscated `_SafeStr_6484`; the AS3 sibling
+    // `_cachedOwnAvatarMenu` is readable and names the pattern)
     private _cachedOwnPetMenu: OwnPetMenuView | null = null;
+    // AS3: AvatarInfoWidget.as::_cachedPetMenu (obfuscated `_SafeStr_5550`)
     private _cachedPetMenu: PetMenuView | null = null;
 
     // AS3: AvatarInfoWidget.as::_handlePetInfo
     private _handlePetInfo: boolean = true;
 
-    // AS3: AvatarInfoWidget.as::_SafeStr_5652 / _buttonsSetup — the pending menu build,
-    // deferred until the wired click handler has had its say (setupMenuView()).
+    // AS3: AvatarInfoWidget.as::_pendingMenuRoomIndex (obfuscated `_SafeStr_5652`) — with
+    // _buttonsSetup below, the menu build deferred until the wired click handler has had its
+    // say (setupMenuView()).
     private _pendingMenuRoomIndex: number = -1;
+    // AS3: AvatarInfoWidget.as::_buttonsSetup
     private _buttonsSetup: (() => void) | null = null;
 
-    // AS3: AvatarInfoWidget.as::_useProductBubbles / _breedPetBubbles — one bubble per candidate
-    // pet, keyed on its webID (AS3 uses a Map keyed by the same string).
+    // AS3: AvatarInfoWidget.as::_useProductBubbles — one bubble per candidate pet, keyed on its
+    // webID (AS3 keys its own map by the same string).
     private _useProductBubbles: Map<string, UseProductView> = new Map();
+    // AS3: AvatarInfoWidget.as::_breedPetBubbles
     private _breedPetBubbles: Map<string, BreedPetView> = new Map();
 
-    // AS3: AvatarInfoWidget.as::_SafeStr_4966 / _SafeStr_4972 / _SafeStr_5284 / _SafeStr_4888 /
-    // _SafeStr_8360 — the five modal pet dialogs, each at most one at a time.
+    // The five modal pet dialogs, each at most one at a time.
+    // AS3: AvatarInfoWidget.as::_useProductConfirmationView (obfuscated `_SafeStr_4966`)
     private _useProductConfirmationView: UseProductConfirmationView | null = null;
+    // AS3: AvatarInfoWidget.as::_breedMonsterPlantsConfirmationView (obfuscated `_SafeStr_4972`)
     private _breedMonsterPlantsConfirmationView: BreedMonsterPlantsConfirmationView | null = null;
+    // AS3: AvatarInfoWidget.as::_confirmPetBreedingView (obfuscated `_SafeStr_5284`)
     private _confirmPetBreedingView: ConfirmPetBreedingView | null = null;
+    // AS3: AvatarInfoWidget.as::_breedPetsResultView (obfuscated `_SafeStr_4888`)
     private _breedPetsResultView: BreedPetsResultView | null = null;
+    // AS3: AvatarInfoWidget.as::_nestBreedingSuccessView (obfuscated `_SafeStr_8360`)
     private _nestBreedingSuccessView: NestBreedingSuccessView | null = null;
 
-    // AS3: AvatarInfoWidget.as::_breedingConfirmationAlert + the pair it can cancel.
+    // AS3: AvatarInfoWidget.as::_breedingConfirmationAlert
     private _breedingConfirmationAlert: IConfirmDialog | null = null;
+    // AS3: AvatarInfoWidget.as::_breedingAlertRequestObjectId (obfuscated `_SafeStr_7960`; named
+    // from showBreedingPetsWaitingConfirmationAlert(), which stores the pair the alert can cancel)
     private _breedingAlertRequestObjectId: number = -1;
+    // AS3: AvatarInfoWidget.as::_breedingAlertTargetObjectId (obfuscated `_SafeStr_6730`)
     private _breedingAlertTargetObjectId: number = -1;
 
     // AS3: AvatarInfoWidget.as::AvatarInfoWidget()

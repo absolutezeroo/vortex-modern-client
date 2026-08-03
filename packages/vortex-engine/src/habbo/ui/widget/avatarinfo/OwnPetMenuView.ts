@@ -53,12 +53,20 @@ const FURNI_CATEGORY_MONSTERPLANT_REVIVE: number = 20;
 
 export class OwnPetMenuView extends AvatarContextInfoButtonView
 {
+    // AS3: OwnPetMenuView.as::_petData (obfuscated `_SafeStr_4556`)
     private _petData: PetInfoData | null = null;
+    // AS3: OwnPetMenuView.as::_mode
     private _mode: number = MODE_NORMAL;
+    // AS3: OwnPetMenuView.as::_saddleFurnitureData (obfuscated `_SafeStr_6269`; named from the
+    // findFurnitureData(16, 15) that fills it and the buy_saddle button that reads it)
     private _saddleFurnitureData: IFurnitureData | null = null;
+    // AS3: OwnPetMenuView.as::_reviveFurnitureData (obfuscated `_SafeStr_8187`; named from the
+    // findFurnitureData(20, 16) that fills it and the revive button that reads it)
     private _reviveFurnitureData: IFurnitureData | null = null;
 
+    // AS3: OwnPetMenuView.as::_catalog
     protected _catalog: IHabboCatalog | null;
+    // AS3: OwnPetMenuView.as::_habboTracking
     protected _habboTracking: IHabboTracking | null;
 
     // AS3: OwnPetMenuView.as::OwnPetMenuView()

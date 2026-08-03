@@ -31,7 +31,9 @@ const MODE_MONSTER_PLANT: number = 3;
 
 export class PetMenuView extends AvatarContextInfoButtonView
 {
+    // AS3: PetMenuView.as::_petData (obfuscated `_SafeStr_4556`)
     private _petData: PetInfoData | null = null;
+    // AS3: PetMenuView.as::_mode
     private _mode: number = MODE_NORMAL;
 
     // AS3: PetMenuView.as::PetMenuView()

@@ -35,21 +35,34 @@ const PREVIEW_POSTURE: string = 'std';
 
 export class ConfirmPetBreedingView implements IDisposable, IGetImageListener
 {
+    // AS3: ConfirmPetBreedingView.as::_window
     private _window: IFrameWindow | null = null;
+    // AS3: ConfirmPetBreedingView.as::disposed (obfuscated `_SafeStr_5769`; named from its getter)
     private _disposed: boolean = false;
+    // AS3: ConfirmPetBreedingView.as::_widget (obfuscated `_SafeStr_4549`)
     private _widget: AvatarInfoWidget;
+    // AS3: ConfirmPetBreedingView.as::_windowManager
     private _windowManager: IHabboWindowManager;
+    // AS3: ConfirmPetBreedingView.as::_assets
     private _assets: IAssetLibrary | null;
 
     // AS3: ConfirmPetBreedingView.as::_SafeStr_6216 — pending image request id → target window name.
     private _pendingImages: Map<number, string> = new Map();
 
+    // AS3: ConfirmPetBreedingView.as::requestRoomObjectId (obfuscated `_SafeStr_7499`)
     private _requestRoomObjectId: number = 0;
+    // AS3: ConfirmPetBreedingView.as::targetRoomObjectId (obfuscated `_SafeStr_6863`)
     private _targetRoomObjectId: number = 0;
+    // AS3: ConfirmPetBreedingView.as::_petData (obfuscated `_SafeStr_4853`)
     private _petData: IUserData | null = null;
+    // AS3: ConfirmPetBreedingView.as::_petData2
     private _petData2: IUserData | null = null;
+    // AS3: ConfirmPetBreedingView.as::_stuffId
     private _stuffId: number = 0;
+    // AS3: ConfirmPetBreedingView.as::_rarityCategories
     private _rarityCategories: BreedingRarityCategoryData[] = [];
+    // AS3: ConfirmPetBreedingView.as::_resultPetTypeId (obfuscated `_SafeStr_9492`; named from
+    // the open() argument, which is the nest's resulting pet type)
     private _resultPetTypeId: number = 0;
 
     // AS3: ConfirmPetBreedingView.as::ConfirmPetBreedingView()

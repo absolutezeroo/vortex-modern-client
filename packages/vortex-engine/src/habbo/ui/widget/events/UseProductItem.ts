@@ -8,12 +8,19 @@
  */
 export class UseProductItem
 {
+    // AS3: UseProductItem.as::id (the backing field is obfuscated `_SafeStr_4872`; named from its getter)
     private _id: number;
+    // AS3: UseProductItem.as::category (obfuscated `_SafeStr_4689`)
     private _category: number;
+    // AS3: UseProductItem.as::_name
     private _name: string;
+    // AS3: UseProductItem.as::requestRoomObjectId (obfuscated `_SafeStr_7499`)
     private _requestRoomObjectId: number;
+    // AS3: UseProductItem.as::targetRoomObjectId (obfuscated `_SafeStr_6863`)
     private _targetRoomObjectId: number;
+    // AS3: UseProductItem.as::requestInventoryStripId (obfuscated `_SafeStr_9849`)
     private _requestInventoryStripId: number;
+    // AS3: UseProductItem.as::replace (obfuscated `_SafeStr_9295`)
     private _replace: boolean;
 
     // AS3: UseProductItem.as::UseProductItem()
