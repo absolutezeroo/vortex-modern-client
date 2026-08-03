@@ -135,6 +135,7 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
         if(!events) return;
 
         events.on(RoomEngineToWidgetEvent.REQUEST_MYSTERYBOX_OPEN_DIALOG, this.onMysteryBoxOpenDialogRequested, this);
+        events.on(RoomEngineToWidgetEvent.REQUEST_EFFECTBOX_OPEN_DIALOG, this.onEffectBoxOpenDialogRequested, this);
         events.on(RoomEngineToWidgetEvent.REQUEST_MYSTERYTROPHY_OPEN_DIALOG, this.onMysteryTrophyOpenDialogRequested, this);
     }
 
@@ -146,6 +147,7 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
         if(events)
         {
             events.off(RoomEngineToWidgetEvent.REQUEST_MYSTERYBOX_OPEN_DIALOG, this.onMysteryBoxOpenDialogRequested, this);
+            events.off(RoomEngineToWidgetEvent.REQUEST_EFFECTBOX_OPEN_DIALOG, this.onEffectBoxOpenDialogRequested, this);
             events.off(RoomEngineToWidgetEvent.REQUEST_MYSTERYTROPHY_OPEN_DIALOG, this.onMysteryTrophyOpenDialogRequested, this);
         }
 
@@ -464,6 +466,21 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
         if(object === null) return;
 
         this._widget.showMysteryBoxOpenDialog(object);
+    }
+
+    /** Owner-only, unlike the mystery box: an effect box is opened by whoever owns it. */
+    // AS3: FurnitureContextMenuWidgetHandler.as::onEffectBoxOpenDialogRequested()
+    private onEffectBoxOpenDialogRequested(event: RoomEngineToWidgetEvent): void
+    {
+        if(this._widget === null) return;
+
+        const object = this.getRoomObject(event.objectId);
+
+        if(object === null) return;
+
+        if(!this._container?.isOwnerOfFurniture(object)) return;
+
+        this._widget.showEffectBoxOpenDialog(object);
     }
 
     // AS3: FurnitureContextMenuWidgetHandler.as::onMysteryTrophyOpenDialogRequested()

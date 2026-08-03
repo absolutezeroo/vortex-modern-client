@@ -34,6 +34,7 @@ import {RandomTeleportContextMenuView} from './RandomTeleportContextMenuView';
 import {MonsterPlantSeedContextMenuView} from './MonsterPlantSeedContextMenuView';
 import {MonsterPlantSeedConfirmationView} from './MonsterPlantSeedConfirmationView';
 import {PurchasableClothingConfirmationView} from './PurchasableClothingConfirmationView';
+import {EffectBoxOpenDialogView} from '@habbo/ui/widget/furniture/effectbox/EffectBoxOpenDialogView';
 import {MysteryBoxContextMenuView} from '@habbo/ui/widget/furniture/mysterybox/MysteryBoxContextMenuView';
 import {MysteryBoxOpenDialogView} from '@habbo/ui/widget/furniture/mysterybox/MysteryBoxOpenDialogView';
 import {MysteryTrophyOpenDialogView} from '@habbo/ui/widget/furniture/mysterytrophy/MysteryTrophyOpenDialogView';
@@ -73,6 +74,9 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
     // AS3: FurnitureContextMenuWidget.as::_SafeStr_6070
     private _purchasableClothingConfirmationView: PurchasableClothingConfirmationView | null = null;
 
+    // AS3: FurnitureContextMenuWidget.as::_SafeStr_6094
+    private _effectBoxOpenDialogView: EffectBoxOpenDialogView | null = null;
+
     // AS3: FurnitureContextMenuWidget.as::_SafeStr_6960
     private _mysteryBoxOpenDialogView: MysteryBoxOpenDialogView | null = null;
 
@@ -108,11 +112,12 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
         this._monsterPlantSeedContextMenuView = new MonsterPlantSeedContextMenuView(this);
         this._monsterPlantSeedConfirmationView = new MonsterPlantSeedConfirmationView(this);
         this._purchasableClothingConfirmationView = new PurchasableClothingConfirmationView(this);
+        this._effectBoxOpenDialogView = new EffectBoxOpenDialogView(this);
         this._mysteryBoxOpenDialogView = new MysteryBoxOpenDialogView(this);
         this._mysteryTrophyOpenDialogView = new MysteryTrophyOpenDialogView(this);
 
         // TODO(AS3): FurnitureContextMenuWidget.as::FurnitureContextMenuWidget() also builds
-        // GuildFurnitureContextMenuView and EffectBoxOpenDialogView. Neither is ported.
+        // GuildFurnitureContextMenuView. It is not ported.
 
         this.handler.widget = this;
 
@@ -210,6 +215,21 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
         FurnitureContextInfoView.setup(this._activeView, object);
 
         this.registerUpdateReceiver();
+    }
+
+    // AS3: FurnitureContextMenuWidget.as::showEffectBoxOpenDialog()
+    public showEffectBoxOpenDialog(object: IRoomObject): void
+    {
+        this._selectedObject = object;
+
+        if(this._activeView !== null) this.removeView(this._activeView, false);
+
+        if(this._effectBoxOpenDialogView === null)
+        {
+            this._effectBoxOpenDialogView = new EffectBoxOpenDialogView(this);
+        }
+
+        this._effectBoxOpenDialogView.open(object.getId());
     }
 
     // AS3: FurnitureContextMenuWidget.as::showPurchasableClothingConfirmationDialog()
