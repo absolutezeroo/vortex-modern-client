@@ -3,11 +3,13 @@ import type {WindowController} from '@core/window/WindowController';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
-import {type EditorState} from '../../state/EditorState';
+import {EditorEvents, ZOOM_STEPS, type EditorState} from '../../state/EditorState';
 import {downloadLayout, importLayoutXml, saveLayout} from '../../ops/LayoutSerializer';
 import {distributeChildren} from '../../ops/StructuralOps';
 import {toggleLocalisation} from '../../ops/LocaliseOps';
+import {downloadLayoutPng} from '../../ops/ScreenshotOps';
 import type {WindowGallery} from './WindowGallery';
+import type {WindowPalette} from './WindowPalette';
 import {slotsOf} from '../LayoutSlots';
 
 const log = Logger.getLogger('glaze.ui.windows.WindowToolbar');
@@ -17,37 +19,120 @@ const SMALL_INPUT = slotsOf('glaze_smallinput_xml');
 interface IContainerLike { addChild(child: IWindow): IWindow; }
 interface IDropWidget { populate(items: unknown[]): void; selection: number; addEventListener(type: string, cb: () => void): void; }
 interface IInputWidget { text: string; addEventListener(type: string, cb: () => void): void; }
+interface ICheckWidget { isSelected: boolean; addEventListener(type: string, cb: () => void): void; }
+
+/** One widget in the flow, with the box the reflow gives it. */
+interface IBarItem
+{
+    window: IWindow;
+    width: number;
+    height: number;
+    /** Starts a new row even when the current one still has room. */
+    breakBefore: boolean;
+}
 
 /** Cap the layout dropdown so populating doesn't build hundreds of item windows. */
 const DROPDOWN_LIMIT = 200;
 
+/** Space the "GLAZE" title reserves on the first row. */
+const TITLE_WIDTH = 92;
+const EDGE_PADDING = 12;
+const ROW_HEIGHT = 26;
+const ROW_GAP = 8;
+const ITEM_GAP = 5;
+
 /**
  * WindowToolbar — the top action bar, built from Habbo button widgets.
  *
- * Buttons are Illumina `button` widgets laid out left-to-right inside the toolbar
- * container; a `dropmenu` selects a registered layout to edit. Actions with a
- * concrete behavior are wired (Open/Import, Reload, Save, Save As/Export, Save
- * Screenshot); the rest log a notice until their subsystem lands.
+ * Buttons are Illumina `button` widgets; a `dropmenu` selects a registered layout
+ * to edit. Actions with a concrete behavior are wired (Open/Import, Reload, Save,
+ * Save As/Export, Save Screenshot); the rest log a notice until their subsystem
+ * lands.
+ *
+ * The bar **reflows**: widgets are built once into a flow and {@link layout}
+ * packs them into as many rows as the current canvas width needs, returning the
+ * height the chrome should give the bar. Fixed rows meant that on anything
+ * narrower than ~1700 px the last buttons — Image Gallery, Widgets — were laid out
+ * past the right edge and simply could not be clicked.
  */
 export class WindowToolbar
 {
     private readonly _state: EditorState;
     private readonly _wm: EditorState['runtime']['windowManager'];
     private readonly _bar: IWindow;
-    private _x = 92;
-    private _x2 = 12;
+    private readonly _items: IBarItem[] = [];
     private _fileInput: HTMLInputElement | null = null;
+    private _modeButton: WindowController | null = null;
+    private _zoomDrop: IDropWidget | null = null;
+    private _breakNext = false;
     private readonly _gallery: WindowGallery | null;
+    private readonly _palette: WindowPalette | null;
 
-    public constructor(state: EditorState, bar: IWindow, gallery: WindowGallery | null)
+    public constructor(state: EditorState, bar: IWindow, gallery: WindowGallery | null, palette: WindowPalette | null = null)
     {
         this._state = state;
         this._wm = state.runtime.windowManager;
         this._bar = bar;
         this._gallery = gallery;
+        this._palette = palette;
 
         this.build();
+        state.events.on(EditorEvents.VIEW_CHANGED, this._refreshView);
     }
+
+    /**
+     * Packs the bar into `width` and returns the height it needs. Called by the
+     * chrome on every resize, before it positions the panels below.
+     */
+    public layout(width: number): number
+    {
+        let row = 0;
+        let x = TITLE_WIDTH;
+
+        for(const item of this._items)
+        {
+            const rowStart = row === 0 ? TITLE_WIDTH : EDGE_PADDING;
+            const wraps = (x + item.width) > (width - EDGE_PADDING);
+
+            if((item.breakBefore || wraps) && x > rowStart)
+            {
+                row++;
+                x = row === 0 ? TITLE_WIDTH : EDGE_PADDING;
+            }
+
+            const top = ROW_GAP + row * (ROW_HEIGHT + ROW_GAP);
+
+            (item.window as unknown as WindowController).rectangle = {
+                x,
+                y: top + Math.round((ROW_HEIGHT - item.height) / 2),
+                width: item.width,
+                height: item.height
+            };
+
+            x += item.width + ITEM_GAP;
+        }
+
+        return ROW_GAP + (row + 1) * (ROW_HEIGHT + ROW_GAP);
+    }
+
+    /** Keeps the zoom dropdown and the mode button honest when a shortcut fires. */
+    private readonly _refreshView = (): void =>
+    {
+        if(this._modeButton && !this._modeButton.disposed)
+        {
+            this._modeButton.caption = this.modeCaption();
+        }
+
+        if(this._zoomDrop)
+        {
+            const index = ZOOM_STEPS.indexOf(this._state.zoom);
+
+            if(index >= 0 && this._zoomDrop.selection !== index)
+            {
+                this._zoomDrop.selection = index;
+            }
+        }
+    };
 
     private build(): void
     {
@@ -67,8 +152,62 @@ export class WindowToolbar
         this.button('Canvas Back Color', () => this.cycleBackColor());
         this.button('Load Image', () => this.loadImage());
         this.button('Image Gallery', () => this._gallery?.toggle());
+        this.button('Widgets', () => this._palette?.toggle());
 
-        this.buildRow2();
+        this.rowBreak();
+        this.buildViewTools();
+    }
+
+    /** The view/geometry strip: it always starts its own row. */
+    private buildViewTools(): void
+    {
+        this.label('Snap', 34);
+        this.snapInput();
+        this.label('Zoom', 36);
+        this.zoomDropdown();
+        this._modeButton = this.button(this.modeCaption(), () => this.toggleMode());
+        this.label('Guides', 44);
+        this.guidesToggle();
+        this.button('Align L', () => this._state.alignSelected('left'));
+        this.button('Align R', () => this._state.alignSelected('right'));
+        this.button('Align T', () => this._state.alignSelected('top'));
+        this.button('Align B', () => this._state.alignSelected('bottom'));
+        this.button('Center H', () => this._state.alignSelected('hcenter'));
+        this.button('Center V', () => this._state.alignSelected('vmiddle'));
+        this.button('Distribute V', () => this.distribute('v'));
+        this.button('Distribute H', () => this.distribute('h'));
+    }
+
+    /**
+     * Distributes the selection when three or more nodes are picked, and falls
+     * back to spreading the selected container's own children otherwise — the
+     * behaviour Glaze's toolbar had before multi-selection existed.
+     */
+    private distribute(axis: 'h' | 'v'): void
+    {
+        if(!this._state.distributeSelected(axis))
+        {
+            distributeChildren(this._state, axis);
+        }
+    }
+
+    private modeCaption(): string
+    {
+        return this._state.mode === 'edit' ? 'Mode: Edit' : 'Mode: Preview';
+    }
+
+    /**
+     * Preview hands the canvas centre back to the edited layout, so its buttons,
+     * tabs and lists can be clicked for real; Edit takes it back for selection.
+     */
+    private toggleMode(): void
+    {
+        this._state.mode = this._state.mode === 'edit' ? 'preview' : 'edit';
+
+        if(this._modeButton && !this._modeButton.disposed)
+        {
+            this._modeButton.caption = this.modeCaption();
+        }
     }
 
     private toggleBackground(): void
@@ -111,22 +250,24 @@ export class WindowToolbar
         input.click();
     }
 
-    private buildRow2(): void
+    // ---- Flow builders -----------------------------------------------------
+
+    /** Marks the next widget as the start of a new row. */
+    private rowBreak(): void
     {
-        this.label('Snap', this._x2, 48, 34);
-        this._x2 += 38;
-        this.snapInput();
-        this.button2('Align L', () => this._state.alignSelected('left'));
-        this.button2('Align R', () => this._state.alignSelected('right'));
-        this.button2('Align T', () => this._state.alignSelected('top'));
-        this.button2('Align B', () => this._state.alignSelected('bottom'));
-        this.button2('Center H', () => this._state.alignSelected('hcenter'));
-        this.button2('Center V', () => this._state.alignSelected('vmiddle'));
-        this.button2('Distribute V', () => distributeChildren(this._state, 'v'));
-        this.button2('Distribute H', () => distributeChildren(this._state, 'h'));
+        this._breakNext = true;
     }
 
-    private label(text: string, x: number, y: number, width: number): void
+    private add(window: IWindow | null, width: number, height: number): void
+    {
+        if(!window) return;
+
+        (this._bar as unknown as IContainerLike).addChild(window);
+        this._items.push({window, width, height, breakBefore: this._breakNext});
+        this._breakNext = false;
+    }
+
+    private label(text: string, width: number): void
     {
         const lbl = this._wm.buildWidgetLayout('glaze_label_xml');
 
@@ -134,8 +275,7 @@ export class WindowToolbar
 
         // The layout root IS the text element.
         (lbl as unknown as { text: string }).text = text;
-        (this._bar as unknown as IContainerLike).addChild(lbl);
-        (lbl as unknown as WindowController).rectangle = {x, y, width, height: 16};
+        this.add(lbl, width, 16);
     }
 
     private snapInput(): void
@@ -146,35 +286,13 @@ export class WindowToolbar
 
         const input = SMALL_INPUT.findAs<IInputWidget>(box, 'glaze_siinput');
 
-        (this._bar as unknown as IContainerLike).addChild(box);
-        (box as unknown as WindowController).rectangle = {x: this._x2, y: 45, width: 54, height: 22};
-        this._x2 += 62;
+        this.add(box, 54, 22);
 
         if(input)
         {
             input.text = String(this._state.snap);
             input.addEventListener('WE_CHANGE', () => { this._state.snap = Number(input.text) || 0; });
         }
-    }
-
-    private button2(caption: string, onClick: () => void): void
-    {
-        const btn = this._wm.buildWidgetLayout('glaze_button_xml');
-
-        if(!btn) return;
-
-        const bc = btn as unknown as WindowController;
-        const width = Math.max(44, caption.length * 7 + 18);
-
-        bc.caption = caption;
-        (this._bar as unknown as IContainerLike).addChild(btn);
-        bc.rectangle = {x: this._x2, y: 44, width, height: 26};
-        bc.procedure = (event: WindowEvent): void =>
-        {
-            if(event.type === WindowMouseEvent.CLICK) onClick();
-        };
-
-        this._x2 += width + 5;
     }
 
     private layoutDropdown(): void
@@ -186,9 +304,7 @@ export class WindowToolbar
             return;
         }
 
-        (this._bar as unknown as IContainerLike).addChild(dd);
-        (dd as unknown as WindowController).rectangle = {x: this._x, y: 9, width: 210, height: 24};
-        this._x += 216;
+        this.add(dd, 210, 24);
 
         const drop = dd as unknown as IDropWidget;
         const names = this._state.getLayoutNames().slice(0, DROPDOWN_LIMIT);
@@ -205,21 +321,55 @@ export class WindowToolbar
         });
     }
 
-    private button(caption: string, onClick: () => void): void
+    private zoomDropdown(): void
+    {
+        const dd = this._wm.buildWidgetLayout('glaze_dropdown_xml');
+
+        if(!dd) return;
+
+        this.add(dd, 76, 22);
+
+        const drop = dd as unknown as IDropWidget;
+        const labels = ZOOM_STEPS.map((step) => `${Math.round(step * 100)}%`);
+
+        drop.populate(labels);
+        drop.selection = Math.max(0, ZOOM_STEPS.indexOf(1));
+        this._zoomDrop = drop;
+        drop.addEventListener('WE_SELECTED', () =>
+        {
+            const step = ZOOM_STEPS[drop.selection];
+
+            if(step) this._state.zoom = step;
+        });
+    }
+
+    private guidesToggle(): void
+    {
+        const chk = this._wm.buildWidgetLayout('glaze_check_xml');
+
+        if(!chk) return;
+
+        this.add(chk, 19, 21);
+
+        const widget = chk as unknown as ICheckWidget;
+
+        widget.isSelected = this._state.smartGuides;
+        widget.addEventListener('WE_SELECTED', () => { this._state.smartGuides = true; });
+        widget.addEventListener('WE_UNSELECTED', () => { this._state.smartGuides = false; });
+    }
+
+    private button(caption: string, onClick: () => void): WindowController | null
     {
         const btn = this._wm.buildWidgetLayout('glaze_button_xml');
 
         if(!btn)
         {
-            return;
+            return null;
         }
 
         const bc = btn as unknown as WindowController;
-        const width = Math.max(44, caption.length * 7 + 20);
 
         bc.caption = caption;
-        (this._bar as unknown as IContainerLike).addChild(btn);
-        bc.rectangle = {x: this._x, y: 9, width, height: 26};
         bc.procedure = (event: WindowEvent): void =>
         {
             if(event.type === WindowMouseEvent.CLICK)
@@ -227,8 +377,9 @@ export class WindowToolbar
                 onClick();
             }
         };
+        this.add(btn, Math.max(44, caption.length * 7 + 20), ROW_HEIGHT);
 
-        this._x += width + 5;
+        return bc;
     }
 
     private reload(): void
@@ -250,18 +401,7 @@ export class WindowToolbar
 
     private saveScreenshot(): void
     {
-        const canvas = document.querySelector('canvas') as HTMLCanvasElement | null;
-
-        if(!canvas)
-        {
-            return;
-        }
-
-        const a = document.createElement('a');
-
-        a.href = canvas.toDataURL('image/png');
-        a.download = `${this._state.currentLayoutName ?? 'glaze'}.png`;
-        a.click();
+        void downloadLayoutPng(this._state);
     }
 
     private importFile(): void
@@ -306,6 +446,7 @@ export class WindowToolbar
 
     public dispose(): void
     {
+        this._state.events.off(EditorEvents.VIEW_CHANGED, this._refreshView);
         this._fileInput?.remove();
         this._fileInput = null;
     }

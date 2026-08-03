@@ -1,21 +1,64 @@
 import {defineConfig, type Plugin} from 'vite';
 import {resolve} from 'path';
-import {writeFileSync} from 'fs';
+import {readdirSync, readFileSync, statSync, writeFileSync} from 'fs';
 
 /**
- * Dev-server middleware: POST /glaze/save { name, xml } writes an edited layout
- * back to the client's source `window-layouts/<name>.xml`. `name` is restricted
- * to the AS3 asset-name charset and the resolved path is confined to the layouts
- * directory (no traversal).
+ * Dev-server middleware.
+ *
+ * - `POST /glaze/save { name, xml }` writes an edited layout back to the client's
+ *   source `window-layouts/<name>.xml`. `name` is restricted to the AS3 asset-name
+ *   charset and the resolved path is confined to the layouts directory (no
+ *   traversal).
+ * - `GET /glaze/layouts` returns every source layout **newer than the shipped
+ *   `assets-xml.bundle`**. The editor loads its layouts from that prebuilt bundle
+ *   while Save writes to the sources, so without this a saved layout was still the
+ *   old one after a page reload — a re-theme, or any other edit, never came back.
+ *   Normally the list is empty; after a save it holds the one file that changed.
  */
 function glazeSavePlugin(): Plugin
 {
     const layoutsDir = resolve(__dirname, '../vortex-client/src/assets/window-layouts');
+    const xmlBundle = resolve(__dirname, '../vortex-client/public/assets-xml.bundle');
 
     return {
         name: 'glaze-save',
         configureServer(server)
         {
+            server.middlewares.use('/glaze/layouts', (req, res) =>
+            {
+                res.setHeader('Content-Type', 'application/json');
+
+                try
+                {
+                    let bundleTime = 0;
+
+                    try
+                    {
+                        bundleTime = statSync(xmlBundle).mtimeMs;
+                    }
+                    catch
+                    {
+                        bundleTime = 0; // no bundle built yet — everything counts as newer
+                    }
+
+                    const files = readdirSync(layoutsDir)
+                        .filter((file) => file.endsWith('.xml'))
+                        .filter((file) => statSync(resolve(layoutsDir, file)).mtimeMs > bundleTime)
+                        .map((file) => ({
+                            name: file.replace(/\.xml$/, ''),
+                            xml: readFileSync(resolve(layoutsDir, file), 'utf8')
+                        }));
+
+                    res.statusCode = 200;
+                    res.end(JSON.stringify({files}));
+                }
+                catch (error)
+                {
+                    res.statusCode = 500;
+                    res.end(JSON.stringify({message: String(error), files: []}));
+                }
+            });
+
             server.middlewares.use('/glaze/save', (req, res) =>
             {
                 if(req.method !== 'POST')

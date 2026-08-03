@@ -1,19 +1,33 @@
 import {EventEmitter} from 'eventemitter3';
 import type {IWindow} from '@core/window/IWindow';
-import type {WindowController} from '@core/window/WindowController';
 import type {IGlazeRuntime} from '../boot/GlazeBoot';
 import {VariablesModel} from './VariablesModel';
 import {EditorHistory} from './EditorHistory';
+import {alignSelection, distributeSelection} from '../ops/SelectionOps';
 
 export type AlignEdge = 'left' | 'hcenter' | 'right' | 'top' | 'vmiddle' | 'bottom';
+
+/**
+ * Editor interaction mode.
+ *
+ * - `edit`    — the canvas centre belongs to the editor (select/move/resize).
+ * - `preview` — the editor stands down and the edited layout receives the mouse,
+ *               so its buttons, tabs and lists can be exercised for real.
+ */
+export type EditorMode = 'edit' | 'preview';
+
+/** Zoom steps offered in the toolbar (1 = 100 %). */
+export const ZOOM_STEPS = [0.5, 0.75, 1, 1.5, 2, 3, 4];
 
 /**
  * Editor state events.
  *
  * - `layoutChanged`     — the open layout's root window was replaced.
- * - `selectionChanged`  — the selected node changed (rebuild the inspector).
+ * - `selectionChanged`  — the selection changed (rebuild the inspector).
  * - `treeChanged`       — the tree structure or a node's geometry/label changed
  *                          (refresh the hierarchy view), without changing selection.
+ * - `viewChanged`       — zoom or edit/preview mode changed (repaint, refresh the
+ *                          toolbar's view controls).
  */
 export const EditorEvents =
     {
@@ -21,7 +35,8 @@ export const EditorEvents =
         SELECTION_CHANGED: 'selectionChanged',
         TREE_CHANGED: 'treeChanged',
         GEOMETRY_CHANGED: 'geometryChanged',
-        DEBUG_CHANGED: 'debugChanged'
+        DEBUG_CHANGED: 'debugChanged',
+        VIEW_CHANGED: 'viewChanged'
     } as const;
 
 /**
@@ -46,13 +61,19 @@ export class EditorState
     /** True while a modal popup (e.g. Image Gallery) is open, so the centre picker stands down. */
     public modalOpen = false;
 
+    /** Aimant sur les frères: snap the dragged node to its siblings' edges/centres. */
+    public smartGuides = true;
+
     private readonly _runtime: IGlazeRuntime;
     private readonly _history: EditorHistory;
     private _rootWindow: IWindow | null = null;
-    private _selected: IWindow | null = null;
+    private _selection: IWindow[] = [];
     private _currentLayoutName: string | null = null;
     private _variables: VariablesModel | null = null;
     private _snap: number = 8;
+    private _zoom: number = 1;
+    private _mode: EditorMode = 'edit';
+    private _rootOrigin: { x: number; y: number } = {x: 0, y: 0};
 
     public constructor(runtime: IGlazeRuntime)
     {
@@ -70,14 +91,71 @@ export class EditorState
         return this._rootWindow;
     }
 
+    /**
+     * The primary selection — the node the inspector edits and the one carrying
+     * the resize handles. It is the last node added to the selection.
+     */
     public get selected(): IWindow | null
     {
-        return this._selected;
+        return this._selection.length > 0 ? this._selection[this._selection.length - 1] : null;
+    }
+
+    /** Every selected node, in the order they were selected. */
+    public get selection(): readonly IWindow[]
+    {
+        return this._selection;
+    }
+
+    public isSelected(window: IWindow | null): boolean
+    {
+        return window !== null && this._selection.indexOf(window) >= 0;
     }
 
     public get currentLayoutName(): string | null
     {
         return this._currentLayoutName;
+    }
+
+    /** Editor interaction mode (`edit` owns the centre, `preview` hands it over). */
+    public get mode(): EditorMode
+    {
+        return this._mode;
+    }
+
+    public set mode(value: EditorMode)
+    {
+        if(this._mode === value)
+        {
+            return;
+        }
+
+        this._mode = value;
+        this.events.emit(EditorEvents.VIEW_CHANGED);
+    }
+
+    /** Canvas magnification of the edited layout (the chrome never scales). */
+    public get zoom(): number
+    {
+        return this._zoom;
+    }
+
+    public set zoom(value: number)
+    {
+        const next = Math.max(0.25, Math.min(8, value || 1));
+
+        if(next === this._zoom)
+        {
+            return;
+        }
+
+        this._zoom = next;
+        this.events.emit(EditorEvents.VIEW_CHANGED);
+    }
+
+    /** The open layout's authored root position, before the editor centred it. */
+    public get rootOrigin(): { x: number; y: number }
+    {
+        return this._rootOrigin;
     }
 
     /** The source-XML `<variables>` model for the open layout (edited off the XML). */
@@ -136,11 +214,16 @@ export class EditorState
             (desktop as unknown as { addChild(child: IWindow): IWindow }).addChild(built);
         }
 
+        // `center()` overwrites the root's authored position with a canvas
+        // coordinate, so remember it first: the serializer puts it back, or the
+        // saved layout would tell the client to place the window wherever it
+        // happened to sit in the editor.
+        this._rootOrigin = {x: built.x, y: built.y};
         built.center();
 
         this._rootWindow = built;
         this._currentLayoutName = name;
-        this._selected = built;
+        this._selection = [built];
         this._variables = new VariablesModel(this._runtime.layoutXml.get(name) ?? '');
 
         // Opening a fresh layout starts a clean history; a restore (undo/redo)
@@ -181,34 +264,24 @@ export class EditorState
         return this._history.canRedo;
     }
 
-    /** Aligns the selected window against its parent's edges/center. */
+    /**
+     * Aligns the selection. With two or more nodes selected they align against
+     * the selection's own bounding box (Clove/Figma semantics); with one, against
+     * its parent's edges/centre — Glaze's original behaviour.
+     */
     public alignSelected(edge: AlignEdge): void
     {
-        const win = this._selected as unknown as WindowController | null;
+        alignSelection(this, edge);
+    }
 
-        if(!win || win.disposed || !win.parent)
-        {
-            return;
-        }
-
-        const parent = win.parent;
-        let x = win.x;
-        let y = win.y;
-
-        this.pushHistory();
-
-        switch(edge)
-        {
-            case 'left': x = 0; break;
-            case 'hcenter': x = Math.round((parent.width - win.width) / 2); break;
-            case 'right': x = parent.width - win.width; break;
-            case 'top': y = 0; break;
-            case 'vmiddle': y = Math.round((parent.height - win.height) / 2); break;
-            case 'bottom': y = parent.height - win.height; break;
-        }
-
-        win.rectangle = {x, y, width: win.width, height: win.height};
-        this.notifyGeometryChanged();
+    /**
+     * Distributes the selection evenly along one axis. Needs three or more nodes
+     * selected; with fewer, the caller's fallback (the selected container's own
+     * children) applies.
+     */
+    public distributeSelected(axis: 'h' | 'v'): boolean
+    {
+        return distributeSelection(this, axis);
     }
 
     /** Re-centers the open root window within the canvas. */
@@ -222,15 +295,67 @@ export class EditorState
         }
     }
 
+    /** Replaces the selection with `window` (or clears it when null). */
     public select(window: IWindow | null): void
     {
-        if(this._selected === window)
+        if(this._selection.length === (window ? 1 : 0) && (!window || this._selection[0] === window))
         {
             return;
         }
 
-        this._selected = window;
-        this.events.emit(EditorEvents.SELECTION_CHANGED, window);
+        this._selection = window ? [window] : [];
+        this.events.emit(EditorEvents.SELECTION_CHANGED, this.selected);
+    }
+
+    /**
+     * Adds `window` to the selection, or removes it when it is already in —
+     * Ctrl/Cmd-click. Removing the primary promotes the previous node.
+     */
+    public toggleSelected(window: IWindow | null): void
+    {
+        if(!window || window.disposed)
+        {
+            return;
+        }
+
+        const index = this._selection.indexOf(window);
+
+        if(index >= 0)
+        {
+            this._selection.splice(index, 1);
+        }
+        else
+        {
+            this._selection.push(window);
+        }
+
+        this.events.emit(EditorEvents.SELECTION_CHANGED, this.selected);
+    }
+
+    /** Replaces the selection with `windows` (marquee, Shift-range, Select All). */
+    public selectMany(windows: IWindow[]): void
+    {
+        const next = windows.filter((win) => win && !win.disposed);
+
+        if(next.length === this._selection.length && next.every((win, i) => this._selection[i] === win))
+        {
+            return;
+        }
+
+        this._selection = next;
+        this.events.emit(EditorEvents.SELECTION_CHANGED, this.selected);
+    }
+
+    /** Drops nodes that were destroyed under the selection (after a delete). */
+    public pruneSelection(): void
+    {
+        const kept = this._selection.filter((win) => !win.disposed);
+
+        if(kept.length !== this._selection.length)
+        {
+            this._selection = kept;
+            this.events.emit(EditorEvents.SELECTION_CHANGED, this.selected);
+        }
     }
 
     /** Signals that a node's geometry, label or structure changed. */
@@ -265,7 +390,7 @@ export class EditorState
         }
 
         this._rootWindow = null;
-        this._selected = null;
+        this._selection = [];
     }
 
     public dispose(): void

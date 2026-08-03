@@ -7,7 +7,8 @@ import type {EditorState} from '../state/EditorState';
  * Structure + attributes come from the engine's own AS3-faithful serializer
  * `WindowParser.windowToXMLString` (walking the live window tree); the source
  * `<variables>` blocks — which the live tree faithfully discards — are re-injected
- * per named node from the {@link VariablesModel}. Round-trip caveat (R1): the
+ * per named node from the {@link VariablesModel}, replacing any block the engine
+ * serializer emitted for that node. Round-trip caveat (R1): the
  * engine serializer emits raw children via `numChildren`/`getChildAt`, so windows
  * whose children are inserted through list/grid iterators may not reproduce
  * byte-for-byte; simple container/region/text/border trees round-trip cleanly.
@@ -24,7 +25,89 @@ export function serializeLayout(state: EditorState): string
     const parser = new WindowParser(root.context);
     const xml = parser.windowToXMLString(root);
 
-    return injectVariables(xml, state);
+    return wrapInLayoutDocument(state, injectVariables(xml, state));
+}
+
+/**
+ * Wraps the serialized window in the `<layout><window>…</window></layout>`
+ * document the client's own parser reads.
+ *
+ * `windowToXMLString` returns the window element alone — saving that verbatim
+ * produced a file whose root was a bare `<border>`/`<container>`, which
+ * `parseWindowLayoutXml` rejects outright (it takes a `<layout>` or a `<window>`
+ * root and returns nothing otherwise). Every layout Glaze saved was therefore
+ * unreadable, and reopening one silently fell back to the bundled original.
+ *
+ * The open layout's source document supplies the envelope, so its attributes and
+ * any non-`<window>` blocks it carries (`<sharedvariables>`) survive the
+ * round-trip; only the declared size follows the edited root.
+ */
+function wrapInLayoutDocument(state: EditorState, windowXml: string): string
+{
+    const root = state.rootWindow;
+
+    if(!windowXml || !root)
+    {
+        return windowXml;
+    }
+
+    const parsed = new DOMParser().parseFromString(windowXml, 'text/xml');
+
+    if(parsed.getElementsByTagName('parsererror').length > 0 || !parsed.documentElement)
+    {
+        return windowXml;
+    }
+
+    const name = state.currentLayoutName ?? 'layout';
+    const source = state.currentLayoutName ? state.runtime.layoutXml.get(state.currentLayoutName) : null;
+    const doc = document.implementation.createDocument('', 'layout', null);
+    const layoutRoot = doc.documentElement;
+
+    if(source)
+    {
+        const sourceDoc = new DOMParser().parseFromString(source, 'text/xml');
+        const sourceRoot = sourceDoc.documentElement;
+
+        if(sourceRoot && sourceRoot.nodeName === 'layout' && sourceDoc.getElementsByTagName('parsererror').length === 0)
+        {
+            for(let i = 0; i < sourceRoot.attributes.length; i++)
+            {
+                const attribute = sourceRoot.attributes.item(i);
+
+                if(attribute)
+                {
+                    layoutRoot.setAttribute(attribute.name, attribute.value);
+                }
+            }
+
+            for(const child of Array.from(sourceRoot.children))
+            {
+                if(child.nodeName !== 'window')
+                {
+                    layoutRoot.appendChild(doc.importNode(child, true));
+                }
+            }
+        }
+    }
+
+    if(!layoutRoot.getAttribute('name'))
+    {
+        layoutRoot.setAttribute('name', name);
+    }
+
+    layoutRoot.setAttribute('width', String(root.width));
+    layoutRoot.setAttribute('height', String(root.height));
+
+    // The editor centres the root on the canvas; the file keeps where it was authored.
+    parsed.documentElement.setAttribute('x', String(state.rootOrigin.x));
+    parsed.documentElement.setAttribute('y', String(state.rootOrigin.y));
+
+    const windowElement = doc.createElement('window');
+
+    windowElement.appendChild(doc.importNode(parsed.documentElement, true));
+    layoutRoot.appendChild(windowElement);
+
+    return `<?xml version="1.0" encoding="UTF-8"?>\n${new XMLSerializer().serializeToString(layoutRoot)}`;
 }
 
 function injectVariables(xml: string, state: EditorState): string
@@ -47,12 +130,24 @@ function injectVariables(xml: string, state: EditorState): string
     {
         const name = el.getAttribute('name');
 
-        if(name && !directChild(el, 'variables'))
+        if(name)
         {
             const block = model.emit(name, doc);
 
             if(block)
             {
+                // The model wins over anything the engine serializer emitted for
+                // this node: it is seeded from the source XML and carries the
+                // editor's `<var>` edits, while `windowToXMLString` can only see
+                // the properties a controller happens to keep (the base class
+                // keeps none), which would silently drop an edit.
+                const existing = directChild(el, 'variables');
+
+                if(existing)
+                {
+                    el.removeChild(existing);
+                }
+
                 el.appendChild(block);
             }
         }

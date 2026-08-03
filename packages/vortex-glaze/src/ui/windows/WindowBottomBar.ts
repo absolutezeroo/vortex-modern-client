@@ -1,7 +1,11 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {WindowController} from '@core/window/WindowController';
+import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowParam} from '@core/window/enum/WindowParam';
 import {Logger} from '@core/utils/Logger';
 import {EditorEvents, type EditorState} from '../../state/EditorState';
+import type {WindowColorPicker} from './WindowColorPicker';
 
 const log = Logger.getLogger('glaze.ui.windows.WindowBottomBar');
 
@@ -21,17 +25,20 @@ export class WindowBottomBar
     private readonly _state: EditorState;
     private readonly _wm: EditorState['runtime']['windowManager'];
     private readonly _bar: IWindow;
+    private readonly _colorPicker: WindowColorPicker | null;
     private _x = 12;
     private _coords: { text: string } | null = null;
     private _swatch: WindowController | null = null;
     private _colorLabel: { text: string } | null = null;
+    private _selectionLabel: { text: string } | null = null;
     private _rafId = 0;
 
-    public constructor(state: EditorState, bar: IWindow)
+    public constructor(state: EditorState, bar: IWindow, colorPicker: WindowColorPicker | null = null)
     {
         this._state = state;
         this._wm = state.runtime.windowManager;
         this._bar = bar;
+        this._colorPicker = colorPicker;
 
         this.build();
         state.events.on(EditorEvents.SELECTION_CHANGED, this._refreshColor);
@@ -61,6 +68,12 @@ export class WindowBottomBar
         this.label('Locales', this._x, 7, 50);
         this._x += 54;
         this.locales();
+
+        this._x += 14;
+        this.label('Selected', this._x, 7, 56);
+        this._x += 60;
+        this._selectionLabel = this.labelRef('1', this._x, 7, 40);
+        this._x += 46;
     }
 
     private toggle(text: string, read: () => boolean, write: (v: boolean) => void): void
@@ -109,16 +122,38 @@ export class WindowBottomBar
         return lbl as unknown as { text: string };
     }
 
+    /** The selection's colour, and the shortcut into the colour picker. */
     private swatch(): WindowController | null
     {
         const sw = this._wm.buildWidgetLayout('glaze_swatch_xml');
 
         if(!sw) return null;
 
-        (this._bar as unknown as IContainerLike).addChild(sw);
-        (sw as unknown as WindowController).rectangle = {x: this._x, y: 5, width: 18, height: 18};
+        const controller = sw as unknown as WindowController;
 
-        return sw as unknown as WindowController;
+        (this._bar as unknown as IContainerLike).addChild(sw);
+        controller.rectangle = {x: this._x, y: 5, width: 18, height: 18};
+        // The swatch layout is a passive region — opt it into input events so the
+        // picker can be opened from here as well as from the Property Editor.
+        controller.setParamFlag(WindowParam.INPUT_EVENT_PROCESSOR, true);
+        controller.procedure = (event: WindowEvent): void =>
+        {
+            if(event.type !== WindowMouseEvent.CLICK) return;
+
+            const selected = this._state.selected as unknown as WindowController | null;
+
+            if(!selected || selected.disposed || !this._colorPicker) return;
+
+            this._colorPicker.open('color', selected.color >>> 0, (color) =>
+            {
+                this._state.pushHistory('color:bottombar');
+                selected.color = color >>> 0;
+                this._refreshColor();
+                this._state.notifyTreeChanged();
+            });
+        };
+
+        return controller;
     }
 
     private locales(): void
@@ -144,6 +179,7 @@ export class WindowBottomBar
 
         if(this._swatch) this._swatch.color = color;
         if(this._colorLabel) this._colorLabel.text = `0x${color.toString(16).padStart(8, '0')}`;
+        if(this._selectionLabel) this._selectionLabel.text = String(this._state.selection.length);
     };
 
     private startCoordsLoop(): void

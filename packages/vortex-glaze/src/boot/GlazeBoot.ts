@@ -168,6 +168,7 @@ export class GlazeBoot
         await this.loadWebFonts(xmlBundle);
         await this.loadSkinAssets(windowManager, imageBundle, xmlBundle);
         this.registerLayouts(windowManager, xmlBundle, layoutXml);
+        await this.overlaySourceLayouts(windowManager, layoutXml);
         this.registerGlazeLayouts(windowManager, layoutXml);
         this.registerImageAssets(windowManager, imageBundle);
 
@@ -380,6 +381,76 @@ export class GlazeBoot
                     layoutXmlSink.set(layout.name, layout.xml);
                 }
             }
+        }
+    }
+
+    /**
+     * Re-registers, on top of the bundle, every source layout that is newer than
+     * the bundle itself (dev server only, see `vite.config.ts`).
+     *
+     * The bundle is a build artefact while Save writes to
+     * `vortex-client/src/assets/window-layouts/` — so a layout edited in the
+     * editor came back as its pre-edit self on the next page load, and the only
+     * way to see the change was to re-run `pnpm --filter vortex-glaze bundle`.
+     * The server sends only the files that actually changed, so this is normally
+     * an empty response.
+     */
+    private async overlaySourceLayouts(
+        windowManager: IHabboWindowManager,
+        layoutXmlSink: Map<string, string>
+    ): Promise<void>
+    {
+        if(!import.meta.env.DEV)
+        {
+            return;
+        }
+
+        try
+        {
+            const response = await fetch('/glaze/layouts');
+
+            if(!response.ok)
+            {
+                return;
+            }
+
+            const data = await response.json() as { files?: Array<{ name: string; xml: string }> };
+            const files = data.files ?? [];
+            let count = 0;
+
+            for(const file of files)
+            {
+                let layouts: IWindowLayoutXmlData[];
+
+                try
+                {
+                    layouts = parseWindowLayoutXml(file.xml, file.name, `${file.name}.xml`);
+                }
+                catch (error)
+                {
+                    log.warn(`Failed to parse source layout: ${file.name}.xml`, error);
+                    continue;
+                }
+
+                for(const layout of layouts)
+                {
+                    if(typeof layout.name === 'string' && layout.name.length > 0)
+                    {
+                        windowManager.registerWidgetLayout(layout.name, layout.xml);
+                        layoutXmlSink.set(layout.name, layout.xml);
+                        count++;
+                    }
+                }
+            }
+
+            if(count > 0)
+            {
+                log.info(`${count} layout(s) loaded from source instead of the bundle (edited since it was built)`);
+            }
+        }
+        catch (error)
+        {
+            log.warn('Source-layout overlay unavailable (is the Glaze dev server running?)', error);
         }
     }
 

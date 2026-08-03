@@ -25,6 +25,22 @@ interface IContainerLike
     addChild(child: IWindow): IWindow;
 }
 
+/**
+ * A widget the palette can drop into the tree: the window type plus the geometry,
+ * caption and style it should be born with (a `button` with no caption and a
+ * 60×30 box is not recognisable as a button).
+ */
+export interface IWidgetSpec
+{
+    type: string;
+    label: string;
+    width: number;
+    height: number;
+    caption?: string;
+    style?: number;
+    params?: number;
+}
+
 let counter = 1;
 
 /**
@@ -37,80 +53,120 @@ let counter = 1;
 /** Creates a child of the given type under the selected node (or the root). */
 export function addChildOfType(state: EditorState, typeName: string): void
 {
+    addWidget(state, {type: typeName, label: typeName, width: 60, height: 30});
+}
+
+/**
+ * Creates `spec` under the selected node (or the root) and selects it. The new
+ * window inherits its parent's style unless the spec names one, which is what
+ * keeps a control dropped into an Illumina frame looking Illumina.
+ */
+export function addWidget(state: EditorState, spec: IWidgetSpec): IWindow | null
+{
     const parent = (state.selected ?? state.rootWindow) as IWindow | null;
 
     if(!parent || parent.disposed)
     {
-        return;
+        return null;
     }
 
-    const type = TYPE_NAME_TO_CODE[typeName];
+    const type = TYPE_NAME_TO_CODE[spec.type];
 
     if(type === undefined)
     {
-        return;
+        return null;
     }
 
     state.pushHistory();
 
     const target = parent.getLayoutChildTarget();
-    const name = `${typeName}_${counter++}`;
+    const name = `${spec.type}_${counter++}`;
     const created = target.context.create(
-        name, '', type, target.style, 0,
-        {x: 0, y: 0, width: 60, height: 30},
+        name, spec.caption ?? '', type, spec.style ?? target.style, spec.params ?? 0,
+        {x: 0, y: 0, width: spec.width, height: spec.height},
         null, target, 0, null, '', null
     );
 
     state.notifyTreeChanged();
     state.select(created);
+
+    return created;
 }
 
-/** Destroys the selected node (never the root) and selects its parent. */
+/** The deletable/clonable part of the selection: live nodes, never the root. */
+function editableSelection(state: EditorState): WindowController[]
+{
+    return state.selection
+        .filter((win) => !win.disposed && win !== state.rootWindow)
+        .map((win) => win as unknown as WindowController);
+}
+
+/** Destroys every selected node (never the root) and selects the last parent. */
 export function deleteSelected(state: EditorState): void
 {
-    const win = state.selected as unknown as WindowController | null;
+    const nodes = editableSelection(state);
 
-    if(!win || win.disposed || (win as unknown as IWindow) === state.rootWindow)
+    if(nodes.length === 0)
     {
         return;
     }
 
-    const parent = win.parent;
-
     state.pushHistory();
-    win.destroy();
-    state.select(parent ?? state.rootWindow);
+
+    let fallback: IWindow | null = null;
+
+    for(const win of nodes)
+    {
+        if(win.disposed)
+        {
+            continue; // already gone with an ancestor deleted earlier in this pass
+        }
+
+        fallback = win.parent ?? fallback;
+        win.destroy();
+    }
+
+    state.select(fallback ?? state.rootWindow);
     state.notifyTreeChanged();
 }
 
-/** Clones the selected node into its parent, offset by the grid. */
+/** Clones every selected node into its parent, offset by the grid. */
 export function cloneSelected(state: EditorState): void
 {
-    const win = state.selected as unknown as WindowController | null;
+    const nodes = editableSelection(state);
 
-    if(!win || win.disposed)
-    {
-        return;
-    }
-
-    const parent = win.parent as unknown as IContainerLike | null;
-
-    if(!parent)
+    if(nodes.length === 0)
     {
         return;
     }
 
     state.pushHistory();
 
-    const clone = win.clone() as unknown as WindowController;
-
-    parent.addChild(clone);
-
     const offset = state.snap || 8;
+    const clones: IWindow[] = [];
 
-    clone.rectangle = {x: win.x + offset, y: win.y + offset, width: win.width, height: win.height};
+    for(const win of nodes)
+    {
+        const parent = win.parent as unknown as IContainerLike | null;
+
+        if(!parent)
+        {
+            continue;
+        }
+
+        const clone = win.clone() as unknown as WindowController;
+
+        parent.addChild(clone);
+        clone.rectangle = {x: win.x + offset, y: win.y + offset, width: win.width, height: win.height};
+        clones.push(clone as unknown as IWindow);
+    }
+
     state.notifyTreeChanged();
-    state.select(clone as unknown as IWindow);
+
+    if(clones.length > 0)
+    {
+        state.selectMany(clones);
+    }
 }
 
 /** Moves the selected node up/down among its siblings. */
@@ -252,6 +308,127 @@ export function distributeChildren(state: EditorState, axis: 'v' | 'h'): void
     });
 
     state.notifyGeometryChanged();
+}
+
+/** Where a dragged hierarchy row lands relative to the row it was dropped on. */
+export type DropPosition = 'before' | 'inside' | 'after';
+
+/** True when a window can take children at all (containers, frames, lists…). */
+export function canHaveChildren(window: IWindow | null): boolean
+{
+    if(!window || window.disposed)
+    {
+        return false;
+    }
+
+    const container = window as unknown as Partial<IContainerLike>;
+
+    return typeof container.numChildren === 'number' && typeof container.addChildAt === 'function';
+}
+
+function childIndexOf(parent: IWindow, child: IWindow): number
+{
+    const container = parent as unknown as IContainerLike;
+
+    for(let i = 0; i < container.numChildren; i++)
+    {
+        if(container.getChildAt(i) === child)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+function isAncestorOf(candidate: IWindow, node: IWindow): boolean
+{
+    let parent: IWindow | null = node.parent;
+
+    while(parent)
+    {
+        if(parent === candidate)
+        {
+            return true;
+        }
+
+        parent = parent.parent;
+    }
+
+    return false;
+}
+
+/**
+ * Drops `node` onto `target` — the hierarchy's drag & drop. `inside` appends it
+ * to the target's child list; `before`/`after` inserts it beside the target among
+ * its siblings. Cycles, no-ops and drops onto the node's own descendants are
+ * rejected.
+ */
+export function dropNode(state: EditorState, node: IWindow, target: IWindow, position: DropPosition): void
+{
+    if(!node || !target || node === target || node.disposed || target.disposed || node === state.rootWindow)
+    {
+        return;
+    }
+
+    if(isAncestorOf(node, target))
+    {
+        return;
+    }
+
+    if(position === 'inside')
+    {
+        reparent(state, node, target);
+
+        return;
+    }
+
+    const parent = target.parent;
+
+    if(!parent || parent === node)
+    {
+        return;
+    }
+
+    const container = parent.getLayoutChildTarget() as unknown as IContainerLike;
+    const sameParent = node.parent === parent;
+    let index = childIndexOf(parent, target);
+
+    if(index < 0)
+    {
+        return;
+    }
+
+    if(position === 'after')
+    {
+        index += 1;
+    }
+
+    if(sameParent)
+    {
+        const current = childIndexOf(parent, node);
+
+        if(current >= 0 && current < index)
+        {
+            index -= 1; // removing the node first shifts everything after it down
+        }
+
+        if(current === index)
+        {
+            return;
+        }
+    }
+
+    state.pushHistory();
+
+    if(node.parent)
+    {
+        (node.parent as unknown as IContainerLike).removeChild(node);
+    }
+
+    container.addChildAt(node, Math.max(0, Math.min(container.numChildren, index)));
+    state.notifyTreeChanged();
+    state.select(node);
 }
 
 /** Reparents `child` under `newParent` (rejecting cycles and no-ops). */

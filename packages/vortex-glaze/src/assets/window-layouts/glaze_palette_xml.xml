@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<layout name="glaze_hierarchy" width="318" height="600">
+<layout name="glaze_palette" width="380" height="520">
   <window>
-    <frame x="0" y="0" width="318" height="600" params="1" style="102" name="glaze_hierarchy_frame" caption="Hierarchy View">
+    <frame x="0" y="0" width="380" height="520" params="32769" style="102" name="glaze_palette_frame" caption="Widgets" width_min="240">
       <variables>
         <var key="margin_left" value="6" type="int"/>
         <var key="margin_top" value="26" type="int"/>
@@ -9,8 +9,7 @@
         <var key="margin_bottom" value="7" type="int"/>
       </variables>
       <children>
-        <container x="0" y="0" width="288" height="60" params="0" style="3" name="glaze_hierarchy_controls"/>
-        <scrollable_itemlist_vertical x="0" y="62" width="306" height="505" params="16" style="100" name="glaze_hierarchy_list">
+        <scrollable_itemlist_vertical x="0" y="0" width="368" height="487" params="16" style="100" name="glaze_palette_list">
           <variables>
             <var key="resize_on_item_update" value="false" type="Boolean"/>
           </variables>

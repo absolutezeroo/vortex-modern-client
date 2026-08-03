@@ -25,6 +25,11 @@ export interface GlazeLayoutSlots
     glaze_check_xml:
         | 'glaze_chk';
 
+    /** glaze_cp_body: container, glaze_cp_frame: frame */
+    glaze_colorpicker_xml:
+        | 'glaze_cp_body'
+        | 'glaze_cp_frame';
+
     /** glaze_dd: dropmenu */
     glaze_dropdown_xml:
         | 'glaze_dd';
@@ -58,12 +63,41 @@ export interface GlazeLayoutSlots
     glaze_label_xml:
         | 'glaze_lbl';
 
+    /** glaze_wrow: region, glaze_wrow_label: text, glaze_wrow_preview: container, glaze_wrow_type: text */
+    glaze_palette_row_xml:
+        | 'glaze_wrow'
+        | 'glaze_wrow_label'
+        | 'glaze_wrow_preview'
+        | 'glaze_wrow_type';
+
+    /** glaze_palette_frame: frame, glaze_palette_list: scrollable_itemlist_vertical */
+    glaze_palette_xml:
+        | 'glaze_palette_frame'
+        | 'glaze_palette_list';
+
+    /** glaze_arow: container, glaze_arow_add: button, glaze_arow_key: input, glaze_arow_keybox: border, glaze_arow_value: input, glaze_arow_valuebox: border */
+    glaze_prop_addvar_xml:
+        | 'glaze_arow'
+        | 'glaze_arow_add'
+        | 'glaze_arow_key'
+        | 'glaze_arow_keybox'
+        | 'glaze_arow_value'
+        | 'glaze_arow_valuebox';
+
     /** glaze_crow: container, glaze_crow_check: checkbox, glaze_crow_label: text, glaze_crow_type: text */
     glaze_prop_check_xml:
         | 'glaze_crow'
         | 'glaze_crow_check'
         | 'glaze_crow_label'
         | 'glaze_crow_type';
+
+    /** glaze_korow: container, glaze_korow_input: input, glaze_korow_inputbox: border, glaze_korow_label: text, glaze_korow_swatch: region */
+    glaze_prop_color_xml:
+        | 'glaze_korow'
+        | 'glaze_korow_input'
+        | 'glaze_korow_inputbox'
+        | 'glaze_korow_label'
+        | 'glaze_korow_swatch';
 
     /** glaze_drow: container, glaze_drow_drop: dropmenu, glaze_drow_label: text */
     glaze_prop_drop_xml:
@@ -83,6 +117,15 @@ export interface GlazeLayoutSlots
         | 'glaze_prow_inputbox'
         | 'glaze_prow_label'
         | 'glaze_prow_type';
+
+    /** glaze_vrow: container, glaze_vrow_input: input, glaze_vrow_inputbox: border, glaze_vrow_label: text, glaze_vrow_remove: button, glaze_vrow_type: text */
+    glaze_prop_var_xml:
+        | 'glaze_vrow'
+        | 'glaze_vrow_input'
+        | 'glaze_vrow_inputbox'
+        | 'glaze_vrow_label'
+        | 'glaze_vrow_remove'
+        | 'glaze_vrow_type';
 
     /** glaze_property_frame: frame, glaze_property_list: itemlist_vertical */
     glaze_property_xml:

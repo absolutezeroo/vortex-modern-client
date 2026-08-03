@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_prop_addvar" width="332" height="26">
+  <window>
+    <container x="0" y="0" width="332" height="26" params="16" style="3" name="glaze_arow">
+      <children>
+        <border x="8" y="2" width="112" height="21" params="16" style="105" name="glaze_arow_keybox">
+          <children>
+            <input x="4" y="2" width="104" height="16" params="2177" style="3" name="glaze_arow_key" tags="INPUT" caption="">
+              <variables>
+                <var key="display_raw" value="true" type="Boolean"/>
+                <var key="text_color" value="0x4a4a4a" type="hex"/>
+                <var key="text_style" value="il_regular" type="String"/>
+                <var key="margin_left" value="5" type="int"/>
+                <var key="spacing" value="0" type="Number"/>
+                <var key="leading" value="0" type="Number"/>
+              </variables>
+            </input>
+          </children>
+        </border>
+        <border x="128" y="2" width="140" height="21" params="16" style="105" name="glaze_arow_valuebox">
+          <children>
+            <input x="4" y="2" width="132" height="16" params="2177" style="3" name="glaze_arow_value" tags="INPUT" caption="">
+              <variables>
+                <var key="display_raw" value="true" type="Boolean"/>
+                <var key="text_color" value="0x4a4a4a" type="hex"/>
+                <var key="text_style" value="il_regular" type="String"/>
+                <var key="margin_left" value="5" type="int"/>
+                <var key="spacing" value="0" type="Number"/>
+                <var key="leading" value="0" type="Number"/>
+              </variables>
+            </input>
+          </children>
+        </border>
+        <button x="274" y="1" width="52" height="23" params="1" style="102" name="glaze_arow_add" caption="Add var" dynamic_style="button">
+          <variables>
+            <var key="text_style" value="il_button" type="String"/>
+          </variables>
+        </button>
+      </children>
+    </container>
+  </window>
+</layout>

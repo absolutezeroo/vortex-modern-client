@@ -650,6 +650,73 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **vortex-glaze: multi-selection, zoom, snapping, tree drag & drop, variables, palette**, 2026-08-03.
+  - Editor tooling only — no AS3 counterpart; the feature set was picked by comparing against
+    [Clove](https://github.com/iSetht/clove), a React/Electron Habbo-layout editor, and taking what
+    Glaze lacked. What was deliberately *not* taken: its TSX export (Nitro-only), its `.clove.json`
+    project format (Glaze saves the layout XML itself, which is better) and its generated
+    `windowTypes.json` catalogue (the port has the real `ThemeManager`).
+  - **Canvas**: Ctrl/Shift-click and rubber-band selection, moves/nudges/deletes/clones over the
+    whole selection, align against the selection's bounding box (a single node still aligns against
+    its parent, as before), distribute over the selection with the old
+    "children of the selected container" as the fallback, Alt-drag to duplicate, and 50–400 % zoom.
+  - **Zoom without an engine change**: everything composites into one buffer, so the layer repaints
+    the canvas background over the centre — nothing else is drawn there — and blits
+    `renderWindowSnapshot(root)` through the zoom transform, cached until the renderer or the editor
+    reports a change. Forwarded pointer coordinates are mapped through the inverse transform and
+    *dropped* when they fall outside the content area, so a mapped point can never hit a chrome panel.
+  - **Snapping** (`canvas/SnapGuides.ts`): a drag aligns to its siblings' and its parent's edges and
+    centres within 6 screen px, with the guide lines painted while it holds; resize snaps the moved
+    edge. Toggled from the toolbar.
+  - **Hierarchy drag & drop**: before/inside/after by pointer position within the row, auto-expand
+    after 400 ms over a collapsed container, drop past the last row = move to the root, plus
+    Ctrl/Shift range selection and greying for nodes hidden by an ancestor. `reparent()` had been in
+    `StructuralOps` since the beginning with no caller.
+  - **Inspector**: a colour swatch that opens a generated swatch-grid picker (hex field kept, still
+    authoritative), and the `<variables>` group — edit, add and remove, with add creating the
+    `<variables>` block a palette-created node does not have.
+  - **Palette**: a popup listing 28 window types, each previewed by a **real instance of that type
+    built inside its row**, so no thumbnail machinery exists at all.
+  - **Two real bugs found while verifying in the browser** (not by reading):
+    - Edited `<var>` values silently never reached the saved XML when the engine serializer had
+      emitted its own `<variables>` for that node — `injectVariables` skipped any node that already
+      had a block. The editor's model now replaces it; it is the one seeded from the source XML.
+    - **Every editor input field ate `${localization.key}` values and showed empty**, because
+      `TextController.set text` diverts a `${…}` caption to the localization listener. Editing a
+      localized `caption` therefore overwrote the key with an empty string. All editor inputs now
+      ship `display_raw="true"`, which `TextFieldController` already honoured.
+  - Both panels are `scrollable_itemlist_vertical` now (Flags and Variables were simply unreachable
+    below the fold), which is what widened them to 318 / 368 px.
+
+- 🐛 **vortex-glaze: four defects the first pass surfaced**, 2026-08-03 (same day, found by using it).
+  - **Save wrote files nothing could read.** `serializeLayout` returned
+    `WindowParser.windowToXMLString(root)` — the window element *alone* — so the saved file's root
+    was a bare `<border>`/`<container>`. `parseWindowLayoutXml` takes a `<layout>` or a `<window>`
+    root and returns `[]` for anything else, so every layout Glaze ever saved was silently
+    unloadable and reopening one fell back to the bundled original. It now emits the
+    `<layout><window>…</window></layout>` envelope, reusing the open layout's own source document so
+    its attributes and `<sharedvariables>` survive, and it writes back the root's **authored**
+    position — `openLayout` centres the root on the canvas, and that canvas coordinate was being
+    saved into the file.
+  - **The editor read layouts from the bundle and wrote them to the sources**, so even a correct
+    save came back as its old self on the next page load. `GET /glaze/layouts` (dev middleware) now
+    returns every source layout newer than `assets-xml.bundle` — normally none — and `GlazeBoot`
+    re-registers them over the bundle.
+  - **Popup close buttons did nothing.** The three layer-3 popups listened for `WE_CLOSE`/`WE_CLOSED`,
+    which only `DropBaseController` emits; a frame's header builds an ordinary `closebutton` named
+    `header_button_close` whose click bubbles to the frame's procedure, exactly as
+    `InventoryMainView` handles it. Shared now in `ui/windows/PopupChrome.ts`, along with clamping a
+    popup to the canvas so a short window cannot push its title bar off-screen.
+  - **The theme dropdown claimed every window was Volter.** It listed four hard-coded themes while
+    `ThemeManager` knows eight: `Misc` was missing from Set Theme, and any window whose theme is one
+    of the virtual groupings (`None`, `Icon`, `Legacy border`) fell back to index 0. Set Theme offers
+    the five real themes; the Property Editor lists whatever `getThemes()` reports.
+  - Also: the Image Gallery set the **canvas background** whenever the selection was not a bitmap —
+    it now inserts a `static_bitmap` sized to the image, which is what an image library is for; and
+    the toolbar reflows instead of laying its last buttons past the right edge (below ~1700 px,
+    Image Gallery and Widgets were unclickable), with the panels' lists finally following the
+    frame height.
+
 - ✅ **Clothing-change furniture (`RWE_CLOTHING_CHANGE`)**, 2026-08-02.
   - `ClothingChangeFurnitureWidget` + `FurnitureClothingChangeWidgetHandler`, plus the two
     widget classes they pass between them (`RoomWidgetClothingChangeUpdateEvent`,

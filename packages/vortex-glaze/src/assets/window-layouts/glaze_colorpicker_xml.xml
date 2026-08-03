@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_colorpicker" width="292" height="288">
+  <window>
+    <frame x="0" y="0" width="292" height="288" params="32769" style="102" name="glaze_cp_frame" caption="Colour" width_min="292">
+      <variables>
+        <var key="margin_left" value="6" type="int"/>
+        <var key="margin_top" value="26" type="int"/>
+        <var key="margin_right" value="6" type="int"/>
+        <var key="margin_bottom" value="7" type="int"/>
+      </variables>
+      <children>
+        <container x="0" y="0" width="280" height="255" params="16" style="3" name="glaze_cp_body"/>
+      </children>
+    </frame>
+  </window>
+</layout>

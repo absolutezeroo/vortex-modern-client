@@ -41,6 +41,8 @@ export class CanvasSurface
     private _docUpHandler: ((e: MouseEvent) => void) | null = null;
     private _overlayPainter: ((ctx: CanvasRenderingContext2D, w: number, h: number) => void) | null = null;
     private _bgPainter: ((ctx: CanvasRenderingContext2D, w: number, h: number) => void) | null = null;
+    private _coordMapper: ((x: number, y: number) => { x: number; y: number } | null) | null = null;
+    private _onResized: (() => void) | null = null;
 
     private readonly _globalPosScratch = {x: 0, y: 0};
 
@@ -79,6 +81,31 @@ export class CanvasSurface
     public getCanvasRect(): DOMRect | null
     {
         return this._canvas?.getBoundingClientRect() ?? null;
+    }
+
+    /**
+     * Installs the transform applied to forwarded mouse coordinates. The editor
+     * uses it so that, while the edited layout is drawn magnified, a click lands
+     * on the widget the user actually sees; returning null from the mapper drops
+     * the event (the point maps outside the area the layout is drawn in).
+     */
+    public setCoordMapper(mapper: ((x: number, y: number) => { x: number; y: number } | null) | null): void
+    {
+        this._coordMapper = mapper;
+    }
+
+    /** The renderer's frame counter — a cheap "did anything redraw" signal. */
+    public get renderVersion(): number
+    {
+        return this._windowManager.getWindowRenderer()?.renderVersion ?? 0;
+    }
+
+    /** Canvas-local coordinates with the forwarding transform applied. */
+    private toEventCoords(e: MouseEvent): { x: number; y: number } | null
+    {
+        const raw = this.toCanvasCoords(e);
+
+        return this._coordMapper ? this._coordMapper(raw.x, raw.y) : raw;
     }
 
     public mount(): void
@@ -137,6 +164,16 @@ export class CanvasSurface
                 desktop.height = h;
             }
         }
+
+        // The chrome re-lays itself out from here rather than from `window.resize`,
+        // so it never reads desktop dimensions this method has not written yet.
+        this._onResized?.();
+    }
+
+    /** Called after every canvas resize, once the desktop layers have been sized. */
+    public setResizeHandler(handler: (() => void) | null): void
+    {
+        this._onResized = handler;
     }
 
     private startRenderLoop(): void
@@ -208,7 +245,11 @@ export class CanvasSurface
 
         e.preventDefault();
 
-        const {x, y} = this.toCanvasCoords(e);
+        const point = this.toEventCoords(e);
+
+        if(!point) return;
+
+        const {x, y} = point;
         const hit = this._windowManager.findWindowAtPoint(x, y);
 
         if(!hit) return;
@@ -242,7 +283,9 @@ export class CanvasSurface
 
             this._docMoveHandler = (ev: MouseEvent): void =>
             {
-                const coords = this.toCanvasCoords(ev);
+                const coords = this.toEventCoords(ev);
+
+                if(!coords) return;
 
                 dragger.handleMouseMove(coords.x, coords.y);
                 scaler.handleMouseMove(coords.x, coords.y);
@@ -253,9 +296,11 @@ export class CanvasSurface
                 dragger.handleMouseUp();
                 scaler.handleMouseUp();
 
-                if(this._mouseDownWindow && !this._mouseDownWindow.disposed)
+                const upPoint = this.toEventCoords(ev);
+
+                if(this._mouseDownWindow && !this._mouseDownWindow.disposed && upPoint)
                 {
-                    const {x: ux, y: uy} = this.toCanvasCoords(ev);
+                    const {x: ux, y: uy} = upPoint;
                     const gp = this._globalPosScratch;
 
                     this._mouseDownWindow.getGlobalPosition(gp);
@@ -301,7 +346,11 @@ export class CanvasSurface
     {
         if(!this._forwardMouse) return;
 
-        const {x, y} = this.toCanvasCoords(e);
+        const point = this.toEventCoords(e);
+
+        if(!point) return;
+
+        const {x, y} = point;
         const hit = this._windowManager.findWindowAtPoint(x, y);
 
         if(hit !== this._lastHoveredWindow)
@@ -358,7 +407,11 @@ export class CanvasSurface
         if(!this._forwardMouse) return;
         if(this._docUpHandler) return;
 
-        const {x, y} = this.toCanvasCoords(e);
+        const point = this.toEventCoords(e);
+
+        if(!point) return;
+
+        const {x, y} = point;
         const hit = this._windowManager.findWindowAtPoint(x, y);
 
         if(!hit) return;
@@ -386,7 +439,11 @@ export class CanvasSurface
     {
         if(!this._forwardMouse) return;
 
-        const {x, y} = this.toCanvasCoords(e);
+        const point = this.toEventCoords(e);
+
+        if(!point) return;
+
+        const {x, y} = point;
         const hit = this._windowManager.findWindowAtPoint(x, y);
 
         if(!hit) return;

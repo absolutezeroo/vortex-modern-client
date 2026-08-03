@@ -9,6 +9,8 @@ import {WindowProperty} from './ui/windows/WindowProperty';
 import {WindowToolbar} from './ui/windows/WindowToolbar';
 import {WindowBottomBar} from './ui/windows/WindowBottomBar';
 import {WindowGallery} from './ui/windows/WindowGallery';
+import {WindowPalette} from './ui/windows/WindowPalette';
+import {WindowColorPicker} from './ui/windows/WindowColorPicker';
 import {GlazeShortcuts} from './input/GlazeShortcuts';
 import {Logger} from '@core/utils/Logger';
 
@@ -44,17 +46,24 @@ async function main(): Promise<void>
     chrome.mount();
 
     const hierarchyList = chrome.hierarchyList;
-    const hierarchy = hierarchyList ? new WindowHierarchy(state, hierarchyList) : null;
+    const hierarchy = hierarchyList ? new WindowHierarchy(state, hierarchyList, surface) : null;
 
     const hcBar = chrome.hierarchyControls;
     const hierarchyControls = hcBar ? new WindowHierarchyControls(state, hcBar, hierarchy) : null;
 
+    const colorPicker = new WindowColorPicker(state);
     const propertyList = chrome.propertyList;
-    const property = propertyList ? new WindowProperty(state, propertyList) : null;
+    const property = propertyList ? new WindowProperty(state, propertyList, colorPicker) : null;
 
     const gallery = new WindowGallery(state);
-    const toolbar = chrome.toolbar ? new WindowToolbar(state, chrome.toolbar, gallery) : null;
-    const bottomBar = chrome.bottomBar ? new WindowBottomBar(state, chrome.bottomBar) : null;
+    const palette = new WindowPalette(state);
+    const toolbar = chrome.toolbar ? new WindowToolbar(state, chrome.toolbar, gallery, palette) : null;
+
+    // The bar reflows to the canvas width and reports its height, which is where
+    // the panels below start — so the chrome lays itself out through it.
+    chrome.setToolbarSizer(toolbar ? (width) => toolbar.layout(width) : null);
+    surface.setResizeHandler(() => chrome.relayout());
+    const bottomBar = chrome.bottomBar ? new WindowBottomBar(state, chrome.bottomBar, colorPicker) : null;
 
     // Direct manipulation (select/move/resize + handles) in the canvas centre.
     const editorCanvas = new EditorCanvasLayer(state, surface, () => chrome.contentInsets);
@@ -75,7 +84,7 @@ async function main(): Promise<void>
 
     log.info(`Ready — ${names.length} layouts, chrome mounted`);
 
-    (window as unknown as { glaze: unknown }).glaze = {runtime, state, chrome, hierarchy, hierarchyControls, property, toolbar, bottomBar, gallery, editorCanvas, shortcuts, surface};
+    (window as unknown as { glaze: unknown }).glaze = {runtime, state, chrome, hierarchy, hierarchyControls, property, toolbar, bottomBar, gallery, palette, colorPicker, editorCanvas, shortcuts, surface};
 }
 
 void main().catch((error) =>

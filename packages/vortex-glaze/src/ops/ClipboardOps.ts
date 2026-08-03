@@ -14,39 +14,42 @@ interface IContainerLike { addChild(child: IWindow): IWindow; }
  * shared window context). Paste clones the stored node again, so the same copy
  * can be pasted repeatedly.
  */
-let clipboard: WindowController | null = null;
+let clipboard: WindowController[] = [];
 
 export function hasClipboard(): boolean
 {
-    return clipboard !== null && !clipboard.disposed;
+    return clipboard.some((win) => !win.disposed);
 }
 
-/** Stores a detached clone of the selected node. */
+/** Stores a detached clone of every selected node. */
 export function copySelected(state: EditorState): void
 {
-    const win = state.selected as unknown as WindowController | null;
+    const nodes = state.selection.filter((win) => !win.disposed);
 
-    if(!win || win.disposed)
+    if(nodes.length === 0)
     {
         return;
     }
 
     const previous = clipboard;
 
-    clipboard = win.clone() as unknown as WindowController;
+    clipboard = nodes.map((win) => (win as unknown as WindowController).clone() as unknown as WindowController);
 
-    if(previous && previous !== clipboard && !previous.disposed)
+    for(const stale of previous)
     {
-        previous.destroy();
+        if(!stale.disposed)
+        {
+            stale.destroy();
+        }
     }
 }
 
 /** Copies then deletes the selection (delete records its own undo step). */
 export function cutSelected(state: EditorState): void
 {
-    const win = state.selected as unknown as WindowController | null;
+    const nodes = state.selection.filter((win) => !win.disposed && win !== state.rootWindow);
 
-    if(!win || win.disposed || (win as unknown as IWindow) === state.rootWindow)
+    if(nodes.length === 0)
     {
         return;
     }
@@ -61,7 +64,9 @@ export function cutSelected(state: EditorState): void
  */
 export function pasteClipboard(state: EditorState): void
 {
-    if(!clipboard || clipboard.disposed)
+    const stored = clipboard.filter((win) => !win.disposed);
+
+    if(stored.length === 0)
     {
         return;
     }
@@ -77,16 +82,21 @@ export function pasteClipboard(state: EditorState): void
         ? (selected as unknown as IWindow)
         : selected.parent;
     const container = parentWin.getLayoutChildTarget() as unknown as IContainerLike;
+    const offset = state.snap || 8;
 
     state.pushHistory();
 
-    const copy = clipboard.clone() as unknown as WindowController;
+    const pasted: IWindow[] = [];
 
-    container.addChild(copy as unknown as IWindow);
+    for(const source of stored)
+    {
+        const copy = source.clone() as unknown as WindowController;
 
-    const offset = state.snap || 8;
+        container.addChild(copy as unknown as IWindow);
+        copy.rectangle = {x: copy.x + offset, y: copy.y + offset, width: copy.width, height: copy.height};
+        pasted.push(copy as unknown as IWindow);
+    }
 
-    copy.rectangle = {x: copy.x + offset, y: copy.y + offset, width: copy.width, height: copy.height};
     state.notifyTreeChanged();
-    state.select(copy as unknown as IWindow);
+    state.selectMany(pasted);
 }

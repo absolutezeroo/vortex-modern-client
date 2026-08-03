@@ -70,9 +70,59 @@ export class VariablesModel
     }
 
     /**
+     * Declares a new variable on a node, creating its `<variables>` block if the
+     * node had none. A node built from the widget palette starts bare, so this is
+     * the only way to give it the `text_style` / `asset_uri` / `auto_size` vars
+     * the Flash layouts rely on.
+     */
+    public addVar(name: string, key: string, type: string, value: string): boolean
+    {
+        if(!name || !key)
+        {
+            return false;
+        }
+
+        const vars = this._byName.get(name) ?? [];
+
+        if(vars.some((entry) => entry.key === key))
+        {
+            return false;
+        }
+
+        vars.push({key, type: type || 'String', value, complex: false});
+        this._byName.set(name, vars);
+
+        if(!this._blockXml.has(name))
+        {
+            this._blockXml.set(name, '<variables/>');
+        }
+
+        return true;
+    }
+
+    /** Drops a variable from a node (complex ones included). */
+    public removeVar(name: string, key: string): void
+    {
+        const vars = this._byName.get(name);
+
+        if(!vars)
+        {
+            return;
+        }
+
+        const index = vars.findIndex((entry) => entry.key === key);
+
+        if(index >= 0)
+        {
+            vars.splice(index, 1);
+        }
+    }
+
+    /**
      * Rebuilds the `<variables>` element for a named node into `targetDoc`,
-     * patching simple vars with their edited values and keeping complex vars as
-     * they were in the source. Returns null if the node had no variables.
+     * patching simple vars with their edited values, keeping complex vars as they
+     * were in the source, appending vars added in the editor and dropping the ones
+     * removed. Returns null if the node has no variables at all.
      */
     public emit(name: string, targetDoc: Document): Element | null
     {
@@ -93,22 +143,50 @@ export class VariablesModel
 
         const vars = this._byName.get(name) ?? [];
 
-        for(let i = 0; i < node.children.length; i++)
+        if(vars.length === 0)
         {
-            const varEl = node.children.item(i);
+            return null;
+        }
 
-            if(!varEl || varEl.nodeName !== 'var')
+        const seen = new Set<string>();
+
+        for(const varEl of Array.from(node.children))
+        {
+            if(varEl.nodeName !== 'var')
             {
                 continue;
             }
 
             const key = varEl.getAttribute('key') ?? varEl.getAttribute('name');
-            const gv = vars.find((v) => v.key === key);
+            const gv = key ? vars.find((v) => v.key === key) : undefined;
 
-            if(gv && !gv.complex)
+            if(!gv)
+            {
+                node.removeChild(varEl); // removed in the editor
+                continue;
+            }
+
+            if(!gv.complex)
             {
                 varEl.setAttribute('value', gv.value);
             }
+
+            seen.add(gv.key);
+        }
+
+        for(const entry of vars)
+        {
+            if(seen.has(entry.key) || entry.complex)
+            {
+                continue;
+            }
+
+            const varEl = parsed.createElement('var');
+
+            varEl.setAttribute('key', entry.key);
+            varEl.setAttribute('value', entry.value);
+            varEl.setAttribute('type', entry.type);
+            node.appendChild(varEl);
         }
 
         return targetDoc.importNode(node, true) as Element;
