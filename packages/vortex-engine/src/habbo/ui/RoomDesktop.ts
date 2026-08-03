@@ -69,6 +69,7 @@ import {FriendFurniEngravingWidgetHandler} from './handler/FriendFurniEngravingW
 import {FriendFurniConfirmWidgetHandler} from './handler/FriendFurniConfirmWidgetHandler';
 import {CustomStackHeightWidgetHandler} from './handler/CustomStackHeightWidgetHandler';
 import {FurnitureRoomLinkHandler} from './handler/FurnitureRoomLinkHandler';
+import {FurnitureClothingChangeWidgetHandler} from './handler/FurnitureClothingChangeWidgetHandler';
 import {PlaceholderWidgetHandler} from './handler/PlaceholderWidgetHandler';
 import {FurnitureBackgroundColorWidgetHandler} from './handler/FurnitureBackgroundColorWidgetHandler';
 import {FurnitureCreditWidgetHandler} from './handler/FurnitureCreditWidgetHandler';
@@ -805,6 +806,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new FriendFurniEngravingWidgetHandler();
                 break;
+            case 'RWE_CLOTHING_CHANGE':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:828-830
+                handler = new FurnitureClothingChangeWidgetHandler();
+                break;
             case 'RWE_CUSTOM_STACK_HEIGHT':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:894-895
                 handler = new CustomStackHeightWidgetHandler();
@@ -1076,6 +1081,14 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             // others this one is not translated into a widget message: the mannequin handler
             // subscribes to the engine event itself (`getProcessedEvents()`), so it only has to
             // reach the handler list, which the generic path below does.
+            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_CLOTHING_CHANGE" (line 1277)
+            case RoomEngineToWidgetEvent.REQUEST_CLOTHING_CHANGE:
+                this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
+                    RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_CLOTHING_CHANGE_WIDGET,
+                    event.objectId, event.category, event.roomId
+                ));
+
+                return;
             // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_PRESENT"
             case RoomEngineToWidgetEvent.REQUEST_PRESENT:
                 this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
