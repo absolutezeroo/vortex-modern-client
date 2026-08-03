@@ -1,7 +1,7 @@
 /**
  * Fired on the widget event bus when the user types into a catalog text-input widget.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/events/TextInputEvent.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/TextInputEvent.as
  */
 export class TextInputEvent
 {

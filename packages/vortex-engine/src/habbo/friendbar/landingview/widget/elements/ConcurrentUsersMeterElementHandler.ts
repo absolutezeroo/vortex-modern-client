@@ -15,13 +15,13 @@ const log = Logger.getLogger('habbo.friendbar.landingview.widget.elements.Concur
  * Progress-meter image that swaps its asset in 10%-of-goal increments as the
  * community goal's concurrent-user challenge progresses.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4539.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4539.as
  */
 export class ConcurrentUsersMeterElementHandler implements IElementHandler, IFloatableElementHandler
 {
     private _sprite: IStaticBitmapWrapperWindow | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4539.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4539.as::initialize()
     initialize(landingView: HabboLandingView, window: IWindow, params: string[], _ownerWidget: GenericWidget): void
     {
         this._sprite = window as IStaticBitmapWrapperWindow;
@@ -37,12 +37,12 @@ export class ConcurrentUsersMeterElementHandler implements IElementHandler, IFlo
         landingView.communicationManager?.addHabboConnectionMessageEvent(new ConcurrentUsersGoalProgressMessageEvent(this.onConcurrentUsersGoalProgress));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4539.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4539.as::refresh()
     refresh(): void
     {
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4539.as::isFloating()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4539.as::isFloating()
     isFloating(_value: boolean): boolean
     {
         return true;

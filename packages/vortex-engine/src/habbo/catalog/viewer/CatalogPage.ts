@@ -327,7 +327,7 @@ export class CatalogPage implements ICatalogPage
         }
     }
 
-    // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
     // 36 of the ~45 AS3 cases are ported so far (itemGridWidget/simplePriceWidget/productViewWidget/
     // purchaseWidget/spinnerWidget/totalPriceWidget/limitedItemWidget/specialInfoWidget/warningWidget/
     // textInputWidget/firstProductAutoSelectorWidget/singleViewWidget/builderWidget/

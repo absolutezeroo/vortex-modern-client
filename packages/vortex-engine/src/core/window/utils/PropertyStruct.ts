@@ -1,7 +1,7 @@
 /**
  * Key-value property struct for custom window properties.
  *
- * @see sources/win63_version/core/window/utils/PropertyStruct.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/PropertyStruct.as
  */
 export class PropertyStruct
 {
@@ -41,6 +41,8 @@ export class PropertyStruct
         return this._value;
     }
 
+    // TS-only: AS3 has no `value` setter - `withValue()` returns a new struct instead.
+    // Kept for the ported callers that mutate a struct they already own.
     public set value(value: unknown)
     {
         this._value = value;
@@ -83,6 +85,30 @@ export class PropertyStruct
             case PropertyStruct.STRING:
                 changed = String(this._value) !== String(newValue);
                 break;
+            case PropertyStruct.ARRAY:
+            {
+                // AS3 only treats two arrays as comparable when both are non-null and of
+                // equal length; anything else stays `changed`. Without this case every
+                // array-typed write allocated a fresh struct and invalidated the window,
+                // even when the contents were identical.
+                const previous = this._value as unknown[] | null;
+                const next = newValue as unknown[] | null;
+
+                if(Array.isArray(previous) && Array.isArray(next) && previous.length === next.length)
+                {
+                    changed = false;
+
+                    for(let i = 0; i < next.length; i++)
+                    {
+                        if(previous[i] !== next[i])
+                        {
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
         }
 
         if(changed)
@@ -103,6 +129,7 @@ export class PropertyStruct
         return new PropertyStruct(this._key.replace(/.*:/, ''), this._value, this._type, this._valid, this._range);
     }
 
+    // TS-only: no AS3 counterpart; AS3 copies through `withNameSpace()`/`withValue()`.
     public clone(): PropertyStruct
     {
         return new PropertyStruct(this._key, this._value, this._type, this._valid, this._range);
@@ -116,6 +143,18 @@ export class PropertyStruct
                 return '0x' + ((this._value as number) >>> 0).toString(16);
             case PropertyStruct.BOOLEAN:
                 return this._value ? 'true' : 'false';
+            case PropertyStruct.POINT:
+            {
+                const point = this._value as { x: number; y: number };
+
+                return `Point(${point.x}, ${point.y})`;
+            }
+            case PropertyStruct.RECTANGLE:
+            {
+                const rect = this._value as { x: number; y: number; width: number; height: number };
+
+                return `Rectangle(${rect.x}, ${rect.y}, ${rect.width}, ${rect.height})`;
+            }
             default:
                 return String(this._value);
         }

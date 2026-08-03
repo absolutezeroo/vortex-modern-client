@@ -11,14 +11,14 @@ import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 /**
  * External web link content element - warns before navigating away.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4540.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4540.as
  */
 export class LinkElementHandler implements IElementHandler, IDisposable
 {
     private _landingView: HabboLandingView | null = null;
     private _url: string = '';
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4540.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4540.as::dispose()
     dispose(): void
     {
         this._landingView = null;
@@ -29,7 +29,7 @@ export class LinkElementHandler implements IElementHandler, IDisposable
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4540.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4540.as::initialize()
     initialize(landingView: HabboLandingView, window: IWindow, params: string[], _ownerWidget: GenericWidget): void
     {
         this._landingView = landingView;
@@ -58,7 +58,7 @@ export class LinkElementHandler implements IElementHandler, IDisposable
         }
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4540.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4540.as::refresh()
     refresh(): void
     {
     }

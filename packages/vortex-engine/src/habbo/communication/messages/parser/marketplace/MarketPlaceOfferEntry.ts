@@ -8,16 +8,16 @@ import type {IStuffData} from '@habbo/room/object/data/IStuffData';
  * preserved faithfully from AS3 rather than collapsed into one class.
  *
  * TS-derived name: obfuscated with no readable-name counterpart in any of the
- * three source trees (win63_2026_crypted_version's `_SafeCls_2516`,
+ * three source trees (WIN63-202607011411-782849652's `_SafeCls_2516`,
  * win63_version's `class_3020`, PRODUCTION-201601012205-226667486's `_Str_4192` are all
  * decompiler placeholders). Named from usage context: this is the per-offer
  * entry produced while parsing the offers list off the wire.
  *
- * AS3: sources/win63_2026_crypted_version/src/unknowns/_SafePkg_1899/_SafeCls_2516.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1899/_SafeCls_2516.as
  */
 export class MarketPlaceOfferEntry 
 {
-    // AS3: sources/win63_2026_crypted_version/src/unknowns/_SafePkg_1899/_SafeCls_2516.as::_SafeCls_2516()
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1899/_SafeCls_2516.as::_SafeCls_2516()
     constructor(
         offerId: number, furniId: number, furniType: number, extraData: string, stuffData: IStuffData | null,
         price: number, status: number, timeLeftMinutes: number, averagePrice: number, offerCount: number = -1,

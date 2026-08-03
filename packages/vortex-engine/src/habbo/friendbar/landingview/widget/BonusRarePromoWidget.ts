@@ -20,7 +20,7 @@ import {WidgetContainerLayout} from '../layout/WidgetContainerLayout';
  * "Bonus rare" progress promo - shows progress toward a free rare, opens the
  * credits page on click.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as
  */
 export class BonusRarePromoWidget implements ILandingViewWidget, IProductDataListener, ISettingsAwareWidget, IGetImageListener
 {
@@ -31,13 +31,13 @@ export class BonusRarePromoWidget implements ILandingViewWidget, IProductDataLis
     private _totalCoinsForBonus: number = 0;
     private _coinsStillRequiredToBuy: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::BonusRarePromoWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::BonusRarePromoWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -52,7 +52,7 @@ export class BonusRarePromoWidget implements ILandingViewWidget, IProductDataLis
         return this._container === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::initialize()
     initialize(): void
     {
         this._container = this._landingView!.getXmlWindow('bonus_rare_promo') as IWindowContainer | null;
@@ -69,13 +69,13 @@ export class BonusRarePromoWidget implements ILandingViewWidget, IProductDataLis
         this.requestBonusRareInfo();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::requestBonusRareInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::requestBonusRareInfo()
     private requestBonusRareInfo(): void
     {
         this._landingView?.send(new GetBonusRareInfoMessageComposer());
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::refresh()
     refresh(): void
     {
         this.requestBonusRareInfo();
@@ -86,30 +86,30 @@ export class BonusRarePromoWidget implements ILandingViewWidget, IProductDataLis
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::productDataReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::productDataReady()
     productDataReady(): void
     {
         this.refreshContent();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::imageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::imageReady()
     imageReady(_id: number, _data: ImageBitmap | null): void
     {
         this.refreshContent();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::imageFailed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::imageFailed()
     imageFailed(_id: number): void
     {
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::onRoomEngineInitialized()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::onRoomEngineInitialized()
     private onRoomEngineInitialized = (): void =>
     {
         this.refreshContent();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::refreshContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::refreshContent()
     private refreshContent(): void
     {
         if(this.disposed || !this._landingView || !this._container) return;
@@ -146,7 +146,7 @@ export class BonusRarePromoWidget implements ILandingViewWidget, IProductDataLis
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::onBonusRareInfoMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::onBonusRareInfoMessage()
     private onBonusRareInfoMessage = (event: IMessageEvent): void =>
     {
         const parser = event.parser as BonusRareInfoMessageParser | null;
@@ -160,7 +160,7 @@ export class BonusRarePromoWidget implements ILandingViewWidget, IProductDataLis
         this.refreshContent();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::onOpenCreditsPageButton()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::onOpenCreditsPageButton()
     private onOpenCreditsPageButton = (event: WindowEvent): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
@@ -169,13 +169,13 @@ export class BonusRarePromoWidget implements ILandingViewWidget, IProductDataLis
         this._landingView?.catalog?.openCreditsHabblet();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::set settings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::set settings()
     set settings(value: CommonWidgetSettings)
     {
         if(this._container) WidgetContainerLayout.applyCommonWidgetSettings(this._container, value);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::setProgress()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::setProgress()
     private setProgress(current: number, total: number): void
     {
         const barBackground = this._container?.findChildByName('bar_a_bkg');

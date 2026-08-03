@@ -10,21 +10,21 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  *
  * Actual drawing is performed by {@link BitmapFillSkinRenderer}.
  *
- * @see sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as
  */
 export class BitmapFillController extends StaticBitmapWrapperController
 {
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::FILL_MODE_STRETCH
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::FILL_MODE_STRETCH
     public static readonly FILL_MODE_STRETCH: string = 'stretch';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::FILL_MODE_TILE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::FILL_MODE_TILE
     public static readonly FILL_MODE_TILE: string = 'tile';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::FILL_MODE_CENTER
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::FILL_MODE_CENTER
     public static readonly FILL_MODE_CENTER: string = 'center';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::FILL_MODE_COVER
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::FILL_MODE_COVER
     public static readonly FILL_MODE_COVER: string = 'cover';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::FILL_MODE_CONTAIN
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::FILL_MODE_CONTAIN
     public static readonly FILL_MODE_CONTAIN: string = 'contain';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::FILL_MODES
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::FILL_MODES
     public static readonly FILL_MODES: readonly string[] = ['stretch', 'tile', 'center', 'cover', 'contain'];
 
     // Declared without initializers: WindowController's applyProperties()
@@ -38,7 +38,7 @@ export class BitmapFillController extends StaticBitmapWrapperController
     private _tint: boolean | null = null;
     private _spacing: number | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::BitmapFillController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::BitmapFillController()
     constructor(
         name: string,
         type: number,
@@ -57,7 +57,7 @@ export class BitmapFillController extends StaticBitmapWrapperController
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::BitmapFillController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::BitmapFillController()
     protected override finalize(): void
     {
         super.finalize();
@@ -69,13 +69,13 @@ export class BitmapFillController extends StaticBitmapWrapperController
         this._spacing ??= BitmapFillController.normalizeSpacing(Number(defaults?.getValue('spacing') ?? 0));
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::normalizeFillMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::normalizeFillMode()
     public static normalizeFillMode(value: string): string
     {
         return BitmapFillController.FILL_MODES.indexOf(value) >= 0 ? value : 'stretch';
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::normalizeSpacing()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::normalizeSpacing()
     public static normalizeSpacing(value: number): number
     {
         return Number.isNaN(value) ? 0 : Math.max(0, value);
@@ -98,13 +98,13 @@ export class BitmapFillController extends StaticBitmapWrapperController
         return !!value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::get fillMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::get fillMode()
     public get fillMode(): string
     {
         return this._fillMode ?? 'stretch';
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::set fillMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::set fillMode()
     public set fillMode(value: string)
     {
         const normalized = BitmapFillController.normalizeFillMode(value);
@@ -116,13 +116,13 @@ export class BitmapFillController extends StaticBitmapWrapperController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::get tint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::get tint()
     public get tint(): boolean
     {
         return this._tint ?? false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::set tint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::set tint()
     public set tint(value: boolean)
     {
         if(this.tint !== value)
@@ -132,13 +132,13 @@ export class BitmapFillController extends StaticBitmapWrapperController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::get spacing()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::get spacing()
     public get spacing(): number
     {
         return this._spacing ?? 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::set spacing()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::set spacing()
     public set spacing(value: number)
     {
         const normalized = BitmapFillController.normalizeSpacing(value);
@@ -150,7 +150,7 @@ export class BitmapFillController extends StaticBitmapWrapperController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::get properties()
     public override get properties(): unknown[]
     {
         const props = super.properties;
@@ -162,7 +162,7 @@ export class BitmapFillController extends StaticBitmapWrapperController
         return props;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapFillController.as::set properties()
     public override set properties(value: unknown[])
     {
         let changed = false;

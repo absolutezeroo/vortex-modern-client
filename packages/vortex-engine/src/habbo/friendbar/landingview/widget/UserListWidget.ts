@@ -15,7 +15,7 @@ import {GetExtendedProfileMessageComposer} from '@habbo/communication/messages/o
  * variation, a hover popup, and an extended-profile lookup on click.
  * Subclasses supply the actual `users` data and popup content.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as
  */
 export class UserListWidget implements ILandingViewWidget
 {
@@ -27,19 +27,19 @@ export class UserListWidget implements ILandingViewWidget
     private _avatarContainerWidths: number[] = [];
     private _avatarDirections: number[] = [2, 4, 2, 2, 4, 2, 2, 2, 4, 2];
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::UserListWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::UserListWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::get container()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::dispose()
     dispose(): void
     {
         this._landingView = null;
@@ -52,25 +52,25 @@ export class UserListWidget implements ILandingViewWidget
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::initialize()
     initialize(): void
     {
         this._container = this._landingView!.getXmlWindow('user_list') as IWindowContainer | null;
         this.registerMessageListeners();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::refresh()
     refresh(): void
     {
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::refreshContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::refreshContent()
     refreshContent(): void
     {
         if(!this._container) return;
@@ -182,7 +182,7 @@ export class UserListWidget implements ILandingViewWidget
         return this.users?.[window.id] ?? null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::onEntry()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::onEntry()
     private onEntry = (event: WindowEvent, window: IWindow): void =>
     {
         const entry = this.getEntry(window);
@@ -203,7 +203,7 @@ export class UserListWidget implements ILandingViewWidget
         }
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::onExtraLink()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::onExtraLink()
     private onExtraLink = (event: WindowEvent, window: IWindow): void =>
     {
         if(event.type === WindowMouseEvent.CLICK)
@@ -311,7 +311,7 @@ export class UserListWidget implements ILandingViewWidget
         this._avatarContainerWidths = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::set startOffset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::set startOffset()
     set startOffset(value: number)
     {
         this._startOffset = value;

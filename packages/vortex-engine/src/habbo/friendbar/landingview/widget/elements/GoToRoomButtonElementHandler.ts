@@ -9,20 +9,20 @@ import {ButtonElementHandler} from './ButtonElementHandler';
  * AS3 identifier recovered from sources/win63_version/habbo/friendbar/landingview/widget/elements/class_4135.as
  * (obfuscated as `_SafeCls_4526` in the primary source).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4526.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4526.as
  */
 export class GoToRoomButtonElementHandler extends ButtonElementHandler
 {
     private _roomId: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4526.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4526.as::initialize()
     override initialize(landingView: HabboLandingView, window: IWindow, params: string[], ownerWidget: GenericWidget): void
     {
         super.initialize(landingView, window, params, ownerWidget);
         this._roomId = parseInt(params[2], 10);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4526.as::onClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4526.as::onClick()
     protected override onClick(): void
     {
         this.landingView?.navigator?.goToPrivateRoom(this._roomId);

@@ -21,7 +21,7 @@ import {HabboWebTools} from '@habbo/utils/HabboWebTools';
  * Rotating promo-article carousel (news carousel) - up to 10 articles with a
  * fade transition between them, navigation dots, and web/internal link CTAs.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as
  */
 export class PromoArticleWidget implements ILandingViewWidget, ISettingsAwareWidget, IUpdateReceiver
 {
@@ -37,13 +37,13 @@ export class PromoArticleWidget implements ILandingViewWidget, ISettingsAwareWid
     private _promoArticlesEvent: IMessageEvent | null = null;
     private _fadeElapsed: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::PromoArticleWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::PromoArticleWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::initialize()
     initialize(): void
     {
         if(!this._landingView) return;
@@ -58,7 +58,7 @@ export class PromoArticleWidget implements ILandingViewWidget, ISettingsAwareWid
         this._landingView.communicationManager?.addHabboConnectionMessageEvent(this._promoArticlesEvent);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::refresh()
     refresh(): void
     {
         if(!this._landingView) return;
@@ -74,13 +74,13 @@ export class PromoArticleWidget implements ILandingViewWidget, ISettingsAwareWid
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::get container()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::dispose()
     dispose(): void
     {
         if(this._promoArticlesEvent && this._landingView)
@@ -99,13 +99,13 @@ export class PromoArticleWidget implements ILandingViewWidget, ISettingsAwareWid
         this._landingView = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::set settings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::set settings()
     set settings(value: CommonWidgetSettings)
     {
         if(this._container)
@@ -301,7 +301,7 @@ export class PromoArticleWidget implements ILandingViewWidget, ISettingsAwareWid
         if(image) image.blend = blend;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::update()
     update(elapsedTime: number): void
     {
         const nextElapsed = this._fadeElapsed + elapsedTime;

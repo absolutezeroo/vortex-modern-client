@@ -18,7 +18,7 @@ import {GetCurrentTimingCodeMessageComposer} from '@habbo/communication/messages
  * a dynamic slot (`landing.view.dynamic.slot.N.conf` is a scheduling string
  * like `2001-01-01 00:00,<widgetType>`).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as
  */
 export class WidgetContainerWidget implements ILandingViewWidget, ISlotAwareWidget
 {
@@ -30,13 +30,13 @@ export class WidgetContainerWidget implements ILandingViewWidget, ISlotAwareWidg
     private _schedulingStr: string = '';
     private _currentWidgetContainer: WidgetContainer | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::WidgetContainerWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::WidgetContainerWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::hideChildren()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::hideChildren()
     static hideChildren(container: IWindowContainer): void
     {
         for(let i = 0; i < container.numChildren; i++)
@@ -47,7 +47,7 @@ export class WidgetContainerWidget implements ILandingViewWidget, ISlotAwareWidg
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::set slot()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::set slot()
     set slot(value: number)
     {
         this._slot = value;
@@ -58,14 +58,14 @@ export class WidgetContainerWidget implements ILandingViewWidget, ISlotAwareWidg
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::dispose()
     dispose(): void
     {
         this._landingView = null;
         this._container = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::initialize()
     initialize(): void
     {
         this._container = this._landingView!.getXmlWindow('widget_container_widget') as IWindowContainer | null;
@@ -76,7 +76,7 @@ export class WidgetContainerWidget implements ILandingViewWidget, ISlotAwareWidg
         this._schedulingStr = this._landingView!.getProperty(`landing.view.dynamic.slot.${this._slot}.conf`);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::refresh()
     refresh(): void
     {
         this._landingView?.send(new GetCurrentTimingCodeMessageComposer(this._schedulingStr));
@@ -87,7 +87,7 @@ export class WidgetContainerWidget implements ILandingViewWidget, ISlotAwareWidg
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::refreshContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::refreshContent()
     private refreshContent(): void
     {
         if(!this._container) return;
@@ -107,7 +107,7 @@ export class WidgetContainerWidget implements ILandingViewWidget, ISlotAwareWidg
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::createWidgetContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::createWidgetContainer()
     private createWidgetContainer(code: string): WidgetContainer | null
     {
         if(!this._landingView || !this._container || !this._settings) return null;
@@ -134,7 +134,7 @@ export class WidgetContainerWidget implements ILandingViewWidget, ISlotAwareWidg
         return widgetContainer;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::onTimingCode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::onTimingCode()
     private onTimingCode = (event: IMessageEvent): void =>
     {
         const parser = event.parser as CurrentTimingCodeMessageEventParser | null;
@@ -148,7 +148,7 @@ export class WidgetContainerWidget implements ILandingViewWidget, ISlotAwareWidg
         }
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::switchCurrentWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::switchCurrentWidget()
     private switchCurrentWidget(code: string): void
     {
         if(code === '')

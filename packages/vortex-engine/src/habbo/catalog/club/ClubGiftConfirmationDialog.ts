@@ -9,7 +9,7 @@ import type {ClubGiftController} from './ClubGiftController';
 /**
  * Confirmation dialog shown when picking which offer to redeem an available Club gift against.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/club/ClubGiftConfirmationDialog.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/club/ClubGiftConfirmationDialog.as
  */
 export class ClubGiftConfirmationDialog
 {

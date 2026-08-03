@@ -10,7 +10,7 @@ import type {WindowEvent} from '../events/WindowEvent';
  * Displays a small image/icon. The `fitToSize()` method resizes the
  * window to match the skin layout dimensions for the current state.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/IconController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/IconController.as
  */
 export class IconController extends WindowController implements IIconWindow
 {
@@ -32,7 +32,7 @@ export class IconController extends WindowController implements IIconWindow
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/IconController.as::IconController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/IconController.as::IconController()
     protected override finalize(): void
     {
         super.finalize();

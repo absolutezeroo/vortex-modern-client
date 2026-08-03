@@ -17,14 +17,14 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
  * (obfuscated as `_SafeCls_4537` in the primary source; the 5 `requestbadgebutton*`
  * config type strings in `ElementHandlerFactory` all resolve to this one class).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4537.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4537.as
  */
 export class RequestBadgeButtonElementHandler extends ButtonElementHandler implements IFloatableElementHandler
 {
     private _badgeRequestCode: string = '';
     private _isFloating: boolean = true;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4537.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4537.as::initialize()
     override initialize(landingView: HabboLandingView, window: IWindow, params: string[], ownerWidget: GenericWidget): void
     {
         super.initialize(landingView, window, params, ownerWidget);
@@ -42,21 +42,21 @@ export class RequestBadgeButtonElementHandler extends ButtonElementHandler imple
         landingView.communicationManager?.addHabboConnectionMessageEvent(new WiredRewardResultMessageEvent(this.onReward));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4537.as::onClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4537.as::onClick()
     protected override onClick(): void
     {
         this.landingView?.requestBadge(this._badgeRequestCode);
         this.landingView?.tracking?.trackGoogle('landingView', 'click_requestbadge_' + this._badgeRequestCode);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4537.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4537.as::refresh()
     override refresh(): void
     {
         super.refresh();
         this.landingView?.send(new GetIsBadgeRequestFulfilledComposer(this._badgeRequestCode));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4537.as::isFloating()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4537.as::isFloating()
     isFloating(_value: boolean): boolean
     {
         return this._isFloating;

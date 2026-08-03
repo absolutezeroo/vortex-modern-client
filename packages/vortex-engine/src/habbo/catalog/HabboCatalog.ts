@@ -418,7 +418,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
     private _frontPageItems: FrontPageItem[] | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::get frontPageItems()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get frontPageItems()
     get frontPageItems(): FrontPageItem[] | null
     {
         return this._frontPageItems;
@@ -720,7 +720,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._purchaseWillBeGift = isGift;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseProduct()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseProduct()
     // TODO(AS3): the roomAdPurchaseData-based extend/replace branch is not ported - roomAdPurchaseData
     // is a pre-existing always-null stub on this port (see its own getter's note), so the real AS3
     // condition (`roomAdPurchaseData == null || roomAdPurchaseData.offerId != offerId`) is always
@@ -783,7 +783,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         ));
     }
 
-    // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::doNotCloseAfterVipPurchase()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::doNotCloseAfterVipPurchase()
     // Sibling of the pre-existing rememberPageDuringVipPurchase()/forgetPageDuringVipPurchase()
     // stubs below - all three back the same deferred "reopen the remembered page after a club
     // purchase" flow (see onSubscriptionInfo()'s own TODO).
@@ -791,7 +791,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     {
     }
 
-    // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::forgetPageDuringVipPurchase()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::forgetPageDuringVipPurchase()
     forgetPageDuringVipPurchase(): void
     {
     }
@@ -1024,7 +1024,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.setCatalogBusy(this._catalogType, value);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::sendGetProductOffer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::sendGetProductOffer()
     // TODO(AS3): the response (ProductOfferEvent/onProductOffer) isn't ported yet - it needs a
     // full offer/product reconstruction (same shape as the catalog-page response) plus
     // CatalogPage.updateLimitedItemsLeft()/ProductOfferUpdatedEvent wiring. The request goes out
@@ -1404,7 +1404,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._builderFurniCount = parser.furniCount;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getBuilderFurniPlaceableStatusForOffer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getBuilderFurniPlaceableStatusForOffer()
     public getBuilderFurniPlaceableStatusForOffer(_offer: IPurchasableOffer | null): number
     {
         if(_offer == null) return 1;
@@ -1473,7 +1473,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this._purse;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getClubBuyController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getClubBuyController()
     // Controllers are created eagerly in initComponent() (see createClubBuyController() etc.
     // below), not lazily here - matches AS3, where these are plain field getters.
     public getClubBuyController(): ClubBuyController | null
@@ -1489,7 +1489,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getClubExtendController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getClubExtendController()
     public getClubExtendController(): ClubExtendController | null
     {
         return this._clubExtendController;
@@ -1503,7 +1503,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getClubGiftController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getClubGiftController()
     public getClubGiftController(): ClubGiftController | null
     {
         return this._clubGiftController;
@@ -1551,7 +1551,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getMarketPlace()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getMarketPlace()
     public getMarketPlace(): IMarketPlace | null
     {
         return this._marketPlace;
@@ -1565,49 +1565,49 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getPublicMarketPlaceOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getPublicMarketPlaceOffers()
     public getPublicMarketPlaceOffers(minPrice: number, maxPrice: number, searchString: string, category: number, combineUniques: boolean = true): void
     {
         this.connection?.send(new GetMarketplaceOffersMessageComposer(minPrice, maxPrice, searchString, category, combineUniques));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getOwnMarketPlaceOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getOwnMarketPlaceOffers()
     public getOwnMarketPlaceOffers(category: number = 1): void
     {
         this.connection?.send(new GetMarketplaceOwnOffersMessageComposer(category));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::cancelAllMarketPlaceOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::cancelAllMarketPlaceOffers()
     public cancelAllMarketPlaceOffers(): void
     {
         this.connection?.send(new CancelAllMarketplaceOffersMessageComposer());
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::clearOwnMarketPlaceHistory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::clearOwnMarketPlaceHistory()
     public clearOwnMarketPlaceHistory(status: number): void
     {
         this.connection?.send(new ClearOwnMarketplaceHistoryMessageComposer(status));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::buyMarketPlaceOffer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::buyMarketPlaceOffer()
     public buyMarketPlaceOffer(offerId: number): void
     {
         this.connection?.send(new BuyMarketplaceOfferMessageComposer(offerId));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::redeemSoldMarketPlaceOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::redeemSoldMarketPlaceOffers()
     public redeemSoldMarketPlaceOffers(): void
     {
         this.connection?.send(new RedeemMarketplaceOfferCreditsMessageComposer());
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::redeemExpiredMarketPlaceOffer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::redeemExpiredMarketPlaceOffer()
     public redeemExpiredMarketPlaceOffer(offerId: number): void
     {
         this.connection?.send(new CancelMarketplaceOfferMessageComposer(offerId));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getMarketplaceItemStats()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getMarketplaceItemStats()
     public getMarketplaceItemStats(category: number, furniId: number, extraData: string | null = null): void
     {
         if(!this._communication) return;
@@ -1713,7 +1713,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         dialog.dispose();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getHabboClubOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getHabboClubOffers()
     public getHabboClubOffers(source: number): void
     {
         this.connection?.send(new GetClubOffersMessageComposer(source));
@@ -2685,7 +2685,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.events.emit(PurseUpdateEvent.UPDATE, new PurseUpdateEvent());
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onSubscriptionInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onSubscriptionInfo()
     // TODO(AS3): the responseType === RESPONSE_TYPE_PURCHASE branch (reset() + reopen the page
     // remembered via rememberPageDuringVipPurchase()) isn't ported - reset() tears down and
     // reloads the whole catalog (navigators/viewer/product data) after a club purchase, and its
@@ -2824,7 +2824,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._windowManager?.alert('${catalog.alert.voucherredeem.error.title}', description, 0, this.alertDialogEventProcessor);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onHabboClubOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onHabboClubOffers()
     private onHabboClubOffers(event: IMessageEvent): void
     {
         if(!event) return;
@@ -2839,7 +2839,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onHabboClubExtendOffer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onHabboClubExtendOffer()
     // Unlike onHabboClubOffers() above, AS3 forwards the raw event here (not its parser) -
     // ClubExtendController.onOffer() does its own event.getParser() extraction. Preserved as-is,
     // a genuine inconsistency in the primary source between these two otherwise-similar handlers.
@@ -2852,7 +2852,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         if(this._clubExtendController) this._clubExtendController.onOffer(event);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onClubGiftInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onClubGiftInfo()
     private onClubGiftInfo(event: IMessageEvent): void
     {
         if(!event || !this._clubGiftController) return;
@@ -2864,37 +2864,37 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._clubGiftController.setInfo(parser.daysUntilNextGift, parser.giftsAvailable, parser.offers, parser.giftData);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceOffers()
     private onMarketPlaceOffers(event: IMessageEvent): void
     {
         this._marketPlace?.onOffers(event);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceOwnOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceOwnOffers()
     private onMarketPlaceOwnOffers(event: IMessageEvent): void
     {
         this._marketPlace?.onOwnOffers(event);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceBuyResult()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceBuyResult()
     private onMarketPlaceBuyResult(event: IMessageEvent): void
     {
         this._marketPlace?.onBuyResult(event);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceCancelResult()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceCancelResult()
     private onMarketPlaceCancelResult(event: IMessageEvent): void
     {
         this._marketPlace?.onCancelResult(event);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceCancelAllResult()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceCancelAllResult()
     private onMarketPlaceCancelAllResult(event: IMessageEvent): void
     {
         this._marketPlace?.onCancelAllResult(event);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceClearOwnHistoryResult()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceClearOwnHistoryResult()
     private onMarketPlaceClearOwnHistoryResult(event: IMessageEvent): void
     {
         this._marketPlace?.onClearOwnHistoryResult(event);
@@ -2936,7 +2936,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._groupMembershipsController?.onGuildMembershipsMessageEvent(event);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketplaceItemStats()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketplaceItemStats()
     private onMarketplaceItemStats(event: IMessageEvent): void
     {
         if(!event || !this._marketPlace) return;
@@ -2960,7 +2960,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._marketPlace.itemStats = stats;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketplaceConfiguration()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketplaceConfiguration()
     private onMarketplaceConfiguration(event: IMessageEvent): void
     {
         if(!event || !this._marketPlace) return;

@@ -3,7 +3,7 @@ import type {IMessageEvent, MessageEventCallback} from '@core/communication/mess
 import {MarketplaceItemStatsEventParser} from '../../parser/marketplace/MarketplaceItemStatsEventParser';
 
 /**
- * @see sources/win63_2026_crypted_version/src/unknowns/_SafePkg_1899/_SafeCls_2085.as
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1899/_SafeCls_2085.as
  * (real class name recovered from sources/win63_version/habbo/communication/messages/incoming/marketplace/MarketplaceItemStatsEvent.as)
  */
 export class MarketplaceItemStatsEvent extends MessageEvent implements IMessageEvent

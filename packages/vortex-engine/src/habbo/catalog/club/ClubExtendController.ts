@@ -11,7 +11,7 @@ import {ClubExtendConfirmationDialog} from './ClubExtendConfirmationDialog';
 /**
  * Drives the Habbo Club/VIP membership *extension* flow (renew-before-expiry upsell dialog).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/club/ClubExtendController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/club/ClubExtendController.as
  */
 export class ClubExtendController
 {
@@ -38,7 +38,7 @@ export class ClubExtendController
         this._disposed = true;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/club/ClubExtendController.as::onOffer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/club/ClubExtendController.as::onOffer()
     // Takes the raw incoming event (not its parser) and extracts the parser/offer itself - unlike
     // ClubBuyController.onOffers(), which HabboCatalog's own handler unwraps before calling. A
     // genuine inconsistency in the primary source between these two otherwise-similar handlers,

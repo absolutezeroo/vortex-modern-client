@@ -2,7 +2,7 @@
  * Animates a 24-bit RGB color from its current value toward a target over
  * a fixed duration, using simple per-channel linear interpolation.
  *
- * @see sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedColor.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedColor.as
  */
 export class AnimatedColor
 {
@@ -13,19 +13,19 @@ export class AnimatedColor
     private _targetColor: number = 0;
     private _value: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedColor.as::AnimatedColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedColor.as::AnimatedColor()
     constructor(durationMs: number)
     {
         this._durationMs = Math.max(0, durationMs);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedColor.as::get value()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedColor.as::get value()
     public get value(): number
     {
         return this._value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedColor.as::snapTo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedColor.as::snapTo()
     public snapTo(color: number, nowMs: number): void
     {
         const normalized = AnimatedColor.normalizeColor(color);
@@ -36,7 +36,7 @@ export class AnimatedColor
         this._value = normalized;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedColor.as::setTarget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedColor.as::setTarget()
     public setTarget(color: number, nowMs: number): void
     {
         const normalized = AnimatedColor.normalizeColor(color);
@@ -52,13 +52,13 @@ export class AnimatedColor
         this._targetColor = normalized;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedColor.as::needsUpdate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedColor.as::needsUpdate()
     public needsUpdate(_nowMs: number): boolean
     {
         return this._value !== this._targetColor;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedColor.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedColor.as::update()
     public update(nowMs: number): boolean
     {
         const previous = this._value;

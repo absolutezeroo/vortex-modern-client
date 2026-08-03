@@ -5,7 +5,7 @@ import type {ClubBuyOfferData} from '../../club/ClubBuyOfferData';
  * Visualization contract for ClubBuyController - implemented by both ClubBuyCatalogWidget and
  * VipBuyCatalogWidget.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/IVipBuyCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/IVipBuyCatalogWidget.as
  */
 export interface IVipBuyCatalogWidget extends IDisposable
 {

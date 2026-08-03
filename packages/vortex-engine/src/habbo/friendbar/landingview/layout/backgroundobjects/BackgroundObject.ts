@@ -11,7 +11,7 @@ import type {HabboLandingView} from '../../HabboLandingView';
  *
  * Implements AS3 `_SafeCls_64` (`IDisposable` + `update(elapsedTime)`).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as
  */
 export class BackgroundObject implements IDisposable
 {
@@ -20,7 +20,7 @@ export class BackgroundObject implements IDisposable
     protected _events: EventEmitter;
     private _sprite: IStaticBitmapWrapperWindow | null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::BackgroundObject()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::BackgroundObject()
     constructor(id: number, container: IWindowContainer, events: EventEmitter, landingView: HabboLandingView, _dataContent: string, useStaticVariant: boolean = false)
     {
         this._id = id;
@@ -34,56 +34,56 @@ export class BackgroundObject implements IDisposable
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::dispose()
     dispose(): void
     {
         this._window = null;
         this._sprite = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::get disposed()
     get disposed(): boolean
     {
         return this._window === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::set sprite()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::set sprite()
     set sprite(value: IStaticBitmapWrapperWindow | null)
     {
         this._sprite = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::get sprite()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::get sprite()
     get sprite(): IStaticBitmapWrapperWindow | null
     {
         return this._sprite;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::get window()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::get window()
     get window(): IWindow | null
     {
         return this._window;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::set window()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::set window()
     set window(value: IWindow | null)
     {
         this._window = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::get events()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::get events()
     get events(): EventEmitter
     {
         return this._events;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::get id()
     get id(): number
     {
         return this._id;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::update()
     update(_elapsedTime: number): void
     {
         if(!this._sprite) return;

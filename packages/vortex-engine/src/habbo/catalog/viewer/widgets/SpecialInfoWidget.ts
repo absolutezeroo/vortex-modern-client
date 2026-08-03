@@ -6,7 +6,7 @@ import {CatalogWidget} from './CatalogWidget';
 /**
  * Hides the "special" info label as soon as a product is selected.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/SpecialInfoWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpecialInfoWidget.as
  */
 export class SpecialInfoWidget extends CatalogWidget
 {

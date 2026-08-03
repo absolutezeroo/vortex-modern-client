@@ -7,14 +7,14 @@ import {HabboLandingView as HabboLandingViewClass} from '../HabboLandingView';
 /**
  * Static moderation-team promo tile.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as
  */
 export class HabboModerationPromoWidget implements ILandingViewWidget
 {
     private _landingView: HabboLandingView | null;
     private _container: IWindowContainer | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as::HabboModerationPromoWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as::HabboModerationPromoWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
@@ -25,14 +25,14 @@ export class HabboModerationPromoWidget implements ILandingViewWidget
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as::dispose()
     dispose(): void
     {
         this._landingView = null;
         this._container = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as::initialize()
     initialize(): void
     {
         this._container = this._landingView!.getXmlWindow('habbo_moderation_promo') as IWindowContainer | null;
@@ -43,7 +43,7 @@ export class HabboModerationPromoWidget implements ILandingViewWidget
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as::refresh()
     refresh(): void
     {
     }

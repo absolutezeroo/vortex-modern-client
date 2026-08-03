@@ -24,7 +24,7 @@ const log = Logger.getLogger('habbo.friendbar.landingview.widget.CommunityGoalPr
  * Rank-tier prize breakdown for the active community goal (top 1/2/3 reward
  * bands) plus the current user's personal rank/points and avatar preview.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as
  */
 export class CommunityGoalPrizesWidget implements ILandingViewWidget, ISettingsAwareWidget
 {
@@ -33,19 +33,19 @@ export class CommunityGoalPrizesWidget implements ILandingViewWidget, ISettingsA
     private _communityProgress: CommunityGoalProgressData | null = null;
     private _ownFigure: string = '';
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::CommunityGoalPrizesWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::CommunityGoalPrizesWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::get container()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::dispose()
     dispose(): void
     {
         this._landingView = null;
@@ -53,7 +53,7 @@ export class CommunityGoalPrizesWidget implements ILandingViewWidget, ISettingsA
         this._communityProgress = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::initialize()
     initialize(): void
     {
         this._container = this._landingView!.getXmlWindow('achievement_competition_prizes') as IWindowContainer | null;
@@ -65,13 +65,13 @@ export class CommunityGoalPrizesWidget implements ILandingViewWidget, ISettingsA
         communicationManager?.addHabboConnectionMessageEvent(new UserObjectMessageEvent(this.onUserObject));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::refresh()
     refresh(): void
     {
         this.refreshContent();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;
@@ -235,7 +235,7 @@ export class CommunityGoalPrizesWidget implements ILandingViewWidget, ISettingsA
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::set settings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::set settings()
     set settings(value: CommonWidgetSettings)
     {
         WidgetContainerLayout.applyCommonWidgetSettings(this._container, value);

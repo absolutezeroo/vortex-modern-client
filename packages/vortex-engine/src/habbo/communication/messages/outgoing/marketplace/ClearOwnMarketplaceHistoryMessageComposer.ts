@@ -6,7 +6,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * Named from usage context: `HabboCatalog.clearOwnMarketPlaceHistory(status)`
  * sends this with the `MarketPlaceOfferStatus` value to clear.
  *
- * @see sources/win63_2026_crypted_version/src/unknowns/_SafePkg_1746/_SafeCls_2060.as
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1746/_SafeCls_2060.as
  */
 export class ClearOwnMarketplaceHistoryMessageComposer extends MessageComposer<[number]> 
 {

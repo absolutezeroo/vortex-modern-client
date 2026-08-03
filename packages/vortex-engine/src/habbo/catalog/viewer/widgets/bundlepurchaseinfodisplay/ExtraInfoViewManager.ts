@@ -16,7 +16,7 @@ const MAX_ANIM_Y_OFFSET = 28;
  * Owns and animates the stack of ExtraInfoListItem rows shown by BundlePurchaseExtraInfoWidget
  * (promo nudge, bundle-info explainer, discount-value breakdown).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as
  */
 export class ExtraInfoViewManager implements IUpdateReceiver
 {
@@ -80,7 +80,7 @@ export class ExtraInfoViewManager implements IUpdateReceiver
         this.render();
     }
 
-    // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::addItem()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::addItem()
     // AS3's switch has no case for ExtraInfoItemData.TYPE_RESET_MESSAGE (5) - and neither
     // BundlePurchaseExtraInfoWidget nor anything else in this module ever constructs that type,
     // so it's dead in the original client too, not a porting gap.

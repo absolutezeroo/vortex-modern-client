@@ -10,11 +10,11 @@
  * `setInterval`/`performance.now()`, matching the convention already used
  * elsewhere in this codebase (see `ItemListController`'s scroll-wheel timer).
  *
- * @see sources/win63_2026_crypted_version/com/sulake/core/window/utils/SmoothScroller.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as
  */
 export class SmoothScroller
 {
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/utils/SmoothScroller.as::DEFAULT_SCROLL_STEP
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as::DEFAULT_SCROLL_STEP
     public static readonly DEFAULT_SCROLL_STEP: number = 25;
 
     private static readonly DEFAULT_MAX_DURATION_MS: number = 200;
@@ -48,7 +48,7 @@ export class SmoothScroller
     private _targetTime: number = 0;
     private _curveControlY1: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/utils/SmoothScroller.as::SmoothScroller()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as::SmoothScroller()
     constructor(
         getPosition: () => number,
         setPosition: (value: number) => void,
@@ -183,19 +183,19 @@ export class SmoothScroller
         return value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/utils/SmoothScroller.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as::dispose()
     public dispose(): void
     {
         this.stop();
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/utils/SmoothScroller.as::get duration()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as::get duration()
     public get duration(): number
     {
         return this._duration;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/utils/SmoothScroller.as::set duration()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as::set duration()
     public set duration(value: number)
     {
         if(!Number.isFinite(value) || value <= 0)
@@ -207,13 +207,13 @@ export class SmoothScroller
         this._halfDuration = value * 0.5;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/utils/SmoothScroller.as::get isScrolling()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as::get isScrolling()
     public get isScrolling(): boolean
     {
         return this._timer !== null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/utils/SmoothScroller.as::adjustStartPosition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as::adjustStartPosition()
     public adjustStartPosition(delta: number): void
     {
         if(!this.isScrolling || !Number.isFinite(delta) || delta === 0)
@@ -225,13 +225,13 @@ export class SmoothScroller
         this._targetValue = this.clampPosition(this._targetValue + delta);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/utils/SmoothScroller.as::scrollWithWheel()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as::scrollWithWheel()
     public scrollWithWheel(delta: number): boolean
     {
         return this.scrollBySteps(delta);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/utils/SmoothScroller.as::scrollBySteps()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as::scrollBySteps()
     public scrollBySteps(steps: number): boolean
     {
         if(!Number.isFinite(steps) || steps === 0)
@@ -297,13 +297,13 @@ export class SmoothScroller
         return true;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/utils/SmoothScroller.as::stop()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as::stop()
     public stop(): void
     {
         this.stopInternal(false);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/utils/SmoothScroller.as::complete()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as::complete()
     public complete(): void
     {
         if(this._targetTime > this._startTime)

@@ -18,7 +18,7 @@ const STRIKETHROUGH_RIGHT_MARGIN = 20;
  * Shows "was X, now Y" bundle-quantity discount pricing, split into a credits and/or
  * activity-point column depending on the offer's pricing model.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as
  */
 export class ExtraInfoDiscountValueItem extends UpdateableExtraInfoListItem
 {

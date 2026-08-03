@@ -18,7 +18,7 @@ import {WidgetContainerLayout} from '../layout/WidgetContainerLayout';
  * found child window, not literal null); ported here with the evident
  * correct intent.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as
  */
 export class CatalogPromoWidget implements ILandingViewWidget, ISettingsAwareWidget
 {
@@ -26,19 +26,19 @@ export class CatalogPromoWidget implements ILandingViewWidget, ISettingsAwareWid
     protected _container: IWindowContainer | null = null;
     private _targetCatalogPageName: string = '';
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::CatalogPromoWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::CatalogPromoWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::get xmlAssetName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::get xmlAssetName()
     protected get xmlAssetName(): string
     {
         return 'catalog_promo';
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::initialize()
     initialize(): void
     {
         this._container = this._landingView!.getXmlWindow(this.xmlAssetName) as IWindowContainer | null;
@@ -71,7 +71,7 @@ export class CatalogPromoWidget implements ILandingViewWidget, ISettingsAwareWid
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::refresh()
     refresh(): void
     {
     }
@@ -81,7 +81,7 @@ export class CatalogPromoWidget implements ILandingViewWidget, ISettingsAwareWid
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::dispose()
     dispose(): void
     {
         this._landingView = null;
@@ -98,7 +98,7 @@ export class CatalogPromoWidget implements ILandingViewWidget, ISettingsAwareWid
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::onOpenPageButtonClicked()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::onOpenPageButtonClicked()
     private onOpenPageButtonClicked = (event: WindowEvent): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
@@ -106,7 +106,7 @@ export class CatalogPromoWidget implements ILandingViewWidget, ISettingsAwareWid
         this._landingView?.catalog?.openCatalogPage(this._targetCatalogPageName);
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::setCustomLocalization()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::setCustomLocalization()
     private setCustomLocalization(childName: string, localizationKey: string, targetPageName: string): void
     {
         const fullKey = `${localizationKey}.${targetPageName}`;
@@ -123,7 +123,7 @@ export class CatalogPromoWidget implements ILandingViewWidget, ISettingsAwareWid
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::set settings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::set settings()
     set settings(value: CommonWidgetSettings)
     {
         if(this._container) WidgetContainerLayout.applyCommonWidgetSettings(this._container, value);

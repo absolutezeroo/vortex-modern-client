@@ -44,7 +44,7 @@ function isDisposableElementHandler(handler: IElementHandler): handler is IEleme
  * instantiating an `IElementHandler` via `ElementHandlerFactory` and laying
  * it into the widget's scrollable item list (or floating, e.g. a title).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as
  */
 export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISettingsAwareWidget, IConfigurableWidget, IDisableableWidget
 {
@@ -54,13 +54,13 @@ export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISet
     private _configurationCode: string | null = null;
     private _elements: Map<string, IElementHandler> = new Map();
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::GenericWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::GenericWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::configureLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::configureLayout()
     static configureLayout(landingView: HabboLandingView, slot: number, configurationCode: string | null, container: IWindowContainer): void
     {
         const layoutSpec = GenericWidget.getConf(landingView, slot, configurationCode, 'layout');
@@ -114,7 +114,7 @@ export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISet
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::getConf()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::getConf()
     private static getConf(landingView: HabboLandingView, slot: number, configurationCode: string | null, suffix: string): string
     {
         const key = configurationCode !== null
@@ -124,25 +124,25 @@ export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISet
         return landingView.getProperty(key);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::isWideSlot()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::isWideSlot()
     private static isWideSlot(slot: number): boolean
     {
         return slot !== 3 && slot !== 5;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::set slot()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::set slot()
     set slot(value: number)
     {
         this._slot = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::get configurationCode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::get configurationCode()
     get configurationCode(): string
     {
         return this._configurationCode ?? '';
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::set configurationCode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::set configurationCode()
     set configurationCode(value: string)
     {
         this._configurationCode = value;
@@ -153,7 +153,7 @@ export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISet
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::dispose()
     dispose(): void
     {
         this._landingView = null;
@@ -170,7 +170,7 @@ export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISet
         this._elements.clear();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::initialize()
     initialize(): void
     {
         this._container = this._landingView!.getXmlWindow('generic_widget') as IWindowContainer | null;
@@ -183,13 +183,13 @@ export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISet
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::getElementByName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::getElementByName()
     getElementByName(name: string): IElementHandler | null
     {
         return this._elements.get(name) ?? null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::configureContentColumn()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::configureContentColumn()
     private configureContentColumn(): void
     {
         if(!this._landingView || !this._container) return;
@@ -251,7 +251,7 @@ export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISet
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::refresh()
     refresh(): void
     {
         for(const element of this._elements.values())
@@ -265,13 +265,13 @@ export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISet
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::set settings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::set settings()
     set settings(value: CommonWidgetSettings)
     {
         if(this._container) WidgetContainerLayout.applyCommonWidgetSettings(this._container, value);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::disable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::disable()
     disable(): void
     {
         for(const element of this._elements.values())

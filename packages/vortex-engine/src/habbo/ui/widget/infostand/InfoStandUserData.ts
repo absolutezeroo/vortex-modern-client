@@ -37,7 +37,7 @@ export class InfoStandUserData
         return this.type === 'RWUIUE_BOT';
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::setData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::setData()
     // TODO(AS3): selectedBadges/badgesRank (badge glow/preserve tracking) not
     // carried here — deferred with the same Phase 1 display-polish scope cut
     // as InfoStandWidget.onUserInfo()'s shouldPreserveDisplayedBadges().

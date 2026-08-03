@@ -5,7 +5,7 @@ import {CatalogWidget} from './CatalogWidget';
 /**
  * Displays a warning message dispatched by another widget on the shared warning_text label.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/WarningCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/WarningCatalogWidget.as
  */
 export class WarningCatalogWidget extends CatalogWidget
 {

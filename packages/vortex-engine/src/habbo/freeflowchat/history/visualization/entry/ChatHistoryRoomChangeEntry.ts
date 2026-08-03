@@ -27,11 +27,11 @@ export interface IRoomChangeData
  * `getRoomChangeBitmap()` nor the `_SafeCls_2520.TEXT_FORMAT*` text formats
  * are ported yet, so `bitmap` returns null here instead of a composited image.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryRoomChangeEntry.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryRoomChangeEntry.as
  */
 export class ChatHistoryRoomChangeEntry implements IChatHistoryEntry
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryRoomChangeEntry.as::ChatHistoryRoomChangeEntry()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryRoomChangeEntry.as::ChatHistoryRoomChangeEntry()
     // TODO(AS3): see class header — bitmap compositing not ported, `roomData`/`chatFlow` unused for now.
     constructor(_roomData: IRoomChangeData | null, _chatFlow: unknown)
     {

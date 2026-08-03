@@ -10,23 +10,23 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  *
  * Actual drawing is performed by {@link StrokeSkinRenderer}.
  *
- * @see sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as
  */
 export class StrokeController extends WindowController
 {
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::SIDE_TOP
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::SIDE_TOP
     public static readonly SIDE_TOP: number = 1;
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::SIDE_RIGHT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::SIDE_RIGHT
     public static readonly SIDE_RIGHT: number = 2;
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::SIDE_BOTTOM
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::SIDE_BOTTOM
     public static readonly SIDE_BOTTOM: number = 4;
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::SIDE_LEFT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::SIDE_LEFT
     public static readonly SIDE_LEFT: number = 8;
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::SIDES_ALL
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::SIDES_ALL
     public static readonly SIDES_ALL: string = 'all';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::SIDE_MASK_ALL
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::SIDE_MASK_ALL
     private static readonly SIDE_MASK_ALL: number = 15;
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::SIDE_NAMES
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::SIDE_NAMES
     public static readonly SIDE_NAMES: readonly string[] = ['top', 'right', 'bottom', 'left'];
 
     // Declared without initializers: WindowController's applyProperties()
@@ -39,7 +39,7 @@ export class StrokeController extends WindowController
     private _sides: string | null = null;
     private _sideMask: number | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::StrokeController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::StrokeController()
     constructor(
         name: string,
         type: number,
@@ -57,7 +57,7 @@ export class StrokeController extends WindowController
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::StrokeController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::StrokeController()
     protected override finalize(): void
     {
         super.finalize();
@@ -68,7 +68,7 @@ export class StrokeController extends WindowController
         this._sideMask ??= StrokeController.SIDE_MASK_ALL;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::sidesFromString()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::sidesFromString()
     public static sidesFromString(value: string | null): number
     {
         if(value === null)
@@ -145,13 +145,13 @@ export class StrokeController extends WindowController
         return value === null ? '' : value.replace(/^\s+|\s+$/g, '');
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::get radius()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::get radius()
     public get radius(): number
     {
         return this._radius ?? 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::set radius()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::set radius()
     public set radius(value: number)
     {
         const normalized = StrokeController.clampNumber(value);
@@ -163,13 +163,13 @@ export class StrokeController extends WindowController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::get strokeThickness()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::get strokeThickness()
     public get strokeThickness(): number
     {
         return this._strokeThickness ?? 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::set strokeThickness()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::set strokeThickness()
     public set strokeThickness(value: number)
     {
         const normalized = StrokeController.clampNumber(value);
@@ -181,31 +181,31 @@ export class StrokeController extends WindowController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::get sides()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::get sides()
     public get sides(): string
     {
         return this._sides ?? 'all';
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::set sides()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::set sides()
     public set sides(value: string)
     {
         this.setSidesMask(StrokeController.sidesFromString(value));
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::get sideMask()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::get sideMask()
     public get sideMask(): number
     {
         return this._sideMask ?? StrokeController.SIDE_MASK_ALL;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::set sideMask()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::set sideMask()
     public set sideMask(value: number)
     {
         this.setSidesMask(StrokeController.normalizeSideMask(value));
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::get properties()
     public override get properties(): unknown[]
     {
         const props = super.properties;
@@ -217,7 +217,7 @@ export class StrokeController extends WindowController
         return props;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::set properties()
     public override set properties(value: unknown[])
     {
         let changed = false;
@@ -270,7 +270,7 @@ export class StrokeController extends WindowController
         super.properties = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::setSidesMask()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::setSidesMask()
     private setSidesMask(mask: number): void
     {
         if(this.updateSides(mask))
@@ -279,7 +279,7 @@ export class StrokeController extends WindowController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::updateSides()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StrokeController.as::updateSides()
     private updateSides(mask: number): boolean
     {
         mask = StrokeController.normalizeSideMask(mask);

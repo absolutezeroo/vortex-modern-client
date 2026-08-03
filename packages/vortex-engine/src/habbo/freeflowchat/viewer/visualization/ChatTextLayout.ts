@@ -18,7 +18,7 @@
  * nested tags occur in practice - italic wraps the whole message, bold wraps
  * either the username prefix or a shout, never both nested).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as
  */
 import {quoteFontFamilyList, measureFontLineHeight} from '@core/window/utils/CanvasFontString';
 
@@ -290,7 +290,7 @@ function parseInlineMarkup(text: string): IStyledSpan[]
  * in the style's link color, underlined) - same substitution AS3's
  * ChatBubble constructor performs.
  *
- * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::ChatBubble()
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::ChatBubble()
  */
 export function buildChatTextRuns(
     text: string,

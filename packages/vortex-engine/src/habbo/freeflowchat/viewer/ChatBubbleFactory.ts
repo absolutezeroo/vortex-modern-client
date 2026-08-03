@@ -35,7 +35,7 @@ const MAX_DISPOSABLE_BITMAPS = 30;
  * in @habbo/ui/handler/ChatWidgetHandler.ts: `IRoomEngine.getPetImage()`/
  * `PetFigureData` don't exist yet.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as
  */
 export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListener
 {
@@ -49,7 +49,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
     private readonly _disposableBitmaps: ImageBitmap[] = [];
     private _pool: PooledChatBubble[] = [];
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::ChatBubbleFactory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::ChatBubbleFactory()
     constructor(chatFlow: IHabboFreeFlowChat)
     {
         this._chatFlow = chatFlow;
@@ -64,7 +64,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -81,7 +81,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         return this._chatFlow === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getNewChatBubble()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getNewChatBubble()
     getNewChatBubble(item: ChatItem, _isOwnChat: boolean = false): PooledChatBubble | null
     {
         if(!this._chatFlow) return null;
@@ -126,7 +126,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         return bubble;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getNewEmptySpace()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getNewEmptySpace()
     getNewEmptySpace(_chatType: number): PooledChatBubble | null
     {
         if(!this._chatFlow) return null;
@@ -151,7 +151,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         return bubble;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getHistoryLineEntry()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getHistoryLineEntry()
     // TS note: async — see ChatBubble.ts::toImageBitmap()'s header for why (no
     // synchronous caller exists yet to break).
     async getHistoryLineEntry(item: ChatItem): Promise<IChatHistoryEntry | null>
@@ -197,7 +197,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         return new ChatHistoryEntryBitmapBubble(item, canIgnore, webId, name, bitmap, style.overlap);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getNewChatBubble()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getNewChatBubble()
     // and ::getHistoryLineEntry() resolve the face/color with *different* switches, not
     // identical logic: getNewChatBubble (history=false) images only users (type 1) and
     // pets (type 2, pet flag true); getHistoryLineEntry (history=true) also gives bots and
@@ -245,19 +245,19 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         return {face, color};
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getHistoryRoomChangeEntry()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getHistoryRoomChangeEntry()
     getHistoryRoomChangeEntry(roomData: IRoomChangeData | null): IChatHistoryEntry
     {
         return new ChatHistoryRoomChangeEntry(roomData, this._chatFlow);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::recycle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::recycle()
     recycle(bubble: PooledChatBubble): void
     {
         this._pool.push(bubble);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getUserImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getUserImage()
     getUserImage(figureString: string): ImageBitmap | null
     {
         let image = this._avatarImageCache.get(figureString) ?? null;
@@ -285,7 +285,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         return image;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getPetImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getPetImage()
     // TODO(AS3): same gap as ChatWidgetHandler's getPetImage() — genuinely blocked, not
     // deferred out of laziness: AS3's real implementation needs
     // roomEngine.getPetImage(typeId, paletteId, color, direction, size, listener,
@@ -300,7 +300,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         return null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::imageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::imageReady()
     imageReady(id: number, data: ImageBitmap | null): void
     {
         const figureString = this._petImageIdToFigureString.get(id);
@@ -317,12 +317,12 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::imageFailed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::imageFailed()
     imageFailed(_id: number): void
     {
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::petImageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::petImageReady()
     private petImageReady(figureString: string): void
     {
         const cached = this._petImageCache.get(figureString);
@@ -339,7 +339,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::avatarImageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::avatarImageReady()
     avatarImageReady(figureString: string): void
     {
         const cached = this._avatarImageCache.get(figureString);
@@ -361,7 +361,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         return this._chatStyleLibrary;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::discardOldBitmaps()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::discardOldBitmaps()
     // AS3 disposes every entry but never clears the array (only dispose() does) — kept as-is.
     private discardOldBitmaps(): void
     {
@@ -371,7 +371,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::applySpecialChatContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::applySpecialChatContent()
     private applySpecialChatContent(item: ChatItem, name: string): void
     {
         if(item.chatType === 12)
@@ -460,7 +460,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::isSystemNotificationChat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::isSystemNotificationChat()
     private isSystemNotificationChat(chatType: number): boolean
     {
         switch(chatType - 3)
@@ -480,7 +480,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::resolveRoomUserName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::resolveRoomUserName()
     private resolveRoomUserName(roomId: number, objectId: number): string
     {
         const roomObject = this._chatFlow?.roomEngine?.getRoomObject(roomId, objectId, 100) ?? null;

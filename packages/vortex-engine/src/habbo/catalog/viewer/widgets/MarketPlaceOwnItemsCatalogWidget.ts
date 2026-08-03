@@ -30,7 +30,7 @@ const MAX_SEARCH_STRING_LENGTH = 40;
 /**
  * The "my offers" (ongoing/sold/expired) marketplace widget.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as
  */
 export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements IMarketPlaceVisualization, IGetImageListener
 {
@@ -150,7 +150,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::listUpdatedNotify()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::listUpdatedNotify()
     listUpdatedNotify(): void
     {
         if(this.marketPlace == null) return;
@@ -159,7 +159,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this.applySearchFilter();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::removeOfferIds()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::removeOfferIds()
     removeOfferIds(offerIds: number[]): void
     {
         if(!this._itemList || !this._offers || offerIds == null) return;
@@ -369,7 +369,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this.updateBottomActionButtons(this._allOffers.length > 0);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::displayMainView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::displayMainView()
     displayMainView(): void
     {
         this.attachWidgetView(CatalogWidgetName.MARKET_PLACE_OWN_ITEMS);
@@ -377,7 +377,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this._itemList = this.window.findChildByName('item_list') as unknown as IItemListWindow | null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::imageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::imageReady()
     imageReady(id: number, data: ImageBitmap | null): void
     {
         if(this.disposed || !this.marketPlace || !data || !this._itemList || !this._offers) return;
@@ -409,7 +409,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::imageFailed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::imageFailed()
     imageFailed(_id: number): void
     {
     }
@@ -793,7 +793,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this.marketPlace.clearOwnHistory(this._category);
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::updateStats()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::updateStats()
     updateStats(): void
     {
     }

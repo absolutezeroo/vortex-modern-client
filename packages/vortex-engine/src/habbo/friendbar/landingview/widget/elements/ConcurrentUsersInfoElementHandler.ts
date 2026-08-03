@@ -25,7 +25,7 @@ const UPDATE_INTERVAL_MS = 5000;
  * users goal, polls for updates while the landing view is visible, and lets
  * the user redeem the reward once achieved.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as
  */
 export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisposable
 {
@@ -51,7 +51,7 @@ export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisp
         this.refresh();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::dispose()
     dispose(): void
     {
         if(this._updateIntervalId !== null)
@@ -68,7 +68,7 @@ export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisp
         return this._disposed;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::initialize()
     initialize(landingView: HabboLandingView, window: IWindow, params: string[], ownerWidget: GenericWidget): void
     {
         this._ownerWidget = ownerWidget;
@@ -102,7 +102,7 @@ export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisp
         landingView.communicationManager?.addHabboConnectionMessageEvent(new ConcurrentUsersGoalProgressMessageEvent(this.onConcurrentUsersGoalProgress));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::refresh()
     refresh(): void
     {
         this._landingView?.send(new GetConcurrentUsersGoalProgressMessageComposer());

@@ -1,7 +1,7 @@
 /**
  * ExtendedProfileWindowCtrl
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as
  *
  * Phase 1 (basic profile) port: header (name/motto/avatar/online-friend
  * status/last-login/activity-points/friend-count/level/badge-count),
@@ -45,26 +45,26 @@ const BADGE_SLOT_COUNT = 5;
 
 export class ExtendedProfileWindowCtrl
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_4571
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_4571
     private _groupsManager: HabboGroupsManager | null;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_window
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_window
     private _window: IWindowContainer | null = null;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_4556
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_4556
     private _profile: ExtendedProfileData | null = null;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_7764
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_7764
     private _badgeUpdateExpected: boolean = false;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_7676
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_7676
     // Set when onProfileChanged() silently re-requests an already-open profile,
     // so the next onProfile() doesn't steal window focus/activation.
     private _skipActivateOnNextProfile: boolean = false;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::ExtendedProfileWindowCtrl()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::ExtendedProfileWindowCtrl()
     constructor(groupsManager: HabboGroupsManager)
     {
         this._groupsManager = groupsManager;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::dispose()
     dispose(): void
     {
         this._groupsManager = null;
@@ -73,19 +73,19 @@ export class ExtendedProfileWindowCtrl
         this._profile = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::get disposed()
     get disposed(): boolean
     {
         return this._groupsManager === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::get linkPattern()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::get linkPattern()
     get linkPattern(): string
     {
         return 'profile/';
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::linkReceived()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::linkReceived()
     linkReceived(link: string): void
     {
         const parts = link.split('/');
@@ -103,19 +103,19 @@ export class ExtendedProfileWindowCtrl
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::get badgeUpdateExpected() / set badgeUpdateExpected()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::get badgeUpdateExpected() / set badgeUpdateExpected()
     get badgeUpdateExpected(): boolean
     {
         return this._badgeUpdateExpected;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::set badgeUpdateExpected()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::set badgeUpdateExpected()
     set badgeUpdateExpected(value: boolean)
     {
         this._badgeUpdateExpected = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::prepareWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::prepareWindow()
     private prepareWindow(): void
     {
         if(this._window) return;
@@ -167,7 +167,7 @@ export class ExtendedProfileWindowCtrl
         if(userActivityPoints) userActivityPoints.visible = groupsManager.isActivityDisplayEnabled;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onProfile()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onProfile()
     onProfile(profile: ExtendedProfileData): void
     {
         const isSameUserAlreadyShown = this._profile?.userId === profile.userId && !!this._window?.visible;
@@ -191,7 +191,7 @@ export class ExtendedProfileWindowCtrl
         this._skipActivateOnNextProfile = false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onProfileChanged()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onProfileChanged()
     onProfileChanged(userId: number): void
     {
         if(this._profile && this._profile.userId === userId && this._window?.visible)
@@ -201,7 +201,7 @@ export class ExtendedProfileWindowCtrl
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::refresh()
     private refresh(isSameUserAlreadyShown: boolean): void
     {
         this.prepareWindow();
@@ -215,7 +215,7 @@ export class ExtendedProfileWindowCtrl
         this.refreshHeader();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::refreshHeader()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::refreshHeader()
     private refreshHeader(): void
     {
         const window = this._window;
@@ -306,7 +306,7 @@ export class ExtendedProfileWindowCtrl
         if(blockButton) blockButton.visible = !isOwnProfile;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::refreshAvatarImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::refreshAvatarImage()
     private refreshAvatarImage(): void
     {
         const widgetWindow = this._window?.findChildByName('avatar_image') as IWidgetWindow | null;
@@ -315,7 +315,7 @@ export class ExtendedProfileWindowCtrl
         if(widget && this._profile) widget.figure = this._profile.figure;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onUserBadges()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onUserBadges()
     // TS deviation: only the plain badge-code list is used (no per-slot rarity/glow
     // data or glow playback) — same simplification as InfoStandUserView.updateBadges().
     onUserBadges(userId: number, badges: string[]): void
@@ -332,7 +332,7 @@ export class ExtendedProfileWindowCtrl
         this._badgeUpdateExpected = false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::setSelectedBadge()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::setSelectedBadge()
     // TS deviation: AS3 takes (index, badge data object, playGlow) — simplified to
     // (index, badgeId) since no rarity/glow data reaches this call (see onUserBadges()).
     private setSelectedBadge(index: number, badgeId: string): void
@@ -347,7 +347,7 @@ export class ExtendedProfileWindowCtrl
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::clearSelectedBadges()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::clearSelectedBadges()
     private clearSelectedBadges(): void
     {
         if(!this._window) return;
@@ -358,7 +358,7 @@ export class ExtendedProfileWindowCtrl
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onAddAsFriend()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onAddAsFriend()
     private onAddAsFriend = (event: WindowEvent): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
@@ -375,7 +375,7 @@ export class ExtendedProfileWindowCtrl
         this.refreshHeader();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onRooms()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onRooms()
     private onRooms = (event: WindowEvent): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
@@ -387,7 +387,7 @@ export class ExtendedProfileWindowCtrl
         this._groupsManager?.newNavigator?.performSearch('hotel_view', `owner:${profile.userName}`);
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onBlock()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onBlock()
     private onBlock = (event: WindowEvent): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
@@ -400,7 +400,7 @@ export class ExtendedProfileWindowCtrl
         );
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onConfirmBlock()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onConfirmBlock()
     private onConfirmBlock = (dialog: IDisposable, event: WindowEvent): void =>
     {
         if(!dialog || dialog.disposed) return;
@@ -417,7 +417,7 @@ export class ExtendedProfileWindowCtrl
         }
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onConfirmUnblock()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onConfirmUnblock()
     private onConfirmUnblock = (dialog: IDisposable, event: WindowEvent): void =>
     {
         if(!dialog || dialog.disposed) return;
@@ -434,7 +434,7 @@ export class ExtendedProfileWindowCtrl
         }
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onClose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onClose()
     private onClose = (event: WindowEvent): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
@@ -442,13 +442,13 @@ export class ExtendedProfileWindowCtrl
         this.close();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::close()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::close()
     close(): void
     {
         if(this._window) this._window.visible = false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onChangeLooks()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onChangeLooks()
     private onChangeLooks = (event: WindowEvent): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
@@ -456,7 +456,7 @@ export class ExtendedProfileWindowCtrl
         this._groupsManager?.context.createLinkEvent('avatareditor/open');
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onChangeBadges()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onChangeBadges()
     private onChangeBadges = (event: WindowEvent): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
@@ -464,7 +464,7 @@ export class ExtendedProfileWindowCtrl
         this._groupsManager?.context.createLinkEvent('inventory/open/badges');
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::updateVisibleExtendedProfile()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::updateVisibleExtendedProfile()
     updateVisibleExtendedProfile(userId: number): void
     {
         if(this._window?.visible && this._profile && this._profile.userId !== userId)

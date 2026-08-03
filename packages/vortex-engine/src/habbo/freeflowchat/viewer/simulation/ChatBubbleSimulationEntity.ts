@@ -12,7 +12,7 @@ import type {PooledChatBubble} from '@habbo/freeflowchat/viewer/visualization/Po
  * boxes actually touch. `x`/`y` here are the simulated position; syncToVisualization()
  * pushes them back onto the real PooledChatBubble via moveTo()/warpTo().
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as
  */
 export class ChatBubbleSimulationEntity
 {
@@ -37,7 +37,7 @@ export class ChatBubbleSimulationEntity
     private _collisionHandled: ChatBubbleSimulationEntity[] = [];
     private _isSpacer: boolean = false;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::ChatBubbleSimulationEntity()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::ChatBubbleSimulationEntity()
     constructor(bubble: PooledChatBubble, wideRect: boolean = false)
     {
         this._visualization = bubble;
@@ -66,7 +66,7 @@ export class ChatBubbleSimulationEntity
         this._lastUserScreenPositionX = bubble.scrolledUserPositionX;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::dispose()
     dispose(): void
     {
         if(this._visualization) this._visualization.readyToRecycle = true;
@@ -74,13 +74,13 @@ export class ChatBubbleSimulationEntity
         this._visualization = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get y()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get y()
     get y(): number
     {
         return this._y;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::set y()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::set y()
     set y(value: number)
     {
         this._y = value;
@@ -89,13 +89,13 @@ export class ChatBubbleSimulationEntity
         if(this._wideRect) this._wideRect.y = this._visualRect.y;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get x()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get x()
     get x(): number
     {
         return this._x;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::set x()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::set x()
     // Applies the impulse with negative feedback (only 90% of the delta lands
     // each call) rather than snapping straight to the target - this is what
     // keeps repeated small impulses across simulate()'s iterations smooth
@@ -108,31 +108,31 @@ export class ChatBubbleSimulationEntity
         if(this._wideRect) this._wideRect.x = this._visualRect.x - ChatBubbleSimulationEntity.WIDE_RECT_MARGIN;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get visualRect()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get visualRect()
     get visualRect(): Rectangle
     {
         return this._visualRect;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get wideRect()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get wideRect()
     get wideRect(): Rectangle
     {
         return this._wideRect ?? this._visualRect;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get hasWideRect()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get hasWideRect()
     get hasWideRect(): boolean
     {
         return this._wideRect !== null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get centerX()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get centerX()
     get centerX(): number
     {
         return this._x + this._visualRect.width / 2;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::initializePosition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::initializePosition()
     initializePosition(x: number, y: number): void
     {
         const overlap = this._visualization?.overlap ?? null;
@@ -149,38 +149,38 @@ export class ChatBubbleSimulationEntity
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::addHorizontalImpulse()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::addHorizontalImpulse()
     addHorizontalImpulse(value: number): void
     {
         this._horizontalImpulse += value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::addCollisionHandled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::addCollisionHandled()
     addCollisionHandled(other: ChatBubbleSimulationEntity): void
     {
         this._collisionHandled.push(other);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::hasCollidedWith()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::hasCollidedWith()
     hasCollidedWith(other: ChatBubbleSimulationEntity): boolean
     {
         return this._collisionHandled.indexOf(other) !== -1;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::addVerticalImpulse()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::addVerticalImpulse()
     addVerticalImpulse(value: number): void
     {
         this._verticalImpulse += value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::applyImpulseForces()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::applyImpulseForces()
     applyImpulseForces(upwardLimit: number): void
     {
         this.x += this._horizontalImpulse;
         this.y += Math.max(this._verticalImpulse, -upwardLimit);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::resetSimulationStep()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::resetSimulationStep()
     resetSimulationStep(): void
     {
         this._horizontalImpulse = 0;
@@ -188,7 +188,7 @@ export class ChatBubbleSimulationEntity
         this._collisionHandled = [];
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::syncToVisualization()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::syncToVisualization()
     syncToVisualization(force: boolean = false): void
     {
         if(!this._visualization) return;
@@ -211,7 +211,7 @@ export class ChatBubbleSimulationEntity
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::syncToUserScreenPosition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::syncToUserScreenPosition()
     syncToUserScreenPosition(): void
     {
         if(!this._visualization) return;
@@ -231,49 +231,49 @@ export class ChatBubbleSimulationEntity
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::set fullHeightCollision()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::set fullHeightCollision()
     set fullHeightCollision(value: boolean)
     {
         if(this._wideRect) this._wideRect.height = value ? this._visualRect.height : this._visualRect.height / 2;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get visualizationHasHitMargin()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get visualizationHasHitMargin()
     get visualizationHasHitMargin(): boolean
     {
         return this._visualization?.hasHitDesktopMargin ?? false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::set readyToRecycle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::set readyToRecycle()
     set readyToRecycle(value: boolean)
     {
         if(this._visualization) this._visualization.readyToRecycle = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get readyToRecycle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get readyToRecycle()
     get readyToRecycle(): boolean
     {
         return this._visualization?.readyToRecycle ?? true;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get timeStamp()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get timeStamp()
     get timeStamp(): number
     {
         return this._visualization?.timeStamp ?? 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get isSpacer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::get isSpacer()
     get isSpacer(): boolean
     {
         return this._isSpacer;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::set isSpacer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::set isSpacer()
     set isSpacer(value: boolean)
     {
         this._isSpacer = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::intersectsWith()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::intersectsWith()
     intersectsWith(other: ChatBubbleSimulationEntity): boolean
     {
         if(this._wideRect)
@@ -289,7 +289,7 @@ export class ChatBubbleSimulationEntity
         return this._visualRect.intersects(other._visualRect);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::visualIntertersectsWith()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::visualIntertersectsWith()
     // AS3 spelling typo ("Intertersects") preserved so the trace stays literal.
     visualIntertersectsWith(other: ChatBubbleSimulationEntity): boolean
     {

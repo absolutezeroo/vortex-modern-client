@@ -8,7 +8,7 @@ import type {IChatTextFormat} from '@habbo/freeflowchat/style/IChatStyle';
  * ChatStyleLibrary — the hyperlink colors used inside `allowHTML` bubbles
  * (the `a:link` / `a:hover` / `a:active` CSS-like rules).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::initializeStyleFromAssets()
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::initializeStyleFromAssets()
  */
 export interface IChatLinkStyleSheet
 {
@@ -24,7 +24,7 @@ export interface IChatLinkStyleSheet
  * viewer package (bubble text positioning, pointer/emblem placement, link
  * styling) — a superset of the public IChatStyle contract.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as
  * (readable name recovered from sources/win63_2023_version/com/sulake/habbo/freeflowchat/viewer/visualization/style/IChatStyleInternal.as,
  * which only carries a partial member list — the primary source above is the fuller, ground-truth version)
  */

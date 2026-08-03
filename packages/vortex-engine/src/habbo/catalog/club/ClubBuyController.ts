@@ -14,7 +14,7 @@ import {ClubBuyConfirmationDialog} from './ClubBuyConfirmationDialog';
  * registered widget, and (an unreachable path today - see showConfirmation()'s note) can show
  * its own confirmation dialog.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/club/ClubBuyController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/club/ClubBuyController.as
  */
 export class ClubBuyController
 {

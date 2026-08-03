@@ -897,7 +897,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     // null or larger than the panel's 140x200 slot; ImageBitmap conversion is always async in
     // the browser (see ImageResult.ts), so that same fallback check happens in imageReady()/
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectInfoMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectInfoMessage()
     private handleGetObjectInfoMessage(message: RoomWidgetRoomObjectMessage): void 
     {
         const roomId = this._container?.roomSession.roomId;
@@ -929,7 +929,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
      * deferred too — its AS3 event (RoomWidgetRentableBotInfoUpdateEvent) has
      * no TS port yet.
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectInfoMessage() (case 100)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectInfoMessage() (case 100)
     private handleGetUserObjectInfoMessage(message: RoomWidgetRoomObjectMessage, roomId: number): void 
     {
         const container = this._container;
@@ -966,7 +966,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     }
 
     /**
-     * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetUserInfoMessage()
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetUserInfoMessage()
      *
      * Phase 1 (identity only) — deferred, matching the AS3 method lines ~891-967:
      * canBeMuted/canBeKicked/canBeBanned (moderation permission checks, needs
@@ -981,7 +981,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
      * habboGroupsManager.updateVisibleExtendedProfile() and the trailing
      * composer send are deferred with the group/respect fields.
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetUserInfoMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetUserInfoMessage()
     private handleGetUserInfoMessage(roomId: number, roomIndex: number, category: number, userData: IUserData): void 
     {
         const container = this._container;
@@ -1053,7 +1053,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         container.desktopEvents.emit(event.type, event);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetBotInfoMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetBotInfoMessage()
     private handleGetBotInfoMessage(roomId: number, roomIndex: number, category: number, userData: IUserData): void 
     {
         const container = this._container;
@@ -1086,7 +1086,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         container.desktopEvents.emit(event.type, event);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage() (RWOPEM_OPEN_USER_PROFILE case)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage() (RWOPEM_OPEN_USER_PROFILE case)
     private handleOpenProfileMessage(message: RoomWidgetOpenProfileMessage): void 
     {
         const container = this._container;

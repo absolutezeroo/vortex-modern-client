@@ -1900,6 +1900,16 @@ export class VortexApp
         // events) until an ancestor actually handles it.
         let target: WindowController | null = hit as WindowController;
 
+        // Flash raised two distinct stage events, `mouseWheel` and `mouseWheelHorizontal`,
+        // and ItemList/ItemGrid branch on the resulting WME type to pick the horizontal
+        // scroller. The DOM has one `wheel` event carrying both axes, so the axis is
+        // resolved here and the matching WME type dispatched.
+        const isHorizontal = NativeWheelDelta.isHorizontal(e);
+        const wheelType = isHorizontal ? WindowMouseEvent.WHEEL_HORIZONTAL : WindowMouseEvent.WHEEL;
+        const wheelDelta = isHorizontal
+            ? NativeWheelDelta.horizontalFromWheelEvent(e)
+            : NativeWheelDelta.fromWheelEvent(e);
+
         while(target && !target.disposed)
         {
             const globalPos = this._globalPosScratch;
@@ -1911,10 +1921,10 @@ export class VortexApp
             // upwards, 25px per line) - see its header for why the raw deltaY made lists
             // jump straight to the top or the bottom.
             const event = WindowMouseEvent.allocateMouse(
-                WindowMouseEvent.WHEEL, target, null,
+                wheelType, target, null,
                 x - globalPos.x, y - globalPos.y, e.clientX, e.clientY,
                 e.altKey, e.ctrlKey, e.shiftKey, false,
-                NativeWheelDelta.fromWheelEvent(e)
+                wheelDelta
             );
 
             const handled = target.update(target, event);

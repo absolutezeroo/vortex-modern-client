@@ -50,7 +50,7 @@ export class FrameController extends ContainerController implements IFrameWindow
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/FrameController.as::FrameController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/FrameController.as::FrameController()
     // Moved out of the constructor: it reads `_HEADER`/`_SCALER`/named children built by
     // buildLayoutChildren(), which only runs later via completeConstruction() (see
     // WindowController.ts's phase-split) - at constructor time no children exist yet.

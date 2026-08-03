@@ -37,7 +37,7 @@ interface IChatStyleAttributes
  * bubble or opens the style selector, image registration has long since
  * completed. The constructor only parses the catalog's `<style>` attributes.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as
  */
 export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
 {
@@ -47,7 +47,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
     private readonly _styles: Map<number, ChatStyle> = new Map();
     private readonly _styleAttributes: Map<number, IChatStyleAttributes> = new Map();
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::ChatStyleLibrary()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::ChatStyleLibrary()
     constructor(assets: IAssetLibrary)
     {
         this._assets = assets;
@@ -116,7 +116,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::initializeStyleFromAssets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::initializeStyleFromAssets()
     private initializeStyleFromAssets(
         assetId: string,
         isSystemStyle: boolean,
@@ -256,7 +256,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         return new ChatStyle(descriptor);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::toHexString()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::toHexString()
     private toHexString(color: number): string
     {
         let hex = (color >>> 0).toString(16);
@@ -269,13 +269,13 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         return `#${hex}`;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::hasConfig()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::hasConfig()
     private hasConfig(config: string, key: string): boolean
     {
         return config.indexOf(key) !== -1;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getConfigCSV()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getConfigCSV()
     private getConfigCSV(config: string, key: string): string[] | null
     {
         const keyIndex = config.indexOf(key);
@@ -294,7 +294,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         return config.substring(start, endIndex).split(',');
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getConfigPoint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getConfigPoint()
     private getConfigPoint(config: string, key: string): Point
     {
         const csv = this.getConfigCSV(config, key)!;
@@ -302,7 +302,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         return new Point(parseInt(csv[0], 10), parseInt(csv[1], 10));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getConfigIntArray()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getConfigIntArray()
     private getConfigIntArray(config: string, key: string): number[]
     {
         const csv = this.getConfigCSV(config, key) ?? [];
@@ -310,7 +310,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         return csv.map((value) => parseInt(value, 10));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getConfigRect()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getConfigRect()
     private getConfigRect(config: string, key: string): Rectangle
     {
         const csv = this.getConfigCSV(config, key)!;
@@ -318,13 +318,13 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         return new Rectangle(parseInt(csv[0], 10), parseInt(csv[1], 10), parseInt(csv[2], 10), parseInt(csv[3], 10));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getConfigBoolean()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getConfigBoolean()
     private getConfigBoolean(config: string, key: string): boolean
     {
         return this.getConfigCSV(config, key)?.[0] === 'true';
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getStyleIds()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getStyleIds()
     getStyleIds(): number[]
     {
         // AS3 builds every style eagerly at init inside a try/catch and adds only the
@@ -345,7 +345,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         return ids;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getStyle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getStyle()
     // Narrower return type than IChatStyleLibrary's (ChatStyle also implements
     // IChatStyleInternal) — ChatBubbleFactory holds this concrete class and needs
     // the fuller shape (pointer margins, emblem, styleSheet...) to build a bubble.
@@ -371,7 +371,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         return this._disposed;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

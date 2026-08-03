@@ -26,7 +26,7 @@ import {GetCommunityGoalProgressMessageComposer} from '@habbo/communication/mess
  * outside this widget's scope) - send()/listen() are harmless no-ops until
  * that registration lands.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as
  */
 export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget, ISettingsAwareWidget
 {
@@ -45,20 +45,20 @@ export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget,
     private _catalogButtonInteractive: boolean = true;
     private _votingMode: boolean;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::CommunityGoalWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::CommunityGoalWidget()
     constructor(landingView: HabboLandingView, votingMode: boolean = false)
     {
         this._landingView = landingView;
         this._votingMode = votingMode;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::get container()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::dispose()
     dispose(): void
     {
         if(this._landingView?.windowManager)
@@ -71,13 +71,13 @@ export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget,
         this._communityProgress = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::initialize()
     initialize(): void
     {
         this._landingView!.communicationManager?.addHabboConnectionMessageEvent(
@@ -263,7 +263,7 @@ export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget,
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::refresh()
     refresh(): void
     {
         this.requestCommunityGoalProgress();
@@ -279,7 +279,7 @@ export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget,
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::update()
     update(elapsedTime: number): void
     {
         this._updateElapsed += elapsedTime;
@@ -317,7 +317,7 @@ export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget,
         }
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::set settings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::set settings()
     set settings(value: CommonWidgetSettings)
     {
         WidgetContainerLayout.applyCommonWidgetSettings(this._container, value);

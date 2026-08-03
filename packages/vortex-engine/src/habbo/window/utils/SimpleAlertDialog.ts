@@ -102,7 +102,7 @@ export class SimpleAlertDialog implements IDisposable
             }).interpolate?.(linkUrl) ?? linkUrl;
         }
 
-        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as
         // loads "simple_alert_xml" via assets.getAssetByName() and builds a modal dialog from it.
         //
         // In AS3 that name only has to be unique inside HabboWindowManagerCom. Here every

@@ -10,7 +10,7 @@ import type {ClubBuyOfferData} from './ClubBuyOfferData';
  * Standalone Club/VIP buy confirmation dialog. Real but currently unreachable - see
  * ClubBuyController.showConfirmation()'s note.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/club/ClubBuyConfirmationDialog.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/club/ClubBuyConfirmationDialog.as
  */
 export class ClubBuyConfirmationDialog
 {

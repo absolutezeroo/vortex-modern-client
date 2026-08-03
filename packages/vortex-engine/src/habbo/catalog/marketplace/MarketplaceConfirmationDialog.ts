@@ -17,7 +17,7 @@ import type {IMarketPlace} from './IMarketPlace';
 import type {MarketPlaceOfferData} from './MarketPlaceOfferData';
 
 /**
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as
  */
 export class MarketplaceConfirmationDialog implements IGetImageListener
 {
@@ -31,7 +31,7 @@ export class MarketplaceConfirmationDialog implements IGetImageListener
 
     private _offer: MarketPlaceOfferData | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::MarketplaceConfirmationDialog()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::MarketplaceConfirmationDialog()
     constructor(marketplace: IMarketPlace, catalog: IHabboCatalog, roomEngine: IRoomEngine)
     {
         this._marketplace = marketplace;
@@ -39,7 +39,7 @@ export class MarketplaceConfirmationDialog implements IGetImageListener
         this._roomEngine = roomEngine;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::dispose()
     dispose(): void
     {
         this._marketplace = null;
@@ -55,7 +55,7 @@ export class MarketplaceConfirmationDialog implements IGetImageListener
         this._offer = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::showConfirmation()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::showConfirmation()
     showConfirmation(type: number, offer: MarketPlaceOfferData): void
     {
         if(!offer) return;
@@ -247,7 +247,7 @@ export class MarketplaceConfirmationDialog implements IGetImageListener
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::imageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::imageReady()
     imageReady(id: number, data: ImageBitmap | null): void
     {
         if(this._offer && this._offer.imageCallback === id)
@@ -257,7 +257,7 @@ export class MarketplaceConfirmationDialog implements IGetImageListener
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::imageFailed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::imageFailed()
     imageFailed(_id: number): void
     {
         // AS3: no-op

@@ -12,7 +12,7 @@ import type {IChatHistoryEntry} from './IChatHistoryEntry';
  * TextField-equivalent renderer exist yet, so `bitmap` here exposes the raw
  * bubble bitmap unmodified (no timestamp prefix) until that's ported.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as
  */
 export class ChatHistoryEntryBitmapBubble implements IChatHistoryEntry
 {
@@ -24,7 +24,7 @@ export class ChatHistoryEntryBitmapBubble implements IChatHistoryEntry
     private readonly _canIgnore: boolean;
     private readonly _userName: string;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as::ChatHistoryEntryBitmapBubble()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as::ChatHistoryEntryBitmapBubble()
     // `bitmap` is `| null` here (AS3's is not) — see class header: callers can't
     // produce the real composited bitmap (ChatBubble isn't ported) yet.
     constructor(item: ChatItem, canIgnore: boolean, webId: number, userName: string, bitmap: ImageBitmap | null, overlap: Rectangle | null = null)

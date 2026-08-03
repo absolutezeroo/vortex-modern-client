@@ -23,7 +23,7 @@ const DAYS_IN_MONTH = 31;
  * "Gift Habbo Club to a friend" widget - lists redeemable offers and confirms a selection via
  * ClubGiftController.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as
  */
 export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
 {
@@ -329,7 +329,7 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
         if(event.type === WindowMouseEvent.OUT) this.hidePreview();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::showPreview()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::showPreview()
     private showPreview(offer: IPurchasableOffer, targetRectangle: {x: number; y: number; width: number; height: number}): void
     {
         if(!offer || !offer.productContainer) return;
@@ -364,7 +364,7 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::imageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::imageReady()
     imageReady(id: number, data: ImageBitmap | null): void
     {
         if(id !== this._pendingPreviewId || !data || !this._preview || !this._previewTargetRectangle) return;
@@ -386,7 +386,7 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
         this._preview.activate();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::imageFailed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::imageFailed()
     imageFailed(_id: number): void
     {
     }

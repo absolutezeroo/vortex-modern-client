@@ -21,13 +21,13 @@ import {PooledChatBubble} from './PooledChatBubble';
  * bubble through an internal PooledChatBubble and rasterizes that - same
  * visual result, one composition implementation to keep correct.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as
  */
 export class ChatBubble
 {
     private _bubble: PooledChatBubble | null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::ChatBubble()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::ChatBubble()
     constructor(
         item: ChatItem,
         style: IChatStyleInternal,
@@ -62,7 +62,7 @@ export class ChatBubble
         return this._bubble?.height ?? 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::drawToBitmap()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::drawToBitmap()
     // TS note: AS3's `bitmapData.draw(this)` is synchronous; the web equivalent
     // (renderer.extract.canvas() + createImageBitmap()) needs a microtask for the
     // final decode, so this is async - see ChatBubbleFactory.getHistoryLineEntry(),

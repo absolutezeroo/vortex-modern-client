@@ -14,33 +14,33 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
  * AS3 identifier recovered from sources/win63_version/habbo/friendbar/landingview/widget/elements/class_4133.as
  * (obfuscated as `_SafeCls_4524` in the primary source).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as
  */
 export class ButtonElementHandler implements IElementHandler, IDisposable, ILayoutNameProvider
 {
     private _landingView: HabboLandingView | null = null;
     private _window: IWindow | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::get layoutName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::get layoutName()
     get layoutName(): string
     {
         return 'element_button';
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::dispose()
     dispose(): void
     {
         this._landingView = null;
         this._window = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::initialize()
     initialize(landingView: HabboLandingView, window: IWindow, params: string[], _ownerWidget: GenericWidget): void
     {
         this._landingView = landingView;
@@ -64,7 +64,7 @@ export class ButtonElementHandler implements IElementHandler, IDisposable, ILayo
     {
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::refresh()
     refresh(): void
     {
     }

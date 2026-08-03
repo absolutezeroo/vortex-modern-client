@@ -23,7 +23,7 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
  * AS3 identifier recovered from sources/win63_version/habbo/friendbar/landingview/widget/elements/class_4147.as
  * (obfuscated as `_SafeCls_4543` in the primary source).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as
  */
 export class DailyQuestElementHandler implements IElementHandler, IFloatableElementHandler, IDisposable
 {
@@ -38,7 +38,7 @@ export class DailyQuestElementHandler implements IElementHandler, IFloatableElem
     private _campaignCode: string = '';
     private _chainCode: string = '';
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::moveChildrenToRow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::moveChildrenToRow()
     static moveChildrenToRow(container: IWindowContainer, spacing: number): void
     {
         let x = 0;
@@ -54,7 +54,7 @@ export class DailyQuestElementHandler implements IElementHandler, IFloatableElem
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::initialize()
     initialize(landingView: HabboLandingView, window: IWindow, params: string[], _ownerWidget: GenericWidget): void
     {
         this._landingView = landingView;
@@ -106,20 +106,20 @@ export class DailyQuestElementHandler implements IElementHandler, IFloatableElem
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::dispose()
     dispose(): void
     {
         this._landingView = null;
         this._disposed = true;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::isFloating()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::isFloating()
     isFloating(_value: boolean): boolean
     {
         return this._isFloating;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::refresh()
     refresh(): void
     {
         this._index = 0;
@@ -256,7 +256,7 @@ export class DailyQuestElementHandler implements IElementHandler, IFloatableElem
         }
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::getQuestName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::getQuestName()
     getQuestName(): string
     {
         return '${' + this._quest?.getQuestLocalizationKey() + '.name}';

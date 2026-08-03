@@ -9,7 +9,7 @@ import {CatalogWidget} from './CatalogWidget';
  * Shows a "sold out" banner (and hides the purchase widget) for a unique/limited item that has
  * no supply left, or when the page is specifically a "limited sold" / "sold_ltd_items" page.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/SoldLtdItemsCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SoldLtdItemsCatalogWidget.as
  */
 export class SoldLtdItemsCatalogWidget extends CatalogWidget
 {

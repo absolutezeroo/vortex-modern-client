@@ -313,7 +313,7 @@ export class RoomPreviewer
         model.setNumber('furniture_invisible_layer', 1);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/preview/RoomPreviewer.as::canRotatePreviewFurniture()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::canRotatePreviewFurniture()
     // TODO(AS3): AS3 checks getPreviewFurnitureAllowedDirections().length > 1, based on the
     // furniture data's own valid-direction set - that data isn't exposed by the ported room
     // engine yet. Always false until it is, so the rotate buttons show correctly disabled
@@ -323,7 +323,7 @@ export class RoomPreviewer
         return false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/preview/RoomPreviewer.as::rotatePreviewFurniture()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::rotatePreviewFurniture()
     // TODO(AS3): see canRotatePreviewFurniture() - needs the furniture object's allowed
     // direction set, which the ported room engine doesn't expose yet.
     rotatePreviewFurniture(_clockwise: boolean): boolean
@@ -331,7 +331,7 @@ export class RoomPreviewer
         return false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/preview/RoomPreviewer.as::canRotatePreviewWallItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::canRotatePreviewWallItem()
     // TODO(AS3): AS3 checks getPreviewWallItemObject() != null - needs the preview wall item's
     // room object lookup, not wired up here yet.
     canRotatePreviewWallItem(): boolean
@@ -339,7 +339,7 @@ export class RoomPreviewer
         return false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/preview/RoomPreviewer.as::rotatePreviewWallItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::rotatePreviewWallItem()
     // TODO(AS3): see canRotatePreviewWallItem().
     rotatePreviewWallItem(): boolean
     {
@@ -432,7 +432,7 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updateAvatarDirectionAndLocation()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updateAvatarDirectionAndLocation()
     updateAvatarDirectionAndLocation(bodyDirection: number, headDirection: number, location: IVector3d | null = null): void
     {
         if(this.isRoomEngineReady)

@@ -18,7 +18,7 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  * widget factory to create the appropriate widget, which then builds
  * its own window tree and sets it as rootWindow.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/WidgetWindowController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/WidgetWindowController.as
  */
 export class WidgetWindowController extends WindowController implements IWidgetWindow
 {
@@ -42,7 +42,7 @@ export class WidgetWindowController extends WindowController implements IWidgetW
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/WidgetWindowController.as::WidgetWindowController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/WidgetWindowController.as::WidgetWindowController()
     //
     // Resolved here (overriding applyProperties() rather than a plain ctor
     // assignment) because our own `set properties()` override reads

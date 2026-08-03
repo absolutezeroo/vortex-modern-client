@@ -2,7 +2,7 @@
  * Fired on the widget event bus to populate a colour-swatch selector where each swatch can show
  * up to 2 colours split diagonally (e.g. two-tone recolourable furniture).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetMultiColoursEvent.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetMultiColoursEvent.as
  */
 export class CatalogWidgetMultiColoursEvent
 {

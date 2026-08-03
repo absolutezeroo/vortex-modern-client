@@ -23,7 +23,7 @@ interface ISelectorHost
  * added/removed after the iterator was created. Delegating to the live
  * controller (not a snapshot array) here matches that.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/iterators/SelectorIterator.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/iterators/SelectorIterator.as
  */
 export class SelectorIterator implements IIterator
 {

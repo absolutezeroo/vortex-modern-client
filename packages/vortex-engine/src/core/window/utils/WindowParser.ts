@@ -34,7 +34,7 @@ export class WindowParser implements IWindowParser
 
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/utils/WindowParser.as::WindowParser()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::WindowParser()
     // AS3's constructor takes and stores the owning context, independent of whatever `parent` a
     // given parseAndConstruct() call is passed - buildFromXML() calls it with `parent = null`
     // (see HabboWindowManagerComponent.as::buildFromXML()), and this is how the top-level
@@ -567,7 +567,7 @@ export class WindowParser implements IWindowParser
 
             if(parentIsItemGrid) 
             {
-                // AS3: sources/win63_2026_crypted_version core/window/iterators/ItemGridIterator.as::setProperty()
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/iterators/ItemGridIterator.as::setProperty()
                 // The grid's iterator appends via `iterator[iterator.length] = child`, i.e.
                 // addGridItemAt(child, numGridItems), placing the child into a column cell
                 // (grid layout) rather than adding it as a raw list column.
@@ -575,7 +575,7 @@ export class WindowParser implements IWindowParser
             }
             else 
             {
-                // AS3: sources/win63_2026_crypted_version core/window/iterators/ItemListIterator.as::setProperty()
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/iterators/ItemListIterator.as::setProperty()
                 // Flash appends via `iterator[iterator.length] = child`, which the Proxy's
                 // setProperty forwards to addListItemAt(child, index) - NOT addListItem(). That
                 // matters: addListItemAt skips addListItem's manual running-height bookkeeping

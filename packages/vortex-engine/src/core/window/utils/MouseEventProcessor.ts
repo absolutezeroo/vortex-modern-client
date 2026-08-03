@@ -5,7 +5,6 @@ import type {IInteractiveWindow} from '../components/IInteractiveWindow';
 import type {IDesktopWindow} from '../components/IDesktopWindow';
 import type {EventProcessorState} from './EventProcessorState';
 import type {IMouseEventEntry} from './MouseEventQueue';
-import type {WindowEvent} from '../events/WindowEvent';
 import {RegionController} from '../components/RegionController';
 import type {WindowController} from '../WindowController';
 import {WindowParam} from '../enum/WindowParam';
@@ -330,24 +329,16 @@ export class MouseEventProcessor
                         this._clickAwayTarget = target;
                     }
 
-                    let parent: IWindow | null = target.parent;
-
-                    while(parent && !parent.disposed)
-                    {
-                        const inputRoot = parent as unknown as { process?: (event: WindowEvent) => boolean };
-
-                        if(typeof inputRoot.process === 'function')
-                        {
-                            const routedEvent = this.convertMouseEventType(entry, parent, target);
-
-                            inputRoot.process(routedEvent);
-                            routedEvent.recycle();
-                            break;
-                        }
-
-                        parent = parent.parent;
-                    }
-
+                    // AS3 guards the IInputProcessorRoot walk up the parent chain with
+                    // `while(_loc6_ && ...)` while `_loc6_` is still the `false` it was
+                    // initialised to two statements earlier and is only ever assigned
+                    // inside that same loop - so the walk never runs
+                    // (MouseEventProcessor.as::process(), lines 230/272-285). It is not
+                    // ported: `ItemListController` is the only IInputProcessorRoot, and it
+                    // already receives these events through the ordinary
+                    // `passMouseEvent()` bubbling into its own `update()`. Reviving the
+                    // walk dispatched into `process()` a second time, on events a child
+                    // had already handled.
                     if(this._focused && this.isInteractiveWindow(this._focused))
                     {
                         try
@@ -567,6 +558,9 @@ export class MouseEventProcessor
             case 'mouseWheel':
                 type = WindowMouseEvent.WHEEL;
                 break;
+            case 'mouseWheelHorizontal':
+                type = WindowMouseEvent.WHEEL_HORIZONTAL;
+                break;
             default:
                 type = '';
         }
@@ -671,6 +665,12 @@ export class MouseEventProcessor
             case 'wheel':
             case 'mouseWheel':
                 return 'mouseWheel';
+            // AS3 receives a distinct Flash `mouseWheelHorizontal` stage event
+            // (MouseEventQueue.as:22). The DOM folds both axes into one `wheel` event, so
+            // the queue tags horizontal ones with this synthetic type when |deltaX| wins.
+            case 'wheelHorizontal':
+            case 'mouseWheelHorizontal':
+                return 'mouseWheelHorizontal';
             default:
                 return type;
         }

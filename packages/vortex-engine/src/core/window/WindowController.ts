@@ -31,7 +31,7 @@ type WindowRectangle = { x: number; y: number; width: number; height: number };
  * In AS3 this also extended Sprite; in TypeScript we are engine-only
  * and expose rendering metadata through an optional {@link IGraphicContext}.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as
  */
 export class WindowController extends WindowModel implements IWindow, IGraphicContextHost 
 {
@@ -57,7 +57,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     private _propertyMap: IPropertyMap | null = null;
     private _graphicsSetup: boolean = false;
     private _dynamicStyleInstance: DynamicStyle | null = null;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::_lookupCache
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as::_lookupCache
     private _lookupCache: Map<string, IWindow> | null = null;
 
     constructor(
@@ -1020,7 +1020,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * at their type-default (subclass field initializers only run after
      * this constructor returns).
      *
-     * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController()
+     * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as::WindowController()
      */
     public completeConstruction(
         properties: unknown[] | null,
@@ -1566,6 +1566,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
                     break;
 
                 case WindowMouseEvent.WHEEL:
+                case WindowMouseEvent.WHEEL_HORIZONTAL:
                     return false;
             }
         }
@@ -3720,7 +3721,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (theme lookup, line 92)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as::WindowController() (theme lookup, line 92)
     protected resolveTheme(): void 
     {
         try 
@@ -3733,7 +3734,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 99-116)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as::WindowController() (lines 99-116)
     protected buildLayoutChildren(): void 
     {
         const effectiveRect: WindowRectangle = {x: this._x, y: this._y, width: this._width, height: this._height};
@@ -3794,7 +3795,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 117-134)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as::WindowController() (lines 117-134)
     protected applyDefaultAttributes(): void 
     {
         try 
@@ -3838,7 +3839,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 135-138)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as::WindowController() (lines 135-138)
     protected applyProperties(properties: unknown[] | null): void 
     {
         if(properties) 
@@ -3847,13 +3848,13 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (line 139)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as::WindowController() (line 139)
     protected setProcedure(procedure: ((event: WindowEvent, window: IWindow) => void) | null): void 
     {
         this._procedure = procedure;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 140-149, plus graphic context ensure at lines 94-97)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as::WindowController() (lines 140-149, plus graphic context ensure at lines 94-97)
     protected attachToParent(parent: IWindow | null): void 
     {
         if(!this._graphicContext) 

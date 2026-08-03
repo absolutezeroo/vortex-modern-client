@@ -11,7 +11,7 @@ import {HsvLayerColor} from './HsvLayerColor';
  * this port uses native Canvas2D path fill/stroke, which is visually
  * equivalent and far cheaper under a canvas-based renderer.
  *
- * @see sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as
  */
 export class ShapeSkinRenderer extends SkinRenderer
 {
@@ -20,7 +20,7 @@ export class ShapeSkinRenderer extends SkinRenderer
         super(name);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as::alphaFromColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as::alphaFromColor()
     public static alphaFromColor(color: number): number
     {
         const alphaByte = (color >>> 24) & 0xFF;
@@ -42,7 +42,7 @@ export class ShapeSkinRenderer extends SkinRenderer
         return `rgba(${r},${g},${b},${alpha})`;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as::draw()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as::draw()
     public override draw(
         window: IWindow,
         ctx: OffscreenCanvasRenderingContext2D,
@@ -138,7 +138,7 @@ export class ShapeSkinRenderer extends SkinRenderer
         return path;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as::isStateDrawable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as::isStateDrawable()
     public override isStateDrawable(_state: number): boolean
     {
         return true;

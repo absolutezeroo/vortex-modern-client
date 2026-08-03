@@ -6,11 +6,11 @@ import {ButtonElementHandler} from './ButtonElementHandler';
  * AS3 identifier recovered from sources/win63_version/habbo/friendbar/landingview/widget/elements/class_4134.as
  * (obfuscated as `_SafeCls_4525` in the primary source).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4525.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4525.as
  */
 export class CreditHabbletButtonElementHandler extends ButtonElementHandler
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4525.as::onClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4525.as::onClick()
     protected override onClick(): void
     {
         this.landingView?.catalog?.openCreditsHabblet();

@@ -8,7 +8,7 @@ import {CatalogWidget} from './CatalogWidget';
 /**
  * Lets the user type a voucher code and redeem it via HabboCatalog.redeemVoucher().
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/RedeemItemCodeCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/RedeemItemCodeCatalogWidget.as
  */
 export class RedeemItemCodeCatalogWidget extends CatalogWidget
 {

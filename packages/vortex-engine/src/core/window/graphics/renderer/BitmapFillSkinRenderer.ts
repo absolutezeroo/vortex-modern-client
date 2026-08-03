@@ -16,7 +16,7 @@ type CanvasImage = ImageBitmap | OffscreenCanvas;
  * cell are cached per-renderer and only rebuilt when their inputs change,
  * matching the AS3 caching fields.
  *
- * @see sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as
  */
 export class BitmapFillSkinRenderer extends SkinRenderer
 {
@@ -37,7 +37,7 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         super(name);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::scaleForMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::scaleForMode()
     public static scaleForMode(fillMode: string, srcW: number, srcH: number, dstW: number, dstH: number): number
     {
         if(srcW <= 0 || srcH <= 0 || dstW <= 0 || dstH <= 0)
@@ -56,7 +56,7 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         return Math.max(scaleX, scaleY);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::tileStep()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::tileStep()
     public static tileStep(size: number, scale: number, spacing: number): number
     {
         if(Number.isNaN(size) || size <= 0)
@@ -99,7 +99,7 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         return BitmapFillSkinRenderer.normalizedZoom(controller.zoomY) * (BitmapFillSkinRenderer.isFlippedY(controller) ? -1 : 1);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::xForPivot()/yForPivot()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::xForPivot()/yForPivot()
     // Pivot values are a 3x3 grid (see PivotPoint enum): column = pivot % 3 (left/center/right),
     // row = floor(pivot / 3) (top/middle/bottom) — identical numbering in AS3 and TS.
     private static xForPivot(rect: { x: number; width: number }, size: number, pivot: number): number
@@ -142,7 +142,7 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         super.dispose();
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::draw()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::draw()
     public override draw(
         window: IWindow,
         ctx: OffscreenCanvasRenderingContext2D,
@@ -394,7 +394,7 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         return canvas;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::isStateDrawable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::isStateDrawable()
     public override isStateDrawable(_state: number): boolean
     {
         return true;

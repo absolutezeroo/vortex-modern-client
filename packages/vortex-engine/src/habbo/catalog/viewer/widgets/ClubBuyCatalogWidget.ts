@@ -16,7 +16,7 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.ClubBuyCatalogWidget'
 /**
  * Habbo Club purchase widget (the "buy HC/VIP days" catalog page).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ClubBuyCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ClubBuyCatalogWidget.as
  */
 export class ClubBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalogWidget
 {

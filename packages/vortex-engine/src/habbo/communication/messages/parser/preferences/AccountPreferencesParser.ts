@@ -4,7 +4,7 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 /**
  * Parser for account preferences message
  *
- * @see sources/win63_2026_crypted_version/src/unknowns/_SafePkg_1927/_SafeCls_1926.as
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1927/_SafeCls_1926.as
  * (real name unrecoverable - this AS3 file lives outside com/sulake, but is
  * directly imported by HabboFreeFlowChat.as/SessionDataManager.as as their
  * account-preferences parser, so it is genuinely part of the client despite

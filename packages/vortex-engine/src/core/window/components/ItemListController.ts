@@ -17,7 +17,7 @@ import {SmoothScroller} from '../utils/SmoothScroller';
  * that holds the actual list items. Scroll positioning works by repositioning
  * _container within the ItemListController bounds.
  *
- * @see sources/win63_version/com/sulake/core/window/components/ItemListController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as
  */
 export class ItemListController extends WindowController implements IItemListWindow 
 {
@@ -34,12 +34,6 @@ export class ItemListController extends WindowController implements IItemListWin
     // already applied from `properties`. Default primed with `??=` in
     // finalize() instead.
     protected _arrangeListItems: boolean | null = null;
-    private _disableAutodragFlag: boolean = false;
-    private _isDragging: boolean = false;
-    private _dragStartX: number = 0;
-    private _dragStartY: number = 0;
-    private _dragScrollStartH: number = 0;
-    private _dragScrollStartV: number = 0;
     private readonly _containerEventHandlerBound: (event: WindowEvent) => void;
 
     constructor(
@@ -56,14 +50,14 @@ export class ItemListController extends WindowController implements IItemListWin
         id: number = 0
     ) 
     {
-        // AS3: sources win63_2026_crypted_version core/window/components/ItemListController.as
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
 
         this._containerEventHandlerBound = this._containerEventHandler.bind(this);
         this._isHorizontal = (type === 51);
     }
 
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::ItemListController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::ItemListController()
     //
     // Runs after applyProperties() (as a factory phase, not embedded in the
     // base constructor), matching the AS3 order where this same container
@@ -121,18 +115,6 @@ export class ItemListController extends WindowController implements IItemListWin
             containerWin.setParamFlag(0x800000, this._resizeOnItemUpdate);
             containerWin.setParamFlag(0x400000, this._inverseResizeOnItemUpdate);
         }
-    }
-
-    private _enableScrollByDragging: boolean = false;
-
-    public get enableScrollByDragging(): boolean 
-    {
-        return this._enableScrollByDragging;
-    }
-
-    public set enableScrollByDragging(value: boolean) 
-    {
-        this._enableScrollByDragging = value;
     }
 
     private _isPartOfGridWindow: boolean = false;
@@ -412,20 +394,7 @@ export class ItemListController extends WindowController implements IItemListWin
         return this.numListItems > 0 ? this.getListItemAt(this.numListItems - 1) : null;
     }
 
-    /**
-     * Sets whether automatic dragging is disabled.
-     */
-    public get disableAutodrag(): boolean 
-    {
-        return this._disableAutodragFlag;
-    }
-
-    public set disableAutodrag(value: boolean) 
-    {
-        this._disableAutodragFlag = value;
-    }
-
-    public override get clipping(): boolean 
+    public override get clipping(): boolean
     {
         return super.clipping;
     }
@@ -501,10 +470,10 @@ export class ItemListController extends WindowController implements IItemListWin
         return this._isHorizontal;
     }
 
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::_SafeStr_5632/_SafeStr_5532
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::_SafeStr_5632/_SafeStr_5532
     private _horizontalSmoothScroller: SmoothScroller | null = null;
 
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::get horizontalSmoothScroller()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::get horizontalSmoothScroller()
     private get horizontalSmoothScroller(): SmoothScroller 
     {
         if(this._horizontalSmoothScroller === null) 
@@ -521,7 +490,7 @@ export class ItemListController extends WindowController implements IItemListWin
 
     private _verticalSmoothScroller: SmoothScroller | null = null;
 
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::get verticalSmoothScroller()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::get verticalSmoothScroller()
     private get verticalSmoothScroller(): SmoothScroller 
     {
         if(this._verticalSmoothScroller === null) 
@@ -536,7 +505,7 @@ export class ItemListController extends WindowController implements IItemListWin
         return this._verticalSmoothScroller;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ItemListController.as::iterator()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::iterator()
     public iterator(): IIterator
     {
         return new ItemListIterator(this);
@@ -758,15 +727,7 @@ export class ItemListController extends WindowController implements IItemListWin
         this.updateScrollAreaRegion();
     }
 
-    /**
-     * Stops any active drag operation.
-     */
-    public stopDragging(): void 
-    {
-        this._isDragging = false;
-    }
-
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::scrollWithWheel()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::scrollWithWheel()
     public scrollWithWheel(delta: number, useHorizontal: boolean): boolean 
     {
         return this.getSmoothScroller(useHorizontal).scrollWithWheel(delta);
@@ -829,54 +790,24 @@ export class ItemListController extends WindowController implements IItemListWin
         return this.isInWindowBounds(point);
     }
 
-    // this class that hasn't been located/ported yet.
-    public process(event: WindowMouseEvent): boolean 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::process()
+    public process(event: WindowMouseEvent): boolean
     {
-        let handled = false;
-        const localX = event.localX | 0;
-        const localY = event.localY | 0;
-
-        switch(event.type) 
+        if(!(event instanceof WindowMouseEvent))
         {
-            case 'WME_WHEEL':
-            case 'WME_WHEEL_HORIZONTAL':
+            return false;
+        }
+
+        switch(event.type)
+        {
+            case WindowMouseEvent.WHEEL:
+            case WindowMouseEvent.WHEEL_HORIZONTAL:
                 if(this._isPartOfGridWindow) return false;
 
                 return this.handleScrollWheelEvent(event);
-            case 'WME_DOWN':
-                this._dragStartX = localX;
-                this._dragStartY = localY;
-                this._dragScrollStartH = this._scrollH * this.maxScrollH;
-                this._dragScrollStartV = this._scrollV * this.maxScrollV;
-                this._isDragging = true;
-                handled = true;
-                break;
-            case 'WME_MOVE':
-                if(this._isDragging && !this._disableAutodragFlag && this._enableScrollByDragging) 
-                {
-                    if(this._isHorizontal) 
-                    {
-                        this.scrollH = (this._dragScrollStartH + this._dragStartX - localX) / Math.max(1, this.maxScrollH);
-                    }
-                    else 
-                    {
-                        this.scrollV = (this._dragScrollStartV + this._dragStartY - localY) / Math.max(1, this.maxScrollV);
-                    }
-
-                    handled = true;
-                }
-                break;
-            case 'WME_UP':
-            case 'WME_UP_OUTSIDE':
-                if(this._isDragging) 
-                {
-                    this._isDragging = false;
-                    handled = true;
-                }
-                break;
+            default:
+                return false;
         }
-
-        return handled;
     }
 
     /**
@@ -903,7 +834,7 @@ export class ItemListController extends WindowController implements IItemListWin
             (this._container as unknown as IWindow).removeEventListener('WE_CHILD_VISIBILITY', this._containerEventHandlerBound);
         }
 
-        // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::dispose()
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::dispose()
         if(this._horizontalSmoothScroller !== null) 
         {
             this._horizontalSmoothScroller.dispose();
@@ -941,7 +872,7 @@ export class ItemListController extends WindowController implements IItemListWin
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::handleScrollWheelEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::handleScrollWheelEvent()
     protected handleScrollWheelEvent(event: WindowMouseEvent): boolean 
     {
         return this.scrollWithWheel(
@@ -950,7 +881,7 @@ export class ItemListController extends WindowController implements IItemListWin
         );
     }
 
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::getScrollWheelDelta()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::getScrollWheelDelta()
     protected getScrollWheelDelta(event: WindowMouseEvent | null): number 
     {
         if(!event) return 0;
@@ -961,7 +892,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Recalculates the scroll area dimensions and repositions items.
      */
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::updateScrollAreaRegion()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::updateScrollAreaRegion()
     protected updateScrollAreaRegion(): void 
     {
         if(!this._arrangeListItems || this._isUpdating || !this._container) return;
@@ -1064,14 +995,7 @@ export class ItemListController extends WindowController implements IItemListWin
         this._isUpdating = false;
     }
 
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::process()
-    // AS3 only reacts to WME_WHEEL/WME_WHEEL_HORIZONTAL here. The WME_DOWN/MOVE/UP drag-scroll
-    // handling below has no AS3 counterpart in this class, but enableScrollByDragging/
-    // disableAutodrag are live properties several other windows (FurniView, RoomChatWidget,
-    // ScrollableItemListWindow) depend on for touch/drag scrolling - left in place rather
-    // than deleted outright, since AS3 achieves the equivalent UX through a mechanism outside
-
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::getSmoothScroller()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::getSmoothScroller()
     private getSmoothScroller(useHorizontal: boolean): SmoothScroller 
     {
         return useHorizontal ? this.horizontalSmoothScroller : this.verticalSmoothScroller;
@@ -1107,7 +1031,7 @@ export class ItemListController extends WindowController implements IItemListWin
         return this.maxScrollV;
     }
 
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::getChildRequiredHorizontalSpace()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::getChildRequiredHorizontalSpace()
     private getChildRequiredHorizontalSpace(child: IWindow): number 
     {
         const hMode = child.param & 0xC0;
@@ -1133,7 +1057,7 @@ export class ItemListController extends WindowController implements IItemListWin
         return child.x + child.width;
     }
 
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::getChildRequiredVerticalSpace()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::getChildRequiredVerticalSpace()
     private getChildRequiredVerticalSpace(child: IWindow): number 
     {
         const vMode = child.param & 0x0C00;
@@ -1159,7 +1083,7 @@ export class ItemListController extends WindowController implements IItemListWin
         return child.y + child.height;
     }
 
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::setAbsoluteScrollH()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::setAbsoluteScrollH()
     private setAbsoluteScrollH(value: number): void 
     {
         const max = this.maxScrollH;
@@ -1179,7 +1103,7 @@ export class ItemListController extends WindowController implements IItemListWin
         if(this._container) (this._container as unknown as IWindow).x = -value;
     }
 
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::setAbsoluteScrollV()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::setAbsoluteScrollV()
     private setAbsoluteScrollV(value: number): void 
     {
         const max = this.maxScrollV;
@@ -1199,7 +1123,7 @@ export class ItemListController extends WindowController implements IItemListWin
         if(this._container) (this._container as unknown as IWindow).y = -value;
     }
 
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::setScrollH()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::setScrollH()
     private setScrollH(value: number, fromWheel: boolean): void 
     {
         if(value < 0) value = 0;
@@ -1231,7 +1155,7 @@ export class ItemListController extends WindowController implements IItemListWin
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::setScrollV()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::setScrollV()
     private setScrollV(value: number, fromWheel: boolean): void 
     {
         if(value < 0) value = 0;

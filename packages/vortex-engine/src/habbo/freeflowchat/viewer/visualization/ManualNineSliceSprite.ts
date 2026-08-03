@@ -14,7 +14,7 @@ import {Container, Sprite, Texture, type Rectangle} from 'pixi.js';
  * behavior as AS3's `copyPixels` vs `Matrix`-scaled `draw()`), then uploads
  * the composited canvas as this sprite's texture.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as
  */
 export class ManualNineSliceSprite extends Container
 {
@@ -32,7 +32,7 @@ export class ManualNineSliceSprite extends Container
     private _width: number;
     private _height: number;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::ManualNineSliceSprite()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::ManualNineSliceSprite()
     constructor(scale9Grid: Rectangle, source: ImageBitmap)
     {
         super();
@@ -52,13 +52,13 @@ export class ManualNineSliceSprite extends Container
         this.redraw();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::get width()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::get width()
     override get width(): number
     {
         return this._width;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::set width()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::set width()
     override set width(value: number)
     {
         const next = Math.max(this._leftWidth + this._rightWidth, Math.round(value));
@@ -69,13 +69,13 @@ export class ManualNineSliceSprite extends Container
         this.redraw();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::get height()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::get height()
     override get height(): number
     {
         return this._height;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::set height()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::set height()
     override set height(value: number)
     {
         const next = Math.max(this._topHeight + this._bottomHeight, Math.round(value));
@@ -86,7 +86,7 @@ export class ManualNineSliceSprite extends Container
         this.redraw();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::redraw()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::redraw()
     private redraw(): void
     {
         const width = Math.max(this._leftWidth + this._rightWidth, this._width);
@@ -125,7 +125,7 @@ export class ManualNineSliceSprite extends Container
         previousTexture?.destroy();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::drawPatch()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::drawPatch()
     private drawPatch(ctx: OffscreenCanvasRenderingContext2D, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number): void
     {
         if(sw <= 0 || sh <= 0 || dw <= 0 || dh <= 0) return;

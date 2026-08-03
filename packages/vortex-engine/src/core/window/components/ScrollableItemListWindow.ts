@@ -13,7 +13,7 @@ import type {WindowEvent} from '../events/WindowEvent';
  * Combines an item list with a scrollbar. The scrollbar is automatically
  * bound to the item list and can optionally auto-hide when not needed.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/ScrollableItemListWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemListWindow.as
  */
 export class ScrollableItemListWindow extends ContainerController implements IScrollableListWindow 
 {
@@ -41,7 +41,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         this._scrollBarEventProcBound = this.scrollBarEventProc.bind(this);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ScrollableItemListWindow.as::ScrollableItemListWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemListWindow.as::ScrollableItemListWindow()
     // this.scrollBar/this.itemList read named children built by buildLayoutChildren(),
     // which only runs later via completeConstruction() (see WindowController.ts's
     // phase-split) - at constructor time no children exist yet, so binding the scrollbar
@@ -127,9 +127,10 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         return this.itemList?.isPartOfGridWindow ?? false;
     }
 
-    public set isPartOfGridWindow(value: boolean) 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemListWindow.as::set isPartOfGridWindow()
+    public set isPartOfGridWindow(value: boolean)
     {
-        if(this.itemList) this.itemList.disableAutodrag = value;
+        if(this.itemList) this.itemList.isPartOfGridWindow = value;
     }
 
     public get scrollH(): number 
@@ -240,25 +241,6 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
     public get scrollableWindow(): IWindow 
     {
         return this.itemList?.scrollableWindow ?? this;
-    }
-
-    public get enableScrollByDragging(): boolean 
-    {
-        return true;
-    }
-
-    public set enableScrollByDragging(_value: boolean) 
-    {
-    }
-
-    public get disableAutodrag(): boolean 
-    {
-        return this.itemList?.disableAutodrag ?? false;
-    }
-
-    public set disableAutodrag(value: boolean) 
-    {
-        if(this.itemList) this.itemList.disableAutodrag = value;
     }
 
     /**
@@ -397,14 +379,6 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         return this.itemList?.groupListItemsWithTag(tag, result, depth) ?? 0;
     }
 
-    /**
-     * Scrolls the list by a wheel delta amount.
-     */
-    public stopDragging(): void 
-    {
-        this.itemList?.stopDragging();
-    }
-
     public populate(items: IWindow[]): void 
     {
         this.itemList?.populate(items);
@@ -448,12 +422,10 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         {
             scrollBar.scrollable = itemList;
 
-            if(scrollBar.testStateFlag(32) && this._autoHideScrollBar) 
+            if(scrollBar.testStateFlag(32) && this._autoHideScrollBar)
             {
                 this.hideScrollBar();
             }
-
-            itemList.enableScrollByDragging = true;
         }
     }
 

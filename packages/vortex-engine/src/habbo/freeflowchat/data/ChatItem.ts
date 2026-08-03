@@ -112,14 +112,14 @@ export class ChatItem
         return this._style;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::applySpecialChatContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::applySpecialChatContent()
     // overrides style for special system messages (handitem, mutetime, pet events, ...).
     set style(value: number)
     {
         this._style = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/data/ChatItem.as::links
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/data/ChatItem.as::links
     // Was `string[]` (display text only) — widened to the full parsed IChatLink[]
     // (url/displayText/isTrusted) since ChatBubble/PooledChatBubble need the real url to
     // build a clickable link, and RoomSessionChatEvent already carries it unmodified.

@@ -9,7 +9,7 @@ import {CatalogWidget} from './CatalogWidget';
  * Shows "you have N <currency>" for the page's activity-point-priced offer (e.g. "you have 40
  * duckets"), hidden entirely for non-visible activity point types (NO_OP_1/2/4).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ActivityPointDisplayCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ActivityPointDisplayCatalogWidget.as
  */
 export class ActivityPointDisplayCatalogWidget extends CatalogWidget
 {

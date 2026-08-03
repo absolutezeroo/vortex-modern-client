@@ -327,7 +327,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         this._connection = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/_SafeCls_90.as::get isDecorateMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get isDecorateMode()
     get isDecorateMode(): boolean 
     {
         if(!this._roomSessionManager) 
@@ -342,13 +342,13 @@ export class RoomEngine extends Component implements IRoomEngine,
 
     private _isGameMode: boolean = false;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/_SafeCls_90.as::get isGameMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get isGameMode()
     get isGameMode(): boolean 
     {
         return this._isGameMode;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/_SafeCls_90.as::set isGameMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::set isGameMode()
     set isGameMode(value: boolean)
     {
         this._isGameMode = value;

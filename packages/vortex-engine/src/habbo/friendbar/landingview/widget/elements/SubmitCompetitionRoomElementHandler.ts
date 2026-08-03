@@ -15,7 +15,7 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
  * AS3 identifier recovered from sources/win63_version/habbo/friendbar/landingview/widget/elements/class_4150.as
  * (obfuscated as `_SafeCls_4528` in the primary source).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4528.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4528.as
  */
 export class SubmitCompetitionRoomElementHandler extends ButtonElementHandler
 {
@@ -24,7 +24,7 @@ export class SubmitCompetitionRoomElementHandler extends ButtonElementHandler
     private _isPartOf: boolean = false;
     private _targetId: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4528.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4528.as::initialize()
     override initialize(landingView: HabboLandingView, window: IWindow, params: string[], ownerWidget: GenericWidget): void
     {
         super.initialize(landingView, window, params, ownerWidget);
@@ -35,14 +35,14 @@ export class SubmitCompetitionRoomElementHandler extends ButtonElementHandler
         landingView.communicationManager?.addHabboConnectionMessageEvent(new IsUserPartOfCompetitionMessageEvent(this.onInfo));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4528.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4528.as::refresh()
     override refresh(): void
     {
         super.refresh();
         this.landingView?.send(new GetIsUserPartOfCompetitionMessageComposer(this._goalCode));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4528.as::onClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4528.as::onClick()
     protected override onClick(): void
     {
         this.landingView?.questEngine?.reenableRoomCompetitionWindow();

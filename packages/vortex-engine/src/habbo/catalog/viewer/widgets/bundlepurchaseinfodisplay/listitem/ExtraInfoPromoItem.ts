@@ -17,7 +17,7 @@ const DISCOUNT_PROMO_KEY = 'catalog.bundlewidget.discount.promo';
  * Promo row nudging the buyer toward the next bundle-discount quantity threshold; pulses a
  * highlight effect whenever the target threshold changes.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoPromoItem.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoPromoItem.as
  */
 export class ExtraInfoPromoItem extends UpdateableExtraInfoListItem
 {

@@ -28,7 +28,7 @@ import type {ChatFlowViewer} from './viewer/ChatFlowViewer';
  * are wired here - omitted from this interface since nothing in this port
  * reads it yet (only mode/bubbleWidth/scrollSpeed feed ChatFlowStage/PooledChatBubble).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatSettings()
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatSettings()
  */
 export interface IRoomChatSettings
 {
@@ -119,7 +119,7 @@ export interface IHabboFreeFlowChat
     /**
 	 * Whether the room chat text field should be width-limited/bordered.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatBorderLimited()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatBorderLimited()
 	 */
     readonly roomChatBorderLimited: boolean;
 
@@ -132,14 +132,14 @@ export interface IHabboFreeFlowChat
 	 * The bubble/history-entry factory (also owns the recycle pool consumed by
 	 * ChatFlowViewer once a bubble is flagged readyToRecycle).
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatBubbleFactory()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatBubbleFactory()
 	 */
     readonly chatBubbleFactory: ChatBubbleFactory | null;
 
     /**
 	 * The live bubble display-list owner - null until roomEntered() builds it.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFlowViewer()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFlowViewer()
 	 */
     readonly chatFlowViewer: ChatFlowViewer | null;
 
@@ -147,21 +147,21 @@ export interface IHabboFreeFlowChat
 	 * The server-synced chat display preferences (bubble mode/width/scroll speed).
 	 * Null until a real preferences message populates it - see IRoomChatSettings.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatSettings()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatSettings()
 	 */
     readonly roomChatSettings: IRoomChatSettings | null;
 
     /**
 	 * The user's font-size preference for chat bubbles (0-4, S/M/L/XL/XXL).
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get/set chatFontSizeMode()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get/set chatFontSizeMode()
 	 */
     chatFontSizeMode: number;
 
     /**
 	 * The text-scale multiplier for chatFontSizeMode's current value.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFontSizeScale()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFontSizeScale()
 	 */
     readonly chatFontSizeScale: number;
 
@@ -170,7 +170,7 @@ export interface IHabboFreeFlowChat
 	 * into - RoomUI mounts this into the room's "room_new_chat" layout slot.
 	 * Null until roomEntered() has built the ChatViewController.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get displayObject()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get displayObject()
 	 */
     readonly displayObject: Container | null;
 
@@ -178,7 +178,7 @@ export interface IHabboFreeFlowChat
 	 * Converts a room-space location to absolute stage/screen coordinates -
 	 * how a chat bubble's pointer tracks its speaker's on-screen position.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::getScreenPointFromRoomLocation()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::getScreenPointFromRoomLocation()
 	 */
     getScreenPointFromRoomLocation(roomId: number, location: IVector3d): IPoint;
 
@@ -186,7 +186,7 @@ export interface IHabboFreeFlowChat
 	 * Whether a click on a chat bubble should propagate to a context menu
 	 * instead of selecting the speaker's avatar.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clickHasToPropagate()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clickHasToPropagate()
 	 * TODO(AS3): always returns false - roomUI.mouseEventPositionHasContextMenu()
 	 * isn't ported (RoomUI has no context-menu hit-testing yet).
 	 */
@@ -195,7 +195,7 @@ export interface IHabboFreeFlowChat
     /**
 	 * Selects the avatar that sent a chat item (bubble click handler).
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::selectAvatarWithChatItem()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::selectAvatarWithChatItem()
 	 * TODO(AS3): only calls roomEngine.selectAvatar() - the moderation
 	 * (userSelected webID/name reporting) and RWROM_GET_OBJECT_INFO widget
 	 * message AS3 also sends aren't ported (roomUI/moderation not wired in).
@@ -209,7 +209,7 @@ export interface IHabboFreeFlowChat
 	 * through the chatFlow reference they're constructed with rather than
 	 * needing their own direct Component/context access.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/core/runtime/_SafeCls_47.as (IUpdateOwner-equivalent)
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_47.as (IUpdateOwner-equivalent)
 	 */
     registerUpdateReceiver(receiver: IUpdateReceiver, priority: number): void;
 

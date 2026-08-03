@@ -7,7 +7,7 @@ import {CatalogWidget} from './CatalogWidget';
 /**
  * Wraps a plain text field, re-broadcasting keystrokes as a TextInputEvent on the widget bus.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/TextInputCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/TextInputCatalogWidget.as
  */
 export class TextInputCatalogWidget extends CatalogWidget
 {

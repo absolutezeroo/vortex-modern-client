@@ -6,11 +6,11 @@ import {ButtonElementHandler} from './ButtonElementHandler';
  * AS3 identifier recovered from sources/win63_version/habbo/friendbar/landingview/widget/elements/class_4137.as
  * (obfuscated as `_SafeCls_4529` in the primary source).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4529.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4529.as
  */
 export class GoToHomeRoomButtonElementHandler extends ButtonElementHandler
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4529.as::onClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4529.as::onClick()
     protected override onClick(): void
     {
         this.landingView?.questEngine?.reenableRoomCompetitionWindow();

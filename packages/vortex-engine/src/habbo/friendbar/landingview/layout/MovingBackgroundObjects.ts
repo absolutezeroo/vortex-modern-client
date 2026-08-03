@@ -22,11 +22,11 @@ type BackgroundObjectConstructor = new (
  * `landing.view.bgobject.<N>` (or `landing.view.<timingCode>.bgobject.<N>`)
  * config strings, and ticks them every frame.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as
  */
 export class MovingBackgroundObjects implements IDisposable
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::MAX_OBJECTS
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::MAX_OBJECTS
     private static readonly MAX_OBJECTS: number = 20;
 
     private _landingView: HabboLandingView | null;
@@ -35,14 +35,14 @@ export class MovingBackgroundObjects implements IDisposable
     private _events: EventEmitter = new EventEmitter();
     private _timingCode: string = '';
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::MovingBackgroundObjects()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::MovingBackgroundObjects()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
         this.initializeObjectTypeMapping();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::initializeObjectTypeMapping()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::initializeObjectTypeMapping()
     private initializeObjectTypeMapping(): void
     {
         this._typeMap.set(BackgroundObjectType.LINEAR, LinearMovingBackgroundObject);
@@ -51,7 +51,7 @@ export class MovingBackgroundObjects implements IDisposable
         this._typeMap.set(BackgroundObjectType.RANDOM_WALK, RandomWalkMovingBackgroundObject);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::dispose()
     dispose(): void
     {
         this._landingView = null;
@@ -65,13 +65,13 @@ export class MovingBackgroundObjects implements IDisposable
         this._typeMap.clear();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::initialize()
     initialize(root: IWindowContainer): void
     {
         const container = root.findChildByName('moving_objects_container') as IWindowContainer | null;
@@ -100,7 +100,7 @@ export class MovingBackgroundObjects implements IDisposable
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::update()
     update(elapsedTime: number): void
     {
         for(const object of this._objects)
@@ -109,7 +109,7 @@ export class MovingBackgroundObjects implements IDisposable
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::getObjectByDataContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::getObjectByDataContent()
     private getObjectByDataContent(id: number, dataContent: string, container: IWindowContainer): BackgroundObject | null
     {
         const parts = dataContent.split(';');
@@ -128,7 +128,7 @@ export class MovingBackgroundObjects implements IDisposable
         return null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::set timingCode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::set timingCode()
     set timingCode(value: string)
     {
         this._timingCode = value;

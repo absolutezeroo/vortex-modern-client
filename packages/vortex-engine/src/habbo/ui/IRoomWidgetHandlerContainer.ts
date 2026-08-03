@@ -60,9 +60,9 @@ export interface IRoomWidgetHandlerContainer
     readonly habboTracking: IHabboTracking | null;
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboGroupsManager()
     readonly habboGroupsManager: IHabboGroupsManager | null;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get friendList()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get friendList()
     readonly friendList: IHabboFriendList | null;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get freeFlowChat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get freeFlowChat()
     readonly freeFlowChat: IHabboFreeFlowChat | null;
     // NOT from AS3: the furni editor is a Vortex-only staff tool with no counterpart in
     // IRoomWidgetHandlerContainer.as. It is exposed here rather than reached through the root

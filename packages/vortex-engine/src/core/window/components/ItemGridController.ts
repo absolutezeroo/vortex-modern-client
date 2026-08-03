@@ -20,7 +20,7 @@ import {ItemGridIterator} from '../iterators/ItemGridIterator';
  * In AS3, extends ItemListController. The grid stores items in
  * column sub-lists and provides grid-level indexing across them.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ItemGridController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemGridController.as
  */
 export class ItemGridController extends ItemListController implements IItemGridWindow
 {
@@ -51,7 +51,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ItemGridController.as::ItemGridController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemGridController.as::ItemGridController()
     protected override finalize(): void
     {
         super.finalize();

@@ -1,7 +1,7 @@
 /**
  * Fired on the widget event bus to update the "spaces" room preview (wall/floor/landscape).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetUpdateRoomPreviewEvent.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetUpdateRoomPreviewEvent.as
  */
 export class CatalogWidgetUpdateRoomPreviewEvent
 {

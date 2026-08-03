@@ -7,7 +7,7 @@ import {ExtraInfoListItem} from '../ExtraInfoListItem';
  * wherever it's actually constructed (ExtraInfoViewManager.addItem() case 4, never triggered by
  * BundlePurchaseExtraInfoWidget itself - see that widget's port notes).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoBonusAchievementItem.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoBonusAchievementItem.as
  */
 export class ExtraInfoBonusAchievementItem extends ExtraInfoListItem
 {

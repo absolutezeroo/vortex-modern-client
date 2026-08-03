@@ -24,11 +24,11 @@ const log = Logger.getLogger('habbo.window.widgets.ProductIconWidget');
  * chat style preview, or a pet figure - whichever `productInfo.productTypeId`
  * selects.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as
  */
 export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarImageListener
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::TYPE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::TYPE
     public static readonly TYPE: string = 'product_icon';
 
     private _widgetWindow: IWidgetWindow | null = null;
@@ -40,7 +40,7 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
     private _pendingImageId: number = -1;
     private _blend: number = 1;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::ProductIconWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::ProductIconWidget()
     constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
     {
         this._widgetWindow = window;
@@ -57,38 +57,38 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         this.clearPreviewer();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get productInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get productInfo()
     public get productInfo(): IProductDisplayInfo | null
     {
         return this._productInfo;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::set productInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::set productInfo()
     public set productInfo(value: IProductDisplayInfo | null)
     {
         this._productInfo = value;
         this.previewImage(value);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         return [];
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::set properties()
     public set properties(_values: PropertyStruct[])
     {
         // AS3: no-op
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::set unknownImageUri()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::set unknownImageUri()
     public set unknownImageUri(value: string)
     {
         const window = this.unknownImageWindow;
@@ -96,13 +96,13 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         if(window) window.assetUri = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get blend()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get blend()
     public get blend(): number
     {
         return this._blend;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::set blend()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::set blend()
     public set blend(value: number)
     {
         this._blend = value;
@@ -146,7 +146,7 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         return (this._root?.findChildByName('icon') as unknown as IIconWindow) ?? null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::previewImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::previewImage()
     public previewImage(info: IProductDisplayInfo | null): void
     {
         if(!info)
@@ -266,7 +266,7 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::clearPreviewer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::clearPreviewer()
     public clearPreviewer(): void
     {
         this._pendingImageId = -1;
@@ -319,7 +319,7 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         (pet.widget as PetImageWidget).figure = figure;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::set botResult()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::set botResult()
     private setBotResult(figure: string): void
     {
         this.clearPreviewer();
@@ -397,7 +397,7 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         icon.fitToSize();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::set habbiconResult()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::set habbiconResult()
     // TODO(AS3): HabbiconAssetManager (habbicon preview bitmap cache + "habbicon_assets_loaded"
     // event) is not ported yet. Until it exists, habbicon products fall back to unknown.
     private setHabbiconResult(_habbiconId: number): void
@@ -405,7 +405,7 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         this.setUnknownImage();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::imageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::imageReady()
     public imageReady(id: number, data: ImageBitmap | null): void
     {
         if(this._pendingImageId === id && this.productPreviewBitmap)
@@ -414,13 +414,13 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::imageFailed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::imageFailed()
     public imageFailed(_id: number): void
     {
         // AS3: no-op
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::avatarImageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::avatarImageReady()
     public avatarImageReady(figure: string): void
     {
         if(!this._disposed && this._productInfo?.productTypeId === 6 && this._productInfo.botFigureString === figure)
@@ -429,7 +429,7 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

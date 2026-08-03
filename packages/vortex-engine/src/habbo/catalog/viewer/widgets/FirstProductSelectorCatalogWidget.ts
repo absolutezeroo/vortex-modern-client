@@ -6,7 +6,7 @@ import {CatalogWidget} from './CatalogWidget';
 /**
  * Auto-selects the page's first offer once every widget on the page has finished initializing.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/FirstProductSelectorCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/FirstProductSelectorCatalogWidget.as
  */
 export class FirstProductSelectorCatalogWidget extends CatalogWidget
 {

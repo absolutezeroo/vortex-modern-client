@@ -104,7 +104,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     private _landingView: IHabboLandingView | null = null;
     private _habboTracking: IHabboTracking | null = null;
     private _habboGroupsManager: IHabboGroupsManager | null = null;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomUI.as::friendList
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::friendList
     private _friendList: IHabboFriendList | null = null;
     private _freeFlowChat: IHabboFreeFlowChat | null = null;
     private _widgetFactory: RoomWidgetFactory;
@@ -182,7 +182,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         return this._roomEngine;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomUI.as::get chatStyleLibrary()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::get chatStyleLibrary()
     public get chatStyleLibrary(): IChatStyleLibrary | null
     {
         return this._freeFlowChat?.chatStyleLibrary ?? null;
@@ -484,7 +484,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 },
                 false
             ),
-            // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomUI.as::onPerkAllowances()
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::onPerkAllowances()
             // wires the same dependency via a ComponentDependency(new IIDHabboFreeFlowChat(), ...).
             new ComponentDependency(
                 IID_HabboFreeFlowChat,
@@ -871,7 +871,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
                     desktop.createRoomView(canvasId);
 
-                    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomUI.as::roomEventHandler()
+                    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::roomEventHandler()
                     // (REE_INITIALIZED case) - when freeFlowChat is present, its
                     // displayObject is mounted into the room_new_chat layout slot instead
                     // of creating the legacy chat-bubble widget. This source tree dropped

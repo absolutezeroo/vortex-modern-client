@@ -10,12 +10,12 @@ import type {ChatBubbleSimulationEntity} from './ChatBubbleSimulationEntity';
  *
  * Real class name recovered from the tertiary (PRODUCTION-201601012205-226667486) source tree -
  * it ships there as ChatFlowGravity, obfuscated to `_SafeCls_2911` ("_-oC")
- * in the primary win63_2026_crypted_version tree and to the generic,
+ * in the primary WIN63-202607011411-782849652 tree and to the generic,
  * unrecovered `class_3255` in the secondary win63_version tree (neither
  * retains the real identifier, so per project rules the tertiary tree is
  * used here to avoid inventing a name).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/_SafeCls_2911.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/_SafeCls_2911.as
  * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowGravity.as
  */
 export class ChatFlowGravity 
@@ -31,7 +31,7 @@ export class ChatFlowGravity
 
     private static readonly MAX_ATTRACTION_RANGE = 380;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/_SafeCls_2911.as::getAttraction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/_SafeCls_2911.as::getAttraction()
     getAttraction(a: ChatBubbleSimulationEntity, b: ChatBubbleSimulationEntity, coefficient: number = 1, maxImpulse: number = 100): number 
     {
         const distance = Math.abs(b.centerX - a.centerX);

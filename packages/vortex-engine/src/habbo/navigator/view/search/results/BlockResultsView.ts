@@ -41,7 +41,6 @@ export class BlockResultsView
     set itemList(value: IItemListWindow)
     {
         this._itemList = value;
-        this._itemList.disableAutodrag = true;
     }
 
     private _categoryElementFactory: CategoryElementFactory | null = null;

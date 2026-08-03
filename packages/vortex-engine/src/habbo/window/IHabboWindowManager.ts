@@ -58,11 +58,11 @@ export interface IHabboWindowManager extends IDisposable {
     readonly localization: IHabboLocalizationManager | null;
     // AS3: sources/win63_version/habbo/window/class_38.as::habboPagesStyleSheet
     readonly habboPagesStyleSheet: unknown | null;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get catalog()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get catalog()
     readonly catalog: IHabboCatalog | null;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get freeFlowChat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get freeFlowChat()
     readonly freeFlowChat: IHabboFreeFlowChat | null;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as (context.configuration)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as (context.configuration)
     readonly configuration: IHabboConfigurationManager | null;
 
     // TS-only
@@ -132,7 +132,7 @@ export interface IHabboWindowManager extends IDisposable {
     /**
      * Look up a registered widget layout's raw XML by name, throwing if missing.
      *
-     * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as
      * fetches these directly via `assets.getAssetByName(name).content as XML` inline at each call
      * site (alert/confirm/simpleAlert/etc) and has no equivalent named method; this centralizes
      * that lookup + the "missing asset" throw shared by all of them.
@@ -262,7 +262,7 @@ export interface IHabboWindowManager extends IDisposable {
     renderWindowSnapshot(window: IWindow, width: number, height: number, darken?: boolean): OffscreenCanvas | null;
 
     // TS-only: darkens an existing captured buffer.
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/utils/ModalDialog.as::COLOR_TRANSFORM
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::COLOR_TRANSFORM
     darkenSnapshot(source: OffscreenCanvas | ImageBitmap, width: number, height: number): OffscreenCanvas | null;
 
     // TS-only
@@ -274,7 +274,7 @@ export interface IHabboWindowManager extends IDisposable {
     // TS-only
     getServiceManager(): IInternalWindowServices | null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::createWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::createWidget()
     createWidget(type: string, window: IWidgetWindow): IWidget | null;
 
     // AS3: sources/win63_version/habbo/window/class_38.as::simpleAlert()

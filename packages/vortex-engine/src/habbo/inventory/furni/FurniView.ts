@@ -473,8 +473,6 @@ export class FurniView
         const itemGrid = this._window.findChildByName('item_grid') as IItemGridWindow | null;
         const itemGridPages = this._window.findChildByName('item_grid_pages') as IItemListWindow | null;
 
-        if(itemGridPages) itemGridPages.enableScrollByDragging = true;
-
         if(itemGrid) this._grid = new FurniGridView(itemGrid, itemGridPages);
 
         this.populateFilterOptions();

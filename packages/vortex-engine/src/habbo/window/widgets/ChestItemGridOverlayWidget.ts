@@ -16,17 +16,17 @@ import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
  * the same pattern as {@link RarityItemGridOverlayWidget}/
  * {@link LimitedItemGridOverlayWidget}.
  *
- * @see sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as
  */
 export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget 
 {
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::TYPE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::TYPE
     public static readonly TYPE: string = 'chest_overlay_grid';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::COLOR_SILVER
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::COLOR_SILVER
     public static readonly COLOR_SILVER: string = 'silver';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::COLOR_GOLD
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::COLOR_GOLD
     public static readonly COLOR_GOLD: string = 'gold';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::COLOR_BROWN
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::COLOR_BROWN
     public static readonly COLOR_BROWN: string = 'brown';
 
     private _widgetWindow: IWidgetWindow | null = null;
@@ -35,7 +35,7 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
     private _plaqueBitmap: IStaticBitmapWrapperWindow | null = null;
     private _numberBitmap: IWindow | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::ChestItemGridOverlayWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::ChestItemGridOverlayWidget()
     constructor(window: IWidgetWindow, windowManager: IHabboWindowManager) 
     {
         this._widgetWindow = window;
@@ -55,7 +55,7 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
 
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
@@ -63,13 +63,13 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
 
     private _contentsCount: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get contentsCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get contentsCount()
     public get contentsCount(): number 
     {
         return this._contentsCount;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::set contentsCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::set contentsCount()
     // TODO(AS3): AS3 also renders `contentsCount` as glyph bitmaps onto
     // `chest_plaque_number_bitmap` via the (unported) shared
     // `unique_item_number_glyph_*` bitmap-compositing helper also used by
@@ -83,13 +83,13 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
 
     private _color: string = '';
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get color()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get color()
     public get color(): string 
     {
         return this._color;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::set color()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::set color()
     public set color(value: string) 
     {
         this._color = value;
@@ -100,25 +100,25 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get iterator()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get iterator()
     public get iterator(): IIterator 
     {
         return EmptyIterator.INSTANCE;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get properties()
     public get properties(): PropertyStruct[] 
     {
         return [];
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::set properties()
     public set properties(_values: PropertyStruct[]) 
     {
         // AS3: properties setter is a no-op for this widget
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;

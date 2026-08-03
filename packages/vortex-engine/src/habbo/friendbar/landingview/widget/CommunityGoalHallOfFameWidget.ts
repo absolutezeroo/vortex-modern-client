@@ -18,27 +18,27 @@ import {ForwardToACompetitionRoomMessageComposer} from '@habbo/communication/mes
  * configured schedule string and re-requests hall-of-fame data (with
  * per-campaign avatar-list layout overrides) whenever the code changes.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalHallOfFameWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalHallOfFameWidget.as
  */
 export class CommunityGoalHallOfFameWidget extends UserListWidget
 {
     private _hallOfFameData: CommunityGoalHallOfFameData | null = null;
     private _schedulingStr: string = '';
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalHallOfFameWidget.as::CommunityGoalHallOfFameWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalHallOfFameWidget.as::CommunityGoalHallOfFameWidget()
     constructor(landingView: HabboLandingView)
     {
         super(landingView);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalHallOfFameWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalHallOfFameWidget.as::initialize()
     override initialize(): void
     {
         super.initialize();
         this._schedulingStr = this.landingView?.getProperty('landing.view.dynamic.slot.6.conf') ?? '';
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalHallOfFameWidget.as::registerMessageListeners()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalHallOfFameWidget.as::registerMessageListeners()
     protected override registerMessageListeners(): void
     {
         this.landingView?.communicationManager?.addHabboConnectionMessageEvent(
@@ -49,7 +49,7 @@ export class CommunityGoalHallOfFameWidget extends UserListWidget
         );
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalHallOfFameWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalHallOfFameWidget.as::refresh()
     override refresh(): void
     {
         this.landingView?.send(new GetCurrentTimingCodeMessageComposer(this._schedulingStr));

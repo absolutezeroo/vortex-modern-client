@@ -12,7 +12,7 @@ import {CatalogWidget} from './CatalogWidget';
  * The catalog front-page promo banner grid: a fixed "first item" slot plus up to 3 more cloned
  * from a template list item, each linking to a catalog page/offer.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/FeaturedItemsCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/FeaturedItemsCatalogWidget.as
  */
 export class FeaturedItemsCatalogWidget extends CatalogWidget
 {

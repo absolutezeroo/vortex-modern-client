@@ -21,7 +21,7 @@ import {GetCommunityGoalProgressMessageComposer} from '@habbo/communication/mess
  * AS3 identifier recovered from sources/win63_version/habbo/friendbar/landingview/widget/elements/class_4139.as
  * (obfuscated as `_SafeCls_4532` in the primary source).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as
  */
 export class CommunityGoalScoreElementHandler implements IElementHandler, IDisposable, IFloatableElementHandler, ILayoutNameProvider, IDisableableElementHandler
 {
@@ -32,7 +32,7 @@ export class CommunityGoalScoreElementHandler implements IElementHandler, IDispo
     private _pollIntervalMs: number = 0;
     private _hasReceivedFirstUpdate: boolean = false;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::dispose()
     dispose(): void
     {
         if(this._landingView)
@@ -54,7 +54,7 @@ export class CommunityGoalScoreElementHandler implements IElementHandler, IDispo
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::initialize()
     initialize(landingView: HabboLandingView, window: IWindow, params: string[], _ownerWidget: GenericWidget): void
     {
         this._landingView = landingView;
@@ -86,7 +86,7 @@ export class CommunityGoalScoreElementHandler implements IElementHandler, IDispo
         this._pollIntervalMs = pollIntervalMs;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::disable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::disable()
     disable(): void
     {
         if(this._pollIntervalId !== null)
@@ -96,7 +96,7 @@ export class CommunityGoalScoreElementHandler implements IElementHandler, IDispo
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::refresh()
     refresh(): void
     {
         this._landingView?.send(new GetCommunityGoalProgressMessageComposer());
@@ -110,13 +110,13 @@ export class CommunityGoalScoreElementHandler implements IElementHandler, IDispo
         this._pollIntervalId = setInterval(this.onPollTimer, this._pollIntervalMs);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::isFloating()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::isFloating()
     isFloating(_value: boolean): boolean
     {
         return this._isFloating;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::get layoutName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::get layoutName()
     get layoutName(): string
     {
         return 'element_community_goal_score';

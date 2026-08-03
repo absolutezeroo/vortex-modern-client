@@ -16,7 +16,7 @@ import {GlyphAtlas} from '../utils/GlyphAtlas';
  * rather than owning a dedicated TextField. Unlike TextController,
  * this extends WindowController directly per AS3.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextLabelController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as
  */
 export class TextLabelController extends WindowController implements ILabelWindow
 {
@@ -68,7 +68,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextLabelController.as::TextLabelController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::TextLabelController()
     protected override finalize(): void
     {
         super.finalize();
@@ -387,7 +387,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 	 * via TextFieldCache, measures text, then auto-sizes the window to fit
 	 * text content + margins.
 	 *
-	 * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextLabelController.as refresh()
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as refresh()
 	 */
     private refresh(fromResize: boolean = false): void
     {

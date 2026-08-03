@@ -22,7 +22,7 @@ export class Theme
     public static readonly VOLTER: string = 'Volter';
     // AS3: sources/win63_version/habbo/window/theme/Theme.as::UBUNTU
     public static readonly UBUNTU: string = 'Ubuntu';
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/theme/Theme.as::MISC
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/theme/Theme.as::MISC
     public static readonly MISC: string = 'Misc';
     // AS3: sources/win63_version/habbo/window/theme/Theme.as::ILLUMINA_LIGHT
     public static readonly ILLUMINA_LIGHT: string = 'Illumina Light';

@@ -350,31 +350,31 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._habboGroupsManager = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::friendList
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::friendList
     private _friendList: IHabboFriendList | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get friendList()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get friendList()
     public get friendList(): IHabboFriendList | null 
     {
         return this._friendList;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::set friendList()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::set friendList()
     public set friendList(value: IHabboFriendList | null) 
     {
         this._friendList = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomDesktop.as::_freeFlowChat
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::_freeFlowChat
     private _freeFlowChat: IHabboFreeFlowChat | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomDesktop.as::get freeFlowChat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::get freeFlowChat()
     public get freeFlowChat(): IHabboFreeFlowChat | null 
     {
         return this._freeFlowChat;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomDesktop.as::set freeFlowChat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::set freeFlowChat()
     public set freeFlowChat(value: IHabboFreeFlowChat | null) 
     {
         this._freeFlowChat = value;

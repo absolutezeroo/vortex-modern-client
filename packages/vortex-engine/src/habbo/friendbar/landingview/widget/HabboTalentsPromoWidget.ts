@@ -10,33 +10,33 @@ import {GetTalentTrackMessageComposer} from '@habbo/communication/messages/outgo
  * Talent-track promo tile - "go" button tracks the click and opens the
  * current talent track.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as
  */
 export class HabboTalentsPromoWidget implements ILandingViewWidget
 {
     private _landingView: HabboLandingView | null;
     private _container: IWindowContainer | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::HabboTalentsPromoWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::HabboTalentsPromoWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::get container()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::dispose()
     dispose(): void
     {
         this._landingView = null;
         this._container = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::initialize()
     initialize(): void
     {
         this._container = this._landingView!.getXmlWindow('habbo_talents_promo') as IWindowContainer | null;
@@ -49,7 +49,7 @@ export class HabboTalentsPromoWidget implements ILandingViewWidget
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::refresh()
     refresh(): void
     {
     }
@@ -59,7 +59,7 @@ export class HabboTalentsPromoWidget implements ILandingViewWidget
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::onGoButton()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::onGoButton()
     private onGoButton = (event: WindowEvent): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;

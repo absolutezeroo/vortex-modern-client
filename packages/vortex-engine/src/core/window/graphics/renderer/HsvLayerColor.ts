@@ -18,11 +18,11 @@ export interface IColorTransform
  * Derives HSV-shaded variants of a color (used for stroke shading relative
  * to a shape's fill color).
  *
- * @see sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/HsvLayerColor.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/HsvLayerColor.as
  */
 export class HsvLayerColor
 {
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/HsvLayerColor.as::configureTransform()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/HsvLayerColor.as::configureTransform()
     public static configureTransform(transform: IColorTransform, color: number, shade: number): void
     {
         const derived = HsvLayerColor.deriveColor(color, shade);
@@ -37,7 +37,7 @@ export class HsvLayerColor
         transform.alphaOffset = 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/HsvLayerColor.as::deriveColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/HsvLayerColor.as::deriveColor()
     public static deriveColor(color: number, shade: number): number
     {
         if(Number.isNaN(shade))

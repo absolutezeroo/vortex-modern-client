@@ -31,13 +31,13 @@ export interface IRoomEngine extends IDisposable {
     /**
      * Whether the active room session has the local user in decorate (furni move) mode.
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/IRoomEngine.as::get isDecorateMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::get isDecorateMode()
     readonly isDecorateMode: boolean;
     /**
      * Whether the room is currently in game mode.
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/IRoomEngine.as::get isGameMode()
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/IRoomEngine.as::set isGameMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::get isGameMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::set isGameMode()
     isGameMode: boolean;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::get activeRoomHasFreeFurniMovementsMode()

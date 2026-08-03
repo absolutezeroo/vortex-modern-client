@@ -19,11 +19,11 @@ import {HabboLandingView} from '../HabboLandingView';
  * Shows the catalog page with the soonest-expiring offer, with a countdown
  * to expiry. Client-side refresh throttled to once per 30s.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as
  */
 export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsAwareWidget
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::REFRESH_PERIOD_IN_MILLIS
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::REFRESH_PERIOD_IN_MILLIS
     private static readonly REFRESH_PERIOD_IN_MILLIS: number = 30000;
 
     protected _landingView: HabboLandingView | null;
@@ -32,7 +32,7 @@ export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsA
     protected _secondsToExpiry: number = 0;
     private _lastRequestTime: number | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::ExpiringCatalogPageWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::ExpiringCatalogPageWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
@@ -43,7 +43,7 @@ export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsA
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::dispose()
     dispose(): void
     {
         this._landingView = null;
@@ -55,7 +55,7 @@ export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsA
         return 'expiring_catalog_page';
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::initialize()
     initialize(): void
     {
         this._container = this._landingView!.getXmlWindow(this.xmlAssetName) as IWindowContainer | null;
@@ -75,7 +75,7 @@ export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsA
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::refresh()
     refresh(): void
     {
         const now = Date.now();
@@ -87,7 +87,7 @@ export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsA
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::refreshContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::refreshContent()
     protected refreshContent(): void
     {
         if(!this._container) return;
@@ -113,7 +113,7 @@ export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsA
         this.refreshTimer();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::refreshTimer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::refreshTimer()
     protected refreshTimer(): void
     {
         const countdown = this._container?.findChildByName('countdown_widget') as IWidgetWindow | null;
@@ -124,7 +124,7 @@ export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsA
         widget.seconds = this._secondsToExpiry;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::getText()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::getText()
     private getText(prefix: string, pageKey: string, suffix: string): string
     {
         const key = `${prefix}${this.useDefaultLocalization ? '' : '.' + pageKey}.${suffix}`;
@@ -132,13 +132,13 @@ export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsA
         return '${' + key + '}';
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::get useDefaultLocalization()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::get useDefaultLocalization()
     protected get useDefaultLocalization(): boolean
     {
         return false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::onOpenCatalogButton()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::onOpenCatalogButton()
     private onOpenCatalogButton = (event: WindowEvent): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
@@ -152,7 +152,7 @@ export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsA
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::onCatalogPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::onCatalogPage()
     private onCatalogPage = (event: IMessageEvent): void =>
     {
         const parser = event.parser as CatalogPageWithEarliestExpiryMessageEventParser | null;
@@ -164,7 +164,7 @@ export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsA
         this.refreshContent();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::set settings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::set settings()
     set settings(value: CommonWidgetSettings)
     {
         if(this._container) WidgetContainerLayout.applyCommonWidgetSettings(this._container, value);

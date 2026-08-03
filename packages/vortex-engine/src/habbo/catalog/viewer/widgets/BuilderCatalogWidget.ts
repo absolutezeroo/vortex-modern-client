@@ -22,7 +22,7 @@ import {CatalogWidget} from './CatalogWidget';
  * (HabboCatalog.requestSelectedItemToMover()) is itself a CatalogObjectMover-blocked stub -
  * so this widget renders and reacts correctly, but the buttons don't yet place furniture.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/BuilderCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/BuilderCatalogWidget.as
  */
 export class BuilderCatalogWidget extends CatalogWidget
 {

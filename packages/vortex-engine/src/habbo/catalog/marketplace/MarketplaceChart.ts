@@ -10,11 +10,11 @@
  * `await` it (AS3's callers are all synchronous event handlers, so this is
  * the one unavoidable signature change in this class).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as
  */
 export class MarketplaceChart
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as::_xMin
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as::_xMin
     private static readonly X_MIN: number = -30;
 
     private static readonly GRID_COLOR: string = '#cccccc';
@@ -31,20 +31,20 @@ export class MarketplaceChart
 
     private _maxY: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as::MarketplaceChart()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as::MarketplaceChart()
     constructor(xValues: number[], yValues: number[])
     {
         this._xValues = xValues.slice();
         this._yValues = yValues.slice();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as::get available()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as::get available()
     get available(): boolean
     {
         return this._xValues != null && this._yValues != null && this._xValues.length > 1;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as::draw()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as::draw()
     async draw(width: number, height: number): Promise<ImageBitmap>
     {
         const canvas = new OffscreenCanvas(width, height);
@@ -120,13 +120,13 @@ export class MarketplaceChart
         return createImageBitmap(canvas);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as::getX()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as::getX()
     private getX(index: number): number
     {
         return this._chartWidth + this._chartWidth / -MarketplaceChart.X_MIN * this._xValues[index];
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as::getY()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as::getY()
     private getY(index: number): number
     {
         return this._chartHeight - this._chartHeight / this._maxY * this._yValues[index];

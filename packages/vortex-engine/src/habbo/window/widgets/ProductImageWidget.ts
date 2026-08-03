@@ -25,11 +25,11 @@ const log = Logger.getLogger('habbo.window.widgets.ProductImageWidget');
  * `productInfo.productTypeId` selects. Larger, angled sibling of
  * ProductIconWidget's flat icon previews.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as
  */
 export class ProductImageWidget implements IWidget, IGetImageListener
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::TYPE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::TYPE
     public static readonly TYPE: string = 'product_image';
 
     private _widgetWindow: IWidgetWindow | null = null;
@@ -46,7 +46,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
     private _lastEasterEggItemTypeId: string = '';
     private _easterEggRepeatCount: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::ProductImageWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::ProductImageWidget()
     // TODO(AS3): AS3 also constructs `_SafeStr_5597 = new EffectPreviewer(effectImageWidget,
     // windowManager.avatarRenderer)` here - EffectPreviewer (pixel-effect-on-avatar preview
     // renderer) isn't ported yet, so setEffectResult() can't show anything until it exists.
@@ -68,26 +68,26 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         this.setPlaceholder();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get productInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get productInfo()
     public get productInfo(): IProductDisplayInfo | null
     {
         return this._productInfo;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set productInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set productInfo()
     public set productInfo(value: IProductDisplayInfo | null)
     {
         this._productInfo = value;
         this.previewImage(value);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         if(this._disposed) return [];
@@ -97,7 +97,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         ];
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set properties()
     public set properties(values: PropertyStruct[])
     {
         for(const prop of values)
@@ -109,13 +109,13 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get pivot()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get pivot()
     public get pivot(): number
     {
         return this._pivot;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set pivot()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set pivot()
     public set pivot(value: number)
     {
         this._pivot = value;
@@ -174,7 +174,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         return (this._root?.findChildByName('unknown_image') as unknown as IStaticBitmapWrapperWindow) ?? null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::previewImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::previewImage()
     public previewImage(info: IProductDisplayInfo | null): void
     {
         if(!info)
@@ -292,7 +292,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::handlePreviewImageEasterEgg()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::handlePreviewImageEasterEgg()
     // TODO(AS3): the special-name reveal at each repeat-count threshold depends on
     // ProductCategoryMapping.createChatItemPreview(), which is stubbed to null until
     // IHabboFreeFlowChat.createPreviewBitmap() is ported - so this always falls through
@@ -345,7 +345,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         return false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::clearPreviewer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::clearPreviewer()
     public clearPreviewer(): void
     {
         this._pendingImageId = -1;
@@ -439,7 +439,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         log.warn('Pixel effect preview not implemented yet (EffectPreviewer not ported)');
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::setUnknownImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::setUnknownImage()
     public setUnknownImage(): void
     {
         this.clearPreviewer();
@@ -449,7 +449,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         if(unknown) unknown.visible = true;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::setPlaceholder()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::setPlaceholder()
     public setPlaceholder(): void
     {
         this.clearPreviewer();
@@ -476,7 +476,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         preview.visible = true;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set unknownImageUri()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set unknownImageUri()
     public set unknownImageUri(value: string)
     {
         const window = this.unknownImageWindow;
@@ -484,13 +484,13 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         if(window) window.assetUri = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get blend()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get blend()
     public get blend(): number
     {
         return this._blend;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set blend()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set blend()
     public set blend(value: number)
     {
         this._blend = value;
@@ -509,7 +509,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         (badge?.widget as BadgeImageWidget | null)?.refresh();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::imageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::imageReady()
     public imageReady(id: number, data: ImageBitmap | null): void
     {
         if(this._pendingImageId === id && this.productPreviewBitmap)
@@ -518,13 +518,13 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::imageFailed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::imageFailed()
     public imageFailed(_id: number): void
     {
         // AS3: no-op
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

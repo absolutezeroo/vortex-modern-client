@@ -8,7 +8,7 @@ import {CatalogWidget} from './CatalogWidget';
  * `windowManager.alert("TODO", "Fix in MadMoneyCatalogWidget.as", ...)`, dead code that never
  * runs. Ported as the inert lookup AS3 actually performs.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MadMoneyCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MadMoneyCatalogWidget.as
  */
 export class MadMoneyCatalogWidget extends CatalogWidget
 {

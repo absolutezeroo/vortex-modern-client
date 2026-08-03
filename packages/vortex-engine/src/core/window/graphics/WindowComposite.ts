@@ -180,7 +180,7 @@ export class WindowComposite
 	 * Draws `source` into a freshly allocated canvas with the modal-dialog
 	 * darkening filter applied.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/utils/ModalDialog.as::refresh()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::refresh()
 	 * (`_loc1_.colorTransform(_loc1_.rect, COLOR_TRANSFORM)`)
 	 */
     public darken(source: OffscreenCanvas | ImageBitmap, width: number, height: number): OffscreenCanvas

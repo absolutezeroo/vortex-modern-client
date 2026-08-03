@@ -10,7 +10,7 @@ import {PathResetEvent} from './events/PathResetEvent';
  *
  * Data content format: `<image>;<type>;<startX>;<startY>;<speedX>;<speedY>`
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/LinearMovingBackgroundObject.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/LinearMovingBackgroundObject.as
  */
 export class LinearMovingBackgroundObject extends BackgroundObject
 {
@@ -21,7 +21,7 @@ export class LinearMovingBackgroundObject extends BackgroundObject
     private _posX: number;
     private _posY: number;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/LinearMovingBackgroundObject.as::LinearMovingBackgroundObject()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/LinearMovingBackgroundObject.as::LinearMovingBackgroundObject()
     constructor(id: number, container: IWindowContainer, events: EventEmitter, landingView: HabboLandingView, dataContent: string)
     {
         super(id, container, events, landingView, dataContent);
@@ -42,7 +42,7 @@ export class LinearMovingBackgroundObject extends BackgroundObject
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/LinearMovingBackgroundObject.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/LinearMovingBackgroundObject.as::update()
     override update(elapsedTime: number): void
     {
         super.update(elapsedTime);

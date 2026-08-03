@@ -23,7 +23,7 @@ interface IContainerHost
  * the iterator was created. Delegating to the live container (not a
  * snapshot array) here matches that.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/iterators/ContainerIterator.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/iterators/ContainerIterator.as
  */
 export class ContainerIterator implements IIterator
 {

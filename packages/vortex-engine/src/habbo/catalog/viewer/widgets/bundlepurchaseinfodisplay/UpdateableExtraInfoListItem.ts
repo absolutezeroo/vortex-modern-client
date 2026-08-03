@@ -5,7 +5,7 @@ import {ExtraInfoListItem} from './ExtraInfoListItem';
 /**
  * An ExtraInfoListItem that can refresh its data/display in place instead of being recreated.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/UpdateableExtraInfoListItem.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/UpdateableExtraInfoListItem.as
  */
 export class UpdateableExtraInfoListItem extends ExtraInfoListItem
 {

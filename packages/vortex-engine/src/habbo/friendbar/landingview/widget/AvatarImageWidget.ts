@@ -15,7 +15,7 @@ import type {AvatarUpdateEvent} from '@habbo/avatar/events/AvatarUpdateEvent';
  * on login (`UserObjectMessageEvent`), figure change (`UserChangeMessageEvent`
  * with id `-1`, i.e. self), and live avatar-editor updates.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as
  */
 export class AvatarImageWidget implements ILandingViewWidget
 {
@@ -24,7 +24,7 @@ export class AvatarImageWidget implements ILandingViewWidget
     private _userObjectEvent: UserObjectMessageEvent | null;
     private _userChangeEvent: UserChangeMessageEvent | null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::AvatarImageWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::AvatarImageWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
@@ -49,7 +49,7 @@ export class AvatarImageWidget implements ILandingViewWidget
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::dispose()
     dispose(): void
     {
         if(this._userObjectEvent)
@@ -68,7 +68,7 @@ export class AvatarImageWidget implements ILandingViewWidget
         this._container = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::initialize()
     initialize(): void
     {
         // AS3 resolves "avatar_image_xml" against the friendbar component's own asset
@@ -81,7 +81,7 @@ export class AvatarImageWidget implements ILandingViewWidget
         this._container = (this._landingView!.windowManager?.buildWidgetLayout('HabboFriendBar_avatar_image_xml') ?? null) as IWidgetWindow | null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::refresh()
     refresh(): void
     {
         this.refreshAvatarInfo();
@@ -92,7 +92,7 @@ export class AvatarImageWidget implements ILandingViewWidget
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::onUserObject()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::onUserObject()
     private onUserObject = (event: IMessageEvent): void =>
     {
         const parser = event.parser as UserObjectMessageParser | null;
@@ -100,7 +100,7 @@ export class AvatarImageWidget implements ILandingViewWidget
         if(parser) this.refreshAvatarInfo(parser.figure);
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::onUserChange()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::onUserChange()
     private onUserChange = (event: IMessageEvent): void =>
     {
         const parser = event.parser as UserChangeMessageEventParser | null;
@@ -113,13 +113,13 @@ export class AvatarImageWidget implements ILandingViewWidget
         }
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::onAvatarFigureUpdated()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::onAvatarFigureUpdated()
     private onAvatarFigureUpdated = (event: AvatarUpdateEvent): void =>
     {
         this.refreshAvatarInfo(event.figure);
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::refreshAvatarInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::refreshAvatarInfo()
     private refreshAvatarInfo(figure: string | null = null): void
     {
         if(!figure && this._landingView?.sessionData)

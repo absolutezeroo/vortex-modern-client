@@ -11,7 +11,7 @@ import {PIVOT_NAMES, pivotFromName} from '../enum/PivotPoint';
  * Base class for bitmap-based window types. Manages a single ImageBitmap
  * with pivot, stretch, zoom, wrap, greyscale, rotation, and etching properties.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/BitmapDataController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapDataController.as
  */
 export class BitmapDataController extends WindowController 
 {
@@ -391,7 +391,7 @@ export class BitmapDataController extends WindowController
         super.dispose();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/BitmapDataController.as::BitmapDataController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapDataController.as::BitmapDataController()
     protected override finalize(): void
     {
         super.finalize();

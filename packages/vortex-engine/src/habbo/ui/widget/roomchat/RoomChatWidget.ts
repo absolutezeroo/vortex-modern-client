@@ -123,7 +123,10 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         this._container.tags.push('room_widget_chat');
 
         this._contentList = windowManager.createWindow('chat_contentlist', '', 50, 0, 0x10 | 0x0880, {x: 0, y: 0, width: 200, height: this._chatAreaHeight}, null, 0) as unknown as IItemListWindow;
-        this._contentList.disableAutodrag = true;
+        // `disableAutodrag` gated ItemListController's WME_DOWN/MOVE/UP drag-scroll, which the
+        // 701 client dropped: its ItemListController.process() answers only WME_WHEEL /
+        // WME_WHEEL_HORIZONTAL. With no drag state left to suppress, the flag has nothing to
+        // gate. This widget's own drag lives in mouseMove()/mouseUp() below and is untouched.
         (this._container as unknown as IWindowContainer).addChild(this._contentList as unknown as IWindow);
 
         this._activeContent = windowManager.createWindow('chat_active_content', '', 4, 0, 16, {x: 0, y: 0, width: 200, height: this._chatAreaHeight}, null, 0);
@@ -922,8 +925,6 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
     // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::mouseUp()
     public mouseUp(): void
     {
-        this._contentList.stopDragging();
-
         const bottom = this._container.bottom - 39;
 
         if(bottom < this._baseAreaHeight && bottom <= this._chatAreaHeight + this._container.y)

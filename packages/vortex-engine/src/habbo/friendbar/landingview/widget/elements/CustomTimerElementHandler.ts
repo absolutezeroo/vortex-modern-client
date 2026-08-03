@@ -13,13 +13,13 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
  * AS3 identifier recovered from sources/win63_version/habbo/friendbar/landingview/widget/elements/class_4143.as
  * (obfuscated as `_SafeCls_4534` in the primary source).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4534.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4534.as
  */
 export class CustomTimerElementHandler extends TimerElementHandlerBase
 {
     private _timeStr: string = '';
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4534.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4534.as::initialize()
     override initialize(landingView: HabboLandingView, window: IWindow, params: string[], ownerWidget: GenericWidget): void
     {
         super.initialize(landingView, window, params, ownerWidget);
@@ -28,7 +28,7 @@ export class CustomTimerElementHandler extends TimerElementHandlerBase
         landingView.communicationManager?.addHabboConnectionMessageEvent(new SecondsUntilMessageEvent(this.onTime));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4534.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4534.as::refresh()
     override refresh(): void
     {
         this.landingView?.send(new GetSecondsUntilMessageComposer(this._timeStr));

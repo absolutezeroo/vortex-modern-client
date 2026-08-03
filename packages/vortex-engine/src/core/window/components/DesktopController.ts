@@ -33,13 +33,13 @@ export class DesktopController extends ActivatorController implements IDesktopWi
         super(name, type, style, param, context, rect, parent, procedure ?? DesktopController.defaultProcedure, tags, properties, id);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/DesktopController.as::get mouseX()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/DesktopController.as::get mouseX()
     public get mouseX(): number
     {
         return WindowContext.inputEventQueue?.mouseX ?? 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/DesktopController.as::get mouseY()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/DesktopController.as::get mouseY()
     public get mouseY(): number
     {
         return WindowContext.inputEventQueue?.mouseY ?? 0;

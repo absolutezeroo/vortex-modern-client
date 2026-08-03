@@ -10,7 +10,7 @@ import {WindowStyle} from './enum/WindowStyle';
  * lookup semantics mirror the real AS3 SkinContainer (see SkinContainer.ts),
  * which this registry doesn't replace.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/SkinContainer.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/SkinContainer.as
  */
 export class ElementRegistry
 {

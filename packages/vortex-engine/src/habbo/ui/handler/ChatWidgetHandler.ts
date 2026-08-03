@@ -99,7 +99,7 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
     // Older source trees (PRODUCTION-201601012205-226667486/win63_version) guard this whole method with
     // `if(container.freeFlowChat && !container.freeFlowChat.isDisabledInPreferences) return;`
     // (a user preference to fall back to the legacy bubble system). The primary source
-    // (win63_2026_crypted_version) dropped that preference entirely along with the legacy
+    // (WIN63-202607011411-782849652) dropped that preference entirely along with the legacy
     // RWE_CHAT_WIDGET widget itself (RoomUI no longer even creates it once freeFlowChat is
     // present - see RoomUI.ts's REE_INITIALIZED handling) - freeflowchat is mandatory
     // there. This guard is a safety net for the (normally momentary) window before the

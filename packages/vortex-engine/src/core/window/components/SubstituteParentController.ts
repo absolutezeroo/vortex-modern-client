@@ -9,7 +9,7 @@ import {WindowController} from '../WindowController';
  * transparent proxy for window hierarchy operations. Used by the
  * context to hold orphaned windows temporarily.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/SubstituteParentController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as
  */
 export class SubstituteParentController extends WindowController
 {
@@ -32,7 +32,7 @@ export class SubstituteParentController extends WindowController
         );
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/SubstituteParentController.as::SubstituteParentController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::SubstituteParentController()
     protected override finalize(): void
     {
         super.finalize();

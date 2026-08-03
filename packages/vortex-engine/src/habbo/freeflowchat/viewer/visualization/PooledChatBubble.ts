@@ -37,7 +37,7 @@ function lerp(a: number, b: number, t: number): number
  * ChatTextLayout.ts's header for why text is built from flat styled runs
  * instead of real inline HTML.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as
  */
 export class PooledChatBubble extends Container
 {
@@ -67,7 +67,7 @@ export class PooledChatBubble extends Container
     private _timeMs: number = 0;
     private _roomPanOffsetX: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::PooledChatBubble()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::PooledChatBubble()
     constructor(chatFlow: IHabboFreeFlowChat)
     {
         super();
@@ -78,7 +78,7 @@ export class PooledChatBubble extends Container
         this.on('pointertap', this.onMouseClick, this);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::set chatItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::set chatItem()
     set chatItem(value: ChatItem)
     {
         this._chatItem = value;
@@ -89,7 +89,7 @@ export class PooledChatBubble extends Container
         return this._chatItem;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::set style()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::set style()
     set style(value: IChatStyleInternal)
     {
         this._style = value;
@@ -100,7 +100,7 @@ export class PooledChatBubble extends Container
         return this._style;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::set face()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::set face()
     set face(value: ImageBitmap | null)
     {
         this._face = value;
@@ -116,13 +116,13 @@ export class PooledChatBubble extends Container
         return this._chatFlow;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get minHeight()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get minHeight()
     get minHeight(): number
     {
         return this._minHeight;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::recreate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::recreate()
     recreate(userName: string, color: number, borderLimited: boolean = false, minHeight: number = -1): void
     {
         const style = this._style;
@@ -296,7 +296,7 @@ export class PooledChatBubble extends Container
         this.visible = false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::unregister()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::unregister()
     unregister(): void
     {
         if(this._clipMask.parent === this) this.removeChild(this._clipMask);
@@ -314,7 +314,7 @@ export class PooledChatBubble extends Container
         this._textSprite.mask = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::moveTo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::moveTo()
     moveTo(x: number, y: number): void
     {
         // AS3 (PooledChatBubble.as:359) only restarts the tween when the target actually
@@ -332,7 +332,7 @@ export class PooledChatBubble extends Container
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::warpTo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::warpTo()
     warpTo(x: number, y: number): void
     {
         // AS3 (PooledChatBubble.as:371) also sets the tween target, so a following
@@ -344,7 +344,7 @@ export class PooledChatBubble extends Container
         this.y = y;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::update()
     update(deltaMs: number): void
     {
         this._timeMs += deltaMs;
@@ -387,7 +387,7 @@ export class PooledChatBubble extends Container
         return this._proxyX;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::set proxyX()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::set proxyX()
     // recreate() now sets _useDesktopMargins from the borderLimited flag ChatBubbleFactory
     // passes, so this clamp runs. Both branches offset by _roomPanOffsetX (AS3 clamps
     // proxyX + roomPanOffsetX, not proxyX). window.innerWidth stands in for AS3's
@@ -435,7 +435,7 @@ export class PooledChatBubble extends Container
         return this._roomPanOffsetX;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::set roomPanOffsetX()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::set roomPanOffsetX()
     set roomPanOffsetX(value: number)
     {
         if(value === this._roomPanOffsetX) return;
@@ -444,7 +444,7 @@ export class PooledChatBubble extends Container
         this.warpTo(this._proxyX, this.y);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::repositionPointer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::repositionPointer()
     repositionPointer(): void
     {
         const style = this._style;
@@ -459,7 +459,7 @@ export class PooledChatBubble extends Container
         this._pointer.y = (this._background?.height ?? 0) - style.pointerOffsetToBubbleBottom;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::get userScreenPos()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::get userScreenPos()
     get userScreenPos(): {x: number; y: number}
     {
         const item = this._chatItem;
@@ -478,7 +478,7 @@ export class PooledChatBubble extends Container
         return this._chatFlow.getScreenPointFromRoomLocation(item.roomId, item.userLocation);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::get displayedHeight()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::get displayedHeight()
     get displayedHeight(): number
     {
         if(!this._style) return this.height;
@@ -491,7 +491,7 @@ export class PooledChatBubble extends Container
         return this._style?.overlap ?? null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get scrolledUserPositionX()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get scrolledUserPositionX()
     get scrolledUserPositionX(): number
     {
         const offset = this._chatFlow?.roomEngine?.getRoomCanvasScreenOffset(this.roomId) ?? null;
@@ -519,7 +519,7 @@ export class PooledChatBubble extends Container
         return this._readyToRecycle;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::set readyToRecycle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::set readyToRecycle()
     set readyToRecycle(value: boolean)
     {
         this._readyToRecycle = value;
@@ -527,7 +527,7 @@ export class PooledChatBubble extends Container
         if(value) this.off('pointertap', this.onMouseClick, this);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::onMouseClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::onMouseClick()
     private onMouseClick(event: FederatedPointerEvent): void
     {
         if(!this._style || this._style.isAnonymous || !this._chatFlow || !this._chatItem) return;

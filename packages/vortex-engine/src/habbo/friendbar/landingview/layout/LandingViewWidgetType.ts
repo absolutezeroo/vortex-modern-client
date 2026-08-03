@@ -25,7 +25,7 @@ import {WidgetContainerWidget} from '../widget/WidgetContainerWidget';
 /**
  * Type-string constants and factory for landing view widgets.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/LandingViewWidgetType.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/LandingViewWidgetType.as
  */
 export class LandingViewWidgetType
 {
@@ -51,7 +51,7 @@ export class LandingViewWidgetType
     public static readonly PROMOARTICLE: string = 'promoarticle';
     public static readonly BONUSRARE: string = 'bonusrare';
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/LandingViewWidgetType.as::getWidgetForType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/LandingViewWidgetType.as::getWidgetForType()
     public static getWidgetForType(type: string, landingView: HabboLandingView): ILandingViewWidget | null
     {
         switch(type)

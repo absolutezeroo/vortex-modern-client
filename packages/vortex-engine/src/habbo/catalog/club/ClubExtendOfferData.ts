@@ -8,7 +8,7 @@ import {ClubBuyOfferData} from './ClubBuyOfferData';
  * TS-only name: unrecoverable in all three source trees (obfuscated _SafeCls_3494 in the primary
  * tree, generic class_2375 in the secondary tree, absent from the tertiary tree).
  *
- * @see sources/win63_2026_crypted_version/src/unknowns/_SafePkg_1716/_SafeCls_3494.as
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1716/_SafeCls_3494.as
  */
 export class ClubExtendOfferData extends ClubBuyOfferData
 {
@@ -35,7 +35,7 @@ export class ClubExtendOfferData extends ClubBuyOfferData
         super(offerId, productCode, priceCredits, priceInActivityPoints, activityPointType, vip, months, extraDays, daysLeftAfterPurchase, year, month, day, isGiftable);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/unknowns/_SafePkg_1716/_SafeCls_3494.as::parse()
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1716/_SafeCls_3494.as::parse()
     // Field order matches the wire exactly, right after the 13 base ClubBuyOfferData fields (see
     // ClubBuyOfferData.fromWrapper() for that read order).
     static fromWrapper(wrapper: IMessageDataWrapper): ClubExtendOfferData

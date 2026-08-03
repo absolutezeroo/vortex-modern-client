@@ -11,19 +11,19 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  * for the fill and dedicated stroke properties for the outline. Actual
  * drawing is performed by {@link ShapeSkinRenderer}.
  *
- * @see sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as
  */
 export class ShapeController extends ContainerController
 {
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::SHAPE_RECTANGLE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::SHAPE_RECTANGLE
     public static readonly SHAPE_RECTANGLE: string = 'rectangle';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::SHAPE_ROUND_RECTANGLE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::SHAPE_ROUND_RECTANGLE
     public static readonly SHAPE_ROUND_RECTANGLE: string = 'round_rectangle';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::SHAPE_ELLIPSE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::SHAPE_ELLIPSE
     public static readonly SHAPE_ELLIPSE: string = 'ellipse';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::SHAPE_RHOMBUS
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::SHAPE_RHOMBUS
     public static readonly SHAPE_RHOMBUS: string = 'rhombus';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::SHAPES
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::SHAPES
     public static readonly SHAPES: readonly string[] = ['rectangle', 'round_rectangle', 'ellipse', 'rhombus'];
 
     // Declared without initializers: WindowController's applyProperties()
@@ -37,7 +37,7 @@ export class ShapeController extends ContainerController
     private _strokeHsvShade: number | null = null;
     private _strokeThickness: number | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::ShapeController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::ShapeController()
     constructor(
         name: string,
         type: number,
@@ -55,7 +55,7 @@ export class ShapeController extends ContainerController
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::ShapeController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::ShapeController()
     protected override finalize(): void
     {
         super.finalize();
@@ -68,19 +68,19 @@ export class ShapeController extends ContainerController
         this._strokeThickness ??= 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::normalizeShape()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::normalizeShape()
     public static normalizeShape(value: string): string
     {
         return ShapeController.SHAPES.indexOf(value) >= 0 ? value : 'rectangle';
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::get shape()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::get shape()
     public get shape(): string
     {
         return this._shape ?? 'rectangle';
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::set shape()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::set shape()
     public set shape(value: string)
     {
         const normalized = ShapeController.normalizeShape(value);
@@ -92,13 +92,13 @@ export class ShapeController extends ContainerController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::get radius()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::get radius()
     public get radius(): number
     {
         return this._radius ?? 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::set radius()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::set radius()
     public set radius(value: number)
     {
         const normalized = Number.isNaN(value) ? 0 : Math.max(0, value);
@@ -110,13 +110,13 @@ export class ShapeController extends ContainerController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::get strokeColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::get strokeColor()
     public get strokeColor(): number
     {
         return this._strokeColor ?? 0xFF000000;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::set strokeColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::set strokeColor()
     public set strokeColor(value: number)
     {
         if(this._strokeColor !== value)
@@ -126,13 +126,13 @@ export class ShapeController extends ContainerController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::get strokeHsvShade()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::get strokeHsvShade()
     public get strokeHsvShade(): number
     {
         return this._strokeHsvShade ?? 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::set strokeHsvShade()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::set strokeHsvShade()
     public set strokeHsvShade(value: number)
     {
         const normalized = Number.isNaN(value) ? 0 : value;
@@ -144,13 +144,13 @@ export class ShapeController extends ContainerController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::get strokeThickness()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::get strokeThickness()
     public get strokeThickness(): number
     {
         return this._strokeThickness ?? 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::set strokeThickness()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::set strokeThickness()
     public set strokeThickness(value: number)
     {
         const normalized = Number.isNaN(value) ? 0 : Math.max(0, value);
@@ -162,7 +162,7 @@ export class ShapeController extends ContainerController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::get properties()
     public override get properties(): unknown[]
     {
         const props = super.properties;
@@ -176,7 +176,7 @@ export class ShapeController extends ContainerController
         return props;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::set properties()
     public override set properties(value: unknown[])
     {
         for(const item of value)

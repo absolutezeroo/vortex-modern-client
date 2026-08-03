@@ -11,7 +11,7 @@ import type {AvatarImageWidget as GenericAvatarImageWidget} from '@habbo/window/
  * Safety-quiz promo with an avatar preview, opens the safety booklet on
  * click.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as
  */
 export class SafetyQuizPromoWidget implements ILandingViewWidget
 {
@@ -19,13 +19,13 @@ export class SafetyQuizPromoWidget implements ILandingViewWidget
     private _container: IWindowContainer | null = null;
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::SafetyQuizPromoWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::SafetyQuizPromoWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::initialize()
     initialize(): void
     {
         this._container = this._landingView!.getXmlWindow('safety_quiz_promo') as IWindowContainer | null;
@@ -35,7 +35,7 @@ export class SafetyQuizPromoWidget implements ILandingViewWidget
         this.refresh();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::widgetProcedure()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::widgetProcedure()
     private widgetProcedure = (event: WindowEvent, window: IWindow): void =>
     {
         if(event.type === WindowMouseEvent.CLICK && window.name === 'safety_quiz_button')
@@ -44,7 +44,7 @@ export class SafetyQuizPromoWidget implements ILandingViewWidget
         }
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::refresh()
     refresh(): void
     {
         if(!this._container || this._container.disposed) return;
@@ -63,7 +63,7 @@ export class SafetyQuizPromoWidget implements ILandingViewWidget
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

@@ -24,6 +24,8 @@ export class WindowMouseEvent extends WindowEvent
     public static readonly UP: string = 'WME_UP';
     public static readonly UP_OUTSIDE: string = 'WME_UP_OUTSIDE';
     public static readonly WHEEL: string = 'WME_WHEEL';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/events/WindowMouseEvent.as::WHEEL_HORIZONTAL
+    public static readonly WHEEL_HORIZONTAL: string = 'WME_WHEEL_HORIZONTAL';
     public static readonly RIGHT_CLICK: string = 'WME_RIGHT_CLICK';
     public static readonly RIGHT_DOWN: string = 'WME_RIGHT_DOWN';
     public static readonly RIGHT_UP: string = 'WME_RIGHT_UP';

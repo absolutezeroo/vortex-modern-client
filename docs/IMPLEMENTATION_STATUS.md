@@ -650,6 +650,53 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **Window system realigned on the 2026 (701) tree**, 2026-08-03.
+  - Prompted by "the further we go, the more small problems appear everywhere". The skeleton was
+    never the problem: `WindowController` has all 153 AS3 members, and `WindowParam` (55 values),
+    `WindowState` and `WindowStyle` match **bit for bit** — only `WindowType` 62 is absent. Every
+    defect was inside a method body, and several came from **mixing revisions**.
+  - **`ItemListController.process()` was win63_version's, not 2026's.** The 2023 build answers
+    `WME_WHEEL`/`WME_WHEEL_HORIZONTAL` *and* `WME_DOWN/MOVE/UP` drag-scroll; the 701 build narrowed
+    it to the two wheel types. Drag-scroll and its `enableScrollByDragging` / `disableAutodrag` /
+    `stopDragging` API are gone — 2026's `IItemListWindow` declares none of them. 4 external call
+    sites updated (`FurniView`, `BlockResultsView`, `RoomChatWidget` ×2).
+  - **`MouseEventProcessor` revived a loop that is dead in AS3.** `process()` walked the ancestor
+    chain calling `IInputProcessorRoot.process()`; AS3 guards that walk with `while(_loc6_ && …)`
+    where `_loc6_` is still `false` (lines 230 / 272-285), so it never runs. Combined with the point
+    above, every mousedown/mousemove over a list child drove the parent list's drag-scroll — even
+    when the child had already handled the event. Removed.
+  - **`WindowUtils.disableSection()`: three special cases restored.** The `TODO(AS3)`s claimed
+    `_SafeCls_2013/2254/2326` were unidentifiable; they are empty marker interfaces with exactly one
+    implementor each — `ButtonController`, `BorderController`, `BackgroundController`. AS3 skips the
+    whole recursion/blend block for buttons (they render their own disabled state), and force-blends
+    borders and backgrounds regardless of graphic-context ownership. A `BackgroundController` also
+    carries its opacity in the **top byte of `color`**, not `blend`, so disabled sections' backgrounds
+    never dimmed. 42 call sites.
+  - **Horizontal wheel was dead end to end.** `ItemList`/`ItemGrid` handled `WME_WHEEL_HORIZONTAL`
+    but nothing produced it: no constant, no conversion case, no source. Added
+    `WindowMouseEvent.WHEEL_HORIZONTAL`, the `mouseWheelHorizontal` mapping, and axis resolution in
+    `App.ts::_onWheel` (the DOM folds both axes into one `wheel` event where Flash raised two).
+  - **`ScrollableItemListWindow.set isPartOfGridWindow()` wrote to `disableAutodrag`.** A
+    copy-paste bug, not a port decision — AS3 assigns `_itemList.isPartOfGridWindow`. The flag is
+    what makes a list inside a grid decline the wheel, so nested lists both consumed it.
+  - **`PropertyStruct.withValue()` lost the `Array` comparison** → every array-typed write allocated
+    a new struct and invalidated the window. `toString()` regained `Point`/`Rectangle`.
+  - **Touch mode no longer masquerades as mouse.** `INPUT_MODE_TOUCH` built a `MouseEventQueue` +
+    `MouseEventProcessor`. Ported `TabletEventQueue`/`TabletEventProcessor` — and note 2026's
+    `process()` is a deliberate **no-op** that drains the queue.
+  - **275 files traced to `sources/win63_2026_crypted_version/`, a tree that no longer exists.**
+    Rewritten to `WIN63-202607011411-782849652`; 1387 of 1410 distinct paths now resolve to a real
+    file. That unverifiability is how the `disableSection` "not identifiable" TODOs survived —
+    `grep implements` answers them in seconds against the tree actually on disk.
+  - **Still open, deliberately:** `MouseEventProcessor` is a faithful port that **never runs** —
+    nothing feeds `WindowContext.inputEventQueue`; `App.ts` reimplements dispatch (~370 lines) with
+    no bubbling, no `WME_UP_OUTSIDE`, no `ignoreMouseEvents` / `ROUTE_INPUT_EVENTS_TO_PARENT` /
+    disabled-state gate, and no cursor-by-state. `WME_CLICK_AWAY` is produced only inside that dead
+    processor, so the click-outside close of 8 views (own-avatar and pet menus, chat selectors,
+    `ChatStyleSelector`) never fires. Also open: 193 traces to `win63_2021_version` and 60 to
+    `win63_2023_version`, both non-existent trees — not remapped, because guessing the target is
+    exactly the unverified change that caused this. And 23 traces name classes obfuscated in 2026.
+
 - ✅ **vortex-glaze: multi-selection, zoom, snapping, tree drag & drop, variables, palette**, 2026-08-03.
   - Editor tooling only — no AS3 counterpart; the feature set was picked by comparing against
     [Clove](https://github.com/iSetht/clove), a React/Electron Habbo-layout editor, and taking what

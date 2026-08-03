@@ -205,13 +205,13 @@ export class BadgeImageWidget implements IBadgeImageWidget
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::get pivotPoint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::get pivotPoint()
     public get pivotPoint(): number
     {
         return (this._bitmap as unknown as IStaticBitmapWrapperWindow | null)?.pivotPoint ?? 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::set pivotPoint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::set pivotPoint()
     public set pivotPoint(value: number)
     {
         const bitmap = this._bitmap as unknown as IStaticBitmapWrapperWindow | null;

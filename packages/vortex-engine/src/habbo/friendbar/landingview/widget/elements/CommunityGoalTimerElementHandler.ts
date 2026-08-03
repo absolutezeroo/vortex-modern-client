@@ -14,18 +14,18 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
  * `_SafeCls_4541`); the win63_version directory listing does not correspond
  * 1:1 by position so no secondary cross-reference file is cited here.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4541.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4541.as
  */
 export class CommunityGoalTimerElementHandler extends TimerElementHandlerBase
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4541.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4541.as::initialize()
     override initialize(landingView: HabboLandingView, window: IWindow, params: string[], ownerWidget: GenericWidget): void
     {
         super.initialize(landingView, window, params, ownerWidget);
         landingView.communicationManager?.addHabboConnectionMessageEvent(new CommunityGoalProgressMessageEvent(this.onCommunityGoalProgress));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4541.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4541.as::refresh()
     override refresh(): void
     {
         this.landingView?.send(new GetCommunityGoalProgressMessageComposer());

@@ -51,8 +51,8 @@ type WidgetConstructor = new (window: IWidgetWindow, windowManager: IHabboWindow
  * EffectPreviewer class, which doesn't exist yet (the wall/floor-item cases now use
  * IRoomEngine.getWallItemImage()/getFurnitureImage(), Phase 5). See ProductImageWidget.ts itself.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/WidgetClasses.as
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::createWidget()
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/WidgetClasses.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::createWidget()
  */
 export class HabboWidgetFactory implements IWidgetFactory
 {
@@ -112,7 +112,7 @@ export class HabboWidgetFactory implements IWidgetFactory
 	 * @param window - The host IWidgetWindow
 	 * @returns The created widget, or null if the type is unknown
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::createWidget()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::createWidget()
 	 * throws "Unknown widget type ..." when the type isn't registered. We log instead of
 	 * throwing - one unknown widget type shouldn't abort the whole window's property
 	 * application - but this should never fire against correctly-authored layouts, so

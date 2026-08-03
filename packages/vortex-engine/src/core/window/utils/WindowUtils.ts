@@ -1,22 +1,25 @@
 import type {IWindow} from '../IWindow';
 import type {IWindowContainer} from '../IWindowContainer';
+import {BackgroundController} from '../components/BackgroundController';
+import {BorderController} from '../components/BorderController';
+import {ButtonController} from '../components/ButtonController';
 
 /**
  * Generic window enable/disable helpers, including recursive "disable a
  * whole section" with blend-based dimming.
  *
- * The AS3 original special-cases a handful of anonymous window types when
- * deciding whether to recurse into children vs. blend the window itself
- * (see TODOs below) — those exact types could not be identified with
- * confidence from the obfuscated source, so this port applies the general
- * (Container / ItemList / Selector all share `IWindowContainer` in this
- * port, unlike the separate AS3 interfaces) rule uniformly.
+ * The three window types AS3 special-cases here are declared as empty marker
+ * interfaces, so the obfuscated source names nothing on its own; each is
+ * identified by its single implementor:
+ * `_SafeCls_2013` -> ButtonController, `_SafeCls_2254` -> BorderController,
+ * `_SafeCls_2326` -> BackgroundController. This port matches on the concrete
+ * classes, since it has no counterpart to the marker interfaces.
  *
- * @see sources/win63_2026_crypted_version/com/sulake/core/window/utils/WindowUtils.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowUtils.as
  */
 export class WindowUtils
 {
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/utils/WindowUtils.as::disableButton()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowUtils.as::disableButton()
     public static disableButton(window: IWindow, disabled: boolean): void
     {
         if(disabled)
@@ -29,13 +32,33 @@ export class WindowUtils
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowUtils.as::getBlend()
+    // A BackgroundController carries its opacity in the top byte of `color`, not in
+    // `blend` - reading `blend` there returns an unrelated value.
     private static getBlend(window: IWindow): number
     {
+        if(window instanceof BackgroundController)
+        {
+            return ((window.color >>> 24) & 0xFF) / 255;
+        }
+
         return window.blend;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowUtils.as::setBlend()
     private static setBlend(window: IWindow, blend: number): void
     {
+        if(window instanceof BackgroundController)
+        {
+            // AS3 truncates with `int(param2 * 255)` before clamping - `Math.trunc`, not
+            // `Math.round`, or a blend of 0.5 lands a pixel off the original's 127.
+            const alpha = Math.max(0, Math.min(255, Math.trunc(blend * 255))) >>> 0;
+
+            window.color = (window.color & 0xFFFFFF) | (alpha << 24);
+
+            return;
+        }
+
         window.blend = blend;
     }
 
@@ -48,7 +71,7 @@ export class WindowUtils
             : null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/utils/WindowUtils.as::disableSection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowUtils.as::disableSection()
     public static disableSection(window: IWindow, disabled: boolean = true, dimFactor: number = 0.5): void
     {
         if(window.tags.indexOf('DO_NOT_DISABLE') !== -1)
@@ -93,37 +116,37 @@ export class WindowUtils
         // AS3 param flag 16 = "shares parent's graphic context" (no own drawable surface).
         const ownsGraphicContext = !window.getParamFlag(16);
 
-        // TODO(AS3): AS3 skips all of the recursion/blend logic below entirely for
-        // one anonymous interactive-control type (`_SafeCls_2013` in the obfuscated
-        // 2026 source), which manages its own disabled visual state. Not identifiable
-        // with confidence, so it is not special-cased here.
-        const container = WindowUtils.asContainer(window);
-
-        if(container)
+        // A ButtonController skips the whole recursion/blend block: it renders its own
+        // disabled state from the state flag `disable()` sets below, so dimming it here
+        // would apply the effect twice and dim its label and icon children as well.
+        if(!(window instanceof ButtonController))
         {
-            for(let i = 0; i < container.numChildren; i++)
-            {
-                const child = container.getChildAt(i);
+            const container = WindowUtils.asContainer(window);
 
-                if(child)
+            if(container)
+            {
+                for(let i = 0; i < container.numChildren; i++)
                 {
-                    WindowUtils.disableSection(child, disabled, ownsGraphicContext ? 1 : dimFactor);
+                    const child = container.getChildAt(i);
+
+                    if(child)
+                    {
+                        WindowUtils.disableSection(child, disabled, ownsGraphicContext ? 1 : dimFactor);
+                    }
+                }
+
+                // Borders and backgrounds are blended whether or not they own their graphic
+                // context - they *are* the section's visible surface, so skipping them
+                // leaves a fully-lit frame around dimmed contents.
+                if(window instanceof BorderController || window instanceof BackgroundController || ownsGraphicContext)
+                {
+                    WindowUtils.setBlend(window, targetBlend);
                 }
             }
-
-            // TODO(AS3): AS3 also force-applies blend directly to two further anonymous
-            // container subtypes (`_SafeCls_2254`, `_SafeCls_2326`) in addition to
-            // recursing into children — not identifiable with confidence from the
-            // obfuscated source. Only the "owns its own graphic context" case is
-            // honored here.
-            if(ownsGraphicContext)
+            else if(!isIcon)
             {
                 WindowUtils.setBlend(window, targetBlend);
             }
-        }
-        else if(!isIcon)
-        {
-            WindowUtils.setBlend(window, targetBlend);
         }
 
         WindowUtils.disableButton(window, disabled);

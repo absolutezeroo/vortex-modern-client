@@ -17,7 +17,7 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.LoyaltyVipBuyCatalogW
  * Loyalty-program VIP purchase widget (source 6 - a distinct offer-request source from the
  * regular VipBuyCatalogWidget's 1/2, otherwise near-identical).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as
  */
 export class LoyaltyVipBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalogWidget
 {
@@ -105,7 +105,7 @@ export class LoyaltyVipBuyCatalogWidget extends CatalogWidget implements IVipBuy
         this.initLinks();
     }
 
-    // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as::fixFormatting()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as::fixFormatting()
     // Same pre-existing ITextFormat align/leading gap as VipBuyCatalogWidget.ts's own note.
     private fixFormatting(_field: ITextWindow | null, _leading: number = 0): void
     {

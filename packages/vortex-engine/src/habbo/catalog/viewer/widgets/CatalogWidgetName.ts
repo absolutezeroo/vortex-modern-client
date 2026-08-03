@@ -5,7 +5,7 @@
  * AS3 switch matches the same raw string literals directly, with no source-level constant of
  * its own to port) - not an AS3 member.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
  */
 export class CatalogWidgetName
 {

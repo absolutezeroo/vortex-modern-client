@@ -227,7 +227,7 @@ export class ResourceManager implements IResourceManager
             {
                 this._loading.delete(name);
 
-                // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/ResourceManager.as
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as
                 // ::retrieveAsset() catch block - on a failed load, deliver the
                 // "missing_image_icon" placeholder instead of leaving receivers queued
                 // forever with nothing ever shown.

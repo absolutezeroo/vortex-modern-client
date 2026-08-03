@@ -88,7 +88,7 @@ const log = Logger.getLogger('habbo.window.HabboWindowManager');
  * and IWidgetFactory. It managed 4 WindowContexts (one per layer), a
  * WindowRenderer, SkinContainer, ThemeManager, and ResourceManager.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as
  */
 export class HabboWindowManager extends Component implements IHabboWindowManager 
 {
@@ -121,7 +121,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     /**
      * Configuration manager accessor (AS3 parity).
      *
-     * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as
      * exposes this via `context.configuration`; our `_configuration` field is already
      * wired up as a direct DI dependency below, so this just exposes it directly.
      */
@@ -135,7 +135,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     /**
      * Catalog accessor (AS3 parity).
      *
-     * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get catalog()
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get catalog()
      */
     public get catalog(): IHabboCatalog | null 
     {
@@ -147,7 +147,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     /**
      * FreeFlowChat accessor (AS3 parity).
      *
-     * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get freeFlowChat()
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get freeFlowChat()
      */
     public get freeFlowChat(): IHabboFreeFlowChat | null 
     {
@@ -328,7 +328,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
      * {@link loadSkinAssets} via {@link BitmapSkinParser}, replacing the
      * `NullSkinRenderer` placeholder built here).
      *
-     * AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/_SafeCls_1859.as::parse()
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/_SafeCls_1859.as::parse()
      * (renderer name → class Dictionary)
      */
     private static createRendererForType(rendererType: string, rendererName: string): ISkinRenderer
@@ -512,14 +512,14 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
 
         if(parser && desktop)
         {
-            // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::buildFromXML()
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::buildFromXML()
             // AS3 passes `null` as parent here, not the desktop - the constructed window is
             // returned standalone, unattached, for the caller to place wherever it belongs (see
             // WindowParser's constructor note for how it still resolves a context/theme without a
             // parent to read `.context` off of).
             const result = parser.parseAndConstruct(xml, null, null) as IWindow;
 
-            // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::buildFromXML()
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::buildFromXML()
             // Every frame built this way gets its help button wired to openHelpPage().
             if(result instanceof FrameController) 
             {

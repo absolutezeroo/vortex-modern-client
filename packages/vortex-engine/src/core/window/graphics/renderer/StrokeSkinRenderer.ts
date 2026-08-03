@@ -7,7 +7,7 @@ import {SkinRenderer} from './SkinRenderer';
  * (when all sides are enabled and a corner radius is set) or as up to
  * four independent per-side filled strips (sharp corners).
  *
- * @see sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/StrokeSkinRenderer.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/StrokeSkinRenderer.as
  */
 export class StrokeSkinRenderer extends SkinRenderer
 {
@@ -29,7 +29,7 @@ export class StrokeSkinRenderer extends SkinRenderer
         return `rgba(${r},${g},${b},${alpha})`;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/StrokeSkinRenderer.as::draw()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/StrokeSkinRenderer.as::draw()
     public override draw(
         window: IWindow,
         ctx: OffscreenCanvasRenderingContext2D,
@@ -98,7 +98,7 @@ export class StrokeSkinRenderer extends SkinRenderer
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/graphics/renderer/StrokeSkinRenderer.as::isStateDrawable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/StrokeSkinRenderer.as::isStateDrawable()
     public override isStateDrawable(_state: number): boolean
     {
         return true;

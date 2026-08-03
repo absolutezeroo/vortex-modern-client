@@ -12,7 +12,7 @@ import {MarketPlaceOfferEntry} from './MarketPlaceOfferEntry';
  * count) - this port follows the primary tree's `_SafeCls_2885`, which is
  * complete and internally consistent.
  *
- * @see sources/win63_2026_crypted_version/src/unknowns/_SafePkg_1932/_SafeCls_2885.as
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1932/_SafeCls_2885.as
  * (real class name recovered from sources/win63_version/habbo/communication/messages/parser/marketplace/MarketPlaceOffersEventParser.as)
  */
 export class MarketPlaceOffersEventParser implements IMessageParser

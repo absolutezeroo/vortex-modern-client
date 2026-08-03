@@ -6,7 +6,7 @@ import type {ExtraInfoItemData} from './ExtraInfoItemData';
 /**
  * Base class for a single row rendered inside BundlePurchaseExtraInfoWidget's overlay stack.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as
  */
 export class ExtraInfoListItem implements IDisposable
 {

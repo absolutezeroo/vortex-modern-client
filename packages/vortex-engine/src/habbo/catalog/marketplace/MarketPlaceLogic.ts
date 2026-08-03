@@ -26,7 +26,7 @@ import type {MarketplaceItemStats} from './MarketplaceItemStats';
 import {MarketplaceConfirmationDialog} from './MarketplaceConfirmationDialog';
 
 /**
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as
  */
 export class MarketPlaceLogic implements IMarketPlace
 {
@@ -76,7 +76,7 @@ export class MarketPlaceLogic implements IMarketPlace
 
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::MarketPlaceLogic()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::MarketPlaceLogic()
     constructor(catalog: HabboCatalog, windowManager: IHabboWindowManager, roomEngine: IRoomEngine)
     {
         this._catalog = catalog;
@@ -85,13 +85,13 @@ export class MarketPlaceLogic implements IMarketPlace
         this.getConfiguration();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -114,19 +114,19 @@ export class MarketPlaceLogic implements IMarketPlace
         this._disposed = true;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get windowManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get windowManager()
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get localization()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get localization()
     get localization(): IHabboLocalizationManager | null
     {
         return this._catalog?.localization ?? null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::registerVisualization()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::registerVisualization()
     registerVisualization(visualization: IMarketPlaceVisualization | null = null): void
     {
         if(visualization === null) return;
@@ -151,19 +151,19 @@ export class MarketPlaceLogic implements IMarketPlace
         this._confirmationDialog.showConfirmation(type, offer);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::requestOffersByName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::requestOffersByName()
     requestOffersByName(searchString: string, combineUniques: boolean = true): void
     {
         this.requestOffers(-1, -1, searchString, -1, combineUniques);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::requestOffersByPrice()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::requestOffersByPrice()
     requestOffersByPrice(maxPrice: number, combineUniques: boolean = true): void
     {
         this.requestOffers(maxPrice, -1, '', -1, combineUniques);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::requestOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::requestOffers()
     requestOffers(minPrice: number, maxPrice: number, searchString: string, category: number, combineUniques: boolean = true): void
     {
         this._minPrice = minPrice;
@@ -175,13 +175,13 @@ export class MarketPlaceLogic implements IMarketPlace
         this._catalog?.getPublicMarketPlaceOffers(minPrice, maxPrice, searchString, category, combineUniques);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::refreshOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::refreshOffers()
     refreshOffers(): void
     {
         this.requestOffers(this._minPrice, this._maxPrice, this._searchString, this._category, this._combineUniques);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::requestOwnItems()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::requestOwnItems()
     requestOwnItems(category: number = 1): void
     {
         this._ownOffersCategory = category;
@@ -189,7 +189,7 @@ export class MarketPlaceLogic implements IMarketPlace
         this._catalog?.getOwnMarketPlaceOffers(category);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::requestItemStats()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::requestItemStats()
     requestItemStats(offer: IMarketPlaceOfferData): void
     {
         if(!this._catalog || !offer) return;
@@ -204,7 +204,7 @@ export class MarketPlaceLogic implements IMarketPlace
         this._catalog.getMarketplaceItemStats(this._statsFurniCategoryId, offer.furniId, extraData);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::buyOffer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::buyOffer()
     buyOffer(offerId: number): void
     {
         if(!this._latestOffers || !this._catalog || !this._catalog.getPurse()) return;
@@ -223,19 +223,19 @@ export class MarketPlaceLogic implements IMarketPlace
         this.showConfirmation(MarketPlaceLogic.PURCHASE_CONFIRM_TYPE_NORMAL, offer);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::redeemExpiredOffer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::redeemExpiredOffer()
     redeemExpiredOffer(offerId: number): void
     {
         this._catalog?.redeemExpiredMarketPlaceOffer(offerId);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::recallAllOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::recallAllOffers()
     recallAllOffers(): void
     {
         this._catalog?.cancelAllMarketPlaceOffers();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::clearOwnHistory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::clearOwnHistory()
     clearOwnHistory(status: number): void
     {
         if(!this._catalog || !MarketPlaceOfferStatus.isClearable(status)) return;
@@ -254,7 +254,7 @@ export class MarketPlaceLogic implements IMarketPlace
         offers.dispose();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::onOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::onOffers()
     onOffers(event: IMessageEvent): void
     {
         const offersEvent = event as MarketPlaceOffersEvent | null;
@@ -284,7 +284,7 @@ export class MarketPlaceLogic implements IMarketPlace
         this._visualization?.listUpdatedNotify();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::onOwnOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::onOwnOffers()
     onOwnOffers(event: IMessageEvent): void
     {
         const ownOffersEvent = event as MarketPlaceOwnOffersEvent | null;
@@ -314,7 +314,7 @@ export class MarketPlaceLogic implements IMarketPlace
         this._visualization?.listUpdatedNotify();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::onBuyResult()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::onBuyResult()
     onBuyResult(event: IMessageEvent): void
     {
         const buyEvent = event as MarketplaceBuyOfferResultEvent | null;
@@ -365,7 +365,7 @@ export class MarketPlaceLogic implements IMarketPlace
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::onCancelResult()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::onCancelResult()
     onCancelResult(event: IMessageEvent): void
     {
         const cancelEvent = event as MarketplaceCancelOfferResultEvent | null;
@@ -391,7 +391,7 @@ export class MarketPlaceLogic implements IMarketPlace
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::onCancelAllResult()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::onCancelAllResult()
     onCancelAllResult(event: IMessageEvent): void
     {
         const cancelEvent = event as MarketplaceCancelAllOffersResultEvent | null;
@@ -430,7 +430,7 @@ export class MarketPlaceLogic implements IMarketPlace
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::onClearOwnHistoryResult()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::onClearOwnHistoryResult()
     onClearOwnHistoryResult(event: IMessageEvent): void
     {
         const clearEvent = event as MarketplaceClearOwnHistoryResultEvent | null;
@@ -468,25 +468,25 @@ export class MarketPlaceLogic implements IMarketPlace
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::latestOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::latestOffers()
     latestOffers(): OrderedMap<number, MarketPlaceOfferData> | null
     {
         return this._latestOffers;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::latestOwnOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::latestOwnOffers()
     latestOwnOffers(): OrderedMap<number, MarketPlaceOfferData> | null
     {
         return this._latestOwnOffers;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::totalItemsFound()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::totalItemsFound()
     totalItemsFound(): number
     {
         return this._totalItemsFound;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::set itemStats()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::set itemStats()
     set itemStats(value: MarketplaceItemStats)
     {
         if(value.furniCategoryId !== this._statsFurniCategoryId || value.furniTypeId !== this._statsFurniTypeId) return;
@@ -495,31 +495,31 @@ export class MarketPlaceLogic implements IMarketPlace
         this._visualization?.updateStats();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get itemStats()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get itemStats()
     get itemStats(): MarketplaceItemStats | null
     {
         return this._itemStats;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get creditsWaiting()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get creditsWaiting()
     get creditsWaiting(): number
     {
         return this._creditsWaiting;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get ownOffersCategory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get ownOffersCategory()
     get ownOffersCategory(): number
     {
         return this._ownOffersCategory;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get averagePricePeriod()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::get averagePricePeriod()
     get averagePricePeriod(): number
     {
         return this._averagePricePeriod;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::set averagePricePeriod()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::set averagePricePeriod()
     set averagePricePeriod(value: number)
     {
         this._averagePricePeriod = value;
@@ -544,7 +544,7 @@ export class MarketPlaceLogic implements IMarketPlace
         return false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::getNameLocalizationKey()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::getNameLocalizationKey()
     getNameLocalizationKey(offer: IMarketPlaceOfferData): string
     {
         if(!offer) return '';
@@ -558,7 +558,7 @@ export class MarketPlaceLogic implements IMarketPlace
         return '';
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::getDescriptionLocalizationKey()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::getDescriptionLocalizationKey()
     getDescriptionLocalizationKey(offer: IMarketPlaceOfferData): string
     {
         if(!offer) return '';
@@ -572,7 +572,7 @@ export class MarketPlaceLogic implements IMarketPlace
         return '';
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::isAccountSafetyLocked()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::isAccountSafetyLocked()
     isAccountSafetyLocked(): boolean
     {
         return this._catalog?.sessionDataManager?.isAccountSafetyLocked() ?? false;

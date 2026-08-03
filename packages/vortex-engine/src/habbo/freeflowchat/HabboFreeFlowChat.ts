@@ -75,7 +75,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     private _isInRoom: boolean = false;
     private _isInitialized: boolean = false;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::HabboFreeFlowChat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::HabboFreeFlowChat()
     constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
     {
         super(context, flags, assetLibrary);
@@ -118,7 +118,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._localizations;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get avatarRenderManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get avatarRenderManager()
     private _avatarRenderManager: IAvatarRenderManager | null = null;
 
     get avatarRenderManager(): IAvatarRenderManager | null
@@ -133,28 +133,28 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._chatBubbleFactory?.chatStyleLibrary ?? null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatBubbleFactory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatBubbleFactory()
     get chatBubbleFactory(): ChatBubbleFactory | null
     {
         return this._chatBubbleFactory;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatBorderLimited()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatBorderLimited()
     get roomChatBorderLimited(): boolean
     {
         return this._roomChatSettings?.mode === 1;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatMode
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatMode
     private _chatMode: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatBubbleWidth
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatBubbleWidth
     private _chatBubbleWidth: number = 1;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get/set chatScrollSpeed() (backing field, "_-51u")
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get/set chatScrollSpeed() (backing field, "_-51u")
     private _chatScrollSpeed: number = 1;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatSettings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatSettings()
     // Built by refreshEffectiveChatSettings() from _chatMode/_chatBubbleWidth/_chatScrollSpeed,
     // which the constructor already calls once (matching AS3's own constructor) - so this is
     // never actually null in practice, same as AS3. onAccountPreferences() (below) is the only
@@ -168,7 +168,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._roomChatSettings;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::refreshEffectiveChatSettings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::refreshEffectiveChatSettings()
     private refreshEffectiveChatSettings(): void
     {
         this._roomChatSettings = {
@@ -178,25 +178,25 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         };
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::sanitizeChatMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::sanitizeChatMode()
     private sanitizeChatMode(value: number): number
     {
         return value === 0 || value === 1 ? value : 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::sanitizeChatBubbleWidth()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::sanitizeChatBubbleWidth()
     private sanitizeChatBubbleWidth(value: number): number
     {
         return value === 0 || value === 1 || value === 2 ? value : 1;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::sanitizeChatScrollSpeed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::sanitizeChatScrollSpeed()
     private sanitizeChatScrollSpeed(value: number): number
     {
         return value === 0 || value === 1 || value === 2 ? value : 1;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clampChatFontSizeMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clampChatFontSizeMode()
     private clampChatFontSizeMode(value: number): number
     {
         return value < 0 ? 0 : (value > 4 ? 4 : value);
@@ -280,7 +280,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         );
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::onAccountPreferences()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::onAccountPreferences()
     // TODO(AS3): onRoomChatSettings()/onGuestRoomData() (the two other AS3 call sites that
     // also touch refreshEffectiveChatSettings()) aren't wired - both only ever update
     // floodSensitivity, a field this port's roomChatSettings doesn't expose yet (nothing
@@ -305,16 +305,16 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         if(this._isInRoom) this._chatFlowStage?.refreshSettings();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatFontSizeMode
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatFontSizeMode
     private _chatFontSizeMode: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFontSizeMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFontSizeMode()
     get chatFontSizeMode(): number
     {
         return this._chatFontSizeMode;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::set chatFontSizeMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::set chatFontSizeMode()
     set chatFontSizeMode(value: number)
     {
         this._chatFontSizeMode = this.clampChatFontSizeMode(value);
@@ -322,7 +322,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         this._communication?.connection?.send(new SetChatStylePreferenceComposer(this._preferedChatStyle, this._chatFontSizeMode));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFontSizeScale()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFontSizeScale()
     get chatFontSizeScale(): number
     {
         switch(this._chatFontSizeMode - 1)
@@ -335,7 +335,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get displayObject()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get displayObject()
     // Set by roomEntered() once the ChatViewController exists (see viewer/ChatViewController.ts).
     private _displayObject: Container | null = null;
 
@@ -344,7 +344,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._displayObject;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::getScreenPointFromRoomLocation()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::getScreenPointFromRoomLocation()
     // `geometry.getScreenPoint()` returns a point relative to the isometric
     // camera's own centre, not the canvas's top-left - AS3 recentres it onto
     // the Flash stage (stage.stageWidth/stageHeight / 2) before adding the
@@ -398,7 +398,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return {x, y};
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clickHasToPropagate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clickHasToPropagate()
     // TODO(AS3): always false — roomUI.mouseEventPositionHasContextMenu() isn't ported
     // (RoomUI has no context-menu hit-testing yet, and HabboFreeFlowChat has no roomUI
     // dependency wired in — see IHabboFreeFlowChat.ts's doc comment on this method).
@@ -407,7 +407,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::selectAvatarWithChatItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::selectAvatarWithChatItem()
     // TODO(AS3): no-op — AS3 delegates to roomEngine.selectAvatar(roomId, userId), which
     // isn't ported (same room-object-selection gap ChatInputWidgetHandler.ts's "@Name"
     // mention-autocomplete TODO already flags); moderation reporting and the
@@ -423,7 +423,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._preferedChatStyle;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::set preferedChatStyle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::set preferedChatStyle()
     set preferedChatStyle(value: number)
     {
         this._preferedChatStyle = value;
@@ -554,7 +554,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 	 * `Sprite.scale9Grid`, which PixiJS's own `NineSliceSprite` reproduces
 	 * natively on the GPU without needing a per-resize CPU bake).
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::create9SliceSprite()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::create9SliceSprite()
 	 */
     static createNineSliceSprite(scale9Grid: Rectangle, background: ImageBitmap): Container
     {
@@ -578,7 +578,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 	 * identically on the GPU, but `ManualNineSliceSprite` is ported as-is for
 	 * fidelity in case a caller depends on its baked-bitmap semantics.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::createPixelPerfect9SliceSprite()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::createPixelPerfect9SliceSprite()
 	 */
     static createPixelPerfectNineSliceSprite(scale9Grid: Rectangle, background: ImageBitmap): Container
     {
@@ -597,7 +597,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     /**
 	 * Called when a room session is created/entered.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomEntered()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomEntered()
 	 * TODO(AS3): ChatHistoryScrollView/ChatHistoryTray (the drag-down history panel) are
 	 * not built here — see ChatViewController.ts's header. displayObject/chatFlowViewer
 	 * still work without them; the history toggle button stays a no-op.
@@ -635,7 +635,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     /**
 	 * Called when a room session has ended/left.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomLeft()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomLeft()
 	 */
     roomLeft(): void
     {
@@ -656,7 +656,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         log.debug('Room left');
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::fixHtml()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::fixHtml()
     // Escapes raw HTML if the style doesn't allow it, then applies ChatMarkup's
     // [tag]/@color@ shorthand - see ChatTextLayout.ts's parseInlineMarkup() for how the
     // resulting <b>/<i>/<u>/<font color> tags get turned into styled runs (no real HTML
@@ -686,7 +686,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 	 * minimal - see ChatFlowStage.ts) chat flow stage, and hands it to the
 	 * viewer to display.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::insertChat()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::insertChat()
 	 *
 	 * @param item The chat item to insert
 	 */

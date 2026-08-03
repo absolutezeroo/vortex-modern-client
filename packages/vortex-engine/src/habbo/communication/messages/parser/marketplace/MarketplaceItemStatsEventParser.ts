@@ -2,7 +2,7 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
 
 /**
- * @see sources/win63_2026_crypted_version/src/unknowns/_SafePkg_1932/_SafeCls_1931.as
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1932/_SafeCls_1931.as
  * (real class name recovered from sources/win63_version/habbo/communication/messages/parser/marketplace/MarketplaceItemStatsEventParser.as)
  */
 export class MarketplaceItemStatsEventParser implements IMessageParser

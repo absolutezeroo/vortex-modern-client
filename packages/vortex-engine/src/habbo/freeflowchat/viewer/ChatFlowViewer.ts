@@ -15,7 +15,7 @@ const VIEW_BOTTOM_RATIO = 0.25;
  * drives each bubble's per-frame tween/pointer-tracking update + recycling
  * once it's flagged `readyToRecycle`.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as
  */
 export class ChatFlowViewer implements IUpdateReceiver, IDisposable
 {
@@ -27,7 +27,7 @@ export class ChatFlowViewer implements IUpdateReceiver, IDisposable
     private _lastRoomId: number = 0;
     private _lastRoomPanOffsetX: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::ChatFlowViewer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::ChatFlowViewer()
     constructor(chatFlow: IHabboFreeFlowChat, chatFlowStage: ChatFlowStage)
     {
         this._chatFlow = chatFlow;
@@ -40,7 +40,7 @@ export class ChatFlowViewer implements IUpdateReceiver, IDisposable
         return this._rootDisplayObject === null || this._chatFlow === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -51,7 +51,7 @@ export class ChatFlowViewer implements IUpdateReceiver, IDisposable
         this._rootDisplayObject.destroy({children: true});
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::insertBubble()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::insertBubble()
     insertBubble(bubble: PooledChatBubble, point: {x: number; y: number}): void
     {
         const chatFlow = this._chatFlow;
@@ -70,7 +70,7 @@ export class ChatFlowViewer implements IUpdateReceiver, IDisposable
         this._lastRoomId = bubble.roomId;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::update()
     update(deltaMs: number): void
     {
         const chatFlow = this._chatFlow;
@@ -119,7 +119,7 @@ export class ChatFlowViewer implements IUpdateReceiver, IDisposable
         return this._rootDisplayObject;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::get viewBottom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::get viewBottom()
     get viewBottom(): number
     {
         const stageHeight = typeof window !== 'undefined' ? window.innerHeight : 0;
@@ -127,7 +127,7 @@ export class ChatFlowViewer implements IUpdateReceiver, IDisposable
         return stageHeight > 0 ? stageHeight * VIEW_BOTTOM_RATIO : VIEW_BOTTOM_DEFAULT;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::resize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::resize()
     resize(width: number, height: number): void
     {
         this._chatFlowStage.resize(width, height);

@@ -49,7 +49,7 @@ export interface IChatStyleDescriptor
  * A single chat bubble style (skin) — background/pointer/emblem bitmaps,
  * text formatting, and the flags that decide who can use/see it.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as
  */
 export class ChatStyle implements IChatStyle, IChatStyleInternal
 {
@@ -83,7 +83,7 @@ export class ChatStyle implements IChatStyle, IChatStyleInternal
     private readonly _styleSheet: IChatLinkStyleSheet | null;
     private readonly _usePixelPerfectNineSlice: boolean;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::ChatStyle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::ChatStyle()
     constructor(descriptor: IChatStyleDescriptor)
     {
         this._background = descriptor.background;
@@ -115,7 +115,7 @@ export class ChatStyle implements IChatStyle, IChatStyleInternal
         this._usePixelPerfectNineSlice = descriptor.usePixelPerfectNineSlice;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::getNewBackgroundSprite()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::getNewBackgroundSprite()
     getNewBackgroundSprite(tint: number = 0xFFFFFF): Container
     {
         let background = this._background;
@@ -162,31 +162,31 @@ export class ChatStyle implements IChatStyle, IChatStyleInternal
             : HabboFreeFlowChat.createNineSliceSprite(this._scale9Grid, background);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get textFormat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get textFormat()
     get textFormat(): IChatTextFormat
     {
         return this._textFormat;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get styleSheet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get styleSheet()
     get styleSheet(): IChatLinkStyleSheet | null
     {
         return this._styleSheet;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get pointer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get pointer()
     get pointer(): ImageBitmap | null
     {
         return this._pointer;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get pointerOffsetToBubbleBottom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get pointerOffsetToBubbleBottom()
     get pointerOffsetToBubbleBottom(): number
     {
         return this._background.height - this._pointerY;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::getPointerLeftMargin()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::getPointerLeftMargin()
     getPointerLeftMargin(defaultValue: number): number
     {
         if(!this._pointerXMargins || this._pointerXMargins.length < 1) return defaultValue;
@@ -194,7 +194,7 @@ export class ChatStyle implements IChatStyle, IChatStyleInternal
         return this._pointerXMargins[0];
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::getPointerRightMargin()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::getPointerRightMargin()
     getPointerRightMargin(defaultValue: number): number
     {
         if(!this._pointerXMargins || this._pointerXMargins.length < 2) return defaultValue;
@@ -202,19 +202,19 @@ export class ChatStyle implements IChatStyle, IChatStyleInternal
         return this._pointerXMargins[1];
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isAnonymous()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isAnonymous()
     get isAnonymous(): boolean
     {
         return this._isAnonymous;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get faceOffset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get faceOffset()
     get faceOffset(): Point | null
     {
         return this._faceOffset;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::getEmblem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::getEmblem()
     getEmblem(multiline: boolean = false): ImageBitmap | null
     {
         if(multiline && this._emblemMultiline && this._emblemMultilineOffset) return this._emblemMultiline;
@@ -223,7 +223,7 @@ export class ChatStyle implements IChatStyle, IChatStyleInternal
         return this._emblemOffset !== null ? this._emblem : null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::getEmblemOffset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::getEmblemOffset()
     getEmblemOffset(multiline: boolean = false): Point | null
     {
         if(multiline && this._emblemMultiline && this._emblemMultilineOffset) return this._emblemMultilineOffset;
@@ -231,7 +231,7 @@ export class ChatStyle implements IChatStyle, IChatStyleInternal
         return this._emblemOffset;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get iconImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get iconImage()
     // Not part of IChatStyle/IChatStyleInternal — consumed by concrete-typed callers
     // (e.g. the freeflowchat ChatBubbleFactory casts getStyle()'s result down to ChatStyle).
     get iconImage(): ImageBitmap | null
@@ -239,61 +239,61 @@ export class ChatStyle implements IChatStyle, IChatStyleInternal
         return this._icon;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get textFieldMargins()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get textFieldMargins()
     get textFieldMargins(): Rectangle
     {
         return this._textFieldMargins;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get overlap()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get overlap()
     get overlap(): Rectangle | null
     {
         return this._overlap;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get selectorPreview()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get selectorPreview()
     get selectorPreview(): ImageBitmap
     {
         return this._selectorPreview;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isSystemStyle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isSystemStyle()
     get isSystemStyle(): boolean
     {
         return this._isSystemStyle;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get purchasable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get purchasable()
     get purchasable(): boolean
     {
         return this._purchasable;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isHcOnly()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isHcOnly()
     get isHcOnly(): boolean
     {
         return this._isHcOnly;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isAmbassadorOnly()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isAmbassadorOnly()
     get isAmbassadorOnly(): boolean
     {
         return this._isAmbassadorOnly;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isStaffOverrideable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isStaffOverrideable()
     get isStaffOverrideable(): boolean
     {
         return this._isStaffOverrideable;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get allowHTML()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get allowHTML()
     get allowHTML(): boolean
     {
         return this._allowHTML;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isNotification()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isNotification()
     get isNotification(): boolean
     {
         return this._isNotification;

@@ -13,7 +13,7 @@ import type {ChatFlowViewer} from './viewer/ChatFlowViewer';
  * docs/IMPLEMENTATION_STATUS.md. The `pulldown` param is already shaped for
  * it so wiring the tray in later doesn't need to change this constructor.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/ChatViewController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/ChatViewController.as
  */
 export class ChatViewController implements IDisposable
 {
@@ -25,7 +25,7 @@ export class ChatViewController implements IDisposable
         this._chatFlowViewer?.resize(window.innerWidth, window.innerHeight);
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/ChatViewController.as::ChatViewController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/ChatViewController.as::ChatViewController()
     // TODO(AS3): 3rd AS3 param (ChatHistoryTray) omitted - see class header.
     constructor(private readonly _chatFlowViewer: ChatFlowViewer, pulldown: {rootDisplayObject: Container} | null = null)
     {
@@ -48,7 +48,7 @@ export class ChatViewController implements IDisposable
         return this._rootDisplayObject === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/ChatViewController.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/ChatViewController.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -62,7 +62,7 @@ export class ChatViewController implements IDisposable
         this._rootDisplayObject = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/ChatViewController.as::get rootDisplayObject()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/ChatViewController.as::get rootDisplayObject()
     get rootDisplayObject(): Container | null
     {
         return this._rootDisplayObject;

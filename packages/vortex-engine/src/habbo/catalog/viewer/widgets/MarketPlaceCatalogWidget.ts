@@ -38,7 +38,7 @@ const POPULATE_INTERVAL_MS = 25;
 /**
  * The public marketplace search/browse/buy widget.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as
  */
 export class MarketPlaceCatalogWidget extends CatalogWidget implements IMarketPlaceVisualization, IGetImageListener
 {
@@ -106,19 +106,19 @@ export class MarketPlaceCatalogWidget extends CatalogWidget implements IMarketPl
         return true;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::listUpdatedNotify()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::listUpdatedNotify()
     listUpdatedNotify(): void
     {
         this.hideDetails();
         this.updateList();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::removeOfferIds()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::removeOfferIds()
     removeOfferIds(_offerIds: number[]): void
     {
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::updateStats()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::updateStats()
     updateStats(): void
     {
         if(!this.marketPlace || !this.marketPlace.localization || !this.window) return;
@@ -191,7 +191,7 @@ export class MarketPlaceCatalogWidget extends CatalogWidget implements IMarketPl
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::displayMainView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::displayMainView()
     displayMainView(): void
     {
         this._dontGetOffers = true;
@@ -474,7 +474,7 @@ export class MarketPlaceCatalogWidget extends CatalogWidget implements IMarketPl
         item.procedure = this.onOfferListEvent;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::imageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::imageReady()
     imageReady(id: number, data: ImageBitmap | null): void
     {
         if(this.disposed || !this.marketPlace || !data || !this._itemList || !this._offers) return;
@@ -506,7 +506,7 @@ export class MarketPlaceCatalogWidget extends CatalogWidget implements IMarketPl
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::imageFailed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::imageFailed()
     imageFailed(_id: number): void
     {
     }

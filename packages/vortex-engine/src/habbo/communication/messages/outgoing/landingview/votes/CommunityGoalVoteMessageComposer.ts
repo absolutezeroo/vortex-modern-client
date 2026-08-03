@@ -3,7 +3,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
 /**
  * Casts a vote for one of the two sides of a "versus" community goal.
  *
- * This message is absent from the primary sources/win63_2026_crypted_version
+ * This message is absent from the primary sources/WIN63-202607011411-782849652
  * AS3 tree's landingview message folders (only present in the older
  * sources/win63_version). Registered in HabboMessages.ts with header id 1104,
  * matching sources/win63_version — this codebase mirrors win63_version's real

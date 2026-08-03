@@ -13,7 +13,7 @@ import {CatalogWidget} from './CatalogWidget';
  * distinct from the "deal" grid item icon `BundleProductContainer` shows inline in a normal
  * item grid).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/BundleGridViewCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/BundleGridViewCatalogWidget.as
  */
 export class BundleGridViewCatalogWidget extends CatalogWidget implements IItemGrid
 {

@@ -2,7 +2,7 @@
  * Fired on the widget event bus when the player's current room changes, so widgets that
  * depend on room-session state (e.g. BuilderCatalogWidget's placement buttons) can refresh.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetRoomChangedEvent.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetRoomChangedEvent.as
  */
 export class CatalogWidgetRoomChangedEvent
 {

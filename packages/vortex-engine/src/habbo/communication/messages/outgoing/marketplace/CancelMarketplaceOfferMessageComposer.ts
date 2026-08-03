@@ -6,7 +6,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * expired/unsold listing), but the wire-level composer name (recovered from
  * win63_version) is "cancel".
  *
- * @see sources/win63_2026_crypted_version/src/unknowns/_SafePkg_1746/_SafeCls_1808.as
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1746/_SafeCls_1808.as
  * (real name recovered from sources/win63_version/habbo/communication/messages/outgoing/marketplace/CancelMarketplaceOfferMessageComposer.as)
  */
 export class CancelMarketplaceOfferMessageComposer extends MessageComposer<[number]>

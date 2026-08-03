@@ -12,7 +12,7 @@ import {ExtraInfoListItem} from '../ExtraInfoListItem';
  * Clickable row explaining that a bundle discount was applied; clicking it re-opens the promo
  * item (see BundlePurchaseExtraInfoWidget.onExtraInfoItemClickedEvent()).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoBundlesInfoItem.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoBundlesInfoItem.as
  */
 export class ExtraInfoBundlesInfoItem extends ExtraInfoListItem
 {

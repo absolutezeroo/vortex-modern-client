@@ -25,7 +25,7 @@ const TEASER_IMAGE_URL_TEMPLATE = '${image.library.catalogue.url}catalogue/vip_e
  * Club/VIP membership extension (renewal) confirmation dialog: shows the original vs. discounted
  * price breakdown, a remote "teaser" image, and an animated credit-icon flourish.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as
  */
 export class ClubExtendConfirmationDialog
 {

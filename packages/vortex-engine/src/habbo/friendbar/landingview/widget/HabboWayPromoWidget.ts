@@ -13,7 +13,7 @@ import {GetCommunityGoalProgressMessageComposer} from '@habbo/communication/mess
  * "Habbo Way" community promo - shows the current community total score,
  * opens the Habbo Way help page on click.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as
  */
 export class HabboWayPromoWidget implements ILandingViewWidget
 {
@@ -21,26 +21,26 @@ export class HabboWayPromoWidget implements ILandingViewWidget
     private _container: IWindowContainer | null = null;
     private _communityTotalScore: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::HabboWayPromoWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::HabboWayPromoWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::get container()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::dispose()
     dispose(): void
     {
         this._landingView = null;
         this._container = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::initialize()
     initialize(): void
     {
         this._container = this._landingView!.getXmlWindow('habbo_way_promo') as IWindowContainer | null;
@@ -57,7 +57,7 @@ export class HabboWayPromoWidget implements ILandingViewWidget
         );
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::refresh()
     refresh(): void
     {
         this._landingView?.send(new GetCommunityGoalProgressMessageComposer());
@@ -69,7 +69,7 @@ export class HabboWayPromoWidget implements ILandingViewWidget
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::onGoButton()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::onGoButton()
     private onGoButton = (event: WindowEvent): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
@@ -77,7 +77,7 @@ export class HabboWayPromoWidget implements ILandingViewWidget
         this._landingView?.habboHelp?.showHabboWay();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::onCommunityGoalProgress()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::onCommunityGoalProgress()
     private onCommunityGoalProgress = (event: IMessageEvent): void =>
     {
         const parser = event.parser as CommunityGoalProgressMessageParser | null;
@@ -86,7 +86,7 @@ export class HabboWayPromoWidget implements ILandingViewWidget
         this.refreshContent();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::refreshContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::refreshContent()
     private refreshContent(): void
     {
         let counterText = String(this._communityTotalScore);

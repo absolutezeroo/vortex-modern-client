@@ -18,11 +18,11 @@ import {WidgetContainerLayout} from '../layout/WidgetContainerLayout';
 /**
  * Countdown to the next limited-edition rare's availability in the catalog.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as
  */
 export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProductDataListener, ISettingsAwareWidget
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::REFRESH_PERIOD_IN_MILLIS
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::REFRESH_PERIOD_IN_MILLIS
     private static readonly REFRESH_PERIOD_IN_MILLIS: number = 30000;
 
     private _landingView: HabboLandingView | null;
@@ -34,13 +34,13 @@ export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProd
     private _lastRequestTime: number | null = null;
     private _modeSwitchTimer: ReturnType<typeof setTimeout> | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::NextLimitedRareCountdownWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::NextLimitedRareCountdownWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -60,7 +60,7 @@ export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProd
         return this._container === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::initialize()
     initialize(): void
     {
         this._container = this._landingView!.getXmlWindow('next_ltd_available') as IWindowContainer | null;
@@ -80,7 +80,7 @@ export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProd
         this.requestLimitedOfferAppearingNextMessage();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::requestLimitedOfferAppearingNextMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::requestLimitedOfferAppearingNextMessage()
     private requestLimitedOfferAppearingNextMessage(): void
     {
         if(!this._landingView?.getBoolean('next.limited.rare.countdown.widget.disabled'))
@@ -89,7 +89,7 @@ export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProd
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::refresh()
     refresh(): void
     {
         const now = Date.now();
@@ -106,13 +106,13 @@ export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProd
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::productDataReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::productDataReady()
     productDataReady(): void
     {
         this.refreshContent();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::refreshContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::refreshContent()
     private refreshContent(): void
     {
         if(this.disposed || !this._landingView || !this._container) return;
@@ -146,7 +146,7 @@ export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProd
         this.refreshTimer();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::refreshTimer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::refreshTimer()
     private refreshTimer(): void
     {
         const countdown = this._container?.findChildByName('countdown') as IWidgetWindow | null;
@@ -158,7 +158,7 @@ export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProd
         widget.running = true;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::setModeSwitchTimer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::setModeSwitchTimer()
     private setModeSwitchTimer(seconds: number): void
     {
         if(seconds <= 0) return;
@@ -172,7 +172,7 @@ export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProd
         this._modeSwitchTimer = setTimeout(() => this.requestLimitedOfferAppearingNextMessage(), (seconds + 1) * 1000);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::onLimitedOfferAppearingNextMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::onLimitedOfferAppearingNextMessage()
     private onLimitedOfferAppearingNextMessage = (event: IMessageEvent): void =>
     {
         const parser = event.parser as LimitedOfferAppearingNextMessageEventParser | null;
@@ -187,7 +187,7 @@ export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProd
         this.setModeSwitchTimer(this._appearsInSeconds);
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::onOpenCatalogButton()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::onOpenCatalogButton()
     private onOpenCatalogButton = (event: WindowEvent): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
@@ -196,7 +196,7 @@ export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProd
         this._landingView?.tracking?.trackGoogle('landingView', 'click_goToNextLimitedCatalogPage');
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::set settings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::set settings()
     set settings(value: CommonWidgetSettings)
     {
         if(this._container) WidgetContainerLayout.applyCommonWidgetSettings(this._container, value);

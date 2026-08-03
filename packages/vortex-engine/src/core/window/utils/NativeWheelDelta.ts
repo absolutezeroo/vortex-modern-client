@@ -51,6 +51,31 @@ export class NativeWheelDelta
     }
 
     /**
+     * Converts the horizontal delta of a native wheel event to Flash line units.
+     *
+     * Flash raised a separate `mouseWheelHorizontal` stage event carrying its own
+     * `delta`; the DOM folds both axes into one `wheel` event, so the axis has to be
+     * picked here. `ItemListController.getScrollWheelDelta()` negates the delta again
+     * for `WME_WHEEL_HORIZONTAL`, so the shared sign flip in `convert()` is undone
+     * there - matching AS3, where both axes arrived with Flash's own convention.
+     */
+    public static horizontalFromWheelEvent(event: WheelEvent): number
+    {
+        return NativeWheelDelta.convert(event.deltaX, event.deltaMode);
+    }
+
+    /**
+     * Whether a native wheel event should be treated as a horizontal one.
+     *
+     * A trackpad emits both axes at once; the dominant one wins, matching how Flash
+     * only ever raised one of the two events for a given physical gesture.
+     */
+    public static isHorizontal(event: WheelEvent): boolean
+    {
+        return Math.abs(event.deltaX) > Math.abs(event.deltaY);
+    }
+
+    /**
      * Converts a raw `deltaY`/`deltaMode` pair to Flash line units.
      */
     public static convert(deltaY: number, deltaMode: number): number

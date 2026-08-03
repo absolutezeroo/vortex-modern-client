@@ -15,6 +15,8 @@ import {SubstituteParentController} from './components/SubstituteParentControlle
 import {EventProcessorState} from './utils/EventProcessorState';
 import {MouseEventProcessor} from './utils/MouseEventProcessor';
 import {MouseEventQueue} from './utils/MouseEventQueue';
+import {TabletEventQueue} from './utils/tablet/TabletEventQueue';
+import {TabletEventProcessor} from './utils/tablet/TabletEventProcessor';
 
 type WindowContextResizeHost = {
     width: number;
@@ -141,9 +143,8 @@ export class WindowContext implements IWindowContext
                 WindowContext._inputMode = value;
                 break;
             case WindowContext.INPUT_MODE_TOUCH:
-                // Touch pipeline is not ported yet; keep a functional queue/processor.
-                WindowContext.inputEventQueue = new MouseEventQueue();
-                WindowContext._inputEventProcessor = new MouseEventProcessor();
+                WindowContext.inputEventQueue = new TabletEventQueue();
+                WindowContext._inputEventProcessor = new TabletEventProcessor();
                 WindowContext._inputMode = value;
                 break;
             default:

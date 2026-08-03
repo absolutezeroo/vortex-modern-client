@@ -55,7 +55,7 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.ProductViewCatalogWid
  *   are fully implemented (they only depend on RoomPreviewer.updateAvatarDirectionAndLocation(),
  *   which is real).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as
  */
 export class ProductViewCatalogWidget extends CatalogWidget implements IGetImageListener, IDragAndDropDoneReceiver
 {
@@ -288,7 +288,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
             this._productImageWidgetContainer.visible = false;
         }
 
-        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::init()
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::init()
         this._rotateAvatarLeftButton = this.window.findChildByName('rotate_avatar_left');
 
         if(this._rotateAvatarLeftButton != null)
@@ -423,35 +423,35 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         }
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onRotateAvatarLeft()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onRotateAvatarLeft()
     private onRotateAvatarLeft = (event: WindowMouseEvent): void =>
     {
         this.rotateCurrentPreview(1);
         event.stopPropagation();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onRotateAvatarRight()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onRotateAvatarRight()
     private onRotateAvatarRight = (event: WindowMouseEvent): void =>
     {
         this.rotateCurrentPreview(-1);
         event.stopPropagation();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onTogglePreviewMagic()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onTogglePreviewMagic()
     private onTogglePreviewMagic = (event: WindowMouseEvent): void =>
     {
         this.cyclePreviewAvatarAction();
         event.stopPropagation();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onTogglePreviewZoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onTogglePreviewZoom()
     private onTogglePreviewZoom = (event: WindowMouseEvent): void =>
     {
         this.togglePreviewZoom();
         event.stopPropagation();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::rotateCurrentPreview()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::rotateCurrentPreview()
     private rotateCurrentPreview(direction: number): void
     {
         const roomPreviewer = this._catalog?.roomPreviewer ?? null;
@@ -475,7 +475,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::rotatePreviewAvatar()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::rotatePreviewAvatar()
     private rotatePreviewAvatar(direction: number, roomPreviewer: RoomPreviewer): void
     {
         if(this._previewMode !== ProductViewCatalogWidget.PREVIEW_MODE_AVATAR) return;
@@ -494,7 +494,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.applyPreviewAvatarDirection(roomPreviewer);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::cyclePreviewAvatarAction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::cyclePreviewAvatarAction()
     private cyclePreviewAvatarAction(): void
     {
         const roomPreviewer = this._catalog?.roomPreviewer ?? null;
@@ -505,7 +505,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.applyPreviewAvatarAction(roomPreviewer);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::togglePreviewZoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::togglePreviewZoom()
     private togglePreviewZoom(): void
     {
         if(this._previewMode !== ProductViewCatalogWidget.PREVIEW_MODE_AVATAR) return;
@@ -517,7 +517,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.updatePreviewControls();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::applyPreviewAvatarDirection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::applyPreviewAvatarDirection()
     private applyPreviewAvatarDirection(roomPreviewer: RoomPreviewer): void
     {
         roomPreviewer.updateAvatarDirectionAndLocation(this._avatarBodyDirection, this._avatarHeadDirection, this.getPreviewAvatarLocation());
@@ -525,7 +525,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         roomPreviewer.updateRoomEngine();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setPreviewMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setPreviewMode()
     private setPreviewMode(mode: number, canRotate: boolean = false): void
     {
         let resolvedMode = mode;
@@ -561,7 +561,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.updatePreviewControls();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setFloorFurnitureRotationAvailabilityMonitorEnabled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setFloorFurnitureRotationAvailabilityMonitorEnabled()
     // TS deviation: AS3 hooks the room canvas DisplayObject's own "enterFrame" event; we don't
     // have a per-DisplayObject frame event here, so this uses the window manager's shared
     // update-receiver loop instead (same mechanism HintManager uses for its own polling).
@@ -592,7 +592,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         disposed: false,
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onFloorFurnitureRotationAvailabilityFrame()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onFloorFurnitureRotationAvailabilityFrame()
     private onFloorFurnitureRotationAvailabilityFrame(): void
     {
         const roomPreviewer = this._catalog?.roomPreviewer ?? null;
@@ -613,7 +613,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::updatePreviewControls()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::updatePreviewControls()
     private updatePreviewControls(): void
     {
         const isAvatar = this._previewMode === ProductViewCatalogWidget.PREVIEW_MODE_AVATAR;
@@ -626,7 +626,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.setPreviewButtonState(this._toggleZoomButton, isAvatar, isAvatar);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setPreviewButtonState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setPreviewButtonState()
     private setPreviewButtonState(button: IWindow | null, visible: boolean, enabled: boolean): void
     {
         if(button == null) return;
@@ -643,20 +643,20 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::resetPreviewAvatarDirection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::resetPreviewAvatarDirection()
     private resetPreviewAvatarDirection(): void
     {
         this._avatarBodyDirection = ProductViewCatalogWidget.PREVIEW_AVATAR_DEFAULT_BODY_DIRECTION;
         this._avatarHeadDirection = ProductViewCatalogWidget.PREVIEW_AVATAR_DEFAULT_HEAD_DIRECTION;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::resetPreviewAvatarAction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::resetPreviewAvatarAction()
     private resetPreviewAvatarAction(): void
     {
         this._avatarAction = ProductViewCatalogWidget.PREVIEW_ACTION_STAND;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::getPreviewAvatarLocation()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::getPreviewAvatarLocation()
     private getPreviewAvatarLocation(): Vector3d | null
     {
         switch(this._avatarAction - ProductViewCatalogWidget.PREVIEW_ACTION_SIT)
@@ -670,7 +670,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::applyPreviewAvatarAction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::applyPreviewAvatarAction()
     private applyPreviewAvatarAction(roomPreviewer: RoomPreviewer): void
     {
         roomPreviewer.updateObjectUserAction('figure_dance', 0);
@@ -709,7 +709,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         roomPreviewer.updateRoomEngine();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::getNextPreviewAvatarAction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::getNextPreviewAvatarAction()
     private getNextPreviewAvatarAction(current: number): number
     {
         let next = current;
@@ -723,26 +723,26 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         return next;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::isPreviewAvatarActionSkippedForDirection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::isPreviewAvatarActionSkippedForDirection()
     private isPreviewAvatarActionSkippedForDirection(action: number, direction: number): boolean
     {
         return (action === ProductViewCatalogWidget.PREVIEW_ACTION_SIT && this.isDiagonalAvatarDirection(direction))
             || (action === ProductViewCatalogWidget.PREVIEW_ACTION_LAY && !this.isValidLayingDirection(direction));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::resetPreviewZoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::resetPreviewZoom()
     private resetPreviewZoom(): void
     {
         this._zoomState = ProductViewCatalogWidget.PREVIEW_ZOOM_NORMAL;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::animatePreviewZoomToSelection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::animatePreviewZoomToSelection()
     private animatePreviewZoomToSelection(): void
     {
         this.setPreviewZoomAnimationTarget(this._zoomState === ProductViewCatalogWidget.PREVIEW_ZOOM_IN ? 1 : 0);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setPreviewZoomAnimationTarget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setPreviewZoomAnimationTarget()
     private setPreviewZoomAnimationTarget(target: number, immediate: boolean = false): void
     {
         const clamped = Math.max(0, Math.min(1, target));
@@ -779,7 +779,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.startPreviewZoomAnimation();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::startPreviewZoomAnimation()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::startPreviewZoomAnimation()
     // TS deviation: driven by the window manager's shared update-receiver loop rather than a
     // DisplayObject "enterFrame" event - see setFloorFurnitureRotationAvailabilityMonitorEnabled().
     private startPreviewZoomAnimation(): void
@@ -795,7 +795,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         updateAware?.registerUpdateReceiver?.(this._zoomAnimationReceiver, 10);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::stopPreviewZoomAnimation()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::stopPreviewZoomAnimation()
     private stopPreviewZoomAnimation(): void
     {
         if(!this._zoomAnimationActive) return;
@@ -815,7 +815,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         disposed: false,
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewZoomAnimationFrame()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewZoomAnimationFrame()
     private onPreviewZoomAnimationFrame(): void
     {
         const remaining = this._previewZoomAnimationTargetProgress - this._previewZoomAnimationProgress;
@@ -858,7 +858,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.applyRoomCanvasZoom();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::applyRoomCanvasZoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::applyRoomCanvasZoom()
     private applyRoomCanvasZoom(): void
     {
         if(this._roomCanvas == null || this._canvasDisplayObject == null) return;
@@ -883,7 +883,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this._canvasDisplayObject.y = basePosition.y - (this._roomCanvas.height * scale - this._roomCanvas.height) / 2 - offsetY;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::normalizeAvatarDirection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::normalizeAvatarDirection()
     private normalizeAvatarDirection(direction: number): number
     {
         let result = direction % 8;
@@ -893,13 +893,13 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         return result;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::isDiagonalAvatarDirection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::isDiagonalAvatarDirection()
     private isDiagonalAvatarDirection(direction: number): boolean
     {
         return this.normalizeAvatarDirection(direction) % 2 !== 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::isValidLayingDirection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::isValidLayingDirection()
     private isValidLayingDirection(direction: number): boolean
     {
         const normalized = this.normalizeAvatarDirection(direction);
@@ -1102,7 +1102,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct()
     // ("s" product-type branch)
     private renderFurniturePreview(offer: IPurchasableOffer, product: IProduct, roomPreviewer: RoomPreviewer | null, hasRoomCanvas: boolean): {mode: number; canRotate: boolean}
     {
@@ -1152,7 +1152,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         return {mode: ProductViewCatalogWidget.PREVIEW_MODE_FLOOR_FURNITURE, canRotate: roomPreviewer.canRotatePreviewFurniture()};
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct()
     // ("i" product-type branch)
     private renderWallItemPreview(offer: IPurchasableOffer, product: IProduct, roomPreviewer: RoomPreviewer | null): {mode: number; canRotate: boolean}
     {

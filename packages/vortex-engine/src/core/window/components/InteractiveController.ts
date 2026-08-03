@@ -11,7 +11,7 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  * Extends WindowController with IInteractiveWindow functionality: tooltip,
  * mouse cursor per state, and interactive event processing.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/InteractiveController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/InteractiveController.as
  */
 export class InteractiveController extends WindowController implements IInteractiveWindow
 {
@@ -36,7 +36,7 @@ export class InteractiveController extends WindowController implements IInteract
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/InteractiveController.as::InteractiveController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/InteractiveController.as::InteractiveController()
     protected override finalize(): void
     {
         super.finalize();

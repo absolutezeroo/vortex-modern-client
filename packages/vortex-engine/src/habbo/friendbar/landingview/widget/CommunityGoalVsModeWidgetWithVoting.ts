@@ -13,20 +13,20 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
  * (both registered in HabboMessages.ts with win63_version's real header
  * ids - see CommunityGoalVoteMessageComposer.ts).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidgetWithVoting.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidgetWithVoting.as
  */
 export class CommunityGoalVsModeWidgetWithVoting extends CommunityGoalVsModeWidget
 {
     private _voteOneButton: IWindow | null = null;
     private _voteTwoButton: IWindow | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidgetWithVoting.as::CommunityGoalVsModeWidgetWithVoting()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidgetWithVoting.as::CommunityGoalVsModeWidgetWithVoting()
     constructor(landingView: HabboLandingView)
     {
         super(landingView, true);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidgetWithVoting.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidgetWithVoting.as::initialize()
     override initialize(): void
     {
         super.initialize();
@@ -42,7 +42,7 @@ export class CommunityGoalVsModeWidgetWithVoting extends CommunityGoalVsModeWidg
         this._landingView?.communicationManager?.addHabboConnectionMessageEvent(new CommunityVoteReceivedEvent(this.onInfo));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidgetWithVoting.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidgetWithVoting.as::refresh()
     override refresh(): void
     {
         super.refresh();

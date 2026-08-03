@@ -9,7 +9,7 @@ import {CatalogWidget} from './CatalogWidget';
  * Shows the badge that comes bundled with the currently selected offer (e.g. a club-day offer's
  * loyalty badge), via the shared `IBadgeImageWidget`.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/AddOnBadgeViewCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/AddOnBadgeViewCatalogWidget.as
  */
 export class AddOnBadgeViewCatalogWidget extends CatalogWidget
 {

@@ -7,11 +7,11 @@ import type {IElementHandler} from '../../interfaces/elements/IElementHandler';
 /**
  * Static image content element.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4542.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4542.as
  */
 export class ImageElementHandler implements IElementHandler
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4542.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4542.as::initialize()
     initialize(_landingView: HabboLandingView, window: IWindow, params: string[], _ownerWidget: GenericWidget): void
     {
         const bitmapWindow = window as IStaticBitmapWrapperWindow;
@@ -20,7 +20,7 @@ export class ImageElementHandler implements IElementHandler
         bitmapWindow.x = parseInt(params[2], 10);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4542.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4542.as::refresh()
     refresh(): void
     {
     }

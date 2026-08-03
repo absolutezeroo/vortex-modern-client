@@ -9,7 +9,7 @@ import type {IGridItem} from '../viewer/IGridItem';
 /**
  * A single Habbo Club/VIP subscription purchase offer (buy-days catalog entry).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/club/ClubBuyOfferData.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/club/ClubBuyOfferData.as
  */
 export class ClubBuyOfferData implements IPurchasableOffer, IDisposable
 {
@@ -39,7 +39,7 @@ export class ClubBuyOfferData implements IPurchasableOffer, IDisposable
     {
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/communication/messages/parser/catalog/HabboClubOffersMessageEventParser.as
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/parser/catalog/HabboClubOffersMessageEventParser.as
     // Reads the raw wire-DTO fields directly into the real, named data class (the AS3 parser
     // wraps an intermediate per-offer struct whose own class name is unrecoverable in all three
     // source trees - obfuscated _SafeCls_3272 in the primary tree, generic class_2374 in the

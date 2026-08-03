@@ -11,11 +11,11 @@ const log = Logger.getLogger('habbo.friendbar.landingview.widget.elements.Reward
 /**
  * Static reward-badge image content element.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4527.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4527.as
  */
 export class RewardBadgeElementHandler implements IElementHandler
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4527.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4527.as::initialize()
     initialize(_landingView: HabboLandingView, window: IWindow, params: string[], _ownerWidget: GenericWidget): void
     {
         const container = window as IWindowContainer;
@@ -41,7 +41,7 @@ export class RewardBadgeElementHandler implements IElementHandler
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4527.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4527.as::refresh()
     refresh(): void
     {
     }

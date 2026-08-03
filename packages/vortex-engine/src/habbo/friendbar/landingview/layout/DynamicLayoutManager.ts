@@ -20,13 +20,13 @@ const SLOT_COUNT = 6;
  * spacing on every resize. Slot 5 is allocated but not touched by the
  * balance methods below - ported exactly as decompiled, not "fixed".
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as
  */
 export class DynamicLayoutManager implements IDisposable
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::PLACEHOLDER_NAME
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::PLACEHOLDER_NAME
     public static readonly PLACEHOLDER_NAME: string = 'placeholder_dynamic_widget_slots';
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::CONTENT_AREA_START_X
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::CONTENT_AREA_START_X
     public static readonly CONTENT_AREA_START_X: number = 230;
     private static readonly NUMBER_OF_SLOTS: number = 5;
     private static readonly RESIZE_TOLERANCE_SCROLLBAR_VISIBILITY: number = 6;
@@ -59,7 +59,7 @@ export class DynamicLayoutManager implements IDisposable
     private _verticalSizeApplied: boolean = false;
     private _resizingWindow: IWindow | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::DynamicLayoutManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::DynamicLayoutManager()
     constructor(layout: WidgetContainerLayout, settings: CommonWidgetSettings)
     {
         this._layout = layout;
@@ -108,7 +108,7 @@ export class DynamicLayoutManager implements IDisposable
         this._centerScrollableList.arrangeListItems();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -132,19 +132,19 @@ export class DynamicLayoutManager implements IDisposable
         this._layout = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::get disposed()
     get disposed(): boolean
     {
         return this._layout === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::getDynamicSlotContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::getDynamicSlotContainer()
     getDynamicSlotContainer(index: number): IWindowContainer | null
     {
         return this._slots[index];
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::enableSeparator()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::enableSeparator()
     enableSeparator(slotNumber: number, titleKey: string): void
     {
         let targetList: IItemListWindow | null;
@@ -192,7 +192,7 @@ export class DynamicLayoutManager implements IDisposable
         return (this._slots[index]?.numChildren ?? 0) > 0;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::resizeTo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::resizeTo()
     resizeTo(width: number, height: number): void
     {
         this._topItemList.height = Math.min(height, this.topItemListInitialHeight);
@@ -201,7 +201,7 @@ export class DynamicLayoutManager implements IDisposable
         this.applyVerticalSize();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::get topItemListInitialHeight()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::get topItemListInitialHeight()
     get topItemListInitialHeight(): number
     {
         if(this._topItemListInitialHeightCache === -1)
@@ -212,7 +212,7 @@ export class DynamicLayoutManager implements IDisposable
         return this._topItemListInitialHeightCache;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::get topItemListInitialWidth()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::get topItemListInitialWidth()
     get topItemListInitialWidth(): number
     {
         if(this._topItemListInitialWidthCache === -1)
@@ -428,7 +428,7 @@ export class DynamicLayoutManager implements IDisposable
         this._centerSlotsContainer.height = maxHeight;
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::set ignoreBottomRightSlot()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::set ignoreBottomRightSlot()
     set ignoreBottomRightSlot(value: boolean)
     {
         this._ignoreBottomRightSlot = value;

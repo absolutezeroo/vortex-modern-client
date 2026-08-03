@@ -18,7 +18,7 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.SpacesNewCatalogWidge
  * Item grid grouped into wall/floor/landscape categories via a radio selector, driving the
  * "spaces" room preview (walls + floor + landscape shown together).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/SpacesNewCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpacesNewCatalogWidget.as
  */
 export class SpacesNewCatalogWidget extends ItemGridCatalogWidget
 {

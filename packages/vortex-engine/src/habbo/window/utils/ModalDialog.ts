@@ -20,7 +20,7 @@ const log = Logger.getLogger('habbo.window.utils.ModalDialog');
  * modal dialogs, stacking them with alternating background/content
  * child pairs.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/window/utils/ModalDialog.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as
  */
 export class ModalDialog implements IModalDialog
 {
@@ -153,7 +153,7 @@ export class ModalDialog implements IModalDialog
 	 * port's compositor has no such quirk (it skips invisible desktops), so
 	 * the snapshot is taken before the desktops are hidden instead.
 	 */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/utils/ModalDialog.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::refresh()
     private static refresh(): void
     {
         if(!ModalDialog._container) return;

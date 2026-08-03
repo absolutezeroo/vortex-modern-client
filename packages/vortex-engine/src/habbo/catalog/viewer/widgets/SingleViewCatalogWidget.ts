@@ -8,7 +8,7 @@ import {ProductViewCatalogWidget} from './ProductViewCatalogWidget';
  * A `ProductViewCatalogWidget` that also auto-selects the page's first offer once every widget
  * on the page has finished initializing - used by single-offer pages that skip the item grid.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/SingleViewCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SingleViewCatalogWidget.as
  */
 export class SingleViewCatalogWidget extends ProductViewCatalogWidget
 {

@@ -6,20 +6,20 @@ import {CommunityGoalWidget} from './CommunityGoalWidget';
  * 7-level ±3 scale instead of the base 0-3 scale, and never auto-builds up
  * (jumps straight to its target frame every `update()` tick).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidget.as
  */
 export class CommunityGoalVsModeWidget extends CommunityGoalWidget
 {
     private static readonly NEEDLE_LEVELS: number[] = [-3, -2, -1, 0, 1, 2, 3];
     private static readonly NEEDLE_FRAMES: number[] = [0, 0, 4.75, 11.5, 16.25, 23, 23];
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidget.as::CommunityGoalVsModeWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidget.as::CommunityGoalVsModeWidget()
     constructor(landingView: HabboLandingView, votingMode: boolean = false)
     {
         super(landingView, votingMode);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidget.as::getCurrentNeedleFrame()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidget.as::getCurrentNeedleFrame()
     protected override getCurrentNeedleFrame(): number
     {
         const levels = CommunityGoalVsModeWidget.NEEDLE_LEVELS;
@@ -46,13 +46,13 @@ export class CommunityGoalVsModeWidget extends CommunityGoalWidget
         return Math.round(baseFrame + (progress.percentCompletionTowardsNextLevel / 100) * frameSpan * direction);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidget.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidget.as::update()
     override update(_elapsedTime: number): void
     {
         this.updateMeter(Math.floor(this.getCurrentNeedleFrame()), false);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidget.as::initialize()
     override initialize(): void
     {
         super.initialize();

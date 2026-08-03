@@ -59,7 +59,7 @@ export class WindowRendererItem
         return this._skinContainer.getTheActualState(window.type, window.style, window.state) !== this._previousState;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/WindowRendererItem.as::needsRedraw()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/WindowRendererItem.as::needsRedraw()
     public needsRedraw(window: IWindow): boolean
     {
         return this._refresh || this.testForStateChange(window);

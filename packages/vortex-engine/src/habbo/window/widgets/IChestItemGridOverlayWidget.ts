@@ -6,7 +6,7 @@ import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
  * Displays a colored plaque (silver/gold/brown) with a contents-count
  * number on a grid item, for "chest"-type catalog/inventory items.
  *
- * @see sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as
  */
 export interface IChestItemGridOverlayWidget
 {

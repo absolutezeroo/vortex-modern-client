@@ -7,7 +7,7 @@ import type {Rectangle} from 'pixi.js';
  * baked to a bitmap (ChatHistoryEntryBitmapBubble) or a room-change marker
  * (ChatHistoryRoomChangeEntry).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2418.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2418.as
  */
 export interface IChatHistoryEntry
 {

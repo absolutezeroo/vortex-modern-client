@@ -103,7 +103,7 @@ export class TextController extends WindowController implements ITextWindow
     protected _numLinesCache: number = 1;
     protected _maxScrollHCache: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::_field
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::_field
     // Flash's own top-padding quirk for TextField content — must match
     // WindowComposite.FLASH_TEXT_FIELD_TOP_GUTTER, which renders the same text.
     // Protected, not private: TextFieldController positions its DOM caret bridge
@@ -154,7 +154,7 @@ export class TextController extends WindowController implements ITextWindow
         this._fieldHeight = rect.height;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::TextController() (setTextFormatting(), called post-super)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::TextController() (setTextFormatting(), called post-super)
     protected override finalize(): void
     {
         super.finalize();
@@ -722,7 +722,7 @@ export class TextController extends WindowController implements ITextWindow
 	 * always renders single-line, unwrapped text, so this doesn't affect real
 	 * behavior yet.
 	 */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::getCharIndexAtPoint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getCharIndexAtPoint()
     public getCharIndexAtPoint(localX: number, localY: number): number
     {
         if(!this._text) return -1;
@@ -770,7 +770,7 @@ export class TextController extends WindowController implements ITextWindow
 	 * calls it with no arguments for the whole-field base format, so a
 	 * per-range read isn't implemented.
 	 */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::getTextFormat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getTextFormat()
     public getTextFormat(_beginIndex: number = -1, _endIndex: number = -1): ITextFormat
     {
         return {
@@ -790,7 +790,7 @@ export class TextController extends WindowController implements ITextWindow
 	 * original too (TextController.as::setTextFormat() guards on exactly
 	 * this condition before touching `_field`).
 	 */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::setTextFormat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setTextFormat()
     public setTextFormat(format: ITextFormat, beginIndex: number = -1, endIndex: number = -1): void
     {
         if(beginIndex >= 0 && endIndex > beginIndex && endIndex < this._text.length)

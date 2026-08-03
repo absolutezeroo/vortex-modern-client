@@ -1,7 +1,7 @@
 /**
  * InfoStandUserView
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as
  *
  * Phase 1 (identity only) port: name (with a working profile-link click/
  * hover), motto (read-only), avatar figure, badges, hand-item, and (when
@@ -24,7 +24,7 @@ import {RoomWidgetOpenProfileMessage} from '../messages/RoomWidgetOpenProfileMes
 import type {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUpdateEvent';
 import type {InfoStandWidget} from './InfoStandWidget';
 
-// AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::LINK_COLOR_ACTIONS_HOVER
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::LINK_COLOR_ACTIONS_HOVER
 const LINK_COLOR_HOVER = 0x91C2FF;
 const LINK_COLOR_DEFAULT = 0xFFFFFF;
 
@@ -32,38 +32,38 @@ const BADGE_SLOT_COUNT = 5;
 
 export class InfoStandUserView
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_4549
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_4549
     protected _widget: InfoStandWidget;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_window
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_window
     protected _window: IItemListWindow | null = null;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_4558
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_4558
     protected _infoBorder: IWindowContainer | null = null;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_4641
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_4641
     protected _elementList: IItemListWindow | null = null;
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_5253
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_5253
     protected _profileLink: IWindowContainer | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::InfoStandUserView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::InfoStandUserView()
     constructor(widget: InfoStandWidget, name: string)
     {
         this._widget = widget;
         this.createWindow(name);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::dispose()
     public dispose(): void
     {
         this._window?.dispose();
         this._window = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::get window()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::get window()
     public get window(): IWindow | null
     {
         return this._window;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::createWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::createWindow()
     protected createWindow(name: string): void
     {
         const window = this._widget.getXmlWindow('user_view') as IItemListWindow | null;
@@ -106,13 +106,13 @@ export class InfoStandUserView
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::onClose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::onClose()
     private onClose = (_event: WindowMouseEvent): void =>
     {
         this._widget.close();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::set name()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::set name()
     public set name(value: string)
     {
         if(!this._profileLink)
@@ -139,7 +139,7 @@ export class InfoStandUserView
 	 * clicked user's extended profile — matches AS3's InfoStandUserView.as
 	 * wiring both regions to this same procedure.
 	 */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::onProfileLink()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::onProfileLink()
     private onProfileLink = (event: WindowEvent, window: IWindow): void =>
     {
         if(event.type === WindowMouseEvent.CLICK)
@@ -164,7 +164,7 @@ export class InfoStandUserView
         }
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setFigure()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setFigure()
     public setFigure(figure: string): void
     {
         const widgetWindow = this._infoBorder?.findChildByName('avatar_image') as IWidgetWindow | null;
@@ -182,7 +182,7 @@ export class InfoStandUserView
 	 * IS ported: it's not display polish, it's the only AS3 mechanism that
 	 * ever sets avatar_image.visible (the layout defaults it to false).
 	 */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setMotto()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setMotto()
     public setMotto(motto: string, _editable: boolean): void
     {
         const mottoContainer = this._elementList?.getListItemByName('motto_container') as IWindowContainer | null;
@@ -210,7 +210,7 @@ export class InfoStandUserView
         this.updateWindow();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::set achievementScore()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::set achievementScore()
     public set achievementScore(value: number)
     {
         if(!this._widget.handler.isActivityDisplayEnabled) return;
@@ -222,7 +222,7 @@ export class InfoStandUserView
         scoreValue.text = String(value);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::set carryItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::set carryItem()
     public set carryItem(value: number)
     {
         const handitemText = this._elementList?.getListItemByName('handitem_txt') as ITextWindow | null;
@@ -253,7 +253,7 @@ export class InfoStandUserView
         this.updateWindow();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setBadge()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setBadge()
     public setBadge(index: number, badgeId: string): void
     {
         const widgetWindow = this._infoBorder?.findChildByName(`badge_${index}`) as IWidgetWindow | null;
@@ -262,7 +262,7 @@ export class InfoStandUserView
         if(widget) widget.badgeId = badgeId;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::clearBadges()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::clearBadges()
     public clearBadges(): void
     {
         for(let i = 0; i < BADGE_SLOT_COUNT; i++)
@@ -271,13 +271,13 @@ export class InfoStandUserView
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::clearGroupBadge()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::clearGroupBadge()
     public clearGroupBadge(): void
     {
         this.setGroupBadge('');
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setGroupBadge()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setGroupBadge()
     public setGroupBadge(badgeId: string | null): void
     {
         const widgetWindow = this._infoBorder?.findChildByName('badge_group') as IWidgetWindow | null;
@@ -292,12 +292,12 @@ export class InfoStandUserView
 	 * rest of the relationship-status feature (needs RoomSessionFavouriteGroupUpdateEvent
 	 * wiring, not part of the Phase 1 identity scope).
 	 */
-    // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setRelationshipStatuses()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setRelationshipStatuses()
     public setRelationshipStatuses(_statuses: unknown): void
     {
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::update()
     // TODO(AS3): badge glow/preserve tracking (selectedBadges, playGlow) not
     // carried — see InfoStandWidget.onUserInfo()'s same scope cut.
     public update(event: RoomWidgetUserInfoUpdateEvent): void
@@ -307,7 +307,7 @@ export class InfoStandUserView
         this.updateInfo(event);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::updateInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::updateInfo()
     protected updateInfo(event: RoomWidgetUserInfoUpdateEvent): void
     {
         this.name = event.name;
@@ -318,7 +318,7 @@ export class InfoStandUserView
         this.updateBadges(event.badges);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::updateBadges()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::updateBadges()
     // TODO(AS3): AS3 prefers `selectedBadges` (slot-indexed, rarity-aware) over
     // the plain `badges` array when present — not tracked in Phase 1, always
     // falls through to the plain-badges branch.
@@ -334,7 +334,7 @@ export class InfoStandUserView
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::updateWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::updateWindow()
     protected updateWindow(): void
     {
         if(!this._elementList || !this._infoBorder) return;

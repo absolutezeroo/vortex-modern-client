@@ -1,7 +1,7 @@
 /**
  * RoomChatInputView
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as
  *
  * TODO(AS3): scope-reduced for the first pass — the habbicon selector
  * (HabbiconSelector), the NUX first-time chat reminder animation, the "chat
@@ -64,13 +64,13 @@ export class RoomChatInputView
         return this._window;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::get widget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::get widget()
     public get widget(): RoomChatInputWidget | null
     {
         return this._widget;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::get chatStyleMenuContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::get chatStyleMenuContainer()
     public get chatStyleMenuContainer(): IWindowContainer | null
     {
         return this._chatStyleMenuContainer;
@@ -430,13 +430,13 @@ export class RoomChatInputView
         this._lastText = restoreText;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::customChatStylesEnabled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::customChatStylesEnabled()
     private customChatStylesEnabled(): boolean
     {
         return this._widget?.roomUi?.getBoolean('custom.chat.styles.enabled') ?? false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::createOrUpdateChatStylesView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::createOrUpdateChatStylesView()
     public createOrUpdateChatStylesView(): void
     {
         const container = this._widget?.handler.container;
@@ -488,7 +488,7 @@ export class RoomChatInputView
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::createChatStyleSelectorMenuItems()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::createChatStyleSelectorMenuItems()
     private createChatStyleSelectorMenuItems(allowedIds: number[]): void
     {
         const container = this._widget?.handler.container;
@@ -521,35 +521,35 @@ export class RoomChatInputView
         this._chatStyleSelector.initFontSizeSelection(freeFlowChat?.chatFontSizeMode ?? 0);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideHabbiconSelector()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideHabbiconSelector()
     // TODO(AS3): no-op - HabbiconSelector isn't ported (matches AS3's own
     // `if(_habbiconSelector) ...` guard, which is always false here).
     public hideHabbiconSelector(): void
     {
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideChatStyleSelector()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideChatStyleSelector()
     public hideChatStyleSelector(): void
     {
         if(this._chatStyleSelector) this._chatStyleSelector.hide();
         else if(this._chatStyleMenuContainer) this._chatStyleMenuContainer.visible = false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideTransientSelectors()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideTransientSelectors()
     public hideTransientSelectors(): void
     {
         this.hideHabbiconSelector();
         this.hideChatStyleSelector();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::chatInputWindowProcedure()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::chatInputWindowProcedure()
     private chatInputWindowProcedure = (event: WindowEvent, window: IWindow): void =>
     {
         if(event.type === 'WME_CLICK') this.hideSelectorsIfClickOutside(window);
         else if(event.type === 'WME_CLICK_AWAY') this.hideSelectorsIfClickOutside(event.related);
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideSelectorsIfClickOutside()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideSelectorsIfClickOutside()
     // TODO(AS3): the habbicon-selector half of this guard is omitted - always false, see
     // hideHabbiconSelector()'s header.
     private hideSelectorsIfClickOutside(clicked: IWindow | null): void
@@ -560,7 +560,7 @@ export class RoomChatInputView
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::getChatInputY()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::getChatInputY()
     public getChatInputY(): number
     {
         const container = this._window?.findChildByName('chat_input_container');

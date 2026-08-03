@@ -11,7 +11,7 @@ import type {IScrollableWindow} from './IScrollableWindow';
  * no current caller (chat-message links, the only setTextFormat() consumer)
  * needs them, and the renderer only supports one font/size per text window.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::getTextFormat()
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getTextFormat()
  */
 export interface ITextFormat
 {
@@ -67,12 +67,12 @@ export interface ITextWindow extends IWindow, IScrollableWindow
 
     replaceText(beginIndex: number, endIndex: number, newText: string): void;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::getCharIndexAtPoint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getCharIndexAtPoint()
     getCharIndexAtPoint(localX: number, localY: number): number;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::getTextFormat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getTextFormat()
     getTextFormat(beginIndex?: number, endIndex?: number): ITextFormat;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::setTextFormat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setTextFormat()
     setTextFormat(format: ITextFormat, beginIndex?: number, endIndex?: number): void;
 }

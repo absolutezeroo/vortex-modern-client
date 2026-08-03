@@ -1,7 +1,7 @@
 /**
  * Fired on the widget event bus to display a warning message via WarningCatalogWidget.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetShowWarningTextEvent.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetShowWarningTextEvent.as
  */
 export class CatalogWidgetShowWarningTextEvent
 {

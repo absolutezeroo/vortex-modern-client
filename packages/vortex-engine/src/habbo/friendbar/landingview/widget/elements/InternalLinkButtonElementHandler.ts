@@ -14,14 +14,14 @@ import {ButtonElementHandler} from './ButtonElementHandler';
  * _SafeCls_4535 (internallinkbutton) read directly from the primary source,
  * since the win63_version positional listing does not correspond 1:1.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4535.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4535.as
  */
 export class InternalLinkButtonElementHandler extends ButtonElementHandler
 {
     private _linkTarget: string = '';
     private _configurationCode: string = '';
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4535.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4535.as::initialize()
     override initialize(landingView: HabboLandingView, window: IWindow, params: string[], ownerWidget: GenericWidget): void
     {
         super.initialize(landingView, window, params, ownerWidget);
@@ -29,7 +29,7 @@ export class InternalLinkButtonElementHandler extends ButtonElementHandler
         this._configurationCode = ownerWidget.configurationCode ?? '';
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4535.as::onClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4535.as::onClick()
     protected override onClick(): void
     {
         this.landingView?.context.createLinkEvent(this._linkTarget);

@@ -678,7 +678,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
     private _configurationManager: IHabboConfigurationManager | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/session/SessionDataManager.as::get currentTalentTrack()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::get currentTalentTrack()
     get currentTalentTrack(): string
     {
         const citizenshipEnabled = this._configurationManager?.getBoolean('talent.track.citizenship.enabled') ?? false;

@@ -35,7 +35,7 @@ export class ContainerButtonController extends InteractiveController
     /**
 	 * Returns an iterator over children.
 	 */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ContainerButtonController.as::iterator()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ContainerButtonController.as::iterator()
     public iterator(): IIterator
     {
         return new ContainerIterator(this);

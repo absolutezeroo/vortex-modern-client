@@ -17,7 +17,7 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.VipBuyCatalogWidget')
  * VIP purchase widget (also reused for gifting VIP to another user via the `isGift` constructor
  * flag).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as
  */
 export class VipBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalogWidget
 {
@@ -108,7 +108,7 @@ export class VipBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalog
         this.initLinks();
     }
 
-    // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::fixFormatting()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::fixFormatting()
     // ITextFormat (ITextWindow.ts) doesn't carry align/leading yet - documented pre-existing gap
     // ("not threaded through here since no current caller needs them"); this is now a real caller,
     // but extending the shared per-range text-format type is out of scope for this widget.
@@ -137,7 +137,7 @@ export class VipBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalog
         }
     }
 
-    // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::setLinkStyle()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::setLinkStyle()
     // Needs a flash.text.StyleSheet-equivalent (CSS-in-caption rendering) - same pre-existing gap
     // already documented in LocalizationCatalogWidget.ts's own setLinkStyle() note.
     private setLinkStyle(_field: ITextWindow): void

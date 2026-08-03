@@ -23,15 +23,11 @@ export interface IItemListWindow extends IWindowContainer, IScrollableWindow
     readonly firstListItem: IWindow | null;
     readonly lastListItem: IWindow | null;
     readonly scrollableWindow: IWindow;
-    disableAutodrag: boolean;
-    enableScrollByDragging: boolean;
 
     arrangeItems(): void;
     arrangeListItems(): void;
 
     populate(items: IWindow[]): void;
-
-    stopDragging(): void;
 
     scrollWithWheel(delta: number, useHorizontal: boolean): boolean;
 

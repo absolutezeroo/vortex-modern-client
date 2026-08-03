@@ -63,7 +63,7 @@ export class ThemeManager implements IThemeManager
         // AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("auto_size","none",["none","left","center","right"])
         properties.addEnumeration('auto_size', 'none', ['none', 'left', 'center', 'right']);
         properties.addString('bitmap_asset_name', '');
-        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("fill_mode","stretch",["stretch","tile","center","cover","contain"])
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("fill_mode","stretch",["stretch","tile","center","cover","contain"])
         properties.addEnumeration('fill_mode', 'stretch', ['stretch', 'tile', 'center', 'cover', 'contain']);
         properties.addBoolean('border', false);
         properties.addHex('border_color', 0);
@@ -79,7 +79,7 @@ export class ThemeManager implements IThemeManager
         properties.addBoolean('flip_x', false);
         properties.addBoolean('flip_y', false);
         properties.addBoolean('focus_capturer', false);
-        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager() — addHex("color1",4294967295)/addHex("color2",4278190080)/addEnumeration("mode","linear",["linear","radial"])
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager() — addHex("color1",4294967295)/addHex("color2",4278190080)/addEnumeration("mode","linear",["linear","radial"])
         properties.addHex('color1', 0xFFFFFFFF);
         properties.addHex('color2', 0xFF000000);
         properties.addEnumeration('mode', 'linear', ['linear', 'radial']);
@@ -117,7 +117,7 @@ export class ThemeManager implements IThemeManager
         properties.addNumber('scroll_step_h', -1);
         properties.addNumber('scroll_step_v', -1);
         properties.addBoolean('selectable', true);
-        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("shape","rectangle",["rectangle","round_rectangle","ellipse","rhombus"])
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("shape","rectangle",["rectangle","round_rectangle","ellipse","rhombus"])
         properties.addEnumeration('shape', 'rectangle', ['rectangle', 'round_rectangle', 'ellipse', 'rhombus']);
         properties.addString('sides', 'all');
         properties.addHex('stroke_color', 0xFF000000);
@@ -197,7 +197,7 @@ export class ThemeManager implements IThemeManager
 
         this._themes.set(Theme.UBUNTU, new Theme(Theme.UBUNTU, true, 3, 5, ubuntuProps));
 
-        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager()
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager()
         // Misc theme: real theme, styles 10000-10007, clones Ubuntu's properties (antialias/text_style overrides included)
         this._themes.set(Theme.MISC, new Theme(Theme.MISC, true, 10000, 8, ubuntuProps.clone()));
 

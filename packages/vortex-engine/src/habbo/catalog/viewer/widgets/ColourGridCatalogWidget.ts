@@ -19,7 +19,7 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.ColourGridCatalogWidg
  * `BitmapSkinRenderer.colorizeEntity()`). Supports single-colour and two-tone (diagonal split)
  * swatches.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ColourGridCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ColourGridCatalogWidget.as
  */
 export class ColourGridCatalogWidget extends CatalogWidget
 {

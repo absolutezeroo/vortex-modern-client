@@ -288,7 +288,7 @@ export class InfoStandWidget extends RoomWidgetBase
 	 * re-glow flicker on repeat clicks) and stops a tooltip-close timer — both
 	 * deferred as display polish, not needed for basic identity display.
 	 */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onUserInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onUserInfo()
     private onUserInfo = (event: RoomWidgetUserInfoUpdateEvent): void =>
     {
         this._userData.setData(event);
@@ -299,7 +299,7 @@ export class InfoStandWidget extends RoomWidgetBase
         this.selectView(VIEW_NAME.USER);
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onBotInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onBotInfo()
     private onBotInfo = (event: RoomWidgetUserInfoUpdateEvent): void =>
     {
         this._userData.setData(event);

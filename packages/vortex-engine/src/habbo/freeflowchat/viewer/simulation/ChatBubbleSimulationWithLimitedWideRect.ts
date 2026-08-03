@@ -11,7 +11,7 @@ import {ChatBubbleSimulationEntity} from './ChatBubbleSimulationEntity';
  * wideRect centered on the bubble, offset by a mutable `wideRectOffset` that
  * the collision/relaxation passes can nudge independently of `x`.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as
  */
 export class ChatBubbleSimulationWithLimitedWideRect extends ChatBubbleSimulationEntity
 {
@@ -20,7 +20,7 @@ export class ChatBubbleSimulationWithLimitedWideRect extends ChatBubbleSimulatio
 
     private _wideRectOffset: number;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as::ChatBubbleSimulationWithLimitedWideRect()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as::ChatBubbleSimulationWithLimitedWideRect()
     constructor(bubble: PooledChatBubble)
     {
         super(bubble, false);
@@ -33,7 +33,7 @@ export class ChatBubbleSimulationWithLimitedWideRect extends ChatBubbleSimulatio
         this._wideRect.y = this._visualRect.y;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as::get x()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as::get x()
     // Not overridden in AS3 either - re-declared here only because JS/TS accessor
     // pairs are defined per-prototype-level (unlike AS3's independently overridable
     // get/set method slots), so overriding just the setter below would otherwise
@@ -43,7 +43,7 @@ export class ChatBubbleSimulationWithLimitedWideRect extends ChatBubbleSimulatio
         return super.x;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as::set x()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as::set x()
     override set x(value: number)
     {
         this._x += (value - this._x) * (1 - ChatBubbleSimulationWithLimitedWideRect.MOVE_NEGATIVE_FEEDBACK);
@@ -52,7 +52,7 @@ export class ChatBubbleSimulationWithLimitedWideRect extends ChatBubbleSimulatio
         if(this._wideRect) this._wideRect.x = this._visualRect.x + this._wideRectOffset;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as::initializePosition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as::initializePosition()
     override initializePosition(x: number, y: number): void
     {
         const overlap = this._visualization?.overlap ?? null;
@@ -69,13 +69,13 @@ export class ChatBubbleSimulationWithLimitedWideRect extends ChatBubbleSimulatio
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as::get wideRectOffset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as::get wideRectOffset()
     get wideRectOffset(): number
     {
         return this._wideRectOffset;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as::set wideRectOffset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as::set wideRectOffset()
     set wideRectOffset(value: number)
     {
         this._wideRectOffset = value;

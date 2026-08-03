@@ -6,7 +6,7 @@ import type {HabboCatalog} from '../HabboCatalog';
 /**
  * Standalone "VIP benefits" info popup, opened from the VIP buy widget's benefits link.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/club/VipBenefitsWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/club/VipBenefitsWindow.as
  */
 export class VipBenefitsWindow implements IDisposable
 {

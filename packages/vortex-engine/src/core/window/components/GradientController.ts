@@ -9,25 +9,25 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  *
  * Actual drawing is performed by {@link GradientSkinRenderer}.
  *
- * @see sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as
  */
 export class GradientController extends WindowController
 {
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::MODE_LINEAR
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::MODE_LINEAR
     public static readonly MODE_LINEAR: string = 'linear';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::MODE_RADIAL
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::MODE_RADIAL
     public static readonly MODE_RADIAL: string = 'radial';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::DIRECTION_UP_LEFT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::DIRECTION_UP_LEFT
     public static readonly DIRECTION_UP_LEFT: string = 'up_left';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::DIRECTION_UP_RIGHT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::DIRECTION_UP_RIGHT
     public static readonly DIRECTION_UP_RIGHT: string = 'up_right';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::DIRECTION_DOWN_LEFT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::DIRECTION_DOWN_LEFT
     public static readonly DIRECTION_DOWN_LEFT: string = 'down_left';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::DIRECTION_DOWN_RIGHT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::DIRECTION_DOWN_RIGHT
     public static readonly DIRECTION_DOWN_RIGHT: string = 'down_right';
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::MODES
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::MODES
     public static readonly MODES: readonly string[] = ['linear', 'radial'];
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::_SafeStr_6668 (DIRECTIONS)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::_SafeStr_6668 (DIRECTIONS)
     public static readonly DIRECTIONS: readonly string[] = [
         'up', 'down', 'left', 'right', 'up_left', 'up_right', 'down_left', 'down_right',
     ];
@@ -42,7 +42,7 @@ export class GradientController extends WindowController
     private _mode: string | null = null;
     private _direction: string | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::GradientController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::GradientController()
     constructor(
         name: string,
         type: number,
@@ -60,7 +60,7 @@ export class GradientController extends WindowController
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::GradientController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::GradientController()
     protected override finalize(): void
     {
         super.finalize();
@@ -71,25 +71,25 @@ export class GradientController extends WindowController
         this._direction ??= 'down';
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::normalizeMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::normalizeMode()
     public static normalizeMode(value: string): string
     {
         return value === 'radial' ? 'radial' : 'linear';
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::normalizeDirection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::normalizeDirection()
     public static normalizeDirection(value: string): string
     {
         return GradientController.DIRECTIONS.indexOf(value) >= 0 ? value : 'down';
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::get color1()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::get color1()
     public get color1(): number
     {
         return this._color1 ?? 0xFFFFFFFF;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::set color1()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::set color1()
     public set color1(value: number)
     {
         if(this._color1 !== value)
@@ -99,13 +99,13 @@ export class GradientController extends WindowController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::get color2()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::get color2()
     public get color2(): number
     {
         return this._color2 ?? 0xFF000000;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::set color2()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::set color2()
     public set color2(value: number)
     {
         if(this._color2 !== value)
@@ -115,13 +115,13 @@ export class GradientController extends WindowController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::get mode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::get mode()
     public get mode(): string
     {
         return this._mode ?? 'linear';
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::set mode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::set mode()
     public set mode(value: string)
     {
         const normalized = GradientController.normalizeMode(value);
@@ -133,13 +133,13 @@ export class GradientController extends WindowController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::get direction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::get direction()
     public get direction(): string
     {
         return this._direction ?? 'down';
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::set direction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::set direction()
     public set direction(value: string)
     {
         const normalized = GradientController.normalizeDirection(value);
@@ -151,7 +151,7 @@ export class GradientController extends WindowController
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::get properties()
     public override get properties(): unknown[]
     {
         const props = super.properties;
@@ -164,7 +164,7 @@ export class GradientController extends WindowController
         return props;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::set properties()
     public override set properties(value: unknown[])
     {
         for(const item of value)

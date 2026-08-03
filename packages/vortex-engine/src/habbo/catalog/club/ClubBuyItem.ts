@@ -7,7 +7,7 @@ import type {ClubBuyOfferData} from './ClubBuyOfferData';
 /**
  * A single Club-buy list row (used for both the HC and VIP item lists on the club buy page).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/club/ClubBuyItem.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/club/ClubBuyItem.as
  */
 export class ClubBuyItem
 {

@@ -7,9 +7,9 @@
  * `lowestCurrentPrice`/`suggestedPrice` are primary-tree-only additions not
  * present in PRODUCTION-201601012205-226667486's `MarketplaceItemStats` (whose readable field
  * names - `currentOfferCount` in particular - are used here in place of the
- * ambiguous `offerCount` getter name recovered from win63_2026_crypted_version).
+ * ambiguous `offerCount` getter name recovered from WIN63-202607011411-782849652).
  *
- * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as
  * (real class name recovered from sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/catalog/marketplace/MarketplaceItemStats.as)
  */
 export class MarketplaceItemStats 
@@ -18,13 +18,13 @@ export class MarketplaceItemStats
 
     private _averagePrice: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get averagePrice()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get averagePrice()
     get averagePrice(): number 
     {
         return this._averagePrice;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set averagePrice()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set averagePrice()
     set averagePrice(value: number) 
     {
         this._averagePrice = value;
@@ -32,13 +32,13 @@ export class MarketplaceItemStats
 
     private _historyLength: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get historyLength()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get historyLength()
     get historyLength(): number 
     {
         return this._historyLength;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set historyLength()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set historyLength()
     set historyLength(value: number) 
     {
         this._historyLength = value;
@@ -46,13 +46,13 @@ export class MarketplaceItemStats
 
     private _dayOffsets: number[] = [];
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get dayOffsets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get dayOffsets()
     get dayOffsets(): number[] 
     {
         return this._dayOffsets;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set dayOffsets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set dayOffsets()
     set dayOffsets(value: number[]) 
     {
         this._dayOffsets = value.slice();
@@ -60,15 +60,15 @@ export class MarketplaceItemStats
 
     private _averagePrices: number[] = [];
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get averagePrices()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get averagePrices()
     get averagePrices(): number[] 
     {
         return this._averagePrices;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get offerCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get offerCount()
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set averagePrices()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set averagePrices()
     set averagePrices(value: number[]) 
     {
         this._averagePrices = value.slice();
@@ -76,13 +76,13 @@ export class MarketplaceItemStats
 
     private _soldAmounts: number[] = [];
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get soldAmounts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get soldAmounts()
     get soldAmounts(): number[] 
     {
         return this._soldAmounts;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set soldAmounts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set soldAmounts()
     set soldAmounts(value: number[]) 
     {
         this._soldAmounts = value.slice();
@@ -90,13 +90,13 @@ export class MarketplaceItemStats
 
     private _furniTypeId: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get furniTypeId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get furniTypeId()
     get furniTypeId(): number 
     {
         return this._furniTypeId;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set furniTypeId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set furniTypeId()
     set furniTypeId(value: number) 
     {
         this._furniTypeId = value;
@@ -104,13 +104,13 @@ export class MarketplaceItemStats
 
     private _furniCategoryId: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get furniCategoryId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get furniCategoryId()
     get furniCategoryId(): number 
     {
         return this._furniCategoryId;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set furniCategoryId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set furniCategoryId()
     set furniCategoryId(value: number) 
     {
         this._furniCategoryId = value;
@@ -118,13 +118,13 @@ export class MarketplaceItemStats
 
     private _lowestCurrentPrice: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get lowestCurrentPrice()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get lowestCurrentPrice()
     get lowestCurrentPrice(): number 
     {
         return this._lowestCurrentPrice;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set lowestCurrentPrice()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set lowestCurrentPrice()
     set lowestCurrentPrice(value: number) 
     {
         this._lowestCurrentPrice = value;
@@ -132,13 +132,13 @@ export class MarketplaceItemStats
 
     private _suggestedPrice: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get suggestedPrice()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get suggestedPrice()
     get suggestedPrice(): number 
     {
         return this._suggestedPrice;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set suggestedPrice()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set suggestedPrice()
     set suggestedPrice(value: number) 
     {
         this._suggestedPrice = value;
@@ -150,7 +150,7 @@ export class MarketplaceItemStats
         return this._currentOfferCount;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set offerCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set offerCount()
     set offerCount(value: number) 
     {
         this._currentOfferCount = value;

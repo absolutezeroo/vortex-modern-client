@@ -44,11 +44,11 @@ const DYNAMIC_SLOT_COUNT = 6;
  * drives background parallax + campaign background-image timing codes, and
  * handles resize/activate/disable.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as
  */
 export class WidgetContainerLayout implements IUpdateReceiver
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::getColorizableElements()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::getColorizableElements()
     private static getColorizableElements(container: IWindowContainer | null): ITextWindow[]
     {
         if(!container) return [];
@@ -66,7 +66,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
 	 * widget's container. Called by widgets implementing `ISettingsAwareWidget`
 	 * from their `set settings()`.
 	 *
-	 * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::applyCommonWidgetSettings()
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::applyCommonWidgetSettings()
 	 */
     public static applyCommonWidgetSettings(container: IWindowContainer | null, settings: CommonWidgetSettings): void
     {
@@ -83,7 +83,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::applyColorizableWidgetTextColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::applyColorizableWidgetTextColor()
     public static applyColorizableWidgetTextColor(container: IWindowContainer | null, textColor: number): void
     {
         if(!container) return;
@@ -94,7 +94,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::applyColorizableWidgetEtchingColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::applyColorizableWidgetEtchingColor()
     public static applyColorizableWidgetEtchingColor(container: IWindowContainer | null, etchingColor: number): void
     {
         if(!container) return;
@@ -105,7 +105,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::applyColorizableWidgetEtchingPosition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::applyColorizableWidgetEtchingPosition()
     public static applyColorizableWidgetEtchingPosition(container: IWindowContainer | null, etchingPosition: string): void
     {
         if(!container) return;
@@ -126,7 +126,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
     private _settings: CommonWidgetSettings | null = null;
     private _schedulingStr: string = '';
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::WidgetContainerLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::WidgetContainerLayout()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
@@ -136,7 +136,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         landingView.registerUpdateReceiver(this, 1000);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::update()
     update(elapsedTime: number): void
     {
         if(this._window !== null && this._window.visible)
@@ -150,7 +150,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::dispose()
     dispose(): void
     {
         if(this._landingView)
@@ -194,7 +194,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
 	 * Creates the window if it doesn't exist, resizes it to fill the desktop,
 	 * and sets it visible.
 	 *
-	 * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::activate()
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::activate()
 	 */
     public activate(): void
     {
@@ -242,7 +242,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         log.debug('Landing view layout activated');
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::get navigatorPosition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::get navigatorPosition()
     private get navigatorPosition(): {x: number; y: number} | null
     {
         const placer = this._window?.findChildByName('navigator_placer');
@@ -259,7 +259,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
     /**
 	 * Disable the landing view layout (hide the window).
 	 *
-	 * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::disable()
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::disable()
 	 */
     public disable(): void
     {
@@ -274,7 +274,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::createWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::createWindow()
     protected createWindow(): void
     {
         if(this._window !== null) return;
@@ -305,7 +305,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         log.debug(`Landing view window created from layout: ${layoutName}`);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::hideWarningIfPresent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::hideWarningIfPresent()
     private hideWarningIfPresent(): void
     {
         const warning = this._window?.findChildByName('warning');
@@ -313,7 +313,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         if(warning) warning.visible = false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::setOrgWindowSize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::setOrgWindowSize()
     protected setOrgWindowSize(): void
     {
         if(!this._window) return;
@@ -322,7 +322,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         this._orgWindowHeight = this._window.height;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::setupBottomSlotWidgetName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::setupBottomSlotWidgetName()
     protected setupBottomSlotWidgetName(): void
     {
         const placeholder = this._window?.findChildByName('widget_placeholder_bottom_slot');
@@ -341,7 +341,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::getLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::getLayout()
     private getLayout(): string
     {
         if(this._landingView && this._landingView.propertyExists('landing.view.layoutxml'))
@@ -352,7 +352,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         return DEFAULT_LAYOUT;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::isGenericReceptionLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::isGenericReceptionLayout()
     private isGenericReceptionLayout(): boolean
     {
         return this.getLayout() === GENERIC_RECEPTION_LAYOUT;
@@ -362,7 +362,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
 	 * Resize the window to fill the desktop, via the dynamic grid layout
 	 * engine if one is active, otherwise the custom (fixed) layout path.
 	 *
-	 * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::resizeWindow()
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::resizeWindow()
 	 */
     protected resizeWindow(): void
     {
@@ -386,7 +386,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::resizeDynamicLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::resizeDynamicLayout()
     private resizeDynamicLayout(): void
     {
         if(!this._window?.desktop || !this._dynamicWidgetLayout) return;
@@ -405,7 +405,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         );
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::resizeCustomLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::resizeCustomLayout()
     private resizeCustomLayout(): void
     {
         if(!this._window || !this._window.desktop) return;
@@ -427,13 +427,13 @@ export class WidgetContainerLayout implements IUpdateReceiver
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::onDesktopResized()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::onDesktopResized()
     protected onDesktopResized = (_event: WindowEvent): void =>
     {
         this.resizeWindow();
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::setBackgroundGraphics()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::setBackgroundGraphics()
     private setBackgroundGraphics(code: string | null): void
     {
         if(!this._window || !this._landingView) return;
@@ -464,7 +464,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::registerFixedWidgets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::registerFixedWidgets()
     private registerFixedWidgets(): void
     {
         for(const type of FIXED_WIDGET_TYPES)
@@ -473,7 +473,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::registerPlaceholderAnchoredWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::registerPlaceholderAnchoredWidget()
     private registerPlaceholderAnchoredWidget(type: string): void
     {
         if(!this._landingView) return;
@@ -492,7 +492,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         this._widgetContainers.push(new WidgetContainer(widget, WIDGET_PLACEHOLDER_PREFIX + type, this._settings));
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::registerDynamicWidgets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::registerDynamicWidgets()
     private registerDynamicWidgets(): void
     {
         if(!this._window || !this._landingView || !this._settings) return;
@@ -549,7 +549,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         return this._landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::onTimingCode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::onTimingCode()
     private onTimingCode = (event: IMessageEvent): void =>
     {
         const parser = event.parser as CurrentTimingCodeMessageEventParser | null;

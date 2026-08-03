@@ -18,7 +18,7 @@ import {ClubGiftConfirmationDialog} from './ClubGiftConfirmationDialog';
  * same GetClubGiftMessageComposer/ClubGiftInfoEvent pair already ported for HabboClubCenter's
  * gift-count popup) and confirms/redeems a selected gift.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/club/ClubGiftController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/club/ClubGiftController.as
  */
 export class ClubGiftController
 {

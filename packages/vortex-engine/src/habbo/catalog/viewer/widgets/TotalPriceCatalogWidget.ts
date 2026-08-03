@@ -15,7 +15,7 @@ import {CatalogWidget} from './CatalogWidget';
  * Shows the running total price (credits/activity points, with a struck-through original
  * price when a bundle-quantity discount applies) next to the purchase widget.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as
  */
 export class TotalPriceCatalogWidget extends CatalogWidget
 {
@@ -60,7 +60,7 @@ export class TotalPriceCatalogWidget extends CatalogWidget
     {
         if(!super.init()) return false;
 
-        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as::init()
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as::init()
         if(this.page.isBuilderPage)
         {
             this.window.visible = false;
@@ -119,7 +119,7 @@ export class TotalPriceCatalogWidget extends CatalogWidget
         this.window.findChildByName('currency_indicator_bitmap_left')!.visible = false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as::updateCurrencyIndicators()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as::updateCurrencyIndicators()
     private updateCurrencyIndicators(): void
     {
         const catalog = this._catalog!;
@@ -183,7 +183,7 @@ export class TotalPriceCatalogWidget extends CatalogWidget
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as::createCurrencyIndicators()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as::createCurrencyIndicators()
     private createCurrencyIndicators(): void
     {
         const catalog = this._catalog!;

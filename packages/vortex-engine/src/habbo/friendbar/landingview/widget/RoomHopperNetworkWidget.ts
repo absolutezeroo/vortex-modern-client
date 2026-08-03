@@ -12,7 +12,7 @@ import {WidgetContainerLayout} from '../layout/WidgetContainerLayout';
 /**
  * Promo card forwarding into a configured room-hopper network.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as
  */
 export class RoomHopperNetworkWidget implements ILandingViewWidget, ISettingsAwareWidget
 {
@@ -21,13 +21,13 @@ export class RoomHopperNetworkWidget implements ILandingViewWidget, ISettingsAwa
     private _disposed: boolean = false;
     private _networkId: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::RoomHopperNetworkWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::RoomHopperNetworkWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::initialize()
     initialize(): void
     {
         this._container = this._landingView!.getXmlWindow('room_hopper_network') as IWindowContainer | null;
@@ -42,7 +42,7 @@ export class RoomHopperNetworkWidget implements ILandingViewWidget, ISettingsAwa
         if(button) button.procedure = this.onRoomForwardButton;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::refresh()
     refresh(): void
     {
     }
@@ -52,7 +52,7 @@ export class RoomHopperNetworkWidget implements ILandingViewWidget, ISettingsAwa
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -71,13 +71,13 @@ export class RoomHopperNetworkWidget implements ILandingViewWidget, ISettingsAwa
         return this._disposed;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::set settings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::set settings()
     set settings(value: CommonWidgetSettings)
     {
         if(this._container) WidgetContainerLayout.applyCommonWidgetSettings(this._container, value);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::onRoomForwardButton()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::onRoomForwardButton()
     private onRoomForwardButton = (event: WindowEvent): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;

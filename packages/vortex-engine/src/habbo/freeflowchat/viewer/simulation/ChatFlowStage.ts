@@ -37,7 +37,7 @@ const MINIMUM_COLLIDER_WIDTH = 240;
  * HabboFreeFlowChat.onAccountPreferences() is wired, it just defaults to
  * free-flow (mode 0) until a real preference says otherwise.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as
  */
 export class ChatFlowStage implements IUpdateReceiver, IDisposable
 {
@@ -59,7 +59,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
     private _gravityEnabled: boolean = true;
     private _viewBottom: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::ChatFlowStage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::ChatFlowStage()
     constructor(chatFlow: IHabboFreeFlowChat)
     {
         this._chatFlow = chatFlow;
@@ -67,7 +67,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
         this.refreshSettings();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::refreshSettings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::refreshSettings()
     refreshSettings(): void
     {
         const settings = this._chatFlow?.roomChatSettings;
@@ -90,7 +90,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
         return this._chatFlow === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -99,7 +99,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
         this._chatFlow = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::insertBubble()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::insertBubble()
     insertBubble(bubble: PooledChatBubble): {x: number; y: number}
     {
         const chatFlow = this._chatFlow;
@@ -182,7 +182,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
         return point;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::update()
     update(deltaMs: number): void
     {
         this._simulationTime += deltaMs;
@@ -225,7 +225,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::clear()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::clear()
     clear(): void
     {
         for(const entity of this._bubbles) entity.readyToRecycle = true;
@@ -234,7 +234,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
         this._chatFlow?.chatFlowViewer?.update(0);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::simulate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::simulate()
     private simulate(): void
     {
         for(let round = 0; round < MAX_ITERATIONS; round++)
@@ -321,7 +321,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::scrollUp()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::scrollUp()
     private scrollUp(): void
     {
         const chatFlow = this._chatFlow;
@@ -359,7 +359,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
         this.simulate();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::cleanup()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::cleanup()
     private cleanup(): void
     {
         for(const entity of this._bubbles)
@@ -387,7 +387,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::resize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::resize()
     resize(_width: number, _height: number): void
     {
         const chatFlow = this._chatFlow;

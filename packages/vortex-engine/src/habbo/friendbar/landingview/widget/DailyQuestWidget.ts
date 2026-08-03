@@ -21,7 +21,7 @@ import {GenericWidget} from './GenericWidget';
  * Current daily quest card - shows the active/next quest, accept/cancel/next
  * actions, and an easy/hard difficulty toggle.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as
  */
 export class DailyQuestWidget implements IDisposable, ILandingViewWidget, ISlotAwareWidget, IConfigurableWidget
 {
@@ -35,13 +35,13 @@ export class DailyQuestWidget implements IDisposable, ILandingViewWidget, ISlotA
     private _slot: number = 0;
     private _configurationCode: string = '';
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::DailyQuestWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::DailyQuestWidget()
     constructor(landingView: HabboLandingView)
     {
         this._landingView = landingView;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::moveChildrenToRow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::moveChildrenToRow()
     static moveChildrenToRow(container: IWindowContainer, spacing: number): void
     {
         let x = 0;
@@ -57,25 +57,25 @@ export class DailyQuestWidget implements IDisposable, ILandingViewWidget, ISlotA
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::set configurationCode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::set configurationCode()
     set configurationCode(value: string)
     {
         this._configurationCode = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::set slot()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::set slot()
     set slot(value: number)
     {
         this._slot = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::get container()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::dispose()
     dispose(): void
     {
         this._landingView = null;
@@ -83,13 +83,13 @@ export class DailyQuestWidget implements IDisposable, ILandingViewWidget, ISlotA
         this._quest = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::initialize()
     initialize(): void
     {
         if(!this._landingView) return;
@@ -124,7 +124,7 @@ export class DailyQuestWidget implements IDisposable, ILandingViewWidget, ISlotA
         GenericWidget.configureLayout(this._landingView, this._slot, this._configurationCode, this._container);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::refresh()
     refresh(): void
     {
         this._index = 0;
@@ -235,7 +235,7 @@ export class DailyQuestWidget implements IDisposable, ILandingViewWidget, ISlotA
         return '${' + key + '}';
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::getQuestName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::getQuestName()
     getQuestName(): string
     {
         if(!this._quest) return '';

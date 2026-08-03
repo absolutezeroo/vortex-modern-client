@@ -362,7 +362,7 @@ export class HabboCatalogUtils implements IGetImageListener
         this._catalog?.tracking?.trackEventLogOncePerSession('Catalog', 'discountItemShown', 'client.bundle.discounts');
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::showVipBenefits()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::showVipBenefits()
     showVipBenefits(): void
     {
         if(this._catalog?.getBoolean('catalog.vip.benefits.enabled'))
@@ -378,7 +378,7 @@ export class HabboCatalogUtils implements IGetImageListener
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::openLink()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::openLink()
     openLink(url: string): void
     {
         if(url !== '')

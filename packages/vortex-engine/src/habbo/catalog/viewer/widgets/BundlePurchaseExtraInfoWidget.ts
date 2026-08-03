@@ -13,7 +13,7 @@ const PROMO_ITEM_DROP_DELAY_MS = 4000;
  * Shows the promo/discount/bundle-info overlay rows above the purchase spinner for
  * multi-purchase-enabled catalog offers.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as
  */
 export class BundlePurchaseExtraInfoWidget extends CatalogWidget
 {
@@ -205,7 +205,7 @@ export class BundlePurchaseExtraInfoWidget extends CatalogWidget
 
         if(event.value === this._quantity) return;
 
-        // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::onSpinnerEvent()
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::onSpinnerEvent()
         // catalog.bundleDiscountRuleset is a documented always-null stub on this port (the config
         // message that populates it isn't parsed yet - see HabboCatalog.ts's own note), so the
         // real AS3 condition (`event.value >= bundleDiscountRuleset.bundleSize`) would throw here;

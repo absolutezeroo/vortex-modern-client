@@ -7,7 +7,7 @@ import type {ClubBuyOfferData} from './ClubBuyOfferData';
 /**
  * A single VIP-buy list row (credits/activity-point price + buy/gift buttons).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/club/VipBuyItem.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/club/VipBuyItem.as
  */
 export class VipBuyItem implements IDisposable
 {

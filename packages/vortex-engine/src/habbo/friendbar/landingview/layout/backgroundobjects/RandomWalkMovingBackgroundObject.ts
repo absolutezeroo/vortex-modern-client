@@ -11,7 +11,7 @@ import {MathUtils} from '@habbo/utils/MathUtils';
  *
  * Data content format: `<image>;<type>;<startX>;<startY>;<speedX>;<speedY>;<randRangeX>;<randRangeY>;<intervalMs>`
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/RandomWalkMovingBackgroundObject.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/RandomWalkMovingBackgroundObject.as
  */
 export class RandomWalkMovingBackgroundObject extends BackgroundObject
 {
@@ -31,7 +31,7 @@ export class RandomWalkMovingBackgroundObject extends BackgroundObject
     private _curOffsetY: number = 0;
     private _lastIntervalTime: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/RandomWalkMovingBackgroundObject.as::RandomWalkMovingBackgroundObject()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/RandomWalkMovingBackgroundObject.as::RandomWalkMovingBackgroundObject()
     constructor(id: number, container: IWindowContainer, events: EventEmitter, landingView: HabboLandingView, dataContent: string)
     {
         super(id, container, events, landingView, dataContent, false);
@@ -55,7 +55,7 @@ export class RandomWalkMovingBackgroundObject extends BackgroundObject
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/RandomWalkMovingBackgroundObject.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/RandomWalkMovingBackgroundObject.as::update()
     override update(elapsedTime: number): void
     {
         super.update(elapsedTime);

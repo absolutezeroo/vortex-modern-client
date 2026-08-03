@@ -3,7 +3,7 @@
  * physics (accelerate, then decelerate to a stop exactly at the target),
  * bounded by a maximum velocity, integrated in fixed sub-steps.
  *
- * @see sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedScalar.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedScalar.as
  */
 export class AnimatedScalar
 {
@@ -18,7 +18,7 @@ export class AnimatedScalar
     private _target: number = 0;
     private _value: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedScalar.as::AnimatedScalar()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedScalar.as::AnimatedScalar()
     constructor(acceleration: number, maxVelocity: number, tolerance: number)
     {
         this._acceleration = Math.max(0, acceleration);
@@ -26,13 +26,13 @@ export class AnimatedScalar
         this._tolerance = Math.max(0, tolerance);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedScalar.as::get value()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedScalar.as::get value()
     public get value(): number
     {
         return this._value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedScalar.as::snapTo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedScalar.as::snapTo()
     public snapTo(value: number, nowMs: number): void
     {
         this._lastUpdateTimeMs = nowMs;
@@ -41,7 +41,7 @@ export class AnimatedScalar
         this._value = value;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedScalar.as::setTarget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedScalar.as::setTarget()
     public setTarget(value: number, nowMs: number): void
     {
         this.update(nowMs);
@@ -60,7 +60,7 @@ export class AnimatedScalar
         this._velocity = direction * Math.min(Math.abs(this._velocity), this._maxVelocity);
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedScalar.as::needsUpdate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedScalar.as::needsUpdate()
     public needsUpdate(_nowMs: number, scale: number = 1): boolean
     {
         if(scale > 0 && Math.trunc(this._target * scale) !== Math.trunc(this._value * scale))
@@ -71,7 +71,7 @@ export class AnimatedScalar
         return Math.abs(this._target - this._value) > this._tolerance || Math.abs(this._velocity) > this._tolerance;
     }
 
-    // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/AnimatedScalar.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AnimatedScalar.as::update()
     public update(nowMs: number): boolean
     {
         let remainingMs = Math.max(0, nowMs - this._lastUpdateTimeMs);

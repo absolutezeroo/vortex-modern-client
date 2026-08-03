@@ -11,7 +11,7 @@ import {CatalogWidget} from './CatalogWidget';
  * Shows the "X left of Y" supply overlay for the currently selected limited-edition
  * (LTD) product, refreshed from the server every 20 seconds while visible.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/UniqueLimitedItemWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/UniqueLimitedItemWidget.as
  */
 export class UniqueLimitedItemWidget extends CatalogWidget
 {
@@ -64,7 +64,7 @@ export class UniqueLimitedItemWidget extends CatalogWidget
         return true;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/UniqueLimitedItemWidget.as::onSelectProduct()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/UniqueLimitedItemWidget.as::onSelectProduct()
     private onSelectProduct = (event: SelectProductEvent): void =>
     {
         if(event == null) return;
@@ -73,14 +73,14 @@ export class UniqueLimitedItemWidget extends CatalogWidget
         this.update(event.offer, true);
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/UniqueLimitedItemWidget.as::onOfferUpdated()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/UniqueLimitedItemWidget.as::onOfferUpdated()
     private onOfferUpdated = (event: ProductOfferUpdatedEvent): void =>
     {
         this._lastOffer = event.offer;
         this.update(event.offer);
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/UniqueLimitedItemWidget.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/UniqueLimitedItemWidget.as::update()
     private update(offer: IPurchasableOffer, requestRefresh: boolean = false): void
     {
         const product = offer.product;
@@ -117,7 +117,7 @@ export class UniqueLimitedItemWidget extends CatalogWidget
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/UniqueLimitedItemWidget.as::onSupplyLeftTimer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/UniqueLimitedItemWidget.as::onSupplyLeftTimer()
     private onSupplyLeftTimer(): void
     {
         if(this.window.visible && this._lastOffer != null)

@@ -57,7 +57,7 @@ const log = Logger.getLogger('habbo.friendbar.landingview.HabboLandingView');
  */
 export class HabboLandingView extends AbstractView implements IHabboLandingView
 {
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::positionAfterAndStretch()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::positionAfterAndStretch()
     public static positionAfterAndStretch(container: IWindowContainer, afterName: string, targetName: string): void
     {
         const afterWindow = container.findChildByName(afterName);
@@ -113,7 +113,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
 
     private _catalog: IHabboCatalog | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get catalog()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get catalog()
     get catalog(): IHabboCatalog | null
     {
         return this._catalog;
@@ -121,7 +121,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
 
     private _questEngine: IHabboQuestEngine | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get questEngine()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get questEngine()
     get questEngine(): IHabboQuestEngine | null
     {
         return this._questEngine;
@@ -129,7 +129,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
 
     private _habboHelp: IHabboHelp | null = null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get habboHelp()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get habboHelp()
     get habboHelp(): IHabboHelp | null
     {
         return this._habboHelp;
@@ -137,7 +137,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
 
     // TODO(AS3): HabboAvatarEditor has no ported manager/interface yet (IID_HabboAvatarEditor
     // is typed `unknown`) - field kept for interface parity with
-    // sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get avatarEditor(),
+    // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get avatarEditor(),
     // always null until that manager is implemented.
     private _avatarEditor: unknown = null;
 
@@ -211,7 +211,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
         return this._sessionDataManager;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get tracking()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get tracking()
     get tracking(): IHabboTracking | null
     {
         return this._tracking;
@@ -441,7 +441,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
     /**
 	 * Forward the user into a random room from a promoted room category.
 	 *
-	 * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::goToRoom()
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::goToRoom()
 	 */
     public goToRoom(category: string | null = null): void
     {
@@ -456,7 +456,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
     /**
 	 * Request a specific badge be granted to the current user.
 	 *
-	 * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::requestBadge()
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::requestBadge()
 	 */
     public requestBadge(badgeCode: string): void
     {
@@ -466,7 +466,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
     /**
 	 * Cast a vote for one of the two sides of a "versus" community goal.
 	 *
-	 * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::communityGoalVote()
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::communityGoalVote()
 	 */
     public communityGoalVote(voteOption: number): void
     {
@@ -476,7 +476,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
     /**
 	 * Load and return product data for a given product code.
 	 *
-	 * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::getProductData()
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::getProductData()
 	 */
     public getProductData(productCode: string, listener: IProductDataListener): IProductData | null
     {
@@ -569,7 +569,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
 	 * Initialize with error handling, showing an `initialization_error`
 	 * fallback window if construction throws.
 	 *
-	 * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::tryInitialize()
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::tryInitialize()
 	 */
     private tryInitialize(): void
     {
@@ -614,7 +614,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
 	 * Re-activates the landing view when an expired/invisible catalog page
 	 * link is clicked while the landing view is visible.
 	 *
-	 * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::onExpiredLinkClick()
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::onExpiredLinkClick()
 	 */
     private onExpiredLinkClick = (): void =>
     {
@@ -628,7 +628,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
 	 * Re-initializes the landing view when the server sends navigator
 	 * settings with no room to auto-enter.
 	 *
-	 * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::onNavigatorSettings()
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::onNavigatorSettings()
 	 */
     private onNavigatorSettings = (event: IMessageEvent): void =>
     {

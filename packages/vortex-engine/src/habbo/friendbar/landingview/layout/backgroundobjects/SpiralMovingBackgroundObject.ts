@@ -9,7 +9,7 @@ import {PathResetEvent} from './events/PathResetEvent';
  *
  * Data content format: `<image>;<type>;<startRadius>;<startAngle>;<speedRadius>;<speedAngle>;<centerX>;<centerY>`
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/SpiralMovingBackgroundObject.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/SpiralMovingBackgroundObject.as
  */
 export class SpiralMovingBackgroundObject extends BackgroundObject
 {
@@ -22,7 +22,7 @@ export class SpiralMovingBackgroundObject extends BackgroundObject
     private _centerX: number;
     private _centerY: number;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/SpiralMovingBackgroundObject.as::SpiralMovingBackgroundObject()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/SpiralMovingBackgroundObject.as::SpiralMovingBackgroundObject()
     constructor(id: number, container: IWindowContainer, events: EventEmitter, landingView: HabboLandingView, dataContent: string)
     {
         super(id, container, events, landingView, dataContent);
@@ -45,7 +45,7 @@ export class SpiralMovingBackgroundObject extends BackgroundObject
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/SpiralMovingBackgroundObject.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/SpiralMovingBackgroundObject.as::update()
     override update(elapsedTime: number): void
     {
         super.update(elapsedTime);

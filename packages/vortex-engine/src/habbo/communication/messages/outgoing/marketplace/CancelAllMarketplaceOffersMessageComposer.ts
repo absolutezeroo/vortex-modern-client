@@ -6,7 +6,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * Named from usage context: `HabboCatalog.cancelAllMarketPlaceOffers()`
  * sends this with no arguments.
  *
- * @see sources/win63_2026_crypted_version/src/unknowns/_SafePkg_1746/_SafeCls_1986.as
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1746/_SafeCls_1986.as
  */
 export class CancelAllMarketplaceOffersMessageComposer extends MessageComposer<[]> 
 {

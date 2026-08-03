@@ -53,7 +53,7 @@ function clampFontSize(value: number): number
  *  - `dispose()` fully clears `_entries` instead of AS3's
  *    `while(length>1) pop()`, which always leaves one stray entry behind.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as
  */
 export class ChatStyleSelector implements IDisposable 
 {
@@ -65,7 +65,7 @@ export class ChatStyleSelector implements IDisposable
     private _styleRequiresUpdate: boolean = false;
     private _fontSizeMode: number = 0;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::ChatStyleSelector()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::ChatStyleSelector()
     constructor(chatInputView: RoomChatInputView, container: IWindowContainer | null) 
     {
         this._chatInputView = chatInputView;
@@ -103,13 +103,13 @@ export class ChatStyleSelector implements IDisposable
         return this._gridView === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::get visible()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::get visible()
     get visible(): boolean 
     {
         return !!this._chatInputView?.chatStyleMenuContainer?.visible;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::get selectedStyleId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::get selectedStyleId()
     get selectedStyleId(): number 
     {
         if(this._styleRequiresUpdate && this.selected) 
@@ -122,7 +122,7 @@ export class ChatStyleSelector implements IDisposable
         return -1;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::get selectedStyleBitmap()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::get selectedStyleBitmap()
     get selectedStyleBitmap(): ImageBitmap | null 
     {
         return this.selected?.bitmap ?? null;
@@ -155,7 +155,7 @@ export class ChatStyleSelector implements IDisposable
         return this._selected;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::dispose()
     dispose(): void 
     {
         this._entries = [];
@@ -170,7 +170,7 @@ export class ChatStyleSelector implements IDisposable
         this._chatInputView = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::hide()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::hide()
     hide(): void 
     {
         const menuContainer = this._chatInputView?.chatStyleMenuContainer;
@@ -179,7 +179,7 @@ export class ChatStyleSelector implements IDisposable
         if(this._gridView?.window) this._gridView.window.visible = false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::containsWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::containsWindow()
     containsWindow(window: IWindow | null): boolean 
     {
         return isWindowInTree(window, this._container)
@@ -187,7 +187,7 @@ export class ChatStyleSelector implements IDisposable
             || isWindowInTree(window, this._gridView?.window ?? null);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::addItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::addItem()
     addItem(styleId: number, preview: ImageBitmap): void
     {
         if(!this._gridView?.grid || !this._styleTemplateWindow) return;
@@ -205,14 +205,14 @@ export class ChatStyleSelector implements IDisposable
         if(background) background.visible = false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::clear()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::clear()
     clear(): void 
     {
         this._entries = [];
         this._gridView?.grid?.removeGridItems();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::set gridColumns()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::set gridColumns()
     // TS-only addition: also pins limits.maxWidth to the same value. The
     // itemgrid_vertical layout node carries resize_on_item_update="true" (real
     // AS3 layout data, not invented here), which grows the grid's own width by
@@ -223,7 +223,7 @@ export class ChatStyleSelector implements IDisposable
     // instead of wrapping. Capping maxWidth here freezes the ceiling this
     // property is meant to express without touching resize_on_item_update
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::initSelection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::initSelection()
     initSelection(): void 
     {
         if(this._entries.length === 0) 
@@ -238,21 +238,21 @@ export class ChatStyleSelector implements IDisposable
         this._styleRequiresUpdate = false;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::initFontSizeSelection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::initFontSizeSelection()
     initFontSizeSelection(mode: number): void 
     {
         this._fontSizeMode = clampFontSize(mode);
         this.updateFontSizeSelectionHighlight();
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::set selected()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::set selected()
     // TODO(AS3): AS3 also tints/masks a "chat_bg_preview" live bubble-background preview
     // behind the chat input box here - chatinput_window_new's actual layout (verified
     // against the raw source XML) has no such element, and AS3's own null-check on it
     // early-returns BEFORE reaching setInputFieldColor() too, so in this layout picking a
     // style has no visible side effect on the input field either - this is a faithful
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::alignMenuToSelector()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::alignMenuToSelector()
     alignMenuToSelector(): void 
     {
         if(this._gridView?.window?.visible) this._gridView.alignToSelector(this._container);
@@ -319,8 +319,8 @@ export class ChatStyleSelector implements IDisposable
         return this._chatInputView?.widget?.windowManager.buildWidgetLayout(assetName) ?? null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::windowProc()
-    // win63_2026_crypted_version (primary source) leaves the popup open after picking a
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::windowProc()
+    // WIN63-202607011411-782849652 (primary source) leaves the popup open after picking a
     // style - only font-size selection, re-clicking the toggle, or a click-away close it.
     // win63_version/PRODUCTION-201601012205-226667486 auto-close on style pick instead; this ports the primary
     // tree's behavior.
@@ -355,7 +355,7 @@ export class ChatStyleSelector implements IDisposable
         void window;
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::gridItemWindowProc()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::gridItemWindowProc()
     private gridItemWindowProc = (event: WindowEvent, window: IWindow): void => 
     {
         if(event.type === 'WME_CLICK_AWAY') 
@@ -390,7 +390,7 @@ export class ChatStyleSelector implements IDisposable
         }
     };
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::fontSizeItemWindowProc()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::fontSizeItemWindowProc()
     private fontSizeItemWindowProc = (event: WindowEvent, window: IWindow): void => 
     {
         if(event.type === 'WME_CLICK_AWAY') 
@@ -474,7 +474,7 @@ export class ChatStyleSelector implements IDisposable
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::resolveFontSizeItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::resolveFontSizeItem()
     private resolveFontSizeItem(window: IWindow): IWindowContainer | null 
     {
         const fontSizeList = this._gridView?.fontSizeList;

@@ -10,7 +10,7 @@ import {ExtraInfoListItem} from '../ExtraInfoListItem';
  * wherever it's actually constructed (ExtraInfoViewManager.addItem() case 3, never triggered by
  * BundlePurchaseExtraInfoWidget itself - see that widget's port notes).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoBonusBadgeItem.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoBonusBadgeItem.as
  */
 export class ExtraInfoBonusBadgeItem extends ExtraInfoListItem implements IGetImageListener
 {

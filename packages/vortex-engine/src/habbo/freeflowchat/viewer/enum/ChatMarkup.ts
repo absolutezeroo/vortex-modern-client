@@ -8,7 +8,7 @@
  * this port turns that HTML back into styled runs (no real HTML text
  * component - see that file's header for why).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as
  */
 export class ChatMarkup
 {
@@ -30,13 +30,13 @@ export class ChatMarkup
 
     static readonly COLOUR_NAMES: string[] = ChatMarkup.COLOUR_ARRAY.map(([name]) => name);
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as::getColourArray()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as::getColourArray()
     private static getColourArray(baseColor: number): [string, number][]
     {
         return baseColor === 16777215 ? ChatMarkup.WHITE_COLOUR_ARRAY : ChatMarkup.COLOUR_ARRAY;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as::getHexColorForTag()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as::getHexColorForTag()
     private static getHexColorForTag(tag: string, baseColor: number): string | null
     {
         const entry = ChatMarkup.getColourArray(baseColor).find(([name]) => name === tag);
@@ -44,7 +44,7 @@ export class ChatMarkup
         return entry ? `#${entry[1].toString(16).toUpperCase()}` : null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as::applyColourToChat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as::applyColourToChat()
     static applyColourToChat(text: string, baseColor: number): string
     {
         for(const [name, hex] of ChatMarkup.getColourArray(baseColor))
@@ -63,7 +63,7 @@ export class ChatMarkup
         return text;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as::tokenize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as::tokenize()
     static tokenize(text: string): string[]
     {
         const tokens: string[] = [];
@@ -101,7 +101,7 @@ export class ChatMarkup
         return tokens;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as::applyToElements()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as::applyToElements()
     static applyToElements(text: string, baseColor: number): string
     {
         if(text.length === 0) return '';

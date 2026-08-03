@@ -17,14 +17,14 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.LocalizationCatalogWi
  * Applies a page's PageLocalization text/image fields (and the catalog main window's
  * category header title/description/icon) to the actual window elements.
  *
- * TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::
+ * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::
  * initLinks()'s per-layoutCode click-handler switch (frontpage3/info_pixels/club_buy/monkey/...)
  * isn't ported - link elements get click-armed (setParamFlag/mouseThreshold) but clicking them
  * does nothing yet, since none of those legacy special pages are exercised by the ported catalog
  * pages. setLinkStyle() also isn't ported (needs flash.text.StyleSheet-equivalent CSS-in-caption
  * support on ITextWindow/IHTMLTextWindow).
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as
  */
 export class LocalizationCatalogWidget extends CatalogWidget
 {
@@ -271,7 +271,7 @@ export class LocalizationCatalogWidget extends CatalogWidget
         log.warn(`Could not find element: ${elementName}`);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::retrieveCatalogImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::retrieveCatalogImage()
     private retrieveCatalogImage(assetName: string): void
     {
         const catalog = this._catalog!;
@@ -306,7 +306,7 @@ export class LocalizationCatalogWidget extends CatalogWidget
         });
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::onCatalogImageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::onCatalogImageReady()
     private onCatalogImageReady(assetName: string): void
     {
         const elementName = this._imageElementMap.get(assetName);

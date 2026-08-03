@@ -27,7 +27,7 @@ function isDisableableWidget(widget: ILandingViewWidget): widget is ILandingView
  * widgets) or a dynamic-grid slot container (the 6 dynamic slots), and
  * lazily initializes it on first `refresh()`.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as
  */
 export class WidgetContainer implements IDisposable
 {
@@ -37,7 +37,7 @@ export class WidgetContainer implements IDisposable
     private _initialized: boolean = false;
     private _settings: CommonWidgetSettings | null;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::WidgetContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::WidgetContainer()
     constructor(
         widget: ILandingViewWidget,
         placeholderName: string | null,
@@ -51,7 +51,7 @@ export class WidgetContainer implements IDisposable
         this._dynamicSlotContainer = dynamicSlotContainer;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::dispose()
     dispose(): void
     {
         if(this._widget)
@@ -63,13 +63,13 @@ export class WidgetContainer implements IDisposable
         this._settings = null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::get disposed()
     get disposed(): boolean
     {
         return this._widget === null && this._settings === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::refresh()
     refresh(root: IWindowContainer): void
     {
         const contentBackground = root.findChildByName('content_background') as IWindowContainer | null;
@@ -125,13 +125,13 @@ export class WidgetContainer implements IDisposable
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::get container()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::get container()
     get container(): IWindow | null
     {
         return this._widget ? this._widget.container : null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::windowResized()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::windowResized()
     windowResized(): void
     {
         if(this._widget !== null && this._widget.container !== null && isResizeAwareWidget(this._widget))
@@ -140,7 +140,7 @@ export class WidgetContainer implements IDisposable
         }
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::disable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::disable()
     disable(): void
     {
         if(this._widget !== null && this._widget.container !== null && isDisableableWidget(this._widget))

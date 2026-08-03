@@ -10,13 +10,13 @@ import {HabboLandingView as HabboLandingViewClass} from '../../HabboLandingView'
  * Section title content element - positions its caption then stretches the
  * header divider line to fill the remaining width.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/TitleElementHandler.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/TitleElementHandler.as
  */
 export class TitleElementHandler implements IElementHandler, IFloatableElementHandler
 {
     private _isFloating: boolean = false;
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/TitleElementHandler.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/TitleElementHandler.as::initialize()
     initialize(_landingView: HabboLandingView, window: IWindow, params: string[], _ownerWidget: GenericWidget): void
     {
         const container = window as IWindowContainer;
@@ -34,13 +34,13 @@ export class TitleElementHandler implements IElementHandler, IFloatableElementHa
         HabboLandingViewClass.positionAfterAndStretch(container, 'title_txt', 'hdr_line');
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/TitleElementHandler.as::isFloating()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/TitleElementHandler.as::isFloating()
     isFloating(value: boolean): boolean
     {
         return value || this._isFloating;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/elements/TitleElementHandler.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/TitleElementHandler.as::refresh()
     refresh(): void
     {
     }
