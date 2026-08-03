@@ -24,6 +24,7 @@ import {MannequinWidget} from './widget/furniture/mannequin/MannequinWidget';
 import {FriendFurniEngravingWidget} from './widget/furniture/friendfurni/FriendFurniEngravingWidget';
 import {FriendFurniConfirmWidget} from './widget/furniture/friendfurni/FriendFurniConfirmWidget';
 import {CustomStackHeightWidget} from './widget/furniture/CustomStackHeightWidget';
+import {FurnitureRoomLinkWidget} from './widget/furniture/roomlink/FurnitureRoomLinkWidget';
 import {PlaceholderWidget} from './widget/furniture/placeholder/PlaceholderWidget';
 import {BackgroundColorFurniWidget} from './widget/furniture/backgroundcolor/BackgroundColorFurniWidget';
 import {CreditFurniWidget} from './widget/furniture/credit/CreditFurniWidget';
@@ -99,6 +100,9 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
             // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_STICKIE_WIDGET"
             case 'RWE_FURNI_STICKIE_WIDGET':
                 return new StickieFurniWidget(handler, this._roomUI.windowManager, this._roomUI.assets);
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_ROOM_LINK"
+            case 'RWE_ROOM_LINK':
+                return new FurnitureRoomLinkWidget(handler, this._roomUI.windowManager);
             // AS3: RoomWidgetFactory.as::createWidget() "RWE_CUSTOM_STACK_HEIGHT"
             case 'RWE_CUSTOM_STACK_HEIGHT':
                 return new CustomStackHeightWidget(

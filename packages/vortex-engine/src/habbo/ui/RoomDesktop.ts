@@ -68,6 +68,7 @@ import {MannequinWidgetHandler} from './handler/MannequinWidgetHandler';
 import {FriendFurniEngravingWidgetHandler} from './handler/FriendFurniEngravingWidgetHandler';
 import {FriendFurniConfirmWidgetHandler} from './handler/FriendFurniConfirmWidgetHandler';
 import {CustomStackHeightWidgetHandler} from './handler/CustomStackHeightWidgetHandler';
+import {FurnitureRoomLinkHandler} from './handler/FurnitureRoomLinkHandler';
 import {PlaceholderWidgetHandler} from './handler/PlaceholderWidgetHandler';
 import {FurnitureBackgroundColorWidgetHandler} from './handler/FurnitureBackgroundColorWidgetHandler';
 import {FurnitureCreditWidgetHandler} from './handler/FurnitureCreditWidgetHandler';
@@ -808,6 +809,16 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:894-895
                 handler = new CustomStackHeightWidgetHandler();
                 break;
+            case 'RWE_ROOM_LINK': {
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:889-891
+                // — handed the communication manager on construction, which is where it
+                // registers its GetGuestRoomResult listener.
+                const roomLinkHandler = new FurnitureRoomLinkHandler();
+
+                roomLinkHandler.communicationManager = this._communicationManager;
+                handler = roomLinkHandler;
+                break;
+            }
             case 'RWE_FRIEND_FURNI_CONFIRM': {
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:876-878
                 // — this one is handed the connection at construction, because it registers its
