@@ -650,6 +650,29 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **The personal word filter** (`toolbar/extensions/settings/WordFilterSettingsView.ts` 328 AS3 l., 3 composers, 2 events + 2 parsers), 2026-08-03.
+  - Closes `toolbar/extensions/settings/` at 5/5: every entry in the client settings menu now opens
+    a real window.
+  - Nothing is applied locally — add and remove both go to the server, and the list only moves when
+    `ModifyCustomFilterResult` comes back. Rows are built once and collapse to zero height rather
+    than being removed, and a click selects a row that the remove button then acts on **by caption**,
+    not by index.
+  - **The emulator disagrees on every one of these five headers and implements none of them.** WIN63's
+    registry gives `GetCustomFilter` **801**, `AddToCustomFilter` **2656**, `RemoveFromCustomFilter`
+    **2209**, `GetCustomFilterResult` **2231**, `ModifyCustomFilterResult` **3622**; `Headers.cs` says
+    3812 / 936 / 209 / 1426 / 1488, with no `AS3-verified` comment on any of them and no handler,
+    parser or serializer behind them. The client uses WIN63's numbers, per the source-of-truth order,
+    and says so at each declaration. **The feature cannot work until the server implements it.**
+  - The two incoming events had to go into `HabboMessages._events` even though the view registers its
+    own handlers: `MessageRegistry.registerMessageEvent()` maps an event **instance** to an id through
+    that class table and warns `Unknown message event class` for anything absent, so a self-registering
+    view still needs its events in the registry.
+  - Both parsers are among the few this dump leaves **unobfuscated**
+    (`GetCustomFilterResultMessageEventParser`, `ModifyCustomFilterResultMessageEventParser`), so those
+    names are real. The three result constants on the event are not: AS3 tests only `1` (added) and `3`
+    (removed), so those two names are derived from that use and `0` is declared with its value and no
+    claim about its meaning.
+
 - ✅ **Sound and other settings, and the slider under them** (`toolbar/extensions/settings/SoundSettingsView.ts` + `SoundSettingsItem.ts` + `OtherSettingsView.ts` rewritten, `toolbar/memenu/soundsettings/MeMenuSoundSettingsSlider.ts` rewritten, 3 new composers), 2026-08-03.
   - The sound chain was three SolidJS-era stubs deep — view, item and slider — none of which built
     a window. All three are now real.
@@ -686,9 +709,8 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     closing commits once more. The port's `IHabboFreeFlowChat` was missing `chatMode`,
     `chatBubbleWidth`, `chatScrollSpeed` and `updateChatPreferences()`, all four of which AS3's own
     interface (`freeflowchat/_SafeCls_70.as`) declares.
-  - **Sound and other settings followed in the same session** (see the entry below); only
-    `WordFilterSettingsView` (328 l.) is still unported — it needs 3 composers and 2 events for the
-    custom-filter list.
+  - **Sound, other and word-filter settings all followed in the same session** (see the entries
+    below): `toolbar/extensions/settings/` is now 5/5 and every menu entry opens a real window.
   - Checked while looking for this: **room settings are complete** (`navigator/roomsettings/`, 9/9
     including `RoomSettingsFriendListManager`), reachable from three entry points, with `GetRoomSettings`
     256 / `SaveRoomSettings` 725 / `RoomSettingsData` 791 registered and handled by the emulator.

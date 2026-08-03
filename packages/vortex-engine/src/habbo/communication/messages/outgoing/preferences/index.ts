@@ -4,3 +4,6 @@ export * from './SetUIFlagsMessageComposer';
 export {SetIgnoreRoomInvitesMessageComposer} from './SetIgnoreRoomInvitesMessageComposer';
 export {SetRoomCameraPreferencesMessageComposer} from './SetRoomCameraPreferencesMessageComposer';
 export {ResetPhoneNumberStateMessageComposer} from './ResetPhoneNumberStateMessageComposer';
+export {GetCustomFilterMessageComposer} from './GetCustomFilterMessageComposer';
+export {AddToCustomFilterMessageComposer} from './AddToCustomFilterMessageComposer';
+export {RemoveFromCustomFilterMessageComposer} from './RemoveFromCustomFilterMessageComposer';

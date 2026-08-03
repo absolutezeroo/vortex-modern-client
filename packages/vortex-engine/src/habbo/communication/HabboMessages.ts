@@ -459,7 +459,11 @@ import {
 } from './messages/incoming/users';
 
 // Incoming Events - Preferences
-import {AccountPreferencesEvent} from './messages/incoming/preferences';
+import {
+    AccountPreferencesEvent,
+    GetCustomFilterResultMessageEvent,
+    ModifyCustomFilterResultMessageEvent
+} from './messages/incoming/preferences';
 
 // Incoming Events - Perk
 import {PerkAllowancesMessageEvent} from './messages/incoming/perk';
@@ -676,6 +680,9 @@ import {RespectPetMessageComposer, RespectUserMessageComposer,} from './messages
 import {
     SetChatStylePreferenceComposer,
     SetNewNavigatorWindowPreferencesMessageComposer,
+    AddToCustomFilterMessageComposer,
+    GetCustomFilterMessageComposer,
+    RemoveFromCustomFilterMessageComposer,
     ResetPhoneNumberStateMessageComposer,
     SetIgnoreRoomInvitesMessageComposer,
     SetRoomCameraPreferencesMessageComposer,
@@ -1450,6 +1457,14 @@ export class HabboMessages implements IMessageConfiguration
         // _SafeStr_4546[1402] = _SafeCls_2145) and corroborated by vortex-emulator
         // Vortex.Revisions/Revision20260701/Headers.cs (GuildMemberFurniCountInHQMessageComposer = 1402).
         this._events.set(1402, GuildMemberFurniCountInHQMessageEvent);
+        // The personal word filter's two replies. Registering them here is what lets
+        // WordFilterSettingsView's own addHabboConnectionMessageEvent() resolve a header:
+        // MessageRegistry maps an event INSTANCE to an id through this class table, and
+        // warns "Unknown message event class" for anything missing from it. Headers read
+        // from WIN63's own registry (_SafeStr_4546[2231]/[3622]); the emulator names both
+        // differently and implements neither.
+        this._events.set(2231, GetCustomFilterResultMessageEvent);
+        this._events.set(3622, ModifyCustomFilterResultMessageEvent);
         // The members window's five replies. Headers read from WIN63's own registry
         // (habbo/communication/_SafeCls_2046.as, _SafeStr_4546[403]/[3477]/[1735]/[595]/[2087])
         // and corroborated by vortex-emulator Vortex.Revisions/Revision20260701/Headers.cs
@@ -2121,6 +2136,13 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1332, SetIgnoreRoomInvitesMessageComposer);
         this._composers.set(3917, SetRoomCameraPreferencesMessageComposer);
         this._composers.set(2056, ResetPhoneNumberStateMessageComposer);
+        // The personal word filter. Headers read from WIN63's own registry
+        // (habbo/communication/_SafeCls_2046.as, _composers[801]/[2656]/[2209]).
+        // vortex-emulator's Headers.cs names all three differently, with no verification
+        // comment and no handler or parser behind them, so it corroborates nothing here.
+        this._composers.set(801, GetCustomFilterMessageComposer);
+        this._composers.set(2656, AddToCustomFilterMessageComposer);
+        this._composers.set(2209, RemoveFromCustomFilterMessageComposer);
         this._composers.set(1276, SetNewNavigatorWindowPreferencesMessageComposer);
         this._composers.set(2634, SetChatStylePreferenceComposer);
 

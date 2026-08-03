@@ -9,6 +9,7 @@ import type {HabboToolbar} from '../HabboToolbar';
 import {ChatSettingsView} from './settings/ChatSettingsView';
 import {SoundSettingsView} from './settings/SoundSettingsView';
 import {OtherSettingsView} from './settings/OtherSettingsView';
+import {WordFilterSettingsView} from './settings/WordFilterSettingsView';
 
 const log = Logger.getLogger('habbo.toolbar.extensions.SettingsExtension');
 
@@ -166,17 +167,12 @@ export class SettingsExtension
         this.attachToDesktop(new OtherSettingsView(this._toolbar).window);
     }
 
-    /**
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/SettingsExtension.as::openWordFilterWindow()
-     * builds `WordFilterSettingsView` (328 AS3 lines), which is not ported — it needs three
-     * composers and two events for the custom-filter list that this port does not carry
-     * yet. The button only appears when `user.custom.filter.enabled` is set, so this is
-     * unreachable unless that key is on.
-     */
     // AS3: .../SettingsExtension.as::openWordFilterWindow()
     private openWordFilterWindow(): void
     {
-        log.warn('Word filter settings are not ported yet - WordFilterSettingsView is missing');
+        if(this._toolbar === null) return;
+
+        this.attachToDesktop(new WordFilterSettingsView(this._toolbar).window);
     }
 
     // AS3: .../SettingsExtension.as::openDiscordSettingsWindow()
