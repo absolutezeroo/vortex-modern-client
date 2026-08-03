@@ -436,6 +436,11 @@ import {
     GuildEditFailedMessageEvent,
     GuildEditInfoMessageEvent,
     GuildMemberFurniCountInHQMessageEvent,
+    GuildMemberMgmtFailedMessageEvent,
+    GuildMembersMessageEvent,
+    GuildMembershipRejectedMessageEvent,
+    GuildMembershipUpdatedMessageEvent,
+    GroupMembershipRequestedMessageEvent,
     GuildEditorDataMessageEvent,
     GuildMembershipsMessageEvent,
     HabboGroupBadgesMessageEvent,
@@ -869,7 +874,14 @@ import {
     GetExtendedProfileMessageComposer,
     GetGuildCreationInfoMessageComposer,
     DeactivateGuildMessageComposer,
+    AddAdminRightsToMemberMessageComposer,
+    ApproveAllMembershipRequestsMessageComposer,
+    ApproveMembershipRequestMessageComposer,
     GetGuildEditInfoMessageComposer,
+    GetGuildMembersMessageComposer,
+    RejectMembershipRequestMessageComposer,
+    RemoveAdminRightsFromMemberMessageComposer,
+    UnblockGroupMemberMessageComposer,
     GetMemberGuildItemCountMessageComposer,
     KickMemberMessageComposer,
     GetGuildEditorDataMessageComposer,
@@ -1435,6 +1447,17 @@ export class HabboMessages implements IMessageConfiguration
         // _SafeStr_4546[1402] = _SafeCls_2145) and corroborated by vortex-emulator
         // Vortex.Revisions/Revision20260701/Headers.cs (GuildMemberFurniCountInHQMessageComposer = 1402).
         this._events.set(1402, GuildMemberFurniCountInHQMessageEvent);
+        // The members window's five replies. Headers read from WIN63's own registry
+        // (habbo/communication/_SafeCls_2046.as, _SafeStr_4546[403]/[3477]/[1735]/[595]/[2087])
+        // and corroborated by vortex-emulator Vortex.Revisions/Revision20260701/Headers.cs
+        // (GuildMembersMessageComposer = 403, GuildMembershipUpdatedMessageComposer = 3477,
+        // GuildMemberMgmtFailedMessageComposer = 1735, GuildMembershipRejectedMessageComposer = 595,
+        // GroupMembershipRequestedMessageComposer = 2087).
+        this._events.set(403, GuildMembersMessageEvent);
+        this._events.set(3477, GuildMembershipUpdatedMessageEvent);
+        this._events.set(1735, GuildMemberMgmtFailedMessageEvent);
+        this._events.set(595, GuildMembershipRejectedMessageEvent);
+        this._events.set(2087, GroupMembershipRequestedMessageEvent);
         this._events.set(1292, HabboUserBadgesMessageEvent);
         this._events.set(3874, HandItemReceivedMessageEvent);
         this._events.set(1554, InClientLinkMessageEvent);
@@ -1828,6 +1851,16 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2725, DeactivateGuildMessageComposer);
         this._composers.set(781, GetMemberGuildItemCountMessageComposer);
         this._composers.set(3156, KickMemberMessageComposer);
+        // Everything the members window can send. Headers read from WIN63's own registry
+        // (habbo/communication/_SafeCls_2046.as lines for _SafeCls_2908/2681/2867/3648/3129/3772/2425)
+        // and corroborated by vortex-emulator Vortex.Revisions/Revision20260701/Headers.cs.
+        this._composers.set(1337, GetGuildMembersMessageComposer);
+        this._composers.set(3200, RejectMembershipRequestMessageComposer);
+        this._composers.set(2580, UnblockGroupMemberMessageComposer);
+        this._composers.set(3999, RemoveAdminRightsFromMemberMessageComposer);
+        this._composers.set(2152, AddAdminRightsToMemberMessageComposer);
+        this._composers.set(3505, ApproveMembershipRequestMessageComposer);
+        this._composers.set(1621, ApproveAllMembershipRequestsMessageComposer);
         this._composers.set(184, MyRecommendedRoomsMessageComposer);
         this._composers.set(3744, GuildBaseSearchMessageComposer);
         this._composers.set(3101, SetRoomSessionTagsMessageComposer);

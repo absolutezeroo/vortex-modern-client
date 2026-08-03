@@ -8,6 +8,7 @@ export {GroupCreatedWindowCtrl} from './GroupCreatedWindowCtrl';
 export {GroupRoomInfoCtrl} from './GroupRoomInfoCtrl';
 export {GuildKickData} from './GuildKickData';
 export {GuildManagementWindowCtrl} from './GuildManagementWindowCtrl';
+export {GuildMembersWindowCtrl} from './GuildMembersWindowCtrl';
 export {GuildSettingsCtrl} from './GuildSettingsCtrl';
 export {GuildSettingsData} from './GuildSettingsData';
 export {HabboGroupsManager} from './HabboGroupsManager';
