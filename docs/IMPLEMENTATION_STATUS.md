@@ -650,6 +650,27 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **Sound and other settings, and the slider under them** (`toolbar/extensions/settings/SoundSettingsView.ts` + `SoundSettingsItem.ts` + `OtherSettingsView.ts` rewritten, `toolbar/memenu/soundsettings/MeMenuSoundSettingsSlider.ts` rewritten, 3 new composers), 2026-08-03.
+  - The sound chain was three SolidJS-era stubs deep — view, item and slider — none of which built
+    a window. All three are now real.
+  - `MeMenuSoundSettingsSlider` owns no drag logic: the window system moves `slider_button` and
+    reports `WE_RELOCATED`, and the slider turns the x into a value. Its travel is the movement
+    area **minus the button's own width**, which is what makes the far right read exactly `maxValue`.
+  - A drag only previews. `saveVolume(..., false)` routes to `soundManager.previewVolume()`, so the
+    player hears the change without it being stored; closing the window commits all three channels.
+  - `OtherSettingsView` needed 3 composers, all newly registered: **`SetIgnoreRoomInvites` 1332**,
+    **`SetRoomCameraPreferences` 3917**, **`ResetPhoneNumberState` 2056** (no payload). Headers from
+    WIN63's registry, corroborated against the emulator. The wired-whisper checkbox sends nothing —
+    AS3 keeps that one client-side.
+  - Two AS3 quirks preserved with a note: `SoundSettingsItem._volume` has **no initializer**, so it
+    starts NaN and `setValue()` never writes it — the mute icons therefore read "on" until the row is
+    first touched, whatever the stored volume is (a `0` default would mute all three on open). And
+    `MeMenuSoundSettingsSlider.setValue()` looks `slider_button` up on the container where
+    `displaySlider()` looks it up under `slider_movement_area`; both find it, the lookup being recursive.
+  - Omitted deliberately, with a `TODO(AS3)`: `SoundSettingsView`'s four `BitmapData` icon fields and
+    their public getters. Nothing in the AS3 ever assigns them — the icons load by `assetUri` — so
+    they can only ever be null.
+
 - ✅ **The client settings menu opens** (`habbo/toolbar/extensions/SettingsExtension.ts` rewritten, `settings/ChatSettingsView.ts` new, `IHabboFreeFlowChat` +4 members), 2026-08-03.
   - Asked for as "add the client settings". The module was **not** missing — `SettingsExtension`,
     `SoundSettingsView` and `OtherSettingsView` all existed, as leftovers from the SolidJS era:
@@ -665,11 +686,9 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     closing commits once more. The port's `IHabboFreeFlowChat` was missing `chatMode`,
     `chatBubbleWidth`, `chatScrollSpeed` and `updateChatPreferences()`, all four of which AS3's own
     interface (`freeflowchat/_SafeCls_70.as`) declares.
-  - **Still stubs**, each now returning a null `window` with a `TODO(AS3)` and a `log.warn` when the
-    menu tries to open it — visible rather than silent: `SoundSettingsView` (225 AS3 l. + its
-    `SoundSettingsItem`, 145 l.) and `OtherSettingsView` (111 l., needs 3 composers for ignore-room-
-    invites, camera-follow and phone-collection reset). `WordFilterSettingsView` (328 l.) is not
-    ported at all — it needs 3 composers and 2 events for the custom-filter list.
+  - **Sound and other settings followed in the same session** (see the entry below); only
+    `WordFilterSettingsView` (328 l.) is still unported — it needs 3 composers and 2 events for the
+    custom-filter list.
   - Checked while looking for this: **room settings are complete** (`navigator/roomsettings/`, 9/9
     including `RoomSettingsFriendListManager`), reachable from three entry points, with `GetRoomSettings`
     256 / `SaveRoomSettings` 725 / `RoomSettingsData` 791 registered and handled by the emulator.

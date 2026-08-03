@@ -1,214 +1,209 @@
+import type {XmlAsset} from '@core/assets/XmlAsset';
+import type {IWindow} from '@core/window/IWindow';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {Logger} from '@core/utils/Logger';
+
 import type {HabboToolbar} from '../../HabboToolbar';
 import {SoundSettingsItem} from './SoundSettingsItem';
-import type {IWindowContainer} from '@core/window/IWindowContainer';
-import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('habbo.toolbar.extensions.settings.SoundSettingsView');
 
 /**
- * Sound settings panel view
+ * SoundSettingsView
  *
- * In AS3 this creates a window with three sound setting items (UI, furni, trax),
- * manages volume state and syncs with the sound manager. In Vortex, UI rendering
- * is handled by SolidJS.
+ * Three volume rows — interface, furniture, trax — each a `SoundSettingsItem` over a
+ * container the layout provides. The view holds the three numbers; the rows write through
+ * it, and it writes to the sound manager.
  *
- * @see sources/win63_version/habbo/toolbar/extensions/settings/SoundSettingsView.as
+ * A drag only previews: `saveVolume(..., false)` routes to `previewVolume()`, letting the
+ * player hear the change without storing it. Closing the window commits all three.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/settings/SoundSettingsView.as
  */
 export class SoundSettingsView
 {
+    // AS3: .../SoundSettingsView.as::_window
+    private _window: IWindowContainer | null = null;
+
+    // AS3: .../SoundSettingsView.as::_SafeStr_6213
+    private _uiVolumeItem: SoundSettingsItem | null = null;
+
+    // AS3: .../SoundSettingsView.as::_SafeStr_6199
+    private _furniVolumeItem: SoundSettingsItem | null = null;
+
+    // AS3: .../SoundSettingsView.as::_SafeStr_6274
+    private _traxVolumeItem: SoundSettingsItem | null = null;
+
+    // AS3: .../SoundSettingsView.as::_genericVolume
+    private _genericVolume: number = 1;
+
+    // AS3: .../SoundSettingsView.as::_furniVolume
+    private _furniVolume: number = 1;
+
+    // AS3: .../SoundSettingsView.as::_traxVolume
+    private _traxVolume: number = 1;
+
+    // AS3: .../SoundSettingsView.as::_toolbar
+    private _toolbar: HabboToolbar | null;
+
+    // AS3: .../SoundSettingsView.as::SoundSettingsView()
     constructor(toolbar: HabboToolbar)
     {
         this._toolbar = toolbar;
 
-        this._uiVolumeItem = new SoundSettingsItem(this, SoundSettingsItem.TYPE_UI_VOLUME);
-        this._furniVolumeItem = new SoundSettingsItem(this, SoundSettingsItem.TYPE_FURNI_VOLUME);
-        this._traxVolumeItem = new SoundSettingsItem(this, SoundSettingsItem.TYPE_TRAX_VOLUME);
-
-        this.updateSettings();
-
-        log.debug('SoundSettingsView constructed');
+        this.createWindow();
     }
 
-    private _toolbar: HabboToolbar | null;
+    // AS3: .../SoundSettingsView.as::get window()
+    get window(): IWindowContainer | null
+    {
+        return this._window;
+    }
 
-    /**
-	 * The toolbar reference
-	 */
+    // AS3: .../SoundSettingsView.as::get toolbar()
     get toolbar(): HabboToolbar | null
     {
         return this._toolbar;
     }
 
-    private _uiVolumeItem: SoundSettingsItem | null = null;
-
-    /**
-	 * The UI volume item
-	 */
-    get uiVolumeItem(): SoundSettingsItem | null
+    // AS3: .../SoundSettingsView.as::updateSettings()
+    updateSettings(): void
     {
-        return this._uiVolumeItem;
+        const soundManager = this._toolbar?.soundManager ?? null;
+
+        if(soundManager === null) return;
+
+        this._genericVolume = soundManager.genericVolume;
+        this._furniVolume = soundManager.furniVolume;
+        this._traxVolume = soundManager.traxVolume;
+
+        this._uiVolumeItem?.setValue(this._genericVolume);
+        this._furniVolumeItem?.setValue(this._furniVolume);
+        this._traxVolumeItem?.setValue(this._traxVolume);
     }
 
-    private _furniVolumeItem: SoundSettingsItem | null = null;
-
-    /**
-	 * The furni volume item
-	 */
-    get furniVolumeItem(): SoundSettingsItem | null
+    /** Every direct child gets the click handler; only `back_btn` does anything with it. */
+    // AS3: .../SoundSettingsView.as::createWindow()
+    private createWindow(): void
     {
-        return this._furniVolumeItem;
-    }
+        const asset = this._toolbar?.assets?.getAssetByName('me_menu_sound_settings_xml') as XmlAsset | null;
 
-    private _traxVolumeItem: SoundSettingsItem | null = null;
-
-    /**
-	 * The trax volume item
-	 */
-    get traxVolumeItem(): SoundSettingsItem | null
-    {
-        return this._traxVolumeItem;
-    }
-
-    private _genericVolume: number = 1;
-
-    /**
-	 * The current generic (UI) volume
-	 */
-    get genericVolume(): number
-    {
-        return this._genericVolume;
-    }
-
-    private _furniVolume: number = 1;
-
-    /**
-	 * The current furni volume
-	 */
-    get furniVolume(): number
-    {
-        return this._furniVolume;
-    }
-
-    private _traxVolume: number = 1;
-
-    /**
-	 * The current trax volume
-	 */
-    get traxVolume(): number
-    {
-        return this._traxVolume;
-    }
-
-    /**
-	 * Update settings from the sound manager
-	 */
-    public updateSettings(): void
-    {
-        // In AS3: reads from toolbar.soundManager
-        // In Vortex, these would be synced from the sound manager
-        if(this._uiVolumeItem)
+        if(asset === null || asset === undefined)
         {
-            this._uiVolumeItem.setValue(this._genericVolume);
+            log.warn('Missing layout "me_menu_sound_settings_xml" - sound settings cannot open');
+
+            return;
         }
 
-        if(this._furniVolumeItem)
+        this._window = this._toolbar?.windowManager?.buildFromXML(
+            asset.content as unknown as string
+        ) as IWindowContainer | null;
+
+        if(this._window === null) return;
+
+        for(let index = 0; index < this._window.numChildren; index++)
         {
-            this._furniVolumeItem.setValue(this._furniVolume);
+            this._window.getChildAt(index)?.addEventListener('WME_CLICK', this.onButtonClicked);
         }
 
-        if(this._traxVolumeItem)
-        {
-            this._traxVolumeItem.setValue(this._traxVolume);
-        }
+        this._uiVolumeItem = new SoundSettingsItem(this, SoundSettingsItem.TYPE_UI_VOLUME, this.uiVolumeContainer);
+        this._furniVolumeItem = new SoundSettingsItem(this, SoundSettingsItem.TYPE_FURNI_VOLUME, this.furniVolumeContainer);
+        this._traxVolumeItem = new SoundSettingsItem(this, SoundSettingsItem.TYPE_TRAX_VOLUME, this.traxVolumeContainer);
+
+        this.updateSettings();
     }
 
-    /**
-	 * Save volume values
-	 *
-	 * @param genericVolume UI volume (-1 to keep current)
-	 * @param furniVolume Furni volume (-1 to keep current)
-	 * @param traxVolume Trax volume (-1 to keep current)
-	 * @param persist If true, persist the volume. If false, just preview.
-	 */
-    public saveVolume(genericVolume: number, furniVolume: number, traxVolume: number, persist: boolean = true): void
+    // AS3: .../SoundSettingsView.as::onButtonClicked()
+    private onButtonClicked = (event: WindowEvent): void =>
     {
-        const effectiveFurni = furniVolume !== -1 ? furniVolume : this._furniVolume;
-        const effectiveGeneric = genericVolume !== -1 ? genericVolume : this._genericVolume;
-        const effectiveTrax = traxVolume !== -1 ? traxVolume : this._traxVolume;
+        const name = (event.target as unknown as IWindow | null)?.name ?? '';
 
-        if(persist)
+        if(name !== 'back_btn')
         {
-            if(!this._toolbar) return;
+            log.debug(`Me Menu Settings View: unknown button: ${name}`);
 
-            this._genericVolume = effectiveGeneric;
-            this._furniVolume = effectiveFurni;
-            this._traxVolume = effectiveTrax;
+            return;
+        }
 
-            // In AS3: toolbar.soundManager.furniVolume = effectiveFurni
-            // In AS3: toolbar.soundManager.genericVolume = effectiveGeneric
-            // In AS3: toolbar.soundManager.traxVolume = effectiveTrax
+        this.dispose();
+    };
+
+    /**
+     * `-1` means "leave this channel alone", which is how one row writes its own volume
+     * without disturbing the other two.
+     */
+    // AS3: .../SoundSettingsView.as::saveVolume()
+    saveVolume(genericVolume: number, furniVolume: number, traxVolume: number, save: boolean = true): void
+    {
+        const soundManager = this._toolbar?.soundManager ?? null;
+
+        if(soundManager === null) return;
+
+        const furni = furniVolume !== -1 ? furniVolume : this._furniVolume;
+        const generic = genericVolume !== -1 ? genericVolume : this._genericVolume;
+        const trax = traxVolume !== -1 ? traxVolume : this._traxVolume;
+
+        if(save)
+        {
+            soundManager.furniVolume = furni;
+            soundManager.genericVolume = generic;
+            soundManager.traxVolume = trax;
         }
         else
         {
-            // In AS3: toolbar.soundManager.previewVolume(effectiveGeneric, effectiveFurni, effectiveTrax)
+            soundManager.previewVolume(generic, furni, trax);
         }
     }
 
-    /**
-	 * Handle a button click
-	 *
-	 * @param buttonName The button name
-	 */
-    public onButtonClicked(buttonName: string): void
+    /** AS3 no-op: the sound settings carry no unseen-item badge. */
+    // AS3: .../SoundSettingsView.as::updateUnseenItemCount()
+    updateUnseenItemCount(_category: string, _count: number): void
     {
-        if(buttonName === 'back_btn')
-        {
-            this.dispose();
-        }
-        else
-        {
-            log.warn(`Me Menu Settings View: unknown button: ${buttonName}`);
-        }
+    }
+
+    // AS3: .../SoundSettingsView.as::get uiVolumeContainer()
+    get uiVolumeContainer(): IWindowContainer | null
+    {
+        return (this._window?.findChildByName('ui_volume_container') ?? null) as IWindowContainer | null;
+    }
+
+    // AS3: .../SoundSettingsView.as::get furniVolumeContainer()
+    get furniVolumeContainer(): IWindowContainer | null
+    {
+        return (this._window?.findChildByName('furni_volume_container') ?? null) as IWindowContainer | null;
+    }
+
+    // AS3: .../SoundSettingsView.as::get traxVolumeContainer()
+    get traxVolumeContainer(): IWindowContainer | null
+    {
+        return (this._window?.findChildByName('trax_volume_container') ?? null) as IWindowContainer | null;
     }
 
     /**
-	 * Dispose of this view
-	 */
-    public dispose(): void
+     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/settings/SoundSettingsView.as
+     * also declares four `BitmapData` icon fields (`soundsOffIconColor`, `soundsOffIconWhite`,
+     * `soundsOnIconColor`, `soundsOnIconWhite`) with public getters, and disposes them here.
+     * Nothing in that file — nor in `SoundSettingsItem`, which loads its icons by `assetUri`
+     * instead — ever assigns them, so they are permanently null and the getters are never
+     * called. Omitted rather than ported as four fields that can only ever be null.
+     */
+    // AS3: .../SoundSettingsView.as::dispose()
+    dispose(): void
     {
         this.saveVolume(this._genericVolume, this._furniVolume, this._traxVolume);
 
-        if(this._uiVolumeItem)
-        {
-            this._uiVolumeItem.dispose();
-            this._uiVolumeItem = null;
-        }
+        if(this._window !== null) this._window.dispose();
 
-        if(this._furniVolumeItem)
-        {
-            this._furniVolumeItem.dispose();
-            this._furniVolumeItem = null;
-        }
+        this._window = null;
 
-        if(this._traxVolumeItem)
-        {
-            this._traxVolumeItem.dispose();
-            this._traxVolumeItem = null;
-        }
+        this._uiVolumeItem?.dispose();
+        this._uiVolumeItem = null;
 
-        this._toolbar = null;
-    }
+        this._furniVolumeItem?.dispose();
+        this._furniVolumeItem = null;
 
-    /**
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/settings/SoundSettingsView.as::createWindow()
-     * builds `me_menu_sound_settings_xml` and wires its three volume items to the sound manager. This port's view was
-     * written against a UI layer that no longer exists and holds state without a window,
-     * so there is nothing for `SettingsExtension` to attach — the menu entry opens
-     * nothing and says so in the log. Returning null is what makes that visible.
-     */
-    // AS3: .../SoundSettingsView.as::get window()
-    get window(): IWindowContainer | null
-    {
-        return null;
+        this._traxVolumeItem?.dispose();
+        this._traxVolumeItem = null;
     }
 }

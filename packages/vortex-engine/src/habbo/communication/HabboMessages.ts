@@ -676,6 +676,9 @@ import {RespectPetMessageComposer, RespectUserMessageComposer,} from './messages
 import {
     SetChatStylePreferenceComposer,
     SetNewNavigatorWindowPreferencesMessageComposer,
+    ResetPhoneNumberStateMessageComposer,
+    SetIgnoreRoomInvitesMessageComposer,
+    SetRoomCameraPreferencesMessageComposer,
     SetUIFlagsMessageComposer,
 } from './messages/outgoing/preferences';
 
@@ -2110,6 +2113,14 @@ export class HabboMessages implements IMessageConfiguration
 
         // === PREFERENCES ===
         this._composers.set(3653, SetUIFlagsMessageComposer);
+        // The other-settings checkboxes. Headers read from WIN63's own registry
+        // (habbo/communication/_SafeCls_2046.as, _composers[1332]/[3917]/[2056]) and
+        // corroborated by vortex-emulator Vortex.Revisions/Revision20260701/Headers.cs
+        // (SetIgnoreRoomInvitesMessageEvent = 1332, SetRoomCameraPreferencesMessageEvent = 3917,
+        // ResetPhoneNumberStateMessageEvent = 2056).
+        this._composers.set(1332, SetIgnoreRoomInvitesMessageComposer);
+        this._composers.set(3917, SetRoomCameraPreferencesMessageComposer);
+        this._composers.set(2056, ResetPhoneNumberStateMessageComposer);
         this._composers.set(1276, SetNewNavigatorWindowPreferencesMessageComposer);
         this._composers.set(2634, SetChatStylePreferenceComposer);
 

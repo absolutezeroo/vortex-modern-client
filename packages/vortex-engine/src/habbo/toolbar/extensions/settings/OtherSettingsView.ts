@@ -1,161 +1,184 @@
-import type {HabboToolbar} from '../../HabboToolbar';
+import type {XmlAsset} from '@core/assets/XmlAsset';
+import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
+import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {Logger} from '@core/utils/Logger';
+
+import {
+    SetIgnoreRoomInvitesMessageComposer
+} from '@habbo/communication/messages/outgoing/preferences/SetIgnoreRoomInvitesMessageComposer';
+import {
+    SetRoomCameraPreferencesMessageComposer
+} from '@habbo/communication/messages/outgoing/preferences/SetRoomCameraPreferencesMessageComposer';
+import {
+    ResetPhoneNumberStateMessageComposer
+} from '@habbo/communication/messages/outgoing/preferences/ResetPhoneNumberStateMessageComposer';
+import type {HabboToolbar} from '../../HabboToolbar';
 
 const log = Logger.getLogger('habbo.toolbar.extensions.settings.OtherSettingsView');
 
 /**
- * Other settings panel view
+ * OtherSettingsView
  *
- * In AS3 this creates a window with checkboxes for old chat preference,
- * ignore room invites, disable room camera follow, and reset phone number.
- * In Vortex, UI rendering is handled by SolidJS.
+ * The leftovers panel: ignore room invites, disable wired whispers, stop the room camera
+ * following you, and reset phone-number collection. Each checkbox commits the moment it
+ * is clicked — there is no save button and no dispose-time write.
  *
- * @see sources/win63_version/habbo/toolbar/extensions/settings/OtherSettingsView.as
+ * Two of the four are config-gated and simply absent otherwise, and the phone-number
+ * button appears only for one specific combination of verification and collection status.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/settings/OtherSettingsView.as
  */
 export class OtherSettingsView
 {
+    // AS3: .../OtherSettingsView.as::_window
+    private _window: IWindowContainer | null = null;
+
+    // AS3: .../OtherSettingsView.as::_toolbar
     private _toolbar: HabboToolbar | null;
 
+    // AS3: .../OtherSettingsView.as::OtherSettingsView()
     constructor(toolbar: HabboToolbar)
     {
         this._toolbar = toolbar;
 
-        this.initializeSettings();
-
-        log.debug('OtherSettingsView constructed');
+        this.createWindow();
     }
 
-    private _preferOldChat: boolean = false;
+    // AS3: .../OtherSettingsView.as::get window()
+    get window(): IWindowContainer | null
+    {
+        return this._window;
+    }
+
+    // AS3: .../OtherSettingsView.as::createWindow()
+    private createWindow(): void
+    {
+        const toolbar = this._toolbar;
+
+        if(toolbar === null) return;
+
+        const asset = toolbar.assets?.getAssetByName('me_menu_other_settings_xml') as XmlAsset | null;
+
+        if(asset === null || asset === undefined)
+        {
+            log.warn('Missing layout "me_menu_other_settings_xml" - other settings cannot open');
+
+            return;
+        }
+
+        this._window = toolbar.windowManager?.buildFromXML(
+            asset.content as unknown as string
+        ) as IWindowContainer | null;
+
+        if(this._window === null) return;
+
+        this._window.procedure = this.onButtonClicked;
+
+        this.setChecked('ignore_room_invites_checkbox', toolbar.messenger?.getRoomInvitesIgnored() ?? false);
+        this.setChecked('disable_wired_whisper_checkbox', toolbar.roomEvents?.wiredWhisperDisabled ?? false);
+
+        const cameraFollowEnabled = toolbar.getBoolean('room.camera.follow_user');
+        const cameraFollowRow = this._window.findChildByName('disable_room_camera_follow');
+
+        if(cameraFollowRow) cameraFollowRow.visible = cameraFollowEnabled;
+
+        if(cameraFollowEnabled)
+        {
+            this.setChecked(
+                'disable_room_camera_follow_checkbox',
+                toolbar.sessionDataManager?.isRoomCameraFollowDisabled ?? false
+            );
+        }
+
+        // Offered only to someone SMS verification applies to but who is not verified,
+        // and either already gave a number or is allowed to be asked for one.
+        const smsEnabled = toolbar.getBoolean('sms.identity.verification.enabled');
+        const verified = toolbar.getInteger('phone.verification.status', 0) === 2;
+        const collected = toolbar.getInteger('phone.collection.status', 0) === 2;
+        const buttonEnabled = toolbar.getBoolean('sms.identity.verification.button.enabled');
+        const notCollected = toolbar.getInteger('phone.collection.status', 0) === 0;
+
+        const resetButton = this._window.findChildByName('btn_reset_phone_number_collection');
+
+        if(resetButton) resetButton.visible = smsEnabled && !verified && (collected || (buttonEnabled && notCollected));
+    }
+
+    // TS-only: the checkbox cast AS3 spells out at each of its three call sites.
+    private setChecked(name: string, selected: boolean): void
+    {
+        const checkbox = this._window?.findChildByName(name) as unknown as ISelectableWindow | null;
+
+        if(checkbox !== null && checkbox !== undefined) checkbox.isSelected = selected;
+    }
+
+    // TS-only: the matching read.
+    private isChecked(name: string): boolean
+    {
+        const checkbox = this._window?.findChildByName(name) as unknown as ISelectableWindow | null;
+
+        return checkbox?.isSelected ?? false;
+    }
 
     /**
-	 * Whether the old chat preference is selected
-	 */
-    get preferOldChat(): boolean
+     * The checkbox has already toggled itself by the time this runs, so each branch reads
+     * the new state back off the window rather than tracking it.
+     */
+    // AS3: .../OtherSettingsView.as::onButtonClicked()
+    private onButtonClicked = (event: WindowEvent, window: IWindow): void =>
     {
-        return this._preferOldChat;
-    }
+        if(event.type !== 'WME_CLICK') return;
 
-    set preferOldChat(value: boolean)
-    {
-        this._preferOldChat = value;
-    }
+        const toolbar = this._toolbar;
 
-    private _ignoreRoomInvites: boolean = false;
+        if(toolbar === null) return;
 
-    /**
-	 * Whether room invites are ignored
-	 */
-    get ignoreRoomInvites(): boolean
-    {
-        return this._ignoreRoomInvites;
-    }
-
-    set ignoreRoomInvites(value: boolean)
-    {
-        this._ignoreRoomInvites = value;
-    }
-
-    private _disableRoomCameraFollow: boolean = false;
-
-    /**
-	 * Whether room camera follow is disabled
-	 */
-    get disableRoomCameraFollow(): boolean
-    {
-        return this._disableRoomCameraFollow;
-    }
-
-    set disableRoomCameraFollow(value: boolean)
-    {
-        this._disableRoomCameraFollow = value;
-    }
-
-    private _showResetPhoneButton: boolean = false;
-
-    /**
-	 * Whether the reset phone number button is visible
-	 */
-    get showResetPhoneButton(): boolean
-    {
-        return this._showResetPhoneButton;
-    }
-
-    /**
-	 * Handle a button click
-	 *
-	 * @param buttonName The name of the clicked button
-	 */
-    public onButtonClicked(buttonName: string): void
-    {
-        if(!this._toolbar) return;
-
-        switch(buttonName)
+        switch(window.name)
         {
             case 'back_btn':
                 this.dispose();
                 break;
-            case 'prefer_old_chat_checkbox':
-                // In AS3: toolbar.freeFlowChat.isDisabledInPreferences = isSelected
-                break;
             case 'ignore_room_invites_checkbox':
-                // In AS3: toolbar.messenger.setRoomInvitesIgnored(isSelected)
-                // In AS3: toolbar.connection.send(new SetIgnoreRoomInvitesMessageComposer(...))
+                toolbar.messenger?.setRoomInvitesIgnored(this.isChecked('ignore_room_invites_checkbox'));
+                toolbar.connection?.send(
+                    new SetIgnoreRoomInvitesMessageComposer(toolbar.messenger?.getRoomInvitesIgnored() ?? false)
+                );
+                break;
+            case 'disable_wired_whisper_checkbox':
+                // Client-side only: AS3 sends nothing for this one.
+                if(toolbar.roomEvents !== null)
+                {
+                    toolbar.roomEvents.wiredWhisperDisabled = this.isChecked('disable_wired_whisper_checkbox');
+                }
                 break;
             case 'disable_room_camera_follow_checkbox':
-                // In AS3: toolbar.connection.send(new SetRoomCameraPreferencesMessageComposer(...))
-                // In AS3: toolbar.sessionDataManager.setRoomCameraFollowDisabled(...)
+            {
+                const disabled = this.isChecked('disable_room_camera_follow_checkbox');
+
+                toolbar.connection?.send(new SetRoomCameraPreferencesMessageComposer(disabled));
+                toolbar.sessionDataManager?.setRoomCameraFollowDisabled(disabled);
                 break;
+            }
             case 'btn_reset_phone_number_collection':
-                this._showResetPhoneButton = false;
-                // In AS3: toolbar.connection.send(new ResetPhoneNumberStateMessageComposer())
+            {
+                const resetButton = this._window?.findChildByName('btn_reset_phone_number_collection');
+
+                if(resetButton) resetButton.visible = false;
+
+                toolbar.connection?.send(new ResetPhoneNumberStateMessageComposer());
                 break;
+            }
         }
-    }
+    };
 
-    /**
-	 * Dispose of this view
-	 */
-    public dispose(): void
+    /** AS3 keeps the toolbar reference; only the window goes. */
+    // AS3: .../OtherSettingsView.as::dispose()
+    dispose(): void
     {
-        if(this._toolbar == null) return;
+        if(this._window === null) return;
 
-        this._toolbar = null;
-    }
-
-    private initializeSettings(): void
-    {
-        if(!this._toolbar) return;
-
-        const roomCameraFollowEnabled = this._toolbar.getBoolean('room.camera.follow_user');
-        const smsVerificationEnabled = this._toolbar.getBoolean('sms.identity.verification.enabled');
-        const phoneVerificationStatus = this._toolbar.getInteger('phone.verification.status', 0);
-        const phoneCollectionStatus = this._toolbar.getInteger('phone.collection.status', 0);
-        const smsButtonEnabled = this._toolbar.getBoolean('sms.identity.verification.button.enabled');
-
-        const isVerified = phoneVerificationStatus === 2;
-        const isCollected = phoneCollectionStatus === 2;
-        const isNotCollected = phoneCollectionStatus === 0;
-
-        this._showResetPhoneButton = smsVerificationEnabled && !isVerified &&
-			(isCollected || (smsButtonEnabled && isNotCollected));
-
-        if(roomCameraFollowEnabled && this._toolbar.sessionDataManager)
-        {
-            this._disableRoomCameraFollow = this._toolbar.sessionDataManager.isRoomCameraFollowDisabled;
-        }
-    }
-
-    /**
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/settings/OtherSettingsView.as::createWindow()
-     * builds `me_menu_other_settings_xml` and wires its checkboxes to the messenger, room events and session data. This port's view was
-     * written against a UI layer that no longer exists and holds state without a window,
-     * so there is nothing for `SettingsExtension` to attach — the menu entry opens
-     * nothing and says so in the log. Returning null is what makes that visible.
-     */
-    // AS3: .../OtherSettingsView.as::get window()
-    get window(): IWindowContainer | null
-    {
-        return null;
+        this._window.dispose();
+        this._window = null;
     }
 }
