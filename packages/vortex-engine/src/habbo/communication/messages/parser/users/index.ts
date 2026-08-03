@@ -10,6 +10,7 @@ export * from './GuildCreatedMessageParser';
 export * from './GuildCreationInfoMessageParser';
 export * from './GuildEditFailedMessageParser';
 export * from './GuildEditInfoMessageParser';
+export * from './GuildMemberFurniCountInHQMessageParser';
 export * from './GuildEditorDataMessageParser';
 export * from './GuildMembershipsMessageEventParser';
 export * from './HabboGroupBadgesMessageParser';

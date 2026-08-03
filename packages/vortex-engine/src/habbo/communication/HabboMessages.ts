@@ -435,6 +435,7 @@ import {
     GuildCreationInfoMessageEvent,
     GuildEditFailedMessageEvent,
     GuildEditInfoMessageEvent,
+    GuildMemberFurniCountInHQMessageEvent,
     GuildEditorDataMessageEvent,
     GuildMembershipsMessageEvent,
     HabboGroupBadgesMessageEvent,
@@ -867,7 +868,10 @@ import {
     GetExtendedProfileByNameMessageComposer,
     GetExtendedProfileMessageComposer,
     GetGuildCreationInfoMessageComposer,
+    DeactivateGuildMessageComposer,
     GetGuildEditInfoMessageComposer,
+    GetMemberGuildItemCountMessageComposer,
+    KickMemberMessageComposer,
     GetGuildEditorDataMessageComposer,
     GetGuildMembershipsMessageComposer,
     GetHabboGroupBadgesMessageComposer,
@@ -1426,6 +1430,11 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1132, GuildEditorDataMessageEvent);
         this._events.set(2138, GuildCreatedMessageEvent);
         this._events.set(496, GuildEditFailedMessageEvent);
+        // Kick/leave step two: how much furni the target still has in the HQ. Header read
+        // from WIN63's own registry (habbo/communication/_SafeCls_2046.as line 1241,
+        // _SafeStr_4546[1402] = _SafeCls_2145) and corroborated by vortex-emulator
+        // Vortex.Revisions/Revision20260701/Headers.cs (GuildMemberFurniCountInHQMessageComposer = 1402).
+        this._events.set(1402, GuildMemberFurniCountInHQMessageEvent);
         this._events.set(1292, HabboUserBadgesMessageEvent);
         this._events.set(3874, HandItemReceivedMessageEvent);
         this._events.set(1554, InClientLinkMessageEvent);
@@ -1810,6 +1819,15 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3882, UpdateGuildBadgeMessageComposer);
         this._composers.set(3421, UpdateGuildColorsMessageComposer);
         this._composers.set(3716, UpdateGuildSettingsMessageComposer);
+        // Guild deletion and the two-step kick/leave. Headers read from WIN63's own
+        // registry (habbo/communication/_SafeCls_2046.as lines 855/1138/926) and
+        // corroborated by vortex-emulator Vortex.Revisions/Revision20260701/Headers.cs
+        // (DeactivateGuildMessageEvent = 2725, GetMemberGuildItemCountMessageEvent = 781,
+        // KickMemberMessageEvent = 3156 — whose comment records that 781 was once
+        // mistaken for the kick itself).
+        this._composers.set(2725, DeactivateGuildMessageComposer);
+        this._composers.set(781, GetMemberGuildItemCountMessageComposer);
+        this._composers.set(3156, KickMemberMessageComposer);
         this._composers.set(184, MyRecommendedRoomsMessageComposer);
         this._composers.set(3744, GuildBaseSearchMessageComposer);
         this._composers.set(3101, SetRoomSessionTagsMessageComposer);

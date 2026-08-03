@@ -16,6 +16,7 @@ export * from './GuildCreationInfoMessageEvent';
 export * from './GuildEditFailedMessageEvent';
 export * from './GuildEditInfoData';
 export * from './GuildEditInfoMessageEvent';
+export * from './GuildMemberFurniCountInHQMessageEvent';
 export * from './GuildEditorData';
 export * from './GuildEditorDataMessageEvent';
 export * from './GuildMembership';

@@ -29,3 +29,6 @@ export {UpdateGuildColorsMessageComposer} from './UpdateGuildColorsMessageCompos
 export {UpdateGuildIdentityMessageComposer} from './UpdateGuildIdentityMessageComposer';
 export {UpdateGuildSettingsMessageComposer} from './UpdateGuildSettingsMessageComposer';
 export {GetDailyTasksComposer} from './GetDailyTasksComposer';
+export {DeactivateGuildMessageComposer} from './DeactivateGuildMessageComposer';
+export {GetMemberGuildItemCountMessageComposer} from './GetMemberGuildItemCountMessageComposer';
+export {KickMemberMessageComposer} from './KickMemberMessageComposer';

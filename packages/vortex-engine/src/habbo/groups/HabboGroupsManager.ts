@@ -31,6 +31,7 @@ import {
     GuildCreationInfoMessageEvent,
     GuildEditFailedMessageEvent,
     GuildEditInfoMessageEvent,
+    GuildMemberFurniCountInHQMessageEvent,
     GuildEditorDataMessageEvent,
     HabboGroupDeactivatedMessageEvent,
     HabboGroupDetailsMessageEvent,
@@ -44,6 +45,8 @@ import {
 import {
     GetExtendedProfileMessageComposer,
     GetGuildEditorDataMessageComposer,
+    GetMemberGuildItemCountMessageComposer,
+    KickMemberMessageComposer,
     GetHabboGroupDetailsMessageComposer
 } from '@habbo/communication/messages/outgoing/users';
 import {GuildEditFailedMessageParser} from '@habbo/communication/messages/parser/users/GuildEditFailedMessageParser';
@@ -56,11 +59,14 @@ import {GetGuestRoomResultMessageEvent} from '@habbo/communication/messages/inco
 import {CloseConnectionMessageEvent} from '@habbo/communication/messages/incoming/room/session/CloseConnectionMessageEvent';
 import type {GetGuestRoomResultMessageParser} from '@habbo/communication/messages/parser/navigator/GetGuestRoomResultMessageParser';
 import type {RoomEntryInfoMessageParser} from '@habbo/communication/messages/parser/room/engine/RoomEntryInfoMessageParser';
+import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import {HabboGroupsEditorData} from './events/HabboGroupsEditorData';
 import {ExtendedProfileWindowCtrl} from './ExtendedProfileWindowCtrl';
 import {GuildManagementWindowCtrl} from './GuildManagementWindowCtrl';
+import {DetailsWindowCtrl} from './DetailsWindowCtrl';
+import {GuildKickData} from './GuildKickData';
 import {GroupCreatedWindowCtrl} from './GroupCreatedWindowCtrl';
 import {HcRequiredWindowCtrl} from './HcRequiredWindowCtrl';
 import {GroupRoomInfoCtrl} from './GroupRoomInfoCtrl';
@@ -115,6 +121,10 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     private readonly _hcRequiredWindowCtrl: HcRequiredWindowCtrl;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_5157
     private readonly _groupRoomInfoCtrl: GroupRoomInfoCtrl;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_5630
+    private readonly _detailsWindowCtrl: DetailsWindowCtrl;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_5283
+    private _kickData: GuildKickData | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_8664
     private _guildEditorData: GuildEditorData | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_9811
@@ -134,6 +144,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this._groupCreatedWindowCtrl = new GroupCreatedWindowCtrl(this);
         this._hcRequiredWindowCtrl = new HcRequiredWindowCtrl(this);
         this._groupRoomInfoCtrl = new GroupRoomInfoCtrl(this);
+        this._detailsWindowCtrl = new DetailsWindowCtrl(this);
     }
 
     /**
@@ -378,6 +389,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this._groupCreatedWindowCtrl.dispose();
         this._hcRequiredWindowCtrl.dispose();
         this._groupRoomInfoCtrl.dispose();
+        this._detailsWindowCtrl.dispose();
         this._guildEditorData = null;
         this._communicationManager = null;
 
@@ -400,6 +412,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this.addMessageEvent(new GuildEditorDataMessageEvent(this.onGuildEditorData.bind(this)));
         this.addMessageEvent(new GuildCreatedMessageEvent(this.onGuildCreated.bind(this)));
         this.addMessageEvent(new GuildEditFailedMessageEvent(this.onGuildEditFailed.bind(this)));
+        this.addMessageEvent(new GuildMemberFurniCountInHQMessageEvent(this.onKickConfirmation.bind(this)));
         this.addMessageEvent(new FlatCreatedMessageEvent(this.onFlatCreated.bind(this)));
         this.addMessageEvent(new ScrSendUserInfoEvent(this.onSubscriptionInfo.bind(this)));
         this.addMessageEvent(new RoomEntryInfoMessageEvent(this.onRoomEnter.bind(this)));
@@ -472,10 +485,11 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         }
 
         this._groupDetailsById.set(data.groupId, data);
+        this._detailsWindowCtrl.onGroupDetails(data);
         this._groupRoomInfoCtrl.onGroupDetails(data);
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onGroupDetails() also forwards to DetailsWindowCtrl (120 AS3
-        // lines) and ExtendedProfileWindowCtrl::onGroupDetails(); neither is ported.
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onGroupDetails() also forwards to
+        // ExtendedProfileWindowCtrl::onGroupDetails(), which the port's ExtendedProfileWindowCtrl does not implement.
     }
 
     private onGroupDetailsChanged(event: IMessageEvent): void
@@ -505,6 +519,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         }
 
         this._groupDetailsById.delete(deactivatedEvent.groupId);
+        this._detailsWindowCtrl.onGroupDeactivated(deactivatedEvent.groupId);
         this._groupRoomInfoCtrl.onGroupDeactivated(deactivatedEvent.groupId);
     }
 
@@ -685,6 +700,94 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         if(this._guildEditorData === null) this.send(new GetGuildEditorDataMessageComposer());
     }
 
+    /**
+     * Step one of removing a member — and of leaving, which is a player kicking
+     * themselves. Nothing is sent to the guild yet: this only asks how much furniture the
+     * target has in the HQ, because that number picks the confirmation text.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::handleUserKick()
+    handleUserKick(userId: number, groupId: number): void
+    {
+        this._kickData = new GuildKickData(groupId, userId);
+        this.send(new GetMemberGuildItemCountMessageComposer(groupId, userId));
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::handleUserBlock()
+    handleUserBlock(userId: number, groupId: number): void
+    {
+        this._kickData = new GuildKickData(groupId, userId, true);
+        this.send(new GetMemberGuildItemCountMessageComposer(groupId, userId));
+    }
+
+    /**
+     * The furni count came back, so the confirmation can finally name a number — and, for
+     * someone other than the player, a user.
+     *
+     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onKickConfirmation()
+     * resolves that user through `guildMembersWindowCtrl.data.getUser(userId)`.
+     * `GuildMembersWindowCtrl` (717 AS3 lines) is not ported, so the two branches that
+     * kick or block someone else fall back to the un-named text; leaving, which is the
+     * only path the ported UI can reach today, is unaffected.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onKickConfirmation()
+    private onKickConfirmation(event: IMessageEvent): void
+    {
+        const countEvent = event as GuildMemberFurniCountInHQMessageEvent;
+
+        if(countEvent === null || this._kickData === null) return;
+
+        const userId = countEvent.userId;
+        const furniCount = countEvent.furniCount;
+        const key = this._kickData.targetBlocked ? 'group.block' : 'group.kick';
+        const isSelf = userId === this.avatarId;
+
+        if(furniCount > 0)
+        {
+            if(isSelf)
+            {
+                this.localization?.registerParameter('group.leaveconfirm.desc', 'amount', `${furniCount}`);
+                this.windowManager?.confirm('${group.leaveconfirm.title}', '${group.leaveconfirm.desc}', 0, this.onKickConfirmationClose);
+            }
+            else
+            {
+                this.localization?.registerParameter(`${key}confirm.desc`, 'amount', `${furniCount}`);
+                this.windowManager?.confirm(`\${${key}confirm.title}`, `\${${key}confirm.desc}`, 0, this.onKickConfirmationClose);
+            }
+        }
+        else if(isSelf)
+        {
+            this.windowManager?.confirm('${group.leaveconfirm.title}', '${group.leaveconfirm_nofurni.desc}', 0, this.onKickConfirmationClose);
+        }
+        else
+        {
+            this.windowManager?.confirm(`\${${key}confirm.title}`, `\${${key}confirm_nofurni.desc}`, 0, this.onKickConfirmationClose);
+        }
+    }
+
+    /** Only WE_OK sends the kick; every other way out of the dialog drops the request. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onKickConfirmationClose()
+    private onKickConfirmationClose = (dialog: IDisposable, event: WindowEvent): void =>
+    {
+        const kickData = this._kickData;
+
+        this._kickData = null;
+
+        if(dialog === null || kickData === null) return;
+
+        dialog.dispose();
+
+        if(event.type === 'WE_OK')
+        {
+            this.send(new KickMemberMessageComposer(kickData.kickGuildId, kickData.kickTargetId, kickData.targetBlocked));
+        }
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::get detailsWindowCtrl()
+    get detailsWindowCtrl(): DetailsWindowCtrl
+    {
+        return this._detailsWindowCtrl;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onAlertClose()
     private onAlertClose = (dialog: IDisposable): void =>
     {
@@ -723,7 +826,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
 
     /**
      * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::get guildMembersWindowCtrl()
-     * returns the GuildMembersWindowCtrl (748 AS3 lines), which is not ported. AS3's own
+     * returns the GuildMembersWindowCtrl (717 AS3 lines), which is not ported. AS3's own
      * caller — GuildManagementWindowCtrl::onMembersClick() — already null-checks it, so
      * returning null here disables the members link rather than breaking anything.
      */
