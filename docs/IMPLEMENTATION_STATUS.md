@@ -650,6 +650,31 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **The client settings menu opens** (`habbo/toolbar/extensions/SettingsExtension.ts` rewritten, `settings/ChatSettingsView.ts` new, `IHabboFreeFlowChat` +4 members), 2026-08-03.
+  - Asked for as "add the client settings". The module was **not** missing — `SettingsExtension`,
+    `SoundSettingsView` and `OtherSettingsView` all existed, as leftovers from the SolidJS era:
+    they held state and built **no window at all**. `HabboToolbar.toggleSettingVisibility()` even
+    carried a comment saying so, toggling a `visible` flag nothing rendered.
+  - `SettingsExtension` now builds the real `settings_xml` column, one `setting_category_xml`
+    button per entry, stacking each under the last and growing the menu to fit — which is how the
+    two optional entries (Discord, word filter, both config-gated) can be skipped without a gap.
+    It attaches as toolbar extension `settings` at index 1 and starts hidden, and
+    `toggleSettingVisibility()` now toggles that window as AS3 does.
+  - `ChatSettingsView` ported whole: three drop menus (chat mode, bubble width, scroll speed)
+    writing straight through to `HabboFreeFlowChat`. No save button — every selection commits, and
+    closing commits once more. The port's `IHabboFreeFlowChat` was missing `chatMode`,
+    `chatBubbleWidth`, `chatScrollSpeed` and `updateChatPreferences()`, all four of which AS3's own
+    interface (`freeflowchat/_SafeCls_70.as`) declares.
+  - **Still stubs**, each now returning a null `window` with a `TODO(AS3)` and a `log.warn` when the
+    menu tries to open it — visible rather than silent: `SoundSettingsView` (225 AS3 l. + its
+    `SoundSettingsItem`, 145 l.) and `OtherSettingsView` (111 l., needs 3 composers for ignore-room-
+    invites, camera-follow and phone-collection reset). `WordFilterSettingsView` (328 l.) is not
+    ported at all — it needs 3 composers and 2 events for the custom-filter list.
+  - Checked while looking for this: **room settings are complete** (`navigator/roomsettings/`, 9/9
+    including `RoomSettingsFriendListManager`), reachable from three entry points, with `GetRoomSettings`
+    256 / `SaveRoomSettings` 725 / `RoomSettingsData` 791 registered and handled by the emulator.
+    Nothing to add there.
+
 - ✅ **The guild members list** (`habbo/groups/GuildMembersWindowCtrl.ts` 717 AS3 l., `habbo/utils/InfoText.ts`, 2 data classes, 5 events + 5 parsers, 7 composers), 2026-08-03.
   - The last large guild gap, and the one the previous slice had to stub: the members and
     pending-members links called `guildMembersWindowCtrl`, which returned null.

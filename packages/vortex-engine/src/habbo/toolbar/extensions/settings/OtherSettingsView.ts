@@ -1,4 +1,5 @@
 import type {HabboToolbar} from '../../HabboToolbar';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
 import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('habbo.toolbar.extensions.settings.OtherSettingsView');
@@ -143,5 +144,18 @@ export class OtherSettingsView
         {
             this._disableRoomCameraFollow = this._toolbar.sessionDataManager.isRoomCameraFollowDisabled;
         }
+    }
+
+    /**
+     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/settings/OtherSettingsView.as::createWindow()
+     * builds `me_menu_other_settings_xml` and wires its checkboxes to the messenger, room events and session data. This port's view was
+     * written against a UI layer that no longer exists and holds state without a window,
+     * so there is nothing for `SettingsExtension` to attach — the menu entry opens
+     * nothing and says so in the log. Returning null is what makes that visible.
+     */
+    // AS3: .../OtherSettingsView.as::get window()
+    get window(): IWindowContainer | null
+    {
+        return null;
     }
 }

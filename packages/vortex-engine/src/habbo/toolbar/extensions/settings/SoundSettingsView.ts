@@ -1,5 +1,6 @@
 import type {HabboToolbar} from '../../HabboToolbar';
 import {SoundSettingsItem} from './SoundSettingsItem';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
 import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('habbo.toolbar.extensions.settings.SoundSettingsView');
@@ -196,5 +197,18 @@ export class SoundSettingsView
         }
 
         this._toolbar = null;
+    }
+
+    /**
+     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/settings/SoundSettingsView.as::createWindow()
+     * builds `me_menu_sound_settings_xml` and wires its three volume items to the sound manager. This port's view was
+     * written against a UI layer that no longer exists and holds state without a window,
+     * so there is nothing for `SettingsExtension` to attach — the menu entry opens
+     * nothing and says so in the log. Returning null is what makes that visible.
+     */
+    // AS3: .../SoundSettingsView.as::get window()
+    get window(): IWindowContainer | null
+    {
+        return null;
     }
 }

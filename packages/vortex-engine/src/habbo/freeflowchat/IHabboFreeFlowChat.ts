@@ -216,6 +216,32 @@ export interface IHabboFreeFlowChat
     removeUpdateReceiver(receiver: IUpdateReceiver): void;
 
     /**
+	 * The three chat display preferences, as the settings window reads and writes them.
+	 * Each setter funnels through updateChatPreferences(), so writing one keeps the other
+	 * two - which is why ChatSettingsView writes all three at once instead.
+	 *
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/_SafeCls_70.as::get/set chatMode()
+	 */
+    chatMode: number;
+
+    /**
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/_SafeCls_70.as::get/set chatBubbleWidth()
+	 */
+    chatBubbleWidth: number;
+
+    /**
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/_SafeCls_70.as::get/set chatScrollSpeed()
+	 */
+    chatScrollSpeed: number;
+
+    /**
+	 * Commits all three preferences at once and tells the server.
+	 *
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/_SafeCls_70.as::updateChatPreferences()
+	 */
+    updateChatPreferences(chatMode: number, chatBubbleWidth: number, chatScrollSpeed: number): void;
+
+    /**
 	 * Clear the current chat flow stage
 	 */
     clear(): void;

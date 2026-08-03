@@ -656,20 +656,15 @@ export class HabboToolbar extends Component implements IHabboToolbar
     }
 
     /**
-	 * Toggles the settings panel's visibility and refreshes the extension view.
+	 * Toggles the settings menu and refreshes the extension strip around it.
 	 *
-	 * AS3 toggles `var_1178.window.visible` directly - SettingsExtension.ts doesn't build
-	 * a real window yet (TODO in that file), so this toggles its `visible` flag instead as
-	 * the closest faithful equivalent until that window is ported.
-	 *
-	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as toggleSettingVisibility()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::toggleSettingVisibility()
 	 */
     toggleSettingVisibility(): void
     {
-        if(this._settingsExtension)
-        {
-            this._settingsExtension.visible = !this._settingsExtension.visible;
-        }
+        const window = this._settingsExtension?.window ?? null;
+
+        if(window !== null) window.visible = !window.visible;
 
         this.extensionView?.refreshItemWindow();
     }
