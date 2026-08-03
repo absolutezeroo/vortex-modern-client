@@ -20,6 +20,8 @@ import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import {FurniModel} from './furni/FurniModel';
+import {FurnitureCategory} from './enum/FurnitureCategory';
+import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 import {BadgesModel} from './badges/BadgesModel';
 import {EffectsModel} from './effects/EffectsModel';
 import {PetsModel} from './pets/PetsModel';
@@ -208,6 +210,42 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     get furniModel(): IFurniModel
     {
         return this._furniModel;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getFloorItemById()
+    getFloorItemById(itemId: number): FurnitureItem | null
+    {
+        for(const groupItem of this._furniModel.furniData)
+        {
+            const item = groupItem.getItem(itemId);
+
+            if(item && !item.isWallItem) return item;
+        }
+
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::requestSelectedFurniToMover()
+    // Posters carry their placement payload as the stuff data's legacy string and pass no stuff
+    // data object; everything else passes its own `extra` plus the stuff data.
+    requestSelectedFurniToMover(item: FurnitureItem): boolean
+    {
+        if(!this._roomEngine) return false;
+
+        const category = item.isWallItem
+            ? RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL
+            : RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE;
+
+        if(item.category === FurnitureCategory.POSTER)
+        {
+            return this._roomEngine.initializeRoomObjectInsert(
+                'inventory', item.id, category, item.type, item.stuffData?.getLegacyString() ?? ''
+            );
+        }
+
+        return this._roomEngine.initializeRoomObjectInsert(
+            'inventory', item.id, category, item.type, item.extra.toString(), item.stuffData
+        );
     }
 
     private _badgesModel!: BadgesModel;

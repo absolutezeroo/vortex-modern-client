@@ -8,6 +8,7 @@ import type {IBotsModel} from './bots/IBotsModel';
 import type {ITradingModel} from './trading/ITradingModel';
 import type {IPurse} from './purse/IPurse';
 import type {UnseenItemTracker} from './UnseenItemTracker';
+import type {FurnitureItem} from './items/FurnitureItem';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
@@ -124,6 +125,12 @@ export interface IHabboInventory
 
     // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::toggleInventoryPage()
     toggleInventoryPage(category: string, itemId?: string | null, forceSwitch?: boolean): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::getFloorItemById()
+    getFloorItemById(itemId: number): FurnitureItem | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::requestSelectedFurniToMover()
+    requestSelectedFurniToMover(item: FurnitureItem): boolean;
 
     // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::toggleInventorySubPage()
     toggleInventorySubPage(category: string): void;

@@ -15,6 +15,7 @@ import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IRoomEngine} from '@habbo/room';
+import {PetImageUtility} from './utils/PetImageUtility';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboHelp} from '@habbo/help/IHabboHelp';
@@ -124,6 +125,25 @@ export class HabboNotifications extends Component implements IHabboNotifications
     get singularController(): SingularNotificationController | null
     {
         return this._singularController;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get windowManager()
+    get windowManager(): IHabboWindowManager | null
+    {
+        return this._windowManager;
+    }
+
+    private _petImageUtility: PetImageUtility | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get petImageUtility()
+    // Built lazily, and only once the room engine dependency has resolved.
+    get petImageUtility(): PetImageUtility | null
+    {
+        if(!this._roomEngine) return null;
+
+        if(!this._petImageUtility) this._petImageUtility = new PetImageUtility(this._roomEngine);
+
+        return this._petImageUtility;
     }
 
     private _disabled: boolean = false;

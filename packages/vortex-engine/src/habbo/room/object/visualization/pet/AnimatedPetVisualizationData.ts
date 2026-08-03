@@ -7,11 +7,8 @@
  * AS3 parses these from the visualization XML; this port receives the same data already decoded
  * from the .nitro bundle, so the element handlers take decoded objects instead of XML nodes.
  *
- * TODO(AS3): `defineVisualizations()` is not overridden yet. AS3 uses it to set the
- * head-turn flag (`_isAllowedToTurnHead = graphics.@disableheadturn != "1"`), which backs
- * `isAllowedToTurnHead` - still hardcoded true here. It does not affect image rendering.
- * `getZOffset()`/`getDirectionValue()`/`getTag()` below are also still stubs (no AS3 counterpart
- * on this class - they predate this pass).
+ * TODO(AS3): `getZOffset()`/`getDirectionValue()`/`getTag()` below are still stubs (no AS3
+ * counterpart on this class - they predate this pass).
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as
  */
@@ -40,6 +37,28 @@ export class AnimatedPetVisualizationData extends AnimatedFurnitureVisualization
     get isAllowedToTurnHead(): boolean
     {
         return this._allowHeadTurn;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::defineVisualizations()
+    // AS3 reads `graphics.@disableheadturn` off the visualization XML; the decoded bundle carries
+    // the same attribute as a plain key on the `graphics` node. Absent means head turning is
+    // allowed, and only the exact string "1" switches it off.
+    protected override defineVisualizations(data: Record<string, unknown>): boolean
+    {
+        const graphics = data['graphics'];
+
+        if(graphics !== null && typeof graphics === 'object')
+        {
+            const value = (graphics as Record<string, unknown>)['disableheadturn'];
+
+            this._allowHeadTurn = value === undefined ? true : String(value) !== '1';
+        }
+        else
+        {
+            this._allowHeadTurn = true;
+        }
+
+        return super.defineVisualizations(data);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::getAnimationForPosture()

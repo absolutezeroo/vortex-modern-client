@@ -4,17 +4,11 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 /**
  * A pet gained experience — drives the floating "+N" bubble over the pet (header 946).
  *
- * TODO(AS3)/SERVER MISMATCH — this is the one pet message that fails **silently**, so treat any
- * value read here as untrustworthy until the server is fixed. Revision20260701's
- * PetExperienceMessageComposerSerializer writes five ints —
- * `PetId, Experience, ExperienceForNextLevel, Level, MaxLevel` — while the AS3 reads three:
- * `petId, petRoomIndex, gainedExperience`. Only petId lines up. There is enough data on the wire
- * that no read runs off the end, so nothing throws: petRoomIndex silently receives the pet's total
- * Experience and gainedExperience silently receives ExperienceForNextLevel, and the trailing two
- * ints are ignored. Identical in Revision20260112.
- *
- * The AS3 order is kept because it is the real protocol — the fix belongs in the emulator's
- * serializer, not here. See docs/CLIENT-SERVER-ARCHITECTURE.md for the full pet mismatch table.
+ * The server used to write five ints here (`PetId, Experience, ExperienceForNextLevel, Level,
+ * MaxLevel`) against the AS3's three, which failed silently because there was more than enough
+ * data on the wire for the reads to succeed with the wrong values. Revision20260701's
+ * PetExperienceMessageComposerSerializer now writes exactly `PetId, PetRoomIndex,
+ * GainedExperience`, so client and server agree; keep the AS3 order, it is the real protocol.
  *
  * AS3: sources/win63_version/habbo/communication/messages/parser/room/pets/PetExperienceEventParser.as
  */

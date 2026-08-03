@@ -146,11 +146,18 @@ export class FurniModel implements IFurniModel
         // Not wired yet.
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::showUseProductSelection()
-    // TODO(AS3): needs RoomEngine.showUseProductSelection() (not ported yet).
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::showUseProductSelection()
+    // The inventory's "use" button on a pet product: hands the group's top item to the room
+    // engine, which raises ROSM_USE_PRODUCT_FROM_INVENTORY for AvatarInfoWidgetHandler to turn
+    // into one bubble per pet the product applies to.
     showUseProductSelection(): void
     {
-        // Not wired yet.
+        const groupItem = this.getSelectedItem();
+        const item = groupItem?.peek() ?? null;
+
+        if(!item) return;
+
+        this._roomEngine?.showUseProductSelection(item.ref, item.type);
     }
 
     // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::extendRentPeriod()

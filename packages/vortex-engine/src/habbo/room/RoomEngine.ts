@@ -45,6 +45,7 @@ import {RoomObjectVariableEnum} from './object/RoomObjectVariableEnum';
 import {RoomEngineEvent} from './events/RoomEngineEvent';
 import {RoomEngineObjectEvent} from './events/RoomEngineObjectEvent';
 import {RoomEngineDragWithMouseEvent} from './events/RoomEngineDragWithMouseEvent';
+import {RoomEngineUseProductEvent} from './events/RoomEngineUseProductEvent';
 import {RoomObjectFactory} from './RoomObjectFactory';
 import {RoomVariableEnum} from './RoomVariableEnum';
 import {RoomObjectVisualizationFactory} from './object/RoomObjectVisualizationFactory';
@@ -583,9 +584,29 @@ export class RoomEngine extends Component implements IRoomEngine,
         return false; // TODO: implement game state
     }
 
-    getActiveRoomIsPlayingGame(): boolean 
+    getActiveRoomIsPlayingGame(): boolean
     {
         return this.getIsPlayingGame(this._activeRoomId);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::showUseProductSelection()
+    // The inventory's entry point: a pet product used straight from the strip, before it is
+    // placed. `objectId` is -1 when the whole group is used rather than one identified item.
+    // The category comes from the product's own type, so the bubbles know what they target.
+    showUseProductSelection(inventoryStripId: number, furnitureTypeId: number, objectId: number = -1): void
+    {
+        if(!this._contentLoader) return;
+
+        const type = this._contentLoader.getActiveObjectType(furnitureTypeId);
+        const category = this.getRoomObjectCategory(type ?? '');
+
+        this.events.emit(
+            RoomEngineUseProductEvent.USE_PRODUCT_FROM_INVENTORY,
+            new RoomEngineUseProductEvent(
+                RoomEngineUseProductEvent.USE_PRODUCT_FROM_INVENTORY,
+                this._activeRoomId, objectId, category, inventoryStripId, furnitureTypeId
+            )
+        );
     }
 
     isAreaSelectionMode(): boolean 
@@ -862,7 +883,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         color: number,
         direction: IVector3d,
         scale: number,
-        listener: IGetImageListener,
+        listener: IGetImageListener | null,
         fullImage: boolean = true,
         backgroundColor: number = 0,
         customParts: { layerId: number; partId: number; paletteId: number }[] | null = null,
@@ -5604,10 +5625,19 @@ export class RoomEngine extends Component implements IRoomEngine,
             case RoomObjectWidgetRequestEvent.ROWRE_MYSTERYTROPHY_OPEN_DIALOG:
                 this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_MYSTERYTROPHY_OPEN_DIALOG, roomId, objectId, category);
                 break;
+            // Double-clicking a pet product already standing in the room. Unlike its siblings this
+            // one does not go through RoomEngineToWidgetEvent: AS3 dispatches the use-product event
+            // itself, which AvatarInfoWidgetHandler picks up to raise one bubble per eligible pet.
+            case RoomObjectWidgetRequestEvent.ROWRE_PET_PRODUCT_MENU:
+                this.events.emit(
+                    RoomEngineUseProductEvent.USE_PRODUCT_FROM_ROOM,
+                    new RoomEngineUseProductEvent(RoomEngineUseProductEvent.USE_PRODUCT_FROM_ROOM, roomId, objectId, category)
+                );
+                break;
             default:
                 // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectWidgetRequestEvent()
                 // continues past ROWRE_CLOTHING_CHANGE with the playlist-editor, mannequin,
-                // pet-product, guild-context-menu, monsterplant/clothing confirmation,
+                // guild-context-menu, monsterplant/clothing confirmation,
                 // area-hide, effectbox dialog, achievement-resolution, friend-furni,
                 // badge-display, high-score and link cases (the mysterybox and mysterytrophy
                 // dialogs above are done). Their RETWE_* constants already exist on

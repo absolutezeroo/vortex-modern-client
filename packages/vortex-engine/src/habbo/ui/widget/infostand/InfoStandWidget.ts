@@ -353,11 +353,11 @@ export class InfoStandWidget extends RoomWidgetBase
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onPetFigureUpdate()
     // AS3's event carries a rendered BitmapData; this port's carries the figure string, so the
-    // re-render goes through the same setImage path the infostand already uses. TODO(AS3): rasterise
-    // `event.figure` and hand the result to _petView.updateImage() — the pet-image request path lives
-    // in InfoStandWidgetHandler.onPetInfo() and is not reachable from here yet.
-    private onPetFigureUpdate = (_event: RoomWidgetPetFigureUpdateEvent): void =>
+    // render goes through the handler's own getPetImage() — the same call its onPetInfo() makes —
+    // before reaching the view's updateImage().
+    private onPetFigureUpdate = (event: RoomWidgetPetFigureUpdateEvent): void =>
     {
+        this._petView.updateImage(event.petId, this.handler.getPetImage(event.figure));
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onPetCommands()

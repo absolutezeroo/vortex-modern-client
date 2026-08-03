@@ -112,6 +112,8 @@ import type {
     UserObjectMessageParser
 } from '@habbo/communication/messages/parser/handshake/UserObjectMessageParser';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
+import type {IDisposable} from '@core/runtime/IDisposable';
+import type {WindowEvent} from '@core/window/events/WindowEvent';
 
 const log = Logger.getLogger('habbo.notifications.NotificationMessageHandler');
 
@@ -568,7 +570,23 @@ export class NotificationMessageHandler
 
         if(!parser) return;
 
-        // Show pet level notification with pet image
+        const localization = this._notifications?.localizationManager;
+
+        localization?.registerParameter('notifications.text.petlevel', 'pet_name', parser.petName);
+        localization?.registerParameter('notifications.text.petlevel', 'level', parser.level.toString());
+
+        const text = localization?.getLocalizationRaw('notifications.text.petlevel');
+
+        if(!text) return;
+
+        const figureData = parser.figureData;
+        const image = figureData
+            ? this._notifications?.petImageUtility?.getPetImage(
+                figureData.typeId, figureData.paletteId, figureData.color
+            ) ?? null
+            : null;
+
+        this._notifications?.addItemWithBitmap(text.value, 'petlevel', image);
     }
 
     /**
@@ -584,7 +602,22 @@ export class NotificationMessageHandler
 
         if(!parser) return;
 
-        // Show pet bought/received notification
+        const localization = this._notifications?.localizationManager;
+        const text = localization?.getLocalizationRaw(
+            parser.boughtAsGift ? 'notifications.text.petbought' : 'notifications.text.petreceived'
+        );
+
+        if(!text) return;
+
+        const petFigure = parser.pet?.figureData ?? null;
+        // AS3 tags this one 'petlevel' too — the feed styles both by that key.
+        const image = petFigure
+            ? this._notifications?.petImageUtility?.getPetImage(
+                petFigure.typeId, petFigure.paletteId, petFigure.color
+            ) ?? null
+            : null;
+
+        this._notifications?.addItemWithBitmap(text.value, 'petlevel', image);
     }
 
     /**
@@ -600,7 +633,20 @@ export class NotificationMessageHandler
 
         if(!parser) return;
 
-        // Show alert with required/avatar age
+        const localization = this._notifications?.localizationManager;
+
+        localization?.registerParameter('room.error.pets.respectfailed', 'required_age', `${parser.requiredDays}`);
+        localization?.registerParameter('room.error.pets.respectfailed', 'avatar_age', `${parser.avatarAgeInDays}`);
+
+        this._notifications?.windowManager?.alert(
+            '${error.title}',
+            '${room.error.pets.respectfailed}',
+            0,
+            (dialog: IDisposable, alertEvent: WindowEvent): void =>
+            {
+                if(alertEvent.type === 'WE_OK' || alertEvent.type === 'WE_CANCEL') dialog.dispose();
+            }
+        );
     }
 
     /**

@@ -61,6 +61,12 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::selectRoomObject()
     selectRoomObject(roomId: number, id: number, category: number): void;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getActiveRoomIsPlayingGame()
+    getActiveRoomIsPlayingGame(): boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::showUseProductSelection()
+    showUseProductSelection(inventoryStripId: number, furnitureTypeId: number, objectId?: number): void;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getRoomObjectCount()
     getRoomObjectCount(roomId: number, category: number): number;
 
@@ -118,7 +124,7 @@ export interface IRoomEngine extends IDisposable {
         color: number,
         direction: IVector3d,
         scale: number,
-        listener: IGetImageListener,
+        listener: IGetImageListener | null,
         fullImage?: boolean,
         backgroundColor?: number,
         customParts?: { layerId: number; partId: number; paletteId: number }[] | null,

@@ -726,13 +726,15 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::getPetImage()
     // AS3 passes a null listener — getPetImage() is a synchronous read for it, and a miss
-    // falls straight through to the grey placeholder. This port's IRoomEngine.getPetImage()
-    // types the listener non-nullable, so `this` goes in instead; that is inert, because
+    // falls straight through to the grey placeholder. `this` goes in instead, which is inert:
     // imageReady()/imageFailed() only act on ids registered in _pendingImageRequests and
-    // pet requests are never registered there. RoomEngine.getPetImage() honours AS3's
+    // pet requests are never registered there.
+    // Public (AS3 has it private) because this port's RWPIUE_PET_FIGURE_UPDATE carries the
+    // figure string rather than AS3's already-rendered BitmapData, so InfoStandWidget has to
+    // do the render itself — see InfoStandWidget.onPetFigureUpdate(). RoomEngine.getPetImage() honours AS3's
     // synchronous-hit contract (result.data set, result.id 0) once the pet content is
     // loaded, so the placeholder branch is the not-yet-loaded case — same as AS3.
-    private getPetImage(figure: string, posture: string | null = null): ImageBitmap | null
+    public getPetImage(figure: string, posture: string | null = null): ImageBitmap | null
     {
         const roomEngine = this._container?.roomEngine;
 

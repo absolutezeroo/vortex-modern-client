@@ -66,6 +66,7 @@ import {RoomSessionErrorMessageEvent} from '@habbo/session/events/RoomSessionErr
 import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
+import {RoomEngineUseProductEvent} from '@habbo/room/events/RoomEngineUseProductEvent';
 import type {RoomEngineRoomColorEvent} from '@habbo/room/events/RoomEngineRoomColorEvent';
 import type {RoomEngineHSLColorEnableEvent} from '@habbo/room/events/RoomEngineHSLColorEnableEvent';
 
@@ -288,6 +289,13 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         // forwarded like the widget requests above.
                         engine.events.on(RoomEngineToWidgetEvent.REQUEST_OPEN_FURNI_CONTEXT_MENU, this.roomObjectEventHandler, this);
                         engine.events.on(RoomEngineToWidgetEvent.REQUEST_CLOSE_FURNI_CONTEXT_MENU, this.roomObjectEventHandler, this);
+                        // AS3: RoomUI.as:299-304 registers the same handler for the two
+                        // use-product events. They are not RETWE_* — the engine dispatches them
+                        // itself — and AvatarInfoWidgetHandler declares both in
+                        // getProcessedEvents(), so this is the only hop between the engine and the
+                        // per-pet "use this product on…" bubbles.
+                        engine.events.on(RoomEngineUseProductEvent.USE_PRODUCT_FROM_INVENTORY, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineUseProductEvent.USE_PRODUCT_FROM_ROOM, this.roomObjectEventHandler, this);
                     }
                 },
                 true
