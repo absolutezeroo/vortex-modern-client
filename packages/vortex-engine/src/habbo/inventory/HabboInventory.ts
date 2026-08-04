@@ -225,6 +225,19 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getWallItemById()
+    getWallItemById(itemId: number): FurnitureItem | null
+    {
+        for(const groupItem of this._furniModel.furniData)
+        {
+            const item = groupItem.getItem(itemId);
+
+            if(item && item.isWallItem) return item;
+        }
+
+        return null;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::requestSelectedFurniToMover()
     // Posters carry their placement payload as the stuff data's legacy string and pass no stuff
     // data object; everything else passes its own `extra` plus the stuff data.

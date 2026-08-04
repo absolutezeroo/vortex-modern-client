@@ -62,6 +62,7 @@ import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
 import {FurnitureTrophyWidgetHandler} from './handler/FurnitureTrophyWidgetHandler';
 import {FurnitureStickieWidgetHandler} from './handler/FurnitureStickieWidgetHandler';
+import {SpamWallPostItWidgetHandler} from './handler/SpamWallPostItWidgetHandler';
 import {FurnitureDimmerWidgetHandler} from './handler/FurnitureDimmerWidgetHandler';
 import {FurniturePresentWidgetHandler} from './handler/FurniturePresentWidgetHandler';
 import {MannequinWidgetHandler} from './handler/MannequinWidgetHandler';
@@ -790,6 +791,17 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:786
                 handler = new FurnitureStickieWidgetHandler();
                 break;
+            case 'RWE_SPAMWALL_POSTIT_WIDGET':
+            {
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:843
+                // This one owns a message event, so it needs the connection the moment it is
+                // built - the open request is a server push, not a room-engine translation.
+                const spamWallHandler = new SpamWallPostItWidgetHandler();
+
+                spamWallHandler.connection = this._connection;
+                handler = spamWallHandler;
+                break;
+            }
             case 'RWE_ROOM_DIMMER':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new FurnitureDimmerWidgetHandler();

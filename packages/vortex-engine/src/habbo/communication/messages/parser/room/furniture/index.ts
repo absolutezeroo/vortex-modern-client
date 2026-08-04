@@ -6,3 +6,4 @@ export * from './PresentOpenedMessageEventParser';
 export * from './OpenPetPackageRequestedMessageEventParser';
 export * from './OpenPetPackageResultMessageEventParser';
 export * from './RentableSpaceConfigMessageEventParser';
+export * from './RequestSpamWallPostItMessageParser';

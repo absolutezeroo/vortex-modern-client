@@ -129,6 +129,9 @@ export interface IHabboInventory
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::getFloorItemById()
     getFloorItemById(itemId: number): FurnitureItem | null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::getWallItemById()
+    getWallItemById(itemId: number): FurnitureItem | null;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::requestSelectedFurniToMover()
     requestSelectedFurniToMover(item: FurnitureItem): boolean;
 

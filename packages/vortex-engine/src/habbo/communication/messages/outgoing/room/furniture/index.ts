@@ -27,3 +27,4 @@ export * from './SetMannequinNameMessageComposer';
 export * from './SetObjectDataMessageComposer';
 export * from './SetRandomStateMessageComposer';
 export * from './UseWallItemMessageComposer';
+export {AddSpamWallPostItMessageComposer} from './AddSpamWallPostItMessageComposer';

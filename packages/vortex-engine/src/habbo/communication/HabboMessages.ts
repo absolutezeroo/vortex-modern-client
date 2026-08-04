@@ -4,6 +4,8 @@ import type {
     IMessageConfiguration
 } from '@core/communication/messages/IMessageConfiguration';
 import {Logger} from '@core/utils/Logger';
+import {RequestSpamWallPostItMessageEvent} from './messages/incoming/room/furniture/RequestSpamWallPostItMessageEvent';
+import {AddSpamWallPostItMessageComposer} from './messages/outgoing/room/furniture/AddSpamWallPostItMessageComposer';
 
 // Incoming Events - Handshake
 import {
@@ -1476,6 +1478,10 @@ export class HabboMessages implements IMessageConfiguration
         // RoomMuteAllMessageEvent.
         // 2051 (FlatAccessible) is registered above, with the room/session events.
         this._events.set(2902, GameStartedMessageEvent);
+        // The spam-wall post-it pair. Headers read from WIN63's own registry
+        // (_SafeStr_4546[2816] and _composers[2684]) and corroborated by vortex-emulator
+        // (RequestSpamWallPostItMessageComposer = 2816, AddSpamWallPostItMessageEvent = 2684).
+        this._events.set(2816, RequestSpamWallPostItMessageEvent);
         this._events.set(1172, RoomMuteAllMessageEvent);
         this._events.set(735, NoOwnedRoomsAlertMessageEvent);
         this._events.set(1122, NoSuchFlatMessageEvent);
@@ -2158,6 +2164,7 @@ export class HabboMessages implements IMessageConfiguration
         // (habbo/communication/_SafeCls_2046.as, _composers[801]/[2656]/[2209]).
         // vortex-emulator's Headers.cs names all three differently, with no verification
         // comment and no handler or parser behind them, so it corroborates nothing here.
+        this._composers.set(2684, AddSpamWallPostItMessageComposer);
         this._composers.set(801, GetCustomFilterMessageComposer);
         this._composers.set(2656, AddToCustomFilterMessageComposer);
         this._composers.set(2209, RemoveFromCustomFilterMessageComposer);
