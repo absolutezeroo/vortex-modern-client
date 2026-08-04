@@ -7,12 +7,16 @@ import {BaseHandler} from './BaseHandler';
 import {ChatMessageEvent} from '../../communication/messages/incoming/room/chat/ChatMessageEvent';
 import {ShoutMessageEvent} from '../../communication/messages/incoming/room/chat/ShoutMessageEvent';
 import {WhisperMessageEvent} from '../../communication/messages/incoming/room/chat/WhisperMessageEvent';
+import {PetRespectNotificationEvent} from '../../communication/messages/incoming/notifications/PetRespectNotificationEvent';
 import {PetSupplementedNotificationEvent} from '../../communication/messages/incoming/users/PetSupplementedNotificationEvent';
 import type {
     PetSupplementedNotificationEventParser
 } from '../../communication/messages/parser/users/PetSupplementedNotificationEventParser';
 
 // Parsers
+import type {
+    PetRespectNotificationEventParser
+} from '../../communication/messages/parser/notifications/PetRespectNotificationEventParser';
 import type {ChatMessageEventParser, IChatLink} from '../../communication/messages/parser/room/chat/ChatMessageEventParser';
 
 // Events
@@ -45,6 +49,7 @@ export class RoomChatHandler extends BaseHandler
         this.addMessageEvent(connection, new ShoutMessageEvent(this.onRoomShout.bind(this)));
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as::RoomChatHandler()
         this.addMessageEvent(connection, new PetSupplementedNotificationEvent(this.onPetSupplementedNotification.bind(this)));
+        this.addMessageEvent(connection, new PetRespectNotificationEvent(this.onPetRespectNotification.bind(this)));
 
         // TODO: Register additional message events when implemented
         // this.addMessageEvent(connection, new RespectNotificationMessageEvent(this.onRespectNotification.bind(this)));
@@ -108,6 +113,35 @@ export class RoomChatHandler extends BaseHandler
                 )
             );
         }
+    }
+
+    /**
+     * Scratching a pet, or feeding it a treat, surfaces as a bubble over the pet. Which of the
+     * two it was is not a field on the message: AS3 infers it from the pet's own figure type, so
+     * `isTreat()` is a look at the payload rather than a flag.
+     *
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as::onPetRespectNotification()
+     */
+    private onPetRespectNotification(event: IMessageEvent): void
+    {
+        const parser = event.parser as PetRespectNotificationEventParser | null;
+
+        if(parser === null || parser.petData === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        const petData = session.userDataManager.getPetUserData(parser.petData.id);
+
+        if(petData === null) return;
+
+        const chatType = parser.isTreat()
+            ? RoomSessionChatEvent.CHAT_TYPE_PET_TREAT
+            : RoomSessionChatEvent.CHAT_TYPE_PET_RESPECT;
+
+        // AS3 passes no giver here, unlike its supplement sibling one method down.
+        this.dispatchChatEvent(petData.roomObjectId, '', chatType, 1);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as::onPetSupplementedNotification()
