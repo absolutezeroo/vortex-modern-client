@@ -190,19 +190,38 @@ Two same-named messages are *not* a conflict: `ChangeUserName` is 879 for the on
 
 ## Current Priorities
 
-Re-ranked 2026-07-28, biggest product gap first.
+Re-ranked **2026-08-03**, biggest product gap first.
 
-1. **`habbo/ui/widget` — the largest single gap and the most user-visible one.** The numbers here
-   were stale twice over: `handler/` is 15/47 (not 6), `RoomDesktop`/`RoomUI` are ported (not 0),
-   and `furniture/` is **26/54** (not 0) — `trophy/`, `placeholder/`, `backgroundcolor/`, `credit/`,
-   `ecotronbox/`, `petpackage/`, `stickie/`, `mysterybox/`, `mysterytrophy/`, `contextmenu/` and,
-   since 2026-08-02, `dimmer/`, `present/` and `mannequin/` are in. **Re-measure before quoting
-   any of these.** What is still missing and worth having, in rough order of how often a player
-   meets it: `friendfurni/` (7 files — love lock and the engraving
-   dialogs), `CustomStackHeightWidget.as` (499 l., build-mode stacking), then `video/`,
-   `externalimage/`, `highscore/`, `clothingchange/`, `areahide/`, `roomlink/`, `rentablespace/`,
-   `effectbox/`, `guildfurnicontextmenu/`, `requirementsmissing/` and the 5 remaining
-   `contextmenu/` views. `events/` (12/64) and `messages/` (17/54) grow with each slice.
+> **Read priority 0 first.** Three days of this week went on features that were already ported and
+> simply never connected. Measuring that is cheap; porting the same thing twice is not.
+
+0. **Sweep for ported-but-never-wired code, module by module.** This was by far the highest-yield
+   work of the 2026-08-03 session and it is nowhere near exhausted. The failure mode is always the
+   same: the class exists, type-checks and reads correctly, but nothing constructs it, subscribes to
+   it or hands it a window — so it fails silently and looks like a missing feature. Four found in one
+   day, each of which had looked like "not ported yet":
+   - the client settings menu — `SettingsExtension` + 3 views held state and **built no window**
+     (SolidJS-era stubs; see `project_no_solidjs`);
+   - the in-room Room Info window — `HabboNavigator.openRoomInfo()` flipped a boolean and logged,
+     while the complete 739-line `RoomInfoViewCtrl` sat on `LegacyNavigator`, unreachable;
+   - the room-settings dialog — every reply existed, was registered and was parsed, and **nothing was
+     subscribed**, so it was dropped on the floor;
+   - 25 of the navigator's 47 incoming handlers, likewise unsubscribed.
+
+   The recipe that found all four: for a module, list what AS3 registers/constructs
+   (`grep -o "addHabboConnectionMessageEvent(new _SafeCls_[0-9]*(on[A-Za-z]*" <file>.as`), list what
+   the port does, and diff — being alert to alias names. Then check each ported class has a
+   constructor call, not just a definition. Candidates not yet swept: `habbo/inventory`,
+   `habbo/catalog`, `habbo/moderation`, `habbo/friendlist`, `habbo/help`.
+1. **`habbo/ui/widget/furniture` — 44/54**, measured 2026-08-03. Ten left, smallest first:
+   `AchievementResolutionTrophyFurniWidget` (150), `VimeoDisplayWidget` (150),
+   `CustomUserNotificationWidget` (174), `GuildFurnitureContextMenuView` (185),
+   `RentableSpaceDisplayWidget` (194), `HighScoreDisplayWidget` (248), `AreaHideFurniWidget` (358),
+   `YoutubeDisplayWidget` (448), `ExternalImageWidget` (758), `_SafeCls_3218` (32).
+   **Size these by the feature, not the file.** The trophy widget above is 150 lines but its only
+   dispatcher, `FurnitureBadgeDisplayWidgetHandler`, is 331 lines and unported — the real slice is
+   ~480 lines plus a badge-info composer/event/parser, a badge-rarity enum and two `HabboGroups`
+   helpers. Porting the widget alone would add another entry to priority 0's list.
 2. **Finish `habbo/roomevents`** (395/448). It is 88% there and the remainder is enumerated:
    `VariableManagementDetailController`, the `chests` tab + `wiredChest`, the `WiredMenuEvent`
    toolbar dispatch, and Bloc C's 16 `TODO(AS3)`s — several of which Bloc E has now unblocked.
