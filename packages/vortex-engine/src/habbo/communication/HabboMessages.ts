@@ -50,7 +50,13 @@ import {
     PopularRoomTagsResultMessageEvent,
     RoomEventCancelMessageEvent,
     RoomEventMessageEvent,
+    GameStartedMessageEvent,
+    NoOwnedRoomsAlertMessageEvent,
+    NoSuchFlatMessageEvent,
+    RoomFilterSettingsMessageEvent,
     RoomInfoUpdatedMessageEvent,
+    RoomMuteAllMessageEvent,
+    RoomSettingsErrorMessageEvent,
     RoomRatingMessageEvent,
     UserEventCatsMessageEvent,
     UserFlatCatsMessageEvent,
@@ -1463,6 +1469,18 @@ export class HabboMessages implements IMessageConfiguration
         // warns "Unknown message event class" for anything missing from it. Headers read
         // from WIN63's own registry (_SafeStr_4546[2231]/[3622]); the emulator names both
         // differently and implements neither.
+        // The navigator's remaining replies. Headers read from WIN63's own registry
+        // (habbo/communication/_SafeCls_2046.as, _SafeStr_4546[2051]/[2902]/[1172]/[735]/[1122]/[3208]/[3715])
+        // and corroborated by vortex-emulator Vortex.Revisions/Revision20260701/Headers.cs
+        // for all but 1172, which has no constant there at all - hence the derived name on
+        // RoomMuteAllMessageEvent.
+        // 2051 (FlatAccessible) is registered above, with the room/session events.
+        this._events.set(2902, GameStartedMessageEvent);
+        this._events.set(1172, RoomMuteAllMessageEvent);
+        this._events.set(735, NoOwnedRoomsAlertMessageEvent);
+        this._events.set(1122, NoSuchFlatMessageEvent);
+        this._events.set(3208, RoomFilterSettingsMessageEvent);
+        this._events.set(3715, RoomSettingsErrorMessageEvent);
         this._events.set(2231, GetCustomFilterResultMessageEvent);
         this._events.set(3622, ModifyCustomFilterResultMessageEvent);
         // The members window's five replies. Headers read from WIN63's own registry

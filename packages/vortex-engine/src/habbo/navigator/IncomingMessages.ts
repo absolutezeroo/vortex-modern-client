@@ -1,10 +1,52 @@
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import type {IWindow} from '@core/window/IWindow';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IDisposable} from '@core/runtime/IDisposable';
 import type {HabboNavigator} from './HabboNavigator';
 import type {NavigatorData} from './domain';
 import {Logger} from '@core/utils/Logger';
 
 // Message events
 import {UserObjectMessageEvent} from '../communication/messages/incoming/handshake/UserObjectMessageEvent';
+import {
+    GameStartedMessageEvent,
+    NoOwnedRoomsAlertMessageEvent,
+    NoSuchFlatMessageEvent,
+    RoomFilterSettingsMessageEvent,
+    RoomMuteAllMessageEvent,
+    RoomSettingsErrorMessageEvent,
+} from '../communication/messages/incoming/navigator';
+import type {
+    RoomFilterSettingsMessageEventParser,
+    RoomMuteAllMessageEventParser,
+} from '../communication/messages/parser/navigator';
+import {FlatAccessibleMessageEvent} from '../communication/messages/incoming/room/session/FlatAccessibleMessageEvent';
+import type {FlatAccessibleMessageParser} from '../communication/messages/parser/room/session/FlatAccessibleMessageParser';
+import {CantConnectMessageEvent} from '../communication/messages/incoming/room/session/CantConnectMessageEvent';
+import {RoomForwardMessageEvent} from '../communication/messages/incoming/room/session/RoomForwardMessageEvent';
+import {RoomEntryInfoMessageEvent} from '../communication/messages/incoming/room/engine/RoomEntryInfoMessageEvent';
+import {CloseConnectionMessageEvent} from '../communication/messages/incoming/room/session/CloseConnectionMessageEvent';
+import {GenericErrorMessageEvent} from '../communication/messages/incoming/handshake/GenericErrorMessageEvent';
+import {UserRightsMessageEvent} from '../communication/messages/incoming/handshake/UserRightsMessageEvent';
+import {ScrSendUserInfoEvent} from '../communication/messages/incoming/users/ScrSendUserInfoEvent';
+import {
+    FriendListFragmentMessageEvent,
+    FriendListUpdateMessageEvent,
+} from '../communication/messages/incoming/friendlist';
+import {RoomSettingsSavedEvent} from '../communication/messages/incoming/roomsettings';
+import type {CantConnectMessageParser} from '../communication/messages/parser/room/session/CantConnectMessageParser';
+import type {RoomForwardMessageParser} from '../communication/messages/parser/room/session/RoomForwardMessageParser';
+import type {RoomEntryInfoMessageParser} from '../communication/messages/parser/room/engine/RoomEntryInfoMessageParser';
+import type {GenericErrorMessageParser} from '../communication/messages/parser/handshake/GenericErrorMessageParser';
+import type {UserRightsMessageParser} from '../communication/messages/parser/handshake/UserRightsMessageParser';
+import type {ScrSendUserInfoMessageParser} from '../communication/messages/parser/users/ScrSendUserInfoMessageParser';
+import type {RoomSettingsSavedEventParser} from '../communication/messages/parser/roomsettings';
+import {GetGuestRoomMessageComposer} from '../communication/messages/outgoing/navigator/GetGuestRoomMessageComposer';
+import {QuitMessageComposer} from '../communication/messages/outgoing/room/session/QuitMessageComposer';
+import {HabboWebTools} from '../utils/HabboWebTools';
+import {HabboToolbarEvent} from '../toolbar/events/HabboToolbarEvent';
+import {SimpleAlertView} from './SimpleAlertView';
+import {AlertView} from './AlertView';
 import {
     BannedUsersFromRoomEvent,
     FlatControllerAddedEvent,
@@ -121,6 +163,28 @@ export class IncomingMessages
         // complete, and holding every handler below — never heard a single reply: clicking
         // "room settings" sent GetRoomSettings (256) and nothing ever came back to open the
         // window. Room filter opened fine precisely because it needs no round trip.
+        // Room lifecycle, forwarding and rights. AS3 registers all of these in the same
+        // class (_SafeCls_1951.as); none were subscribed here, which is why entering a room
+        // left the info/settings/filter windows open over it, and why HC, event-mod and
+        // room-picker state never reached NavigatorData.
+        this.addMessageEvent(new FlatAccessibleMessageEvent(this.onDoorOpened.bind(this)));
+        this.addMessageEvent(new GameStartedMessageEvent(this.onGameStarted.bind(this)));
+        this.addMessageEvent(new RoomMuteAllMessageEvent(this.onMuteAllEvent.bind(this)));
+        this.addMessageEvent(new NoOwnedRoomsAlertMessageEvent(this.onNoOwnedRoomsAlert.bind(this)));
+        this.addMessageEvent(new NoSuchFlatMessageEvent(this.onNoSuchFlat.bind(this)));
+        this.addMessageEvent(new RoomFilterSettingsMessageEvent(this.onRoomFilterSettings.bind(this)));
+        this.addMessageEvent(new RoomSettingsErrorMessageEvent(this.onRoomSettingsError.bind(this)));
+        this.addMessageEvent(new RoomEntryInfoMessageEvent(this.onRoomEnter.bind(this)));
+        this.addMessageEvent(new CloseConnectionMessageEvent(this.onRoomExit.bind(this)));
+        this.addMessageEvent(new CantConnectMessageEvent(this.onCantConnect.bind(this)));
+        this.addMessageEvent(new RoomForwardMessageEvent(this.onRoomForward.bind(this)));
+        this.addMessageEvent(new GenericErrorMessageEvent(this.onError.bind(this)));
+        this.addMessageEvent(new UserRightsMessageEvent(this.onUserRights.bind(this)));
+        this.addMessageEvent(new ScrSendUserInfoEvent(this.onSubscriptionInfo.bind(this)));
+        this.addMessageEvent(new RoomSettingsSavedEvent(this.onRoomSettingsSaved.bind(this)));
+        this.addMessageEvent(new FriendListFragmentMessageEvent(this.onFriendsListFragment.bind(this)));
+        this.addMessageEvent(new FriendListUpdateMessageEvent(this.onFriendListUpdate.bind(this)));
+
         this.addMessageEvent(new RoomSettingsDataEvent(this.onRoomSettingsData.bind(this)));
         this.addMessageEvent(new RoomSettingsSaveErrorEvent(this.onRoomSettingsSaveError.bind(this)));
         this.addMessageEvent(new FlatControllersEvent(this.onFlatControllers.bind(this)));
@@ -613,5 +677,317 @@ export class IncomingMessages
         this._navigator.transitionalNavigator?.enforceCategoryCtrl?.show(
             this.data.enteredGuestRoom?.flatId ?? 0
         );
+    }
+
+    /**
+     * Entering a room closes everything the navigator had open over it, then asks for the
+     * room's own data - the reply is what fills the room-info card.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/_SafeCls_1951.as::onRoomEnter()
+    private onRoomEnter(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as RoomEntryInfoMessageParser;
+
+        if(!parser) return;
+
+        log.debug('Navigator: entering room');
+
+        this.data.onRoomEnter(parser);
+        this.closeOpenCantConnectAlerts();
+
+        const transitional = this._navigator.transitionalNavigator;
+
+        transitional?.roomInfoViewCtrl?.close();
+        this._navigator.send(new GetGuestRoomMessageComposer(parser.guestRoomId, true, false));
+        transitional?.roomEventInfoCtrl?.refresh();
+        transitional?.roomEventViewCtrl?.close();
+        transitional?.roomSettingsCtrl?.close();
+        transitional?.roomFilterCtrl?.close();
+
+        HabboWebTools.closeNews();
+    }
+
+    // AS3: .../_SafeCls_1951.as::onRoomExit()
+    private onRoomExit(_event: IMessageEvent): void
+    {
+        log.debug('Navigator: exiting room');
+
+        this.data.onRoomExit();
+
+        const transitional = this._navigator.transitionalNavigator;
+
+        transitional?.roomInfoViewCtrl?.close();
+        transitional?.roomEventInfoCtrl?.close();
+        transitional?.roomEventViewCtrl?.close();
+        transitional?.roomSettingsCtrl?.close();
+        transitional?.roomFilterCtrl?.close();
+
+        if(this._navigator.getBoolean('news.auto_popup.enabled')) HabboWebTools.openNews();
+    }
+
+    /**
+     * The reason is read one lower than it is sent - AS3 switches on `reason - 1` - so 1 is
+     * "room full", 3 a queue error, 4 banned and 5 blocked. Whatever the reason, the player
+     * quits the queue and is sent back to reception.
+     */
+    // AS3: .../_SafeCls_1951.as::onCantConnect()
+    private onCantConnect(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as CantConnectMessageParser;
+
+        if(!parser) return;
+
+        log.warn(`FAILED TO CONNECT: REASON: ${parser.reason}`);
+
+        const transitional = this._navigator.transitionalNavigator;
+
+        if(transitional !== null)
+        {
+            let caption = '${room.queue.error.title}';
+            let text = '${room.queue.error.title}';
+
+            switch(parser.reason - 1)
+            {
+                case 0:
+                    caption = '${navigator.guestroomfull.title}';
+                    text = '${navigator.guestroomfull.text}';
+                    break;
+                case 2:
+                    caption = '${room.queue.error.title}';
+                    text = `\${room.queue.error.${parser.parameter}}`;
+                    break;
+                case 3:
+                    caption = '${navigator.banned.title}';
+                    text = '${navigator.banned.text}';
+                    break;
+                case 4:
+                    caption = '${navigator.blocked.title}';
+                    text = '${navigator.blocked.text}';
+                    break;
+            }
+
+            new SimpleAlertView(transitional, caption, text).show();
+        }
+
+        this._navigator.send(new QuitMessageComposer());
+
+        const toolbarEvent = new HabboToolbarEvent(HabboToolbarEvent.TOOLBAR_CLICK);
+
+        toolbarEvent.iconId = 'HTIE_ICON_RECEPTION';
+        this._navigator.transitionalNavigator?.toolbar?.toolbarEvents.emit(HabboToolbarEvent.TOOLBAR_CLICK, toolbarEvent);
+    }
+
+    // AS3: .../_SafeCls_1951.as::onRoomForward()
+    private onRoomForward(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as RoomForwardMessageParser;
+
+        if(!parser) return;
+
+        log.debug(`Got room forward: ${parser.roomId}`);
+        this.forwardToRoom(parser.roomId);
+    }
+
+    // AS3: .../_SafeCls_1951.as::forwardToRoom()
+    private forwardToRoom(roomId: number): void
+    {
+        this._navigator.send(new GetGuestRoomMessageComposer(roomId, false, true));
+        this._navigator.trackNavigationDataPoint('Room Forward', 'go.roomforward', '', roomId);
+    }
+
+    /** Only these six codes are handled; anything else falls through silently, as in AS3. */
+    // AS3: .../_SafeCls_1951.as::onError()
+    private onError(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as GenericErrorMessageParser;
+
+        if(!parser) return;
+
+        const alert = (key: string): void =>
+        {
+            this._navigator.transitionalNavigator?.windowManager?.alert('${generic.alert.title}', key, 0, (dialog: IDisposable) => dialog.dispose());
+        };
+
+        switch(parser.errorCode)
+        {
+            case -100002:
+                this._navigator.transitionalNavigator?.passwordInput?.showRetry();
+                break;
+            case 4009:
+                alert('${navigator.alert.need.to.be.vip}');
+                break;
+            case 4010:
+                alert('${navigator.alert.invalid_room_name}');
+                break;
+            case 4011:
+                alert('${navigator.alert.cannot_perm_ban}');
+                break;
+            case 4013:
+                alert('${navigator.alert.room_in_maintenance}');
+                break;
+            case -100005:
+                alert('${notification.nft_token_required}');
+                break;
+        }
+    }
+
+    // AS3: .../_SafeCls_1951.as::onUserRights()
+    private onUserRights(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as UserRightsMessageParser;
+
+        if(!parser) return;
+
+        if(parser.securityLevel >= 5) this.data.eventMod = true;
+        if(parser.securityLevel >= 7) this.data.roomPicker = true;
+    }
+
+    // AS3: .../_SafeCls_1951.as::onSubscriptionInfo()
+    private onSubscriptionInfo(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as ScrSendUserInfoMessageParser;
+
+        if(!parser) return;
+
+        this.data.hcMember = parser.daysToPeriodEnd > 0;
+    }
+
+    // AS3: .../_SafeCls_1951.as::onRoomSettingsSaved()
+    private onRoomSettingsSaved(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as RoomSettingsSavedEventParser;
+
+        if(!parser) return;
+
+        log.debug(`Room settings saved: ${parser.roomId}`);
+        this._navigator.transitionalNavigator?.mainViewCtrl?.reloadRoomList(5);
+    }
+
+    // AS3: .../_SafeCls_1951.as::onFriendsListFragment()
+    private onFriendsListFragment(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        this.data.friendList.onFriendsListFragment(event);
+    }
+
+    // AS3: .../_SafeCls_1951.as::onFriendListUpdate()
+    private onFriendListUpdate(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        this.data.friendList.onFriendListUpdate(event);
+        this._navigator.transitionalNavigator?.roomSettingsCtrl?.onFriendListUpdate();
+    }
+
+    /**
+     * Alerts opened by `onCantConnect()` are found by their `SimpleAlertView` tag on the
+     * layer-2 desktop, since nothing keeps a reference to them once shown.
+     */
+    // AS3: .../_SafeCls_1951.as::closeOpenCantConnectAlerts()
+    private closeOpenCantConnectAlerts(): void
+    {
+        const desktop = (this._navigator.transitionalNavigator?.windowManager?.getWindowContext(2)?.getDesktopWindow() ?? null) as IWindowContainer | null;
+
+        if(desktop === null || desktop === undefined) return;
+
+        const found: IWindow[] = [];
+
+        for(let index = 0; index < desktop.numChildren; index++)
+        {
+            const child = desktop.getChildAt(index);
+
+            if(child !== null && child !== undefined && child.tags.indexOf('SimpleAlertView') > -1) found.push(child);
+        }
+
+        for(const window of found)
+        {
+            AlertView.findAlertView(window)?.dispose();
+        }
+    }
+
+    /** An empty user name means the doorbell has nothing left to show. */
+    // AS3: .../_SafeCls_1951.as::onDoorOpened()
+    private onDoorOpened(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as FlatAccessibleMessageParser;
+
+        if(!parser) return;
+
+        if(parser.userName === null || parser.userName.length === 0)
+        {
+            this._navigator.transitionalNavigator?.doorbell?.hide();
+        }
+    }
+
+    // AS3: .../_SafeCls_1951.as::onGameStarted()
+    private onGameStarted(_event: IMessageEvent): void
+    {
+        this._navigator.transitionalNavigator?.mainViewCtrl?.close();
+    }
+
+    /** Redraws the room-info buttons so the mute-all button flips with the new state. */
+    // AS3: .../_SafeCls_1951.as::onMuteAllEvent()
+    private onMuteAllEvent(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as RoomMuteAllMessageEventParser;
+        const roomData = this.data.enteredGuestRoom;
+
+        if(!parser || roomData === null) return;
+
+        roomData.allInRoomMuted = parser.allMuted;
+
+        const roomInfoViewCtrl = this._navigator.transitionalNavigator?.roomInfoViewCtrl ?? null;
+
+        if(roomInfoViewCtrl !== null) roomInfoViewCtrl.refreshButtons(roomData);
+    }
+
+    // AS3: .../_SafeCls_1951.as::onNoOwnedRoomsAlert()
+    private onNoOwnedRoomsAlert(_event: IMessageEvent): void
+    {
+        this._navigator.startRoomCreation();
+    }
+
+    /** AS3's handler body is empty; the flat id is parsed and dropped. */
+    // AS3: .../_SafeCls_1951.as::onNoSuchFlat()
+    private onNoSuchFlat(_event: IMessageEvent): void
+    {
+    }
+
+    // AS3: .../_SafeCls_1951.as::onRoomFilterSettings()
+    private onRoomFilterSettings(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as RoomFilterSettingsMessageEventParser;
+
+        if(!parser) return;
+
+        this._navigator.transitionalNavigator?.roomFilterCtrl?.onRoomFilterSettings(parser.badWords);
+        log.debug(`GOT ROOM FILTER SETTINGS: ${parser.badWords}`);
+    }
+
+    /** AS3 reads the parser into a local and does nothing with it. */
+    // AS3: .../_SafeCls_1951.as::onRoomSettingsError()
+    private onRoomSettingsError(_event: IMessageEvent): void
+    {
     }
 }

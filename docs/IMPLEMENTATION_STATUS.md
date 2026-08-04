@@ -650,6 +650,34 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **The navigator's incoming messages closed at 47/47** (`habbo/navigator/IncomingMessages.ts`, 7 new events + 7 parsers), 2026-08-03.
+  - Follow-up to the room-settings fix, which had measured this file at 22 of AS3's 47 registrations.
+    All 17 genuinely-missing handlers are now ported; the five names that still differ are aliases
+    this port already used (`onRoomInfo`/`onGetGuestRoomResult`, `onCompetitionData`/`onCompetitionRoomsData`,
+    `onCategoriesWithUserCount`/`onCategoriesWithVisitorCount`, `onRoomEventEvent`/`onRoomEvent`,
+    `onCanCreateRoomEventEvent`/`onCanCreateRoomEvent`).
+  - **Ten needed only wiring** — their events, parsers and headers all existed and had simply never
+    been subscribed: `RoomEntryInfo`, `CloseConnection`, `CantConnect`, `RoomForward`, `GenericError`,
+    `UserRights`, `ScrSendUserInfo`, `RoomSettingsSaved`, `FriendListFragment`, `FriendListUpdate`.
+    That is why entering a room left the info/settings/filter windows open over it, and why HC,
+    event-mod and room-picker state never reached `NavigatorData`.
+  - **Seven were missing entirely**, now created with headers from WIN63's registry and corroborated
+    against the emulator: `GameStarted` 2902, `NoOwnedRoomsAlert` 735, `NoSuchFlat` 1122,
+    `RoomFilterSettings` 3208, `RoomSettingsError` 3715 — plus `RoomMuteAll` **1172**, whose name is
+    **DERIVED** because the emulator has no constant for that header at all. `FlatAccessible` (2051,
+    `onDoorOpened`) turned out to already exist under `room/session`; the duplicate was deleted rather
+    than kept.
+  - AS3 quirks preserved with a note: `RoomFilterSettingsMessageEventParser.parse()` returns **false**
+    where every sibling returns true; `onNoSuchFlat` and `onRoomSettingsError` have empty AS3 bodies
+    (the latter reads its parser into a local and discards it); and `onCantConnect` switches on
+    `reason - 1`. `GameStarted`'s parser reads nothing, with a `TODO(AS3)`: AS3 builds a `GameLobbyData`
+    the navigator's handler never looks at, and messages are length-delimited so an unread body cannot
+    desynchronise the stream.
+  - **Server-side, in `vortex-emulator`**: `Vortex.Rooms/Grains/RoomGrain.cs` now resolves the room
+    owner's name (`.Include(e => e.PlayerEntity)`, `OwnerName = entity.PlayerEntity?.Name`) where it
+    hard-coded `string.Empty`. That was the whole reason the owner line in the room-info card was
+    blank — the client was rendering exactly what it was sent.
+
 - ✅ **The room settings window opens** (`habbo/navigator/IncomingMessages.ts` + `HabboNavigator.ts`), 2026-08-03.
   - Reported as "room filter opens, room settings does nothing" — and that contrast was the clue:
     the filter needs no server round trip, the settings do. `startRoomSettingsEdit()` sent
