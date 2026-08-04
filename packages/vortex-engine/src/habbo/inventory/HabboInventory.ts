@@ -31,6 +31,9 @@ import {BadgeReceivedEvent} from '../communication/messages/incoming/inventory/b
 import type {
     BadgeReceivedEventParser
 } from '../communication/messages/parser/inventory/badges/BadgeReceivedEventParser';
+import {BotInventoryMessageEvent} from '@habbo/communication/messages/incoming/inventory/bots/BotInventoryMessageEvent';
+import type {BotInventoryMessageParser} from '@habbo/communication/messages/parser/inventory/bots/BotInventoryMessageParser';
+import {Bot} from './bots/Bot';
 import {PetInventoryMessageEvent} from '../communication/messages/incoming/inventory/pets/PetInventoryMessageEvent';
 import type {PetInventoryMessageParser} from '../communication/messages/parser/inventory/pets/PetInventoryMessageParser';
 import {
@@ -118,6 +121,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // Accumulates pets across a fragmented PetInventory response (AS3 buffers by fragment like furni).
     private _petListFragments: Map<number, Pet> = new Map();
     private _petMessageEvents: IMessageEvent[] = [];
+    private _botMessageEvents: IMessageEvent[] = [];
     // TS-only: no AS3 counterpart; the dump's inventory message handler keeps one flat
     // `_messageEvents` vector, where this port already splits it per feature (furni/pet/effect).
     private _badgeMessageEvents: IMessageEvent[] = [];
@@ -502,6 +506,9 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._badgesModel?.dispose();
         this._effectsModel?.dispose();
         this._petsModel?.dispose();
+        for(const event of this._botMessageEvents) this._communication?.removeMessageEvent(event);
+
+        this._botMessageEvents.length = 0;
         this._botsModel?.dispose();
         this._tradingModel?.dispose();
         this._unseenItemTracker?.dispose();
@@ -861,6 +868,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._view = new InventoryMainView(this);
         this.registerFurniMessageEvents();
         this.registerPetMessageEvents();
+        this.registerBotMessageEvents();
         this.registerEffectMessageEvents();
         this.registerBadgeMessageEvents();
         log.debug('Inventory initialized');
@@ -961,6 +969,50 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication.addMessageEvent(new GoToBreedingNestFailureEvent(this.onGoToBreedingNestFailure))
         );
     }
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as:168
+     * — the bot branch of the same block. `BotsModel` was built and `BotInventory` was registered
+     * in the header table, but nothing subscribed, so the reply was parsed and dropped and the bots
+     * tab stayed empty however many times it was opened.
+     *
+     * TODO(AS3): the same block registers `BotAddedToInventory` (`_SafeCls_3954`, `onBotAdded`) and
+     * `BotRemovedFromInventory` (`_SafeCls_3331`, `onBotRemoved`). Neither message class exists in
+     * this port, so a bot bought or placed while the tab is open still needs a reopen to show up.
+     * `BotsModel.addBot()`/`removeBot()` are both ready for them.
+     */
+    private registerBotMessageEvents(): void
+    {
+        if(!this._communication) return;
+
+        this._botMessageEvents.push(
+            this._communication.addMessageEvent(new BotInventoryMessageEvent(this.onBotInventory))
+        );
+    }
+
+    /**
+     * AS3: .../_SafeCls_1951.as::onBots()
+     *
+     * AS3 calls `setListInitialized()` after `updateItems()`; this port's `updateBots()` raises that
+     * flag itself, so the separate call would be redundant rather than missing.
+     */
+    private onBotInventory = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as BotInventoryMessageParser | null;
+
+        if(!parser || !this._botsModel) return;
+
+        const bots = new Map<number, Bot>();
+
+        for(const data of parser.bots)
+        {
+            bots.set(data.id, new Bot(data.id, data.name, data.motto, data.figure, data.gender));
+        }
+
+        this._botsModel.updateBots(bots);
+        this.setInventoryCategoryInit('bots');
+        this._botsModel.updateView();
+    };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as:200
     // — the badge branch of the same registration block the furni/pet ones above come from.
