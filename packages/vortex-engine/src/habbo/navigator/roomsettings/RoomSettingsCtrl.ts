@@ -709,7 +709,10 @@ export class RoomSettingsCtrl
             const chatScrollEl = this._window.findChildByName('chat_scroll_speed') as unknown as IPopulatable | null;
             if(chatScrollEl) chatScrollEl.selection = data.chatSettings.scrollSpeed;
 
-            (this._chatFullHearRangeInput as unknown as { setText?(v: string): void })?.setText?.(data.chatSettings.fullHearRange.toString());
+            // TODO(AS3): this revision dropped `fullHearRange` from the room-settings chat
+            // block - `_SafeCls_1709.as` carries only mode, bubble width, scroll speed and
+            // flood sensitivity, and RoomSettingsCtrl.as:851 reads flood sensitivity alone.
+            // The field is left undrawn rather than filled with an invented value.
 
             const floodEl = this._window.findChildByName('chat_flood_sensitivity') as unknown as IPopulatable | null;
             if(floodEl) floodEl.selection = data.chatSettings.floodSensitivity;

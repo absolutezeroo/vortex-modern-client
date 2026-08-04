@@ -31,7 +31,27 @@ export class RoomSettingsData
     wallThickness: number = 0;
     floorThickness: number = 0;
     chatSettings: RoomChatSettings | null = null;
+
+    /**
+     * The six fields this revision inserted between the chat block and the moderation
+     * block. `RoomSettingsCtrl` does not draw them yet; they are read so the rest of the
+     * packet lands on the right fields, which is what the dialog actually needs.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1961/_SafeCls_1961.as::leaveOnDoorTileEnabled
+    leaveOnDoorTileEnabled: boolean = false;
+    idleSleepEnabled: boolean = true;
+    idleSleepTimeoutSeconds: number = 0;
+    idleAutokickEnabled: boolean = false;
+    idleAutokickTimeoutSeconds: number = 0;
+    muteAllPets: boolean = false;
+
+    /**
+     * Read from the wire by an earlier build, but NOT by this revision's parser — AS3's
+     * `_SafeCls_3719.as` never touches it. `RoomSettingsCtrl` still ticks its checkbox from
+     * this field, so it is kept and simply stays false until something sets it.
+     */
     allowNavigatorDynamicCats: boolean = false;
+
     roomModerationSettings: RoomModerationSettings | null = null;
     hiddenByBc: boolean = false;
 
