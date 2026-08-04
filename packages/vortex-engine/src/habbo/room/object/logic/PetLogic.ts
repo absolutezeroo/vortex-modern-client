@@ -186,7 +186,13 @@ export class PetLogic extends MovingObjectLogic
         // Experience gain
         if(message instanceof RoomObjectAvatarExperienceUpdateMessage)
         {
-            model.setNumber('figure_experience_timestamp', Date.now());
+            // AS3 stamps `getTimer()` here - milliseconds since the player started - and
+            // AnimatedPetVisualization.updateExperienceBubble() subtracts it from the `time` the
+            // room renderer passes down, which is `performance.now()`: the same monotonic clock.
+            // `Date.now()` is epoch milliseconds, so the difference came out around -1.75e12. That
+            // is still under the 2000ms window, so the bubble took the visible branch, computed
+            // sin() of an astronomically large angle for its alpha, and never reset the stamp.
+            model.setNumber('figure_experience_timestamp', performance.now());
             model.setNumber('figure_gained_experience', message.gainedExperience);
             return;
         }
