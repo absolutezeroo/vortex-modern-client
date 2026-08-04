@@ -25,6 +25,7 @@ import {HabboNotifications} from '@habbo/notifications/HabboNotifications';
 import {HabboSoundManagerFlash10} from '@habbo/sound/HabboSoundManagerFlash10';
 import {HabboToolbar} from '@habbo/toolbar/HabboToolbar';
 import {HabboQuestEngine} from '@habbo/quest/HabboQuestEngine';
+import {HabboHelp} from '@habbo/help/HabboHelp';
 import {HabboFreeFlowChat} from '@habbo/freeflowchat/HabboFreeFlowChat';
 import {AvatarRenderManager} from '@habbo/avatar/AvatarRenderManager';
 import {HabboWindowManager} from '@habbo/window/HabboWindowManager';
@@ -78,6 +79,7 @@ import type {IHabboClubCenter} from '@habbo/catalog/clubcenter/IHabboClubCenter'
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
+import {IID_HabboHelp} from '@iid/IIDHabboHelp';
 import {IID_HabboClubCenter} from '@iid/IIDHabboClubCenter';
 import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents';
 import {IID_HabboFurniEditor} from '@iid/IIDHabboFurniEditor';
@@ -259,6 +261,7 @@ export class VortexMain implements IVortexMain
 
     private _toolbar: HabboToolbar | null = null;
     private _questEngine: HabboQuestEngine | null = null;
+    private _habboHelp: HabboHelp | null = null;
 
     get toolbar(): IHabboToolbar 
     {
@@ -521,6 +524,7 @@ export class VortexMain implements IVortexMain
         // Nullify Habbo manager refs (inverse init order)
         this._clubCenter = null;
         this._userDefinedRoomEvents = null;
+        this._habboHelp = null;
         this._messenger = null;
         this._friendList = null;
         this._friendBar = null;
@@ -882,6 +886,17 @@ export class VortexMain implements IVortexMain
         // HabboFriendListCom for the same reason.
         this._messenger = new HabboMessenger(ctx, 0, this._assets);
         ctx.attachComponent(this._messenger, [IID_HabboMessenger]);
+
+        // Help (call for help, FAQ, guide sessions). AS3 registers this via the HabboHelpCom SWF
+        // library; the port never instantiated it, so all 696 lines of HabboHelp and the 19 files
+        // under habbo/help sat dormant - the same shape as the quest engine above. Five components
+        // declare IID_HabboHelp and all five declare it optional, which is why nothing ever failed
+        // loudly: HabboNavigator, HabboNewNavigator, HabboMessenger, HabboNotifications and
+        // HabboLandingView simply held null forever. Attached after the messenger so its own
+        // optional dependencies (toolbar, navigator, friend list, tracking) are already up; its
+        // one hard dependency is the communication manager.
+        this._habboHelp = new HabboHelp(ctx);
+        ctx.attachComponent(this._habboHelp, [IID_HabboHelp]);
 
         log.debug('Friend List initialized');
     }
