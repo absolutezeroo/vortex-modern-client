@@ -6,6 +6,26 @@ import {Logger} from '@core/utils/Logger';
 // Message events
 import {UserObjectMessageEvent} from '../communication/messages/incoming/handshake/UserObjectMessageEvent';
 import {
+    BannedUsersFromRoomEvent,
+    FlatControllerAddedEvent,
+    FlatControllerRemovedEvent,
+    FlatControllersEvent,
+    RoomSettingsDataEvent,
+    RoomSettingsSaveErrorEvent,
+    ShowEnforceRoomCategoryDialogEvent,
+    UserUnbannedFromRoomEvent,
+} from '../communication/messages/incoming/roomsettings';
+import type {
+    BannedUsersFromRoomEventParser,
+    FlatControllerAddedEventParser,
+    FlatControllerRemovedEventParser,
+    FlatControllersEventParser,
+    RoomSettingsDataEventParser,
+    RoomSettingsSaveErrorEventParser,
+    ShowEnforceRoomCategoryDialogEventParser,
+    UserUnbannedFromRoomEventParser,
+} from '../communication/messages/parser/roomsettings';
+import {
     CanCreateRoomEventMessageEvent,
     CanCreateRoomMessageEvent,
     CategoriesWithVisitorCountMessageEvent,
@@ -95,6 +115,21 @@ export class IncomingMessages
     private registerEvents(): void
     {
         // Settings & Favourites
+        // Room settings. AS3 registers these in the navigator's own incoming-messages class
+        // (_SafeCls_1951.as lines 120-121/134 and the flat-controller/ban block) and routes
+        // each to roomSettingsCtrl. None of them were subscribed here, so RoomSettingsCtrl —
+        // complete, and holding every handler below — never heard a single reply: clicking
+        // "room settings" sent GetRoomSettings (256) and nothing ever came back to open the
+        // window. Room filter opened fine precisely because it needs no round trip.
+        this.addMessageEvent(new RoomSettingsDataEvent(this.onRoomSettingsData.bind(this)));
+        this.addMessageEvent(new RoomSettingsSaveErrorEvent(this.onRoomSettingsSaveError.bind(this)));
+        this.addMessageEvent(new FlatControllersEvent(this.onFlatControllers.bind(this)));
+        this.addMessageEvent(new FlatControllerAddedEvent(this.onFlatControllerAdded.bind(this)));
+        this.addMessageEvent(new FlatControllerRemovedEvent(this.onFlatControllerRemoved.bind(this)));
+        this.addMessageEvent(new BannedUsersFromRoomEvent(this.onBannedUsersFromRoom.bind(this)));
+        this.addMessageEvent(new UserUnbannedFromRoomEvent(this.onUserUnbannedFromRoom.bind(this)));
+        this.addMessageEvent(new ShowEnforceRoomCategoryDialogEvent(this.onEnforceRoomCategorySelection.bind(this)));
+
         this.addMessageEvent(new NavigatorSettingsMessageEvent(this.onNavigatorSettings.bind(this)));
         this.addMessageEvent(new FavouritesMessageEvent(this.onFavourites.bind(this)));
         this.addMessageEvent(new FavouriteChangedMessageEvent(this.onFavouriteChanged.bind(this)));
@@ -471,5 +506,112 @@ export class IncomingMessages
         this.data.competitionRoomsData = parser.data;
 
         log.debug(`Competition rooms data: goal=${parser.data?.goalId}, page=${parser.data?.pageIndex}`);
+    }
+
+    /**
+     * The room-settings replies all land on the same controller, which this port hangs off
+     * the transitional navigator rather than off HabboNavigator as AS3 does.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/_SafeCls_1951.as::onRoomSettingsData()
+    private onRoomSettingsData(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as RoomSettingsDataEventParser;
+        const data = parser?.data ?? null;
+
+        if(data === null) return;
+
+        this._navigator.transitionalNavigator?.roomSettingsCtrl?.onRoomSettings(data);
+    }
+
+    // AS3: .../_SafeCls_1951.as::onRoomSettingsSaveError()
+    private onRoomSettingsSaveError(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as RoomSettingsSaveErrorEventParser;
+
+        if(!parser) return;
+
+        this._navigator.transitionalNavigator?.roomSettingsCtrl?.onRoomSettingsSaveError(
+            parser.roomId, parser.errorCode, parser.info
+        );
+    }
+
+    // AS3: .../_SafeCls_1951.as::onFlatControllers()
+    private onFlatControllers(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as FlatControllersEventParser;
+
+        if(!parser) return;
+
+        this._navigator.transitionalNavigator?.roomSettingsCtrl?.onFlatControllers(parser.roomId, parser.controllers);
+    }
+
+    // AS3: .../_SafeCls_1951.as::onFlatControllerAdded()
+    private onFlatControllerAdded(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as FlatControllerAddedEventParser;
+        const data = parser?.data ?? null;
+
+        if(data === null) return;
+
+        this._navigator.transitionalNavigator?.roomSettingsCtrl?.onFlatControllerAdded(parser.flatId, data);
+    }
+
+    // AS3: .../_SafeCls_1951.as::onFlatControllerRemoved()
+    private onFlatControllerRemoved(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as FlatControllerRemovedEventParser;
+
+        if(!parser) return;
+
+        this._navigator.transitionalNavigator?.roomSettingsCtrl?.onFlatControllerRemoved(parser.flatId, parser.userId);
+    }
+
+    // AS3: .../_SafeCls_1951.as::onBannedUsersFromRoom()
+    private onBannedUsersFromRoom(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as BannedUsersFromRoomEventParser;
+
+        if(!parser) return;
+
+        this._navigator.transitionalNavigator?.roomSettingsCtrl?.onBannedUsersFromRoom(parser.roomId, parser.bannedUsers);
+    }
+
+    // AS3: .../_SafeCls_1951.as::onUserUnbannedFromRoom()
+    private onUserUnbannedFromRoom(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as UserUnbannedFromRoomEventParser;
+
+        if(!parser) return;
+
+        this._navigator.transitionalNavigator?.roomSettingsCtrl?.onUserUnbannedFromRoom(parser.roomId, parser.userId);
+    }
+
+    /** AS3 passes the entered room's id, not the selection type the parser carries. */
+    // AS3: .../_SafeCls_1951.as::onEnforceRoomCategorySelection()
+    private onEnforceRoomCategorySelection(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as ShowEnforceRoomCategoryDialogEventParser;
+
+        if(!parser) return;
+
+        this._navigator.transitionalNavigator?.enforceCategoryCtrl?.show(
+            this.data.enteredGuestRoom?.flatId ?? 0
+        );
     }
 }

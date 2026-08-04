@@ -650,6 +650,27 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **The room settings window opens** (`habbo/navigator/IncomingMessages.ts` + `HabboNavigator.ts`), 2026-08-03.
+  - Reported as "room filter opens, room settings does nothing" — and that contrast was the clue:
+    the filter needs no server round trip, the settings do. `startRoomSettingsEdit()` sent
+    `GetRoomSettings` (256) and **nothing on the client was subscribed to the reply**.
+  - `RoomSettingsCtrl` is complete and holds all eight handlers; all nine incoming events and their
+    parsers exist and are registered in `HabboMessages`. Only the subscription was missing, so every
+    reply was parsed and dropped. Now wired: `RoomSettingsData`, `RoomSettingsSaveError`,
+    `FlatControllers`, `FlatControllerAdded`, `FlatControllerRemoved`, `BannedUsersFromRoom`,
+    `UserUnbannedFromRoom`, `ShowEnforceRoomCategoryDialog`.
+  - **Re-measure**: AS3's navigator incoming-messages class (`_SafeCls_1951.as`) registers **47**
+    handlers; this port's `IncomingMessages.ts` registered 22, now 30. The remaining 17 are listed
+    by `grep -o "addHabboConnectionMessageEvent(new _SafeCls_[0-9]*(on[A-Za-z]*"` on that file —
+    among them `onUserRights`, `onMuteAllEvent`, `onRoomFilterSettings`, `onNoSuchFlat`,
+    `onGameStarted`, `onRoomEnter`/`onRoomExit`.
+  - Also added the `UserInfoRegionUtil.setUserInfoState(false, …)` call AS3 makes on every room-info
+    refresh (`RoomInfoViewCtrl.as` line 184), which resets the profile eye to its idle image.
+  - **The missing owner name is server-side, not here.** `vortex-emulator`'s
+    `Vortex.Rooms/Grains/RoomGrain.cs:402` builds the room snapshot with `OwnerName = string.Empty`
+    and never resolves it from `entity.PlayerEntityId`, so the client renders exactly what it is
+    sent. The parser and the serializer agree field-for-field; nothing to fix on this side.
+
 - ✅ **The in-room "Room info" window actually opens** (`habbo/navigator/HabboNavigator.ts`, `IHabboNewNavigator.ts`), 2026-08-03.
   - Reported as `habbo.navigator.HabboNavigator Room info opened` in the log with nothing on screen —
     which named the culprit exactly: `openRoomInfo()` flipped a private boolean and logged, and that

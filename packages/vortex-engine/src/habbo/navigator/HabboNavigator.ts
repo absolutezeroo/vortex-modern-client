@@ -15,6 +15,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IHabboNavigator} from './IHabboNavigator';
 import type {IHabboNewNavigator} from './IHabboNewNavigator';
 import type {RoomInfoViewCtrl} from './inroom/RoomInfoViewCtrl';
+import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
 import type {IRoomSessionManager} from '../session/IRoomSessionManager';
 import type {ISessionDataManager} from '../session/ISessionDataManager';
 import type {IHabboToolbar} from '../toolbar/IHabboToolbar';
@@ -401,6 +402,17 @@ export class HabboNavigator extends Component implements IHabboNavigator
         }
 
         if(wrapper.roomCreateViewCtrl !== null) wrapper.roomInfoViewCtrl?.toggle();
+    }
+
+    /**
+     * TS-only: the transitional half of AS3's HabboNavigator, which this port put on
+     * `LegacyNavigator`. AS3 reaches `roomSettingsCtrl` and friends as its own fields
+     * (HabboNavigator.as::get roomSettingsCtrl(), line 180); everything holding only this
+     * component — `IncomingMessages` above all — has to come back through here.
+     */
+    get transitionalNavigator(): IHabboTransitionalNavigator | null
+    {
+        return this._newNavigator?.legacyWrapper ?? null;
     }
 
     // TS-only: the controller AS3 holds as its own field, reached through the wrapper here.

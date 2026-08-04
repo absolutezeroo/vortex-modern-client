@@ -14,6 +14,7 @@ import {TagRenderer} from '../TagRenderer';
 import {GuildInfoCtrl} from '../GuildInfoCtrl';
 import {SimpleAlertView} from '../SimpleAlertView';
 import {Util} from '../Util';
+import {UserInfoRegionUtil} from '@habbo/utils/UserInfoRegionUtil';
 
 /**
  * Room info view controller for displaying room details in-room.
@@ -245,6 +246,10 @@ export class RoomInfoViewCtrl
             this._find('owner_name_cont').visible = true;
             ownerNameEl.visible = true;
             ownerNameEl.text = roomData.ownerName;
+
+            // Resets the profile eye to its idle image; AS3 does this on every refresh so a
+            // hover left over from the previous room's card does not persist.
+            UserInfoRegionUtil.setUserInfoState(false, roomDetailsContainer);
         }
         else
         {
