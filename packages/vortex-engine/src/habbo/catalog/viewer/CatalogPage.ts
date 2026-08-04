@@ -49,6 +49,7 @@ import {NewPetsCatalogWidget} from './widgets/NewPetsCatalogWidget';
 import {PetPreviewCatalogWidget} from './widgets/PetPreviewCatalogWidget';
 import {ClubGiftWidget} from './widgets/ClubGiftWidget';
 import {CatalogWidgetName} from './widgets/CatalogWidgetName';
+import {ProductOfferUpdatedEvent} from './widgets/events/ProductOfferUpdatedEvent';
 import {CatalogWidgetEvent} from './widgets/events/CatalogWidgetEvent';
 
 const log = Logger.getLogger('habbo.catalog.viewer.CatalogPage');
@@ -77,10 +78,12 @@ export class CatalogPage implements ICatalogPage
 
     private _localization: IPageLocalization;
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/viewer/CatalogPage.as::createWidget()
-    // createWidget()'s ~45-case switch (one per layout window name) only handles
-    // "itemGridWidget"/"simplePriceWidget" so far - the rest of viewer/widgets/ isn't ported yet,
-    // so most pages still render their background/layout with limited interactive content.
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
+    // The switch now covers 39 of the 48 names CatalogWidgetName declares. Still without a case:
+    // BUILDER_ADDONS, BUILDER_LOYALTY, BUILDER_SUBSCRIPTION, ROOM_ADS_CATALOG, ROOM_PREVIEW,
+    // SONG_DISK_PRODUCT_VIEW, TRAX_PREVIEW, TROPHY, USER_BADGE_SELECTOR - a page naming one of
+    // those renders its layout with that slot inert (no default case, so an unmatched name is
+    // silently skipped).
     private _widgets: ICatalogWidget[] = [];
 
     private _widgetEvents: EventEmitter | null = new EventEmitter();
@@ -612,9 +615,15 @@ export class CatalogPage implements ICatalogPage
             {
                 offer.product!.uniqueLimitedItemsLeft = itemsLeft;
 
-                // TODO(AS3): sources/win63_version/habbo/catalog/viewer/CatalogPage.as::updateLimitedItemsLeft()
-                // AS3 dispatches a ProductOfferUpdatedEvent here for listening widgets -
-                // no widget listens yet (see the _widgets field note).
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::updateLimitedItemsLeft()
+                // UniqueLimitedItemWidget listens for this to redraw its "X left of Y" overlay, and
+                // it polls the server every 20s while visible. Without the dispatch the reply
+                // landed on the offer and stopped there, so the count never moved on screen.
+                this._widgetEvents?.emit(
+                    ProductOfferUpdatedEvent.CWE_PRODUCT_OFFER_UPDATED,
+                    new ProductOfferUpdatedEvent(offer)
+                );
+
                 return;
             }
         }
