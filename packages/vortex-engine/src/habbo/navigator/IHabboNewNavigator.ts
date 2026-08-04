@@ -7,6 +7,7 @@ import type {IRoomSessionManager} from '../session/IRoomSessionManager';
 import type {ISessionDataManager} from '../session/ISessionDataManager';
 import type {IHabboWindowManager} from '../window/IHabboWindowManager';
 import type {IHabboNavigator} from './IHabboNavigator';
+import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
 import type {NavigatorData} from './domain';
 import type {ContextContainer, SearchContext, SearchContextHistoryManager} from './context';
 import type {NavigatorCache} from './cache';
@@ -43,6 +44,17 @@ export interface IHabboNewNavigator extends IDisposable
 	 * Get the legacy navigator
 	 */
     readonly legacyNavigator: IHabboNavigator;
+
+    /**
+	 * The LegacyNavigator wrapper this component builds around that legacy navigator.
+	 *
+	 * It is where this port put the transitional half of AS3's HabboNavigator — the
+	 * in-room controllers (room info, room settings, room events) all hang off it — so
+	 * anything holding only the old navigator has to come back through here to reach them.
+	 *
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNewNavigator.as::_SafeStr_5440
+	 */
+    readonly legacyWrapper: IHabboTransitionalNavigator | null;
 
     /**
 	 * Get the navigator data model (from legacy navigator)

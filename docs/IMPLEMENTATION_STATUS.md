@@ -650,6 +650,26 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **The in-room "Room info" window actually opens** (`habbo/navigator/HabboNavigator.ts`, `IHabboNewNavigator.ts`), 2026-08-03.
+  - Reported as `habbo.navigator.HabboNavigator Room info opened` in the log with nothing on screen —
+    which named the culprit exactly: `openRoomInfo()` flipped a private boolean and logged, and that
+    was the whole method. `RoomInfoViewCtrl` (739 l., complete) was never reached.
+  - Structural cause: AS3's `HabboNavigator` implements **both** `_SafeCls_93` and `_SafeCls_94` (the
+    transitional interface) and owns its own `RoomInfoViewCtrl`. This port split that in two —
+    `HabboNavigator` implements only the first, and the in-room controllers live on `LegacyNavigator`,
+    which `HabboNewNavigator` builds and holds privately. The old navigator is what is attached under
+    `IID_HabboNavigator` and what `RoomDesktop` hands to `RoomToolsWidgetHandler`, so the click landed
+    on the half without the controllers.
+  - Fixed by exposing `legacyWrapper` on `IHabboNewNavigator` and giving `HabboNavigator` an
+    **optional** `IID_HabboNewNavigator` dependency to reach it (hard would deadlock: the new
+    navigator already depends on the old one). `toggleRoomInfoVisibility()` and `closeRoomInfo()` now
+    drive the real controller.
+  - AS3 quirk preserved: the toggle is guarded on `roomCreateViewCtrl` — a *different* controller —
+    not on the room-info one it then toggles. Both are built and nulled together, so the test means
+    "not disposed".
+  - This is also the path to the **room settings**: the settings button lives on that window, so the
+    earlier "room settings are complete but nothing opens" had the same single cause.
+
 - ✅ **The personal word filter** (`toolbar/extensions/settings/WordFilterSettingsView.ts` 328 AS3 l., 3 composers, 2 events + 2 parsers), 2026-08-03.
   - Closes `toolbar/extensions/settings/` at 5/5: every entry in the client settings menu now opens
     a real window.

@@ -8,10 +8,13 @@ import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import {IID_HabboHelp} from '@iid/IIDHabboHelp';
+import {IID_HabboNewNavigator} from '@iid/IIDHabboNewNavigator';
 import type {IWindow} from '@core/window/IWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IHabboNavigator} from './IHabboNavigator';
+import type {IHabboNewNavigator} from './IHabboNewNavigator';
+import type {RoomInfoViewCtrl} from './inroom/RoomInfoViewCtrl';
 import type {IRoomSessionManager} from '../session/IRoomSessionManager';
 import type {ISessionDataManager} from '../session/ISessionDataManager';
 import type {IHabboToolbar} from '../toolbar/IHabboToolbar';
@@ -53,7 +56,14 @@ export class HabboNavigator extends Component implements IHabboNavigator
 {
     private _incomingMessages: IncomingMessages | null = null;
     private _isOpen: boolean = false;
-    private _isRoomInfoOpen: boolean = false;
+    /**
+     * The new navigator, resolved optionally so this component can still start without
+     * it. AS3's HabboNavigator implements the transitional interface itself and owns its
+     * own RoomInfoViewCtrl; this port put that half on `LegacyNavigator`, which the new
+     * navigator builds and holds — so the controller has to be reached through it.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::_SafeStr_5440 (owned directly there)
+    private _newNavigator: IHabboNewNavigator | null = null;
     private _roomSessionManager: IRoomSessionManager | null = null;
     private _toolbar: IHabboToolbar | null = null;
     private _windowManager: IHabboWindowManager | null = null;
@@ -204,6 +214,14 @@ export class HabboNavigator extends Component implements IHabboNavigator
                 {
                     this._avatarManager = manager;
                 }
+            ),
+            new ComponentDependency(
+                IID_HabboNewNavigator,
+                (navigator: IHabboNewNavigator | null) =>
+                {
+                    this._newNavigator = navigator;
+                },
+                false
             ),
             new ComponentDependency(
                 IID_HabboHelp,
@@ -365,16 +383,30 @@ export class HabboNavigator extends Component implements IHabboNavigator
         log.debug('Navigator closed');
     }
 
-    toggleRoomInfoVisibility(): void 
+    /**
+     * AS3 guards this on `roomCreateViewCtrl` — a different controller — rather than on
+     * the room-info one it then toggles. Both are built together and nulled together in
+     * dispose(), so the test means "not disposed"; preserved as written.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::toggleRoomInfoVisibility()
+    toggleRoomInfoVisibility(): void
     {
-        if(this._isRoomInfoOpen) 
+        const wrapper = this._newNavigator?.legacyWrapper ?? null;
+
+        if(wrapper === null)
         {
-            this.closeRoomInfo();
+            log.warn('toggleRoomInfoVisibility: no legacy navigator wrapper - the room info window cannot open');
+
+            return;
         }
-        else 
-        {
-            this.openRoomInfo();
-        }
+
+        if(wrapper.roomCreateViewCtrl !== null) wrapper.roomInfoViewCtrl?.toggle();
+    }
+
+    // TS-only: the controller AS3 holds as its own field, reached through the wrapper here.
+    private get roomInfoViewCtrl(): RoomInfoViewCtrl | null
+    {
+        return this._newNavigator?.legacyWrapper?.roomInfoViewCtrl ?? null;
     }
 
     canRateRoom(): boolean 
@@ -724,21 +756,14 @@ export class HabboNavigator extends Component implements IHabboNavigator
         }
     };
 
-    private openRoomInfo(): void 
+    /**
+     * AS3 has no open/close pair of its own — it closes the controller directly, from
+     * `goToRoomNetwork()` among other places (HabboNavigator.as lines 404, 558, 742).
+     * Kept as one method because that is what this port's call sites already use.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::goToRoomNetwork() (the _SafeStr_5440.close() call)
+    private closeRoomInfo(): void
     {
-        if(this._isRoomInfoOpen) return;
-
-        this._isRoomInfoOpen = true;
-
-        log.debug('Room info opened');
-    }
-
-    private closeRoomInfo(): void 
-    {
-        if(!this._isRoomInfoOpen) return;
-
-        this._isRoomInfoOpen = false;
-
-        log.debug('Room info closed');
+        this.roomInfoViewCtrl?.close();
     }
 }
