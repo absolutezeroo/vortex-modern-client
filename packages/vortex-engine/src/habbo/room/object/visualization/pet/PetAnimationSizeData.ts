@@ -1,5 +1,8 @@
 import {OrderedMap} from '@core/utils/OrderedMap';
+import {Logger} from '@core/utils/Logger';
 import {AnimationSizeData} from '../data/AnimationSizeData';
+
+const log = Logger.getLogger('habbo.room.object.visualization.pet.PetAnimationSizeData');
 
 /**
  * Per-scale posture/gesture animation table for a pet.
@@ -88,7 +91,41 @@ export class PetAnimationSizeData extends AnimationSizeData
 
         if(key == null) return 0;
 
-        return this._posturesToAnimations.getValue(key) ?? 0;
+        const animationId = this._posturesToAnimations.getValue(key) ?? 0;
+
+        // TEMPORARY DIAGNOSTIC - remove once the pet walk animation is settled.
+        // Symptom under investigation: pets slide instead of walking. The posture chain is faithful
+        // to AS3 from setUserMovePosture() down to here, so this answers the one open question -
+        // does the pet's own animation table declare "mv", or is it falling back to the default?
+        // Fires only on a posture change (validateActions gates it), not per frame.
+        if(!PetAnimationSizeData._tracedPostures.has(posture))
+        {
+            PetAnimationSizeData._tracedPostures.add(posture);
+            log.info(
+                `posture="${posture}" resolved="${key}" animationId=${animationId} ` +
+                `default="${this._defaultPosture}" known=[${this.listKnownPostures()}]`
+            );
+        }
+
+        return animationId;
+    }
+
+    /** TEMPORARY: one line per distinct posture, so a walking pet does not flood the console. */
+    private static _tracedPostures: Set<string> = new Set<string>();
+
+    /** TEMPORARY: OrderedMap exposes keys only by index, hence the walk. */
+    private listKnownPostures(): string
+    {
+        const keys: string[] = [];
+
+        for(let i = 0; i < this._posturesToAnimations.length; i++)
+        {
+            const key = this._posturesToAnimations.getKey(i);
+
+            if(key !== null) keys.push(key);
+        }
+
+        return keys.join(',');
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/PetAnimationSizeData.as::getGestureDisabled()
