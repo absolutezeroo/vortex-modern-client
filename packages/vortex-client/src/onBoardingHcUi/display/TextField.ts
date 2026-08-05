@@ -31,6 +31,9 @@ export interface ITextFormat
 
 export class TextField extends DisplayObject
 {
+    /** TS-only: the glyph Flash substitutes for every character of a `displayAsPassword` field. */
+    public static readonly PASSWORD_MASK: string = '*';
+
     /** TS-only: shared measuring surface — one context for every field. */
     private static _measureContext: OffscreenCanvasRenderingContext2D | null = null;
 
@@ -230,6 +233,31 @@ export class TextField extends DisplayObject
     }
 
     /**
+     * TS-only: Flash's rule that a text field which is neither editable nor selectable is
+     * transparent to the mouse — the click falls through to whatever is behind it.
+     *
+     * `LoaderUI.createTextField()` sets `selectable = param6` alongside `type`, so every label in
+     * this tree is a non-selectable dynamic field and every editable box is a selectable input one.
+     * AS3 leans on that: `InputField` puts no click handler on its caption or its prompt, and
+     * focuses itself from the sprite BEHIND them (`onInputBackgroundClicked()`), which only ever
+     * runs if the click reaches that sprite.
+     *
+     * Without it a bounding-box hit test hands the press to the nearest label, and the labels here
+     * are wide: `LoaderUI.createFrame()` gives a STYLE_HITCH caption `width = param3.width` — the
+     * full dialog width, 640px, even when the caption is the empty string. The password field's
+     * caption is laid over the email field's box that way (`lineUpVertically(_emailField, -20,
+     * _passwordField)`), so the lower two thirds of the email box answered with a label that is not
+     * an input, and `Stage.onMouseDown()` read that as "focus nothing" — a click that blurred the
+     * field instead of focusing it.
+     */
+    public override hitTest(localX: number, localY: number): DisplayObject | null
+    {
+        if(!this.isInput && !this.selectable) return null;
+
+        return super.hitTest(localX, localY);
+    }
+
+    /**
      * TS-only: the CSS font string for this field's format.
      */
     public get cssFont(): string
@@ -244,7 +272,18 @@ export class TextField extends DisplayObject
     {
         if(!this.displayAsPassword) return this._text;
 
-        return '*'.repeat(this._text.length);
+        return TextField.PASSWORD_MASK.repeat(this._text.length);
+    }
+
+    /**
+     * TS-only: the advance of `text` in this field's own format.
+     *
+     * The stage needs it to reconcile what it paints with what the `<input>` it parks over the
+     * field lays out — see `Stage.positionInputElement()`.
+     */
+    public measureString(text: string): number
+    {
+        return TextField.measureLine(text, this._format);
     }
 
     protected draw(context: CanvasRenderingContext2D): void

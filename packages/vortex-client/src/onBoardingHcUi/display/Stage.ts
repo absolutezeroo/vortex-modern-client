@@ -21,6 +21,12 @@ const log = Logger.getLogger('client.onBoardingHcUi.Stage');
 
 export class Stage extends DisplayObjectContainer
 {
+    /** TS-only: the glyph a browser substitutes for every character of an `input[type=password]`. */
+    private static readonly PASSWORD_BULLET: string = '•';
+
+    /** TS-only: id of the one `<style>` the stage installs, so a second stage reuses it. */
+    private static readonly STYLE_ELEMENT_ID: string = 'vortex-login-input-style';
+
     private readonly _canvas: HTMLCanvasElement;
     private readonly _context: CanvasRenderingContext2D;
     private readonly _input: HTMLInputElement;
@@ -56,6 +62,7 @@ export class Stage extends DisplayObjectContainer
         }
 
         this._context = context;
+        Stage.installInputStyles();
         this._input = Stage.createInputElement();
         this._form = Stage.createInputForm(this._input);
         container.appendChild(this._form);
@@ -455,6 +462,66 @@ export class Stage extends DisplayObjectContainer
         this._input.style.height = `${Math.max(1, field.lineHeight)}px`;
         this._input.style.font = field.cssFont;
         this._input.style.caretColor = `rgb(${red}, ${green}, ${blue})`;
+        this._input.style.letterSpacing = Stage.maskLetterSpacing(field);
+    }
+
+    /**
+     * TS-only: the letter spacing that makes the overlay's caret land on the canvas's glyphs.
+     *
+     * The two halves of an editing field disagree on what a masked character is. Flash — and so
+     * `TextField.displayText`, which is what the canvas paints — substitutes an asterisk;
+     * `input[type=password]` lays its value out as U+2022 bullets, which are the wider glyph. The
+     * element's text is transparent, so only its caret shows the difference, and it showed it as a
+     * caret drifting a little further right of the last asterisk with every character typed.
+     *
+     * Spacing the overlay by the difference makes one bullet advance exactly one asterisk, so the
+     * caret after N characters sits at N asterisks — where the canvas has just painted them.
+     */
+    private static maskLetterSpacing(field: TextField): string
+    {
+        if(!field.displayAsPassword) return 'normal';
+
+        const mask = field.measureString(TextField.PASSWORD_MASK);
+        const bullet = field.measureString(Stage.PASSWORD_BULLET);
+
+        return `${mask - bullet}px`;
+    }
+
+    /**
+     * TS-only: hides the controls a browser hangs inside its own password fields.
+     *
+     * Edge decorates every `input[type=password]` with a reveal eye, and WebKit/Chrome with the
+     * password-manager buttons. They are drawn by the engine, not by us, so they are the one part
+     * of the overlay that is not transparent — an eye appearing inside a Flash hitch box the moment
+     * a password is typed. None of them can be turned off from an inline style, since they are
+     * pseudo-elements; hence the one stylesheet.
+     *
+     * Nothing is lost with them gone: the element exists to carry the caret, IME and the password
+     * manager's fill, and revealing a field whose glyphs the canvas paints would show nothing.
+     */
+    private static installInputStyles(): void
+    {
+        if(document.getElementById(Stage.STYLE_ELEMENT_ID)) return;
+
+        const style = document.createElement('style');
+
+        style.id = Stage.STYLE_ELEMENT_ID;
+        style.textContent = `
+            #vortex-login-input::-ms-reveal,
+            #vortex-login-input::-ms-clear,
+            #vortex-login-input::-webkit-credentials-auto-fill-button,
+            #vortex-login-input::-webkit-strong-password-auto-fill-button,
+            #vortex-login-input::-webkit-caps-lock-indicator
+            {
+                display: none !important;
+                visibility: hidden;
+                pointer-events: none;
+                width: 0;
+                margin: 0;
+            }
+        `;
+
+        document.head.appendChild(style);
     }
 
     /**
