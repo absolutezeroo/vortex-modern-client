@@ -206,7 +206,16 @@ export function parseElementDescriptionXml(
     {
         const attrs = readAttributes(windowNode);
         const typeName = attrs.type ?? '';
-        const typeId = TYPE_MAP[typeName] ?? -1;
+        // AS3 hands the table lookup straight to `addSkinRenderer(param1:uint, …)`
+        // (habbo/window/utils/_SafeCls_1859.as), so an unlisted type name arrives as
+        // `uint(undefined)` = 0, not as an error. The layout parser resolves the same
+        // unlisted tag to `WindowType.NULL` (0) too, so the two agree and the element
+        // still finds its skin: `frame_pointer_down` is in no type table but is both a
+        // tag in `habbo_window_layout_frame_7_xml` and a style-7 descriptor here, and
+        // that is the only reason the style-7 frame's pointer renders at all. Dropping
+        // it at -1 sent that lookup to the style-0 fallback — `habbo_skin_frame_xml`,
+        // a whole frame where a 16×12 arrow belongs.
+        const typeId = TYPE_MAP[typeName] ?? 0;
         const statesNode = getChildElements(windowNode, 'states')[0] ?? null;
         const states = getChildElements(statesNode, 'state').map((stateNode) => 
         {
