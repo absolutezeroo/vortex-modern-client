@@ -59,7 +59,12 @@ export const WindowType =
         SCROLLABLE_ITEMLIST_HORIZONTAL: 57,
         BUTTON: 60,
         BUTTON_THICK: 61,
-        BUTTON_ICON: 79,
+        // Name recovered from PRODUCTION-201601012205-226667486's WindowType.as::WINDOW_TYPE_BUTTON_ICON
+        // (WIN63's own constant is obfuscated). Deliberately NOT in Classes: AS3's own registry has no
+        // entry for 62 either, so the type parses but cannot be instantiated — the live icon button is
+        // ICONBUTTON (79) below. This constant used to hold 79, which mapped the `iconbutton` tag to
+        // nothing at all.
+        BUTTON_ICON: 62,
         BUTTON_UP: 63,
         BUTTON_DOWN: 64,
         BUTTON_LEFT: 65,
@@ -76,6 +81,10 @@ export const WindowType =
         DRAGBAR: 76,
         TEXTFIELD: 77,
         PASSWORD: 78,
+        // Derived name — AS3's constant for 79 is obfuscated in every tree (WIN63's
+        // enum has `_SafeStr_10771:uint = 79`, and the type postdates the 2016 build).
+        // Taken from the tag the AS3 type table gives it: `iconbutton` = 79.
+        ICONBUTTON: 79,
         TAB_CONTENT: 90,
         TAB_CONTEXT: 91,
         TAB_SELECTOR: 92,
@@ -185,6 +194,9 @@ export const TYPE_NAME_TO_CODE: Record<string, number> =
         'dragbar': WindowType.DRAGBAR,
         'input': WindowType.TEXTFIELD,
         'password': WindowType.PASSWORD,
+        // Kept after `button_icon` so the reverse map resolves 79 back to `iconbutton` —
+        // the tag the shipped layouts and the element description actually use.
+        'iconbutton': WindowType.ICONBUTTON,
         'tab_content': WindowType.TAB_CONTENT,
         'tab_context': WindowType.TAB_CONTEXT,
         'tab_selector': WindowType.TAB_SELECTOR,

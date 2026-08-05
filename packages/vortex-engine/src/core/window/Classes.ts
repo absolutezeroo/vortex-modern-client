@@ -151,7 +151,9 @@ export class Classes
             WindowType.BUTTON_UP, WindowType.BUTTON_DOWN,
             WindowType.BUTTON_LEFT, WindowType.BUTTON_RIGHT,
         ], ButtonController as any);
-        Classes.register(WindowType.BUTTON_ICON, IconButtonController as any);
+        // AS3 registers IconButtonController on 79 (`iconbutton`) and nothing on 62
+        // (`button_icon`), so WindowType.BUTTON_ICON stays unregistered here too.
+        Classes.register(WindowType.ICONBUTTON, IconButtonController as any);
         Classes.register(WindowType.BUTTON_GROUP_LEFT, SelectableButtonController as any);
         Classes.register(WindowType.BUTTON_GROUP_CENTER, SelectableButtonController as any);
         Classes.register(WindowType.BUTTON_GROUP_RIGHT, SelectableButtonController as any);
