@@ -669,6 +669,80 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **vortex-glaze: the widget library now covers every buildable window type — and the `iconbutton`
+  tag it exposed had never parsed at all**, 2026-08-04.
+  - **The gap.** The palette listed 28 of the parser's 97 tags, and the hierarchy strip's
+    Create/Convert drop menu listed 9 — so `Convert` could only reach nine types, and a created node
+    was a 60×30 box with `params="0"` whatever its type (an `input` that could not take focus, a
+    `button` that ignored the mouse). Both lists now come from one `ops/WidgetCatalog.ts`: **94
+    entries**, grouped into 11 categories, each with the geometry, caption and params its family uses
+    in the shipped layouts. `addChildOfType()` reads the same spec, so a type created from the strip
+    is born identical to the same type picked in the popup.
+  - **Four tags are excluded on purpose**, and `assertCatalogCoverage()` reports any other drift in
+    dev: `null` (the parser's unresolved-tag fallback), `itemlist` (same type code as
+    `itemlist_vertical`, so it would save itself out under the other name), `button_icon` (type 62,
+    which AS3's own `Classes` leaves unregistered — `create()` returns nothing), and
+    `itemgrid_horizontal`, whose `ItemGridController` throws *"Horizontal item grid not yet
+    implemented!"* — an engine gap, found by instantiating all 95 candidates rather than by reading.
+  - **The type picker is the popup, not a drop menu.** The ported `dropmenu` sizes its expanded view
+    to the total item height and does not scroll, so 94 types in one column is unusable. The strip
+    shows the armed type on a button that opens the library in `pick` mode; the strip is three rows
+    now (`glaze_hierarchy_controls` 306×88, tree list moved to y=90).
+  - 🐛 **`<iconbutton>` resolved to nothing, client-wide** (`core/window/enum/WindowType.ts`,
+    `Classes.ts`). The port had `BUTTON_ICON = 79` with the tag `button_icon`. AS3's type table
+    (`core/window/utils/_SafeCls_2816.as`) says `button_icon` = **62** and `iconbutton` = **79**, and
+    its `Classes.as` registers `IconButtonController` on 79 and nothing on 62. So the tag the
+    layouts actually use resolved to `undefined` → `WindowType.NULL`, and
+    `parseElementDescriptionXml`'s `TYPE_MAP[name] ?? -1` dropped both `type="iconbutton"` skin
+    descriptors before `ElementRegistry` ever saw them. Eight elements were dead: trading's
+    silver ±, the moderation tool's ±coins/±furni, the chest's upgrade-capacity button, wired's
+    Ubuntu `add_more`. Verified A/B in a browser: `silver_minus_button` is `type 0` /
+    `WindowController` before the fix and `type 79` / `IconButtonController` after.
+    `BUTTON_ICON` now holds 62 (name recovered from PRODUCTION) and stays unregistered, as in AS3;
+    79 is `ICONBUTTON`, a derived name — its AS3 constant is obfuscated in every tree.
+  - 🐛 **`frame_pointer_down` was drawn with the whole frame's skin** (`client/window/WindowXmlAssetParser.ts`).
+    Same family, found by scanning every shipped layout for tags the parser cannot resolve — with
+    `iconbutton` fixed, exactly one remained. `frame_pointer_down` is in no AS3 type table, yet it is
+    both a tag in `habbo_window_layout_frame_7_xml` and a style-7 descriptor in the element
+    description. AS3 passes the failed lookup straight into `addSkinRenderer(param1:uint, …)`, so it
+    lands at `uint(undefined)` = **0** — the same 0 the layout parser gives the unresolved tag, which
+    is the only reason that arrow renders at all. This port used `?? -1` and `ElementRegistry.load`
+    dropped it, so the style-7 lookup fell through to style 0: `habbo_skin_frame_skin`, a whole
+    9-slice frame inside a 16×12 box. Verified A/B on a real style-7 frame — the renderer at (0,7) is
+    `default_frame_skin` before and `frame_pointer_down_skin` after; (0,0) is untouched. The first A/B
+    read only the renderer's *class name*, which is `BitmapSkinRenderer` either way and said "no
+    change" — the identity is in its name field.
+  - **Client-wide, the tag/param tables now resolve everything the assets use**: 806 layouts + the
+    element description, 0 unknown tags, 0 unknown `<param name>`.
+  - **Verified in a browser, not by reading**: all 94 entries created through `addChildOfType` (94/94,
+    each checked against its expected type code), `convertSelected` round-tripped on one type per
+    category (11/11), and the popup built 105 rows (94 previews + 11 headers) with no failed
+    preview. That run is also what caught `itemgrid_horizontal` and a header row whose caption never
+    appeared (`glaze_label_xml`'s root *is* the text node, so `findChildByName('glaze_lbl')` never
+    matched).
+
+- 🐛 **OPEN — vortex-glaze's Save/Export silently drops most of a layout**, found 2026-08-04 while
+  auditing the rest of the editor. **Not fixed; do not save over a real layout until it is.**
+  - `serializeLayout` delegates to the engine's `WindowParser.windowToXMLString`, whose
+    `serializeChildren` skips every child tagged `_EXCLUDE` — faithful to AS3, which does exactly the
+    same. But the *parser* adds children through `getLayoutChildTarget()`, and for a frame that is
+    `content_area` (`_CONTENT, _INTERNAL, _EXCLUDE`), for an item list / scrollable list / tab context
+    it is the internal `_CONTAINER` (also `_EXCLUDE`). Read-in and write-out therefore disagree: every
+    node the editor can actually select lives under a container the serializer refuses to walk into.
+  - Measured: `group_management_window` 117 widget tags in source → **1** saved; `campaign_calendar_xml`
+    31 → 1; `add_friends_tab_xml` 8 → 2, and re-importing its own saved output yields 3 of 10 live
+    nodes. The `<layout><window>` envelope from the 2026-08-03 fix is correct — the file parses, which
+    is precisely why the loss went unnoticed: the check was "does it load", not "did it keep the nodes".
+  - AS3's serializer was a debug utility for a single widget, never Glaze's save format (the Flash
+    Glaze had its own document model), so this is a tooling gap, not an engine parity gap — the engine
+    function should stay as it is.
+  - Proposed fix, ~40 lines and no behaviour change to shipped code: make `serializeChildren`
+    `protected`, and give Glaze a `WindowParser` subclass that, for each child, skips `_EXCLUDE` as
+    today **except** when the child is its parent's `getLayoutChildTarget()`, in which case it emits
+    that child's children in its place. Frame internals (`titlebar`, `_FRAME_SCALER`) and a button's
+    `_BTN_TEXT` stay excluded because they are not the layout target; the emitted shape then matches
+    the source XML, where the items sit directly under `<itemlist><children>`.
+
 - ✅ **The navigator's incoming messages closed at 47/47** (`habbo/navigator/IncomingMessages.ts`, 7 new events + 7 parsers), 2026-08-03.
   - Follow-up to the room-settings fix, which had measured this file at 22 of AS3's 47 registrations.
     All 17 genuinely-missing handlers are now ported; the five names that still differ are aliases
