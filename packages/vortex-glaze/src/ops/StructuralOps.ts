@@ -2,19 +2,9 @@ import type {IWindow} from '@core/window/IWindow';
 import type {WindowController} from '@core/window/WindowController';
 import {TYPE_NAME_TO_CODE} from '@core/window/enum/WindowType';
 import type {EditorState} from '../state/EditorState';
+import {specFor, type IWidgetSpec} from './WidgetCatalog';
 
-/** Window types offered in the "add" palette. */
-export const ADDABLE_TYPES = [
-    'container',
-    'region',
-    'text',
-    'label',
-    'border',
-    'button',
-    'checkbox',
-    'bitmap',
-    'itemlist_vertical'
-];
+export type {IWidgetSpec};
 
 interface IContainerLike
 {
@@ -23,22 +13,6 @@ interface IContainerLike
     removeChild(child: IWindow): IWindow | null;
     addChildAt(child: IWindow, index: number): IWindow;
     addChild(child: IWindow): IWindow;
-}
-
-/**
- * A widget the palette can drop into the tree: the window type plus the geometry,
- * caption and style it should be born with (a `button` with no caption and a
- * 60×30 box is not recognisable as a button).
- */
-export interface IWidgetSpec
-{
-    type: string;
-    label: string;
-    width: number;
-    height: number;
-    caption?: string;
-    style?: number;
-    params?: number;
 }
 
 let counter = 1;
@@ -50,10 +24,17 @@ let counter = 1;
  * Each op re-notifies the hierarchy and updates the selection.
  */
 
-/** Creates a child of the given type under the selected node (or the root). */
-export function addChildOfType(state: EditorState, typeName: string): void
+/**
+ * Creates a child of the given type under the selected node (or the root).
+ *
+ * The catalog supplies the geometry, caption and params, so a type created from
+ * the hierarchy strip is born identical to the same type picked in the Widgets
+ * popup. Without that it was a 60×30 box with `params="0"` whatever the type —
+ * an `input` that could not take focus, a `button` that ignored the mouse.
+ */
+export function addChildOfType(state: EditorState, typeName: string): IWindow | null
 {
-    addWidget(state, {type: typeName, label: typeName, width: 60, height: 30});
+    return addWidget(state, specFor(typeName) ?? {type: typeName, label: typeName, width: 60, height: 30});
 }
 
 /**

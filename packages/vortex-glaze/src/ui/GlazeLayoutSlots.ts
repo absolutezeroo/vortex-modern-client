@@ -53,7 +53,7 @@ export interface GlazeLayoutSlots
         | 'glaze_row_twisty'
         | 'glaze_row_vis';
 
-    /** glaze_hierarchy_controls: container, glaze_hierarchy_frame: frame, glaze_hierarchy_list: itemlist_vertical */
+    /** glaze_hierarchy_controls: container, glaze_hierarchy_frame: frame, glaze_hierarchy_list: scrollable_itemlist_vertical */
     glaze_hierarchy_xml:
         | 'glaze_hierarchy_controls'
         | 'glaze_hierarchy_frame'
@@ -127,7 +127,7 @@ export interface GlazeLayoutSlots
         | 'glaze_vrow_remove'
         | 'glaze_vrow_type';
 
-    /** glaze_property_frame: frame, glaze_property_list: itemlist_vertical */
+    /** glaze_property_frame: frame, glaze_property_list: scrollable_itemlist_vertical */
     glaze_property_xml:
         | 'glaze_property_frame'
         | 'glaze_property_list';

@@ -48,15 +48,17 @@ async function main(): Promise<void>
     const hierarchyList = chrome.hierarchyList;
     const hierarchy = hierarchyList ? new WindowHierarchy(state, hierarchyList, surface) : null;
 
+    // The palette doubles as the strip's type picker, so it exists before the strip.
+    const palette = new WindowPalette(state);
+
     const hcBar = chrome.hierarchyControls;
-    const hierarchyControls = hcBar ? new WindowHierarchyControls(state, hcBar, hierarchy) : null;
+    const hierarchyControls = hcBar ? new WindowHierarchyControls(state, hcBar, hierarchy, palette) : null;
 
     const colorPicker = new WindowColorPicker(state);
     const propertyList = chrome.propertyList;
     const property = propertyList ? new WindowProperty(state, propertyList, colorPicker) : null;
 
     const gallery = new WindowGallery(state);
-    const palette = new WindowPalette(state);
     const toolbar = chrome.toolbar ? new WindowToolbar(state, chrome.toolbar, gallery, palette) : null;
 
     // The bar reflows to the canvas width and reports its height, which is where

@@ -25,8 +25,8 @@ const FRAME_MARGIN_X = 6;
 const FRAME_MARGIN_TOP = 26;
 const FRAME_MARGIN_BOTTOM = 7;
 
-/** Height of the Hierarchy View's action strip above the tree. */
-const HIERARCHY_CONTROLS_H = 60;
+/** Height of the Hierarchy View's action strip above the tree (three 24px rows). */
+const HIERARCHY_CONTROLS_H = 88;
 
 interface IContainerLike { addChild(child: IWindow): IWindow; }
 
