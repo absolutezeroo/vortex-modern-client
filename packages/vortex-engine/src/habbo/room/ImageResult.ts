@@ -9,11 +9,17 @@
  * AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/ImageResult.as
  * (real class name recovered from PRODUCTION-201601012205-226667486; win63 decompiles this as class_2198/class_3266)
  *
- * TS deviation: `data` is ImageBitmap (matching IBitmapWrapperWindow.bitmap), not
- * AS3's BitmapData. Converting a loaded PixiJS Texture to an ImageBitmap is
- * inherently asynchronous in the browser (unlike Flash's synchronous BitmapData
- * cloning), so RoomEngine always resolves this via the id>0 pending path and
- * delivers through imageReady() — even for already-cached assets.
+ * TS deviation: `data` is ImageBitmap (matching IBitmapWrapperWindow.bitmap), not AS3's BitmapData.
+ *
+ * **Callers must handle both halves.** This header used to claim RoomEngine always resolved via
+ * the id>0 pending path, on the grounds that Texture->ImageBitmap conversion is inherently async.
+ * It is not — `OffscreenCanvas.transferToImageBitmap()` is synchronous — and
+ * `getGenericRoomObjectImage()` was changed to honour AS3's real contract precisely because the
+ * always-async version made the pet widgets' `imageReady()` -> `updateImage()` chain spin forever.
+ * A caller that reads only `imageReady()` therefore shows nothing for any already-loaded asset,
+ * which is the common case; one that reads only `data` shows nothing for an asset still loading.
+ * See `PurchaseConfirmationDialog.showProductImage()` for the shape AS3 uses: take `data` now,
+ * remember `id`, and let `imageReady()` fill in later.
  */
 export class ImageResult 
 {

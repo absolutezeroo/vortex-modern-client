@@ -207,11 +207,16 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
 
         if(productName)
         {
-            // AS3 reads the name off productdata, NOT off the offer: `getProductData(localizationId)?.name`.
-            // A localization id with no productdata row leaves this empty in AS3 too — that is a
-            // catalog-data problem (the offer is named something productdata does not carry), not a
-            // client one, so it is deliberately not papered over with a fallback here.
-            productName.caption = catalog.getProductData(offer.localizationId)?.name ?? '';
+            // AS3 writes `getProductData(localizationId)?.name` here, which is `null` when
+            // productdata carries no row for the offer - and an unset caption leaves the layout's
+            // own design placeholder ("001 lorem ipsum title that wraps around") on screen.
+            //
+            // Deviation, stated: fall back to `offer.localizationName`, which is AS3's own accessor
+            // for this same string (`Offer.as::get localizationName()`) and answers `${<id>}` for a
+            // missing row - so the dialog then shows exactly what the catalog page behind it shows
+            // for the same offer, instead of a placeholder or a blank. Only the fallback differs;
+            // when productdata has the row both paths return the identical name.
+            productName.caption = catalog.getProductData(offer.localizationId)?.name || offer.localizationName;
         }
 
         const quantity = this._window.findChildByName('quantity');
@@ -252,8 +257,16 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
     /**
      * AS3: PurchaseConfirmationDialog.as::showConfirmationDialog() — the `getIconWrapper()` tail.
      *
-     * The furni/wall requests answer through imageReady(); this port's RoomEngine always resolves
-     * them that way, even for a cached asset (see ImageResult), so nothing is read synchronously.
+     * Both halves of the ImageResult contract have to be honoured, exactly as AS3 does it
+     * (`if(_loc6_ != null) { _loc13_ = _loc6_.data; _SafeStr_6872 = _loc6_.id; }`): a request whose
+     * content is already loaded comes back **synchronously** with `id === 0` and `data` filled and
+     * never calls `imageReady()`, while one that still has to load returns `id > 0` and answers
+     * later. Reading only the callback is why the preview stayed blank for every cached furni — i.e.
+     * essentially always, since the catalog has just rendered the same item in its grid.
+     *
+     * `ImageResult`'s own header still describes the old always-async behaviour; the body of
+     * `RoomEngine.getGenericRoomObjectImage()` is what actually holds (it was changed to return
+     * synchronously so the pet widgets' imageReady->updateImage chain would terminate).
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::showConfirmationDialog()
     private showProductImage(offer: IPurchasableOffer): void
@@ -269,31 +282,38 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         const roomEngine = catalog.roomEngine;
         const classId = product.productClassId;
         const extraParam = product.extraParam;
+        let image: ImageBitmap | null = null;
 
         switch(this.productType)
         {
             case 's':
                 if(roomEngine)
                 {
-                    this._pendingImageId = roomEngine.getFurnitureImage(
-                        classId, new Vector3d(90, 0, 0), 64, this, 0, extraParam, -1, -1, this._stuffData).id;
+                    const result = roomEngine.getFurnitureImage(
+                        classId, new Vector3d(90, 0, 0), 64, this, 0, extraParam, -1, -1, this._stuffData);
+
+                    image = result.data;
+                    this._pendingImageId = result.id;
                 }
 
                 break;
             case 'i':
                 if(roomEngine)
                 {
-                    this._pendingImageId = roomEngine.getWallItemImage(
-                        classId, new Vector3d(90, 0, 0), 64, this, 0, extraParam).id;
+                    const result = roomEngine.getWallItemImage(
+                        classId, new Vector3d(90, 0, 0), 64, this, 0, extraParam);
+
+                    image = result.data;
+                    this._pendingImageId = result.id;
                 }
 
                 break;
             case 'e':
-                this.setImage(catalog.getPixelEffectIcon(classId));
+                image = catalog.getPixelEffectIcon(classId);
 
                 break;
             case 'h':
-                this.setImage(catalog.getSubscriptionProductIcon(classId));
+                image = catalog.getSubscriptionProductIcon(classId);
 
                 break;
             default:
@@ -303,6 +323,10 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
                 // reachable from here in this port yet.
                 log.warn(`No purchase-confirmation preview for product type "${this.productType}"`);
         }
+
+        // AS3 calls setImage() unconditionally at the end of the branch; setImage() is null-guarded,
+        // so the pending case falls through to imageReady() without clearing what is there.
+        this.setImage(image);
     }
 
     // AS3: PurchaseConfirmationDialog.as::imageReady()

@@ -704,11 +704,24 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     answer rather than on the click — `onPurchaseOK`/`onPurchaseError` dispose it, `onNotEnoughBalance`
     calls `notEnoughCredits()` — which is what AS3 does and what lets a rejected purchase leave it up.
     Gifting, the three collectible offer classes and the LTD raffle stay TODO in the class header.
-  - ⚠️ **Not a client bug: the product name is empty when productdata has no row for the offer.**
-    AS3 reads `getProductData(offer.localizationId)?.name` and shows nothing when it misses. The
-    emulator's catalog names that offer `classic3_plant*3`, and neither the live nor the dumped
-    productdata carries that code (they do carry other `code*n` bundles, e.g. `barchair_silo*10`), so
-    this is catalog-seed data, not display code. Deliberately not papered over with a fallback.
+  - 🐛 **The preview stayed blank, because `ImageResult`'s class header no longer described the
+    code.** It says RoomEngine "always resolves via the id>0 pending path and delivers through
+    `imageReady()` — even for already-cached assets", so the dialog was written to read only the
+    callback. `getGenericRoomObjectImage()`'s body does the opposite for loaded content: it ends
+    `result.data = offscreen.transferToImageBitmap(); result.id = 0; return result;` and never calls
+    the listener. That branch was deliberate (an always-async result made the pet widgets'
+    `imageReady()` -> `updateImage()` chain spin forever) — the header simply was not updated with
+    it. **Callers must handle both halves**, which is what AS3 does
+    (`_loc13_ = _loc6_.data; _SafeStr_6872 = _loc6_.id;` then `setImage()`). Header rewritten to say
+    so. Two other call sites still read the callback only and so show nothing for a cached asset:
+    `ClubGiftWidget.showPreview()` and `ProductViewCatalogWidget`'s no-room-canvas fallback.
+  - ⚠️ **The product name is blank only when productdata has no row for the offer.** AS3 writes
+    `getProductData(localizationId)?.name`, i.e. `null` for a miss — which leaves the layout's own
+    design placeholder on screen. Stated deviation: fall back to `offer.localizationName`, AS3's own
+    accessor for the same string (`Offer.as::get localizationName()`, which answers `${<id>}`), so
+    the dialog shows what the catalog page behind it shows. The trigger case is catalog-seed data,
+    not display code: the emulator names that offer `classic3_plant*3` and neither the live nor the
+    dumped productdata carries it, though both carry other `code*n` bundles (`barchair_silo*10`).
 
 
 - ✅ **vortex-glaze: the widget library now covers every buildable window type — and the `iconbutton`
