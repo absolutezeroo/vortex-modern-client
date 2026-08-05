@@ -84,6 +84,8 @@ import type {FurniListRemoveMultipleMessageParser} from '../communication/messag
 import type {FurniListItemParser} from '../communication/messages/parser/inventory/furni/FurniListItemParser';
 import type {IFurnitureItemData} from './items/FurnitureItemData';
 import {FurnitureItem} from './items/FurnitureItem';
+import {ScrSendUserInfoEvent} from '../communication/messages/incoming/users/ScrSendUserInfoEvent';
+import type {ScrSendUserInfoMessageParser} from '../communication/messages/parser/users/ScrSendUserInfoMessageParser';
 import {AvatarEffectsMessageEvent} from '../communication/messages/incoming/inventory/AvatarEffectsMessageEvent';
 import {AvatarEffectAddedMessageEvent} from '../communication/messages/incoming/inventory/AvatarEffectAddedMessageEvent';
 import {AvatarEffectActivatedMessageEvent} from '../communication/messages/incoming/inventory/AvatarEffectActivatedMessageEvent';
@@ -125,6 +127,9 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // TS-only: no AS3 counterpart; the dump's inventory message handler keeps one flat
     // `_messageEvents` vector, where this port already splits it per feature (furni/pet/effect).
     private _badgeMessageEvents: IMessageEvent[] = [];
+    // TS-only: no AS3 counterpart; the dump's inventory message handler keeps one flat
+    // `_messageEvents` vector, where this port splits it per feature (furni/pet/effect/badge).
+    private _clubMessageEvents: IMessageEvent[] = [];
     private _initializedCategories: Set<string> = new Set();
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::_SafeStr_4983
     private _purseTimer: ReturnType<typeof setInterval> | null = null;
@@ -499,9 +504,15 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication?.removeMessageEvent(event);
         }
 
+        for(const event of this._clubMessageEvents)
+        {
+            this._communication?.removeMessageEvent(event);
+        }
+
         this._furniMessageEvents = [];
         this._effectMessageEvents = [];
         this._badgeMessageEvents = [];
+        this._clubMessageEvents = [];
         this._furniModel?.dispose();
         this._badgesModel?.dispose();
         this._effectsModel?.dispose();
@@ -871,6 +882,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this.registerBotMessageEvents();
         this.registerEffectMessageEvents();
         this.registerBadgeMessageEvents();
+        this.registerClubMessageEvents();
         log.debug('Inventory initialized');
     }
 
@@ -1161,6 +1173,55 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication.addMessageEvent(new AvatarEffectExpiredMessageEvent(this.onAvatarEffectExpired))
         );
     }
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as:164
+     * — `_com.addHabboConnectionMessageEvent(new _SafeCls_2180(onClubStatus))`.
+     *
+     * `setClubStatus()` was ported but nothing ever called it, so the inventory's purse kept
+     * `clubPeriods`/`clubDays` at 0 and `get clubLevel()` — which is exactly
+     * `clubDays == 0 && clubPeriods == 0 ? 0 : ...` — answered 0 for a member. That is what made
+     * the toolbar purse show the "Get" join label to users who do hold HC: PurseClubArea's
+     * `clubLevel == 0` branch is the one that writes `amountZeroText`.
+     *
+     * The catalog registers the same message for its own purse (HabboCatalog.onSubscriptionInfo);
+     * the registry allows both listeners, and AS3 likewise has the two components subscribe
+     * independently rather than share one purse.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::registerMessageEvents()
+    private registerClubMessageEvents(): void
+    {
+        if(!this._communication) return;
+
+        this._clubMessageEvents.push(
+            this._communication.addMessageEvent(new ScrSendUserInfoEvent(this.onClubStatus))
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onClubStatus()
+    private onClubStatus = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as ScrSendUserInfoMessageParser | null;
+
+        if(!parser) return;
+
+        if(parser.productName !== 'habbo_club' && parser.productName !== 'club_habbo') return;
+
+        this.setClubStatus(
+            parser.periodsSubscribedAhead,
+            parser.daysToPeriodEnd,
+            parser.hasEverBeenMember,
+            parser.isVIP,
+            parser.responseType === 3,
+            parser.responseType === 4,
+            parser.minutesUntilExpiration,
+            parser.minutesSinceLastModified
+        );
+
+        // AS3 dispatches `new HabboInventoryHabboClubEvent()`; HabboToolbar subscribes to it under
+        // this type name and fans it out to every club-dependent extension.
+        this.events.emit('HIHCE_HABBO_CLUB_CHANGED');
+    };
 
     // AS3: _SafeCls_1951.as::onAvatarEffects()
     private onAvatarEffects = (event: IMessageEvent): void =>

@@ -965,6 +965,15 @@ export class RoomSettingsCtrl
         {
             this._friendsListCtrl.refresh(friendsList, friendsWithNoRights, filter, 0);
         }
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::refreshFlatControllers()
+        // Both column headers are `...(%displayed%/%total%)` in the locale; without these four
+        // registrations the placeholders were rendered verbatim. `displayed` is the post-filter
+        // row count each list controller actually laid out, `total` the unfiltered array length.
+        this._navigator.registerParameter('navigator.flatctrls.userswithrights', 'displayed', String(this._usersWithRightsListCtrl?.userCount ?? 0));
+        this._navigator.registerParameter('navigator.flatctrls.friends', 'displayed', String(this._friendsListCtrl?.userCount ?? 0));
+        this._navigator.registerParameter('navigator.flatctrls.userswithrights', 'total', String(controllers.length));
+        this._navigator.registerParameter('navigator.flatctrls.friends', 'total', String(friendsWithNoRights.length));
     }
 
     private _refreshBannedUsers(): void

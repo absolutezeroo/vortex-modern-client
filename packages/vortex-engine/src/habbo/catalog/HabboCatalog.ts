@@ -170,6 +170,7 @@ import type {ICatalogNavigator} from './navigation/ICatalogNavigator';
 import {CatalogNavigator} from './navigation/CatalogNavigator';
 import {RequestedPage} from './navigation/RequestedPage';
 import {CatalogViewer} from './viewer/CatalogViewer';
+import type {ICatalogPage} from './viewer/ICatalogPage';
 import {PageLocalization} from './viewer/PageLocalization';
 import {Offer} from './viewer/Offer';
 import {ClubBuyOfferData} from './club/ClubBuyOfferData';
@@ -298,6 +299,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     get roomEngine(): IRoomEngine | null
     {
         return this._roomEngine;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get currentPage()
+    get currentPage(): ICatalogPage | null
+    {
+        return this._catalogViewer?.currentPage ?? null;
     }
 
     private _newNavigator: IHabboNewNavigator | null = null;
@@ -830,16 +837,16 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::showPurchaseConfirmation()
-    // TODO(AS3): this port's PurchaseConfirmationDialog is a minimal confirm/cancel dialog -
-    // see its own file header for what AS3 sub-flows (gifting, gift wrapping, spending
-    // disclaimer, room-ad extension) are not yet ported.
+    // TODO(AS3): the dialog now builds the real `purchase_confirmation` layout; see its own file
+    // header for the sub-flows still missing (gifting/gift wrapping, the collectible offer classes,
+    // the LTD raffle).
     // `showConfirmation` (param7) is declared by AS3 but never read anywhere in its method body -
     // a dead parameter in the original client, kept here only so the pet widgets' 8-argument call
     // matches the real signature.
-    // TODO(AS3): `previewImage` (param8) is accepted but not displayed. AS3 forwards it to
-    // PurchaseConfirmationDialog.showOffer()'s last argument; this port's dialog is the documented
-    // minimal stub above and has no preview-image surface to forward it to yet. The pet widgets do
-    // pass a real rendered pet image, so this becomes live as soon as the dialog is ported.
+    // TODO(AS3): `previewImage` (param8) is accepted but not forwarded. AS3 passes it as
+    // showOffer()'s last argument, where it short-circuits the rendered preview; the pet widgets do
+    // supply a real rendered pet image, so wiring it through is what makes a pet offer show its own
+    // portrait instead of the "no preview for product type" path.
     showPurchaseConfirmation(
         offer: IPurchasableOffer,
         pageId: number,
@@ -2716,13 +2723,10 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onPurchaseOK()
-    // TODO(AS3): AS3 also plays an icon-flyover animation toward the toolbar using the active
-    // confirmation dialog's own icon bitmap (getIconWrapper()/isGiftPurchase()/productType) and
-    // calls its ltdRaffleEnded()/dispose(). PurchaseConfirmationDialog.ts is a documented minimal
-    // stub (see its own header comment) that sends the composer and disposes itself immediately
-    // on confirm, without waiting for or tracking this response - it exposes none of that state,
-    // so only the one side effect that's still meaningful today (the CatalogFurniPurchaseEvent
-    // signal, e.g. for tutorial/achievement tracking) is ported.
+    // TODO(AS3): AS3 also plays an icon-flyover animation toward the toolbar
+    // (`_toolbar.createTransitionToIcon()` with the dialog's own icon bitmap, aimed at
+    // HTIE_ICON_INVENTORY or HTIE_ICON_MEMENU for an effect), and calls the dialog's
+    // ltdRaffleEnded() - the LTD raffle timer is not ported.
     private onPurchaseOK(event: IMessageEvent): void
     {
         if(!event) return;
@@ -2734,6 +2738,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         {
             this.events.emit(CatalogFurniPurchaseEvent.CATALOG_FURNI_PURCHASE, new CatalogFurniPurchaseEvent(offer.localizationId));
         }
+
+        // AS3 closes the confirmation here, not on the buy click: the dialog stays up with its
+        // buttons disabled until the server answers, which is what makes a rejected purchase leave
+        // it open for onPurchaseError/onNotEnoughBalance to speak to.
+        this._purchaseConfirmationDialog?.dispose();
+        this._purchaseConfirmationDialog = null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onPurchaseError()
@@ -2750,6 +2760,11 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             : '${catalog.alert.purchaseerror.description}';
 
         this._windowManager?.alert('${catalog.alert.purchaseerror.title}', description, 0, this.alertDialogEventProcessor);
+
+        // AS3 tears the confirmation down here too - the buy and cancel buttons were disabled when
+        // the composer went out, so leaving it up would strand the user on a dead dialog.
+        this._purchaseConfirmationDialog?.dispose();
+        this._purchaseConfirmationDialog = null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onPurchaseNotAllowed()
@@ -2785,6 +2800,8 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         {
             this.showNotEnoughActivityPointsAlert(parser.activityPointType);
         }
+
+        this._purchaseConfirmationDialog?.notEnoughCredits();
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::onVoucherRedeemOk()

@@ -105,6 +105,9 @@ export class TextFieldController extends TextController implements ITextFieldWin
         if(this._inputElement && this._inputElement instanceof HTMLInputElement)
         {
             this._inputElement.type = value ? 'password' : 'text';
+            // The layout's `display_as_password` var lands here, after createInputElement() has
+            // already chosen an autocomplete hint from the (still false) initial value.
+            this._inputElement.autocomplete = value ? 'new-password' : 'off';
         }
     }
 
@@ -653,6 +656,21 @@ export class TextFieldController extends TextController implements ITextFieldWin
             el.type = this._displayAsPassword ? 'password' : 'text';
         }
 
+        // TS-only: no AS3 counterpart — Flash had no browser autofill to defend against.
+        // The password manager treats any `input[type=password]` on the page as a login form and
+        // fills the paired text input with the saved account name; the room-settings Access tab
+        // builds two such fields, so a plain field elsewhere in the client (the rights filter, the
+        // room name) got the user's e-mail written into it. That is not merely wrong data: the
+        // `:-webkit-autofill` UA rule overrides `color: transparent` and `background: transparent`
+        // with its own, so the bridge element — which exists only to carry the caret and IME while
+        // the canvas paints the glyphs — becomes visible, and paints an e-mail address over the UI.
+        // `off` alone is honoured inconsistently for text inputs; the per-type values below are the
+        // ones Chrome actually respects.
+        el.autocomplete = this._displayAsPassword ? 'new-password' : 'off';
+        el.spellcheck = false;
+        el.setAttribute('autocorrect', 'off');
+        el.setAttribute('autocapitalize', 'off');
+
         // The visible text is painted on the canvas (TextSkinRenderer), not by this element — but a
         // fully transparent input (opacity:0) hides its native caret too, which is why editable
         // fields had no blinking cursor. Instead keep the element visible with TRANSPARENT text and
@@ -1002,9 +1020,19 @@ export class TextFieldController extends TextController implements ITextFieldWin
     {
         try
         {
+            // `this.unfocus()`, not `super.unfocus()`: the override is what hides the DOM bridge
+            // and stops the caret-tracking frame loop. Going straight to super left the element at
+            // `display: ''` after every native blur — clicking anywhere else on the canvas — so it
+            // outlived its own window and its tab, which is how an autofilled field ended up
+            // floating over the room-settings dialog. Re-entry is safe: unfocus() only calls
+            // blur() when the element still is document.activeElement, which it no longer is here.
             if(this.getStateFlag(2))
             {
-                super.unfocus();
+                this.unfocus();
+            }
+            else if(this._inputElement)
+            {
+                this._inputElement.style.display = 'none';
             }
         }
         catch (err)

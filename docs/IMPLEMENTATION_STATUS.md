@@ -669,6 +669,48 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **Four UI defects reported from a live session: room-settings placeholders, a DOM input that
+  outlived its window, the purse's "Get" for HC holders, and the stub purchase dialog**, 2026-08-05.
+  - 🐛 **`%displayed%/%total%` rendered verbatim in the Rights tab.** `RoomSettingsCtrl.refreshFlatControllers()`
+    had the two `UserListCtrl.refresh()` calls but not the four `registerParameter()` calls AS3 makes
+    right after them (`navigator.flatctrls.userswithrights` / `.friends` × `displayed` / `total`).
+    The column headers are localization keys with those placeholders, and `TextController` registers
+    itself as a listener for its own `${...}` caption, so the four registrations were the whole fix.
+  - 🐛 **A text field's DOM bridge stayed visible for the rest of the session** (`TextFieldController`).
+    `onFocusOutEvent()` called `super.unfocus()`, skipping the override that sets
+    `style.display = 'none'` and stops the caret-tracking frame loop — so every native blur (a click
+    anywhere else on the canvas) left the element parked at its last position, outliving its window
+    and its tab. Invisible on its own, since the element carries transparent text while the canvas
+    paints the glyphs — **except** that Chrome's `:-webkit-autofill` rule overrides both `color` and
+    `background`. With two `input[type=password]` in the room-settings Access tab, the password
+    manager filled a plain field elsewhere with the account e-mail and painted it over the dialog.
+    Fixed on both sides: the blur handler now goes through `this.unfocus()`, and every bridge element
+    is created with `autocomplete="off"` (`new-password` for password fields, re-applied when the
+    layout's `display_as_password` var lands after construction).
+  - 🐛 **The toolbar purse showed the "Get" join label to users who hold HC.** `HabboInventory.setClubStatus()`
+    was ported but never called: the inventory's `ScrSendUserInfo` registration
+    (`_SafeCls_1951.as:164`, `onClubStatus`) was missing, so its purse kept `clubDays`/`clubPeriods`
+    at 0, `get clubLevel()` answered 0, and `PurseClubArea`'s `clubLevel == 0` branch wrote
+    `amountZeroText`. `HabboToolbar` was already listening for `HIHCE_HABBO_CLUB_CHANGED` with a
+    comment saying the producer was unported — that is now the producer. (The catalog registers the
+    same message independently for its own purse; AS3 does the same.)
+  - ✅ **`PurchaseConfirmationDialog` builds the real `purchase_confirmation` layout.** It was a
+    `windowManager.confirm()` one-liner showing `offer.localizationName` and a hand-formatted price,
+    which is why a bundle read as a bare `classic3_plant*3` in an oversized empty box. Now ported:
+    the product preview (`getFurnitureImage()`/`getWallItemImage()` via `imageReady()`, centred into
+    the 126×152 wrapper the way AS3's `setImage()` composes it), the productdata name, the `X n`
+    quantity row (removed from the item list when it does not apply, as AS3 does), the price box,
+    the spending disclaimer, and rent-aware buy captions. The dialog now closes on the server's
+    answer rather than on the click — `onPurchaseOK`/`onPurchaseError` dispose it, `onNotEnoughBalance`
+    calls `notEnoughCredits()` — which is what AS3 does and what lets a rejected purchase leave it up.
+    Gifting, the three collectible offer classes and the LTD raffle stay TODO in the class header.
+  - ⚠️ **Not a client bug: the product name is empty when productdata has no row for the offer.**
+    AS3 reads `getProductData(offer.localizationId)?.name` and shows nothing when it misses. The
+    emulator's catalog names that offer `classic3_plant*3`, and neither the live nor the dumped
+    productdata carries that code (they do carry other `code*n` bundles, e.g. `barchair_silo*10`), so
+    this is catalog-seed data, not display code. Deliberately not papered over with a fallback.
+
+
 - ✅ **vortex-glaze: the widget library now covers every buildable window type — and the `iconbutton`
   tag it exposed had never parsed at all**, 2026-08-04.
   - **The gap.** The palette listed 28 of the parser's 97 tags, and the hierarchy strip's
