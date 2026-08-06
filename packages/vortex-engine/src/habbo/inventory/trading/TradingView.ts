@@ -17,6 +17,8 @@ import type {OrderedMap} from '@core/utils/OrderedMap';
 import {TradingState} from './TradingState';
 import {Util} from '../Util';
 import {ItemPopupCtrl} from '../ItemPopupCtrl';
+import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
+import {SongInfoReceivedEvent} from '@habbo/sound/events/SongInfoReceivedEvent';
 import type {HabboInventory} from '../HabboInventory';
 import {CreditTradingItem} from '../items/CreditTradingItem';
 import {FurnitureCategory} from '../enum';
@@ -25,11 +27,8 @@ import {Logger} from '@core/utils/Logger';
 const log = Logger.getLogger('habbo.inventory.trading.TradingView');
 
 /**
- * The trade window: two item grids, the accept/cancel pair, the countdown, the silver-fee row and
- * the per-side notices.
- *
- * One AS3 dependency is still out, marked `TODO(AS3)` where it belongs: the sound manager, which
- * names a Trax disc in the hover tooltip. Everything else, tooltip included, is here.
+ * The trade window: two item grids, the accept/cancel pair, the countdown, the silver-fee row, the
+ * per-side notices and the hover tooltip.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/trading/TradingView.as
  */
@@ -89,23 +88,40 @@ export class TradingView implements IInventoryView
     // AS3: .../TradingView.as::_itemPopup
     private _itemPopup: ItemPopupCtrl | null = null;
 
+    // AS3: .../TradingView.as::_soundManager
+    private _soundManager: IHabboSoundManager | null;
+
+    /**
+     * AS3: .../TradingView.as::_waitingSongInfo
+     *
+     * The one tooltip whose song title has not arrived yet, held as AS3 holds it: a flat array
+     * used as a 3-slot stack (grid index, group item, own-side flag). AS3 pops three and pushes
+     * three, so only the most recent hover is ever waiting.
+     */
+    private _waitingSongInfo: [number, GroupItem, boolean] | null = null;
+
     // AS3: .../TradingView.as::TradingView()
     // AS3 builds `item_popup_xml` into an `ItemPopupCtrl` here, hidden, and subscribes the sound
     // manager's `SIR_TRAX_SONG_INFO_RECEIVED`.
-    // TODO(AS3): that subscription, and the `getTraxSongFurniName()` path it feeds, wait on the
-    // sound manager — a Trax disc shows its furniture name instead of its song title.
     constructor(
         model: TradingModel,
         windowManager: IHabboWindowManager | null,
         assets: IAssetLibrary | null,
-        localization: IHabboLocalizationManager | null
+        localization: IHabboLocalizationManager | null,
+        soundManager: IHabboSoundManager | null
     )
     {
         this._model = model;
         this._windowManager = windowManager;
         this._assets = assets;
         this._localization = localization;
+        this._soundManager = soundManager;
         this._visible = false;
+
+        this._soundManager?.events.on(
+            SongInfoReceivedEvent.TRAX_SONG_INFO_RECEIVED,
+            this.onSongInfoReceivedEvent
+        );
 
         const popupWindow = windowManager?.buildWidgetLayout('item_popup_xml') as IWindowContainer | null;
 
@@ -1052,9 +1068,10 @@ export class TradingView implements IInventoryView
                 + created.toLocaleDateString();
         }
 
-        // TODO(AS3): category 8 (a Trax disc) resolves its song title through
-        // `getTraxSongFurniName()` and the sound manager's music controller, which is unported —
-        // the disc shows its furniture name instead.
+        if(item.category === FurnitureCategory.TRAX_SONG)
+        {
+            name = this.getTraxSongFurniName(groupItem, name, true, window.id, isOwnUser);
+        }
 
         this._itemPopup.updateContent(
             window as unknown as IWindowContainer,
@@ -1067,6 +1084,79 @@ export class TradingView implements IInventoryView
         );
         this._itemPopup.show();
     }
+
+    /**
+     * AS3: .../TradingView.as::getTraxSongFurniName()
+     *
+     * A Trax disc is named after the song it holds, not after the furniture. The song id is the
+     * item's `extra`. If the controller does not know the song yet it is asked for — and the
+     * tooltip keeps the furniture name until the answer arrives, at which point
+     * `onSongInfoReceivedEvent()` repaints it.
+     *
+     * `canRequest` is false on the repaint pass, so a song that never resolves cannot loop.
+     */
+    private getTraxSongFurniName(
+        groupItem: GroupItem,
+        fallbackName: string,
+        canRequest: boolean,
+        gridIndex: number = -1,
+        isOwnUser: boolean = false
+    ): string
+    {
+        const item = groupItem.peek();
+
+        if(item === null) return fallbackName;
+
+        const songInfo = this._soundManager?.musicController?.getSongInfo(item.extra) ?? null;
+
+        if(songInfo !== null)
+        {
+            this._localization?.registerParameter('songdisc.info', 'name', songInfo.name);
+            this._localization?.registerParameter('songdisc.info', 'author', songInfo.creator);
+
+            return this._localization?.getLocalization('songdisc.info') ?? fallbackName;
+        }
+
+        if(canRequest)
+        {
+            this._waitingSongInfo = [gridIndex, groupItem, isOwnUser];
+            this._soundManager?.musicController?.requestSongInfoWithoutSamples(item.extra);
+        }
+
+        return fallbackName;
+    }
+
+    /**
+     * AS3: .../TradingView.as::onSongInfoReceivedEvent()
+     *
+     * Repaints the waiting tooltip — but only if the tile it was opened on still holds the same
+     * group item, which is what the index check is for: the offer may have changed while the
+     * answer was in flight.
+     */
+    private onSongInfoReceivedEvent = (event: {id: number}): void =>
+    {
+        if(this._waitingSongInfo === null || this._model === null || this._itemPopup === null) return;
+
+        const [gridIndex, groupItem, isOwnUser] = this._waitingSongInfo;
+        const item = groupItem.peek();
+
+        if(item === null || item.extra !== event.id) return;
+
+        this._waitingSongInfo = null;
+
+        const items = isOwnUser ? this._model.ownUserItems : this._model.otherUserItems;
+
+        if(items?.getWithIndex(gridIndex) !== groupItem) return;
+
+        const name = this.getTraxSongFurniName(groupItem, '', false);
+        const image = this._model.getInventory()?.getItemImage(item) ?? null;
+        const grid = isOwnUser ? this.getOwnUsersItemGrid() : this.getOtherUsersItemGrid();
+        const cell = grid?.getGridItemAt(gridIndex) ?? null;
+
+        if(cell === null) return;
+
+        this._itemPopup.updateContent(cell as unknown as IWindowContainer, name, image);
+    };
 
     // AS3: .../TradingView.as::isExternalImagetype()
     // AS3's own static helper — the flag lives on the furniture data, not on the item.
@@ -1103,6 +1193,13 @@ export class TradingView implements IInventoryView
         }
 
         this.cancelConfirmCountdown();
+
+        this._soundManager?.events.off(
+            SongInfoReceivedEvent.TRAX_SONG_INFO_RECEIVED,
+            this.onSongInfoReceivedEvent
+        );
+        this._soundManager = null;
+        this._waitingSongInfo = null;
 
         this._itemPopup?.dispose();
         this._itemPopup = null;

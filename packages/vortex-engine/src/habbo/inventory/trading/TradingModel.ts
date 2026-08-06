@@ -17,6 +17,7 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
+import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import {StringArrayStuffData} from '@habbo/room/object/data/StringArrayStuffData';
 import {OrderedMap} from '@core/utils/OrderedMap';
@@ -193,14 +194,15 @@ export class TradingModel implements ITradingModel, IInventoryModel
 
     // AS3: .../TradingModel.as::TradingModel()
     // AS3 builds both the view and the name-scam warning controller here.
-    // TODO(AS3): AS3 also hands the room engine and the sound manager to the view; the sound
-    // manager is what names a Trax disc in the hover tooltip, and is unported.
+    // TODO(AS3): AS3 also hands the room engine to the view, for the item icons it renders
+    // itself; this port asks the inventory for those (`getItemImage()`).
     constructor(
         inventory: HabboInventory | null,
         windowManager: IHabboWindowManager | null,
         communication: IHabboCommunicationManager | null,
         assets: IAssetLibrary | null,
         localization: IHabboLocalizationManager | null,
+        soundManager: IHabboSoundManager | null,
         notifications: IHabboNotifications | null
     )
     {
@@ -208,7 +210,7 @@ export class TradingModel implements ITradingModel, IInventoryModel
         this._communication = communication;
         this._localization = localization;
         this._notifications = notifications;
-        this._view = new TradingView(this, windowManager, assets, localization);
+        this._view = new TradingView(this, windowManager, assets, localization, soundManager);
         this._nameScamWarning = new TradingNameScamWarningController(
             windowManager,
             assets,

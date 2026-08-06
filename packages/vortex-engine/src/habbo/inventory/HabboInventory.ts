@@ -96,6 +96,8 @@ import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
 import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
+import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
+import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
@@ -157,6 +159,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     private _localization: IHabboLocalizationManager | null = null;
     private _notifications: IHabboNotifications | null = null;
     private _friendList: IHabboFriendList | null = null;
+    private _soundManager: IHabboSoundManager | null = null;
     private _furniMessageEvents: IMessageEvent[] = [];
     private _effectMessageEvents: IMessageEvent[] = [];
     private _furniListFragments: Map<number, FurniListItemParser> = new Map();
@@ -203,6 +206,12 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get soundManager()
+    get soundManager(): IHabboSoundManager | null
+    {
+        return this._soundManager;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get friendList()
@@ -525,6 +534,17 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
                 },
                 true
             ),
+            // AS3: HabboInventory.as:179 — IIDHabboSoundManager, declared with no third
+            // argument, i.e. required. VortexMain attaches it, so it cannot deadlock. The trade
+            // window's tooltip is what reads it, to name a Trax disc.
+            new ComponentDependency(
+                IID_HabboSoundManager,
+                (soundManager: IHabboSoundManager | null) =>
+                {
+                    this._soundManager = soundManager;
+                },
+                true
+            ),
             // AS3: HabboInventory.as:164 — IIDHabboFriendList, declared *optional* there (its
             // third argument is false). The trade's name-scam check is the only reader: without it
             // the friend half of the comparison is simply empty.
@@ -691,6 +711,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication,
             this.assets,
             this._localization,
+            this._soundManager,
             this._notifications
         );
 

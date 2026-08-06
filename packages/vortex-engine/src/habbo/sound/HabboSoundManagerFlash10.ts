@@ -21,6 +21,7 @@ import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
 
 import type {IHabboSoundManager} from './IHabboSoundManager';
 import type {IHabboMusicController} from './IHabboMusicController';
+import {HabboMusicController} from './music/HabboMusicController';
 import type {IHabboSound} from './IHabboSound';
 import {HabboSoundBase} from './HabboSoundBase';
 import {HabboSoundWithPitch} from './HabboSoundWithPitch';
@@ -371,11 +372,19 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
             return;
         }
 
-        // TODO(AS3): AS3 constructs `HabboMusicController`, `TraxSampleManager` and
-        // `FurniSamplePlaybackManager` here. All three are unported (music/ 1688 l.,
-        // trax/ 1495 l., furni/ 206 l.), so `musicController` stays null, furniture samples
-        // do not play, and the `_musicController !== null` half of the guard above never
-        // becomes true — which is why this method also checks the room engine.
+        // AS3: HabboSoundManagerFlash10.as:423 — the controller takes the manager, the manager's
+        // own event bus, the *room engine's* bus (it listens for the jukebox and sound-machine
+        // room events on that one) and the connection.
+        this._musicController = new HabboMusicController(
+            this,
+            this.events,
+            this._roomEngine.events,
+            this._connection
+        );
+
+        // TODO(AS3): AS3 also constructs `TraxSampleManager` and `FurniSamplePlaybackManager`
+        // here (trax/ 1495 l., furni/ 206 l.), both unported — so a song's samples never load and
+        // furniture samples do not play.
         this._roomEngine.events.on(RoomEngineObjectPlaySoundEvent.PLAY_SOUND, this._onRoomEngineObjectPlaySound);
         this._roomEngine.events.on(RoomEngineObjectPlaySoundEvent.PLAY_SOUND_AT_PITCH, this._onRoomEngineObjectPlaySound);
 

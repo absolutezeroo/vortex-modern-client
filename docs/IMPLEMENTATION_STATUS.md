@@ -242,9 +242,10 @@ Re-ranked **2026-08-03**, biggest product gap first.
    (`HabboGameManager`, `IncomingMessages`, `events/`, 2 obfuscated), and the rest is one large
    self-contained minigame, not infrastructure anything else waits on. Size it accordingly.
    `nux` (4/4), `phonenumber` (7/7) and `userclassification` (1/1) left this list on 2026-08-05.
-   `habbo/sound` left it on 2026-08-02 at 10/29 —
-   effects play; what remains there is music: `music/` (1688 l.), `trax/` (1495 l.) and `furni/`
-   (206 l.), i.e. the jukebox, the Trax sequencer and furniture samples.
+   `habbo/sound` left it on 2026-08-02 at 10/29 — effects play. `music/` was opened on 2026-08-06
+   with `HabboMusicController` (the metadata/priority spine, see Recent Work); what remains there
+   is the two play-list controllers (710 l.), plus `trax/` (1495 l.) and `furni/` (206 l.) — the
+   jukebox play lists, the Trax sequencer and furniture samples.
 4. **Protocol batches, in gap order**: `game`, `users`, `collectibles`, `catalog`, `room`,
    `inventory`, `groupforums`. Read the naming caveat in the message section before trusting any
    per-category count.
@@ -683,6 +684,41 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 ---
 
 ## Recent Work Recorded
+
+- ✅ **`habbo/sound/music` opened: `HabboMusicController`, and the Trax title that needed it**,
+  2026-08-06.
+  - **Why it existed at all:** `IHabboMusicController` and `ISongInfo` were already declared, and
+    `HabboSoundManagerFlash10.init()` carried a `TODO(AS3)` where AS3 builds the controller — so
+    `musicController` was permanently null and every caller of `getSongInfo()` got nothing. It is
+    constructed now, from the same line AS3 builds it on (`HabboSoundManagerFlash10.as:423`), with
+    the room engine's own event bus as its third argument.
+  - **Ported: the song-metadata spine.** The 817-line controller — the metadata cache, the
+    request queue batched once a second behind it, the song-disk inventory, and the four-slot
+    priority stack that decides what a room should be hearing. Plus `SongDataEntry`,
+    `SongStartRequestData`, the three sound events, and five messages that did not exist:
+    `TraxSongInfoMessageEvent` (2278), `UserSongDisksInventoryMessageEvent` (1930),
+    `GetSongInfoMessageComposer` (3130), `GetUserSongDisksMessageComposer` (1685),
+    `GetJukeboxPlayListMessageComposer` (1281) — every header from WIN63's registry, every name
+    from `win63_version`, which carries the sound messages unobfuscated.
+  - 🐛 **The song-info parser reads six fields and drops one.** The order on the wire is *id, an
+    unread string, name, data, length, creator*, and the constructor is then called as
+    `(id, length, name, creator, data)` — a different order again. Skipping the unread read
+    instead of performing it would desynchronise every following song in the batch.
+  - **Playback stops exactly where the sequencer would be.** `loadTraxSong()` is a documented stub
+    returning null (`habbo/sound/trax`, 1,495 l., unported), so every entry's `soundObject` stays
+    null and the play paths return at AS3's own `soundObject == null || !ready` guards. The
+    `TODO(AS3)`s that remain are the two play-list controllers (jukebox 281 l., sound machine
+    429 l.) and the sample bookkeeping — all sequencer- or play-list-bound.
+  - **The Trax song title now resolves in the trade tooltip**, which is what opened this module:
+    a disc is named after its song, and if the controller does not know it yet the name is
+    requested and the tooltip repaints on `SIR_TRAX_SONG_INFO_RECEIVED`. `HabboInventory` gains
+    AS3's required `IIDHabboSoundManager` dependency to carry it.
+  - **Verified in a browser**: the three headers resolve; the parser reads the emulator's order
+    leaving no bytes; three `getSongInfo()`/request calls for two distinct songs collapse into one
+    batched `[2, 101, 102]`; an empty queue sends nothing; the answer fills the cache and fires one
+    event per song, with a duplicate answer firing none; and the disk inventory **holds its ready
+    event back** while a song it names is unknown, requests that song, and fires once it arrives —
+    AS3's deferred dispatch, exactly.
 
 - ✅ **Trading, slice 4: the name-scam warning**, 2026-08-06.
   - **All 5 `namescam/` files ported.** The lookalike detector, its result and warning-data records,

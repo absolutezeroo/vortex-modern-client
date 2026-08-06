@@ -464,6 +464,17 @@ import {
     TryPhoneNumberMessageComposer
 } from './messages/outgoing/preferences/TryPhoneNumberMessageComposer';
 import {VerifyCodeMessageComposer} from './messages/outgoing/preferences/VerifyCodeMessageComposer';
+import {TraxSongInfoMessageEvent} from './messages/incoming/sound/TraxSongInfoMessageEvent';
+import {
+    UserSongDisksInventoryMessageEvent
+} from './messages/incoming/sound/UserSongDisksInventoryMessageEvent';
+import {GetSongInfoMessageComposer} from './messages/outgoing/sound/GetSongInfoMessageComposer';
+import {
+    GetUserSongDisksMessageComposer
+} from './messages/outgoing/sound/GetUserSongDisksMessageComposer';
+import {
+    GetJukeboxPlayListMessageComposer
+} from './messages/outgoing/sound/GetJukeboxPlayListMessageComposer';
 import {UpdateFigureDataMessageComposer} from './messages/outgoing/avatar/UpdateFigureDataMessageComposer';
 import {CheckUserNameResultMessageEvent} from './messages/incoming/help/CheckUserNameResultMessageEvent';
 import {ChangeUserNameMessageComposer} from './messages/outgoing/help/ChangeUserNameMessageComposer';
@@ -1234,6 +1245,13 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2294, TradingYouAreNotAllowedEvent);
         this._events.set(1490, TradeSilverSetMessageEvent);
         this._events.set(3497, TradeSilverFeeMessageEvent);
+
+        // === SOUND (Trax) ===
+        // The song-metadata answer and your song-disk inventory, `_events[2278]`/`_events[1930]`
+        // in WIN63's registry. `HabboMusicController` subscribes both; the metadata one is what
+        // names a Trax disc anywhere it is shown.
+        this._events.set(2278, TraxSongInfoMessageEvent);
+        this._events.set(1930, UserSongDisksInventoryMessageEvent);
 
         // === INVENTORY - UNSEEN ===
         this._events.set(3059, UnseenItemsMessageEvent);
@@ -2427,6 +2445,13 @@ export class HabboMessages implements IMessageConfiguration
         // sends the single-item composer when exactly one item survives its filter.
         this._composers.set(3370, AddItemsToTradeComposer);
         this._composers.set(2717, SilverFeeMessageComposer);
+
+        // === SOUND (Trax) ===
+        // `_composers[3130]`/`[1685]`/`[1281]` in WIN63's registry. 3130 carries the whole pending
+        // song-info queue at once; the other two have no payload.
+        this._composers.set(3130, GetSongInfoMessageComposer);
+        this._composers.set(1685, GetUserSongDisksMessageComposer);
+        this._composers.set(1281, GetJukeboxPlayListMessageComposer);
 
         // === INVENTORY - STAR GEMS / VAULT / REWARD ===
         // TODO(AS3): GiveStarGemToUserMessageComposer has no entry in the authoritative revision
