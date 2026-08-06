@@ -145,7 +145,7 @@ export class NextQuestTimer implements IDisposable
             engine.questController?.onQuest(quest);
         }
 
-        const time = FriendlyTime.getFriendlyTime(seconds);
+        const time = FriendlyTime.getFriendlyTime(engine.localization, seconds);
         const delayedMsgKey = `${quest.getCampaignLocalizationKey()}.delayedmsg`;
 
         engine.localization?.registerParameter('quests.nextquesttimer.caption.contracted', 'time', time);

@@ -264,7 +264,7 @@ export class ExtendedProfileWindowCtrl
         localization?.registerParameter('extendedprofile.activitypoints', 'activitypoints', profile.achievementScore.toString());
         localization?.registerParameter(
             'extendedprofile.last.login', 'lastlogin',
-            profile.lastAccessSinceInSeconds === -1 ? '-' : FriendlyTime.getFriendlyTime(profile.lastAccessSinceInSeconds, '.ago')
+            profile.lastAccessSinceInSeconds === -1 ? '-' : FriendlyTime.getFriendlyTime(localization, profile.lastAccessSinceInSeconds, '.ago')
         );
         localization?.registerParameter(
             'extendedprofile.friends.count', 'count',

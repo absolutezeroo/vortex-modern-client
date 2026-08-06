@@ -109,9 +109,7 @@ export class ErrorDataTableObject implements ITableObject
                     return new TableCell(TableCell.TYPE_TEXT, '/');
                 }
 
-                // Port note: AS3 passes _localization to FriendlyTime.getFriendlyTime; the port's
-                // FriendlyTime has no localization param (non-localized English units), so it is omitted.
-                return new TableCell(TableCell.TYPE_TEXT, FriendlyTime.getFriendlyTime(this._error.msSinceLastOccurrence / 1000, '.ago', 3), false, false, null, null, false, this.timestampString);
+                return new TableCell(TableCell.TYPE_TEXT, FriendlyTime.getFriendlyTime(this._localization, this._error.msSinceLastOccurrence / 1000, '.ago', 3), false, false, null, null, false, this.timestampString);
             default:
                 return null as unknown as TableCell;
         }

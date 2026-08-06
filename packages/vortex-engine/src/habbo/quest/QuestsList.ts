@@ -450,7 +450,7 @@ export class QuestsList implements IDisposable
 
             if(timeleftTxt)
             {
-                timeleftTxt.caption = FriendlyTime.getFriendlyTime(quest.secondsLeft, '.short', 3);
+                timeleftTxt.caption = FriendlyTime.getFriendlyTime(this._engine?.localization ?? null, quest.secondsLeft, '.short', 3);
             }
 
             this.initHourglassIcon(container);
@@ -523,7 +523,7 @@ export class QuestsList implements IDisposable
 
             if(delayTxt)
             {
-                delayTxt.caption = FriendlyTime.getFriendlyTime(seconds);
+                delayTxt.caption = FriendlyTime.getFriendlyTime(this._engine?.localization ?? null, seconds);
             }
         }
 
@@ -541,7 +541,7 @@ export class QuestsList implements IDisposable
 
             if(seconds < 0) return false;
 
-            timeleftTxt.caption = FriendlyTime.getFriendlyTime(seconds, '.short', 3);
+            timeleftTxt.caption = FriendlyTime.getFriendlyTime(this._engine?.localization ?? null, seconds, '.short', 3);
         }
 
         return true;

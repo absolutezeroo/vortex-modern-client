@@ -465,7 +465,7 @@ export class RoomInfoPopup
             const eventName = this._navigator.getLocalization('navigator.eventsettings.name') + ': ' + this._roomData.roomAdName;
             let eventDesc = this._navigator.getLocalization('navigator.eventsettings.desc') + ': ' + this._roomData.roomAdDescription + '\n';
 
-            eventDesc += this._navigator.getLocalization('roomad.event.expiration_time') + FriendlyTime.getFriendlyTime(this._roomData.roomAdExpiresInMin * 60);
+            eventDesc += this._navigator.getLocalization('roomad.event.expiration_time') + FriendlyTime.getFriendlyTime(this._navigator.localization, this._roomData.roomAdExpiresInMin * 60);
 
             const eventNameEl = this._window.findChildByName('event_name');
 

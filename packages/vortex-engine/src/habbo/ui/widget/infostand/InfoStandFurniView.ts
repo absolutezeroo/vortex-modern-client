@@ -462,7 +462,7 @@ export class InfoStandFurniView
         if(!text) return;
 
         this._widget.localizations?.registerParameter(
-            'infostand.rent.expiration', 'time', FriendlyTime.getFriendlyTime(value)
+            'infostand.rent.expiration', 'time', FriendlyTime.getFriendlyTime(this._widget.localizations, value)
         );
         text.visible = value >= 0 && this._ownerId === this.container?.sessionDataManager?.userId;
         this.updateWindow();

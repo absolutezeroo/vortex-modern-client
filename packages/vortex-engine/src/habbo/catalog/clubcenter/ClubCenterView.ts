@@ -329,11 +329,11 @@ export class ClubCenterView implements IAvatarImageListener
 
     private formatMinutes(minutes: number): string 
     {
-        return FriendlyTime.getShortFriendlyTime(minutes * 60);
+        return FriendlyTime.getShortFriendlyTime(this._manager?.localization ?? null, minutes * 60);
     }
 
     private formatDays(days: number): string 
     {
-        return FriendlyTime.getShortFriendlyTime(days * 86400);
+        return FriendlyTime.getShortFriendlyTime(this._manager?.localization ?? null, days * 86400);
     }
 }
