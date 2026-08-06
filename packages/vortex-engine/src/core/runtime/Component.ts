@@ -262,8 +262,8 @@ export class Component implements IDisposable
 	 * Override this to declare component dependencies.
 	 * Called during construction.
 	 */
-     
     // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::get dependencies()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- variance: typed ComponentDependency<T> is contravariant in T
     protected get dependencies(): Array<ComponentDependency<any>>
     {
         return [];
