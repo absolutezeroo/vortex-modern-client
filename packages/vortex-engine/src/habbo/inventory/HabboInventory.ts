@@ -95,6 +95,8 @@ import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
+import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
+import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
@@ -154,6 +156,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     private _sessionDataManager: ISessionDataManager | null = null;
     private _localization: IHabboLocalizationManager | null = null;
     private _notifications: IHabboNotifications | null = null;
+    private _friendList: IHabboFriendList | null = null;
     private _furniMessageEvents: IMessageEvent[] = [];
     private _effectMessageEvents: IMessageEvent[] = [];
     private _furniListFragments: Map<number, FurniListItemParser> = new Map();
@@ -200,6 +203,12 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get friendList()
+    get friendList(): IHabboFriendList | null
+    {
+        return this._friendList;
     }
 
     // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get roomSession()
@@ -515,6 +524,17 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
                     this._localization = localization;
                 },
                 true
+            ),
+            // AS3: HabboInventory.as:164 — IIDHabboFriendList, declared *optional* there (its
+            // third argument is false). The trade's name-scam check is the only reader: without it
+            // the friend half of the comparison is simply empty.
+            new ComponentDependency(
+                IID_HabboFriendList,
+                (friendList: IHabboFriendList | null) =>
+                {
+                    this._friendList = friendList;
+                },
+                false
             ),
             // AS3 declares IIDHabboNotifications as a *required* dependency (HabboInventory.as:161)
             // and hands it to both trading models. VortexMain attaches it, so requiring it here

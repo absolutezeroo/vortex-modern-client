@@ -684,6 +684,31 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **Trading, slice 4: the name-scam warning**, 2026-08-06.
+  - **All 5 `namescam/` files ported.** The lookalike detector, its result and warning-data records,
+    the controller, and the 315-line warning window — the other trader's name and avatar beside the
+    names it resembles, with both ways out **locked for six seconds** so the warning cannot be
+    clicked away unseen.
+  - **The detector is the interesting half.** Two names match if they can be walked together
+    allowing only: an exact character, a case-only difference (≤ 2), a lookalike swap
+    (`0`/`O`/`o`/`Ö`/`ö`, `1`/`l`/`I`/`!`, … — free and unlimited), or a skipped `.`/`,`/`:` on
+    either side (≤ 2). A name containing anything outside the allowed alphabet is never compared.
+  - **One dead guard kept as written.** AS3's `detectNameScam()` opens with `if(!param1 && false)`
+    — the `&& false` disables the early-out, so a self-initiated trade is checked like any other.
+    That agrees with the constant above it
+    (`SHOW_NAME_SCAM_WARNING_FOR_SELF_INITIATED_TRADES = true`) and explains why the constant is
+    read by nothing. The port expresses it through the constant rather than "restoring" what the
+    parameter name suggests.
+  - **`HabboInventory` gains AS3's optional `IIDHabboFriendList` dependency** — the friend half of
+    the comparison. Optional there and here, so it cannot deadlock the component.
+  - **The class name `TradingNameScamDetector` is DERIVED**, and says so at its declaration:
+    `_SafeCls_3934` is obfuscated in every tree including PRODUCTION, since it postdates 2016.
+  - **Verified in a browser** against the algorithm: 1 and 2 case changes match and 3 does not;
+    1 and 2 skipped small-punctuation marks match and 3 does not, from either side; lookalike
+    swaps are free and unlimited (`oooo` ≈ `0Ö0ö`); `B8b` is not a lookalike of `Bob`; identical,
+    empty, null and out-of-alphabet names never match; and `detect()` deduplicates its candidates,
+    skips the identical name, and hands back copies.
+
 - ✅ **Trading, slice 3: the hover tooltip — `ItemPopupCtrl`**, 2026-08-06.
   - **Ported from the 370-line AS3**: one window re-parented under whichever thumb is hovered,
     the 250 ms open / 100 ms close delays, the left/right placement with the arrow pointing back
@@ -817,8 +842,8 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     not against a live multi-fragment session.
   - **What the sweep leaves open, in order of product weight:**
     - **Trading landed 2026-08-06** (three entries above): messages, model, window and tooltip.
-      What remains is `namescam/` (5 files), the NFT half (waits on `habbo/inventory/collectibles`)
-      and the Trax song title (waits on the sound manager).
+      What remains is the NFT half (waits on `habbo/inventory/collectibles`) and the Trax song
+      title (waits on the sound manager's music controller).
     - **Inventory, the rest of the 35:** collectibles (no module), bots add/remove, post-it
       placed, not-enough-credits, badge point limits, `onUserBadges`, marketplace (4 handlers, and
       `inventory/marketplace/` is an empty directory here).

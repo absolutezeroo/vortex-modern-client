@@ -1,6 +1,10 @@
 import type {ITradingModel} from './ITradingModel';
 import type {IInventoryModel} from '../IInventoryModel';
 import {TradingView} from './TradingView';
+import {TradingNameScamDetector} from './namescam/TradingNameScamDetector';
+import {TradingNameScamDetectionResult} from './namescam/TradingNameScamDetectionResult';
+import {TradingNameScamWarningController} from './namescam/TradingNameScamWarningController';
+import {TradingNameScamWarningData} from './namescam/TradingNameScamWarningData';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IAssetLibrary} from '@core/assets';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
@@ -85,9 +89,8 @@ const log = Logger.getLogger('habbo.inventory.trading.TradingModel');
  * The state of one trade, and the only place that talks to the server about it. It owns the
  * `TradingView` it drives, as AS3 does.
  *
- * Still unported around the edges, each marked `TODO(AS3)` where it belongs: the name-scam warning
- * (`inventory/trading/namescam/`, 5 files), the NFT/collectibles half of both item lists, and the
- * hover tooltip inside the view.
+ * Still unported around the edges, each marked `TODO(AS3)` where it belongs: the NFT/collectibles
+ * half of both item lists, and the Trax song title in the view's hover tooltip.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/trading/TradingModel.as
  */
@@ -110,6 +113,10 @@ export class TradingModel implements ITradingModel, IInventoryModel
 
     // AS3: .../TradingModel.as::_view
     private _view: TradingView;
+
+    // AS3: .../TradingModel.as::_nameScamWarning
+    // Name DERIVED (`_SafeStr_6149`).
+    private _nameScamWarning: TradingNameScamWarningController;
 
     private _disposed: boolean = false;
 
@@ -186,10 +193,8 @@ export class TradingModel implements ITradingModel, IInventoryModel
 
     // AS3: .../TradingModel.as::TradingModel()
     // AS3 builds both the view and the name-scam warning controller here.
-    // TODO(AS3): the second construction — `new TradingNameScamWarningController(windowManager,
-    // assets, localization, communication)` — waits on `inventory/trading/namescam/`. AS3 also
-    // hands the room engine and the sound manager to the view, for the item icons and the Trax
-    // song titles the hover tooltip shows; both belong with `ItemPopupCtrl`.
+    // TODO(AS3): AS3 also hands the room engine and the sound manager to the view; the sound
+    // manager is what names a Trax disc in the hover tooltip, and is unported.
     constructor(
         inventory: HabboInventory | null,
         windowManager: IHabboWindowManager | null,
@@ -204,6 +209,12 @@ export class TradingModel implements ITradingModel, IInventoryModel
         this._localization = localization;
         this._notifications = notifications;
         this._view = new TradingView(this, windowManager, assets, localization);
+        this._nameScamWarning = new TradingNameScamWarningController(
+            windowManager,
+            assets,
+            localization,
+            communication
+        );
     }
 
     // AS3: .../TradingModel.as::getGuildFurniType()
@@ -427,13 +438,10 @@ export class TradingModel implements ITradingModel, IInventoryModel
         this._otherUserNumItems = 0;
         this._otherUserNumCredits = 0;
 
-        // TODO(AS3): .../TradingModel.as::startTrading() — AS3 hides the name-scam warning here,
-        // runs detectNameScam(selfInitiated) and, on a hit, shows the warning built by
-        // createNameScamWarningData(). `inventory/trading/namescam/` is unported (5 files:
-        // TradingNameScamWarningController/Data/View, TradingNameScamDetectionResult and the
-        // detector `_SafeCls_3934`), so no warning is shown. The two name sources it needs are
-        // ported below.
-        void selfInitiated;
+        this._nameScamWarning.hide();
+
+        const detection = this.detectNameScam(selfInitiated);
+        const warningData = detection.nameScamDetected ? this.createNameScamWarningData(detection) : null;
 
         this._tradingOpen = true;
         this.state = TradingState.RUNNING;
@@ -446,6 +454,55 @@ export class TradingModel implements ITradingModel, IInventoryModel
 
         this._inventory?.toggleInventoryPage('furni');
         this._inventory?.events.emit('HABBO_INVENTORY_TRACKING_EVENT_TRADING');
+
+        // AS3 shows the warning last, after the window is up, so it lands on top of it.
+        if(warningData !== null) this._nameScamWarning.show(warningData);
+    }
+
+    /**
+     * AS3: .../TradingModel.as::detectNameScam()
+     *
+     * The guard AS3 wrote is `if(!param1 && false)`, i.e. dead: the `&& false` disables the
+     * early-out entirely, so a self-initiated trade is checked exactly like an invited one. That
+     * matches the constant above it — SHOW_NAME_SCAM_WARNING_FOR_SELF_INITIATED_TRADES is true —
+     * and it is why the constant is read by nothing. Kept as written rather than "restored" to
+     * what the parameter suggests.
+     */
+    private detectNameScam(selfInitiated: boolean): TradingNameScamDetectionResult
+    {
+        if(!selfInitiated && !TradingModel.SHOW_NAME_SCAM_WARNING_FOR_SELF_INITIATED_TRADES)
+        {
+            return TradingNameScamDetectionResult.NO_MATCHES;
+        }
+
+        return TradingNameScamDetector.detect(
+            this._otherUserName,
+            this.getRoomUserNamesForNameScamDetection(),
+            this.getFriendNamesForNameScamDetection()
+        );
+    }
+
+    // AS3: .../TradingModel.as::createNameScamWarningData()
+    // The figure is looked up from the room session, and simply left empty when it is not there.
+    private createNameScamWarningData(detection: TradingNameScamDetectionResult): TradingNameScamWarningData
+    {
+        let figure = '';
+        const roomSession = this._inventory?.roomSession;
+
+        if(roomSession?.userDataManager)
+        {
+            const userData = roomSession.userDataManager.getUserData(this._otherUserId);
+
+            if(userData?.figure) figure = userData.figure;
+        }
+
+        return new TradingNameScamWarningData(
+            this._otherUserId,
+            this._otherUserName,
+            figure,
+            detection.similarInRoom,
+            detection.similarInFriends
+        );
     }
 
     /**
@@ -472,7 +529,7 @@ export class TradingModel implements ITradingModel, IInventoryModel
             this._tradingOpen = false;
         }
 
-        // TODO(AS3): AS3 also hides the name-scam warning here; `namescam/` is unported.
+        this._nameScamWarning.hide();
         this._view.setMinimized(false);
     }
 
@@ -504,12 +561,9 @@ export class TradingModel implements ITradingModel, IInventoryModel
     }
 
     // AS3: .../TradingModel.as::getFriendNamesForNameScamDetection()
-    // TODO(AS3): AS3 reads `_inventory.friendList.getFriendNames()`. `HabboInventory` has no
-    // friendList dependency in this port yet (AS3 declares IIDHabboFriendList as an *optional*
-    // dependency), so the friend half of the scam check has nothing to compare against.
     private getFriendNamesForNameScamDetection(): string[]
     {
-        return [];
+        return this._inventory?.friendList?.getFriendNames() ?? [];
     }
 
     // AS3: .../TradingModel.as::isConfirmingWeb3Trade()
@@ -1238,7 +1292,7 @@ export class TradingModel implements ITradingModel, IInventoryModel
 
         if(!this._view.disposed) this._view.dispose();
 
-        // TODO(AS3): AS3 also disposes the name-scam warning controller; `namescam/` is unported.
+        if(!this._nameScamWarning.disposed) this._nameScamWarning.dispose();
 
         this._inventory = null;
         this._communication = null;
