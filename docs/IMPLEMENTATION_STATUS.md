@@ -244,9 +244,8 @@ Re-ranked **2026-08-03**, biggest product gap first.
    `nux` (4/4), `phonenumber` (7/7) and `userclassification` (1/1) left this list on 2026-08-05.
    `habbo/sound` left it on 2026-08-02 at 10/29 — effects play. **`music/` was completed on
    2026-08-06** (controller + both play-list controllers, see Recent Work); what remains in
-   `habbo/sound` is the second half of `trax/` (the 817-line sequencer and its audio graph — the
-   last thing between the music module and audible playback; its numeric core landed 2026-08-06)
-   and `furni/` (206 l., furniture samples).
+   `habbo/sound` is `furni/` (206 l., furniture samples) — **`music/` and `trax/` both completed
+   2026-08-06**, and Trax songs play.
 4. **Protocol batches, in gap order**: `game`, `users`, `collectibles`, `catalog`, `room`,
    `inventory`, `groupforums`. Read the naming caveat in the message section before trusting any
    per-category count.
@@ -685,6 +684,41 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 ---
 
 ## Recent Work Recorded
+
+- ✅ **`habbo/sound/trax` finished: the sequencer, and Trax songs actually play**, 2026-08-06.
+  - **`TraxSequencer` (817 l.) + `TraxSampleManager` (245 l.) + the audio graph.** The last
+    `TODO(AS3)` between this port and audible music is closed: `loadTraxSong()` builds a real
+    sequencer, `HabboSoundManagerFlash10` constructs the sample manager, and `update()` drives its
+    decode budget.
+  - **How Flash's streaming maps onto Web Audio.** Flash *pulls*: `Sound.play()` raises
+    `sampleData` whenever it wants another 8192 frames. Web Audio has no such event, so
+    `TraxStreamNode` (TS-only) inverts it — an `AudioWorklet` drains a queue and posts `need` when
+    it runs low, which is what the sequencer answers by mixing another block. Its `starved`
+    message is exactly AS3's "Audio buffer under run..." log. The processor is built from a Blob
+    URL so the engine stays independent of any one build setup.
+  - **Everything above the block boundary is AS3's**, including the two layout modes (cut mode
+    rounds a sample's bars to nearest, legacy rounds up past a 12.5% threshold — the same song is
+    a different length either way), the last-to-first channel mixing where the highest channel
+    *overwrites* and the rest add, the two-stage finish, and both fades.
+  - 🐛 **One degenerate case worth knowing:** with no fade-out set, `checkSongFinishing()` still
+    raises the fade flag on the last block, and the fade arithmetic then divides by zero — AS3
+    would write NaN into its output stream, except the block is past the song's end so its frame
+    count is zero and the write is skipped. The port keeps the same guard, and the probe confirms
+    zero NaN samples across a whole rendered song.
+  - **Verified in a browser, including the real audio graph**: two channels of a two-bar song mix
+    to exactly `(16385 + 8193) / 32768 = 0.750061` with both output channels equal; a 4-bar song
+    renders 22 blocks of 8192 frames and reports 3.99 s (bars are laid out at 88000 samples but
+    measured at 88200 — AS3 declares both constants and uses each in its own place); the complete
+    event fires once; `stop()` with a fade-out defers completion and then fires it; a 1-second
+    fade-in ramps **0.186 → 0.279 → 0.372 → 0.464 → 0.5** and stops exactly at full level, a
+    fade-out falls by the same step; and `play()` through the worklet starts, runs the context and
+    advances the play head.
+  - ⚠️ **A first probe reported the fade-in dead — the probe was wrong, not the code.** It drove
+    `render()`, and AS3 raises the fade flags only in `play()` (line 383); `render()` loops the
+    block writer directly. Checked against the source before changing anything.
+  - **What is left in `habbo/sound`:** `furni/` (206 l., furniture samples) and, inside the sample
+    manager, AS3's `loadNextSong()` queue drain — a failed sample download leaves its song waiting
+    rather than moving on to the next queued one.
 
 - 🔄 **`habbo/sound/trax`, part 1: the numeric core**, 2026-08-06. **No audio yet** — the
   sequencer and its audio graph are part 2; this is everything underneath them.
