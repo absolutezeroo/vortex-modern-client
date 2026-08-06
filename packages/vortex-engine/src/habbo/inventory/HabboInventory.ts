@@ -31,6 +31,10 @@ import {BadgeReceivedEvent} from '../communication/messages/incoming/inventory/b
 import type {
     BadgeReceivedEventParser
 } from '../communication/messages/parser/inventory/badges/BadgeReceivedEventParser';
+import {BadgesMessageEvent} from '../communication/messages/incoming/inventory/badges/BadgesMessageEvent';
+import type {
+    BadgesMessageParser, IBadgeData
+} from '../communication/messages/parser/inventory/badges/BadgesMessageParser';
 import {BotInventoryMessageEvent} from '@habbo/communication/messages/incoming/inventory/bots/BotInventoryMessageEvent';
 import type {BotInventoryMessageParser} from '@habbo/communication/messages/parser/inventory/bots/BotInventoryMessageParser';
 import {Bot} from './bots/Bot';
@@ -127,6 +131,10 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // TS-only: no AS3 counterpart; the dump's inventory message handler keeps one flat
     // `_messageEvents` vector, where this port already splits it per feature (furni/pet/effect).
     private _badgeMessageEvents: IMessageEvent[] = [];
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::_badgeFragments
+    // Name DERIVED, not recovered: the field is `_SafeStr_7439` and is obfuscated in every tree.
+    // A Vector sized to totalFragments in onBadges(), nulled again once assembled.
+    private _badgeFragments: (IBadgeData[] | null)[] | null = null;
     // TS-only: no AS3 counterpart; the dump's inventory message handler keeps one flat
     // `_messageEvents` vector, where this port splits it per feature (furni/pet/effect/badge).
     private _clubMessageEvents: IMessageEvent[] = [];
@@ -1033,9 +1041,72 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         if(!this._communication) return;
 
         this._badgeMessageEvents.push(
+            this._communication.addMessageEvent(new BadgesMessageEvent(this.onBadges)),
             this._communication.addMessageEvent(new BadgeReceivedEvent(this.onBadgeReceived))
         );
     }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::addMessageFragment()
+    // A single-fragment message is used as it stands — AS3 returns `param1` before it ever looks
+    // at `fragmentNo`, which matters: the server this client talks to sends `totalFragments = 1`
+    // with `fragmentNo = 1`, so any implementation that indexes by fragment number instead would
+    // wait forever for a fragment 0 that never arrives.
+    //
+    // AS3 concatenates the raw fragment buffers and lets `initBadges()` parse the assembled one;
+    // this port's parser already decodes each fragment, so what is assembled here is the decoded
+    // arrays. Same ordering, same completeness rule.
+    private addBadgeMessageFragment(
+        fragment: IBadgeData[],
+        totalFragments: number,
+        fragmentNo: number
+    ): IBadgeData[] | null
+    {
+        if(totalFragments === 1) return fragment;
+
+        if(this._badgeFragments === null) this._badgeFragments = new Array(totalFragments).fill(null);
+
+        this._badgeFragments[fragmentNo] = fragment;
+
+        for(const stored of this._badgeFragments)
+        {
+            if(stored === null) return null;
+        }
+
+        const assembled: IBadgeData[] = [];
+
+        for(const stored of this._badgeFragments)
+        {
+            assembled.push(...stored!);
+        }
+
+        return assembled;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onBadges()
+    // The badge list itself, which nothing subscribed until now: `requestBadges()` sent
+    // GetBadgesComposer and the answer was dropped, so the badges tab stayed empty until a badge
+    // was awarded live (onBadgeReceived, below). AS3's timing logs around the two slow steps are
+    // dropped; the rest is its order, `initBadges()` then `updateView()` then the category latch.
+    private onBadges = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as BadgesMessageParser | null;
+
+        if(!parser || !this._badgesModel) return;
+
+        const badges = this.addBadgeMessageFragment(parser.badges, parser.totalFragments, parser.fragmentNo);
+
+        if(!badges) return;
+
+        this._badgeFragments = null;
+
+        this._badgesModel.initBadges(
+            badges,
+            (id: string) => this._localization?.getBadgeName(id) ?? '',
+            (id: string) => this._localization?.getBadgeDesc(id) ?? ''
+        );
+        this._badgesModel.updateView();
+        this.setInventoryCategoryInit('badges');
+    };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onBadgeReceived()
     // The third argument is AS3's `badgeId:int` — this port named the parameter `slotId` because

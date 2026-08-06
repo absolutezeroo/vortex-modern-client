@@ -412,24 +412,38 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
 
         if(!parser) return;
 
-        if(this._badgeFragments === null)
-        {
-            this._badgeFragments = new Map();
-        }
-
-        this._badgeFragments.set(parser.fragmentNo, parser.badges.map((badge) => badge.badgeId));
-
-        if(this._badgeFragments.size < parser.totalFragments) return;
-
+        const badgeIds = parser.badges.map((badge) => badge.badgeId);
         const allBadgeIds: string[] = [];
 
-        for(let i = 0; i < parser.totalFragments; i++)
+        // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::addMessageFragment()
+        // A single-fragment message is returned before `fragmentNo` is ever read. This port used to
+        // index every fragment by its number and then walk 0..totalFragments-1, which never
+        // completed against a server that numbers a lone fragment 1 — as this one does
+        // (BadgesEventMessageComposerSerializer writes totalFragments 1, fragmentNo 1) — so the
+        // club badge was never resolved and the club centre never showed one.
+        if(parser.totalFragments === 1)
         {
-            const fragment = this._badgeFragments.get(i);
+            allBadgeIds.push(...badgeIds);
+        }
+        else
+        {
+            if(this._badgeFragments === null)
+            {
+                this._badgeFragments = new Map();
+            }
 
-            if(!fragment) return;
+            this._badgeFragments.set(parser.fragmentNo, badgeIds);
 
-            allBadgeIds.push(...fragment);
+            if(this._badgeFragments.size < parser.totalFragments) return;
+
+            // AS3 stores each fragment at `param4[fragmentNo]` and concatenates the vector in index
+            // order, so the numbers order the payload — not the arrival order this Map records.
+            const fragmentNumbers = [...this._badgeFragments.keys()].sort((a, b) => a - b);
+
+            for(const fragmentNumber of fragmentNumbers)
+            {
+                allBadgeIds.push(...this._badgeFragments.get(fragmentNumber)!);
+            }
         }
 
         this._badgeFragments = null;

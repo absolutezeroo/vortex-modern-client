@@ -211,8 +211,15 @@ Re-ranked **2026-08-03**, biggest product gap first.
    The recipe that found all four: for a module, list what AS3 registers/constructs
    (`grep -o "addHabboConnectionMessageEvent(new _SafeCls_[0-9]*(on[A-Za-z]*" <file>.as`), list what
    the port does, and diff — being alert to alias names. Then check each ported class has a
-   constructor call, not just a definition. Candidates not yet swept: `habbo/inventory`,
-   `habbo/catalog`, `habbo/moderation`, `habbo/friendlist`, `habbo/help`.
+   constructor call, not just a definition. Candidates not yet swept: `habbo/moderation`,
+   `habbo/friendlist`, `habbo/help`.
+
+   **`habbo/catalog` and `habbo/inventory` were swept 2026-08-06** — counts and findings under
+   Recent Work. Neither had an unconstructed class; the gap in both is subscriptions. Note the
+   idiom differs per module: catalog registers from `HabboCatalog.as` itself, inventory from a
+   separate handler class (`_SafeCls_1951.as`, obfuscated in every tree), so grepping only the
+   manager finds nothing and reads as "no messages". Find the registrations with
+   `grep -rln "IMessageEvent" <module>/` first.
 1. **`habbo/ui/widget/furniture` — 46/54, and `habbo/ui/handler` — 25/47**, re-measured
    2026-08-05. Eight widgets left, smallest first: `AchievementResolutionTrophyFurniWidget` (150),
    `VimeoDisplayWidget` (150), `GuildFurnitureContextMenuView` (185), `HighScoreDisplayWidget`
@@ -676,6 +683,50 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 ---
 
 ## Recent Work Recorded
+
+- ✅ **Priority-0 sweep of `habbo/catalog` and `habbo/inventory` — and the badge list nobody
+  read**, 2026-08-06.
+  - 📏 **The measurement.** Catalog subscribes **31 of AS3's 45** registrations
+    (`HabboCatalog.as:707-751`); inventory **17 of 52** (`_SafeCls_1951.as`). No class in either
+    module is defined-but-never-constructed — every model (`TradingModel`, `BadgesModel`,
+    `BotsModel`, `EffectsModel`, `PetsModel`, `FurniModel`) has a `new` in `HabboInventory`, and
+    the one catalog class referenced from nowhere, `MarketPlaceOfferState`, is referenced from
+    nowhere in AS3 either. The whole gap in both modules is the subscription list.
+  - 🐛 **The badge list was requested and thrown away.** `HabboInventory.requestBadges()` sent
+    `GetBadgesComposer`, and `BadgesMessageEvent` — ported, parsed, registered at 2748 — was
+    subscribed only by `HabboClubCenter`, for its own club-badge lookup. Nothing fed
+    `BadgesModel`, so the inventory badge tab stayed empty until a badge was awarded *live*
+    (`onBadgeReceived`, the one badge message that was wired). Now `onBadges` runs AS3's order:
+    assemble fragments → `initBadges()` → `updateView()` → `setInventoryCategoryInit('badges')`.
+  - 🐛 **And the club centre could never resolve its badge either.** AS3's `addMessageFragment()`
+    returns a single-fragment message **before it reads `fragmentNo`**; the port indexed every
+    fragment by number and walked `0..totalFragments-1`. `vortex-emulator` numbers a lone fragment
+    **1**, not 0 (`BadgesEventMessageComposerSerializer` writes `totalFragments 1, fragmentNo 1`),
+    so the loop found nothing at 0 and returned every time. Ported faithfully in both places —
+    this is why the helper exists in AS3 at all.
+  - **Verified in a browser**: the parser reads the emulator's exact order — `int totalFragments,
+    int fragmentNo, int count, then (int slotId, string badgeCode)` — leaves no bytes unread,
+    derives `activeBadgeIds` from `slotId > 0`, and `BadgesModel.initBadges()` fills from it;
+    the client resolves `BadgesMessageEvent` at **2748**, which is `MessageComposer.BadgesComposer`
+    in `Headers.cs`. The two fragment fixes are verified against the AS3 helper and by typecheck,
+    not against a live multi-fragment session.
+  - **What the sweep leaves open, in order of product weight:**
+    - **Trading is the big one.** Seven trading events (`TradingOpen/Close/ItemList/Accept/
+      Confirmation/Completed/NotOpen`, headers 953/699/560/2275/1070/3138/3556) are ported,
+      registered and **subscribed by nobody** — but this is not a wiring job: `TradingModel` is a
+      315-line skeleton against AS3's 1,108, `TradingView` (1,053 l.) and `namescam/` (5 files) are
+      unported, and 4 more events (`OpenFailed`, `OtherNotAllowed`, `YouAreNotAllowed`,
+      wired-trading) do not exist here at all. Size it as a feature, ~2,600 lines.
+    - **Inventory, the rest of the 35:** collectibles (no module), bots add/remove, post-it
+      placed, not-enough-credits, badge point limits, `onUserBadges`, marketplace (4 handlers, and
+      `inventory/marketplace/` is an empty directory here).
+    - **Catalog, the 14:** `onCatalogPublished`, `onLimitedEditionSoldOut`, `onLtdRaffleEntered/
+      Result`, `onGiftWrappingConfiguration`, `onGiftReceiverNotFound`, `onProductOffer`,
+      `onNftStorePurchase`, `onBundleDiscountRuleset`, `onSilverBalance`, `onEmeraldBalance`,
+      `onMarketplaceMakeOfferResult`, `onRoomExit`, `onSnowWarGameTokenOffer` (that last one waits
+      on `habbo/game`). None of their message classes exist yet — these are ports, not wiring.
+      `sendGetProductOffer()` already carries a `TODO(AS3)` saying its reply is unported: the
+      request goes out on every limited-edition page and the answer is dropped.
 
 - ✅ **The rentable-space furniture, end to end — and `FriendlyTime` was rendering hardcoded
   English client-wide**, 2026-08-05.
