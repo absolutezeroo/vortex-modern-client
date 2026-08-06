@@ -22,12 +22,15 @@ export class ExtraInfoViewManager implements IUpdateReceiver
 {
     private _widget: BundlePurchaseExtraInfoWidget | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::_catalog
     private _catalog: HabboCatalog | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::_items
     private _items: Map<number, ExtraInfoListItem> = new Map();
 
     private _nextId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::_disposed
     private _disposed: boolean = false;
 
     private _elapsedSeconds: number = 0;
@@ -40,11 +43,13 @@ export class ExtraInfoViewManager implements IUpdateReceiver
         this._catalog.registerUpdateReceiver(this, 10);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -62,6 +67,7 @@ export class ExtraInfoViewManager implements IUpdateReceiver
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::clear()
     clear(): void
     {
         const window = this._widget!.window;
@@ -131,6 +137,7 @@ export class ExtraInfoViewManager implements IUpdateReceiver
         return item!.id;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::removeItem()
     removeItem(id: number): void
     {
         const item = this.getItem(id);
@@ -148,11 +155,13 @@ export class ExtraInfoViewManager implements IUpdateReceiver
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::getItem()
     getItem(id: number): ExtraInfoListItem | null
     {
         return this._items.get(id) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::reallyRemoveItem()
     private reallyRemoveItem(id: number): void
     {
         const item = this.getItem(id);
@@ -166,6 +175,7 @@ export class ExtraInfoViewManager implements IUpdateReceiver
         this._items.delete(id);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::calculateBounce()
     private calculateBounce(since: number, cosine: boolean = false): number
     {
         const elapsed = (this._elapsedSeconds - since) / SLIDE_ANIMATION_LENGTH * (Math.PI / 2);
@@ -173,6 +183,7 @@ export class ExtraInfoViewManager implements IUpdateReceiver
         return cosine ? 1 - Math.abs(Math.cos(elapsed)) : 1 - Math.abs(Math.sin(elapsed));
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::render()
     private render(): void
     {
         let bottomY = 0;
@@ -220,6 +231,7 @@ export class ExtraInfoViewManager implements IUpdateReceiver
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::sortWindows()
     private sortWindows(): void
     {
         const window = this._widget!.window;
@@ -236,6 +248,7 @@ export class ExtraInfoViewManager implements IUpdateReceiver
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::update()
     update(deltaTime: number): void
     {
         this._elapsedSeconds += deltaTime / 1000;

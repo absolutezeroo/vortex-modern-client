@@ -9,10 +9,13 @@ import type { IBinarySearchTest } from './IBinarySearchTest';
  */
 export class TextWidthBinarySearchTest implements IBinarySearchTest
 {
+    // AS3: sources/win63_version/habbo/navigator/class_4017.as::_value
     private _value: string = '';
+    // AS3: sources/win63_version/habbo/navigator/class_4017.as::_text
     private _text: ITextWindow | null = null;
     private _maxHeight: number = 0;
 
+    // AS3: sources/win63_version/habbo/navigator/class_4017.as::test()
     test(index: number): boolean
     {
         if(this._text === null) return false;
@@ -22,6 +25,7 @@ export class TextWidthBinarySearchTest implements IBinarySearchTest
         return (this._text as unknown as { textHeight?: number }).textHeight! > this._maxHeight;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/class_4017.as::beforeSearch()
     beforeSearch(value: string, text: ITextWindow, maxHeight: number): void
     {
         this._value = value;

@@ -15,6 +15,7 @@ export class ModToolSanctionComposer extends MessageComposer<ConstructorParamete
         this._data = [issueId, sanctionTypeId, userId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/moderator/ModToolSanctionComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

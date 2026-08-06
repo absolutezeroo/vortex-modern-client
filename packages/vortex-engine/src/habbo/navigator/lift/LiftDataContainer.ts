@@ -6,6 +6,7 @@ import type {NavigatorLiftedRoomData} from '../../communication/messages/incomin
  */
 export class LiftDataContainer
 {
+    // AS3: .../src/com/sulake/habbo/navigator/lift/LiftDataContainer.as::DEFAULT_IMAGE
     private static readonly DEFAULT_IMAGE = '${image.library.url}officialrooms_hq/nav_teaser_wl.png';
     private _imageLibraryBaseUrl: string = '';
 
@@ -13,8 +14,10 @@ export class LiftDataContainer
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/lift/LiftDataContainer.as::_liftedRooms
     private _liftedRooms: NavigatorLiftedRoomData[] = [];
 
+    // AS3: .../src/com/sulake/habbo/navigator/lift/LiftDataContainer.as::get liftedRooms()
     get liftedRooms(): NavigatorLiftedRoomData[]
     {
         return this._liftedRooms;
@@ -25,11 +28,13 @@ export class LiftDataContainer
         this._imageLibraryBaseUrl = url;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/lift/LiftDataContainer.as::setLiftedRooms()
     setLiftedRooms(rooms: NavigatorLiftedRoomData[]): void
     {
         this._liftedRooms = rooms;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/lift/LiftDataContainer.as::getUrlForLiftImageAtIndex()
     getUrlForLiftImageAtIndex(index: number): string
     {
         if(index < 0 || index > this._liftedRooms.length - 1)

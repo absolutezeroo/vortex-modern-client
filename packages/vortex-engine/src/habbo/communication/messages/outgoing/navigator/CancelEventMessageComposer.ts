@@ -16,6 +16,7 @@ export class CancelEventMessageComposer extends MessageComposer<ConstructorParam
         this._data = [roomId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/CancelEventMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

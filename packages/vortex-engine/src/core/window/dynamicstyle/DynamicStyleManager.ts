@@ -10,6 +10,7 @@ import {DynamicStyle} from './DynamicStyle';
  */
 export class DynamicStyleManager
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/dynamicstyle/DynamicStyleManager.as::_styles
     private static _styles: Map<string, DynamicStyle> | null = null;
 
     /**
@@ -18,6 +19,7 @@ export class DynamicStyleManager
 	 * @param name - The style name
 	 * @returns The matching style, or a new empty DynamicStyle if not found
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/dynamicstyle/DynamicStyleManager.as::getStyle()
     public static getStyle(name: string): DynamicStyle
     {
         if(!DynamicStyleManager._styles)
@@ -67,6 +69,7 @@ export class DynamicStyleManager
         return DynamicStyleManager._styles!.has(name);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/dynamicstyle/DynamicStyleManager.as::fillStyleTable()
     private static fillStyleTable(): void
     {
         DynamicStyleManager._styles = new Map();

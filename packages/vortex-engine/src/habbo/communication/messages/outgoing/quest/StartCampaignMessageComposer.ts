@@ -15,6 +15,7 @@ export class StartCampaignMessageComposer extends MessageComposer<ConstructorPar
         this._data = [campaignCode];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/quest/StartCampaignMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

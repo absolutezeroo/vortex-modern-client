@@ -26,12 +26,15 @@ const STAR_LEVELS = ['bronze', 'silver', 'gold', 'diamond', 'ruby', 'pink', 'gre
  */
 export class RecyclerPrizesCatalogWidget extends CatalogWidget implements IItemGrid
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerPrizesCatalogWidget.as::_prizes
     private _prizes: PrizeLevelContainer[] | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerPrizesCatalogWidget.as::_itemList
     private _itemList: IItemListWindow | null = null;
 
     private _selectedItem: IGridItem | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerPrizesCatalogWidget.as::get recycler()
     private get recycler(): IRecycler | null
     {
         return (this.page?.viewer?.catalog as HabboCatalog | null)?.getRecycler() ?? null;
@@ -74,6 +77,7 @@ export class RecyclerPrizesCatalogWidget extends CatalogWidget implements IItemG
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerPrizesCatalogWidget.as::populateItemGrid()
     private populateItemGrid(): void
     {
         if(this._prizes == null) return;
@@ -84,6 +88,7 @@ export class RecyclerPrizesCatalogWidget extends CatalogWidget implements IItemG
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerPrizesCatalogWidget.as::createLevelItem()
     private createLevelItem(level: PrizeLevelContainer): void
     {
         const catalog = this.page.viewer.catalog as HabboCatalog;
@@ -134,6 +139,7 @@ export class RecyclerPrizesCatalogWidget extends CatalogWidget implements IItemG
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerPrizesCatalogWidget.as::createPrizeItem()
     private createPrizeItem(prize: PrizeContainer, itemGrid: IItemGridWindow): void
     {
         if(prize == null || itemGrid == null || itemGrid.disposed) return;
@@ -175,6 +181,7 @@ export class RecyclerPrizesCatalogWidget extends CatalogWidget implements IItemG
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerPrizesCatalogWidget.as::viewProduct()
     private viewProduct(productView: IWindowContainer, itemType: string, itemTypeId: number, name: string, description: string): void
     {
         const productViewer = productView.findChildByName('product_viewer') as unknown as IWidgetWindow | null;

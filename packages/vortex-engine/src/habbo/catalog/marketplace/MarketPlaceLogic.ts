@@ -30,22 +30,30 @@ import {MarketplaceConfirmationDialog} from './MarketplaceConfirmationDialog';
  */
 export class MarketPlaceLogic implements IMarketPlace
 {
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::PURCHASE_CONFIRM_TYPE_NORMAL
     static readonly PURCHASE_CONFIRM_TYPE_NORMAL: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::PURCHASE_CONFIRM_TYPE_HIGHER
     static readonly PURCHASE_CONFIRM_TYPE_HIGHER: number = 2;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::_catalog
     private _catalog: HabboCatalog | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::_windowManager
     private _windowManager: IHabboWindowManager | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::_roomEngine
     private _roomEngine: IRoomEngine | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::_visualization
     private _visualization: IMarketPlaceVisualization | null = null;
 
     private _confirmationDialog: MarketplaceConfirmationDialog | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::_latestOffers
     private _latestOffers: OrderedMap<number, MarketPlaceOfferData> | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::_latestOwnOffers
     private _latestOwnOffers: OrderedMap<number, MarketPlaceOfferData> | null = null;
 
     private _creditsWaiting: number = 0;
@@ -64,16 +72,21 @@ export class MarketPlaceLogic implements IMarketPlace
 
     private _pendingClearHistoryCategory: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::_minPrice
     private _minPrice: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::_maxPrice
     private _maxPrice: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::_searchString
     private _searchString: string = '';
 
     private _category: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::_combineUniques
     private _combineUniques: boolean = true;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::MarketPlaceLogic()
@@ -134,6 +147,7 @@ export class MarketPlaceLogic implements IMarketPlace
         this._visualization = visualization;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::getConfiguration()
     private getConfiguration(): void
     {
         if(!this._catalog || !this._catalog.connection) return;
@@ -141,6 +155,7 @@ export class MarketPlaceLogic implements IMarketPlace
         this._catalog.connection.send(new GetMarketplaceConfigurationMessageComposer());
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::showConfirmation()
     private showConfirmation(type: number, offer: MarketPlaceOfferData): void
     {
         if(!this._confirmationDialog)
@@ -244,6 +259,7 @@ export class MarketPlaceLogic implements IMarketPlace
         this._catalog.clearOwnMarketPlaceHistory(status);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::disposeOffers()
     private disposeOffers(offers: OrderedMap<number, MarketPlaceOfferData>): void
     {
         for(const offer of offers.values())
@@ -525,6 +541,7 @@ export class MarketPlaceLogic implements IMarketPlace
         this._averagePricePeriod = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::resolveStatsRequestCategory()
     private resolveStatsRequestCategory(offer: IMarketPlaceOfferData | null): number
     {
         if(offer && offer.isUniqueLimitedItem) return 3;
@@ -532,6 +549,7 @@ export class MarketPlaceLogic implements IMarketPlace
         return offer && offer.furniType === 2 ? 2 : 1;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceLogic.as::isPosterItem()
     private isPosterItem(offer: IMarketPlaceOfferData): boolean
     {
         if(offer.furniType === 2 && offer.extraData != null)

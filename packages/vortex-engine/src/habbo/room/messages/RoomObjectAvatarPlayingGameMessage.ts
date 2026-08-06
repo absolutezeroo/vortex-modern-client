@@ -15,8 +15,10 @@ export class RoomObjectAvatarPlayingGameMessage extends RoomObjectUpdateMessage
         this._isPlayingGame = isPlayingGame;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarPlayingGameMessage.as::_isPlayingGame
     private _isPlayingGame: boolean;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarPlayingGameMessage.as::get isPlayingGame()
     get isPlayingGame(): boolean
     {
         return this._isPlayingGame;

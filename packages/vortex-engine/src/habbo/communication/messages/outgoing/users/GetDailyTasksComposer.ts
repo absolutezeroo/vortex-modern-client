@@ -18,7 +18,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetDailyTasksComposer extends MessageComposer<[]>
 {
-    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2136/_SafeCls_1780.as::getMessageArray()
+    // AS3: .../src/unknowns/_SafePkg_1781/_SafeCls_1780.as::getMessageArray()
     getMessageArray(): []
     {
         return [];

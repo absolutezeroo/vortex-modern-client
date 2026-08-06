@@ -32,6 +32,7 @@ export class TradingNameScamWarningController implements IDisposable
     // AS3: .../TradingNameScamWarningController.as::_view
     private _view: TradingNameScamWarningView | null = null;
 
+    // AS3: .../src/com/sulake/habbo/inventory/trading/namescam/TradingNameScamWarningController.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../TradingNameScamWarningController.as::TradingNameScamWarningController()

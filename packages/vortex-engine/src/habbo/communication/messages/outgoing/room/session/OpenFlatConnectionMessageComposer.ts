@@ -19,6 +19,7 @@ export class OpenFlatConnectionMessageComposer extends MessageComposer<Construct
         this._data = [roomId, password, unknown];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/session/OpenFlatConnectionMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

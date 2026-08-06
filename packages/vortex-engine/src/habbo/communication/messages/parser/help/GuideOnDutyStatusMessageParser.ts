@@ -9,8 +9,10 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GuideOnDutyStatusMessageParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideOnDutyStatusMessageEventParser.as::_onDuty
     private _onDuty: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideOnDutyStatusMessageEventParser.as::get onDuty()
     get onDuty(): boolean
     {
         return this._onDuty;
@@ -18,6 +20,7 @@ export class GuideOnDutyStatusMessageParser implements IMessageParser
 
     private _guidesOnDuty: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideOnDutyStatusMessageEventParser.as::get guidesOnDuty()
     get guidesOnDuty(): number
     {
         return this._guidesOnDuty;
@@ -25,6 +28,7 @@ export class GuideOnDutyStatusMessageParser implements IMessageParser
 
     private _helpersOnDuty: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideOnDutyStatusMessageEventParser.as::get helpersOnDuty()
     get helpersOnDuty(): number
     {
         return this._helpersOnDuty;
@@ -32,11 +36,13 @@ export class GuideOnDutyStatusMessageParser implements IMessageParser
 
     private _guardiansOnDuty: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideOnDutyStatusMessageEventParser.as::get guardiansOnDuty()
     get guardiansOnDuty(): number
     {
         return this._guardiansOnDuty;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideOnDutyStatusMessageEventParser.as::flush()
     flush(): boolean
     {
         this._onDuty = false;
@@ -46,6 +52,7 @@ export class GuideOnDutyStatusMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideOnDutyStatusMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

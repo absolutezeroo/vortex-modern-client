@@ -18,22 +18,28 @@ export class RoomObjectDataUpdateMessage extends RoomObjectUpdateMessage
         this._extra = extra;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectDataUpdateMessage.as::_state
     private _state: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectDataUpdateMessage.as::get state()
     get state(): number
     {
         return this._state;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectDataUpdateMessage.as::_data
     private _data: IStuffData | null;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectDataUpdateMessage.as::get data()
     get data(): IStuffData | null
     {
         return this._data;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectDataUpdateMessage.as::_extra
     private _extra: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectDataUpdateMessage.as::get extra()
     get extra(): number
     {
         return this._extra;

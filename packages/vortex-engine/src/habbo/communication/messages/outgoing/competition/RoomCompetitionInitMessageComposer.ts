@@ -16,6 +16,7 @@ export class RoomCompetitionInitMessageComposer extends MessageComposer<Construc
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/competition/RoomCompetitionInitMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

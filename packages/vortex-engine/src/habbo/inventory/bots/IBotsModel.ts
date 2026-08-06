@@ -7,10 +7,12 @@ import type {Bot} from './Bot';
  */
 export interface IBotsModel
 {
+    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::get disposed()
     readonly disposed: boolean;
     readonly isListInitialized: boolean;
     readonly bots: Map<number, Bot>;
 
+    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::dispose()
     dispose(): void;
 
     /**
@@ -63,6 +65,7 @@ export interface IBotsModel
 	 * Reset unseen flags
 	 * Returns IDs that were marked as unseen
 	 */
+    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::resetUnseenItems()
     resetUnseenItems(): number[];
 
     /**
@@ -73,6 +76,7 @@ export interface IBotsModel
     /**
 	 * Check if bot is unseen
 	 */
+    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::isUnseen()
     isUnseen(id: number): boolean;
 
     // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::updateView()

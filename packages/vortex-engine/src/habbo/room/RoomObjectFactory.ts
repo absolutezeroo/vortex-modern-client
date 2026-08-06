@@ -88,7 +88,9 @@ type LogicConstructor = new () => IRoomObjectEventHandler;
 export class RoomObjectFactory implements IRoomObjectFactory
 {
     private _registeredTypes: Map<string, boolean>;
+    // AS3: .../src/com/sulake/habbo/room/RoomObjectFactory.as::_trackedEventTypes
     private _trackedEventTypes: Map<string, boolean>;
+    // AS3: .../src/com/sulake/habbo/room/RoomObjectFactory.as::_objectEventListeners
     private _objectEventListeners: Array<(event: unknown) => void>;
 
     constructor()

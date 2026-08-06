@@ -15,7 +15,9 @@ export class CommonWidgetSettings
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/CommonWidgetSettings.as::ETCHINGPOSITION_DEFAULT
     private static readonly ETCHINGPOSITION_DEFAULT: string = 'bottom';
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/CommonWidgetSettings.as::_textColor
     private _textColor: number = CommonWidgetSettings.TEXTCOLOR_DEFAULT;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/CommonWidgetSettings.as::_etchingColor
     private _etchingColor: number = CommonWidgetSettings.ETCHINGCOLOR_DEFAULT;
     private _etchingPosition: string = CommonWidgetSettings.ETCHINGPOSITION_DEFAULT;
 

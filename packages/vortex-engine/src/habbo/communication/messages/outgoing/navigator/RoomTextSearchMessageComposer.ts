@@ -16,6 +16,7 @@ export class RoomTextSearchMessageComposer extends MessageComposer<ConstructorPa
         this._data = [searchText];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/RoomTextSearchMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

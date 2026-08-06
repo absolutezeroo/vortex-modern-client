@@ -33,6 +33,7 @@ export class Motions
     /**
 	 * Whether the scheduler has any running motions.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/motion/Motions.as::get isRunning()
     public static get isRunning(): boolean
     {
         return Motions._rafId !== 0;

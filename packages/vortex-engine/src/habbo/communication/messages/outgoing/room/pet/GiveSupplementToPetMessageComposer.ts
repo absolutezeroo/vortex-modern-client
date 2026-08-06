@@ -15,6 +15,7 @@ export class GiveSupplementToPetMessageComposer extends MessageComposer<Construc
         this._data = [petId, supplementType];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/engine/GiveSupplementToPetMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

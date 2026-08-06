@@ -21,6 +21,7 @@ export class GuideTicketCreationResultMessageParser implements IMessageParser
         return this._resultCode;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideTicketCreationResultMessageEventParser.as::get localizationCode()
     get localizationCode(): string
     {
         switch(this._resultCode)
@@ -38,12 +39,14 @@ export class GuideTicketCreationResultMessageParser implements IMessageParser
         }
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideTicketCreationResultMessageEventParser.as::flush()
     flush(): boolean
     {
         this._resultCode = -1;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideTicketCreationResultMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

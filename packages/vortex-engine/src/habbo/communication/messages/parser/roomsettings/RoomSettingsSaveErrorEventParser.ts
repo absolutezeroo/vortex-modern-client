@@ -21,11 +21,13 @@ export class RoomSettingsSaveErrorEventParser implements IMessageParser
     private _errorCode: number = 0;
     private _info: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/roomsettings/RoomSettingsSaveErrorEventParser.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/roomsettings/RoomSettingsSaveErrorEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._roomId = wrapper.readInt();
@@ -34,7 +36,10 @@ export class RoomSettingsSaveErrorEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/roomsettings/RoomSettingsSaveErrorEventParser.as::get roomId()
     get roomId(): number { return this._roomId; }
+    // AS3: sources/win63_version/habbo/communication/messages/parser/roomsettings/RoomSettingsSaveErrorEventParser.as::get errorCode()
     get errorCode(): number { return this._errorCode; }
+    // AS3: sources/win63_version/habbo/communication/messages/parser/roomsettings/RoomSettingsSaveErrorEventParser.as::get info()
     get info(): string { return this._info; }
 }

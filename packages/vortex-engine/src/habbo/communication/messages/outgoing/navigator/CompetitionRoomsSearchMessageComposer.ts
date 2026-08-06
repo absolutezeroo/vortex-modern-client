@@ -16,6 +16,7 @@ export class CompetitionRoomsSearchMessageComposer extends MessageComposer<Const
         this._data = [goalId, pageIndex];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/CompetitionRoomsSearchMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

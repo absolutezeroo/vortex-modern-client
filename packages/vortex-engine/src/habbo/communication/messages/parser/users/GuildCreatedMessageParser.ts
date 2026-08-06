@@ -13,6 +13,7 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 export class GuildCreatedMessageParser implements IMessageParser
 {
     private _baseRoomId: number = 0;
+    // AS3: .../src/unknowns/_SafePkg_1891/_SafeCls_2746.as::_groupId
     private _groupId: number = 0;
 
     // AS3: .../_SafeCls_2746.as::get baseRoomId()

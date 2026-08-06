@@ -30,8 +30,11 @@ export class NineSplitSprite
     private static _inputFieldHitch: NineSplitSprite | null = null;
     private static _darkBalloon: NineSplitSprite | null = null;
 
+    // AS3: .../src/onBoardingHcUi/NineSplitSprite.as::_bitmapData
     private readonly _bitmapData: BitmapData;
+    // AS3: .../src/onBoardingHcUi/NineSplitSprite.as::_widths
     private readonly _widths: number[];
+    // AS3: .../src/onBoardingHcUi/NineSplitSprite.as::_heights
     private readonly _heights: number[];
 
     // AS3: NineSplitSprite(_arg_1:BitmapData, _arg_2:Vector.<int>, _arg_3:Vector.<int>)

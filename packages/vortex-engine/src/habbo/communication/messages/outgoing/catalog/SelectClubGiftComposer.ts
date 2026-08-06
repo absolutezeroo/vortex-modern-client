@@ -13,6 +13,7 @@ export class SelectClubGiftComposer extends MessageComposer<ConstructorParameter
         this._data = [productCode];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/catalog/SelectClubGiftComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

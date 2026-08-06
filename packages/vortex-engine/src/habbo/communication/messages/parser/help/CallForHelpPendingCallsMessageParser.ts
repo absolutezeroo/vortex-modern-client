@@ -26,17 +26,20 @@ export class CallForHelpPendingCallsMessageParser implements IMessageParser
         return this._calls;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/CallForHelpPendingCallsMessageEventParser.as::get callCount()
     get callCount(): number
     {
         return this._calls.length;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/CallForHelpPendingCallsMessageEventParser.as::flush()
     flush(): boolean
     {
         this._calls = [];
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/CallForHelpPendingCallsMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

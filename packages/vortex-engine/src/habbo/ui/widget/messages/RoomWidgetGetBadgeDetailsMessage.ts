@@ -11,6 +11,7 @@ export class RoomWidgetGetBadgeDetailsMessage extends RoomWidgetMessage
     public static readonly WIDGET_MESSAGE_GET_BADGE_DETAILS: string = 'RWGOI_MESSAGE_GET_BADGE_DETAILS';
 
     private _own: boolean;
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetGetBadgeDetailsMessage.as::_groupId
     private _groupId: number;
 
     // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetGetBadgeDetailsMessage.as::RoomWidgetGetBadgeDetailsMessage()
@@ -21,11 +22,13 @@ export class RoomWidgetGetBadgeDetailsMessage extends RoomWidgetMessage
         this._groupId = groupId;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetGetBadgeDetailsMessage.as::get own()
     public get own(): boolean
     {
         return this._own;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetGetBadgeDetailsMessage.as::get groupId()
     public get groupId(): number
     {
         return this._groupId;

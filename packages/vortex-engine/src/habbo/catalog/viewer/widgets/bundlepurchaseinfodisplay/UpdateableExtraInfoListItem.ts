@@ -20,6 +20,7 @@ export class UpdateableExtraInfoListItem extends ExtraInfoListItem
         super(widget, id, data, alignment, alwaysOnTop);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/UpdateableExtraInfoListItem.as::update()
     update(data: ExtraInfoItemData): void
     {
         this.data = data;

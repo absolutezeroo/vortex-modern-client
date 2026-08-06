@@ -22,11 +22,14 @@ import {GetCurrentTimingCodeMessageComposer} from '@habbo/communication/messages
  */
 export class WidgetContainerWidget implements ILandingViewWidget, ISlotAwareWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::_landingView
     private _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::_container
     private _container: IWindowContainer | null = null;
     private _widgetContainersByCode: Map<string, WidgetContainer> = new Map();
     private _settings: CommonWidgetSettings | null = null;
     private _slot: number = 0;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::_schedulingStr
     private _schedulingStr: string = '';
     private _currentWidgetContainer: WidgetContainer | null = null;
 
@@ -53,6 +56,7 @@ export class WidgetContainerWidget implements ILandingViewWidget, ISlotAwareWidg
         this._slot = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
@@ -82,6 +86,7 @@ export class WidgetContainerWidget implements ILandingViewWidget, ISlotAwareWidg
         this._landingView?.send(new GetCurrentTimingCodeMessageComposer(this._schedulingStr));
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/WidgetContainerWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;

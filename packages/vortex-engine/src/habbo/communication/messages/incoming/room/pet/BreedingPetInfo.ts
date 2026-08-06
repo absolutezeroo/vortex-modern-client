@@ -32,6 +32,7 @@ export class BreedingPetInfo
         return this._webId;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1735/_SafeCls_4162.as::_name
     private _name: string;
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1735/_SafeCls_4162.as::get name()

@@ -61,6 +61,7 @@ export class WordQuizHandler extends BaseHandler
         this._messageEvents.push(event);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/WordQuizHandler.as::onQuestionStatus()
     private onQuestionStatus(event: IMessageEvent): void
     {
         if(!event) return;
@@ -84,6 +85,7 @@ export class WordQuizHandler extends BaseHandler
         this.listener.sessionEvents.emit(RoomSessionWordQuizEvent.RWPUW_NEW_QUESTION, quizEvent);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/WordQuizHandler.as::onQuestionAnsweredEvent()
     private onQuestionAnsweredEvent(event: IMessageEvent): void
     {
         if(!event) return;
@@ -105,6 +107,7 @@ export class WordQuizHandler extends BaseHandler
         this.listener.sessionEvents.emit(RoomSessionWordQuizEvent.RWPUW_QUESTION_ANSWERED, quizEvent);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/WordQuizHandler.as::onQuestionFinishedEvent()
     private onQuestionFinishedEvent(event: IMessageEvent): void
     {
         if(!event) return;

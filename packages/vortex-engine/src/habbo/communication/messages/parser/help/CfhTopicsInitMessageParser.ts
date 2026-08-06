@@ -34,17 +34,20 @@ export class CfhTopicsInitMessageParser implements IMessageParser
 {
     private _callForHelpCategories: ICfhCategory[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/CfhTopicsInitMessageEventParser.as::get callForHelpCategories()
     get callForHelpCategories(): ICfhCategory[]
     {
         return this._callForHelpCategories;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/CfhTopicsInitMessageEventParser.as::flush()
     flush(): boolean
     {
         this._callForHelpCategories = [];
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/CfhTopicsInitMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

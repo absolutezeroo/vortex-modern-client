@@ -35,6 +35,7 @@ export class DropMenuItemController extends ButtonController implements IDropLis
     /**
 	 * Finds the nearest ancestor IDropMenuWindow.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropMenuItemController.as::get menu()
     public get menu(): IDropMenuWindow | null
     {
         let current: IWindow | null = this.parent;
@@ -55,11 +56,13 @@ export class DropMenuItemController extends ButtonController implements IDropLis
     /**
 	 * The value of this menu item is the item itself.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropMenuItemController.as::get value()
     public get value(): IWindow | null
     {
         return this;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/DropMenuItemController.as::set value()
     public set value(_item: IWindow | null)
     {
         // No-op: value is always self for DropMenuItemController

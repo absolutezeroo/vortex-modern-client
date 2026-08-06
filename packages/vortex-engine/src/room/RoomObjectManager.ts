@@ -16,6 +16,7 @@ export class RoomObjectManager implements IRoomObjectManager
     private _objectsByType: Map<string, Map<string, IRoomObjectController>> = new Map();
     private _cachedValues: IRoomObjectController[] | null = null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/RoomObjectManager.as::_objects
     private _objects: Map<string, IRoomObjectController> = new Map();
 
     get objects(): IRoomObject[]
@@ -28,6 +29,7 @@ export class RoomObjectManager implements IRoomObjectManager
         return this._objects.size;
     }
 
+    // AS3: .../src/com/sulake/room/RoomObjectManager.as::dispose()
     dispose(): void
     {
         this.reset();
@@ -35,6 +37,7 @@ export class RoomObjectManager implements IRoomObjectManager
         this._objectsByType.clear();
     }
 
+    // AS3: .../src/com/sulake/room/RoomObjectManager.as::createObject()
     createObject(id: number, stateCount: number, type: string): IRoomObjectController | null
     {
         const object = new RoomObject(id, stateCount, type);
@@ -42,6 +45,7 @@ export class RoomObjectManager implements IRoomObjectManager
         return this.addObject(String(id), type, object);
     }
 
+    // AS3: .../src/com/sulake/room/RoomObjectManager.as::getObject()
     getObject(id: number): IRoomObject | null
     {
         return this._objects.get(String(id)) ?? null;
@@ -59,6 +63,7 @@ export class RoomObjectManager implements IRoomObjectManager
         return null;
     }
 
+    // AS3: .../src/com/sulake/room/RoomObjectManager.as::getObjectCountForType()
     getObjectCountForType(type: string): number
     {
         const typeMap = this.getObjectsForType(type, false);
@@ -71,6 +76,7 @@ export class RoomObjectManager implements IRoomObjectManager
         return 0;
     }
 
+    // AS3: .../src/com/sulake/room/RoomObjectManager.as::getObjectWithIndexAndType()
     getObjectWithIndexAndType(index: number, type: string): IRoomObjectController | null
     {
         const typeMap = this.getObjectsForType(type, false);
@@ -93,6 +99,7 @@ export class RoomObjectManager implements IRoomObjectManager
         return null;
     }
 
+    // AS3: .../src/com/sulake/room/RoomObjectManager.as::disposeObject()
     disposeObject(id: number): boolean
     {
         const idKey = String(id);
@@ -118,6 +125,7 @@ export class RoomObjectManager implements IRoomObjectManager
         return false;
     }
 
+    // AS3: .../src/com/sulake/room/RoomObjectManager.as::reset()
     reset(): void
     {
         for(const object of this._objects.values())
@@ -136,6 +144,7 @@ export class RoomObjectManager implements IRoomObjectManager
         this._objectsByType.clear();
     }
 
+    // AS3: .../src/com/sulake/room/RoomObjectManager.as::addObject()
     private addObject(idKey: string, type: string, object: IRoomObjectController): IRoomObjectController | null
     {
         if(this._objects.has(idKey))
@@ -164,6 +173,7 @@ export class RoomObjectManager implements IRoomObjectManager
         return this._cachedValues;
     }
 
+    // AS3: .../src/com/sulake/room/RoomObjectManager.as::getObjectsForType()
     private getObjectsForType(type: string, createIfMissing: boolean = true): Map<string, IRoomObjectController> | null
     {
         let typeMap = this._objectsByType.get(type);

@@ -12,17 +12,20 @@ export class MOTDNotificationEventParser implements IMessageParser
 {
     private _messages: string[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/MOTDNotificationEventParser.as::get messages()
     get messages(): string[]
     {
         return this._messages;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/MOTDNotificationEventParser.as::flush()
     flush(): boolean
     {
         this._messages = [];
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/MOTDNotificationEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

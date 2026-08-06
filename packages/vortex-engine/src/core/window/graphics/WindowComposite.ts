@@ -139,6 +139,7 @@ export class WindowComposite
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/utils/ModalDialog.as::dispose()
     public dispose(): void
     {
         this._compositeBuffer = null;

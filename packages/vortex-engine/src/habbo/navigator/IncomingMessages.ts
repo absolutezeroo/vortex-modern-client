@@ -129,6 +129,7 @@ const log = Logger.getLogger('habbo.navigator.IncomingMessages');
  */
 export class IncomingMessages
 {
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::_navigator
     private _navigator: HabboNavigator;
     private _messageEvents: IMessageEvent[] = [];
 
@@ -139,6 +140,7 @@ export class IncomingMessages
         this.registerEvents();
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::get data()
     get data(): NavigatorData
     {
         return this._navigator.data;
@@ -241,6 +243,7 @@ export class IncomingMessages
         this._messageEvents.push(event);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onNavigatorSettings()
     private onNavigatorSettings(event: IMessageEvent): void
     {
         if(!event) return;
@@ -255,6 +258,7 @@ export class IncomingMessages
         log.trace(`Navigator settings received: homeRoomId=${parser.homeRoomId}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onFavourites()
     private onFavourites(event: IMessageEvent): void
     {
         if(!event) return;
@@ -268,6 +272,7 @@ export class IncomingMessages
         log.trace(`Favourites received: ${parser.favouriteRoomIds.length} rooms`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onFavouriteChanged()
     private onFavouriteChanged(event: IMessageEvent): void
     {
         if(!event) return;
@@ -347,6 +352,7 @@ export class IncomingMessages
         log.debug(`Guest room result: ${parser.data.roomName} (${parser.data.flatId}), enterRoom=${parser.enterRoom}, forward=${parser.roomForward}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onRoomInfoUpdated()
     private onRoomInfoUpdated(event: IMessageEvent): void
     {
         if(!event) return;
@@ -359,6 +365,7 @@ export class IncomingMessages
         // Trigger refresh of room info
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onRoomRating()
     private onRoomRating(event: IMessageEvent): void
     {
         if(!event) return;
@@ -373,6 +380,7 @@ export class IncomingMessages
         log.debug(`Room rating: ${parser.rating}, canRate=${parser.canRate}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onGuestRoomSearchResult()
     private onGuestRoomSearchResult(event: IMessageEvent): void
     {
         if(!event) return;
@@ -386,6 +394,7 @@ export class IncomingMessages
         log.debug(`Guest room search results: ${parser.data?.rooms.length ?? 0} rooms`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onPopularRoomTagsResult()
     private onPopularRoomTagsResult(event: IMessageEvent): void
     {
         if(!event) return;
@@ -399,6 +408,7 @@ export class IncomingMessages
         log.trace(`Popular tags received: ${parser.data?.tags.length ?? 0} tags`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onOfficialRooms()
     private onOfficialRooms(event: IMessageEvent): void
     {
         if(!event) return;
@@ -427,6 +437,7 @@ export class IncomingMessages
         log.trace('Categories with visitor count received');
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onUserFlatCats()
     private onUserFlatCats(event: IMessageEvent): void
     {
         if(!event) return;
@@ -440,6 +451,7 @@ export class IncomingMessages
         log.trace(`User flat categories received: ${parser.nodes.length} categories`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onUserEventCats()
     private onUserEventCats(event: IMessageEvent): void
     {
         if(!event) return;
@@ -453,6 +465,7 @@ export class IncomingMessages
         log.trace(`User event categories received: ${parser.eventCategories.length} categories`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onCanCreateRoom()
     private onCanCreateRoom(event: IMessageEvent): void
     {
         if(!event) return;
@@ -477,6 +490,7 @@ export class IncomingMessages
         // Handle room event creation permission check result
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onFlatCreated()
     private onFlatCreated(event: IMessageEvent): void
     {
         if(!event) return;
@@ -490,6 +504,7 @@ export class IncomingMessages
         log.info(`Flat created: ${parser.flatName} (${parser.flatId})`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onUserObject()
     private onUserObject(event: IMessageEvent): void
     {
         if(!event) return;
@@ -516,6 +531,7 @@ export class IncomingMessages
         log.debug(`Room event: ${parser.data?.eventName}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onRoomEventCancel()
     private onRoomEventCancel(_event: IMessageEvent): void
     {
         this.data.roomEventData = null;
@@ -523,6 +539,7 @@ export class IncomingMessages
         log.debug('Room event cancelled');
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onDoorbell()
     private onDoorbell(event: IMessageEvent): void
     {
         if(!event) return;
@@ -535,6 +552,7 @@ export class IncomingMessages
         // Handle doorbell notification
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onFlatAccessDenied()
     private onFlatAccessDenied(event: IMessageEvent): void
     {
         if(!event) return;
@@ -547,6 +565,7 @@ export class IncomingMessages
         // Handle access denied
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onConvertedRoomId()
     private onConvertedRoomId(event: IMessageEvent): void
     {
         if(!event) return;

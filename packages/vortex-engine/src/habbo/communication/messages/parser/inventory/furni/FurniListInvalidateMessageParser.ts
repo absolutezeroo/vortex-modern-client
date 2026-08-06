@@ -8,11 +8,13 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class FurniListInvalidateMessageParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/furni/FurniListInvalidateEventParser.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/furni/FurniListInvalidateEventParser.as::parse()
     parse(_wrapper: IMessageDataWrapper): boolean
     {
         // No data to parse

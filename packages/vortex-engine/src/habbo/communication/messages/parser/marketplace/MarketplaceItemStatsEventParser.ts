@@ -11,10 +11,12 @@ export class MarketplaceItemStatsEventParser implements IMessageParser
 
     private _offerCount: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::_historyLength
     private _historyLength: number = 0;
 
     private _dayOffsets: number[] = [];
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::_averagePrices
     private _averagePrices: number[] = [];
 
     private _soldAmounts: number[] = [];
@@ -27,61 +29,73 @@ export class MarketplaceItemStatsEventParser implements IMessageParser
 
     private _suggestedPrice: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::get averagePrice()
     get averagePrice(): number
     {
         return this._averagePrice;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::get offerCount()
     get offerCount(): number
     {
         return this._offerCount;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::get historyLength()
     get historyLength(): number
     {
         return this._historyLength;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::get dayOffsets()
     get dayOffsets(): number[]
     {
         return this._dayOffsets;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::get averagePrices()
     get averagePrices(): number[]
     {
         return this._averagePrices;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::get soldAmounts()
     get soldAmounts(): number[]
     {
         return this._soldAmounts;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::get furniTypeId()
     get furniTypeId(): number
     {
         return this._furniTypeId;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::get furniCategoryId()
     get furniCategoryId(): number
     {
         return this._furniCategoryId;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::get lowestCurrentPrice()
     get lowestCurrentPrice(): number
     {
         return this._lowestCurrentPrice;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::get suggestedPrice()
     get suggestedPrice(): number
     {
         return this._suggestedPrice;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1931.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._averagePrice = wrapper.readInt();

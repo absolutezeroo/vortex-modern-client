@@ -29,10 +29,13 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
 {
     private _controller: ClubGiftController | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::_offers
     private _offers: Map<number, IPurchasableOffer> = new Map();
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::_preview
     private _preview: IWindowContainer | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
     // AS3: no direct equivalent - AS3's showPreview() passes a null listener and reads
@@ -83,6 +86,7 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::update()
     update(): void
     {
         this.updateInfo();
@@ -96,6 +100,7 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
         if(element) element.caption = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::updateInfo()
     private updateInfo(): void
     {
         if(!this._controller || !this.window) return;
@@ -156,6 +161,7 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::updateList()
     private updateList(): void
     {
         if(!this._controller || !this.window || !this.page) return;
@@ -212,6 +218,7 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::createListItem()
     private createListItem(offer: IPurchasableOffer, eligibility: ClubGiftEligibilityData | null): IWindowContainer | null
     {
         if(!offer || !offer.product || !eligibility) return null;
@@ -391,6 +398,7 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::hidePreview()
     private hidePreview(): void
     {
         this._pendingPreviewId = -1;

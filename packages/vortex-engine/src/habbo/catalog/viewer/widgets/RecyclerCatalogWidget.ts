@@ -29,12 +29,14 @@ export class RecyclerCatalogWidget extends CatalogWidget implements IRecyclerVis
 {
     private _mover: CatalogObjectMover | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::_awaitingImages
     private _awaitingImages: Map<number, number> | null = null;
 
     private _animator: RecyclerEngineAnimator | null = null;
 
     private _timer: ReturnType<typeof setInterval> | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::get recycler()
     private get recycler(): IRecycler | null
     {
         return (this.page?.viewer?.catalog as HabboCatalog | null)?.getRecycler() ?? null;
@@ -121,11 +123,13 @@ export class RecyclerCatalogWidget extends CatalogWidget implements IRecyclerVis
         this.updateRecycleButton();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::startTimer()
     private startTimer(): void
     {
         this._timer = setInterval(() => this.onTimerTick(), 1000);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::stopTimer()
     private stopTimer(): void
     {
         if(this._timer != null)
@@ -135,6 +139,7 @@ export class RecyclerCatalogWidget extends CatalogWidget implements IRecyclerVis
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::onTimerTick()
     private onTimerTick(): void
     {
         this.updateRecycleButton();
@@ -142,6 +147,7 @@ export class RecyclerCatalogWidget extends CatalogWidget implements IRecyclerVis
         if((this.recycler?.secondsToWait() ?? 0) <= 0) this.stopTimer();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::renderSlotGraphics()
     private renderSlotGraphics(): void
     {
         const slotBg = this.getAssetBitmapData('ctlg_recycler_slot_bg');
@@ -173,6 +179,7 @@ export class RecyclerCatalogWidget extends CatalogWidget implements IRecyclerVis
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::renderDucketCost()
     private renderDucketCost(): void
     {
         if(this.window == null || this.recycler == null) return;
@@ -270,6 +277,7 @@ export class RecyclerCatalogWidget extends CatalogWidget implements IRecyclerVis
         this._awaitingImages?.delete(id);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::getFurniImageResult()
     private getFurniImageResult(slot: FurniSlotItem): ImageResult | null
     {
         const roomEngine = this.page?.viewer?.roomEngine;
@@ -282,6 +290,7 @@ export class RecyclerCatalogWidget extends CatalogWidget implements IRecyclerVis
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::get easterEggMode()
     private get easterEggMode(): boolean
     {
         const roomEngine = this.page?.viewer?.roomEngine;
@@ -445,11 +454,13 @@ export class RecyclerCatalogWidget extends CatalogWidget implements IRecyclerVis
         this.abortButtonVisible = false;
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::resetAnimation()
     private resetAnimation(): void
     {
         this._animator?.reset();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::set abortButtonVisible()
     private set abortButtonVisible(value: boolean)
     {
         const region = this.window.findChildByName('abort_region');
@@ -457,11 +468,13 @@ export class RecyclerCatalogWidget extends CatalogWidget implements IRecyclerVis
         if(region != null) region.visible = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::get disabledBorder()
     private get disabledBorder(): IWindowContainer | null
     {
         return this.window.findChildByName('disabled_border') as unknown as IWindowContainer | null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::get patFrankButton()
     private get patFrankButton(): IWindow | null
     {
         return this.window.findChildByName('pat_frank_btn');
@@ -475,6 +488,7 @@ export class RecyclerCatalogWidget extends CatalogWidget implements IRecyclerVis
         return this.window.findChildByName('emoji_1') as unknown as IStaticBitmapWrapperWindow | null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerCatalogWidget.as::get emoji2BitmapTemplate()
     private get emoji2BitmapTemplate(): IStaticBitmapWrapperWindow | null
     {
         return this.window.findChildByName('emoji_2_template') as unknown as IStaticBitmapWrapperWindow | null;

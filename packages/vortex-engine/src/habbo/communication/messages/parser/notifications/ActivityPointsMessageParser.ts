@@ -10,17 +10,20 @@ export class ActivityPointsMessageParser implements IMessageParser
 {
     private _points: Map<number, number> = new Map();
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ActivityPointsMessageEventParser.as::get points()
     get points(): Map<number, number>
     {
         return this._points;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ActivityPointsMessageEventParser.as::flush()
     flush(): boolean
     {
         this._points = new Map();
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ActivityPointsMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         const count = wrapper.readInt();

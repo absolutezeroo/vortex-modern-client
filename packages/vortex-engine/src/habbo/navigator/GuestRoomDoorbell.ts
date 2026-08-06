@@ -14,7 +14,9 @@ import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
  */
 export class GuestRoomDoorbell
 {
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomDoorbell.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomDoorbell.as::_window
     private _window: IWindow | null = null;
     private _roomData: GuestRoomData | null = null;
     private _isWaiting: boolean = false;
@@ -32,6 +34,7 @@ export class GuestRoomDoorbell
 	 * @param posY - Optional Y position
 	 * @param isWaiting - Whether to show in waiting mode
 	 */
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomDoorbell.as::show()
     show(roomData: GuestRoomData, posX: number = -1, posY: number = -1, isWaiting: boolean = false): void
     {
         if(!roomData) return;
@@ -77,6 +80,7 @@ export class GuestRoomDoorbell
     /**
 	 * Switches to the waiting state.
 	 */
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomDoorbell.as::showWaiting()
     showWaiting(): void
     {
         if(this._roomData)
@@ -88,6 +92,7 @@ export class GuestRoomDoorbell
     /**
 	 * Shows the no answer message.
 	 */
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomDoorbell.as::showNoAnswer()
     showNoAnswer(): void
     {
         if(!this._window) return;
@@ -98,6 +103,7 @@ export class GuestRoomDoorbell
         this.showButton('ring', false);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomDoorbell.as::hide()
     hide(): void
     {
         if(!this._window) return;
@@ -105,6 +111,7 @@ export class GuestRoomDoorbell
         this._window.visible = false;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomDoorbell.as::dispose()
     dispose(): void
     {
         if(this._window)
@@ -117,6 +124,7 @@ export class GuestRoomDoorbell
         this._roomData = null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomDoorbell.as::showButton()
     private showButton(name: string, visible: boolean): void
     {
         if(!this._window) return;
@@ -129,6 +137,7 @@ export class GuestRoomDoorbell
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomDoorbell.as::createWindow()
     private createWindow(): void
     {
         if(this._window) return;
@@ -160,6 +169,7 @@ export class GuestRoomDoorbell
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomDoorbell.as::setText()
     private setText(name: string, text: string): void
     {
         if(!this._window) return;

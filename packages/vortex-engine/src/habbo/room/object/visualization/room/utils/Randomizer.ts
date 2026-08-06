@@ -7,16 +7,23 @@
  */
 export class Randomizer
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::DEFAULT_SEED
     public static readonly DEFAULT_SEED: number = 1;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::DEFAULT_MODULUS
     public static readonly DEFAULT_MODULUS: number = 16777216;
 
     private static _instance: Randomizer | null = null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::_seed
     private _seed: number = 1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::_multiplier
     private _multiplier: number = 69069;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::_increment
     private _increment: number = 5;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::_modulus
     private _modulus: number = 16777216;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::setSeed()
     static setSeed(seed: number = 1): void
     {
         if(Randomizer._instance === null)
@@ -26,6 +33,7 @@ export class Randomizer
         Randomizer._instance._seed = seed;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::setModulus()
     static setModulus(modulus: number = 16777216): void
     {
         if(Randomizer._instance === null)
@@ -39,6 +47,7 @@ export class Randomizer
         Randomizer._instance._modulus = modulus;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::getValues()
     static getValues(count: number, min: number, max: number): number[]
     {
         if(Randomizer._instance === null)
@@ -48,6 +57,7 @@ export class Randomizer
         return Randomizer._instance.getRandomValues(count, min, max);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::getArray()
     static getArray(count: number, max: number): number[]
     {
         if(Randomizer._instance === null)
@@ -57,6 +67,7 @@ export class Randomizer
         return Randomizer._instance.getRandomArray(count, max);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::getRandomValues()
     private getRandomValues(count: number, min: number, max: number): number[]
     {
         const result: number[] = [];
@@ -67,6 +78,7 @@ export class Randomizer
         return result;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::getRandomArray()
     private getRandomArray(count: number, max: number): number[]
     {
         if(count > max || max > 1000)
@@ -88,6 +100,7 @@ export class Randomizer
         return result;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::iterate()
     private iterate(): number
     {
         let value = this._multiplier * this._seed + this._increment;
@@ -100,6 +113,7 @@ export class Randomizer
         return value;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/utils/Randomizer.as::iterateScaled()
     private iterateScaled(min: number, range: number): number
     {
         const value = this.iterate();

@@ -13,6 +13,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class UpdateGuildBadgeMessageComposer extends MessageComposer<unknown[]>
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/outgoing/users/UpdateGuildBadgeMessageComposer.as::_data
     private _data: unknown[] = [];
 
     // AS3: .../_SafeCls_3981.as::_SafeCls_3981()

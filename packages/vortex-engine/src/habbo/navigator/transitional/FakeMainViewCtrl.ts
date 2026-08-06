@@ -14,6 +14,7 @@ import type {HabboNavigator} from '../HabboNavigator';
  */
 export class FakeMainViewCtrl implements ITransitionalMainViewCtrl
 {
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::_newNavigator
     private _newNavigator: HabboNewNavigator | null;
     private _oldNavigator: HabboNavigator | null;
 
@@ -23,51 +24,61 @@ export class FakeMainViewCtrl implements ITransitionalMainViewCtrl
         this._oldNavigator = oldNavigator;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::get disposed()
     get disposed(): boolean
     {
         return this._newNavigator === null && this._oldNavigator === null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::get mainWindow()
     get mainWindow(): IWindow | null
     {
         return (this._newNavigator as any)?.mainWindow ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::get searchInput()
     get searchInput(): TextSearchInputs | null
     {
         return (this._oldNavigator as any)?.mainViewCtrl?.searchInput ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::get isPhaseOneNavigator()
     get isPhaseOneNavigator(): boolean
     {
         return (this._oldNavigator as any)?.mainViewCtrl?.isPhaseOneNavigator ?? false;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::onNavigatorToolBarIconClick()
     onNavigatorToolBarIconClick(): void
     {
         this._newNavigator?.toggle();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::open()
     open(): void
     {
         this._newNavigator?.open();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::isOpen()
     isOpen(): boolean
     {
         return false;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::close()
     close(): void
     {
         this._newNavigator?.close();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::refresh()
     refresh(): void
     {
         (this._newNavigator as any)?.refresh?.();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::reloadRoomList()
     reloadRoomList(_categoryId: number): boolean
     {
         (this._newNavigator as any)?.refresh?.();
@@ -83,6 +94,7 @@ export class FakeMainViewCtrl implements ITransitionalMainViewCtrl
 	 * @param query - Search query string
 	 * @param _param4 - Unused
 	 */
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::startSearch()
     startSearch(_param1: number, searchType: number, query: string = '-1', _param4: number = 1): void
     {
         const searchCode = this.getSearchCodeByLegacySearchType(searchType);
@@ -90,16 +102,19 @@ export class FakeMainViewCtrl implements ITransitionalMainViewCtrl
         this._newNavigator?.performSearch(searchCode, query);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::update()
     update(_time: number): void
     {
         // No-op
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::openAtPosition()
     openAtPosition(_x: number, _y: number): void
     {
         this._newNavigator?.open();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::dispose()
     dispose(): void
     {
         this._newNavigator = null;
@@ -112,6 +127,7 @@ export class FakeMainViewCtrl implements ITransitionalMainViewCtrl
 	 * @param searchType - Legacy search type
 	 * @returns New navigator search code string
 	 */
+    // AS3: sources/win63_version/habbo/navigator/transitional/FakeMainViewCtrl.as::getSearchCodeByLegacySearchType()
     private getSearchCodeByLegacySearchType(searchType: number): string
     {
         switch(searchType)

@@ -40,6 +40,7 @@ const log = Logger.getLogger('habbo.navigator.NewIncomingMessages');
  */
 export class NewIncomingMessages
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/NewIncomingMessages.as::_navigator
     private _navigator: HabboNewNavigator;
     private _messageEvents: IMessageEvent[] = [];
 
@@ -50,6 +51,7 @@ export class NewIncomingMessages
         this.addMessageListeners();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/NewIncomingMessages.as::get data()
     get data(): NavigatorData
     {
         return this._navigator.data;

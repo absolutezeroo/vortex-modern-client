@@ -24,6 +24,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 	 * Shared canvas for text measurement.
 	 */
     private static _measureCtx: OffscreenCanvasRenderingContext2D | null = null;
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::_textStyleName
     private _textStyleName: string = '';
     private _refreshing: boolean = false;
     private _marginLeft: number = 0;
@@ -76,13 +77,16 @@ export class TextLabelController extends WindowController implements ILabelWindo
         this._hasVisualContent = true;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::_text
     private _text: string = '';
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get text()
     public get text(): string
     {
         return this._text;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::set text()
     public set text(value: string)
     {
         if(value == null) return;
@@ -92,13 +96,16 @@ export class TextLabelController extends WindowController implements ILabelWindo
         this.refresh();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::_textColor
     private _textColor: number | null = null;
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get textColor()
     public get textColor(): number
     {
         return this._textColor ?? 0;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::set textColor()
     public set textColor(value: number)
     {
         if(value !== this._textColor)
@@ -108,8 +115,10 @@ export class TextLabelController extends WindowController implements ILabelWindo
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::_textWidth
     private _textWidth: number = 0;
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get textWidth()
     public get textWidth(): number
     {
         return this._textWidth;
@@ -117,6 +126,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _textHeight: number = 0;
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get textHeight()
     public get textHeight(): number
     {
         return this._textHeight;
@@ -124,11 +134,13 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _vertical: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get vertical()
     public get vertical(): boolean
     {
         return this._vertical;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::set vertical()
     public set vertical(value: boolean)
     {
         this._vertical = value;
@@ -137,6 +149,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _fontFace: string = '';
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get fontFace()
     public get fontFace(): string
     {
         return this._fontFace;
@@ -144,6 +157,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _fontSize: number = 12;
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get fontSize()
     public get fontSize(): number
     {
         return this._fontSize;
@@ -151,6 +165,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _bold: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get bold()
     public get bold(): boolean
     {
         return this._bold;
@@ -158,6 +173,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _italic: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get italic()
     public get italic(): boolean
     {
         return this._italic;
@@ -165,6 +181,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _underline: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get underline()
     public get underline(): boolean
     {
         return this._underline;
@@ -197,11 +214,13 @@ export class TextLabelController extends WindowController implements ILabelWindo
     /**
 	 * Whether a text color has been explicitly set.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get hasTextColor()
     public get hasTextColor(): boolean
     {
         return this._textColor !== null;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get textBackground()
     public get textBackground(): boolean
     {
         return this.background;
@@ -212,6 +231,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
         this.background = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get textBackgroundColor()
     public get textBackgroundColor(): number
     {
         return this.color;
@@ -222,6 +242,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
         this.color = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get length()
     public get length(): number
     {
         return this._text.length;
@@ -230,6 +251,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
     /**
 	 * Draw offset X (margin left).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get drawOffsetX()
     public get drawOffsetX(): number
     {
         return this._marginLeft;
@@ -238,6 +260,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
     /**
 	 * Draw offset Y (margin top).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get drawOffsetY()
     public get drawOffsetY(): number
     {
         return this._marginTop;
@@ -389,6 +412,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as refresh()
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::refresh()
     private refresh(fromResize: boolean = false): void
     {
         if(this._refreshing) return;

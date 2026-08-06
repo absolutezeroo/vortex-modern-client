@@ -12,8 +12,10 @@ export class CatalogWidgetSellablePetPalettesEvent
 {
     static readonly SELLABLE_PET_PALETTES: string = 'SELLABLE_PET_PALETTES';
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetSellablePetPalettesEvent.as::_productCode
     private _productCode: string;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetSellablePetPalettesEvent.as::_sellablePalettes
     private _sellablePalettes: SellablePetPalette[] | null;
 
     constructor(productCode: string, sellablePalettes: SellablePetPalette[] | null)

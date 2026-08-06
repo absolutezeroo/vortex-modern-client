@@ -69,6 +69,7 @@ export const ComponentFlags = {
  */
 interface IInterfaceStruct<T = unknown>
 {
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::iid
     iid: IID<T>;
     instance: unknown;
     references: number;
@@ -118,9 +119,11 @@ interface IInterfaceStruct<T = unknown>
  */
 export class Component implements IDisposable
 {
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::_lastError
     protected _lastError: string = '';
     protected _lastWarning: string = '';
     protected _lastDebug: string = '';
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::_context
     private readonly _context: IContext;
     private readonly _events: EventEmitter;
     private readonly _interfaces: Map<symbol, IInterfaceStruct> = new Map();
@@ -191,11 +194,13 @@ export class Component implements IDisposable
         this._constructionComplete = true;
     }
 
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::_assets
     private _assets: IAssetLibrary | null = null;
 
     /**
 	 * The asset library for this component
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::get assets()
     get assets(): IAssetLibrary | null
     {
         return this._assets;
@@ -206,16 +211,19 @@ export class Component implements IDisposable
     /**
 	 * Component flags
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::get flags()
     get flags(): number
     {
         return this._flags;
     }
 
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::_disposed
     protected _disposed: boolean = false;
 
     /**
 	 * Whether the component has been disposed
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -226,6 +234,7 @@ export class Component implements IDisposable
     /**
 	 * Whether the component is locked (waiting for dependencies)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::get locked()
     get locked(): boolean
     {
         return this._locked;
@@ -234,6 +243,7 @@ export class Component implements IDisposable
     /**
 	 * The context this component belongs to
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::get context()
     get context(): IContext
     {
         return this._context;
@@ -242,6 +252,7 @@ export class Component implements IDisposable
     /**
 	 * Event emitter for this component
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::get events()
     get events(): EventEmitter
     {
         return this._events;
@@ -251,7 +262,8 @@ export class Component implements IDisposable
 	 * Override this to declare component dependencies.
 	 * Called during construction.
 	 */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- variance: typed ComponentDependency<T> is contravariant in T
+     
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::get dependencies()
     protected get dependencies(): Array<ComponentDependency<any>>
     {
         return [];
@@ -260,6 +272,7 @@ export class Component implements IDisposable
     /**
 	 * Whether all required dependencies have been injected
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::get allRequiredDependenciesInjected()
     protected get allRequiredDependenciesInjected(): boolean
     {
         return this._requiredDependenciesCount === 0;
@@ -300,6 +313,7 @@ export class Component implements IDisposable
     /**
 	 * Dispose of this component
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -346,6 +360,7 @@ export class Component implements IDisposable
     /**
 	 * Purge cached data (override in subclass if needed)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::purge()
     purge(): void
     {
         // Override in subclass
@@ -354,6 +369,7 @@ export class Component implements IDisposable
     /**
 	 * Request an interface from the context
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::queueInterface()
     queueInterface<T>(iid: IID<T>, callback?: InterfaceCallback<T>): T | null
     {
         // Check if we provide this interface ourselves
@@ -389,6 +405,7 @@ export class Component implements IDisposable
     /**
 	 * Release a reference to an interface
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::release()
     release(iid: IID): number
     {
         if(this._disposed) return 0;
@@ -441,6 +458,7 @@ export class Component implements IDisposable
     /**
 	 * Check if a configuration property exists
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::propertyExists()
     propertyExists(key: string): boolean
     {
         return this._context.configuration?.propertyExists(key) ?? false;
@@ -449,6 +467,7 @@ export class Component implements IDisposable
     /**
 	 * Get a configuration property
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::getProperty()
     getProperty(key: string, params?: Record<string, string>): string
     {
         return this._context.configuration?.getProperty(key, params) ?? '';
@@ -457,6 +476,7 @@ export class Component implements IDisposable
     /**
 	 * Set a configuration property
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::setProperty()
     setProperty(key: string, value: string, persistent?: boolean, log?: boolean): void
     {
         this._context.configuration?.setProperty(key, value, persistent, log);
@@ -465,6 +485,7 @@ export class Component implements IDisposable
     /**
 	 * Get a boolean configuration property
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::getBoolean()
     getBoolean(key: string): boolean
     {
         return this._context.configuration?.getBoolean(key) ?? false;
@@ -503,6 +524,7 @@ export class Component implements IDisposable
     /**
 	 * Register this component to receive updates
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::registerUpdateReceiver()
     registerUpdateReceiver(receiver: IUpdateReceiver, priority: number): void
     {
         if(!this._disposed)
@@ -514,6 +536,7 @@ export class Component implements IDisposable
     /**
 	 * Remove this component from update receivers
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::removeUpdateReceiver()
     removeUpdateReceiver(receiver: IUpdateReceiver): void
     {
         if(!this._disposed)
@@ -525,6 +548,7 @@ export class Component implements IDisposable
     /**
 	 * String representation
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::toString()
     toString(): string
     {
         return `[Component ${this.constructor.name}]`;
@@ -534,6 +558,7 @@ export class Component implements IDisposable
 	 * Called when all required dependencies have been injected.
 	 * Override this to perform initialization that requires dependencies.
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::initComponent()
     protected initComponent(): void
     {
         // Override in subclass
@@ -542,6 +567,7 @@ export class Component implements IDisposable
     /**
 	 * Lock the component (waiting for dependencies)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::lock()
     protected lock(): void
     {
         if(!this._locked)
@@ -553,6 +579,7 @@ export class Component implements IDisposable
     /**
 	 * Unlock the component (all dependencies resolved)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::unlock()
     protected unlock(): void
     {
         if(this._locked)
@@ -566,6 +593,7 @@ export class Component implements IDisposable
     /**
 	 * Inject a single dependency
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::injectDependency()
     private injectDependency(dep: ComponentDependency): void
     {
         const callback = this.createDependencyCallback(dep);

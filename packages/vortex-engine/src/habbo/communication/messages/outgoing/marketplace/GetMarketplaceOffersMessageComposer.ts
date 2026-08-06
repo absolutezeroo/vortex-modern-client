@@ -14,6 +14,7 @@ export class GetMarketplaceOffersMessageComposer extends MessageComposer<Constru
         this._data = [minPrice, maxPrice, searchString, category, combineUniques];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1746/_SafeCls_1953.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -12,10 +12,12 @@ import type {ICatalogNode} from './navigation/ICatalogNode';
  */
 export class TopViewSelector
 {
+    // AS3: sources/win63_version/habbo/catalog/TopViewSelector.as::_catalog
     private _catalog: CatalogNavigator;
 
     private _tabTemplate: ITabButtonWindow;
 
+    // AS3: sources/win63_version/habbo/catalog/TopViewSelector.as::_tabContext
     private _tabContext: ITabContextWindow;
 
     constructor(catalog: CatalogNavigator, tabContext: ITabContextWindow)
@@ -29,6 +31,7 @@ export class TopViewSelector
         this._tabContext.removeTabItem(template);
     }
 
+    // AS3: sources/win63_version/habbo/catalog/TopViewSelector.as::addTabItem()
     addTabItem(node: ICatalogNode): void
     {
         const tab = this._tabTemplate.clone() as ITabButtonWindow;
@@ -40,6 +43,7 @@ export class TopViewSelector
         this.alignTabs();
     }
 
+    // AS3: sources/win63_version/habbo/catalog/TopViewSelector.as::alignTabs()
     private alignTabs(): void
     {
         for(let i = 0; i < this._tabContext.numTabItems; i++)
@@ -50,6 +54,7 @@ export class TopViewSelector
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/TopViewSelector.as::clearTabs()
     clearTabs(): void
     {
         while(this._tabContext.numTabItems > 0)
@@ -58,6 +63,7 @@ export class TopViewSelector
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/TopViewSelector.as::selectTabByIndex()
     selectTabByIndex(index: number): void
     {
         const tab = this._tabContext.getTabItemAt(index);
@@ -68,6 +74,7 @@ export class TopViewSelector
         this.selectTabButton(tab);
     }
 
+    // AS3: sources/win63_version/habbo/catalog/TopViewSelector.as::topViewSelectorButtonProcedure()
     private topViewSelectorButtonProcedure(event: WindowEvent, window: IWindow): void
     {
         if(event.type === 'WME_CLICK')
@@ -81,6 +88,7 @@ export class TopViewSelector
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/TopViewSelector.as::selectTabButton()
     private selectTabButton(tab: ITabButtonWindow | null): void
     {
         if(!tab) return;

@@ -21,39 +21,49 @@ export class MessageEvent implements IMessageEvent
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/core/communication/messages/MessageEvent.as::_callback
     protected _callback: MessageEventCallback;
 
+    // AS3: .../src/com/sulake/core/communication/messages/MessageEvent.as::get callback()
     get callback(): MessageEventCallback
     {
         return this._callback;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/communication/messages/MessageEvent.as::_connection
     protected _connection: IConnection | null = null;
 
+    // AS3: .../src/com/sulake/core/communication/messages/MessageEvent.as::get connection()
     get connection(): IConnection | null
     {
         return this._connection;
     }
 
+    // AS3: .../src/com/sulake/core/communication/messages/MessageEvent.as::set connection()
     set connection(value: IConnection | null)
     {
         this._connection = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/communication/messages/MessageEvent.as::_parserClass
     protected _parserClass: ParserClass;
 
+    // AS3: .../src/com/sulake/core/communication/messages/MessageEvent.as::get parserClass()
     get parserClass(): ParserClass
     {
         return this._parserClass;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/communication/messages/MessageEvent.as::_parser
     protected _parser: IMessageParser | null = null;
 
+    // AS3: .../src/com/sulake/core/communication/messages/MessageEvent.as::get parser()
     get parser(): IMessageParser | null
     {
         return this._parser;
     }
 
+    // AS3: .../src/com/sulake/core/communication/messages/MessageEvent.as::set parser()
     set parser(value: IMessageParser | null)
     {
         this._parser = value;
@@ -67,6 +77,7 @@ export class MessageEvent implements IMessageEvent
         return this._parser as T;
     }
 
+    // AS3: .../src/com/sulake/core/communication/messages/MessageEvent.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

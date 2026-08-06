@@ -5,5 +5,6 @@
  */
 export interface IDragAndDropDoneReceiver
 {
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_2050.as::onDragAndDropDone()
     onDragAndDropDone(success: boolean, extraParam: string): void;
 }

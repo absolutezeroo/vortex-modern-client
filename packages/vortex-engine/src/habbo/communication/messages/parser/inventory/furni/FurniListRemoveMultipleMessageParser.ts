@@ -10,11 +10,13 @@ export class FurniListRemoveMultipleMessageParser implements IMessageParser
 {
     private _stripIds: number[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/furni/FurniListRemoveMultipleEventParser.as::get stripIds()
     get stripIds(): number[]
     {
         return this._stripIds;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/furni/FurniListRemoveMultipleEventParser.as::flush()
     flush(): boolean
     {
         this._stripIds = [];
@@ -22,6 +24,7 @@ export class FurniListRemoveMultipleMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/furni/FurniListRemoveMultipleEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._stripIds = [];

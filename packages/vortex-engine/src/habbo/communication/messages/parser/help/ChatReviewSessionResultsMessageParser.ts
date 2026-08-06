@@ -10,6 +10,7 @@ export class ChatReviewSessionResultsMessageParser implements IMessageParser
 {
     private _winningVoteCode: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionResultsMessageEventParser.as::get winningVoteCode()
     get winningVoteCode(): number
     {
         return this._winningVoteCode;
@@ -17,6 +18,7 @@ export class ChatReviewSessionResultsMessageParser implements IMessageParser
 
     private _ownVoteCode: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionResultsMessageEventParser.as::get ownVoteCode()
     get ownVoteCode(): number
     {
         return this._ownVoteCode;
@@ -24,11 +26,13 @@ export class ChatReviewSessionResultsMessageParser implements IMessageParser
 
     private _finalStatus: Array<number> = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionResultsMessageEventParser.as::get finalStatus()
     get finalStatus(): Array<number>
     {
         return this._finalStatus;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionResultsMessageEventParser.as::flush()
     flush(): boolean
     {
         this._winningVoteCode = -1;
@@ -37,6 +41,7 @@ export class ChatReviewSessionResultsMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionResultsMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

@@ -19,13 +19,16 @@ export class ChatMessageEventParser implements IMessageParser
 {
     private _userId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/chat/ChatMessageEventParser.as::get userId()
     get userId(): number
     {
         return this._userId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/chat/ChatMessageEventParser.as::_text
     private _text: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/chat/ChatMessageEventParser.as::get text()
     get text(): string
     {
         return this._text;
@@ -33,6 +36,7 @@ export class ChatMessageEventParser implements IMessageParser
 
     private _gesture: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/chat/ChatMessageEventParser.as::get gesture()
     get gesture(): number
     {
         return this._gesture;
@@ -40,6 +44,7 @@ export class ChatMessageEventParser implements IMessageParser
 
     private _styleId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/chat/ChatMessageEventParser.as::get styleId()
     get styleId(): number
     {
         return this._styleId;
@@ -47,6 +52,7 @@ export class ChatMessageEventParser implements IMessageParser
 
     private _links: IChatLink[] | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/chat/ChatMessageEventParser.as::get links()
     get links(): IChatLink[] | null
     {
         return this._links;
@@ -54,11 +60,13 @@ export class ChatMessageEventParser implements IMessageParser
 
     private _trackingId: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/chat/ChatMessageEventParser.as::get trackingId()
     get trackingId(): number
     {
         return this._trackingId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/chat/ChatMessageEventParser.as::flush()
     flush(): boolean
     {
         this._userId = 0;
@@ -70,6 +78,7 @@ export class ChatMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/chat/ChatMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper === null)

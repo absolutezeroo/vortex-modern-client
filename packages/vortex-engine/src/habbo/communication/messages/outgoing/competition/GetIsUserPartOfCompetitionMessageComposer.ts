@@ -16,6 +16,7 @@ export class GetIsUserPartOfCompetitionMessageComposer extends MessageComposer<C
         this._data = [goalCode];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/competition/GetIsUserPartOfCompetitionMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

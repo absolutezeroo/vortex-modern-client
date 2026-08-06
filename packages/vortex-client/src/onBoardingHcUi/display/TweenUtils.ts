@@ -170,6 +170,7 @@ export class TweenUtils
      * `_arg_2` is the DELAY, `_arg_3` the duration — the alpha is zeroed first, so a call with a
      * delay hides the object until the fade starts.
      */
+    // AS3: .../src/com/sulake/habbo/utils/animation/TweenUtils.as::alphaTweenVisible()
     public static alphaTweenVisible(target: DisplayObject, delay: number, time: number, transition: string = 'linear'): Tween
     {
         target.alpha = 0;
@@ -186,6 +187,7 @@ export class TweenUtils
     /**
      * AS3: alphaTweenInvisible(_arg_1:DisplayObject, _arg_2:Number, _arg_3:Number, _arg_4:String="linear")
      */
+    // AS3: .../src/com/sulake/habbo/utils/animation/TweenUtils.as::alphaTweenInvisible()
     public static alphaTweenInvisible(target: DisplayObject, delay: number, time: number, transition: string = 'linear'): Tween
     {
         target.alpha = 1;

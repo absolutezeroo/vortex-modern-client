@@ -17,9 +17,11 @@ export class WindowToggle implements IDisposable
     // AS3: sources/win63_version/habbo/utils/WindowToggle.as::RESULT_HIDE
     public static readonly RESULT_HIDE: number = 2;
 
+    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::_window
     private _window: IWindow | null;
     private _container: IWindowContainer | null;
     private _showFunction: (() => void) | null;
+    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::_hideFunction
     private _hideFunction: (() => void) | null;
 
     // AS3: sources/win63_version/habbo/utils/WindowToggle.as::WindowToggle()
@@ -101,6 +103,7 @@ export class WindowToggle implements IDisposable
         return this.visible && !!this._window && this._window.getStateFlag(1);
     }
 
+    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: sources/win63_version/habbo/utils/WindowToggle.as::get disposed()

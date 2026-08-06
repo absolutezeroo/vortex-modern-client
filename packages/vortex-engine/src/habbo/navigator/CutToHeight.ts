@@ -8,10 +8,14 @@ import type {IBinarySearchTest} from './IBinarySearchTest';
  */
 export class CutToHeight implements IBinarySearchTest
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/CutToHeight.as::_value
     private _value: string = '';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/CutToHeight.as::_text
     private _text: ITextWindow | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/CutToHeight.as::_maxHeight
     private _maxHeight: number = 0;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/CutToHeight.as::test()
     test(index: number): boolean
     {
         if(!this._text) return false;

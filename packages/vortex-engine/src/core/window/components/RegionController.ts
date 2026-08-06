@@ -18,9 +18,13 @@ import type {WindowEvent} from '../events/WindowEvent';
  */
 export class RegionController extends ContainerController implements IRegionWindow
 {
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::KEY_TOOLTIP_CAPTION
     protected static readonly KEY_TOOLTIP_CAPTION: string = 'tool_tip_caption';
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::DEF_TOOLTIP_CAPTION
     protected static readonly DEF_TOOLTIP_CAPTION: string = '';
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::KEY_TOOLTIP_DELAY
     protected static readonly KEY_TOOLTIP_DELAY: string = 'tool_tip_delay';
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::DEF_TOOLTIP_DELAY
     protected static readonly DEF_TOOLTIP_DELAY: number = 500;
     protected _cursorMap: Map<number, number> | null = null;
 
@@ -44,11 +48,13 @@ export class RegionController extends ContainerController implements IRegionWind
 
     protected _toolTipDelay: number = 500;
 
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::get toolTipDelay()
     public get toolTipDelay(): number
     {
         return this._toolTipDelay;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::set toolTipDelay()
     public set toolTipDelay(value: number)
     {
         this._toolTipDelay = value;
@@ -56,11 +62,13 @@ export class RegionController extends ContainerController implements IRegionWind
 
     protected _toolTipCaption: string = '';
 
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::get toolTipCaption()
     public get toolTipCaption(): string
     {
         return this._toolTipCaption;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::set toolTipCaption()
     public set toolTipCaption(value: string)
     {
         this._toolTipCaption = value === null ? '' : value;
@@ -68,11 +76,13 @@ export class RegionController extends ContainerController implements IRegionWind
 
     protected _toolTipIsDynamic: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::get toolTipIsDynamic()
     public get toolTipIsDynamic(): boolean
     {
         return this._toolTipIsDynamic;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::set toolTipIsDynamic()
     public set toolTipIsDynamic(value: boolean)
     {
         this._toolTipIsDynamic = value;
@@ -80,11 +90,13 @@ export class RegionController extends ContainerController implements IRegionWind
 
     private _interactiveCursorDisabled: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::get interactiveCursorDisabled()
     public get interactiveCursorDisabled(): boolean
     {
         return this._interactiveCursorDisabled;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::set interactiveCursorDisabled()
     public set interactiveCursorDisabled(value: boolean)
     {
         this._interactiveCursorDisabled = value;
@@ -101,11 +113,13 @@ export class RegionController extends ContainerController implements IRegionWind
         super.properties = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::showToolTip()
     public showToolTip(_toolTip: IToolTipWindow): void
     {
         // No-op per AS3
     }
 
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::hideToolTip()
     public hideToolTip(): void
     {
         // No-op per AS3
@@ -116,6 +130,7 @@ export class RegionController extends ContainerController implements IRegionWind
 	 *
 	 * @returns The previous cursor type for that state
 	 */
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::setMouseCursorForState()
     public setMouseCursorForState(state: number, cursor: number): number
     {
         if(!this._cursorMap)
@@ -140,6 +155,7 @@ export class RegionController extends ContainerController implements IRegionWind
     /**
 	 * Gets the mouse cursor type for a given state.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/RegionController.as::getMouseCursorByState()
     public getMouseCursorByState(state: number): number
     {
         if(this.testStateFlag(32))

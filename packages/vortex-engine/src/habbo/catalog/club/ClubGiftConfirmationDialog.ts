@@ -13,6 +13,7 @@ import type {ClubGiftController} from './ClubGiftController';
  */
 export class ClubGiftConfirmationDialog
 {
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftConfirmationDialog.as::_offer
     private _offer: IPurchasableOffer | null;
 
     private _controller: ClubGiftController | null;
@@ -27,6 +28,7 @@ export class ClubGiftConfirmationDialog
         this.showConfirmation();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftConfirmationDialog.as::dispose()
     dispose(): void
     {
         this._controller = null;
@@ -35,6 +37,7 @@ export class ClubGiftConfirmationDialog
         this._window = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftConfirmationDialog.as::showConfirmation()
     showConfirmation(): void
     {
         if(!this._offer || !this._controller) return;
@@ -60,6 +63,7 @@ export class ClubGiftConfirmationDialog
         this._offer.productContainer.initProductIcon(this._controller.roomEngine!);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftConfirmationDialog.as::getProductName()
     private getProductName(): string
     {
         if(this._offer?.product)
@@ -92,6 +96,7 @@ export class ClubGiftConfirmationDialog
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftConfirmationDialog.as::createWindow()
     private createWindow(name: string): IWindowContainer | null
     {
         if(!this._controller?.assets || !this._controller?.windowManager) return null;

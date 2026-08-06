@@ -20,22 +20,33 @@ const log = Logger.getLogger('habbo.catalog.viewer.Offer');
  */
 export class Offer implements IPurchasableOffer
 {
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::PRICING_MODEL_UNKNOWN
     static readonly PRICING_MODEL_UNKNOWN: string = 'pricing_model_unknown';
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::PRICING_MODEL_SINGLE
     static readonly PRICING_MODEL_SINGLE: string = 'pricing_model_single';
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::PRICING_MODEL_MULTI
     static readonly PRICING_MODEL_MULTI: string = 'pricing_model_multi';
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::PRICING_MODEL_BUNDLE
     static readonly PRICING_MODEL_BUNDLE: string = 'pricing_model_bundle';
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::PRICING_MODEL_FURNI
     static readonly PRICING_MODEL_FURNI: string = 'pricing_model_furniture';
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::PRICE_TYPE_NONE
     static readonly PRICE_TYPE_NONE: string = 'price_type_none';
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::PRICE_TYPE_CREDITS
     static readonly PRICE_TYPE_CREDITS: string = 'price_type_credits';
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::PRICE_TYPE_ACTIVITYPOINTS
     static readonly PRICE_TYPE_ACTIVITYPOINTS: string = 'price_type_activitypoints';
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::PRICE_TYPE_CREDITS_AND_ACTIVITYPOINTS
     static readonly PRICE_TYPE_CREDITS_AND_ACTIVITYPOINTS: string = 'price_type_credits_and_activitypoints';
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::PRICE_TYPE_SILVER
     static readonly PRICE_TYPE_SILVER: string = 'price_type_silver';
 
     private _pricingModel: string = Offer.PRICING_MODEL_UNKNOWN;
 
     private _priceType: string = Offer.PRICE_TYPE_NONE;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::_offerId
     private _offerId: number;
 
     private _localizationId: string;
@@ -56,6 +67,7 @@ export class Offer implements IPurchasableOffer
 
     private _productContainer: IProductContainer | null = null;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::_disposed
     private _disposed: boolean = false;
 
     private _clubLevel: number = 0;
@@ -66,6 +78,7 @@ export class Offer implements IPurchasableOffer
 
     private _bundlePurchaseAllowed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _isSingleChatStyle: boolean;
@@ -126,101 +139,121 @@ export class Offer implements IPurchasableOffer
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get clubLevel()
     get clubLevel(): number
     {
         return this._clubLevel;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get page()
     get page(): ICatalogPage
     {
         return this._page!;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::set page()
     set page(page: ICatalogPage)
     {
         this._page = page;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get offerId()
     get offerId(): number
     {
         return this._offerId;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get localizationId()
     get localizationId(): string
     {
         return this._localizationId;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get priceInCredits()
     get priceInCredits(): number
     {
         return this._priceInCredits;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get priceInActivityPoints()
     get priceInActivityPoints(): number
     {
         return this._priceInActivityPoints;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get activityPointType()
     get activityPointType(): number
     {
         return this._activityPointType;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get priceInSilver()
     get priceInSilver(): number
     {
         return this._priceInSilver;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get giftable()
     get giftable(): boolean
     {
         return this._giftable;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get productContainer()
     get productContainer(): IProductContainer
     {
         return this._productContainer!;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get product()
     get product(): IProduct | null
     {
         return this._productContainer ? this._productContainer.firstProduct : null;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get gridItem()
     get gridItem(): IGridItem
     {
         return this._productContainer as unknown as IGridItem;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get pricingModel()
     get pricingModel(): string
     {
         return this._pricingModel;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get priceType()
     get priceType(): string
     {
         return this._priceType;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get previewCallbackId()
     get previewCallbackId(): number
     {
         return this._previewCallbackId;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::set previewCallbackId()
     set previewCallbackId(value: number)
     {
         this._previewCallbackId = value;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get bundlePurchaseAllowed()
     get bundlePurchaseAllowed(): boolean
     {
         return this._bundlePurchaseAllowed;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get isRentOffer()
     get isRentOffer(): boolean
     {
         return this._isRentOffer;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -241,11 +274,13 @@ export class Offer implements IPurchasableOffer
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::createProductContainer()
     private createProductContainer(products: IProduct[]): void
     {
         switch(this._pricingModel)
@@ -265,6 +300,7 @@ export class Offer implements IPurchasableOffer
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::analyzePricingModel()
     private analyzePricingModel(products: IProduct[]): void
     {
         if(this.isSingleChatStyle)
@@ -290,11 +326,13 @@ export class Offer implements IPurchasableOffer
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get isSingleChatStyle()
     get isSingleChatStyle(): boolean
     {
         return this._isSingleChatStyle;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::analyzePriceType()
     private analyzePriceType(): void
     {
         if(this._priceInCredits > 0 && this._priceInActivityPoints > 0)
@@ -319,6 +357,7 @@ export class Offer implements IPurchasableOffer
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::clone()
     clone(): Offer
     {
         const productData = this._catalog!.getProductData(this.localizationId);
@@ -359,16 +398,19 @@ export class Offer implements IPurchasableOffer
         return clone;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get badgeCode()
     get badgeCode(): string
     {
         return this._badgeCode ?? '';
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get extraChatStyleCode()
     get extraChatStyleCode(): string
     {
         return this._extraChatStyleCode ?? '';
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get localizationName()
     get localizationName(): string
     {
         const productData = this._catalog!.getProductData(this._localizationId);
@@ -376,6 +418,7 @@ export class Offer implements IPurchasableOffer
         return productData ? productData.name : '${' + this._localizationId + '}';
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get localizationDescription()
     get localizationDescription(): string
     {
         const productData = this._catalog!.getProductData(this._localizationId);
@@ -383,6 +426,7 @@ export class Offer implements IPurchasableOffer
         return productData ? productData.description : '${' + this._localizationId + '}';
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Offer.as::get priceInEmerald()
     get priceInEmerald(): number
     {
         return 0;

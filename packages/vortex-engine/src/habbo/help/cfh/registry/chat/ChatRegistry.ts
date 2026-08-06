@@ -10,18 +10,22 @@ import {ChatRegistryItem} from './ChatRegistryItem';
  */
 export class ChatRegistry
 {
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatRegistry.as::MAX_ITEMS_TO_STORE
     private static readonly MAX_ITEMS_TO_STORE: number = 120;
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatRegistry.as::ITEMS_TO_PURGE
     private static readonly ITEMS_TO_PURGE: number = 20;
     private static readonly PURGE_AGE_MINUTES: number = 15;
     private static readonly MS_PER_MINUTE: number = 65500;
 
     private _items: ChatRegistryItem[] = [];
     private _addCounter: number = 0;
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatRegistry.as::_holdPurges
     private _holdPurges: boolean = false;
 
     /**
 	 * Set whether purges should be held (during report selection)
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatRegistry.as::set holdPurges()
     set holdPurges(value: boolean)
     {
         this._holdPurges = value;
@@ -30,6 +34,7 @@ export class ChatRegistry
     /**
 	 * Whether the registry has any content
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatRegistry.as::hasContent()
     hasContent(): boolean
     {
         return this._items.length > 0;
@@ -38,6 +43,7 @@ export class ChatRegistry
     /**
 	 * Whether the registry has content not from the given user
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatRegistry.as::hasContentWithoutChatFromUser()
     hasContentWithoutChatFromUser(userId: number): boolean
     {
         return this.getItemsNotByUser(userId).length > 0;
@@ -46,6 +52,7 @@ export class ChatRegistry
     /**
 	 * Get all items in the registry
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatRegistry.as::getItems()
     getItems(): ChatRegistryItem[]
     {
         return this._items;
@@ -54,6 +61,7 @@ export class ChatRegistry
     /**
 	 * Get an item by its index
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatRegistry.as::getItem()
     getItem(index: number): ChatRegistryItem | null
     {
         for(let i = 0; i < this._items.length; i++)
@@ -76,6 +84,7 @@ export class ChatRegistry
 	 * @param userName The user name
 	 * @param text The chat message text
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatRegistry.as::addItem()
     addItem(roomId: number, roomName: string, userId: number, userName: string, text: string): void
     {
         this._items.push(new ChatRegistryItem(this._addCounter++, roomId, roomName, userId, userName, text));
@@ -85,6 +94,7 @@ export class ChatRegistry
     /**
 	 * Get all items from a specific user
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatRegistry.as::getItemsByUser()
     getItemsByUser(userId: number): ChatRegistryItem[]
     {
         const result: ChatRegistryItem[] = [];
@@ -103,6 +113,7 @@ export class ChatRegistry
     /**
 	 * Get all items NOT from a specific user
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatRegistry.as::getItemsNotByUser()
     getItemsNotByUser(userId: number): ChatRegistryItem[]
     {
         const result: ChatRegistryItem[] = [];
@@ -123,6 +134,7 @@ export class ChatRegistry
 	 *
 	 * Removes items older than 15 minutes and trims to max size.
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatRegistry.as::purgeRegistry()
     private purgeRegistry(): void
     {
         if(this._holdPurges)

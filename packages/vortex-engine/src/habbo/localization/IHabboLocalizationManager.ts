@@ -55,6 +55,7 @@ export interface IHabboLocalizationManager extends ICoreLocalizationManager
     /**
 	 * Get localization with varargs parameters
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/localization/IHabboLocalizationManager.as::getLocalizationWithParams()
     getLocalizationWithParams(key: string, defaultValue?: string, ...params: string[]): string;
 
     /**
@@ -85,11 +86,13 @@ export interface IHabboLocalizationManager extends ICoreLocalizationManager
     /**
 	 * Get badge display name
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/localization/IHabboLocalizationManager.as::getBadgeName()
     getBadgeName(badgeId: string): string;
 
     /**
 	 * Get badge description
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/localization/IHabboLocalizationManager.as::getBadgeDesc()
     getBadgeDesc(badgeId: string): string;
 
     /**

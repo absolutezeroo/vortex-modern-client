@@ -25,30 +25,37 @@ export class BadgeBaseAndLevel
         }
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/localization/BadgeBaseAndLevel.as::_base
     private _base: string = '';
 
+    // AS3: .../src/com/sulake/habbo/localization/BadgeBaseAndLevel.as::get base()
     get base(): string
     {
         return this._base;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/localization/BadgeBaseAndLevel.as::_level
     private _level: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/localization/BadgeBaseAndLevel.as::get level()
     get level(): number
     {
         return this._level;
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/BadgeBaseAndLevel.as::set level()
     set level(value: number)
     {
         this._level = Math.max(1, value);
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/BadgeBaseAndLevel.as::get badgeId()
     get badgeId(): string
     {
         return this._base + this._level;
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/BadgeBaseAndLevel.as::isNumber()
     private isNumber(char: string): boolean
     {
         const code = char.charCodeAt(0);

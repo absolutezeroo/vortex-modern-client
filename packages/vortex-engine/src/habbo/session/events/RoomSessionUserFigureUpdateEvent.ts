@@ -39,6 +39,7 @@ export class RoomSessionUserFigureUpdateEvent extends RoomSessionEvent
 
     private _figure: string;
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionUserFigureUpdateEvent.as::get figure()
     get figure(): string
     {
         return this._figure;
@@ -51,15 +52,19 @@ export class RoomSessionUserFigureUpdateEvent extends RoomSessionEvent
         return this._sex;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionUserFigureUpdateEvent.as::_customInfo
     private _customInfo: string;
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionUserFigureUpdateEvent.as::get customInfo()
     get customInfo(): string
     {
         return this._customInfo;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionUserFigureUpdateEvent.as::_achievementScore
     private _achievementScore: number;
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionUserFigureUpdateEvent.as::get achievementScore()
     get achievementScore(): number
     {
         return this._achievementScore;

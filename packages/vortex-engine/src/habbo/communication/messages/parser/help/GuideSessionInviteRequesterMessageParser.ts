@@ -16,6 +16,7 @@ export class GuideSessionInviteRequesterMessageParser implements IMessageParser
         return this._roomId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionInvitedToGuideRoomMessageEventParser.as::_roomName
     private _roomName: string = '';
 
     get roomName(): string
@@ -23,6 +24,7 @@ export class GuideSessionInviteRequesterMessageParser implements IMessageParser
         return this._roomName;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionInvitedToGuideRoomMessageEventParser.as::flush()
     flush(): boolean
     {
         this._roomId = 0;
@@ -30,6 +32,7 @@ export class GuideSessionInviteRequesterMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionInvitedToGuideRoomMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

@@ -10,13 +10,16 @@ export class CampaignCalendarDoorOpenedMessageParser implements IMessageParser
 {
     private _doorOpened: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/campaign/CampaignCalendarDoorOpenedMessageEventParser.as::get doorOpened()
     get doorOpened(): boolean
     {
         return this._doorOpened;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/campaign/CampaignCalendarDoorOpenedMessageEventParser.as::_productName
     private _productName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/campaign/CampaignCalendarDoorOpenedMessageEventParser.as::get productName()
     get productName(): string
     {
         return this._productName;
@@ -24,6 +27,7 @@ export class CampaignCalendarDoorOpenedMessageParser implements IMessageParser
 
     private _customImage: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/campaign/CampaignCalendarDoorOpenedMessageEventParser.as::get customImage()
     get customImage(): string
     {
         return this._customImage;
@@ -31,11 +35,13 @@ export class CampaignCalendarDoorOpenedMessageParser implements IMessageParser
 
     private _furnitureClassName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/campaign/CampaignCalendarDoorOpenedMessageEventParser.as::get furnitureClassName()
     get furnitureClassName(): string
     {
         return this._furnitureClassName;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/campaign/CampaignCalendarDoorOpenedMessageEventParser.as::flush()
     flush(): boolean
     {
         this._doorOpened = false;
@@ -45,6 +51,7 @@ export class CampaignCalendarDoorOpenedMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/campaign/CampaignCalendarDoorOpenedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

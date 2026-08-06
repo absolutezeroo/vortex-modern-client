@@ -16,6 +16,7 @@ export class GetLimitedOfferAppearingNextComposer extends MessageComposer<Constr
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/catalog/GetLimitedOfferAppearingNextComposer.as::getMessageArray()
     getMessageArray(): []
     {
         return this._data;

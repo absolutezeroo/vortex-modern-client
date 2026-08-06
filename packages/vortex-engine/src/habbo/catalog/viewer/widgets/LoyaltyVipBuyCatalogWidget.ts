@@ -23,8 +23,10 @@ export class LoyaltyVipBuyCatalogWidget extends CatalogWidget implements IVipBuy
 {
     private _controller: ClubBuyController | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as::_offers
     private _offers: VipBuyItem[] = [];
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
     constructor(window: IWindowContainer, catalog: HabboCatalog)
@@ -34,6 +36,7 @@ export class LoyaltyVipBuyCatalogWidget extends CatalogWidget implements IVipBuy
         this._catalog = catalog;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as::get isGift()
     get isGift(): boolean
     {
         return false;
@@ -61,6 +64,7 @@ export class LoyaltyVipBuyCatalogWidget extends CatalogWidget implements IVipBuy
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as::reset()
     reset(): void
     {
         for(const item of this._offers)
@@ -71,6 +75,7 @@ export class LoyaltyVipBuyCatalogWidget extends CatalogWidget implements IVipBuy
         this._offers = [];
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as::initClubType()
     initClubType(clubType: number): void
     {
         if(this.disposed) return;
@@ -111,6 +116,7 @@ export class LoyaltyVipBuyCatalogWidget extends CatalogWidget implements IVipBuy
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as::initLinks()
     private initLinks(): void
     {
         if(!this.window) return;
@@ -129,6 +135,7 @@ export class LoyaltyVipBuyCatalogWidget extends CatalogWidget implements IVipBuy
         this._catalog?.utils.showVipBenefits();
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as::showOffer()
     showOffer(offer: ClubBuyOfferData): void
     {
         if(this.disposed || !offer.vip) return;

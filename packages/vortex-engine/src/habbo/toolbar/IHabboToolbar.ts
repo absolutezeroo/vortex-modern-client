@@ -22,11 +22,13 @@ export interface IHabboToolbar
     /**
 	 * The extension view container for toolbar extensions
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IHabboToolbar.as::get extensionView()
     readonly extensionView: IExtensionView | null;
 
     /**
 	 * The width of the toolbar area
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IHabboToolbar.as::get toolBarAreaWidth()
     readonly toolBarAreaWidth: number;
 
     /**
@@ -45,6 +47,7 @@ export interface IHabboToolbar
 	 *
 	 * @param state One of HabboToolbarEnum state constants
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IHabboToolbar.as::setToolbarState()
     setToolbarState(state: string): void;
 
     /**
@@ -53,6 +56,7 @@ export interface IHabboToolbar
 	 * @param iconId Icon identifier
 	 * @returns Rectangle-like object with position, or null
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IHabboToolbar.as::getIconLocation()
     getIconLocation(iconId: string): { x: number; y: number; width: number; height: number } | null;
 
     /**
@@ -61,6 +65,7 @@ export interface IHabboToolbar
 	 * @param iconId Icon identifier
 	 * @param bitmap Bitmap data (implementation-specific)
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IHabboToolbar.as::setIconBitmap()
     setIconBitmap(iconId: string, bitmap: unknown): void;
 
     /**
@@ -68,6 +73,7 @@ export interface IHabboToolbar
 	 *
 	 * @returns Rectangle-like object with toolbar bounds
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IHabboToolbar.as::getRect()
     getRect(): { x: number; y: number; width: number; height: number };
 
     /**
@@ -76,6 +82,7 @@ export interface IHabboToolbar
 	 * @param iconId Icon identifier
 	 * @param visible Whether the icon should be visible
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IHabboToolbar.as::setIconVisibility()
     setIconVisibility(iconId: string, visible: boolean): void;
 
     /**
@@ -83,6 +90,7 @@ export interface IHabboToolbar
 	 *
 	 * @param iconName Icon name to toggle
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IHabboToolbar.as::toggleWindowVisibility()
     toggleWindowVisibility(iconName: string): void;
 
     /**
@@ -98,6 +106,7 @@ export interface IHabboToolbar
 	 * @returns The fly motion, or null if the icon was not found
 	 * @see sources/win63_version/habbo/toolbar/IHabboToolbar.as createTransitionToIcon()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IHabboToolbar.as::createTransitionToIcon()
     createTransitionToIcon(iconId: string, bitmap: ImageBitmap | null, startX: number, startY: number): Motion | null;
 
     /**

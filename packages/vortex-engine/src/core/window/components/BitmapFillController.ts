@@ -34,7 +34,9 @@ export class BitmapFillController extends StaticBitmapWrapperController
     // (see BubbleController for the same pattern) — here primed from the
     // theme's property defaults, matching the AS3 constructor which reads
     // them before calling super().
+    // AS3: .../src/com/sulake/core/window/components/BitmapFillController.as::_fillMode
     private _fillMode: string | null = null;
+    // AS3: .../src/com/sulake/core/window/components/BitmapFillController.as::_tint
     private _tint: boolean | null = null;
     private _spacing: number | null = null;
 
@@ -81,6 +83,7 @@ export class BitmapFillController extends StaticBitmapWrapperController
         return Number.isNaN(value) ? 0 : Math.max(0, value);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapFillController.as::parseBoolean()
     private static parseBoolean(value: unknown): boolean
     {
         if(typeof value === 'boolean')

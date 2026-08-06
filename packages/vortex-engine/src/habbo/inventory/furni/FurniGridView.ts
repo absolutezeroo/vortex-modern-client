@@ -33,12 +33,18 @@ export class FurniGridView
     private _pageList: IItemListWindow | null;
     private _pageTemplate: IRegionWindow | null = null;
 
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_items
     private _items: GroupItem[] = [];
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_passedItems
     private _passedItems: GroupItem[] = [];
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_currentPageItems
     private _currentPageItems: GroupItem[] = [];
 
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_showFloorItems
     private _showFloorItems: boolean = true;
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_showWallItems
     private _showWallItems: boolean = true;
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_showingRentedItems
     private _showingRentedItems: boolean = false;
     private _mergeRentFurni: boolean = false;
     private _showingNfts: boolean = true;
@@ -76,6 +82,7 @@ export class FurniGridView
         return this._currentPageItems;
     }
 
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::get pageCount()
     private get pageCount(): number
     {
         return Math.floor(this._passedItems.length / this._itemsPerPage) + 1;
@@ -140,6 +147,7 @@ export class FurniGridView
         this.update();
     }
 
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::update()
     private update(): void
     {
         let currentItems = this._items.filter((item) => this.passFilter(item));
@@ -179,6 +187,7 @@ export class FurniGridView
         this.updatePaging();
     }
 
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::changeToPage()
     private changeToPage(page: number, force: boolean = false): void
     {
         if(page > -1)
@@ -213,6 +222,7 @@ export class FurniGridView
         }
     }
 
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::updatePaging()
     private updatePaging(): void
     {
         if(!this._pageList) return;

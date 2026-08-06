@@ -15,13 +15,16 @@ import {RoomObjectMoveEvent} from '../../events/RoomObjectMoveEvent';
 
 export class MovingObjectLogic extends ObjectLogicBase
 {
+    // AS3: .../src/com/sulake/habbo/room/object/logic/MovingObjectLogic.as::DEFAULT_UPDATE_INTERVAL
     public static readonly DEFAULT_UPDATE_INTERVAL = 500;
 
     private static readonly _helperVector: Vector3d = new Vector3d();
 
     private _delta: Vector3d = new Vector3d();
     private _location: Vector3d = new Vector3d();
+    // AS3: .../src/com/sulake/habbo/room/object/logic/MovingObjectLogic.as::_liftAmount
     private _liftAmount: number = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/MovingObjectLogic.as::_changeTime
     private _changeTime: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/MovingObjectLogic.as::_overshootTime
@@ -78,8 +81,10 @@ export class MovingObjectLogic extends ObjectLogicBase
         this._curveStrength = curve;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/MovingObjectLogic.as::_lastUpdateTime
     private _lastUpdateTime: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/MovingObjectLogic.as::get lastUpdateTime()
     protected get lastUpdateTime(): number
     {
         return this._lastUpdateTime;
@@ -259,6 +264,7 @@ export class MovingObjectLogic extends ObjectLogicBase
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/MovingObjectLogic.as::getLocationOffset()
     protected getLocationOffset(): IVector3d | null
     {
         return null;

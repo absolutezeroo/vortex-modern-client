@@ -10,6 +10,7 @@ export class AvatarEffectMessageEventParser implements IMessageParser
 {
     private _userId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/AvatarEffectMessageEventParser.as::get userId()
     get userId(): number
     {
         return this._userId;
@@ -17,6 +18,7 @@ export class AvatarEffectMessageEventParser implements IMessageParser
 
     private _effectId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/AvatarEffectMessageEventParser.as::get effectId()
     get effectId(): number
     {
         return this._effectId;
@@ -24,11 +26,13 @@ export class AvatarEffectMessageEventParser implements IMessageParser
 
     private _delayMilliSeconds: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/AvatarEffectMessageEventParser.as::get delayMilliSeconds()
     get delayMilliSeconds(): number
     {
         return this._delayMilliSeconds;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/AvatarEffectMessageEventParser.as::flush()
     flush(): boolean
     {
         this._userId = 0;
@@ -37,6 +41,7 @@ export class AvatarEffectMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/AvatarEffectMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper === null)

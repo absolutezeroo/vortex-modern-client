@@ -8,12 +8,16 @@ export class CatalogWidgetMultiColoursEvent
 {
     static readonly MULTI_COLOUR_ARRAY: string = 'MULTI_COLOUR_ARRAY';
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetMultiColoursEvent.as::_colours
     private _colours: number[][];
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetMultiColoursEvent.as::_backgroundAssetName
     private _backgroundAssetName: string;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetMultiColoursEvent.as::_colourAssetName
     private _colourAssetName: string;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetMultiColoursEvent.as::_chosenColourAssetName
     private _chosenColourAssetName: string;
 
     constructor(
@@ -34,21 +38,25 @@ export class CatalogWidgetMultiColoursEvent
         return CatalogWidgetMultiColoursEvent.MULTI_COLOUR_ARRAY;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetMultiColoursEvent.as::get colours()
     get colours(): number[][]
     {
         return this._colours;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetMultiColoursEvent.as::get backgroundAssetName()
     get backgroundAssetName(): string
     {
         return this._backgroundAssetName;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetMultiColoursEvent.as::get colourAssetName()
     get colourAssetName(): string
     {
         return this._colourAssetName;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetMultiColoursEvent.as::get chosenColourAssetName()
     get chosenColourAssetName(): string
     {
         return this._chosenColourAssetName;

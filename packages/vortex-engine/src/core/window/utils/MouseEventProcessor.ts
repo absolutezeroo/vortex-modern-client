@@ -34,7 +34,9 @@ export class MouseEventProcessor
     private _clickAwayTarget: WindowController | null = null;
     private _renderer: IWindowRenderer | null = null;
     private _desktop: IDesktopWindow | null = null;
+    // AS3: sources/win63_version/core/window/utils/MouseEventProcessor.as::_eventTrackers
     private _eventTrackers: IInputEventTracker[] = [];
+    // AS3: sources/win63_version/core/window/utils/MouseEventProcessor.as::_disposed
     private _disposed: boolean = false;
     private _absMouseX: number = -1;
     private _absMouseY: number = -1;
@@ -59,6 +61,7 @@ export class MouseEventProcessor
         this._lastClickTarget = value as WindowController | null;
     }
 
+    // AS3: sources/win63_version/core/window/utils/MouseEventProcessor.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -74,6 +77,7 @@ export class MouseEventProcessor
         return this._absMouseY;
     }
 
+    // AS3: sources/win63_version/core/window/utils/MouseEventProcessor.as::setMouseCursorByState()
     public static setMouseCursorByState(stateFlag: number, cursorType: number): void
     {
         const index = MouseEventProcessor._stateFlags.indexOf(stateFlag);
@@ -84,6 +88,7 @@ export class MouseEventProcessor
         }
     }
 
+    // AS3: sources/win63_version/core/window/utils/MouseEventProcessor.as::getMouseCursorByState()
     public static getMouseCursorByState(state: number): number
     {
         let i = MouseEventProcessor._stateFlags.length;
@@ -138,6 +143,7 @@ export class MouseEventProcessor
         }
     }
 
+    // AS3: sources/win63_version/core/window/utils/MouseEventProcessor.as::process()
     public process(state: EventProcessorState, queue: MouseEventQueue): void
     {
         if(queue.length === 0)
@@ -379,6 +385,7 @@ export class MouseEventProcessor
         state.eventTrackers = this._eventTrackers;
     }
 
+    // AS3: sources/win63_version/core/window/utils/MouseEventProcessor.as::passMouseEvent()
     private passMouseEvent(window: WindowController, entry: IMouseEventEntry, fromParent: boolean = false): WindowController | null
     {
         if(window.disposed)
@@ -509,6 +516,7 @@ export class MouseEventProcessor
         return handled;
     }
 
+    // AS3: sources/win63_version/core/window/utils/MouseEventProcessor.as::convertMouseEventType()
     private convertMouseEventType(
         entry: IMouseEventEntry,
         target: IWindow,
@@ -676,6 +684,7 @@ export class MouseEventProcessor
         }
     }
 
+    // AS3: sources/win63_version/core/window/utils/MouseEventProcessor.as::dispose()
     public dispose(): void
     {
         if(!this._disposed)

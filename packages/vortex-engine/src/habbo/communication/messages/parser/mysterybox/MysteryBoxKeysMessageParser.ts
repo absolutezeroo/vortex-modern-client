@@ -8,20 +8,25 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class MysteryBoxKeysMessageParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/mysterybox/MysteryBoxKeysMessageEventParser.as::_boxColor
     private _boxColor: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/mysterybox/MysteryBoxKeysMessageEventParser.as::get boxColor()
     get boxColor(): string
     {
         return this._boxColor;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/mysterybox/MysteryBoxKeysMessageEventParser.as::_keyColor
     private _keyColor: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/mysterybox/MysteryBoxKeysMessageEventParser.as::get keyColor()
     get keyColor(): string
     {
         return this._keyColor;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/mysterybox/MysteryBoxKeysMessageEventParser.as::flush()
     flush(): boolean
     {
         this._boxColor = '';
@@ -29,6 +34,7 @@ export class MysteryBoxKeysMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/mysterybox/MysteryBoxKeysMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._boxColor = wrapper.readString();

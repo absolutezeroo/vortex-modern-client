@@ -20,10 +20,14 @@ const SPACING = 2;
 
 export class RoomToolsHistory
 {
+    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::_windowManager
     private _windowManager: IHabboWindowManager | null;
+    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::_assets
     private _assets: IAssetLibrary | null;
+    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::_window
     private _window: IWindowContainer | null;
     private _handler: RoomToolsWidgetHandler | null;
+    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::_items
     private _items: IWindow[] = [];
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::RoomToolsHistory()

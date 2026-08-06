@@ -56,6 +56,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
     /**
      * Gets whether auto-hide scrollbar is enabled.
      */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get autoHideScrollBar()
     public get autoHideScrollBar(): boolean 
     {
         return this._autoHideScrollBar;
@@ -64,12 +65,14 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
     /**
      * Sets whether auto-hide scrollbar is enabled.
      */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::set autoHideScrollBar()
     public set autoHideScrollBar(value: boolean) 
     {
         this._autoHideScrollBar = value;
         this.updateScrollBarVisibility(true);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get isScrollBarVisible()
     public get isScrollBarVisible(): boolean 
     {
         return (this.scrollBar as unknown as IWindow | null)?.visible ?? false;
@@ -78,6 +81,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
     /**
      * Gets whether items auto-arrange.
      */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get autoArrangeItems()
     public get autoArrangeItems(): boolean 
     {
         return this.itemList?.autoArrangeItems ?? true;
@@ -86,6 +90,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
     /**
      * Sets whether items auto-arrange.
      */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::set autoArrangeItems()
     public set autoArrangeItems(value: boolean) 
     {
         if(this.itemList) this.itemList.autoArrangeItems = value;
@@ -94,6 +99,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
     /**
      * Gets the spacing between items.
      */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get spacing()
     public get spacing(): number 
     {
         return this.itemList?.spacing ?? 0;
@@ -102,11 +108,13 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
     /**
      * Sets the spacing between items.
      */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::set spacing()
     public set spacing(value: number) 
     {
         if(this.itemList) this.itemList.spacing = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get numListItems()
     public get numListItems(): number 
     {
         return this.itemList?.numListItems ?? 0;
@@ -122,6 +130,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         return this.itemList?.lastListItem ?? null;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get isPartOfGridWindow()
     public get isPartOfGridWindow(): boolean 
     {
         return this.itemList?.isPartOfGridWindow ?? false;
@@ -133,71 +142,85 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         if(this.itemList) this.itemList.isPartOfGridWindow = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get scrollH()
     public get scrollH(): number 
     {
         return this.itemList?.scrollH ?? 0;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::set scrollH()
     public set scrollH(value: number) 
     {
         if(this.itemList) this.itemList.scrollH = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get scrollV()
     public get scrollV(): number 
     {
         return this.itemList?.scrollV ?? 0;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::set scrollV()
     public set scrollV(value: number) 
     {
         if(this.itemList) this.itemList.scrollV = value;
     }
 
+    // AS3: sources/win63_version/core/window/components/ScrollableItemListWindow.as::get scrollStepH()
     public get scrollStepH(): number 
     {
         return this.itemList?.scrollStepH ?? 25;
     }
 
+    // AS3: sources/win63_version/core/window/components/ScrollableItemListWindow.as::set scrollStepH()
     public set scrollStepH(value: number) 
     {
         if(this.itemList) this.itemList.scrollStepH = value;
     }
 
+    // AS3: sources/win63_version/core/window/components/ScrollableItemListWindow.as::get scrollStepV()
     public get scrollStepV(): number 
     {
         return this.itemList?.scrollStepV ?? 25;
     }
 
+    // AS3: sources/win63_version/core/window/components/ScrollableItemListWindow.as::set scrollStepV()
     public set scrollStepV(value: number) 
     {
         if(this.itemList) this.itemList.scrollStepV = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get maxScrollH()
     public get maxScrollH(): number 
     {
         return this.itemList?.maxScrollH ?? 0;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get maxScrollV()
     public get maxScrollV(): number 
     {
         return this.itemList?.maxScrollV ?? 0;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get visibleRegion()
     public get visibleRegion(): { x: number; y: number; width: number; height: number } 
     {
         return this.itemList?.visibleRegion ?? {x: 0, y: 0, width: this.width, height: this.height};
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get scrollableRegion()
     public get scrollableRegion(): { x: number; y: number; width: number; height: number } 
     {
         return this.itemList?.scrollableRegion ?? {x: 0, y: 0, width: 0, height: 0};
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get scaleToFitItems()
     public get scaleToFitItems(): boolean 
     {
         return this.itemList?.scaleToFitItems ?? false;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::set scaleToFitItems()
     public set scaleToFitItems(value: boolean) 
     {
         const itemList = this.itemList;
@@ -208,11 +231,13 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get resizeOnItemUpdate()
     public get resizeOnItemUpdate(): boolean 
     {
         return this.itemList?.resizeOnItemUpdate ?? false;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::set resizeOnItemUpdate()
     public set resizeOnItemUpdate(value: boolean) 
     {
         const itemList = this.itemList;
@@ -223,11 +248,13 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get inverseResizeOnItemUpdate()
     public get inverseResizeOnItemUpdate(): boolean 
     {
         return this.itemList?.inverseResizeOnItemUpdate ?? false;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::set inverseResizeOnItemUpdate()
     public set inverseResizeOnItemUpdate(value: boolean) 
     {
         const itemList = this.itemList;
@@ -238,6 +265,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get scrollableWindow()
     public get scrollableWindow(): IWindow 
     {
         return this.itemList?.scrollableWindow ?? this;
@@ -289,6 +317,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
     /**
      * Arranges items in the list.
      */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::arrangeListItems()
     public arrangeListItems(): void 
     {
         this.itemList?.arrangeListItems();
@@ -299,81 +328,97 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         this.itemList?.arrangeItems();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::addListItem()
     public addListItem(item: IWindow): IWindow 
     {
         return this.itemList?.addListItem(item) ?? item;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::addListItemAt()
     public addListItemAt(item: IWindow, index: number): IWindow 
     {
         return this.itemList?.addListItemAt(item, index) ?? item;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::getListItemAt()
     public getListItemAt(index: number): IWindow | null 
     {
         return this.itemList?.getListItemAt(index) ?? null;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::getListItemByName()
     public getListItemByName(name: string): IWindow | null 
     {
         return this.itemList?.getListItemByName(name) ?? null;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::getListItemByID()
     public getListItemByID(id: number): IWindow | null 
     {
         return this.itemList?.getListItemByID(id) ?? null;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::getListItemByTag()
     public getListItemByTag(tag: string): IWindow | null 
     {
         return this.itemList?.getListItemByTag(tag) ?? null;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::getListItemIndex()
     public getListItemIndex(item: IWindow): number 
     {
         return this.itemList?.getListItemIndex(item) ?? -1;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::removeListItem()
     public removeListItem(item: IWindow): IWindow | null 
     {
         return this.itemList?.removeListItem(item) ?? null;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::removeListItemAt()
     public removeListItemAt(index: number): IWindow | null 
     {
         return this.itemList?.removeListItemAt(index) ?? null;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::removeListItems()
     public removeListItems(): void 
     {
         this.itemList?.removeListItems();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::destroyListItems()
     public destroyListItems(): void 
     {
         this.itemList?.destroyListItems();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::setListItemIndex()
     public setListItemIndex(item: IWindow, index: number): void 
     {
         this.itemList?.setListItemIndex(item, index);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::swapListItems()
     public swapListItems(a: IWindow, b: IWindow): void 
     {
         this.itemList?.swapListItems(a, b);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::swapListItemsAt()
     public swapListItemsAt(indexA: number, indexB: number): void 
     {
         this.itemList?.swapListItemsAt(indexA, indexB);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::groupListItemsWithID()
     public groupListItemsWithID(id: number, result: IWindow[], depth: number = 0): number 
     {
         return this.itemList?.groupListItemsWithID(id, result, depth) ?? 0;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::groupListItemsWithTag()
     public groupListItemsWithTag(tag: string, result: IWindow[], depth: number = 0): number 
     {
         return this.itemList?.groupListItemsWithTag(tag, result, depth) ?? 0;
@@ -384,6 +429,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         this.itemList?.populate(items);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::scrollWithWheel()
     public scrollWithWheel(delta: number, useHorizontal: boolean): boolean 
     {
         return this.itemList?.scrollWithWheel(delta, useHorizontal) ?? false;
@@ -435,6 +481,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         return this.itemList !== null && this.scrollBar !== null;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::scrollBarEventProc()
     private scrollBarEventProc(event: WindowEvent): void 
     {
         if(event.type === 'WE_ENABLED') 
@@ -447,6 +494,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::hideScrollBar()
     private hideScrollBar(): void 
     {
         const scrollBar = this.scrollBar;
@@ -459,6 +507,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::showScrollBar()
     private showScrollBar(): void 
     {
         const scrollBar = this.scrollBar;
@@ -471,6 +520,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::updateScrollBarVisibility()
     private updateScrollBarVisibility(force: boolean = false): void 
     {
         const scrollBar = this.scrollBar;

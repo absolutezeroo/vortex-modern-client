@@ -15,7 +15,9 @@ const log = Logger.getLogger('habbo.room.utils.TileObjectMap');
 export class TileObjectMap
 {
     private _map: (IRoomObject | null)[];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/TileObjectMap.as::_width
     private _width: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/TileObjectMap.as::_height
     private _height: number;
 
     constructor(width: number, height: number)
@@ -28,6 +30,7 @@ export class TileObjectMap
     /**
 	 * Get the room object occupying a tile.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/TileObjectMap.as::getObjectInTile()
     getObjectInTile(x: number, y: number): IRoomObject | null
     {
         if(x < 0 || x >= this._width || y < 0 || y >= this._height)
@@ -41,6 +44,7 @@ export class TileObjectMap
     /**
 	 * Set a room object in a tile.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/TileObjectMap.as::setObjectInTile()
     setObjectInTile(x: number, y: number, object: IRoomObject | null): void
     {
         // AS3 refuses (and logs) an object that isn't initialised: its getLocation()
@@ -69,6 +73,7 @@ export class TileObjectMap
 	 * Add a room object to the map, considering its footprint (size and rotation).
 	 * Based on AS3 TileObjectMap.addRoomObject()
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/TileObjectMap.as::addRoomObject()
     addRoomObject(object: IRoomObject): void
     {
         // AS3 bails on a null/model-less/uninitialised object (the null check is dead
@@ -133,6 +138,7 @@ export class TileObjectMap
     /**
 	 * Clear all tiles.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/TileObjectMap.as::clear()
     clear(): void
     {
         this._map.fill(null);
@@ -142,6 +148,7 @@ export class TileObjectMap
 	 * Rebuild the whole map from scratch from a fresh object list.
 	 * Based on AS3 TileObjectMap.populate()
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/TileObjectMap.as::populate()
     populate(objects: readonly IRoomObject[]): void
     {
         this.clear();
@@ -149,6 +156,7 @@ export class TileObjectMap
         for(const object of objects) this.addRoomObject(object);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/TileObjectMap.as::dispose()
     dispose(): void
     {
         // AS3 also zeroes the dimensions: leaving them set while _map is empty keeps

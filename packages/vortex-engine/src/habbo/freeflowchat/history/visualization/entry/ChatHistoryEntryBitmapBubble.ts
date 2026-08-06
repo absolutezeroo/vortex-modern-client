@@ -16,12 +16,15 @@ import type {IChatHistoryEntry} from './IChatHistoryEntry';
  */
 export class ChatHistoryEntryBitmapBubble implements IChatHistoryEntry
 {
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as::_bitmap
     private readonly _bitmap: ImageBitmap | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as::_overlap
     private readonly _overlap: Rectangle | null;
     private readonly _userIndex: number;
     private readonly _webId: number;
     private readonly _roomId: number;
     private readonly _canIgnore: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as::_userName
     private readonly _userName: string;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as::ChatHistoryEntryBitmapBubble()
@@ -38,36 +41,43 @@ export class ChatHistoryEntryBitmapBubble implements IChatHistoryEntry
         this._userName = userName;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as::get bitmap()
     get bitmap(): ImageBitmap | null
     {
         return this._bitmap;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as::get overlap()
     get overlap(): Rectangle | null
     {
         return this._overlap;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as::get userIndex()
     get userIndex(): number
     {
         return this._userIndex;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as::get webId()
     get webId(): number
     {
         return this._webId;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as::get roomId()
     get roomId(): number
     {
         return this._roomId;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as::get canIgnore()
     get canIgnore(): boolean
     {
         return this._canIgnore;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryEntryBitmapBubble.as::get userName()
     get userName(): string
     {
         return this._userName;

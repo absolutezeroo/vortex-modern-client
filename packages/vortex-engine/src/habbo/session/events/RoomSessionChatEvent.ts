@@ -13,16 +13,22 @@ export class RoomSessionChatEvent extends RoomSessionEvent
     public static readonly RSCE_FLOOD_EVENT = 'RSCE_FLOOD_EVENT';
 
     // Chat types
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_SPEAK
     public static readonly CHAT_TYPE_SPEAK = 0;
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_WHISPER
     public static readonly CHAT_TYPE_WHISPER = 1;
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_SHOUT
     public static readonly CHAT_TYPE_SHOUT = 2;
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_RESPECT
     public static readonly CHAT_TYPE_RESPECT = 3;
     public static readonly CHAT_TYPE_PET_RESPECT = 4;
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_HAND_ITEM_RECEIVED
     public static readonly CHAT_TYPE_HAND_ITEM_RECEIVED = 5;
     public static readonly CHAT_TYPE_PET_TREAT = 6;
     public static readonly CHAT_TYPE_PET_REVIVE = 7;
     public static readonly CHAT_TYPE_PET_REBREED = 8;
     public static readonly CHAT_TYPE_PET_SPEED = 9;
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_MUTE_REMAINING
     public static readonly CHAT_TYPE_MUTE_REMAINING = 10;
 
     // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::RoomSessionChatEvent()
@@ -50,13 +56,16 @@ export class RoomSessionChatEvent extends RoomSessionEvent
 
     private _userId: number;
 
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::get userId()
     get userId(): number
     {
         return this._userId;
     }
 
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::_text
     private _text: string;
 
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::get text()
     get text(): string
     {
         return this._text;
@@ -64,6 +73,7 @@ export class RoomSessionChatEvent extends RoomSessionEvent
 
     private _chatType: number;
 
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::get chatType()
     get chatType(): number
     {
         return this._chatType;
@@ -79,6 +89,7 @@ export class RoomSessionChatEvent extends RoomSessionEvent
     // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::get links()
     private _links: IChatLink[] | null;
 
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::get links()
     get links(): IChatLink[] | null
     {
         return this._links;
@@ -86,6 +97,7 @@ export class RoomSessionChatEvent extends RoomSessionEvent
 
     private _extraParam: number;
 
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::get extraParam()
     get extraParam(): number
     {
         return this._extraParam;

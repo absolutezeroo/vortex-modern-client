@@ -7,6 +7,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetFriendRequestsMessageComposer extends MessageComposer<[]>
 {
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/GetFriendRequestsMessageComposer.as::getMessageArray()
     getMessageArray(): []
     {
         return [];

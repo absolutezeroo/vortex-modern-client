@@ -89,6 +89,7 @@ export class FurnitureBadgeDisplayLogic extends FurnitureLogic
         }
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureBadgeDisplayLogic.as::updateBadge()
     protected updateBadge(badgeId: string): void
     {
         if(badgeId !== '' && this.eventDispatcher !== null && this.object !== null)

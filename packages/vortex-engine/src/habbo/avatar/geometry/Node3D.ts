@@ -23,6 +23,7 @@ export class Node3D
 
     private _location: Vector3D;
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Node3D.as::get location()
     public get location(): Vector3D
     {
         return this._location;
@@ -30,11 +31,13 @@ export class Node3D
 
     private _transformedLocation: Vector3D;
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Node3D.as::get transformedLocation()
     public get transformedLocation(): Vector3D
     {
         return this._transformedLocation;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Node3D.as::applyTransform()
     public applyTransform(matrix: Matrix4x4): void
     {
         if(this._needsTransform)

@@ -9,6 +9,7 @@ import {RoomEngineEvent} from './RoomEngineEvent';
 
 export class RoomEngineHSLColorEnableEvent extends RoomEngineEvent
 {
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineHSLColorEnableEvent.as::ROOM_BACKGROUND_COLOR
     public static readonly ROOM_BACKGROUND_COLOR = 'ROHSLCEE_ROOM_BACKGROUND_COLOR';
 
     constructor(
@@ -29,6 +30,7 @@ export class RoomEngineHSLColorEnableEvent extends RoomEngineEvent
 
     private _enable: boolean;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineHSLColorEnableEvent.as::get enable()
     get enable(): boolean
     {
         return this._enable;
@@ -36,6 +38,7 @@ export class RoomEngineHSLColorEnableEvent extends RoomEngineEvent
 
     private _hue: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineHSLColorEnableEvent.as::get hue()
     get hue(): number
     {
         return this._hue;
@@ -43,6 +46,7 @@ export class RoomEngineHSLColorEnableEvent extends RoomEngineEvent
 
     private _saturation: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineHSLColorEnableEvent.as::get saturation()
     get saturation(): number
     {
         return this._saturation;
@@ -50,6 +54,7 @@ export class RoomEngineHSLColorEnableEvent extends RoomEngineEvent
 
     private _lightness: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineHSLColorEnableEvent.as::get lightness()
     get lightness(): number
     {
         return this._lightness;

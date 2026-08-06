@@ -9,6 +9,7 @@ export class CatalogLocalizationData
 {
     private _images: string[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2409.as::get images()
     get images(): string[]
     {
         return this._images;
@@ -16,6 +17,7 @@ export class CatalogLocalizationData
 
     private _texts: string[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2409.as::get texts()
     get texts(): string[]
     {
         return this._texts;

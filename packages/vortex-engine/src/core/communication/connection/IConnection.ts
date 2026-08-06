@@ -14,6 +14,7 @@ export interface IConnection extends IDisposable
     /**
 	 * Whether the connection is currently established
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::get connected()
     readonly connected: boolean;
     /**
 	 * Connection timeout in milliseconds
@@ -27,6 +28,7 @@ export interface IConnection extends IDisposable
 	 * @param tcpNoDelay AS3 socket TCP_NODELAY flag; ignored by WebSocket transport
 	 * @returns True if connection attempt started
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::init()
     init(host: string, port?: number, tcpNoDelay?: boolean): boolean;
 
     /**
@@ -34,6 +36,7 @@ export interface IConnection extends IDisposable
 	 *
 	 * AS3: IConnection.createSocket()
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::createSocket()
     createSocket(): void;
 
     /**
@@ -41,6 +44,7 @@ export interface IConnection extends IDisposable
 	 *
 	 * AS3: IConnection.addListener()
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::addListener()
     addListener(type: string, listener: (...args: unknown[]) => void): void;
 
     /**
@@ -48,6 +52,7 @@ export interface IConnection extends IDisposable
 	 * @param composer The message to send
 	 * @returns True if message was sent
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::send()
     send(composer: IMessageComposer<unknown[]>): boolean;
 
     /**
@@ -55,6 +60,7 @@ export interface IConnection extends IDisposable
 	 * @param composer The message to send
 	 * @returns True if message was sent
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::sendUnencrypted()
     sendUnencrypted(composer: IMessageComposer<unknown[]>): boolean;
 
     /**
@@ -62,6 +68,7 @@ export interface IConnection extends IDisposable
 	 * @param clientToServer Encryption for outgoing messages
 	 * @param serverToClient Encryption for incoming messages
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::setEncryption()
     setEncryption(clientToServer: IEncryption, serverToClient: IEncryption): void;
 
     /**
@@ -69,6 +76,7 @@ export interface IConnection extends IDisposable
 	 *
 	 * AS3: IConnection.isAuthenticated()
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::isAuthenticated()
     isAuthenticated(): void;
 
     /**
@@ -76,11 +84,13 @@ export interface IConnection extends IDisposable
 	 *
 	 * AS3: IConnection.isConfigured()
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::isConfigured()
     isConfigured(): void;
 
     /**
 	 * Get the server-to-client encryption
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::getServerToClientEncryption()
     getServerToClientEncryption(): IEncryption | null;
 
     /**
@@ -91,26 +101,31 @@ export interface IConnection extends IDisposable
     /**
 	 * Register message classes from configuration
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::registerMessageClasses()
     registerMessageClasses(config: IMessageConfiguration): void;
 
     /**
 	 * Add a message event handler
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::addMessageEvent()
     addMessageEvent(event: IMessageEvent): void;
 
     /**
 	 * Remove a message event handler
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::removeMessageEvent()
     removeMessageEvent(event: IMessageEvent): void;
 
     /**
 	 * Process received data (call from update loop)
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::processReceivedData()
     processReceivedData(): void;
 
     /**
 	 * Close the connection
 	 */
+    // AS3: .../src/com/sulake/core/communication/connection/IConnection.as::close()
     close(): void;
 
     /**

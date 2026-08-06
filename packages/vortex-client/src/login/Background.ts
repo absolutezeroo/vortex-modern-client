@@ -45,6 +45,7 @@ export class Background extends Sprite
     /**
      * AS3: resize()
      */
+    // AS3: .../src/login/Background.as::resize()
     public resize(): void
     {
         const stage = this.stage;

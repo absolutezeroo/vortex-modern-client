@@ -149,6 +149,7 @@ export class SsoTokenView extends Sprite
      * has `hh` stripped and two aliases remapped (`br` → `pt`, `us` → `en`). On success the vector
      * comes back as [environment, first, second].
      */
+    // AS3: .../src/login/SsoTokenView.as::validateToken()
     private validateToken(parts: string[]): boolean
     {
         if(!this._tokenField) return false;

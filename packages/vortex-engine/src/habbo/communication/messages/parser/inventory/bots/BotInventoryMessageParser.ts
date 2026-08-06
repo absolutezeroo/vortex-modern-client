@@ -24,12 +24,14 @@ export class BotInventoryMessageParser implements IMessageParser
         return this._bots;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/bots/BotInventoryEventParser.as::flush()
     flush(): boolean
     {
         this._bots = [];
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/bots/BotInventoryEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         const count = wrapper.readInt();

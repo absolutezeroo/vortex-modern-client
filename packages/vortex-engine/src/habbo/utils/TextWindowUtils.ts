@@ -22,6 +22,7 @@ export class TextWindowUtils
      * colours are computed and dropped, and links render in the layout's own text colour.
      * The one caller is `PhoneNumberCollectView.createWindow()` (`collect_summary`).
      */
+    // AS3: .../src/com/sulake/habbo/utils/TextWindowUtils.as::setHTMLLinkStyle()
     public static setHTMLLinkStyle(
         textWindow: ITextWindow | null,
         hoverColor: number,
@@ -59,6 +60,7 @@ export class TextWindowUtils
      *
      * Zero-pads to six digits so `0x0033ff` does not come out as `#33ff`.
      */
+    // AS3: .../src/com/sulake/habbo/utils/TextWindowUtils.as::toHexString()
     public static toHexString(color: number): string
     {
         let hex = color.toString(16);

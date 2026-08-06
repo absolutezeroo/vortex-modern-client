@@ -40,6 +40,7 @@ export class ProductCategoryMapping
      * which isn't ported yet (IHabboFreeFlowChat has no createPreviewBitmap()). Always
      * returns null until that lands; callers already treat null as "can't preview this".
      */
+    // AS3: .../src/com/sulake/habbo/window/utils/_SafeCls_4273.as::createChatItemPreview()
     public static createChatItemPreview(_windowManager: unknown, _styleId: number, _username: string | null = null): ImageBitmap | null 
     {
         return null;

@@ -18,10 +18,13 @@ import type {IRoomWidget} from './IRoomWidget';
 
 export class RoomWidgetBase implements IRoomWidget
 {
+    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::_disposed
     private _disposed: boolean = false;
     private _updateEventDispatcher: EventEmitter | null = null;
     private _messageListener: IRoomWidgetMessageListener | null = null;
+    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::_windowManager
     private _windowManager: IHabboWindowManager;
+    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::_assets
     protected _assets: IAssetLibrary | null;
     protected _localizations: IHabboLocalizationManager | null;
     protected _handler: IRoomWidgetHandler | null;
@@ -91,6 +94,7 @@ export class RoomWidgetBase implements IRoomWidget
         this._messageListener = value;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::get messageListener()
     public get messageListener(): IRoomWidgetMessageListener | null
     {
         return this._messageListener;
@@ -167,6 +171,7 @@ export class RoomWidgetBase implements IRoomWidget
         this._reusable = value;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::get reusable()
     public get reusable(): boolean
     {
         return this._reusable;
@@ -178,6 +183,7 @@ export class RoomWidgetBase implements IRoomWidget
         this._widgetType = value;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::get widgetType()
     public get widgetType(): string
     {
         return this._widgetType;

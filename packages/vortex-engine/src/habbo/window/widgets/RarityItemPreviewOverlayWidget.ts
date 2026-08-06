@@ -14,11 +14,13 @@ import {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class RarityItemPreviewOverlayWidget implements IRarityItemPreviewOverlayWidget 
 {
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemPreviewOverlayWidget.as::TYPE
     public static readonly TYPE: string = 'rarity_item_overlay_preview';
 
     private static readonly RARITY_LEVEL_KEY: string = 'rarity_item_overlay_preview:level';
 
     private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemPreviewOverlayWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
 
     private _root: IWindowContainer | null = null;
@@ -38,8 +40,10 @@ export class RarityItemPreviewOverlayWidget implements IRarityItemPreviewOverlay
         }
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemPreviewOverlayWidget.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemPreviewOverlayWidget.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
@@ -47,16 +51,19 @@ export class RarityItemPreviewOverlayWidget implements IRarityItemPreviewOverlay
 
     private _rarityLevel: number = 0;
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemPreviewOverlayWidget.as::get rarityLevel()
     public get rarityLevel(): number 
     {
         return this._rarityLevel;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemPreviewOverlayWidget.as::set rarityLevel()
     public set rarityLevel(value: number) 
     {
         this._rarityLevel = value;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemPreviewOverlayWidget.as::get properties()
     public get properties(): PropertyStruct[] 
     {
         if(this._disposed) return [];
@@ -66,6 +73,7 @@ export class RarityItemPreviewOverlayWidget implements IRarityItemPreviewOverlay
         ];
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemPreviewOverlayWidget.as::set properties()
     public set properties(values: PropertyStruct[]) 
     {
         for(const prop of values) 
@@ -77,6 +85,7 @@ export class RarityItemPreviewOverlayWidget implements IRarityItemPreviewOverlay
         }
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemPreviewOverlayWidget.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;

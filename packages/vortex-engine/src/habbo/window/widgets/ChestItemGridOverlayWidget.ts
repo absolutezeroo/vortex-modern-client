@@ -30,6 +30,7 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
     public static readonly COLOR_BROWN: string = 'brown';
 
     private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
     private _plaqueBitmap: IStaticBitmapWrapperWindow | null = null;
@@ -53,6 +54,7 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get disposed()
@@ -81,6 +83,7 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
         this._contentsCount = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::_color
     private _color: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get color()

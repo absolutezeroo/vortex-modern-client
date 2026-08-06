@@ -12,13 +12,16 @@ export class RoomMessageNotificationMessageEventParser implements IMessageParser
 {
     private _roomId: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/RoomMessageNotificationMessageEventParser.as::get roomId()
     get roomId(): number
     {
         return this._roomId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/RoomMessageNotificationMessageEventParser.as::_roomName
     private _roomName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/RoomMessageNotificationMessageEventParser.as::get roomName()
     get roomName(): string
     {
         return this._roomName;
@@ -26,11 +29,13 @@ export class RoomMessageNotificationMessageEventParser implements IMessageParser
 
     private _messageCount: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/RoomMessageNotificationMessageEventParser.as::get messageCount()
     get messageCount(): number
     {
         return this._messageCount;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/RoomMessageNotificationMessageEventParser.as::flush()
     flush(): boolean
     {
         this._roomId = -1;
@@ -39,6 +44,7 @@ export class RoomMessageNotificationMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/RoomMessageNotificationMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

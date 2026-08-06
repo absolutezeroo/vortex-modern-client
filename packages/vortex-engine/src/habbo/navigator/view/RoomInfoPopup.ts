@@ -24,7 +24,9 @@ import type {LegacyNavigator} from '../transitional/LegacyNavigator';
  */
 export class RoomInfoPopup
 {
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::_navigator
     private _navigator: HabboNewNavigator;
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::_window
     private _window: IWindowContainer | null = null;
     private _roomData: GuestRoomData | null = null;
     private _tags: string[] = [];
@@ -48,6 +50,7 @@ export class RoomInfoPopup
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/RoomInfoPopup.as get visible()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::get visible()
     get visible(): boolean
     {
         if(!this._window) return false;
@@ -62,6 +65,7 @@ export class RoomInfoPopup
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/RoomInfoPopup.as show()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::show()
     show(visible: boolean): void
     {
         if(visible)
@@ -95,6 +99,7 @@ export class RoomInfoPopup
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/RoomInfoPopup.as showAt()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::showAt()
     showAt(visible: boolean, x: number, y: number): void
     {
         const wasHidden = !this.visible;
@@ -128,6 +133,7 @@ export class RoomInfoPopup
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/RoomInfoPopup.as setData()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::setData()
     setData(data: GuestRoomData): void
     {
         this._roomData = data;
@@ -140,6 +146,7 @@ export class RoomInfoPopup
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/RoomInfoPopup.as getGlobalRectangle()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::getGlobalRectangle()
     getGlobalRectangle(out: { x: number; y: number; width: number; height: number }): void
     {
         if(this._window)
@@ -164,6 +171,7 @@ export class RoomInfoPopup
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::refreshHomeState()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::refreshHomeState()
     refreshHomeState(): void
     {
         this._homeOverridden = false;
@@ -179,6 +187,7 @@ export class RoomInfoPopup
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::get roomIsHome()
     private get roomIsHome(): boolean
     {
         if(this._homeOverridden)
@@ -189,12 +198,14 @@ export class RoomInfoPopup
         return this._navigator.legacyNavigator.isRoomHome(this._roomData!.flatId);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::set roomIsHome()
     private set roomIsHome(value: boolean)
     {
         this._homeOverridden = true;
         this._homeOverrideValue = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::get roomIsFavorite()
     private get roomIsFavorite(): boolean
     {
         if(this._favoriteOverridden)
@@ -205,6 +216,7 @@ export class RoomInfoPopup
         return this._navigator.legacyNavigator.isRoomFavorite(this._roomData!.flatId);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::set roomIsFavorite()
     private set roomIsFavorite(value: boolean)
     {
         this._favoriteOverridden = true;
@@ -216,6 +228,7 @@ export class RoomInfoPopup
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/RoomInfoPopup.as populate()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::populate()
     private populate(): void
     {
         if(this._roomData === null || !this._window) return;
@@ -566,6 +579,7 @@ export class RoomInfoPopup
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/RoomInfoPopup.as clearProperties()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::clearProperties()
     private clearProperties(): void
     {
         if(!this._window) return;
@@ -587,6 +601,7 @@ export class RoomInfoPopup
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/RoomInfoPopup.as addProperty()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::addProperty()
     private addProperty(listName: string, name: string, value: string): void
     {
         if(!this._window) return;
@@ -629,6 +644,7 @@ export class RoomInfoPopup
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/RoomInfoPopup.as getNewTagItem()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::getNewTagItem()
     private getNewTagItem(tag: string, index: number): IWindow
     {
         // AS3: sources/win63_version/habbo/navigator/view/RoomInfoPopup.as::getNewTagItem()
@@ -659,6 +675,7 @@ export class RoomInfoPopup
         return tagWindow as unknown as IWindow;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::createWindow()
     private createWindow(): void
     {
         const windowManager = this._navigator.windowManager;
@@ -673,6 +690,7 @@ export class RoomInfoPopup
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::destroy()
     private destroy(): void
     {
         if(this._window)

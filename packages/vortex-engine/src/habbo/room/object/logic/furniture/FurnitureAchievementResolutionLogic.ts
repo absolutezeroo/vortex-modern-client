@@ -15,12 +15,18 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureAchievementResolutionLogic extends FurnitureBadgeDisplayLogic
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureAchievementResolutionLogic.as::STATE_RESOLUTION_NOT_STARTED
     public static readonly STATE_RESOLUTION_NOT_STARTED = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureAchievementResolutionLogic.as::STATE_RESOLUTION_IN_PROGRESS
     public static readonly STATE_RESOLUTION_IN_PROGRESS = 1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureAchievementResolutionLogic.as::STATE_RESOLUTION_ACHIEVED
     public static readonly STATE_RESOLUTION_ACHIEVED = 2;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureAchievementResolutionLogic.as::STATE_RESOLUTION_FAILED
     public static readonly STATE_RESOLUTION_FAILED = 3;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureAchievementResolutionLogic.as::ACH_NOT_SET
     private static readonly ACH_NOT_SET = 'ACH_0';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureAchievementResolutionLogic.as::BADGE_VISIBLE_IN_STATE
     private static readonly BADGE_VISIBLE_IN_STATE = 2;
 
     override getEventTypes(): string[]

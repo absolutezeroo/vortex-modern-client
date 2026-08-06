@@ -26,10 +26,14 @@ export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsA
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::REFRESH_PERIOD_IN_MILLIS
     private static readonly REFRESH_PERIOD_IN_MILLIS: number = 30000;
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::_landingView
     protected _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::_container
     protected _container: IWindowContainer | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::_pageName
     protected _pageName: string = '';
     protected _secondsToExpiry: number = 0;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::_lastRequestTime
     private _lastRequestTime: number | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::ExpiringCatalogPageWidget()
@@ -38,6 +42,7 @@ export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsA
         this._landingView = landingView;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
@@ -147,6 +152,7 @@ export class ExpiringCatalogPageWidget implements ILandingViewWidget, ISettingsA
         this._landingView?.tracking?.trackGoogle('landingView', 'click_goToExpiringCatalogPage');
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/ExpiringCatalogPageWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;

@@ -42,6 +42,7 @@ export class JukeboxSongDisksMessageParser implements IMessageParser
      * decompiler damage, the same shape as the badges parser's. The read itself is intact and is
      * what is ported: max length, then a count, then that many (diskId, songId) pairs.
      */
+    // AS3: sources/win63_version/habbo/communication/messages/parser/sound/JukeboxSongDisksMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._maxLength = wrapper.readInt();

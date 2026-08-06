@@ -28,6 +28,7 @@ export class InventoryMainView
 {
     private _habboInventory: HabboInventory;
     private _window: IFrameWindow | null = null;
+    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
 
     private _currentCategory: string | null = null;
@@ -673,6 +674,7 @@ export class InventoryMainView
     }
 
     // Requires IRecycler/FurniSlotItem (habbo/catalog/recycler), not yet ported.
+    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::emptyFurnimaticSlots()
     private emptyFurnimaticSlots(): void 
     {
         // Intentional no-op until the recycler feature is ported.

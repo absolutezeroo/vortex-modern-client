@@ -9,13 +9,18 @@ import type {ClubBuyOfferData} from '../../club/ClubBuyOfferData';
  */
 export interface IVipBuyCatalogWidget extends IDisposable
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/IVipBuyCatalogWidget.as::init()
     init(): boolean;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/IVipBuyCatalogWidget.as::reset()
     reset(): void;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/IVipBuyCatalogWidget.as::initClubType()
     initClubType(clubType: number): void;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/IVipBuyCatalogWidget.as::showOffer()
     showOffer(offer: ClubBuyOfferData): void;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/IVipBuyCatalogWidget.as::get isGift()
     readonly isGift: boolean;
 }

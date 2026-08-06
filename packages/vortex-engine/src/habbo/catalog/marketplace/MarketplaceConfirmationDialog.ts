@@ -21,14 +21,19 @@ import type {MarketPlaceOfferData} from './MarketPlaceOfferData';
  */
 export class MarketplaceConfirmationDialog implements IGetImageListener
 {
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::_marketplace
     private _marketplace: IMarketPlace | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::_catalog
     private _catalog: IHabboCatalog | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::_roomEngine
     private _roomEngine: IRoomEngine | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::_window
     private _window: IWindowContainer | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::_offer
     private _offer: MarketPlaceOfferData | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::MarketplaceConfirmationDialog()
@@ -185,6 +190,7 @@ export class MarketplaceConfirmationDialog implements IGetImageListener
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::setImage()
     private setImage(): void
     {
         if(!this._offer || !this._window || !this._roomEngine) return;
@@ -238,6 +244,7 @@ export class MarketplaceConfirmationDialog implements IGetImageListener
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::hide()
     private hide(): void
     {
         if(this._window)
@@ -263,6 +270,7 @@ export class MarketplaceConfirmationDialog implements IGetImageListener
         // AS3: no-op
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketplaceConfirmationDialog.as::setDisclaimerAccepted()
     private setDisclaimerAccepted(accepted: boolean): void
     {
         if(!this._window) return;

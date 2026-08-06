@@ -40,7 +40,9 @@ const LEFT_PANE_MARGIN_CONST = 7;
  */
 export class NavigatorView implements IUpdateReceiver
 {
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::_navigator
     private _navigator: HabboNewNavigator;
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::_window
     private _window: IWindowContainer | null = null;
     private _searchView: SearchView | null = null;
     private _blockResultsView: BlockResultsView | null = null;
@@ -49,18 +51,23 @@ export class NavigatorView implements IUpdateReceiver
     private _topViewSelector: TopViewSelector | null = null;
     private _quickLinksView: QuickLinksView | null = null;
     private _liftView: LiftView | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::_roomInfoPopup
     private _roomInfoPopup: RoomInfoPopup | null = null;
     private _lastWindowX: number = -1;
     private _lastWindowY: number = -1;
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::_lastWindowWidth
     private _lastWindowWidth: number = -1;
     private _lastWindowHeight: number = -1;
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::_lastLeftPaneHidden
     private _lastLeftPaneHidden: boolean = false;
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::_waitingForGroupDetails
     private _waitingForGroupDetails: number = -1;
     private _popupHideDelay: number = 4000;
     private _lastPreferencesSaveTime: number = 0;
     private _rightPane: IWindow | null = null;
     private _rightPaneOriginalX: number = 0;
     private _leftPaneMarginConst: number = LEFT_PANE_MARGIN_CONST;
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::_leftPaneMargin
     private _leftPaneMargin: number = 0;
     private _roomInfoGlobalRectangle: { x: number; y: number; width: number; height: number } = {
         x: 0,
@@ -79,6 +86,7 @@ export class NavigatorView implements IUpdateReceiver
     /**
      * Whether this struct has been disposed
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -87,6 +95,7 @@ export class NavigatorView implements IUpdateReceiver
     // State
     private _isBusy: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::get isBusy()
     get isBusy(): boolean
     {
         return this._isBusy;
@@ -97,6 +106,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as set isBusy()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::set isBusy()
     set isBusy(value: boolean)
     {
         if(this._window)
@@ -119,6 +129,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as get visible()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::get visible()
     get visible(): boolean
     {
         if(this._window)
@@ -137,6 +148,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as set visible()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::set visible()
     set visible(value: boolean)
     {
         if(value && this._navigator.isReady)
@@ -190,6 +202,7 @@ export class NavigatorView implements IUpdateReceiver
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::get mainWindow()
     get mainWindow(): IWindow | null
     {
         return this._window;
@@ -200,6 +213,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as get isRoomInfoBubbleVisible()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::get isRoomInfoBubbleVisible()
     get isRoomInfoBubbleVisible(): boolean
     {
         if(this._roomInfoPopup)
@@ -216,6 +230,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/NavigatorView.as::refreshRoomInfoBubbleHomeState()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::refreshRoomInfoBubbleHomeState()
     refreshRoomInfoBubbleHomeState(): void
     {
         this._roomInfoPopup?.refreshHomeState();
@@ -226,6 +241,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as get windowPreferencesChanged()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::get windowPreferencesChanged()
     private get windowPreferencesChanged(): boolean
     {
         if(!this._window) return false;
@@ -260,6 +276,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as update()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::update()
     update(deltaTime: number): void
     {
         if(!this._window) return;
@@ -303,6 +320,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as currentFilterText()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::currentFilterText()
     currentFilterText(): string
     {
         if(this._searchView)
@@ -323,6 +341,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as showRoomInfoBubbleAt()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::showRoomInfoBubbleAt()
     showRoomInfoBubbleAt(roomData: GuestRoomData, x: number, y: number, isUpdate: boolean = false): void
     {
         if(!this._window) return;
@@ -452,6 +471,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as onSavedSearches()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::onSavedSearches()
     onSavedSearches(searches: NavigatorSavedSearch[]): void
     {
         if(this._quickLinksView)
@@ -465,6 +485,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as setInitialWindowDimensions()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::setInitialWindowDimensions()
     setInitialWindowDimensions(x: number, y: number, height: number, leftPaneHidden: boolean, _resultsMode: number): void
     {
         if(this._window)
@@ -488,6 +509,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as refreshLiftedRooms()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::refreshLiftedRooms()
     refreshLiftedRooms(): void
     {
         if(this._liftView)
@@ -501,6 +523,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as onGroupDetailsArrived()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::onGroupDetailsArrived()
     onGroupDetailsArrived(groupId: number): void
     {
         if(this._waitingForGroupDetails === groupId)
@@ -516,6 +539,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as setLeftPaneVisibility()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::setLeftPaneVisibility()
     setLeftPaneVisibility(visible: boolean): void
     {
         if(!this._window || !this._rightPane) return;
@@ -578,6 +602,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as dispose()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::dispose()
     dispose(): void
     {
         this._navigator.removeUpdateReceiver(this);
@@ -612,6 +637,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as createSubViews()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::createSubViews()
     private createSubViews(): void
     {
         if(this._blockResultsView === null)
@@ -969,6 +995,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as sendWindowPreferences()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::sendWindowPreferences()
     private sendWindowPreferences(): void
     {
         if(!this._window) return;
@@ -999,6 +1026,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as keepWindowInsideScreenRegion()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::keepWindowInsideScreenRegion()
     private keepWindowInsideScreenRegion(): void
     {
         if(!this._window) return;

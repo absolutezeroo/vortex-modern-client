@@ -21,6 +21,7 @@ import {HabboWebTools} from '@habbo/utils/HabboWebTools';
  */
 export class MeMenuNewController extends AbstractSubMenuController
 {
+    // AS3: .../src/com/sulake/habbo/toolbar/memenu/MeMenuNewController.as::USE_GUIDE_TOOL
     public static readonly USE_GUIDE_TOOL: string = 'USE_GUIDE_TOOL';
 
     private _iconLoader: MeMenuNewIconLoader | null;

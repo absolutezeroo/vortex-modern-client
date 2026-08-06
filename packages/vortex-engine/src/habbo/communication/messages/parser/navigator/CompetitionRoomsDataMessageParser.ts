@@ -11,17 +11,20 @@ export class CompetitionRoomsDataMessageParser implements IMessageParser
 {
     private _data: CompetitionRoomsData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/CompetitionRoomsDataMessageEventParser.as::get data()
     get data(): CompetitionRoomsData | null
     {
         return this._data;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/CompetitionRoomsDataMessageEventParser.as::flush()
     flush(): boolean
     {
         this._data = null;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/CompetitionRoomsDataMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._data = new CompetitionRoomsData(wrapper);

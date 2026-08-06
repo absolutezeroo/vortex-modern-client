@@ -35,9 +35,13 @@ type WindowRectangle = { x: number; y: number; width: number; height: number };
  */
 export class WindowController extends WindowModel implements IWindow, IGraphicContextHost 
 {
+    // AS3: .../src/com/sulake/core/window/WindowController.as::TAG_EXCLUDE
     public static readonly TAG_EXCLUDE: string = '_EXCLUDE';
+    // AS3: .../src/com/sulake/core/window/WindowController.as::TAG_INTERNAL
     public static readonly TAG_INTERNAL: string = '_INTERNAL';
+    // AS3: .../src/com/sulake/core/window/WindowController.as::TAG_COLORIZE
     public static readonly TAG_COLORIZE: string = '_COLORIZE';
+    // AS3: .../src/com/sulake/core/window/WindowController.as::TAG_IGNORE_INHERITED_STYLE
     public static readonly TAG_IGNORE_INHERITED_STYLE: string = '_IGNORE_INHERITED_STYLE';
     private static _nextUniqueId: number = 0;
     private static readonly _tempRect: { x: number; y: number; width: number; height: number } = {
@@ -90,11 +94,13 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     private _ignoreMouseEvents: boolean = false;
 
     /** Returns whether this window ignores mouse events. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::get ignoreMouseEvents()
     public get ignoreMouseEvents(): boolean 
     {
         return this._ignoreMouseEvents;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set ignoreMouseEvents()
     public set ignoreMouseEvents(value: boolean) 
     {
         this._ignoreMouseEvents = value;
@@ -103,6 +109,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     protected _procedure: ((event: WindowEvent, window: IWindow) => void) | null = null;
 
     /** The window procedure, bubbles up to parent if not set locally. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::get procedure()
     public get procedure(): ((event: WindowEvent, window: IWindow) => void) | null 
     {
         if(this._procedure !== null) return this._procedure;
@@ -112,19 +119,23 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return WindowController.nullEventProc;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set procedure()
     public set procedure(value: ((event: WindowEvent, window: IWindow) => void) | null) 
     {
         this._procedure = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::_parent
     protected _parent: WindowController | null = null;
 
     /** The parent window. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::get parent()
     public get parent(): IWindow | null 
     {
         return this._parent;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set parent()
     public set parent(value: IWindow | null) 
     {
         if(value === this) 
@@ -186,9 +197,11 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::_children
     protected _children: IWindow[] | null = null;
 
     /** Direct access to the children array. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::get children()
     public get children(): IWindow[] | null 
     {
         return this._children;
@@ -197,24 +210,29 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     protected _debug: boolean = false;
 
     /** Debug mode flag. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::get debug()
     public get debug(): boolean 
     {
         return this._debug;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set debug()
     public set debug(value: boolean) 
     {
         this._debug = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::_immediateClickMode
     protected _immediateClickMode: boolean = false;
 
     /** Whether immediate click mode is enabled. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::get immediateClickMode()
     public get immediateClickMode(): boolean 
     {
         return this._immediateClickMode;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set immediateClickMode()
     public set immediateClickMode(value: boolean) 
     {
         if(value !== this._immediateClickMode) 
@@ -245,6 +263,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     }
 
     /** Rectangle limits for the window. Created lazily. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::get limits()
     public get limits(): IRectLimiter 
     {
         if(!this._rectLimits) 
@@ -256,6 +275,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     }
 
     /** The host window (topmost non-desktop ancestor). */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::get host()
     public get host(): IWindow 
     {
         const desktop = this.desktop;
@@ -264,12 +284,14 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     }
 
     /** The desktop window of this context. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::get desktop()
     public get desktop(): IWindow | null 
     {
         return this._context.getDesktopWindow();
     }
 
     /** Filters (delegated to graphic context). */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::get filters()
     public get filters(): unknown[] 
     {
         const gc = this._graphicContext;
@@ -277,6 +299,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return gc ? (gc.filters ?? []) : [];
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set filters()
     public set filters(value: unknown[]) 
     {
         if(this._graphicContext) 
@@ -286,11 +309,13 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     }
 
     /** Properties array (stub for compatibility). */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::get properties()
     public get properties(): unknown[] 
     {
         return [];
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set properties()
     public set properties(_value: unknown[]) 
     {
         // Stub: properties are handled via PropertyStruct
@@ -302,6 +327,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return [];
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set etching()
     public set etching(_value: unknown[]) 
     {
         // Stub: etching is a visual feature not needed in engine
@@ -312,6 +338,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._x;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set x()
     public set x(value: number) 
     {
         if(value !== this._x) 
@@ -325,6 +352,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._y;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set y()
     public set y(value: number) 
     {
         if(value !== this._y) 
@@ -338,6 +366,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._width;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set width()
     public set width(value: number) 
     {
         if(value !== this._width) 
@@ -351,6 +380,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._height;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set height()
     public set height(value: number) 
     {
         if(value !== this._height) 
@@ -364,6 +394,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return {x: this._x, y: this._y};
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set position()
     public set position(value: { x: number; y: number }) 
     {
         this.setRectangle(value.x, value.y, this._width, this._height);
@@ -374,6 +405,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return {x: this._x, y: this._y, width: this._width, height: this._height};
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set rectangle()
     public set rectangle(value: { x: number; y: number; width: number; height: number }) 
     {
         this.setRectangle(value.x, value.y, value.width, value.height);
@@ -384,6 +416,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._background;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set background()
     public set background(value: boolean) 
     {
         this._background = value;
@@ -397,6 +430,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._fillColor;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set color()
     public set color(value: number) 
     {
         this._alphaColor = value & 0xFF000000;
@@ -409,6 +443,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._alphaColor >>> 24;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set alpha()
     public set alpha(value: number) 
     {
         this._alphaColor = value << 24;
@@ -421,6 +456,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._blend;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set blend()
     public set blend(value: number) 
     {
         value = value > 1 ? 1 : (value < 0 ? 0 : value);
@@ -437,6 +473,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._visible;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set visible()
     public set visible(value: boolean) 
     {
         if(value !== this._visible) 
@@ -461,6 +498,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._type;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set type()
     public set type(value: number) 
     {
         if(value !== this._type) 
@@ -475,6 +513,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._caption;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set caption()
     public set caption(value: string) 
     {
         value = resolveLocalizationTokens(value ?? '');
@@ -493,6 +532,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._tags;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set tags()
     public set tags(value: string[]) 
     {
         if(value !== null) 
@@ -506,6 +546,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._mouseThreshold;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set mouseThreshold()
     public set mouseThreshold(value: number) 
     {
         this._mouseThreshold = value > 0xFF ? 0xFF : value;
@@ -516,6 +557,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._state;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set state()
     public set state(value: number) 
     {
         if(value !== this._state) 
@@ -530,6 +572,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._style;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set style()
     public set style(value: number) 
     {
         if(value !== this._style) 
@@ -579,12 +622,14 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._dynamicStyleName;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set dynamicStyle()
     public set dynamicStyle(value: string) 
     {
         this._dynamicStyleName = value;
         this._context.invalidate(this, null, 1);
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::get dynamicStyleColor()
     public get dynamicStyleColor(): {
         redMultiplier: number;
         greenMultiplier: number;
@@ -599,6 +644,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._dynamicStyleColorTransform;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set dynamicStyleColor()
     public set dynamicStyleColor(value: {
         redMultiplier: number;
         greenMultiplier: number;
@@ -618,6 +664,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._clipping;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set clipping()
     public set clipping(value: boolean) 
     {
         if(value !== this._clipping) 
@@ -632,6 +679,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._id;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set id()
     public set id(value: number) 
     {
         this._id = value;
@@ -642,6 +690,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._name;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set name()
     public set name(value: string) 
     {
         this._name = value;
@@ -652,6 +701,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._offsetX;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set offsetX()
     public set offsetX(value: number) 
     {
         this._offsetX = value;
@@ -662,12 +712,14 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._offsetY;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::set offsetY()
     public set offsetY(value: number) 
     {
         this._offsetY = value;
     }
 
     /** The number of children. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::get numChildren()
     public get numChildren(): number 
     {
         return this._children ? this._children.length : 0;
@@ -679,6 +731,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param parent - The parent window to expand
      * @param child - The child window that may exceed bounds
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::expandToAccommodateChild()
     public static expandToAccommodateChild(parent: WindowController, child: IWindow): void 
     {
         let offsetX: number = 0;
@@ -753,6 +806,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param parent - The parent window to resize
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::resizeToAccommodateChildren()
     public static resizeToAccommodateChildren(parent: WindowController): void 
     {
         let maxRight: number = -2147483648;
@@ -805,6 +859,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param out - The rectangle to expand with results
      * @see sources/win63_version/core/window/WindowController.as line 145
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::calculateMouseRegion()
     public static calculateMouseRegion(controller: WindowController, out: {
         x: number;
         y: number;
@@ -1005,6 +1060,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     /**
      * No-op event procedure used as fallback when no procedure is set.
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::nullEventProc()
     private static nullEventProc(_event: WindowEvent, _window: IWindow): void 
     {
         // Intentionally empty
@@ -1038,6 +1094,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     }
 
     /** Returns whether a graphic context exists or can be created. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::hasGraphicsContext()
     public hasGraphicsContext(): boolean 
     {
         return this._graphicContext !== null || !this.testParamFlag(16);
@@ -1049,6 +1106,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param createIfMissing - Whether to create one if it does not exist
      * @returns The graphic context, or null
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getGraphicContext()
     public getGraphicContext(createIfMissing: boolean): IGraphicContext | null 
     {
         if(createIfMissing && !this._graphicContext) 
@@ -1074,6 +1132,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._graphicContext;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::setupGraphicsContext()
     public setupGraphicsContext(): IGraphicContext | null 
     {
         this._graphicContext = this.getGraphicContext(true);
@@ -1111,6 +1170,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this._graphicContext;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::releaseGraphicsContext()
     public releaseGraphicsContext(): void 
     {
         this._graphicsSetup = false;
@@ -1127,6 +1187,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param newWidth - New width
      * @param newHeight - New height
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::setRectangle()
     public setRectangle(newX: number, newY: number, newWidth: number, newHeight: number): void
     {
         // Apply rect limits
@@ -1271,6 +1332,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     }
 
     /** Resolves the layout. Override in subclasses. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::resolve()
     public resolve(): number 
     {
         return 0;
@@ -1292,6 +1354,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     }
 
     /** Centers this window within its parent. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::center()
     public center(): void 
     {
         if(this._parent !== null) 
@@ -1307,6 +1370,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param dx - Horizontal offset
      * @param dy - Vertical offset
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::offset()
     public offset(dx: number, dy: number): void 
     {
         this.setRectangle(this._x + dx, this._y + dy, this._width, this._height);
@@ -1318,6 +1382,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param sx - Horizontal scale delta
      * @param sy - Vertical scale delta
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::scale()
     public scale(sx: number, sy: number): void 
     {
         this.setRectangle(this._x, this._y, this._width + sx, this._height + sy);
@@ -1330,6 +1395,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param namedWindows - Optional map to collect named windows
      * @returns `true` if construction succeeded
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::buildFromXML()
     public buildFromXML(layout: string | Document | Element, namedWindows: Map<string, IWindow> | null = null): boolean 
     {
         try 
@@ -1349,6 +1415,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * If this window shares its parent's graphic context (param flag 16),
      * delegates to the parent.
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::fetchDrawBuffer()
     public fetchDrawBuffer(): unknown 
     {
         if(this.testParamFlag(16)) 
@@ -1366,6 +1433,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param out - The rectangle to populate
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getDrawRegion()
     public getDrawRegion(out: { x: number; y: number; width: number; height: number }): void 
     {
         if(!this.testParamFlag(16)) 
@@ -1403,6 +1471,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param event - The event to route
      * @returns `true` if the event was handled
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::update()
     public update(source: WindowController, event: WindowEvent): boolean 
     {
         // Param flag 9 = ignore events
@@ -1759,6 +1828,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param out - Point to populate
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getLocalPosition()
     public getLocalPosition(out: { x: number; y: number }): void 
     {
         out.x = this._x;
@@ -1770,6 +1840,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param out - Rectangle to populate
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getLocalRectangle()
     public getLocalRectangle(out: { x: number; y: number; width: number; height: number }): void 
     {
         out.x = this._x;
@@ -1784,6 +1855,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param point - The point in local coordinates
      * @returns `true` if the point is inside the window
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::hitTestLocalPoint()
     public hitTestLocalPoint(point: { x: number; y: number }): boolean 
     {
         return (
@@ -1800,6 +1872,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param rect - The rectangle in local coordinates
      * @returns `true` if the rectangles intersect
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::hitTestLocalRectangle()
     public hitTestLocalRectangle(rect: { x: number; y: number; width: number; height: number }): boolean 
     {
         return !(
@@ -1810,6 +1883,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         );
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::validateLocalPointIntersection()
     public validateLocalPointIntersection(point: { x: number; y: number }, drawBuffer: unknown): boolean 
     {
         return this.testLocalPointHitAgainstAlpha(point, drawBuffer, this._mouseThreshold);
@@ -1820,6 +1894,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param out - Point to populate
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getGlobalPosition()
     public getGlobalPosition(out: { x: number; y: number }): void 
     {
         if(this._parent !== null) 
@@ -1840,6 +1915,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param point - The desired global position
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::setGlobalPosition()
     public setGlobalPosition(point: { x: number; y: number }): void 
     {
         const current: { x: number; y: number } = {x: 0, y: 0};
@@ -1865,6 +1941,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param out - Rectangle to populate
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getGlobalRectangle()
     public getGlobalRectangle(out: { x: number; y: number; width: number; height: number }): void 
     {
         if(this._parent !== null) 
@@ -1888,6 +1965,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param rect - The desired global rectangle
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::setGlobalRectangle()
     public setGlobalRectangle(rect: { x: number; y: number; width: number; height: number }): void 
     {
         const current: { x: number; y: number } = {x: 0, y: 0};
@@ -1918,6 +1996,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param point - The point in global coordinates
      * @returns `true` if the point is inside
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::hitTestGlobalPoint()
     public hitTestGlobalPoint(point: { x: number; y: number }): boolean 
     {
         const rect: { x: number; y: number; width: number; height: number } = {x: 0, y: 0, width: 0, height: 0};
@@ -1937,6 +2016,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param rect - The rectangle in global coordinates
      * @returns `true` if they intersect
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::hitTestGlobalRectangle()
     public hitTestGlobalRectangle(rect: { x: number; y: number; width: number; height: number }): boolean 
     {
         const global: { x: number; y: number; width: number; height: number } = {x: 0, y: 0, width: 0, height: 0};
@@ -1950,6 +2030,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         );
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::validateGlobalPointIntersection()
     public validateGlobalPointIntersection(point: { x: number; y: number }, drawBuffer: unknown): boolean 
     {
         const local: { x: number; y: number } = {x: 0, y: 0};
@@ -1965,6 +2046,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param point - The point to convert (modified in place)
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::convertPointFromLocalToGlobalSpace()
     public convertPointFromLocalToGlobalSpace(point: { x: number; y: number }): void 
     {
         const localX: number = point.x;
@@ -1991,6 +2073,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param point - The point to convert (modified in place)
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::convertPointFromGlobalToLocalSpace()
     public convertPointFromGlobalToLocalSpace(point: { x: number; y: number }): void 
     {
         const globalX: number = point.x;
@@ -2013,12 +2096,14 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     }
 
     /** Returns the vertical scale relative to the initial size. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::resolveVerticalScale()
     public resolveVerticalScale(): number 
     {
         return this._height / this._initialRect.height;
     }
 
     /** Returns the horizontal scale relative to the initial size. */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::resolveHorizontalScale()
     public resolveHorizontalScale(): number 
     {
         return this._width / this._initialRect.width;
@@ -2029,6 +2114,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param out - Point to populate with relative coordinates
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getRelativeMousePosition()
     public getRelativeMousePosition(out: { x: number; y: number }): void 
     {
         this.getGlobalPosition(out);
@@ -2053,6 +2139,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param out - Point to populate with absolute coordinates
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getAbsoluteMousePosition()
     public getAbsoluteMousePosition(out: { x: number; y: number }): void 
     {
         const desktop = this._context.getDesktopWindow() as unknown as {
@@ -2074,6 +2161,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param out - Rectangle to populate
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getMouseRegion()
     public getMouseRegion(out: { x: number; y: number; width: number; height: number }): void 
     {
         this.getGlobalRectangle(out);
@@ -2111,6 +2199,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param name - The name to search for
      * @returns The matching window, or null
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::findParentByName()
     public findParentByName(name: string): IWindow | null 
     {
         if(this._name === name) return this;
@@ -2135,6 +2224,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @returns `true` if the point is inside bounds
      * @see sources/win63_version/core/window/WindowController.as line 1603
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::isInWindowBounds()
     public isInWindowBounds(point: { x: number; y: number }): boolean 
     {
         return point.x >= 0 && point.x < this._width && point.y >= 0 && point.y < this._height;
@@ -2146,6 +2236,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @returns Always `true` for base WindowController
      * @see sources/win63_version/core/window/WindowController.as line 1608
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::isCapableOfUsingSharedGraphicContext()
     public isCapableOfUsingSharedGraphicContext(): boolean 
     {
         return true;
@@ -2161,6 +2252,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @returns The topmost child under the point, or null
      * @see sources/win63_version/core/window/WindowController.as line 2111
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getChildUnderPoint()
     public getChildUnderPoint(point: { x: number; y: number }): IWindow | null 
     {
         if(this._visible) 
@@ -2214,6 +2306,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param result - Array to populate with matching windows
      * @see sources/win63_version/core/window/WindowController.as line 2141
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::groupChildrenUnderPoint()
     public groupChildrenUnderPoint(point: { x: number; y: number }, result: IWindow[]): void 
     {
         if(this._visible) 
@@ -2267,6 +2360,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param paramFilter - Param flag mask to filter by
      * @see sources/win63_version/core/window/WindowController.as line 2174
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::groupParameterFilteredChildrenUnderPoint()
     public groupParameterFilteredChildrenUnderPoint(point: {
         x: number;
         y: number
@@ -2321,6 +2415,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param flag - The flag bitmask
      * @returns `true` if the flag is set
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getStateFlag()
     public getStateFlag(flag: number): boolean 
     {
         return (this._state & flag) !== 0;
@@ -2332,6 +2427,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param flag - The flag bitmask
      * @param value - Whether to set (true) or clear (false)
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::setStateFlag()
     public setStateFlag(flag: number, value: boolean = true): void 
     {
         const previous: number = this._state;
@@ -2351,6 +2447,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param flag - The flag bitmask
      * @returns `true` if the flag is set
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getStyleFlag()
     public getStyleFlag(flag: number): boolean 
     {
         return (this._style & flag) !== 0;
@@ -2362,6 +2459,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param flag - The flag bitmask
      * @param value - Whether to set (true) or clear (false)
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::setStyleFlag()
     public setStyleFlag(flag: number, value: boolean = true): void 
     {
         const previous: number = this._style;
@@ -2394,6 +2492,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param flag - The flag bitmask
      * @returns `true` if the flag is set
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getParamFlag()
     public getParamFlag(flag: number): boolean 
     {
         return (this._param & flag) !== 0;
@@ -2405,6 +2504,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param flag - The flag bitmask
      * @param value - Whether to set (true) or clear (false)
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::setParamFlag()
     public setParamFlag(flag: number, value: boolean = true): void 
     {
         const previous: number = this._param;
@@ -2436,6 +2536,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @returns `true` if activation succeeded
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::activate()
     public activate(): boolean 
     {
         let event = WindowEvent.allocate(WindowEvent.WE_ACTIVATE, this, null);
@@ -2464,6 +2565,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @returns `true` if deactivation succeeded
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::deactivate()
     public deactivate(): boolean 
     {
         if(!this.getStateFlag(1)) 
@@ -2497,6 +2599,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @returns `true` if minimization succeeded
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::minimize()
     public minimize(): boolean 
     {
         if(this._state & 0x40) 
@@ -2530,6 +2633,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @returns `true` if maximization succeeded
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::maximize()
     public maximize(): boolean 
     {
         if(this._state & 0x40) 
@@ -2563,6 +2667,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @returns `true` if restoration succeeded
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::restore()
     public restore(): boolean 
     {
         let event = WindowEvent.allocate(WindowEvent.WE_RESTORE, this, null);
@@ -2591,6 +2696,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @returns `true` if locking succeeded
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::lock()
     public lock(): boolean 
     {
         if(this.getStateFlag(64)) 
@@ -2624,6 +2730,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @returns `true` if unlocking succeeded
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::unlock()
     public unlock(): boolean 
     {
         if(!this.getStateFlag(64)) 
@@ -2657,6 +2764,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @returns `true` if enabling succeeded
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::enable()
     public enable(): boolean 
     {
         if(!this.getStateFlag(32)) 
@@ -2690,6 +2798,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @returns `true` if disabling succeeded
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::disable()
     public disable(): boolean 
     {
         if(this.getStateFlag(32)) 
@@ -2727,6 +2836,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @returns `true` if focusing succeeded
      * @see sources/win63_version/core/window/WindowController.as line 2069
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::focus()
     public focus(): boolean 
     {
         if(this.getStateFlag(2)) 
@@ -2764,6 +2874,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @returns `true` if unfocusing succeeded
      * @see sources/win63_version/core/window/WindowController.as line 2090
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::unfocus()
     public unfocus(): boolean 
     {
         if(!this.getStateFlag(2)) 
@@ -2793,6 +2904,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     }
 
     /** Returns whether this window is enabled (not disabled). */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::isEnabled()
     public isEnabled(): boolean 
     {
         return !this.getStateFlag(32);
@@ -2803,6 +2915,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @returns `true` if destruction succeeded
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::destroy()
     public destroy(): boolean 
     {
         if(this._state === 0x40000000) 
@@ -2840,6 +2953,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param listener - The callback function
      * @param priority - Listener priority (higher = first)
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::addEventListener()
     public addEventListener(type: string, listener: WindowEventListener, priority: number = 0): void
     {
         if(!this._disposed) 
@@ -2859,6 +2973,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param type - The event type string
      * @returns `true` if a listener exists
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::hasEventListener()
     public hasEventListener(type: string): boolean 
     {
         if(this._disposed || !this._eventDispatcher) return false;
@@ -2872,6 +2987,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param type - The event type string
      * @param listener - The callback function to remove
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::removeEventListener()
     public removeEventListener(type: string, listener: WindowEventListener): void
     {
         if(!this._disposed && this._eventDispatcher) 
@@ -2887,6 +3003,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param value - The property value
      * @returns A new PropertyStruct
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::createProperty()
     public createProperty(key: string, value: unknown): PropertyStruct 
     {
         if(this._propertyMap) 
@@ -2908,6 +3025,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param key - The property key
      * @returns The default PropertyStruct, or null
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getDefaultProperty()
     public getDefaultProperty(key: string): PropertyStruct | null 
     {
         if(this._propertyMap) 
@@ -2924,6 +3042,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param doEnable - Whether to enable (true) or disable (false)
      * @param exceptions - Names of children to target
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::enableChildren()
     public enableChildren(doEnable: boolean, exceptions: string[]): void 
     {
         for(const name of exceptions) 
@@ -2950,6 +3069,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param doActivate - Whether to activate (true) or deactivate (false)
      * @param exceptions - Names of children to target
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::activateChildren()
     public activateChildren(doActivate: boolean, exceptions: string[]): void 
     {
         for(const name of exceptions) 
@@ -2976,6 +3096,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param isVisible - Whether to make visible (true) or hide (false)
      * @param exceptions - Names of children to target
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::setVisibleChildren()
     public setVisibleChildren(isVisible: boolean, exceptions: string[]): void 
     {
         for(const name of exceptions) 
@@ -2995,6 +3116,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param child - The window to add
      * @returns The added window
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::addChild()
     public addChild(child: IWindow): IWindow 
     {
         const wc = child as WindowController;
@@ -3037,6 +3159,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param index - The position to insert at
      * @returns The added window
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::addChildAt()
     public addChildAt(child: IWindow, index: number): IWindow 
     {
         const wc = child as WindowController;
@@ -3078,6 +3201,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param index - The child index
      * @returns The child window, or null if out of range
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getChildAt()
     public getChildAt(index: number): IWindow | null 
     {
         if(!this._children) return null;
@@ -3091,6 +3215,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param id - The child ID
      * @returns The matching child, or null
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getChildByID()
     public getChildByID(id: number): IWindow | null 
     {
         if(this._children) 
@@ -3110,6 +3235,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param name - The child name
      * @returns The matching child, or null
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getChildByName()
     public getChildByName(name: string): IWindow | null 
     {
         if(this._children) 
@@ -3129,6 +3255,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param name - The child name to find
      * @returns The matching window, or null
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::findChildByName()
     public findChildByName(name: string): IWindow | null 
     {
         if(this._lookupCache && this._lookupCache.has(name)) 
@@ -3178,6 +3305,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param tag - The tag to search for
      * @returns The matching child, or null
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getChildByTag()
     public getChildByTag(tag: string): IWindow | null 
     {
         if(this._children) 
@@ -3197,6 +3325,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param tag - The tag to search for
      * @returns The matching window, or null
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::findChildByTag()
     public findChildByTag(tag: string): IWindow | null 
     {
         if(this._tags && this._tags.indexOf(tag) > -1) 
@@ -3225,6 +3354,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param child - The child to find
      * @returns The index, or -1 if not found
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getChildIndex()
     public getChildIndex(child: IWindow): number 
     {
         return this._children ? this._children.indexOf(child) : -1;
@@ -3236,6 +3366,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param child - The window to remove
      * @returns The removed window, or null if not found
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::removeChild()
     public removeChild(child: IWindow): IWindow | null 
     {
         if(!this._children) return null;
@@ -3272,6 +3403,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param index - The index of the child to remove
      * @returns The removed window, or null
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::removeChildAt()
     public removeChildAt(index: number): IWindow | null 
     {
         const child = this.getChildAt(index);
@@ -3285,6 +3417,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param child - The child to reindex
      * @param index - The new index
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::setChildIndex()
     public setChildIndex(child: IWindow, index: number): void 
     {
         if(!this._children) return;
@@ -3316,6 +3449,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param childA - First child
      * @param childB - Second child
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::swapChildren()
     public swapChildren(childA: IWindow, childB: IWindow): void 
     {
         if(!this._children) return;
@@ -3363,6 +3497,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param indexA - First child index
      * @param indexB - Second child index
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::swapChildrenAt()
     public swapChildrenAt(indexA: number, indexB: number): void 
     {
         if(!this._children) return;
@@ -3389,6 +3524,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param depth - How many levels deep to search (0 = this level only, -1 = infinite)
      * @returns The number of matches found
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::groupChildrenWithID()
     public groupChildrenWithID(id: number, result: IWindow[], depth: number = 0): number 
     {
         if(!this._children) return 0;
@@ -3420,6 +3556,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param depth - How many levels deep to search (0 = this level only, -1 = infinite)
      * @returns The number of matches found
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::groupChildrenWithTag()
     public groupChildrenWithTag(tag: string, result: IWindow[], depth: number = 0): number 
     {
         if(!this._children) return 0;
@@ -3448,6 +3585,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param children - The children to add
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::populate()
     public populate(children: IWindow[]): void 
     {
         let hasGraphicChildren: boolean = false;
@@ -3483,6 +3621,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param minimized - Receives the minimized rectangle
      * @param maximized - Receives the maximized rectangle
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::getRegionProperties()
     public getRegionProperties(
         current: { x: number; y: number; width: number; height: number } | null = null,
         previous: { x: number; y: number; width: number; height: number } | null = null,
@@ -3530,6 +3669,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param minimized - New minimized rectangle
      * @param maximized - New maximized rectangle
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::setRegionProperties()
     public setRegionProperties(
         current: { x: number; y: number; width: number; height: number } | null = null,
         minimized: { x: number; y: number; width: number; height: number } | null = null,
@@ -3583,6 +3723,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @returns A new WindowController with the same properties
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::clone()
     public clone(): IWindow 
     {
         const cloned = new (this.constructor as typeof WindowController)(
@@ -3884,6 +4025,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         // No-op by default
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::testLocalPointHitAgainstAlpha()
     protected testLocalPointHitAgainstAlpha(point: {
         x: number;
         y: number
@@ -3925,6 +4067,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return this.isInWindowBounds(point);
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::requiresOwnGraphicContext()
     protected requiresOwnGraphicContext(): boolean 
     {
         if(this.testParamFlag(16)) 
@@ -3946,6 +4089,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return true;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowController.as::immediateClickHandler()
     protected immediateClickHandler(event: unknown): void 
     {
         const nativeMouseEvent = event as {
@@ -4023,6 +4167,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param target - The controller to clone children into
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::cloneChildWindows()
     protected cloneChildWindows(target: WindowController): void 
     {
         if(this._children) 
@@ -4041,6 +4186,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * Updates the position/size relative to the parent based on param flags.
      * Handles horizontal and vertical anchoring, centering, and stretching.
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::updateScaleRelativeToParent()
     protected updateScaleRelativeToParent(): void 
     {
         if(this._parent === null) return;
@@ -4148,6 +4294,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     /**
      * Scales this window to accommodate all of its children.
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::scaleToAccommodateChildren()
     protected scaleToAccommodateChildren(): void 
     {
         if(!this._children) return;
@@ -4226,6 +4373,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     /**
      * Returns whether this is a child window (not directly under desktop).
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::isChildWindow()
     protected isChildWindow(): boolean 
     {
         return this._parent !== this._context.getDesktopWindow();
@@ -4236,6 +4384,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param event - The event to dispatch
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::notifyEventListeners()
     protected notifyEventListeners(event: WindowEvent): void 
     {
         const proc = this.procedure;
@@ -4290,6 +4439,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @see sources/win63_version/core/window/WindowController.as line 1260
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::renderDynamicStyle()
     private renderDynamicStyle(): void 
     {
         if(this._dynamicStyleName === '') 
@@ -4340,6 +4490,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param state - The state flag (0=default, 4=hover, 16=pressed, 32=disabled)
      * @see sources/win63_version/core/window/WindowController.as line 1294
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::applyDynamicStyleByState()
     private applyDynamicStyleByState(target: WindowController, style: DynamicStyle, state: number): void 
     {
         const props = style.getStyleByWindowState(state);
@@ -4384,6 +4535,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param state - The parent's active state
      * @see sources/win63_version/core/window/WindowController.as line 1322
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::recursivelyUpdateChildrensDynamicStyles()
     private recursivelyUpdateChildrensDynamicStyles(children: IWindow[], state: number): void 
     {
         for(const child of children) 
@@ -4407,6 +4559,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @param event - The event to dispatch to children
      */
+    // AS3: .../src/com/sulake/core/window/WindowController.as::notifyChildren()
     private notifyChildren(event: WindowEvent): void 
     {
         if(this._children) 

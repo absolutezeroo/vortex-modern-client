@@ -11,10 +11,15 @@ import {Vector3d} from '@room/utils/Vector3d';
 
 export class RoomObjectRoomMaskUpdateMessage extends RoomObjectUpdateMessage
 {
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::ADD_MASK
     public static readonly ADD_MASK = 'RORMUM_ADD_MASK';
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::REMOVE_MASK
     public static readonly REMOVE_MASK = 'RORMUM_REMOVE_MASK';
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::MASK_TYPE_DOOR
     public static readonly MASK_TYPE_DOOR = 'door';
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::MASK_CATEGORY_WINDOW
     public static readonly MASK_CATEGORY_WINDOW = 'window';
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::MASK_CATEGORY_HOLE
     public static readonly MASK_CATEGORY_HOLE = 'hole';
 
     constructor(
@@ -38,22 +43,28 @@ export class RoomObjectRoomMaskUpdateMessage extends RoomObjectUpdateMessage
         this._maskCategory = maskCategory;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::_type
     private _type: string = '';
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::get type()
     get type(): string
     {
         return this._type;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::_maskId
     private _maskId: string = '';
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::get maskId()
     get maskId(): string
     {
         return this._maskId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::_maskType
     private _maskType: string | null = '';
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::get maskType()
     get maskType(): string | null
     {
         return this._maskType;
@@ -61,13 +72,16 @@ export class RoomObjectRoomMaskUpdateMessage extends RoomObjectUpdateMessage
 
     private _maskLocation: Vector3d | null = null;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::get maskLocation()
     get maskLocation(): IVector3d | null
     {
         return this._maskLocation;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::_maskCategory
     private _maskCategory: string = 'window';
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectRoomMaskUpdateMessage.as::get maskCategory()
     get maskCategory(): string
     {
         return this._maskCategory;

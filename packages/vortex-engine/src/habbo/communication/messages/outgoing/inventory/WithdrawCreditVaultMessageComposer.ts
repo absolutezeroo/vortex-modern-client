@@ -14,6 +14,7 @@ export class WithdrawCreditVaultMessageComposer extends MessageComposer<[]>
         super();
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/vault/WithdrawCreditVaultMessageComposer.as::getMessageArray()
     getMessageArray(): []
     {
         return this._data;

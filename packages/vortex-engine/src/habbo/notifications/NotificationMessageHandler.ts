@@ -129,10 +129,14 @@ const log = Logger.getLogger('habbo.notifications.NotificationMessageHandler');
  */
 export class NotificationMessageHandler
 {
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::CALL_FOR_HELP_NOTIFICATION_TYPE
     private static readonly CALL_FOR_HELP_NOTIFICATION_TYPE: string = 'cfh.created';
 
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::_notifications
     private _notifications: HabboNotifications | null;
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::_communication
     private _communication: IHabboCommunicationManager | null;
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::_messageEvents
     private _messageEvents: IMessageEvent[] = [];
 
     constructor(notifications: HabboNotifications, communication: IHabboCommunicationManager)
@@ -146,6 +150,7 @@ export class NotificationMessageHandler
         this._notifications.activate();
     }
 
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::dispose()
     dispose(): void
     {
         if(this._messageEvents != null && this._communication != null)
@@ -166,6 +171,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onRoomMessagesNotification()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onRoomMessagesNotification()
     private onRoomMessagesNotification(event: IMessageEvent): void
     {
         if(!event) return;
@@ -269,6 +275,7 @@ export class NotificationMessageHandler
     /**
 	 * Register a message event with the communication manager and track it for cleanup
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::addMessageEvent()
     private addMessageEvent(event: IMessageEvent): void
     {
         if(this._communication)
@@ -303,6 +310,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onHotelMaintenance()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onHotelMaintenance()
     private onHotelMaintenance(event: IMessageEvent): void
     {
         const parser = event.parser as MaintenanceStatusMessageEventParser;
@@ -323,6 +331,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onLoginFailedHotelClosed()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onLoginFailedHotelClosed()
     private onLoginFailedHotelClosed(event: IMessageEvent): void
     {
         if(!event) return;
@@ -341,6 +350,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onInfoFeedEnable()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onInfoFeedEnable()
     private onInfoFeedEnable(event: IMessageEvent): void
     {
         const parser = event.parser as InfoFeedEnableMessageParser;
@@ -451,6 +461,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onMOTD()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onMOTD()
     private onMOTD(event: IMessageEvent): void
     {
         const parser = (event as MOTDNotificationEvent).parser as MOTDNotificationEventParser;
@@ -471,6 +482,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onBroadcastMessageEvent()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onBroadcastMessageEvent()
     private onBroadcastMessageEvent(event: IMessageEvent): void
     {
         const parser = (event as HabboBroadcastMessageEvent).parser as HabboBroadcastMessageEventParser;
@@ -487,6 +499,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onNotificationDialogMessageEvent()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onNotificationDialogMessageEvent()
     private onNotificationDialogMessageEvent(event: IMessageEvent): void
     {
         if(!event) return;
@@ -510,6 +523,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onHotelClosing()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onHotelClosing()
     private onHotelClosing(event: IMessageEvent): void
     {
         if(!event) return;
@@ -528,6 +542,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onHotelClosed()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onHotelClosed()
     private onHotelClosed(event: IMessageEvent): void
     {
         if(!event) return;
@@ -546,6 +561,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onLevelUp()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onLevelUp()
     private onLevelUp(event: IMessageEvent): void
     {
         if(!event) return;
@@ -562,6 +578,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onPetLevelNotification()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onPetLevelNotification()
     private onPetLevelNotification(event: IMessageEvent): void
     {
         if(!event) return;
@@ -594,6 +611,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onPetReceived()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onPetReceived()
     private onPetReceived(event: IMessageEvent): void
     {
         if(!event) return;
@@ -625,6 +643,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onPetRespectFailed()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onPetRespectFailed()
     private onPetRespectFailed(event: IMessageEvent): void
     {
         if(!event) return;
@@ -780,6 +799,7 @@ export class NotificationMessageHandler
 	 *
 	 * @see source_as_win63/habbo/notifications/class_3353.as onRoomEnter()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onRoomEnter()
     private onRoomEnter(_event: IMessageEvent): void
     {
         this._notifications?.singularController?.showModerationDisclaimer();

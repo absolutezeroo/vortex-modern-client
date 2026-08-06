@@ -16,12 +16,15 @@
  */
 export class MarketPlaceOfferState 
 {
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/_SafeCls_4489.as::ONGOING
     static readonly ONGOING: number = 1;
 
     // TS-derived name: unreadable in every tree; duplicate value of ONGOING (see class doc).
     static readonly ONGOING_ALT: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/_SafeCls_4489.as::SOLD
     static readonly SOLD: number = 2;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/_SafeCls_4489.as::EXPIRED
     static readonly EXPIRED: number = 3;
 }

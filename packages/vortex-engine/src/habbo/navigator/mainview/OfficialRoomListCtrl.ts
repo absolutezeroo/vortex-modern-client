@@ -12,7 +12,9 @@ import { PromotedRoomsListCtrl } from './PromotedRoomsListCtrl';
  */
 export class OfficialRoomListCtrl implements IViewCtrl
 {
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomListCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator;
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomListCtrl.as::_content
     private _content: IWindowContainer | null = null;
     private _itemList: IItemListWindow | null = null;
     private _promotedRoomsListCtrl: PromotedRoomsListCtrl;
@@ -23,6 +25,7 @@ export class OfficialRoomListCtrl implements IViewCtrl
         this._promotedRoomsListCtrl = new PromotedRoomsListCtrl(navigator);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomListCtrl.as::dispose()
     dispose(): void
     {
         if(this._promotedRoomsListCtrl)
@@ -32,17 +35,20 @@ export class OfficialRoomListCtrl implements IViewCtrl
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomListCtrl.as::get content()
     get content(): IWindowContainer | null
     {
         return this._content;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomListCtrl.as::set content()
     set content(value: IWindowContainer | null)
     {
         this._content = value;
         this._itemList = value ? value.findChildByName('item_list_official') as IItemListWindow : null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomListCtrl.as::refresh()
     refresh(): void
     {
         if(!this._itemList) return;
@@ -77,6 +83,7 @@ export class OfficialRoomListCtrl implements IViewCtrl
         this._itemList.autoArrangeItems = true;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomListCtrl.as::getVisibleEntries()
     private getVisibleEntries(): OfficialRoomEntryData[]
     {
         const all = this._navigator.data.officialRooms?.entries ?? [];
@@ -102,6 +109,7 @@ export class OfficialRoomListCtrl implements IViewCtrl
         return visible;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomListCtrl.as::refreshEntry()
     private refreshEntry(
         show: boolean,
         isOdd: boolean,
@@ -126,6 +134,7 @@ export class OfficialRoomListCtrl implements IViewCtrl
         return false;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomListCtrl.as::refreshPromotedRooms()
     private refreshPromotedRooms(): void
     {
         const promotedContainer = this._itemList!.getListItemAt(0) as IWindowContainer | null;

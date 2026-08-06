@@ -25,6 +25,7 @@ const log = Logger.getLogger('habbo.avatar.AvatarAssetDownloadManager');
  */
 export class AvatarAssetDownloadManager extends EventEmitter 
 {
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::LIBRARY_LOADED
     public static readonly LIBRARY_LOADED: string = 'LIBRARY_LOADED';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::_SafeStr_9372
@@ -33,18 +34,28 @@ export class AvatarAssetDownloadManager extends EventEmitter
     // legacy CDN); that bump is a dead branch in this port (no such host exists), so only the
     // default is restored.
     private static readonly MAX_SIMULTANEOUS_DOWNLOADS: number = 6;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::LIB_BODY
     private static readonly LIB_BODY: string = 'hh_human_body';
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::LIB_ITEMS
     private static readonly LIB_ITEMS: string = 'hh_human_item';
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::_structure
     private _structure: AvatarStructure;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::_libraries
     private _libraries: Map<string, AvatarAssetDownloadLibrary>;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::_figureMap
     private _figureMap: Map<string, AvatarAssetDownloadLibrary[]>;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::_incompleteFigures
     private _incompleteFigures: Map<string, AvatarAssetDownloadLibrary[]>;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::_listeners
     private _listeners: Map<string, IAvatarImageListener[]>;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::_pendingDownloadQueue
     private _pendingDownloadQueue: AvatarAssetDownloadLibrary[];
     private _pendingDownloadSet: Set<AvatarAssetDownloadLibrary>;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::_currentDownloads
     private _currentDownloads: AvatarAssetDownloadLibrary[];
     private _currentDownloadSet: Set<AvatarAssetDownloadLibrary>;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::_initDownloadBuffer
     private _initDownloadBuffer: [IAvatarFigureContainer, IAvatarImageListener | null][];
     private _isReady: boolean;
     private _downloadUrl: string;
@@ -116,6 +127,7 @@ export class AvatarAssetDownloadManager extends EventEmitter
      * @param figure - The figure container to check
      * @returns True if all required libraries are ready
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::isReady()
     public isReady(figure: IAvatarFigureContainer): boolean 
     {
         if(!this._isReady || (this._renderReadyProvider !== null && !this._renderReadyProvider())) return false;
@@ -128,6 +140,7 @@ export class AvatarAssetDownloadManager extends EventEmitter
     /**
      * Returns whether any mandatory libraries are still missing.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::isMissingMandatoryLibs()
     public isMissingMandatoryLibs(): boolean 
     {
         return this._mandatoryLibs.length > 0;
@@ -144,6 +157,7 @@ export class AvatarAssetDownloadManager extends EventEmitter
      * @param figure - The figure container describing the avatar
      * @param listener - Optional listener to notify when assets are ready
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::loadFigureSetData()
     public loadFigureSetData(figure: IAvatarFigureContainer, listener: IAvatarImageListener | null = null): void 
     {
         const renderReady = this._renderReadyProvider === null || this._renderReadyProvider();
@@ -208,6 +222,7 @@ export class AvatarAssetDownloadManager extends EventEmitter
      * In AS3, this iterates all libraries and calls purge() on those
      * that are ready and not mandatory.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::purge()
     public purge(): void 
     {
         for(const library of this._libraries.values()) 
@@ -219,6 +234,7 @@ export class AvatarAssetDownloadManager extends EventEmitter
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::dispose()
     public dispose(): void 
     {
         this._libraries.clear();
@@ -245,6 +261,7 @@ export class AvatarAssetDownloadManager extends EventEmitter
      * - Root-level array [...]
      * - { lib: [...] } (converted from XML)
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::generateMap()
     private generateMap(data: any): void 
     {
         if(!data) return;
@@ -327,6 +344,7 @@ export class AvatarAssetDownloadManager extends EventEmitter
      * In AS3, this iterates the figure's part type IDs, looks up each part set,
      * then checks each part's "type:id" key against the figure map for unready libraries.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::getLibsToDownload()
     private getLibsToDownload(figure: IAvatarFigureContainer): AvatarAssetDownloadLibrary[] 
     {
         const result: AvatarAssetDownloadLibrary[] = [];
@@ -469,6 +487,7 @@ export class AvatarAssetDownloadManager extends EventEmitter
     /**
      * Adds a library to the pending download queue if not already queued or downloading.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::addToQueue()
     private addToQueue(library: AvatarAssetDownloadLibrary): void 
     {
         if(!library.isReady && !this._pendingDownloadSet.has(library) && !this._currentDownloadSet.has(library)) 
@@ -483,6 +502,7 @@ export class AvatarAssetDownloadManager extends EventEmitter
      *
      * In AS3, this is triggered by a Timer with 100ms delay.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::processPending()
     private processPending(): void 
     {
         while(this._pendingDownloadQueue.length > 0 && this._currentDownloads.length < AvatarAssetDownloadManager.MAX_SIMULTANEOUS_DOWNLOADS) 
@@ -501,6 +521,7 @@ export class AvatarAssetDownloadManager extends EventEmitter
      *
      * These are required for basic avatar rendering and are queued immediately.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::loadMandatoryLibs()
     private loadMandatoryLibs(): void 
     {
         const libs = this._mandatoryLibs.slice();

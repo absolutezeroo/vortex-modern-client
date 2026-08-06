@@ -97,6 +97,7 @@ export class ActionDefinition implements IActionDefinition
         return this._geometryType;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::_isMain
     private _isMain: boolean = false;
 
     // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get isMain()
@@ -105,6 +106,7 @@ export class ActionDefinition implements IActionDefinition
         return this._isMain;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::_isDefault
     private _isDefault: boolean = false;
 
     // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get isDefault()
@@ -129,6 +131,7 @@ export class ActionDefinition implements IActionDefinition
         return this._startFromFrameZero;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::_params
     private _params: Map<string, string>;
 
     // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get params()

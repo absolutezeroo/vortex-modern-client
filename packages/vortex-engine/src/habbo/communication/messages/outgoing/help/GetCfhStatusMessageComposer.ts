@@ -15,6 +15,7 @@ export class GetCfhStatusMessageComposer extends MessageComposer<ConstructorPara
         this._data = [openHelp];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/GetCfhStatusMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

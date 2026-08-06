@@ -11,6 +11,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class OpenMessageParser implements IMessageParser
 {
+    // AS3: .../src/com/sulake/habbo/communication/messages/parser/userdefinedroomevents/_SafeCls_2993.as::_stuffId
     private _stuffId: number = 0;
 
     // AS3: _SafeCls_2993.as::get stuffId()

@@ -10,6 +10,7 @@ export class ExpressionMessageEventParser implements IMessageParser
 {
     private _userId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/ExpressionMessageEventParser.as::get userId()
     get userId(): number
     {
         return this._userId;
@@ -17,11 +18,13 @@ export class ExpressionMessageEventParser implements IMessageParser
 
     private _expressionType: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/ExpressionMessageEventParser.as::get expressionType()
     get expressionType(): number
     {
         return this._expressionType;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/ExpressionMessageEventParser.as::flush()
     flush(): boolean
     {
         this._userId = 0;
@@ -29,6 +32,7 @@ export class ExpressionMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/ExpressionMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper === null)

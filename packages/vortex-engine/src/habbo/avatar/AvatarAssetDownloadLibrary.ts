@@ -18,12 +18,18 @@ export class AvatarAssetDownloadLibrary extends EventEmitter
 {
     public static readonly COMPLETE: string = 'AADL_COMPLETE';
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::STATE_IDLE
     private static readonly STATE_IDLE: number = 0;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::STATE_DOWNLOADING
     private static readonly STATE_DOWNLOADING: number = 1;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::STATE_READY
     private static readonly STATE_READY: number = 2;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::_revision
     private _revision: string;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::_downloadUrl
     private _downloadUrl: string;
     private _assetLibrary: IAssetLibrary;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::_state
     private _state: number;
 
     constructor(libraryName: string, revision: string, downloadUrl: string, assetLibrary: IAssetLibrary) 
@@ -38,11 +44,13 @@ export class AvatarAssetDownloadLibrary extends EventEmitter
         this._isMandatory = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::_libraryName
     private _libraryName: string;
 
     /**
      * The name of this asset library.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::get libraryName()
     public get libraryName(): string 
     {
         return this._libraryName;
@@ -53,11 +61,13 @@ export class AvatarAssetDownloadLibrary extends EventEmitter
     /**
      * Whether this library is a mandatory (core) library.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::get isMandatory()
     public get isMandatory(): boolean 
     {
         return this._isMandatory;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::set isMandatory()
     public set isMandatory(value: boolean) 
     {
         this._isMandatory = value;
@@ -66,6 +76,7 @@ export class AvatarAssetDownloadLibrary extends EventEmitter
     /**
      * Whether the library has finished downloading.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::get isReady()
     public get isReady(): boolean 
     {
         return this._state === AvatarAssetDownloadLibrary.STATE_READY;
@@ -78,6 +89,7 @@ export class AvatarAssetDownloadLibrary extends EventEmitter
      * Here we use the AssetLibrary.loadAssetFromFile() system to load the .nitro bundle.
      * On completion (or error), emits COMPLETE.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::startDownloading()
     public startDownloading(): void 
     {
         if(this._state !== AvatarAssetDownloadLibrary.STATE_IDLE) return;
@@ -150,11 +162,13 @@ export class AvatarAssetDownloadLibrary extends EventEmitter
      *
      * In AS3 this removes the asset library from the AssetLibraryCollection.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::purge()
     public purge(): void 
     {
         this._state = AvatarAssetDownloadLibrary.STATE_IDLE;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as::toString()
     public toString(): string 
     {
         return this._libraryName + (this.isReady ? '[x]' : '[ ]');

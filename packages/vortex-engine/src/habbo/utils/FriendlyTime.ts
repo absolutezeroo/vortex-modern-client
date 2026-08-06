@@ -42,6 +42,7 @@ export class FriendlyTime
      *
      * Falls through to seconds — AS3 has no "just now" case.
      */
+    // AS3: .../src/com/sulake/habbo/utils/FriendlyTime.as::getFriendlyTime()
     static getFriendlyTime(
         localization: IHabboLocalizationManager | null,
         seconds: number,
@@ -83,6 +84,7 @@ export class FriendlyTime
      * The same ladder against `friendlytime.<unit>.short<suffix>` keys — note `.short` sits before
      * the suffix, so `('.ago')` here means `friendlytime.days.short.ago`.
      */
+    // AS3: .../src/com/sulake/habbo/utils/FriendlyTime.as::getShortFriendlyTime()
     static getShortFriendlyTime(
         localization: IHabboLocalizationManager | null,
         seconds: number,
@@ -124,6 +126,7 @@ export class FriendlyTime
      * The key doubles as its own default, so a missing entry shows the key rather than an empty
      * string. Returning the key when there is no manager at all keeps that behaviour.
      */
+    // AS3: .../src/com/sulake/habbo/utils/FriendlyTime.as::getLocalization()
     static getLocalization(localization: IHabboLocalizationManager | null, key: string, amount: number): string
     {
         if(!localization)

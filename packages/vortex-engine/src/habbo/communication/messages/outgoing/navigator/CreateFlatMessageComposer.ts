@@ -23,6 +23,7 @@ export class CreateFlatMessageComposer extends MessageComposer<ConstructorParame
         this._data = [roomName, roomDescription, roomModel, categoryId, maxUsers, tradeMode];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/CreateFlatMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -14,6 +14,7 @@ export class IgnoredUsersMessageEvent extends MessageEvent implements IMessageEv
         super(callback, IgnoredUsersMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/IgnoredUsersMessageEvent.as::get ignoredUserIds()
     get ignoredUserIds(): number[]
     {
         return (this._parser as IgnoredUsersMessageParser).ignoredUsers;

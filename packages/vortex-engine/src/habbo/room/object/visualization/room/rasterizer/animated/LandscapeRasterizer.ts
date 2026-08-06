@@ -21,9 +21,12 @@ import type {
 
 export class LandscapeRasterizer extends PlaneRasterizer
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/LandscapeRasterizer.as::UPDATE_INTERVAL
     private static readonly UPDATE_INTERVAL: number = 500;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/LandscapeRasterizer.as::_landscapeWidth
     private _landscapeWidth: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/LandscapeRasterizer.as::_landscapeHeight
     private _landscapeHeight: number = 0;
 
     override initializeDimensions(width: number, height: number): boolean
@@ -123,6 +126,7 @@ export class LandscapeRasterizer extends PlaneRasterizer
 	 * Each landscape can have both static visualization layers and
 	 * animated layers containing scrolling animation items.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/LandscapeRasterizer.as::parseLandscapes()
     private parseLandscapes(planes: IAssetPlane[]): void
     {
         if(planes === null) return;
@@ -238,6 +242,7 @@ export class LandscapeRasterizer extends PlaneRasterizer
 	 *
 	 * @see AS3 LandscapeRasterizer.getCoordinateValue()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/LandscapeRasterizer.as::getCoordinateValue()
     private getCoordinateValue(value: string, random: string): number
     {
         let result = 0;

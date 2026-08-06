@@ -16,6 +16,7 @@ export class PollStartComposer extends MessageComposer<ConstructorParameters<typ
         this._data = [pollId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/poll/PollStartComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

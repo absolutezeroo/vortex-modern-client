@@ -20,6 +20,7 @@ const log = Logger.getLogger('habbo.catalog.viewer.Product');
  */
 export class Product extends ProductGridItem implements IProduct
 {
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::EFFECT_CLASSID_NINJA_DISAPPEAR
     static readonly EFFECT_CLASSID_NINJA_DISAPPEAR: number = 108;
 
     private _productType: string;
@@ -67,6 +68,7 @@ export class Product extends ProductGridItem implements IProduct
         this._uniqueLimitedItemsLeft = uniqueLimitedItemsLeft;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::stripAddonProducts()
     static stripAddonProducts(products: IProduct[]): IProduct[]
     {
         if(products.length === 1) return products;
@@ -78,56 +80,67 @@ export class Product extends ProductGridItem implements IProduct
         );
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::get productType()
     get productType(): string
     {
         return this._productType;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::get productClassId()
     get productClassId(): number
     {
         return this._productClassId;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::set extraParam()
     set extraParam(value: string)
     {
         this._extraParam = value;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::get extraParam()
     get extraParam(): string
     {
         return this._extraParam;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::get productCount()
     get productCount(): number
     {
         return this._productCount;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::get productData()
     get productData(): IProductData | null
     {
         return this._productData;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::get furnitureData()
     get furnitureData(): IFurnitureData | null
     {
         return this._furnitureData;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::get isUniqueLimitedItem()
     get isUniqueLimitedItem(): boolean
     {
         return this._isUniqueLimitedItem;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::get uniqueLimitedItemSeriesSize()
     get uniqueLimitedItemSeriesSize(): number
     {
         return this._uniqueLimitedItemSeriesSize;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::get uniqueLimitedItemsLeft()
     get uniqueLimitedItemsLeft(): number
     {
         return this._uniqueLimitedItemsLeft;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::set uniqueLimitedItemsLeft()
     set uniqueLimitedItemsLeft(value: number)
     {
         this._uniqueLimitedItemsLeft = value;
@@ -273,6 +286,7 @@ export class Product extends ProductGridItem implements IProduct
         return image;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::imageReady()
     imageReady(_id: number, image: ImageBitmap | null): void
     {
         if(!this.disposed)
@@ -281,6 +295,7 @@ export class Product extends ProductGridItem implements IProduct
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::imageFailed()
     imageFailed(_id: number): void
     {
     }
@@ -296,6 +311,7 @@ export class Product extends ProductGridItem implements IProduct
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/Product.as::get isColorable()
     get isColorable(): boolean
     {
         if(this._furnitureData && this._furnitureData.fullName)

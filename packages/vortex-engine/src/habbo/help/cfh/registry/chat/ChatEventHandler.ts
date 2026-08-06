@@ -26,6 +26,7 @@ export class ChatEventHandler
     /**
 	 * Whether this handler has been disposed
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatEventHandler.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -50,6 +51,7 @@ export class ChatEventHandler
     /**
 	 * Dispose of this handler
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatEventHandler.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

@@ -67,6 +67,7 @@ export class ChatItem
 
     private _timeStamp: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::get timeStamp()
     get timeStamp(): number
     {
         return this._timeStamp;
@@ -74,6 +75,7 @@ export class ChatItem
 
     private _userId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::get userId()
     get userId(): number
     {
         return this._userId;
@@ -81,18 +83,22 @@ export class ChatItem
 
     private _roomId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::get roomId()
     get roomId(): number
     {
         return this._roomId;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::_text
     private _text: string = '';
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::get text()
     get text(): string
     {
         return this._text;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::set text()
     set text(value: string)
     {
         this._text = value;
@@ -100,13 +106,16 @@ export class ChatItem
 
     private _chatType: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::get chatType()
     get chatType(): number
     {
         return this._chatType;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::_style
     private _style: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::get style()
     get style(): number
     {
         return this._style;
@@ -125,6 +134,7 @@ export class ChatItem
     // build a clickable link, and RoomSessionChatEvent already carries it unmodified.
     private _links: IChatLink[];
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::get links()
     get links(): IChatLink[]
     {
         return this._links;
@@ -132,13 +142,16 @@ export class ChatItem
 
     private _userLocation: IVector3d | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::get userLocation()
     get userLocation(): IVector3d | null
     {
         return this._userLocation;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::_forcedColor
     private _forcedColor: number | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::get forcedColor()
     get forcedColor(): number | null
     {
         return this._forcedColor;
@@ -146,6 +159,7 @@ export class ChatItem
 
     private _forcedScreenLocation: unknown = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::get forcedScreenLocation()
     get forcedScreenLocation(): unknown
     {
         return this._forcedScreenLocation;
@@ -153,13 +167,16 @@ export class ChatItem
 
     private _forcedFigure: string | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::get forcedFigure()
     get forcedFigure(): string | null
     {
         return this._forcedFigure;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::_forcedUserName
     private _forcedUserName: string | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::get forcedUserName()
     get forcedUserName(): string | null
     {
         return this._forcedUserName;
@@ -167,6 +184,7 @@ export class ChatItem
 
     private _extraParam: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatItem.as::get extraParam()
     get extraParam(): number
     {
         return this._extraParam;

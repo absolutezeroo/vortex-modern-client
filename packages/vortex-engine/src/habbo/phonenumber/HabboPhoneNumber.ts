@@ -164,6 +164,7 @@ export class HabboPhoneNumber extends Component
      *
      * Codes are upper-cased before sending; empty input is dropped without a message.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/HabboPhoneNumber.as::sendTryVerificationCode()
     sendTryVerificationCode(verificationCode: string): void
     {
         if(!verificationCode)
@@ -216,6 +217,7 @@ export class HabboPhoneNumber extends Component
      *
      * The "I did not get the code" path: drops the verify dialog and asks the server to start over.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/HabboPhoneNumber.as::requestPhoneNumberCollectionReset()
     requestPhoneNumberCollectionReset(): void
     {
         this.destroyVerifyView();
@@ -254,6 +256,7 @@ export class HabboPhoneNumber extends Component
      * AS3 switches on `resultCode - 1`; the equivalent `PhoneNumberStatusEnum` values are spelled
      * out here. The error branch has no `break`, but it is the last one, so nothing falls through.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/HabboPhoneNumber.as::onPhoneNumberResultMessage()
     private onPhoneNumberResultMessage(event: IMessageEvent): void
     {
         const parser = (event as TryPhoneNumberResultMessageEvent).tryPhoneNumberResultParser;
@@ -304,6 +307,7 @@ export class HabboPhoneNumber extends Component
      *
      * AS3 switches on `resultCode - 2`.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/HabboPhoneNumber.as::onVerificationCodeResultMessage()
     private onVerificationCodeResultMessage(event: IMessageEvent): void
     {
         const parser = (event as TryVerificationCodeResultMessageEvent).tryVerificationCodeResultParser;
@@ -339,6 +343,7 @@ export class HabboPhoneNumber extends Component
      * Mirrors both codes into configuration before deciding anything, so the rest of the client
      * can read `phone.collection.status` / `phone.verification.status` without listening here.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/HabboPhoneNumber.as::onStateMessage()
     private onStateMessage(event: IMessageEvent): void
     {
         const parser = (event as PhoneCollectionStateMessageEvent).phoneCollectionStateParser;
@@ -404,6 +409,7 @@ export class HabboPhoneNumber extends Component
      * The preferred countries come from configuration as a comma-separated list and are floated to
      * the top of the country menu by the view.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/HabboPhoneNumber.as::createCollectView()
     private createCollectView(): void
     {
         this.destroyCollectView();
@@ -467,6 +473,7 @@ export class HabboPhoneNumber extends Component
      * Detaches unconditionally, before the null check — AS3 does too, so a stale extension is
      * cleared even when the view is already gone.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/HabboPhoneNumber.as::destroyCollectMinimizedView()
     private destroyCollectMinimizedView(): void
     {
         this._toolbar?.extensionView?.detachExtension('phone_number');

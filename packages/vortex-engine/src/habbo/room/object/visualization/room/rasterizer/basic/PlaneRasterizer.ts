@@ -30,26 +30,34 @@ import type {
 
 export class PlaneRasterizer implements IPlaneRasterizer
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::DEFAULT_TYPE
     protected static readonly DEFAULT_TYPE: string = 'default';
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::_textures
     private _textures: Map<string, PlaneTexture> = new Map();
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::_materials
     private _materials: Map<string, PlaneMaterial> = new Map();
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::_planes
     private _planes: Map<string, Plane> = new Map();
     private _geometryCache: Map<string, IRoomGeometry> = new Map();
     private _assetTextures: Map<string, HTMLCanvasElement> | null = null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::_data
     private _data: IAssetPlaneVisualizationData | null = null;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::get data()
     protected get data(): IAssetPlaneVisualizationData | null
     {
         return this._data;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::initializeDimensions()
     initializeDimensions(_width: number, _height: number): boolean
     {
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::dispose()
     dispose(): void
     {
         for(const plane of this._planes.values())
@@ -74,6 +82,7 @@ export class PlaneRasterizer implements IPlaneRasterizer
         this._assetTextures = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::clearCache()
     clearCache(): void
     {
         for(const plane of this._planes.values())
@@ -86,11 +95,13 @@ export class PlaneRasterizer implements IPlaneRasterizer
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::initialize()
     initialize(data: IAssetPlaneVisualizationData): void
     {
         this._data = data;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::reinitialize()
     reinitialize(): void
     {
         this.resetTextures();
@@ -98,6 +109,7 @@ export class PlaneRasterizer implements IPlaneRasterizer
         this.initializeAll();
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::initializeAssetCollection()
     initializeAssetCollection(textures: Map<string, HTMLCanvasElement>): void
     {
         if(this._data === null) return;
@@ -105,6 +117,7 @@ export class PlaneRasterizer implements IPlaneRasterizer
         this.initializeAll();
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::render()
     render(
         _canvas: HTMLCanvasElement | null,
         _id: string,
@@ -123,11 +136,13 @@ export class PlaneRasterizer implements IPlaneRasterizer
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::getTextureIdentifier()
     getTextureIdentifier(scale: number, _normal: IVector3d): string
     {
         return String(scale);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::getLayers()
     getLayers(id: string): (unknown | null)[]
     {
         let plane = this.getPlane(id);
@@ -142,21 +157,25 @@ export class PlaneRasterizer implements IPlaneRasterizer
         return [];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::getTexture()
     protected getTexture(id: string): PlaneTexture | null
     {
         return this._textures.get(id) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::getMaterial()
     protected getMaterial(id: string): PlaneMaterial | null
     {
         return this._materials.get(id) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::getPlane()
     protected getPlane(id: string): Plane | null
     {
         return this._planes.get(id) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::addPlane()
     protected addPlane(id: string, plane: Plane): boolean
     {
         if(plane === null) return false;
@@ -165,11 +184,13 @@ export class PlaneRasterizer implements IPlaneRasterizer
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::initializePlanes()
     protected initializePlanes(): void
     {
         // Override in subclasses
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::getGeometry()
     protected getGeometry(scale: number, horizontalAngle: number, verticalAngle: number): IRoomGeometry
     {
         horizontalAngle = Math.abs(horizontalAngle);
@@ -189,6 +210,7 @@ export class PlaneRasterizer implements IPlaneRasterizer
         return geo;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::parseVisualizations()
     protected parseVisualizations(plane: Plane, visualizations: IAssetPlaneVisualization[]): void
     {
         if(plane === null || visualizations === null) return;
@@ -235,6 +257,7 @@ export class PlaneRasterizer implements IPlaneRasterizer
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::resetMaterials()
     private resetMaterials(): void
     {
         for(const material of this._materials.values())
@@ -244,6 +267,7 @@ export class PlaneRasterizer implements IPlaneRasterizer
         this._materials.clear();
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::resetTextures()
     private resetTextures(): void
     {
         for(const texture of this._textures.values())
@@ -253,6 +277,7 @@ export class PlaneRasterizer implements IPlaneRasterizer
         this._textures.clear();
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::initializeAll()
     private initializeAll(): void
     {
         if(this._data === null) return;
@@ -260,6 +285,7 @@ export class PlaneRasterizer implements IPlaneRasterizer
         this.initializePlanes();
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::initializeTexturesAndMaterials()
     private initializeTexturesAndMaterials(): void
     {
         if(this._data === null) return;
@@ -275,6 +301,7 @@ export class PlaneRasterizer implements IPlaneRasterizer
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::parseTextures()
     private parseTextures(textures: IAssetPlaneTexture[]): void
     {
         if(textures === null || this._assetTextures === null) return;
@@ -311,6 +338,7 @@ export class PlaneRasterizer implements IPlaneRasterizer
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::parsePlaneMaterials()
     private parsePlaneMaterials(materials: IAssetPlaneMaterial[]): void
     {
         if(materials === null) return;
@@ -352,6 +380,7 @@ export class PlaneRasterizer implements IPlaneRasterizer
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::parsePlaneMaterialCellColumn()
     private parsePlaneMaterialCellColumn(
         columnData: IAssetPlaneMaterialCellColumn,
         matrix: PlaneMaterialCellMatrix,
@@ -367,6 +396,7 @@ export class PlaneRasterizer implements IPlaneRasterizer
         matrix.createColumn(index, width, cells, repeatMode);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneRasterizer.as::parsePlaneMaterialCells()
     private parsePlaneMaterialCells(cellsData: IAssetPlaneMaterialCell[]): PlaneMaterialCell[] | null
     {
         if(cellsData === null) return null;

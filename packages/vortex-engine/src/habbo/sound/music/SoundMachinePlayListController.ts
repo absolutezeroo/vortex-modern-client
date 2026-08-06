@@ -56,6 +56,7 @@ export class SoundMachinePlayListController implements IPlayListController
     // AS3: .../SoundMachinePlayListController.as::_isPlaying
     private _isPlaying: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/sound/music/SoundMachinePlayListController.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../SoundMachinePlayListController.as::_messageEvents
@@ -141,6 +142,7 @@ export class SoundMachinePlayListController implements IPlayListController
      * With no list yet it asks for one and marks itself playing anyway — the answer's own handler
      * then starts the track, which is why `onPlayListMessage()` checks `isPlaying` at the end.
      */
+    // AS3: .../src/com/sulake/habbo/sound/music/SoundMachinePlayListController.as::startPlaying()
     startPlaying(): void
     {
         if(this._isPlaying) return;
@@ -284,6 +286,7 @@ export class SoundMachinePlayListController implements IPlayListController
      * The stored play-head offset is consumed: it is read, then cleared, so the room's
      * synchronisation offset applies only to the first song it joins mid-way through.
      */
+    // AS3: .../src/com/sulake/habbo/sound/music/SoundMachinePlayListController.as::playCurrentSongAndNotify()
     private playCurrentSongAndNotify(songId: number): void
     {
         const entry = this.getEntryWithId(songId) as SongDataEntry | null;
@@ -307,6 +310,7 @@ export class SoundMachinePlayListController implements IPlayListController
      * is the one after the *last* entry with that id. Past the end it wraps to 0, which is also
      * what an unknown current song gives.
      */
+    // AS3: .../src/com/sulake/habbo/sound/music/SoundMachinePlayListController.as::getNextEntry()
     private getNextEntry(): SongDataEntry | null
     {
         if(this._playListEntries.length === 0) return null;

@@ -34,8 +34,11 @@ export class StrokeController extends WindowController
     // runs, so plain initializers here would clobber a value set from
     // `properties`. Defaults are primed with `??=` in finalize() instead
     // (see BubbleController for the same pattern).
+    // AS3: .../src/com/sulake/core/window/components/StrokeController.as::_radius
     private _radius: number | null = null;
+    // AS3: .../src/com/sulake/core/window/components/StrokeController.as::_strokeThickness
     private _strokeThickness: number | null = null;
+    // AS3: .../src/com/sulake/core/window/components/StrokeController.as::_sides
     private _sides: string | null = null;
     private _sideMask: number | null = null;
 
@@ -109,11 +112,13 @@ export class StrokeController extends WindowController
         return mask === 0 ? StrokeController.SIDE_MASK_ALL : mask;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/StrokeController.as::clampNumber()
     private static clampNumber(value: number): number
     {
         return Number.isNaN(value) ? 0 : Math.max(0, value);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/StrokeController.as::normalizeSideMask()
     private static normalizeSideMask(mask: number): number
     {
         const masked = mask & 0x0F;
@@ -121,6 +126,7 @@ export class StrokeController extends WindowController
         return masked === 0 ? StrokeController.SIDE_MASK_ALL : masked;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/StrokeController.as::sidesToString()
     private static sidesToString(mask: number): string
     {
         mask = StrokeController.normalizeSideMask(mask);
@@ -140,6 +146,7 @@ export class StrokeController extends WindowController
         return parts.join(',');
     }
 
+    // AS3: .../src/com/sulake/core/window/components/StrokeController.as::trim()
     private static trim(value: string | null): string
     {
         return value === null ? '' : value.replace(/^\s+|\s+$/g, '');

@@ -11,6 +11,7 @@ export class OfficialRoomsMessageParser implements IMessageParser
 {
     private _data: OfficialRoomsData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/OfficialRoomsEventParser.as::get data()
     get data(): OfficialRoomsData | null
     {
         return this._data;
@@ -18,18 +19,22 @@ export class OfficialRoomsMessageParser implements IMessageParser
 
     private _adRoom: OfficialRoomEntryData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/OfficialRoomsEventParser.as::get adRoom()
     get adRoom(): OfficialRoomEntryData | null
     {
         return this._adRoom;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/OfficialRoomsEventParser.as::_promotedRooms
     private _promotedRooms: PromotedRoomsData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/OfficialRoomsEventParser.as::get promotedRooms()
     get promotedRooms(): PromotedRoomsData | null
     {
         return this._promotedRooms;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/OfficialRoomsEventParser.as::flush()
     flush(): boolean
     {
         this._data = null;
@@ -38,6 +43,7 @@ export class OfficialRoomsMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/OfficialRoomsEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._data = new OfficialRoomsData(wrapper);

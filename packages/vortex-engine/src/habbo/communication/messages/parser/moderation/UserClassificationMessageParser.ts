@@ -11,6 +11,7 @@ export class UserClassificationMessageParser implements IMessageParser
 {
     private _classifiedUsernameMap: Map<number, string> = new Map();
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/userclassification/UserClassificationMessageEventParser.as::get classifiedUsernameMap()
     get classifiedUsernameMap(): Map<number, string>
     {
         return this._classifiedUsernameMap;
@@ -18,11 +19,13 @@ export class UserClassificationMessageParser implements IMessageParser
 
     private _classifiedUserTypeMap: Map<number, string> = new Map();
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/userclassification/UserClassificationMessageEventParser.as::get classifiedUserTypeMap()
     get classifiedUserTypeMap(): Map<number, string>
     {
         return this._classifiedUserTypeMap;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/userclassification/UserClassificationMessageEventParser.as::flush()
     flush(): boolean
     {
         this._classifiedUsernameMap = new Map();
@@ -30,6 +33,7 @@ export class UserClassificationMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/userclassification/UserClassificationMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

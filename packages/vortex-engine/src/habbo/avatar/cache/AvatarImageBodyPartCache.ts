@@ -12,9 +12,11 @@ import type {AvatarImageActionCache} from './AvatarImageActionCache';
  */
 export class AvatarImageBodyPartCache
 {
+    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageBodyPartCache.as::_cache
     private _cache: Map<string, AvatarImageActionCache>;
     private _currentAction: IActiveActionData | null;
     private _currentDirection: number;
+    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageBodyPartCache.as::_disposed
     private _disposed: boolean;
 
     constructor()
@@ -32,6 +34,7 @@ export class AvatarImageBodyPartCache
 	 * @param action - The active action data
 	 * @param frameCount - The current frame count (used as access timestamp)
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageBodyPartCache.as::setAction()
     public setAction(action: IActiveActionData, frameCount: number): void
     {
         if(!this._currentAction)
@@ -52,6 +55,7 @@ export class AvatarImageBodyPartCache
     /**
 	 * Gets the current action for this body part.
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageBodyPartCache.as::getAction()
     public getAction(): IActiveActionData | null
     {
         return this._currentAction;
@@ -62,6 +66,7 @@ export class AvatarImageBodyPartCache
 	 *
 	 * @param direction - The avatar direction (0-7)
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageBodyPartCache.as::setDirection()
     public setDirection(direction: number): void
     {
         this._currentDirection = direction;
@@ -70,6 +75,7 @@ export class AvatarImageBodyPartCache
     /**
 	 * Gets the current direction for this body part.
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageBodyPartCache.as::getDirection()
     public getDirection(): number
     {
         return this._currentDirection;
@@ -82,6 +88,7 @@ export class AvatarImageBodyPartCache
 	 * @param action - The action to look up, or null for current action
 	 * @returns The action cache, or null if not found
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageBodyPartCache.as::getActionCache()
     public getActionCache(action: IActiveActionData | null = null): AvatarImageActionCache | null
     {
         if(!this._currentAction) return null;
@@ -102,6 +109,7 @@ export class AvatarImageBodyPartCache
 	 * @param action - The action data
 	 * @param cache - The action cache to store
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageBodyPartCache.as::updateActionCache()
     public updateActionCache(action: IActiveActionData, cache: AvatarImageActionCache): void
     {
         if(action.overridingAction)
@@ -121,6 +129,7 @@ export class AvatarImageBodyPartCache
 	 * @param maxIdleTime - Maximum idle time in ms before eviction
 	 * @param currentTime - The current timestamp in ms
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageBodyPartCache.as::disposeActions()
     public disposeActions(maxIdleTime: number, currentTime: number): void
     {
         if(!this._cache || this._disposed) return;
@@ -150,6 +159,7 @@ export class AvatarImageBodyPartCache
     /**
 	 * Disposes all action caches and clears state.
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageBodyPartCache.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

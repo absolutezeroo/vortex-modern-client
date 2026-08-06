@@ -18,6 +18,7 @@ export class MountPetComposer extends MessageComposer<[number, boolean]>
         this._data = [petId, mount];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/engine/MountPetMessageComposer.as::getMessageArray()
     getMessageArray(): [number, boolean]
     {
         return this._data;

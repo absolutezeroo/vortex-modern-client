@@ -12,10 +12,13 @@ import type {ChatItem} from '../data/ChatItem';
  */
 export class ChatHistoryBuffer
 {
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/ChatHistoryBuffer.as::MAX_CHAT_ITEMS
     private static readonly MAX_CHAT_ITEMS: number = 1000;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/ChatHistoryBuffer.as::_entries
     private _entries: ChatItem[] = [];
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/ChatHistoryBuffer.as::get entries()
     get entries(): ChatItem[]
     {
         return this._entries;
@@ -23,6 +26,7 @@ export class ChatHistoryBuffer
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/ChatHistoryBuffer.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -42,6 +46,7 @@ export class ChatHistoryBuffer
 	 *
 	 * @param item The chat item to insert
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/ChatHistoryBuffer.as::insertChat()
     insertChat(item: ChatItem): void
     {
         this._entries.push(item);
@@ -51,6 +56,7 @@ export class ChatHistoryBuffer
     /**
 	 * Dispose of the buffer and clear all entries.
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/ChatHistoryBuffer.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

@@ -54,43 +54,55 @@ export class PetFigureData
         return new PetFigureData(typeId, paletteId, color, breedId, customPartCount, customParts);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/inventory/pets/PetFigureData.as::_typeId
     private _typeId: number;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_3943.as::get typeId()
     get typeId(): number
     {
         return this._typeId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/inventory/pets/PetFigureData.as::_paletteId
     private _paletteId: number;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_3943.as::get paletteId()
     get paletteId(): number
     {
         return this._paletteId;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_3943.as::_color
     private _color: string;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_3943.as::get color()
     get color(): string
     {
         return this._color;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/inventory/pets/PetFigureData.as::_breedId
     private _breedId: number;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_3943.as::get breedId()
     get breedId(): number
     {
         return this._breedId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/inventory/pets/PetFigureData.as::_customPartCount
     private _customPartCount: number;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_3943.as::get customPartCount()
     get customPartCount(): number
     {
         return this._customPartCount;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/inventory/pets/PetFigureData.as::_customParts
     private _customParts: number[];
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_3943.as::get customParts()
     get customParts(): number[]
     {
         return this._customParts;
@@ -99,6 +111,7 @@ export class PetFigureData
     /**
 	 * Generate figure string for rendering
 	 */
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_3943.as::get figureString()
     get figureString(): string
     {
         let result = `${this._typeId} ${this._paletteId} ${this._color}`;

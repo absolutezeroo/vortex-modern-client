@@ -16,8 +16,11 @@ import {WidgetContainerLayout} from '../layout/WidgetContainerLayout';
  */
 export class RoomHopperNetworkWidget implements ILandingViewWidget, ISettingsAwareWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::_landingView
     private _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::_container
     private _container: IWindowContainer | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::_disposed
     private _disposed: boolean = false;
     private _networkId: number = 0;
 
@@ -47,6 +50,7 @@ export class RoomHopperNetworkWidget implements ILandingViewWidget, ISettingsAwa
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
@@ -66,6 +70,7 @@ export class RoomHopperNetworkWidget implements ILandingViewWidget, ISettingsAwa
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;

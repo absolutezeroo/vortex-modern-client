@@ -16,6 +16,7 @@ export class RoomAdSearchMessageComposer extends MessageComposer<ConstructorPara
         this._data = [categoryId, index];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/RoomAdSearchMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

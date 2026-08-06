@@ -16,6 +16,7 @@ export class SetNewNavigatorWindowPreferencesMessageComposer extends MessageComp
         this._data = [x, y, width, height, leftPaneHidden, resultsMode];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/preferences/SetNewNavigatorWindowPreferencesMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

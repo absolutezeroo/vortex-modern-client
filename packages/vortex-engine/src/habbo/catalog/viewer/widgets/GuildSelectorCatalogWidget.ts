@@ -31,12 +31,16 @@ const CWE_EXTRA_PARAM_REQUIRED_FOR_BUY = 'CWE_EXTRA_PARAM_REQUIRED_FOR_BUY';
  */
 export class GuildSelectorCatalogWidget extends CatalogWidget
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/GuildSelectorCatalogWidget.as::GUILD_COLORS_BMP_BORDER_COLOR
     private static readonly GUILD_COLORS_BMP_BORDER_COLOR: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/GuildSelectorCatalogWidget.as::GUILD_COLORS_BMP_BORDER_WIDTH
     private static readonly GUILD_COLORS_BMP_BORDER_WIDTH: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/GuildSelectorCatalogWidget.as::GUILD_COLORS_BMP_HEIGHT
     private static readonly GUILD_COLORS_BMP_HEIGHT: number = 14;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/GuildSelectorCatalogWidget.as::GUILD_COLORS_BMP_WIDTH
     private static readonly GUILD_COLORS_BMP_WIDTH: number = 21;
 
     private _dropList: IDropListWindow | null = null;
@@ -47,6 +51,7 @@ export class GuildSelectorCatalogWidget extends CatalogWidget
 
     private _selectorWindow: IWindow | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/GuildSelectorCatalogWidget.as::_membersOnlyInfo
     private _membersOnlyInfo: IWindow | null = null;
 
     private _selectedIndex: number = -1;
@@ -199,6 +204,7 @@ export class GuildSelectorCatalogWidget extends CatalogWidget
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/GuildSelectorCatalogWidget.as::selectFromDropList()
     private selectFromDropList(index: number): void
     {
         if(index > -1)

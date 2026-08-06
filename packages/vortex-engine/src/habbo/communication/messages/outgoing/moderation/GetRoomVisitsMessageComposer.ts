@@ -15,6 +15,7 @@ export class GetRoomVisitsMessageComposer extends MessageComposer<ConstructorPar
         this._data = [userId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/moderator/GetRoomVisitsMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

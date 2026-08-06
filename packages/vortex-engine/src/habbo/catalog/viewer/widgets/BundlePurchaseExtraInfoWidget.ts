@@ -17,6 +17,7 @@ const PROMO_ITEM_DROP_DELAY_MS = 4000;
  */
 export class BundlePurchaseExtraInfoWidget extends CatalogWidget
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _viewManager: ExtraInfoViewManager | null = null;
@@ -29,6 +30,7 @@ export class BundlePurchaseExtraInfoWidget extends CatalogWidget
 
     private _activityPointType: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::_itemBadgeCode
     private _itemBadgeCode: string | null = null;
 
     private _promoItemId: number = -1;
@@ -94,6 +96,7 @@ export class BundlePurchaseExtraInfoWidget extends CatalogWidget
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::createPromoItem()
     private createPromoItem(): void
     {
         const data = new ExtraInfoItemData(ExtraInfoItemData.TYPE_PROMO);
@@ -102,6 +105,7 @@ export class BundlePurchaseExtraInfoWidget extends CatalogWidget
         this._promoItemId = this._viewManager!.addItem(data);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::updatePromoItem()
     private updatePromoItem(quantity: number): void
     {
         if(this._promoItemId === -1) return;
@@ -113,6 +117,7 @@ export class BundlePurchaseExtraInfoWidget extends CatalogWidget
         item.update(data);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::removePromoItem()
     private removePromoItem(): void
     {
         if(this._promoItemId === -1) return;
@@ -121,6 +126,7 @@ export class BundlePurchaseExtraInfoWidget extends CatalogWidget
         this._promoItemId = -1;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::createDiscountValueItem()
     private createDiscountValueItem(): void
     {
         const data = new ExtraInfoItemData(ExtraInfoItemData.TYPE_DISCOUNT_VALUE);
@@ -134,6 +140,7 @@ export class BundlePurchaseExtraInfoWidget extends CatalogWidget
         this._catalog!.utils.discountShownEventTrack();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::updateDiscountValueItem()
     private updateDiscountValueItem(quantity: number): void
     {
         if(this._discountValueItemId === -1) return;
@@ -147,6 +154,7 @@ export class BundlePurchaseExtraInfoWidget extends CatalogWidget
         item.update(data);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::removeDiscountValueItem()
     private removeDiscountValueItem(): void
     {
         if(this._discountValueItemId === -1) return;
@@ -155,6 +163,7 @@ export class BundlePurchaseExtraInfoWidget extends CatalogWidget
         this._discountValueItemId = -1;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::createBundleInfoItem()
     private createBundleInfoItem(): void
     {
         const data = new ExtraInfoItemData(ExtraInfoItemData.TYPE_BUNDLES_INFO_SCREEN);
@@ -163,6 +172,7 @@ export class BundlePurchaseExtraInfoWidget extends CatalogWidget
         this._catalog!.utils.bundlesInfoShownEventTrack();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::removeBundleInfoItem()
     private removeBundleInfoItem(): void
     {
         if(this._bundleInfoItemId === -1) return;
@@ -261,6 +271,7 @@ export class BundlePurchaseExtraInfoWidget extends CatalogWidget
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::onPromoItemDropDownTimerEvent()
     private onPromoItemDropDownTimerEvent(): void
     {
         this.createPromoItem();

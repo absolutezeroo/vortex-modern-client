@@ -38,8 +38,10 @@ export class MarketPlaceOfferEntry
         this._isUsed = isUsed;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::_offerId
     private _offerId: number;
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::get offerId()
     get offerId(): number 
     {
         return this._offerId;
@@ -47,6 +49,7 @@ export class MarketPlaceOfferEntry
 
     private _furniId: number;
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::get furniId()
     get furniId(): number 
     {
         return this._furniId;
@@ -54,6 +57,7 @@ export class MarketPlaceOfferEntry
 
     private _furniType: number;
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::get furniType()
     get furniType(): number 
     {
         return this._furniType;
@@ -61,6 +65,7 @@ export class MarketPlaceOfferEntry
 
     private _extraData: string;
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::get extraData()
     get extraData(): string 
     {
         return this._extraData;
@@ -68,6 +73,7 @@ export class MarketPlaceOfferEntry
 
     private _stuffData: IStuffData | null;
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::get stuffData()
     get stuffData(): IStuffData | null 
     {
         return this._stuffData;
@@ -75,20 +81,25 @@ export class MarketPlaceOfferEntry
 
     private _price: number;
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::get price()
     get price(): number 
     {
         return this._price;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::_status
     private _status: number;
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::get status()
     get status(): number 
     {
         return this._status;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::_timeLeftMinutes
     private _timeLeftMinutes: number;
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::get timeLeftMinutes()
     get timeLeftMinutes(): number 
     {
         return this._timeLeftMinutes;
@@ -96,20 +107,25 @@ export class MarketPlaceOfferEntry
 
     private _averagePrice: number;
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::get averagePrice()
     get averagePrice(): number 
     {
         return this._averagePrice;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::_offerCount
     private _offerCount: number;
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::get offerCount()
     get offerCount(): number 
     {
         return this._offerCount;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::_statusTime
     private _statusTime: number;
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::get statusTime()
     get statusTime(): number 
     {
         return this._statusTime;
@@ -117,6 +133,7 @@ export class MarketPlaceOfferEntry
 
     private _isUsable: boolean;
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::get isUsable()
     get isUsable(): boolean 
     {
         return this._isUsable;
@@ -124,6 +141,7 @@ export class MarketPlaceOfferEntry
 
     private _isUsed: boolean;
 
+    // AS3: .../src/unknowns/_SafePkg_1899/_SafeCls_2516.as::get isUsed()
     get isUsed(): boolean 
     {
         return this._isUsed;

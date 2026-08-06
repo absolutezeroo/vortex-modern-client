@@ -91,6 +91,7 @@ export class CommunityGoalVsModeWidgetWithVoting extends CommunityGoalVsModeWidg
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidgetWithVoting.as::hideVoteButtons()
     private hideVoteButtons(): void
     {
         if(this._voteOneButton) this._voteOneButton.visible = false;

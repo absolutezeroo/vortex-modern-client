@@ -16,6 +16,7 @@ export class ScrGetUserInfoMessageComposer extends MessageComposer<ConstructorPa
         this._data = [productName];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/ScrGetUserInfoMessageComposer.as::getMessageArray()
     getMessageArray(): [string]
     {
         return this._data;

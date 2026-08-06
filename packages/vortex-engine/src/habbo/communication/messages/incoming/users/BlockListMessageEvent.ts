@@ -14,6 +14,7 @@ export class BlockListMessageEvent extends MessageEvent implements IMessageEvent
         super(callback, BlockListMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/BlockListMessageEvent.as::get blockedUserIds()
     get blockedUserIds(): number[]
     {
         return (this._parser as BlockListMessageParser).blockedUsers;

@@ -6,6 +6,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RedeemMarketplaceOfferCreditsMessageComposer extends MessageComposer<[]>
 {
+    // AS3: .../src/unknowns/_SafePkg_1746/_SafeCls_1745.as::getMessageArray()
     getMessageArray(): []
     {
         return [];

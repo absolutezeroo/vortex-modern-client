@@ -16,6 +16,7 @@ export class MyRecommendedRoomsMessageComposer extends MessageComposer<Construct
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/MyRecommendedRoomsMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

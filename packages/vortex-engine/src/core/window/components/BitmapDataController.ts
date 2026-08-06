@@ -43,11 +43,13 @@ export class BitmapDataController extends WindowController
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::_bitmapData
     protected _bitmapData: ImageBitmap | null = null;
 
     /**
      * The bitmap data for this window.
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get bitmapData()
     public get bitmapData(): ImageBitmap | null 
     {
         return this._bitmapData;
@@ -88,11 +90,13 @@ export class BitmapDataController extends WindowController
     /**
      * Whether the bitmap is stretched vertically.
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get stretchedY()
     public get stretchedY(): boolean 
     {
         return this._stretchedY;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::set stretchedY()
     public set stretchedY(value: boolean) 
     {
         this._stretchedY = value;
@@ -104,11 +108,13 @@ export class BitmapDataController extends WindowController
     /**
      * Horizontal zoom factor.
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get zoomX()
     public get zoomX(): number
     {
         return this._zoomX ?? 1.0;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::set zoomX()
     public set zoomX(value: number)
     {
         this._zoomX = value;
@@ -121,11 +127,13 @@ export class BitmapDataController extends WindowController
     /**
      * Vertical zoom factor.
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get zoomY()
     public get zoomY(): number 
     {
         return this._zoomY ?? 1.0;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::set zoomY()
     public set zoomY(value: number) 
     {
         this._zoomY = value;
@@ -137,11 +145,13 @@ export class BitmapDataController extends WindowController
     /**
      * Whether to auto-resize the window to fit the bitmap dimensions.
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get fitSizeToContents()
     public get fitSizeToContents(): boolean 
     {
         return this._fitSizeToContents;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::set fitSizeToContents()
     public set fitSizeToContents(value: boolean) 
     {
         this._fitSizeToContents = value;
@@ -153,26 +163,31 @@ export class BitmapDataController extends WindowController
     /**
      * Whether the bitmap is rendered in greyscale.
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get greyscale()
     public get greyscale(): boolean 
     {
         return this._greyscale;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::set greyscale()
     public set greyscale(value: boolean) 
     {
         this._greyscale = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::_etchingColor
     private _etchingColor: number = 0;
 
     /**
      * The etching color used for the shadow/outline effect.
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get etchingColor()
     public get etchingColor(): number 
     {
         return this._etchingColor;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::set etchingColor()
     public set etchingColor(value: number) 
     {
         this._etchingColor = value;
@@ -181,6 +196,7 @@ export class BitmapDataController extends WindowController
     /**
      * Returns the etching offset point as [x, y].
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get etchingPoint()
     public get etchingPoint(): { x: number; y: number } 
     {
         return {x: this._etchingPointX, y: this._etchingPointY ?? -1};
@@ -189,6 +205,7 @@ export class BitmapDataController extends WindowController
     /**
      * Sets etching from an array [color, offsetX, offsetY].
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::set etching()
     public set etching(value: unknown[]) 
     {
         this._etchingColor = value[0] as number;
@@ -201,11 +218,13 @@ export class BitmapDataController extends WindowController
     /**
      * Whether the bitmap wraps horizontally.
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get wrapX()
     public get wrapX(): boolean 
     {
         return this._wrapX;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::set wrapX()
     public set wrapX(value: boolean) 
     {
         this._wrapX = value;
@@ -216,11 +235,13 @@ export class BitmapDataController extends WindowController
     /**
      * Whether the bitmap wraps vertically.
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get wrapY()
     public get wrapY(): boolean 
     {
         return this._wrapY;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::set wrapY()
     public set wrapY(value: boolean) 
     {
         this._wrapY = value;
@@ -231,11 +252,13 @@ export class BitmapDataController extends WindowController
     /**
      * Whether the bitmap is flipped horizontally.
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get flipX()
     public get flipX(): boolean 
     {
         return this._flipX;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::set flipX()
     public set flipX(value: boolean) 
     {
         this._flipX = value;
@@ -246,11 +269,13 @@ export class BitmapDataController extends WindowController
     /**
      * Whether the bitmap is flipped vertically.
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get flipY()
     public get flipY(): boolean 
     {
         return this._flipY;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::set flipY()
     public set flipY(value: boolean) 
     {
         this._flipY = value;
@@ -261,11 +286,13 @@ export class BitmapDataController extends WindowController
     /**
      * Rotation angle for the bitmap.
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get rotation()
     public get rotation(): number 
     {
         return this._rotation;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::set rotation()
     public set rotation(value: number) 
     {
         this._rotation = value;
@@ -274,11 +301,13 @@ export class BitmapDataController extends WindowController
     /**
      * The pivot point for bitmap rendering.
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::get pivotPoint()
     public get pivotPoint(): number 
     {
         return this._pivot;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::set pivotPoint()
     public set pivotPoint(value: number) 
     {
         this._pivot = value;
@@ -405,6 +434,7 @@ export class BitmapDataController extends WindowController
     /**
      * Resizes the window to match the bitmap dimensions (scaled by zoom).
      */
+    // AS3: .../src/com/sulake/core/window/components/BitmapDataController.as::fitSize()
     protected fitSize(): void 
     {
         if(!this._fitSizeToContents || !this._bitmapData) return;

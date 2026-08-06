@@ -55,6 +55,7 @@ export class MeMenuSoundSettingsView
         return this._traxVolumeItem;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsView.as::_genericVolume
     private _genericVolume: number = 1;
 
     /**
@@ -65,6 +66,7 @@ export class MeMenuSoundSettingsView
         return this._genericVolume;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsView.as::_furniVolume
     private _furniVolume: number = 1;
 
     /**
@@ -75,6 +77,7 @@ export class MeMenuSoundSettingsView
         return this._furniVolume;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsView.as::_traxVolume
     private _traxVolume: number = 1;
 
     /**
@@ -88,6 +91,7 @@ export class MeMenuSoundSettingsView
     /**
 	 * The parent widget controller
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsView.as::get widget()
     get widget(): MeMenuController | null
     {
         return this._settingsMenuView?.widget ?? null;
@@ -99,6 +103,7 @@ export class MeMenuSoundSettingsView
 	 * @param settingsMenuView The parent settings menu view
 	 * @param toolbarView The toolbar view for positioning
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsView.as::init()
     public init(settingsMenuView: MeMenuSettingsMenuView, toolbarView: ToolbarView): void
     {
         this._settingsMenuView = settingsMenuView;
@@ -114,6 +119,7 @@ export class MeMenuSoundSettingsView
     /**
 	 * Update settings from the sound manager
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsView.as::updateSettings()
     public updateSettings(): void
     {
         // In AS3: reads volumes from settingsMenuView.widget.toolbar.soundManager
@@ -142,6 +148,7 @@ export class MeMenuSoundSettingsView
 	 * @param traxVolume Trax volume (-1 to keep current)
 	 * @param persist If true, persist the volume. If false, just preview.
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsView.as::saveVolume()
     public saveVolume(genericVolume: number, furniVolume: number, traxVolume: number, persist: boolean = true): void
     {
         const effectiveFurni = furniVolume !== -1 ? furniVolume : this._furniVolume;
@@ -171,6 +178,7 @@ export class MeMenuSoundSettingsView
 	 *
 	 * @param buttonName The button name
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsView.as::onButtonClicked()
     public onButtonClicked(buttonName: string): void
     {
         if(buttonName === 'back_btn')
@@ -191,6 +199,7 @@ export class MeMenuSoundSettingsView
     /**
 	 * Dispose of this view
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsView.as::dispose()
     public dispose(): void
     {
         this.saveVolume(this._genericVolume, this._furniVolume, this._traxVolume);

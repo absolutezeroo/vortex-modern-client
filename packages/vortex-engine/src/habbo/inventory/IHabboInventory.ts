@@ -38,27 +38,38 @@ export type InventoryCategoryType = typeof InventoryCategory[keyof typeof Invent
  */
 export interface IHabboInventory
 {
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get isInitialized()
     readonly isInitialized: boolean;
     readonly currentCategory: InventoryCategoryType | null;
 
     // Component event emitter — the me-menu EffectsWidget handler subscribes to
     // HIEE_EFFECTS_CHANGED here (AS3: container.inventory.events).
+    // AS3: .../src/com/sulake/habbo/inventory/_SafeCls_588.as::get events()
     readonly events: EventEmitter;
 
     // Models
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get furniModel()
     readonly furniModel: IFurniModel;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get badgesModel()
     readonly badgesModel: IBadgesModel;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get effectsModel()
     readonly effectsModel: IEffectsModel | null;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get petsModel()
     readonly petsModel: IPetsModel;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get botsModel()
     readonly botsModel: IBotsModel;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get tradingModel()
     readonly tradingModel: ITradingModel;
 
     // Purse & Tracking
     readonly purse: IPurse;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get clubLevel()
     readonly clubLevel: number;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get unseenItemTracker()
     readonly unseenItemTracker: UnseenItemTracker;
 
     // Room session state
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get hasRoomSession()
     hasRoomSession: boolean;
 
     // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get roomSession()
@@ -95,6 +106,7 @@ export interface IHabboInventory
     /**
 	 * Initialize all models
 	 */
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::init()
     init(): void;
 
     /**
@@ -168,6 +180,7 @@ export interface IHabboInventory
     /**
 	 * Update club/subscription status
 	 */
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::setClubStatus()
     setClubStatus(
         periods: number,
         days: number,

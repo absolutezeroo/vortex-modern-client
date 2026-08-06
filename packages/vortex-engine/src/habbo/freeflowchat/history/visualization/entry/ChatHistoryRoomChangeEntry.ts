@@ -37,36 +37,43 @@ export class ChatHistoryRoomChangeEntry implements IChatHistoryEntry
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryRoomChangeEntry.as::get bitmap()
     get bitmap(): ImageBitmap | null
     {
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryRoomChangeEntry.as::get overlap()
     get overlap(): Rectangle
     {
         return new Rectangle(0, 0, 0, 0);
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryRoomChangeEntry.as::get userIndex()
     get userIndex(): number
     {
         return -1;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryRoomChangeEntry.as::get webId()
     get webId(): number
     {
         return -1;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryRoomChangeEntry.as::get roomId()
     get roomId(): number
     {
         return -1;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryRoomChangeEntry.as::get canIgnore()
     get canIgnore(): boolean
     {
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryRoomChangeEntry.as::get userName()
     get userName(): string
     {
         return '';

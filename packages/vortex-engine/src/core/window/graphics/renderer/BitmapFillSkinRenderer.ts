@@ -74,26 +74,31 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         return Math.max(1, size * Math.abs(scale) + normalizedSpacing);
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::normalizedZoom()
     private static normalizedZoom(zoom: number): number
     {
         return Number.isNaN(zoom) || zoom === 0 ? 1 : Math.abs(zoom);
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::isFlippedX()
     private static isFlippedX(controller: BitmapFillController): boolean
     {
         return (controller.zoomX < 0) !== controller.flipX;
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::isFlippedY()
     private static isFlippedY(controller: BitmapFillController): boolean
     {
         return (controller.zoomY < 0) !== controller.flipY;
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::scaleXForController()
     private static scaleXForController(controller: BitmapFillController): number
     {
         return BitmapFillSkinRenderer.normalizedZoom(controller.zoomX) * (BitmapFillSkinRenderer.isFlippedX(controller) ? -1 : 1);
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::scaleYForController()
     private static scaleYForController(controller: BitmapFillController): number
     {
         return BitmapFillSkinRenderer.normalizedZoom(controller.zoomY) * (BitmapFillSkinRenderer.isFlippedY(controller) ? -1 : 1);
@@ -115,6 +120,7 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::yForPivot()
     private static yForPivot(rect: { y: number; height: number }, size: number, pivot: number): number
     {
         switch(Math.floor(pivot / 3))
@@ -192,6 +198,7 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::drawStretch()
     private drawStretch(
         controller: BitmapFillController,
         ctx: OffscreenCanvasRenderingContext2D,
@@ -209,6 +216,7 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         ctx.restore();
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::drawFitted()
     private drawFitted(
         controller: BitmapFillController,
         ctx: OffscreenCanvasRenderingContext2D,
@@ -228,6 +236,7 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         );
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::drawScaled()
     private drawScaled(
         controller: BitmapFillController,
         ctx: OffscreenCanvasRenderingContext2D,
@@ -252,6 +261,7 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         ctx.restore();
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::drawTile()
     private drawTile(
         controller: BitmapFillController,
         ctx: OffscreenCanvasRenderingContext2D,
@@ -283,6 +293,7 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         ctx.restore();
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::tileBitmapFor()
     private tileBitmapFor(
         bitmap: CanvasImage,
         scaleX: number,
@@ -326,6 +337,7 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         return canvas;
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapFillSkinRenderer.as::prepareBitmapData()
     private prepareBitmapData(source: ImageBitmap, controller: BitmapFillController): CanvasImage
     {
         if(!controller.greyscale && !controller.tint)

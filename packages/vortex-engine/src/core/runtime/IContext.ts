@@ -27,21 +27,25 @@ export interface IContext extends IDisposable
     /**
 	 * Event emitter for context-level events
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::get events()
     readonly events: EventEmitter;
 
     /**
 	 * Root context (top of the hierarchy)
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::get root()
     readonly root: IContext;
 
     /**
 	 * Configuration manager
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::get configuration()
     configuration: ICoreConfiguration | null;
 
     /**
 	 * Asset library for this context
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::get assets()
     readonly assets: IAssetLibrary | null;
 
     /**
@@ -62,6 +66,7 @@ export interface IContext extends IDisposable
 	 * @param component The component to attach
 	 * @param interfaces Array of interface IDs this component provides
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::attachComponent()
     attachComponent(component: Component, interfaces: IID[]): void;
 
     /**
@@ -69,6 +74,7 @@ export interface IContext extends IDisposable
 	 *
 	 * @param component The component to detach
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::detachComponent()
     detachComponent(component: Component): void;
 
     /**
@@ -77,11 +83,13 @@ export interface IContext extends IDisposable
 	 * @param receiver Object with update method
 	 * @param priority Update priority (lower = earlier)
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::registerUpdateReceiver()
     registerUpdateReceiver(receiver: IUpdateReceiver, priority: number): void;
 
     /**
 	 * Remove an update receiver
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::removeUpdateReceiver()
     removeUpdateReceiver(receiver: IUpdateReceiver): void;
 
     /**
@@ -89,6 +97,7 @@ export interface IContext extends IDisposable
 	 *
 	 * @param tracker The tracker to add
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::addLinkEventTracker()
     addLinkEventTracker(tracker: ILinkEventTracker): void;
 
     /**
@@ -96,6 +105,7 @@ export interface IContext extends IDisposable
 	 *
 	 * @param tracker The tracker to remove
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::removeLinkEventTracker()
     removeLinkEventTracker(tracker: ILinkEventTracker): void;
 
     /**
@@ -103,6 +113,7 @@ export interface IContext extends IDisposable
 	 *
 	 * @param link The link string to route
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::createLinkEvent()
     createLinkEvent(link: string): void;
 
     /**
@@ -111,17 +122,19 @@ export interface IContext extends IDisposable
 	 * @returns whether the error was handled by tearing the context down, so callers can stop
 	 * whatever they were doing.
 	 */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/IContext.as::error()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::error()
     error(message: string, fatal?: boolean, code?: number, error?: Error): boolean;
 
     /**
 	 * Log a warning
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::warning()
     warning(message: string): void;
 
     /**
 	 * Log a debug message
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/IContext.as::debug()
     debug(message: string): void;
 }
 

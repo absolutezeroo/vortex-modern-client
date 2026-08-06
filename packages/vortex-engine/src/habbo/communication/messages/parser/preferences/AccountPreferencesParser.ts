@@ -12,22 +12,28 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class AccountPreferencesParser implements IMessageParser
 {
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::_uiVolume
     private _uiVolume: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get uiVolume()
     get uiVolume(): number
     {
         return this._uiVolume;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::_furniVolume
     private _furniVolume: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get furniVolume()
     get furniVolume(): number
     {
         return this._furniVolume;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::_traxVolume
     private _traxVolume: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get traxVolume()
     get traxVolume(): number
     {
         return this._traxVolume;
@@ -35,6 +41,7 @@ export class AccountPreferencesParser implements IMessageParser
 
     private _roomInvitesIgnored: boolean = false;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get roomInvitesIgnored()
     get roomInvitesIgnored(): boolean
     {
         return this._roomInvitesIgnored;
@@ -42,6 +49,7 @@ export class AccountPreferencesParser implements IMessageParser
 
     private _roomCameraFollowDisabled: boolean = false;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get roomCameraFollowDisabled()
     get roomCameraFollowDisabled(): boolean
     {
         return this._roomCameraFollowDisabled;
@@ -49,6 +57,7 @@ export class AccountPreferencesParser implements IMessageParser
 
     private _uiFlags: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get uiFlags()
     get uiFlags(): number
     {
         return this._uiFlags;
@@ -58,6 +67,7 @@ export class AccountPreferencesParser implements IMessageParser
     // field spelling, kept here too since both trace to the same AS3 source.
     private _preferedChatStyle: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get preferedChatStyle()
     get preferedChatStyle(): number
     {
         return this._preferedChatStyle;
@@ -65,6 +75,7 @@ export class AccountPreferencesParser implements IMessageParser
 
     private _wiredMenuButton: boolean = false;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get wiredMenuButton()
     get wiredMenuButton(): boolean
     {
         return this._wiredMenuButton;
@@ -72,13 +83,16 @@ export class AccountPreferencesParser implements IMessageParser
 
     private _wiredInspectButton: boolean = false;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get wiredInspectButton()
     get wiredInspectButton(): boolean
     {
         return this._wiredInspectButton;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::_playTestMode
     private _playTestMode: boolean = false;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get playTestMode()
     get playTestMode(): boolean
     {
         return this._playTestMode;
@@ -86,6 +100,7 @@ export class AccountPreferencesParser implements IMessageParser
 
     private _wiredWhisperDisabled: boolean = false;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get wiredWhisperDisabled()
     get wiredWhisperDisabled(): boolean
     {
         return this._wiredWhisperDisabled;
@@ -93,6 +108,7 @@ export class AccountPreferencesParser implements IMessageParser
 
     private _showAllNotifications: boolean = false;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get showAllNotifications()
     get showAllNotifications(): boolean
     {
         return this._showAllNotifications;
@@ -100,6 +116,7 @@ export class AccountPreferencesParser implements IMessageParser
 
     private _wiredUiStyle: string = '';
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get wiredUiStyle()
     get wiredUiStyle(): string
     {
         return this._wiredUiStyle;
@@ -107,20 +124,25 @@ export class AccountPreferencesParser implements IMessageParser
 
     private _chatSizePreference: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get chatSizePreference()
     get chatSizePreference(): number
     {
         return this._chatSizePreference;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::_chatMode
     private _chatMode: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get chatMode()
     get chatMode(): number
     {
         return this._chatMode;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::_chatBubbleWidth
     private _chatBubbleWidth: number = 1;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get chatBubbleWidth()
     get chatBubbleWidth(): number
     {
         return this._chatBubbleWidth;
@@ -128,11 +150,13 @@ export class AccountPreferencesParser implements IMessageParser
 
     private _chatScrollSpeed: number = 1;
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::get chatScrollSpeed()
     get chatScrollSpeed(): number
     {
         return this._chatScrollSpeed;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::flush()
     flush(): boolean
     {
         this._uiVolume = 0;
@@ -155,6 +179,7 @@ export class AccountPreferencesParser implements IMessageParser
         return true;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1927/_SafeCls_1926.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

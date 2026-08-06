@@ -21,6 +21,7 @@ export class ClubSpecialInfoBubbleView
     private static readonly MARGIN: number = 8;
 
     private _manager: IHabboClubCenter | null;
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubSpecialInfoBubbleView.as::_window
     private _window: IWindowContainer | null = null;
     private _desktop: IWindow | null = null;
     private _activateTimer: ReturnType<typeof setTimeout> | null = null;
@@ -71,6 +72,7 @@ export class ClubSpecialInfoBubbleView
         this._desktop?.addEventListener(WindowMouseEvent.DOWN, this._onDesktopDown);
     }
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubSpecialInfoBubbleView.as::dispose()
     dispose(): void 
     {
         this._desktop?.removeEventListener(WindowMouseEvent.DOWN, this._onDesktopDown);
@@ -93,12 +95,14 @@ export class ClubSpecialInfoBubbleView
 
     private readonly _onDesktopDown = (event: WindowEvent): void => this.onDesktopDown(event);
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubSpecialInfoBubbleView.as::onTimerEvent()
     private onTimerEvent(): void 
     {
         this._activateTimer = null;
         this._window?.activate();
     }
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubSpecialInfoBubbleView.as::positionWindow()
     private positionWindow(anchor: IWindow): void 
     {
         if(!this._window || !this._manager || !this._desktop) return;
@@ -151,6 +155,7 @@ export class ClubSpecialInfoBubbleView
         this._manager?.removeBreakdown();
     }
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubSpecialInfoBubbleView.as::setElementText()
     private setElementText(name: string, text: string): void 
     {
         const el = this._window?.findChildByName(name) as ITextWindow | null;
@@ -158,6 +163,7 @@ export class ClubSpecialInfoBubbleView
         if(el) el.text = text;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubSpecialInfoBubbleView.as::getLocalization()
     private getLocalization(key: string): string 
     {
         if(!this._manager?.localization) return '';

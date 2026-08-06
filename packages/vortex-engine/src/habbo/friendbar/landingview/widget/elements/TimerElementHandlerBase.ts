@@ -22,10 +22,14 @@ import type {CountdownWidget} from '@habbo/window/widgets/CountdownWidget';
  */
 export class TimerElementHandlerBase implements IElementHandler, IDisposable, IFloatableElementHandler, ILayoutNameProvider
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4533.as::_landingView
     private _landingView: HabboLandingView | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4533.as::_window
     private _window: IWindowContainer | null = null;
     private _isFloating: boolean = false;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4533.as::_timeRemainingKey
     private _timeRemainingKey: string = '';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4533.as::_expiredKey
     private _expiredKey: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4533.as::get layoutName()
@@ -76,6 +80,7 @@ export class TimerElementHandlerBase implements IElementHandler, IDisposable, IF
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4533.as::setTimer()
     protected setTimer(secondsRemaining: number): void
     {
         const countdownWindow = this._window?.findChildByName('countdown_widget') as IWidgetWindow | null;
@@ -91,6 +96,7 @@ export class TimerElementHandlerBase implements IElementHandler, IDisposable, IF
         this.setCaption(secondsRemaining > 0 ? this._timeRemainingKey : this._expiredKey);
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4533.as::setCaption()
     private setCaption(key: string | null): void
     {
         const captionWindow = this._window?.findChildByName('timer_caption_txt') ?? null;
@@ -107,6 +113,7 @@ export class TimerElementHandlerBase implements IElementHandler, IDisposable, IF
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4533.as::get landingView()
     protected get landingView(): HabboLandingView | null
     {
         return this._landingView;

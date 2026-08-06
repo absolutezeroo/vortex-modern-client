@@ -19,8 +19,10 @@ export class RoomEngineRoomColorEvent extends RoomEngineEvent
         this._backgroundOnly = backgroundOnly;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineRoomColorEvent.as::_color
     private _color: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineRoomColorEvent.as::get color()
     get color(): number
     {
         return this._color;

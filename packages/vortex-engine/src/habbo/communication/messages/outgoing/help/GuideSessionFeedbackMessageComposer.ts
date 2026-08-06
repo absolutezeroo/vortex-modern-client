@@ -15,6 +15,7 @@ export class GuideSessionFeedbackMessageComposer extends MessageComposer<Constru
         this._data = [positive];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/GuideSessionFeedbackMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

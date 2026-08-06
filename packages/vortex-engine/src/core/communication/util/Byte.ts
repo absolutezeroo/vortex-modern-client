@@ -4,6 +4,7 @@
  */
 export class Byte
 {
+    // AS3: .../src/com/sulake/core/communication/util/Byte.as::get value()
     public readonly value: number;
 
     constructor(value: number)

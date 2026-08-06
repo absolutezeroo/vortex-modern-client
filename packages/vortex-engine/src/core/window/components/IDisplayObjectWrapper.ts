@@ -11,7 +11,9 @@ import type {IWindow} from '../IWindow';
  */
 export interface IDisplayObjectWrapper extends IWindow
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IDisplayObjectWrapper.as::setDisplayObject()
     setDisplayObject(displayObject: unknown): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IDisplayObjectWrapper.as::getDisplayObject()
     getDisplayObject(): unknown;
 }

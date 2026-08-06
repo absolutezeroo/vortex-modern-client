@@ -11,6 +11,7 @@ export class CallForHelpResultMessageParser implements IMessageParser
 {
     private _resultType: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/CallForHelpResultMessageEventParser.as::get resultType()
     get resultType(): number
     {
         return this._resultType;
@@ -18,11 +19,13 @@ export class CallForHelpResultMessageParser implements IMessageParser
 
     private _messageText: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/CallForHelpResultMessageEventParser.as::get messageText()
     get messageText(): string
     {
         return this._messageText;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/CallForHelpResultMessageEventParser.as::flush()
     flush(): boolean
     {
         this._resultType = -1;
@@ -30,6 +33,7 @@ export class CallForHelpResultMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/CallForHelpResultMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

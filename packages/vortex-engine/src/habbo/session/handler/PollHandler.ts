@@ -60,6 +60,7 @@ export class PollHandler extends BaseHandler
         this._messageEvents.push(event);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/PollHandler.as::onPollOfferEvent()
     private onPollOfferEvent(event: IMessageEvent): void
     {
         if(!event) return;
@@ -81,6 +82,7 @@ export class PollHandler extends BaseHandler
         this.listener.sessionEvents.emit(RoomSessionPollEvent.OFFER, pollEvent);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/PollHandler.as::onPollErrorEvent()
     private onPollErrorEvent(event: IMessageEvent): void
     {
         if(!event) return;
@@ -95,6 +97,7 @@ export class PollHandler extends BaseHandler
         this.listener.sessionEvents.emit(RoomSessionPollEvent.ERROR, pollEvent);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/PollHandler.as::onPollContentsEvent()
     private onPollContentsEvent(event: IMessageEvent): void
     {
         if(!event) return;

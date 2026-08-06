@@ -23,8 +23,10 @@ const log = Logger.getLogger('habbo.notifications.singular.SingularNotificationC
  */
 export class SingularNotificationController implements IUpdateReceiver
 {
+    // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::MODERATION_DISCLAIMER_DELAY_MS
     private static readonly MODERATION_DISCLAIMER_DELAY_MS: number = 5000;
 
+    // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::_notifications
     private _notifications: HabboNotifications | null;
     private _queue: HabboNotificationItem[] = [];
     private _moderationDisclaimerShown: boolean = false;
@@ -42,6 +44,7 @@ export class SingularNotificationController implements IUpdateReceiver
 
     private _alertDialogManager: HabboAlertDialogManager;
 
+    // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::get alertDialogManager()
     get alertDialogManager(): HabboAlertDialogManager
     {
         return this._alertDialogManager;
@@ -49,6 +52,7 @@ export class SingularNotificationController implements IUpdateReceiver
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -191,6 +195,7 @@ export class SingularNotificationController implements IUpdateReceiver
 	 * @param songName The name of the song
 	 * @param songAuthor The author of the song
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::addSongPlayingNotification()
     addSongPlayingNotification(songName: string, songAuthor: string): void
     {
         // TODO: Requires localization manager integration for parameter substitution
@@ -203,6 +208,7 @@ export class SingularNotificationController implements IUpdateReceiver
 	 *
 	 * @param link The internal link string
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::onInternalLink()
     onInternalLink(link: string): void
     {
         this._notifications?.createLinkEvent(link);
@@ -244,6 +250,7 @@ export class SingularNotificationController implements IUpdateReceiver
 	 *
 	 * @param numGifts Number of available club gifts
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::showClubGiftNotification()
     showClubGiftNotification(numGifts: number): void
     {
         // TODO: Requires ClubGiftNotification view implementation
@@ -256,6 +263,7 @@ export class SingularNotificationController implements IUpdateReceiver
 	 *
 	 * @param userId The user ID
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::showSafetyLockedNotification()
     showSafetyLockedNotification(userId: number): void
     {
         // TODO: Requires SafetyLockedNotification view implementation
@@ -266,6 +274,7 @@ export class SingularNotificationController implements IUpdateReceiver
     /**
 	 * Hide the safety locked notification
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::hideSafetyLockedNotification()
     hideSafetyLockedNotification(): void
     {
         this._notifications?.notificationEvents.emit('hideSafetyLockedNotification');
@@ -299,6 +308,7 @@ export class SingularNotificationController implements IUpdateReceiver
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -333,6 +343,7 @@ export class SingularNotificationController implements IUpdateReceiver
     /**
 	 * Get the next item from the front of the queue
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::getNextItemFromQueue()
     private getNextItemFromQueue(): HabboNotificationItem | null
     {
         const items = this._queue.splice(0, 1);

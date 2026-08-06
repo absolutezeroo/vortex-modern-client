@@ -16,6 +16,7 @@ export class GetBotInventoryComposer extends MessageComposer<ConstructorParamete
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/inventory/bots/GetBotInventoryComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

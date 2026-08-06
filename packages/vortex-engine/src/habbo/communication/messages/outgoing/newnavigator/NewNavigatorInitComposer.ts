@@ -16,6 +16,7 @@ export class NewNavigatorInitComposer extends MessageComposer<ConstructorParamet
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/newnavigator/NewNavigatorInitComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

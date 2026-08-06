@@ -11,6 +11,7 @@ export class QuestDailyMessageParser implements IMessageParser
 {
     private _quest: QuestMessageData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestDailyMessageEventParser.as::get quest()
     get quest(): QuestMessageData | null
     {
         return this._quest;
@@ -18,6 +19,7 @@ export class QuestDailyMessageParser implements IMessageParser
 
     private _easyQuestCount: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestDailyMessageEventParser.as::get easyQuestCount()
     get easyQuestCount(): number
     {
         return this._easyQuestCount;
@@ -25,11 +27,13 @@ export class QuestDailyMessageParser implements IMessageParser
 
     private _hardQuestCount: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestDailyMessageEventParser.as::get hardQuestCount()
     get hardQuestCount(): number
     {
         return this._hardQuestCount;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestDailyMessageEventParser.as::flush()
     flush(): boolean
     {
         this._quest = null;
@@ -38,6 +42,7 @@ export class QuestDailyMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestDailyMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

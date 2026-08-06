@@ -15,6 +15,7 @@ const log = Logger.getLogger('habbo.toolbar.extensions.CitizenshipVipDiscountPro
  */
 export class CitizenshipVipDiscountPromoExtension
 {
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipDiscountPromoExtension.as::_toolbar
     private _toolbar: HabboToolbar | null;
     private _expandedHeight: number = 216;
     private _expirationTimer: ReturnType<typeof setTimeout> | null = null;
@@ -26,6 +27,7 @@ export class CitizenshipVipDiscountPromoExtension
         log.debug('CitizenshipVipDiscountPromoExtension constructed');
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipDiscountPromoExtension.as::_expanded
     private _expanded: boolean = true;
 
     /**
@@ -57,6 +59,7 @@ export class CitizenshipVipDiscountPromoExtension
     /**
 	 * Get the extension view from the toolbar
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipDiscountPromoExtension.as::get extensionView()
     private get extensionView(): IExtensionView | null
     {
         return this._toolbar?.extensionView ?? null;
@@ -67,6 +70,7 @@ export class CitizenshipVipDiscountPromoExtension
 	 *
 	 * Shows or hides the VIP discount promo based on club expiration status.
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipDiscountPromoExtension.as::onClubChanged()
     public onClubChanged(citizenshipVipIsExpiring: boolean, clubMinutesUntilExpiration: number): void
     {
         if(!this._toolbar) return;
@@ -116,6 +120,7 @@ export class CitizenshipVipDiscountPromoExtension
     /**
 	 * Dispose of this extension
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipDiscountPromoExtension.as::dispose()
     public dispose(): void
     {
         if(this._toolbar == null) return;
@@ -129,12 +134,14 @@ export class CitizenshipVipDiscountPromoExtension
         this._toolbar = null;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipDiscountPromoExtension.as::assignState()
     private assignState(): void
     {
         // State is tracked; UI layer reads expanded + windowCreated
         log.debug(`VIP discount promo: expanded=${this._expanded}`);
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipDiscountPromoExtension.as::isExtensionEnabled()
     private isExtensionEnabled(): boolean
     {
         if(!this._toolbar) return false;
@@ -142,12 +149,14 @@ export class CitizenshipVipDiscountPromoExtension
         return this._toolbar.getBoolean('club.membership.extend.vip.promotion.enabled');
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipDiscountPromoExtension.as::destroyWindow()
     private destroyWindow(): void
     {
         this._windowCreated = false;
         this.destroyExpirationTimer();
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipDiscountPromoExtension.as::destroyExpirationTimer()
     private destroyExpirationTimer(): void
     {
         if(this._expirationTimer !== null)
@@ -157,6 +166,7 @@ export class CitizenshipVipDiscountPromoExtension
         }
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipDiscountPromoExtension.as::onExtendOfferExpire()
     private onExtendOfferExpire(): void
     {
         if(this.extensionView)

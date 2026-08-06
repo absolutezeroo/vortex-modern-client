@@ -10,6 +10,7 @@ export class FavouritesMessageParser implements IMessageParser
 {
     private _limit: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FavouritesEventParser.as::get limit()
     get limit(): number
     {
         return this._limit;
@@ -17,11 +18,13 @@ export class FavouritesMessageParser implements IMessageParser
 
     private _favouriteRoomIds: number[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FavouritesEventParser.as::get favouriteRoomIds()
     get favouriteRoomIds(): number[]
     {
         return this._favouriteRoomIds;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FavouritesEventParser.as::flush()
     flush(): boolean
     {
         this._limit = 0;
@@ -29,6 +32,7 @@ export class FavouritesMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FavouritesEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._limit = wrapper.readInt();

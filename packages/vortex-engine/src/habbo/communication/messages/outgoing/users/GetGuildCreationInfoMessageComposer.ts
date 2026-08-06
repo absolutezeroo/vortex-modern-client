@@ -7,6 +7,7 @@ export class GetGuildCreationInfoMessageComposer extends MessageComposer<[]>
 {
     private _data: [] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/GetGuildCreationInfoMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

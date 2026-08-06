@@ -643,6 +643,7 @@ export class GlyphAtlas
         return canvas;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

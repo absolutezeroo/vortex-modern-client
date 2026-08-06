@@ -30,6 +30,7 @@ export class CustomUserNotificationMessageParser implements IMessageParser
      *
      * Returns true without clearing `_code`, as AS3 does.
      */
+    // AS3: .../src/unknowns/_SafePkg_2942/_SafeCls_4382.as::flush()
     flush(): boolean
     {
         return true;

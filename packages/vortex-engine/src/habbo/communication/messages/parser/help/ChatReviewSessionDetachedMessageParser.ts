@@ -8,11 +8,13 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class ChatReviewSessionDetachedMessageParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionDetachedMessageEventParser.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionDetachedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

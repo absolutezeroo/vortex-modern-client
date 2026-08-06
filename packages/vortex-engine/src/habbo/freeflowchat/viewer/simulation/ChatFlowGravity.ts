@@ -21,14 +21,18 @@ import type {ChatBubbleSimulationEntity} from './ChatBubbleSimulationEntity';
 export class ChatFlowGravity 
 {
     /** AS3: _SafeCls_2911.as::INPUT_GRAVITY_COEFFICIENT - declared but never referenced symbolically anywhere in the AS3 source; call sites hardcode the literal instead (ported as-is below). */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/_SafeCls_2911.as::INPUT_GRAVITY_COEFFICIENT
     static readonly INPUT_GRAVITY_COEFFICIENT = 60;
 
     /** AS3: _SafeCls_2911.as::INPUT_GRAVITY_USERPOS_MARGIN - same as above, unused symbolically in AS3. */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/_SafeCls_2911.as::INPUT_GRAVITY_USERPOS_MARGIN
     static readonly INPUT_GRAVITY_USERPOS_MARGIN = 15;
 
     /** AS3: _SafeCls_2911.as::INPUT_GRAVITY_MAX_IMPULSE - same as above, unused symbolically in AS3. */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/_SafeCls_2911.as::INPUT_GRAVITY_MAX_IMPULSE
     static readonly INPUT_GRAVITY_MAX_IMPULSE = 40;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/_SafeCls_2911.as::MAX_ATTRACTION_RANGE
     private static readonly MAX_ATTRACTION_RANGE = 380;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/_SafeCls_2911.as::getAttraction()

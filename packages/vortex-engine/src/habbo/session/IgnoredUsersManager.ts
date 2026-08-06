@@ -29,11 +29,13 @@ export class IgnoredUsersManager implements IIgnoredUsersManager
         this.registerMessageEvents();
     }
 
+    // AS3: .../src/com/sulake/habbo/session/IgnoredUsersManager.as::get disposed()
     get disposed(): boolean
     {
         return this._communication === null;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/IgnoredUsersManager.as::initIgnoreList()
     initIgnoreList(): void
     {
         if(this._sendCallback)
@@ -42,6 +44,7 @@ export class IgnoredUsersManager implements IIgnoredUsersManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/IgnoredUsersManager.as::ignoreUser()
     ignoreUser(userId: number): void
     {
         if(this._sendCallback)
@@ -50,6 +53,7 @@ export class IgnoredUsersManager implements IIgnoredUsersManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/IgnoredUsersManager.as::unignoreUser()
     unignoreUser(userId: number): void
     {
         if(this._sendCallback)
@@ -58,6 +62,7 @@ export class IgnoredUsersManager implements IIgnoredUsersManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/IgnoredUsersManager.as::isIgnored()
     isIgnored(userId: number): boolean
     {
         return this._ignoredUserIds.has(userId);
@@ -101,6 +106,7 @@ export class IgnoredUsersManager implements IIgnoredUsersManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/IgnoredUsersManager.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -116,11 +122,13 @@ export class IgnoredUsersManager implements IIgnoredUsersManager
         this._sendCallback = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/IgnoredUsersManager.as::addUserToIgnoreList()
     private addUserToIgnoreList(userId: number): void
     {
         this._ignoredUserIds.add(userId);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/IgnoredUsersManager.as::removeUserFromIgnoreList()
     private removeUserFromIgnoreList(userId: number): void
     {
         this._ignoredUserIds.delete(userId);
@@ -152,6 +160,7 @@ export class IgnoredUsersManager implements IIgnoredUsersManager
         this.setIgnoredUsers(ignoredUsersEvent.ignoredUserIds);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/IgnoredUsersManager.as::onIgnoreResult()
     private onIgnoreResult(event: IMessageEvent): void
     {
         const ignoreResultEvent = event as IgnoreResultMessageEvent | IgnoredUsersMessageEvent;

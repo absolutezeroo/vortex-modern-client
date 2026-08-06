@@ -16,6 +16,7 @@ export class RemoveOwnRoomRightsRoomMessageComposer extends MessageComposer<Cons
         this._data = [roomId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/RemoveOwnRoomRightsRoomMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

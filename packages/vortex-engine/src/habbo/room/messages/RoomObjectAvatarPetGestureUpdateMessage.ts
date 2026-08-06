@@ -15,8 +15,10 @@ export class RoomObjectAvatarPetGestureUpdateMessage extends RoomObjectUpdateMes
         this._gesture = gesture;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectAvatarPetGestureUpdateMessage.as::_gesture
     private _gesture: string;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarPetGestureUpdateMessage.as::get gesture()
     get gesture(): string
     {
         return this._gesture;

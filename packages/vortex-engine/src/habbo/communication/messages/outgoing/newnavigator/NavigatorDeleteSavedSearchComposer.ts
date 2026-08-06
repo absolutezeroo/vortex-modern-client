@@ -16,6 +16,7 @@ export class NavigatorDeleteSavedSearchComposer extends MessageComposer<Construc
         this._data = [searchId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/newnavigator/NavigatorDeleteSavedSearchComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

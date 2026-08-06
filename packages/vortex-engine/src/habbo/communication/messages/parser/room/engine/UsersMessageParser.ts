@@ -11,6 +11,7 @@ import {RoomUserData} from '@habbo/communication/messages/incoming/room/engine/R
 
 export class UsersMessageParser implements IMessageParser
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/UsersMessageParser.as::_users
     private _users: RoomUserData[] = [];
 
     get userCount(): number
@@ -35,12 +36,14 @@ export class UsersMessageParser implements IMessageParser
         return data;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/UsersMessageParser.as::flush()
     flush(): boolean
     {
         this._users = [];
         return true;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/UsersMessageParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         const count = wrapper.readInt();
@@ -137,11 +140,13 @@ export class UsersMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/UsersMessageParser.as::resolveSex()
     private resolveSex(value: string): string
     {
         return value[0]?.toLowerCase() === 'f' ? 'F' : 'M';
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/UsersMessageParser.as::convertSwimFigure()
     private convertSwimFigure(swimFigure: string, baseFigure: string, sex: string): string
     {
         // Find skin color from 'hd' part (e.g., "hd-180-1" → skinColor = 1)

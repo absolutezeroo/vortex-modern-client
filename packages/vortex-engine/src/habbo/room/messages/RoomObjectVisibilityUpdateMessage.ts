@@ -18,8 +18,10 @@ export class RoomObjectVisibilityUpdateMessage extends RoomObjectUpdateMessage
         this._type = type;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectVisibilityUpdateMessage.as::_type
     private _type: string;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectVisibilityUpdateMessage.as::get type()
     get type(): string
     {
         return this._type;

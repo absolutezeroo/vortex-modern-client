@@ -22,9 +22,11 @@ export class WindowLinkEvent extends WindowEvent
         this._type = WindowLinkEvent.WE_LINK;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowLinkEvent.as::_link
     private _link: string = '';
 
     /** The link URL string. */
+    // AS3: .../src/com/sulake/core/window/events/WindowLinkEvent.as::get link()
     public get link(): string
     {
         return this._link;

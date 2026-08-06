@@ -23,6 +23,7 @@ export class CommandConfiguration
         }
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/infostand/CommandConfiguration.as::get allCommandIds()
     public get allCommandIds(): number[]
     {
         return this._allCommandIds;

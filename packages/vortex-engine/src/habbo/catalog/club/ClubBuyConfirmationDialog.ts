@@ -14,6 +14,7 @@ import type {ClubBuyOfferData} from './ClubBuyOfferData';
  */
 export class ClubBuyConfirmationDialog
 {
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyConfirmationDialog.as::_offer
     private _offer: ClubBuyOfferData | null;
 
     private _controller: ClubBuyController | null;
@@ -31,6 +32,7 @@ export class ClubBuyConfirmationDialog
         this.showConfirmation();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyConfirmationDialog.as::dispose()
     dispose(): void
     {
         this._controller = null;
@@ -39,6 +41,7 @@ export class ClubBuyConfirmationDialog
         this._window = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyConfirmationDialog.as::showConfirmation()
     showConfirmation(): void
     {
         if(!this._offer || !this._controller) return;
@@ -81,6 +84,7 @@ export class ClubBuyConfirmationDialog
         if(priceBox) this._controller.catalog?.utils.showPriceInContainer(priceBox, this._offer);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyConfirmationDialog.as::setDisclaimerAccepted()
     private setDisclaimerAccepted(accepted: boolean): void
     {
         if(this._window == null) return;

@@ -15,6 +15,7 @@ import {Util} from './Util';
  */
 export class TagRenderer
 {
+    // AS3: sources/win63_version/habbo/navigator/TagRenderer.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
     private _callback: (() => void) | null;
 
@@ -26,6 +27,7 @@ export class TagRenderer
 
     private _useHashTags: boolean = false;
 
+    // AS3: sources/win63_version/habbo/navigator/TagRenderer.as::set useHashTags()
     set useHashTags(value: boolean)
     {
         this._useHashTags = value;
@@ -37,6 +39,7 @@ export class TagRenderer
 	 * @param container - Parent container with a "tags" child
 	 * @param tagArray - Array of tag strings
 	 */
+    // AS3: sources/win63_version/habbo/navigator/TagRenderer.as::refreshTags()
     refreshTags(container: IWindowContainer, tagArray: string[]): void
     {
         const tagsContainer = container.findChildByName('tags') as IWindowContainer | null;
@@ -62,6 +65,7 @@ export class TagRenderer
 	 * @param index - Tag index (0-3)
 	 * @param text - Tag text, or null to hide
 	 */
+    // AS3: sources/win63_version/habbo/navigator/TagRenderer.as::refreshTag()
     refreshTag(container: IWindowContainer, index: number, text: string | null): void
     {
         const name = 'tag.' + index;
@@ -104,12 +108,14 @@ export class TagRenderer
         tagWindow.visible = true;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/TagRenderer.as::dispose()
     dispose(): void
     {
         this._navigator = null;
         this._callback = null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/TagRenderer.as::refreshTagBg()
     private refreshTagBg(container: IWindowContainer, hover: boolean): void
     {
         this.refreshBgPiece(container, 'l', hover);
@@ -151,6 +157,7 @@ export class TagRenderer
         }
     };
 
+    // AS3: sources/win63_version/habbo/navigator/TagRenderer.as::refreshBgPiece()
     private refreshBgPiece(container: IWindowContainer, piece: string, hover: boolean): void
     {
         if(!this._navigator) return;

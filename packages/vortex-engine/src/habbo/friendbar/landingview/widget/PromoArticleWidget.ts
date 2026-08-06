@@ -25,14 +25,21 @@ import {HabboWebTools} from '@habbo/utils/HabboWebTools';
  */
 export class PromoArticleWidget implements ILandingViewWidget, ISettingsAwareWidget, IUpdateReceiver
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::REFRESH_PERIOD_IN_MILLIS
     private static readonly REFRESH_PERIOD_IN_MILLIS: number = 600000;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::FADE_LENGTH
     private static readonly FADE_LENGTH: number = 500;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::MAX_ARTICLES
     private static readonly MAX_ARTICLES: number = 10;
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::_landingView
     private _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::_container
     private _container: IWindowContainer | null = null;
     private _currentIndex: number = 0;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::_articles
     private _articles: PromoArticleData[] = [];
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::_lastRequestTime
     private _lastRequestTime: Date | null = null;
     private _promoArticlesEvent: IMessageEvent | null = null;
     private _fadeElapsed: number = 0;
@@ -114,12 +121,14 @@ export class PromoArticleWidget implements ILandingViewWidget, ISettingsAwareWid
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::refreshContent()
     private refreshContent(): void
     {
         this.setArticleContent();
         this.setNavigationDisks();
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::setArticleContent()
     private setArticleContent(): void
     {
         const article = this._articles[this._currentIndex];
@@ -156,6 +165,7 @@ export class PromoArticleWidget implements ILandingViewWidget, ISettingsAwareWid
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::setNavigationDisks()
     private setNavigationDisks(): void
     {
         const navigation = this._container?.findChildByName('navigation') as IWindowContainer | null;
@@ -186,6 +196,7 @@ export class PromoArticleWidget implements ILandingViewWidget, ISettingsAwareWid
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::goToArticle()
     private goToArticle(index: number): void
     {
         const isSameArticle = index === this._currentIndex;
@@ -215,18 +226,21 @@ export class PromoArticleWidget implements ILandingViewWidget, ISettingsAwareWid
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::startFade()
     private startFade(): void
     {
         this._fadeElapsed = 0;
         this._landingView?.registerUpdateReceiver(this, 1);
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::stopFade()
     private stopFade(): void
     {
         this._landingView?.removeUpdateReceiver(this);
         this.setBlend(1);
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::followLink()
     private followLink(): void
     {
         const article = this._articles[this._currentIndex];
@@ -269,6 +283,7 @@ export class PromoArticleWidget implements ILandingViewWidget, ISettingsAwareWid
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::hoverOverNavigation()
     private hoverOverNavigation(regionWindow: IWindow, hovering: boolean): void
     {
         const disk = (regionWindow as IWindowContainer).getChildAt(0) as IStaticBitmapWrapperWindow | null;
@@ -286,6 +301,7 @@ export class PromoArticleWidget implements ILandingViewWidget, ISettingsAwareWid
         this.refresh();
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/PromoArticleWidget.as::setBlend()
     private setBlend(blend: number): void
     {
         if(!this._container) return;

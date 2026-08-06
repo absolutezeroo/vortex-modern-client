@@ -60,17 +60,26 @@ const log = Logger.getLogger('habbo.roomevents.HabboUserDefinedRoomEvents');
  */
 export class HabboUserDefinedRoomEvents extends Component implements IHabboUserDefinedRoomEvents
 {
+    // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
+    // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::_notifications
     private _notifications: IHabboNotifications | null = null;
+    // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
+    // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
+    // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::_roomUI
     private _roomUI: IRoomUI | null = null;
+    // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
 
     private _roomSession: IRoomSession | null = null;
     private _roomSessionManager: IRoomSessionManager | null = null;
+    // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::_userName
     private _userName: string = '';
 
     // Created in initComponent() (see scope note).
@@ -84,6 +93,7 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     // AS3: HabboUserDefinedRoomEvents.as::_variablePickerHelper (shared state for the variable picker).
     private _variablePickerHelper!: NewVariablePickerHelper;
 
+    // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::_incomingMessages
     private _incomingMessages: IncomingMessages | null = null;
 
     // TODO(AS3): deferred sub-controllers, all created in the AS3 constructor and exposed via getters
@@ -474,6 +484,7 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         this.onHabboToolbarEvent(event);
     };
 
+    // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::onHabboToolbarEvent()
     private onHabboToolbarEvent(event: unknown): void
     {
         // AS3 param is HabboToolbarEvent (type + iconId).

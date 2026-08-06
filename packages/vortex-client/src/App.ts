@@ -531,7 +531,9 @@ export class VortexApp
     private _animFrameId: number = 0;
     private _uiCompositeDirty: boolean = true;
     private _lastUiRenderVersion: number = -1;
+    // AS3: sources/win63_version/habbo/window/ResourceManager.as::_disposed
     private _disposed: boolean = false;
+    // AS3: .../src/binaryData/HabboAir.as::_loadingScreen
     private _loadingScreen: VortexLoadingScreen | null;
 
     /** Memoized engine boot — see bootstrapEngine(). */
@@ -594,6 +596,7 @@ export class VortexApp
      *
      * @see sources/win63_2021_version/HabboAir.as
      */
+    // AS3: .../src/login/LoginFlow.as::init()
     public async init(): Promise<void>
     {
         // INFO in dev, WARN in production, then the `vortex:log` localStorage key and the `?log=`
@@ -1103,6 +1106,7 @@ export class VortexApp
     /**
      * Disposes the application and cleans up resources.
      */
+    // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

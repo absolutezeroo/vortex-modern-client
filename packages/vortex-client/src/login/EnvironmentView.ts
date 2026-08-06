@@ -130,6 +130,7 @@ export class EnvironmentView extends Sprite
      * An environment that is not in the list is not an error — AS3 logs it and falls back to the
      * first entry, which is how a fresh install lands on a hotel at all.
      */
+    // AS3: .../src/login/EnvironmentView.as::updateEnvironment()
     public updateEnvironment(): void
     {
         if(!this._context || !this._environmentTypes) return;
@@ -157,6 +158,7 @@ export class EnvironmentView extends Sprite
      * `onAlignElements()` and `chooseEnvironment()` dead in the dump. The button is restored below
      * — see the comment there — so those branches now run.
      */
+    // AS3: .../src/login/EnvironmentView.as::initView()
     public initView(): void
     {
         this.addTitleField();
@@ -245,6 +247,7 @@ export class EnvironmentView extends Sprite
      *
      * The order here is the contract with `live.environment.list` — see the class header.
      */
+    // AS3: .../src/login/EnvironmentView.as::initEnvironmentImages()
     private initEnvironmentImages(): void
     {
         if(!this._context) return;

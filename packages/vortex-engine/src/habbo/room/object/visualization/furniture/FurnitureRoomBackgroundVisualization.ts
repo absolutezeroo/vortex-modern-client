@@ -92,6 +92,7 @@ export class FurnitureRoomBackgroundVisualization extends FurnitureRoomBrandingV
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureRoomBackgroundVisualization.as::addDirectionalOffsets()
     private addDirectionalOffsets(size: number, height: number, width: number): void
     {
         const offsets = new DirectionalOffsetData();
@@ -105,6 +106,7 @@ export class FurnitureRoomBackgroundVisualization extends FurnitureRoomBrandingV
         this._directionalOffsets!.set(size, offsets);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureRoomBackgroundVisualization.as::getScaledOffset()
     private getScaledOffset(offset: number, scale: number): number
     {
         return offset * scale / 64;

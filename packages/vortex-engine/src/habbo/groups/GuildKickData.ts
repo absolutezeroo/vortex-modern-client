@@ -15,22 +15,28 @@ export class GuildKickData
         this._targetBlocked = isBlocked;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/groups/GuildKickData.as::_kickGuildId
     private _kickGuildId: number;
 
+    // AS3: .../src/com/sulake/habbo/groups/GuildKickData.as::get kickGuildId()
     get kickGuildId(): number
     {
         return this._kickGuildId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/groups/GuildKickData.as::_kickTargetId
     private _kickTargetId: number;
 
+    // AS3: .../src/com/sulake/habbo/groups/GuildKickData.as::get kickTargetId()
     get kickTargetId(): number
     {
         return this._kickTargetId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/groups/GuildKickData.as::_targetBlocked
     private _targetBlocked: boolean;
 
+    // AS3: .../src/com/sulake/habbo/groups/GuildKickData.as::get targetBlocked()
     get targetBlocked(): boolean
     {
         return this._targetBlocked;

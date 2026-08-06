@@ -23,6 +23,7 @@ import type {IHabboClubCenter} from './IHabboClubCenter';
 export class ClubCenterView implements IAvatarImageListener 
 {
     private _manager: IHabboClubCenter | null;
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::_window
     private _window: IWindowContainer | null = null;
     private _avatarWidget: IRoomPreviewerWidget | null = null;
     private _figure: string;
@@ -67,6 +68,7 @@ export class ClubCenterView implements IAvatarImageListener
         this._window.procedure = this.onInput;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::get disposed()
     get disposed(): boolean 
     {
         return this._manager === null;
@@ -99,6 +101,7 @@ export class ClubCenterView implements IAvatarImageListener
         return canvas;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::dispose()
     dispose(): void 
     {
         if(this._window) 
@@ -204,11 +207,13 @@ export class ClubCenterView implements IAvatarImageListener
         this.updateAvatarPreview();
     }
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::getSpecialCalloutAnchor()
     getSpecialCalloutAnchor(): IWindow | null 
     {
         return this._window?.findChildByName('special_content_postit') ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::setVideoOfferButtonVisibility()
     setVideoOfferButtonVisibility(visible: boolean, enabled: boolean): void 
     {
         const button = this._window?.findChildByName('btn_earn');
@@ -297,6 +302,7 @@ export class ClubCenterView implements IAvatarImageListener
         this._manager?.removeBreakdown();
     };
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::setElementText()
     private setElementText(name: string, text: string): void 
     {
         const el = this._window?.findChildByName(name) as ITextWindow | null;
@@ -304,6 +310,7 @@ export class ClubCenterView implements IAvatarImageListener
         if(el) el.text = text;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::setElementVisibility()
     private setElementVisibility(name: string, visible: boolean): void 
     {
         const el = this._window?.findChildByName(name);
@@ -311,6 +318,7 @@ export class ClubCenterView implements IAvatarImageListener
         if(el) el.visible = visible;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::removeElement()
     private removeElement(name: string): void 
     {
         const el = this._window?.findChildByName(name);
@@ -320,6 +328,7 @@ export class ClubCenterView implements IAvatarImageListener
         (el.parent as IWindowContainer).removeChild(el);
     }
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::getLocalization()
     private getLocalization(key: string): string 
     {
         if(!this._manager?.localization) return '';
@@ -327,11 +336,13 @@ export class ClubCenterView implements IAvatarImageListener
         return this._manager.localization.getLocalization(key, key);
     }
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::formatMinutes()
     private formatMinutes(minutes: number): string 
     {
         return FriendlyTime.getShortFriendlyTime(this._manager?.localization ?? null, minutes * 60);
     }
 
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::formatDays()
     private formatDays(days: number): string 
     {
         return FriendlyTime.getShortFriendlyTime(this._manager?.localization ?? null, days * 86400);

@@ -68,6 +68,7 @@ export class DisplayObjectWrapperController extends WindowController implements 
     /**
 	 * Returns the wrapped display object.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DisplayObjectWrapperController.as::getDisplayObject()
     public getDisplayObject(): unknown
     {
         return this._displayObject;
@@ -76,6 +77,7 @@ export class DisplayObjectWrapperController extends WindowController implements 
     /**
 	 * Sets the wrapped display object.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DisplayObjectWrapperController.as::setDisplayObject()
     public setDisplayObject(displayObject: unknown): void
     {
         this._displayObject = displayObject;

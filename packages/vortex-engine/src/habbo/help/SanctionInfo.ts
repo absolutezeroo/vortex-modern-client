@@ -12,11 +12,13 @@ const log = Logger.getLogger('habbo.help.SanctionInfo');
  */
 export class SanctionInfo
 {
+    // AS3: .../src/com/sulake/habbo/help/SanctionInfo.as::_disposed
     private _disposed: boolean = false;
 
     /**
 	 * Whether this handler has been disposed
 	 */
+    // AS3: .../src/com/sulake/habbo/help/SanctionInfo.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -79,6 +81,7 @@ export class SanctionInfo
 	 * @param lengthHours The sanction duration in hours
 	 * @returns The localization key suffix for the sanction type
 	 */
+    // AS3: sources/win63_version/habbo/help/SanctionInfo.as::getSanctionTypeDescription()
     getSanctionTypeDescription(prefix: string, sanctionName: string, lengthHours: number): string
     {
         let key = 'help.sanction.' + prefix;
@@ -111,6 +114,7 @@ export class SanctionInfo
     /**
 	 * Dispose of this handler
 	 */
+    // AS3: .../src/com/sulake/habbo/help/SanctionInfo.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

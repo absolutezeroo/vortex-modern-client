@@ -27,6 +27,7 @@ const BUTTON_OK: string = 'ok';
 
 export class MysteryTrophyOpenDialogView
 {
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/mysterytrophy/MysteryTrophyOpenDialogView.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: MysteryTrophyOpenDialogView.as::_window

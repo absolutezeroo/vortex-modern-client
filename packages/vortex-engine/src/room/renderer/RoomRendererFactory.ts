@@ -24,6 +24,7 @@ export class RoomRendererFactory extends Component implements IRoomRendererFacto
 	 *
 	 * @see AS3 class_2015 lines 16-19
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomRendererFactory.as::createRenderer()
     createRenderer(): IRoomRenderer
     {
         return new RoomRenderer();

@@ -15,8 +15,11 @@ import {SelectableController} from './SelectableController';
  */
 export class TabButtonController extends SelectableController implements ITabButtonWindow
 {
+    // AS3: .../src/com/sulake/core/window/components/TabButtonController.as::CONTENT_TAG
     private static readonly CONTENT_TAG: string = 'TAB_BUTTON_CONTENT';
+    // AS3: .../src/com/sulake/core/window/components/TabButtonController.as::LABEL_TAG
     private static readonly LABEL_TAG: string = 'TAB_BUTTON_TITLE';
+    // AS3: .../src/com/sulake/core/window/components/TabButtonController.as::ICON_TAG
     private static readonly ICON_TAG: string = 'TAB_BUTTON_ICON';
 
     constructor(

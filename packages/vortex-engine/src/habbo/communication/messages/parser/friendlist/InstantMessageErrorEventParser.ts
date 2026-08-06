@@ -11,6 +11,7 @@ export class InstantMessageErrorEventParser implements IMessageParser
 {
     private _errorCode: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/InstantMessageErrorEventParser.as::get errorCode()
     get errorCode(): number
     {
         return this._errorCode;
@@ -18,6 +19,7 @@ export class InstantMessageErrorEventParser implements IMessageParser
 
     private _userId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/InstantMessageErrorEventParser.as::get userId()
     get userId(): number
     {
         return this._userId;
@@ -25,11 +27,13 @@ export class InstantMessageErrorEventParser implements IMessageParser
 
     private _message: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/InstantMessageErrorEventParser.as::get message()
     get message(): string
     {
         return this._message;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/InstantMessageErrorEventParser.as::flush()
     flush(): boolean
     {
         this._errorCode = 0;
@@ -38,6 +42,7 @@ export class InstantMessageErrorEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/InstantMessageErrorEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

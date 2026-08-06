@@ -21,11 +21,15 @@ export class PerformanceTracker
 {
     private _updateCount: number = 0;
     private _averageInterval: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/PerformanceTracker.as::_userAgent
     private _userAgent: string = '';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/PerformanceTracker.as::_slowUpdateCount
     private _slowUpdateCount: number = 0;
     private _timer: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/PerformanceTracker.as::_reportCount
     private _reportCount: number = 0;
     private _lastAverageInterval: number = 0;
+    // AS3: .../src/com/sulake/habbo/tracking/PerformanceTracker.as::_habboTracking
     private _habboTracking: HabboTracking;
 
     constructor(tracking: HabboTracking)
@@ -47,26 +51,31 @@ export class PerformanceTracker
     /**
 	 * Get the current average update interval
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/PerformanceTracker.as::get averageUpdateInterval()
     get averageUpdateInterval(): number
     {
         return this._averageInterval;
     }
 
+    // AS3: .../src/com/sulake/habbo/tracking/PerformanceTracker.as::get slowUpdateLimit()
     private get slowUpdateLimit(): number
     {
         return this._habboTracking.getInteger('performancetest.slowupdatelimit', 1000);
     }
 
+    // AS3: .../src/com/sulake/habbo/tracking/PerformanceTracker.as::get reportInterval()
     private get reportInterval(): number
     {
         return this._habboTracking.getInteger('performancetest.interval', 60);
     }
 
+    // AS3: .../src/com/sulake/habbo/tracking/PerformanceTracker.as::get reportLimit()
     private get reportLimit(): number
     {
         return this._habboTracking.getInteger('performancetest.reportlimit', 10);
     }
 
+    // AS3: .../src/com/sulake/habbo/tracking/PerformanceTracker.as::get meanDevianceLimit()
     private get meanDevianceLimit(): number
     {
         return this._habboTracking.propertyExists('performancetest.distribution.deviancelimit.percent')
@@ -74,6 +83,7 @@ export class PerformanceTracker
             : 10;
     }
 
+    // AS3: .../src/com/sulake/habbo/tracking/PerformanceTracker.as::get useDistribution()
     private get useDistribution(): boolean
     {
         return this._habboTracking.getBoolean('performancetest.distribution.enabled');
@@ -82,6 +92,7 @@ export class PerformanceTracker
     /**
 	 * Calculate difference between two values as a percentage.
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/PerformanceTracker.as::differenceInPercents()
     private static differenceInPercents(a: number, b: number): number
     {
         if(a === b)
@@ -107,6 +118,7 @@ export class PerformanceTracker
 	 * @param deltaTime Time since last update in milliseconds
 	 * @param currentTime Current time in milliseconds
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/PerformanceTracker.as::update()
     update(deltaTime: number, currentTime: number): void
     {
         if(deltaTime > this.slowUpdateLimit)
@@ -158,6 +170,7 @@ export class PerformanceTracker
     /**
 	 * Send a performance report to the server.
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/PerformanceTracker.as::sendReport()
     private sendReport(currentTime: number): void
     {
         const uptimeSeconds = Math.floor(currentTime / 1000);

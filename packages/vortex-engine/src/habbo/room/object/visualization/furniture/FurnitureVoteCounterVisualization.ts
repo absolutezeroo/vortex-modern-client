@@ -12,6 +12,7 @@ export class FurnitureVoteCounterVisualization extends AnimatedFurnitureVisualiz
     private static readonly ONES_SPRITE_TAG: string = 'ones_sprite';
     private static readonly TENS_SPRITE_TAG: string = 'tens_sprite';
     private static readonly HUNDREDS_SPRITE_TAG: string = 'hundreds_sprite';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVoteCounterVisualization.as::HIDE_COUNTER_SCORE
     private static readonly HIDE_COUNTER_SCORE: number = -1;
 
     protected override updateObject(scale: number, geometryDirection: number): boolean

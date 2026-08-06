@@ -52,6 +52,7 @@ export class QuestController implements IDisposable
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/quest/QuestController.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;

@@ -15,6 +15,7 @@ export class CreditFurniRedeemMessageComposer extends MessageComposer<Constructo
         this._data = [objectId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/furniture/CreditFurniRedeemMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

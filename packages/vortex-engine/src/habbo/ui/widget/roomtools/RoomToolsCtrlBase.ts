@@ -20,9 +20,12 @@ export class RoomToolsCtrlBase
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsCtrlBase.as::TOOLBAR_X
     protected static readonly TOOLBAR_X: number = -5;
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsCtrlBase.as::_window
     protected _window: IWindowContainer | null = null;
     protected _widget: RoomToolsWidget | null;
+    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsCtrlBase.as::_windowManager
     protected _windowManager: IHabboWindowManager;
+    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsCtrlBase.as::_assets
     protected _assets: IAssetLibrary | null;
     protected _collapsed: boolean = true;
     private _collapseTimer: ReturnType<typeof setTimeout> | null = null;

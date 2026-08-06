@@ -9,11 +9,14 @@ import type {IAvatarImage} from '@habbo/avatar/IAvatarImage';
  */
 export class HabboFaceFocuser
 {
+    // AS3: sources/win63_version/habbo/utils/HabboFaceFocuser.as::ICON_HEIGHT_NORMAL
     private static readonly ICON_HEIGHT_NORMAL: number = 50;
+    // AS3: sources/win63_version/habbo/utils/HabboFaceFocuser.as::ICON_WIDTH_NORMAL
     private static readonly ICON_WIDTH_NORMAL: number = 50;
     private static readonly X_OFFSETS: number[] = [-100, -100, 21, 21, -100, -100, -100, -100, -100];
     private static readonly Y_OFFSETS: number[] = [-100, -100, 28, 30, -100, -100, -100, -100, -100];
 
+    // AS3: sources/win63_version/habbo/utils/HabboFaceFocuser.as::focusUserFace()
     public static focusUserFace(
         avatarImage: IAvatarImage,
         setType: string,
@@ -57,6 +60,7 @@ export class HabboFaceFocuser
         return canvas.transferToImageBitmap();
     }
 
+    // AS3: sources/win63_version/habbo/utils/HabboFaceFocuser.as::cutCircleFromBitmap()
     public static cutCircleFromBitmap(bitmap: ImageBitmap, radius: number): ImageBitmap | null
     {
         const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);

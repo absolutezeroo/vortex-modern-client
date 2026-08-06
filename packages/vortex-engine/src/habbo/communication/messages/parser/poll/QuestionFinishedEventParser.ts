@@ -10,6 +10,7 @@ export class QuestionFinishedEventParser implements IMessageParser
 {
     private _questionId: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/QuestionFinishedEventParser.as::get questionId()
     get questionId(): number
     {
         return this._questionId;
@@ -17,11 +18,13 @@ export class QuestionFinishedEventParser implements IMessageParser
 
     private _answerCounts: Map<string, number> = new Map();
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/QuestionFinishedEventParser.as::get answerCounts()
     get answerCounts(): Map<string, number>
     {
         return this._answerCounts;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/QuestionFinishedEventParser.as::flush()
     flush(): boolean
     {
         this._questionId = -1;
@@ -29,6 +32,7 @@ export class QuestionFinishedEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/QuestionFinishedEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

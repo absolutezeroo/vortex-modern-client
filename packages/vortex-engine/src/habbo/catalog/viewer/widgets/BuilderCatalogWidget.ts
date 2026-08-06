@@ -26,8 +26,10 @@ import {CatalogWidget} from './CatalogWidget';
  */
 export class BuilderCatalogWidget extends CatalogWidget
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BuilderCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BuilderCatalogWidget.as::_offer
     private _offer: IPurchasableOffer | null = null;
 
     private _youAreOwnerEvent: YouAreOwnerMessageEvent;
@@ -105,6 +107,7 @@ export class BuilderCatalogWidget extends CatalogWidget
         this.updateButtons(false);
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BuilderCatalogWidget.as::updateButtons()
     private updateButtons(ignoreGroupRoomStatus: boolean): void
     {
         if(!this.window || !this.window.visible) return;

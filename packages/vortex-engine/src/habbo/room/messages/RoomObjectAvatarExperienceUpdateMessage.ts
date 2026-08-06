@@ -15,8 +15,10 @@ export class RoomObjectAvatarExperienceUpdateMessage extends RoomObjectUpdateMes
         this._gainedExperience = gainedExperience;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectAvatarExperienceUpdateMessage.as::_gainedExperience
     private _gainedExperience: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarExperienceUpdateMessage.as::get gainedExperience()
     get gainedExperience(): number
     {
         return this._gainedExperience;

@@ -9,15 +9,22 @@
  */
 export class DynamicStyle
 {
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::STYLE_LIFTED_HOVER
     public static readonly STYLE_LIFTED_HOVER: string = 'lifted_hover';
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::BRIGHTNESS_AND_SHADOW_UNDER
     public static readonly BRIGHTNESS_AND_SHADOW_UNDER: string = 'brightness_and_shadow_under';
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::BRIGHTNESS_AND_SHADOW_UNDER_GENTLE
     public static readonly BRIGHTNESS_AND_SHADOW_UNDER_GENTLE: string = 'brightness_and_shadow_under_gentle';
     public static readonly BUTTON: string = 'button';
 
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::name
     public name: string;
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::defaultStyles
     public defaultStyles: Record<string, unknown> = {};
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::hoverStyles
     public hoverStyles: Record<string, unknown> = {};
     public pressedStyles: Record<string, unknown> = {};
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::disabledStyles
     public disabledStyles: Record<string, unknown> = {colorTransform: [1, 1, 1, 0.4, 0, 0, 0, 0]};
 
     private _childStyles: Map<string, DynamicStyle> = new Map();
@@ -33,6 +40,7 @@ export class DynamicStyle
 	 * @param state - The window state flag
 	 * @returns The style properties object for that state
 	 */
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::getStyleByWindowState()
     public getStyleByWindowState(state: number): Record<string, unknown>
     {
         switch(state)
@@ -88,6 +96,7 @@ export class DynamicStyle
 	 * @param state - The window state flag
 	 * @returns The computed color value, or 0 if no color transform
 	 */
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::getColorValue()
     public getColorValue(state: number): number
     {
         const props = this.getStyleByWindowState(state);
@@ -115,6 +124,7 @@ export class DynamicStyle
 	 * @param state - The window state flag
 	 * @returns Color transform as [rMul, gMul, bMul, aMul, rOff, gOff, bOff, aOff]
 	 */
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::getColorTransform()
     public getColorTransform(state: number): {
         redMultiplier: number;
         greenMultiplier: number;
@@ -156,6 +166,7 @@ export class DynamicStyle
         };
     }
 
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::getChildDynamicStyleByKey()
     private getChildDynamicStyleByKey(key: string): DynamicStyle
     {
         const child = this._childStyles.get(key);

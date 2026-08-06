@@ -57,11 +57,14 @@ function clampFontSize(value: number): number
  */
 export class ChatStyleSelector implements IDisposable 
 {
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::_container
     private _container: IWindowContainer | null;
     private _gridView: ChatStyleGridView | null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::_entries
     private _entries: ChatStyleGridEntry[] = [];
     private _styleTemplateWindow: IWindow | null;
     private _fontSizeTemplateWindow: IWindow | null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::_styleRequiresUpdate
     private _styleRequiresUpdate: boolean = false;
     private _fontSizeMode: number = 0;
 
@@ -93,11 +96,13 @@ export class ChatStyleSelector implements IDisposable
 
     private _chatInputView: RoomChatInputView | null;
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::get chatInputView()
     get chatInputView(): RoomChatInputView | null 
     {
         return this._chatInputView;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::get disposed()
     get disposed(): boolean 
     {
         return this._gridView === null;
@@ -129,6 +134,7 @@ export class ChatStyleSelector implements IDisposable
     }
 
     // itself or any other ItemGridController consumer.
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::set gridColumns()
     set gridColumns(columns: number) 
     {
         const grid = this._gridView?.grid;
@@ -146,8 +152,10 @@ export class ChatStyleSelector implements IDisposable
         grid.width = width;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::_selected
     private _selected: ChatStyleGridEntry | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::get selected()
     private get selected(): ChatStyleGridEntry | null 
     {
         if(!this._selected && this._entries.length > 0) this._selected = this._entries[this._entries.length - 1];
@@ -267,6 +275,7 @@ export class ChatStyleSelector implements IDisposable
         this._styleRequiresUpdate = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::getGridItemWindowWrapper()
     private getGridItemWindowWrapper(preview: ImageBitmap): IWindowContainer | null 
     {
         if(!this._styleTemplateWindow) return null;
@@ -281,6 +290,7 @@ export class ChatStyleSelector implements IDisposable
         return clone;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::createFontSizeOptions()
     private createFontSizeOptions(): void 
     {
         const fontSizeList = this._gridView?.fontSizeList;
@@ -297,6 +307,7 @@ export class ChatStyleSelector implements IDisposable
         this.updateFontSizeSelectionHighlight();
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::getFontSizeItemWindowWrapper()
     private getFontSizeItemWindowWrapper(label: string, id: number): IWindowContainer | null 
     {
         if(!this._fontSizeTemplateWindow) return null;
@@ -314,6 +325,7 @@ export class ChatStyleSelector implements IDisposable
         return clone;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::buildTemplateWindow()
     private buildTemplateWindow(assetName: string): IWindow | null 
     {
         return this._chatInputView?.widget?.windowManager.buildWidgetLayout(assetName) ?? null;
@@ -430,11 +442,13 @@ export class ChatStyleSelector implements IDisposable
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::hideIfClickAway()
     private hideIfClickAway(related: IWindow | null): void 
     {
         if(this.visible && !this.containsWindow(related)) this.hide();
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::showBackgroundOnlyForItem()
     private showBackgroundOnlyForItem(item: IWindow): void 
     {
         const grid = this._gridView?.grid;
@@ -453,6 +467,7 @@ export class ChatStyleSelector implements IDisposable
         if(selectedBackground) selectedBackground.visible = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::updateFontSizeSelectionHighlight()
     private updateFontSizeSelectionHighlight(): void 
     {
         const fontSizeList = this._gridView?.fontSizeList;

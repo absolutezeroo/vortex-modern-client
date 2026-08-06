@@ -10,8 +10,10 @@ import {PlaneTextureBitmap} from './PlaneTextureBitmap';
 
 export class PlaneTexture
 {
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/rasterizer/basic/PlaneTexture.as::_bitmaps
     private _bitmaps: PlaneTextureBitmap[] = [];
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneTexture.as::dispose()
     dispose(): void
     {
         if(this._bitmaps !== null)
@@ -27,6 +29,7 @@ export class PlaneTexture
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneTexture.as::addBitmap()
     addBitmap(
         bitmap: HTMLCanvasElement,
         normalMinX: number = -1,
@@ -40,12 +43,14 @@ export class PlaneTexture
         this._bitmaps.push(textureBitmap);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneTexture.as::getBitmap()
     getBitmap(normal: IVector3d): HTMLCanvasElement | null
     {
         const textureBitmap = this.getPlaneTextureBitmap(normal);
         return textureBitmap === null ? null : textureBitmap.bitmap;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneTexture.as::getPlaneTextureBitmap()
     getPlaneTextureBitmap(normal: IVector3d): PlaneTextureBitmap | null
     {
         if(normal === null)
@@ -70,6 +75,7 @@ export class PlaneTexture
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneTexture.as::getAssetName()
     getAssetName(normal: IVector3d): string | null
     {
         const bitmap = this.getPlaneTextureBitmap(normal);

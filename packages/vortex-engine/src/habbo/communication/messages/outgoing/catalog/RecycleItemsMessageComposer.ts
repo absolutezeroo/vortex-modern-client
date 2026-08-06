@@ -13,6 +13,7 @@ export class RecycleItemsMessageComposer extends MessageComposer<number[]>
         this._data = [itemIds.length, ...itemIds];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/catalog/RecycleItemsMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -32,12 +32,15 @@ type NavigatorSecurityProvider = {
  */
 export class NavigatorData
 {
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::_navigator
     private readonly _navigator: NavigatorSecurityProvider | null;
     private _lastMessage: INavigatorSearchResultData | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::_favouriteLimit
     private _favouriteLimit: number = 0;
     private _favouriteCount: number = 0;
     private _favouriteRoomIds: Map<number, boolean> = new Map();
     private _isLoading: boolean = false;
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::_friendList
     private _friendList: RoomSettingsFriendListManager = new RoomSettingsFriendListManager();
 
     constructor(navigator: NavigatorSecurityProvider | null = null)
@@ -47,11 +50,13 @@ export class NavigatorData
 
     private _roomEventData: RoomEventData | null = null;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get roomEventData()
     get roomEventData(): RoomEventData | null
     {
         return this._roomEventData;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set roomEventData()
     set roomEventData(value: RoomEventData | null)
     {
         if(this._roomEventData !== null)
@@ -64,11 +69,13 @@ export class NavigatorData
 
     private _eventMod: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get eventMod()
     get eventMod(): boolean
     {
         return this._eventMod;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set eventMod()
     set eventMod(value: boolean)
     {
         this._eventMod = value;
@@ -76,11 +83,13 @@ export class NavigatorData
 
     private _roomPicker: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get roomPicker()
     get roomPicker(): boolean
     {
         return this._roomPicker;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set roomPicker()
     set roomPicker(value: boolean)
     {
         this._roomPicker = value;
@@ -88,6 +97,7 @@ export class NavigatorData
 
     private _currentRoomOwner: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get currentRoomOwner()
     get currentRoomOwner(): boolean
     {
         return this._currentRoomOwner;
@@ -95,6 +105,7 @@ export class NavigatorData
 
     private _currentRoomId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get currentRoomId()
     get currentRoomId(): number
     {
         return this._currentRoomId;
@@ -102,18 +113,22 @@ export class NavigatorData
 
     private _avatarId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get avatarId()
     get avatarId(): number
     {
         return this._avatarId;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set avatarId()
     set avatarId(value: number)
     {
         this._avatarId = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::_enteredGuestRoom
     private _enteredGuestRoom: GuestRoomData | null = null;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get enteredGuestRoom()
     get enteredGuestRoom(): GuestRoomData | null
     {
         return this._enteredGuestRoom;
@@ -129,6 +144,7 @@ export class NavigatorData
         this._enteredGuestRoom = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set enteredRoom()
     set enteredRoom(value: GuestRoomData | null)
     {
         this.enteredGuestRoom = value;
@@ -136,11 +152,13 @@ export class NavigatorData
 
     private _hcMember: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get hcMember()
     get hcMember(): boolean
     {
         return this._hcMember;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set hcMember()
     set hcMember(value: boolean)
     {
         this._hcMember = value;
@@ -148,23 +166,28 @@ export class NavigatorData
 
     private _createdFlatId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get createdFlatId()
     get createdFlatId(): number
     {
         return this._createdFlatId;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set createdFlatId()
     set createdFlatId(value: number)
     {
         this._createdFlatId = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::_hotRoomPopupOpen
     private _hotRoomPopupOpen: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get hotRoomPopupOpen()
     get hotRoomPopupOpen(): boolean
     {
         return this._hotRoomPopupOpen;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set hotRoomPopupOpen()
     set hotRoomPopupOpen(value: boolean)
     {
         this._hotRoomPopupOpen = value;
@@ -172,11 +195,13 @@ export class NavigatorData
 
     private _homeRoomId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get homeRoomId()
     get homeRoomId(): number
     {
         return this._homeRoomId;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set homeRoomId()
     set homeRoomId(value: number)
     {
         this._homeRoomId = value;
@@ -184,41 +209,51 @@ export class NavigatorData
 
     private _settingsReceived: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get settingsReceived()
     get settingsReceived(): boolean
     {
         return this._settingsReceived;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set settingsReceived()
     set settingsReceived(value: boolean)
     {
         this._settingsReceived = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::_allCategories
     private _allCategories: FlatCategory[] = [];
     private _categoryByNodeId: Map<number, FlatCategory> = new Map();
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get allCategories()
     get allCategories(): FlatCategory[]
     {
         return this._allCategories;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::_visibleCategories
     private _visibleCategories: FlatCategory[] = [];
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get visibleCategories()
     get visibleCategories(): FlatCategory[]
     {
         return this._visibleCategories;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::_allEventCategories
     private _allEventCategories: EventCategory[] = [];
     private _eventCategoryById: Map<number, EventCategory> = new Map();
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get allEventCategories()
     get allEventCategories(): EventCategory[]
     {
         return this._allEventCategories;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::_visibleEventCategories
     private _visibleEventCategories: EventCategory[] = [];
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get visibleEventCategories()
     get visibleEventCategories(): EventCategory[]
     {
         return this._visibleEventCategories;
@@ -226,11 +261,13 @@ export class NavigatorData
 
     private _currentRoomRating: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get currentRoomRating()
     get currentRoomRating(): number
     {
         return this._currentRoomRating;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set currentRoomRating()
     set currentRoomRating(value: number)
     {
         this._currentRoomRating = value;
@@ -238,11 +275,13 @@ export class NavigatorData
 
     private _canRate: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get canRate()
     get canRate(): boolean
     {
         return this._canRate;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set canRate()
     set canRate(value: boolean)
     {
         this._canRate = value;
@@ -250,11 +289,13 @@ export class NavigatorData
 
     private _currentRoomIsStaffPick: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get currentRoomIsStaffPick()
     get currentRoomIsStaffPick(): boolean
     {
         return this._currentRoomIsStaffPick;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set currentRoomIsStaffPick()
     set currentRoomIsStaffPick(value: boolean)
     {
         this._currentRoomIsStaffPick = value;
@@ -262,11 +303,13 @@ export class NavigatorData
 
     private _adIndex: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get adIndex()
     get adIndex(): number
     {
         return this._adIndex;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set adIndex()
     set adIndex(value: number)
     {
         this._adIndex = value;
@@ -274,23 +317,28 @@ export class NavigatorData
 
     private _adRoom: OfficialRoomEntryData | null = null;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get adRoom()
     get adRoom(): OfficialRoomEntryData | null
     {
         return this._adRoom;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set adRoom()
     set adRoom(value: OfficialRoomEntryData | null)
     {
         this._adRoom = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::_promotedRooms
     private _promotedRooms: PromotedRoomsData | null = null;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get promotedRooms()
     get promotedRooms(): PromotedRoomsData | null
     {
         return this._promotedRooms;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set promotedRooms()
     set promotedRooms(value: PromotedRoomsData | null)
     {
         this._promotedRooms = value;
@@ -303,6 +351,7 @@ export class NavigatorData
         return this._roomSessionTags;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set roomSessionTags()
     set roomSessionTags(value: RoomSessionTags | null)
     {
         this._roomSessionTags = value;
@@ -310,11 +359,13 @@ export class NavigatorData
 
     private _competitionRoomsData: CompetitionRoomsData | null = null;
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get competitionRoomsData()
     get competitionRoomsData(): CompetitionRoomsData | null
     {
         return this._competitionRoomsData;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set competitionRoomsData()
     set competitionRoomsData(value: CompetitionRoomsData | null)
     {
         this._competitionRoomsData = value;
@@ -347,41 +398,49 @@ export class NavigatorData
         this._isLoading = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get canAddFavourite()
     get canAddFavourite(): boolean
     {
         return this._enteredGuestRoom !== null && !this._currentRoomOwner;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get canEditRoomSettings()
     get canEditRoomSettings(): boolean
     {
         return this._enteredGuestRoom !== null && (this._currentRoomOwner || (this._navigator?.sessionData?.hasSecurity(5) ?? false));
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get popularTagsArrived()
     get popularTagsArrived(): boolean
     {
         return this._lastMessage !== null && 'tags' in this._lastMessage;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get guestRoomSearchArrived()
     get guestRoomSearchArrived(): boolean
     {
         return this._lastMessage !== null && 'rooms' in this._lastMessage;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get officialRoomsArrived()
     get officialRoomsArrived(): boolean
     {
         return this._lastMessage !== null && 'entries' in this._lastMessage;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get categoriesWithUserCountArrived()
     get categoriesWithUserCountArrived(): boolean
     {
         return this._lastMessage !== null && 'categories' in this._lastMessage;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get guestRoomSearchResults()
     get guestRoomSearchResults(): GuestRoomSearchResultData | null
     {
         return this._lastMessage as GuestRoomSearchResultData | null;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set guestRoomSearchResults()
     set guestRoomSearchResults(value: GuestRoomSearchResultData | null)
     {
         this.disposeCurrentMessage();
@@ -396,11 +455,13 @@ export class NavigatorData
         this._isLoading = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get popularTags()
     get popularTags(): PopularTagsData | null
     {
         return this._lastMessage as PopularTagsData | null;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set popularTags()
     set popularTags(value: PopularTagsData | null)
     {
         this.disposeCurrentMessage();
@@ -409,11 +470,13 @@ export class NavigatorData
         this._isLoading = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get officialRooms()
     get officialRooms(): OfficialRoomsData | null
     {
         return this._lastMessage as OfficialRoomsData | null;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set officialRooms()
     set officialRooms(value: OfficialRoomsData | null)
     {
         this.disposeCurrentMessage();
@@ -422,11 +485,13 @@ export class NavigatorData
         this._isLoading = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get categoriesWithVisitorData()
     get categoriesWithVisitorData(): CategoriesWithVisitorCountData | null
     {
         return this._lastMessage as CategoriesWithVisitorCountData | null;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set categoriesWithVisitorData()
     set categoriesWithVisitorData(value: CategoriesWithVisitorCountData | null)
     {
         this.disposeCurrentMessage();
@@ -435,6 +500,7 @@ export class NavigatorData
         this._isLoading = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set categories()
     set categories(value: FlatCategory[])
     {
         this._allCategories = value;
@@ -452,6 +518,7 @@ export class NavigatorData
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::set eventCategories()
     set eventCategories(value: EventCategory[])
     {
         this._allEventCategories = value;
@@ -469,6 +536,7 @@ export class NavigatorData
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::onRoomEnter()
     onRoomEnter(roomEnterOrGuestRoomId: { readonly guestRoomId: number; readonly owner: boolean } | number, isOwner: boolean = false): void
     {
         const guestRoomId = typeof roomEnterOrGuestRoomId === 'number' ? roomEnterOrGuestRoomId : roomEnterOrGuestRoomId.guestRoomId;
@@ -479,6 +547,7 @@ export class NavigatorData
         this._currentRoomId = guestRoomId;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::onRoomExit()
     onRoomExit(): void
     {
         if(this._roomEventData !== null)
@@ -495,6 +564,7 @@ export class NavigatorData
         this._currentRoomOwner = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::getCategoryById()
     getCategoryById(nodeId: number): FlatCategory | null
     {
         return this._categoryByNodeId.get(nodeId) ?? null;
@@ -512,6 +582,7 @@ export class NavigatorData
         return this._eventCategoryById.get(categoryId) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::onFavourites()
     onFavourites(favouritesOrLimit: { readonly limit: number; readonly favouriteRoomIds: number[] } | number, roomIds: number[] = []): void
     {
         const limit = typeof favouritesOrLimit === 'number' ? favouritesOrLimit : favouritesOrLimit.limit;
@@ -527,6 +598,7 @@ export class NavigatorData
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::favouriteChanged()
     favouriteChanged(roomId: number, added: boolean): void
     {
         if(added)
@@ -541,6 +613,7 @@ export class NavigatorData
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::isCurrentRoomFavourite()
     isCurrentRoomFavourite(): boolean
     {
         if(!this._enteredGuestRoom)
@@ -550,6 +623,7 @@ export class NavigatorData
         return this._favouriteRoomIds.has(this._enteredGuestRoom.flatId);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::isCurrentRoomHome()
     isCurrentRoomHome(): boolean
     {
         if(!this._enteredGuestRoom)
@@ -559,36 +633,43 @@ export class NavigatorData
         return this._homeRoomId === this._enteredGuestRoom.flatId;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::isRoomFavourite()
     isRoomFavourite(roomId: number): boolean
     {
         return this._favouriteRoomIds.has(roomId);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::isFavouritesFull()
     isFavouritesFull(): boolean
     {
         return this._favouriteCount >= this._favouriteLimit;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::isRoomHome()
     isRoomHome(roomId: number): boolean
     {
         return roomId === this._homeRoomId;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::startLoading()
     startLoading(): void
     {
         this._isLoading = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::isLoading()
     isLoading(): boolean
     {
         return this._isLoading;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::get friendList()
     get friendList(): RoomSettingsFriendListManager
     {
         return this._friendList;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/domain/NavigatorData.as::getAndResetSessionTags()
     getAndResetSessionTags(): RoomSessionTags | null
     {
         const tags = this._roomSessionTags;

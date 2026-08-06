@@ -83,6 +83,7 @@ export class InfoStandWidget extends RoomWidgetBase
     private readonly _rentableBotData: InfoStandRentableBotData;
 
     private _mainContainer: IWindowContainer | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::_config
     private readonly _config: IHabboConfigurationManager | null;
 
     // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::InfoStandWidget()
@@ -258,21 +259,25 @@ export class InfoStandWidget extends RoomWidgetBase
         dispatcher.off('RWPIUE_PET_FIGURE_UPDATE', this.onPetFigureUpdate);
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::get rentableBotData()
     public get rentableBotData(): InfoStandRentableBotData
     {
         return this._rentableBotData;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::get userData()
     public get userData(): InfoStandUserData
     {
         return this._userData;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::get furniData()
     public get furniData(): InfoStandFurniData
     {
         return this._furniData;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::get petData()
     public get petData(): InfoStandPetData
     {
         return this._petData;

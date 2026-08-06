@@ -9,14 +9,21 @@
  */
 export class Transitions
 {
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::LINEAR
     public static readonly LINEAR: string = 'linear';
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::EASE_IN
     public static readonly EASE_IN: string = 'easeIn';
     public static readonly EASE_OUT: string = 'easeOut';
     public static readonly EASE_IN_OUT: string = 'easeInOut';
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::EASE_OUT_IN
     public static readonly EASE_OUT_IN: string = 'easeOutIn';
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::EASE_IN_BACK
     public static readonly EASE_IN_BACK: string = 'easeInBack';
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::EASE_OUT_BACK
     public static readonly EASE_OUT_BACK: string = 'easeOutBack';
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::EASE_IN_OUT_BACK
     public static readonly EASE_IN_OUT_BACK: string = 'easeInOutBack';
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::EASE_OUT_IN_BACK
     public static readonly EASE_OUT_IN_BACK: string = 'easeOutInBack';
     public static readonly EASE_IN_ELASTIC: string = 'easeInElastic';
     public static readonly EASE_OUT_ELASTIC: string = 'easeOutElastic';
@@ -35,6 +42,7 @@ export class Transitions
 	 * @param name The transition name (e.g. "linear", "easeIn")
 	 * @returns The transition function, or null if not found
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::getTransition()
     static getTransition(name: string): ((ratio: number) => number) | null
     {
         if(Transitions._transitions === null)
@@ -51,6 +59,7 @@ export class Transitions
 	 * @param name The transition name
 	 * @param func The transition function
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::register()
     static register(name: string, func: (ratio: number) => number): void
     {
         if(Transitions._transitions === null)
@@ -64,6 +73,7 @@ export class Transitions
     /**
 	 * Register all default transition functions.
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::registerDefaults()
     private static registerDefaults(): void
     {
         Transitions._transitions = new Map();
@@ -88,16 +98,19 @@ export class Transitions
 
     // --- Easing functions ---
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::linear()
     private static linear(ratio: number): number
     {
         return ratio;
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeIn()
     private static easeIn(ratio: number): number
     {
         return ratio * ratio * ratio;
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeOut()
     private static easeOut(ratio: number): number
     {
         const inv = ratio - 1;
@@ -105,16 +118,19 @@ export class Transitions
         return inv * inv * inv + 1;
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeInOut()
     private static easeInOut(ratio: number): number
     {
         return Transitions.easeCombined(Transitions.easeIn, Transitions.easeOut, ratio);
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeOutIn()
     private static easeOutIn(ratio: number): number
     {
         return Transitions.easeCombined(Transitions.easeOut, Transitions.easeIn, ratio);
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeInBack()
     private static easeInBack(ratio: number): number
     {
         const s = 1.70158;
@@ -122,6 +138,7 @@ export class Transitions
         return Math.pow(ratio, 2) * ((s + 1) * ratio - s);
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeOutBack()
     private static easeOutBack(ratio: number): number
     {
         const inv = ratio - 1;
@@ -130,16 +147,19 @@ export class Transitions
         return Math.pow(inv, 2) * ((s + 1) * inv + s) + 1;
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeInOutBack()
     private static easeInOutBack(ratio: number): number
     {
         return Transitions.easeCombined(Transitions.easeInBack, Transitions.easeOutBack, ratio);
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeOutInBack()
     private static easeOutInBack(ratio: number): number
     {
         return Transitions.easeCombined(Transitions.easeOutBack, Transitions.easeInBack, ratio);
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeInElastic()
     private static easeInElastic(ratio: number): number
     {
         if(ratio === 0 || ratio === 1)
@@ -154,6 +174,7 @@ export class Transitions
         return -1 * Math.pow(2, 10 * inv) * Math.sin((inv - s) * (2 * Math.PI) / p);
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeOutElastic()
     private static easeOutElastic(ratio: number): number
     {
         if(ratio === 0 || ratio === 1)
@@ -167,21 +188,25 @@ export class Transitions
         return Math.pow(2, -10 * ratio) * Math.sin((ratio - s) * (2 * Math.PI) / p) + 1;
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeInOutElastic()
     private static easeInOutElastic(ratio: number): number
     {
         return Transitions.easeCombined(Transitions.easeInElastic, Transitions.easeOutElastic, ratio);
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeOutInElastic()
     private static easeOutInElastic(ratio: number): number
     {
         return Transitions.easeCombined(Transitions.easeOutElastic, Transitions.easeInElastic, ratio);
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeInBounce()
     private static easeInBounce(ratio: number): number
     {
         return 1 - Transitions.easeOutBounce(1 - ratio);
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeOutBounce()
     private static easeOutBounce(ratio: number): number
     {
         const s = 7.5625;
@@ -211,11 +236,13 @@ export class Transitions
         return s * Math.pow(ratio, 2) + 0.984375;
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeInOutBounce()
     private static easeInOutBounce(ratio: number): number
     {
         return Transitions.easeCombined(Transitions.easeInBounce, Transitions.easeOutBounce, ratio);
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeOutInBounce()
     private static easeOutInBounce(ratio: number): number
     {
         return Transitions.easeCombined(Transitions.easeOutBounce, Transitions.easeInBounce, ratio);
@@ -230,6 +257,7 @@ export class Transitions
 	 * @param ratio The input ratio (0-1)
 	 * @returns The combined eased value
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/Transitions.as::easeCombined()
     private static easeCombined(
         easeIn: (ratio: number) => number,
         easeOut: (ratio: number) => number,

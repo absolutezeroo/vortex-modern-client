@@ -11,8 +11,10 @@ import {PlaneMaskBitmap} from './PlaneMaskBitmap';
 
 export class PlaneMaskVisualization
 {
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/mask/PlaneMaskVisualization.as::_bitmaps
     private _bitmaps: PlaneMaskBitmap[] = [];
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskVisualization.as::dispose()
     dispose(): void
     {
         for(const bitmap of this._bitmaps)
@@ -23,6 +25,7 @@ export class PlaneMaskVisualization
         this._bitmaps = [];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskVisualization.as::addBitmap()
     addBitmap(
         asset: IGraphicAsset,
         normalMinX: number = -1,
@@ -34,6 +37,7 @@ export class PlaneMaskVisualization
         this._bitmaps.push(new PlaneMaskBitmap(asset, normalMinX, normalMaxX, normalMinY, normalMaxY));
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskVisualization.as::getAsset()
     getAsset(position: IVector3d): IGraphicAsset | null
     {
         if(position === null)

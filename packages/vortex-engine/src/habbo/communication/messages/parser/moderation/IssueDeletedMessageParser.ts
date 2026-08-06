@@ -10,17 +10,20 @@ export class IssueDeletedMessageParser implements IMessageParser
 {
     private _issueId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/IssueDeletedMessageEventParser.as::get issueId()
     get issueId(): number
     {
         return this._issueId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/IssueDeletedMessageEventParser.as::flush()
     flush(): boolean
     {
         this._issueId = 0;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/IssueDeletedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

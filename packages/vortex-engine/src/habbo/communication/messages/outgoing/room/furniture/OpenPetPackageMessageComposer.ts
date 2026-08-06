@@ -15,6 +15,7 @@ export class OpenPetPackageMessageComposer extends MessageComposer<ConstructorPa
         this._data = [objectId, name];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/furniture/OpenPetPackageMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

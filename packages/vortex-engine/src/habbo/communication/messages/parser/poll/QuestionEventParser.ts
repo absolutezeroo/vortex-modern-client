@@ -10,6 +10,7 @@ export class QuestionEventParser implements IMessageParser
 {
     private _pollType: string | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/QuestionEventParser.as::get pollType()
     get pollType(): string | null
     {
         return this._pollType;
@@ -17,6 +18,7 @@ export class QuestionEventParser implements IMessageParser
 
     private _pollId: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/QuestionEventParser.as::get pollId()
     get pollId(): number
     {
         return this._pollId;
@@ -24,6 +26,7 @@ export class QuestionEventParser implements IMessageParser
 
     private _questionId: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/QuestionEventParser.as::get questionId()
     get questionId(): number
     {
         return this._questionId;
@@ -31,6 +34,7 @@ export class QuestionEventParser implements IMessageParser
 
     private _duration: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/QuestionEventParser.as::get duration()
     get duration(): number
     {
         return this._duration;
@@ -38,11 +42,13 @@ export class QuestionEventParser implements IMessageParser
 
     private _question: Record<string, unknown> | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/QuestionEventParser.as::get question()
     get question(): Record<string, unknown> | null
     {
         return this._question;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/QuestionEventParser.as::flush()
     flush(): boolean
     {
         this._pollType = null;
@@ -53,6 +59,7 @@ export class QuestionEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/QuestionEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

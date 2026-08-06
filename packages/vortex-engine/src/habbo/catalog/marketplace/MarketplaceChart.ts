@@ -25,6 +25,7 @@ export class MarketplaceChart
 
     private _yValues: number[];
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketplaceChart.as::_chartWidth
     private _chartWidth: number = 0;
 
     private _chartHeight: number = 0;

@@ -42,6 +42,7 @@ export class RoomObjectWallMouseEvent extends RoomObjectMouseEvent
 
     private _wallLocation: Vector3d;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomObjectWallMouseEvent.as::get wallLocation()
     get wallLocation(): IVector3d
     {
         return this._wallLocation;
@@ -49,6 +50,7 @@ export class RoomObjectWallMouseEvent extends RoomObjectMouseEvent
 
     private _wallWidth: Vector3d;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomObjectWallMouseEvent.as::get wallWidth()
     get wallWidth(): IVector3d
     {
         return this._wallWidth;
@@ -56,27 +58,34 @@ export class RoomObjectWallMouseEvent extends RoomObjectMouseEvent
 
     private _wallHeight: Vector3d;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomObjectWallMouseEvent.as::get wallHeight()
     get wallHeight(): IVector3d
     {
         return this._wallHeight;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/events/RoomObjectWallMouseEvent.as::_x
     private _x: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomObjectWallMouseEvent.as::get x()
     get x(): number
     {
         return this._x;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/events/RoomObjectWallMouseEvent.as::_y
     private _y: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomObjectWallMouseEvent.as::get y()
     get y(): number
     {
         return this._y;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/events/RoomObjectWallMouseEvent.as::_direction
     private _direction: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomObjectWallMouseEvent.as::get direction()
     get direction(): number
     {
         return this._direction;

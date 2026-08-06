@@ -49,13 +49,16 @@ export class HistoryMessageEntry
 
     private _senderId: number;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/friendlist/class_3449.as::get senderId()
     get senderId(): number
     {
         return this._senderId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/friendlist/class_3449.as::_senderName
     private _senderName: string;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/friendlist/class_3449.as::get senderName()
     get senderName(): string
     {
         return this._senderName;
@@ -63,6 +66,7 @@ export class HistoryMessageEntry
 
     private _senderFigure: string;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/friendlist/class_3449.as::get senderFigure()
     get senderFigure(): string
     {
         return this._senderFigure;
@@ -76,6 +80,7 @@ export class HistoryMessageEntry
 
     private _secondsSinceSent: number;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/friendlist/class_3449.as::get secondsSinceSent()
     get secondsSinceSent(): number
     {
         return this._secondsSinceSent;
@@ -83,6 +88,7 @@ export class HistoryMessageEntry
 
     private _messageId: string;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/friendlist/class_3449.as::get messageId()
     get messageId(): string
     {
         return this._messageId;
@@ -99,6 +105,7 @@ export class ConsoleMessageHistoryEventParser implements IMessageParser
 {
     private _chatId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/ConsoleMessageHistoryEventParser.as::get chatId()
     get chatId(): number
     {
         return this._chatId;
@@ -106,11 +113,13 @@ export class ConsoleMessageHistoryEventParser implements IMessageParser
 
     private _historyFragment: HistoryMessageEntry[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/ConsoleMessageHistoryEventParser.as::get historyFragment()
     get historyFragment(): HistoryMessageEntry[]
     {
         return this._historyFragment;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/ConsoleMessageHistoryEventParser.as::flush()
     flush(): boolean
     {
         this._chatId = 0;
@@ -118,6 +127,7 @@ export class ConsoleMessageHistoryEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/ConsoleMessageHistoryEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

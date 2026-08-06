@@ -9,6 +9,7 @@ export class GetCreditsInfoComposer extends MessageComposer<[]>
 {
     private _data: [] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/inventory/purse/GetCreditsInfoComposer.as::getMessageArray()
     getMessageArray(): []
     {
         return this._data;

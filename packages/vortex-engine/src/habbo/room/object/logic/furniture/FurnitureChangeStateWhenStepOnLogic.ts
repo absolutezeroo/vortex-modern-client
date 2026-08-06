@@ -32,6 +32,7 @@ export class FurnitureChangeStateWhenStepOnLogic extends FurnitureLogic
         super.tearDown();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureChangeStateWhenStepOnLogic.as::onOwnAvatarMove()
     private onOwnAvatarMove(event: RoomToObjectOwnAvatarMoveEvent): void
     {
         if(this.object === null)

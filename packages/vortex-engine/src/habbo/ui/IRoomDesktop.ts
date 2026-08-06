@@ -20,21 +20,25 @@ export interface IRoomDesktop
     /**
 	 * The active room session.
 	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomDesktop.as::get roomSession()
     readonly roomSession: IRoomSession;
 
     /**
 	 * Gets the first canvas ID for this desktop.
 	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomDesktop.as::getFirstCanvasId()
     getFirstCanvasId(): number;
 
     /**
 	 * Gets the room view rectangle.
 	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomDesktop.as::getRoomViewRect()
     getRoomViewRect(): { x: number; y: number; width: number; height: number } | null;
 
     /**
 	 * Processes an event.
 	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomDesktop.as::processEvent()
     processEvent(event: unknown): void;
 
     // AS3: sources/win63_version/habbo/ui/IRoomDesktop.as::getWidget()

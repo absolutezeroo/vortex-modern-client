@@ -10,6 +10,7 @@ export class StateController
 {
     private _enabled: boolean = false;
     private _gameMode: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/notifications/feed/StateController.as::_currentState
     private _currentState: number = FeedVisibilityEnum.VIEW_STATE_HIDDEN;
     private _requestedState: number = FeedVisibilityEnum.VIEW_STATE_MINIMIZED;
 
@@ -20,6 +21,7 @@ export class StateController
 	 * @param enabled Whether the feed should be enabled
 	 * @returns The resulting visibility state
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/feed/StateController.as::setEnabled()
     setEnabled(enabled: boolean): number
     {
         this._enabled = enabled;
@@ -39,6 +41,7 @@ export class StateController
 	 * @param gameMode Whether the client is in game mode
 	 * @returns The resulting visibility state
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/feed/StateController.as::setGameMode()
     setGameMode(gameMode: boolean): number
     {
         this._gameMode = gameMode;
@@ -54,6 +57,7 @@ export class StateController
     /**
 	 * Get the current visibility state
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/feed/StateController.as::currentState()
     currentState(): number
     {
         return this._currentState;
@@ -66,6 +70,7 @@ export class StateController
 	 * @param state The desired visibility state
 	 * @returns The resulting visibility state
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/feed/StateController.as::requestState()
     requestState(state: number): number
     {
         if(!this.isActive())
@@ -82,6 +87,7 @@ export class StateController
     /**
 	 * Check if the feed is currently active (enabled and not in game mode)
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/feed/StateController.as::isActive()
     private isActive(): boolean
     {
         return this._enabled && !this._gameMode;
@@ -91,6 +97,7 @@ export class StateController
 	 * Restore visibility from the requested state.
 	 * If the requested state was hidden, defaults to minimized.
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/feed/StateController.as::setVisible()
     private setVisible(): number
     {
         let state = this._requestedState;

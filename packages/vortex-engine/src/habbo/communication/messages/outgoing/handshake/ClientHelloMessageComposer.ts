@@ -22,6 +22,7 @@ export class ClientHelloMessageComposer extends PreEncryptionMessageComposer<Con
         this._data = [releaseVersion, type, platform, category];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/handshake/ClientHelloMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

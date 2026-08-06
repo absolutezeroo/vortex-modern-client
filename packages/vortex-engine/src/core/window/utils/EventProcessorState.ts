@@ -16,11 +16,13 @@ export class EventProcessorState
     /**
 	 * The window renderer.
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/EventProcessorState.as::renderer
     public renderer: IWindowRenderer | null;
 
     /**
 	 * The desktop window.
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/EventProcessorState.as::desktop
     public desktop: IWindow | null;
 
     /**
@@ -31,11 +33,13 @@ export class EventProcessorState
     /**
 	 * The last window that received a mouseDown.
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/EventProcessorState.as::lastClickTarget
     public lastClickTarget: IWindow | null;
 
     /**
 	 * The window that received the most recent mouseDown event.
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/EventProcessorState.as::lastMouseDownTarget
     public lastMouseDownTarget: IWindow | null;
 
     /**
@@ -46,6 +50,7 @@ export class EventProcessorState
     /**
 	 * Active input event trackers.
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/EventProcessorState.as::eventTrackers
     public eventTrackers: IInputEventTracker[];
 
     constructor(

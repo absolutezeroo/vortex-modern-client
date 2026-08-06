@@ -32,9 +32,13 @@ export class ShapeController extends ContainerController
     // `properties`. Defaults are primed with `??=` in finalize() instead
     // (see BubbleController for the same pattern).
     private _shape: string | null = null;
+    // AS3: .../src/com/sulake/core/window/components/ShapeController.as::_radius
     private _radius: number | null = null;
+    // AS3: .../src/com/sulake/core/window/components/ShapeController.as::_strokeColor
     private _strokeColor: number | null = null;
+    // AS3: .../src/com/sulake/core/window/components/ShapeController.as::_strokeHsvShade
     private _strokeHsvShade: number | null = null;
+    // AS3: .../src/com/sulake/core/window/components/ShapeController.as::_strokeThickness
     private _strokeThickness: number | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ShapeController.as::ShapeController()

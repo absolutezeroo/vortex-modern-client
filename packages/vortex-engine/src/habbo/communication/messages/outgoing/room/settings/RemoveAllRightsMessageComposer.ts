@@ -10,6 +10,7 @@ export class RemoveAllRightsMessageComposer extends MessageComposer<[number]>
         this._data = [roomId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/action/RemoveAllRightsMessageComposer.as::getMessageArray()
     getMessageArray(): [number]
     {
         return this._data;

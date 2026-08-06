@@ -23,6 +23,7 @@ export class SetActivatedBadgesComposer extends MessageComposer<unknown[]>
         }
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/inventory/badges/SetActivatedBadgesComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

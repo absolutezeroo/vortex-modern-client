@@ -16,6 +16,7 @@ export class UnacceptTradingComposer extends MessageComposer<ConstructorParamete
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/inventory/trading/UnacceptTradingComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

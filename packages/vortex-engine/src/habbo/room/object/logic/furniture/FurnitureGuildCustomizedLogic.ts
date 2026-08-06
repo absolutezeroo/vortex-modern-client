@@ -17,9 +17,13 @@ import type {RoomObjectSelectedMessage} from '@habbo/room/messages/RoomObjectSel
 
 export class FurnitureGuildCustomizedLogic extends FurnitureMultiStateLogic
 {
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureGuildCustomizedLogic.as::GUILD_ID_STUFFDATA_KEY
     public static readonly GUILD_ID_STUFFDATA_KEY = 1;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureGuildCustomizedLogic.as::BADGE_CODE_STUFFDATA_KEY
     public static readonly BADGE_CODE_STUFFDATA_KEY = 2;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureGuildCustomizedLogic.as::COLOR_1_STUFFDATA_KEY
     public static readonly COLOR_1_STUFFDATA_KEY = 3;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureGuildCustomizedLogic.as::COLOR_2_STUFFDATA_KEY
     public static readonly COLOR_2_STUFFDATA_KEY = 4;
 
     override getEventTypes(): string[]
@@ -96,6 +100,7 @@ export class FurnitureGuildCustomizedLogic extends FurnitureMultiStateLogic
         super.mouseEvent(event, geometry);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureGuildCustomizedLogic.as::openContextMenu()
     protected openContextMenu(): void
     {
         if(this.eventDispatcher !== null && this.object !== null)
@@ -107,17 +112,20 @@ export class FurnitureGuildCustomizedLogic extends FurnitureMultiStateLogic
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureGuildCustomizedLogic.as::updateGuildId()
     protected updateGuildId(value: string): void
     {
         this.object?.getModelController()?.setNumber('furniture_guild_customized_guild_id', parseInt(value));
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureGuildCustomizedLogic.as::updateGuildColors()
     private updateGuildColors(color1: string, color2: string): void
     {
         this.object?.getModelController()?.setNumber('furniture_guild_customized_color_1', parseInt(color1, 16));
         this.object?.getModelController()?.setNumber('furniture_guild_customized_color_2', parseInt(color2, 16));
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureGuildCustomizedLogic.as::updateGuildBadge()
     private updateGuildBadge(badgeCode: string): void
     {
         if(this.eventDispatcher !== null && this.object !== null)

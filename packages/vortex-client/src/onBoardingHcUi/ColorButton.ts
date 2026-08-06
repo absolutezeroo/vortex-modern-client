@@ -62,6 +62,7 @@ export class ColorButton extends Button
         return this._index;
     }
 
+    // AS3: .../src/onBoardingHcUi/ColorButton.as::set index()
     public set index(value: number)
     {
         this._index = value;
@@ -73,6 +74,7 @@ export class ColorButton extends Button
         return this._club;
     }
 
+    // AS3: .../src/onBoardingHcUi/ColorButton.as::set club()
     public set club(value: boolean)
     {
         this._club = value;

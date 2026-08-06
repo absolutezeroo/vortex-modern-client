@@ -17,6 +17,7 @@ export class ThrowDiceMessageComposer extends MessageComposer<ConstructorParamet
         this._data = [objectId];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2609/_SafeCls_3154.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

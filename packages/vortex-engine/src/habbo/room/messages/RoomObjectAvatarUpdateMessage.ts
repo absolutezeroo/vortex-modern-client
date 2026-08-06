@@ -31,6 +31,7 @@ export class RoomObjectAvatarUpdateMessage extends RoomObjectMoveUpdateMessage
 
     private _dirHead: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarUpdateMessage.as::get dirHead()
     get dirHead(): number
     {
         return this._dirHead;
@@ -38,6 +39,7 @@ export class RoomObjectAvatarUpdateMessage extends RoomObjectMoveUpdateMessage
 
     private _canStandUp: boolean;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarUpdateMessage.as::get canStandUp()
     get canStandUp(): boolean
     {
         return this._canStandUp;
@@ -45,6 +47,7 @@ export class RoomObjectAvatarUpdateMessage extends RoomObjectMoveUpdateMessage
 
     private _baseY: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarUpdateMessage.as::get baseY()
     get baseY(): number
     {
         return this._baseY;

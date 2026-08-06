@@ -36,6 +36,7 @@ export class SelectableController extends InteractiveController implements ISele
     /**
 	 * Finds the nearest ancestor ISelectorWindow.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectableController.as::get selector()
     public get selector(): ISelectorWindow | null
     {
         if(this._parent)
@@ -59,11 +60,13 @@ export class SelectableController extends InteractiveController implements ISele
     /**
 	 * Whether this window is currently selected (state flag 8).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectableController.as::get isSelected()
     public get isSelected(): boolean
     {
         return this.testStateFlag(8);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/SelectableController.as::set isSelected()
     public set isSelected(value: boolean)
     {
         this.setStateFlag(8, value);
@@ -103,6 +106,7 @@ export class SelectableController extends InteractiveController implements ISele
 	 *
 	 * @returns True if the selection succeeded
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectableController.as::select()
     public select(): boolean
     {
         if(this.getStateFlag(8))
@@ -135,6 +139,7 @@ export class SelectableController extends InteractiveController implements ISele
 	 *
 	 * @returns True if the unselection succeeded
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectableController.as::unselect()
     public unselect(): boolean
     {
         if(!this.getStateFlag(8))

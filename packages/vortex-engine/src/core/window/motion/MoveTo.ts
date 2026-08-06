@@ -11,11 +11,15 @@ import {Interval} from './Interval';
  */
 export class MoveTo extends Interval
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/motion/MoveTo.as::_startX
     protected _startX: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/motion/MoveTo.as::_startY
     protected _startY: number = 0;
     protected _targetX: number;
     protected _targetY: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/motion/MoveTo.as::_deltaX
     protected _deltaX: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/motion/MoveTo.as::_deltaY
     protected _deltaY: number = 0;
 
     constructor(target: IWindow, duration: number, targetX: number, targetY: number)

@@ -36,6 +36,7 @@ export class PetInventoryMessageParser implements IMessageParser
 {
     private _totalFragments: number = 1;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2926.as::get totalFragments()
     get totalFragments(): number
     {
         return this._totalFragments;
@@ -43,6 +44,7 @@ export class PetInventoryMessageParser implements IMessageParser
 
     private _fragmentNo: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2926.as::get fragmentNo()
     get fragmentNo(): number
     {
         return this._fragmentNo;
@@ -55,12 +57,14 @@ export class PetInventoryMessageParser implements IMessageParser
         return this._pets;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2926.as::flush()
     flush(): boolean
     {
         this._pets = [];
         return true;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2926.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._totalFragments = wrapper.readInt();

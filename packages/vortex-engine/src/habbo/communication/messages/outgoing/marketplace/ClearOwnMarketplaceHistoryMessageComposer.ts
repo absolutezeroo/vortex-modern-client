@@ -18,6 +18,7 @@ export class ClearOwnMarketplaceHistoryMessageComposer extends MessageComposer<[
         this._data = [status];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1746/_SafeCls_2060.as::getMessageArray()
     getMessageArray(): [number] 
     {
         return this._data;

@@ -9,7 +9,9 @@ import {AnimatedFurnitureVisualization} from './AnimatedFurnitureVisualization';
 
 export class FurnitureHabboWheelVisualization extends AnimatedFurnitureVisualization
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureHabboWheelVisualization.as::ANIMATION_ID_OFFSET_SLOW1
     private static readonly ANIMATION_ID_OFFSET_SLOW1: number = 10;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureHabboWheelVisualization.as::ANIMATION_ID_OFFSET_SLOW2
     private static readonly ANIMATION_ID_OFFSET_SLOW2: number = 20;
     private static readonly ANIMATION_ID_ROLL: number = 31;
     private static readonly ANIMATION_ID_BOUNCE: number = 32;

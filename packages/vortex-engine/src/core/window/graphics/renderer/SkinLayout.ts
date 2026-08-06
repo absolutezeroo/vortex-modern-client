@@ -17,22 +17,28 @@ export class SkinLayout
         this._blendMode = blendMode;
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::_name
     private _name: string;
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get name()
     public get name(): string 
     {
         return this._name;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::_transparent
     private _transparent: boolean;
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get transparent()
     public get transparent(): boolean 
     {
         return this._transparent;
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::_blendMode
     private _blendMode: string;
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get blendMode()
     public get blendMode(): string 
     {
         return this._blendMode;
@@ -45,15 +51,19 @@ export class SkinLayout
         return this._entities;
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::_width
     private _width: number = 0;
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get width()
     public get width(): number 
     {
         return this._width;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::_height
     private _height: number = 0;
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get height()
     public get height(): number 
     {
         return this._height;

@@ -67,12 +67,16 @@ const log = Logger.getLogger('habbo.communication.demo.IncomingMessages');
 export class IncomingMessages
 {
     private _demo: HabboCommunicationDemo;
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::_communication
     private _communication: IHabboCommunicationManager;
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::_messageEvents
     private _messageEvents: IMessageEvent[] = [];
     private _keyExchange: IKeyExchange | null = null;
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::_privateKey
     private _privateKey: string = '';
     private _isHandshaking: boolean = false;
     private _wasDisconnected: boolean = false;
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::_rsa
     private _rsa: RSA;
 
     private _boundOnConnected: () => void;
@@ -111,6 +115,7 @@ export class IncomingMessages
         this.addHabboConnectionMessageEvent(new AuthenticationOKMessageEvent(this.onAuthenticationOK.bind(this)));
     }
 
+    // AS3: .../src/com/sulake/habbo/game/IncomingMessages.as::dispose()
     dispose(): void
     {
         const connection = this._communication.connection as SocketConnection;
@@ -133,6 +138,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as addHabboConnectionMessageEvent()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::addHabboConnectionMessageEvent()
     private addHabboConnectionMessageEvent(event: IMessageEvent): void
     {
         this._communication.addMessageEvent(event);
@@ -142,6 +148,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as onConnectionEstablished()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::onConnectionEstablished()
     private onConnectionEstablished(): void
     {
         const connection = this._communication.connection;
@@ -162,6 +169,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as onInitDiffieHandshake()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::onInitDiffieHandshake()
     private onInitDiffieHandshake(event: IMessageEvent): void
     {
         const connection = event.connection;
@@ -225,6 +233,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as onCompleteDiffieHandshake()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::onCompleteDiffieHandshake()
     private onCompleteDiffieHandshake(event: IMessageEvent): void
     {
         const connection = event.connection;
@@ -294,6 +303,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as onPing()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::onPing()
     private onPing(event: IMessageEvent): void
     {
         const connection = event.connection;
@@ -306,6 +316,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as onDisconnectReason()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::onDisconnectReason()
     private onDisconnectReason(event: IMessageEvent): void
     {
         if(this._isHandshaking)
@@ -328,6 +339,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as onGenericError()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::onGenericError()
     private onGenericError(event: IMessageEvent): void
     {
         const parser = event.parser as GenericErrorMessageParser;
@@ -348,6 +360,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as onUniqueMachineId()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::onUniqueMachineId()
     private onUniqueMachineId(_event: IMessageEvent): void
     {
         // AS3: CommunicationUtils.writeSOLProperty("machineid", param1.machineID)
@@ -357,6 +370,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as onLoginFailedHotelClosed()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::onLoginFailedHotelClosed()
     private onLoginFailedHotelClosed(event: IMessageEvent): void
     {
         const parser = (event as LoginFailedHotelClosedMessageEvent).getParser() as LoginFailedHotelClosedMessageEventParser;
@@ -369,6 +383,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as onErrorReport()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::onErrorReport()
     private onErrorReport(event: IMessageEvent): void
     {
         const parser = (event as ErrorReportEvent).getParser() as ErrorReportEventParser;
@@ -381,6 +396,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as onMaintenance()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::onMaintenance()
     private onMaintenance(event: IMessageEvent): void
     {
         const parser = (event as MaintenanceStatusMessageEvent).getParser() as MaintenanceStatusMessageEventParser;
@@ -395,6 +411,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as onIdentityAccounts()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::onIdentityAccounts()
     private onIdentityAccounts(event: IMessageEvent): void
     {
         const parser = (event as IdentityAccountsEvent).getParser() as IdentityAccountsEventParser;
@@ -409,6 +426,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as onConnectionDisconnected()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::onConnectionDisconnected()
     private onConnectionDisconnected(): void
     {
         if(this._isHandshaking)
@@ -425,6 +443,7 @@ export class IncomingMessages
     /**
 	 * @see source_as_win63/habbo/communication/demo/IncomingMessages.as generateRandomHexString()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::generateRandomHexString()
     private generateRandomHexString(byteLength: number): string
     {
         let result = '';

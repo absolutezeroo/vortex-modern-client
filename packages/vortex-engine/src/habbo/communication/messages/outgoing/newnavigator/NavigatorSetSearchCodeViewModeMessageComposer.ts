@@ -16,6 +16,7 @@ export class NavigatorSetSearchCodeViewModeMessageComposer extends MessageCompos
         this._data = [searchCode, viewMode];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/newnavigator/NavigatorSetSearchCodeViewModeMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -16,6 +16,7 @@ export class BlockListInitComposer extends MessageComposer<ConstructorParameters
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/BlockListInitComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

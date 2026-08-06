@@ -21,6 +21,7 @@ export interface IRoomHandlerListener
 	 * @param roomId The room ID
 	 * @param type The update type (RS_CONNECTED, RS_READY, RS_DISCONNECTED)
 	 */
+    // AS3: .../src/com/sulake/habbo/session/IRoomHandlerListener.as::sessionUpdate()
     sessionUpdate(roomId: number, type: string): void;
 
     /**
@@ -28,10 +29,12 @@ export interface IRoomHandlerListener
 	 * @param oldRoomId The old room ID
 	 * @param newRoomId The new room ID
 	 */
+    // AS3: .../src/com/sulake/habbo/session/IRoomHandlerListener.as::sessionReinitialize()
     sessionReinitialize(oldRoomId: number, newRoomId: number): void;
 
     /**
 	 * Get a session by room ID
 	 */
+    // AS3: .../src/com/sulake/habbo/session/IRoomHandlerListener.as::getSession()
     getSession(roomId: number): IRoomSession | null;
 }

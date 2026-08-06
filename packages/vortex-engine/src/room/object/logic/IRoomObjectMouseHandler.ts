@@ -10,5 +10,6 @@ import type {IRoomGeometry} from '../../utils/IRoomGeometry';
 
 export interface IRoomObjectMouseHandler
 {
+    // AS3: .../src/com/sulake/room/object/logic/IRoomObjectMouseHandler.as::mouseEvent()
     mouseEvent(event: RoomSpriteMouseEvent, geometry: IRoomGeometry): void;
 }

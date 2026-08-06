@@ -14,11 +14,13 @@ export class HandItemReceivedMessageEvent extends MessageEvent implements IMessa
         super(callback, HandItemReceivedMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/HandItemReceivedMessageEvent.as::get giverUserId()
     get giverUserId(): number
     {
         return (this._parser as HandItemReceivedMessageParser).giverUserId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/HandItemReceivedMessageEvent.as::get handItemType()
     get handItemType(): number
     {
         return (this._parser as HandItemReceivedMessageParser).handItemType;

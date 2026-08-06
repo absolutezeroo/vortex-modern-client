@@ -48,6 +48,7 @@ export class ActionType
         return this._id;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::_value
     private _value: number;
 
     // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get value()

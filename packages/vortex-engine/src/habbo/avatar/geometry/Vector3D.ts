@@ -14,11 +14,13 @@ export class Vector3D
 
     private _x: number;
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::get x()
     public get x(): number
     {
         return this._x;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::set x()
     public set x(value: number)
     {
         this._x = value;
@@ -26,11 +28,13 @@ export class Vector3D
 
     private _y: number;
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::get y()
     public get y(): number
     {
         return this._y;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::set y()
     public set y(value: number)
     {
         this._y = value;
@@ -38,21 +42,25 @@ export class Vector3D
 
     private _z: number;
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::get z()
     public get z(): number
     {
         return this._z;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::set z()
     public set z(value: number)
     {
         this._z = value;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::dot()
     public static dot(a: Vector3D, b: Vector3D): number
     {
         return a._x * b._x + a._y * b._y + a._z * b._z;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::cross()
     public static cross(a: Vector3D, b: Vector3D): Vector3D
     {
         const result = new Vector3D();
@@ -64,6 +72,7 @@ export class Vector3D
         return result;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::subtract()
     public static subtract(a: Vector3D, b: Vector3D): Vector3D
     {
         return new Vector3D(a._x - b._x, a._y - b._y, a._z - b._z);
@@ -85,6 +94,7 @@ export class Vector3D
         return result;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::subtract()
     public subtract(other: Vector3D): void
     {
         this._x -= other._x;
@@ -92,6 +102,7 @@ export class Vector3D
         this._z -= other._z;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::add()
     public add(other: Vector3D): void
     {
         this._x += other._x;
@@ -99,6 +110,7 @@ export class Vector3D
         this._z += other._z;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::normalize()
     public normalize(): void
     {
         const len = 1 / this.length();
@@ -108,11 +120,13 @@ export class Vector3D
         this._z *= len;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::length()
     public length(): number
     {
         return Math.sqrt(this._x * this._x + this._y * this._y + this._z * this._z);
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Vector3D.as::toString()
     public toString(): string
     {
         return 'Vector3D: (' + this._x + ',' + this._y + ',' + this._z + ')';

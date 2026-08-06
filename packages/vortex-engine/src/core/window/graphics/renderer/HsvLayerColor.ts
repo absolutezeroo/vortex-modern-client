@@ -65,6 +65,7 @@ export class HsvLayerColor
         return HsvLayerColor.hsvToRgb(hsv.h, hsv.s, hsv.v);
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/HsvLayerColor.as::rgbToHsv()
     private static rgbToHsv(r: number, g: number, b: number): { h: number; s: number; v: number }
     {
         const max = Math.max(r, Math.max(g, b));
@@ -99,6 +100,7 @@ export class HsvLayerColor
         return {h, s, v: max};
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/HsvLayerColor.as::hsvToRgb()
     private static hsvToRgb(h: number, s: number, v: number): number
     {
         h -= Math.floor(h);
@@ -132,16 +134,19 @@ export class HsvLayerColor
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/HsvLayerColor.as::toColor()
     private static toColor(r: number, g: number, b: number): number
     {
         return (HsvLayerColor.toByte(r) << 16) | (HsvLayerColor.toByte(g) << 8) | HsvLayerColor.toByte(b);
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/HsvLayerColor.as::toByte()
     private static toByte(value: number): number
     {
         return Math.round(HsvLayerColor.clamp01(value) * 255) >>> 0;
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/HsvLayerColor.as::clamp01()
     private static clamp01(value: number): number
     {
         if(Number.isNaN(value) || value < 0)

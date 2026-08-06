@@ -73,6 +73,7 @@ export class CustomUserNotificationWidget extends RoomWidgetBase
      * Does nothing while a window is already up — the second refusal is swallowed, which is what
      * AS3 does.
      */
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/requirementsmissing/CustomUserNotificationWidget.as::open()
     public open(type: string = ''): void
     {
         if(this._window) return;
@@ -129,6 +130,7 @@ export class CustomUserNotificationWidget extends RoomWidgetBase
      * AS3 returns void and only assigns `_window`; the return value is a TS addition so `open()`
      * can act on the window without fighting the narrowing its own guard introduced.
      */
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/requirementsmissing/CustomUserNotificationWidget.as::buildWindow()
     private buildWindow(layoutName: string): IWindowContainer | null
     {
         this._window = this.windowManager.buildWidgetLayout(layoutName) as IWindowContainer | null;
@@ -152,6 +154,7 @@ export class CustomUserNotificationWidget extends RoomWidgetBase
      * `%users%` is only substituted when the config carries a minimum — AS3 leaves the token in
      * the sentence otherwise.
      */
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/requirementsmissing/CustomUserNotificationWidget.as::setText()
     private setText(variant: string): void
     {
         const key = 'respect.giving.failed.no.' + variant;
@@ -180,6 +183,7 @@ export class CustomUserNotificationWidget extends RoomWidgetBase
      * The bitmap hangs off the frame's content area, not off the frame — AS3 reaches it through
      * `_window.content.getChildByName()`.
      */
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/requirementsmissing/CustomUserNotificationWidget.as::setBitmapUrl()
     private setBitmapUrl(variant: string): void
     {
         const uri = '${image.library.url}notifications/habbo_talent_show_' + variant + '.png';
@@ -199,6 +203,7 @@ export class CustomUserNotificationWidget extends RoomWidgetBase
      * the name switch above it — so `close` runs twice for a child that is both named and tagged
      * `close`. `close()` is idempotent, and this is AS3's own shape.
      */
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/requirementsmissing/CustomUserNotificationWidget.as::eventProc()
     private eventProc(event: WindowEvent, window: IWindow): void
     {
         if(event.type !== WindowMouseEvent.CLICK) return;

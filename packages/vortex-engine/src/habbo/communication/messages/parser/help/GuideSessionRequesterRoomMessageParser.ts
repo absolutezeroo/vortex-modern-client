@@ -16,12 +16,14 @@ export class GuideSessionRequesterRoomMessageParser implements IMessageParser
         return this._roomId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionRequesterRoomMessageEventParser.as::flush()
     flush(): boolean
     {
         this._roomId = 0;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionRequesterRoomMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

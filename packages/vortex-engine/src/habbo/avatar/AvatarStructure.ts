@@ -25,11 +25,13 @@ import {PartSetsData} from './structure/PartSetsData';
  */
 export class AvatarStructure
 {
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::_geometry
     private _geometry: AvatarModelGeometry | null = null;
     private _actionManager: AvatarActionManager | null = null;
     private _figureSetData: FigureSetData;
     private _partSetsData: PartSetsData;
     private _animationData: AnimationData;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::_defaultAction
     private _defaultAction: ActionDefinition | null = null;
     private _defaultLayAction: ActionDefinition | null = null;
     private _mandatorySetTypeCache: Map<string, Map<number, string[]>>;
@@ -45,21 +47,25 @@ export class AvatarStructure
 
     private _animationManager: AnimationManager;
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::get animationManager()
     public get animationManager(): AnimationManager
     {
         return this._animationManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::get figureData()
     public get figureData(): IFigureData
     {
         return this._figureSetData;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::init()
     public init(): void
     {
         this._mandatorySetTypeCache = new Map();
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::initGeometry()
     public initGeometry(data: any): void
     {
         if(!data) return;
@@ -92,6 +98,7 @@ export class AvatarStructure
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::initPartSets()
     public initPartSets(data: any): boolean
     {
         if(!data) return false;
@@ -110,6 +117,7 @@ export class AvatarStructure
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::initAnimation()
     public initAnimation(data: any): boolean
     {
         if(!data) return false;
@@ -117,6 +125,7 @@ export class AvatarStructure
         return this._animationData.parse(data);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::initFigureData()
     public initFigureData(data: any): boolean
     {
         if(!data) return false;
@@ -130,6 +139,7 @@ export class AvatarStructure
         this._figureSetData.injectXML(data);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::registerAnimation()
     public registerAnimation(data: any): void
     {
         this._animationManager.registerAnimation(
@@ -138,6 +148,7 @@ export class AvatarStructure
         );
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getPartColor()
     public getPartColor(figure: IAvatarFigureContainer, partType: string, colorIndex: number = 0): IPartColor | null
     {
         const colorIds = figure.getPartColorIds(partType);
@@ -155,16 +166,19 @@ export class AvatarStructure
         return palette.getColor(colorIds[colorIndex]);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getBodyPartData()
     public getBodyPartData(animationName: string, frameIndex: number, partId: string): AnimationLayerData | null
     {
         return this._animationManager.getLayerData(animationName, frameIndex, partId);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getAnimation()
     public getAnimation(name: string): Animation | null
     {
         return this._animationManager.getAnimation(name) as Animation | null;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getActionDefinition()
     public getActionDefinition(id: string): ActionDefinition | null
     {
         if(!this._actionManager) return null;
@@ -196,6 +210,7 @@ export class AvatarStructure
         return [...carryItem.params.keys()];
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getActionDefinitionWithState()
     public getActionDefinitionWithState(state: string): ActionDefinition | null
     {
         if(!this._actionManager) return null;
@@ -203,6 +218,7 @@ export class AvatarStructure
         return this._actionManager.getActionDefinitionWithState(state);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::isMainAvatarSet()
     public isMainAvatarSet(setId: string): boolean
     {
         if(!this._geometry) return false;
@@ -210,6 +226,7 @@ export class AvatarStructure
         return this._geometry.isMainAvatarSet(setId);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::sortActions()
     public sortActions(actions: IActiveActionData[]): IActiveActionData[]
     {
         if(!this._actionManager) return actions;
@@ -217,6 +234,7 @@ export class AvatarStructure
         return this._actionManager.sortActions(actions);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::maxFrames()
     public maxFrames(actions: IActiveActionData[]): number
     {
         let max = 0;
@@ -229,6 +247,7 @@ export class AvatarStructure
         return max;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getMandatorySetTypeIds()
     public getMandatorySetTypeIds(gender: string, clubLevel: number): string[]
     {
         if(!this._mandatorySetTypeCache.has(gender))
@@ -250,11 +269,13 @@ export class AvatarStructure
         return result;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getDefaultPartSet()
     public getDefaultPartSet(type: string, gender: string): IFigurePartSet | null
     {
         return this._figureSetData.getDefaultPartSet(type, gender);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getCanvasOffsets()
     public getCanvasOffsets(actions: IActiveActionData[], scale: string, direction: number): number[] | null
     {
         if(!this._actionManager) return null;
@@ -262,6 +283,7 @@ export class AvatarStructure
         return this._actionManager.getCanvasOffsets(actions, scale, direction);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getCanvas()
     public getCanvas(scale: string, geometryId: string): AvatarCanvas | null
     {
         if(!this._geometry) return null;
@@ -269,11 +291,13 @@ export class AvatarStructure
         return this._geometry.getCanvas(scale, geometryId);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::removeDynamicItems()
     public removeDynamicItems(avatar: IAvatarImage): void
     {
         if(this._geometry) this._geometry.removeDynamicItems(avatar);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getActiveBodyPartIds()
     public getActiveBodyPartIds(action: IActiveActionData, avatar: IAvatarImage): string[]
     {
         if(!this._geometry) return [];
@@ -375,6 +399,7 @@ export class AvatarStructure
         return bodyPartIds;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getBodyPartsUnordered()
     public getBodyPartsUnordered(setId: string): string[]
     {
         if(!this._geometry) return [];
@@ -382,6 +407,7 @@ export class AvatarStructure
         return this._geometry.getBodyPartIdsInAvatarSet(setId);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getBodyParts()
     public getBodyParts(setType: string, geometryType: string, direction: number): string[]
     {
         if(!this._geometry) return [];
@@ -391,6 +417,7 @@ export class AvatarStructure
         return this._geometry.getBodyPartsAtAngle(setType, angle, geometryType);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getFrameBodyPartOffset()
     public getFrameBodyPartOffset(action: IActiveActionData, direction: number, frameIndex: number, bodyPartId: string): {
         x: number;
         y: number
@@ -406,6 +433,7 @@ export class AvatarStructure
         return {x: 0, y: 0};
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getParts()
     public getParts(
         bodyPartId: string,
         figure: IAvatarFigureContainer,
@@ -629,6 +657,7 @@ export class AvatarStructure
         return result;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::dispose()
     public dispose(): void
     {
         this._geometry = null;
@@ -638,6 +667,7 @@ export class AvatarStructure
         this._mandatorySetTypeCache.clear();
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getPopulatedArray()
     private getPopulatedArray(count: number): number[]
     {
         const result: number[] = [];

@@ -29,11 +29,15 @@ const log = Logger.getLogger('habbo.window.widgets.IlluminaChatBubbleWidget');
  */
 export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
 {
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::TYPE
     public static readonly TYPE: string = 'illumina_chat_bubble';
 
     private static readonly FLIPPED_KEY: string = 'illumina_chat_bubble:flipped';
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::USER_NAME_KEY
     private static readonly USER_NAME_KEY: string = 'illumina_chat_bubble:user_name';
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::FIGURE_KEY
     private static readonly FIGURE_KEY: string = 'illumina_chat_bubble:figure';
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::MESSAGE_KEY
     private static readonly MESSAGE_KEY: string = 'illumina_chat_bubble:message';
 
     private static readonly PARAM_FLAG_147456: number = 147456;
@@ -66,9 +70,11 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
     // AS3: .../IlluminaChatBubbleWidget.as::_SafeStr_6125
     private _avatarHolder: IWindow | null = null;
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::_messages
     private _messages: ChatBubbleMessage[] = [];
     private _confirmationIds: number[] = [];
     private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
 
     private _root: IWindowContainer | null = null;
@@ -81,6 +87,7 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
     private _bubbleWrapper: IWindowContainer | null = null;
     private _postTimeWidget: IWindow | null = null;
     private _offlinePlaceholder: IWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::_arrowPoint
     private _arrowPoint: IWindow | null = null;
     private _messageRegion: IWindow | null = null;
 
@@ -154,8 +161,10 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -163,23 +172,28 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
 
     private _flipped: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::get flipped()
     public get flipped(): boolean
     {
         return this._flipped;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::set flipped()
     public set flipped(value: boolean)
     {
         this._flipped = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::_userName
     private _userName: string = '';
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::get userName()
     public get userName(): string
     {
         return this._userName;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::set userName()
     public set userName(value: string)
     {
         this._userName = value;
@@ -187,11 +201,13 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
 
     private _userId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::get userId()
     public get userId(): number
     {
         return this._userId;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::set userId()
     public set userId(value: number)
     {
         this._userId = value;
@@ -199,11 +215,13 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
 
     private _figure: string = '';
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::get figure()
     public get figure(): string
     {
         return this._figure;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::set figure()
     public set figure(value: string)
     {
         this._figure = value;
@@ -211,11 +229,13 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
 
     private _timeStamp: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::get timeStamp()
     public get timeStamp(): number
     {
         return this._timeStamp;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::set timeStamp()
     public set timeStamp(value: number)
     {
         this._timeStamp = value;
@@ -250,6 +270,7 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
         return this._messages.length;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         if(this._disposed) return [];
@@ -262,6 +283,7 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
         ];
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::set properties()
     public set properties(values: PropertyStruct[])
     {
         for(const prop of values)
@@ -287,6 +309,7 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
     /**
 	 * Parse messages from a tab-separated property string.
 	 */
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::getMessagesFromProperty()
     public static getMessagesFromProperty(value: string): string[]
     {
         const parts = value.split('\t');
@@ -624,6 +647,7 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
         log.warn(`renderHabbicon: habbicon ${habbiconId} cannot be drawn - HabbiconAssetManager is not ported, so the message shows an empty 80x80 box`);
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::setAwaitingConfirmationId()
     public setAwaitingConfirmationId(messageIndex: number, confirmationId: number): void
     {
         if(messageIndex < this._confirmationIds.length)
@@ -632,6 +656,7 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::clearAwaitingConfirmationId()
     public clearAwaitingConfirmationId(messageIndex: number): void
     {
         if(messageIndex < this._confirmationIds.length)
@@ -640,11 +665,13 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::getAwaitingConfirmationId()
     public getAwaitingConfirmationId(messageIndex: number): number
     {
         return this._confirmationIds[messageIndex] ?? 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

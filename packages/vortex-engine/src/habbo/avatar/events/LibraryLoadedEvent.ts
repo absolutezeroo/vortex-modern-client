@@ -20,6 +20,7 @@ export class LibraryLoadedEvent
 
     private _library: string;
 
+    // AS3: sources/win63_version/habbo/avatar/events/LibraryLoadedEvent.as::get library()
     public get library(): string
     {
         return this._library;

@@ -28,6 +28,7 @@ export class SSOTicketMessageComposer extends MessageComposer<ConstructorParamet
         return Date.now() - SSOTicketMessageComposer._startTime;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/handshake/SSOTicketMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

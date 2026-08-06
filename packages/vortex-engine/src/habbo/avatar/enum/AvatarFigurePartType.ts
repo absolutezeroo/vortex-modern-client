@@ -5,19 +5,27 @@
  */
 export class AvatarFigurePartType
 {
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::BODY
     public static readonly BODY: string = 'bd';
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::SHOES
     public static readonly SHOES: string = 'sh';
     public static readonly LEGS: string = 'lg';
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::CHEST
     public static readonly CHEST: string = 'ch';
     public static readonly WAIST_ACCESSORY: string = 'wa';
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::CHEST_ACCESSORY
     public static readonly CHEST_ACCESSORY: string = 'ca';
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::HEAD
     public static readonly HEAD: string = 'hd';
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::HAIR
     public static readonly HAIR: string = 'hr';
     public static readonly FACE_ACCESSORY: string = 'fa';
     public static readonly EYE_ACCESSORY: string = 'ea';
     public static readonly HEAD_ACCESSORY: string = 'ha';
     public static readonly HEAD_ACCESSORY_EXTRA: string = 'he';
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::COAT_CHEST
     public static readonly COAT_CHEST: string = 'cc';
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::CHEST_PRINT
     public static readonly CHEST_PRINT: string = 'cp';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::MISC
     public static readonly MISC: string = 'mc';
@@ -36,16 +44,22 @@ export class AvatarFigurePartType
     public static readonly PET_LEFT: string = 'ptl';
     public static readonly LEFT_HAND_ITEM: string = 'li';
     public static readonly LEFT_HAND: string = 'lh';
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::LEFT_SLEEVE
     public static readonly LEFT_SLEEVE: string = 'ls';
     public static readonly RIGHT_HAND: string = 'rh';
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::RIGHT_SLEEVE
     public static readonly RIGHT_SLEEVE: string = 'rs';
     public static readonly FACE: string = 'fc';
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::EYES
     public static readonly EYES: string = 'ey';
     public static readonly HAIR_BIG: string = 'hrb';
     public static readonly RIGHT_HAND_ITEM: string = 'ri';
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::LEFT_COAT_SLEEVE
     public static readonly LEFT_COAT_SLEEVE: string = 'lc';
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::RIGHT_COAT_SLEEVE
     public static readonly RIGHT_COAT_SLEEVE: string = 'rc';
 
+    // AS3: .../src/com/sulake/habbo/avatar/enum/AvatarFigurePartType.as::FIGURE_SETS
     public static readonly FIGURE_SETS: string[] = [
         AvatarFigurePartType.SHOES,
         AvatarFigurePartType.LEGS,

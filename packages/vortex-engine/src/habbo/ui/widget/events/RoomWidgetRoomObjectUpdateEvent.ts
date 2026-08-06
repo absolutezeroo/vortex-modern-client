@@ -44,16 +44,19 @@ export class RoomWidgetRoomObjectUpdateEvent extends RoomWidgetUpdateEvent
         this._roomId = roomId;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/events/RoomWidgetRoomObjectUpdateEvent.as::get id()
     public get id(): number
     {
         return this._id;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/events/RoomWidgetRoomObjectUpdateEvent.as::get category()
     public get category(): number
     {
         return this._category;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/events/RoomWidgetRoomObjectUpdateEvent.as::get roomId()
     public get roomId(): number
     {
         return this._roomId;

@@ -5,6 +5,7 @@
  */
 export class AvatarUpdateEvent
 {
+    // AS3: sources/win63_version/habbo/avatar/events/AvatarUpdateEvent.as::AVATAR_FIGURE_UPDATED
     public static readonly AVATAR_FIGURE_UPDATED: string = 'AVATAR_FIGURE_UPDATED';
 
     constructor(figure: string)
@@ -15,6 +16,7 @@ export class AvatarUpdateEvent
 
     private _figure: string;
 
+    // AS3: sources/win63_version/habbo/avatar/events/AvatarUpdateEvent.as::get figure()
     public get figure(): string
     {
         return this._figure;

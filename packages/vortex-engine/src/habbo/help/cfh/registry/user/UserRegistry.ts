@@ -10,6 +10,7 @@ import {UserRegistryItem} from './UserRegistryItem';
  */
 export class UserRegistry
 {
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistry.as::MAX_USERS_TO_STORE
     private static readonly MAX_USERS_TO_STORE: number = 80;
 
     private _users: Map<number, UserRegistryItem> = new Map();
@@ -21,6 +22,7 @@ export class UserRegistry
     /**
 	 * Get the current room ID
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistry.as::get roomId()
     get roomId(): number
     {
         return this._currentRoomId;
@@ -29,6 +31,7 @@ export class UserRegistry
     /**
 	 * Get the current room name
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistry.as::get roomName()
     get roomName(): string
     {
         return this._currentRoomName;
@@ -37,6 +40,7 @@ export class UserRegistry
     /**
 	 * Get all registered users
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistry.as::getRegistry()
     getRegistry(): Map<number, UserRegistryItem>
     {
         return this._users;
@@ -45,6 +49,7 @@ export class UserRegistry
     /**
 	 * Get a user entry by ID
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistry.as::getEntry()
     getEntry(userId: number): UserRegistryItem | null
     {
         return this._users.get(userId) ?? null;
@@ -56,6 +61,7 @@ export class UserRegistry
 	 * @param roomId The room ID
 	 * @param roomName The room name
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistry.as::registerRoom()
     registerRoom(roomId: number, roomName: string): void
     {
         this._currentRoomId = roomId;
@@ -74,6 +80,7 @@ export class UserRegistry
 	 * @param userName The user name
 	 * @param figure The user figure string
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistry.as::registerUser()
     registerUser(userId: number, userName: string, figure: string = ''): void
     {
         if(this._users.has(userId))
@@ -95,6 +102,7 @@ export class UserRegistry
     /**
 	 * Purge excess users to stay within the limit
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistry.as::purgeUserIndex()
     private purgeUserIndex(): void
     {
         while(this._users.size > UserRegistry.MAX_USERS_TO_STORE)
@@ -115,6 +123,7 @@ export class UserRegistry
     /**
 	 * Add the current room name to users that were missing it
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistry.as::addRoomNameForMissing()
     private addRoomNameForMissing(): void
     {
         while(this._missingRoomNames.length > 0)

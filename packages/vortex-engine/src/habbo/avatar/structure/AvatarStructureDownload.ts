@@ -13,6 +13,7 @@ const log = Logger.getLogger('habbo.avatar.structure.AvatarStructureDownload');
  */
 export class AvatarStructureDownload extends EventEmitter 
 {
+    // AS3: .../src/com/sulake/habbo/avatar/structure/AvatarStructureDownload.as::STRUCTURE_DONE
     public static readonly STRUCTURE_DONE: string = 'AVATAR_STRUCTURE_DONE';
 
     private _structureData: IStructureData;

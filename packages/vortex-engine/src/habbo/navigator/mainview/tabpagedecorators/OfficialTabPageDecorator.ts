@@ -15,6 +15,7 @@ export interface IOfficialTabNavigator extends ITabNavigator
  */
 export class OfficialTabPageDecorator implements ITabPageDecorator
 {
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/OfficialTabPageDecorator.as::_navigator
     private _navigator: IOfficialTabNavigator;
 
     constructor(navigator: IOfficialTabNavigator)
@@ -22,33 +23,40 @@ export class OfficialTabPageDecorator implements ITabPageDecorator
         this._navigator = navigator;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/OfficialTabPageDecorator.as::refreshCustomContent()
     refreshCustomContent(_container: IWindowContainer): void
     {
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/OfficialTabPageDecorator.as::tabSelected()
     tabSelected(): void
     {
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/OfficialTabPageDecorator.as::refreshFooter()
     refreshFooter(container: IWindowContainer): void
     {
         this._navigator.officialRoomEntryManager.refreshAdFooter(container);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/OfficialTabPageDecorator.as::navigatorOpenedWhileInTab()
     navigatorOpenedWhileInTab(): void
     {
         this._navigator.mainViewCtrl?.startSearch(4, 11, '-1', 4);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/OfficialTabPageDecorator.as::get filterCategory()
     get filterCategory(): string | null
     {
         return null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/OfficialTabPageDecorator.as::setSubSelection()
     setSubSelection(_value: number): void
     {
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/OfficialTabPageDecorator.as::processSearchParam()
     processSearchParam(param: string): string
     {
         return param;

@@ -14,11 +14,15 @@ import {StuffDataBase} from './StuffDataBase';
 
 export class VoteResultStuffData extends StuffDataBase implements IStuffData
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/VoteResultStuffData.as::FORMAT_KEY
     public static readonly FORMAT_KEY = 3;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/VoteResultStuffData.as::_state
     private _state: string = '';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/VoteResultStuffData.as::_result
     private _result: number = 0;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/VoteResultStuffData.as::get result()
     get result(): number
     {
         return this._result;

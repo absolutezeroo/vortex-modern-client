@@ -21,6 +21,7 @@ import {Randomizer} from './utils/Randomizer';
  */
 interface IRoomPlaneBitmapMask
 {
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get type()
     type: string;
     leftSideLoc: number;
     rightSideLoc: number;
@@ -45,10 +46,13 @@ export class RoomPlane
     public static readonly TYPE_UNDEFINED: number = 0;
     public static readonly TYPE_WALL: number = 1;
     public static readonly TYPE_FLOOR: number = 2;
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::TYPE_LANDSCAPE
     public static readonly TYPE_LANDSCAPE: number = 3;
 
     private _randomSeed: number = 0;
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::_origin
     private _origin: Vector3d;
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::_secondaryNormals
     private _secondaryNormals: Vector3d[] = [];
     private _geometryUpdateId: number = -1;
     private _isVisible: boolean = false;
@@ -61,6 +65,7 @@ export class RoomPlane
     private _cornerB: Vector3d;
     private _cornerC: Vector3d;
     private _cornerD: Vector3d;
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::_width
     private _width: number = 0;
     private _height: number = 0;
     private _textureCache: Map<string, PlaneBitmapData> = new Map();
@@ -71,6 +76,7 @@ export class RoomPlane
     private _rectangleMasks: IRoomPlaneRectangleMask[] = [];
     private _maskChanged: boolean = false;
     private _graphics: Graphics;
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::_bitmapData
     private _bitmapData: HTMLCanvasElement | null = null;
 
     constructor(
@@ -153,11 +159,13 @@ export class RoomPlane
 
     private _rasterizer: IPlaneRasterizer | null = null;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::set rasterizer()
     set rasterizer(value: IPlaneRasterizer | null)
     {
         this._rasterizer = value;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::_disposed
     private _disposed: boolean = false;
 
     get disposed(): boolean
@@ -167,6 +175,7 @@ export class RoomPlane
 
     private _location: Vector3d;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get location()
     get location(): IVector3d
     {
         return this._location;
@@ -174,6 +183,7 @@ export class RoomPlane
 
     private _leftSide: Vector3d;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get leftSide()
     get leftSide(): IVector3d
     {
         return this._leftSide;
@@ -181,13 +191,16 @@ export class RoomPlane
 
     private _rightSide: Vector3d;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get rightSide()
     get rightSide(): IVector3d
     {
         return this._rightSide;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::_normal
     private _normal: Vector3d;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get normal()
     get normal(): IVector3d
     {
         return this._normal;
@@ -195,6 +208,7 @@ export class RoomPlane
 
     private _type: number = 0;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get type()
     get type(): number
     {
         return this._type;
@@ -202,11 +216,13 @@ export class RoomPlane
 
     private _canBeVisible: boolean = true;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get canBeVisible()
     get canBeVisible(): boolean
     {
         return this._canBeVisible;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::set canBeVisible()
     set canBeVisible(value: boolean)
     {
         if(value !== this._canBeVisible)
@@ -222,11 +238,13 @@ export class RoomPlane
 
     private _hasTexture: boolean = true;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get hasTexture()
     get hasTexture(): boolean
     {
         return this._hasTexture;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::set hasTexture()
     set hasTexture(value: boolean)
     {
         this._hasTexture = value;
@@ -239,6 +257,7 @@ export class RoomPlane
         return this._id;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::set id()
     set id(value: string)
     {
         this._id = value;
@@ -246,39 +265,49 @@ export class RoomPlane
 
     private _uniqueId: number;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get uniqueId()
     get uniqueId(): number
     {
         return this._uniqueId;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::_offset
     private _offset: { x: number; y: number } = {x: 0, y: 0};
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get offset()
     get offset(): { x: number; y: number }
     {
         return this._offset;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::_relativeDepth
     private _relativeDepth: number = 0;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get relativeDepth()
     get relativeDepth(): number
     {
         return this._relativeDepth + this._extraDepth;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::_color
     private _color: number = 0;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get color()
     get color(): number
     {
         return this._color;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::set color()
     set color(value: number)
     {
         this._color = value;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::_extraDepth
     private _extraDepth: number = 0;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::set extraDepth()
     set extraDepth(value: number)
     {
         this._extraDepth = value;
@@ -291,16 +320,19 @@ export class RoomPlane
 
     private _isHighlighter: boolean = false;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get isHighlighter()
     get isHighlighter(): boolean
     {
         return this._isHighlighter;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::set isHighlighter()
     set isHighlighter(value: boolean)
     {
         this._isHighlighter = value;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::get visible()
     get visible(): boolean
     {
         return this._isVisible && this._canBeVisible;
@@ -325,6 +357,7 @@ export class RoomPlane
 	 *
 	 * @see sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::copyBitmapData()
     copyBitmapData(): Texture | null
     {
         if(!this.visible)
@@ -335,6 +368,7 @@ export class RoomPlane
         return this._bitmapDataTexture;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::dispose()
     dispose(): void
     {
         if(this._disposed)
@@ -365,6 +399,7 @@ export class RoomPlane
     /**
 	 * Update the plane based on room geometry
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::update()
     update(geometry: IRoomGeometry, time: number): boolean
     {
         if(geometry === null || this._disposed)
@@ -458,6 +493,7 @@ export class RoomPlane
     /**
 	 * Reset all bitmap masks. Based on AS3 RoomPlane.resetBitmapMasks()
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::resetBitmapMasks()
     resetBitmapMasks(): void
     {
         if(this._disposed) return;
@@ -474,6 +510,7 @@ export class RoomPlane
     /**
 	 * Add a bitmap mask (e.g., door hole). Based on AS3 RoomPlane.addBitmapMask()
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::addBitmapMask()
     addBitmapMask(type: string, leftSideLoc: number, rightSideLoc: number): boolean
     {
         if(this._useMask)
@@ -497,6 +534,7 @@ export class RoomPlane
     /**
 	 * Reset all rectangle masks. Based on AS3 RoomPlane.resetRectangleMasks()
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::resetRectangleMasks()
     resetRectangleMasks(): void
     {
         if(this._useMask)
@@ -511,6 +549,7 @@ export class RoomPlane
     /**
 	 * Add a rectangle mask. Based on AS3 RoomPlane.addRectangleMask()
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::addRectangleMask()
     addRectangleMask(leftSideLoc: number, rightSideLoc: number, leftSideLength: number, rightSideLength: number): boolean
     {
         if(this._useMask)
@@ -541,6 +580,7 @@ export class RoomPlane
 	 * C = location + leftSide + rightSide
 	 * D = location + leftSide
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::updateCorners()
     private updateCorners(geometry: IRoomGeometry): void
     {
         const aPos = geometry.getScreenPosition(this._location);
@@ -603,6 +643,7 @@ export class RoomPlane
 	 * Resolve the cache key for the currently rendered texture.
 	 * Based on AS3 RoomPlane.getTextureIdentifier()
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::getTextureIdentifier()
     private getTextureIdentifier(scale: number): string
     {
         if(this._rasterizer !== null)
@@ -629,6 +670,7 @@ export class RoomPlane
 	 * frame), avoiding one redundant recompute. Not ported — requires snapshotting
 	 * the previous mask arrays, which don't otherwise exist in this port.
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::needsNewTexture()
     private needsNewTexture(time: number): boolean
     {
         if(!this._canBeVisible)
@@ -648,6 +690,7 @@ export class RoomPlane
 	 * "last rendered" bitmap.
 	 * Based on AS3 RoomPlane.cacheTexture()
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::cacheTexture()
     private cacheTexture(identifier: string, data: PlaneBitmapData): void
     {
         const previous = this._textureCache.get(identifier);
@@ -666,6 +709,7 @@ export class RoomPlane
 	 * re-render from the rasterizer.
 	 * Based on AS3 RoomPlane.resetTextureCache()
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::resetTextureCache()
     private resetTextureCache(): void
     {
         for(const data of this._textureCache.values())
@@ -682,6 +726,7 @@ export class RoomPlane
 	 * nothing that would affect it has changed.
 	 * Based on AS3 RoomPlane.getTexture()
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::getTexture()
     private getTexture(geometry: IRoomGeometry, time: number): PlaneBitmapData | null
     {
         if(this._rasterizer === null || !this._hasTexture)
@@ -740,6 +785,7 @@ export class RoomPlane
 	 *   cornerB = origin + horizontal axis
 	 *   cornerD = origin + vertical axis
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::renderTexture()
     private renderTexture(textureBitmap: HTMLCanvasElement): void
     {
         const tw = textureBitmap.width;

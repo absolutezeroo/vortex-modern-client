@@ -10,7 +10,9 @@ import {AnimatedFurnitureVisualization} from './AnimatedFurnitureVisualization';
 
 export class FurnitureWaterAreaVisualization extends AnimatedFurnitureVisualization
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureWaterAreaVisualization.as::_sizeX
     private _sizeX: number = -1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureWaterAreaVisualization.as::_sizeY
     private _sizeY: number = -1;
 
     protected override updateModel(scale: number): boolean

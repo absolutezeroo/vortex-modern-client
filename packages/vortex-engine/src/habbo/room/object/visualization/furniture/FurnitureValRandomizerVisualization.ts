@@ -9,8 +9,11 @@ import {AnimatedFurnitureVisualization} from './AnimatedFurnitureVisualization';
 
 export class FurnitureValRandomizerVisualization extends AnimatedFurnitureVisualization
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureValRandomizerVisualization.as::ANIMATION_ID_OFFSET_SLOW1
     private static readonly ANIMATION_ID_OFFSET_SLOW1: number = 20;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureValRandomizerVisualization.as::ANIMATION_ID_OFFSET_SLOW2
     private static readonly ANIMATION_ID_OFFSET_SLOW2: number = 10;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureValRandomizerVisualization.as::ANIMATION_ID_ROLL
     private static readonly ANIMATION_ID_ROLL: number = 31;
     private static readonly ANIMATION_ID_BOUNCE: number = 32;
     private static readonly ANIMATION_ID_REST: number = 30;

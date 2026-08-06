@@ -12,23 +12,32 @@ export class FurnitureData implements IFurnitureData
 
     private _type: string;
     private _id: number;
+    // AS3: .../src/com/sulake/habbo/session/furniture/FurnitureData.as::_className
     private _className: string;
+    // AS3: .../src/com/sulake/habbo/session/furniture/FurnitureData.as::_fullName
     private _fullName: string;
+    // AS3: .../src/com/sulake/habbo/session/furniture/FurnitureData.as::_hasIndexedColor
     private _hasIndexedColor: boolean;
     private _colourIndex: number;
     private _revision: number;
     private _tileSizeX: number;
     private _tileSizeY: number;
     private _tileSizeZ: number;
+    // AS3: .../src/com/sulake/habbo/session/furniture/FurnitureData.as::_colours
     private _colours: number[] | null;
+    // AS3: .../src/com/sulake/habbo/session/furniture/FurnitureData.as::_localizedName
     private _localizedName: string;
+    // AS3: .../src/com/sulake/habbo/session/furniture/FurnitureData.as::_description
     private _description: string;
     private _adUrl: string;
     private _purchaseOfferId: number;
     private _rentOfferId: number;
+    // AS3: .../src/com/sulake/habbo/session/furniture/FurnitureData.as::_customParams
     private _customParams: string | null;
     private _category: number;
+    // AS3: .../src/com/sulake/habbo/session/furniture/FurnitureData.as::_purchaseCouldBeUsedForBuyout
     private _purchaseCouldBeUsedForBuyout: boolean;
+    // AS3: .../src/com/sulake/habbo/session/furniture/FurnitureData.as::_rentCouldBeUsedForBuyout
     private _rentCouldBeUsedForBuyout: boolean;
     private _availableForBuildersClub: boolean;
     private _canStandOn: boolean;

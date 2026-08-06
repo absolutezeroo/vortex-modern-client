@@ -15,6 +15,7 @@ export class ChangeMottoMessageComposer extends MessageComposer<ConstructorParam
         this._data = [motto];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/avatar/ChangeMottoMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

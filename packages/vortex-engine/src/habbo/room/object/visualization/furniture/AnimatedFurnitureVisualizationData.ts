@@ -13,6 +13,7 @@ import {FurnitureVisualizationData} from './FurnitureVisualizationData';
 
 export class AnimatedFurnitureVisualizationData extends FurnitureVisualizationData
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualizationData.as::hasAnimation()
     hasAnimation(scale: number, animationId: number): boolean
     {
         const sizeData = this.getSizeData(scale) as AnimationSizeData;
@@ -25,6 +26,7 @@ export class AnimatedFurnitureVisualizationData extends FurnitureVisualizationDa
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualizationData.as::getAnimationCount()
     getAnimationCount(scale: number): number
     {
         const sizeData = this.getSizeData(scale) as AnimationSizeData;
@@ -37,6 +39,7 @@ export class AnimatedFurnitureVisualizationData extends FurnitureVisualizationDa
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualizationData.as::getAnimationId()
     getAnimationId(scale: number, index: number): number
     {
         const sizeData = this.getSizeData(scale) as AnimationSizeData;
@@ -49,6 +52,7 @@ export class AnimatedFurnitureVisualizationData extends FurnitureVisualizationDa
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualizationData.as::isImmediateChange()
     isImmediateChange(scale: number, animationId: number, fromAnimationId: number): boolean
     {
         const sizeData = this.getSizeData(scale) as AnimationSizeData;
@@ -61,6 +65,7 @@ export class AnimatedFurnitureVisualizationData extends FurnitureVisualizationDa
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualizationData.as::getStartFrame()
     getStartFrame(scale: number, animationId: number, direction: number): number
     {
         const sizeData = this.getSizeData(scale) as AnimationSizeData;
@@ -73,6 +78,7 @@ export class AnimatedFurnitureVisualizationData extends FurnitureVisualizationDa
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualizationData.as::getFrame()
     getFrame(
         scale: number,
         animationId: number,
@@ -91,6 +97,7 @@ export class AnimatedFurnitureVisualizationData extends FurnitureVisualizationDa
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualizationData.as::getFrameFromSequence()
     getFrameFromSequence(
         scale: number,
         animationId: number,

@@ -27,16 +27,23 @@ export class EffectAssetDownloadManager extends EventEmitter
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::LIBRARY_LOADED
     public static readonly LIBRARY_LOADED: string = 'LIBRARY_LOADED';
 
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::MAX_SIMULTANEOUS_DOWNLOADS
     private static readonly MAX_SIMULTANEOUS_DOWNLOADS: number = 2;
     private static readonly MANDATORY_EFFECT_IDS: string[] = ['dance.1', 'dance.2', 'dance.3', 'dance.4'];
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::_structure
     private _structure: AvatarStructure;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::_incompleteEffects
     private _incompleteEffects: Map<string, EffectAssetDownloadLibrary[]>;
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::_listeners
     private _listeners: Map<string, IAvatarEffectListener[]>;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::_pendingDownloadQueue
     private _pendingDownloadQueue: EffectAssetDownloadLibrary[];
     private _pendingDownloadSet: Set<EffectAssetDownloadLibrary>;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::_currentDownloads
     private _currentDownloads: EffectAssetDownloadLibrary[];
     private _currentDownloadSet: Set<EffectAssetDownloadLibrary>;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::_initDownloadBuffer
     private _initDownloadBuffer: [number, IAvatarEffectListener | null][];
     private _isReady: boolean;
     private _downloadUrl: string;
@@ -102,6 +109,7 @@ export class EffectAssetDownloadManager extends EventEmitter
      * @param effectId - The effect ID to check
      * @returns True if all required libraries are ready
      */
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::isReady()
     public isReady(effectId: number): boolean 
     {
         if(!this._isReady) return false;
@@ -122,6 +130,7 @@ export class EffectAssetDownloadManager extends EventEmitter
      * @param effectId - The effect ID to load
      * @param listener - Optional listener to notify when effect assets are ready
      */
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::loadEffectData()
     public loadEffectData(effectId: number, listener: IAvatarEffectListener | null = null): void 
     {
         if(!this._isReady) 
@@ -243,6 +252,7 @@ export class EffectAssetDownloadManager extends EventEmitter
     /**
      * Determines which libraries still need to be downloaded for a given effect.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::getLibsToDownload()
     private getLibsToDownload(effectId: number): EffectAssetDownloadLibrary[] 
     {
         const result: EffectAssetDownloadLibrary[] = [];
@@ -338,6 +348,7 @@ export class EffectAssetDownloadManager extends EventEmitter
      *
      * In AS3, this also immediately calls processPending().
      */
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::addToQueue()
     private addToQueue(library: EffectAssetDownloadLibrary): void 
     {
         if(!library.isReady && !this._pendingDownloadSet.has(library) && !this._currentDownloadSet.has(library)) 
@@ -353,6 +364,7 @@ export class EffectAssetDownloadManager extends EventEmitter
      *
      * In AS3, this is also triggered by a Timer with 100ms delay.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::processPending()
     private processPending(): void 
     {
         while(this._pendingDownloadQueue.length > 0 && this._currentDownloads.length < EffectAssetDownloadManager.MAX_SIMULTANEOUS_DOWNLOADS) 
@@ -371,6 +383,7 @@ export class EffectAssetDownloadManager extends EventEmitter
      *
      * These are queued immediately after the effect map is generated.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::loadMandatoryLibs()
     private loadMandatoryLibs(): void 
     {
         const mandatoryIds = EffectAssetDownloadManager.MANDATORY_EFFECT_IDS.slice();

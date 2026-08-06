@@ -16,6 +16,7 @@ export class ForwardToASubmittableRoomMessageComposer extends MessageComposer<Co
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/competition/ForwardToASubmittableRoomMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

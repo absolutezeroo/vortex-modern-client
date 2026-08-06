@@ -7,18 +7,29 @@ import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfig
  */
 export class ActivityPointTypeEnum
 {
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::DUCKET
     public static readonly DUCKET: number = 0;
     public static readonly SUBSCRIPTION_GIFT_POINTS: number = 3;
     public static readonly LOYALTY: number = 5;
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::CREDITS
     public static readonly CREDITS: number = 7;
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::SEASONAL_1
     public static readonly SEASONAL_1: number = 101;
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::SEASONAL_2
     public static readonly SEASONAL_2: number = 102;
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::SEASONAL_3
     public static readonly SEASONAL_3: number = 103;
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::SEASONAL_4
     public static readonly SEASONAL_4: number = 104;
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::SEASONAL_5
     public static readonly SEASONAL_5: number = 105;
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::NO_OP_1
     public static readonly NO_OP_1: number = 1;
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::NO_OP_2
     public static readonly NO_OP_2: number = 2;
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::NO_OP_4
     public static readonly NO_OP_4: number = 4;
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::SILVER
     public static readonly SILVER: number = 1000;
     public static readonly EMERALD: number = 1001;
 
@@ -42,6 +53,7 @@ export class ActivityPointTypeEnum
         ['mushrooms', [79, 78]],
     ]);
 
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::values()
     public static values(): number[]
     {
         return [
@@ -57,6 +69,7 @@ export class ActivityPointTypeEnum
         ];
     }
 
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::getIconStyleFor()
     public static getIconStyleFor(
         type: number,
         configuration: IHabboConfigurationManager,
@@ -89,6 +102,7 @@ export class ActivityPointTypeEnum
         return configuration.getInteger(`currencyiconstyle.${big ? 'big' : 'small'}.${type}${combo ? '.combo' : ''}`, 0);
     }
 
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::isVisible()
     public static isVisible(type: number): boolean
     {
         return type !== ActivityPointTypeEnum.NO_OP_1
@@ -96,6 +110,7 @@ export class ActivityPointTypeEnum
             && type !== ActivityPointTypeEnum.NO_OP_4;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/purse/class_2085.as::isSeasonal()
     public static isSeasonal(type: number): boolean
     {
         return type >= ActivityPointTypeEnum.SEASONAL_1 && type <= ActivityPointTypeEnum.SEASONAL_5;

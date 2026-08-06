@@ -11,17 +11,20 @@ export class NoobnessLevelMessageParser implements IMessageParser
 {
     private _noobnessLevel: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/NoobnessLevelMessageEventParser.as::get noobnessLevel()
     get noobnessLevel(): number
     {
         return this._noobnessLevel;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/NoobnessLevelMessageEventParser.as::flush()
     flush(): boolean
     {
         this._noobnessLevel = 0;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/NoobnessLevelMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._noobnessLevel = wrapper.readInt();

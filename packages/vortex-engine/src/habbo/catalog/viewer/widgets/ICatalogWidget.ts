@@ -9,15 +9,21 @@ import type {ICatalogPage} from '../ICatalogPage';
  */
 export interface ICatalogWidget
 {
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/class_2612.as::get page()
     page: ICatalogPage;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/class_2612.as::get events()
     events: EventEmitter;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/class_2612.as::get window()
     readonly window: IWindowContainer;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/class_2612.as::dispose()
     dispose(): void;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/class_2612.as::init()
     init(): boolean;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/class_2612.as::closed()
     closed(): void;
 }

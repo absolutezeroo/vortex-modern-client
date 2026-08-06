@@ -119,6 +119,7 @@ export class TradingModel implements ITradingModel, IInventoryModel
     // Name DERIVED (`_SafeStr_6149`).
     private _nameScamWarning: TradingNameScamWarningController;
 
+    // AS3: .../src/com/sulake/habbo/inventory/trading/TradingModel.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../TradingModel.as::_tradingOpen
@@ -470,6 +471,7 @@ export class TradingModel implements ITradingModel, IInventoryModel
      * and it is why the constant is read by nothing. Kept as written rather than "restored" to
      * what the parameter suggests.
      */
+    // AS3: .../src/com/sulake/habbo/inventory/trading/TradingModel.as::detectNameScam()
     private detectNameScam(selfInitiated: boolean): TradingNameScamDetectionResult
     {
         if(!selfInitiated && !TradingModel.SHOW_NAME_SCAM_WARNING_FOR_SELF_INITIATED_TRADES)
@@ -516,6 +518,7 @@ export class TradingModel implements ITradingModel, IInventoryModel
      * `state = CANCELLED` is the no-op the setter guards on, and the inner call is what actually
      * lands the state on READY. Verified against the source before being left alone.
      */
+    // AS3: .../src/com/sulake/habbo/inventory/trading/TradingModel.as::close()
     close(): void
     {
         if(this._tradingOpen)

@@ -13,6 +13,7 @@ export class FaqTextMessageParser implements IMessageParser
 {
     private _questionId: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/communication/messages/parser/help/_SafeCls_4068.as::get questionId()
     get questionId(): number 
     {
         return this._questionId;
@@ -20,11 +21,13 @@ export class FaqTextMessageParser implements IMessageParser
 
     private _answerText: string | null = null;
 
+    // AS3: .../src/com/sulake/habbo/communication/messages/parser/help/_SafeCls_4068.as::get answerText()
     get answerText(): string | null 
     {
         return this._answerText;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/messages/parser/help/_SafeCls_4068.as::flush()
     flush(): boolean 
     {
         this._questionId = -1;
@@ -32,6 +35,7 @@ export class FaqTextMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/messages/parser/help/_SafeCls_4068.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean 
     {
         if(!wrapper) return false;

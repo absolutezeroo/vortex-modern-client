@@ -28,13 +28,19 @@ export type AlertDialogCallback = (dialog: IDisposable, event: WindowEvent) => v
  * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/window/utils/IAlertDialog.as
  */
 export interface IAlertDialog extends IDisposable {
+    // AS3: .../src/com/sulake/habbo/window/utils/AlertDialog.as::get title()
     title: string;
+    // AS3: .../src/com/sulake/habbo/window/utils/AlertDialog.as::get summary()
     summary: string;
+    // AS3: .../src/com/sulake/habbo/window/utils/AlertDialog.as::get callback()
     callback: AlertDialogCallback | null;
+    // AS3: .../src/com/sulake/habbo/window/utils/AlertDialog.as::get titleBarColor()
     titleBarColor: number;
 
+    // AS3: .../src/com/sulake/habbo/window/utils/AlertDialog.as::getButtonCaption()
     getButtonCaption(buttonFlag: number): ICaption | null;
 
+    // AS3: .../src/com/sulake/habbo/window/utils/AlertDialog.as::setButtonCaption()
     setButtonCaption(buttonFlag: number, caption: ICaption): void;
 }
 

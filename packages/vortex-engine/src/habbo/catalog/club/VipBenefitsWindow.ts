@@ -10,8 +10,10 @@ import type {HabboCatalog} from '../HabboCatalog';
  */
 export class VipBenefitsWindow implements IDisposable
 {
+    // AS3: .../src/com/sulake/habbo/catalog/club/VipBenefitsWindow.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/VipBenefitsWindow.as::_window
     private _window: IWindowContainer | null;
 
     constructor(catalog: HabboCatalog)
@@ -22,6 +24,7 @@ export class VipBenefitsWindow implements IDisposable
         this._window?.center();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/VipBenefitsWindow.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -31,6 +34,7 @@ export class VipBenefitsWindow implements IDisposable
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/VipBenefitsWindow.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;

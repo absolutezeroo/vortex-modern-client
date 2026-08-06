@@ -71,6 +71,7 @@ export class FloorRasterizer extends PlaneRasterizer
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/FloorRasterizer.as::parseFloors()
     private parseFloors(planes: IAssetPlane[]): void
     {
         if(planes === null) return;

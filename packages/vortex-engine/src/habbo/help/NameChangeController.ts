@@ -13,6 +13,7 @@ const log = Logger.getLogger('habbo.help.NameChangeController');
  */
 export class NameChangeController
 {
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::NAME_CHANGE
     public static readonly NAME_CHANGE: string = 'TUI_NAME_VIEW';
     private _communication: IHabboCommunicationManager | null = null;
 
@@ -22,31 +23,37 @@ export class NameChangeController
         log.debug('NameChangeController initialized');
     }
 
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::_disposed
     private _disposed: boolean = false;
 
     /**
 	 * Whether this controller has been disposed
 	 */
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::_ownUserName
     private _ownUserName: string = '';
 
     /**
 	 * Get the current user's name
 	 */
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::get ownUserName()
     get ownUserName(): string
     {
         return this._ownUserName;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/help/namechange/NameChangeController.as::_ownUserId
     private _ownUserId: number = 0;
 
     /**
 	 * Get the current user's ID
 	 */
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::get ownUserId()
     get ownUserId(): number
     {
         return this._ownUserId;
@@ -57,6 +64,7 @@ export class NameChangeController
 	 *
 	 * @param name The name to check
 	 */
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::checkName()
     checkName(name: string): void
     {
         log.debug('Check name:', name);
@@ -68,6 +76,7 @@ export class NameChangeController
 	 *
 	 * @param name The new name
 	 */
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::changeName()
     changeName(name: string): void
     {
         log.debug('Change name:', name);
@@ -81,6 +90,7 @@ export class NameChangeController
 	 * @param name The checked name
 	 * @param suggestions Array of suggested names if not available
 	 */
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::onCheckUserNameResult()
     onCheckUserNameResult(resultCode: number, name: string, suggestions: string[]): void
     {
         if(resultCode === 0)
@@ -99,6 +109,7 @@ export class NameChangeController
 	 * @param resultCode The result code (0 = success)
 	 * @param name The new name
 	 */
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::onChangeUserNameResult()
     onChangeUserNameResult(resultCode: number, name: string): void
     {
         if(resultCode === 0)
@@ -118,6 +129,7 @@ export class NameChangeController
 	 * @param userId The user ID
 	 * @param userName The user name
 	 */
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::onUserObject()
     onUserObject(userId: number, userName: string): void
     {
         this._ownUserId = userId;
@@ -130,6 +142,7 @@ export class NameChangeController
 	 * @param webId The user web ID
 	 * @param newName The new name
 	 */
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::onUserNameChanged()
     onUserNameChanged(webId: number, newName: string): void
     {
         if(this._ownUserId === webId)
@@ -141,6 +154,7 @@ export class NameChangeController
     /**
 	 * Show the name change view
 	 */
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::showView()
     showView(): void
     {
         log.debug('Show name change view');
@@ -149,6 +163,7 @@ export class NameChangeController
     /**
 	 * Dispose of this controller
 	 */
+    // AS3: .../src/com/sulake/habbo/help/namechange/NameChangeController.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

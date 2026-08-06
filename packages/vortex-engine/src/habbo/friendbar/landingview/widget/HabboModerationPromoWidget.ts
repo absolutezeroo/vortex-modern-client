@@ -11,7 +11,9 @@ import {HabboLandingView as HabboLandingViewClass} from '../HabboLandingView';
  */
 export class HabboModerationPromoWidget implements ILandingViewWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as::_landingView
     private _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as::_container
     private _container: IWindowContainer | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as::HabboModerationPromoWidget()
@@ -20,6 +22,7 @@ export class HabboModerationPromoWidget implements ILandingViewWidget
         this._landingView = landingView;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
@@ -48,6 +51,7 @@ export class HabboModerationPromoWidget implements ILandingViewWidget
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/HabboModerationPromoWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;

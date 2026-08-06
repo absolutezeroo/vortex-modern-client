@@ -133,6 +133,7 @@ export class ModeratorInitData
         return this._roomKickPermission;
     }
 
+    // AS3: sources/win63_version/habbo/communication/demo/class_1762.as::dispose()
     dispose(): void
     {
         this._issues = [];

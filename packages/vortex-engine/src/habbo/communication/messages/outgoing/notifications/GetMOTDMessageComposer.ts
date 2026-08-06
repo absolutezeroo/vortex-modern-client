@@ -15,6 +15,7 @@ export class GetMOTDMessageComposer extends MessageComposer<[]>
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/GetMOTDMessageComposer.as::getMessageArray()
     getMessageArray(): []
     {
         return this._data;

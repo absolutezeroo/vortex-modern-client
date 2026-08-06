@@ -15,6 +15,7 @@ export class IncomeRewardClaimMessageComposer extends MessageComposer<[number]>
         this._data = [rewardId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/vault/IncomeRewardClaimMessageComposer.as::getMessageArray()
     getMessageArray(): [number]
     {
         return this._data;

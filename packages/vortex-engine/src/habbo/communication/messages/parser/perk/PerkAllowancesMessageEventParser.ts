@@ -11,12 +11,14 @@ export class PerkAllowancesMessageEventParser implements IMessageParser
 {
     private _perks: PerkAllowanceData[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/perk/PerkAllowancesMessageEventParser.as::flush()
     flush(): boolean
     {
         this._perks.length = 0;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/perk/PerkAllowancesMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper)
@@ -40,11 +42,13 @@ export class PerkAllowancesMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/perk/PerkAllowancesMessageEventParser.as::getPerks()
     getPerks(): PerkAllowanceData[]
     {
         return this._perks;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/perk/PerkAllowancesMessageEventParser.as::isPerkAllowed()
     isPerkAllowed(code: string): boolean
     {
         const perk = this.getPerk(code);
@@ -52,6 +56,7 @@ export class PerkAllowancesMessageEventParser implements IMessageParser
         return perk !== null && perk.isAllowed;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/perk/PerkAllowancesMessageEventParser.as::getPerk()
     getPerk(code: string): PerkAllowanceData | null
     {
         for(const perk of this._perks)

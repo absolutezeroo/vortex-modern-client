@@ -22,6 +22,7 @@ export class SetRoomPreviewerStuffDataEvent
         return SetRoomPreviewerStuffDataEvent.CWE_SET_PREVIEWER_STUFFDATA;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/SetRoomPreviewerStuffDataEvent.as::get stuffData()
     get stuffData(): IStuffData | null
     {
         return this._stuffData;

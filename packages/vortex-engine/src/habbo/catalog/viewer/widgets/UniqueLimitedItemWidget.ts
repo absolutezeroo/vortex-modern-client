@@ -15,10 +15,13 @@ import {CatalogWidget} from './CatalogWidget';
  */
 export class UniqueLimitedItemWidget extends CatalogWidget
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/UniqueLimitedItemWidget.as::SUPPLY_REFRESH_PERIOD_MS
     private static readonly SUPPLY_REFRESH_PERIOD_MS: number = 20000;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/UniqueLimitedItemWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/UniqueLimitedItemWidget.as::_overlayWidget
     private _overlayWidget: ILimitedItemSupplyLeftOverlayWidget | null = null;
 
     private _lastOffer: IPurchasableOffer | null = null;

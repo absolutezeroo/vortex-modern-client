@@ -16,6 +16,7 @@ export class JoinHabboGroupMessageComposer extends MessageComposer<ConstructorPa
         this._data = [groupId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/JoinHabboGroupMessageComposer.as::getMessageArray()
     getMessageArray(): [number]
     {
         return this._data;

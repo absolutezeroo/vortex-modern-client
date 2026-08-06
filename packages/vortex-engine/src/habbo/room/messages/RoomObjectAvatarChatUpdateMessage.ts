@@ -15,8 +15,10 @@ export class RoomObjectAvatarChatUpdateMessage extends RoomObjectUpdateMessage
         this._numberOfWords = numberOfWords;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectAvatarChatUpdateMessage.as::_numberOfWords
     private _numberOfWords: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarChatUpdateMessage.as::get numberOfWords()
     get numberOfWords(): number
     {
         return this._numberOfWords;

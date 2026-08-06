@@ -22,6 +22,7 @@ import type {ImageResult} from '@habbo/room/ImageResult';
  */
 export class CatalogObjectMover implements IGetImageListener
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogObjectMover.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
 
     private _mainContainer: IWindowContainer | null = null;
@@ -122,6 +123,7 @@ export class CatalogObjectMover implements IGetImageListener
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogObjectMover.as::getFurniImageResult()
     private getFurniImageResult(objectData: ISelectedRoomObjectData): ImageResult | null
     {
         if(objectData == null || this._roomEngine == null) return null;
@@ -132,6 +134,7 @@ export class CatalogObjectMover implements IGetImageListener
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogObjectMover.as::createOverlaySprite()
     private createOverlaySprite(result: ImageResult): void
     {
         if(result.data == null || this._roomEngine == null || this._overlaySprite != null) return;
@@ -141,6 +144,7 @@ export class CatalogObjectMover implements IGetImageListener
         this._roomEngine.addStageChild(this._overlaySprite);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogObjectMover.as::moveOverlaySprite()
     private moveOverlaySprite(stageX: number, stageY: number): void
     {
         if(this._overlaySprite == null) return;
@@ -149,6 +153,7 @@ export class CatalogObjectMover implements IGetImageListener
         this._overlaySprite.y = stageY - Math.round(this._overlaySprite.height / 2);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogObjectMover.as::releaseOverlaySprite()
     private releaseOverlaySprite(): void
     {
         if(this._overlaySprite == null || this._roomEngine == null) return;

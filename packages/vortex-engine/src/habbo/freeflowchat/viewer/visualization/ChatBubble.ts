@@ -76,11 +76,13 @@ export class ChatBubble
         return createImageBitmap(canvas as unknown as CanvasImageSource);
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::get overlap()
     get overlap(): Rectangle | null
     {
         return this._bubble?.overlap ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::dispose()
     dispose(): void
     {
         if(!this._bubble) return;

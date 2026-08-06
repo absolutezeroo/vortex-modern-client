@@ -12,6 +12,7 @@ export class WiredUserClickHandledEvent
 
     private _type: string;
 
+    // AS3: .../src/com/sulake/habbo/roomevents/events/WiredUserClickHandledEvent.as::_index
     private _index: number;
 
     private _openMenu: boolean;

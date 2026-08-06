@@ -22,6 +22,7 @@ export class AddItemsToTradeComposer extends MessageComposer<number[]>
         this._data = [itemIds.length, ...itemIds];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/inventory/trading/AddItemsToTradeComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

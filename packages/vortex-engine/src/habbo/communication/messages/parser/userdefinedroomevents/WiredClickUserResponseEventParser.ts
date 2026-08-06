@@ -13,6 +13,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class WiredClickUserResponseEventParser implements IMessageParser
 {
+    // AS3: .../src/com/sulake/habbo/communication/messages/parser/userdefinedroomevents/_SafeCls_3523.as::_index
     private _index: number = 0;
 
     private _openMenu: boolean = false;

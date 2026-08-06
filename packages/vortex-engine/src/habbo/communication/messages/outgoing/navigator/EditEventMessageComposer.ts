@@ -16,6 +16,7 @@ export class EditEventMessageComposer extends MessageComposer<ConstructorParamet
         this._data = [categoryId, eventName, eventDescription];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/EditEventMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

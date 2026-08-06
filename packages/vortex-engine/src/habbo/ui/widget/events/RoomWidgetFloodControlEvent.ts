@@ -19,6 +19,7 @@ export class RoomWidgetFloodControlEvent extends RoomWidgetUpdateEvent
         this._seconds = seconds;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/events/RoomWidgetFloodControlEvent.as::get seconds()
     public get seconds(): number
     {
         return this._seconds;

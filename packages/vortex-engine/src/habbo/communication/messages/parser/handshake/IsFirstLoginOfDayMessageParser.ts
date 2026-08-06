@@ -10,17 +10,20 @@ export class IsFirstLoginOfDayMessageParser implements IMessageParser
 {
     private _isFirstLoginOfDay: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/IsFirstLoginOfDayEventParser.as::get isFirstLoginOfDay()
     get isFirstLoginOfDay(): boolean
     {
         return this._isFirstLoginOfDay;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/IsFirstLoginOfDayEventParser.as::flush()
     flush(): boolean
     {
         this._isFirstLoginOfDay = false;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/IsFirstLoginOfDayEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._isFirstLoginOfDay = wrapper.readBoolean();

@@ -41,6 +41,7 @@ export class ActivityPointDisplayCatalogWidget extends CatalogWidget
         return this.updateAmount();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ActivityPointDisplayCatalogWidget.as::updateAmount()
     private updateAmount(): boolean
     {
         if(this.disposed || this.window == null) return false;
@@ -76,6 +77,7 @@ export class ActivityPointDisplayCatalogWidget extends CatalogWidget
         this.updateAmount();
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ActivityPointDisplayCatalogWidget.as::getActivityPointType()
     private getActivityPointType(): number
     {
         if(this.page?.offers == null) return 0;

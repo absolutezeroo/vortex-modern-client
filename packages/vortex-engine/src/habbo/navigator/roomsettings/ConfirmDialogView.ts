@@ -10,6 +10,7 @@ import { Util } from '../Util';
  */
 export class ConfirmDialogView
 {
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/ConfirmDialogView.as::_window
     private _window: IWindowContainer | null = null;
     private _callback: (() => void) | null = null;
 
@@ -54,11 +55,13 @@ export class ConfirmDialogView
         win.activate();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/ConfirmDialogView.as::get disposed()
     get disposed(): boolean
     {
         return this._window === null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/ConfirmDialogView.as::dispose()
     dispose(): void
     {
         if(this._window === null) return;

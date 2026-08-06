@@ -11,11 +11,15 @@ import {ColorConverter} from './ColorConverter';
 export class ColorTransitioner
 {
     private _lightness: number;
+    // AS3: .../src/com/sulake/room/utils/ColorTransitioner.as::_originalColor
     private _originalColor: number;
     private _originalLightness: number;
+    // AS3: .../src/com/sulake/room/utils/ColorTransitioner.as::_targetColor
     private _targetColor: number;
     private _targetLightness: number;
+    // AS3: .../src/com/sulake/room/utils/ColorTransitioner.as::_colorChangedTime
     private _colorChangedTime: number = 0;
+    // AS3: .../src/com/sulake/room/utils/ColorTransitioner.as::_colorTransitionLength
     private _colorTransitionLength: number = 0;
 
     constructor(color: number = 0xFFFFFF, lightness: number = 255)
@@ -28,6 +32,7 @@ export class ColorTransitioner
         this._targetLightness = lightness;
     }
 
+    // AS3: .../src/com/sulake/room/utils/ColorTransitioner.as::_color
     private _color: number;
 
     /**
@@ -36,6 +41,7 @@ export class ColorTransitioner
 	 * Converts the current RGB to HSL, replaces the lightness component,
 	 * then converts back to RGB.
 	 */
+    // AS3: .../src/com/sulake/room/utils/ColorTransitioner.as::get color()
     public get color(): number
     {
         const hsl = ColorConverter.rgbToHSL(this._color);
@@ -54,6 +60,7 @@ export class ColorTransitioner
 	 * @param currentTime - Current time in milliseconds
 	 * @param duration - Transition duration in milliseconds (default 1500)
 	 */
+    // AS3: .../src/com/sulake/room/utils/ColorTransitioner.as::startTransition()
     public startTransition(targetColor: number, targetLightness: number, currentTime: number, duration: number = 1500): void
     {
         this._originalColor = this._color;
@@ -70,6 +77,7 @@ export class ColorTransitioner
 	 * @param currentTime - Current time in milliseconds
 	 * @returns true if the color changed or transition completed
 	 */
+    // AS3: .../src/com/sulake/room/utils/ColorTransitioner.as::updateColor()
     public updateColor(currentTime: number): boolean
     {
         if(this._colorTransitionLength <= 0)

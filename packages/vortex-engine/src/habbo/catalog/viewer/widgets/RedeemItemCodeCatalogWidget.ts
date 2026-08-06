@@ -56,6 +56,7 @@ export class RedeemItemCodeCatalogWidget extends CatalogWidget
         if(event.charCode === 13) this.redeem();
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RedeemItemCodeCatalogWidget.as::redeem()
     private redeem(): void
     {
         const input = this.window.findChildByName('voucher_code');

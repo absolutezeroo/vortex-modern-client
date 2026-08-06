@@ -20,6 +20,7 @@ export class WindowMouseListener extends WindowMouseOperator implements IMouseLi
 {
     private _eventTypes: string[] = [];
 
+    // AS3: sources/win63_version/core/window/services/WindowMouseListener.as::get eventTypes()
     get eventTypes(): string[]
     {
         return this._eventTypes;
@@ -27,11 +28,13 @@ export class WindowMouseListener extends WindowMouseOperator implements IMouseLi
 
     private _areaLimit: number = 0;
 
+    // AS3: sources/win63_version/core/window/services/WindowMouseListener.as::get areaLimit()
     get areaLimit(): number
     {
         return this._areaLimit;
     }
 
+    // AS3: sources/win63_version/core/window/services/WindowMouseListener.as::set areaLimit()
     set areaLimit(value: number)
     {
         this._areaLimit = value;

@@ -16,6 +16,7 @@ export class RespectUserMessageComposer extends MessageComposer<ConstructorParam
         this._data = [userId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/RespectUserMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

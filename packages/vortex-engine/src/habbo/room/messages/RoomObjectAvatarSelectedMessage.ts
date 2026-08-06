@@ -15,8 +15,10 @@ export class RoomObjectAvatarSelectedMessage extends RoomObjectUpdateMessage
         this._selected = selected;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarSelectedMessage.as::_selected
     private _selected: boolean;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarSelectedMessage.as::get selected()
     get selected(): boolean
     {
         return this._selected;

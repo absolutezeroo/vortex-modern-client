@@ -12,9 +12,11 @@ import {RoomPlaneBitmapMaskData} from './RoomPlaneBitmapMaskData';
 
 export class RoomPlaneBitmapMaskParser
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskParser.as::_masks
     private _masks: Map<string, RoomPlaneBitmapMaskData> = new Map();
     private _maskKeys: string[] = [];
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskParser.as::get maskCount()
     get maskCount(): number
     {
         return this._maskKeys.length;
@@ -24,6 +26,7 @@ export class RoomPlaneBitmapMaskParser
 	 * Initialize from an XML string (planeMasks element).
 	 * Based on AS3 RoomPlaneBitmapMaskParser.initialize()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskParser.as::initialize()
     initialize(xmlString: string): boolean
     {
         if(!xmlString) return false;
@@ -70,6 +73,7 @@ export class RoomPlaneBitmapMaskParser
     /**
 	 * Reset all masks.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskParser.as::reset()
     reset(): void
     {
         for(const data of this._masks.values())
@@ -85,6 +89,7 @@ export class RoomPlaneBitmapMaskParser
 	 * Add or replace a mask.
 	 * Based on AS3 RoomPlaneBitmapMaskParser.addMask()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskParser.as::addMask()
     addMask(id: string, type: string, location: IVector3d, category: string): void
     {
         const existing = this._masks.get(id);
@@ -105,6 +110,7 @@ export class RoomPlaneBitmapMaskParser
 	 * Remove a mask by ID.
 	 * Based on AS3 RoomPlaneBitmapMaskParser.removeMask()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskParser.as::removeMask()
     removeMask(id: string): boolean
     {
         const data = this._masks.get(id);
@@ -124,6 +130,7 @@ export class RoomPlaneBitmapMaskParser
 	 * Serialize current masks to XML string.
 	 * Based on AS3 RoomPlaneBitmapMaskParser.getXML()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskParser.as::getXML()
     getXML(): string
     {
         let xml = '<planeMasks>';
@@ -145,6 +152,7 @@ export class RoomPlaneBitmapMaskParser
         return xml;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskParser.as::getMaskLocation()
     getMaskLocation(index: number): IVector3d | null
     {
         if(index < 0 || index >= this._maskKeys.length) return null;
@@ -153,6 +161,7 @@ export class RoomPlaneBitmapMaskParser
         return data?.loc ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskParser.as::getMaskType()
     getMaskType(index: number): string | null
     {
         if(index < 0 || index >= this._maskKeys.length) return null;
@@ -161,6 +170,7 @@ export class RoomPlaneBitmapMaskParser
         return data?.type ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskParser.as::getMaskCategory()
     getMaskCategory(index: number): string | null
     {
         if(index < 0 || index >= this._maskKeys.length) return null;
@@ -169,6 +179,7 @@ export class RoomPlaneBitmapMaskParser
         return data?.category ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskParser.as::dispose()
     dispose(): void
     {
         this.reset();

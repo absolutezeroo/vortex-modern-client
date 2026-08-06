@@ -35,6 +35,7 @@ export class ChildEntityArray
 	 * @param child - The child window to add
 	 * @returns The added child
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/ChildEntityArray.as::addChild()
     public addChild(child: IWindow): IWindow
     {
         this._children.push(child);
@@ -49,6 +50,7 @@ export class ChildEntityArray
 	 * @param index - The insertion index
 	 * @returns The added child
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/ChildEntityArray.as::addChildAt()
     public addChildAt(child: IWindow, index: number): IWindow
     {
         this._children.splice(index, 0, child);
@@ -62,6 +64,7 @@ export class ChildEntityArray
 	 * @param child - The child window to remove
 	 * @returns The removed child, or null if not found
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/ChildEntityArray.as::removeChild()
     public removeChild(child: IWindow): IWindow | null
     {
         const index = this._children.indexOf(child);
@@ -82,6 +85,7 @@ export class ChildEntityArray
 	 * @param index - The index to remove
 	 * @returns The removed child, or null if index is invalid
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/ChildEntityArray.as::removeChildAt()
     public removeChildAt(index: number): IWindow | null
     {
         const child = this._children[index];
@@ -124,6 +128,7 @@ export class ChildEntityArray
 	 * @param child - The child to move
 	 * @param index - The target index
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/ChildEntityArray.as::setChildIndex()
     public setChildIndex(child: IWindow, index: number): void
     {
         const current = this._children.indexOf(child);
@@ -141,6 +146,7 @@ export class ChildEntityArray
 	 * @param a - First child
 	 * @param b - Second child
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/ChildEntityArray.as::swapChildren()
     public swapChildren(a: IWindow, b: IWindow): void
     {
         if(!a || !b || a === b)
@@ -178,6 +184,7 @@ export class ChildEntityArray
 	 * @param indexA - First index
 	 * @param indexB - Second index
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/ChildEntityArray.as::swapChildrenAt()
     public swapChildrenAt(indexA: number, indexB: number): void
     {
         this.swapChildren(this._children[indexA], this._children[indexB]);

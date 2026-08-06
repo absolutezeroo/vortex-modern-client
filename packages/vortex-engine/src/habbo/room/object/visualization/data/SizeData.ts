@@ -12,11 +12,15 @@ import {LayerData} from './LayerData';
 
 export class SizeData
 {
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::LAYER_LIMIT
     public static readonly LAYER_LIMIT: number = 1000;
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::DEFAULT_DIRECTION
     public static readonly DEFAULT_DIRECTION: number = 0;
     private _angle: number = 360;
     private _defaultDirection: DirectionData;
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::_directions
     private _directions: Map<number, DirectionData> = new Map();
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::_colors
     private _colors: Map<string, ColorData> = new Map();
     private _cachedDirection: DirectionData | null = null;
     private _cachedDirectionId: number = -1;
@@ -37,11 +41,13 @@ export class SizeData
 
     private _layerCount: number = 0;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::get layerCount()
     get layerCount(): number
     {
         return this._layerCount;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::dispose()
     dispose(): void
     {
         if(this._defaultDirection !== null)
@@ -76,6 +82,7 @@ export class SizeData
 	 *
 	 * JSON format: `{ "layers": { "0": { "tag": "...", "ink": "ADD", "alpha": 128, ... } } }`
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::defineLayers()
     defineLayers(data: Record<string, unknown>): boolean
     {
         if(data === null || data === undefined)
@@ -93,6 +100,7 @@ export class SizeData
 	 *
 	 * JSON format: `{ "0": { "layers": { "0": { ... } } }, "2": { ... } }`
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::defineDirections()
     defineDirections(data: Record<string, unknown>): boolean
     {
         if(data === null || data === undefined)
@@ -133,6 +141,7 @@ export class SizeData
 	 *
 	 * JSON format: `{ "1": { "layers": { "0": { "color": "FF0000" }, ... } } }`
 	 */
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::defineColors()
     defineColors(data: Record<string, unknown>): boolean
     {
         if(data === null || data === undefined)
@@ -174,6 +183,7 @@ export class SizeData
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::getDirectionValue()
     getDirectionValue(direction: number): number
     {
         const normalizedDir = ((direction % 360) + 360 + Math.floor(this._angle / 2)) % 360;
@@ -215,6 +225,7 @@ export class SizeData
         return 0;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::getTag()
     getTag(direction: number, layerIndex: number): string
     {
         const dirData = this.getDirectionData(direction);
@@ -227,6 +238,7 @@ export class SizeData
         return LayerData.DEFAULT_TAG;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::getInk()
     getInk(direction: number, layerIndex: number): number
     {
         const dirData = this.getDirectionData(direction);
@@ -239,6 +251,7 @@ export class SizeData
         return LayerData.DEFAULT_INK;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::getAlpha()
     getAlpha(direction: number, layerIndex: number): number
     {
         const dirData = this.getDirectionData(direction);
@@ -251,6 +264,7 @@ export class SizeData
         return LayerData.DEFAULT_ALPHA;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::getColor()
     getColor(layerIndex: number, colorId: number): number
     {
         const colorData = this._colors.get(String(colorId));
@@ -263,6 +277,7 @@ export class SizeData
         return ColorData.DEFAULT_COLOR;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::getIgnoreMouse()
     getIgnoreMouse(direction: number, layerIndex: number): boolean
     {
         const dirData = this.getDirectionData(direction);
@@ -275,6 +290,7 @@ export class SizeData
         return LayerData.DEFAULT_IGNORE_MOUSE;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::getXOffset()
     getXOffset(direction: number, layerIndex: number): number
     {
         const dirData = this.getDirectionData(direction);
@@ -287,6 +303,7 @@ export class SizeData
         return LayerData.DEFAULT_X_OFFSET;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::getYOffset()
     getYOffset(direction: number, layerIndex: number): number
     {
         const dirData = this.getDirectionData(direction);
@@ -299,6 +316,7 @@ export class SizeData
         return LayerData.DEFAULT_Y_OFFSET;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::getZOffset()
     getZOffset(direction: number, layerIndex: number): number
     {
         const dirData = this.getDirectionData(direction);
@@ -311,6 +329,7 @@ export class SizeData
         return LayerData.DEFAULT_Z_OFFSET;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::defineDirection()
     private defineDirection(directionData: DirectionData, layers: Array<[number, Record<string, unknown>]>): boolean
     {
         if(directionData === null || layers === null)
@@ -634,6 +653,7 @@ export class SizeData
         return false;
     }
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::getDirectionData()
     private getDirectionData(direction: number): DirectionData
     {
         if(direction === this._cachedDirectionId && this._cachedDirection !== null)

@@ -71,6 +71,7 @@ export class WaitIndicator extends Sprite
     /**
      * AS3: circleShade(_arg_1:int):ColorTransform
      */
+    // AS3: .../src/onBoardingHcUi/WaitIndicator.as::circleShade()
     private circleShade(index: number): ColorTransform
     {
         let phase = index / DOT_COUNT - (performance.now() - this._startTime) * 0.001;

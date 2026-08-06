@@ -61,12 +61,18 @@ export interface IHabboNotificationEvents
 export class HabboNotifications extends Component implements IHabboNotifications
 {
     private _messageHandler: NotificationMessageHandler | null = null;
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::_inventory
     private _inventory: IHabboInventory | null = null;
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::_friendList
     private _friendList: IHabboFriendList | null = null;
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::_catalog
     private _catalog: unknown | null = null;
     private _toolbar: IHabboToolbar | null = null;
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::_habboHelp
     private _habboHelp: IHabboHelp | null = null;
 
     constructor(context: IContext)
@@ -92,22 +98,28 @@ export class HabboNotifications extends Component implements IHabboNotifications
         return this._notificationEvents;
     }
 
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::get communication()
     get communication(): IHabboCommunicationManager | null
     {
         return this._communication;
     }
 
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::get sessionDataManager()
     get sessionDataManager(): ISessionDataManager | null
     {
         return this._sessionDataManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::_roomSessionManager
     private _roomSessionManager: IRoomSessionManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::get roomSessionManager()
     get roomSessionManager(): IRoomSessionManager | null
     {
         return this._roomSessionManager;
@@ -120,8 +132,10 @@ export class HabboNotifications extends Component implements IHabboNotifications
         return this._localizationManager;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/notifications/HabboNotifications.as::_singularController
     private _singularController: SingularNotificationController | null = null;
 
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::get singularController()
     get singularController(): SingularNotificationController | null
     {
         return this._singularController;
@@ -148,13 +162,16 @@ export class HabboNotifications extends Component implements IHabboNotifications
         return this._petImageUtility;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/notifications/HabboNotifications.as::_disabled
     private _disabled: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::get disabled()
     get disabled(): boolean
     {
         return this._disabled;
     }
 
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::set disabled()
     set disabled(value: boolean)
     {
         this._disabled = value;
@@ -262,6 +279,7 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as activate()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::activate()
     activate(): void
     {
         if(this._communication?.connection)
@@ -279,6 +297,7 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as addItem()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::addItem()
     addItem(content: string, type: string, iconAssetName?: string | null): void
     {
         this._singularController?.addItem(content, type, null, iconAssetName ?? null);
@@ -314,6 +333,7 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as showNotification()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::showNotification()
     showNotification(type: string, parameters?: Map<string, string> | null): void
     {
         const params = parameters ?? new Map<string, string>();
@@ -377,6 +397,7 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as addSongPlayingNotification()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::addSongPlayingNotification()
     addSongPlayingNotification(songName: string, songAuthor: string): void
     {
         this._singularController?.addSongPlayingNotification(songName, songAuthor);
@@ -394,6 +415,7 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as getNotificationPart()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::getNotificationPart()
     getNotificationPart(
         params: Map<string, string>,
         type: string,
@@ -433,6 +455,7 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as getNotificationImageUrl()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::getNotificationImageUrl()
     getNotificationImageUrl(params: Map<string, string>, type: string): string | null
     {
         const image = params.get('image');
@@ -452,6 +475,7 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as createLinkEvent()
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::createLinkEvent()
     createLinkEvent(link: string): void
     {
         this.context.createLinkEvent(link);

@@ -11,19 +11,23 @@ import {SizeData} from '../data/SizeData';
 
 export class FurnitureVisualizationData implements IRoomObjectVisualizationData
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::LAYER_LIMIT
     public static readonly LAYER_LIMIT: number = 1000;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::LAYER_NAMES
     public static readonly LAYER_NAMES: string[] = [
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
         'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
     ];
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::_sizes
     private _sizes: Map<number, SizeData> = new Map();
     private _sortedSizes: number[] = [];
     private _cachedSizeData: SizeData | null = null;
     private _cachedSizeId: number = -1;
     private _cachedSize: number = -1;
     private _cachedSizeScale: number = -1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::_type
     private _type: string = '';
     private _disposed: boolean = false;
 
@@ -32,6 +36,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -66,6 +71,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
 	 * }
 	 * ```
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::initialize()
     initialize(data: unknown): boolean
     {
         this.reset();
@@ -98,11 +104,13 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getType()
     getType(): string
     {
         return this._type;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getSize()
     getSize(scale: number): number
     {
         if(scale === this._cachedSizeScale)
@@ -125,6 +133,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return size;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getLayerCount()
     getLayerCount(scale: number): number
     {
         const sizeData = this.getSizeData(scale);
@@ -137,6 +146,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getDirectionValue()
     getDirectionValue(scale: number, direction: number): number
     {
         const sizeData = this.getSizeData(scale);
@@ -149,6 +159,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getTag()
     getTag(scale: number, direction: number, layerIndex: number): string
     {
         const sizeData = this.getSizeData(scale);
@@ -161,6 +172,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return '';
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getInk()
     getInk(scale: number, direction: number, layerIndex: number): number
     {
         const sizeData = this.getSizeData(scale);
@@ -173,6 +185,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getAlpha()
     getAlpha(scale: number, direction: number, layerIndex: number): number
     {
         const sizeData = this.getSizeData(scale);
@@ -185,6 +198,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return 255;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getColor()
     getColor(scale: number, layerIndex: number, colorId: number): number
     {
         const sizeData = this.getSizeData(scale);
@@ -197,6 +211,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return 0xFFFFFF;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getIgnoreMouse()
     getIgnoreMouse(scale: number, direction: number, layerIndex: number): boolean
     {
         const sizeData = this.getSizeData(scale);
@@ -209,6 +224,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getXOffset()
     getXOffset(scale: number, direction: number, layerIndex: number): number
     {
         const sizeData = this.getSizeData(scale);
@@ -221,6 +237,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getYOffset()
     getYOffset(scale: number, direction: number, layerIndex: number): number
     {
         const sizeData = this.getSizeData(scale);
@@ -233,6 +250,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getZOffset()
     getZOffset(scale: number, direction: number, layerIndex: number): number
     {
         const sizeData = this.getSizeData(scale);
@@ -245,6 +263,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::reset()
     protected reset(): void
     {
         this._type = '';
@@ -263,6 +282,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         this._cachedSizeId = -1;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::defineVisualizations()
     protected defineVisualizations(data: Record<string, unknown>): boolean
     {
         const visualizations = this.getVisualizationDefinitions(data);
@@ -307,11 +327,13 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::createSizeData()
     protected createSizeData(_size: number, layerCount: number, angle: number): SizeData
     {
         return new SizeData(layerCount, angle);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::processVisualizationElement()
     protected processVisualizationElement(sizeData: SizeData, elementName: string, elementData: Record<string, unknown>): boolean
     {
         if(sizeData === null)
@@ -344,6 +366,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getSizeData()
     protected getSizeData(scale: number): SizeData | null
     {
         if(scale === this._cachedSizeId)
@@ -492,6 +515,7 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return defaultValue;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualizationData.as::getSizeIndex()
     private getSizeIndex(scale: number): number
     {
         let bestIndex = 0;

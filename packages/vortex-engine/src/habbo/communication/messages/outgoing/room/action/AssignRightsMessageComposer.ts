@@ -15,6 +15,7 @@ export class AssignRightsMessageComposer extends MessageComposer<[number]>
         this._data = [userId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/action/AssignRightsMessageComposer.as::getMessageArray()
     getMessageArray(): [number]
     {
         return this._data;

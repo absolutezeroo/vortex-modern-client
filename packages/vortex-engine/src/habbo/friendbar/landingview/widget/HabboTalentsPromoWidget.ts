@@ -14,7 +14,9 @@ import {GetTalentTrackMessageComposer} from '@habbo/communication/messages/outgo
  */
 export class HabboTalentsPromoWidget implements ILandingViewWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::_landingView
     private _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::_container
     private _container: IWindowContainer | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::HabboTalentsPromoWidget()
@@ -54,6 +56,7 @@ export class HabboTalentsPromoWidget implements ILandingViewWidget
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/HabboTalentsPromoWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;

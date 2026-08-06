@@ -15,6 +15,7 @@ export class LetUserInMessageComposer extends MessageComposer<[string, boolean]>
         this._data = [userName, allow];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/action/LetUserInMessageComposer.as::getMessageArray()
     getMessageArray(): [string, boolean]
     {
         return this._data;

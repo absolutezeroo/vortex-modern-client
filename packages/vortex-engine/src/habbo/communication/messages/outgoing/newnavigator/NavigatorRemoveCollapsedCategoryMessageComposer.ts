@@ -16,6 +16,7 @@ export class NavigatorRemoveCollapsedCategoryMessageComposer extends MessageComp
         this._data = [category];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/newnavigator/NavigatorRemoveCollapsedCategoryMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -12,14 +12,18 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GuildMembership
 {
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/class_3489.as::_groupId
     private _groupId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/class_3489.as::_groupName
     private _groupName: string = '';
 
     private _badgeCode: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/class_3489.as::_primaryColor
     private _primaryColor: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/class_3489.as::_secondaryColor
     private _secondaryColor: string = '';
 
     private _favourite: boolean = false;

@@ -10,9 +10,13 @@ import {PerksUpdatedEvent} from './events/PerksUpdatedEvent';
  */
 export class PerkManager implements IPerkManager
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/PerkManager.as::_ready
     private _ready: boolean = false;
+    // AS3: .../src/com/sulake/habbo/session/PerkManager.as::_sessionDataManager
     private _sessionDataManager: SessionDataManager | null = null;
+    // AS3: .../src/com/sulake/habbo/session/PerkManager.as::_perkAllowancesMessageEvent
     private _perkAllowancesMessageEvent: IMessageEvent | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/PerkManager.as::_perks
     private _perks: Map<string, IPerkAllowance> | null = new Map();
 
     constructor(sessionDataManager: SessionDataManager)
@@ -27,16 +31,19 @@ export class PerkManager implements IPerkManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PerkManager.as::get isReady()
     get isReady(): boolean
     {
         return this._ready;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PerkManager.as::get disposed()
     get disposed(): boolean
     {
         return this._sessionDataManager === null;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PerkManager.as::isPerkAllowed()
     isPerkAllowed(perkCode: string): boolean
     {
         const perk = this._perks?.get(perkCode) ?? null;
@@ -44,6 +51,7 @@ export class PerkManager implements IPerkManager
         return perk !== null && perk.isAllowed;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PerkManager.as::getPerkErrorMessage()
     getPerkErrorMessage(perkCode: string): string
     {
         const perk = this._perks?.get(perkCode) ?? null;
@@ -51,6 +59,7 @@ export class PerkManager implements IPerkManager
         return perk !== null ? perk.errorMessage : '';
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PerkManager.as::onPerkAllowances()
     private onPerkAllowances(event: IMessageEvent): void
     {
         const parser = (event as PerkAllowancesMessageEvent).getParser();
@@ -64,6 +73,7 @@ export class PerkManager implements IPerkManager
         this._sessionDataManager?.events.emit(PerksUpdatedEvent.PERKS_UPDATED, new PerksUpdatedEvent());
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PerkManager.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;

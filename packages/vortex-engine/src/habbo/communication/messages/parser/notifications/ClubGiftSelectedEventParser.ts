@@ -13,6 +13,7 @@ export class ClubGiftSelectedEventParser implements IMessageParser
 {
     private _productCode: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/ClubGiftSelectedEventParser.as::get productCode()
     get productCode(): string
     {
         return this._productCode;
@@ -20,11 +21,13 @@ export class ClubGiftSelectedEventParser implements IMessageParser
 
     private _products: ClubGiftProductData[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/ClubGiftSelectedEventParser.as::get products()
     get products(): ClubGiftProductData[]
     {
         return this._products;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/ClubGiftSelectedEventParser.as::flush()
     flush(): boolean
     {
         this._productCode = '';
@@ -32,6 +35,7 @@ export class ClubGiftSelectedEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/ClubGiftSelectedEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

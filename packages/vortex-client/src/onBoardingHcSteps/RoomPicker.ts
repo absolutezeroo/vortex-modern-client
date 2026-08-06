@@ -103,6 +103,7 @@ export class RoomPicker
      *
      * `new.user.flow.roomTypes` is a comma list of type ids; each maps to one `nux_room_<id>_round.png`.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHcSteps/RoomPicker.as::fetchThumbnails()
     public fetchThumbnails(): void
     {
         if(!this._newUserFlow) return;
@@ -156,6 +157,7 @@ export class RoomPicker
      * Built once every render has arrived. Room containers are named 1..N (1-based), which is what
      * `_selectedRoom` indexes.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHcSteps/RoomPicker.as::initView()
     public initView(): void
     {
         if(!this._newUserFlow || !this._container) return;

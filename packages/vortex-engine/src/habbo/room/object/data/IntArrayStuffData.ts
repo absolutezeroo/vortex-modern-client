@@ -14,8 +14,10 @@ import {StuffDataBase} from './StuffDataBase';
 
 export class IntArrayStuffData extends StuffDataBase implements IStuffData
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/IntArrayStuffData.as::FORMAT_KEY
     public static readonly FORMAT_KEY = 5;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/IntArrayStuffData.as::_data
     private _data: number[] = [];
 
     get length(): number
@@ -62,7 +64,7 @@ export class IntArrayStuffData extends StuffDataBase implements IStuffData
         return '';
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/IntArrayStuffData.as::compare()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/IntArrayStuffData.as::compare()
     override compare(data: IStuffData): boolean
     {
         // AS3 casts to the same type (else false), then compares every element
@@ -85,7 +87,7 @@ export class IntArrayStuffData extends StuffDataBase implements IStuffData
         return true;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/IntArrayStuffData.as::getValue()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/IntArrayStuffData.as::getValue()
     getValue(index: number): number
     {
         if(index >= 0 && index < this._data.length)

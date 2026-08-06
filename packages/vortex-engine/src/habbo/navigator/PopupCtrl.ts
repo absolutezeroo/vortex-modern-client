@@ -14,11 +14,14 @@ import {Util} from './Util';
  */
 export class PopupCtrl
 {
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::_xmlFileName
     private _xmlFileName: string;
     private _offsetXLeft: number;
     private _offsetXRight: number;
     private _displayTimer: ReturnType<typeof setTimeout> | null = null;
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::_hideTimer
     private _hideTimer: ReturnType<typeof setTimeout> | null = null;
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::_popup
     private _popup: IWindowContainer | null = null;
 
     constructor(navigator: IHabboTransitionalNavigator, offsetX: number, offsetY: number, xmlFileName: string)
@@ -29,13 +32,16 @@ export class PopupCtrl
         this._offsetXRight = offsetY;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
 
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::get navigator()
     get navigator(): IHabboTransitionalNavigator | null
     {
         return this._navigator;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::get visible()
     get visible(): boolean
     {
         return this._popup !== null && this._popup.visible;
@@ -46,6 +52,7 @@ export class PopupCtrl
 	 *
 	 * @param triggerWindow - The window that triggered the popup
 	 */
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::showPopup()
     showPopup(triggerWindow: IWindow): void
     {
         if(!this._navigator) return;
@@ -101,6 +108,7 @@ export class PopupCtrl
     /**
 	 * Starts the hide timer (100ms delay).
 	 */
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::closePopup()
     closePopup(): void
     {
         this.resetHideTimer();
@@ -111,6 +119,7 @@ export class PopupCtrl
     /**
 	 * Hides the popup immediately without delay.
 	 */
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::hideInstantly()
     hideInstantly(): void
     {
         if(this._popup)
@@ -127,11 +136,13 @@ export class PopupCtrl
 	 *
 	 * @param _popup - The popup container
 	 */
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::refreshContent()
     refreshContent(_popup: IWindowContainer): void
     {
         // Override in subclasses
     }
 
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::dispose()
     dispose(): void
     {
         this._navigator = null;
@@ -139,12 +150,14 @@ export class PopupCtrl
         this.resetHideTimer();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::refreshPopupArrows()
     private refreshPopupArrows(container: IWindowContainer, showLeft: boolean): void
     {
         this.refreshPopupArrow(container, true, showLeft);
         this.refreshPopupArrow(container, false, !showLeft);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::refreshPopupArrow()
     private refreshPopupArrow(container: IWindowContainer, isLeft: boolean, show: boolean): void
     {
         const name = 'popup_arrow_' + (isLeft ? 'left' : 'right');
@@ -182,6 +195,7 @@ export class PopupCtrl
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::onDisplayTimer()
     private onDisplayTimer(): void
     {
         if(this._popup)
@@ -191,6 +205,7 @@ export class PopupCtrl
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/PopupCtrl.as::onHideTimer()
     private onHideTimer(): void
     {
         if(this._popup)

@@ -18,6 +18,7 @@ export class GetSongInfoMessageComposer extends MessageComposer<number[]>
         this._data = [songIds.length, ...songIds];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/sound/GetSongInfoMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

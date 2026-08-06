@@ -35,6 +35,7 @@ export class PhoneNumberCollectView
      * the display order: the menu is sorted by localized country name, with the preferred codes
      * floated to the top.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/PhoneNumberCollectView.as::ALL_COUNTRY_CODES
     private static readonly ALL_COUNTRY_CODES: string[] = [
         'VU', 'EC', 'VN', 'VI', 'DZ', 'VG', 'VE', 'DM', 'VC', 'DO', 'VA', 'DE',
         'UZ', 'UY', 'DK', 'DJ', 'US', 'UG', 'UA', 'ET', 'ES', 'ER', 'EH', 'EG',
@@ -88,6 +89,7 @@ export class PhoneNumberCollectView
      * The result code is taken and not used — AS3 clears the field and re-enables the form
      * whatever it says. The caller alerts on it separately.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/PhoneNumberCollectView.as::handleSubmitFailure()
     handleSubmitFailure(_resultCode: number): void
     {
         const input = this._window?.findChildByName('phone_number_input');
@@ -106,6 +108,7 @@ export class PhoneNumberCollectView
      *
      * `NOT_SELECTED` and `--` are AS3's own sentinels and go out on the wire as written.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/PhoneNumberCollectView.as::get selectedCountryCode()
     private get selectedCountryCode(): string
     {
         const countryList = this._window?.findChildByName('country_list') as unknown as IDropListWindow | null;
@@ -130,6 +133,7 @@ export class PhoneNumberCollectView
      * expression, `getLocalization("phone.number.collect.countries") || "{}"`, and that is what is
      * ported here.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/PhoneNumberCollectView.as::createWindow()
     private createWindow(preferredCountries: string[]): void
     {
         if(this._window) return;
@@ -274,6 +278,7 @@ export class PhoneNumberCollectView
      *
      * The OK button is disabled either way — typing re-enables it from `onInput()`.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/PhoneNumberCollectView.as::setInputStates()
     private setInputStates(enabled: boolean): void
     {
         if(!this._window) return;
@@ -309,6 +314,7 @@ export class PhoneNumberCollectView
      * One procedure for every control, dispatching on the window's name. The buttons answer to
      * WME_DOWN here, where the verify dialog's answer to WME_CLICK — that difference is AS3's.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/PhoneNumberCollectView.as::onInput()
     private onInput(event: WindowEvent, window: IWindow): void
     {
         if(event.type === WindowMouseEvent.DOWN)

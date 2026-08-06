@@ -12,6 +12,7 @@ export class ClubGiftInfoEventParser implements IMessageParser
 {
     private _daysUntilNextGift: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/ClubGiftInfoEventParser.as::get daysUntilNextGift()
     get daysUntilNextGift(): number
     {
         return this._daysUntilNextGift;
@@ -19,13 +20,16 @@ export class ClubGiftInfoEventParser implements IMessageParser
 
     private _giftsAvailable: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/ClubGiftInfoEventParser.as::get giftsAvailable()
     get giftsAvailable(): number
     {
         return this._giftsAvailable;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/ClubGiftInfoEventParser.as::_offers
     private _offers: ClubOfferData[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/ClubGiftInfoEventParser.as::get offers()
     get offers(): ClubOfferData[]
     {
         return this._offers;
@@ -33,11 +37,13 @@ export class ClubGiftInfoEventParser implements IMessageParser
 
     private _giftData: Map<number, ClubGiftEligibilityData> = new Map();
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/ClubGiftInfoEventParser.as::get giftData()
     get giftData(): Map<number, ClubGiftEligibilityData>
     {
         return this._giftData;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/ClubGiftInfoEventParser.as::flush()
     flush(): boolean
     {
         this._offers = [];
@@ -46,6 +52,7 @@ export class ClubGiftInfoEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/ClubGiftInfoEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._daysUntilNextGift = wrapper.readInt();

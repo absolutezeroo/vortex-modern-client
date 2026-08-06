@@ -19,6 +19,7 @@ import {ButtonElementHandler} from './ButtonElementHandler';
 export class InternalLinkButtonElementHandler extends ButtonElementHandler
 {
     private _linkTarget: string = '';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4535.as::_configurationCode
     private _configurationCode: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4535.as::initialize()

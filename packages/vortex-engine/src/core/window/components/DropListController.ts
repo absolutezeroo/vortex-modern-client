@@ -45,6 +45,7 @@ export class DropListController extends DropBaseController implements IDropListW
     /**
 	 * Adds a menu item at the end of the list.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropListController.as::addMenuItem()
     public addMenuItem(item: IWindow): IWindow | null
     {
         return this.addMenuItemAt(item, this._itemArray.length);
@@ -56,6 +57,7 @@ export class DropListController extends DropBaseController implements IDropListW
 	 * In AS3, special named children (_DROPLIST_TITLETEXT, _DROPLIST_ITEMLIST,
 	 * _DROPLIST_REGION) are redirected to addChild() instead of the item array.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropListController.as::addMenuItemAt()
     public addMenuItemAt(item: IWindow, _index: number): IWindow | null
     {
         if(item && this._itemArray.indexOf(item) === -1)
@@ -104,6 +106,7 @@ export class DropListController extends DropBaseController implements IDropListW
     /**
 	 * Returns the menu item at the specified index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropListController.as::getMenuItemAt()
     public getMenuItemAt(index: number): IWindow | null
     {
         if(this._itemArray && index > -1 && index < this._itemArray.length)
@@ -117,6 +120,7 @@ export class DropListController extends DropBaseController implements IDropListW
     /**
 	 * Removes a menu item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropListController.as::removeMenuItem()
     public removeMenuItem(item: IWindow): IWindow | null
     {
         const index = this._itemArray.indexOf(item);
@@ -145,6 +149,7 @@ export class DropListController extends DropBaseController implements IDropListW
     /**
 	 * Removes the menu item at the specified index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropListController.as::removeMenuItemAt()
     public removeMenuItemAt(index: number): IWindow | null
     {
         const item = this._itemArray[index];
@@ -155,6 +160,7 @@ export class DropListController extends DropBaseController implements IDropListW
     /**
 	 * Returns the index of a menu item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropListController.as::getMenuItemIndex()
     public getMenuItemIndex(item: IWindow): number
     {
         return this._itemArray.indexOf(item);

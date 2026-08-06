@@ -29,10 +29,12 @@ export class MovingBackgroundObjects implements IDisposable
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::MAX_OBJECTS
     private static readonly MAX_OBJECTS: number = 20;
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::_landingView
     private _landingView: HabboLandingView | null;
     private _objects: BackgroundObject[] = [];
     private _typeMap: Map<string, BackgroundObjectConstructor> = new Map();
     private _events: EventEmitter = new EventEmitter();
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::_timingCode
     private _timingCode: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/MovingBackgroundObjects.as::MovingBackgroundObjects()

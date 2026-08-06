@@ -21,6 +21,7 @@ export class RoomObjectStateChangeEvent extends RoomObjectEvent
 
     private _param: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomObjectStateChangeEvent.as::get param()
     get param(): number
     {
         return this._param;

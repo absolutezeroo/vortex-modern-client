@@ -12,19 +12,26 @@ import type {IProduct} from './IProduct';
  */
 export interface IProductContainer extends IDisposable
 {
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_2557.as::initProductIcon()
     initProductIcon(roomEngine: IRoomEngine, stuffData?: unknown | null): void;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_2557.as::activate()
     activate(): void;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_2557.as::get products()
     readonly products: IProduct[];
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_2557.as::get firstProduct()
     readonly firstProduct: IProduct | null;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_2557.as::get view()
     view: IWindowContainer;
 
     grid: IItemGrid;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_2557.as::setClubIconLevel()
     setClubIconLevel(clubLevel: number): void;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_2557.as::get offer()
     readonly offer: IPurchasableOffer;
 }

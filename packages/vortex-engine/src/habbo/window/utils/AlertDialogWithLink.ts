@@ -15,7 +15,9 @@ import {AlertDialog} from './AlertDialog';
  * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/window/utils/AlertDialogWithLink.as
  */
 export interface IAlertDialogWithLink {
+    // AS3: .../src/com/sulake/habbo/window/utils/AlertDialogWithLink.as::get linkTitle()
     linkTitle: string;
+    // AS3: .../src/com/sulake/habbo/window/utils/AlertDialogWithLink.as::get linkUrl()
     linkUrl: string;
 }
 
@@ -64,11 +66,13 @@ export class AlertDialogWithLink extends AlertDialog implements IAlertDialogWith
         this.linkUrl = linkUrl;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/utils/AlertDialogWithLink.as::_linkTitle
     protected _linkTitle: string = '';
 
     /**
      * Gets the link button display text.
      */
+    // AS3: .../src/com/sulake/habbo/window/utils/AlertDialogWithLink.as::get linkTitle()
     public get linkTitle(): string 
     {
         return this._linkTitle;
@@ -77,6 +81,7 @@ export class AlertDialogWithLink extends AlertDialog implements IAlertDialogWith
     /**
      * Sets the link button display text.
      */
+    // AS3: .../src/com/sulake/habbo/window/utils/AlertDialogWithLink.as::set linkTitle()
     public set linkTitle(value: string) 
     {
         this._linkTitle = value;
@@ -97,6 +102,7 @@ export class AlertDialogWithLink extends AlertDialog implements IAlertDialogWith
     /**
      * Gets the link URL.
      */
+    // AS3: .../src/com/sulake/habbo/window/utils/AlertDialogWithLink.as::get linkUrl()
     public get linkUrl(): string 
     {
         return this._linkUrl;
@@ -105,6 +111,7 @@ export class AlertDialogWithLink extends AlertDialog implements IAlertDialogWith
     /**
      * Sets the link URL.
      */
+    // AS3: .../src/com/sulake/habbo/window/utils/AlertDialogWithLink.as::set linkUrl()
     public set linkUrl(value: string) 
     {
         this._linkUrl = value;

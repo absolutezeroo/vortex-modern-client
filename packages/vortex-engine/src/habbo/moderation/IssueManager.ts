@@ -25,22 +25,33 @@ const log = Logger.getLogger('habbo.moderation.IssueManager');
 export class IssueManager
 {
     public static readonly BUNDLE_OPEN: string = 'issue_bundle_open';
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::BUNDLE_MY
     public static readonly BUNDLE_MY: string = 'issue_bundle_my';
     public static readonly BUNDLE_PICKED: string = 'issue_bundle_picked';
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::PRIORITY_UPDATE_INTERVAL_MS
     public static readonly PRIORITY_UPDATE_INTERVAL_MS: number = 15000;
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::RESOLUTION_USELESS
     public static readonly RESOLUTION_USELESS: number = 1;
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::RESOLUTION_RESOLVED
     public static readonly RESOLUTION_RESOLVED: number = 3;
 
     private _manager: ModerationManager;
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::_issues
     private _issues: Map<number, IssueInfoData> = new Map();
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::_bundles
     private _bundles: Map<number, IssueBundle> = new Map();
     private _issueToBundleMap: Map<number, number> = new Map();
     private _pendingPickIssueIds: number[] = [];
     private _pendingReleaseIssueIds: number[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueManager.as::_nextBundleId
     private _nextBundleId: number = 1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueManager.as::_windowX
     private _windowX: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueManager.as::_windowY
     private _windowY: number = 0;
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::_windowWidth
     private _windowWidth: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueManager.as::_windowHeight
     private _windowHeight: number = 0;
 
     constructor(manager: ModerationManager)
@@ -69,6 +80,7 @@ export class IssueManager
 	 *
 	 * @param issue - The issue data to process
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::updateIssue()
     updateIssue(issue: IssueInfoData): void
     {
         if(issue === null)
@@ -196,6 +208,7 @@ export class IssueManager
 	 *
 	 * @param issueId - The ID of the issue to remove
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::removeIssue()
     removeIssue(issueId: number): void
     {
         if(this._issues === null)
@@ -227,6 +240,7 @@ export class IssueManager
     /**
 	 * Trigger an update of the issue browser display.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::updateIssueBrowser()
     updateIssueBrowser(): void
     {
         if(this._manager === null)
@@ -246,6 +260,7 @@ export class IssueManager
 	 * @param autoRetry - Whether to auto-retry on failure
 	 * @param retryCount - Current retry count
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::pickBundle()
     pickBundle(bundleId: number, reason: string, autoRetry: boolean = false, retryCount: number = 0): void
     {
         const bundle = this._bundles.get(bundleId) ?? null;
@@ -267,6 +282,7 @@ export class IssueManager
 	 * @param retry - Whether this is a retry attempt
 	 * @param retryCount - Current retry count
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::autoPick()
     autoPick(reason: string, retry: boolean = false, retryCount: number = 0): void
     {
         let bestBundle: IssueBundle | null = null;
@@ -293,6 +309,7 @@ export class IssueManager
     /**
 	 * Release all issues picked by the current user.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::releaseAll()
     releaseAll(): void
     {
         if(this._bundles === null)
@@ -319,6 +336,7 @@ export class IssueManager
 	 *
 	 * @param bundleId - The bundle to release
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::releaseBundle()
     releaseBundle(bundleId: number): void
     {
         if(this._bundles === null)
@@ -342,6 +360,7 @@ export class IssueManager
 	 * @param bundleId - The bundle to close
 	 * @param resolution - Resolution type (RESOLUTION_USELESS or RESOLUTION_RESOLVED)
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::closeBundle()
     closeBundle(bundleId: number, resolution: number): void
     {
         const bundle = this._bundles.get(bundleId) ?? null;
@@ -360,6 +379,7 @@ export class IssueManager
 	 * @param bundleId - The bundle to close
 	 * @param resolution - Resolution type
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::closeDefaultAction()
     closeDefaultAction(bundleId: number, resolution: number): void
     {
         const bundle = this._bundles.get(bundleId) ?? null;
@@ -395,6 +415,7 @@ export class IssueManager
 	 *
 	 * @param bundleId - The bundle to handle
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::handleBundle()
     handleBundle(bundleId: number): void
     {
         const bundle = this._bundles.get(bundleId) ?? null;
@@ -425,6 +446,7 @@ export class IssueManager
 	 *
 	 * @param bundleId - The bundle to unhandle
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::unhandleBundle()
     unhandleBundle(bundleId: number): void
     {
         const bundle = this._bundles.get(bundleId) ?? null;
@@ -443,6 +465,7 @@ export class IssueManager
 	 * @param bundleId - The bundle to request sanction data for
 	 * @param modActionId - The moderation action ID
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::requestSanctionData()
     requestSanctionData(bundleId: number, modActionId: number): void
     {
         const bundle = this._bundles.get(bundleId) ?? null;
@@ -467,6 +490,7 @@ export class IssueManager
 	 * @param accountId - The account ID
 	 * @param sanctionData - The sanction data object
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::updateSanctionData()
     updateSanctionData(issueId: number, accountId: number, sanctionData: unknown): void
     {
         log.debug('Update sanction data:', issueId, accountId, sanctionData);
@@ -478,6 +502,7 @@ export class IssueManager
 	 * @param issues - Array of issue info data that failed to pick
 	 * @returns True if any issue was already picked by another moderator
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::issuePickFailed()
     issuePickFailed(issues: IssueInfoData[]): boolean
     {
         if(!issues)
@@ -537,6 +562,7 @@ export class IssueManager
 	 * @param h - Window height
 	 * @param w - Window width
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::setToolPreferences()
     setToolPreferences(x: number, y: number, h: number, w: number): void
     {
         this._windowX = x;
@@ -550,6 +576,7 @@ export class IssueManager
 	 *
 	 * @param topics - Array of CFH topic data
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::setCfhTopics()
     setCfhTopics(topics: unknown[]): void
     {
         log.debug('CFH topics set:', topics.length);
@@ -561,6 +588,7 @@ export class IssueManager
 	 * @param type - One of BUNDLE_OPEN, BUNDLE_MY, or BUNDLE_PICKED
 	 * @returns Array of matching bundles
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::getBundles()
     getBundles(type: string): IssueBundle[]
     {
         if(this._bundles === null)
@@ -604,6 +632,7 @@ export class IssueManager
 	 *
 	 * @param issue - The issue that triggered the sound
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::playSound()
     playSound(issue: IssueInfoData): void
     {
         if(this._issues.has(issue.issueId))
@@ -629,6 +658,7 @@ export class IssueManager
     /**
 	 * Check if a bundle has higher priority or is older than another.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::isBundleHigherPriorityOrOlder()
     private isBundleHigherPriorityOrOlder(a: IssueBundle, b: IssueBundle): boolean
     {
         if(a.highestPriority < b.highestPriority)
@@ -642,6 +672,7 @@ export class IssueManager
     /**
 	 * Send a pick request to the server.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::sendPick()
     private sendPick(issueIds: number[], autoRetry: boolean, retryCount: number, reason: string): void
     {
         if(issueIds === null || issueIds.length === 0 || this._manager === null || this._manager.connection === null)
@@ -655,6 +686,7 @@ export class IssueManager
     /**
 	 * Send a release request to the server.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::sendRelease()
     private sendRelease(issueIds: number[]): void
     {
         if(issueIds === null || issueIds.length === 0 || this._manager === null || this._manager.connection === null)
@@ -669,6 +701,7 @@ export class IssueManager
     /**
 	 * Send a close request to the server.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::sendClose()
     private sendClose(issueIds: number[], resolution: number): void
     {
         if(issueIds === null || this._manager === null || this._manager.connection === null)
@@ -682,6 +715,7 @@ export class IssueManager
     /**
 	 * Send a close with default action request to the server.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::sendCloseDefaultAction()
     private sendCloseDefaultAction(mainIssueId: number, otherIssueIds: number[], resolution: number): void
     {
         if(this._manager === null || this._manager.connection === null)

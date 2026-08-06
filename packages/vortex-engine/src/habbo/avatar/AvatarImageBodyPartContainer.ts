@@ -23,6 +23,7 @@ export class AvatarImageBodyPartContainer
     /**
 	 * The rendered texture for this body part.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImageBodyPartContainer.as::get image()
     public get image(): Texture | null
     {
         return this._image;
@@ -41,11 +42,13 @@ export class AvatarImageBodyPartContainer
         this._image = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImageBodyPartContainer.as::_regPoint
     private _regPoint: { x: number; y: number };
 
     /**
 	 * The combined registration point (regPoint + offset).
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImageBodyPartContainer.as::get regPoint()
     public get regPoint(): { x: number; y: number }
     {
         return {
@@ -54,11 +57,13 @@ export class AvatarImageBodyPartContainer
         };
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImageBodyPartContainer.as::_offset
     private _offset: { x: number; y: number };
 
     /**
 	 * Sets the offset and rounds coordinates.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImageBodyPartContainer.as::set offset()
     public set offset(value: { x: number; y: number })
     {
         this._offset = {x: value.x, y: value.y};
@@ -70,6 +75,7 @@ export class AvatarImageBodyPartContainer
     /**
 	 * Whether this body part container can be cached.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImageBodyPartContainer.as::get isCacheable()
     public get isCacheable(): boolean
     {
         return this._isCacheable;
@@ -100,6 +106,7 @@ export class AvatarImageBodyPartContainer
     /**
 	 * Disposes the texture and nullifies references.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImageBodyPartContainer.as::dispose()
     public dispose(): void
     {
         if(this._image)
@@ -115,6 +122,7 @@ export class AvatarImageBodyPartContainer
     /**
 	 * Rounds all point coordinates to integers (mimics AS3 int() cast).
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImageBodyPartContainer.as::cleanPoints()
     private cleanPoints(): void
     {
         this._regPoint.x = Math.trunc(this._regPoint.x);

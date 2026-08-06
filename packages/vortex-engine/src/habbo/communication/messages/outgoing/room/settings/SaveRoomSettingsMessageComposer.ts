@@ -40,6 +40,7 @@ export class SaveRoomSettingsMessageComposer extends MessageComposer<unknown[]>
         ];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/roomsettings/SaveRoomSettingsMessageComposer.as::getMessageArray()
     getMessageArray(): unknown[]
     {
         return this._data;

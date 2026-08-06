@@ -15,6 +15,7 @@ export class RemoveRightsMessageComposer extends MessageComposer<unknown[]>
         this._userIds = userIds;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/action/RemoveRightsMessageComposer.as::getMessageArray()
     getMessageArray(): unknown[]
     {
         return [this._userIds.length, ...this._userIds];

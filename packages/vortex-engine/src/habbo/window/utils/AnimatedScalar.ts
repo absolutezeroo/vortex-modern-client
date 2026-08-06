@@ -7,12 +7,14 @@
  */
 export class AnimatedScalar
 {
+    // AS3: .../src/com/sulake/habbo/window/utils/AnimatedScalar.as::MAX_INTEGRATION_STEP_MS
     private static readonly MAX_INTEGRATION_STEP_MS: number = 8;
 
     private readonly _acceleration: number;
     private readonly _maxVelocity: number;
     private readonly _tolerance: number;
 
+    // AS3: .../src/com/sulake/habbo/window/utils/AnimatedScalar.as::_lastUpdateTimeMs
     private _lastUpdateTimeMs: number = 0;
     private _velocity: number = 0;
     private _target: number = 0;
@@ -98,6 +100,7 @@ export class AnimatedScalar
         return this._value !== previous;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/utils/AnimatedScalar.as::settle()
     private settle(): boolean
     {
         const changed = this._value !== this._target || this._velocity !== 0;
@@ -108,6 +111,7 @@ export class AnimatedScalar
         return changed;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/utils/AnimatedScalar.as::integrateStep()
     private integrateStep(dtMs: number): void
     {
         const remainingDistance = this._target - this._value;
@@ -145,6 +149,7 @@ export class AnimatedScalar
         this._velocity = nextVelocity;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/utils/AnimatedScalar.as::resolveAcceleration()
     private resolveAcceleration(direction: number): number
     {
         if(this._acceleration <= 0)
@@ -174,6 +179,7 @@ export class AnimatedScalar
         return direction * this._acceleration;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/utils/AnimatedScalar.as::resolveDirectionToTarget()
     private resolveDirectionToTarget(): number
     {
         const remainingDistance = this._target - this._value;
@@ -181,11 +187,13 @@ export class AnimatedScalar
         return Math.abs(remainingDistance) <= this._tolerance ? 0 : AnimatedScalar.sign(remainingDistance);
     }
 
+    // AS3: .../src/com/sulake/habbo/window/utils/AnimatedScalar.as::isSettled()
     private isSettled(): boolean
     {
         return Math.abs(this._target - this._value) <= this._tolerance && Math.abs(this._velocity) <= this._tolerance;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/utils/AnimatedScalar.as::sign()
     private static sign(value: number): number
     {
         if(value > 0) return 1;

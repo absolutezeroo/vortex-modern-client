@@ -17,6 +17,7 @@ const log = Logger.getLogger('habbo.navigator.mainview.tabpagedecorators.RoomsTa
  */
 export class RoomsTabPageDecorator implements ITabPageDecorator
 {
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/RoomsTabPageDecorator.as::_navigator
     private _navigator: ITabNavigator;
     private _filter: IDropMenuWindow | null = null;
     private _personalized: boolean = false;
@@ -26,6 +27,7 @@ export class RoomsTabPageDecorator implements ITabPageDecorator
         this._navigator = navigator;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/RoomsTabPageDecorator.as::refreshCustomContent()
     refreshCustomContent(container: IWindowContainer): void
     {
         const header = container.findChildByName('rooms_header') as IWindowContainer | null;
@@ -46,6 +48,7 @@ export class RoomsTabPageDecorator implements ITabPageDecorator
         header.visible = true;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/RoomsTabPageDecorator.as::prepareRoomCategories()
     prepareRoomCategories(): void
     {
         if(!this._filter || (this._filter as unknown as { disposed?: boolean }).disposed) return;
@@ -71,6 +74,7 @@ export class RoomsTabPageDecorator implements ITabPageDecorator
         this._filter.selection = this.defaultSelection;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/RoomsTabPageDecorator.as::tabSelected()
     tabSelected(): void
     {
         if(!this._filter || (this._filter as unknown as { disposed?: boolean }).disposed) return;
@@ -80,16 +84,19 @@ export class RoomsTabPageDecorator implements ITabPageDecorator
         this._filter.addEventListener('WE_SELECTED', this.onFilterSelected);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/RoomsTabPageDecorator.as::refreshFooter()
     refreshFooter(container: IWindowContainer): void
     {
         this._navigator.officialRoomEntryManager.refreshAdFooter(container);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/RoomsTabPageDecorator.as::navigatorOpenedWhileInTab()
     navigatorOpenedWhileInTab(): void
     {
         this.startSearch();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/RoomsTabPageDecorator.as::get filterCategory()
     get filterCategory(): string | null
     {
         if(!this._filter || (this._filter as unknown as { disposed?: boolean }).disposed) return null;
@@ -97,15 +104,18 @@ export class RoomsTabPageDecorator implements ITabPageDecorator
         return this._filter.enumerateSelection()[this._filter.selection] ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/RoomsTabPageDecorator.as::setSubSelection()
     setSubSelection(_value: number): void
     {
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/RoomsTabPageDecorator.as::processSearchParam()
     processSearchParam(param: string): string
     {
         return param;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/RoomsTabPageDecorator.as::get defaultSelection()
     private get defaultSelection(): number
     {
         return this._personalized ? 2 : 0;
@@ -124,6 +134,7 @@ export class RoomsTabPageDecorator implements ITabPageDecorator
         }
     };
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/RoomsTabPageDecorator.as::startSearch()
     private startSearch(): void
     {
         const filter = this._filter;

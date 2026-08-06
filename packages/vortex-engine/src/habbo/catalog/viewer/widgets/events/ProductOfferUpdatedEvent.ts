@@ -10,6 +10,7 @@ export class ProductOfferUpdatedEvent
 {
     static readonly CWE_PRODUCT_OFFER_UPDATED: string = 'CWE_PRODUCT_OFFER_UPDATED';
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/ProductOfferUpdatedEvent.as::_offer
     private _offer: IPurchasableOffer;
 
     constructor(offer: IPurchasableOffer)
@@ -22,6 +23,7 @@ export class ProductOfferUpdatedEvent
         return ProductOfferUpdatedEvent.CWE_PRODUCT_OFFER_UPDATED;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/ProductOfferUpdatedEvent.as::get offer()
     get offer(): IPurchasableOffer
     {
         return this._offer;

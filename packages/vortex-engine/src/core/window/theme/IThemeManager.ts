@@ -9,6 +9,7 @@ import type {IPropertyMap} from './IPropertyMap';
  */
 export interface IThemeManager
 {
+    // AS3: .../src/com/sulake/core/window/theme/IThemeManager.as::getPropertyDefaults()
     getPropertyDefaults(style: number): IPropertyMap | null;
 
     setPropertyDefaults(style: number, properties: IPropertyMap): void;

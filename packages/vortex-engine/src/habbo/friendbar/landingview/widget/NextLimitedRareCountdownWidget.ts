@@ -25,12 +25,16 @@ export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProd
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::REFRESH_PERIOD_IN_MILLIS
     private static readonly REFRESH_PERIOD_IN_MILLIS: number = 30000;
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::_landingView
     private _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::_container
     private _container: IWindowContainer | null = null;
     private _appearsInSeconds: number = 0;
     private _pageId: number = -1;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::_offerId
     private _offerId: number = -1;
     private _productType: string = '';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::_lastRequestTime
     private _lastRequestTime: number | null = null;
     private _modeSwitchTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -55,6 +59,7 @@ export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProd
         this._container = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._container === null;
@@ -101,6 +106,7 @@ export class NextLimitedRareCountdownWidget implements ILandingViewWidget, IProd
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/NextLimitedRareCountdownWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;

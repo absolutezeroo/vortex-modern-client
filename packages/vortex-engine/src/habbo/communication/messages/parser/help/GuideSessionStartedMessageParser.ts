@@ -11,13 +11,16 @@ export class GuideSessionStartedMessageParser implements IMessageParser
 {
     private _requesterUserId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionStartedMessageEventParser.as::get requesterUserId()
     get requesterUserId(): number
     {
         return this._requesterUserId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionStartedMessageEventParser.as::_requesterName
     private _requesterName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionStartedMessageEventParser.as::get requesterName()
     get requesterName(): string
     {
         return this._requesterName;
@@ -25,6 +28,7 @@ export class GuideSessionStartedMessageParser implements IMessageParser
 
     private _requesterFigure: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionStartedMessageEventParser.as::get requesterFigure()
     get requesterFigure(): string
     {
         return this._requesterFigure;
@@ -32,13 +36,16 @@ export class GuideSessionStartedMessageParser implements IMessageParser
 
     private _guideUserId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionStartedMessageEventParser.as::get guideUserId()
     get guideUserId(): number
     {
         return this._guideUserId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionStartedMessageEventParser.as::_guideName
     private _guideName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionStartedMessageEventParser.as::get guideName()
     get guideName(): string
     {
         return this._guideName;
@@ -46,11 +53,13 @@ export class GuideSessionStartedMessageParser implements IMessageParser
 
     private _guideFigure: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionStartedMessageEventParser.as::get guideFigure()
     get guideFigure(): string
     {
         return this._guideFigure;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionStartedMessageEventParser.as::flush()
     flush(): boolean
     {
         this._requesterUserId = 0;
@@ -62,6 +71,7 @@ export class GuideSessionStartedMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionStartedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

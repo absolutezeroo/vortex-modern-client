@@ -27,13 +27,21 @@ export interface IChatTextFormat
  */
 export interface IChatStyle
 {
+    // AS3: .../src/com/sulake/habbo/freeflowchat/style/_SafeCls_1775.as::get selectorPreview()
     readonly selectorPreview: ImageBitmap;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/style/_SafeCls_1775.as::get isSystemStyle()
     readonly isSystemStyle: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/style/_SafeCls_1775.as::get purchasable()
     readonly purchasable: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/style/_SafeCls_1775.as::get isHcOnly()
     readonly isHcOnly: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/style/_SafeCls_1775.as::get isAmbassadorOnly()
     readonly isAmbassadorOnly: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/style/_SafeCls_1775.as::get isStaffOverrideable()
     readonly isStaffOverrideable: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/style/_SafeCls_1775.as::get overlap()
     readonly overlap: Rectangle | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/style/_SafeCls_1775.as::get textFormat()
     readonly textFormat: IChatTextFormat;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/style/_SafeCls_1775.as::getNewBackgroundSprite()

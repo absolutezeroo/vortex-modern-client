@@ -16,7 +16,9 @@ import {HabboInventoryEffectsEvent} from '@habbo/inventory/events/HabboInventory
 
 export class EffectsWidgetHandler implements IRoomWidgetHandler
 {
+    // AS3: .../src/com/sulake/habbo/ui/handler/_SafeCls_3455.as::_disposed
     private _disposed: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/handler/_SafeCls_3455.as::_container
     private _container: IRoomWidgetHandlerContainer | null = null;
     private _widget: EffectsWidget | null = null;
 
@@ -48,6 +50,7 @@ export class EffectsWidgetHandler implements IRoomWidgetHandler
         );
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/handler/_SafeCls_3455.as::get container()
     public get container(): IRoomWidgetHandlerContainer | null
     {
         return this._container;

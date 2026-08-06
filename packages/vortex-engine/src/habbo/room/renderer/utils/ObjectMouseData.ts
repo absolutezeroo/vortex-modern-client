@@ -10,6 +10,7 @@
  */
 export class ObjectMouseData 
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ObjectMouseData.as::_objectId
     private _objectId: string = '';
 
     get objectId(): string 
@@ -22,13 +23,16 @@ export class ObjectMouseData
         this._objectId = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ObjectMouseData.as::_spriteTag
     private _spriteTag: string = '';
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ObjectMouseData.as::get spriteTag()
     get spriteTag(): string 
     {
         return this._spriteTag;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ObjectMouseData.as::set spriteTag()
     set spriteTag(value: string) 
     {
         this._spriteTag = value;

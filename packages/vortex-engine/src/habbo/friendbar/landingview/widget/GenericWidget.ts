@@ -48,9 +48,12 @@ function isDisposableElementHandler(handler: IElementHandler): handler is IEleme
  */
 export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISettingsAwareWidget, IConfigurableWidget, IDisableableWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::_landingView
     private _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::_container
     private _container: IWindowContainer | null = null;
     private _slot: number = 0;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::_configurationCode
     private _configurationCode: string | null = null;
     private _elements: Map<string, IElementHandler> = new Map();
 
@@ -148,6 +151,7 @@ export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISet
         this._configurationCode = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
@@ -260,6 +264,7 @@ export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISet
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/GenericWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;

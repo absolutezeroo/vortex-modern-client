@@ -18,6 +18,7 @@ export class ErrorReportStorage
         this._data.set(key, value);
     }
 
+    // AS3: .../src/com/sulake/core/utils/ErrorReportStorage.as::getDebugData()
     static getDebugData(key: string): string | null
     {
         return this._data.get(key) ?? null;

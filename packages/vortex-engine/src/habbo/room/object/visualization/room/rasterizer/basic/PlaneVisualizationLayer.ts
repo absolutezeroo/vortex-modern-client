@@ -10,12 +10,18 @@ import type {PlaneMaterial} from './PlaneMaterial';
 
 export class PlaneVisualizationLayer
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::DEFAULT_OFFSET
     public static readonly DEFAULT_OFFSET: number = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::ALIGN_TOP
     public static readonly ALIGN_TOP: number = 1;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::ALIGN_BOTTOM
     public static readonly ALIGN_BOTTOM: number = 2;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::ALIGN_DEFAULT
     public static readonly ALIGN_DEFAULT: number = 1;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::_material
     private _material: PlaneMaterial | null;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::_color
     private _color: number;
     private _cachedBitmap: HTMLCanvasElement | null = null;
 
@@ -27,15 +33,19 @@ export class PlaneVisualizationLayer
         this._offset = offset;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::_align
     private _align: number;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::get align()
     get align(): number
     {
         return this._align;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::_offset
     private _offset: number;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::get offset()
     get offset(): number
     {
         return this._offset;
@@ -43,11 +53,13 @@ export class PlaneVisualizationLayer
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::dispose()
     dispose(): void
     {
         this._disposed = true;
@@ -55,21 +67,25 @@ export class PlaneVisualizationLayer
         this._cachedBitmap = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::clearCache()
     clearCache(): void
     {
         this._cachedBitmap = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::getMaterial()
     getMaterial(): PlaneMaterial | null
     {
         return this._material;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::getColor()
     getColor(): number
     {
         return this._color;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.as::render()
     render(
         canvas: HTMLCanvasElement | null,
         width: number,

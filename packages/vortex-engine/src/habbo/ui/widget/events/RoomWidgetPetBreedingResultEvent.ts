@@ -15,6 +15,7 @@ export class RoomWidgetPetBreedingResultEvent extends RoomWidgetUpdateEvent
 
     private _resultData: PetBreedingResultEventData;
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/events/RoomWidgetPetBreedingResultEvent.as::_resultData2
     private _resultData2: PetBreedingResultEventData;
 
     // AS3: .../RoomWidgetPetBreedingResultEvent.as::RoomWidgetPetBreedingResultEvent()

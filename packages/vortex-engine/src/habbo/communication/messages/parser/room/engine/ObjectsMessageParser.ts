@@ -12,6 +12,7 @@ import {FurnitureDataParser} from './FurnitureDataParser';
 
 export class ObjectsMessageParser implements IMessageParser
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/ObjectsMessageParser.as::_objects
     private _objects: FurnitureFloorData[] = [];
     private _ownerMap: Map<number, string> = new Map();
 
@@ -20,6 +21,7 @@ export class ObjectsMessageParser implements IMessageParser
         return this._objects.length;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/ObjectsMessageParser.as::getObject()
     getObject(index: number): FurnitureFloorData | null
     {
         if(index < 0 || index >= this._objects.length)
@@ -37,12 +39,14 @@ export class ObjectsMessageParser implements IMessageParser
         return data;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/ObjectsMessageParser.as::flush()
     flush(): boolean
     {
         this._objects.length = 0;
         return true;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/ObjectsMessageParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper === null)

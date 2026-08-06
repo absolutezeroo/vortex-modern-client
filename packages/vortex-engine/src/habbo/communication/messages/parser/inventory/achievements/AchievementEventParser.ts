@@ -11,17 +11,20 @@ export class AchievementEventParser implements IMessageParser
 {
     private _achievement: AchievementData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/achievements/AchievementEventParser.as::get achievement()
     get achievement(): AchievementData | null
     {
         return this._achievement;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/achievements/AchievementEventParser.as::flush()
     flush(): boolean
     {
         this._achievement = null;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/achievements/AchievementEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

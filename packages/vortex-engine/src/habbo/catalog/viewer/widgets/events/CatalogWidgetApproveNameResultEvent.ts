@@ -12,6 +12,7 @@ export class CatalogWidgetApproveNameResultEvent
 
     private _result: number;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetApproveNameResultEvent.as::_nameValidationInfo
     private _nameValidationInfo: string | null;
 
     constructor(result: number, nameValidationInfo: string | null)

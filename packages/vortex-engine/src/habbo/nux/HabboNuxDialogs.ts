@@ -135,6 +135,7 @@ export class HabboNuxDialogs extends Component implements ILinkEventTracker
      * AS3 returns `this` — the component *is* the configuration reader (`getBoolean`,
      * `getInteger`, `getProperty` are its own inherited members).
      */
+    // AS3: .../src/com/sulake/habbo/nux/HabboNuxDialogs.as::get configuration()
     get configuration(): HabboNuxDialogs
     {
         return this;
@@ -222,6 +223,7 @@ export class HabboNuxDialogs extends Component implements ILinkEventTracker
      *
      * Status 0 — the raw integer AS3 pushes at this call site.
      */
+    // AS3: .../src/com/sulake/habbo/nux/HabboNuxDialogs.as::onVerify()
     onVerify(): void
     {
         this._connection?.send(new SetPhoneNumberVerificationStatusMessageComposer(0));
@@ -384,6 +386,7 @@ export class HabboNuxDialogs extends Component implements ILinkEventTracker
      * Empty in AS3 — a leftover the timer setup in `onRoomSessionEvent()` replaced. Kept so the
      * class's member list matches the source.
      */
+    // AS3: .../src/com/sulake/habbo/nux/HabboNuxDialogs.as::startNoobRoomOfferTimer()
     private startNoobRoomOfferTimer(): void
     {
     }
@@ -393,6 +396,7 @@ export class HabboNuxDialogs extends Component implements ILinkEventTracker
      *
      * Re-checks both conditions because the timer may fire long after they were tested.
      */
+    // AS3: .../src/com/sulake/habbo/nux/HabboNuxDialogs.as::createNoobRoomOfferView()
     private createNoobRoomOfferView(): void
     {
         if(!this.getBoolean('nux.lobbies.enabled') || !this._sessionDataManager?.isRealNoob)

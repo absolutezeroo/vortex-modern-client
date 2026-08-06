@@ -12,11 +12,13 @@ export class RoomDimmerPresetsMessageEventParser implements IMessageParser
 
     private _selectedPresetId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/RoomDimmerPresetsMessageEventParser.as::get selectedPresetId()
     get selectedPresetId(): number
     {
         return this._selectedPresetId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/RoomDimmerPresetsMessageEventParser.as::get presetCount()
     get presetCount(): number
     {
         return this._presets.length;
@@ -24,6 +26,7 @@ export class RoomDimmerPresetsMessageEventParser implements IMessageParser
 
     private _itemId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/RoomDimmerPresetsMessageEventParser.as::get itemId()
     get itemId(): number
     {
         return this._itemId;
@@ -31,11 +34,13 @@ export class RoomDimmerPresetsMessageEventParser implements IMessageParser
 
     private _isOn: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/RoomDimmerPresetsMessageEventParser.as::get isOn()
     get isOn(): boolean
     {
         return this._isOn;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/RoomDimmerPresetsMessageEventParser.as::getPreset()
     getPreset(index: number): IDimmerPreset | null
     {
         if(index < 0 || index >= this._presets.length)
@@ -45,6 +50,7 @@ export class RoomDimmerPresetsMessageEventParser implements IMessageParser
         return this._presets[index];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/RoomDimmerPresetsMessageEventParser.as::flush()
     flush(): boolean
     {
         this._presets = [];
@@ -54,6 +60,7 @@ export class RoomDimmerPresetsMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/RoomDimmerPresetsMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

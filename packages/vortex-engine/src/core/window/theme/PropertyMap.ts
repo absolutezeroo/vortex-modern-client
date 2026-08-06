@@ -85,6 +85,7 @@ export class PropertyMap implements IPropertyMap
 	 * @param key - The property key
 	 * @param value - The boolean value
 	 */
+    // AS3: .../src/com/sulake/core/window/theme/PropertyMap.as::addBoolean()
     public addBoolean(key: string, value: boolean): void
     {
         this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.BOOLEAN));
@@ -96,6 +97,7 @@ export class PropertyMap implements IPropertyMap
 	 * @param key - The property key
 	 * @param value - The integer value
 	 */
+    // AS3: .../src/com/sulake/core/window/theme/PropertyMap.as::addInt()
     public addInt(key: string, value: number): void
     {
         this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.INT));
@@ -107,6 +109,7 @@ export class PropertyMap implements IPropertyMap
 	 * @param key - The property key
 	 * @param value - The uint value
 	 */
+    // AS3: .../src/com/sulake/core/window/theme/PropertyMap.as::addUint()
     public addUint(key: string, value: number): void
     {
         this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.UINT));
@@ -118,6 +121,7 @@ export class PropertyMap implements IPropertyMap
 	 * @param key - The property key
 	 * @param value - The hex value
 	 */
+    // AS3: .../src/com/sulake/core/window/theme/PropertyMap.as::addHex()
     public addHex(key: string, value: number): void
     {
         this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.HEX));
@@ -129,6 +133,7 @@ export class PropertyMap implements IPropertyMap
 	 * @param key - The property key
 	 * @param value - The number value
 	 */
+    // AS3: .../src/com/sulake/core/window/theme/PropertyMap.as::addNumber()
     public addNumber(key: string, value: number): void
     {
         this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.NUMBER));
@@ -140,6 +145,7 @@ export class PropertyMap implements IPropertyMap
 	 * @param key - The property key
 	 * @param value - The string value
 	 */
+    // AS3: .../src/com/sulake/core/window/theme/PropertyMap.as::addString()
     public addString(key: string, value: string): void
     {
         this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.STRING));
@@ -151,6 +157,7 @@ export class PropertyMap implements IPropertyMap
 	 * @param key - The property key
 	 * @param value - The array value
 	 */
+    // AS3: .../src/com/sulake/core/window/theme/PropertyMap.as::addArray()
     public addArray(key: string, value: unknown[]): void
     {
         this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.ARRAY));
@@ -163,6 +170,7 @@ export class PropertyMap implements IPropertyMap
 	 * @param value - The initial value
 	 * @param range - The allowed values
 	 */
+    // AS3: .../src/com/sulake/core/window/theme/PropertyMap.as::addEnumeration()
     public addEnumeration(key: string, value: string, range: string[]): void
     {
         this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.STRING, false, range));
@@ -173,6 +181,7 @@ export class PropertyMap implements IPropertyMap
 	 *
 	 * @returns A new PropertyMap with the same entries
 	 */
+    // AS3: .../src/com/sulake/core/window/theme/PropertyMap.as::clone()
     public clone(): PropertyMap
     {
         const copy = new PropertyMap();

@@ -13,6 +13,7 @@ export class QuestCompletedMessageEventParser implements IMessageParser
 {
     private _questData: QuestMessageData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestCompletedMessageEventParser.as::get questData()
     get questData(): QuestMessageData | null
     {
         return this._questData;
@@ -20,17 +21,20 @@ export class QuestCompletedMessageEventParser implements IMessageParser
 
     private _showDialog: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestCompletedMessageEventParser.as::get showDialog()
     get showDialog(): boolean
     {
         return this._showDialog;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestCompletedMessageEventParser.as::flush()
     flush(): boolean
     {
         this._questData = null;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestCompletedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

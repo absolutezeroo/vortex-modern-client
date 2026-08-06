@@ -21,6 +21,7 @@ export class SelectInitialRoomMessageComposer extends MessageComposer<[string]>
         this._data = [roomType];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2937/_SafeCls_3967.as::getMessageArray()
     getMessageArray(): [string]
     {
         return this._data;

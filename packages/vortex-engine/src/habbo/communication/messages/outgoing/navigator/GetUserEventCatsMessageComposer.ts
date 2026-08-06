@@ -16,6 +16,7 @@ export class GetUserEventCatsMessageComposer extends MessageComposer<Constructor
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/GetUserEventCatsMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

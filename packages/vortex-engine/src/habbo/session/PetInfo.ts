@@ -9,11 +9,13 @@ export class PetInfo implements IPetInfo
 {
     private _petId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get petId()
     get petId(): number
     {
         return this._petId;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set petId()
     set petId(value: number)
     {
         this._petId = value;
@@ -21,11 +23,13 @@ export class PetInfo implements IPetInfo
 
     private _level: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get level()
     get level(): number
     {
         return this._level;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set level()
     set level(value: number)
     {
         this._level = value;
@@ -33,11 +37,13 @@ export class PetInfo implements IPetInfo
 
     private _levelMax: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get levelMax()
     get levelMax(): number
     {
         return this._levelMax;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set levelMax()
     set levelMax(value: number)
     {
         this._levelMax = value;
@@ -45,11 +51,13 @@ export class PetInfo implements IPetInfo
 
     private _experience: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get experience()
     get experience(): number
     {
         return this._experience;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set experience()
     set experience(value: number)
     {
         this._experience = value;
@@ -57,11 +65,13 @@ export class PetInfo implements IPetInfo
 
     private _experienceMax: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get experienceMax()
     get experienceMax(): number
     {
         return this._experienceMax;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set experienceMax()
     set experienceMax(value: number)
     {
         this._experienceMax = value;
@@ -69,11 +79,13 @@ export class PetInfo implements IPetInfo
 
     private _energy: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get energy()
     get energy(): number
     {
         return this._energy;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set energy()
     set energy(value: number)
     {
         this._energy = value;
@@ -81,11 +93,13 @@ export class PetInfo implements IPetInfo
 
     private _energyMax: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get energyMax()
     get energyMax(): number
     {
         return this._energyMax;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set energyMax()
     set energyMax(value: number)
     {
         this._energyMax = value;
@@ -93,11 +107,13 @@ export class PetInfo implements IPetInfo
 
     private _nutrition: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get nutrition()
     get nutrition(): number
     {
         return this._nutrition;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set nutrition()
     set nutrition(value: number)
     {
         this._nutrition = value;
@@ -105,11 +121,13 @@ export class PetInfo implements IPetInfo
 
     private _nutritionMax: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get nutritionMax()
     get nutritionMax(): number
     {
         return this._nutritionMax;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set nutritionMax()
     set nutritionMax(value: number)
     {
         this._nutritionMax = value;
@@ -117,23 +135,28 @@ export class PetInfo implements IPetInfo
 
     private _ownerId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get ownerId()
     get ownerId(): number
     {
         return this._ownerId;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set ownerId()
     set ownerId(value: number)
     {
         this._ownerId = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::_ownerName
     private _ownerName: string = '';
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get ownerName()
     get ownerName(): string
     {
         return this._ownerName;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set ownerName()
     set ownerName(value: string)
     {
         this._ownerName = value;
@@ -141,11 +164,13 @@ export class PetInfo implements IPetInfo
 
     private _respect: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get respect()
     get respect(): number
     {
         return this._respect;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set respect()
     set respect(value: number)
     {
         this._respect = value;
@@ -153,11 +178,13 @@ export class PetInfo implements IPetInfo
 
     private _age: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get age()
     get age(): number
     {
         return this._age;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set age()
     set age(value: number)
     {
         this._age = value;
@@ -165,11 +192,13 @@ export class PetInfo implements IPetInfo
 
     private _breedId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get breedId()
     get breedId(): number
     {
         return this._breedId;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set breedId()
     set breedId(value: number)
     {
         this._breedId = value;
@@ -177,11 +206,13 @@ export class PetInfo implements IPetInfo
 
     private _hasFreeSaddle: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get hasFreeSaddle()
     get hasFreeSaddle(): boolean
     {
         return this._hasFreeSaddle;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set hasFreeSaddle()
     set hasFreeSaddle(value: boolean)
     {
         this._hasFreeSaddle = value;
@@ -189,11 +220,13 @@ export class PetInfo implements IPetInfo
 
     private _isRiding: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get isRiding()
     get isRiding(): boolean
     {
         return this._isRiding;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set isRiding()
     set isRiding(value: boolean)
     {
         this._isRiding = value;
@@ -201,11 +234,13 @@ export class PetInfo implements IPetInfo
 
     private _canBreed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get canBreed()
     get canBreed(): boolean
     {
         return this._canBreed;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set canBreed()
     set canBreed(value: boolean)
     {
         this._canBreed = value;
@@ -213,11 +248,13 @@ export class PetInfo implements IPetInfo
 
     private _canHarvest: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get canHarvest()
     get canHarvest(): boolean
     {
         return this._canHarvest;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set canHarvest()
     set canHarvest(value: boolean)
     {
         this._canHarvest = value;
@@ -225,11 +262,13 @@ export class PetInfo implements IPetInfo
 
     private _canRevive: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get canRevive()
     get canRevive(): boolean
     {
         return this._canRevive;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set canRevive()
     set canRevive(value: boolean)
     {
         this._canRevive = value;
@@ -237,11 +276,13 @@ export class PetInfo implements IPetInfo
 
     private _rarityLevel: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get rarityLevel()
     get rarityLevel(): number
     {
         return this._rarityLevel;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set rarityLevel()
     set rarityLevel(value: number)
     {
         this._rarityLevel = value;
@@ -249,11 +290,13 @@ export class PetInfo implements IPetInfo
 
     private _skillTresholds: number[] = [];
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get skillTresholds()
     get skillTresholds(): number[]
     {
         return this._skillTresholds;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set skillTresholds()
     set skillTresholds(value: number[])
     {
         this._skillTresholds = value;
@@ -261,11 +304,13 @@ export class PetInfo implements IPetInfo
 
     private _accessRights: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get accessRights()
     get accessRights(): number
     {
         return this._accessRights;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set accessRights()
     set accessRights(value: number)
     {
         this._accessRights = value;
@@ -273,11 +318,13 @@ export class PetInfo implements IPetInfo
 
     private _maxWellBeingSeconds: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get maxWellBeingSeconds()
     get maxWellBeingSeconds(): number
     {
         return this._maxWellBeingSeconds;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set maxWellBeingSeconds()
     set maxWellBeingSeconds(value: number)
     {
         this._maxWellBeingSeconds = value;
@@ -285,11 +332,13 @@ export class PetInfo implements IPetInfo
 
     private _remainingWellBeingSeconds: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get remainingWellBeingSeconds()
     get remainingWellBeingSeconds(): number
     {
         return this._remainingWellBeingSeconds;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set remainingWellBeingSeconds()
     set remainingWellBeingSeconds(value: number)
     {
         this._remainingWellBeingSeconds = value;
@@ -297,11 +346,13 @@ export class PetInfo implements IPetInfo
 
     private _remainingGrowingSeconds: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get remainingGrowingSeconds()
     get remainingGrowingSeconds(): number
     {
         return this._remainingGrowingSeconds;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set remainingGrowingSeconds()
     set remainingGrowingSeconds(value: number)
     {
         this._remainingGrowingSeconds = value;
@@ -309,11 +360,13 @@ export class PetInfo implements IPetInfo
 
     private _hasBreedingPermission: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get hasBreedingPermission()
     get hasBreedingPermission(): boolean
     {
         return this._hasBreedingPermission;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::set hasBreedingPermission()
     set hasBreedingPermission(value: boolean)
     {
         this._hasBreedingPermission = value;
@@ -321,6 +374,7 @@ export class PetInfo implements IPetInfo
 
     private _adultLevel: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/PetInfo.as::get adultLevel()
     get adultLevel(): number
     {
         return this._adultLevel;

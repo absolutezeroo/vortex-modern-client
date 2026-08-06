@@ -13,6 +13,7 @@ export class QuestsMessageEventParser implements IMessageParser
 {
     private _quests: QuestMessageData[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestsMessageEventParser.as::get quests()
     get quests(): QuestMessageData[]
     {
         return this._quests;
@@ -20,17 +21,20 @@ export class QuestsMessageEventParser implements IMessageParser
 
     private _openWindow: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestsMessageEventParser.as::get openWindow()
     get openWindow(): boolean
     {
         return this._openWindow;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestsMessageEventParser.as::flush()
     flush(): boolean
     {
         this._quests = [];
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestsMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

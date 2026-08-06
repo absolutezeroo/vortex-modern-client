@@ -26,10 +26,13 @@ export class ExtensionView implements IExtensionView
     // AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::PURSE_EXTENSION_OFFSET
     private static readonly PURSE_EXTENSION_OFFSET: number = -8;
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::_toolbar
     private _toolbar: HabboToolbar | null;
     private _var104: IItemListWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::_items
     private _items: Map<string, IWindow> = new Map();
     private _orderedItems: IWindow[] = [];
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::_disposed
     private _disposed: boolean = false;
 
     constructor(windowManager: IHabboWindowManager, toolbar: HabboToolbar) 
@@ -57,26 +60,32 @@ export class ExtensionView implements IExtensionView
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::_landingView
     private _landingView: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::get landingView()
     public get landingView(): boolean 
     {
         return this._landingView;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::set landingView()
     public set landingView(value: boolean) 
     {
         this._landingView = value;
         this.refreshItemWindow();
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::_extraMargin
     private _extraMargin: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::get extraMargin()
     public get extraMargin(): number 
     {
         return this._extraMargin;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::set extraMargin()
     public set extraMargin(value: number) 
     {
         this._extraMargin = value;
@@ -92,11 +101,13 @@ export class ExtensionView implements IExtensionView
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::get visible()
     public get visible(): boolean 
     {
         return this._var104 !== null && this._var104.visible;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::set visible()
     public set visible(value: boolean) 
     {
         if(this._var104) 
@@ -105,6 +116,7 @@ export class ExtensionView implements IExtensionView
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::get screenHeight()
     public get screenHeight(): number 
     {
         if(!this._var104) return 0;
@@ -112,6 +124,7 @@ export class ExtensionView implements IExtensionView
         return this._var104.height + this._var104.y;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::attachExtension()
     public attachExtension(id: string, element: unknown, index: number = -1, params: unknown[] | null = null): void 
     {
         if(this._disposed) return;
@@ -144,6 +157,7 @@ export class ExtensionView implements IExtensionView
         this.queueResizeEvent();
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::hasExtension()
     public hasExtension(id: string): boolean 
     {
         return this._items.has(id);
@@ -206,6 +220,7 @@ export class ExtensionView implements IExtensionView
         this._var104.invalidate();
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::detachExtension()
     public detachExtension(id: string): void 
     {
         if(this._disposed) return;
@@ -243,6 +258,7 @@ export class ExtensionView implements IExtensionView
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::removeDimmers()
     public removeDimmers(): void 
     {
         // Dimmer management is a Flash-specific concept not ported to Vortex
@@ -262,6 +278,7 @@ export class ExtensionView implements IExtensionView
         return result;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;
@@ -285,6 +302,7 @@ export class ExtensionView implements IExtensionView
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::getKeyForWindow()
     private getKeyForWindow(window: IWindow): string 
     {
         for(const [key, value] of this._items) 
@@ -295,6 +313,7 @@ export class ExtensionView implements IExtensionView
         return '';
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::resolveIndex()
     private resolveIndex(params: string[]): number 
     {
         for(let i = 0; i < this._orderedItems.length; i++) 
@@ -308,6 +327,7 @@ export class ExtensionView implements IExtensionView
         return -1;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::queueResizeEvent()
     private queueResizeEvent(): void 
     {
         setTimeout(() => 

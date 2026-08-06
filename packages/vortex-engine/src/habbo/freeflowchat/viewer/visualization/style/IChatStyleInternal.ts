@@ -30,27 +30,43 @@ export interface IChatLinkStyleSheet
  */
 export interface IChatStyleInternal
 {
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::getNewBackgroundSprite()
     getNewBackgroundSprite(tint?: number): Container;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::get textFormat()
     readonly textFormat: IChatTextFormat;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::get styleSheet()
     readonly styleSheet: IChatLinkStyleSheet | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::get pointer()
     readonly pointer: ImageBitmap | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::get pointerOffsetToBubbleBottom()
     readonly pointerOffsetToBubbleBottom: number;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::getPointerLeftMargin()
     getPointerLeftMargin(defaultValue: number): number;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::getPointerRightMargin()
     getPointerRightMargin(defaultValue: number): number;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::get faceOffset()
     readonly faceOffset: Point | null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::getEmblem()
     getEmblem(multiline?: boolean): ImageBitmap | null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::getEmblemOffset()
     getEmblemOffset(multiline?: boolean): Point | null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::get textFieldMargins()
     readonly textFieldMargins: Rectangle;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::get overlap()
     readonly overlap: Rectangle | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::get allowHTML()
     readonly allowHTML: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::get isAnonymous()
     readonly isAnonymous: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::get isSystemStyle()
     readonly isSystemStyle: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as::get isNotification()
     readonly isNotification: boolean;
 }

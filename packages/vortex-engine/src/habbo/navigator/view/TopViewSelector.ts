@@ -14,6 +14,7 @@ import type {HabboNewNavigator} from '../HabboNewNavigator';
  */
 export class TopViewSelector
 {
+    // AS3: sources/win63_version/habbo/navigator/view/TopViewSelector.as::_navigator
     private _navigator: HabboNewNavigator;
 
     constructor(navigator: HabboNewNavigator)
@@ -23,13 +24,16 @@ export class TopViewSelector
 
     private _template: ITabButtonWindow | null = null;
 
+    // AS3: sources/win63_version/habbo/navigator/view/TopViewSelector.as::set template()
     set template(value: ITabButtonWindow)
     {
         this._template = value;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/view/TopViewSelector.as::_tabContext
     private _tabContext: ITabContextWindow | null = null;
 
+    // AS3: sources/win63_version/habbo/navigator/view/TopViewSelector.as::set tabContext()
     set tabContext(value: ITabContextWindow)
     {
         this._tabContext = value;
@@ -40,6 +44,7 @@ export class TopViewSelector
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/TopViewSelector.as refresh()
 	 */
+    // AS3: sources/win63_version/habbo/navigator/view/TopViewSelector.as::refresh()
     refresh(): void
     {
         if(!this._tabContext || !this._template) return;
@@ -68,6 +73,7 @@ export class TopViewSelector
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/TopViewSelector.as selectTabByIndex()
 	 */
+    // AS3: sources/win63_version/habbo/navigator/view/TopViewSelector.as::selectTabByIndex()
     selectTabByIndex(index: number): void
     {
         if(!this._tabContext || !this._tabContext.selector) return;
@@ -80,6 +86,7 @@ export class TopViewSelector
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/view/TopViewSelector.as::clearTabs()
     private clearTabs(): void
     {
         if(!this._tabContext) return;

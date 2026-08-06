@@ -16,6 +16,7 @@ export class OpenTradingComposer extends MessageComposer<ConstructorParameters<t
         this._data = [userId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/inventory/trading/OpenTradingComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

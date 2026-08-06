@@ -14,9 +14,13 @@ export class IssueBundle
     public static readonly STATE_OPEN: number = 1;
     public static readonly STATE_PICKED: number = 2;
     public static readonly STATE_CLOSED: number = 3;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueBundle.as::_groupingId
     private _groupingId: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueBundle.as::_messageCount
     private _messageCount: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueBundle.as::_oldestIssue
     private _oldestIssue: IssueInfoData | null = null;
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::_highestPriorityIssue
     private _highestPriorityIssue: IssueInfoData | null = null;
 
     constructor(id: number, issue: IssueInfoData)
@@ -30,53 +34,67 @@ export class IssueBundle
         this.addIssue(issue);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueBundle.as::_id
     private _id: number;
 
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::get id()
     get id(): number
     {
         return this._id;
     }
 
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::_issues
     private _issues: Map<number, IssueInfoData> = new Map();
 
     /**
 	 * Get all issues in this bundle as an array.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::get issues()
     get issues(): IssueInfoData[]
     {
         return Array.from(this._issues.values());
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueBundle.as::_state
     private _state: number;
 
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::get state()
     get state(): number
     {
         return this._state;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueBundle.as::_pickerUserId
     private _pickerUserId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::get pickerUserId()
     get pickerUserId(): number
     {
         return this._pickerUserId;
     }
 
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::_pickerName
     private _pickerName: string = '';
 
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::get pickerName()
     get pickerName(): string
     {
         return this._pickerName;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueBundle.as::_reportedUserId
     private _reportedUserId: number;
 
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::get reportedUserId()
     get reportedUserId(): number
     {
         return this._reportedUserId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueBundle.as::_issueAgeInMilliseconds
     private _issueAgeInMilliseconds: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::get issueAgeInMilliseconds()
     get issueAgeInMilliseconds(): number
     {
         return this._issueAgeInMilliseconds;
@@ -85,6 +103,7 @@ export class IssueBundle
     /**
 	 * Get the highest priority value across all issues.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::get highestPriority()
     get highestPriority(): number
     {
         if(this._highestPriorityIssue === null)
@@ -107,6 +126,7 @@ export class IssueBundle
 	 * @param ignoreState - If true, ignore state and picker matching
 	 * @returns True if the issue belongs to this bundle
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::matches()
     matches(issue: IssueInfoData, ignoreState: boolean = false): boolean
     {
         if(this._groupingId === 0 || issue.groupingId === 0)
@@ -141,6 +161,7 @@ export class IssueBundle
 	 * @param issueId - The issue ID to check
 	 * @returns True if the issue is in this bundle
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::contains()
     contains(issueId: number): boolean
     {
         return this._issues.has(issueId);
@@ -152,6 +173,7 @@ export class IssueBundle
 	 *
 	 * @param issue - The updated issue data
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::updateIssue()
     updateIssue(issue: IssueInfoData): void
     {
         this.removeIssue(issue.issueId);
@@ -164,6 +186,7 @@ export class IssueBundle
 	 * @param issueId - The ID of the issue to remove
 	 * @returns The removed issue, or null if not found
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::removeIssue()
     removeIssue(issueId: number): IssueInfoData | null
     {
         const issue = this._issues.get(issueId) ?? null;
@@ -199,6 +222,7 @@ export class IssueBundle
 	 *
 	 * @returns The highest priority issue, or null if empty
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::getHighestPriorityIssue()
     getHighestPriorityIssue(): IssueInfoData | null
     {
         if(this._highestPriorityIssue === null)
@@ -247,6 +271,7 @@ export class IssueBundle
     /**
 	 * Get the number of issues in this bundle.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::getIssueCount()
     getIssueCount(): number
     {
         return this._issues.size;
@@ -255,6 +280,7 @@ export class IssueBundle
     /**
 	 * Get all issue IDs in this bundle.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::getIssueIds()
     getIssueIds(): number[]
     {
         return Array.from(this._issues.keys());
@@ -263,6 +289,7 @@ export class IssueBundle
     /**
 	 * Get the number of issues with non-empty messages.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::getMessageCount()
     getMessageCount(): number
     {
         return this._messageCount;
@@ -274,6 +301,7 @@ export class IssueBundle
 	 * @param currentTime - The current timestamp in milliseconds
 	 * @returns A formatted time string (e.g., "01:30")
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::getOpenTime()
     getOpenTime(currentTime: number): string
     {
         let oldest = this._oldestIssue;
@@ -302,6 +330,7 @@ export class IssueBundle
     /**
 	 * Add an issue to this bundle.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueBundle.as::addIssue()
     private addIssue(issue: IssueInfoData): void
     {
         this._issues.set(issue.issueId, issue);

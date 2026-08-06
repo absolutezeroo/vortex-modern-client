@@ -15,6 +15,7 @@ export class ShoutMessageComposer extends MessageComposer<[string, number]>
         this._data = [message, styleId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/chat/ShoutMessageComposer.as::getMessageArray()
     getMessageArray(): [string, number]
     {
         return this._data;

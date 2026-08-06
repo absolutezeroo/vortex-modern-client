@@ -13,6 +13,7 @@ export class CatalogPageMessageEventParser implements IMessageParser
 {
     private _pageId: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::get pageId()
     get pageId(): number
     {
         return this._pageId;
@@ -20,6 +21,7 @@ export class CatalogPageMessageEventParser implements IMessageParser
 
     private _catalogType: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::get catalogType()
     get catalogType(): string
     {
         return this._catalogType;
@@ -27,27 +29,34 @@ export class CatalogPageMessageEventParser implements IMessageParser
 
     private _layoutCode: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::get layoutCode()
     get layoutCode(): string
     {
         return this._layoutCode;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::_localization
     private _localization: CatalogLocalizationData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::get localization()
     get localization(): CatalogLocalizationData | null
     {
         return this._localization;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::_offers
     private _offers: ClubOfferData[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::get offers()
     get offers(): ClubOfferData[]
     {
         return this._offers;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::_offerId
     private _offerId: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::get offerId()
     get offerId(): number
     {
         return this._offerId;
@@ -55,18 +64,22 @@ export class CatalogPageMessageEventParser implements IMessageParser
 
     private _acceptSeasonCurrencyAsCredits: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::get acceptSeasonCurrencyAsCredits()
     get acceptSeasonCurrencyAsCredits(): boolean
     {
         return this._acceptSeasonCurrencyAsCredits;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::_frontPageItems
     private _frontPageItems: FrontPageItem[] | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::get frontPageItems()
     get frontPageItems(): FrontPageItem[] | null
     {
         return this._frontPageItems;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::flush()
     flush(): boolean
     {
         this._pageId = -1;
@@ -80,6 +93,7 @@ export class CatalogPageMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

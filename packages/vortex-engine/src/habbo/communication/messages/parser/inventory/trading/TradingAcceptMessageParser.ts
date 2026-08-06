@@ -22,11 +22,13 @@ export class TradingAcceptMessageParser implements IMessageParser
         return this._accepted;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/trading/TradingAcceptEventParser.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/trading/TradingAcceptEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._userId = wrapper.readInt();

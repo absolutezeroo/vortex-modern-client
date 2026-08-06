@@ -10,5 +10,6 @@ export interface IRoomWidgetMessageListener
     /**
 	 * Processes a widget message and returns an update event, or null.
 	 */
+    // AS3: .../src/com/sulake/habbo/ui/widget/IRoomWidgetMessageListener.as::processWidgetMessage()
     processWidgetMessage(message: unknown): unknown;
 }

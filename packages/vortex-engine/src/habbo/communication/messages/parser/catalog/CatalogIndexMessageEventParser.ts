@@ -11,6 +11,7 @@ export class CatalogIndexMessageEventParser implements IMessageParser
 {
     private _root: NodeData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogIndexMessageEventParser.as::get root()
     get root(): NodeData | null
     {
         return this._root;
@@ -18,6 +19,7 @@ export class CatalogIndexMessageEventParser implements IMessageParser
 
     private _newAdditionsAvailable: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogIndexMessageEventParser.as::get newAdditionsAvailable()
     get newAdditionsAvailable(): boolean
     {
         return this._newAdditionsAvailable;
@@ -25,11 +27,13 @@ export class CatalogIndexMessageEventParser implements IMessageParser
 
     private _catalogType: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogIndexMessageEventParser.as::get catalogType()
     get catalogType(): string
     {
         return this._catalogType;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogIndexMessageEventParser.as::flush()
     flush(): boolean
     {
         this._root = null;
@@ -37,6 +41,7 @@ export class CatalogIndexMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/CatalogIndexMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

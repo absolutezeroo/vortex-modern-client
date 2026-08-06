@@ -40,23 +40,31 @@ const EMBEDDED_AVATAR_ACTIONS_XML = `<actions><action  id="Default" precedence="
  */
 export class AvatarRenderManager extends Component implements IAvatarRenderManager 
 {
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::AVATAR_PLACEHOLDER_FIGURE
     private static readonly AVATAR_PLACEHOLDER_FIGURE: string = 'hd-99999-99999';
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarRenderManager.as::_structure
     private _structure: AvatarStructure;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarRenderManager.as::_aliasCollection
     private _aliasCollection: AssetAliasCollection;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarRenderManager.as::_avatarAssetDownloadManager
     private _avatarAssetDownloadManager: AvatarAssetDownloadManager | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarRenderManager.as::_effectAssetDownloadManager
     private _effectAssetDownloadManager: EffectAssetDownloadManager | null = null;
     private _placeholderFigure: AvatarFigureContainer | null = null;
     private _pendingFigureDownloads: [IAvatarFigureContainer, IAvatarImageListener | null][] = [];
     private _configuration: IHabboConfigurationManager | null = null;
     private _assetLibrary: IAssetLibrary | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarRenderManager.as::_figureMapReady
     private _figureMapReady: boolean = false;
     private _mandatoryLibrariesReady: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarRenderManager.as::_structureReady
     private _structureReady: boolean = false;
     private _geometryReady: boolean = false;
     private _partSetsReady: boolean = false;
     private _actionsReady: boolean = false;
     private _animationsReady: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarRenderManager.as::_effectMapReady
     private _effectMapReady: boolean = false;
     private _structureDownload: AvatarStructureDownload | null = null;
     private _configurationCompleteHandled: boolean = false;
@@ -69,13 +77,16 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         this._aliasCollection = new AssetAliasCollection();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarRenderManager.as::_isReady
     private _isReady: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::get isReady()
     public get isReady(): boolean 
     {
         return this._isReady;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::get effectMap()
     public get effectMap(): Map<string, any> 
     {
         if(!this._effectAssetDownloadManager) return new Map();
@@ -163,11 +174,13 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         );
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::getFigureData()
     public getFigureData(): IFigureData 
     {
         return this._structure.figureData;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::getFigureStringWithFigureIds()
     public getFigureStringWithFigureIds(figureString: string, gender: string, figureIds: number[]): string 
     {
         const figure = new AvatarFigureContainer(figureString);
@@ -185,6 +198,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         return figure.getFigureString();
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::isValidFigureSetForGender()
     public isValidFigureSetForGender(setId: number, gender: string): boolean 
     {
         const partSet = this._structure.figureData.getFigurePartSet(setId);
@@ -194,11 +208,13 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         return partSet.gender === gender || partSet.gender === 'U';
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::getMandatoryAvatarPartSetIds()
     public getMandatoryAvatarPartSetIds(gender: string, clubLevel: number): string[] 
     {
         return this._structure.getMandatorySetTypeIds(gender, clubLevel);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::createFigureContainer()
     public createFigureContainer(figureString: string): IAvatarFigureContainer 
     {
         return new AvatarFigureContainer(figureString);
@@ -268,6 +284,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         return clubLevel;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::isFigureReady()
     public isFigureReady(figure: IAvatarFigureContainer): boolean 
     {
         if(!this._avatarAssetDownloadManager) return false;
@@ -275,6 +292,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         return this._avatarAssetDownloadManager.isReady(figure);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::downloadFigure()
     public downloadFigure(figure: IAvatarFigureContainer, listener: IAvatarImageListener | null = null): void 
     {
         if(!this._avatarAssetDownloadManager) 
@@ -287,11 +305,13 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         this._avatarAssetDownloadManager.loadFigureSetData(figure, listener);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::injectFigureData()
     public injectFigureData(data: any): void 
     {
         this._structure.injectFigureData(data);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;
@@ -722,6 +742,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::purgeInitDownloadBuffer()
     private purgeInitDownloadBuffer(): void 
     {
         if(!this._avatarAssetDownloadManager) return;
@@ -739,6 +760,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::validateAvatarFigure()
     private validateAvatarFigure(figure: AvatarFigureContainer, gender: string): void 
     {
         const mandatoryTypes = this._structure.getMandatorySetTypeIds(gender, 0);

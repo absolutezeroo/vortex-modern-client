@@ -13,6 +13,7 @@ import type {IScreenRectangle} from '../contextmenu/ContextInfoView';
 export class AvatarContextInfoButtonView extends ButtonMenuView
 {
     protected _userId: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/AvatarContextInfoButtonView.as::_userName
     protected _userName: string = '';
     protected _userType: number = 0;
     protected _allowNameChange: boolean = false;

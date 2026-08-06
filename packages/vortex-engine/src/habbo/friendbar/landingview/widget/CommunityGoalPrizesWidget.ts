@@ -28,7 +28,9 @@ const log = Logger.getLogger('habbo.friendbar.landingview.widget.CommunityGoalPr
  */
 export class CommunityGoalPrizesWidget implements ILandingViewWidget, ISettingsAwareWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::_landingView
     private _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::_container
     private _container: IWindowContainer | null = null;
     private _communityProgress: CommunityGoalProgressData | null = null;
     private _ownFigure: string = '';
@@ -77,6 +79,7 @@ export class CommunityGoalPrizesWidget implements ILandingViewWidget, ISettingsA
         return this._landingView === null;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::refreshContent()
     private refreshContent(): void
     {
         if(!this._container) return;
@@ -142,6 +145,7 @@ export class CommunityGoalPrizesWidget implements ILandingViewWidget, ISettingsA
         if(element) element.caption = caption;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::setPrizeRankLimits()
     private setPrizeRankLimits(rankTier: number): void
     {
         let startRank = 1;
@@ -164,11 +168,13 @@ export class CommunityGoalPrizesWidget implements ILandingViewWidget, ISettingsA
         this.setCaption('rank_' + rankTier + '_info_txt', caption);
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::resolveStartRank()
     private resolveStartRank(rankTier: number): number
     {
         return this._communityProgress?.rewardUserLimits[rankTier - 2] ?? 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::resolveEndRank()
     private resolveEndRank(rankTier: number): number
     {
         return this._communityProgress?.rewardUserLimits[rankTier - 1] ?? 0;
@@ -180,11 +186,13 @@ export class CommunityGoalPrizesWidget implements ILandingViewWidget, ISettingsA
         this.refreshContent();
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::getKey()
     private getKey(suffix: string): string
     {
         return 'landing.view.competition.prizes.' + suffix;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::getCompetitionSpecificKey()
     private getCompetitionSpecificKey(suffix: string): string
     {
         const key = this.getKey((this._communityProgress?.goalCode ?? '') + '.' + suffix);
@@ -193,11 +201,13 @@ export class CommunityGoalPrizesWidget implements ILandingViewWidget, ISettingsA
         return key;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::getCompetitionSpecificText()
     private getCompetitionSpecificText(suffix: string): string
     {
         return '${' + this.getCompetitionSpecificKey(suffix) + '}';
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::getText()
     private getText(key: string): string
     {
         return '${' + this.getKey(key) + '}';
@@ -224,6 +234,7 @@ export class CommunityGoalPrizesWidget implements ILandingViewWidget, ISettingsA
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalPrizesWidget.as::refreshAvatarInfo()
     private refreshAvatarInfo(): void
     {
         const avatarWidgetWindow = this._container?.findChildByName('avatar_image') as IWidgetWindow | null;

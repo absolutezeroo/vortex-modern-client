@@ -11,16 +11,19 @@ export class RecyclerPrizesMessageEventParser implements IMessageParser
 {
     private _prizeLevels: PrizeLevelMessageData[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/RecyclerPrizesMessageEventParser.as::get prizeLevels()
     get prizeLevels(): PrizeLevelMessageData[]
     {
         return this._prizeLevels;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/RecyclerPrizesMessageEventParser.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/RecyclerPrizesMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

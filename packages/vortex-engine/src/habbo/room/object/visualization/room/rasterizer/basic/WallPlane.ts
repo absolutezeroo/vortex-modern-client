@@ -11,10 +11,14 @@ import {Plane} from './Plane';
 
 export class WallPlane extends Plane
 {
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/rasterizer/basic/WallPlane.as::DEFAULT_COLOR
     public static readonly DEFAULT_COLOR: number = 0xFFFFFF;
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/rasterizer/basic/WallPlane.as::HORIZONTAL_ANGLE_DEFAULT
     public static readonly HORIZONTAL_ANGLE_DEFAULT: number = 45;
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/rasterizer/basic/WallPlane.as::VERTICAL_ANGLE_DEFAULT
     public static readonly VERTICAL_ANGLE_DEFAULT: number = 30;
 
+    // AS3: sources/win63_version/habbo/room/object/visualization/room/rasterizer/basic/WallPlane.as::render()
     render(
         canvas: HTMLCanvasElement | null,
         leftLen: number,

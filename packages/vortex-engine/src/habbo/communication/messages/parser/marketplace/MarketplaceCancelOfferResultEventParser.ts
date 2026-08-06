@@ -7,25 +7,30 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class MarketplaceCancelOfferResultEventParser implements IMessageParser
 {
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_2414.as::_offerId
     private _offerId: number = 0;
 
     private _success: boolean = false;
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_2414.as::get offerId()
     get offerId(): number
     {
         return this._offerId;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_2414.as::get success()
     get success(): boolean
     {
         return this._success;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_2414.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_2414.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._offerId = wrapper.readInt();

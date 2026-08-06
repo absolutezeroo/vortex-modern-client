@@ -15,6 +15,7 @@ import {GuildMemberEntryData} from '../../incoming/users/GuildMemberEntryData';
  */
 export class GroupMembershipRequestedMessageParser implements IMessageParser
 {
+    // AS3: .../src/unknowns/_SafePkg_1891/_SafeCls_2858.as::_groupId
     private _groupId: number = 0;
     private _requester: GuildMemberEntryData | null = null;
 

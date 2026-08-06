@@ -30,19 +30,27 @@ const log = Logger.getLogger('habbo.inventory.pets.PetsView');
  */
 export class PetsView implements IGetImageListener
 {
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::STATE_NULL
     private static readonly STATE_NULL: number = 0;
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::STATE_INITIALIZING
     private static readonly STATE_INITIALIZING: number = 1;
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::STATE_EMPTY
     private static readonly STATE_EMPTY: number = 2;
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::STATE_CONTENT
     private static readonly STATE_CONTENT: number = 3;
 
     private _model: PetsModel;
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::_windowManager
     private _windowManager: IHabboWindowManager;
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::_roomEngine
     private _roomEngine: IRoomEngine;
     private _window: IWindowContainer | null = null;
     private _grid: IItemGridWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::_disposed
     private _disposed: boolean = false;
     private _initialized: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::_gridItems
     private _gridItems: Map<number, PetsGridItem> = new Map<number, PetsGridItem>();
     private _selectedItem: PetsGridItem | null = null;
     private _state: number = PetsView.STATE_NULL;
@@ -53,9 +61,11 @@ export class PetsView implements IGetImageListener
     // Type/rarity filter state (AS3 _SafeStr_5811/5476, _SafeStr_6062/5605).
     private _selectedTypeFilter: number = -1;
     private _typeFilterIds: number[] = [-1];
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::_ignoreTypeFilterEvents
     private _ignoreTypeFilterEvents: boolean = false;
     private _selectedRarityFilter: number = -1;
     private _rarityFilterIds: number[] = [-1];
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::_ignoreRarityFilterEvents
     private _ignoreRarityFilterEvents: boolean = false;
 
     constructor(model: PetsModel, windowManager: IHabboWindowManager, roomEngine: IRoomEngine)
@@ -65,6 +75,7 @@ export class PetsView implements IGetImageListener
         this._roomEngine = roomEngine;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -204,6 +215,7 @@ export class PetsView implements IGetImageListener
         this.setSelectedGridItem(item);
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::placePetToRoom()
     placePetToRoom(id: number, skipServer: boolean = false): void
     {
         this._model.placePetToRoom(id, skipServer);
@@ -753,6 +765,7 @@ export class PetsView implements IGetImageListener
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::getSearchTerm()
     private getSearchTerm(): string
     {
         if(this._window === null) return '';
@@ -762,6 +775,7 @@ export class PetsView implements IGetImageListener
         return filter !== null ? filter.caption.toLowerCase() : '';
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::getSelectedTypeFilter()
     private getSelectedTypeFilter(dropdown: IDropMenuWindow): number
     {
         if(this._typeFilterIds.length === 0) return -1;
@@ -773,6 +787,7 @@ export class PetsView implements IGetImageListener
         return this._typeFilterIds[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::getSelectedRarityFilter()
     private getSelectedRarityFilter(dropdown: IDropMenuWindow): number
     {
         if(this._rarityFilterIds.length === 0) return -1;
@@ -784,11 +799,13 @@ export class PetsView implements IGetImageListener
         return this._rarityFilterIds[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::isRarityFilterEnabled()
     private isRarityFilterEnabled(): boolean
     {
         return this._selectedTypeFilter === 16;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::getRarityFilterLabel()
     private getRarityFilterLabel(id: number): string
     {
         if(id === -1)
@@ -799,11 +816,13 @@ export class PetsView implements IGetImageListener
         return String(id);
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::getPetTypeLabel()
     private getPetTypeLabel(typeId: number): string
     {
         return this._model.localization.getLocalization(`pet.type.${typeId}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsView.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

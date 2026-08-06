@@ -21,6 +21,7 @@ export class SubmitRoomToCompetitionMessageComposer extends MessageComposer<Cons
         this._data = [goalCode, confirmAction];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/competition/SubmitRoomToCompetitionMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

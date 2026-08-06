@@ -36,6 +36,7 @@ const log = Logger.getLogger('habbo.sound.music.JukeboxPlayListController');
  */
 export class JukeboxPlayListController implements IPlayListController
 {
+    // AS3: .../src/com/sulake/habbo/sound/music/JukeboxPlayListController.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../JukeboxPlayListController.as::_isPlaying

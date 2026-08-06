@@ -11,15 +11,23 @@ import type {EventEmitter} from 'eventemitter3';
 export interface IAssetLoader extends IDisposable
 {
     readonly events: EventEmitter;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/loaders/IAssetLoader.as::get url()
     readonly url: string;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/loaders/IAssetLoader.as::get content()
     readonly content: unknown;
     readonly bytes: ArrayBuffer | null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/loaders/IAssetLoader.as::get mimeType()
     readonly mimeType: string;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/loaders/IAssetLoader.as::get bytesLoaded()
     readonly bytesLoaded: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/loaders/IAssetLoader.as::get bytesTotal()
     readonly bytesTotal: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/loaders/IAssetLoader.as::get errorCode()
     readonly errorCode: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/loaders/IAssetLoader.as::get id()
     readonly id: number;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/loaders/IAssetLoader.as::load()
     load(url: string): void;
 }
 

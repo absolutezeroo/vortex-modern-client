@@ -12,29 +12,42 @@ import type {IRoomObjectVisualization} from './visualization/IRoomObjectVisualiz
 
 export interface IRoomObject
 {
+    // AS3: .../src/com/sulake/room/object/IRoomObject.as::getId()
     getId(): number;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObject.as::getInstanceId()
     getInstanceId(): number;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObject.as::getType()
     getType(): string;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObject.as::isInitialized()
     isInitialized(): boolean;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObject.as::getLocation()
     getLocation(): IVector3d;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObject.as::getDirection()
     getDirection(): IVector3d;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObject.as::getModel()
     getModel(): IRoomObjectModel;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObject.as::getVisualization()
     getVisualization(): IRoomObjectVisualization | null;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObject.as::getMouseHandler()
     getMouseHandler(): IRoomObjectMouseHandler | null;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObject.as::getAvatarLibraryAssetName()
     getAvatarLibraryAssetName(): string;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObject.as::getState()
     getState(index: number): number;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObject.as::getUpdateID()
     getUpdateID(): number;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObject.as::tearDown()
     tearDown(): void;
 }

@@ -50,6 +50,7 @@ export class WebCaptchaView implements ICaptchaView
     /**
      * AS3: static resolveToken(_arg_1:String):String
      */
+    // AS3: .../src/login/WebCaptchaView.as::resolveToken()
     private static resolveToken(location: string): string | null
     {
         const index = location != null ? location.indexOf(WebCaptchaView.TOKEN_KEY) : -1;

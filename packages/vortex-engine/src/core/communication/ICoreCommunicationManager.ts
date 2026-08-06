@@ -19,6 +19,7 @@ export interface ICoreCommunicationManager extends IDisposable
 	 * @param callback Optional callback for connection events
 	 * @returns The created connection
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/communication/ICoreCommunicationManager.as::createConnection()
     createConnection(callback?: IConnectionCallback): IConnection;
 
     /**

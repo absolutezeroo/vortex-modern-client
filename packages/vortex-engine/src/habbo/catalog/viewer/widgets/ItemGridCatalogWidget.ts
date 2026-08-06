@@ -24,15 +24,19 @@ import {CatalogWidget} from './CatalogWidget';
  */
 export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, IDragAndDropDoneReceiver 
 {
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::itemColors
     itemColors: Map<string, number[]> = new Map();
 
     // AS3 loads these via assets.getAssetByName(name).content (raw XML, rebuilt per item via
     // buildFromXML()); this port's compiled window-layout registry only exposes ready-built
     // window instances (buildWidgetLayout()), so these hold one template instance each, cloned
     // per grid item instead - the same clone-a-template pattern CatalogNodeRenderable already
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::chosenItemColorIndex
     chosenItemColorIndex: number = 0;
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::_itemGrid
     protected _itemGrid: IItemGridWindow | null = null;
     // uses for its own item/list templates.
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::_gridItemLayout
     protected _gridItemLayout: IWindow | null = null;
     protected _gridItemWithPriceMulti: IWindow | null = null;
     protected _gridItemWithPriceSingle: IWindow | null = null;
@@ -40,7 +44,9 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
     protected _graphicsTimer: ReturnType<typeof setInterval> | null = null;
     protected _useTimer: boolean = true;
     protected _sessionDataManager: ISessionDataManager;
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::_bundleCounter
     private _bundleCounter: number = 0;
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::_offerInitIndex
     private _offerInitIndex: number = 0;
     private _catalogType: string;
 
@@ -115,6 +121,7 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::select()
     select(item: IGridItem, dispatchColours: boolean): void
     {
         if(this._selectedGridItem != null)
@@ -172,6 +179,7 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         return false;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::onDragAndDropDone()
     onDragAndDropDone(success: boolean, extraParam: string): void 
     {
         if(this.disposed) return;
@@ -185,10 +193,12 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::stopDragAndDrop()
     stopDragAndDrop(): void 
     {
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::getCurrentItemColors()
     getCurrentItemColors(): number[] 
     {
         let matched: IPurchasableOffer | null = null;
@@ -208,6 +218,7 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         return this.itemColors.get(baseName) ?? [];
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::populateItemGrid()
     protected populateItemGrid(): IPurchasableOffer[] 
     {
         const groupByColor = this.page.layoutCode === 'default_3x3_color_grouping';
@@ -307,11 +318,13 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         return offersToLoad;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::resetTimer()
     protected resetTimer(): void 
     {
         this._offerInitIndex = 0;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::loadItemGridGraphics()
     protected loadItemGridGraphics(offers: IPurchasableOffer[] | null = null): void 
     {
         if(this.disposed) return;
@@ -383,6 +396,7 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
     }
 
     // this port, not the ad-hoc string array AS3 builds here for a not-yet-owned guild furni item.
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::loadGraphics()
     protected loadGraphics(offer: IPurchasableOffer): void 
     {
         if(offer != null && !offer.disposed) 
@@ -393,6 +407,7 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         offer.productContainer.grid = this;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::onColourIndex()
     private onColourIndex(event: CatalogWidgetColourIndexEvent): void 
     {
         let matched: IPurchasableOffer | null = null;
@@ -424,6 +439,7 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::getCurrentItemColourIndex()
     private getCurrentItemColourIndex(): number 
     {
         let matched: IPurchasableOffer | null = null;

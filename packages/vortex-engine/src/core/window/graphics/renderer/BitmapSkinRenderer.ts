@@ -23,6 +23,7 @@ import {HsvLayerColor} from './HsvLayerColor';
 export class BitmapSkinRenderer extends SkinRenderer 
 {
     /** Bitmap cache: "entityName@templateName" → OffscreenCanvas crop. */
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::_bitmapCache
     private _bitmapCache: Map<string, OffscreenCanvas> = new Map();
 
     constructor(name: string) 
@@ -238,6 +239,7 @@ export class BitmapSkinRenderer extends SkinRenderer
      * @param entity - The template entity
      * @returns The cropped OffscreenCanvas piece, or null
      */
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::getBitmapFromCache()
     private getBitmapFromCache(template: SkinTemplate, entity: SkinTemplateEntity): OffscreenCanvas | null 
     {
         const key = `${entity.name}@${template.name}`;

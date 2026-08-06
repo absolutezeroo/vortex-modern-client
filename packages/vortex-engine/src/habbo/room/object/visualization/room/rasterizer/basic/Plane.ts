@@ -11,15 +11,18 @@ import {PlaneVisualization} from './PlaneVisualization';
 export class Plane
 {
     private _visualizations: Map<string, PlaneVisualization> = new Map();
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/Plane.as::_sizes
     private _sizes: number[] = [];
     private _cachedVisualization: PlaneVisualization | null = null;
     private _cachedSize: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/Plane.as::isStatic()
     isStatic(_size: number): boolean
     {
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/Plane.as::dispose()
     dispose(): void
     {
         for(const vis of this._visualizations.values())
@@ -34,6 +37,7 @@ export class Plane
         this._sizes = [];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/Plane.as::clearCache()
     clearCache(): void
     {
         for(const vis of this._visualizations.values())
@@ -45,6 +49,7 @@ export class Plane
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/Plane.as::createPlaneVisualization()
     createPlaneVisualization(size: number, layerCount: number, geometry: IRoomGeometry): PlaneVisualization | null
     {
         const key = String(size);
@@ -60,6 +65,7 @@ export class Plane
         return vis;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/Plane.as::getLayers()
     getLayers(): (unknown | null)[]
     {
         const vis = this.getPlaneVisualization(this._cachedSize);
@@ -70,6 +76,7 @@ export class Plane
         return [];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/Plane.as::getPlaneVisualization()
     protected getPlaneVisualization(size: number): PlaneVisualization | null
     {
         if(size === this._cachedSize)
@@ -92,6 +99,7 @@ export class Plane
         return this._cachedVisualization;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/Plane.as::getSizeIndex()
     private getSizeIndex(size: number): number
     {
         let index = 0;

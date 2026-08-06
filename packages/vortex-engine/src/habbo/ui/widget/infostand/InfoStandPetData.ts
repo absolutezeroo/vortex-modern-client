@@ -14,33 +14,61 @@ import type {RoomWidgetPetInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWid
 
 export class InfoStandPetData
 {
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get name()
     public name: string = '';
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get id()
     public id: number = -1;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get type()
     public type: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get race()
     public race: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get image()
     public image: ImageBitmap | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get isOwnPet()
     public isOwnPet: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get ownerId()
     public ownerId: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get ownerName()
     public ownerName: string = '';
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get canRemovePet()
     public canRemovePet: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get age()
     public age: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get breedId()
     public breedId: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get skillTresholds()
     public skillTresholds: number[] = [];
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get accessRights()
     public accessRights: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get level()
     public level: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get levelMax()
     public levelMax: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get experience()
     public experience: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get experienceMax()
     public experienceMax: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get energy()
     public energy: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get energyMax()
     public energyMax: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get nutrition()
     public nutrition: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get nutritionMax()
     public nutritionMax: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get petRespect()
     public petRespect: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get roomIndex()
     public roomIndex: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get rarityLevel()
     public rarityLevel: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get maxWellBeingSeconds()
     public maxWellBeingSeconds: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get remainingWellBeingSeconds()
     public remainingWellBeingSeconds: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get remainingGrowingSeconds()
     public remainingGrowingSeconds: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::get hasBreedingPermission()
     public hasBreedingPermission: boolean = false;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetData.as::setData()

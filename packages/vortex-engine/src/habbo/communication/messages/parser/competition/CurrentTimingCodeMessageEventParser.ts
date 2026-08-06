@@ -13,6 +13,7 @@ export class CurrentTimingCodeMessageEventParser implements IMessageParser
     private _schedulingStr: string = '';
     private _code: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CurrentTimingCodeMessageEventParser.as::flush()
     flush(): boolean
     {
         this._schedulingStr = '';
@@ -20,6 +21,7 @@ export class CurrentTimingCodeMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CurrentTimingCodeMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;
@@ -29,11 +31,13 @@ export class CurrentTimingCodeMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CurrentTimingCodeMessageEventParser.as::get schedulingStr()
     get schedulingStr(): string
     {
         return this._schedulingStr;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CurrentTimingCodeMessageEventParser.as::get code()
     get code(): string
     {
         return this._code;

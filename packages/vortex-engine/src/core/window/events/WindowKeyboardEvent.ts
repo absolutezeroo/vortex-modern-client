@@ -19,6 +19,7 @@ export class WindowKeyboardEvent extends WindowEvent
     private _keyCode: number = 0;
 
     /** The key code of the pressed key. */
+    // AS3: .../src/com/sulake/core/window/events/WindowKeyboardEvent.as::get keyCode()
     public get keyCode(): number 
     {
         return this._keyCode;
@@ -27,6 +28,7 @@ export class WindowKeyboardEvent extends WindowEvent
     private _charCode: number = 0;
 
     /** The character code of the pressed key. */
+    // AS3: .../src/com/sulake/core/window/events/WindowKeyboardEvent.as::get charCode()
     public get charCode(): number 
     {
         return this._charCode;
@@ -35,6 +37,7 @@ export class WindowKeyboardEvent extends WindowEvent
     private _altKey: boolean = false;
 
     /** Whether the Alt key is pressed. */
+    // AS3: .../src/com/sulake/core/window/events/WindowKeyboardEvent.as::get altKey()
     public get altKey(): boolean 
     {
         return this._altKey;
@@ -43,6 +46,7 @@ export class WindowKeyboardEvent extends WindowEvent
     private _ctrlKey: boolean = false;
 
     /** Whether the Ctrl key is pressed. */
+    // AS3: .../src/com/sulake/core/window/events/WindowKeyboardEvent.as::get ctrlKey()
     public get ctrlKey(): boolean 
     {
         return this._ctrlKey;
@@ -51,6 +55,7 @@ export class WindowKeyboardEvent extends WindowEvent
     private _shiftKey: boolean = false;
 
     /** Whether the Shift key is pressed. */
+    // AS3: .../src/com/sulake/core/window/events/WindowKeyboardEvent.as::get shiftKey()
     public get shiftKey(): boolean 
     {
         return this._shiftKey;
@@ -59,6 +64,7 @@ export class WindowKeyboardEvent extends WindowEvent
     private _keyLocation: number = 0;
 
     /** The key location (standard, left, right, numpad). */
+    // AS3: .../src/com/sulake/core/window/events/WindowKeyboardEvent.as::get keyLocation()
     public get keyLocation(): number 
     {
         return this._keyLocation;

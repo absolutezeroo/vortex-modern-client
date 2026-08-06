@@ -54,52 +54,64 @@ export class ChatRecordData
         }
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/moderation/ChatRecordData.as::_recordType
     private _recordType: number;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/moderation/ChatRecordData.as::get recordType()
     get recordType(): number
     {
         return this._recordType;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/moderation/ChatRecordData.as::_context
     private _context: Map<string, unknown>;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/moderation/ChatRecordData.as::get context()
     get context(): Map<string, unknown>
     {
         return this._context;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/moderation/ChatRecordData.as::_chatlog
     private _chatlog: ChatEntryData[];
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/moderation/ChatRecordData.as::get chatlog()
     get chatlog(): ChatEntryData[]
     {
         return this._chatlog;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/moderation/ChatRecordData.as::get roomId()
     get roomId(): number
     {
         return this.getInt('roomId');
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/moderation/ChatRecordData.as::get roomName()
     get roomName(): string
     {
         return (this._context.get('roomName') as string) ?? '';
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/moderation/ChatRecordData.as::get groupId()
     get groupId(): number
     {
         return this.getInt('groupId');
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/moderation/ChatRecordData.as::get threadId()
     get threadId(): number
     {
         return this.getInt('threadId');
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/moderation/ChatRecordData.as::get messageId()
     get messageId(): number
     {
         return this.getInt('messageId');
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/moderation/ChatRecordData.as::getInt()
     private getInt(key: string): number
     {
         const value = this._context.get(key);

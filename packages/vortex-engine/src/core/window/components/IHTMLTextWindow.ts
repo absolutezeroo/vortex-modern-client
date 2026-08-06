@@ -12,5 +12,6 @@ import type {ITextFieldWindow} from './ITextFieldWindow';
 export interface IHTMLTextWindow extends ITextFieldWindow
 {
     html: string;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IHTMLTextWindow.as::get linkTarget()
     linkTarget: string;
 }

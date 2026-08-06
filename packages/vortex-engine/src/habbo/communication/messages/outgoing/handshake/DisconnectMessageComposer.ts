@@ -17,6 +17,7 @@ export class DisconnectMessageComposer extends MessageComposer<ConstructorParame
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/handshake/DisconnectMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

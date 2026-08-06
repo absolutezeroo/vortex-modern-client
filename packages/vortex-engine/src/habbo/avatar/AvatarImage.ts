@@ -32,24 +32,32 @@ const log = Logger.getLogger('habbo.avatar.AvatarImage');
  */
 export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 {
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::DEFAULT_ACTION
     private static readonly DEFAULT_ACTION: string = 'Default';
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::DEFAULT_DIR
     private static readonly DEFAULT_DIR: number = 2;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::DEFAULT_AVATAR_SET
     private static readonly DEFAULT_AVATAR_SET: string = 'full';
 
     protected _structure: AvatarStructure;
     protected _scale: string;
     protected _mainDirection: number = 0;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::_headDirection
     protected _headDirection: number = 0;
     protected _canvasOffsets: number[] = [];
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::_assets
     protected _assets: AssetAliasCollection;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::_cache
     protected _cache: AvatarImageCache | null = null;
     protected _figure: AvatarFigureContainer;
     protected _avatarDataContainer: IAvatarDataContainer | null = null;
     protected _actions: IActiveActionData[] = [];
     protected _image: Texture | null = null;
     protected _fullImageFromCache: boolean = false;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::_defaultAction
     private _defaultAction: IActiveActionData;
     private _frameCounter: number = 0;
+    // AS3: sources/win63_version/habbo/avatar/AvatarImage.as::_directionOffset
     private _directionOffset: number = 0;
     private _needsUpdate: boolean = true;
     private _animationSpriteData: ISpriteDataContainer[] = [];
@@ -57,7 +65,9 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
     private _sortedActions: IActiveActionData[] | null = null;
     private _lastActionsString: string = '';
     private _currentActionsString: string = '';
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::_fullImageCache
     private _fullImageCache: Map<string, Texture>;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::_useFullImageCache
     private _useFullImageCache: boolean = false;
     private _effectId: number = -1;
     private _animFrameCount: number = 0;
@@ -131,6 +141,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
     /**
 	 * The main action type string, or empty if no main action.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::get mainAction()
     public get mainAction(): string
     {
         if(this._mainAction)
@@ -146,6 +157,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
     /**
 	 * Whether the avatar image has been disposed.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -156,6 +168,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
     /**
 	 * Whether the current animation resets when toggled.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::get animationHasResetOnToggle()
     public get animationHasResetOnToggle(): boolean
     {
         return this._animationHasResetOnToggle;
@@ -164,6 +177,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
     /**
 	 * The avatar data container with color transforms for effects.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::get avatarSpriteData()
     public get avatarSpriteData(): IAvatarDataContainer | null
     {
         return this._avatarDataContainer;
@@ -174,6 +188,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @returns An array of render data entries
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getServerRenderData()
     public getServerRenderData(): any[]
     {
         this.getAvatarPartsForCamera(AvatarImage.DEFAULT_AVATAR_SET);
@@ -191,6 +206,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @returns The figure container
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getFigure()
     public getFigure(): IAvatarFigureContainer
     {
         return this._figure;
@@ -201,6 +217,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @returns The scale string
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getScale()
     public getScale(): string
     {
         return this._scale;
@@ -212,6 +229,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param partType - The part type identifier
 	 * @returns The part color, or null if not found
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getPartColor()
     public getPartColor(partType: string): IPartColor | null
     {
         return this._structure.getPartColor(this._figure, partType);
@@ -224,6 +242,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param setType - The avatar set type (e.g. "full", "head")
 	 * @param direction - The direction index (0-7)
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::setDirection()
     public setDirection(setType: string, direction: number): void
     {
         direction += this._directionOffset;
@@ -267,6 +286,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param setType - The avatar set type
 	 * @param angle - The angle in degrees
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::setDirectionAngle()
     public setDirectionAngle(setType: string, angle: number): void
     {
         const direction = Math.trunc(angle / 45);
@@ -278,6 +298,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @returns The sprite data containers array
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getSprites()
     public getSprites(): ISpriteDataContainer[]
     {
         return this._animationSpriteData;
@@ -288,6 +309,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @returns The canvas offset array
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getCanvasOffsets()
     public getCanvasOffsets(): number[]
     {
         return this._canvasOffsets;
@@ -299,6 +321,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param sprite - The sprite data container to look up
 	 * @returns The animation layer data, or null if not found
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getLayerData()
     public getLayerData(sprite: ISpriteDataContainer): IAnimationLayerData | null
     {
         return this._structure.getBodyPartData(sprite.animation.id, this._frameCounter, sprite.id);
@@ -309,6 +332,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @param frames - The number of frames to advance (defaults to 1)
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::updateAnimationByFrames()
     public updateAnimationByFrames(frames: number = 1): void
     {
         this._frameCounter += frames;
@@ -318,6 +342,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
     /**
 	 * Resets the animation frame counter to zero.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::resetAnimationFrameCounter()
     public resetAnimationFrameCounter(): void
     {
         this._frameCounter = 0;
@@ -346,6 +371,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @returns The direction index (0-7)
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getDirection()
     public getDirection(): number
     {
         return this._mainDirection;
@@ -354,6 +380,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
     /**
 	 * Begins a batch of action appends. Clears pending actions and resets state.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::initActionAppends()
     public initActionAppends(): void
     {
         this._actions = [];
@@ -366,6 +393,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * Finalizes the current batch of appended actions. Sorts them, resolves effects,
 	 * resets internal state, and applies actions to body parts.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::endActionAppends()
     public endActionAppends(): void
     {
         if(this.sortActions())
@@ -397,6 +425,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param args - Additional arguments (typically the action parameter)
 	 * @returns True if the action was accepted
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::appendAction()
     public appendAction(actionType: string, ...args: any[]): boolean
     {
         let param: string | null = null;
@@ -511,6 +540,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @returns True if animating or if multiple frames exist
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::isAnimating()
     public isAnimating(): boolean
     {
         return this._isAnimating || this._animFrameCount > 1;
@@ -521,6 +551,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @returns False for regular avatar images
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::isPlaceholder()
     public isPlaceholder(): boolean
     {
         return false;
@@ -566,6 +597,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
     /**
 	 * Forces the action state to be recalculated on the next render.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::forceActionUpdate()
     public forceActionUpdate(): void
     {
         this._lastActionsString = '';
@@ -574,6 +606,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
     /**
 	 * Disposes inactive action caches to free memory.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::disposeInactiveActionCache()
     public disposeInactiveActionCache(): void
     {
         if(this._cache)
@@ -588,6 +621,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @param effectId - The effect identifier that is now ready
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::avatarEffectReady()
     public avatarEffectReady(effectId: number): void
     {
         if(effectId === this._effectId)
@@ -609,6 +643,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @param setType - The avatar set type (e.g. "full")
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getAvatarPartsForCamera()
     public getAvatarPartsForCamera(setType: string): void
     {
         if(this._mainAction == null) return;
@@ -639,6 +674,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param scale - Optional scale factor (1 = no scaling)
 	 * @returns The rendered texture, or null if rendering failed
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getImage()
     public getImage(setType: string, makeCopy: boolean = false, scale: number = 1): Texture | null
     {
         if(!this._needsUpdate)
@@ -870,6 +906,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param scale - Optional scale factor
 	 * @returns The cropped texture, or null if rendering failed
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getCroppedImage()
     public getCroppedImage(setType: string, scale: number = 1): Texture | null
     {
         if(this._mainAction == null)
@@ -1014,6 +1051,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * Disposes all resources: cache, textures, and clears collections.
 	 * Always the last method of the class.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;
@@ -1057,6 +1095,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param key - The cache key
 	 * @returns The cached texture, or null
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getFullImage()
     protected getFullImage(key: string): Texture | null
     {
         return this._fullImageCache.get(key) || null;
@@ -1068,6 +1107,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param key - The cache key
 	 * @param image - The texture to cache
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::cacheFullImage()
     protected cacheFullImage(key: string, image: Texture): void
     {
         const existing = this._fullImageCache.get(key);
@@ -1089,6 +1129,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param param1 - The action state or type
 	 * @param param2 - The action parameter
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::addActionData()
     protected addActionData(param1: string, param2: string = ''): void
     {
         if(this._actions == null)
@@ -1115,6 +1156,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @returns True
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::resetActions()
     private resetActions(): boolean
     {
         this._animationHasResetOnToggle = false;
@@ -1138,6 +1180,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @returns True if head turning is prevented
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::isHeadTurnPreventedByAction()
     private isHeadTurnPreventedByAction(): boolean
     {
         if(this._sortedActions == null)
@@ -1169,6 +1212,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @returns True if actions changed since last sort
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::sortActions()
     private sortActions(): boolean
     {
         let effectChanged = false;
@@ -1247,6 +1291,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * overriding actions, loads animation sprite data, direction offsets,
 	 * and avatar data containers.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::setActionsToParts()
     private setActionsToParts(): void
     {
         if(this._sortedActions == null)
@@ -1345,6 +1390,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param action - The action data to apply
 	 * @param frameCount - The current frame counter
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::setActionToParts()
     private setActionToParts(action: IActiveActionData, frameCount: number): void
     {
         if(action == null || action.definition == null)
@@ -1381,6 +1427,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @param action - The action to reset cache for
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::resetBodyPartCache()
     private resetBodyPartCache(action: IActiveActionData): void
     {
         if(action == null || !action.definition)
@@ -1417,6 +1464,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 *
 	 * @returns The cache key string, or null if caching is disabled
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getFullImageCacheKey()
     private getFullImageCacheKey(): string | null
     {
         if(!this._useFullImageCache)
@@ -1474,6 +1522,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param direction - The direction index
 	 * @returns An array of body part identifiers
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::getBodyParts()
     private getBodyParts(setType: string, geometryType: string, direction: number): string[]
     {
         if(direction !== this._cachedBodyPartsDirection || geometryType !== this._cachedBodyPartsGeometry || setType !== this._cachedBodyPartsSetType)

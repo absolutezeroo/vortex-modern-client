@@ -10,6 +10,7 @@ export class QuizDataMessageParser implements IMessageParser
 {
     private _quizCode: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/QuizDataMessageEventParser.as::get quizCode()
     get quizCode(): string
     {
         return this._quizCode;
@@ -17,11 +18,13 @@ export class QuizDataMessageParser implements IMessageParser
 
     private _questionIds: Array<number> = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/QuizDataMessageEventParser.as::get questionIds()
     get questionIds(): Array<number>
     {
         return this._questionIds;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/QuizDataMessageEventParser.as::flush()
     flush(): boolean
     {
         this._quizCode = '';
@@ -29,6 +32,7 @@ export class QuizDataMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/QuizDataMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

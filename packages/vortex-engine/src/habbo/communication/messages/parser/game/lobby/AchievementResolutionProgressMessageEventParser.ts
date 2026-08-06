@@ -10,8 +10,10 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class AchievementResolutionProgressMessageEventParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionProgressMessageEventParser.as::_stuffId
     private _stuffId: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionProgressMessageEventParser.as::get stuffId()
     get stuffId(): number
     {
         return this._stuffId;
@@ -19,6 +21,7 @@ export class AchievementResolutionProgressMessageEventParser implements IMessage
 
     private _achievementId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionProgressMessageEventParser.as::get achievementId()
     get achievementId(): number
     {
         return this._achievementId;
@@ -26,6 +29,7 @@ export class AchievementResolutionProgressMessageEventParser implements IMessage
 
     private _requiredLevelBadgeCode: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionProgressMessageEventParser.as::get requiredLevelBadgeCode()
     get requiredLevelBadgeCode(): string
     {
         return this._requiredLevelBadgeCode;
@@ -33,6 +37,7 @@ export class AchievementResolutionProgressMessageEventParser implements IMessage
 
     private _userProgress: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionProgressMessageEventParser.as::get userProgress()
     get userProgress(): number
     {
         return this._userProgress;
@@ -40,18 +45,22 @@ export class AchievementResolutionProgressMessageEventParser implements IMessage
 
     private _totalProgress: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionProgressMessageEventParser.as::get totalProgress()
     get totalProgress(): number
     {
         return this._totalProgress;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionProgressMessageEventParser.as::_endTime
     private _endTime: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionProgressMessageEventParser.as::get endTime()
     get endTime(): number
     {
         return this._endTime;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionProgressMessageEventParser.as::flush()
     flush(): boolean
     {
         this._stuffId = -1;
@@ -63,6 +72,7 @@ export class AchievementResolutionProgressMessageEventParser implements IMessage
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionProgressMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

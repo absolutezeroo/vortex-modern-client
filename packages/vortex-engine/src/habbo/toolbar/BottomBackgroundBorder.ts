@@ -14,6 +14,7 @@ import {WindowEvent} from '@core/window/events/WindowEvent';
  */
 export class BottomBackgroundBorder 
 {
+    // AS3: sources/win63_version/habbo/toolbar/BottomBackgroundBorder.as::_window
     private _window: IWindow | null = null;
     private _windowManager: IHabboWindowManager | null = null;
 
@@ -39,11 +40,13 @@ export class BottomBackgroundBorder
         }
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/BottomBackgroundBorder.as::_disposed
     private _disposed: boolean = false;
 
     /**
      * Whether this border is disposed
      */
+    // AS3: sources/win63_version/habbo/toolbar/BottomBackgroundBorder.as::get disposed()
     get disposed(): boolean 
     {
         return this._disposed;
@@ -52,6 +55,7 @@ export class BottomBackgroundBorder
     /**
      * Dispose of this border
      */
+    // AS3: sources/win63_version/habbo/toolbar/BottomBackgroundBorder.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;
@@ -74,6 +78,7 @@ export class BottomBackgroundBorder
         }
     };
 
+    // AS3: sources/win63_version/habbo/toolbar/BottomBackgroundBorder.as::updatePosition()
     private updatePosition(): void 
     {
         if(!this._window) return;

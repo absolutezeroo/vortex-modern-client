@@ -29,12 +29,15 @@ const UPDATE_INTERVAL_MS = 5000;
  */
 export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisposable
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::_landingView
     private _landingView: HabboLandingView | null = null;
     private _ownerWidget: GenericWidget | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::_localizationKey
     private _localizationKey: string = '';
     private _state: number = -1;
     private _userCount: number = -1;
     private _userCountGoal: number = -1;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::_window
     private _window: IWindowContainer | null = null;
     private _updateIntervalId: ReturnType<typeof setInterval> | null = null;
     private _disposed: boolean = false;
@@ -63,6 +66,7 @@ export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisp
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -108,6 +112,7 @@ export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisp
         this._landingView?.send(new GetConcurrentUsersGoalProgressMessageComposer());
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::updateLocalization()
     private updateLocalization(): void
     {
         if(!this._landingView || !this._window) return;
@@ -212,6 +217,7 @@ export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisp
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::onClick()
     private onClick(): void
     {
         this._landingView?.send(new GetConcurrentUsersRewardMessageComposer());

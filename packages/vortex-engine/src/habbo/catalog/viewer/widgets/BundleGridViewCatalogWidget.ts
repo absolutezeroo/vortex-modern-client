@@ -17,8 +17,10 @@ import {CatalogWidget} from './CatalogWidget';
  */
 export class BundleGridViewCatalogWidget extends CatalogWidget implements IItemGrid
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundleGridViewCatalogWidget.as::_offer
     private _offer: IPurchasableOffer | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundleGridViewCatalogWidget.as::_itemGrid
     private _itemGrid: IItemGridWindow | null = null;
 
     constructor(window: IWindowContainer)
@@ -46,15 +48,18 @@ export class BundleGridViewCatalogWidget extends CatalogWidget implements IItemG
         super.dispose();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundleGridViewCatalogWidget.as::get offer()
     get offer(): IPurchasableOffer | null
     {
         return this._offer;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundleGridViewCatalogWidget.as::select()
     select(_item: IGridItem, _selected: boolean): void
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundleGridViewCatalogWidget.as::startDragAndDrop()
     startDragAndDrop(_item: IGridItem): boolean
     {
         return false;
@@ -76,6 +81,7 @@ export class BundleGridViewCatalogWidget extends CatalogWidget implements IItemG
         this.populateItemGrid();
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundleGridViewCatalogWidget.as::populateItemGrid()
     private populateItemGrid(): void
     {
         if(this._offer == null || this._itemGrid == null) return;

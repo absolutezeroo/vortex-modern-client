@@ -12,10 +12,12 @@ export interface IRoomThumbnailWidget extends IWidget
     /**
 	 * Reset the thumbnail to its default/blank state.
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/IRoomThumbnailWidget.as::reset()
     reset(): void;
 
     /**
 	 * Set the room (flat) ID to load a thumbnail for.
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/IRoomThumbnailWidget.as::set flatId()
     set flatId(value: number);
 }

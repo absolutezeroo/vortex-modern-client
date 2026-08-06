@@ -12,6 +12,7 @@ export class UserChangeMessageEventParser implements IMessageParser
 {
     private _id: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_2184/_SafeCls_2646.as::get id()
     get id(): number
     {
         return this._id;
@@ -19,6 +20,7 @@ export class UserChangeMessageEventParser implements IMessageParser
 
     private _figure: string = '';
 
+    // AS3: .../src/unknowns/_SafePkg_2184/_SafeCls_2646.as::get figure()
     get figure(): string
     {
         return this._figure;
@@ -26,20 +28,25 @@ export class UserChangeMessageEventParser implements IMessageParser
 
     private _sex: string = '';
 
+    // AS3: .../src/unknowns/_SafePkg_2184/_SafeCls_2646.as::get sex()
     get sex(): string
     {
         return this._sex;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2184/_SafeCls_2646.as::_customInfo
     private _customInfo: string = '';
 
+    // AS3: .../src/unknowns/_SafePkg_2184/_SafeCls_2646.as::get customInfo()
     get customInfo(): string
     {
         return this._customInfo;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2184/_SafeCls_2646.as::_achievementScore
     private _achievementScore: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_2184/_SafeCls_2646.as::get achievementScore()
     get achievementScore(): number
     {
         return this._achievementScore;
@@ -54,6 +61,7 @@ export class UserChangeMessageEventParser implements IMessageParser
         return this._badgesRank;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2184/_SafeCls_2646.as::flush()
     flush(): boolean
     {
         this._id = 0;
@@ -65,6 +73,7 @@ export class UserChangeMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2184/_SafeCls_2646.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper === null)

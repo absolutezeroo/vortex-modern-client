@@ -17,6 +17,7 @@ export interface ISkinRenderer extends IDisposable
     /**
 	 * The renderer name.
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::get name()
     readonly name: string;
 
     /**
@@ -28,6 +29,7 @@ export interface ISkinRenderer extends IDisposable
 	 * @param state - The resolved window state
 	 * @param colorize - Whether to apply colorization
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::draw()
     draw(
         window: IWindow,
         ctx: OffscreenCanvasRenderingContext2D,
@@ -42,6 +44,7 @@ export interface ISkinRenderer extends IDisposable
 	 * @param state - The window state flags
 	 * @returns True if the state can be drawn
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::isStateDrawable()
     isStateDrawable(state: number): boolean;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::addLayout()

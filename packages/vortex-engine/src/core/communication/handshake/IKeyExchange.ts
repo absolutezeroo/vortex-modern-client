@@ -9,6 +9,7 @@ export interface IKeyExchange
 	 * @param radix Number base (default 16 for hex)
 	 * @returns Success status
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/communication/handshake/IKeyExchange.as::init()
     init(privateKeyHex: string, radix?: number): boolean;
 
     /**
@@ -17,18 +18,21 @@ export interface IKeyExchange
 	 * @param radix Number base (default 16 for hex)
 	 * @returns Shared key as hex string
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/communication/handshake/IKeyExchange.as::generateSharedKey()
     generateSharedKey(serverPublicKeyHex: string, radix?: number): string;
 
     /**
 	 * Get the shared key
 	 * @param radix Number base for output (default 16 for hex)
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/communication/handshake/IKeyExchange.as::getSharedKey()
     getSharedKey(radix?: number): string;
 
     /**
 	 * Get our public key to send to server
 	 * @param radix Number base for output (default 16 for hex)
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/communication/handshake/IKeyExchange.as::getPublicKey()
     getPublicKey(radix?: number): string;
 
     /**

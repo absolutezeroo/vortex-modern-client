@@ -15,6 +15,7 @@ import {ForwardToRandomCompetitionRoomMessageComposer} from '@habbo/communicatio
  */
 export class GoToCompetitionRoomButtonElementHandler extends ButtonElementHandler
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4538.as::_goalCode
     private _goalCode: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4538.as::initialize()

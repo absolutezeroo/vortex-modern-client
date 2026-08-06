@@ -9,11 +9,13 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class PingMessageParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/PingMessageEventParser.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/PingMessageEventParser.as::parse()
     parse(_wrapper: IMessageDataWrapper): boolean
     {
         return true;

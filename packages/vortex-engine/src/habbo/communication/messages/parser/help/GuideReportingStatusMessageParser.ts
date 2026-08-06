@@ -16,11 +16,13 @@ export class GuideReportingStatusMessageParser implements IMessageParser
 
     private _statusCode: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideReportingStatusMessageEventParser.as::get statusCode()
     get statusCode(): number
     {
         return this._statusCode;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideReportingStatusMessageEventParser.as::get localizationCode()
     get localizationCode(): string
     {
         switch(this._statusCode - 2)
@@ -34,12 +36,14 @@ export class GuideReportingStatusMessageParser implements IMessageParser
         }
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideReportingStatusMessageEventParser.as::flush()
     flush(): boolean
     {
         this._statusCode = 0;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideReportingStatusMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

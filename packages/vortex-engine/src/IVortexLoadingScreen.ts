@@ -18,5 +18,6 @@ export interface IVortexLoadingScreen extends IDisposable
 	 *
 	 * @see sources/win63_2021_version/IHabboLoadingScreen.as updateLoadingBar()
 	 */
+    // AS3: .../src/binaryData/IHabboLoadingScreen.as::updateLoadingBar()
     updateLoadingBar(progress: number): void;
 }

@@ -14,16 +14,22 @@ import type {IRoomRenderingCanvasMouseListener} from './IRoomRenderingCanvasMous
 
 export interface IRoomRenderingCanvas
 {
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::get width()
     readonly width: number;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::get height()
     readonly height: number;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::get screenOffsetX()
     screenOffsetX: number;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::get screenOffsetY()
     screenOffsetY: number;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::get scale()
     readonly scale: number;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::get geometry()
     readonly geometry: IRoomGeometry;
 
     mouseListener: IRoomRenderingCanvasMouseListener | null;
@@ -34,10 +40,13 @@ export interface IRoomRenderingCanvas
     // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::fpsCounterEnabled
     fpsCounterEnabled: boolean;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::initialize()
     initialize(width: number, height: number): void;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::render()
     render(time: number, force?: boolean): void;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::handleMouseEvent()
     handleMouseEvent(
         x: number,
         y: number,
@@ -48,8 +57,10 @@ export interface IRoomRenderingCanvas
         buttonDown: boolean
     ): boolean;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::setScale()
     setScale(scale: number, point?: { x: number; y: number } | null, offset?: { x: number; y: number } | null): void;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::getId()
     getId(): number;
 
     update(): void;

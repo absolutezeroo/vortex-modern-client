@@ -12,17 +12,20 @@ export class ClubGiftNotificationEventParser implements IMessageParser
 {
     private _numGifts: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ClubGiftNotificationEventParser.as::get numGifts()
     get numGifts(): number
     {
         return this._numGifts;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ClubGiftNotificationEventParser.as::flush()
     flush(): boolean
     {
         this._numGifts = 0;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ClubGiftNotificationEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

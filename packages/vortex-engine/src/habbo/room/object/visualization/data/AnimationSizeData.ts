@@ -12,7 +12,9 @@ import {SizeData} from './SizeData';
 
 export class AnimationSizeData extends SizeData
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/data/AnimationSizeData.as::_animations
     private _animations: Map<number, AnimationData> = new Map();
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/data/AnimationSizeData.as::_animationIds
     private _animationIds: number[] = [];
 
     constructor(layerCount: number, angle: number)
@@ -51,6 +53,7 @@ export class AnimationSizeData extends SizeData
 	 * }
 	 * ```
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationSizeData.as::defineAnimations()
     defineAnimations(data: Record<string, unknown>): boolean
     {
         if(data === null || data === undefined)
@@ -127,16 +130,19 @@ export class AnimationSizeData extends SizeData
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationSizeData.as::hasAnimation()
     hasAnimation(animationId: number): boolean
     {
         return this._animations.has(animationId);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationSizeData.as::getAnimationCount()
     getAnimationCount(): number
     {
         return this._animationIds.length;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationSizeData.as::getAnimationId()
     getAnimationId(index: number): number
     {
         const count = this.getAnimationCount();
@@ -149,6 +155,7 @@ export class AnimationSizeData extends SizeData
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationSizeData.as::isImmediateChange()
     isImmediateChange(animationId: number, fromAnimationId: number): boolean
     {
         const animData = this._animations.get(animationId);
@@ -161,6 +168,7 @@ export class AnimationSizeData extends SizeData
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationSizeData.as::getStartFrame()
     getStartFrame(animationId: number, layerIndex: number): number
     {
         const animData = this._animations.get(animationId);
@@ -173,6 +181,7 @@ export class AnimationSizeData extends SizeData
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationSizeData.as::getFrame()
     getFrame(animationId: number, direction: number, layerId: number, frameCounter: number): AnimationFrame | null
     {
         const animData = this._animations.get(animationId);
@@ -185,6 +194,7 @@ export class AnimationSizeData extends SizeData
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationSizeData.as::getFrameFromSequence()
     getFrameFromSequence(
         animationId: number,
         direction: number,
@@ -204,6 +214,7 @@ export class AnimationSizeData extends SizeData
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationSizeData.as::createAnimationData()
     protected createAnimationData(): AnimationData
     {
         return new AnimationData();

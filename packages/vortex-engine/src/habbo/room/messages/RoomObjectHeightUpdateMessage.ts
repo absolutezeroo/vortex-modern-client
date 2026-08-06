@@ -16,8 +16,10 @@ export class RoomObjectHeightUpdateMessage extends RoomObjectUpdateMessage
         this._height = height;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectHeightUpdateMessage.as::_height
     private _height: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectHeightUpdateMessage.as::get height()
     get height(): number
     {
         return this._height;

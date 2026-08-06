@@ -11,6 +11,7 @@ export class IsBadgeRequestFulfilledEventParser implements IMessageParser
     private _requestCode: string = '';
     private _fulfilled: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/badges/IsBadgeRequestFulfilledEventParser.as::flush()
     flush(): boolean
     {
         this._requestCode = '';
@@ -18,6 +19,7 @@ export class IsBadgeRequestFulfilledEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/badges/IsBadgeRequestFulfilledEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;
@@ -27,11 +29,13 @@ export class IsBadgeRequestFulfilledEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/badges/IsBadgeRequestFulfilledEventParser.as::get requestCode()
     get requestCode(): string
     {
         return this._requestCode;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/badges/IsBadgeRequestFulfilledEventParser.as::get fulfilled()
     get fulfilled(): boolean
     {
         return this._fulfilled;

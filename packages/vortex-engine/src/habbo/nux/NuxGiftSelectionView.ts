@@ -86,6 +86,7 @@ export class NuxGiftSelectionView implements IProductDataListener
      * Rebuilds the whole frame per step — AS3 disposes the previous one rather than repopulating
      * it, which is also why `_listItemTemplate` has to survive across calls.
      */
+    // AS3: .../src/com/sulake/habbo/nux/NuxGiftSelectionView.as::show()
     private show(): void
     {
         if(this._frame != null)
@@ -217,6 +218,7 @@ export class NuxGiftSelectionView implements IProductDataListener
      * The picked index is the row's position in the list, resolved from the clicked button's
      * parent — not the button's `name`, which `populateStep()` also sets to the same number.
      */
+    // AS3: .../src/com/sulake/habbo/nux/NuxGiftSelectionView.as::onSelectOption()
     private onSelectOption(event: WindowEvent, window: IWindow): void
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
@@ -251,6 +253,7 @@ export class NuxGiftSelectionView implements IProductDataListener
      * `NuxNoobRoomOfferView`. Only `onClose()` reaches it, and nothing attaches `onClose()`
      * because `show()` hides the close button.
      */
+    // AS3: .../src/com/sulake/habbo/nux/NuxGiftSelectionView.as::hide()
     private hide(): void
     {
         this._nuxDialogs?.destroyNuxOfferView();
@@ -261,6 +264,7 @@ export class NuxGiftSelectionView implements IProductDataListener
      *
      * Dead in AS3: the frame's close button is hidden, never listened to.
      */
+    // AS3: .../src/com/sulake/habbo/nux/NuxGiftSelectionView.as::onClose()
     private onClose(): void
     {
         this.hide();

@@ -16,6 +16,7 @@ export interface IBitmapWrapperWindow extends IWindow {
      * Setting this disposes the old bitmap if `disposesBitmap` is true,
      * calls `fitSize()`, and invalidates the window.
      */
+    // AS3: sources/win63_version/core/window/components/BitmapWrapperController.as::get bitmap()
     bitmap: ImageBitmap | null;
 
     /**
@@ -26,11 +27,13 @@ export interface IBitmapWrapperWindow extends IWindow {
     /**
      * Whether this window owns the bitmap and should dispose it.
      */
+    // AS3: sources/win63_version/core/window/components/BitmapWrapperController.as::get disposesBitmap()
     disposesBitmap: boolean;
 
     /**
      * The named catalog/asset-library image this bitmap was last set from.
      */
+    // AS3: sources/win63_version/core/window/components/BitmapWrapperController.as::get bitmapAssetName()
     bitmapAssetName: string;
 
     /**

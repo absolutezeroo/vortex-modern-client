@@ -11,17 +11,20 @@ export class GuideSessionEndedMessageParser implements IMessageParser
 {
     private _endReason: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionEndedMessageEventParser.as::get endReason()
     get endReason(): number
     {
         return this._endReason;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionEndedMessageEventParser.as::flush()
     flush(): boolean
     {
         this._endReason = 0;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionEndedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

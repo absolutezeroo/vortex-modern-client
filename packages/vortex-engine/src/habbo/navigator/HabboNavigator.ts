@@ -55,6 +55,7 @@ const log = Logger.getLogger('habbo.navigator.HabboNavigator');
  */
 export class HabboNavigator extends Component implements IHabboNavigator 
 {
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_incomingMessages
     private _incomingMessages: IncomingMessages | null = null;
     private _isOpen: boolean = false;
     /**
@@ -65,12 +66,19 @@ export class HabboNavigator extends Component implements IHabboNavigator
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::_SafeStr_5440 (owned directly there)
     private _newNavigator: IHabboNewNavigator | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_roomSessionManager
     private _roomSessionManager: IRoomSessionManager | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_tracking
     private _tracking: IHabboTracking | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_catalog
     private _catalog: unknown | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_avatarManager
     private _avatarManager: IAvatarRenderManager | null = null;
 
     constructor(context: IContext) 
@@ -79,22 +87,28 @@ export class HabboNavigator extends Component implements IHabboNavigator
         this._data = new NavigatorData(this);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_sessionData
     private _sessionData: ISessionDataManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::get sessionData()
     get sessionData(): ISessionDataManager | null 
     {
         return this._sessionData;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_habboHelp
     private _habboHelp: IHabboHelp | null = null;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::get habboHelp()
     get habboHelp(): IHabboHelp | null 
     {
         return this._habboHelp;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::get communication()
     get communication(): IHabboCommunicationManager 
     {
         if(!this._communication) 
@@ -104,23 +118,28 @@ export class HabboNavigator extends Component implements IHabboNavigator
         return this._communication;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/HabboNavigator.as::_data
     private _data: NavigatorData;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::get data()
     get data(): NavigatorData 
     {
         return this._data;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::get homeRoomId()
     get homeRoomId(): number 
     {
         return this._data.homeRoomId;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::get enteredGuestRoomData()
     get enteredGuestRoomData(): GuestRoomData | null 
     {
         return this._data.enteredGuestRoom;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::get visibleEventCategories()
     get visibleEventCategories(): EventCategory[] 
     {
         return this._data.visibleEventCategories;
@@ -235,6 +254,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
         ];
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::goToHomeRoom()
     goToHomeRoom(): boolean 
     {
         if(this._data.homeRoomId < 1) 
@@ -249,11 +269,13 @@ export class HabboNavigator extends Component implements IHabboNavigator
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::goToPrivateRoom()
     goToPrivateRoom(roomId: number): void 
     {
         this.send(new GetGuestRoomMessageComposer(roomId, false, true));
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::goToRoomNetwork()
     goToRoomNetwork(roomId: number, useHomeRoom: boolean): void 
     {
         this.closeRoomInfo();
@@ -269,6 +291,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
         log.debug(`Go to room network: ${roomId}, homeRoom=${homeRoomId}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::goToRoom()
     goToRoom(roomId: number, closeNavigator: boolean = true, password: string = '', _roomCategory: number = -1, skipOpc: boolean = false): void 
     {
         log.info(`Going to room: ${roomId}`);
@@ -287,6 +310,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
         this._roomSessionManager.gotoRoom(roomId, password, '', skipOpc);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::performTagSearch()
     performTagSearch(tag: string): void 
     {
         let searchTag = tag;
@@ -301,6 +325,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
         log.debug(`Tag search: ${searchTag}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::performTextSearch()
     performTextSearch(searchText: string): void 
     {
         this.send(new RoomTextSearchMessageComposer(searchText));
@@ -308,6 +333,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
         log.debug(`Text search: ${searchText}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::performGuildBaseSearch()
     performGuildBaseSearch(): void 
     {
         this.send(new MyGuildBasesSearchMessageComposer());
@@ -315,6 +341,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
         log.debug('Guild base search');
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::performCompetitionRoomsSearch()
     performCompetitionRoomsSearch(goalId: number, pageIndex: number): void 
     {
         if(this._data.isLoading()) 
@@ -334,6 +361,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
         log.debug(`Competition rooms search: goal=${goalId}, page=${pageIndex}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::showOwnRooms()
     showOwnRooms(): void 
     {
         this.send(new MyRoomsSearchMessageComposer());
@@ -343,6 +371,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
         log.debug('Showing own rooms');
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::hasRoomRightsButIsNotOwner()
     hasRoomRightsButIsNotOwner(roomId: number): boolean 
     {
         // Would check with room session manager
@@ -351,11 +380,13 @@ export class HabboNavigator extends Component implements IHabboNavigator
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::removeRoomRights()
     removeRoomRights(roomId: number): void 
     {
         this.send(new RemoveOwnRoomRightsRoomMessageComposer(roomId));
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::startRoomCreation()
     startRoomCreation(): void 
     {
         log.debug('Starting room creation');
@@ -366,6 +397,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
         this.send(new CreateFlatMessageComposer(name, description, model, categoryId, maxUsers, tradeMode));
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::openNavigator()
     openNavigator(): void 
     {
         if(this._isOpen) return;
@@ -375,6 +407,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
         log.debug('Navigator opened');
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::closeNavigator()
     closeNavigator(): void 
     {
         if(!this._isOpen) return;
@@ -421,16 +454,19 @@ export class HabboNavigator extends Component implements IHabboNavigator
         return this._newNavigator?.legacyWrapper?.roomInfoViewCtrl ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::canRateRoom()
     canRateRoom(): boolean 
     {
         return this._data.canRate;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::isRoomFavorite()
     isRoomFavorite(roomId: number): boolean 
     {
         return this._data.isRoomFavourite(roomId);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::isRoomHome()
     isRoomHome(roomId: number): boolean 
     {
         return this._data.isRoomHome(roomId);
@@ -442,6 +478,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      *
      * @param composer - The message composer to send
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::send()
     public send(composer: IMessageComposer<unknown[]>): void 
     {
         const connection = this._communication?.connection;
@@ -460,6 +497,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * @returns The window, or null
      * @see source_as_win63/habbo/navigator/HabboNavigator.as getXmlWindow()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::getXmlWindow()
     getXmlWindow(xmlFileName: string, layer: number = 1): IWindow | null 
     {
         if(!this._windowManager) 
@@ -486,6 +524,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * @returns The localized text, or the key itself as fallback
      * @see source_as_win63/habbo/navigator/HabboNavigator.as getText()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::getText()
     getText(key: string): string 
     {
         if(!this._localization) return key;
@@ -502,6 +541,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * @returns The modified string
      * @see source_as_win63/habbo/navigator/HabboNavigator.as registerParameter()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::registerParameter()
     registerParameter(key: string, param: string, value: string): string 
     {
         if(!this._localization) return key;
@@ -513,6 +553,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * Gets a button image wrapper window.
      * Stub — returns null until asset system is wired.
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::getButton()
     getButton(_assetName: string, _stateSuffix: string, _callback: (event: WindowEvent, window: IWindow) => void, _x: number = 0, _y: number = 0, _index: number = 0): IWindowContainer | null
     {
         return null;
@@ -522,6 +563,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * Refreshes a button's visibility and callback.
      * Stub — no-op until window system is wired.
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::refreshButton()
     refreshButton(_container: IWindowContainer, _name: string, _visible: boolean, _callback: (event: WindowEvent, window: IWindow) => void, _index: number, _tooltip: string | null = null): void
     {
         // Stub
@@ -531,6 +573,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * Gets a button image bitmap.
      * Stub — returns null until asset system is wired.
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::getButtonImage()
     getButtonImage(_assetName: string, _suffix: string = '_png'): unknown | null 
     {
         return null;
@@ -540,6 +583,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * Opens the catalog club page.
      * Stub — no-op until catalog is wired.
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::openCatalogClubPage()
     openCatalogClubPage(_source: string): void 
     {
         log.debug('openCatalogClubPage');
@@ -549,6 +593,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * Opens the catalog room ads page.
      * Stub — no-op until catalog is wired.
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::openCatalogRoomAdsPage()
     openCatalogRoomAdsPage(): void 
     {
         log.debug('openCatalogRoomAdsPage');
@@ -558,6 +603,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * Opens the catalog room ads extend page.
      * Stub — no-op until catalog is wired.
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::openCatalogRoomAdsExtendPage()
     openCatalogRoomAdsExtendPage(_eventName: string, _eventDesc: string, _eventDate: Date, _eventCatId: number): void 
     {
         log.debug('openCatalogRoomAdsExtendPage');
@@ -566,6 +612,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
     /**
      * Shows favourite rooms in the navigator.
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::showFavouriteRooms()
     showFavouriteRooms(): void 
     {
         this.send(new MyFavouriteRoomsSearchMessageComposer());
@@ -578,6 +625,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
     /**
      * Shows room visit history.
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::showHistoryRooms()
     showHistoryRooms(): void 
     {
         this.send(new MyRoomHistorySearchMessageComposer());
@@ -590,6 +638,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
     /**
      * Shows frequently visited rooms.
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::showFrequentRooms()
     showFrequentRooms(): void 
     {
         this.send(new MyFrequentRoomHistorySearchMessageComposer());
@@ -602,6 +651,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
     /**
      * Returns to the navigator main view.
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::goToMainView()
     goToMainView(): void 
     {
         log.debug('Go to main view');
@@ -614,6 +664,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * @returns Whether the perk is allowed
      * @see sources/win63_version/habbo/navigator/HabboNavigator.as isPerkAllowed()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::isPerkAllowed()
     isPerkAllowed(perkCode: string): boolean 
     {
         if(this._sessionData) 
@@ -642,6 +693,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * @param value - Optional numeric value
      * @see sources/win63_version/habbo/navigator/HabboNavigator.as trackGoogle()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::trackGoogle()
     trackGoogle(category: string, action: string, value: number = -1): void 
     {
         if(this._tracking) 
@@ -659,6 +711,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * @param value - Optional numeric value
      * @see sources/win63_version/habbo/navigator/HabboNavigator.as trackNavigationDataPoint()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::trackNavigationDataPoint()
     trackNavigationDataPoint(category: string, action: string, label: string = '', value: number = 0): void 
     {
         if(this._tracking) 
@@ -673,6 +726,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * @param link - The link URL to handle
      * @see sources/win63_version/habbo/navigator/HabboNavigator.as linkReceived()
      */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::linkReceived()
     linkReceived(link: string): void 
     {
         log.trace(`Link received: ${link}`);

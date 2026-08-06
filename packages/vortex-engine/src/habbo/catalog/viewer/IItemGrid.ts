@@ -7,9 +7,12 @@ import type {IGridItem} from './IGridItem';
  */
 export interface IItemGrid
 {
+    // AS3: sources/win63_version/habbo/catalog/viewer/IItemGrid.as::select()
     select(item: IGridItem, selected: boolean): void;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/IItemGrid.as::startDragAndDrop()
     startDragAndDrop(item: IGridItem): boolean;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/IItemGrid.as::dispose()
     dispose(): void;
 }

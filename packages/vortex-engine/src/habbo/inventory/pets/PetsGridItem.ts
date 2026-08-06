@@ -24,14 +24,17 @@ export class PetsGridItem
 {
     // AS3: THUMB_COLOR_NORMAL / THUMB_COLOR_UNSEEN.
     private static readonly THUMB_COLOR_NORMAL: number = 13421772;
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsGridItem.as::THUMB_COLOR_UNSEEN
     private static readonly THUMB_COLOR_UNSEEN: number = 10275685;
 
     private _view: PetsView;
     private _pet: Pet;
     private _windowManager: IHabboWindowManager;
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsGridItem.as::_window
     private _window: IWindowContainer | null = null;
     private _bgColorWindow: IWindow | null = null;
     private _isSelected: boolean = false;
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsGridItem.as::_isUnseen
     private _isUnseen: boolean;
     private _pressed: boolean = false;
     private _imageDownloadId: number = -1;
@@ -90,21 +93,25 @@ export class PetsGridItem
         this.updateStatusGraphics();
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsGridItem.as::get window()
     get window(): IWindowContainer | null
     {
         return this._window;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsGridItem.as::get pet()
     get pet(): Pet
     {
         return this._pet;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsGridItem.as::get imageDownloadId()
     get imageDownloadId(): number
     {
         return this._imageDownloadId;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsGridItem.as::set imageDownloadId()
     set imageDownloadId(value: number)
     {
         this._imageDownloadId = value;
@@ -220,6 +227,7 @@ export class PetsGridItem
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsGridItem.as::dispose()
     dispose(): void
     {
         this._bgColorWindow = null;

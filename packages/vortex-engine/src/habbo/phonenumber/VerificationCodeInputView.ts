@@ -49,6 +49,7 @@ export class VerificationCodeInputView
      *
      * Turns the code red and re-enables the field, so the player can correct it in place.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/VerificationCodeInputView.as::handleSubmitFailure()
     handleSubmitFailure(resultCode: number): void
     {
         this._phoneNumber?.windowManager?.alert(
@@ -76,6 +77,7 @@ export class VerificationCodeInputView
      *
      * Public in AS3, though only this class calls it.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/VerificationCodeInputView.as::showRetry()
     showRetry(): void
     {
         const link = this._window?.findChildByName('did_not_receive_code_link');
@@ -91,6 +93,7 @@ export class VerificationCodeInputView
      * The parameter is declared and ignored in AS3 — the remaining time is read from the
      * component's `retryEnableTime` instead.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/VerificationCodeInputView.as::showWaitForRetry()
     showWaitForRetry(_seconds: number = 0): void
     {
         const link = this._window?.findChildByName('did_not_receive_code_link');
@@ -184,6 +187,7 @@ export class VerificationCodeInputView
      * One procedure for every control, on WME_CLICK — the collect dialog uses WME_DOWN for the
      * same job.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/VerificationCodeInputView.as::onInputButtons()
     private onInputButtons(event: WindowEvent, window: IWindow): void
     {
         if(event.type !== WindowMouseEvent.CLICK)
@@ -235,6 +239,7 @@ export class VerificationCodeInputView
      * Substitutes the remaining seconds into `phone.number.verify.wait.remaining` and stops itself
      * once they reach zero, swapping the label back for the retry link.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/VerificationCodeInputView.as::onWaitTimer()
     private onWaitTimer(): void
     {
         const template = this._phoneNumber?.localizationManager

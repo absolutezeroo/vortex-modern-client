@@ -16,6 +16,7 @@ export class ModerateRoomMessageComposer extends MessageComposer<unknown[]>
         this._data = [roomId, lockDoor ? 1 : 0, changeTitle ? 1 : 0, kickAll ? 1 : 0];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/moderator/ModerateRoomMessageComposer.as::getMessageArray()
     getMessageArray(): unknown[]
     {
         return this._data;

@@ -10,7 +10,9 @@ import {CommunityGoalWidget} from './CommunityGoalWidget';
  */
 export class CommunityGoalVsModeWidget extends CommunityGoalWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidget.as::NEEDLE_LEVELS
     private static readonly NEEDLE_LEVELS: number[] = [-3, -2, -1, 0, 1, 2, 3];
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidget.as::NEEDLE_FRAMES
     private static readonly NEEDLE_FRAMES: number[] = [0, 0, 4.75, 11.5, 16.25, 23, 23];
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalVsModeWidget.as::CommunityGoalVsModeWidget()

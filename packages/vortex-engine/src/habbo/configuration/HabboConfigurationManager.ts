@@ -23,7 +23,9 @@ const log = Logger.getLogger('habbo.configuration.HabboConfigurationManager');
  */
 export class HabboConfigurationManager extends Component implements IHabboConfigurationManager 
 {
+    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::INTERPOLATION_DEPTH_LIMIT
     private static readonly INTERPOLATION_DEPTH_LIMIT: number = 3;
+    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::REPLACE_CHAR
     private static readonly REPLACE_CHAR: string = '%';
 
     private _configurationData: Map<string, string> = new Map();
@@ -32,6 +34,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
     private _isConfigLoaded: boolean = false;
     private _isConfigReadOnly: boolean = false;
     private _embeddedConfigurationAssets: Map<string, string> = new Map();
+    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
     private _skipExternalVariables: boolean = false;
     private _skipLocalizations: boolean = false;
@@ -92,16 +95,19 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         }
     }
 
+    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::isInitialized()
     isInitialized(): boolean 
     {
         return this._isConfigLoaded;
     }
 
+    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::propertyExists()
     propertyExists(key: string): boolean 
     {
         return this._configurationData.has(key);
     }
 
+    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::getProperty()
     getProperty(key: string, params?: Record<string, string>): string 
     {
         if(!params) 
@@ -170,12 +176,14 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         }
     }
 
+    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::getBoolean()
     getBoolean(key: string): boolean 
     {
         const value = this._configurationData.get(key);
         return value !== undefined && (value === '1' || value.toLowerCase() === 'true');
     }
 
+    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::getInteger()
     getInteger(key: string, defaultValue: number): number 
     {
         const value = this._configurationData.get(key);
@@ -190,6 +198,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         return isNaN(parsed) ? defaultValue : parsed;
     }
 
+    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::interpolate()
     interpolate(value: string): string 
     {
         if(!value) 

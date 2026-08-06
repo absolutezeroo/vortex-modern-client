@@ -23,6 +23,7 @@ import {ForwardToACompetitionRoomMessageComposer} from '@habbo/communication/mes
 export class CommunityGoalHallOfFameWidget extends UserListWidget
 {
     private _hallOfFameData: CommunityGoalHallOfFameData | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalHallOfFameWidget.as::_schedulingStr
     private _schedulingStr: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalHallOfFameWidget.as::CommunityGoalHallOfFameWidget()
@@ -118,6 +119,7 @@ export class CommunityGoalHallOfFameWidget extends UserListWidget
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalHallOfFameWidget.as::loadConfigurationOverrides()
     private loadConfigurationOverrides(code: string): void
     {
         const landingView = this.landingView;

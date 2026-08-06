@@ -12,15 +12,22 @@ import type {IGraphicAsset} from '@room/object/visualization/utils/IGraphicAsset
  */
 export interface IAvatarImage
 {
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::get avatarSpriteData()
     readonly avatarSpriteData: IAvatarDataContainer | null;
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::get animationHasResetOnToggle()
     readonly animationHasResetOnToggle: boolean;
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::get mainAction()
     readonly mainAction: string;
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::get disposed()
     disposed?: boolean;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getCroppedImage()
     getCroppedImage(setType: string, scale?: number): any;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getImage()
     getImage(setType: string, hightlight: boolean, scale?: number): any;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getServerRenderData()
     getServerRenderData(): any[];
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/_SafeCls_1793.as::getHeadRegPoints()
@@ -38,43 +45,63 @@ export interface IAvatarImage
     // the interface. Added here because this port stores AvatarImage as IAvatarImage.
     resetCache(): void;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::setDirection()
     setDirection(setType: string, direction: number): void;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::setDirectionAngle()
     setDirectionAngle(setType: string, angle: number): void;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::updateAnimationByFrames()
     updateAnimationByFrames(frames?: number): void;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getScale()
     getScale(): string;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getSprites()
     getSprites(): ISpriteDataContainer[];
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getLayerData()
     getLayerData(sprite: ISpriteDataContainer): IAnimationLayerData | null;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getAsset()
     getAsset(name: string): IGraphicAsset | null;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getDirection()
     getDirection(): number;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getFigure()
     getFigure(): IAvatarFigureContainer;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getPartColor()
     getPartColor(partType: string): IPartColor | null;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::isAnimating()
     isAnimating(): boolean;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getCanvasOffsets()
     getCanvasOffsets(): number[];
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::initActionAppends()
     initActionAppends(): void;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::endActionAppends()
     endActionAppends(): void;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::appendAction()
     appendAction(actionType: string, ...args: any[]): boolean;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::isPlaceholder()
     isPlaceholder(): boolean;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::forceActionUpdate()
     forceActionUpdate(): void;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::resetAnimationFrameCounter()
     resetAnimationFrameCounter(): void;
 
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::disposeInactiveActionCache()
     disposeInactiveActionCache(): void;
 
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::dispose()
     dispose(): void;
 }

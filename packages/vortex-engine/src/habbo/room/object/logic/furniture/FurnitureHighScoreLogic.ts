@@ -15,8 +15,10 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureHighScoreLogic extends FurnitureLogic
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureHighScoreLogic.as::SHOW_WIDGET_IN_STATE
     private static readonly SHOW_WIDGET_IN_STATE = 1;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureHighScoreLogic.as::_state
     private _state: number = -1;
 
     override getEventTypes(): string[]

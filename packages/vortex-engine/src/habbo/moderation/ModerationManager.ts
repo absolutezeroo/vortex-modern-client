@@ -23,6 +23,7 @@ const log = Logger.getLogger('habbo.moderation.ModerationManager');
  */
 export class ModerationManager extends Component implements IHabboModeration
 {
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
 
     constructor(context: IContext)
@@ -30,11 +31,13 @@ export class ModerationManager extends Component implements IHabboModeration
         super(context);
     }
 
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
 
     /**
 	 * The session data manager dependency.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::get sessionDataManager()
     get sessionDataManager(): ISessionDataManager | null
     {
         return this._sessionDataManager;
@@ -45,16 +48,19 @@ export class ModerationManager extends Component implements IHabboModeration
     /**
 	 * The message handler for this moderation component.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::get messageHandler()
     get messageHandler(): ModerationMessageHandler | null
     {
         return this._messageHandler;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/ModerationManager.as::_issueManager
     private _issueManager: IssueManager | null = null;
 
     /**
 	 * The issue manager for this moderation component.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::get issueManager()
     get issueManager(): IssueManager | null
     {
         return this._issueManager;
@@ -80,11 +86,13 @@ export class ModerationManager extends Component implements IHabboModeration
     /**
 	 * The current flat (room) ID the user is in.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::get currentFlatId()
     get currentFlatId(): number
     {
         return this._currentFlatId;
     }
 
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::set currentFlatId()
     set currentFlatId(value: number)
     {
         this._currentFlatId = value;
@@ -93,6 +101,7 @@ export class ModerationManager extends Component implements IHabboModeration
     /**
 	 * The communication connection.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::get connection()
     get connection(): IConnection | null
     {
         return this._communication?.connection ?? null;
@@ -102,6 +111,7 @@ export class ModerationManager extends Component implements IHabboModeration
 	 * Whether the current user has moderator privileges.
 	 * Checks if the user has security level 5 or higher.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::get isModerator()
     get isModerator(): boolean
     {
         return this._sessionDataManager?.hasSecurity(5) ?? false;
@@ -143,6 +153,7 @@ export class ModerationManager extends Component implements IHabboModeration
 	 * @param userId - The ID of the selected user
 	 * @param userName - The name of the selected user
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::userSelected()
     userSelected(userId: number, userName: string): void
     {
         log.debug('User selected:', userId, userName);
@@ -153,6 +164,7 @@ export class ModerationManager extends Component implements IHabboModeration
 	 *
 	 * @param roomId - The room ID to navigate to
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::goToRoom()
     goToRoom(roomId: number): void
     {
         this.context.createLinkEvent('navigator/goto/' + roomId);
@@ -164,6 +176,7 @@ export class ModerationManager extends Component implements IHabboModeration
 	 * @param groupId - The group ID
 	 * @param threadId - The thread ID
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::openThread()
     openThread(groupId: number, threadId: number): void
     {
         this.context.createLinkEvent('groupforum/' + groupId + '/' + threadId);
@@ -176,6 +189,7 @@ export class ModerationManager extends Component implements IHabboModeration
 	 * @param threadId - The thread ID
 	 * @param messageId - The message ID
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::openThreadMessage()
     openThreadMessage(groupId: number, threadId: number, messageId: number): void
     {
         this.context.createLinkEvent('groupforum/' + groupId + '/' + threadId + '/' + messageId);
@@ -187,6 +201,7 @@ export class ModerationManager extends Component implements IHabboModeration
 	 * @param action - The action performed
 	 * @param label - A label for the event
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::logEvent()
     logEvent(action: string, label: string): void
     {
         log.debug('Moderation event:', action, label);

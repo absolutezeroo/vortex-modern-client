@@ -15,7 +15,9 @@ import type {HabboTracking} from './HabboTracking';
 export class LagWarningLogger
 {
     private _lastReportTime: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/LagWarningLogger.as::_warningCount
     private _warningCount: number = 0;
+    // AS3: .../src/com/sulake/habbo/tracking/LagWarningLogger.as::_habboTracking
     private _habboTracking: HabboTracking;
 
     constructor(tracking: HabboTracking)
@@ -26,6 +28,7 @@ export class LagWarningLogger
     /**
 	 * Whether lag warning logging is enabled
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/LagWarningLogger.as::get enabled()
     private get enabled(): boolean
     {
         return this._habboTracking.getBoolean('lagWarningLog.enabled');
@@ -34,6 +37,7 @@ export class LagWarningLogger
     /**
 	 * The interval in milliseconds between warning reports
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/LagWarningLogger.as::get warningInterval()
     private get warningInterval(): number
     {
         return this._habboTracking.getInteger('lagWarningLog.interval.seconds', 10) * 1000;
@@ -62,6 +66,7 @@ export class LagWarningLogger
 	 *
 	 * @param currentTime Current time in milliseconds
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/LagWarningLogger.as::update()
     update(currentTime: number): void
     {
         this.reportWarningsAsNeeded(currentTime);
@@ -70,6 +75,7 @@ export class LagWarningLogger
     /**
 	 * Report accumulated warnings if the interval has elapsed
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/LagWarningLogger.as::reportWarningsAsNeeded()
     private reportWarningsAsNeeded(currentTime: number): void
     {
         if(this._warningCount === 0)

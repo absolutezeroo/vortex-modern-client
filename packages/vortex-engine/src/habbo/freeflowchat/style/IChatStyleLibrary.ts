@@ -8,7 +8,9 @@ import type {IChatStyle} from './IChatStyle';
  */
 export interface IChatStyleLibrary
 {
+    // AS3: .../src/com/sulake/habbo/freeflowchat/style/_SafeCls_1946.as::getStyleIds()
     getStyleIds(): number[];
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/style/_SafeCls_1946.as::getStyle()
     getStyle(styleId: number): IChatStyle | null;
 }

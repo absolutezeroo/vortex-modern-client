@@ -43,6 +43,7 @@ export class HelpMessageHandler
 {
     private _help: HabboHelp;
     private _communication: IHabboCommunicationManager;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_messageEvents
     private _messageEvents: IMessageEvent[] = [];
 
     constructor(help: HabboHelp, communication: IHabboCommunicationManager)
@@ -68,6 +69,7 @@ export class HelpMessageHandler
     /**
 	 * Dispose of this handler and unregister all message events
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -84,6 +86,7 @@ export class HelpMessageHandler
     /**
 	 * Register a message event with the communication manager
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::addMessageEvent()
     private addMessageEvent(event: IMessageEvent): void
     {
         this._communication.addMessageEvent(event);
@@ -152,6 +155,7 @@ export class HelpMessageHandler
         log.trace('CallForHelpPendingCallsDeleted received');
     }
 
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onCallForHelpDisabledNotify()
     private onCallForHelpDisabledNotify(_event: IMessageEvent): void
     {
         log.trace('CallForHelpDisabledNotify received');
@@ -169,6 +173,7 @@ export class HelpMessageHandler
         log.trace('CfhTopicsInit received');
     }
 
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onGuideReportingStatus()
     private onGuideReportingStatus(_event: IMessageEvent): void
     {
         log.trace('GuideReportingStatus received');

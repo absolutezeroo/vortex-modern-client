@@ -15,6 +15,7 @@ export class SetRelationshipStatusMessageComposer extends MessageComposer<Constr
         this._data = [friendId, relationshipStatus];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/SetRelationshipStatusMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

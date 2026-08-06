@@ -15,6 +15,7 @@ export class CallForHelpFromPhotoMessageComposer extends MessageComposer<Constru
         this._data = [message, topicId, reportedUserId, roomId, photoItemId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/CallForHelpFromPhotoMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

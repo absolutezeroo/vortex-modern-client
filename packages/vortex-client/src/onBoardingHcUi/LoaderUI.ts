@@ -63,6 +63,7 @@ export class LoaderUI
      * `_arg_5` sets multiline AND wordWrap; `_arg_6` makes the field an input. The trailing
      * `width = textWidth; height = textHeight` is AS3 shedding Flash's 2px gutter after autoSize.
      */
+    // AS3: .../src/onBoardingHcUi/LoaderUI.as::createTextField()
     public static createTextField(
         text: string,
         size: number,
@@ -105,6 +106,7 @@ export class LoaderUI
      * The filters are cloned, as in AS3 — a shared filter instance would be mutated by whoever
      * touched it next.
      */
+    // AS3: .../src/onBoardingHcUi/LoaderUI.as::addEtching()
     public static addEtching(target: DisplayObject, negative: boolean = false): void
     {
         target.filters = [negative ? LoaderUI.NEGATIVE_ETCHING_FILTER.clone() : LoaderUI.ETCHING_FILTER.clone()];
@@ -191,6 +193,7 @@ export class LoaderUI
      *
      * `_arg_3` is a string of anchor letters, tested with indexOf — so "lt" applies both.
      */
+    // AS3: .../src/onBoardingHcUi/LoaderUI.as::alignAnchors()
     public static alignAnchors(anchor: DisplayObject, offset: number, anchors: string, ...targets: DisplayObject[]): void
     {
         for(const target of targets)
@@ -233,6 +236,7 @@ export class LoaderUI
      * `_arg_4` is declared and never read in the AS3 — kept in the signature so call sites stay
      * a literal transcription.
      */
+    // AS3: .../src/onBoardingHcUi/LoaderUI.as::createBalloon()
     public static createBalloon(
         width: number,
         height: number,
@@ -316,6 +320,7 @@ export class LoaderUI
      * The caption sits ABOVE the frame (negative y), which is what puts an `InputField`'s label
      * over its box.
      */
+    // AS3: .../src/onBoardingHcUi/LoaderUI.as::createFrame()
     public static createFrame(caption: string, subCaption: string, area: Rectangle, style: number = 1): Sprite
     {
         const frame = new Sprite();
@@ -368,6 +373,7 @@ export class LoaderUI
      * AS3 draws nine bitmap-filled rectangles and then sets `scale9Grid`, so the shape re-slices
      * on resize; `Scale9Shape` is that behaviour (see its header).
      */
+    // AS3: .../src/onBoardingHcUi/LoaderUI.as::createScale9GridShapeFromImage()
     public static createScale9GridShapeFromImage(source: BitmapData, grid: Rectangle): Scale9Shape
     {
         return new Scale9Shape(source, grid);

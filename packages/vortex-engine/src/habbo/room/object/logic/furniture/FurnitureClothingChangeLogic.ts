@@ -86,6 +86,7 @@ export class FurnitureClothingChangeLogic extends FurnitureLogic
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureClothingChangeLogic.as::updateClothingData()
     private updateClothingData(data: string): void
     {
         if(data !== null && data.length > 0)

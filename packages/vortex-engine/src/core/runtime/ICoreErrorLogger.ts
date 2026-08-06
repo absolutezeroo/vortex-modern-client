@@ -15,5 +15,6 @@ export interface ICoreErrorLogger
     /**
 	 * Log a non-fatal error
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ICoreErrorLogger.as::logError()
     logError(message: string): void;
 }

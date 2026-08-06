@@ -25,13 +25,16 @@ export class ChatStyleGridView implements IDisposable
         if(this._window) this._window.visible = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleGridView.as::_window
     private _window: IWindowContainer | null;
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleGridView.as::get window()
     get window(): IWindowContainer | null 
     {
         return this._window;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleGridView.as::get disposed()
     get disposed(): boolean 
     {
         return this._window === null;

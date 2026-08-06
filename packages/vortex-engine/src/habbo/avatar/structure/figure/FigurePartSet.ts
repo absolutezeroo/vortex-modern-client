@@ -160,6 +160,7 @@ export class FigurePartSet implements IFigurePartSet
         return this._parts;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::_hiddenLayers
     private _hiddenLayers: string[];
 
     // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::get hiddenLayers()

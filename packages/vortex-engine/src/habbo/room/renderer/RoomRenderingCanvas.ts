@@ -57,24 +57,39 @@ interface IObjectSpriteCache {
  */
 export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface 
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_sortableSpriteList
     private _sortableSpriteList: SortableSprite[] = [];
     private _objectSpriteCaches: Map<string, IObjectSpriteCache> = new Map();
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_spritePool
     private _spritePool: ExtendedSprite[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_spriteCount
     private _spriteCount: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_activeSpriteCount
     private _activeSpriteCount: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_mouseActiveObjects
     private _mouseActiveObjects: Map<string, ObjectMouseData> = new Map();
+    // AS3: sources/win63_version/room/renderer/class_3523.as::_eventCache
     private _eventCache: Map<string, RoomSpriteMouseEvent> = new Map();
     private _mouseLocationX: number = 0;
     private _mouseLocationY: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_mouseOldX
     private _mouseOldX: number = -10000000;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_mouseOldY
     private _mouseOldY: number = -10000000;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_mouseCheckCount
     private _mouseCheckCount: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_mouseSpriteWasHit
     private _mouseSpriteWasHit: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_eventId
     private _eventId: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_renderTimeStamp
     private _renderTimeStamp: number = -1;
+    // AS3: sources/win63_version/room/renderer/class_3523.as::_skipObjectUpdate
     private _skipObjectUpdate: boolean = false;
+    // AS3: sources/win63_version/room/renderer/class_3523.as::_runningSlow
     private _runningSlow: boolean = false;
     private _updateIntervalFrameCount: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_averageUpdateInterval
     private _averageUpdateInterval: number = 0;
     private _averageRenderTime: number = 0;
     private _lastRenderTime: number = 0;
@@ -86,9 +101,13 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     private _lastRenderedWidth: number = -1;
     private _lastRenderedHeight: number = -1;
     private readonly _roomObjectContainer: IRoomSpriteCanvasContainer;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_master
     private readonly _master: Container;
+    // AS3: sources/win63_version/room/renderer/class_3523.as::_display
     private readonly _display: Container;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_spriteMask
     private _spriteMask: Graphics | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_id
     private readonly _id: number;
 
     constructor(container: IRoomSpriteCanvasContainer, id: number, width: number, height: number, scale: number) 
@@ -157,6 +176,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         }
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_useMask
     private _useMask: boolean = false;
 
     // AS3: sources/win63_version/room/renderer/class_3523.as::get useMask()
@@ -182,8 +202,10 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         return this._id;
     }
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::_geometry
     private _geometry: RoomGeometry;
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::get geometry()
     get geometry(): RoomGeometry 
     {
         return this._geometry;
@@ -191,6 +213,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
     private _width: number = 0;
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::get width()
     get width(): number 
     {
         return this._width * this._scale;
@@ -198,18 +221,22 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
     private _height: number = 0;
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::get height()
     get height(): number 
     {
         return this._height * this._scale;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_screenOffsetX
     private _screenOffsetX: number = 0;
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::get screenOffsetX()
     get screenOffsetX(): number 
     {
         return this._screenOffsetX;
     }
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::set screenOffsetX()
     set screenOffsetX(value: number) 
     {
         if(value === this._screenOffsetX) 
@@ -222,13 +249,16 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this._displayTransformDirty = true;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_screenOffsetY
     private _screenOffsetY: number = 0;
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::get screenOffsetY()
     get screenOffsetY(): number 
     {
         return this._screenOffsetY;
     }
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::set screenOffsetY()
     set screenOffsetY(value: number) 
     {
         if(value === this._screenOffsetY) 
@@ -241,13 +271,16 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this._displayTransformDirty = true;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_scale
     private _scale: number = 1;
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::get scale()
     get scale(): number 
     {
         return this._scale;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_mouseListener
     private _mouseListener: IRoomRenderingCanvasMouseListener | null = null;
 
     get mouseListener(): IRoomRenderingCanvasMouseListener | null 
@@ -255,6 +288,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         return this._mouseListener;
     }
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::set mouseListener()
     set mouseListener(value: IRoomRenderingCanvasMouseListener | null) 
     {
         this._mouseListener = value;
@@ -271,6 +305,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * The display container (added to PixiJS stage).
      * AS3: get displayObject() returns _master.
      */
+    // AS3: sources/win63_version/room/renderer/class_3523.as::get container()
     get container(): Container 
     {
         return this._master;
@@ -332,6 +367,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * Initialize canvas dimensions.
      * AS3: initialize(width, height)
      */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_3074.as::initialize()
     initialize(width: number, height: number): void 
     {
         if(width < 1) width = 1;
@@ -484,6 +520,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      *
      * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 1005
      */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_3074.as::handleMouseEvent()
     handleMouseEvent(
         x: number, y: number, type: string,
         altKey: boolean = false, ctrlKey: boolean = false,
@@ -533,6 +570,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      *
      * @see sources/win63_version/room/renderer/class_3523.as line 1346
      */
+    // AS3: sources/win63_version/room/renderer/class_3523.as::getId()
     getId(): number 
     {
         return this._id;
@@ -544,6 +582,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      *
      * @see sources/win63_version/room/renderer/class_3523.as line 1326
      */
+    // AS3: sources/win63_version/room/renderer/class_3523.as::update()
     update(): void 
     {
         if(this._mouseCheckCount === 0) 
@@ -572,6 +611,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this.update();
     }
 
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_3074.as::dispose()
     dispose(): void 
     {
         if(this._disposed) return;
@@ -617,6 +657,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this._disposed = true;
     }
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::roomObjectRemoved()
     roomObjectRemoved(objectId: string): void 
     {
         this.disposeObjectSpriteCache(objectId);
@@ -1353,6 +1394,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * Hide or pool unused sprites beyond the active count.
      * Based on AS3 RoomSpriteCanvas._Str_20677()
      */
+    // AS3: sources/win63_version/room/renderer/class_3523.as::cleanSprites()
     private cleanSprites(activeCount: number): void 
     {
         if(activeCount < this._activeSpriteCount || this._activeSpriteCount === 0) 
@@ -1376,6 +1418,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * Get an ExtendedSprite at the given display index.
      * AS3: getSprite()
      */
+    // AS3: sources/win63_version/room/renderer/class_3523.as::getSprite()
     private getSprite(index: number): ExtendedSprite | null 
     {
         if(index < 0 || index >= this._spriteCount) 
@@ -1602,6 +1645,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * Create a RoomSpriteMouseEvent.
      * Based on AS3 RoomSpriteCanvas._Str_11609()
      */
+    // AS3: sources/win63_version/room/renderer/class_3523.as::createMouseEvent()
     private createMouseEvent(
         x: number, y: number,
         localX: number, localY: number,
@@ -1649,6 +1693,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * Buffer a mouse event for later processing.
      * Based on AS3 RoomSpriteCanvas._Str_14715()
      */
+    // AS3: sources/win63_version/room/renderer/class_3523.as::bufferMouseEvent()
     private bufferMouseEvent(event: RoomSpriteMouseEvent, objectId: string): void 
     {
         this._eventCache.set(objectId, event);
@@ -1660,6 +1705,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      *
      * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 1175
      */
+    // AS3: sources/win63_version/room/renderer/class_3523.as::processMouseEvents()
     private processMouseEvents(): void 
     {
         for(const [objectId, event] of this._eventCache) 

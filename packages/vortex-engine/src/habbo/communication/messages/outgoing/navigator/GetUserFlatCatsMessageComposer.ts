@@ -16,6 +16,7 @@ export class GetUserFlatCatsMessageComposer extends MessageComposer<ConstructorP
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/GetUserFlatCatsMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

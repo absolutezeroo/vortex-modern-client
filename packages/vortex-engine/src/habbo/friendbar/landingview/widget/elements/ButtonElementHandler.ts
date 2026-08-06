@@ -18,7 +18,9 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
  */
 export class ButtonElementHandler implements IElementHandler, IDisposable, ILayoutNameProvider
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::_landingView
     private _landingView: HabboLandingView | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::_window
     private _window: IWindow | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::get layoutName()
@@ -60,6 +62,7 @@ export class ButtonElementHandler implements IElementHandler, IDisposable, ILayo
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::onClick()
     protected onClick(): void
     {
     }
@@ -69,11 +72,13 @@ export class ButtonElementHandler implements IElementHandler, IDisposable, ILayo
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::get landingView()
     protected get landingView(): HabboLandingView | null
     {
         return this._landingView;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4524.as::get window()
     protected get window(): IWindow | null
     {
         return this._window;

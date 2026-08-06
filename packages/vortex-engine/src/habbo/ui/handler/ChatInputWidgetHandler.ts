@@ -24,6 +24,7 @@ import type {RoomSessionChatEvent} from '@habbo/session/events/RoomSessionChatEv
 export class ChatInputWidgetHandler implements IRoomWidgetHandler
 {
     private _disposed: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::_container
     private _container: IRoomWidgetHandlerContainer | null = null;
     private _widget: RoomChatInputWidget | null = null;
     /** Whether the `:showstats` FPS overlay is currently toggled on. */
@@ -35,6 +36,7 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
         return this._container;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::set container()
     public set container(value: IRoomWidgetHandlerContainer | null)
     {
         this._container = value;
@@ -153,6 +155,7 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
         return ['RSCE_FLOOD_EVENT'];
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::update()
     public update(): void
     {
     }

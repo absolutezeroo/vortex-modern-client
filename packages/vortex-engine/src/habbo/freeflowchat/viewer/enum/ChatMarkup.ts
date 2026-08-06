@@ -12,6 +12,7 @@
  */
 export class ChatMarkup
 {
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as::COLOUR_ARRAY
     static readonly COLOUR_ARRAY: [string, number][] = [
         ['red', 9115929],
         ['cyan', 32639],
@@ -28,6 +29,7 @@ export class ChatMarkup
         ['purple', 11767039]
     ];
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as::COLOUR_NAMES
     static readonly COLOUR_NAMES: string[] = ChatMarkup.COLOUR_ARRAY.map(([name]) => name);
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatMarkup.as::getColourArray()

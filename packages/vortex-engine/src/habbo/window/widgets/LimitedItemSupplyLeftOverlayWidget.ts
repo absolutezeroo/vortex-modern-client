@@ -20,9 +20,11 @@ import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class LimitedItemSupplyLeftOverlayWidget implements ILimitedItemSupplyLeftOverlayWidget 
 {
+    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemSupplyLeftOverlayWidget.as::TYPE
     public static readonly TYPE: string = 'limited_item_overlay_supply';
 
     private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemSupplyLeftOverlayWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
 
@@ -43,6 +45,7 @@ export class LimitedItemSupplyLeftOverlayWidget implements ILimitedItemSupplyLef
 
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemSupplyLeftOverlayWidget.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
@@ -50,11 +53,13 @@ export class LimitedItemSupplyLeftOverlayWidget implements ILimitedItemSupplyLef
 
     private _supplyLeft: number = 0;
 
+    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemSupplyLeftOverlayWidget.as::get supplyLeft()
     public get supplyLeft(): number 
     {
         return this._supplyLeft;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemSupplyLeftOverlayWidget.as::set supplyLeft()
     public set supplyLeft(value: number) 
     {
         this._supplyLeft = value;
@@ -79,11 +84,13 @@ export class LimitedItemSupplyLeftOverlayWidget implements ILimitedItemSupplyLef
 
     private _seriesSize: number = 0;
 
+    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemSupplyLeftOverlayWidget.as::get seriesSize()
     public get seriesSize(): number 
     {
         return this._seriesSize;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemSupplyLeftOverlayWidget.as::set seriesSize()
     public set seriesSize(value: number) 
     {
         this._seriesSize = value;
@@ -99,12 +106,14 @@ export class LimitedItemSupplyLeftOverlayWidget implements ILimitedItemSupplyLef
         }
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemSupplyLeftOverlayWidget.as::get serialNumber()
     public get serialNumber(): number 
     {
         // AS3: serialNumber always returns 0 for supply widget
         return 0;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemSupplyLeftOverlayWidget.as::set serialNumber()
     public set serialNumber(_value: number) 
     {
         // AS3: serialNumber setter is a no-op for supply widget
@@ -118,16 +127,19 @@ export class LimitedItemSupplyLeftOverlayWidget implements ILimitedItemSupplyLef
         return this._supplyLeft <= 0;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemSupplyLeftOverlayWidget.as::get properties()
     public get properties(): PropertyStruct[] 
     {
         return [];
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemSupplyLeftOverlayWidget.as::set properties()
     public set properties(_values: PropertyStruct[]) 
     {
         // AS3: properties setter is a no-op for this widget
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemSupplyLeftOverlayWidget.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;

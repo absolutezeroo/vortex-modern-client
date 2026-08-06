@@ -22,6 +22,7 @@ export class MoveObjectMessageComposer extends MessageComposer<[number, number, 
         this._direction = direction;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/engine/MoveObjectMessageComposer.as::getMessageArray()
     getMessageArray(): [number, number, number, number]
     {
         return [this._objectId, this._x, this._y, this._direction];

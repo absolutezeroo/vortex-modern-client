@@ -17,6 +17,7 @@ export class SpinWheelOfFortuneMessageComposer extends MessageComposer<Construct
         this._data = [objectId];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2609/_SafeCls_3425.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

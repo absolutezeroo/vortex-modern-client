@@ -17,10 +17,12 @@ export class FrankRecyclerEmotion
 {
     private static readonly POOL: IStaticBitmapWrapperWindow[] = [];
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/franksemotions/FrankRecyclerEmotion.as::_bitmap
     private _bitmap: IStaticBitmapWrapperWindow | null;
 
     private _timer: ReturnType<typeof setInterval> | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/franksemotions/FrankRecyclerEmotion.as::_startTime
     private _startTime: number = 0;
 
     private _startY: number = 0;

@@ -32,8 +32,10 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
     public static readonly TYPE: string = 'product_icon';
 
     private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductIconWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductIconWidget.as::_disposed
     private _disposed: boolean = false;
     private _productInfo: IProductDisplayInfo | null = null;
     // AS3: _SafeStr_6491 - id of the pending async image request we're waiting on
@@ -121,26 +123,31 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         (badge?.widget as BadgeImageWidget | null)?.refresh();
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get productPreviewBitmap()
     private get productPreviewBitmap(): IBitmapWrapperWindow | null
     {
         return (this._root?.findChildByName('bitmap') as unknown as IBitmapWrapperWindow) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get badgeImageWidget()
     private get badgeImageWidget(): IWidgetWindow | null
     {
         return (this._root?.findChildByName('badge_image_widget') as unknown as IWidgetWindow) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get petImageWidget()
     private get petImageWidget(): IWidgetWindow | null
     {
         return (this._root?.findChildByName('pet_image_widget') as unknown as IWidgetWindow) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get unknownImageWindow()
     private get unknownImageWindow(): IStaticBitmapWrapperWindow | null
     {
         return (this._root?.findChildByName('unknown_image') as unknown as IStaticBitmapWrapperWindow) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get iconWindow()
     private get iconWindow(): IIconWindow | null
     {
         return (this._root?.findChildByName('icon') as unknown as IIconWindow) ?? null;
@@ -358,6 +365,7 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         this.setPreviewImage(cropped);
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductIconWidget.as::setUnknownImage()
     private setUnknownImage(): void
     {
         this.clearPreviewer();
@@ -367,6 +375,7 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         if(unknown) unknown.visible = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductIconWidget.as::setPreviewImage()
     private setPreviewImage(data: ImageBitmap | null): void
     {
         const preview = this.productPreviewBitmap;

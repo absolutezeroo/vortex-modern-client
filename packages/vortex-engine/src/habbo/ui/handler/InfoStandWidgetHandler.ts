@@ -130,6 +130,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
@@ -140,6 +141,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
     private _container: IRoomWidgetHandlerContainer | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::get container()
     public get container(): IRoomWidgetHandlerContainer | null 
     {
         return this._container;
@@ -489,6 +491,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     }
 
     // deferred with the pet view (stub).
+    // AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::update()
     public update(): void 
     {
     }
@@ -886,6 +889,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     }
 
     // not ported (user view is a stub).
+    // AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectNameMessage()
     private handleGetObjectNameMessage(_message: RoomWidgetRoomObjectMessage): void 
     {
     }

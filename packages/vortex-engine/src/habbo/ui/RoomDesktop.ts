@@ -95,18 +95,22 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 {
     public static readonly ROOM_VIEW_CREATED = 'ROOM_VIEW_CREATED';
     public static readonly ROOM_BACKGROUND_COLOR_CHANGED = 'ROOM_BACKGROUND_COLOR_CHANGED';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/RoomDesktop.as::_session
     private _session: IRoomSession;
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_assets
     private _assets: IAssetLibrary;
     private _colorTransitioner: ColorTransitioner;
     private _bgColorTransitioner: ColorTransitioner;
     private _widgetFactory: IRoomWidgetFactory | null = null;
     // Widget management
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/RoomDesktop.as::_widgets
     private _widgets: Map<string, unknown> = new Map();
     // AS3 keys these on an array of handlers per type, not one handler: every handler
     // registers for RETWE_OPEN_WIDGET/RETWE_CLOSE_WIDGET, so a single-handler map let
     // only the last-registered widget ever receive an open/close.
     private _widgetMessageHandlers: Map<string, IRoomWidgetHandler[]> = new Map();
     private _widgetEventHandlers: Map<string, IRoomWidgetHandler[]> = new Map();
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_updateListeners
     private _updateListeners: IRoomWidgetHandler[] = [];
     // Canvas state
     private _canvasIds: number[] = [];
@@ -114,6 +118,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     private _roomViewWindow: IWindow | null = null;
     private _roomCanvasDisplayObject: Container | null = null;
     // Color state
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_roomColor
     private _roomColor: number = 0xFFFFFF;
     // Zoom state
     private _zoomMomentum: number = 0;
@@ -145,69 +150,86 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._desktopEvents;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/RoomDesktop.as::_connection
     private _connection: IConnection | null;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get connection()
     public get connection(): IConnection | null 
     {
         return this._connection;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/RoomDesktop.as::_layoutManager
     private _layoutManager: RoomDesktopLayoutManager;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get layoutManager()
     public get layoutManager(): RoomDesktopLayoutManager 
     {
         return this._layoutManager;
     }
 
     // Manager references (injected via setters)
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get windowManager()
     public get windowManager(): IHabboWindowManager | null 
     {
         return this._windowManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set windowManager()
     public set windowManager(value: IHabboWindowManager | null) 
     {
         this._windowManager = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get roomEngine()
     public get roomEngine(): IRoomEngine | null 
     {
         return this._roomEngine;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set roomEngine()
     public set roomEngine(value: IRoomEngine | null) 
     {
         this._roomEngine = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get sessionDataManager()
     public get sessionDataManager(): ISessionDataManager | null 
     {
         return this._sessionDataManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set sessionDataManager()
     public set sessionDataManager(value: ISessionDataManager | null) 
     {
         this._sessionDataManager = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_roomSessionManager
     private _roomSessionManager: IRoomSessionManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get roomSessionManager()
     public get roomSessionManager(): IRoomSessionManager | null 
     {
         return this._roomSessionManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set roomSessionManager()
     public set roomSessionManager(value: IRoomSessionManager | null) 
     {
         this._roomSessionManager = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_config
     private _config: IHabboConfigurationManager | null = null;
 
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get config()
@@ -216,18 +238,22 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._config;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set config()
     public set config(value: IHabboConfigurationManager | null) 
     {
         this._config = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get localization()
     public get localization(): IHabboLocalizationManager | null 
     {
         return this._localization;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set localization()
     public set localization(value: IHabboLocalizationManager | null) 
     {
         this._localization = value;
@@ -258,16 +284,19 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_catalog
     private _catalog: IHabboCatalog | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get avatarRenderManager()
     private _avatarRenderManager: IAvatarRenderManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get avatarRenderManager()
     public get avatarRenderManager(): IAvatarRenderManager | null
     {
         return this._avatarRenderManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set avatarRenderManager()
     public set avatarRenderManager(value: IAvatarRenderManager | null)
     {
         this._avatarRenderManager = value;
@@ -279,11 +308,13 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._catalog;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set catalog()
     public set catalog(value: IHabboCatalog | null)
     {
         this._catalog = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_inventory
     private _inventory: IHabboInventory | null = null;
 
     // NOT from AS3: Vortex-only furni editor. Consumed by InfoStandFurniView to decide whether to
@@ -307,11 +338,13 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._inventory;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set inventory()
     public set inventory(value: IHabboInventory | null)
     {
         this._inventory = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_habboHelp
     private _habboHelp: IHabboHelp | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get habboHelp()
@@ -321,11 +354,13 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._habboHelp;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set habboHelp()
     public set habboHelp(value: IHabboHelp | null)
     {
         this._habboHelp = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_habboTracking
     private _habboTracking: IHabboTracking | null = null;
 
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboTracking()
@@ -334,11 +369,13 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._habboTracking;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set habboTracking()
     public set habboTracking(value: IHabboTracking | null) 
     {
         this._habboTracking = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_habboGroupsManager
     private _habboGroupsManager: IHabboGroupsManager | null = null;
 
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboGroupsManager()
@@ -383,8 +420,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._freeFlowChat = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_navigator
     private _navigator: IHabboNavigator | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get navigator()
     public get navigator(): IHabboNavigator | null 
     {
         return this._navigator;
@@ -396,8 +435,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._navigator = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_communicationManager
     private _communicationManager: IHabboCommunicationManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get communicationManager()
     public get communicationManager(): IHabboCommunicationManager | null 
     {
         return this._communicationManager;
@@ -409,8 +450,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._communicationManager = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_roomBackgroundColor
     private _roomBackgroundColor: number = 0x000000;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get roomBackgroundColor()
     public get roomBackgroundColor(): number 
     {
         return this._roomBackgroundColor;
@@ -425,6 +468,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._visible;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set visible()
     public set visible(value: boolean) 
     {
         this._visible = value;
@@ -437,16 +481,19 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this.syncRoomCanvasDisplayObject();
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get roomSession()
     public get roomSession(): IRoomSession 
     {
         return this._session;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get roomWidgetFactory()
     public get roomWidgetFactory(): IRoomWidgetFactory | null 
     {
         return this._widgetFactory;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set roomWidgetFactory()
     public set roomWidgetFactory(value: IRoomWidgetFactory | null) 
     {
         this._widgetFactory = value;
@@ -457,6 +504,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     // furni clicks here via container.userDefinedRoomEvents.stuffSelected(id).
     private _userDefinedRoomEvents: IHabboUserDefinedRoomEvents | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get userDefinedRoomEvents()
     public get userDefinedRoomEvents(): IHabboUserDefinedRoomEvents | null
     {
         return this._userDefinedRoomEvents;
@@ -468,16 +516,19 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._userDefinedRoomEvents = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set layout()
     public set layout(layoutName: string) 
     {
         this._layoutManager.setLayout(layoutName, this._windowManager!, this._config);
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::getFirstCanvasId()
     public getFirstCanvasId(): number 
     {
         return this._canvasIds.length > 0 ? this._canvasIds[0] : 1;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::getRoomViewRect()
     public getRoomViewRect(): { x: number; y: number; width: number; height: number } | null 
     {
         return this._layoutManager.roomViewRect;
@@ -580,6 +631,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._roomEngine?.activeRoomHasFreeFurniMovementsMode ?? false;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::addUpdateListener()
     public addUpdateListener(handler: IRoomWidgetHandler): void 
     {
         if(this._updateListeners.indexOf(handler) < 0) 
@@ -588,6 +640,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::removeUpdateListener()
     public removeUpdateListener(handler: IRoomWidgetHandler): void 
     {
         const index = this._updateListeners.indexOf(handler);
@@ -598,6 +651,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::init()
     public init(): void 
     {
         log.debug(`RoomDesktop initialized for room ${this._session.roomId}`);
@@ -609,6 +663,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
      *
      * @param canvasId - The canvas ID to create (typically 1)
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::createRoomView()
     public createRoomView(canvasId: number): void 
     {
         // Guard against double initialization (server can send height map twice)
@@ -941,6 +996,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         log.debug(`Widget created: ${type}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::disposeWidget()
     public disposeWidget(type: string): void 
     {
         const widget = this._widgets.get(type);
@@ -950,6 +1006,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._widgets.delete(type);
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::getWidget()
     public getWidget(type: string): unknown | null 
     {
         return this._widgets.get(type) ?? null;
@@ -959,6 +1016,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
      * Handles mouse events forwarded from the client UI layer.
      * Converts window coordinates to engine coordinates and forwards to RoomEngine.
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::canvasMouseHandler()
     public canvasMouseHandler(x: number, y: number, type: string, altKey: boolean, ctrlKey: boolean, shiftKey: boolean, buttonDown: boolean): void 
     {
         if(!this._roomEngine || this._canvasIds.length === 0) return;
@@ -1018,6 +1076,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     /**
      * Sets the room view foreground color (tint overlay).
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::setRoomViewColor()
     public setRoomViewColor(color: number, brightness: number): void 
     {
         const time = Date.now();
@@ -1028,6 +1087,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     /**
      * Sets the room background color (CSS div behind canvas).
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::setRoomBackgroundColor()
     public setRoomBackgroundColor(h: number, s: number, l: number): void 
     {
         const time = Date.now();
@@ -1040,6 +1100,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._desktopEvents.emit(RoomDesktop.ROOM_BACKGROUND_COLOR_CHANGED, {h, s, l});
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::roomObjectEventHandler()
     public roomObjectEventHandler(event: RoomEngineObjectEvent): void 
     {
         let translatedType: string | null = null;
@@ -1185,6 +1246,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     /**
      * Handles room engine events (mode changes, zoom, etc.).
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::roomEngineEventHandler()
     public roomEngineEventHandler(_event: RoomEngineEvent): void 
     {
         // Stub — will route to appropriate handling when widgets are ported
@@ -1194,6 +1256,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
      * Called each frame by RoomUI.update().
      * Updates color transitions, widget handlers, and zoom momentum.
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::update()
     public update(): void 
     {
         if(this._disposed) return;
@@ -1218,6 +1281,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;

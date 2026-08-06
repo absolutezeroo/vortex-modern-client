@@ -18,14 +18,18 @@ import {ClubBuyConfirmationDialog} from './ClubBuyConfirmationDialog';
  */
 export class ClubBuyController
 {
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::_visualization
     private _visualization: IVipBuyCatalogWidget | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::_catalog
     private _catalog: HabboCatalog | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::_offers
     private _offers: ClubBuyOfferData[] = [];
 
     private _confirmationDialog: ClubBuyConfirmationDialog | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::_disposed
     private _disposed: boolean = false;
 
     constructor(catalog: HabboCatalog, _connection: unknown)
@@ -33,6 +37,7 @@ export class ClubBuyController
         this._catalog = catalog;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -45,11 +50,13 @@ export class ClubBuyController
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::get catalog()
     get catalog(): HabboCatalog | null
     {
         return this._catalog;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::reset()
     reset(): void
     {
         for(const offer of this._offers)
@@ -60,6 +67,7 @@ export class ClubBuyController
         this._offers = [];
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::onOffers()
     onOffers(offers: ClubBuyOfferData[]): void
     {
         if(this._disposed) return;
@@ -107,6 +115,7 @@ export class ClubBuyController
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::getPromotedMonths()
     private getPromotedMonths(isGift: boolean): number[]
     {
         const result: number[] = [];
@@ -130,16 +139,19 @@ export class ClubBuyController
         return result;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::unRegisterVisualization()
     unRegisterVisualization(visualization: IVipBuyCatalogWidget): void
     {
         if(this._visualization === visualization) this._visualization = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::registerVisualization()
     registerVisualization(visualization: IVipBuyCatalogWidget): void
     {
         this._visualization = visualization;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::requestOffers()
     requestOffers(source: number): void
     {
         this._catalog?.getHabboClubOffers(source);
@@ -156,6 +168,7 @@ export class ClubBuyController
         this._confirmationDialog = new ClubBuyConfirmationDialog(this, offer, pageId);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::confirmSelection()
     confirmSelection(offer: ClubBuyOfferData, pageId: number): void
     {
         if(!this._catalog || !this._catalog.connection) return;
@@ -164,12 +177,14 @@ export class ClubBuyController
         this.closeConfirmation();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::closeConfirmation()
     closeConfirmation(): void
     {
         this._confirmationDialog?.dispose();
         this._confirmationDialog = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::getClubType()
     getClubType(): number
     {
         const purse = this._catalog?.getPurse();
@@ -182,36 +197,43 @@ export class ClubBuyController
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::get hasClub()
     get hasClub(): boolean
     {
         return (this._catalog?.getPurse()?.clubDays ?? 0) > 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::get windowManager()
     get windowManager(): IHabboWindowManager | null
     {
         return this._catalog?.windowManager ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::get localization()
     get localization(): IHabboLocalizationManager | null
     {
         return this._catalog?.localization ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::get assets()
     get assets(): IAssetLibrary | null
     {
         return this._catalog?.assets ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::get roomEngine()
     get roomEngine(): IRoomEngine | null
     {
         return this._catalog?.roomEngine ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::getProductData()
     getProductData(localizationId: string): IProductData | null
     {
         return this._catalog?.getProductData(localizationId) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyController.as::getPurse()
     getPurse(): Purse | null
     {
         return this._catalog?.getPurse() ?? null;

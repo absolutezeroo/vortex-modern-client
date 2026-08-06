@@ -13,12 +13,18 @@ import type {AvatarVisualization} from '../AvatarVisualization';
 
 export class NumberBubble implements IAvatarAddition 
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as::_avatar
     private _avatar: AvatarVisualization;
     private _assetName: string | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as::_scale
     private _scale: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as::_number
     private _number: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as::_numberValueFadeDirection
     private _numberValueFadeDirection: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as::_numberValueMoving
     private _numberValueMoving: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as::_numberValueMoveCounter
     private _numberValueMoveCounter: number = 0;
 
     constructor(id: number, value: number, avatar: AvatarVisualization) 
@@ -28,13 +34,16 @@ export class NumberBubble implements IAvatarAddition
         this._avatar = avatar;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as::_id
     private _id: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as::get id()
     get id(): number 
     {
         return this._id;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as::get disposed()
     get disposed(): boolean 
     {
         return this._avatar == null;
@@ -46,6 +55,7 @@ export class NumberBubble implements IAvatarAddition
      * @param sprite - The sprite to update
      * @param scale - The current visualization scale
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as::update()
     update(sprite: IRoomObjectSprite | null, scale: number): void 
     {
         if(!sprite) 
@@ -117,6 +127,7 @@ export class NumberBubble implements IAvatarAddition
      * @param sprite - The sprite to animate
      * @returns True if the animation caused a visual change
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as::animate()
     animate(sprite: IRoomObjectSprite | null): boolean 
     {
         if(!sprite) 
@@ -213,6 +224,7 @@ export class NumberBubble implements IAvatarAddition
     /**
      * Disposes of this addition and releases references.
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as::dispose()
     dispose(): void 
     {
         this._avatar = null!;

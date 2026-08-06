@@ -17,6 +17,7 @@ import {FurnitureVisualizationData} from './FurnitureVisualizationData';
 
 export class FurnitureVisualization extends RoomObjectSpriteVisualization 
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::Z_MULTIPLIER
     protected static readonly Z_MULTIPLIER: number = Math.sqrt(0.5);
     private static readonly UPDATE_INTERVAL: number = 41;
 
@@ -25,14 +26,17 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
     protected _layerCount: number = 0;
     protected _shadowLayerIndex: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_lastUpdateTime
     private _lastUpdateTime: number = -1000;
     private _objectUpdateCounter: number = -1;
     private _geometryDirection: number = NaN;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_selectedColor
     private _selectedColor: number = -1;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_invisibleLayer
     private _invisibleLayer: boolean = false;
     private _adClickUrl: string | null = null;
     private _clickHandling: boolean = false;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_assetNames
     private _assetNames: (string | null)[] = [];
     private _assetNamesHaveFrame: boolean[] = [];
     private _furnitureLift: number = 0;
@@ -43,12 +47,15 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
     private _cachedScale: number = 0;
     private _spriteTags: (string | null)[] = [];
     private _spriteAlphas: (number | null)[] = [];
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_spriteColors
     private _spriteColors: (number | null)[] = [];
     private _spriteXOffsets: (number | null)[] = [];
     private _spriteYOffsets: (number | null)[] = [];
     private _spriteZOffsets: (number | null)[] = [];
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_spriteMouseCaptures
     private _spriteMouseCaptures: (boolean | null)[] = [];
     private _spriteInks: (number | null)[] = [];
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_updatedLayers
     private _updatedLayers: number = 0;
     private _lookThroughChanged: boolean = false;
     private _filtersChanged: boolean = false;
@@ -61,6 +68,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
 
     private _lookThrough: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::set lookThrough()
     set lookThrough(value: boolean) 
     {
         if(this._lookThrough !== value) 
@@ -70,13 +78,16 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_filters
     private _filters: unknown[] | null = null;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::get filters()
     get filters(): unknown[] | null 
     {
         return this._filters;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::set filters()
     set filters(value: unknown[] | null) 
     {
         this._filters = value;
@@ -85,11 +96,13 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
 
     protected override _direction: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::get direction()
     protected get direction(): number 
     {
         return this._direction;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::set direction()
     protected set direction(value: number) 
     {
         this._direction = value;
@@ -97,6 +110,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
 
     private _data: FurnitureVisualizationData | null = null;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::get data()
     protected get data(): FurnitureVisualizationData | null 
     {
         return this._data;
@@ -104,6 +118,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
 
     private _type: string = '';
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::get type()
     protected get type(): string 
     {
         return this._type;
@@ -224,6 +239,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         this.createSprites(0);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::updateSprites()
     protected updateSprites(scale: number, fullUpdate: boolean, animatedLayers: number): void 
     {
         if(this._layerCount !== this.spriteCount) 
@@ -257,6 +273,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         this._alphaChanged = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::updateSprite()
     protected updateSprite(scale: number, layerIndex: number): void 
     {
         const assetName = this.getSpriteAssetName(scale, layerIndex);
@@ -422,11 +439,13 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getLibraryAssetNameForSprite()
     protected getLibraryAssetNameForSprite(asset: IGraphicAsset, _sprite: IRoomObjectSprite): string 
     {
         return asset.libraryAssetName;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getBlendMode()
     protected getBlendMode(ink: number): string 
     {
         switch(ink) 
@@ -450,6 +469,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::updateObject()
     protected updateObject(scale: number, geometryDirection: number): boolean 
     {
         const roomObject = this.object;
@@ -480,6 +500,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::updateModel()
     protected updateModel(_scale: number): boolean 
     {
         const roomObject = this.object;
@@ -533,37 +554,44 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getAdClickUrl()
     protected getAdClickUrl(model: { getString(key: string): string | null }): string | null 
     {
         return model.getString('furniture_ad_url');
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::updateAnimation()
     protected updateAnimation(_scale: number): number 
     {
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::updateLayerCount()
     protected updateLayerCount(count: number): void 
     {
         this._layerCount = count;
         this._shadowLayerIndex = this._layerCount - this.getAdditionalSpriteCount();
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getAdditionalSpriteCount()
     protected getAdditionalSpriteCount(): number 
     {
         return 1;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getFrameNumber()
     protected getFrameNumber(_scale: number, _layerIndex: number): number 
     {
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getPostureForAssetFile()
     protected getPostureForAssetFile(_scale: number, _libraryAssetName: string): string | null 
     {
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getAsset()
     protected getAsset(name: string, _layerIndex: number = -1): IGraphicAsset | null 
     {
         if(this.assetCollection !== null) 
@@ -574,6 +602,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getSpriteAssetName()
     protected getSpriteAssetName(scale: number, layerIndex: number): string 
     {
         if(this._data === null || layerIndex >= FurnitureVisualizationData.LAYER_NAMES.length) 
@@ -598,6 +627,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return baseName;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getSpriteAssetNameWithoutFrame()
     protected getSpriteAssetNameWithoutFrame(scale: number, layerIndex: number, cache: boolean): string 
     {
         const resolvedSize = cache ? this._resolvedSize : this.getSize(scale);
@@ -634,6 +664,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return assetName;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getSpriteTag()
     protected getSpriteTag(scale: number, direction: number, layerIndex: number): string 
     {
         if(this._spriteTags[layerIndex] !== null && this._spriteTags[layerIndex] !== undefined) 
@@ -652,6 +683,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return tag;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getSpriteAlpha()
     protected getSpriteAlpha(scale: number, direction: number, layerIndex: number): number 
     {
         if(this._spriteAlphas[layerIndex] !== null && this._spriteAlphas[layerIndex] !== undefined && !this._alphaChanged) 
@@ -671,6 +703,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return alpha;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getSpriteColor()
     protected getSpriteColor(scale: number, layerIndex: number, colorId: number): number 
     {
         if(this._spriteColors[layerIndex] !== null && this._spriteColors[layerIndex] !== undefined) 
@@ -689,6 +722,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return color;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getSpriteXOffset()
     protected getSpriteXOffset(scale: number, direction: number, layerIndex: number): number 
     {
         if(this._spriteXOffsets[layerIndex] !== null && this._spriteXOffsets[layerIndex] !== undefined) 
@@ -707,6 +741,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return offset;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getSpriteYOffset()
     protected getSpriteYOffset(scale: number, direction: number, layerIndex: number): number 
     {
         if(layerIndex !== this._shadowLayerIndex) 
@@ -731,6 +766,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return Math.ceil(this._furnitureLift * (scale / 2));
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getSpriteMouseCapture()
     protected getSpriteMouseCapture(scale: number, direction: number, layerIndex: number): boolean 
     {
         if(this._spriteMouseCaptures[layerIndex] !== null && this._spriteMouseCaptures[layerIndex] !== undefined) 
@@ -749,6 +785,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return capture;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getSpriteInk()
     protected getSpriteInk(scale: number, direction: number, layerIndex: number): number 
     {
         if(this._spriteInks[layerIndex] !== null && this._spriteInks[layerIndex] !== undefined) 
@@ -767,6 +804,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return ink;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getSpriteZOffset()
     protected getSpriteZOffset(scale: number, direction: number, layerIndex: number): number 
     {
         if(this._spriteZOffsets[layerIndex] !== null && this._spriteZOffsets[layerIndex] !== undefined) 
@@ -785,6 +823,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return offset;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getSize()
     protected getSize(scale: number): number 
     {
         if(this._data !== null) 
@@ -795,6 +834,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return scale;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::resetSprite()
     private resetSprite(sprite: IRoomObjectSprite, layerIndex: number): void 
     {
         sprite.texture = null;
@@ -815,6 +855,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::updateAssetAndSpriteCache()
     private updateAssetAndSpriteCache(scale: number, direction: number): void 
     {
         if(this._cachedDirectionId !== direction || this._cachedScale !== scale) 

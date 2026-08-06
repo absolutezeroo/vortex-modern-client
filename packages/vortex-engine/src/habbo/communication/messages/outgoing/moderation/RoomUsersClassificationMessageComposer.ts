@@ -15,6 +15,7 @@ export class RoomUsersClassificationMessageComposer extends MessageComposer<Cons
         this._data = [roomName];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/userclassification/RoomUsersClassificationMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

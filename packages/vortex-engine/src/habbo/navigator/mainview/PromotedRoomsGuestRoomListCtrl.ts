@@ -18,6 +18,7 @@ export class PromotedRoomsGuestRoomListCtrl extends GuestRoomListCtrl
         super(navigator, -6, false);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsGuestRoomListCtrl.as::set category()
     set category(value: PromotedRoomCategoryData)
     {
         this._category = value;

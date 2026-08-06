@@ -16,6 +16,7 @@ export class ForwardToSomeRoomMessageComposer extends MessageComposer<Constructo
         this._data = [roomType];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/ForwardToSomeRoomMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

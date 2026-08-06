@@ -11,17 +11,22 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
  */
 export interface IFurniModel
 {
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::get disposed()
     readonly disposed: boolean;
     readonly isListInitialized: boolean;
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::get furniData()
     readonly furniData: GroupItem[];
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::get showingRentedFurni()
     readonly showingRentedFurni: boolean;
 
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::dispose()
     dispose(): void;
 
     /**
 	 * Insert furniture from server message (full list)
 	 * Returns info about what changed for the store to update signals
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::insertFurniture()
     insertFurniture(items: Map<number, IFurnitureItemData>): {
         addedCount: number;
         removedCount: number;
@@ -32,6 +37,7 @@ export interface IFurniModel
 	 * Add or update a single item
 	 * Returns the group item affected and if it's new
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::addOrUpdateItem()
     addOrUpdateItem(item: FurnitureItem, isInitializing: boolean): {
         groupItem: GroupItem;
         isNewGroup: boolean;
@@ -41,32 +47,38 @@ export interface IFurniModel
 	 * Remove a furniture item by ID
 	 * Returns the affected group item if found
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::removeFurni()
     removeFurni(itemId: number): GroupItem | null;
 
     /**
 	 * Remove multiple furniture items by ID.
 	 * Returns true if any item was actually removed.
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::removeFurnis()
     removeFurnis(itemIds: number[]): boolean;
 
     /**
 	 * Clear all furniture
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::clearFurniList()
     clearFurniList(): void;
 
     /**
 	 * Get currently selected group item
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::getSelectedItem()
     getSelectedItem(): GroupItem | null;
 
     /**
 	 * Remove all selections
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::removeSelections()
     removeSelections(): void;
 
     /**
 	 * Select the first available item
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::selectFirstItem()
     selectFirstItem(): GroupItem | null;
 
     /**
@@ -77,47 +89,56 @@ export interface IFurniModel
     /**
 	 * Find group item containing a furniture with this ID
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::getItemById()
     getItemById(itemId: number): GroupItem | null;
 
     /**
 	 * Alias for getItemById (AS3 compatibility)
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::getItemWithStripId()
     getItemWithStripId(stripId: number): GroupItem | null;
 
     /**
 	 * Find group item by furniture type ID
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::getGroupItemByItemTypeId()
     getGroupItemByItemTypeId(typeId: number, isWallItem: boolean): GroupItem | null;
 
     /**
 	 * Update item locks based on list of locked reference IDs
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::updateItemLocks()
     updateItemLocks(): void;
 
     /**
 	 * Lock a specific item
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::addLockTo()
     addLockTo(itemId: number): void;
 
     /**
 	 * Unlock a specific item
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::removeLockFrom()
     removeLockFrom(itemId: number): void;
 
     /**
 	 * Remove all locks
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::removeAllLocks()
     removeAllLocks(): void;
 
     /**
 	 * Switch category (furni / rentables)
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::categorySwitch()
     categorySwitch(category: 'furni' | 'rentables'): void;
 
     /**
 	 * Reset unseen flags for current category
 	 * Returns IDs to send to server
 	 */
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::resetUnseenItems()
     resetUnseenItems(): number[];
 
     /**

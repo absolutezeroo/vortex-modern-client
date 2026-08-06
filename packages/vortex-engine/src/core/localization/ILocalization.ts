@@ -8,15 +8,18 @@ export interface ILocalization
     /**
 	 * Whether this localization has been initialized with a value
 	 */
+    // AS3: .../src/com/sulake/core/localization/ILocalization.as::get isInitialized()
     readonly isInitialized: boolean;
 
     /**
 	 * Get the processed value with parameters filled in
 	 */
+    // AS3: .../src/com/sulake/core/localization/ILocalization.as::get value()
     readonly value: string;
 
     /**
 	 * Get the raw value without parameter processing
 	 */
+    // AS3: .../src/com/sulake/core/localization/ILocalization.as::get raw()
     readonly raw: string;
 }

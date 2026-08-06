@@ -109,6 +109,7 @@ export class RoomSessionHandler extends BaseHandler
         this._messageEvents.push(event);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomSessionHandler.as::onRoomConnected()
     private onRoomConnected(event: IMessageEvent): void
     {
         if(!event) return;
@@ -127,6 +128,7 @@ export class RoomSessionHandler extends BaseHandler
         log.debug(`Room connected: ${parser.flatId}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomSessionHandler.as::onFlatAccessible()
     private onFlatAccessible(event: IMessageEvent): void
     {
         if(!event) return;
@@ -156,6 +158,7 @@ export class RoomSessionHandler extends BaseHandler
         log.debug(`Flat accessible: ${parser.flatId}, user: ${userName}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomSessionHandler.as::onRoomReady()
     private onRoomReady(event: IMessageEvent): void
     {
         if(!event) return;
@@ -177,6 +180,7 @@ export class RoomSessionHandler extends BaseHandler
         log.debug(`Room ready: ${roomId}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomSessionHandler.as::onFlatAccessDenied()
     private onFlatAccessDenied(event: IMessageEvent): void
     {
         if(!event) return;
@@ -210,6 +214,7 @@ export class RoomSessionHandler extends BaseHandler
         log.debug(`Flat access denied: ${parser.flatId}, user: ${userName}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomSessionHandler.as::onRoomDisconnected()
     private onRoomDisconnected(_event: IMessageEvent): void
     {
         const roomId = this.roomId;
@@ -222,6 +227,7 @@ export class RoomSessionHandler extends BaseHandler
         log.debug(`Room disconnected: ${roomId}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomSessionHandler.as::onRoomQueueStatus()
     private onRoomQueueStatus(event: IMessageEvent): void
     {
         if(!this.listener || !this.listener.sessionEvents)
@@ -270,6 +276,7 @@ export class RoomSessionHandler extends BaseHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomSessionHandler.as::onYouAreSpectator()
     private onYouAreSpectator(event: IMessageEvent): void
     {
         if(!this.listener)

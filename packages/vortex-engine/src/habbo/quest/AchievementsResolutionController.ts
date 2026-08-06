@@ -23,6 +23,7 @@ export class AchievementsResolutionController implements IDisposable
         this._engine = engine;
     }
 
+    // AS3: .../src/com/sulake/habbo/quest/AchievementsResolutionController.as::_stuffId
     private _stuffId: number = -1;
 
     /**
@@ -33,6 +34,7 @@ export class AchievementsResolutionController implements IDisposable
         return this._stuffId;
     }
 
+    // AS3: .../src/com/sulake/habbo/quest/AchievementsResolutionController.as::_selectedAchievementId
     private _selectedAchievementId: number = -1;
 
     /**
@@ -43,6 +45,7 @@ export class AchievementsResolutionController implements IDisposable
         return this._selectedAchievementId;
     }
 
+    // AS3: .../src/com/sulake/habbo/quest/AchievementsResolutionController.as::_endTime
     private _endTime: number = -1;
 
     /**
@@ -53,6 +56,7 @@ export class AchievementsResolutionController implements IDisposable
         return this._endTime;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/quest/AchievementsResolutionController.as::_achievements
     private _achievements: unknown[] = [];
 
     /**
@@ -65,6 +69,7 @@ export class AchievementsResolutionController implements IDisposable
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/quest/AchievementsResolutionController.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -77,6 +82,7 @@ export class AchievementsResolutionController implements IDisposable
 	 * @param achievements The available resolution achievements
 	 * @param endTime The end time for the resolution period
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementsResolutionController.as::onResolutionAchievements()
     onResolutionAchievements(stuffId: number, achievements: unknown[], endTime: number): void
     {
         this._stuffId = stuffId;
@@ -105,6 +111,7 @@ export class AchievementsResolutionController implements IDisposable
 	 * @param totalProgress The total progress required
 	 * @param endTime The end time for the resolution period
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementsResolutionController.as::onResolutionProgress()
     onResolutionProgress(stuffId: number, achievementId: number, badgeCode: string, userProgress: number, totalProgress: number, _endTime: number): void
     {
         log.debug(`Resolution progress: stuffId=${stuffId}, achievementId=${achievementId}, badge=${badgeCode}, progress=${userProgress}/${totalProgress}`);
@@ -116,6 +123,7 @@ export class AchievementsResolutionController implements IDisposable
 	 * @param badgeCode The badge code earned
 	 * @param stuffCode The stuff code of the item
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementsResolutionController.as::onResolutionCompleted()
     onResolutionCompleted(badgeCode: string, stuffCode: string): void
     {
         log.info(`Resolution completed: badge=${badgeCode}, stuff=${stuffCode}`);
@@ -126,6 +134,7 @@ export class AchievementsResolutionController implements IDisposable
 	 *
 	 * @param data The level-up notification data
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementsResolutionController.as::onLevelUp()
     onLevelUp(_data: unknown): void
     {
         log.trace('Resolution level-up received');
@@ -136,6 +145,7 @@ export class AchievementsResolutionController implements IDisposable
 	 *
 	 * @param data The updated achievement data
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementsResolutionController.as::onAchievement()
     onAchievement(data: AchievementData): void
     {
         log.debug(`Resolution achievement update: ${data.achievementId}`);
@@ -146,6 +156,7 @@ export class AchievementsResolutionController implements IDisposable
 	 *
 	 * @param stuffId The furniture item ID to reset
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementsResolutionController.as::resetResolution()
     resetResolution(stuffId: number): void
     {
         log.debug(`Reset resolution: stuffId=${stuffId}`);
@@ -154,6 +165,7 @@ export class AchievementsResolutionController implements IDisposable
     /**
 	 * Dispose of this controller and release resources
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementsResolutionController.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

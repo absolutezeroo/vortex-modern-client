@@ -38,24 +38,32 @@ export interface IHabboTransitionalNavigator extends IHabboNavigator
 {
     readonly disposed: boolean;
     readonly events: EventEmitter;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::get assets()
     readonly assets: IAssetLibrary | null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::get windowManager()
     readonly windowManager: IHabboWindowManager | null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::get data()
     readonly data: NavigatorData;
     readonly sessionData: ISessionDataManager | null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::get tabs()
     readonly tabs: Tabs;
     readonly mainViewCtrl: ITransitionalMainViewCtrl | null;
     readonly roomInfoViewCtrl: RoomInfoViewCtrl | null;
     readonly roomCreateViewCtrl: RoomCreateViewCtrl | null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::get communication()
     readonly communication: IHabboCommunicationManager;
     readonly roomSettingsCtrl: RoomSettingsCtrl | null;
     readonly passwordInput: GuestRoomPasswordInput | null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::get doorbell()
     readonly doorbell: GuestRoomDoorbell | null;
     readonly roomEventViewCtrl: RoomEventViewCtrl | null;
     readonly officialRoomEntryManager: OfficialRoomEntryManager | null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::get toolbar()
     readonly toolbar: IHabboToolbar | null;
     readonly habboHelp: IHabboHelp | null;
     readonly roomEventInfoCtrl: RoomEventInfoCtrl | null;
     readonly roomFilterCtrl: RoomFilterCtrl | null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::get roomSessionManager()
     readonly roomSessionManager: IRoomSessionManager | null;
     readonly enforceCategoryCtrl: EnforceCategoryCtrl | null;
 
@@ -63,20 +71,26 @@ export interface IHabboTransitionalNavigator extends IHabboNavigator
 
     removeUpdateReceiver(receiver: IUpdateReceiver): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::send()
     send(composer: IMessageComposer<unknown[]>): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::getXmlWindow()
     getXmlWindow(xmlFileName: string, style?: number): IWindow | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::getText()
     getText(key: string): string;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::registerParameter()
     registerParameter(key: string, param: string, value: string): string;
 
     getButton(assetName: string, stateSuffix: string, callback: (event: WindowEvent, window: IWindow) => void, x?: number, y?: number, index?: number): IWindowContainer | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::refreshButton()
     refreshButton(container: IWindowContainer, name: string, visible: boolean, callback: (event: WindowEvent, window: IWindow) => void, index: number, tooltip?: string | null): void;
 
     getButtonImage(assetName: string, suffix?: string): unknown | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::openCatalogClubPage()
     openCatalogClubPage(source: string): void;
 
     openCatalogRoomAdsPage(): void;
@@ -91,17 +105,23 @@ export interface IHabboTransitionalNavigator extends IHabboNavigator
 
     goToMainView(): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::goToRoom()
     goToRoom(roomId: number, closeNavigator: boolean, password?: string, roomCategory?: number, skipOpc?: boolean): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::isPerkAllowed()
     isPerkAllowed(perkCode: string): boolean;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::trackGoogle()
     trackGoogle(category: string, action: string, value?: number): void;
 
     trackNavigationDataPoint(category: string, action: string, label?: string, value?: number): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::getBoolean()
     getBoolean(key: string): boolean;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::getInteger()
     getInteger(key: string, defaultValue: number): number;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::getProperty()
     getProperty(key: string, params?: Record<string, string>): string;
 }

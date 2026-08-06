@@ -11,11 +11,13 @@ export class UserEventCatsMessageParser implements IMessageParser
 {
     private _eventCategories: EventCategory[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/UserEventCatsEventParser.as::get eventCategories()
     get eventCategories(): EventCategory[]
     {
         return this._eventCategories;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/UserEventCatsEventParser.as::flush()
     flush(): boolean
     {
         this._eventCategories = [];
@@ -23,6 +25,7 @@ export class UserEventCatsMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/UserEventCatsEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._eventCategories = [];

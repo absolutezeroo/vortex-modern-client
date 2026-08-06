@@ -11,8 +11,10 @@ export class FeedSettings
     public static readonly FEED_TYPE_STATUS: number = 2;
     public static readonly FEED_TYPE_MOTD: number = 3;
 
+    // AS3: .../src/com/sulake/habbo/notifications/feed/FeedSettings.as::FEED_CATEGORY_ME
     public static readonly FEED_CATEGORY_ME: number = 0;
     public static readonly FEED_CATEGORY_FRIENDS: number = 1;
+    // AS3: .../src/com/sulake/habbo/notifications/feed/FeedSettings.as::FEED_CATEGORY_HOTEL
     public static readonly FEED_CATEGORY_HOTEL: number = 2;
 
     private _visibleCategories: number[];
@@ -28,6 +30,7 @@ export class FeedSettings
     /**
 	 * Get the list of currently visible feed categories
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/feed/FeedSettings.as::getVisibleFeedCategories()
     getVisibleFeedCategories(): number[]
     {
         return this._visibleCategories;
@@ -37,11 +40,13 @@ export class FeedSettings
 	 * Toggle visibility of a specific feed category
 	 * @param category The category ID to toggle
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/feed/FeedSettings.as::toggleVisibleFeedCategory()
     toggleVisibleFeedCategory(_category: number): void
     {
         // TODO: Requires NotificationController.updateFeedCategoryFiltering()
     }
 
+    // AS3: .../src/com/sulake/habbo/notifications/feed/FeedSettings.as::dispose()
     dispose(): void
     {
         this._visibleCategories = [];

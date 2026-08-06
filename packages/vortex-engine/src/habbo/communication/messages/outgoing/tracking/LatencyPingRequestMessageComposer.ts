@@ -15,6 +15,7 @@ export class LatencyPingRequestMessageComposer extends MessageComposer<Construct
         this._data = [requestId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/tracking/LatencyPingRequestMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

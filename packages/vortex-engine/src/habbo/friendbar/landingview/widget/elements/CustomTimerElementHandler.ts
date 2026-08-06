@@ -17,6 +17,7 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
  */
 export class CustomTimerElementHandler extends TimerElementHandlerBase
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4534.as::_timeStr
     private _timeStr: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4534.as::initialize()

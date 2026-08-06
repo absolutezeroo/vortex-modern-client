@@ -16,6 +16,7 @@ export class ApproveNameMessageComposer extends MessageComposer<ConstructorParam
         this._data = [name, validationType];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/ApproveNameMessageComposer.as::getMessageArray()
     getMessageArray(): [string, number]
     {
         return this._data;

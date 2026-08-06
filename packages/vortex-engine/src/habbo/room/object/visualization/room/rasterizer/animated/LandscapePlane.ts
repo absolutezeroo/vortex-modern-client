@@ -12,11 +12,16 @@ import {Plane} from '../basic/Plane';
 
 export class LandscapePlane extends Plane
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/LandscapePlane.as::DEFAULT_COLOR
     public static readonly DEFAULT_COLOR: number = 0xFFFFFF;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/LandscapePlane.as::HORIZONTAL_ANGLE_DEFAULT
     public static readonly HORIZONTAL_ANGLE_DEFAULT: number = 45;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/LandscapePlane.as::VERTICAL_ANGLE_DEFAULT
     public static readonly VERTICAL_ANGLE_DEFAULT: number = 30;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/LandscapePlane.as::_width
     private _width: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/LandscapePlane.as::_height
     private _height: number = 0;
 
     override isStatic(size: number): boolean
@@ -31,6 +36,7 @@ export class LandscapePlane extends Plane
         return super.isStatic(size);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/LandscapePlane.as::initializeDimensions()
     initializeDimensions(width: number, height: number): void
     {
         if(width < 0) width = 0;
@@ -62,6 +68,7 @@ export class LandscapePlane extends Plane
 	 * @param time - Current time in ms
 	 * @returns Rendered canvas or null
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/LandscapePlane.as::render()
     render(
         canvas: HTMLCanvasElement | null,
         leftLen: number,

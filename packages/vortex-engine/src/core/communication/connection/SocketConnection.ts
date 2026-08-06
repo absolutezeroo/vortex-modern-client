@@ -18,6 +18,7 @@ const log = Logger.getLogger('core.communication.connection.SocketConnection');
 
 export interface IConnectionEvents
 {
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::get connected()
     connected: () => void;
     disconnected: () => void;
     error: (error: Error) => void;
@@ -56,6 +57,7 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
 
     private _connected: boolean = false;
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::get connected()
     get connected(): boolean
     {
         return this._connected;
@@ -63,6 +65,7 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
 
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -75,11 +78,13 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
         return this._timeout;
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::set timeout()
     set timeout(value: number)
     {
         this._timeout = value;
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::init()
     init(host: string, port: number = 0, _tcpNoDelay: boolean = true): boolean
     {
         if(this._disposed)
@@ -122,6 +127,7 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
         }
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::createSocket()
     createSocket(): void
     {
         this.close();
@@ -137,7 +143,9 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
         listener: EventEmitter.EventListener<IConnectionEvents, T>,
         context?: unknown
     ): this;
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::addListener()
     addListener(type: string, listener: (...args: unknown[]) => void, context?: unknown): this;
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::addListener()
     addListener(type: string, listener: (...args: any[]) => void, context?: unknown): this
     {
         switch(type)
@@ -160,6 +168,7 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
         }
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::send()
     send(composer: IMessageComposer<unknown[]>): boolean
     {
         if(this._disposed)
@@ -189,6 +198,7 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
         return this.sendRaw(encoded, messageId);
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::sendUnencrypted()
     sendUnencrypted(composer: IMessageComposer<unknown[]>): boolean
     {
         if(this._disposed)
@@ -212,12 +222,14 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
         return this.sendRaw(encoded, messageId);
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::setEncryption()
     setEncryption(clientToServer: IEncryption, serverToClient: IEncryption): void
     {
         this._clientToServerEncryption = clientToServer;
         this._serverToClientEncryption = serverToClient;
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::isAuthenticated()
     isAuthenticated(): void
     {
         this._authenticated = true;
@@ -225,6 +237,7 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
         this.flushPendingComposers();
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::isConfigured()
     isConfigured(): void
     {
         this._configurationReady = true;
@@ -233,6 +246,7 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
         this.flushPendingComposers();
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::getServerToClientEncryption()
     getServerToClientEncryption(): IEncryption | null
     {
         return this._serverToClientEncryption;
@@ -243,21 +257,25 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
         return this._clientToServerEncryption;
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::registerMessageClasses()
     registerMessageClasses(config: IMessageConfiguration): void
     {
         this._messageRegistry.registerMessages(config);
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::addMessageEvent()
     addMessageEvent(event: IMessageEvent): void
     {
         this._messageRegistry.registerMessageEvent(event);
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::removeMessageEvent()
     removeMessageEvent(event: IMessageEvent): void
     {
         this._messageRegistry.unregisterMessageEvent(event);
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::processReceivedData()
     processReceivedData(): void
     {
         if(this._receivedBuffer.length === 0)
@@ -306,6 +324,7 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
         }
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::close()
     close(): void
     {
         this.clearTimeout();
@@ -322,6 +341,7 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
         this._connected = false;
     }
 
+    // AS3: sources/win63_version/core/communication/connection/IConnection.as::dispose()
     dispose(): void
     {
         if(this._disposed)

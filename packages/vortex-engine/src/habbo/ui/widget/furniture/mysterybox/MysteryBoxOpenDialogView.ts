@@ -56,6 +56,7 @@ const CONTENT_TYPE_SUBSCRIPTION: string = 'h';
 
 export class MysteryBoxOpenDialogView implements IGetImageListener
 {
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/mysterybox/MysteryBoxOpenDialogView.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: MysteryBoxOpenDialogView.as::_SafeStr_4549 (the widget)

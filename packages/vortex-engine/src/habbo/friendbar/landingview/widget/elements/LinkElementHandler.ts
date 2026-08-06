@@ -15,6 +15,7 @@ import {HabboWebTools} from '@habbo/utils/HabboWebTools';
  */
 export class LinkElementHandler implements IElementHandler, IDisposable
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4540.as::_landingView
     private _landingView: HabboLandingView | null = null;
     private _url: string = '';
 
@@ -24,6 +25,7 @@ export class LinkElementHandler implements IElementHandler, IDisposable
         this._landingView = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4540.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;

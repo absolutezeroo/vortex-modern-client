@@ -15,6 +15,7 @@ export class GetTalentTrackMessageComposer extends MessageComposer<ConstructorPa
         this._data = [trackName];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/talent/GetTalentTrackMessageComposer.as::getMessageArray()
     getMessageArray(): [string]
     {
         return this._data;

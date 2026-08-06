@@ -15,8 +15,11 @@ const log = Logger.getLogger('habbo.toolbar.memenu.soundsettings.MeMenuSoundSett
  */
 export class MeMenuSoundSettingsItem
 {
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsItem.as::TYPE_UI_VOLUME
     public static readonly TYPE_UI_VOLUME: number = 0;
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsItem.as::TYPE_FURNI_VOLUME
     public static readonly TYPE_FURNI_VOLUME: number = 1;
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsItem.as::TYPE_TRAX_VOLUME
     public static readonly TYPE_TRAX_VOLUME: number = 2;
     private _parentView: MeMenuSoundSettingsView | null;
 
@@ -38,6 +41,7 @@ export class MeMenuSoundSettingsItem
         return this._type;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsItem.as::_volume
     private _volume: number = 0;
 
     /**
@@ -51,6 +55,7 @@ export class MeMenuSoundSettingsItem
     /**
 	 * Whether the item is disposed
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsItem.as::get disposed()
     get disposed(): boolean
     {
         return this._parentView == null;
@@ -62,6 +67,7 @@ export class MeMenuSoundSettingsItem
 	 * @param value Volume value (0-1)
 	 * @param preview If true, only preview the volume (don't persist)
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsItem.as::saveVolume()
     public saveVolume(value: number, preview: boolean): void
     {
         this._volume = value;
@@ -89,6 +95,7 @@ export class MeMenuSoundSettingsItem
 	 *
 	 * @param value Volume value (0-1)
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsItem.as::setValue()
     public setValue(value: number): void
     {
         this._volume = value;
@@ -99,6 +106,7 @@ export class MeMenuSoundSettingsItem
 	 *
 	 * @param buttonName The button name
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsItem.as::onButtonClicked()
     public onButtonClicked(buttonName: string): void
     {
         switch(buttonName)
@@ -117,6 +125,7 @@ export class MeMenuSoundSettingsItem
     /**
 	 * Dispose of this item
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsItem.as::dispose()
     public dispose(): void
     {
         if(this.disposed) return;

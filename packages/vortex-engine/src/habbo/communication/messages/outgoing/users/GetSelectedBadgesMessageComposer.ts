@@ -16,6 +16,7 @@ export class GetSelectedBadgesMessageComposer extends MessageComposer<Constructo
         this._data = [userId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/GetSelectedBadgesMessageComposer.as::getMessageArray()
     getMessageArray(): [number]
     {
         return this._data;

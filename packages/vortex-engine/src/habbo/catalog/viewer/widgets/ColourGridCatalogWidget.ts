@@ -23,8 +23,10 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.ColourGridCatalogWidg
  */
 export class ColourGridCatalogWidget extends CatalogWidget
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ColourGridCatalogWidget.as::_colours
     private _colours: number[][] = [];
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ColourGridCatalogWidget.as::_colourGrid
     private _colourGrid: IItemGridWindow | null = null;
 
     private _backgroundBitmap: ImageBitmap | null = null;
@@ -37,6 +39,7 @@ export class ColourGridCatalogWidget extends CatalogWidget
 
     private _selected: IWindowContainer | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ColourGridCatalogWidget.as::_colourGridCache
     private _colourGridCache: Map<string, IWindowContainer> = new Map();
 
     constructor(window: IWindowContainer)
@@ -114,6 +117,7 @@ export class ColourGridCatalogWidget extends CatalogWidget
         this.select(this._colourGrid?.getGridItemAt(0) as unknown as IWindowContainer | null);
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ColourGridCatalogWidget.as::select()
     private select(item: IWindowContainer | null): void
     {
         log.debug(`Select: ${item}`);
@@ -135,6 +139,7 @@ export class ColourGridCatalogWidget extends CatalogWidget
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ColourGridCatalogWidget.as::populateColourGrid()
     private populateColourGrid(): void
     {
         if(this._colourGrid == null) return;
@@ -164,6 +169,7 @@ export class ColourGridCatalogWidget extends CatalogWidget
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ColourGridCatalogWidget.as::createColorContainer()
     private createColorContainer(colours: number[], index: number): IWindowContainer
     {
         const cacheKey = this.coloursCacheKey(colours, index);
@@ -253,6 +259,7 @@ export class ColourGridCatalogWidget extends CatalogWidget
         return canvas;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ColourGridCatalogWidget.as::coloursCacheKey()
     private coloursCacheKey(colours: number[], index: number): string
     {
         let key = `${this._cacheKeyPrefix}\t${index}`;

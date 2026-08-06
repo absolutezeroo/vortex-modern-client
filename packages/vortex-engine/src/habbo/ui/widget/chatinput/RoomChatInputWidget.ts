@@ -27,9 +27,11 @@ import {RoomChatInputView} from './RoomChatInputView';
 export class RoomChatInputWidget extends RoomWidgetBase
 {
     private _view: RoomChatInputView | null;
+    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputWidget.as::_selectedUserName
     private _selectedUserName: string = '';
     private _floodBlocked: boolean = false;
     private _floodTimer: ReturnType<typeof setTimeout> | null = null;
+    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputWidget.as::_lastPasteTime
     private _lastPasteTime: number = 0;
     private _roomUi: RoomUI | null;
     private _desktop: IRoomDesktop | null;
@@ -48,11 +50,13 @@ export class RoomChatInputWidget extends RoomWidgetBase
         this.handler.widget = this;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputWidget.as::get floodBlocked()
     public get floodBlocked(): boolean
     {
         return this._floodBlocked;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputWidget.as::get roomUi()
     public get roomUi(): RoomUI | null
     {
         return this._roomUi;
@@ -81,11 +85,13 @@ export class RoomChatInputWidget extends RoomWidgetBase
         super.dispose();
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputWidget.as::get allowPaste()
     public get allowPaste(): boolean
     {
         return performance.now() - this._lastPasteTime > 0;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputWidget.as::setLastPasteTime()
     public setLastPasteTime(): void
     {
         this._lastPasteTime = performance.now();
@@ -172,6 +178,7 @@ export class RoomChatInputWidget extends RoomWidgetBase
         return roomToolsWidget?.getWidgetAreaWidth() ?? 0;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputWidget.as::get selectedUserName()
     public get selectedUserName(): string
     {
         return this._selectedUserName;
@@ -224,6 +231,7 @@ export class RoomChatInputWidget extends RoomWidgetBase
         if(this.mainWindow) this.mainWindow.visible = false;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputWidget.as::show()
     private show(): void
     {
         if(this.mainWindow) this.mainWindow.visible = true;

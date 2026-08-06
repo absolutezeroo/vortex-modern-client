@@ -24,10 +24,13 @@ export class SpacesNewCatalogWidget extends ItemGridCatalogWidget
 {
     // Group index 0 = wallpaper/wall, 1 = floor, 2 = landscape - matches switchCategory()'s
     // group.walls/group.floors/group.views mapping.
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/SpacesNewCatalogWidget.as::_groupNames
     private _groupNames: string[] = ['wallpaper', 'floor', 'landscape'];
     private _offersByGroup: IPurchasableOffer[][] = [];
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/SpacesNewCatalogWidget.as::_selectedGroup
     private _selectedGroup: number = 0;
     private _selectedIndexByGroup: number[] = [0, 0, 0];
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/SpacesNewCatalogWidget.as::_categories
     private _categories: string[] = ['group.walls', 'group.floors', 'group.views'];
     private _groupSelector: ISelectorWindow | null = null;
 
@@ -83,6 +86,7 @@ export class SpacesNewCatalogWidget extends ItemGridCatalogWidget
         this.select(offer.gridItem, false);
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/SpacesNewCatalogWidget.as::selectIndex()
     selectIndex(index: number): void
     {
         if(index > -1 && this._itemGrid && index < this._itemGrid.numGridItems)
@@ -113,6 +117,7 @@ export class SpacesNewCatalogWidget extends ItemGridCatalogWidget
         this.updateRoomPreview();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/SpacesNewCatalogWidget.as::updateRoomPreview()
     private updateRoomPreview(): void
     {
         const wallIndex = this._selectedIndexByGroup[0];
@@ -136,6 +141,7 @@ export class SpacesNewCatalogWidget extends ItemGridCatalogWidget
         );
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/SpacesNewCatalogWidget.as::createOfferGroups()
     private createOfferGroups(): void
     {
         for(const offer of this.page.offers)
@@ -191,6 +197,7 @@ export class SpacesNewCatalogWidget extends ItemGridCatalogWidget
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/SpacesNewCatalogWidget.as::switchCategory()
     private switchCategory(name: string): void
     {
         if(this.disposed) return;

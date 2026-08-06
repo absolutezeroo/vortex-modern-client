@@ -13,11 +13,13 @@ export interface IRoomWidgetHandler extends IDisposable
     /**
 	 * The handler type identifier.
 	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandler.as::get type()
     readonly type: string;
 
     /**
 	 * Sets the container providing services to this handler.
 	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandler.as::set container()
     set container(value: IRoomWidgetHandlerContainer | null);
 
     /**
@@ -28,11 +30,13 @@ export interface IRoomWidgetHandler extends IDisposable
 	 * rentable-space handler, talks to its widget through direct method calls instead), and `[]`
 	 * from the rest. RoomDesktop iterates the result, so both mean "no messages".
 	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandler.as::getWidgetMessages()
     getWidgetMessages(): string[] | null;
 
     /**
 	 * Processes a widget message.
 	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandler.as::processWidgetMessage()
     processWidgetMessage(message: unknown): unknown;
 
     /**
@@ -43,15 +47,18 @@ export interface IRoomWidgetHandler extends IDisposable
 	 * the result, so both mean "subscribe to nothing" — but the signature has to admit null or a
 	 * faithful handler cannot be written.
 	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandler.as::getProcessedEvents()
     getProcessedEvents(): string[] | null;
 
     /**
 	 * Processes an event.
 	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandler.as::processEvent()
     processEvent(event: unknown): void;
 
     /**
 	 * Called each frame to update handler state.
 	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandler.as::update()
     update(): void;
 }

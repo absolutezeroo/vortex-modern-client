@@ -14,6 +14,7 @@ export class PetLevelNotificationEventParser implements IMessageParser
 {
     private _petId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/PetLevelNotificationEventParser.as::get petId()
     get petId(): number
     {
         return this._petId;
@@ -21,6 +22,7 @@ export class PetLevelNotificationEventParser implements IMessageParser
 
     private _petName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/PetLevelNotificationEventParser.as::get petName()
     get petName(): string
     {
         return this._petName;
@@ -28,6 +30,7 @@ export class PetLevelNotificationEventParser implements IMessageParser
 
     private _level: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/PetLevelNotificationEventParser.as::get level()
     get level(): number
     {
         return this._level;
@@ -35,11 +38,13 @@ export class PetLevelNotificationEventParser implements IMessageParser
 
     private _figureData: PetFigureData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/PetLevelNotificationEventParser.as::get figureData()
     get figureData(): PetFigureData | null
     {
         return this._figureData;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/PetLevelNotificationEventParser.as::flush()
     flush(): boolean
     {
         this._petId = 0;
@@ -49,6 +54,7 @@ export class PetLevelNotificationEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/PetLevelNotificationEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

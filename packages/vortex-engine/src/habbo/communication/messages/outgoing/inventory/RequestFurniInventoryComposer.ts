@@ -16,6 +16,7 @@ export class RequestFurniInventoryComposer extends MessageComposer<ConstructorPa
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/inventory/furni/RequestFurniInventoryComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

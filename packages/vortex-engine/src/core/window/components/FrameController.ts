@@ -24,9 +24,13 @@ import {TextMargins} from '../utils/TextMargins';
  */
 export class FrameController extends ContainerController implements IFrameWindow 
 {
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::TAG_TITLE_ELEMENT
     private static readonly TAG_TITLE_ELEMENT: string = '_TITLE';
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::TAG_HEADER_ELEMENT
     private static readonly TAG_HEADER_ELEMENT: string = '_HEADER';
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::TAG_CONTENT_ELEMENT
     private static readonly TAG_CONTENT_ELEMENT: string = '_CONTENT';
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::TAG_SCALER_ELEMENT
     private static readonly TAG_SCALER_ELEMENT: string = '_SCALER';
     private _constructed: boolean = false;
 
@@ -73,11 +77,13 @@ export class FrameController extends ContainerController implements IFrameWindow
         this.menuButtonVisible = false;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/FrameController.as::_title
     private _title: ILabelWindow | null = null;
 
     /**
      * Returns the title label window.
      */
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::get title()
     public get title(): ILabelWindow 
     {
         if(!this._title) 
@@ -88,11 +94,13 @@ export class FrameController extends ContainerController implements IFrameWindow
         return this._title!;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::_header
     private _header: IHeaderWindow | null = null;
 
     /**
      * Returns the header window.
      */
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::get header()
     public get header(): IHeaderWindow 
     {
         if(!this._header) 
@@ -103,11 +111,13 @@ export class FrameController extends ContainerController implements IFrameWindow
         return this._header!;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::_content
     private _content: IWindowContainer | null = null;
 
     /**
      * Returns the content container window.
      */
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::get content()
     public get content(): IWindowContainer 
     {
         if(!this._content) 
@@ -118,11 +128,13 @@ export class FrameController extends ContainerController implements IFrameWindow
         return this._content!;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/FrameController.as::_margins
     private _margins: IMargins | null = null;
 
     /**
      * Returns the content margins.
      */
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::get margins()
     public get margins(): IMargins 
     {
         if(!this._margins) 
@@ -139,11 +151,13 @@ export class FrameController extends ContainerController implements IFrameWindow
         return this._margins;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/FrameController.as::_helpPage
     private _helpPage: string = '';
 
     /**
      * Returns the help page identifier.
      */
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::get helpPage()
     public get helpPage(): string 
     {
         return this._helpPage;
@@ -152,6 +166,7 @@ export class FrameController extends ContainerController implements IFrameWindow
     /**
      * Sets the help page identifier and updates help button visibility.
      */
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::set helpPage()
     public set helpPage(value: string) 
     {
         this._helpPage = value;
@@ -164,6 +179,7 @@ export class FrameController extends ContainerController implements IFrameWindow
         }
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/FrameController.as::_helpButtonAction
     private _helpButtonAction: ((helpPage: string) => void) | null = null;
 
     /**
@@ -177,6 +193,7 @@ export class FrameController extends ContainerController implements IFrameWindow
     /**
      * Sets the help button action callback.
      */
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::set helpButtonAction()
     public set helpButtonAction(value: (helpPage: string) => void)
     {
         this._helpButtonAction = value;
@@ -185,16 +202,19 @@ export class FrameController extends ContainerController implements IFrameWindow
     /**
      * Returns the scaler window for frame resizing.
      */
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::get scaler()
     public get scaler(): IScalerWindow 
     {
         return this.findChildByTag(FrameController.TAG_SCALER_ELEMENT) as unknown as IScalerWindow;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::get menuButton()
     public get menuButton(): IWindow | null 
     {
         return this.findChildByName('header_button_menu');
     }
 
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::get menuButtonVisible()
     public get menuButtonVisible(): boolean 
     {
         const menuButton = this.menuButton;
@@ -202,6 +222,7 @@ export class FrameController extends ContainerController implements IFrameWindow
         return menuButton !== null && menuButton.visible;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::set menuButtonVisible()
     public set menuButtonVisible(value: boolean) 
     {
         const menuButton = this.menuButton;
@@ -338,6 +359,7 @@ export class FrameController extends ContainerController implements IFrameWindow
     /**
      * Resizes the frame to fit its content children.
      */
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::resizeToFitContent()
     public resizeToFitContent(): void 
     {
         WindowController.resizeToAccommodateChildren(this.content as unknown as WindowController);
@@ -352,6 +374,7 @@ export class FrameController extends ContainerController implements IFrameWindow
     /**
      * Configures the scaler visibility based on scaling param flags.
      */
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::setupScaling()
     private setupScaling(): void 
     {
         const scalerWindow = this.scaler;
@@ -370,6 +393,7 @@ export class FrameController extends ContainerController implements IFrameWindow
     /**
      * Handles help button click events.
      */
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::helpButtonProcedure()
     private helpButtonProcedure(event: WindowEvent, _window: IWindow): void 
     {
         if(event.type === 'WME_CLICK' && this._helpPage !== '' && this._helpButtonAction !== null) 
@@ -381,6 +405,7 @@ export class FrameController extends ContainerController implements IFrameWindow
     /**
      * Called when margins change to update content rectangle.
      */
+    // AS3: .../src/com/sulake/core/window/components/FrameController.as::marginsCallback()
     private marginsCallback(margins: IMargins): void 
     {
         const contentWindow = this.content;

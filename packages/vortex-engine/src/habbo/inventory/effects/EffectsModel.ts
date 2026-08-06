@@ -28,6 +28,7 @@ export class EffectsModel implements IEffectsModel
 
     private _effects: Effect[] = [];
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/EffectsModel.as::_disposed
     private _disposed: boolean = false;
 
     private _lastActivatedEffect: number = -1;
@@ -37,16 +38,19 @@ export class EffectsModel implements IEffectsModel
         this._connection = connection;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/EffectsModel.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/EffectsModel.as::get lastActivatedEffect()
     get lastActivatedEffect(): number
     {
         return this._lastActivatedEffect;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/EffectsModel.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -247,6 +251,7 @@ export class EffectsModel implements IEffectsModel
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/EffectsModel.as::setAllEffectsDeselected()
     setAllEffectsDeselected(): void
     {
         for(const effect of this._effects)
@@ -301,6 +306,7 @@ export class EffectsModel implements IEffectsModel
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/EffectsModel.as::removeEffect()
     private removeEffect(type: number): void
     {
         for(let i = 0; i < this._effects.length; i++)

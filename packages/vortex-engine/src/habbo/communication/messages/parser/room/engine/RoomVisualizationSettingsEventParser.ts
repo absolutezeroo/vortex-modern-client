@@ -11,6 +11,7 @@ export class RoomVisualizationSettingsEventParser implements IMessageParser
 {
     private _wallsHidden: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/RoomVisualizationSettingsEventParser.as::get wallsHidden()
     get wallsHidden(): boolean
     {
         return this._wallsHidden;
@@ -18,6 +19,7 @@ export class RoomVisualizationSettingsEventParser implements IMessageParser
 
     private _wallThicknessMultiplier: number = 1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/RoomVisualizationSettingsEventParser.as::get wallThicknessMultiplier()
     get wallThicknessMultiplier(): number
     {
         return this._wallThicknessMultiplier;
@@ -25,11 +27,13 @@ export class RoomVisualizationSettingsEventParser implements IMessageParser
 
     private _floorThicknessMultiplier: number = 1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/RoomVisualizationSettingsEventParser.as::get floorThicknessMultiplier()
     get floorThicknessMultiplier(): number
     {
         return this._floorThicknessMultiplier;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/RoomVisualizationSettingsEventParser.as::flush()
     flush(): boolean
     {
         this._wallsHidden = false;
@@ -38,6 +42,7 @@ export class RoomVisualizationSettingsEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/RoomVisualizationSettingsEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

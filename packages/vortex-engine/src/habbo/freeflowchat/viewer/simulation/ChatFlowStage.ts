@@ -42,18 +42,23 @@ const MINIMUM_COLLIDER_WIDTH = 240;
 export class ChatFlowStage implements IUpdateReceiver, IDisposable
 {
     /** AS3: ChatFlowStage.as::MOVE_UP_AMOUNT_PIXELS */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::MOVE_UP_AMOUNT_PIXELS
     static readonly MOVE_UP_AMOUNT_PIXELS = 19;
 
     private _chatFlow: IHabboFreeFlowChat | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::_simulationTime
     private _simulationTime: number = 0;
     private _lastScrollTime: number = 0;
     private _lastCleanupTime: number = 0;
     private readonly _gravity: ChatFlowGravity = new ChatFlowGravity();
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::_bubbles
     private _bubbles: ChatBubbleSimulationEntity[] = [];
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::_toRemove
     private _toRemove: ChatBubbleSimulationEntity[] = [];
 
     // AS3 field _SafeStr_11387 ("_-v2") is declared in ChatFlowStage.as but never
     // referenced anywhere in the class - dead in the source itself, not ported.
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::_lineByLineMode
     private _lineByLineMode: boolean = false;
     private _scrollIntervalMs: number = MOVE_UP_TIMER_DEFAULT;
     private _gravityEnabled: boolean = true;
@@ -85,6 +90,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::get disposed()
     get disposed(): boolean
     {
         return this._chatFlow === null;

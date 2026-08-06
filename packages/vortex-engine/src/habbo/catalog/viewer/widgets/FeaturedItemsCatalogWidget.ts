@@ -16,6 +16,7 @@ import {CatalogWidget} from './CatalogWidget';
  */
 export class FeaturedItemsCatalogWidget extends CatalogWidget
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/FeaturedItemsCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _itemList: IItemListWindow | null = null;
@@ -66,6 +67,7 @@ export class FeaturedItemsCatalogWidget extends CatalogWidget
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/FeaturedItemsCatalogWidget.as::createItemFromTemplate()
     private createItemFromTemplate(item: FrontPageItem): IWindowContainer | null
     {
         const view = this._itemTemplate?.clone() as unknown as IWindowContainer | null;
@@ -75,6 +77,7 @@ export class FeaturedItemsCatalogWidget extends CatalogWidget
         return this.populateItem(item, view);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/FeaturedItemsCatalogWidget.as::populateItem()
     private populateItem(item: FrontPageItem, view: IWindowContainer): IWindowContainer
     {
         const title = view.findChildByName('item_title') as unknown as ITextWindow | null;

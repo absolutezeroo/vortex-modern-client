@@ -15,10 +15,15 @@ import type {IWindow} from '../IWindow';
  */
 export interface IFrameWindow extends IWindowContainer
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IFrameWindow.as::get title()
     readonly title: ILabelWindow;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IFrameWindow.as::get header()
     readonly header: IHeaderWindow;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IFrameWindow.as::get content()
     readonly content: IWindowContainer;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IFrameWindow.as::get margins()
     readonly margins: IMargins;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IFrameWindow.as::get scaler()
     readonly scaler: IScalerWindow;
     readonly menuButton: IWindow | null;
     menuButtonVisible: boolean;

@@ -55,6 +55,7 @@ export class RoomEngineObjectEvent extends RoomEngineEvent
 
     private _objectId: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::get objectId()
     get objectId(): number
     {
         return this._objectId;
@@ -62,6 +63,7 @@ export class RoomEngineObjectEvent extends RoomEngineEvent
 
     private _category: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::get category()
     get category(): number
     {
         return this._category;

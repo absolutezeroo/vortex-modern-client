@@ -16,15 +16,19 @@ export class RoomObjectModelDataUpdateMessage extends RoomObjectUpdateMessage
         this._numberValue = numberValue;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectModelDataUpdateMessage.as::_numberKey
     private _numberKey: string;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectModelDataUpdateMessage.as::get numberKey()
     get numberKey(): string
     {
         return this._numberKey;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectModelDataUpdateMessage.as::_numberValue
     private _numberValue: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectModelDataUpdateMessage.as::get numberValue()
     get numberValue(): number
     {
         return this._numberValue;

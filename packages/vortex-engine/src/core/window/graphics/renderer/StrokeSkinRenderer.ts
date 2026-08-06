@@ -11,6 +11,7 @@ import {SkinRenderer} from './SkinRenderer';
  */
 export class StrokeSkinRenderer extends SkinRenderer
 {
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/StrokeSkinRenderer.as::SIDE_MASK_ALL
     private static readonly SIDE_MASK_ALL: number = 15;
 
     constructor(name: string)

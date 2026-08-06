@@ -8,7 +8,9 @@ import type {IDisposable} from "../../runtime/IDisposable";
  */
 export interface IWindowParser extends IDisposable
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/IWindowParser.as::parseAndConstruct()
     parseAndConstruct(layout: string | Document | Element, parent: IWindow | null, namedWindows: Map<string, IWindow> | null): IWindow | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/IWindowParser.as::windowToXMLString()
     windowToXMLString(window: IWindow): string;
 }

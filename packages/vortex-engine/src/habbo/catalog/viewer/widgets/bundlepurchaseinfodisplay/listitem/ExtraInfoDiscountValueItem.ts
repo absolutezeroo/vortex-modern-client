@@ -22,10 +22,12 @@ const STRIKETHROUGH_RIGHT_MARGIN = 20;
  */
 export class ExtraInfoDiscountValueItem extends UpdateableExtraInfoListItem
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::_window
     private _window: IWindowContainer | null = null;
 
     private _needsRender: boolean = true;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::_catalog
     private _catalog: HabboCatalog;
 
     private _starFrame: number = 0;
@@ -96,6 +98,7 @@ export class ExtraInfoDiscountValueItem extends UpdateableExtraInfoListItem
         return this._window;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::createWindow()
     private createWindow(): void
     {
         this._window = this._catalog.utils.createWindow('discountValueItem') as unknown as IWindowContainer;
@@ -103,6 +106,7 @@ export class ExtraInfoDiscountValueItem extends UpdateableExtraInfoListItem
         this.startSplashAnimation();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::render()
     private render(): void
     {
         if(this._window == null) this.createWindow();
@@ -114,11 +118,13 @@ export class ExtraInfoDiscountValueItem extends UpdateableExtraInfoListItem
         this._needsRender = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::updateColumns()
     private updateColumns(): void
     {
         this.setLeftColumnVisibility(!(this._showActivityPointsOnly || this._showRightCreditsOnly));
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::setCurrencyIcons()
     private setCurrencyIcons(): void
     {
         const configuration = this._catalog as unknown as IHabboConfigurationManager;
@@ -143,6 +149,7 @@ export class ExtraInfoDiscountValueItem extends UpdateableExtraInfoListItem
         this._iconsSet = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::updatePriceIndicators()
     private updatePriceIndicators(): void
     {
         const data = this.data;
@@ -165,6 +172,7 @@ export class ExtraInfoDiscountValueItem extends UpdateableExtraInfoListItem
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::updateStrikeThroughElements()
     private updateStrikeThroughElements(): void
     {
         const window = this._window!;
@@ -184,11 +192,13 @@ export class ExtraInfoDiscountValueItem extends UpdateableExtraInfoListItem
         strikeRight.width = STRIKETHROUGH_LEFT_MARGIN + totalRight.textWidth + STRIKETHROUGH_RIGHT_MARGIN;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::setElementText()
     private setElementText(name: string, text: string): void
     {
         this._window!.findChildByName(name)!.caption = text;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::setElementBitmap()
     private setElementBitmap(name: string, assetName: string): void
     {
         const target = this._window!.findChildByName(name) as unknown as IBitmapWrapperWindow;
@@ -197,11 +207,13 @@ export class ExtraInfoDiscountValueItem extends UpdateableExtraInfoListItem
         if(source) HabboCatalogUtils.replaceCenteredImage(target, source);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::setIconStyle()
     private setIconStyle(name: string, style: number): void
     {
         (this._window!.findChildByName(name) as IWindow).style = style;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::setLeftColumnVisibility()
     private setLeftColumnVisibility(visible: boolean): void
     {
         const elements = [
@@ -218,6 +230,7 @@ export class ExtraInfoDiscountValueItem extends UpdateableExtraInfoListItem
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::startSplashAnimation()
     private startSplashAnimation(): void
     {
         const splash = this._window!.findChildByName('icon_splash_bitmap') as unknown as IBitmapWrapperWindow;
@@ -228,6 +241,7 @@ export class ExtraInfoDiscountValueItem extends UpdateableExtraInfoListItem
         this._starTimer = setInterval(() => this.starAnimationTimerEvent(), 150);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::starAnimationTimerEvent()
     private starAnimationTimerEvent(): void
     {
         if(this._window == null) return;

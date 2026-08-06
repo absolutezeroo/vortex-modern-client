@@ -24,16 +24,19 @@ export class AnimatedPetVisualizationData extends AnimatedFurnitureVisualization
 
     private _commonAssets: IAssetLibrary | null = null;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::get commonAssets()
     get commonAssets(): IAssetLibrary | null
     {
         return this._commonAssets;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::set commonAssets()
     set commonAssets(value: IAssetLibrary | null)
     {
         this._commonAssets = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::get isAllowedToTurnHead()
     get isAllowedToTurnHead(): boolean
     {
         return this._allowHeadTurn;

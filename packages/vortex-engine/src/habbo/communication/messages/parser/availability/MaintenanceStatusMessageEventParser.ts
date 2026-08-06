@@ -10,6 +10,7 @@ export class MaintenanceStatusMessageEventParser implements IMessageParser
 {
     private _isInMaintenance: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/availability/MaintenanceStatusMessageEventParser.as::get isInMaintenance()
     get isInMaintenance(): boolean
     {
         return this._isInMaintenance;
@@ -17,6 +18,7 @@ export class MaintenanceStatusMessageEventParser implements IMessageParser
 
     private _minutesUntilMaintenance: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/availability/MaintenanceStatusMessageEventParser.as::get minutesUntilMaintenance()
     get minutesUntilMaintenance(): number
     {
         return this._minutesUntilMaintenance;
@@ -24,11 +26,13 @@ export class MaintenanceStatusMessageEventParser implements IMessageParser
 
     private _duration: number = 15;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/availability/MaintenanceStatusMessageEventParser.as::get duration()
     get duration(): number
     {
         return this._duration;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/availability/MaintenanceStatusMessageEventParser.as::flush()
     flush(): boolean
     {
         this._isInMaintenance = false;
@@ -37,6 +41,7 @@ export class MaintenanceStatusMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/availability/MaintenanceStatusMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._isInMaintenance = wrapper.readBoolean();

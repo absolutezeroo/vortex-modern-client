@@ -17,6 +17,7 @@ import {WindowEvent} from '../events/WindowEvent';
  */
 export class ScrollBarLiftController extends InteractiveController implements IDragBarWindow
 {
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarLiftController.as::_scrollBar
     protected _scrollBar: ScrollBarController | null = null;
 
     constructor(
@@ -74,6 +75,7 @@ export class ScrollBarLiftController extends InteractiveController implements ID
     /**
 	 * Gets the horizontal scrollbar offset (0..1).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarLiftController.as::get scrollbarOffsetX()
     public get scrollbarOffsetX(): number
     {
         return this._scrollbarOffsetX;
@@ -82,6 +84,7 @@ export class ScrollBarLiftController extends InteractiveController implements ID
     /**
 	 * Sets the horizontal scrollbar offset.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarLiftController.as::set scrollbarOffsetX()
     public set scrollbarOffsetX(_value: number)
     {
         // No-op per AS3
@@ -92,6 +95,7 @@ export class ScrollBarLiftController extends InteractiveController implements ID
     /**
 	 * Gets the vertical scrollbar offset (0..1).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarLiftController.as::get scrollbarOffsetY()
     public get scrollbarOffsetY(): number
     {
         return this._scrollbarOffsetY;
@@ -100,6 +104,7 @@ export class ScrollBarLiftController extends InteractiveController implements ID
     /**
 	 * Sets the vertical scrollbar offset.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarLiftController.as::set scrollbarOffsetY()
     public set scrollbarOffsetY(_value: number)
     {
         // No-op per AS3

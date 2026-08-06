@@ -14,8 +14,10 @@
  */
 export class MarketplaceItemStats 
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/catalog/marketplace/MarketplaceItemStats.as::_currentOfferCount
     private _currentOfferCount: number = 0;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/catalog/marketplace/MarketplaceItemStats.as::_averagePrice
     private _averagePrice: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get averagePrice()
@@ -30,6 +32,7 @@ export class MarketplaceItemStats
         this._averagePrice = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::_historyLength
     private _historyLength: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get historyLength()
@@ -44,6 +47,7 @@ export class MarketplaceItemStats
         this._historyLength = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/catalog/marketplace/MarketplaceItemStats.as::_dayOffsets
     private _dayOffsets: number[] = [];
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get dayOffsets()
@@ -58,6 +62,7 @@ export class MarketplaceItemStats
         this._dayOffsets = value.slice();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::_averagePrices
     private _averagePrices: number[] = [];
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get averagePrices()
@@ -74,6 +79,7 @@ export class MarketplaceItemStats
         this._averagePrices = value.slice();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/catalog/marketplace/MarketplaceItemStats.as::_soldAmounts
     private _soldAmounts: number[] = [];
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get soldAmounts()
@@ -88,6 +94,7 @@ export class MarketplaceItemStats
         this._soldAmounts = value.slice();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/catalog/marketplace/MarketplaceItemStats.as::_furniTypeId
     private _furniTypeId: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get furniTypeId()
@@ -102,6 +109,7 @@ export class MarketplaceItemStats
         this._furniTypeId = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/catalog/marketplace/MarketplaceItemStats.as::_furniCategoryId
     private _furniCategoryId: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get furniCategoryId()
@@ -145,6 +153,7 @@ export class MarketplaceItemStats
     }
 
     // (real field name recovered from PRODUCTION-201601012205-226667486: `_currentOfferCount`)
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get offerCount()
     get offerCount(): number 
     {
         return this._currentOfferCount;

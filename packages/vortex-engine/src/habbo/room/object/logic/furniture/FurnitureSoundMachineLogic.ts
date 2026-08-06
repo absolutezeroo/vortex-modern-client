@@ -12,6 +12,7 @@ import {RoomObjectFurnitureActionEvent} from '@habbo/room/events/RoomObjectFurni
 export class FurnitureSoundMachineLogic extends FurnitureMultiStateLogic
 {
     private _wasInitialized: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureSoundMachineLogic.as::_isInitialized
     private _isInitialized: boolean = false;
     private _lastState: number = -1;
 
@@ -72,6 +73,7 @@ export class FurnitureSoundMachineLogic extends FurnitureMultiStateLogic
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureSoundMachineLogic.as::requestInitialize()
     private requestInitialize(): void
     {
         if(this.object === null || this.eventDispatcher === null)
@@ -89,6 +91,7 @@ export class FurnitureSoundMachineLogic extends FurnitureMultiStateLogic
         this._isInitialized = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureSoundMachineLogic.as::requestPlayList()
     private requestPlayList(): void
     {
         if(this.object === null || this.eventDispatcher === null)
@@ -104,6 +107,7 @@ export class FurnitureSoundMachineLogic extends FurnitureMultiStateLogic
         );
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureSoundMachineLogic.as::requestStopPlaying()
     private requestStopPlaying(): void
     {
         if(this.object === null || this.eventDispatcher === null)
@@ -117,6 +121,7 @@ export class FurnitureSoundMachineLogic extends FurnitureMultiStateLogic
         );
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureSoundMachineLogic.as::requestDispose()
     private requestDispose(): void
     {
         if(!this._wasInitialized)

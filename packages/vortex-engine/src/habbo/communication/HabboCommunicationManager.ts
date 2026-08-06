@@ -42,10 +42,12 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
 {
     private _messageConfig: IMessageConfiguration;
     private _config: IHabboConnectionConfig | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/HabboCommunicationManager.as::_portIndex
     private _portIndex: number = -1;
     private _connectionAttempt: number = 1;
     private _maxConnectionAttempts: number = 2;
     private _pendingMessageEvents: IMessageEvent[] = [];
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::_mode
     private _mode: number = 0;
     private _tcpNoDelay: boolean = true;
     private _suggestedLoginActions: unknown[] = [];
@@ -57,8 +59,10 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         this._messageConfig = new HabboMessages();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/HabboCommunicationManager.as::_connection
     private _connection: IConnection | null = null;
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::get connection()
     get connection(): IConnection | null
     {
         return this._connection;
@@ -81,16 +85,19 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         return this._connection?.connected ?? false;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::get mode()
     get mode(): number
     {
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::set mode()
     set mode(value: number)
     {
         this._mode = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::get port()
     get port(): number
     {
         if(!this._config || this._portIndex < 0 || this._portIndex >= this._config.ports.length)
@@ -101,16 +108,19 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         return this._config.ports[this._portIndex];
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::get suggestedLoginActions()
     get suggestedLoginActions(): unknown[]
     {
         return this._suggestedLoginActions;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::set suggestedLoginActions()
     set suggestedLoginActions(value: unknown[])
     {
         this._suggestedLoginActions = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::set tcpNoDelay()
     set tcpNoDelay(value: boolean)
     {
         this._tcpNoDelay = value;
@@ -174,6 +184,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         this._ssoTicket = config.ssoTicket || null;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::initConnection()
     initConnection(type: string): void
     {
         if(type !== 'habbo')
@@ -226,6 +237,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::renewSocket()
     renewSocket(): void
     {
         this._connectionAttempt = 1;
@@ -233,11 +245,13 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         this._connection?.createSocket();
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::addHabboConnectionMessageEvent()
     addHabboConnectionMessageEvent(event: IMessageEvent): IMessageEvent
     {
         return this.addMessageEvent(event);
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::removeHabboConnectionMessageEvent()
     removeHabboConnectionMessageEvent(event: IMessageEvent): void
     {
         this.removeMessageEvent(event);
@@ -248,6 +262,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         return new ArcFour();
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::initializeEncryption()
     initializeEncryption(): IEncryption
     {
         return this.createEncryption();
@@ -258,11 +273,13 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         return new DiffieHellman(prime, generator);
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::initializeKeyExchange()
     initializeKeyExchange(prime: string, generator: string): IKeyExchange
     {
         return this.createKeyExchange(prime, generator);
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::disconnect()
     disconnect(): void
     {
         this._connection?.close();
@@ -297,7 +314,9 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
     }
 
     private _webApiSession: HabboWebApiSession | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/HabboCommunicationManager.as::_host
     private _host: string = '';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/HabboCommunicationManager.as::_ports
     private _ports: number[] = [];
 
     /**
@@ -305,6 +324,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
 	 * Reads connection.info.host and connection.info.port from configuration
 	 * and updates the internal host/port list.
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::updateHostParameters()
     updateHostParameters(): void
     {
         const configuration = this.context.configuration;
@@ -340,6 +360,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
 	 * AS3: createHabboWebApiSession(listener, server)
 	 * Creates a new HabboWebApiSession for HTTP API requests.
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::createHabboWebApiSession()
     createHabboWebApiSession(listener: IHabboWebApiListener, server: string): IHabboWebApiSession
     {
         if(this._webApiSession)
@@ -361,11 +382,13 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
 	 * AS3: getHabboWebApiSession()
 	 * Returns the current HabboWebApiSession, or null if not created.
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::getHabboWebApiSession()
     getHabboWebApiSession(): IHabboWebApiSession | null
     {
         return this._webApiSession;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::resetHabboWebApiSession()
     resetHabboWebApiSession(): void
     {
         if(!this._webApiSession)
@@ -378,6 +401,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
     }
 
     // IConnectionCallback
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::connectionInit()
     connectionInit(host: string, port: number): void
     {
         log.info(`Connecting to ${host}:${port}...`);
@@ -436,24 +460,28 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         this.tryNextPort();
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::messageReceived()
     messageReceived(messageId: string): void
     {
         ErrorReportStorage.addDebugData('rece_msg_time', String(Date.now()));
         this.appendMessageQueue('R', messageId);
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::messageSent()
     messageSent(messageId: string): void
     {
         ErrorReportStorage.addDebugData('sent_msg_time', String(Date.now()));
         this.appendMessageQueue('S', messageId);
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::messageParseError()
     messageParseError(message: IMessageDataWrapper): void
     {
         ErrorReportStorage.addDebugData('sent_msg_data', String(message));
         this.setMessageQueueErrorDebugData();
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::setMessageQueueErrorDebugData()
     setMessageQueueErrorDebugData(): void
     {
         ErrorReportStorage.addDebugData('MESSAGE_QUEUE', this._messageQueue);
@@ -503,6 +531,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboCommunicationManager.as::tryNextPort()
     private tryNextPort(): void
     {
         if(!this._connection || !this._config) return;

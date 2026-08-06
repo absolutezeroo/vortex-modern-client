@@ -16,6 +16,7 @@ export class ConvertGlobalRoomIdMessageComposer extends MessageComposer<Construc
         this._data = [flatId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/ConvertGlobalRoomIdMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -178,8 +178,11 @@ const ROOM_DRAG_THRESHOLD = 15;
 const TEMPORARY_ROOM_ID = 'temporary_room';
 
 interface IRoomEngineRoomInstanceData {
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get roomCamera()
     roomCamera: RoomCamera;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get furniStackingHeightMap()
     furniStackingHeightMap: FurniStackingHeightMap | null;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get tileObjectMap()
     tileObjectMap: TileObjectMap | null;
     selectedObjectData: SelectedRoomObjectData | null;
 }
@@ -2194,11 +2197,11 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true;
     }
 
-    // AS3: sources/win63_client/com/sulake/habbo/room/RoomObjectEventHandler.as::resetSelectedObjectData()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomObjectEventHandler.as::resetSelectedObjectData()
     // Reverts the semi-transparent preview back to its pre-move location/alpha
     // without notifying the server — used when a move is abandoned by starting
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/room/RoomEngine.as::update()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::update()
     update(time: number): void 
     {
         if(this._roomManager) 
@@ -2240,7 +2243,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         this._canvasSyncCallbacks.add(callback);
     }
 
-    // AS3: sources/win63_client/com/sulake/habbo/room/RoomEngine.as::disposeObjectFurniture()/disposeObjectWallItem()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::disposeObjectFurniture()/disposeObjectWallItem()
     // TODO(AS3): skips the `furniture_disable_picking_animation` model flag check
     // and AS3's stuff-data-wrapper lookup for the icon param — uses the plain
     // furniture_type_id icon, which is correct for the common case but won't
@@ -4967,7 +4970,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.resetSelectedObjectData(roomId);
     }
 
-    // AS3: sources/win63_client/com/sulake/habbo/room/RoomEngine.as::getRoomObjectScreenLocation()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getRoomObjectScreenLocation()
     // Public: the wired overview tab's VariableInfoBubbleView projects holder objects to screen space.
     public getRoomObjectScreenLocation(roomId: number, objectId: number, category: number, canvasId: number = 1): {
         x: number;

@@ -31,6 +31,7 @@ export class UserChatlogMessageParser implements IMessageParser
         return this._rooms;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/UserChatlogEventParser.as::flush()
     flush(): boolean
     {
         this._userId = 0;
@@ -39,6 +40,7 @@ export class UserChatlogMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/UserChatlogEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

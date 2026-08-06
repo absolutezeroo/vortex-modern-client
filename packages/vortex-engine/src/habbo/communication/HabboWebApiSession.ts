@@ -25,12 +25,16 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
      * AS3: SHARED_SECRET — used for device ID HMAC.
      * Not needed in browser (no machine ID), but kept for reference.
      */
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::SHARED_SECRET
     private static readonly SHARED_SECRET = 'CnurvLf7UP';
 
     private _routes: Map<string, WebApiRequest> = new Map();
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::_server
     private _server: string;
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::_listeners
     private _listeners: IHabboWebApiListener[] = [];
     private _deviceId: string;
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::_deviceToken
     private _deviceToken: string = '';
     private _lastRequest: WebApiRequest | null = null;
     private _lastRequestVars: Record<string, unknown> | null = null;
@@ -59,8 +63,10 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::_captchaToken
     private _captchaToken: string | null = null;
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::get captchaToken()
     get captchaToken(): string | null 
     {
         return this._captchaToken;
@@ -68,6 +74,7 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::get disposed()
     get disposed(): boolean 
     {
         return this._disposed;
@@ -76,6 +83,7 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
     /**
      * AS3: addListener(listener)
      */
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::addListener()
     public addListener(listener: IHabboWebApiListener): boolean 
     {
         if(this._listeners.indexOf(listener) === -1) 
@@ -91,6 +99,7 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
     /**
      * AS3: removeListener(listener)
      */
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::removeListener()
     public removeListener(listener: IHabboWebApiListener): void 
     {
         const index = this._listeners.indexOf(listener);
@@ -105,6 +114,7 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
      * AS3: setCaptchaToken(token)
      * Sets the captcha token and re-executes the last failed request if applicable.
      */
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::setCaptchaToken()
     public setCaptchaToken(token: string): boolean 
     {
         this._captchaToken = token;
@@ -125,6 +135,7 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
      * AS3: apiResponse(uri, data)
      * Dispatches successful response to all listeners.
      */
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::apiResponse()
     public apiResponse(uri: string, data: Record<string, unknown>): void 
     {
         for(const listener of this._listeners) 
@@ -140,6 +151,7 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
      * AS3: apiRawResponse(uri, data)
      * Dispatches raw response to all listeners.
      */
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::apiRawResponse()
     public apiRawResponse(uri: string, data: unknown): void 
     {
         for(const listener of this._listeners) 
@@ -155,6 +167,7 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
      * AS3: apiError(uri, status, error, data, isCaptcha)
      * Normalizes the error and dispatches to all listeners.
      */
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::apiError()
     public apiError(uri: string, status: number, error: string, data: Record<string, unknown> | null, isCaptcha: boolean = false): void 
     {
         // AS3: Normalize error from data
@@ -191,96 +204,115 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::emailChange()
     public emailChange(newEmail: string): void 
     {
         this.executeRequest('emailChange', {newEmail});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::passwordChange()
     public passwordChange(newPassword: string): void 
     {
         this.executeRequest('passwordChange', {newPassword});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::tosAccept()
     public tosAccept(): void 
     {
         this.executeRequest('tosAccept');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::captcha()
     public captcha(): void 
     {
         this.executeRequest('captcha');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::achievements()
     public achievements(): void 
     {
         this.executeRequest('achievements');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::achievementsForId()
     public achievementsForId(id: number): void 
     {
         this.executeRequest('achievementsForId', null, [id]);
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::time()
     public time(): void 
     {
         this.executeRequest('time');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::activate()
     public activate(token: string): void 
     {
         this.executeRequest('activate', {token});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::login()
     public login(email: string, password: string): void 
     {
         this.executeRequest('login', {email, password});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::facebook()
     public facebook(accessToken: string): void 
     {
         this.executeRequest('facebook', {accessToken});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::rpx()
     public rpx(token: string): void 
     {
         this.executeRequest('rpx', {token});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::logout()
     public logout(): void 
     {
         this.executeRequest('logout');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::authenticateUser()
     public authenticateUser(): void 
     {
         this.executeRequest('authenticateUser');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::forgotPassword()
     public forgotPassword(email: string): void 
     {
         this.executeRequest('forgotPassword', {email});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::changePassword()
     public changePassword(token: string, password: string, answer1: string, answer2: string): void 
     {
         this.executeRequest('changePassword', {token, password, answer1, answer2});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::groups()
     public groups(id: number): void 
     {
         this.executeRequest('groups', null, [id]);
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::members()
     public members(id: number): void 
     {
         this.executeRequest('members', null, [id]);
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::hello()
     public hello(): void 
     {
         this.executeRequest('hello');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::register()
     public register(email: string, password: string, day: number, month: number, year: number, tos: boolean, captchaToken: string): void 
     {
         this._captchaToken = captchaToken;
@@ -294,71 +326,85 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
         });
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::popularRooms()
     public popularRooms(): void 
     {
         this.executeRequest('popularRooms');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::room()
     public room(id: number): void 
     {
         this.executeRequest('room', null, [id]);
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::hotlooks()
     public hotlooks(): void 
     {
         this.executeRequest('hotlooks');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::logCrash()
     public logCrash(message: string): void 
     {
         this.executeRequest('logCrash', {message});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::logError()
     public logError(message: string): void 
     {
         this.executeRequest('logError', {message});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::logLoginStep()
     public logLoginStep(step: string, extra: string): void 
     {
         this.executeRequest('logLoginStep', {step, extra});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::clientUrl()
     public clientUrl(): void 
     {
         this.executeRequest('clientUrl');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::nameCheck()
     public nameCheck(name: string): void 
     {
         this.executeRequest('nameCheck', {name});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::selectUser()
     public selectUser(name: string): void 
     {
         this.executeRequest('selectUser', {name});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::selectRoom()
     public selectRoom(roomIndex: number): void 
     {
         this.executeRequest('selectRoom', {roomIndex});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::safetyLockStatus()
     public safetyLockStatus(): void 
     {
         this.executeRequest('safetyLockStatus');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::safetyLockDisable()
     public safetyLockDisable(): void 
     {
         this.executeRequest('safetyLockDisable');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::resetTrustedLogins()
     public resetTrustedLogins(): void 
     {
         this.executeRequest('resetTrustedLogins');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::safetyLockSave()
     public safetyLockSave(password: string, q1Id: number, a1: string, q2Id: number, a2: string): void 
     {
         this.executeRequest('safetyLockSave', {
@@ -370,137 +416,164 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
         });
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::safetyLockQuestions()
     public safetyLockQuestions(): void 
     {
         this.executeRequest('safetyLockQuestions');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::safetyLockUnlock()
     public safetyLockUnlock(answer1: string, answer2: string, trustDevice: boolean): void 
     {
         this.executeRequest('safetyLockUnlock', {answer1, answer2, trustDevice});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::commonFriends()
     public commonFriends(id: number): void 
     {
         this.executeRequest('commonFriends', null, [id]);
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::preferences()
     public preferences(): void 
     {
         this.executeRequest('preferences');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::self()
     public self(): void 
     {
         this.executeRequest('self');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::ping()
     public ping(): void 
     {
         this.executeRequest('ping');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::saveUser()
     public saveUser(): void 
     {
         this.executeRequest('saveUser');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::saveVisibility()
     public saveVisibility(visible: boolean): void 
     {
         this.executeRequest('saveVisibility', {visible});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::campaignMessages()
     public campaignMessages(): void 
     {
         this.executeRequest('campaignMessages');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::campaignMessagesAll()
     public campaignMessagesAll(): void 
     {
         this.executeRequest('campaignMessagesAll');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::campaignMessagesSeen()
     public campaignMessagesSeen(): void 
     {
         this.executeRequest('campaignMessagesSeen');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::discussions()
     public discussions(): void 
     {
         this.executeRequest('discussions');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::creditBalance()
     public creditBalance(): void 
     {
         this.executeRequest('creditBalance');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::friendRequestsSent()
     public friendRequestsSent(): void 
     {
         this.executeRequest('friendRequestsSent');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::friendRequestsReceived()
     public friendRequestsReceived(): void 
     {
         this.executeRequest('friendRequestsReceived');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::saveLooks()
     public saveLooks(figure: string, gender: string): void 
     {
         this.executeRequest('saveLooks', {figure, gender});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::avatars()
     public avatars(): void 
     {
         this.executeRequest('avatars');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::selectAvatar()
     public selectAvatar(uniqueId: string): void 
     {
         this.executeRequest('selectAvatar', {uniqueId});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::changeEmail()
     public changeEmail(newEmail: string, currentPassword: string): void 
     {
         this.executeRequest('changeEmail', {newEmail, currentPassword});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::createAvatar()
     public createAvatar(name: string): void 
     {
         this.executeRequest('createAvatar', {name});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::profile()
     public profile(): void 
     {
         this.executeRequest('profile');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::ssoToken()
     public ssoToken(): void 
     {
         this.executeRequest('ssoToken');
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::validateItunesIAP()
     public validateItunesIAP(transactionId: string, receipt: string, centPrice: number, priceLocale: string): void 
     {
         this.executeRequest('validateItunesIAP', {transactionId, receipt, centPrice, priceLocale});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::validatePlaystoreIAP()
     public validatePlaystoreIAP(transactionId: string, receipt: string, centPrice: number, priceLocale: string, signature: string): void 
     {
         this.executeRequest('validatePlaystoreIAP', {transactionId, receipt, centPrice, priceLocale, signature});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::setDeviceToken()
     public setDeviceToken(token: string): void 
     {
         this._deviceToken = token;
         this.executeRequest('setDeviceToken', {token});
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::getDeviceToken()
     public getDeviceToken(): string 
     {
         return this._deviceToken;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;
@@ -528,6 +601,7 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
      * @param vars - Request body variables (for POST) or query params (for GET)
      * @param pathParams - Path parameter substitutions (e.g., :id → value)
      */
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::executeRequest()
     private executeRequest(
         methodName: string,
         vars: Record<string, unknown> | null = null,
@@ -632,6 +706,7 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
     /**
      * AS3: getURL(path)
      */
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::getURL()
     private getURL(path: string): string 
     {
         return this._server + path;
@@ -641,6 +716,7 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
      * AS3: addHeaders(request)
      * Adds device ID and type headers to the request.
      */
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::addHeaders()
     private addHeaders(headers: Record<string, string>): void 
     {
         headers['X-Habbo-Device-ID'] = this._deviceId;
@@ -653,6 +729,7 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
      * Generates a random device ID. In AS3, this was SHA1(SHARED_SECRET + machineId).
      * In the browser, we use crypto.randomUUID() or a random hex string.
      */
+    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::generateDeviceId()
     private generateDeviceId(): string 
     {
         if(typeof crypto !== 'undefined' && crypto.randomUUID) 

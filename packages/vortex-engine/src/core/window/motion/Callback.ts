@@ -11,6 +11,7 @@ import {Motion} from './Motion';
  */
 export class Callback extends Motion
 {
+    // AS3: .../src/com/sulake/core/window/motion/Callback.as::_callback
     protected _callback: ((motion: Motion) => void) | null;
 
     constructor(callback: (motion: Motion) => void)

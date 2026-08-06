@@ -16,29 +16,44 @@ export interface IChatStyleDescriptor
 {
     background: ImageBitmap;
     scale9Grid: Rectangle;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get pointer()
     pointer: ImageBitmap | null;
     pointerY: number;
     pointerXMargins: number[] | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get textFieldMargins()
     textFieldMargins: Rectangle;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get textFormat()
     textFormat: IChatTextFormat;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isAnonymous()
     isAnonymous: boolean;
     emblem: ImageBitmap | null;
     emblemOffset: Point | null;
     emblemMultiline: ImageBitmap | null;
     emblemMultilineOffset: Point | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get faceOffset()
     faceOffset: Point | null;
     icon: ImageBitmap | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get selectorPreview()
     selectorPreview: ImageBitmap;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isSystemStyle()
     isSystemStyle: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get purchasable()
     purchasable: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isHcOnly()
     isHcOnly: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isStaffOverrideable()
     isStaffOverrideable: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isAmbassadorOnly()
     isAmbassadorOnly: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get isNotification()
     isNotification: boolean;
     color: ImageBitmap | null;
     colorOffset: Point | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get overlap()
     overlap: Rectangle | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get allowHTML()
     allowHTML: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get styleSheet()
     styleSheet: IChatLinkStyleSheet | null;
     usePixelPerfectNineSlice: boolean;
 }
@@ -53,13 +68,18 @@ export interface IChatStyleDescriptor
  */
 export class ChatStyle implements IChatStyle, IChatStyleInternal
 {
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::_background
     private readonly _background: ImageBitmap;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::_scale9Grid
     private readonly _scale9Grid: Rectangle;
     private readonly _pointer: ImageBitmap | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::_pointerY
     private readonly _pointerY: number;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::_pointerXMargins
     private readonly _pointerXMargins: number[] | null;
     private readonly _textFieldMargins: Rectangle;
     private readonly _textFormat: IChatTextFormat;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::_isAnonymous
     private readonly _isAnonymous: boolean;
     private readonly _emblem: ImageBitmap | null;
     private readonly _emblemOffset: Point | null;
@@ -74,13 +94,17 @@ export class ChatStyle implements IChatStyle, IChatStyleInternal
     private readonly _isStaffOverrideable: boolean;
     private readonly _isAmbassadorOnly: boolean;
     private readonly _isNotification: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::_color
     private readonly _color: ImageBitmap | null;
     // AS3: colorOffset is stored but never actually read anywhere in ChatStyle
     // (getNewBackgroundSprite() draws `_color` at the origin regardless) — kept for fidelity.
     private readonly _colorOffset: Point | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::_overlap
     private readonly _overlap: Rectangle | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::_allowHTML
     private readonly _allowHTML: boolean;
     private readonly _styleSheet: IChatLinkStyleSheet | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::_usePixelPerfectNineSlice
     private readonly _usePixelPerfectNineSlice: boolean;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::ChatStyle()

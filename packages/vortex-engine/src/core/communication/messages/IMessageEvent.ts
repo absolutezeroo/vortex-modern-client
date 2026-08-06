@@ -23,20 +23,24 @@ export interface IMessageEvent extends IDisposable
     /**
 	 * The callback function to invoke when this message is received
 	 */
+    // AS3: .../src/com/sulake/core/communication/messages/IMessageEvent.as::get callback()
     readonly callback: MessageEventCallback;
 
     /**
 	 * The connection that received this message
 	 */
+    // AS3: .../src/com/sulake/core/communication/messages/IMessageEvent.as::get connection()
     connection: IConnection | null;
 
     /**
 	 * The parser class constructor
 	 */
+    // AS3: .../src/com/sulake/core/communication/messages/IMessageEvent.as::get parserClass()
     readonly parserClass: ParserClass;
 
     /**
 	 * The parser instance (shared among handlers for same message type)
 	 */
+    // AS3: .../src/com/sulake/core/communication/messages/IMessageEvent.as::get parser()
     parser: IMessageParser | null;
 }

@@ -16,6 +16,7 @@ export class GetHabboGroupDetailsMessageComposer extends MessageComposer<Constru
         this._data = [groupId, openDetails];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/GetHabboGroupDetailsMessageComposer.as::getMessageArray()
     getMessageArray(): [number, boolean]
     {
         return this._data;

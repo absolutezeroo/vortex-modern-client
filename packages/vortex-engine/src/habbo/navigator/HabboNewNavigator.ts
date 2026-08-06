@@ -73,18 +73,28 @@ const log = Logger.getLogger('habbo.navigator.HabboNewNavigator');
  */
 export class HabboNewNavigator extends Component implements IHabboNewNavigator
 {
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_incomingMessages
     private _incomingMessages: NewIncomingMessages | null = null;
     private _isInitialized: boolean = false;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_noPushToHistoryDueToNavigation
     private _noPushToHistoryDueToNavigation: boolean = false;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_lastSearchCode
     private _lastSearchCode: string = ViewModeCode.OFFICIAL_VIEW;
     private _lastFiltering: string = '';
     private _lastSource: string = '';
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_roomSessionManager
     private _roomSessionManager: IRoomSessionManager | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_sessionData
     private _sessionData: ISessionDataManager | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_habboHelp
     private _habboHelp: IHabboHelp | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_tracking
     private _tracking: IHabboTracking | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_groupDetails
     private _groupDetails: Map<number, unknown> = new Map();
     private _roomNames: Map<number, string> = new Map();
     private _legacyNavigatorWrapper: LegacyNavigator | null = null;
@@ -99,6 +109,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         this._liftDataContainer = new LiftDataContainer();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/HabboNewNavigator.as::_newResultsRendered
     private _newResultsRendered: boolean = false;
 
     /**
@@ -106,16 +117,19 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as newResultsRendered
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get newResultsRendered()
     get newResultsRendered(): boolean
     {
         return this._newResultsRendered;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::set newResultsRendered()
     set newResultsRendered(value: boolean)
     {
         this._newResultsRendered = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
 
     /**
@@ -123,31 +137,37 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as get windowManager()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get windowManager()
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get sessionData()
     get sessionData(): ISessionDataManager | null
     {
         return this._sessionData;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get roomSessionManager()
     get roomSessionManager(): IRoomSessionManager | null
     {
         return this._roomSessionManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get localization()
     get localization(): IHabboLocalizationManager | null
     {
         return this._localization;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get habboHelp()
     get habboHelp(): IHabboHelp | null
     {
         return this._habboHelp;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get linkPattern()
     get linkPattern(): string
     {
         return 'navigator/';
@@ -160,11 +180,13 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as get view()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get view()
     get view(): NavigatorView | null
     {
         return this._view;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get mainWindow()
     get mainWindow(): IWindow | null
     {
         return this._view?.mainWindow ?? null;
@@ -183,11 +205,13 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         return this._navigatorEvents;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
 
     /**
 	 * Get the communication manager
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get communication()
     get communication(): IHabboCommunicationManager
     {
         if(!this._communication)
@@ -197,16 +221,20 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         return this._communication;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_legacyNavigator
     private _legacyNavigator: IHabboNavigator | null = null;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get legacyNavigator()
     get legacyNavigator(): IHabboNavigator
     {
         if(this._legacyNavigator === null) throw new Error('[HabboNewNavigator] legacyNavigator not initialized');
         return this._legacyNavigator;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/HabboNewNavigator.as::_contextContainer
     private _contextContainer: ContextContainer;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get contextContainer()
     get contextContainer(): ContextContainer
     {
         return this._contextContainer;
@@ -219,6 +247,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         return this._historyManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get searchContextHistoryManager()
     get searchContextHistoryManager(): SearchContextHistoryManager
     {
         return this._historyManager;
@@ -231,6 +260,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         return this._cache;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/HabboNewNavigator.as::_liftDataContainer
     private _liftDataContainer: LiftDataContainer;
 
     /**
@@ -238,30 +268,37 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see sources/win63_version/habbo/navigator/HabboNewNavigator.as get liftDataContainer()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get liftDataContainer()
     get liftDataContainer(): LiftDataContainer
     {
         return this._liftDataContainer;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get imageLibraryBaseUrl()
     get imageLibraryBaseUrl(): string
     {
         return this.getProperty('image.library.url');
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get isReady()
     get isReady(): boolean
     {
         return (this.contextContainer != null) && (this.contextContainer.isReady());
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_currentResults
     private _currentResults: NavigatorSearchResultSet | null = null;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get currentResults()
     get currentResults(): NavigatorSearchResultSet | null
     {
         return this._currentResults;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_collapsedCategories
     private _collapsedCategories: Set<string> = new Set();
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get collapsedCategories()
     get collapsedCategories(): Set<string>
     {
         return this._collapsedCategories;
@@ -281,6 +318,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 * Get the navigator data model
 	 * Uses legacy navigator's data for shared state
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get data()
     get data(): NavigatorData
     {
         return this.legacyNavigator.data;
@@ -389,11 +427,13 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as getEventLogExtraStringFromSearch()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::getEventLogExtraStringFromSearch()
     static getEventLogExtraStringFromSearch(searchCode: string, filtering: string): string
     {
         return searchCode + (filtering === '' ? '' : ':' + filtering);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::initialize()
     initialize(parser: NavigatorMetaDataMessageParser): void
     {
         this._contextContainer.initialize(parser);
@@ -407,6 +447,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as onSearchResult()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::onSearchResult()
     onSearchResult(results: NavigatorSearchResultSet): void
     {
         this._newResultsRendered = false;
@@ -435,6 +476,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         log.debug(`Search results: ${results.blocks.length} blocks`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::onLiftedRooms()
     onLiftedRooms(rooms: NavigatorLiftedRoomData[]): void
     {
         this._liftDataContainer.setLiftedRooms(rooms);
@@ -450,6 +492,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as onSavedSearches()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::onSavedSearches()
     onSavedSearches(searches: NavigatorSavedSearch[]): void
     {
         this._contextContainer.savedSearches = searches;
@@ -464,6 +507,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         log.debug(`Saved searches: ${searches.length}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::onCollapsedCategories()
     onCollapsedCategories(categories: string[]): void
     {
         this._collapsedCategories = new Set(categories);
@@ -478,6 +522,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as open()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::open()
     open(): void
     {
         if(this._view === null) return;
@@ -493,6 +538,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as close()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::close()
     close(): void
     {
         if(this._view === null) return;
@@ -508,6 +554,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as toggle()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::toggle()
     toggle(): void
     {
         if(this._view === null)
@@ -529,6 +576,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as performSearch()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performSearch()
     performSearch(searchCode: string, filtering: string = '', source: string = ''): void
     {
         if(this._view)
@@ -559,11 +607,13 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         log.debug(`Searching: ${searchCode}, filter: ${filtering}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performSearchByContext()
     performSearchByContext(context: SearchContext): void
     {
         this.performSearch(context.searchCode, context.filtering);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performLastSearch()
     performLastSearch(): void
     {
         if(this._lastSearchCode)
@@ -574,31 +624,37 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performTagSearch()
     performTagSearch(tag: string): void
     {
         this.performSearch(ViewModeCode.HOTEL_VIEW, 'tag:' + tag);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performTextSearch()
     performTextSearch(_text: string): void
     {
         // AS3 stub: HabboNewNavigator.performTextSearch(param1:String) is empty in WIN63.
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::showOwnRooms()
     showOwnRooms(): void
     {
         // AS3 stub: HabboNewNavigator.showOwnRooms() is empty in WIN63.
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performGuildBaseSearch()
     performGuildBaseSearch(): void
     {
         // AS3 stub: HabboNewNavigator.performGuildBaseSearch() is empty in WIN63.
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performCompetitionRoomsSearch()
     performCompetitionRoomsSearch(_goalId: number, _roomType: number): void
     {
         // AS3 stub: HabboNewNavigator.performCompetitionRoomsSearch(param1:int, param2:int) is empty in WIN63.
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::goBack()
     goBack(): void
     {
         const context = this._historyManager.getPreviousSearchContextAndGoBack();
@@ -625,6 +681,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::goToRoom()
     goToRoom(roomId: number, source: string = 'mainview'): void
     {
         this.send(new GetGuestRoomMessageComposer(roomId, false, true));
@@ -641,6 +698,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         log.info(`Going to room: ${roomId}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::goToHomeRoom()
     goToHomeRoom(): void
     {
         const homeRoomId = this.data.homeRoomId;
@@ -651,6 +709,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::addSavedSearch()
     addSavedSearch(searchCode: string, filtering: string): void
     {
         if(this._currentResults)
@@ -662,6 +721,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         this._view?.setLeftPaneVisibility(true);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::deleteSavedSearch()
     deleteSavedSearch(id: number): void
     {
         this.send(new NavigatorDeleteSavedSearchComposer(id));
@@ -690,16 +750,19 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         this.toggleSearchCodeViewMode(searchCode, viewMode);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::sendAddCollapsedCategory()
     sendAddCollapsedCategory(category: string): void
     {
         this.send(new NavigatorAddCollapsedCategoryMessageComposer(category));
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::sendRemoveCollapsedCategory()
     sendRemoveCollapsedCategory(category: string): void
     {
         this.send(new NavigatorRemoveCollapsedCategoryMessageComposer(category));
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::toggleSearchCodeViewMode()
     toggleSearchCodeViewMode(searchCode: string, viewMode: number): void
     {
         this.send(new NavigatorSetSearchCodeViewModeMessageComposer(searchCode, viewMode));
@@ -766,6 +829,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 * @param resultsMode - Results display mode
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as onPreferences()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::onPreferences()
     onPreferences(
         preferencesOrWindowX: NavigatorWindowSettingsMessageParser | number,
         windowY: number = 0,
@@ -795,6 +859,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 * @param details - The group details data
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as onGroupDetails()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::onGroupDetails()
     onGroupDetails(groupDetailsOrGroupId: { readonly groupId: number } | number, details?: unknown): void
     {
         const groupId = typeof groupDetailsOrGroupId === 'number' ? groupDetailsOrGroupId : groupDetailsOrGroupId.groupId;
@@ -815,6 +880,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 * @returns The cached group details, or undefined
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as getCachedGroupDetails()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::getCachedGroupDetails()
     getCachedGroupDetails(groupId: number): unknown
     {
         return this._groupDetails.get(groupId);
@@ -827,6 +893,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 * @param _flag - Whether to request full details
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as getGuildInfo()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::getGuildInfo()
     getGuildInfo(groupId: number, _flag: boolean = true): void
     {
         this.send(new GetHabboGroupDetailsMessageComposer(groupId, _flag));
@@ -843,6 +910,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 * @param tabIndex - Active tab index
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as sendWindowPreferences()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::sendWindowPreferences()
     sendWindowPreferences(x: number, y: number, width: number, height: number, leftPaneHidden: boolean, tabIndex: number): void
     {
         this.send(new SetNewNavigatorWindowPreferencesMessageComposer(x, y, width, height, leftPaneHidden, tabIndex));
@@ -854,6 +922,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 * @param userId - The user ID
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as getExtendedProfile()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::getExtendedProfile()
     getExtendedProfile(userId: number): void
     {
         this.send(new GetExtendedProfileMessageComposer(userId));
@@ -864,6 +933,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as createRoom()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::createRoom()
     createRoom(): void
     {
         this._legacyNavigatorWrapper?.roomCreateViewCtrl.show();
@@ -874,6 +944,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as refresh()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::refresh()
     refresh(): void
     {
         if(this._currentResults && this._view)
@@ -890,6 +961,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 * @param link - The link URL to handle
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as linkReceived()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::linkReceived()
     linkReceived(link: string): void
     {
         const parts = link.split('/');
@@ -949,6 +1021,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as showToolbarHover()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::showToolbarHover()
     showToolbarHover(_point: { readonly x: number; readonly y: number } | number, _y: number = 0): void
     {
         // Stub — empty in AS3
@@ -960,6 +1033,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as hideToolbarHover()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::hideToolbarHover()
     hideToolbarHover(_force: boolean): void
     {
         // Stub — empty in AS3
@@ -974,6 +1048,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 * @param value - Optional numeric value
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as trackEventLog()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::trackEventLog()
     trackEventLog(action: string, category: string, label: string = '', value: number = 0): void
     {
         if(this._tracking)
@@ -1049,6 +1124,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see sources/win63_version/habbo/navigator/HabboNewNavigator.as onPerksUpdated()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::onPerksUpdated()
     private onPerksUpdated(_event: PerksUpdatedEvent): void
     {
         const hasPhaseTwoNavigator = this._sessionData?.isPerkAllowed('NAVIGATOR_PHASE_TWO_2014') ?? false;
@@ -1099,6 +1175,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 *
 	 * @see source_as_win63/habbo/navigator/HabboNewNavigator.as extractRoomNamesFromResults()
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::extractRoomNamesFromResults()
     private extractRoomNamesFromResults(results: NavigatorSearchResultSet): void
     {
         this._roomNames.clear();

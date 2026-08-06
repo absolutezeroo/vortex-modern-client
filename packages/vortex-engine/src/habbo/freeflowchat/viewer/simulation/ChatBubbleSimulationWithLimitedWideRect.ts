@@ -16,6 +16,7 @@ import {ChatBubbleSimulationEntity} from './ChatBubbleSimulationEntity';
 export class ChatBubbleSimulationWithLimitedWideRect extends ChatBubbleSimulationEntity
 {
     /** AS3: ChatBubbleSimulationWithLimitedWideRect.as::WIDERECT_WIDTH */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationWithLimitedWideRect.as::WIDERECT_WIDTH
     static readonly WIDERECT_WIDTH = 240;
 
     private _wideRectOffset: number;

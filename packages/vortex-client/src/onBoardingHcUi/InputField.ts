@@ -105,6 +105,7 @@ export class InputField extends Sprite
      * The frame's `y` is AS3's `-(int(-50 / 2))`, i.e. 25 — the caption sits above the box, so the
      * whole thing is pushed down to make room for it.
      */
+    // AS3: .../src/onBoardingHcUi/InputField.as::init()
     private init(): void
     {
         this._frame = LoaderUI.createFrame(

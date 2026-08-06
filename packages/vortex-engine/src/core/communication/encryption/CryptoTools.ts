@@ -8,6 +8,7 @@ export class CryptoTools
     /**
 	 * Convert ByteArray to string (treating bytes as character codes)
 	 */
+    // AS3: .../src/com/sulake/core/communication/encryption/CryptoTools.as::byteArrayToString()
     static byteArrayToString(bytes: ByteArray): string
     {
         const savedPosition = bytes.position;
@@ -27,6 +28,7 @@ export class CryptoTools
     /**
 	 * Convert string to ByteArray (treating characters as bytes)
 	 */
+    // AS3: .../src/com/sulake/core/communication/encryption/CryptoTools.as::stringToByteArray()
     static stringToByteArray(str: string): ByteArray
     {
         const bytes = new ByteArray(str.length);
@@ -41,6 +43,7 @@ export class CryptoTools
     /**
 	 * Convert ByteArray to hexadecimal string
 	 */
+    // AS3: .../src/com/sulake/core/communication/encryption/CryptoTools.as::byteArrayToHexString()
     static byteArrayToHexString(bytes: ByteArray, uppercase: boolean = false): string
     {
         const savedPosition = bytes.position;
@@ -62,6 +65,7 @@ export class CryptoTools
     /**
 	 * Convert hexadecimal string to ByteArray
 	 */
+    // AS3: .../src/com/sulake/core/communication/encryption/CryptoTools.as::hexStringToByteArray()
     static hexStringToByteArray(hex: string): ByteArray
     {
         // Ensure even length
@@ -84,6 +88,7 @@ export class CryptoTools
     /**
 	 * Fletcher-100 checksum
 	 */
+    // AS3: .../src/com/sulake/core/communication/encryption/CryptoTools.as::fletcher100()
     static fletcher100(bytes: ByteArray, initialA: number = 0, initialB: number = 0): number
     {
         let a = initialA;

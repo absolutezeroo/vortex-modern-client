@@ -18,6 +18,7 @@ export class SetChatStylePreferenceComposer extends MessageComposer<ConstructorP
         this._data = [chatStyle, chatFontSizeMode];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2091/_SafeCls_2257.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

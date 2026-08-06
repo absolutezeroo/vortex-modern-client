@@ -11,13 +11,18 @@ import type {IRoomObject} from '../object/IRoomObject';
 
 export interface IRoomRendererBase
 {
+    // AS3: sources/win63_version/room/renderer/IRoomRendererBase.as::dispose()
     dispose(): void;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRendererBase.as::reset()
     reset(): void;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRendererBase.as::feedRoomObject()
     feedRoomObject(object: IRoomObject): void;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRendererBase.as::removeRoomObject()
     removeRoomObject(object: IRoomObject): void;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRendererBase.as::update()
     update(time: number): void;
 }

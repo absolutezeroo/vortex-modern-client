@@ -54,21 +54,25 @@ export class ClubExtendOfferData extends ClubBuyOfferData
         );
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1716/_SafeCls_3494.as::get originalPrice()
     get originalPrice(): number
     {
         return this._originalPriceRaw * this.months;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1716/_SafeCls_3494.as::get originalActivityPointPrice()
     get originalActivityPointPrice(): number
     {
         return this._originalActivityPointPriceRaw * this.months;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1716/_SafeCls_3494.as::get originalActivityPointType()
     get originalActivityPointType(): number
     {
         return this._originalActivityPointType;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1716/_SafeCls_3494.as::get discountCreditAmount()
     get discountCreditAmount(): number
     {
         return this._originalPriceRaw * this.months - this.priceInCredits;
@@ -78,11 +82,13 @@ export class ClubExtendOfferData extends ClubBuyOfferData
     // (_SafeCls_3494.as) and secondary (class_2375.as) source trees: this multiplies by `months`
     // twice (once inside originalActivityPointPrice, once again here), unlike the credit-side
     // discountCreditAmount above which only multiplies once. Ported faithfully, not "fixed".
+    // AS3: .../src/unknowns/_SafePkg_1716/_SafeCls_3494.as::get discountActivityPointAmount()
     get discountActivityPointAmount(): number
     {
         return this.originalActivityPointPrice * this.months - this.priceInActivityPoints;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1716/_SafeCls_3494.as::get subscriptionDaysLeft()
     get subscriptionDaysLeft(): number
     {
         return this._subscriptionDaysLeft;

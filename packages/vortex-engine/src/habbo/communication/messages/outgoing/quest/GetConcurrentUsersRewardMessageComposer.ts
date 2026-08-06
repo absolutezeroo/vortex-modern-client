@@ -7,6 +7,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetConcurrentUsersRewardMessageComposer extends MessageComposer<[]>
 {
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/quest/GetConcurrentUsersRewardMessageComposer.as::getMessageArray()
     getMessageArray(): []
     {
         return [];

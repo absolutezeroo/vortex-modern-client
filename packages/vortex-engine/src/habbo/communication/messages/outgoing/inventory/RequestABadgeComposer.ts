@@ -18,6 +18,7 @@ export class RequestABadgeComposer extends MessageComposer<ConstructorParameters
         this._data = [badgeCode];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/inventory/badges/RequestABadgeComposer.as::getMessageArray()
     getMessageArray(): [string]
     {
         return this._data;

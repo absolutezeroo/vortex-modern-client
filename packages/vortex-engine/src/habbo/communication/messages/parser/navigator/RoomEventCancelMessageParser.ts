@@ -8,11 +8,13 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class RoomEventCancelMessageParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/RoomEventCancelEventParser.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/RoomEventCancelEventParser.as::parse()
     parse(_wrapper: IMessageDataWrapper): boolean
     {
         // No data to parse

@@ -14,6 +14,7 @@ export class PetReceivedMessageEventParser implements IMessageParser
 {
     private _boughtAsGift: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/pets/PetReceivedMessageEventParser.as::get boughtAsGift()
     get boughtAsGift(): boolean
     {
         return this._boughtAsGift;
@@ -21,11 +22,13 @@ export class PetReceivedMessageEventParser implements IMessageParser
 
     private _pet: IPetInfoData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/pets/PetReceivedMessageEventParser.as::get pet()
     get pet(): IPetInfoData | null
     {
         return this._pet;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/pets/PetReceivedMessageEventParser.as::flush()
     flush(): boolean
     {
         this._boughtAsGift = false;
@@ -33,6 +36,7 @@ export class PetReceivedMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/pets/PetReceivedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

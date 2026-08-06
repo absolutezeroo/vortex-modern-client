@@ -10,6 +10,7 @@ export class NotEnoughBalanceMessageEventParser implements IMessageParser
 {
     private _notEnoughCredits: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/NotEnoughBalanceMessageEventParser.as::get notEnoughCredits()
     get notEnoughCredits(): boolean
     {
         return this._notEnoughCredits;
@@ -17,6 +18,7 @@ export class NotEnoughBalanceMessageEventParser implements IMessageParser
 
     private _notEnoughActivityPoints: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/NotEnoughBalanceMessageEventParser.as::get notEnoughActivityPoints()
     get notEnoughActivityPoints(): boolean
     {
         return this._notEnoughActivityPoints;
@@ -24,11 +26,13 @@ export class NotEnoughBalanceMessageEventParser implements IMessageParser
 
     private _activityPointType: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/NotEnoughBalanceMessageEventParser.as::get activityPointType()
     get activityPointType(): number
     {
         return this._activityPointType;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/NotEnoughBalanceMessageEventParser.as::flush()
     flush(): boolean
     {
         this._notEnoughCredits = false;
@@ -38,6 +42,7 @@ export class NotEnoughBalanceMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/NotEnoughBalanceMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

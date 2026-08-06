@@ -21,9 +21,12 @@ const log = Logger.getLogger('habbo.toolbar.memenu.MeMenuIconLoader');
  */
 export class MeMenuIconLoader implements IAvatarImageListener
 {
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuIconLoader.as::MAX_ICON_HEIGHT
     private static readonly MAX_ICON_HEIGHT: number = 50;
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuIconLoader.as::HEAD_MARGIN
     private static readonly HEAD_MARGIN: number = 3;
 
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuIconLoader.as::_toolbar
     private _toolbar: HabboToolbar | null;
     private _fullBitmap: ImageBitmap | null = null;
     private _headBitmap: ImageBitmap | null = null;
@@ -63,6 +66,7 @@ export class MeMenuIconLoader implements IAvatarImageListener
     /**
 	 * Whether the loader is disposed
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuIconLoader.as::get disposed()
     get disposed(): boolean
     {
         return this._toolbar == null;
@@ -73,6 +77,7 @@ export class MeMenuIconLoader implements IAvatarImageListener
 	 *
 	 * @param _key The avatar image key
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuIconLoader.as::avatarImageReady()
     public avatarImageReady(_key: string): void
     {
         this._currentFigure = '';
@@ -84,6 +89,7 @@ export class MeMenuIconLoader implements IAvatarImageListener
 	 *
 	 * @param figure The user's figure string
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuIconLoader.as::onUserObject()
     public onUserObject(figure: string): void
     {
         this.setMeMenuToolbarIcon(figure);
@@ -95,6 +101,7 @@ export class MeMenuIconLoader implements IAvatarImageListener
 	 * @param id The user id (-1 means own user)
 	 * @param figure The new figure string
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuIconLoader.as::onUserChange()
     public onUserChange(id: number, figure: string): void
     {
         if(id === -1)
@@ -106,6 +113,7 @@ export class MeMenuIconLoader implements IAvatarImageListener
     /**
 	 * Dispose of this icon loader
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuIconLoader.as::dispose()
     public dispose(): void
     {
         if(this.disposed) return;
@@ -153,6 +161,7 @@ export class MeMenuIconLoader implements IAvatarImageListener
         this.onUserChange(parser.id, parser.figure);
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuIconLoader.as::setMeMenuToolbarIcon()
     private setMeMenuToolbarIcon(figure?: string): void
     {
         if(!this._toolbar) return;

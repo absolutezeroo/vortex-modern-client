@@ -21,6 +21,7 @@ export class UniqueIDMessageComposer extends MessageComposer<ConstructorParamete
         this._data = [machineId, fingerprint, flashVersion];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/handshake/UniqueIDMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

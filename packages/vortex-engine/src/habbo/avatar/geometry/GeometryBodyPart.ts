@@ -62,6 +62,7 @@ export class GeometryBodyPart extends Node3D
         return this._id;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryBodyPart.as::_radius
     private _radius: number;
 
     // AS3: sources/win63_version/habbo/avatar/geometry/GeometryBodyPart.as::get radius()

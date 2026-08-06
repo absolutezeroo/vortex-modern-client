@@ -16,18 +16,31 @@ const log = Logger.getLogger('habbo.toolbar.ToolbarView');
  */
 export class ToolbarView
 {
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::DEFAULT_LOCATION
     private static readonly DEFAULT_LOCATION = {x: 3, y: 3};
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::LANDING_VIEW_LOCATION
     private static readonly LANDING_VIEW_LOCATION = {x: 3, y: 3};
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::ICON_BG_COLOR_OVER
     private static readonly ICON_BG_COLOR_OVER: number = 0x716769;
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::ICON_BG_COLOR_OUT
     private static readonly ICON_BG_COLOR_OUT: number = 0x57504D;
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::ICON_MOUSE_OVER
     private static readonly ICON_MOUSE_OVER: string = '_hover';
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::ICON_MOUSE_OUT
     private static readonly ICON_MOUSE_OUT: string = '_normal';
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::COUNTER_MARGIN
     private static readonly COUNTER_MARGIN: number = 5;
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::ME_MENU_ICON_NAME
     private static readonly ME_MENU_ICON_NAME: string = 'icon_me_menu';
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::ICON_REGION_HEIGHT
     private static readonly ICON_REGION_HEIGHT: number = 80;
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::ICON_LABEL_HEIGHT
     private static readonly ICON_LABEL_HEIGHT: number = 20;
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::WINDOW_BOTTOM_PADDING
     private static readonly WINDOW_BOTTOM_PADDING: number = 52;
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::_toolbar
     private _toolbar: HabboToolbar | null;
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::_unseenItemCounters
     private _unseenItemCounters: Map<string, unknown> = new Map();
     private _meMenuController: MeMenuController | null = null;
     private _newItemsNotificationEnabled: boolean = false;
@@ -52,11 +65,13 @@ export class ToolbarView
         log.debug('ToolbarView constructed');
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::_disposed
     private _disposed: boolean = false;
 
     /**
 	 * Whether the view is disposed
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -67,6 +82,7 @@ export class ToolbarView
     /**
 	 * Get the unseen achievement count
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::get unseenAchievementCount()
     get unseenAchievementCount(): number
     {
         return this._unseenAchievementCount;
@@ -75,6 +91,7 @@ export class ToolbarView
     /**
 	 * Set the unseen achievement count
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::set unseenAchievementCount()
     set unseenAchievementCount(value: number)
     {
         this._unseenAchievementCount = value;
@@ -85,6 +102,7 @@ export class ToolbarView
     /**
 	 * Get the unseen mini mail message count
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::get unseenMiniMailMessageCount()
     get unseenMiniMailMessageCount(): number
     {
         return this._unseenMiniMailMessageCount;
@@ -93,6 +111,7 @@ export class ToolbarView
     /**
 	 * Set the unseen mini mail message count
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::set unseenMiniMailMessageCount()
     set unseenMiniMailMessageCount(value: number)
     {
         this._unseenMiniMailMessageCount = value;
@@ -101,6 +120,7 @@ export class ToolbarView
     /**
 	 * Get the me menu controller
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::get memenu()
     get memenu(): MeMenuController | null
     {
         return this._meMenuController;
@@ -109,6 +129,7 @@ export class ToolbarView
     /**
 	 * The link pattern for toolbar links
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::get linkPattern()
     get linkPattern(): string
     {
         return 'toolbar/';
@@ -117,6 +138,7 @@ export class ToolbarView
     /**
 	 * Set the on duty state
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::set onDuty()
     set onDuty(value: boolean)
     {
         // Metadata only - UI layer renders the guide icon
@@ -127,6 +149,7 @@ export class ToolbarView
 	 *
 	 * @param state Toolbar state identifier
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::setToolbarState()
     public setToolbarState(state: string): void
     {
         if(state === 'HTE_STATE_HIDDEN')
@@ -162,6 +185,7 @@ export class ToolbarView
 	 * @param iconName Icon name string
 	 * @param visible Whether the icon should be visible
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::iconVisibility()
     public iconVisibility(iconName: string, visible: boolean): void
     {
         this._iconVisibility.set(iconName, visible);
@@ -173,6 +197,7 @@ export class ToolbarView
 	 * @param iconId Icon identifier
 	 * @param count The count to display, 0 hides the counter
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::setUnseenItemCount()
     public setUnseenItemCount(iconId: string, count: number): void
     {
         const iconName = HabboToolbarIconEnum.getIconName(iconId);
@@ -189,6 +214,7 @@ export class ToolbarView
     /**
 	 * Check if new items notification is enabled
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::isNewItemsNotificationEnabled()
     public isNewItemsNotificationEnabled(): boolean
     {
         if(!this._toolbar) return false;
@@ -200,6 +226,7 @@ export class ToolbarView
 	 *
 	 * @param link The link string
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::linkReceived()
     public linkReceived(link: string): void
     {
         const parts = link.split('/');
@@ -219,6 +246,7 @@ export class ToolbarView
     /**
 	 * Dispose of this view and all its resources
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/ToolbarView.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

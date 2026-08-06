@@ -13,13 +13,19 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureVoteCounterLogic extends FurnitureMultiStateLogic
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureVoteCounterLogic.as::UPDATE_INTERVAL
     private static readonly UPDATE_INTERVAL = 33;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureVoteCounterLogic.as::MAX_UPDATE_TIME
     private static readonly MAX_UPDATE_TIME = 1000;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureVoteCounterLogic.as::_total
     private _total: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureVoteCounterLogic.as::_lastUpdate
     private _lastUpdate: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureVoteCounterLogic.as::_updateInterval
     private _updateInterval: number = 33;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureVoteCounterLogic.as::get currentTotal()
     private get currentTotal(): number
     {
         return Math.trunc(this.object?.getModelController()?.getNumber(RoomObjectVariableEnum.FURNITURE_VOTE_COUNTER_COUNT) ?? 0);
@@ -72,6 +78,7 @@ export class FurnitureVoteCounterLogic extends FurnitureMultiStateLogic
         }
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureVoteCounterLogic.as::updateTotal()
     private updateTotal(value: number): void
     {
         this._total = value;

@@ -163,6 +163,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
         this._timerId = window.setInterval(() => this.onBarProgressEvent(), 750);
     }
 
+    // AS3: .../src/binaryData/HabboLoadingScreen.as::_disposed
     private _disposed: boolean = false;
 
     /**
@@ -170,6 +171,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
      *
      * @see sources/win63_2021_version/HabboLoadingScreen.as disposed getter
      */
+    // AS3: .../src/binaryData/HabboLoadingScreen.as::get disposed()
     get disposed(): boolean 
     {
         return this._disposed;
@@ -185,6 +187,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
      * @see sources/win63_2021_version/HabboLoadingScreen.as updateLoadingBar() line 391
      * @see sources/win63_2021_version/IHabboLoadingScreen.as updateLoadingBar()
      */
+    // AS3: .../src/binaryData/HabboLoadingScreen.as::updateLoadingBar()
     public updateLoadingBar(ratio: number): void 
     {
         if(this._disposed) return;
@@ -197,6 +200,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
      *
      * @see sources/win63_2021_version/HabboLoadingScreen.as line 219
      */
+    // AS3: .../src/binaryData/HabboLoadingScreen.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;
@@ -499,6 +503,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
      *
      * @see sources/win63_2021_version/HabboLoadingScreen.as line 164
      */
+    // AS3: .../src/binaryData/HabboLoadingScreen.as::onBarProgressEvent()
     private onBarProgressEvent(): void 
     {
         if(this._disposed) return;
@@ -551,6 +556,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
      *
      * @param ratio - Fill ratio from 0.0 to 1.0
      */
+    // AS3: .../src/binaryData/HabboLoadingScreen.as::updateLoadingBarProgression()
     private updateLoadingBarProgression(ratio: number): void 
     {
         const fillWidth = Math.floor(BAR_INNER_WIDTH * ratio);
@@ -564,6 +570,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
      *
      * @see sources/win63_2021_version/HabboLoadingScreen.as line 200
      */
+    // AS3: .../src/binaryData/HabboLoadingScreen.as::randomNumber()
     private randomNumber(min: number, max: number): number 
     {
         return Math.floor(Math.random() * ((max - min) + 1)) + min;

@@ -51,11 +51,13 @@ export class InteractiveController extends WindowController implements IInteract
     // from `properties`. Default primed with `??=` in finalize() instead.
     protected _toolTipDelay: number | null = null;
 
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::get toolTipDelay()
     public get toolTipDelay(): number
     {
         return this._toolTipDelay ?? 500;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::set toolTipDelay()
     public set toolTipDelay(value: number)
     {
         this._toolTipDelay = value;
@@ -63,11 +65,13 @@ export class InteractiveController extends WindowController implements IInteract
 
     protected _toolTipCaption: string = '';
 
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::get toolTipCaption()
     public get toolTipCaption(): string
     {
         return this._toolTipCaption;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::set toolTipCaption()
     public set toolTipCaption(value: string)
     {
         this._toolTipCaption = value ?? '';
@@ -75,11 +79,13 @@ export class InteractiveController extends WindowController implements IInteract
 
     protected _toolTipIsDynamic: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::get toolTipIsDynamic()
     public get toolTipIsDynamic(): boolean
     {
         return this._toolTipIsDynamic;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::set toolTipIsDynamic()
     public set toolTipIsDynamic(value: boolean)
     {
         this._toolTipIsDynamic = value;
@@ -87,11 +93,13 @@ export class InteractiveController extends WindowController implements IInteract
 
     protected _interactiveCursorDisabled: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::get interactiveCursorDisabled()
     public get interactiveCursorDisabled(): boolean
     {
         return this._interactiveCursorDisabled;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::set interactiveCursorDisabled()
     public set interactiveCursorDisabled(value: boolean)
     {
         this._interactiveCursorDisabled = value;
@@ -111,6 +119,7 @@ export class InteractiveController extends WindowController implements IInteract
     /**
 	 * Processes tooltip events for an interactive window.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::processInteractiveWindowEvents()
     public static processInteractiveWindowEvents(window: IInteractiveWindow, event: WindowEvent): void
     {
         if(window.toolTipIsDynamic)
@@ -147,6 +156,7 @@ export class InteractiveController extends WindowController implements IInteract
     /**
 	 * Reads interactive window properties from an array of PropertyStructs.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::readInteractiveWindowProperties()
     public static readInteractiveWindowProperties(window: IInteractiveWindow, props: unknown[]): void
     {
         for(const item of props)
@@ -186,6 +196,7 @@ export class InteractiveController extends WindowController implements IInteract
     /**
 	 * Writes interactive window properties into a properties array.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::writeInteractiveWindowProperties()
     public static writeInteractiveWindowProperties(window: IInteractiveWindow, props: unknown[]): unknown[]
     {
         props.push(window.createProperty('tool_tip_caption', window.toolTipCaption));
@@ -196,6 +207,7 @@ export class InteractiveController extends WindowController implements IInteract
         return props;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::setMouseCursorForState()
     public setMouseCursorForState(state: number, cursor: number): number
     {
         if(this.testStateFlag(32))
@@ -222,6 +234,7 @@ export class InteractiveController extends WindowController implements IInteract
         return previous;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::getMouseCursorByState()
     public getMouseCursorByState(state: number): number
     {
         if(!this._mouseCursors)
@@ -232,11 +245,13 @@ export class InteractiveController extends WindowController implements IInteract
         return this._mouseCursors.get(state) ?? 0;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::showToolTip()
     public showToolTip(_tooltip: unknown): void
     {
         // Override in subclass
     }
 
+    // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::hideToolTip()
     public hideToolTip(): void
     {
         // Override in subclass

@@ -18,6 +18,7 @@ export class WhisperMessageComposer extends MessageComposer<[string, number]>
         this._data = [recipientName + ' ' + message, styleId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/chat/WhisperMessageComposer.as::getMessageArray()
     getMessageArray(): [string, number]
     {
         return this._data;

@@ -34,6 +34,7 @@ export class RoomSessionEventHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/RoomSessionEventHandler.as::get disposed()
     get disposed(): boolean
     {
         return this._freeFlowChat === null;
@@ -42,6 +43,7 @@ export class RoomSessionEventHandler
     /**
 	 * Dispose of the handler and remove event listeners.
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/RoomSessionEventHandler.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -65,6 +67,7 @@ export class RoomSessionEventHandler
 	 * Handler for RSE_CREATED event. Notifies the free flow chat
 	 * that a room has been entered.
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/RoomSessionEventHandler.as::onRoomSessionCreated()
     private onRoomSessionCreated(_event: RoomSessionEvent): void
     {
         if(this._freeFlowChat)
@@ -77,6 +80,7 @@ export class RoomSessionEventHandler
 	 * Handler for RSE_ENDED event. Notifies the free flow chat
 	 * that a room has been left.
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/RoomSessionEventHandler.as::onRoomSessionEnded()
     private onRoomSessionEnded(_event: RoomSessionEvent): void
     {
         if(this._freeFlowChat)

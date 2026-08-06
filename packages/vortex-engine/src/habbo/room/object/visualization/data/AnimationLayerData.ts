@@ -13,8 +13,11 @@ import {AnimationFrameSequenceData} from './AnimationFrameSequenceData';
 export class AnimationLayerData
 {
     private _sequences: AnimationFrameSequenceData[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/data/AnimationLayerData.as::_loopCount
     private _loopCount: number = 1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/data/AnimationLayerData.as::_frameRepeat
     private _frameRepeat: number = 1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/data/AnimationLayerData.as::_isRandom
     private _isRandom: boolean = false;
 
     constructor(loopCount: number, frameRepeat: number, isRandom: boolean)
@@ -27,8 +30,10 @@ export class AnimationLayerData
         this._isRandom = isRandom;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/data/AnimationLayerData.as::_frameCount
     private _frameCount: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationLayerData.as::get frameCount()
     get frameCount(): number
     {
         if(this._frameCount < 0)
@@ -39,6 +44,7 @@ export class AnimationLayerData
         return this._frameCount;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationLayerData.as::dispose()
     dispose(): void
     {
         for(const sequence of this._sequences)
@@ -52,6 +58,7 @@ export class AnimationLayerData
         this._sequences = [];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationLayerData.as::addFrameSequence()
     addFrameSequence(loopCount: number, isRandom: boolean): AnimationFrameSequenceData
     {
         const sequence = new AnimationFrameSequenceData(loopCount, isRandom);
@@ -60,6 +67,7 @@ export class AnimationLayerData
         return sequence;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationLayerData.as::calculateLength()
     calculateLength(): void
     {
         this._frameCount = 0;
@@ -73,6 +81,7 @@ export class AnimationLayerData
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationLayerData.as::getFrame()
     getFrame(direction: number, frameCounter: number): AnimationFrame | null
     {
         if(this._frameCount < 1)
@@ -132,6 +141,7 @@ export class AnimationLayerData
         return this.getFrameFromSpecificSequence(direction, sequence, sequenceIndex, 0, false);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationLayerData.as::getFrameFromSequence()
     getFrameFromSequence(direction: number, sequenceIndex: number, frameIndex: number, frameCounter: number): AnimationFrame | null
     {
         if(sequenceIndex < 0 || sequenceIndex >= this._sequences.length)
@@ -154,6 +164,7 @@ export class AnimationLayerData
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationLayerData.as::getFrameFromSpecificSequence()
     private getFrameFromSpecificSequence(
         direction: number,
         sequence: AnimationFrameSequenceData | null,

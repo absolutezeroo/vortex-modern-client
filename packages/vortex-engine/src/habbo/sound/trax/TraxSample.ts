@@ -51,6 +51,7 @@ export class TraxSample
     // AS3: .../TraxSample.as::OFFSET_16BIT
     private static readonly OFFSET_16BIT: number = 32767;
 
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSample.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../TraxSample.as::_sampleData
@@ -213,6 +214,7 @@ export class TraxSample
      *
      * Running past the end of the sample zero-fills the remainder rather than leaving stale audio.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSample.as::setSample()
     setSample(target: Int32Array, targetOffset: number, count: number, offset: number): number
     {
         if(this._sampleData === null) return offset;
@@ -265,6 +267,7 @@ export class TraxSample
      * channel on top of the ones already in the buffer. It has no zero-fill: past the end of the
      * sample there is simply nothing to add.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSample.as::addSample()
     addSample(target: Int32Array, targetOffset: number, count: number, offset: number): number
     {
         if(this._sampleData === null) return offset;
@@ -350,6 +353,7 @@ export class TraxSample
      * guard where the other two readers do. The array is emptied here instead, which is the same
      * answer for every guarded path and no crash for the unguarded one.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSample.as::dispose()
     dispose(): void
     {
         this._sampleData = null;

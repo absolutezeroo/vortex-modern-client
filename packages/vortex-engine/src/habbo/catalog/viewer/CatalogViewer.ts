@@ -18,12 +18,15 @@ const log = Logger.getLogger('habbo.catalog.viewer.CatalogViewer');
  */
 export class CatalogViewer implements ICatalogViewer
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::_catalog
     private _catalog: HabboCatalog | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::_container
     private _container: IWindowContainer | null;
 
     private _currentPage: ICatalogPage | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::_forceRefresh
     private _forceRefresh: boolean = false;
 
     private _previousPageId: number = 0;
@@ -50,11 +53,13 @@ export class CatalogViewer implements ICatalogViewer
         return this._catalogType;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::get roomEngine()
     get roomEngine(): IRoomEngine
     {
         return this._catalog!.roomEngine!;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::dispose()
     dispose(): void
     {
         if(this._currentPage)
@@ -67,11 +72,13 @@ export class CatalogViewer implements ICatalogViewer
         this._container = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::get catalog()
     get catalog(): IHabboCatalog
     {
         return this._catalog!;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::showCatalogPage()
     showCatalogPage(
         pageId: number,
         layoutCode: string,
@@ -122,6 +129,7 @@ export class CatalogViewer implements ICatalogViewer
         page.selectOffer(offerId);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::disposeCurrentPage()
     disposeCurrentPage(): void
     {
         if(this._currentPage != null)
@@ -132,6 +140,7 @@ export class CatalogViewer implements ICatalogViewer
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::catalogWindowClosed()
     catalogWindowClosed(): void
     {
         if(this._currentPage != null)
@@ -140,11 +149,13 @@ export class CatalogViewer implements ICatalogViewer
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::dispatchWidgetEvent()
     dispatchWidgetEvent(event: unknown): boolean
     {
         return this._currentPage!.dispatchWidgetEvent(event);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::getCurrentLayoutCode()
     getCurrentLayoutCode(): string
     {
         if(this._currentPage == null) return '';
@@ -152,6 +163,7 @@ export class CatalogViewer implements ICatalogViewer
         return this._currentPage.layoutCode;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::get currentPage()
     get currentPage(): ICatalogPage | null
     {
         return this._currentPage;
@@ -165,16 +177,19 @@ export class CatalogViewer implements ICatalogViewer
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::get viewerTags()
     get viewerTags(): string[]
     {
         return this._container ? this._container.tags : [];
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::setForceRefresh()
     setForceRefresh(): void
     {
         this._forceRefresh = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::get previousPageId()
     get previousPageId(): number
     {
         return this._previousPageId;

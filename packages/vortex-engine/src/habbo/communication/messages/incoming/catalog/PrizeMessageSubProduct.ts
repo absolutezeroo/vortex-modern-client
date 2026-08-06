@@ -9,6 +9,7 @@ export class PrizeMessageSubProduct
 {
     private _productItemType: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/PrizeMessageSubProduct.as::get productItemType()
     get productItemType(): string
     {
         return this._productItemType;
@@ -16,6 +17,7 @@ export class PrizeMessageSubProduct
 
     private _productItemTypeId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/PrizeMessageSubProduct.as::get productItemTypeId()
     get productItemTypeId(): number
     {
         return this._productItemTypeId;

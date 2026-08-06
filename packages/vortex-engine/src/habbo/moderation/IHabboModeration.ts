@@ -11,6 +11,7 @@ export interface IHabboModeration
 	 * @param userId - The ID of the selected user
 	 * @param userName - The name of the selected user
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/IHabboModeration.as::userSelected()
     userSelected(userId: number, userName: string): void;
 
     /**

@@ -14,26 +14,37 @@ import type {IItemGrid} from './IItemGrid';
  */
 export interface IProduct extends IGetImageListener, IDisposable
 {
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_1857.as::get productType()
     readonly productType: string;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_1857.as::get productClassId()
     readonly productClassId: number;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_1857.as::get extraParam()
     extraParam: string;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_1857.as::get productCount()
     readonly productCount: number;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_1857.as::get productData()
     readonly productData: IProductData | null;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_1857.as::get furnitureData()
     readonly furnitureData: IFurnitureData | null;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_1857.as::get isUniqueLimitedItem()
     readonly isUniqueLimitedItem: boolean;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_1857.as::get isColorable()
     readonly isColorable: boolean;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_1857.as::get uniqueLimitedItemSeriesSize()
     readonly uniqueLimitedItemSeriesSize: number;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_1857.as::get uniqueLimitedItemsLeft()
     uniqueLimitedItemsLeft: number;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/class_1857.as::initIcon()
     initIcon(
         grid: unknown,
         imageListener?: IGetImageListener | null,

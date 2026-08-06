@@ -22,7 +22,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class SetChatPreferencesMessageComposer extends MessageComposer<[number, number, number]>
 {
-    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2609/_SafeCls_2255.as::getMessageArray() backing fields — the
+    // AS3: .../src/unknowns/_SafePkg_2091/_SafeCls_2255.as::getMessageArray() backing fields — the
     // constructor-assigned members. Their AS3 identifiers are obfuscated in every available
     // tree, so there is no real name to trace to.
     private _data: [number, number, number];
@@ -33,7 +33,7 @@ export class SetChatPreferencesMessageComposer extends MessageComposer<[number, 
         this._data = [chatMode, chatBubbleWidth, chatScrollSpeed];
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2609/_SafeCls_2255.as::getMessageArray()
+    // AS3: .../src/unknowns/_SafePkg_2091/_SafeCls_2255.as::getMessageArray()
     getMessageArray(): [number, number, number]
     {
         return this._data;

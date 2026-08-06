@@ -14,10 +14,14 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureFriendFurniLogic extends FurnitureMultiStateLogic
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureFriendFurniLogic.as::STATE_UNINITIALIZED
     private static readonly STATE_UNINITIALIZED = -1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureFriendFurniLogic.as::STATE_UNLOCKED
     private static readonly STATE_UNLOCKED = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureFriendFurniLogic.as::STATE_LOCKED
     private static readonly STATE_LOCKED = 1;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureFriendFurniLogic.as::_state
     private _state: number = -1;
 
     override get contextMenu(): string | null
@@ -25,6 +29,7 @@ export class FurnitureFriendFurniLogic extends FurnitureMultiStateLogic
         return (this._state === FurnitureFriendFurniLogic.STATE_UNLOCKED) ? 'FRIEND_FURNITURE' : 'DUMMY';
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureFriendFurniLogic.as::get engravingDialogType()
     protected get engravingDialogType(): number
     {
         return 0;

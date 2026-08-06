@@ -7,6 +7,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetPendingCallsForHelpMessageComposer extends MessageComposer<[]>
 {
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/GetPendingCallsForHelpMessageComposer.as::getMessageArray()
     getMessageArray(): []
     {
         return [];

@@ -10,8 +10,10 @@ export class CreditBalanceEventParser implements IMessageParser
 {
     private _balance: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/purse/CreditBalanceEventParser.as::get balance()
     get balance(): number { return this._balance; }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/purse/CreditBalanceEventParser.as::flush()
     flush(): boolean
     {
         this._balance = 0;
@@ -19,6 +21,7 @@ export class CreditBalanceEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/purse/CreditBalanceEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

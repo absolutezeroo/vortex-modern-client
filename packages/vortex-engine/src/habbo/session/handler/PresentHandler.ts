@@ -59,6 +59,7 @@ export class PresentHandler extends BaseHandler
         this._messageEvents.push(event);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/PresentHandler.as::onPresentOpened()
     private onPresentOpened(event: IMessageEvent): void
     {
         const presentEvent = event as PresentOpenedMessageEvent;

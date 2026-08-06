@@ -59,6 +59,7 @@ const TAB_NAMES: Record<string, number> = {
 export class Tabs
 {
     private _tabs: Tab[];
+    // AS3: sources/win63_version/habbo/navigator/domain/Tabs.as::_navigator
     private _navigator: ITabNavigator;
 
     constructor(navigator: ITabNavigator)
@@ -76,21 +77,25 @@ export class Tabs
         this.setSelectedTab(TAB_EVENTS);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tabs.as::tabIdFromName()
     static tabIdFromName(name: string, fallback: number): number
     {
         return name in TAB_NAMES ? TAB_NAMES[name] : fallback;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tabs.as::onFrontPage()
     onFrontPage(): boolean
     {
         return this.getSelected()?.id === TAB_OFFICIAL;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tabs.as::get tabs()
     get tabs(): Tab[]
     {
         return this._tabs;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tabs.as::setSelectedTab()
     setSelectedTab(id: number): void
     {
         const tab = this.getTab(id);
@@ -102,6 +107,7 @@ export class Tabs
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tabs.as::getSelected()
     getSelected(): Tab | null
     {
         for(const tab of this._tabs)
@@ -112,6 +118,7 @@ export class Tabs
         return null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tabs.as::getTab()
     getTab(id: number): Tab | null
     {
         for(const tab of this._tabs)
@@ -122,6 +129,7 @@ export class Tabs
         return null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tabs.as::clearSelected()
     private clearSelected(): void
     {
         for(const tab of this._tabs)

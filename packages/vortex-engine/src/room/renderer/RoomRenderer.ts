@@ -18,9 +18,12 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 {
     private _objects: Map<string, IRoomObject> = new Map();
     private _objectKeys: string[] = [];
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::_canvases
     private _canvases: Map<string, IRoomRenderingCanvas> = new Map();
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -28,11 +31,13 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 
     private _roomObjectVariableAccurateZ: string | null = null;
 
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::get roomObjectVariableAccurateZ()
     get roomObjectVariableAccurateZ(): string | null
     {
         return this._roomObjectVariableAccurateZ;
     }
 
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::set roomObjectVariableAccurateZ()
     set roomObjectVariableAccurateZ(value: string | null)
     {
         this._roomObjectVariableAccurateZ = value;
@@ -43,6 +48,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 51-84
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -63,6 +69,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 line 87
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::reset()
     reset(): void
     {
         this._objects.clear();
@@ -74,6 +81,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 91-98
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::getRoomObjectIdentifier()
     getRoomObjectIdentifier(object: IRoomObject): string | null
     {
         if(object !== null)
@@ -89,6 +97,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 100-107
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::feedRoomObject()
     feedRoomObject(object: IRoomObject): void
     {
         if(object === null) return;
@@ -110,6 +119,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 109-125
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::removeRoomObject()
     removeRoomObject(object: IRoomObject): void
     {
         const id = this.getRoomObjectIdentifier(object);
@@ -140,6 +150,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 127-130
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::getRoomObject()
     getRoomObject(id: string): IRoomObject | null
     {
         return this._objects.get(id) ?? null;
@@ -150,6 +161,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 132-135
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::getRoomObjectWithIndex()
     getRoomObjectWithIndex(index: number): IRoomObject | null
     {
         if(index < 0 || index >= this._objectKeys.length) return null;
@@ -162,6 +174,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 137-140
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::getRoomObjectIdWithIndex()
     getRoomObjectIdWithIndex(index: number): string | null
     {
         if(index < 0 || index >= this._objectKeys.length) return null;
@@ -174,6 +187,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 142-145
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::getRoomObjectCount()
     getRoomObjectCount(): number
     {
         return this._objects.size;
@@ -184,6 +198,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 147-163
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::render()
     render(): void
     {
         const time = performance.now();
@@ -199,6 +214,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 165-181
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::createCanvas()
     createCanvas(id: number, width: number, height: number, scale: number): IRoomRenderingCanvas
     {
         const key = String(id);
@@ -227,6 +243,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 188-191
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::getCanvas()
     getCanvas(id: number): IRoomRenderingCanvas | null
     {
         return this._canvases.get(String(id)) ?? null;
@@ -237,6 +254,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 193-201
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::disposeCanvas()
     disposeCanvas(id: number): boolean
     {
         const key = String(id);
@@ -256,6 +274,7 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 203-218
 	 */
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_2253.as::update()
     update(_time: number): void
     {
         this.render();

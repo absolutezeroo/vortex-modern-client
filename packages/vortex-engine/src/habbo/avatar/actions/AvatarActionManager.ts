@@ -10,8 +10,10 @@ import {getXmlAttribute, getXmlChildElements, getXmlRoot} from '../structure/Ava
  */
 export class AvatarActionManager
 {
+    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::_assets
     private _assets: IAssetLibrary | null;
     private _actions: Map<string, ActionDefinition>;
+    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::_defaultAction
     private _defaultAction: ActionDefinition | null = null;
     private _defaultLayAction: ActionDefinition | null = null;
 
@@ -206,6 +208,7 @@ export class AvatarActionManager
         }
     }
 
+    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::parseActionOffsets()
     private parseActionOffsets(offsets: any[]): void
     {
         if(!offsets || offsets.length === 0) return;

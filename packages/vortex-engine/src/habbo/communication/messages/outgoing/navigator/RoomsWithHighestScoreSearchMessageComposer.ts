@@ -16,6 +16,7 @@ export class RoomsWithHighestScoreSearchMessageComposer extends MessageComposer<
         this._data = [categoryId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/RoomsWithHighestScoreSearchMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

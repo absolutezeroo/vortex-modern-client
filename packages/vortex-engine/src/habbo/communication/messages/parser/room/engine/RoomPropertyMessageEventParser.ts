@@ -11,6 +11,7 @@ export class RoomPropertyMessageEventParser implements IMessageParser
 {
     private _floorType: string | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/RoomPropertyMessageEventParser.as::get floorType()
     get floorType(): string | null
     {
         return this._floorType;
@@ -18,6 +19,7 @@ export class RoomPropertyMessageEventParser implements IMessageParser
 
     private _wallType: string | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/RoomPropertyMessageEventParser.as::get wallType()
     get wallType(): string | null
     {
         return this._wallType;
@@ -25,6 +27,7 @@ export class RoomPropertyMessageEventParser implements IMessageParser
 
     private _landscapeType: string | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/RoomPropertyMessageEventParser.as::get landscapeType()
     get landscapeType(): string | null
     {
         return this._landscapeType;
@@ -32,11 +35,13 @@ export class RoomPropertyMessageEventParser implements IMessageParser
 
     private _animatedLandscapeType: string | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/RoomPropertyMessageEventParser.as::get animatedLandscapeType()
     get animatedLandscapeType(): string | null
     {
         return this._animatedLandscapeType;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/RoomPropertyMessageEventParser.as::flush()
     flush(): boolean
     {
         this._floorType = null;
@@ -46,6 +51,7 @@ export class RoomPropertyMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/RoomPropertyMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

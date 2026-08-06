@@ -16,6 +16,7 @@ import type {HabboLandingView} from '../../HabboLandingView';
 export class BackgroundObject implements IDisposable
 {
     private _id: number;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/BackgroundObject.as::_window
     protected _window: IWindow | null;
     protected _events: EventEmitter;
     private _sprite: IStaticBitmapWrapperWindow | null;

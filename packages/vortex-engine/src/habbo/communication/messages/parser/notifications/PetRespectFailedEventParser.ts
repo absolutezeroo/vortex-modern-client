@@ -12,6 +12,7 @@ export class PetRespectFailedEventParser implements IMessageParser
 {
     private _requiredDays: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/pets/PetRespectFailedEventParser.as::get requiredDays()
     get requiredDays(): number
     {
         return this._requiredDays;
@@ -19,11 +20,13 @@ export class PetRespectFailedEventParser implements IMessageParser
 
     private _avatarAgeInDays: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/pets/PetRespectFailedEventParser.as::get avatarAgeInDays()
     get avatarAgeInDays(): number
     {
         return this._avatarAgeInDays;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/pets/PetRespectFailedEventParser.as::flush()
     flush(): boolean
     {
         this._requiredDays = 0;
@@ -31,6 +34,7 @@ export class PetRespectFailedEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/pets/PetRespectFailedEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

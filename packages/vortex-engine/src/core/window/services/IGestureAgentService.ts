@@ -7,5 +7,6 @@ export interface IGestureAgentService
 {
     readonly disposed: boolean;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/services/IGestureAgentService.as::dispose()
     dispose(): void;
 }

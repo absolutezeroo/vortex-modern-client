@@ -17,11 +17,13 @@ export class DeclineFriendMessageComposer implements IMessageComposer<unknown[]>
         this._requestIds = requestIds;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/DeclineFriendMessageComposer.as::get disposed()
     get disposed(): boolean
     {
         return false;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/DeclineFriendMessageComposer.as::getMessageArray()
     getMessageArray(): unknown[]
     {
         const result: unknown[] = [];
@@ -45,6 +47,7 @@ export class DeclineFriendMessageComposer implements IMessageComposer<unknown[]>
         return result;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/DeclineFriendMessageComposer.as::dispose()
     dispose(): void
     {
         return;

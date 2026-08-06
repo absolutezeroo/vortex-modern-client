@@ -12,6 +12,7 @@ import {DelayedCall} from './DelayedCall';
  */
 export class Juggler implements IAnimatable
 {
+    // AS3: .../src/com/sulake/habbo/utils/animation/Juggler.as::REMOVE_FROM_JUGGLER
     public static readonly REMOVE_FROM_JUGGLER: string = 'REMOVE_FROM_JUGGLER';
 
     private _animatables: (IAnimatable | null)[] = [];
@@ -21,6 +22,7 @@ export class Juggler implements IAnimatable
     /**
 	 * The total elapsed time since this juggler was created.
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/Juggler.as::get elapsedTime()
     get elapsedTime(): number
     {
         return this._elapsedTime;
@@ -32,6 +34,7 @@ export class Juggler implements IAnimatable
 	 *
 	 * @param animatable The animatable object to add
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/Juggler.as::add()
     add(animatable: IAnimatable | null): void
     {
         if(animatable && !this._animatableSet.has(animatable))
@@ -52,6 +55,7 @@ export class Juggler implements IAnimatable
 	 * @param animatable The animatable to check
 	 * @returns True if the animatable is in the juggler
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/Juggler.as::contains()
     contains(animatable: IAnimatable): boolean
     {
         return this._animatableSet.has(animatable);
@@ -62,6 +66,7 @@ export class Juggler implements IAnimatable
 	 *
 	 * @param animatable The animatable to remove
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/Juggler.as::remove()
     remove(animatable: IAnimatable | null): void
     {
         if(animatable === null)
@@ -90,6 +95,7 @@ export class Juggler implements IAnimatable
     /**
 	 * Remove all animatable objects from the juggler.
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/Juggler.as::purge()
     purge(): void
     {
         for(let i = this._animatables.length - 1; i >= 0; i--)
@@ -115,6 +121,7 @@ export class Juggler implements IAnimatable
 	 * @param args Additional arguments to pass to the callback
 	 * @returns The created DelayedCall, or null if callback is null
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/Juggler.as::delayCall()
     delayCall(callback: ((...args: unknown[]) => void) | null, delay: number, ...args: unknown[]): DelayedCall | null
     {
         if(callback === null)
@@ -137,6 +144,7 @@ export class Juggler implements IAnimatable
 	 * @param args Additional arguments to pass to the callback
 	 * @returns The created DelayedCall, or null if callback is null
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/Juggler.as::repeatCall()
     repeatCall(callback: ((...args: unknown[]) => void) | null, interval: number, count: number = 0, ...args: unknown[]): DelayedCall | null
     {
         if(callback === null)
@@ -157,6 +165,7 @@ export class Juggler implements IAnimatable
 	 *
 	 * @param time The time delta in seconds
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/Juggler.as::advanceTime()
     advanceTime(time: number): void
     {
         let i: number;

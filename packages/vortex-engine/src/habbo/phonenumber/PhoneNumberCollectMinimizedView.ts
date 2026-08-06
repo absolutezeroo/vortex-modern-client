@@ -39,6 +39,7 @@ export class PhoneNumberCollectMinimizedView
      *
      * `HabboPhoneNumber` hands this straight to `extensionView.attachExtension()`.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/PhoneNumberCollectMinimizedView.as::get window()
     get window(): IWindow | null
     {
         return this._window;
@@ -98,6 +99,7 @@ export class PhoneNumberCollectMinimizedView
      *
      * AS3 removes only the click listener before disposing; the other two go with the window.
      */
+    // AS3: .../src/com/sulake/habbo/phonenumber/PhoneNumberCollectMinimizedView.as::dispose()
     dispose(): void
     {
         if(this._window)

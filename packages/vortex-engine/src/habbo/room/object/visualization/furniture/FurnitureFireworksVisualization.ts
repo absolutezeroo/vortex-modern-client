@@ -10,6 +10,7 @@ import {FurnitureParticleSystem} from './FurnitureParticleSystem';
 
 export class FurnitureFireworksVisualization extends AnimatedFurnitureVisualization
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureFireworksVisualization.as::_particleSystems
     private _particleSystems: Map<number, FurnitureParticleSystem> | null = null;
     private _activeParticleSystem: FurnitureParticleSystem | null = null;
 
@@ -107,6 +108,7 @@ export class FurnitureFireworksVisualization extends AnimatedFurnitureVisualizat
         return super.getSpriteYOffset(scale, direction, layerIndex);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureFireworksVisualization.as::readDefinition()
     private readDefinition(): void
     {
         const roomObject = this.object;

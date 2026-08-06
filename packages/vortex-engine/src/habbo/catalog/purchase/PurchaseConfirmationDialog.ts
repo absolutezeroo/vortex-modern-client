@@ -45,6 +45,7 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
     // AS3: PurchaseConfirmationDialog.as::_window.color — the light (non-collectible) header tint.
     private static readonly WINDOW_COLOR: number = 4296112;
 
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _windowManager: IHabboWindowManager | null;
@@ -84,6 +85,7 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
     // request id, matched against imageReady()'s.
     private _pendingImageId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::_disposed
     private _disposed: boolean = false;
 
     constructor(catalog: HabboCatalog, windowManager: IHabboWindowManager)
@@ -92,6 +94,7 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         this._windowManager = windowManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -123,6 +126,7 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
      * constructed with only a localization manager. This port's dialog is handed the catalog in its
      * constructor (see HabboCatalog.showPurchaseConfirmation()), so the first two are already known.
      */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::showOffer()
     showOffer(
         offer: IPurchasableOffer,
         pageId: number,
@@ -492,6 +496,7 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         if(raffle != null) raffle.visible = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

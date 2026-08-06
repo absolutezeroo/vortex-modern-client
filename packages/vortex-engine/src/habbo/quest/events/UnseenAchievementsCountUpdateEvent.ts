@@ -5,6 +5,7 @@
  */
 export class UnseenAchievementsCountUpdateEvent
 {
+    // AS3: .../src/com/sulake/habbo/quest/events/UnseenAchievementsCountUpdateEvent.as::TYPE
     public static readonly TYPE: string = 'qe_uacue';
 
     constructor(count: number)
@@ -12,8 +13,10 @@ export class UnseenAchievementsCountUpdateEvent
         this._count = count;
     }
 
+    // AS3: .../src/com/sulake/habbo/quest/events/UnseenAchievementsCountUpdateEvent.as::_count
     private _count: number;
 
+    // AS3: .../src/com/sulake/habbo/quest/events/UnseenAchievementsCountUpdateEvent.as::get count()
     get count(): number
     {
         return this._count;

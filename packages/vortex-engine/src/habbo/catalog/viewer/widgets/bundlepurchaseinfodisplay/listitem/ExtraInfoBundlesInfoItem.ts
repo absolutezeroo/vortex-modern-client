@@ -16,8 +16,10 @@ import {ExtraInfoListItem} from '../ExtraInfoListItem';
  */
 export class ExtraInfoBundlesInfoItem extends ExtraInfoListItem
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoBundlesInfoItem.as::_catalog
     private _catalog: HabboCatalog;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoBundlesInfoItem.as::_window
     private _window: IWindowContainer | null = null;
 
     private _widget: BundlePurchaseExtraInfoWidget;
@@ -40,6 +42,7 @@ export class ExtraInfoBundlesInfoItem extends ExtraInfoListItem
         return this._window;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoBundlesInfoItem.as::createWindow()
     private createWindow(): void
     {
         this._window = this._catalog.utils.createWindow('bundlesInfoItem') as unknown as IWindowContainer;

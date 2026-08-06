@@ -13,6 +13,7 @@ export class PurchaseFromCatalogComposer extends MessageComposer<ConstructorPara
         this._data = [pageId, offerId, extraParam, amount];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/catalog/PurchaseFromCatalogComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

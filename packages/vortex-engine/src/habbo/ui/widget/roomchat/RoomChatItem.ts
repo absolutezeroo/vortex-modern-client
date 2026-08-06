@@ -38,42 +38,68 @@ const LINK_COLOR_DEFAULT = 0x295BA6; // AS3 decimal 2710438
 
 export class RoomChatItem
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_widget
     private _widget: RoomChatWidget | null;
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::_windowManager
     private _windowManager: IHabboWindowManager;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_localizations
     private _localizations: IHabboLocalizationManager | null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_id
     private _id: string;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_siteUrl
     private _siteUrl: string;
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::_window
     private _window: IRegionWindow | null = null;
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::_aboveLevels
     private _aboveLevels: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_screenLevel
     private _screenLevel: number = -1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_chatType
     private _chatType: number = 0;
     private _styleId: number = 0;
     private _userId: number = 0;
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::_senderName
     private _senderName: string = '';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_message
     private _message: string = '';
     // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::var_790 (var_1993 in win63_2023_version)
     private _links: IChatLink[] | null = null;
     // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::var_1629 (var_2506 in win63_2023_version)
     // [start,end) char ranges within the final message text, one per `_links` entry.
     private _linkRanges: Array<[number, number]> | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_senderX
     private _senderX: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_senderImage
     private _senderImage: ImageBitmap | null = null;
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::_senderColor
     private _senderColor: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_roomId
     private _roomId: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_userType
     private _userType: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_senderCategory
     private _senderCategory: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_petType
     private _petType: number = 0;
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::_width
     private _width: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_rendered
     private _rendered: boolean = false;
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::_topOffset
     private _topOffset: number = 0;
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::_originalBackgroundYOffset
     private _originalBackgroundYOffset: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_x
     private _x: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_y
     private _y: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_dragTooltipEnabled
     private _dragTooltipEnabled: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_timeStamp
     private _timeStamp: number = 0;
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::RoomChatItem()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::RoomChatItem()
     constructor(
         widget: RoomChatWidget, windowManager: IHabboWindowManager, _assets: IAssetLibrary | null,
         id: string, localizations: IHabboLocalizationManager | null, siteUrl: string
@@ -86,7 +112,7 @@ export class RoomChatItem
         this._siteUrl = siteUrl;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::dispose()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::dispose()
     public dispose(): void
     {
         if(this._window)
@@ -98,7 +124,7 @@ export class RoomChatItem
         }
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::define()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::define()
     public define(event: RoomWidgetChatUpdateEvent): void
     {
         this._chatType = event.chatType;
@@ -117,30 +143,51 @@ export class RoomChatItem
         this.renderView();
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::set message()
     public set message(value: string) { this._message = value; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::set senderName()
     public set senderName(value: string) { this._senderName = value; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::set senderImage()
     public set senderImage(value: ImageBitmap | null) { this._senderImage = value; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::set senderColor()
     public set senderColor(value: number) { this._senderColor = value; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::set chatType()
     public set chatType(value: number) { this._chatType = value; }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::get view()
     public get view(): IRegionWindow | null { return this._window; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::get screenLevel()
     public get screenLevel(): number { return this._screenLevel; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::set screenLevel()
     public set screenLevel(value: number) { this._screenLevel = value; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::get timeStamp()
     public get timeStamp(): number { return this._timeStamp; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::set timeStamp()
     public set timeStamp(value: number) { this._timeStamp = value; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::get senderX()
     public get senderX(): number { return this._senderX; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::set senderX()
     public set senderX(value: number) { this._senderX = value; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::get width()
     public get width(): number { return this._width; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::get height()
     public get height(): number { return 18; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::get message()
     public get message(): string { return this._message; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::get x()
     public get x(): number { return this._x; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::get y()
     public get y(): number { return this._y; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::get aboveLevels()
     public get aboveLevels(): number { return this._aboveLevels; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::set aboveLevels()
     public set aboveLevels(value: number) { this._aboveLevels = value; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::get chatStyle()
     public get chatStyle(): number { return this._styleId; }
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::get originalBackgroundYOffset()
     public get originalBackgroundYOffset(): number { return this._originalBackgroundYOffset; }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::set x()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::set x()
     public set x(value: number)
     {
         this._x = value;
@@ -148,7 +195,7 @@ export class RoomChatItem
         if(this._window) this._window.x = value;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::set y()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::set y()
     public set y(value: number)
     {
         this._y = value;
@@ -156,7 +203,7 @@ export class RoomChatItem
         if(this._window) this._window.y = value - this._topOffset + this._originalBackgroundYOffset;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::hidePointer()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::hidePointer()
     public hidePointer(): void
     {
         const pointer = this.findChild('pointer');
@@ -164,7 +211,7 @@ export class RoomChatItem
         if(pointer) pointer.visible = false;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::setPointerOffset()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::setPointerOffset()
     public setPointerOffset(offset: number): void
     {
         if(!this._window || this._window.disposed) return;
@@ -183,7 +230,7 @@ export class RoomChatItem
         (pointer as unknown as IWindow).x = x;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::checkOverlap()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::checkOverlap()
     public checkOverlap(otherHeight: number, otherX: number, otherY: number, otherWidth: number, otherHeight2: number): boolean
     {
         const a = {x: this._x, y: this._y, width: this.width, height: otherHeight};
@@ -192,7 +239,7 @@ export class RoomChatItem
         return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::hideView()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::hideView()
     public hideView(): void
     {
         this._window?.dispose();
@@ -200,6 +247,7 @@ export class RoomChatItem
         this._rendered = false;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::get isNotify()
     private get isNotify(): boolean
     {
         return this._styleId === 1;
@@ -210,7 +258,7 @@ export class RoomChatItem
         return this._window ? (this._window as unknown as IWindowContainer).findChildByName(name) : null;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::renderView()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::renderView()
     public renderView(): void
     {
         if(this._rendered) return;
@@ -364,7 +412,7 @@ export class RoomChatItem
         (background as unknown as IWindow).y = this._topOffset;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::renderView() (message-text branch)
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::renderView() (message-text branch)
     private applyMessageText(messageText: ITextWindow): void
     {
         switch(this._chatType)
@@ -479,20 +527,21 @@ export class RoomChatItem
         return false;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::enableDragTooltip()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::enableDragTooltip()
     public enableDragTooltip(): void
     {
         this._dragTooltipEnabled = true;
         this.refreshTooltip();
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::disableDragTooltip()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::disableDragTooltip()
     public disableDragTooltip(): void
     {
         this._dragTooltipEnabled = false;
         this.refreshTooltip();
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::refreshTooltip()
     private refreshTooltip(): void
     {
         if(!this._window) return;
@@ -509,6 +558,7 @@ export class RoomChatItem
         this._window.toolTipDelay = 500;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::addEventListeners()
     private addEventListeners(window: IWindow): void
     {
         window.setParamFlag(1, true);

@@ -10,6 +10,7 @@ import type {IIterator} from '../utils/IIterator';
  */
 export class EmptyIterator implements IIterator
 {
+    // AS3: .../src/com/sulake/core/window/iterators/EmptyIterator.as::INSTANCE
     public static readonly INSTANCE: EmptyIterator = new EmptyIterator();
 
     public next(): IWindow | null

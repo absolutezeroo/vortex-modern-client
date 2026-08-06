@@ -15,6 +15,7 @@ export class HabboGroupDetailsMessageEvent extends MessageEvent implements IMess
         super(callback, HabboGroupDetailsMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/HabboGroupDetailsMessageEvent.as::get data()
     get data(): HabboGroupDetailsData | null
     {
         return (this._parser as HabboGroupDetailsMessageParser).data;

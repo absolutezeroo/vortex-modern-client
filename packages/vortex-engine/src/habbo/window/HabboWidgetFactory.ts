@@ -118,6 +118,7 @@ export class HabboWidgetFactory implements IWidgetFactory
 	 * application - but this should never fire against correctly-authored layouts, so
 	 * treat any occurrence as a real bug (missing registration or a typo'd widget_type).
 	 */
+    // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::createWidget()
     public createWidget(type: string, window: IWidgetWindow): unknown
     {
         const widgetClass = HabboWidgetFactory.WIDGET_REGISTRY.get(type);

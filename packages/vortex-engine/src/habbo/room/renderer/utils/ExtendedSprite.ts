@@ -12,8 +12,11 @@
 import {Sprite, Texture} from 'pixi.js';
 
 interface IAlphaHitData {
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::get width()
     width: number;
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::get height()
     height: number;
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::get alpha()
     alpha: Uint8ClampedArray;
 }
 
@@ -21,7 +24,9 @@ export class ExtendedSprite extends Sprite
 {
     private static readonly _alphaHitCache: WeakMap<Texture, IAlphaHitData | null> = new WeakMap();
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ExtendedSprite.as::_updateID1
     private _updateID1: number = -1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ExtendedSprite.as::_updateID2
     private _updateID2: number = -1;
     private _spriteWidth: number = 0;
     private _spriteHeight: number = 0;
@@ -32,37 +37,46 @@ export class ExtendedSprite extends Sprite
         this.eventMode = 'none';
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ExtendedSprite.as::_tag
     private _tag: string = '';
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::get tag()
     get tag(): string 
     {
         return this._tag;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::set tag()
     set tag(value: string) 
     {
         this._tag = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ExtendedSprite.as::_identifier
     private _identifier: string = '';
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ExtendedSprite.as::get identifier()
     get identifier(): string 
     {
         return this._identifier;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ExtendedSprite.as::set identifier()
     set identifier(value: string) 
     {
         this._identifier = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ExtendedSprite.as::_clickHandling
     private _clickHandling: boolean = false;
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::get clickHandling()
     get clickHandling(): boolean 
     {
         return this._clickHandling;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::set clickHandling()
     set clickHandling(value: boolean) 
     {
         this._clickHandling = value;
@@ -71,11 +85,13 @@ export class ExtendedSprite extends Sprite
     // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::skipMouseHandling
     private _skipMouseHandling: boolean = false;
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::get skipMouseHandling()
     get skipMouseHandling(): boolean 
     {
         return this._skipMouseHandling;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::set skipMouseHandling()
     set skipMouseHandling(value: boolean) 
     {
         this._skipMouseHandling = value;
@@ -83,11 +99,13 @@ export class ExtendedSprite extends Sprite
 
     private _alphaTolerance: number = 128;
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::get alphaTolerance()
     get alphaTolerance(): number 
     {
         return this._alphaTolerance;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::set alphaTolerance()
     set alphaTolerance(value: number) 
     {
         this._alphaTolerance = value;
@@ -95,11 +113,13 @@ export class ExtendedSprite extends Sprite
 
     private _varyingDepth: boolean = false;
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::get varyingDepth()
     get varyingDepth(): boolean 
     {
         return this._varyingDepth;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::set varyingDepth()
     set varyingDepth(value: boolean) 
     {
         this._varyingDepth = value;
@@ -107,11 +127,13 @@ export class ExtendedSprite extends Sprite
 
     private _offsetX: number = 0;
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::get offsetX()
     get offsetX(): number 
     {
         return this._offsetX;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::set offsetX()
     set offsetX(value: number) 
     {
         this._offsetX = value;
@@ -119,11 +141,13 @@ export class ExtendedSprite extends Sprite
 
     private _offsetY: number = 0;
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::get offsetY()
     get offsetY(): number 
     {
         return this._offsetY;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/IRoomObjectSprite.as::set offsetY()
     set offsetY(value: number) 
     {
         this._offsetY = value;
@@ -248,6 +272,7 @@ export class ExtendedSprite extends Sprite
     /**
      * AS3: hitTest() checks bitmapData.getPixel32(x, y) alpha against alphaTolerance.
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ExtendedSprite.as::hitTest()
     hitTest(localX: number, localY: number): boolean 
     {
         if(this._alphaTolerance > 255 || this.texture === Texture.EMPTY) 
@@ -279,6 +304,7 @@ export class ExtendedSprite extends Sprite
         return data.alpha[(y * data.width + x) * 4 + 3] > this._alphaTolerance;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ExtendedSprite.as::dispose()
     dispose(): void 
     {
         this.setTexture(null);

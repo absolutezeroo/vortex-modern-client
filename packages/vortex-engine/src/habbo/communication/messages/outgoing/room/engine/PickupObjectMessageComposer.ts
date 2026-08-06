@@ -21,6 +21,7 @@ export class PickupObjectMessageComposer extends MessageComposer<(number | boole
         this._confirmed = confirmed;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/engine/PickupObjectMessageComposer.as::getMessageArray()
     getMessageArray(): (number | boolean)[]
     {
         let categoryCode: number;

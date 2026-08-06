@@ -21,16 +21,22 @@ import type {WindowEventListener} from '@core/window/events/WindowEventDispatche
  */
 export class SeparatorWidget implements ISeparatorWidget 
 {
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::TYPE
     public static readonly TYPE: string = 'separator';
 
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::VERTICAL_KEY
     private static readonly VERTICAL_KEY: string = 'separator:vertical';
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::BORDER_IMAGE_HORIZONTAL
     private static readonly BORDER_IMAGE_HORIZONTAL: string = 'illumina_light_separator_horizontal';
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::BORDER_IMAGE_VERTICAL
     private static readonly BORDER_IMAGE_VERTICAL: string = 'illumina_light_separator_vertical';
 
     private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
     private _canvas: IWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::_children
     private _children: IWindowContainer | null = null;
 
     private _onChangeBound: WindowEventListener;
@@ -75,8 +81,10 @@ export class SeparatorWidget implements ISeparatorWidget
         }
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
@@ -84,11 +92,13 @@ export class SeparatorWidget implements ISeparatorWidget
 
     private _vertical: boolean = false;
 
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::get vertical()
     public get vertical(): boolean 
     {
         return this._vertical;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::set vertical()
     public set vertical(value: boolean) 
     {
         this._vertical = value;
@@ -104,6 +114,7 @@ export class SeparatorWidget implements ISeparatorWidget
             : SeparatorWidget.BORDER_IMAGE_HORIZONTAL;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::get properties()
     public get properties(): PropertyStruct[] 
     {
         if(this._disposed) return [];
@@ -113,6 +124,7 @@ export class SeparatorWidget implements ISeparatorWidget
         ];
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::set properties()
     public set properties(values: PropertyStruct[]) 
     {
         for(const prop of values) 
@@ -124,6 +136,7 @@ export class SeparatorWidget implements ISeparatorWidget
         }
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;
@@ -165,6 +178,7 @@ export class SeparatorWidget implements ISeparatorWidget
      * Called when the canvas resizes or children change.
      * Triggers a refresh of the separator rendering.
      */
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::onChange()
     private onChange(): void 
     {
         this.refresh();
@@ -173,6 +187,7 @@ export class SeparatorWidget implements ISeparatorWidget
     /**
      * Refresh the separator rendering based on current layout.
      */
+    // AS3: sources/win63_version/habbo/window/widgets/SeparatorWidget.as::refresh()
     private refresh(): void 
     {
         // AS3: Redraws the separator BitmapData with tiled border images

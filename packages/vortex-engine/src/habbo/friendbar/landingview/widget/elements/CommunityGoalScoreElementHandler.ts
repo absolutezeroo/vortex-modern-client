@@ -25,7 +25,9 @@ import {GetCommunityGoalProgressMessageComposer} from '@habbo/communication/mess
  */
 export class CommunityGoalScoreElementHandler implements IElementHandler, IDisposable, IFloatableElementHandler, ILayoutNameProvider, IDisableableElementHandler
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::_landingView
     private _landingView: HabboLandingView | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::_window
     private _window: IWindowContainer | null = null;
     private _isFloating: boolean = false;
     private _pollIntervalId: ReturnType<typeof setInterval> | null = null;
@@ -49,6 +51,7 @@ export class CommunityGoalScoreElementHandler implements IElementHandler, IDispo
         this._window = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4532.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;

@@ -10,12 +10,17 @@ import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export interface IChestItemGridOverlayWidget
 {
+    // AS3: .../src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get disposed()
     readonly disposed: boolean;
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get contentsCount()
     contentsCount: number;
+    // AS3: .../src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get color()
     color: string;
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get properties()
     properties: PropertyStruct[];
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::dispose()
     dispose(): void;
 }

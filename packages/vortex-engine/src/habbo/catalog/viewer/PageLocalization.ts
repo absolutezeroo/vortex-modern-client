@@ -5,21 +5,27 @@ import type {IPageLocalization} from './IPageLocalization';
  */
 export class PageLocalization implements IPageLocalization
 {
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::HEADER_IMAGE
     static readonly HEADER_IMAGE: string = 'catalog.header.image';
     static readonly HEADER_ICON: string = 'catalog.header.icon';
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::HEADER_TITLE
     static readonly HEADER_TITLE: string = 'catalog.header.title';
     static readonly HEADER_DESCRIPTION: string = 'catalog.header.description';
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::DEFAULT_TEXT_FIELDS
     private static readonly DEFAULT_TEXT_FIELDS: string[] =
         ['catalog.header.description', 'ctlg_description', 'ctlg_special_txt', 'ctlg_text_1', 'ctlg_text_2'];
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::DEFAULT_IMAGE_FIELDS
     private static readonly DEFAULT_IMAGE_FIELDS: string[] =
         ['catalog.header.image', 'ctlg_teaserimg_1', 'ctlg_special_img', 'ctlg_teaserimg_2', 'ctlg_teaserimg_3'];
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::LAYOUTS_IMAGE_FIELDS
     private static readonly LAYOUTS_IMAGE_FIELDS: Map<string, string[]> = new Map([
         ['frontpage4', ['catalog.header.image', 'ctlg_teaserimg_1']],
     ]);
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::LAYOUTS_TEXT_FIELDS
     private static readonly LAYOUTS_TEXT_FIELDS: Map<string, string[]> = new Map([
         ['camera1', ['catalog.header.description', 'ctlg_text_1']],
         ['presents', ['catalog.header.description', 'ctlg_text1']],
@@ -38,6 +44,7 @@ export class PageLocalization implements IPageLocalization
         ['builders_club_loyalty', ['ctlg_description']],
     ]);
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::LAYOUT_LINKS
     private static readonly LAYOUT_LINKS: Map<string, string[]> = new Map([
         ['club_buy', ['club_link']],
         ['mad_money', ['ctlg_madmoney_button']],
@@ -56,32 +63,38 @@ export class PageLocalization implements IPageLocalization
         this._texts = texts;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::get imageCount()
     get imageCount(): number
     {
         return this._images.length;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::get textCount()
     get textCount(): number
     {
         return this._texts.length;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::dispose()
     dispose(): void
     {
         this._images = [];
         this._texts = [];
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::hasLinks()
     hasLinks(layoutCode: string): boolean
     {
         return PageLocalization.LAYOUT_LINKS.get(layoutCode) != null;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::getLinks()
     getLinks(layoutCode: string): string[]
     {
         return PageLocalization.LAYOUT_LINKS.get(layoutCode) ?? [];
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::getTextElementName()
     getTextElementName(index: number, layoutCode: string): string
     {
         const fields = PageLocalization.LAYOUTS_TEXT_FIELDS.get(layoutCode) ?? PageLocalization.DEFAULT_TEXT_FIELDS;
@@ -89,6 +102,7 @@ export class PageLocalization implements IPageLocalization
         return index < fields.length ? fields[index] : '';
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::getImageElementName()
     getImageElementName(index: number, layoutCode: string): string
     {
         const fields = PageLocalization.LAYOUTS_IMAGE_FIELDS.get(layoutCode) ?? PageLocalization.DEFAULT_IMAGE_FIELDS;
@@ -96,11 +110,13 @@ export class PageLocalization implements IPageLocalization
         return index < fields.length ? fields[index] : '';
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::getTextElementContent()
     getTextElementContent(index: number): string
     {
         return index < this._texts.length ? this._texts[index] : '';
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/PageLocalization.as::getImageElementContent()
     getImageElementContent(index: number): string
     {
         return index < this._images.length ? this._images[index] : '';

@@ -10,6 +10,7 @@ import type {IWindow} from './IWindow';
  */
 export interface ICoreWindowManager
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/ICoreWindowManager.as::create()
     create(
         name: string,
         type: number,
@@ -25,16 +26,20 @@ export interface ICoreWindowManager
         layerName?: string
     ): IWindow;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/ICoreWindowManager.as::destroy()
     destroy(window: IWindow): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/ICoreWindowManager.as::buildFromXML()
     buildFromXML(
         layout: string | Document | Element,
         contextLayer?: number,
         namedWindows?: Map<string, IWindow> | null
     ): IWindow | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/ICoreWindowManager.as::windowToXMLString()
     windowToXMLString(window: IWindow): string;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/ICoreWindowManager.as::getDesktop()
     getDesktop(contextLayer: number): IWindow | null;
 
     // TODO(AS3): sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/ICoreWindowManager.as::notify()
@@ -49,5 +54,6 @@ export interface ICoreWindowManager
 
     findWindowByTag(tag: string): IWindow | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/ICoreWindowManager.as::groupWindowsWithTag()
     groupWindowsWithTag(tag: string, result: IWindow[], depth?: number): number;
 }

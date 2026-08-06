@@ -16,6 +16,7 @@ export class SetUIFlagsMessageComposer extends MessageComposer<ConstructorParame
         this._data = [flags];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/preferences/SetUIFlagsMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

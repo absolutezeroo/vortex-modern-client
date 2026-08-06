@@ -16,6 +16,7 @@ export class NavigatorAddCollapsedCategoryMessageComposer extends MessageCompose
         this._data = [category];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/newnavigator/NavigatorAddCollapsedCategoryMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

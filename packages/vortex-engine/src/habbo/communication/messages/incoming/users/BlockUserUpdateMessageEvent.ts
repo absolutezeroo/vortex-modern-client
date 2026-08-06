@@ -17,11 +17,13 @@ export class BlockUserUpdateMessageEvent extends MessageEvent implements IMessag
         super(callback, BlockUserUpdateMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/BlockUserUpdateMessageEvent.as::get result()
     get result(): number
     {
         return (this._parser as BlockUserUpdateMessageParser).result;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/BlockUserUpdateMessageEvent.as::get userId()
     get userId(): number
     {
         return (this._parser as BlockUserUpdateMessageParser).userId;

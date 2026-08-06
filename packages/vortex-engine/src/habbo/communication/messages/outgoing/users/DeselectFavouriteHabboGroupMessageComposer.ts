@@ -16,6 +16,7 @@ export class DeselectFavouriteHabboGroupMessageComposer extends MessageComposer<
         this._data = [groupId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/DeselectFavouriteHabboGroupMessageComposer.as::getMessageArray()
     getMessageArray(): [number]
     {
         return this._data;

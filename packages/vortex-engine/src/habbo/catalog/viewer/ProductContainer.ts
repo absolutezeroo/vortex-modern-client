@@ -21,6 +21,7 @@ import {ProductGridItem} from './ProductGridItem';
  */
 export class ProductContainer extends ProductGridItem implements IGetImageListener, IProductContainer, IAvatarImageListener
 {
+    // AS3: sources/win63_version/habbo/catalog/viewer/ProductContainer.as::_offer
     protected _offer: IPurchasableOffer;
 
     protected _products: IProduct[];
@@ -32,11 +33,13 @@ export class ProductContainer extends ProductGridItem implements IGetImageListen
         this._products = products;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/ProductContainer.as::get products()
     get products(): IProduct[]
     {
         return this._products;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/ProductContainer.as::get firstProduct()
     get firstProduct(): IProduct | null
     {
         if(!this._products || this._products.length === 0) return null;
@@ -53,6 +56,7 @@ export class ProductContainer extends ProductGridItem implements IGetImageListen
         return stripped.length > 0 ? stripped[0] : null;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/ProductContainer.as::get offer()
     get offer(): IPurchasableOffer
     {
         return this._offer;
@@ -72,11 +76,13 @@ export class ProductContainer extends ProductGridItem implements IGetImageListen
         super.dispose();
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/ProductContainer.as::get isLazy()
     get isLazy(): boolean
     {
         return false;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/ProductContainer.as::initProductIcon()
     initProductIcon(_roomEngine: IRoomEngine, _stuffData?: unknown | null): void
     {
     }
@@ -121,6 +127,7 @@ export class ProductContainer extends ProductGridItem implements IGetImageListen
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/ProductContainer.as::setAddOnIcon()
     private setAddOnIcon(assetName: string): void
     {
         const badgeAddOn = this._view!.findChildByName('badge_add_on') as unknown as IBitmapWrapperWindow;
@@ -131,15 +138,18 @@ export class ProductContainer extends ProductGridItem implements IGetImageListen
         badgeAddOn.height = badgeAddOn.bitmap!.height;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/ProductContainer.as::imageReady()
     imageReady(_id: number, image: ImageBitmap | null): void
     {
         this.setIconImage(image, true);
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/ProductContainer.as::imageFailed()
     imageFailed(_id: number): void
     {
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/ProductContainer.as::setClubIconLevel()
     setClubIconLevel(clubLevel: number): void
     {
         if(this.view == null) return;
@@ -167,6 +177,7 @@ export class ProductContainer extends ProductGridItem implements IGetImageListen
         void clubLevel;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/ProductContainer.as::avatarImageReady()
     avatarImageReady(figureString: string): void
     {
         if(!this.disposed)
@@ -189,6 +200,7 @@ export class ProductContainer extends ProductGridItem implements IGetImageListen
 
     // AS3's HabboCatalog itself doubles as a config accessor (getBoolean/getInteger/getProperty
     // from the shared Component base) - cast narrowly to the subset getIconStyleFor() actually uses.
+    // AS3: sources/win63_version/habbo/catalog/viewer/ProductContainer.as::createCurrencyIndicators()
     createCurrencyIndicators(catalog: HabboCatalog): void
     {
         const configuration = catalog as unknown as IHabboConfigurationManager;

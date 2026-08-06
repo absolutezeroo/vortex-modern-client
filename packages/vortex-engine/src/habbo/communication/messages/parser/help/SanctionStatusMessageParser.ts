@@ -11,6 +11,7 @@ export class SanctionStatusMessageParser implements IMessageParser
 {
     private _isSanctionNew: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get isSanctionNew()
     get isSanctionNew(): boolean
     {
         return this._isSanctionNew;
@@ -18,6 +19,7 @@ export class SanctionStatusMessageParser implements IMessageParser
 
     private _isSanctionActive: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get isSanctionActive()
     get isSanctionActive(): boolean
     {
         return this._isSanctionActive;
@@ -25,6 +27,7 @@ export class SanctionStatusMessageParser implements IMessageParser
 
     private _sanctionName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get sanctionName()
     get sanctionName(): string
     {
         return this._sanctionName;
@@ -32,6 +35,7 @@ export class SanctionStatusMessageParser implements IMessageParser
 
     private _sanctionLengthHours: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get sanctionLengthHours()
     get sanctionLengthHours(): number
     {
         return this._sanctionLengthHours;
@@ -39,6 +43,7 @@ export class SanctionStatusMessageParser implements IMessageParser
 
     private _sanctionReason: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get sanctionReason()
     get sanctionReason(): string
     {
         return this._sanctionReason;
@@ -46,6 +51,7 @@ export class SanctionStatusMessageParser implements IMessageParser
 
     private _sanctionCreationTime: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get sanctionCreationTime()
     get sanctionCreationTime(): string
     {
         return this._sanctionCreationTime;
@@ -53,6 +59,7 @@ export class SanctionStatusMessageParser implements IMessageParser
 
     private _probationHoursLeft: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get probationHoursLeft()
     get probationHoursLeft(): number
     {
         return this._probationHoursLeft;
@@ -60,6 +67,7 @@ export class SanctionStatusMessageParser implements IMessageParser
 
     private _nextSanctionName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get nextSanctionName()
     get nextSanctionName(): string
     {
         return this._nextSanctionName;
@@ -67,6 +75,7 @@ export class SanctionStatusMessageParser implements IMessageParser
 
     private _nextSanctionLengthHours: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get nextSanctionLengthHours()
     get nextSanctionLengthHours(): number
     {
         return this._nextSanctionLengthHours;
@@ -74,6 +83,7 @@ export class SanctionStatusMessageParser implements IMessageParser
 
     private _hasCustomMute: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get hasCustomMute()
     get hasCustomMute(): boolean
     {
         return this._hasCustomMute;
@@ -81,11 +91,13 @@ export class SanctionStatusMessageParser implements IMessageParser
 
     private _tradeLockExpiryTime: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get tradeLockExpiryTime()
     get tradeLockExpiryTime(): string
     {
         return this._tradeLockExpiryTime;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::flush()
     flush(): boolean
     {
         this._isSanctionNew = false;
@@ -102,6 +114,7 @@ export class SanctionStatusMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

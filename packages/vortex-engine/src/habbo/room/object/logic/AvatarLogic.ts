@@ -41,19 +41,28 @@ export class AvatarLogic extends MovingObjectLogic
 {
     // Constants
     private static readonly WARP_DISTANCE = 1.5;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::EFFECT_TYPE_SPLASH
     private static readonly EFFECT_TYPE_SPLASH = 28;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::EFFECT_TYPE_SWIM
     private static readonly EFFECT_TYPE_SWIM = 29;
     private static readonly EFFECT_TYPE_SPLASH_DARK = 184;
     private static readonly EFFECT_TYPE_SWIM_DARK = 185;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::EFFECT_SPLASH_LENGTH
     private static readonly EFFECT_SPLASH_LENGTH = 500;
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::CARRY_ITEM_NULL
     private static readonly CARRY_ITEM_NULL = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::CARRY_ITEM_LAST_CONSUMABLE
     private static readonly CARRY_ITEM_LAST_CONSUMABLE = 999;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::CARRY_ITEM_EMPTY_HAND
     private static readonly CARRY_ITEM_EMPTY_HAND = 999999999;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::CARRY_ITEM_DELAY_BEFORE_USE
     private static readonly CARRY_ITEM_DELAY_BEFORE_USE = 5000;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::CARRY_ITEM_EMPTY_HAND_ANIMATION_LENGTH
     private static readonly CARRY_ITEM_EMPTY_HAND_ANIMATION_LENGTH = 1500;
 
     // Selection state
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::_selected
     private _selected = false;
     private _lastLocation: Vector3d | null = null;
 
@@ -73,6 +82,7 @@ export class AvatarLogic extends MovingObjectLogic
     // Carry object state
     private _carryObjectStartTime = 0;
     private _carryObjectEndTime = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::_allowUseCarryObject
     private _allowUseCarryObject = false;
 
     // Blink animation
@@ -479,6 +489,7 @@ export class AvatarLogic extends MovingObjectLogic
         return super.getCurveStrength(message);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::updateEffect()
     private updateEffect(effect: number, delay: number, model: IRoomObjectModelController): void
     {
         const currentEffect = model.getNumber('figure_effect');
@@ -521,6 +532,7 @@ export class AvatarLogic extends MovingObjectLogic
         model.setNumber('figure_effect', effect);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::updateActions()
     private updateActions(time: number, model: IRoomObjectModelController): void
     {
         const now = Date.now();
@@ -633,21 +645,25 @@ export class AvatarLogic extends MovingObjectLogic
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::getTalkingPauseInterval()
     private getTalkingPauseInterval(): number
     {
         return 100 + Math.random() * 200;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::getTalkingPauseLength()
     private getTalkingPauseLength(): number
     {
         return 75 + Math.random() * 75;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::getBlinkInterval()
     private getBlinkInterval(): number
     {
         return 4500 + Math.random() * 1000;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::getBlinkLength()
     private getBlinkLength(): number
     {
         return 50 + Math.random() * 200;

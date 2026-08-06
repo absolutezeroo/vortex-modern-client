@@ -18,21 +18,29 @@ import {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class CountdownWidget implements IWidget
 {
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::TYPE
     public static readonly TYPE: string = 'countdown';
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::RUNNING_KEY
     private static readonly RUNNING_KEY: string = 'countdown:running';
     private static readonly DIGITS_KEY: string = 'countdown:digits';
     private static readonly SECONDS_KEY: string = 'countdown:seconds';
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::COLOR_STYLE_KEY
     private static readonly COLOR_STYLE_KEY: string = 'countdown:color_style';
 
     private static readonly UNIT_NAMES: string[] = ['weeks', 'days', 'hours', 'minutes', 'seconds'];
     private static readonly UNIT_SECONDS: number[] = [604800, 86400, 3600, 60, 1];
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::UNIT_MAX_VALUES
     private static readonly UNIT_MAX_VALUES: number[] = [100, 7, 24, 60, 60];
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::_startSeconds
     private _startSeconds: number = 0;
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::_startTime
     private _startTime: number = Date.now();
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::_displayedTime
     private _displayedTime: number = -1;
 
     private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindow | null = null;
     private _counterTemplate: IWindow | null = null;
@@ -69,8 +77,10 @@ export class CountdownWidget implements IWidget
         this._widgetWindow.rootWindow = this._root;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -78,11 +88,13 @@ export class CountdownWidget implements IWidget
 
     private _running: boolean = false;
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::get running()
     public get running(): boolean
     {
         return this._running;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::set running()
     public set running(value: boolean)
     {
         if(this._running && !value)
@@ -100,11 +112,13 @@ export class CountdownWidget implements IWidget
 
     private _digits: number = 3;
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::get digits()
     public get digits(): number
     {
         return this._digits;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::set digits()
     public set digits(value: number)
     {
         this._digits = Math.max(2, Math.min(4, value));
@@ -112,16 +126,19 @@ export class CountdownWidget implements IWidget
 
     private _colorStyle: number = 0;
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::get colorStyle()
     public get colorStyle(): number
     {
         return this._colorStyle;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::set colorStyle()
     public set colorStyle(value: number)
     {
         this._colorStyle = value;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::get seconds()
     public get seconds(): number
     {
         if(this._running)
@@ -132,12 +149,14 @@ export class CountdownWidget implements IWidget
         return this._startSeconds;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::set seconds()
     public set seconds(value: number)
     {
         this._startSeconds = value;
         this._startTime = Date.now();
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         if(this._disposed) return [];
@@ -150,6 +169,7 @@ export class CountdownWidget implements IWidget
         ];
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::set properties()
     public set properties(values: PropertyStruct[])
     {
         for(const prop of values)
@@ -175,6 +195,7 @@ export class CountdownWidget implements IWidget
     /**
 	 * Determine the maximum unit index for the given digit count and total seconds.
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::getMaxUnitIndex()
     private static getMaxUnitIndex(digits: number, totalSeconds: number): number
     {
         for(let i = 0; i < CountdownWidget.UNIT_SECONDS.length - digits; i++)
@@ -213,6 +234,7 @@ export class CountdownWidget implements IWidget
         return result;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/CountdownWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

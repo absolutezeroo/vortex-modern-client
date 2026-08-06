@@ -16,7 +16,9 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 export class GuildBadgePartData
 {
     private _id: number;
+    // AS3: .../src/unknowns/_SafePkg_1731/_SafeCls_3106.as::_fileName
     private _fileName: string;
+    // AS3: .../src/unknowns/_SafePkg_1731/_SafeCls_3106.as::_maskFileName
     private _maskFileName: string;
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1731/_SafeCls_3106.as::_SafeCls_3106()

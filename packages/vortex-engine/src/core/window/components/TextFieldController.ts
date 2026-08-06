@@ -64,11 +64,13 @@ export class TextFieldController extends TextController implements ITextFieldWin
     /**
 	 * Whether the field accepts user input.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::get editable()
     public get editable(): boolean
     {
         return this._editable;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::set editable()
     public set editable(value: boolean)
     {
         this._editable = value;
@@ -81,11 +83,13 @@ export class TextFieldController extends TextController implements ITextFieldWin
 
     private _selectable: boolean = true;
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::get selectable()
     public get selectable(): boolean
     {
         return this._selectable;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::set selectable()
     public set selectable(value: boolean)
     {
         this._selectable = value;
@@ -93,11 +97,13 @@ export class TextFieldController extends TextController implements ITextFieldWin
 
     private _displayAsPassword: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::get displayAsPassword()
     public get displayAsPassword(): boolean
     {
         return this._displayAsPassword;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::set displayAsPassword()
     public set displayAsPassword(value: boolean)
     {
         this._displayAsPassword = value;
@@ -117,6 +123,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
 	 * In AS3, this checks `_field.stage.focus == _field`.
 	 * Here we check if our hidden input is the active element.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::get focused()
     public get focused(): boolean
     {
         if(this._inputElement)
@@ -129,6 +136,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
 
     private _selectionBeginIndex: number = 0;
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::get selectionBeginIndex()
     public get selectionBeginIndex(): number
     {
         if(this._inputElement)
@@ -141,6 +149,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
 
     private _selectionEndIndex: number = 0;
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::get selectionEndIndex()
     public get selectionEndIndex(): number
     {
         if(this._inputElement)
@@ -153,21 +162,25 @@ export class TextFieldController extends TextController implements ITextFieldWin
 
     private _interactiveCursorDisabled: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::get interactiveCursorDisabled()
     public get interactiveCursorDisabled(): boolean
     {
         return this._interactiveCursorDisabled;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::set interactiveCursorDisabled()
     public set interactiveCursorDisabled(value: boolean)
     {
         this._interactiveCursorDisabled = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::get displayRaw()
     public get displayRaw(): boolean
     {
         return this._displayRaw;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::set displayRaw()
     public set displayRaw(value: boolean)
     {
         this._displayRaw = value;
@@ -178,11 +191,13 @@ export class TextFieldController extends TextController implements ITextFieldWin
 
     private _toolTipCaption: string = '';
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::get toolTipCaption()
     public get toolTipCaption(): string
     {
         return this._toolTipCaption;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::set toolTipCaption()
     public set toolTipCaption(value: string)
     {
         this._toolTipCaption = value ?? '';
@@ -190,11 +205,13 @@ export class TextFieldController extends TextController implements ITextFieldWin
 
     private _toolTipDelay: number = 500;
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::get toolTipDelay()
     public get toolTipDelay(): number
     {
         return this._toolTipDelay;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::set toolTipDelay()
     public set toolTipDelay(value: number)
     {
         this._toolTipDelay = value;
@@ -202,11 +219,13 @@ export class TextFieldController extends TextController implements ITextFieldWin
 
     private _toolTipIsDynamic: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::get toolTipIsDynamic()
     public get toolTipIsDynamic(): boolean
     {
         return this._toolTipIsDynamic;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::set toolTipIsDynamic()
     public set toolTipIsDynamic(value: boolean)
     {
         this._toolTipIsDynamic = value;
@@ -298,6 +317,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
     /**
 	 * Returns word boundary positions for the given text.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::getWordPositions()
     public static getWordPositions(text: string): number[]
     {
         const positions: number[] = [0];
@@ -522,6 +542,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
         return result;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::appendText()
     public appendText(text: string): void
     {
         this._text += text;
@@ -532,6 +553,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::replaceText()
     public replaceText(beginIndex: number, endIndex: number, newText: string): void
     {
         this._text = this._text.substring(0, beginIndex) + newText + this._text.substring(endIndex);
@@ -545,6 +567,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
     /**
 	 * Sets the selection range on the input element.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::setSelection()
     public setSelection(beginIndex: number, endIndex: number): void
     {
         this._selectionBeginIndex = beginIndex;
@@ -561,6 +584,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
 	 *
 	 * In AS3, this calls onChangeEvent(null) which dispatches WE_CHANGE.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::requestChangeEvent()
     public requestChangeEvent(): void
     {
         this.onChangeEvent();
@@ -569,26 +593,31 @@ export class TextFieldController extends TextController implements ITextFieldWin
     /**
 	 * Gets the word at the given pixel position.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::getWordAt()
     public getWordAt(_x: number, _y: number): string
     {
         return '';
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::showToolTip()
     public showToolTip(_toolTip: unknown): void
     {
         // Override in subclass
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::hideToolTip()
     public hideToolTip(): void
     {
         // Override in subclass
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::setMouseCursorForState()
     public setMouseCursorForState(_state: number, _cursor: number): number
     {
         return 0;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::getMouseCursorByState()
     public getMouseCursorByState(_state: number): number
     {
         return 0;
@@ -901,6 +930,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
     /**
 	 * Dispatches a WKE_KEY_DOWN event through the window system.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::onKeyDownEvent()
     private onKeyDownEvent(e: KeyboardEvent): void
     {
         try
@@ -941,6 +971,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
     /**
 	 * Dispatches a WKE_KEY_UP event through the window system.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::onKeyUpEvent()
     private onKeyUpEvent(e: KeyboardEvent): void
     {
         try
@@ -981,6 +1012,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
     /**
 	 * Dispatches a WE_CHANGE event through the window system.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TextFieldController.as::onChangeEvent()
     private onChangeEvent(): void
     {
         try

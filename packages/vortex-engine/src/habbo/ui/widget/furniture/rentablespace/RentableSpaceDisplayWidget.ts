@@ -69,6 +69,7 @@ export class RentableSpaceDisplayWidget extends RoomWidgetBase
      *
      * The base class's handler, narrowed — every call below needs the rent-specific members.
      */
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/rentablespace/RentableSpaceDisplayWidget.as::get ownHandler()
     private get ownHandler(): RentableSpaceWidgetHandler
     {
         return this._handler as unknown as RentableSpaceWidgetHandler;
@@ -86,6 +87,7 @@ export class RentableSpaceDisplayWidget extends RoomWidgetBase
      * Does not build anything — the window appears only once the status answer arrives in
      * `populateRentInfo()`.
      */
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/rentablespace/RentableSpaceDisplayWidget.as::show()
     public show(roomObject: IRoomObject): void
     {
         this._roomObject = roomObject;
@@ -98,6 +100,7 @@ export class RentableSpaceDisplayWidget extends RoomWidgetBase
      * Ignores a request aimed at a different object, which is how a close event for some other
      * furniture leaves this dialog alone.
      */
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/rentablespace/RentableSpaceDisplayWidget.as::hide()
     public hide(roomObject: IRoomObject | null): void
     {
         if(this._roomObject !== roomObject)
@@ -131,6 +134,7 @@ export class RentableSpaceDisplayWidget extends RoomWidgetBase
      * The rent branch decides between three captions: the server's refusal, the widget's own
      * "not enough credits", or no error at all — and only that last case enables the button.
      */
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/rentablespace/RentableSpaceDisplayWidget.as::populateRentInfo()
     public populateRentInfo(
         rented: boolean,
         canRent: boolean,
@@ -219,6 +223,7 @@ export class RentableSpaceDisplayWidget extends RoomWidgetBase
      * Assumes the window exists — AS3 does not null-check it, and in practice a rent failure can
      * only follow a rent button that only the built window has.
      */
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/rentablespace/RentableSpaceDisplayWidget.as::showErrorView()
     public showErrorView(reason: number): void
     {
         if(!this._window) return;
@@ -239,6 +244,7 @@ export class RentableSpaceDisplayWidget extends RoomWidgetBase
      * AS3 returns void; the return value is a TS addition so the caller can act on the window
      * without re-reading a field TS has narrowed.
      */
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/rentablespace/RentableSpaceDisplayWidget.as::createWindow()
     private createWindow(): IWindowContainer | null
     {
         if(this._window != null)

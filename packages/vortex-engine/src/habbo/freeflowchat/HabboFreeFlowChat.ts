@@ -69,9 +69,12 @@ export interface IHabboFreeFlowChatEvents
  */
 export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 {
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatEventHandler
     private _chatEventHandler: ChatEventHandler | null = null;
     private _roomSessionEventHandler: RoomSessionEventHandler | null = null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_isInRoom
     private _isInRoom: boolean = false;
     private _isInitialized: boolean = false;
 
@@ -83,15 +86,19 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         this.refreshEffectiveChatSettings();
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get sessionDataManager()
     get sessionDataManager(): ISessionDataManager | null
     {
         return this._sessionDataManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_roomSessionManager
     private _roomSessionManager: IFreeFlowChatRoomSessionManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomSessionManager()
     get roomSessionManager(): IFreeFlowChatRoomSessionManager | null
     {
         return this._roomSessionManager;
@@ -104,8 +111,10 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._chatHistory;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomEngine()
     get roomEngine(): IRoomEngine | null
     {
         return this._roomEngine;
@@ -113,6 +122,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 
     private _localizations: IHabboLocalizationManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get localizations()
     get localizations(): IHabboLocalizationManager | null
     {
         return this._localizations;
@@ -121,13 +131,16 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get avatarRenderManager()
     private _avatarRenderManager: IAvatarRenderManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get avatarRenderManager()
     get avatarRenderManager(): IAvatarRenderManager | null
     {
         return this._avatarRenderManager;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatBubbleFactory
     private _chatBubbleFactory: ChatBubbleFactory | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatStyleLibrary()
     get chatStyleLibrary(): IChatStyleLibrary | null
     {
         return this._chatBubbleFactory?.chatStyleLibrary ?? null;
@@ -163,6 +176,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     // 10000ms "no settings at all" fallback ChatFlowStage.ts falls back to if this were null).
     private _roomChatSettings: IRoomChatSettings | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatSettings()
     get roomChatSettings(): IRoomChatSettings | null
     {
         return this._roomChatSettings;
@@ -339,6 +353,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     // Set by roomEntered() once the ChatViewController exists (see viewer/ChatViewController.ts).
     private _displayObject: Container | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get displayObject()
     get displayObject(): Container | null
     {
         return this._displayObject;
@@ -416,8 +431,10 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     {
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_preferedChatStyle
     private _preferedChatStyle: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get preferedChatStyle()
     get preferedChatStyle(): number
     {
         return this._preferedChatStyle;
@@ -433,6 +450,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 
     private _isDisabledInPreferences: boolean = false;
 
+    // AS3: sources/win63_version/habbo/freeflowchat/HabboFreeFlowChat.as::get isDisabledInPreferences()
     get isDisabledInPreferences(): boolean
     {
         return this._isDisabledInPreferences;
@@ -444,6 +462,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 	 * That composer carries (chatMode, chatBubbleWidth, chatScrollSpeed) and is only ever sent
 	 * from updateChatPreferences(); AS3 has no wire traffic on this flag at all.
 	 */
+    // AS3: sources/win63_version/habbo/freeflowchat/HabboFreeFlowChat.as::set isDisabledInPreferences()
     set isDisabledInPreferences(value: boolean)
     {
         this._isDisabledInPreferences = value;
@@ -534,6 +553,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 	 *
 	 * @returns A string in HH:MM:SS format
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::getTimeStampNow()
     static getTimeStampNow(): string
     {
         const now = new Date();
@@ -585,10 +605,14 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return new ManualNineSliceSprite(scale9Grid, background);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatFlowStage
     private _chatFlowStage: ChatFlowStage | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatFlowViewer
     private _chatFlowViewer: ChatFlowViewer | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatViewController
     private _chatViewController: ChatViewController | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFlowViewer()
     get chatFlowViewer(): ChatFlowViewer | null
     {
         return this._chatFlowViewer;
@@ -602,6 +626,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 	 * not built here — see ChatViewController.ts's header. displayObject/chatFlowViewer
 	 * still work without them; the history toggle button stays a no-op.
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomEntered()
     roomEntered(): void
     {
         this._isInRoom = true;
@@ -637,6 +662,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomLeft()
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomLeft()
     roomLeft(): void
     {
         if(this._displayObject) this._roomEngine?.removeStageChild(this._displayObject);
@@ -690,6 +716,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 	 *
 	 * @param item The chat item to insert
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::insertChat()
     insertChat(item: ChatItem): void
     {
         if(!this._isInitialized || !this._chatHistory || this._isDisabledInPreferences || !this._chatFlowStage || !this._chatFlowViewer || !this._chatBubbleFactory)
@@ -716,6 +743,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     /**
 	 * Clear the current chat flow.
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clear()
     clear(): void
     {
         this._chatEvents.emit('cleared');
@@ -724,6 +752,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     /**
 	 * Toggle the chat history visibility.
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::toggleVisibility()
     toggleVisibility(): void
     {
         if(this._isDisabledInPreferences || !this._isInitialized)

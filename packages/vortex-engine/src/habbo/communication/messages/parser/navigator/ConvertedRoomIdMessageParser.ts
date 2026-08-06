@@ -10,6 +10,7 @@ export class ConvertedRoomIdMessageParser implements IMessageParser
 {
     private _globalId: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/ConvertedRoomIdEventParser.as::get globalId()
     get globalId(): string
     {
         return this._globalId;
@@ -17,11 +18,13 @@ export class ConvertedRoomIdMessageParser implements IMessageParser
 
     private _convertedId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/ConvertedRoomIdEventParser.as::get convertedId()
     get convertedId(): number
     {
         return this._convertedId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/ConvertedRoomIdEventParser.as::flush()
     flush(): boolean
     {
         this._globalId = '';
@@ -29,6 +32,7 @@ export class ConvertedRoomIdMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/ConvertedRoomIdEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._globalId = wrapper.readString();

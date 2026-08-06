@@ -98,6 +98,7 @@ export class BoxSizerController extends ContainerController implements IBoxSizer
     /**
 	 * Sets the horizontal padding.
 	 */
+    // AS3: sources/win63_version/core/window/components/BoxSizerController.as::setHorizontalPadding()
     public setHorizontalPadding(value: number): void
     {
         this._paddingHorizontal = value;
@@ -107,6 +108,7 @@ export class BoxSizerController extends ContainerController implements IBoxSizer
     /**
 	 * Sets the vertical padding.
 	 */
+    // AS3: sources/win63_version/core/window/components/BoxSizerController.as::setVerticalPadding()
     public setVerticalPadding(value: number): void
     {
         this._paddingVertical = value;
@@ -116,6 +118,7 @@ export class BoxSizerController extends ContainerController implements IBoxSizer
     /**
 	 * Sets the spacing between children.
 	 */
+    // AS3: sources/win63_version/core/window/components/BoxSizerController.as::setSpacing()
     public setSpacing(value: number): void
     {
         this._spacing = value;
@@ -125,6 +128,7 @@ export class BoxSizerController extends ContainerController implements IBoxSizer
     /**
 	 * Sets vertical or horizontal layout.
 	 */
+    // AS3: sources/win63_version/core/window/components/BoxSizerController.as::setVertical()
     public setVertical(value: boolean): void
     {
         this._vertical = value;
@@ -134,6 +138,7 @@ export class BoxSizerController extends ContainerController implements IBoxSizer
     /**
 	 * Enables or disables automatic rearrangement.
 	 */
+    // AS3: sources/win63_version/core/window/components/BoxSizerController.as::setAutoRearrange()
     public setAutoRearrange(value: boolean): void
     {
         this._autoRearrange = value;
@@ -147,6 +152,7 @@ export class BoxSizerController extends ContainerController implements IBoxSizer
     /**
 	 * Returns whether automatic rearrangement is enabled.
 	 */
+    // AS3: sources/win63_version/core/window/components/BoxSizerController.as::getAutoRearrange()
     public getAutoRearrange(): boolean
     {
         return this._autoRearrange;
@@ -155,6 +161,7 @@ export class BoxSizerController extends ContainerController implements IBoxSizer
     /**
 	 * Arranges children along the main axis.
 	 */
+    // AS3: sources/win63_version/core/window/components/BoxSizerController.as::arrangeChildren()
     private arrangeChildren(): void
     {
         if(!this._autoRearrange)
@@ -231,6 +238,7 @@ export class BoxSizerController extends ContainerController implements IBoxSizer
     /**
 	 * Extracts the relative sizing value from a child's tags.
 	 */
+    // AS3: sources/win63_version/core/window/components/BoxSizerController.as::getRelativeValue()
     private getRelativeValue(child: IWindow): number
     {
         let result = 0;
@@ -264,6 +272,7 @@ export class BoxSizerController extends ContainerController implements IBoxSizer
     /**
 	 * Returns the sum of all relative values of visible children.
 	 */
+    // AS3: sources/win63_version/core/window/components/BoxSizerController.as::getRelativeValuesSum()
     private getRelativeValuesSum(): number
     {
         let sum = 0;
@@ -284,6 +293,7 @@ export class BoxSizerController extends ContainerController implements IBoxSizer
     /**
 	 * Calculates space available for relatively-sized children.
 	 */
+    // AS3: sources/win63_version/core/window/components/BoxSizerController.as::calculateSpaceForRelatives()
     private calculateSpaceForRelatives(): number
     {
         let space = this._vertical

@@ -16,6 +16,7 @@ export class FurniListAddOrUpdateMessageParser implements IMessageParser
         return this._items;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/furni/FurniListAddOrUpdateEventParser.as::flush()
     flush(): boolean
     {
         this._items = [];
@@ -23,6 +24,7 @@ export class FurniListAddOrUpdateMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/furni/FurniListAddOrUpdateEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._items = [];

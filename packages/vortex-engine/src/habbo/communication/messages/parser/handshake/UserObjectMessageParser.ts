@@ -10,13 +10,16 @@ export class UserObjectMessageParser implements IMessageParser
 {
     private _id: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get id()
     get id(): number
     {
         return this._id;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::_name
     private _name: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get name()
     get name(): string
     {
         return this._name;
@@ -24,6 +27,7 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _figure: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get figure()
     get figure(): string
     {
         return this._figure;
@@ -31,6 +35,7 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _sex: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get sex()
     get sex(): string
     {
         return this._sex;
@@ -38,13 +43,16 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _customData: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get customData()
     get customData(): string
     {
         return this._customData;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::_realName
     private _realName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get realName()
     get realName(): string
     {
         return this._realName;
@@ -52,6 +60,7 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _directMail: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get directMail()
     get directMail(): boolean
     {
         return this._directMail;
@@ -59,6 +68,7 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _respectTotal: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get respectTotal()
     get respectTotal(): number
     {
         return this._respectTotal;
@@ -66,6 +76,7 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _respectLeft: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get respectLeft()
     get respectLeft(): number
     {
         return this._respectLeft;
@@ -73,6 +84,7 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _petRespectLeft: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get petRespectLeft()
     get petRespectLeft(): number
     {
         return this._petRespectLeft;
@@ -80,6 +92,7 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _streamPublishingAllowed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get streamPublishingAllowed()
     get streamPublishingAllowed(): boolean
     {
         return this._streamPublishingAllowed;
@@ -87,6 +100,7 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _lastAccessDate: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get lastAccessDate()
     get lastAccessDate(): string
     {
         return this._lastAccessDate;
@@ -94,6 +108,7 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _nameChangeAllowed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get nameChangeAllowed()
     get nameChangeAllowed(): boolean
     {
         return this._nameChangeAllowed;
@@ -101,6 +116,7 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _accountSafetyLocked: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get accountSafetyLocked()
     get accountSafetyLocked(): boolean
     {
         return this._accountSafetyLocked;
@@ -108,6 +124,7 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _accountTradeLocked: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get accountTradeLocked()
     get accountTradeLocked(): boolean
     {
         return this._accountTradeLocked;
@@ -115,6 +132,7 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _nameColor: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get nameColor()
     get nameColor(): string
     {
         return this._nameColor;
@@ -122,6 +140,7 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _respectReplenishesLeft: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get respectReplenishesLeft()
     get respectReplenishesLeft(): number
     {
         return this._respectReplenishesLeft;
@@ -129,11 +148,13 @@ export class UserObjectMessageParser implements IMessageParser
 
     private _maxRespectPerDay: number = 3;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::get maxRespectPerDay()
     get maxRespectPerDay(): number
     {
         return this._maxRespectPerDay;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::flush()
     flush(): boolean
     {
         this._id = 0;
@@ -157,6 +178,7 @@ export class UserObjectMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UserObjectEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._id = wrapper.readInt();

@@ -17,17 +17,28 @@ export class SmoothScroller
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as::DEFAULT_SCROLL_STEP
     public static readonly DEFAULT_SCROLL_STEP: number = 25;
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::DEFAULT_MAX_DURATION_MS
     private static readonly DEFAULT_MAX_DURATION_MS: number = 200;
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::INVERSE_DELTA_RAMP_START_PX
     private static readonly INVERSE_DELTA_RAMP_START_PX: number = 120;
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::INVERSE_DELTA_RAMP_END_PX
     private static readonly INVERSE_DELTA_RAMP_END_PX: number = 480;
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::INVERSE_DELTA_MIN_DURATION_SCALE
     private static readonly INVERSE_DELTA_MIN_DURATION_SCALE: number = 0.5;
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::VELOCITY_BOUND_FUDGE
     private static readonly VELOCITY_BOUND_FUDGE: number = 2.5;
     private static readonly EPSILON: number = 0.01;
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::CURVE_X1
     private static readonly CURVE_X1: number = 0.42;
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::CURVE_X2
     private static readonly CURVE_X2: number = 0.58;
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::CURVE_Y2
     private static readonly CURVE_Y2: number = 1;
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::MAX_SLOPE
     private static readonly MAX_SLOPE: number = 1000;
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::NEWTON_ITERATIONS
     private static readonly NEWTON_ITERATIONS: number = 4;
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::BINARY_SEARCH_ITERATIONS
     private static readonly BINARY_SEARCH_ITERATIONS: number = 8;
 
     private readonly _getPosition: () => number;
@@ -46,6 +57,7 @@ export class SmoothScroller
     private _targetValue: number = 0;
     private _startTime: number = 0;
     private _targetTime: number = 0;
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::_curveControlY1
     private _curveControlY1: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/SmoothScroller.as::SmoothScroller()
@@ -72,6 +84,7 @@ export class SmoothScroller
         this._tickIntervalMs = Math.trunc(1000 / fps);
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::getBezierValue()
     private static getBezierValue(x: number, x1: number, y1: number, x2: number): number
     {
         x = SmoothScroller.clamp(x, 0, 1);
@@ -81,6 +94,7 @@ export class SmoothScroller
         return SmoothScroller.sampleCurve(t, y1, SmoothScroller.CURVE_Y2);
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::getBezierSlope()
     private static getBezierSlope(x: number, x1: number, y1: number, x2: number): number
     {
         x = SmoothScroller.clamp(x, 0, 1);
@@ -98,6 +112,7 @@ export class SmoothScroller
         return dydt / dxdt;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::solveCurveTForX()
     private static solveCurveTForX(x: number, x1: number, x2: number): number
     {
         let t = x;
@@ -150,31 +165,37 @@ export class SmoothScroller
         return t;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::sampleCurve()
     private static sampleCurve(t: number, p1: number, p2: number): number
     {
         return ((SmoothScroller.getCurveA(p1, p2) * t + SmoothScroller.getCurveB(p1, p2)) * t + SmoothScroller.getCurveC(p1)) * t;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::sampleCurveDerivative()
     private static sampleCurveDerivative(t: number, p1: number, p2: number): number
     {
         return 3 * SmoothScroller.getCurveA(p1, p2) * t * t + 2 * SmoothScroller.getCurveB(p1, p2) * t + SmoothScroller.getCurveC(p1);
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::getCurveA()
     private static getCurveA(p1: number, p2: number): number
     {
         return 1 - 3 * p2 + 3 * p1;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::getCurveB()
     private static getCurveB(p1: number, p2: number): number
     {
         return 3 * p2 - 6 * p1;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::getCurveC()
     private static getCurveC(p1: number): number
     {
         return 3 * p1;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::clamp()
     private static clamp(value: number, min: number, max: number): number
     {
         if(value < min) return min;
@@ -314,6 +335,7 @@ export class SmoothScroller
         this.stopInternal(true);
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::stopInternal()
     private stopInternal(fireCallback: boolean): void
     {
         const wasRunning = this._timer !== null;
@@ -336,6 +358,7 @@ export class SmoothScroller
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::startAnimation()
     private startAnimation(now: number, start: number, target: number): void
     {
         this._startValue = this.clampPosition(start);
@@ -345,6 +368,7 @@ export class SmoothScroller
         this._targetTime = now + this.getInverseDeltaDurationMs(this._targetValue - this._startValue);
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::updateTarget()
     private updateTarget(now: number, target: number): void
     {
         target = this.clampPosition(target);
@@ -409,11 +433,13 @@ export class SmoothScroller
         this._timer = setInterval(() => this.updateScrolling(), this._tickIntervalMs);
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::updateScrolling()
     private updateScrolling(): void
     {
         this.applyPositionAt(performance.now());
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::applyPositionAt()
     private applyPositionAt(now: number): void
     {
         this.setPosition(this.getValueAt(now));
@@ -424,6 +450,7 @@ export class SmoothScroller
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::wheelDeltaToScrollDelta()
     private wheelDeltaToScrollDelta(steps: number, maxScroll: number): number
     {
         if(this._normalized)
@@ -434,6 +461,7 @@ export class SmoothScroller
         return -steps * this._scrollStep;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::getInverseDeltaDurationMs()
     private getInverseDeltaDurationMs(delta: number): number
     {
         const distance = Math.abs(delta);
@@ -449,6 +477,7 @@ export class SmoothScroller
         return SmoothScroller.clamp(duration, this._halfDuration, this._duration);
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::getBoundedDurationMs()
     private getBoundedDurationMs(delta: number, velocity: number): number
     {
         const inverseDeltaDuration = this.getInverseDeltaDurationMs(delta);
@@ -457,6 +486,7 @@ export class SmoothScroller
         return Math.min(inverseDeltaDuration, velocityBound);
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::getVelocityBasedDurationBoundMs()
     private getVelocityBasedDurationBoundMs(delta: number, velocity: number): number
     {
         if(Math.abs(delta) < SmoothScroller.EPSILON)
@@ -474,6 +504,7 @@ export class SmoothScroller
         return bound < 0 ? Number.MAX_VALUE : bound;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::getValueAt()
     private getValueAt(now: number): number
     {
         const span = this._targetTime - this._startTime;
@@ -494,6 +525,7 @@ export class SmoothScroller
         return this._startValue + (this._targetValue - this._startValue) * eased;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::calculateVelocity()
     private calculateVelocity(now: number): number
     {
         const span = this._targetTime - this._startTime;
@@ -509,21 +541,25 @@ export class SmoothScroller
         return slope * ((this._targetValue - this._startValue) / span);
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::getPosition()
     private getPosition(): number
     {
         return this._getPosition();
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::setPosition()
     private setPosition(value: number): void
     {
         this._setPosition(value);
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::getMaxScroll()
     private getMaxScroll(): number
     {
         return this._getMaxScroll();
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::clampPosition()
     private clampPosition(value: number): number
     {
         if(!this._clampToBounds || !Number.isFinite(value))
@@ -541,6 +577,7 @@ export class SmoothScroller
         return SmoothScroller.clamp(value, 0, maxPosition);
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/SmoothScroller.as::getMaxPosition()
     private getMaxPosition(): number
     {
         if(this._normalized)

@@ -10,6 +10,7 @@ export class PrizeMessageData
 {
     private _productCode: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/PrizeMessageData.as::get productCode()
     get productCode(): string
     {
         return this._productCode;
@@ -17,6 +18,7 @@ export class PrizeMessageData
 
     private _dealSize: number = 1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/PrizeMessageData.as::get isDeal()
     get isDeal(): boolean
     {
         return this._dealSize > 1;
@@ -24,6 +26,7 @@ export class PrizeMessageData
 
     private _productItemType: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/PrizeMessageData.as::get productItemType()
     get productItemType(): string
     {
         return this._productItemType;
@@ -31,6 +34,7 @@ export class PrizeMessageData
 
     private _productItemTypeId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/PrizeMessageData.as::get productItemTypeId()
     get productItemTypeId(): number
     {
         return this._productItemTypeId;
@@ -38,6 +42,7 @@ export class PrizeMessageData
 
     private _subProducts: PrizeMessageSubProduct[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/PrizeMessageData.as::get subProducts()
     get subProducts(): PrizeMessageSubProduct[]
     {
         return this._subProducts;

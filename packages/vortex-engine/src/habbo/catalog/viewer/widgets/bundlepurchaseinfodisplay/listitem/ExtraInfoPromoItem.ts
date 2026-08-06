@@ -21,10 +21,12 @@ const DISCOUNT_PROMO_KEY = 'catalog.bundlewidget.discount.promo';
  */
 export class ExtraInfoPromoItem extends UpdateableExtraInfoListItem
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoPromoItem.as::_window
     private _window: IWindowContainer | null = null;
 
     private _needsRender: boolean = true;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoPromoItem.as::_catalog
     private _catalog: HabboCatalog;
 
     private _nextDiscountMap: Map<number, number> = new Map();
@@ -98,6 +100,7 @@ export class ExtraInfoPromoItem extends UpdateableExtraInfoListItem
         return this._window;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoPromoItem.as::createWindow()
     private createWindow(): void
     {
         this._window = this._catalog.utils.createWindow('discountPromoItem') as unknown as IWindowContainer;
@@ -109,6 +112,7 @@ export class ExtraInfoPromoItem extends UpdateableExtraInfoListItem
         if(source) HabboCatalogUtils.replaceCenteredImage(iconBitmap, source);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoPromoItem.as::render()
     private render(): void
     {
         const localization = this._catalog.localization;
@@ -124,6 +128,7 @@ export class ExtraInfoPromoItem extends UpdateableExtraInfoListItem
         this._needsRender = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoPromoItem.as::resolveNextDiscountLevel()
     private resolveNextDiscountLevel(): void
     {
         for(const level of this._nextDiscountMap.keys())
@@ -137,6 +142,7 @@ export class ExtraInfoPromoItem extends UpdateableExtraInfoListItem
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoPromoItem.as::createNextDiscountMap()
     private createNextDiscountMap(): void
     {
         this._nextDiscountMap = new Map();
@@ -156,6 +162,7 @@ export class ExtraInfoPromoItem extends UpdateableExtraInfoListItem
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoPromoItem.as::onEffectTimer()
     private onEffectTimer(): void
     {
         if(this._effectAlpha > 0)

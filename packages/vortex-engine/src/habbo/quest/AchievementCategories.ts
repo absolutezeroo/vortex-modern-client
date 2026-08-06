@@ -8,10 +8,15 @@ import {AchievementCategory} from './AchievementCategory';
  */
 export class AchievementCategories
 {
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategories.as::ACHIEVEMENT_DISABLED
     public static readonly ACHIEVEMENT_DISABLED: number = 0;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategories.as::ACHIEVEMENT_ENABLED
     public static readonly ACHIEVEMENT_ENABLED: number = 1;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategories.as::ACHIEVEMENT_ARCHIVED
     public static readonly ACHIEVEMENT_ARCHIVED: number = 2;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategories.as::ACHIEVEMENT_OFF_SEASON
     public static readonly ACHIEVEMENT_OFF_SEASON: number = 3;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategories.as::ACHIEVEMENT_CATEGORY_ARCHIVED
     public static readonly ACHIEVEMENT_CATEGORY_ARCHIVED: string = 'archive';
 
     private _categories: Map<string, AchievementCategory> = new Map();
@@ -76,11 +81,13 @@ export class AchievementCategories
         this._categoryList.push(archiveCategory);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/quest/AchievementCategories.as::_categoryList
     private _categoryList: AchievementCategory[] = [];
 
     /**
 	 * Get the ordered list of categories
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategories.as::get categoryList()
     get categoryList(): AchievementCategory[]
     {
         return this._categoryList;
@@ -91,6 +98,7 @@ export class AchievementCategories
 	 *
 	 * @param data The updated achievement data
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategories.as::update()
     update(data: AchievementData): void
     {
         if(!data || data.category === '')
@@ -112,6 +120,7 @@ export class AchievementCategories
 	 * @param code The category code to search for
 	 * @returns The matching category, or null if not found
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategories.as::getCategoryByCode()
     getCategoryByCode(code: string): AchievementCategory | null
     {
         for(const category of this._categoryList)
@@ -130,6 +139,7 @@ export class AchievementCategories
 	 *
 	 * @returns The sum of progress from all categories
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategories.as::getProgress()
     getProgress(): number
     {
         let progress = 0;
@@ -147,6 +157,7 @@ export class AchievementCategories
 	 *
 	 * @returns The sum of max progress from all categories
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategories.as::getMaxProgress()
     getMaxProgress(): number
     {
         let maxProgress = 0;

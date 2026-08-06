@@ -14,18 +14,24 @@ import {StuffDataBase} from './StuffDataBase';
 
 export class CrackableStuffData extends StuffDataBase implements IStuffData
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/CrackableStuffData.as::FORMAT_KEY
     public static readonly FORMAT_KEY = 7;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/CrackableStuffData.as::_state
     private _state: string = '';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/CrackableStuffData.as::_hits
     private _hits: number = 0;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/CrackableStuffData.as::get hits()
     get hits(): number
     {
         return this._hits;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/CrackableStuffData.as::_target
     private _target: number = 0;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/CrackableStuffData.as::get target()
     get target(): number
     {
         return this._target;
@@ -39,7 +45,7 @@ export class CrackableStuffData extends StuffDataBase implements IStuffData
         super.initializeFromIncomingMessage(wrapper);
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/CrackableStuffData.as::initializeFromRoomObjectModel()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/CrackableStuffData.as::initializeFromRoomObjectModel()
     override initializeFromRoomObjectModel(model: IRoomObjectModel): void
     {
         super.initializeFromRoomObjectModel(model);
@@ -52,7 +58,7 @@ export class CrackableStuffData extends StuffDataBase implements IStuffData
         this._target = model.getNumber(RoomObjectVariableEnum.FURNITURE_CRACKABLE_TARGET);
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/CrackableStuffData.as::writeRoomObjectModel()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/CrackableStuffData.as::writeRoomObjectModel()
     override writeRoomObjectModel(model: IRoomObjectModelController): void
     {
         super.writeRoomObjectModel(model);
@@ -67,7 +73,7 @@ export class CrackableStuffData extends StuffDataBase implements IStuffData
         return this._state;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/CrackableStuffData.as::compare()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/CrackableStuffData.as::compare()
     override compare(_data: IStuffData): boolean
     {
         // AS3 returns true unconditionally — two crackables always group together,

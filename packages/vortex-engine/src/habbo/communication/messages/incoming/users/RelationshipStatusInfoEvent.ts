@@ -15,11 +15,13 @@ export class RelationshipStatusInfoEvent extends MessageEvent implements IMessag
         super(callback, RelationshipStatusInfoMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/RelationshipStatusInfoEvent.as::get userId()
     get userId(): number
     {
         return (this._parser as RelationshipStatusInfoMessageParser).userId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/RelationshipStatusInfoEvent.as::get relationshipStatusMap()
     get relationshipStatusMap(): Map<number, RelationshipStatusInfo>
     {
         return (this._parser as RelationshipStatusInfoMessageParser).relationshipStatusMap;

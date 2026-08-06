@@ -27,6 +27,7 @@ export class AddDataContainer
 
     private _id: string;
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AddDataContainer.as::get id()
     public get id(): string
     {
         return this._id;
@@ -34,6 +35,7 @@ export class AddDataContainer
 
     private _align: string;
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AddDataContainer.as::get align()
     public get align(): string
     {
         return this._align;
@@ -41,6 +43,7 @@ export class AddDataContainer
 
     private _base: string;
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AddDataContainer.as::get base()
     public get base(): string
     {
         return this._base;
@@ -48,6 +51,7 @@ export class AddDataContainer
 
     private _ink: string;
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AddDataContainer.as::get ink()
     public get ink(): string
     {
         return this._ink;
@@ -55,11 +59,13 @@ export class AddDataContainer
 
     private _blend: number = 1;
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AddDataContainer.as::get blend()
     public get blend(): number
     {
         return this._blend;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AddDataContainer.as::get isBlended()
     public get isBlended(): boolean
     {
         return this._blend !== 1;

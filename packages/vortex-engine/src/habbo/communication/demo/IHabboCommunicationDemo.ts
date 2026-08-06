@@ -3,6 +3,7 @@ import type {IConnection} from "@core";
 
 export interface IHabboCommunicationDemo
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/demo/HabboCommunicationDemo.as::get communication()
     readonly communication: IHabboCommunicationManager | null;
 
     /**
@@ -36,6 +37,7 @@ export interface IHabboCommunicationDemo
 	 *
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as sendConnectionParameters()
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/demo/HabboCommunicationDemo.as::sendConnectionParameters()
     sendConnectionParameters(connection: IConnection): void;
 
     /**
@@ -85,10 +87,12 @@ export interface IHabboCommunicationDemo
 	 *
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as dispatchLoginStepEvent()
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/demo/HabboCommunicationDemo.as::dispatchLoginStepEvent()
     dispatchLoginStepEvent(step: HabboCommunicationEventType): void;
 
     /**
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as initWithSSO()
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/demo/HabboCommunicationDemo.as::initWithSSO()
     initWithSSO(ticket: string): void;
 }

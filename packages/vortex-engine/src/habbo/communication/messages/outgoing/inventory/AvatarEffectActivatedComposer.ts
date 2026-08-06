@@ -16,6 +16,7 @@ export class AvatarEffectActivatedComposer extends MessageComposer<ConstructorPa
         this._data = [effectType];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/inventory/avatareffect/AvatarEffectActivatedComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

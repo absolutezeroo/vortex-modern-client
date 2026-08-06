@@ -13,11 +13,14 @@ import {PlaneMaskVisualization} from './PlaneMaskVisualization';
 export class PlaneMask
 {
     private _visualizations: Map<string, PlaneMaskVisualization> = new Map();
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMask.as::_sizes
     private _sizes: number[] = [];
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMask.as::_assetNames
     private _assetNames: Map<number, string> = new Map();
     private _cachedVisualization: PlaneMaskVisualization | null = null;
     private _cachedSize: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMask.as::dispose()
     dispose(): void
     {
         for(const viz of this._visualizations.values())
@@ -30,6 +33,7 @@ export class PlaneMask
         this._cachedVisualization = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMask.as::createMaskVisualization()
     createMaskVisualization(size: number): PlaneMaskVisualization | null
     {
         const key = String(size);
@@ -47,6 +51,7 @@ export class PlaneMask
         return viz;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMask.as::getGraphicAsset()
     getGraphicAsset(scale: number, position: IVector3d): IGraphicAsset | null
     {
         const viz = this.getMaskVisualization(scale);
@@ -59,16 +64,19 @@ export class PlaneMask
         return viz.getAsset(position);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMask.as::getAssetName()
     getAssetName(size: number): string | null
     {
         return this._assetNames.get(size) || null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMask.as::setAssetName()
     setAssetName(size: number, name: string): void
     {
         this._assetNames.set(size, name);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMask.as::getMaskVisualization()
     protected getMaskVisualization(scale: number): PlaneMaskVisualization | null
     {
         if(scale === this._cachedSize)
@@ -92,6 +100,7 @@ export class PlaneMask
         return this._cachedVisualization;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMask.as::getSizeIndex()
     private getSizeIndex(scale: number): number
     {
         let index = 0;

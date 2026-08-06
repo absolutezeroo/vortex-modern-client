@@ -16,6 +16,7 @@ export class UpdateHomeRoomMessageComposer extends MessageComposer<ConstructorPa
         this._data = [roomId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/UpdateHomeRoomMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

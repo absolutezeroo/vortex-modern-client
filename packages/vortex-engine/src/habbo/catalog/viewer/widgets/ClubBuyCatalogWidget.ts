@@ -22,6 +22,7 @@ export class ClubBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalo
 {
     private _controller: ClubBuyController | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubBuyCatalogWidget.as::_offers
     private _offers: ClubBuyItem[] = [];
 
     constructor(window: IWindowContainer)
@@ -39,6 +40,7 @@ export class ClubBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalo
         super.dispose();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubBuyCatalogWidget.as::get isGift()
     get isGift(): boolean
     {
         return false;
@@ -57,6 +59,7 @@ export class ClubBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalo
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubBuyCatalogWidget.as::reset()
     reset(): void
     {
         for(const item of this._offers)
@@ -67,6 +70,7 @@ export class ClubBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalo
         this._offers = [];
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubBuyCatalogWidget.as::initClubType()
     initClubType(clubType: number): void
     {
         if(this.disposed) return;
@@ -134,6 +138,7 @@ export class ClubBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalo
         if(element) element.visible = visible;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubBuyCatalogWidget.as::initLinks()
     private initLinks(): void
     {
         if(!this.window) return;
@@ -148,6 +153,7 @@ export class ClubBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalo
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubBuyCatalogWidget.as::showOffer()
     showOffer(offer: ClubBuyOfferData): void
     {
         if(this.disposed) return;
@@ -188,6 +194,7 @@ export class ClubBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalo
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubBuyCatalogWidget.as::openExternalLink()
     private openExternalLink(url: string): void
     {
         if(url === '') return;
@@ -195,6 +202,7 @@ export class ClubBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalo
         (this.page.viewer.catalog as HabboCatalog).utils.openLink(url);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubBuyCatalogWidget.as::showClubInfo()
     private showClubInfo(): void
     {
         const itemList = this.window?.findChildByName('item_list_hc') as unknown as IItemListWindow | null;

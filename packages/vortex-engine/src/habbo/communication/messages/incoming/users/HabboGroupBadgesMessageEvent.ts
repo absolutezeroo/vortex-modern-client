@@ -17,6 +17,7 @@ export class HabboGroupBadgesMessageEvent extends MessageEvent implements IMessa
         super(callback, HabboGroupBadgesMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/HabboGroupBadgesMessageEvent.as::get badges()
     get badges(): Map<number, string> | null
     {
         return (this._parser as HabboGroupBadgesMessageParser).badges;

@@ -86,12 +86,16 @@ export interface IHabboToolbarEvents
 export class HabboToolbar extends Component implements IHabboToolbar
 {
     private _communication: IHabboCommunicationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _roomSessionManager: IRoomSessionManager | null = null;
     private _messageEvents: IMessageEvent[] = [];
     private _extensionsInitialized: boolean = false;
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::_inventory
     private _inventory: IHabboInventory | null = null;
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::_catalog
     private _catalog: IHabboCatalog | null = null;
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::_questEngine
     private _questEngine: IHabboQuestEngine | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::_navigator
     private _navigator: IHabboNavigator | null = null;
@@ -101,6 +105,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
     // interface, which has no hover methods) instead of through that indirection, so
     // BottomBarLeft.onNaviHover() needs a separate route to the object that actually
     // has them - see IHabboNewNavigator.
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::_newNavigator
     private _newNavigator: IHabboNewNavigator | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::_soundManager
     private _soundManager: IHabboSoundManager | null = null;
@@ -114,16 +119,22 @@ export class HabboToolbar extends Component implements IHabboToolbar
     // IHabboUserDefinedRoomEvents itself documents that no concrete implementation
     // exists yet (the wired/competition-scripting module isn't ported) - stays null.
     private _roomEvents: IHabboUserDefinedRoomEvents | null = null;
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
     private _configuration: IHabboConfigurationManager | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/toolbar/HabboToolbar.as::_extensionView
     private _extensionView: ExtensionView | null = null;
     private _purseAreaExtension: PurseAreaExtension | null = null;
     private _seasonalCurrencyIndicator: SeasonalCurrencyIndicator | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/toolbar/HabboToolbar.as::_settingsExtension
     private _settingsExtension: SettingsExtension | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/toolbar/HabboToolbar.as::_clubDiscountPromoExtension
     private _clubDiscountPromoExtension: ClubDiscountPromoExtension | null = null;
     private _citizenshipVipDiscountPromoExtension: CitizenshipVipDiscountPromoExtension | null = null;
     private _citizenshipVipQuestsPromoExtension: CitizenshipVipQuestsPromoExtension | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/toolbar/HabboToolbar.as::_videoOfferExtension
     private _videoOfferExtension: VideoOfferExtension | null = null;
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::_offerExtension
     private _offerExtension: OfferExtension | null = null;
 
     // AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::roomUI
@@ -145,6 +156,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         super(context);
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::_avatarRenderManager
     private _avatarRenderManager: IAvatarRenderManager | null = null;
 
     /**
@@ -152,16 +164,19 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @see sources/win63_version/habbo/toolbar/HabboToolbar.as avatarRenderManager
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::get avatarRenderManager()
     get avatarRenderManager(): IAvatarRenderManager | null
     {
         return this._avatarRenderManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
 
     /**
 	 * The session data manager
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::get sessionDataManager()
     get sessionDataManager(): ISessionDataManager | null
     {
         return this._sessionDataManager;
@@ -200,6 +215,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         return this._onDuty;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::set onDuty()
     set onDuty(value: boolean)
     {
         this._onDuty = value;
@@ -217,6 +233,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 * In Vortex, extensions are handled by the SolidJS UI layer.
 	 * This returns null as the UI layer manages the extension view.
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::get extensionView()
     get extensionView(): IExtensionView | null
     {
         if(!this._extensionView)
@@ -229,6 +246,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         return this._extensionView;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::get windowManager()
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
@@ -240,11 +258,13 @@ export class HabboToolbar extends Component implements IHabboToolbar
         return this._roomUI;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::get inventory()
     get inventory(): IHabboInventory | null
     {
         return this._inventory;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::get catalog()
     get catalog(): IHabboCatalog | null
     {
         return this._catalog;
@@ -299,6 +319,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         return this._roomEvents;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::get localization()
     get localization(): IHabboLocalizationManager | null
     {
         return this._localization;
@@ -317,6 +338,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @see sources/win63_version/habbo/toolbar/HabboToolbar.as get toolBarAreaWidth()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::get toolBarAreaWidth()
     get toolBarAreaWidth(): number
     {
         if(this.bottomBarLeft)
@@ -330,6 +352,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
     /**
 	 * The communication manager
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::get communicationManager()
     get communicationManager(): IHabboCommunicationManager | null
     {
         return this._communication;
@@ -574,6 +597,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 * @param state One of HabboToolbarEnum state constants
 	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as setToolbarState()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::setToolbarState()
     setToolbarState(state: string): void
     {
         this._currentState = state;
@@ -628,6 +652,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 * @param iconName Icon name to toggle
 	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as toggleWindowVisibility()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::toggleWindowVisibility()
     toggleWindowVisibility(iconName: string): void
     {
         const iconId = (HabboToolbarIconEnum as unknown as Record<string, string>)[iconName];
@@ -660,6 +685,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::toggleSettingVisibility()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::toggleSettingVisibility()
     toggleSettingVisibility(): void
     {
         const window = this._settingsExtension?.window ?? null;
@@ -681,6 +707,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as reboot()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::reboot()
     reboot(): void
     {
         log.warn('HabboToolbar.reboot() is not implemented yet - client reboot is not wired up');
@@ -696,6 +723,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 * @returns Rectangle or null if not found
 	 * @see sources/win63_version/habbo/toolbar/HabboToolbar.as getIconLocation()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::getIconLocation()
     getIconLocation(iconId: string): { x: number; y: number; width: number; height: number } | null
     {
         if(this.bottomBarLeft)
@@ -884,6 +912,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
      * @param iconId
      * @param bitmap
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::setIconBitmap()
     setIconBitmap(iconId: string, bitmap: unknown): void
     {
         if(this._bottomBarLeft && (bitmap === null || bitmap instanceof ImageBitmap))
@@ -906,6 +935,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 * @returns The fly motion, or null if the icon was not found
 	 * @see sources/win63_version/habbo/toolbar/HabboToolbar.as createTransitionToIcon()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::createTransitionToIcon()
     createTransitionToIcon(iconId: string, bitmap: ImageBitmap | null, startX: number, startY: number): Motion | null
     {
         if(this._bottomBarLeft && !this._bottomBarLeft.disposed)
@@ -930,6 +960,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 * @returns The toolbar rectangle
 	 * @see sources/win63_version/habbo/toolbar/HabboToolbar.as getRect()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::getRect()
     getRect(): { x: number; y: number; width: number; height: number }
     {
         if(this.bottomBarLeft?.window)
@@ -950,6 +981,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 * @param visible Whether the icon should be visible
 	 * @see sources/win63_version/habbo/toolbar/HabboToolbar.as setIconVisibility()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::setIconVisibility()
     setIconVisibility(iconId: string, visible: boolean): void
     {
         if(this.bottomBarLeft)
@@ -970,6 +1002,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 * @returns True if new.identity config value is greater than 0
 	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as isNewIdentity()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::isNewIdentity()
     isNewIdentity(): boolean
     {
         return this.getInteger('new.identity', 0) > 0;
@@ -981,6 +1014,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 * @returns True if xmas11.enabled config is true
 	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as isXmasEnabled()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::isXmasEnabled()
     isXmasEnabled(): boolean
     {
         return this.getBoolean('xmas11.enabled');
@@ -992,6 +1026,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 * @returns True if valentines.enabled config is true
 	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as isValentinesEnabled()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::isValentinesEnabled()
     isValentinesEnabled(): boolean
     {
         return this.getBoolean('valentines.enabled');
@@ -1128,6 +1163,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as onConfigurationComplete()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::onConfigurationComplete()
     private onConfigurationComplete(): void
     {
         // Configuration is ready - extensions can now be initialized
@@ -1141,6 +1177,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as onPerksUpdated()
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::onPerksUpdated()
     private onPerksUpdated(): void
     {
         if(!this._extensionsInitialized)
@@ -1160,6 +1197,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::initPurseAreaExtension()
     private initPurseAreaExtension(): void
     {
         if(this._purseAreaExtension || !this._windowManager || !this._catalog) return;
@@ -1173,6 +1211,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         this._purseAreaExtension.getClubArea()?.onClubChanged();
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::initSeasonalCurrencyExtension()
     private initSeasonalCurrencyExtension(): void
     {
         if(this._seasonalCurrencyIndicator || !this._windowManager || !this._catalog) return;

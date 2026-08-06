@@ -42,27 +42,32 @@ export class SelectorListController extends SelectorController implements ISelec
     /**
 	 * The spacing between selectable children.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorListController.as::get spacing()
     public get spacing(): number
     {
         return this._spacing;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/SelectorListController.as::set spacing()
     public set spacing(value: number)
     {
         this._spacing = value;
         this.updateSelectableRegion();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/SelectorListController.as::_vertical
     private _vertical: boolean = false;
 
     /**
 	 * Whether children are arranged vertically.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorListController.as::get vertical()
     public get vertical(): boolean
     {
         return this._vertical;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/SelectorListController.as::set vertical()
     public set vertical(value: boolean)
     {
         this._vertical = value;
@@ -130,6 +135,7 @@ export class SelectorListController extends SelectorController implements ISelec
     /**
 	 * Re-arranges children along the main axis.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorListController.as::updateSelectableRegion()
     private updateSelectableRegion(): void
     {
         if(this._updating)

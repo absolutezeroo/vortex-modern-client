@@ -15,6 +15,7 @@ export class PeerUsersClassificationMessageComposer extends MessageComposer<Cons
         this._data = [userName];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/userclassification/PeerUsersClassificationMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

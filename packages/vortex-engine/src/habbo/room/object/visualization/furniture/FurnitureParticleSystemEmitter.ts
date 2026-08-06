@@ -18,23 +18,35 @@ interface IParticleConfig
 
 export class FurnitureParticleSystemEmitter extends FurnitureParticleSystemParticle
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::SHAPE_CONE
     public static readonly SHAPE_CONE: string = 'cone';
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::SHAPE_PLANE
     public static readonly SHAPE_PLANE: string = 'plane';
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::SHAPE_SPHERE
     public static readonly SHAPE_SPHERE: string = 'sphere';
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::_name
     private _name: string;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::_force
     private _force: number = 0;
     private _emitterDirection: { x: number; y: number; z: number } = {x: 0, y: -1, z: 0};
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::_timeStep
     private _timeStep: number = 0.1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::_gravity
     private _gravity: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::_airFriction
     private _airFriction: number = 0;
     private _shape: string = '';
     private _particleConfigs: IParticleConfig[] = [];
     private _maxParticles: number = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::_particlesPerFrame
     private _particlesPerFrame: number = 0;
     private _totalEmitted: number = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::_fuseTime
     private _fuseTime: number = 10;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::_energy
     private _energy: number = 1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::_burstPulse
     private _burstPulse: number = 1;
 
     constructor(name: string = '', spriteId: number = -1)
@@ -44,22 +56,28 @@ export class FurnitureParticleSystemEmitter extends FurnitureParticleSystemParti
         this._roomObjectSpriteId = spriteId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::_roomObjectSpriteId
     private _roomObjectSpriteId: number;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::get roomObjectSpriteId()
     get roomObjectSpriteId(): number
     {
         return this._roomObjectSpriteId;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::_particles
     private _particles: FurnitureParticleSystemParticle[] = [];
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::get particles()
     get particles(): FurnitureParticleSystemParticle[]
     {
         return this._particles;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::_hasIgnited
     private _hasIgnited: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::get hasIgnited()
     get hasIgnited(): boolean
     {
         return this._hasIgnited;
@@ -91,6 +109,7 @@ export class FurnitureParticleSystemEmitter extends FurnitureParticleSystemParti
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::setup()
     setup(
         maxParticles: number,
         particlesPerFrame: number,
@@ -120,6 +139,7 @@ export class FurnitureParticleSystemEmitter extends FurnitureParticleSystemParti
         this.reset();
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::reset()
     reset(): void
     {
         for(const p of this._particles)
@@ -133,6 +153,7 @@ export class FurnitureParticleSystemEmitter extends FurnitureParticleSystemParti
         this.init(0, 0, 0, this._emitterDirection, this._force, this._timeStep, this._fuseTime, true);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::copyStateFrom()
     copyStateFrom(source: FurnitureParticleSystemEmitter, scaleFactor: number): void
     {
         super.copy(source, scaleFactor);
@@ -148,11 +169,13 @@ export class FurnitureParticleSystemEmitter extends FurnitureParticleSystemParti
         this._hasIgnited = source._hasIgnited;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::configureParticle()
     configureParticle(lifeTime: number, isEmitter: boolean, frames: IGraphicAsset[], fade: boolean): void
     {
         this._particleConfigs.push({lifeTime, isEmitter, frames, fade});
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::verlet()
     verlet(): void
     {
         const friction = this._airFriction;
@@ -223,6 +246,7 @@ export class FurnitureParticleSystemEmitter extends FurnitureParticleSystemParti
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::releaseParticles()
     private releaseParticles(source: FurnitureParticleSystemParticle): void
     {
         const dir = {x: 0, y: 0, z: 0};
@@ -282,6 +306,7 @@ export class FurnitureParticleSystemEmitter extends FurnitureParticleSystemParti
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystemEmitter.as::getRandomParticleConfiguration()
     private getRandomParticleConfiguration(): IParticleConfig | null
     {
         if(this._particleConfigs.length === 0)

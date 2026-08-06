@@ -17,11 +17,16 @@ import type {ContextInfoView} from './ContextInfoView';
 
 export interface IContextMenuParentWidget
 {
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/_SafeCls_1870.as::get windowManager()
     readonly windowManager: IHabboWindowManager;
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/_SafeCls_1870.as::get assets()
     readonly assets: IAssetLibrary | null;
     readonly localizations: IHabboLocalizationManager | null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/_SafeCls_1870.as::get messageListener()
     readonly messageListener: IRoomWidgetMessageListener | null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/_SafeCls_1870.as::get catalog()
     readonly catalog: IHabboCatalog | null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/_SafeCls_1870.as::get friendList()
     readonly friendList: IHabboFriendList | null;
 
     // AS3: _SafeCls_1870.as::removeView()

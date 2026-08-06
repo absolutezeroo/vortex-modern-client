@@ -9,6 +9,7 @@ import type {SingularNotificationController} from './SingularNotificationControl
  */
 export class HabboNotificationItem
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/notifications/singular/HabboNotificationItem.as::_controller
     private _controller: SingularNotificationController | null;
 
     constructor(
@@ -22,15 +23,19 @@ export class HabboNotificationItem
         this._controller = controller;
     }
 
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboNotificationItem.as::_style
     private _style: HabboNotificationItemStyle | null;
 
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboNotificationItem.as::get style()
     get style(): HabboNotificationItemStyle | null
     {
         return this._style;
     }
 
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboNotificationItem.as::_content
     private _content: string | null;
 
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboNotificationItem.as::get content()
     get content(): string | null
     {
         return this._content;
@@ -58,6 +63,7 @@ export class HabboNotificationItem
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboNotificationItem.as::dispose()
     dispose(): void
     {
         this._content = null;

@@ -33,10 +33,12 @@ export interface IScreenPoint
 
 export class ContextInfoView
 {
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::CONTEXT_INFO_DELAY
     protected static readonly CONTEXT_INFO_DELAY: number = 3000;
 
     protected static _minimized: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::_window
     protected _window: IWindowContainer | null = null;
     protected _minimizedWindow: IWindowContainer | null = null;
     protected _activeView: IWindowContainer | null = null;
@@ -44,15 +46,20 @@ export class ContextInfoView
     protected _mouseOver: boolean = false;
     protected _positionStack: FixedSizeStack = new FixedSizeStack(25);
     protected _lastY: number = -1000000;
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::_disposed
     protected _disposed: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::_forceActivateOnUpdate
     private _forceActivateOnUpdate: boolean = true;
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::_forcedPositionUpdate
     private _forcedPositionUpdate: boolean = false;
     protected _autoHideTimer: ReturnType<typeof setTimeout> | null = null;
     protected _autoHideDelay: number = 3000;
     protected _hidePending: boolean = false;
     protected _fading: boolean = false;
     protected _blend: number = 1;
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::_fadeTime
     private _fadeTime: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::_fadeLength
     private _fadeLength: number = 500;
     // AS3: _SafeStr_4773 — auto-hide enabled (OwnAvatarMenuView sets it false).
     protected _autoHideEnabled: boolean = true;
@@ -80,6 +87,7 @@ export class ContextInfoView
         view.updateWindow();
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;

@@ -13,17 +13,20 @@ export class QuestMessageEventParser implements IMessageParser
 {
     private _quest: QuestMessageData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestMessageEventParser.as::get quest()
     get quest(): QuestMessageData | null
     {
         return this._quest;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestMessageEventParser.as::flush()
     flush(): boolean
     {
         this._quest = null;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

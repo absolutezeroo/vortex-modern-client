@@ -16,6 +16,7 @@ export class GetExtendedProfileByNameMessageComposer extends MessageComposer<Con
         this._data = [userName];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/GetExtendedProfileByNameMessageComposer.as::getMessageArray()
     getMessageArray(): [string]
     {
         return this._data;

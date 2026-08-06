@@ -12,8 +12,11 @@ import type {IRoomObjectModelController} from '@room/object/IRoomObjectModelCont
 export interface IStuffData
 {
     flags: number;
+    // AS3: .../src/com/sulake/habbo/room/IStuffData.as::get uniqueSerialNumber()
     uniqueSerialNumber: number;
+    // AS3: .../src/com/sulake/habbo/room/IStuffData.as::get uniqueSeriesSize()
     uniqueSeriesSize: number;
+    // AS3: .../src/com/sulake/habbo/room/IStuffData.as::get rarityLevel()
     readonly rarityLevel: number;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IStuffData.as::get contentsCount()
@@ -25,15 +28,21 @@ export interface IStuffData
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IStuffData.as::get state()
     readonly state: number;
 
+    // AS3: .../src/com/sulake/habbo/room/IStuffData.as::initializeFromIncomingMessage()
     initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void;
 
+    // AS3: .../src/com/sulake/habbo/room/IStuffData.as::initializeFromRoomObjectModel()
     initializeFromRoomObjectModel(model: IRoomObjectModel): void;
 
+    // AS3: .../src/com/sulake/habbo/room/IStuffData.as::writeRoomObjectModel()
     writeRoomObjectModel(model: IRoomObjectModelController): void;
 
+    // AS3: .../src/com/sulake/habbo/room/IStuffData.as::getLegacyString()
     getLegacyString(): string;
 
+    // AS3: .../src/com/sulake/habbo/room/IStuffData.as::getJSONValue()
     getJSONValue(key: string): string;
 
+    // AS3: .../src/com/sulake/habbo/room/IStuffData.as::compare()
     compare(data: IStuffData): boolean;
 }

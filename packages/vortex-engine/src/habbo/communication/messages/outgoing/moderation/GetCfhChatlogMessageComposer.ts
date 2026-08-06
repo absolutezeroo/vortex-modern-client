@@ -15,6 +15,7 @@ export class GetCfhChatlogMessageComposer extends MessageComposer<ConstructorPar
         this._data = [issueId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/moderator/GetCfhChatlogMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

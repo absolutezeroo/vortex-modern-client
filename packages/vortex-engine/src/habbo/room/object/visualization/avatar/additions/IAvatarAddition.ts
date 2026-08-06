@@ -10,6 +10,7 @@
 import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
 
 export interface IAvatarAddition {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/IAvatarAddition.as::get id()
     readonly id: number;
     readonly disposed: boolean;
 
@@ -19,6 +20,7 @@ export interface IAvatarAddition {
      * @param sprite - The sprite to update
      * @param scale - The current visualization scale
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/IAvatarAddition.as::update()
     update(sprite: IRoomObjectSprite | null, scale: number): void;
 
     /**
@@ -27,6 +29,7 @@ export interface IAvatarAddition {
      * @param sprite - The sprite to animate
      * @returns True if the animation caused a visual change
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/IAvatarAddition.as::animate()
     animate(sprite: IRoomObjectSprite | null): boolean;
 
     /**

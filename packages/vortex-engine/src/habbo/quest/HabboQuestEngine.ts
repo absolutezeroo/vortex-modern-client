@@ -65,17 +65,27 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     private _resolutionController: AchievementsResolutionController | null = null;
     private _competitionController: RoomCompetitionController | null = null;
     private _messageHandler: QuestMessageHandler | null = null;
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/quest/HabboQuestEngine.as::_configuration
     private _configuration: IHabboConfigurationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
     // AS3: HabboQuestEngine.as::_catalog
     private _catalog: IHabboCatalog | null = null;
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_notifications
     private _notifications: IHabboNotifications | null = null;
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_habboHelp
     private _habboHelp: IHabboHelp | null = null;
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_navigator
     private _navigator: IHabboNewNavigator | null = null;
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_tracking
     private _tracking: IHabboTracking | null = null;
 
     // AS3: HabboQuestEngine.as::onHabboToolbarEvent() — the achievements bottom-bar icon
@@ -106,6 +116,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 
     // The controllers build their panel windows through this (AS3's controllers hold a
     // windowManager reference directly).
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::get windowManager()
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
@@ -153,46 +164,55 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
         return this._sessionDataManager;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/quest/HabboQuestEngine.as::_questController
     private _questController: QuestController | null = null;
 
     /**
 	 * Get the quest controller
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::get questController()
     get questController(): QuestController | null
     {
         return this._questController;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/quest/HabboQuestEngine.as::_achievementController
     private _achievementController: AchievementController | null = null;
 
     /**
 	 * Get the achievement controller
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::get achievementController()
     get achievementController(): AchievementController | null
     {
         return this._achievementController;
     }
 
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_currentlyInRoom
     private _currentlyInRoom: boolean = false;
 
     /**
 	 * Whether the user is currently in a room
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::get currentlyInRoom()
     get currentlyInRoom(): boolean
     {
         return this._currentlyInRoom;
     }
 
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::set currentlyInRoom()
     set currentlyInRoom(value: boolean)
     {
         this._currentlyInRoom = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/quest/HabboQuestEngine.as::_isFirstLoginOfDay
     private _isFirstLoginOfDay: boolean = false;
 
     /**
 	 * Whether this is the first login of the day
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::get isFirstLoginOfDay()
     get isFirstLoginOfDay(): boolean
     {
         return this._isFirstLoginOfDay;
@@ -201,6 +221,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     /**
 	 * Get the achievements resolution controller
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::get achievementsResolutionController()
     get achievementsResolutionController(): AchievementsResolutionController | null
     {
         return this._resolutionController;
@@ -209,6 +230,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     /**
 	 * Get the room competition controller
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::get roomCompetitionController()
     get roomCompetitionController(): RoomCompetitionController | null
     {
         return this._competitionController;
@@ -217,6 +239,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     /**
 	 * The link pattern for the ILinkEventTracker interface
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::get linkPattern()
     get linkPattern(): string
     {
         return 'questengine/';
@@ -324,6 +347,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     /**
 	 * Set the first login of day flag
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::setIsFirstLoginOfDay()
     setIsFirstLoginOfDay(value: boolean): void
     {
         this._isFirstLoginOfDay = value;
@@ -334,6 +358,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 	 *
 	 * @param link The full link string
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::linkReceived()
     linkReceived(link: string): void
     {
         const parts = link.split('/');
@@ -381,6 +406,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 	 *
 	 * @param composer The message composer to send
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::send()
     send(composer: IMessageComposer<unknown[]>): void
     {
         const connection = this._communicationManager?.connection;
@@ -394,6 +420,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     /**
 	 * Request all quests from the server
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::requestQuests()
     requestQuests(): void
     {
         // The composer exists; the "once available" comment was stale, so this sent nothing.
@@ -403,6 +430,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     /**
 	 * Request seasonal quests from the server
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::requestSeasonalQuests()
     requestSeasonalQuests(): void
     {
         this.send(new GetSeasonalQuestsOnlyMessageComposer());
@@ -413,6 +441,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 	 *
 	 * @param questId The quest ID to activate
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::activateQuest()
     activateQuest(questId: number): void
     {
         this.send(new ActivateQuestMessageComposer(questId));
@@ -433,6 +462,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     /**
 	 * Show the achievements panel
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::showAchievements()
     showAchievements(): void
     {
         // AS3 (HabboQuestEngine.as:514) calls achievementController.show(). The old
@@ -443,6 +473,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     /**
 	 * Ensure achievements data has been requested from the server
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::ensureAchievementsInitialized()
     ensureAchievementsInitialized(): void
     {
         if(this._achievementController)
@@ -467,6 +498,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 	 * @param badge The badge identifier
 	 * @returns The user's level for the achievement, or 0 if not found
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::getAchievementLevel()
     getAchievementLevel(category: string, badge: string): number
     {
         if(this._achievementController)
@@ -508,6 +540,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::goToQuestRooms()
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::goToQuestRooms()
     goToQuestRooms(): void
     {
         if(!this.hasQuestRoomsIds()) return;

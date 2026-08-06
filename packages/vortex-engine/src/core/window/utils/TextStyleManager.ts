@@ -10,13 +10,20 @@ import {TextStyle} from './TextStyle';
  */
 export class TextStyleManager 
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::REGULAR
     public static readonly REGULAR: string = 'regular';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::ITALIC
     public static readonly ITALIC: string = 'italic';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::BOLD
     public static readonly BOLD: string = 'bold';
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::TAG_OPEN
     private static readonly TAG_OPEN: string = '{';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::TAG_CLOSE
     private static readonly TAG_CLOSE: string = '}';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::CMT_OPEN
     private static readonly CMT_OPEN: string = '/*';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::CMT_CLOSE
     private static readonly CMT_CLOSE: string = '*/';
 
     private static _styles: Map<string, TextStyle> = new Map();
@@ -29,6 +36,7 @@ export class TextStyleManager
      * Called automatically on first access. Registers 3 base defaults
      * then parses the embedded Habbo CSS to register all named styles.
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::init()
     public static init(): void 
     {
         if(TextStyleManager._initialized) return;
@@ -79,6 +87,7 @@ export class TextStyleManager
      * @param name - The style name (e.g. `"u_regular"`, `"id_frame_title"`)
      * @returns The style, or null if not found
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::getStyle()
     public static getStyle(name: string): TextStyle | null 
     {
         TextStyleManager.init();
@@ -89,6 +98,7 @@ export class TextStyleManager
     /**
      * Registers or overwrites a named style.
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::setStyle()
     public static setStyle(name: string, style: TextStyle): void 
     {
         TextStyleManager.init();
@@ -105,6 +115,7 @@ export class TextStyleManager
     /**
      * Batch-registers an array of styles.
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::setStyles()
     public static setStyles(styles: TextStyle[]): void 
     {
         TextStyleManager.init();
@@ -130,6 +141,7 @@ export class TextStyleManager
      * @param css - The CSS text to parse
      * @returns Array of parsed TextStyle objects
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::parseCSS()
     public static parseCSS(css: string): TextStyle[] 
     {
         const names = TextStyleManager.parseStyleNamesFromCSS(css);
@@ -238,6 +250,7 @@ export class TextStyleManager
     /**
      * Finds a registered style whose properties match a CSS snippet.
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::findMatchingTextStyle()
     public static findMatchingTextStyle(css: string): TextStyle | null 
     {
         TextStyleManager.init();
@@ -260,6 +273,7 @@ export class TextStyleManager
     /**
      * Returns all registered style names.
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::enumerateStyleNames()
     public static enumerateStyleNames(): string[] 
     {
         TextStyleManager.init();
@@ -294,6 +308,7 @@ export class TextStyleManager
      *
      * Port of AS3 TextStyleManager.parseStyleNamesFromCSS().
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::parseStyleNamesFromCSS()
     private static parseStyleNamesFromCSS(css: string): string[] 
     {
         const names: string[] = [];

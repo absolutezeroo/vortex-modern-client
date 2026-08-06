@@ -15,6 +15,7 @@ export class GetIsBadgeRequestFulfilledComposer extends MessageComposer<Construc
         this._data = [requestCode];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/inventory/badges/GetIsBadgeRequestFulfilledComposer.as::getMessageArray()
     getMessageArray(): [string]
     {
         return this._data;

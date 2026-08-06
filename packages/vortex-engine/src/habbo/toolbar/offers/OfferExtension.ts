@@ -15,6 +15,7 @@ const log = Logger.getLogger('habbo.toolbar.offers.OfferExtension');
  */
 export class OfferExtension
 {
+    // AS3: sources/win63_version/habbo/toolbar/offers/OfferExtension.as::_toolbar
     private _toolbar: HabboToolbar | null;
     private _showingVideo: boolean = false;
 
@@ -26,11 +27,13 @@ export class OfferExtension
         log.debug('OfferExtension constructed');
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/offers/OfferExtension.as::_disposed
     private _disposed: boolean = false;
 
     /**
 	 * Whether the extension is disposed
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/offers/OfferExtension.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -87,6 +90,7 @@ export class OfferExtension
     /**
 	 * Indicate that rewards are available to check
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/offers/OfferExtension.as::indicateRewards()
     public indicateRewards(): void
     {
         this._rewardsAvailable = true;
@@ -99,6 +103,7 @@ export class OfferExtension
 	 *
 	 * @param available Whether a video is available
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/offers/OfferExtension.as::indicateVideoAvailable()
     public indicateVideoAvailable(available: boolean): void
     {
         this._videoAvailable = available;
@@ -114,6 +119,7 @@ export class OfferExtension
     /**
 	 * Dispose of this extension
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/offers/OfferExtension.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;
@@ -122,6 +128,7 @@ export class OfferExtension
         this._disposed = true;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/offers/OfferExtension.as::refresh()
     private refresh(): void
     {
         this._visible = this._videoAvailable || this._rewardsAvailable;

@@ -19,7 +19,9 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
  */
 export class SubmitCompetitionRoomElementHandler extends ButtonElementHandler
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4528.as::_submittedKey
     private _submittedKey: string = '';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4528.as::_goalCode
     private _goalCode: string = '';
     private _isPartOf: boolean = false;
     private _targetId: number = 0;

@@ -9,5 +9,6 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 
 export interface IRoomObjectVisualizationData extends IDisposable
 {
+    // AS3: .../src/com/sulake/room/object/visualization/IRoomObjectVisualizationData.as::initialize()
     initialize(data: unknown): boolean;
 }

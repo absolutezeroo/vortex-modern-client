@@ -61,6 +61,7 @@ export class NuxNoobRoomOfferView
      * is identical. `onClose()` below is what actually closes this view. Ported unchanged so the
      * class's member list matches the source.
      */
+    // AS3: .../src/com/sulake/habbo/nux/NuxNoobRoomOfferView.as::hide()
     private hide(): void
     {
         this._nuxDialogs?.destroyNuxOfferView();
@@ -72,6 +73,7 @@ export class NuxNoobRoomOfferView
      * Leaves the view standing — the link event takes the player out of the room, and the
      * resulting RSE_ENDED is what tears it down.
      */
+    // AS3: .../src/com/sulake/habbo/nux/NuxNoobRoomOfferView.as::onGo()
     private onGo(): void
     {
         this._nuxDialogs?.context.createLinkEvent('navigator/goto/predefined_noob_lobby');

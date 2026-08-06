@@ -15,8 +15,10 @@ export class RoomObjectAvatarTypingUpdateMessage extends RoomObjectUpdateMessage
         this._isTyping = isTyping;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectAvatarTypingUpdateMessage.as::_isTyping
     private _isTyping: boolean;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarTypingUpdateMessage.as::get isTyping()
     get isTyping(): boolean
     {
         return this._isTyping;

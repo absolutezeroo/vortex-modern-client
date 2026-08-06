@@ -28,6 +28,7 @@ export class PlaceObjectMessageComposer extends MessageComposer<[string]>
         this._rotation = rotation;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/engine/PlaceObjectMessageComposer.as::getMessageArray()
     getMessageArray(): [string]
     {
         if(this._category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)

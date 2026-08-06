@@ -41,12 +41,16 @@ export class TextController extends WindowController implements ITextWindow
     private static _measureCtx: MeasureContext | null = null;
     private static _measureCanvas: OffscreenCanvas | HTMLCanvasElement | null = null;
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::_textStyleName
     protected _textStyleName: string = 'regular';
     protected _text: string = '';
     protected _htmlText: string = '';
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::_localized
     protected _localized: boolean = false;
     protected _displayRaw: boolean = false;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::_drawing
     protected _drawing: boolean = false;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::_settingRectangle
     protected _settingRectangle: boolean = false;
 
     protected _marginLeft: number = 0;
@@ -61,6 +65,7 @@ export class TextController extends WindowController implements ITextWindow
     protected _autoSize: string = 'none';
     protected _overflowReplace: string = '';
     protected _maxChars: number = 0;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::_maxLines
     protected _maxLines: number = 0;
 
     protected _textColor: number = 0;
@@ -81,6 +86,7 @@ export class TextController extends WindowController implements ITextWindow
     private _restrictAllow: Array<[number, number]> = [];
     private _restrictDeny: Array<[number, number]> = [];
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::_etchingColor
     protected _etchingColor: number = 0;
     protected _etchingPosition: string = 'bottom';
 
@@ -164,11 +170,13 @@ export class TextController extends WindowController implements ITextWindow
         this.applyTextStyle();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get text()
     public get text(): string
     {
         return this._text;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set text()
     public set text(value: string)
     {
         if(value == null) return;
@@ -214,11 +222,13 @@ export class TextController extends WindowController implements ITextWindow
         this.text = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get textColor()
     public get textColor(): number
     {
         return this._textColor;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set textColor()
     public set textColor(value: number)
     {
         this._textColor = value;
@@ -258,77 +268,91 @@ export class TextController extends WindowController implements ITextWindow
         super.color = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get bold()
     public get bold(): boolean
     {
         return this._bold;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set bold()
     public set bold(value: boolean)
     {
         this._bold = value;
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get italic()
     public get italic(): boolean
     {
         return this._italic;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set italic()
     public set italic(value: boolean)
     {
         this._italic = value;
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get underline()
     public get underline(): boolean
     {
         return this._underline;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set underline()
     public set underline(value: boolean)
     {
         this._underline = value;
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get fontFace()
     public get fontFace(): string
     {
         return this._fontFace;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set fontFace()
     public set fontFace(value: string)
     {
         this._fontFace = value;
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get fontSize()
     public get fontSize(): number
     {
         return this._fontSize;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set fontSize()
     public set fontSize(value: number)
     {
         this._fontSize = value;
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get etchingColor()
     public get etchingColor(): number
     {
         return this._etchingColor;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set etchingColor()
     public set etchingColor(value: number)
     {
         this._etchingColor = value;
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get etchingPosition()
     public get etchingPosition(): string
     {
         return this._etchingPosition;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set etchingPosition()
     public set etchingPosition(value: string)
     {
         this._etchingPosition = value;
@@ -420,71 +444,84 @@ export class TextController extends WindowController implements ITextWindow
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get multiline()
     public get multiline(): boolean
     {
         return this._multiline;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set multiline()
     public set multiline(value: boolean)
     {
         this._multiline = value;
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get wordWrap()
     public get wordWrap(): boolean
     {
         return this._wordWrap;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set wordWrap()
     public set wordWrap(value: boolean)
     {
         this._wordWrap = value;
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get maxChars()
     public get maxChars(): number
     {
         return this._maxChars;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set maxChars()
     public set maxChars(value: number)
     {
         this._maxChars = Math.max(0, value);
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get maxLines()
     public get maxLines(): number
     {
         return this._maxLines;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set maxLines()
     public set maxLines(value: number)
     {
         this._maxLines = Math.max(0, value);
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get overflowReplace()
     public get overflowReplace(): string
     {
         return this._overflowReplace;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set overflowReplace()
     public set overflowReplace(value: string)
     {
         this._overflowReplace = value ?? '';
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get isOverflowReplaceOn()
     public get isOverflowReplaceOn(): boolean
     {
         return this._overflowReplace !== '';
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get autoSize()
     public get autoSize(): string
     {
         return this._autoSize;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set autoSize()
     public set autoSize(value: string)
     {
         if(value === this._autoSize) return;
@@ -493,62 +530,74 @@ export class TextController extends WindowController implements ITextWindow
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get length()
     public get length(): number
     {
         return this._text.length;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get numLines()
     public get numLines(): number
     {
         return this._numLinesCache;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get textHeight()
     public get textHeight(): number
     {
         return this._textHeightCache;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get textWidth()
     public get textWidth(): number
     {
         return this._textWidthCache;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get textBackground()
     public get textBackground(): boolean
     {
         return this.background;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set textBackground()
     public set textBackground(value: boolean)
     {
         this.background = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get textBackgroundColor()
     public get textBackgroundColor(): number
     {
         return this.color;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set textBackgroundColor()
     public set textBackgroundColor(value: number)
     {
         this.color = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get scrollH()
     public get scrollH(): number
     {
         return this._scrollH;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set scrollH()
     public set scrollH(value: number)
     {
         this._scrollH = value;
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get scrollV()
     public get scrollV(): number
     {
         return this._scrollV;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set scrollV()
     public set scrollV(value: number)
     {
         if(value > this._scrollV || value < this._scrollV)
@@ -558,36 +607,43 @@ export class TextController extends WindowController implements ITextWindow
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get maxScrollH()
     public get maxScrollH(): number
     {
         return this._maxScrollHCache;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get maxScrollV()
     public get maxScrollV(): number
     {
         return Math.max(this._textHeightCache - this.height, 0);
     }
 
+    // AS3: sources/win63_version/core/window/components/TextController.as::get scrollStepH()
     public get scrollStepH(): number
     {
         return 10;
     }
 
+    // AS3: sources/win63_version/core/window/components/TextController.as::set scrollStepH()
     public set scrollStepH(_value: number)
     {
         // No-op AS3 behavior.
     }
 
+    // AS3: sources/win63_version/core/window/components/TextController.as::get scrollStepV()
     public get scrollStepV(): number
     {
         return this._numLinesCache > 0 ? this._textHeightCache / this._numLinesCache : 10;
     }
 
+    // AS3: sources/win63_version/core/window/components/TextController.as::set scrollStepV()
     public set scrollStepV(_value: number)
     {
         // No-op AS3 behavior.
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get visibleRegion()
     public get visibleRegion(): { x: number; y: number; width: number; height: number }
     {
         return {
@@ -598,6 +654,7 @@ export class TextController extends WindowController implements ITextWindow
         };
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get scrollableRegion()
     public get scrollableRegion(): { x: number; y: number; width: number; height: number }
     {
         return {
@@ -608,11 +665,13 @@ export class TextController extends WindowController implements ITextWindow
         };
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get htmlText()
     public get htmlText(): string
     {
         return this._htmlText;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set htmlText()
     public set htmlText(value: string)
     {
         if(value == null) return;
@@ -640,33 +699,39 @@ export class TextController extends WindowController implements ITextWindow
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get margins()
     public get margins(): IMargins
     {
         return this._margins;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get spacing()
     public get spacing(): number
     {
         return this._spacing;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set spacing()
     public set spacing(value: number)
     {
         this._spacing = value;
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get leading()
     public get leading(): number
     {
         return this._leading;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set leading()
     public set leading(value: number)
     {
         this._leading = value;
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::set localization()
     public set localization(value: string)
     {
         if(value == null) return;
@@ -696,6 +761,7 @@ export class TextController extends WindowController implements ITextWindow
         this._settingRectangle = false;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::appendText()
     public appendText(value: string): void
     {
         this._text += value;
@@ -704,6 +770,7 @@ export class TextController extends WindowController implements ITextWindow
         this.refreshTextImage();
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::replaceText()
     public replaceText(beginIndex: number, endIndex: number, newText: string): void
     {
         this._text = this._text.substring(0, beginIndex) + newText + this._text.substring(endIndex);
@@ -800,6 +867,7 @@ export class TextController extends WindowController implements ITextWindow
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::setTextMargins()
     public setTextMargins(value: IMargins): void
     {
         if(value !== this._margins)
@@ -979,6 +1047,7 @@ export class TextController extends WindowController implements ITextWindow
         this._restrict = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::limitStringLength()
     protected limitStringLength(value: string): string
     {
         return this._maxChars > 0 ? value.substring(0, this._maxChars) : value;
@@ -1104,6 +1173,7 @@ export class TextController extends WindowController implements ITextWindow
         return allowed && !inRanges(this._restrictDeny);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::refreshTextImage()
     protected refreshTextImage(fromResize: boolean = false): void
     {
         if(this._drawing) return;
@@ -1524,6 +1594,7 @@ export class TextController extends WindowController implements ITextWindow
         return Math.max(1, measureFontLineHeight(ctx, this._fontSize, this._leading));
     }
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::replaceNonRenderableCharacters()
     protected replaceNonRenderableCharacters(value: string): string
     {
         // AS3 checks glyph support on embedded fonts; browser canvas does not expose equivalent APIs.
@@ -1596,6 +1667,7 @@ export class TextController extends WindowController implements ITextWindow
     // data) dispatching to setter logic - they must stay snake_case to match
     // what's actually parsed, not camelCase.
     /* eslint-disable @typescript-eslint/naming-convention */
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::createPropertySetterTable()
     protected static createPropertySetterTable(): Record<string, (ctrl: TextController, value: unknown) => void>
     {
         return {
@@ -1792,6 +1864,7 @@ export class TextController extends WindowController implements ITextWindow
     }
     /* eslint-enable @typescript-eslint/naming-convention */
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::resetExplicitStyle()
     public resetExplicitStyle(): void
     {
         // Kept for AS3 API parity.

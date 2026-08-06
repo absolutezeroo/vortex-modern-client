@@ -17,23 +17,28 @@ export class ObjectLogicBase implements IRoomObjectEventHandler
 {
     private _eventDispatcher: EventEmitter | null = null;
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::get eventDispatcher()
     get eventDispatcher(): EventEmitter | null
     {
         return this._eventDispatcher;
     }
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::set eventDispatcher()
     set eventDispatcher(value: EventEmitter | null)
     {
         this._eventDispatcher = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/object/logic/ObjectLogicBase.as::_object
     private _object: IRoomObjectController | null = null;
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::get object()
     get object(): IRoomObjectController | null
     {
         return this._object;
     }
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::set object()
     set object(value: IRoomObjectController | null)
     {
         if(this._object === value)
@@ -58,41 +63,49 @@ export class ObjectLogicBase implements IRoomObjectEventHandler
         }
     }
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::get widget()
     get widget(): string | null
     {
         return null;
     }
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::get contextMenu()
     get contextMenu(): string | null
     {
         return null;
     }
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::getEventTypes()
     getEventTypes(): string[]
     {
         return [];
     }
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::dispose()
     dispose(): void
     {
         this._object = null;
     }
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::mouseEvent()
     mouseEvent(_event: RoomSpriteMouseEvent, _geometry: IRoomGeometry): void
     {
         // Override in subclass
     }
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::initialize()
     initialize(_data: unknown): void
     {
         // Override in subclass
     }
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::update()
     update(_time: number): void
     {
         // Override in subclass
     }
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::processUpdateMessage()
     processUpdateMessage(message: RoomObjectUpdateMessage): void
     {
         if(message !== null)
@@ -112,16 +125,19 @@ export class ObjectLogicBase implements IRoomObjectEventHandler
         }
     }
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::useObject()
     useObject(): void
     {
         // Override in subclass
     }
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::tearDown()
     tearDown(): void
     {
         // Override in subclass
     }
 
+    // AS3: .../src/com/sulake/room/object/logic/ObjectLogicBase.as::getAllEventTypes()
     protected getAllEventTypes(baseTypes: string[], additionalTypes: string[]): string[]
     {
         const result = baseTypes.slice();

@@ -16,6 +16,7 @@ import {FurnitureVisualization} from './FurnitureVisualization';
 
 export class AnimatedFurnitureVisualization extends FurnitureVisualization
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::DEFAULT_ANIMATION_ID
     public static readonly DEFAULT_ANIMATION_ID: number = 0;
 
     protected _needsAnimationUpdate: boolean = false;
@@ -23,6 +24,7 @@ export class AnimatedFurnitureVisualization extends FurnitureVisualization
     private _animData: AnimatedFurnitureVisualizationData | null = null;
     private _lastState: number = -1;
     private _animationState: AnimationStateData;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::_animationChangeTime
     private _animationChangeTime: number = 0;
     private _animScale: number = 0;
     private _animLayerCount: number = 0;
@@ -33,6 +35,7 @@ export class AnimatedFurnitureVisualization extends FurnitureVisualization
         this._animationState = new AnimationStateData();
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::get animationId()
     get animationId(): number
     {
         return this._animationState.animationId;
@@ -40,11 +43,13 @@ export class AnimatedFurnitureVisualization extends FurnitureVisualization
 
     private _frameIncrease: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::get frameIncrease()
     protected get frameIncrease(): number
     {
         return this._frameIncrease;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::get animatedLayerCount()
     protected get animatedLayerCount(): number
     {
         return this._animLayerCount;
@@ -203,6 +208,7 @@ export class AnimatedFurnitureVisualization extends FurnitureVisualization
         return offset;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::getAnimationId()
     protected getAnimationId(_stateData: AnimationStateData): number
     {
         const id = this.animationId;
@@ -215,6 +221,7 @@ export class AnimatedFurnitureVisualization extends FurnitureVisualization
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::setAnimation()
     protected setAnimation(animationId: number): void
     {
         if(this._animData !== null)
@@ -223,6 +230,7 @@ export class AnimatedFurnitureVisualization extends FurnitureVisualization
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::setSubAnimation()
     protected setSubAnimation(stateData: AnimationStateData, animationId: number, hasOldAnimation: boolean = true): boolean
     {
         const oldAnimationId = stateData.animationId;
@@ -303,11 +311,13 @@ export class AnimatedFurnitureVisualization extends FurnitureVisualization
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::getLastFramePlayed()
     protected getLastFramePlayed(layerIndex: number): boolean
     {
         return this._animationState.getLastFramePlayed(layerIndex);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::resetAllAnimationFrames()
     protected resetAllAnimationFrames(): void
     {
         if(this._animationState !== null)
@@ -316,6 +326,7 @@ export class AnimatedFurnitureVisualization extends FurnitureVisualization
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::updateAnimations()
     protected updateAnimations(scale: number): number
     {
         let result = 0;
@@ -338,6 +349,7 @@ export class AnimatedFurnitureVisualization extends FurnitureVisualization
         return result;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::updateFramesForAnimation()
     protected updateFramesForAnimation(stateData: AnimationStateData, scale: number): number
     {
         if(stateData.animationOver && !this._needsAnimationUpdate)
@@ -427,11 +439,13 @@ export class AnimatedFurnitureVisualization extends FurnitureVisualization
         return result;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::usesAnimationResetting()
     protected usesAnimationResetting(): boolean
     {
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::isPlayingTransition()
     private isPlayingTransition(stateData: AnimationStateData, targetAnimationId: number): boolean
     {
         const currentId = stateData.animationId;
@@ -450,6 +464,7 @@ export class AnimatedFurnitureVisualization extends FurnitureVisualization
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/AnimatedFurnitureVisualization.as::getCurrentState()
     private getCurrentState(stateData: AnimationStateData): number
     {
         const currentId = stateData.animationId;

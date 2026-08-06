@@ -34,6 +34,7 @@ export interface ILoginViewer
      * `_arg_2` is not "the name is valid" — it is `uri == "/api/newuser/name/check"`, i.e. which of
      * the two endpoints answered.
      */
+    // AS3: .../src/com/sulake/habbo/communication/login/ILoginViewer.as::nameCheckResponse()
     nameCheckResponse(response: unknown, fromNameCheck: boolean): void;
 
     // AS3: function showAccountError(_arg_1:Object):void

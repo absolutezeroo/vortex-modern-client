@@ -26,29 +26,37 @@ export class RoomObjectTileCursorUpdateMessage extends RoomObjectUpdateMessage
         this._toggleVisibility = toggleVisibility;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectTileCursorUpdateMessage.as::_height
     private _height: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectTileCursorUpdateMessage.as::get height()
     get height(): number
     {
         return this._height;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectTileCursorUpdateMessage.as::_visible
     private _visible: boolean;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectTileCursorUpdateMessage.as::get visible()
     get visible(): boolean
     {
         return this._visible;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectTileCursorUpdateMessage.as::_sourceEventId
     private _sourceEventId: string;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectTileCursorUpdateMessage.as::get sourceEventId()
     get sourceEventId(): string
     {
         return this._sourceEventId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectTileCursorUpdateMessage.as::_toggleVisibility
     private _toggleVisibility: boolean;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectTileCursorUpdateMessage.as::get toggleVisibility()
     get toggleVisibility(): boolean
     {
         return this._toggleVisibility;

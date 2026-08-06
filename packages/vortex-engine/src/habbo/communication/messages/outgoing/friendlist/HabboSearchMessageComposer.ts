@@ -15,6 +15,7 @@ export class HabboSearchMessageComposer extends MessageComposer<ConstructorParam
         this._data = [searchString];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/HabboSearchMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -33,11 +33,13 @@ export class RoomWidgetRoomObjectMessage extends RoomWidgetMessage
         this._category = category;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetRoomObjectMessage.as::get id()
     public get id(): number
     {
         return this._id;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetRoomObjectMessage.as::get category()
     public get category(): number
     {
         return this._category;

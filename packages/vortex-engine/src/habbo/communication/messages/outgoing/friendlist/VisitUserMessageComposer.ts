@@ -15,6 +15,7 @@ export class VisitUserMessageComposer extends MessageComposer<ConstructorParamet
         this._data = [userName];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/VisitUserMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -97,17 +97,26 @@ const ROOM_SESSION_DIALOG_EVENTS: readonly string[] = [
 
 export class RoomUI extends Component implements IRoomUI, IUpdateReceiver 
 {
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_roomSessionManager
     private _roomSessionManager: IRoomSessionManager | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_landingView
     private _landingView: IHabboLandingView | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_habboTracking
     private _habboTracking: IHabboTracking | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_habboGroupsManager
     private _habboGroupsManager: IHabboGroupsManager | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::friendList
     private _friendList: IHabboFriendList | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_freeFlowChat
     private _freeFlowChat: IHabboFreeFlowChat | null = null;
     private _widgetFactory: RoomWidgetFactory;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/RoomUI.as::_desktops
     private _desktops: Map<string, RoomDesktop> = new Map();
     private _currentDesktop: RoomDesktop | null = null;
 
@@ -119,11 +128,13 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         this.registerUpdateReceiver(this, 0);
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
 
     /**
      * The window manager, used by RoomWidgetFactory to construct widgets.
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get windowManager()
     public get windowManager(): IHabboWindowManager | null 
     {
         return this._windowManager;
@@ -139,17 +150,21 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         return this._config;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
 
     /**
      * The localization manager, used by RoomWidgetFactory to construct widgets.
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get localization()
     public get localization(): IHabboLocalizationManager | null 
     {
         return this._localization;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_catalog
     private _catalog: IHabboCatalog | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_inventory
     private _inventory: IHabboInventory | null = null;
 
     // AS3: RoomUI.as — the widget container exposes this to the mannequin and present widgets.
@@ -157,6 +172,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
     // NOT from AS3: Vortex-only furni editor.
     private _furniEditor: IHabboFurniEditor | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_habboHelp
     private _habboHelp: IHabboHelp | null = null;
 
     // AS3: RoomUI.as::_userDefinedRoomEvents — DI-resolved; injected into every RoomDesktop.
@@ -165,6 +181,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * The catalog manager, used to construct widgets that need it (e.g. infostand).
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get catalog()
     public get catalog(): IHabboCatalog | null
     {
         return this._catalog;
@@ -177,6 +194,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         return this._inventory;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get roomEngine()
     public get roomEngine(): IRoomEngine | null
     {
         return this._roomEngine;
@@ -188,6 +206,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         return this._freeFlowChat?.chatStyleLibrary ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_navigator
     private _navigator: IHabboNavigator | null = null;
 
     // AS3: sources/win63_version/habbo/ui/RoomUI.as::get navigator()
@@ -222,6 +241,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     }
 
     // AS3-equivalent single current desktop.
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get desktop()
     public get desktop(): IRoomDesktop | null 
     {
         return this._currentDesktop;
@@ -230,6 +250,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * Sets visibility of the active desktop.
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::set visible()
     public set visible(value: boolean) 
     {
         for(const desktop of this._desktops.values()) 
@@ -531,6 +552,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * Creates a RoomDesktop for the given session.
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::createDesktop()
     public createDesktop(session: IRoomSession): IRoomDesktop 
     {
         const identifier = this.getRoomIdentifier(session.roomId);
@@ -585,6 +607,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * Disposes a desktop by room identifier.
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::disposeDesktop()
     public disposeDesktop(identifier: string): void 
     {
         const desktop = this._desktops.get(identifier);
@@ -605,6 +628,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * Gets a desktop by room identifier.
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/RoomUI.as::getDesktop()
     public getDesktop(identifier: string): IRoomDesktop | null 
     {
         return this._desktops.get(identifier) ?? null;
@@ -613,6 +637,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * Gets the active canvas ID for a room (always 1).
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::getActiveCanvasId()
     public getActiveCanvasId(_roomId: number): number 
     {
         return 1;
@@ -638,6 +663,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * Called each frame. Updates all active desktops.
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::update()
     public update(_time: number): void 
     {
         for(const desktop of this._desktops.values()) 
@@ -777,6 +803,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         this._windowManager?.alert(errorTitle, errorMessage, 0, (dialog) => dialog.dispose());
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::roomSessionStateEventHandler()
     private roomSessionStateEventHandler(event: RoomSessionEvent): void
     {
         switch(event.type) 
@@ -856,6 +883,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * Handles major room engine events (initialized, disposed, color, zoom).
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::roomEventHandler()
     private roomEventHandler(event: RoomEngineEvent): void 
     {
         const roomId = event.roomId;
@@ -973,6 +1001,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * Handles room engine mode events (objects initialized, game mode toggle).
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::roomEngineEventHandler()
     private roomEngineEventHandler(event: RoomEngineEvent): void 
     {
         switch(event.type) 
@@ -1001,6 +1030,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * Routes room object events to the appropriate desktop.
      */
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::roomObjectEventHandler()
     private roomObjectEventHandler(event: RoomEngineObjectEvent): void 
     {
         const identifier = this.getRoomIdentifier(event.roomId);
@@ -1016,6 +1046,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
      * Converts a room ID to a room identifier string.
      * Matches AS3 pattern using "hard_coded_room_id".
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/RoomUI.as::getRoomIdentifier()
     private getRoomIdentifier(roomId: number): string 
     {
         return `hard_coded_room_id_${roomId}`;

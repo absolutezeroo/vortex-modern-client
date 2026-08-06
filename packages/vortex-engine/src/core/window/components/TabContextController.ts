@@ -19,7 +19,9 @@ import type {WindowEvent} from '../events/WindowEvent';
  */
 export class TabContextController extends WindowController implements ITabContextWindow
 {
+    // AS3: .../src/com/sulake/core/window/components/TabContextController.as::TAG_TAB_CONTEXT_SELECTOR
     private static readonly TAG_TAB_CONTEXT_SELECTOR: string = '_SELECTOR';
+    // AS3: .../src/com/sulake/core/window/components/TabContextController.as::TAG_TAB_CONTEXT_CONTENT
     private static readonly TAG_TAB_CONTEXT_CONTENT: string = '_CONTENT';
 
     protected _selectorList: ISelectorListWindow | null = null;
@@ -63,6 +65,7 @@ export class TabContextController extends WindowController implements ITabContex
     /**
 	 * The tab selector list.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TabContextController.as::get selector()
     public get selector(): ISelectorListWindow | null
     {
         if(this._selectorList === null)
@@ -81,6 +84,7 @@ export class TabContextController extends WindowController implements ITabContex
     /**
 	 * The content container.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TabContextController.as::get container()
     public get container(): IWindowContainer | null
     {
         if(this._contentContainer === null)
@@ -94,6 +98,7 @@ export class TabContextController extends WindowController implements ITabContex
     /**
 	 * The number of tab items.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TabContextController.as::get numTabItems()
     public get numTabItems(): number
     {
         return this.selector ? this.selector.numSelectables : 0;
@@ -116,6 +121,7 @@ export class TabContextController extends WindowController implements ITabContex
     /**
 	 * Adds a tab item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TabContextController.as::addTabItem()
     public addTabItem(tab: ITabButtonWindow): ITabButtonWindow
     {
         return this.selector!.addSelectable(tab as unknown as ISelectableWindow) as unknown as ITabButtonWindow;
@@ -124,6 +130,7 @@ export class TabContextController extends WindowController implements ITabContex
     /**
 	 * Adds a tab item at the specified index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TabContextController.as::addTabItemAt()
     public addTabItemAt(tab: ITabButtonWindow, index: number): ITabButtonWindow
     {
         return this.selector!.addSelectableAt(tab as unknown as ISelectableWindow, index) as unknown as ITabButtonWindow;
@@ -132,6 +139,7 @@ export class TabContextController extends WindowController implements ITabContex
     /**
 	 * Removes a tab item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TabContextController.as::removeTabItem()
     public removeTabItem(tab: ITabButtonWindow): void
     {
         this.selector?.removeSelectable(tab as unknown as ISelectableWindow);
@@ -140,6 +148,7 @@ export class TabContextController extends WindowController implements ITabContex
     /**
 	 * Returns the tab item at the specified index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TabContextController.as::getTabItemAt()
     public getTabItemAt(index: number): ITabButtonWindow | null
     {
         return this.selector?.getSelectableAt(index) as unknown as ITabButtonWindow | null ?? null;
@@ -148,6 +157,7 @@ export class TabContextController extends WindowController implements ITabContex
     /**
 	 * Returns the tab item with the specified name.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TabContextController.as::getTabItemByName()
     public getTabItemByName(name: string): ITabButtonWindow | null
     {
         return this.selector?.getSelectableByName(name) as unknown as ITabButtonWindow | null ?? null;
@@ -156,6 +166,7 @@ export class TabContextController extends WindowController implements ITabContex
     /**
 	 * Returns the tab item with the specified ID.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TabContextController.as::getTabItemByID()
     public getTabItemByID(id: number): ITabButtonWindow | null
     {
         return this.selector?.getSelectableByID(id) as unknown as ITabButtonWindow | null ?? null;
@@ -164,6 +175,7 @@ export class TabContextController extends WindowController implements ITabContex
     /**
 	 * Returns the index of the specified tab item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TabContextController.as::getTabItemIndex()
     public getTabItemIndex(tab: ITabButtonWindow): number
     {
         return this.selector?.getSelectableIndex(tab as unknown as ISelectableWindow) ?? -1;
@@ -192,6 +204,7 @@ export class TabContextController extends WindowController implements ITabContex
     /**
 	 * Handles selection events from the selector.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/TabContextController.as::selectorEventProc()
     private selectorEventProc(event: WindowEvent, _window: IWindow): void
     {
         if(event.type === 'WE_SELECTED')

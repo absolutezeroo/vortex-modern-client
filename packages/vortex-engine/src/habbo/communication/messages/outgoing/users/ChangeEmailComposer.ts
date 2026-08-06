@@ -16,6 +16,7 @@ export class ChangeEmailComposer extends MessageComposer<ConstructorParameters<t
         this._data = [email];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/ChangeEmailComposer.as::getMessageArray()
     getMessageArray(): [string]
     {
         return this._data;

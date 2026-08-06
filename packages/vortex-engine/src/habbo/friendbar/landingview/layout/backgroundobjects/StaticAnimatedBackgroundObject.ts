@@ -16,8 +16,10 @@ import {PathResetEvent} from './events/PathResetEvent';
 export class StaticAnimatedBackgroundObject extends BackgroundObject
 {
     private _elapsedAccum: number = 0;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/StaticAnimatedBackgroundObject.as::_imageBaseUri
     private _imageBaseUri: string;
     private _frameCount: number;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/StaticAnimatedBackgroundObject.as::_fps
     private _fps: number;
     private _syncIds: string[];
     private _lastSyncTime: number = 0;

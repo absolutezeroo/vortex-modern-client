@@ -9,8 +9,10 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class MarketplaceCancelAllOffersResultEventParser implements IMessageParser 
 {
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3349.as::_offerIds
     private _offerIds: number[] = [];
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3349.as::get offerIds()
     get offerIds(): number[] 
     {
         return this._offerIds;
@@ -18,11 +20,13 @@ export class MarketplaceCancelAllOffersResultEventParser implements IMessagePars
 
     private _success: boolean = false;
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3349.as::get success()
     get success(): boolean 
     {
         return this._success;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3349.as::flush()
     flush(): boolean 
     {
         this._offerIds = [];
@@ -31,6 +35,7 @@ export class MarketplaceCancelAllOffersResultEventParser implements IMessagePars
         return true;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3349.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean 
     {
         this._offerIds = [];

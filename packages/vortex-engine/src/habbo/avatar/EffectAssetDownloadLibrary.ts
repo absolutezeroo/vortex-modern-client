@@ -21,12 +21,18 @@ export class EffectAssetDownloadLibrary extends EventEmitter
 {
     public static readonly COMPLETE: string = 'EADL_COMPLETE';
 
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as::STATE_IDLE
     private static readonly STATE_IDLE: number = 0;
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as::STATE_DOWNLOADING
     private static readonly STATE_DOWNLOADING: number = 1;
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as::STATE_READY
     private static readonly STATE_READY: number = 2;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as::_revision
     private _revision: string;
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as::_downloadUrl
     private _downloadUrl: string;
     private _assetLibrary: IAssetLibrary;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as::_state
     private _state: number;
 
     constructor(name: string, revision: string, downloadUrl: string, assetLibrary: IAssetLibrary) 
@@ -41,16 +47,19 @@ export class EffectAssetDownloadLibrary extends EventEmitter
         this._animation = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as::_name
     private _name: string;
 
     /**
      * The name of this effect library.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as::get name()
     public get name(): string 
     {
         return this._name;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as::_animation
     private _animation: any | null;
 
     /**
@@ -59,6 +68,7 @@ export class EffectAssetDownloadLibrary extends EventEmitter
      * In AS3, this is XML data extracted from the loaded SWF resource's animation property.
      * In our port, this is JSON animation data from the .nitro bundle.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as::get animation()
     public get animation(): any | null 
     {
         return this._animation;
@@ -67,6 +77,7 @@ export class EffectAssetDownloadLibrary extends EventEmitter
     /**
      * Whether the library has finished downloading.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as::get isReady()
     public get isReady(): boolean 
     {
         return this._state === EffectAssetDownloadLibrary.STATE_READY;
@@ -78,6 +89,7 @@ export class EffectAssetDownloadLibrary extends EventEmitter
      * In AS3 this creates a URLRequest and loads via LibraryLoader.
      * On completion, extracts animation data from the resource and emits COMPLETE.
      */
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as::startDownloading()
     public startDownloading(): void 
     {
         if(this._state !== EffectAssetDownloadLibrary.STATE_IDLE) return;
@@ -147,6 +159,7 @@ export class EffectAssetDownloadLibrary extends EventEmitter
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as::toString()
     public toString(): string 
     {
         return this._name + (this.isReady ? '[x]' : '[ ]');

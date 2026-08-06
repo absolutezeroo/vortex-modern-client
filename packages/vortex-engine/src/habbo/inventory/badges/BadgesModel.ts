@@ -9,14 +9,17 @@ import {Badge} from './Badge';
  */
 export class BadgesModel implements IBadgesModel
 {
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::MAX_ACTIVE_BADGE_COUNT
     private static readonly MAX_ACTIVE_BADGE_COUNT = 5;
     private _allBadges: Badge[] = [];
     private _activeBadges: Badge[] = [];
     private _activeBadgeSet: Set<Badge> = new Set();
     private _badgeSlots: Map<string, number> = new Map();
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -27,6 +30,7 @@ export class BadgesModel implements IBadgesModel
         return BadgesModel.MAX_ACTIVE_BADGE_COUNT;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -138,6 +142,7 @@ export class BadgesModel implements IBadgesModel
         return badge;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::removeBadge()
     removeBadge(badgeId: string): boolean
     {
         for(let i = 0; i < this._allBadges.length; i++)
@@ -182,6 +187,7 @@ export class BadgesModel implements IBadgesModel
         return badge;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::getBadges()
     getBadges(filter: BadgeFilterType = BadgeFilter.ALL): Badge[]
     {
         switch(filter)
@@ -200,6 +206,7 @@ export class BadgesModel implements IBadgesModel
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::getBadge()
     getBadge(badgeId: string): Badge | null
     {
         for(const badge of this._allBadges)
@@ -213,6 +220,7 @@ export class BadgesModel implements IBadgesModel
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::getBadgeFromActive()
     getBadgeFromActive(index: number): Badge | null
     {
         if(index < 0 || index >= this._activeBadges.length)
@@ -223,6 +231,7 @@ export class BadgesModel implements IBadgesModel
         return this._activeBadges[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::getBadgeFromInactive()
     getBadgeFromInactive(index: number): Badge | null
     {
         const inactive = this.getBadges(BadgeFilter.INACTIVE);
@@ -235,6 +244,7 @@ export class BadgesModel implements IBadgesModel
         return inactive[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::getSelectedBadge()
     getSelectedBadge(filter: BadgeFilterType = BadgeFilter.ALL): Badge | null
     {
         const badges = this.getBadges(filter);
@@ -250,6 +260,7 @@ export class BadgesModel implements IBadgesModel
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::setBadgeSelected()
     setBadgeSelected(badgeId: string): void
     {
         for(const badge of this._allBadges)
@@ -258,6 +269,7 @@ export class BadgesModel implements IBadgesModel
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::forceSelection()
     forceSelection(): void
     {
         if(this.getSelectedBadge() !== null)
@@ -282,6 +294,7 @@ export class BadgesModel implements IBadgesModel
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::removeSelections()
     removeSelections(): void
     {
         for(const badge of this._allBadges)
@@ -290,6 +303,7 @@ export class BadgesModel implements IBadgesModel
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::resetUnseenItems()
     resetUnseenItems(): string[]
     {
         const resetIds: string[] = [];
@@ -339,6 +353,7 @@ export class BadgesModel implements IBadgesModel
         return this._activeBadges.map(b => b.badgeId);
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::resetBadges()
     private resetBadges(): void
     {
         for(const badge of this._allBadges)
@@ -352,6 +367,7 @@ export class BadgesModel implements IBadgesModel
         this._badgeSlots.clear();
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::startWearingBadge()
     private startWearingBadge(badge: Badge): void
     {
         if(!this._activeBadgeSet.has(badge))
@@ -363,6 +379,7 @@ export class BadgesModel implements IBadgesModel
         badge.isInUse = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::stopWearingBadge()
     private stopWearingBadge(badge: Badge): void
     {
         if(this._activeBadgeSet.delete(badge))

@@ -10,6 +10,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class CampaignCalendarData
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/campaign/CampaignCalendarData.as::_campaignName
     private _campaignName: string = '';
 
     get campaignName(): string
@@ -22,6 +23,7 @@ export class CampaignCalendarData
         this._campaignName = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/campaign/CampaignCalendarData.as::_campaignImage
     private _campaignImage: string = '';
 
     get campaignImage(): string
@@ -34,6 +36,7 @@ export class CampaignCalendarData
         this._campaignImage = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/campaign/CampaignCalendarData.as::_currentDay
     private _currentDay: number = 0;
 
     get currentDay(): number
@@ -46,6 +49,7 @@ export class CampaignCalendarData
         this._currentDay = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/campaign/CampaignCalendarData.as::_campaignDays
     private _campaignDays: number = 0;
 
     get campaignDays(): number
@@ -58,6 +62,7 @@ export class CampaignCalendarData
         this._campaignDays = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/campaign/CampaignCalendarData.as::_openedDays
     private _openedDays: number[] = [];
 
     get openedDays(): number[]
@@ -70,6 +75,7 @@ export class CampaignCalendarData
         this._openedDays = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/campaign/CampaignCalendarData.as::_missedDays
     private _missedDays: number[] = [];
 
     get missedDays(): number[]
@@ -82,6 +88,7 @@ export class CampaignCalendarData
         this._missedDays = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/campaign/CampaignCalendarData.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._campaignName = wrapper.readString();
@@ -106,6 +113,7 @@ export class CampaignCalendarData
         return true;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/campaign/CampaignCalendarData.as::clone()
     clone(): CampaignCalendarData
     {
         const copy = new CampaignCalendarData();

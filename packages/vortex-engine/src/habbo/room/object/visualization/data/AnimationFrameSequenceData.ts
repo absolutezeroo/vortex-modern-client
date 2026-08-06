@@ -12,9 +12,13 @@ import type {DirectionalOffsetData} from './DirectionalOffsetData';
 
 export class AnimationFrameSequenceData
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationFrameSequenceData.as::_frames
     private _frames: AnimationFrameData[] = [];
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationFrameSequenceData.as::_frameIndexes
     private _frameIndexes: number[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/data/AnimationFrameSequenceData.as::_frameRepeats
     private _frameRepeats: number[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/data/AnimationFrameSequenceData.as::_loopCount
     private _loopCount: number = 1;
 
     constructor(loopCount: number, isRandom: boolean)
@@ -28,18 +32,22 @@ export class AnimationFrameSequenceData
         this._isRandom = isRandom;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/data/AnimationFrameSequenceData.as::_isRandom
     private _isRandom: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationFrameSequenceData.as::get isRandom()
     get isRandom(): boolean
     {
         return this._isRandom;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationFrameSequenceData.as::get frameCount()
     get frameCount(): number
     {
         return this._frameIndexes.length * this._loopCount;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationFrameSequenceData.as::dispose()
     dispose(): void
     {
         this._frames = [];
@@ -48,6 +56,7 @@ export class AnimationFrameSequenceData
     /**
 	 * Pre-calculate frame repeat counts by looking at consecutive identical frame indexes.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationFrameSequenceData.as::initialize()
     initialize(): void
     {
         let count = 1;
@@ -69,6 +78,7 @@ export class AnimationFrameSequenceData
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationFrameSequenceData.as::addFrame()
     addFrame(id: number, x: number, y: number, randomX: number, randomY: number, directionalOffsets: DirectionalOffsetData | null): void
     {
         let repeats = 1;
@@ -108,6 +118,7 @@ export class AnimationFrameSequenceData
         this._frameRepeats.push(1);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationFrameSequenceData.as::getFrame()
     getFrame(index: number): AnimationFrameData | null
     {
         if(this._frames.length === 0 || index < 0 || index >= this.frameCount)
@@ -120,6 +131,7 @@ export class AnimationFrameSequenceData
         return this._frames[frameIndex] || null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationFrameSequenceData.as::getFrameIndex()
     getFrameIndex(index: number): number
     {
         if(index < 0 || index >= this.frameCount)
@@ -140,6 +152,7 @@ export class AnimationFrameSequenceData
         return index;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/data/AnimationFrameSequenceData.as::getRepeats()
     getRepeats(index: number): number
     {
         if(index < 0 || index >= this.frameCount)

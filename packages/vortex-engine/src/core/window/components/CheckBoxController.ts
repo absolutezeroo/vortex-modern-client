@@ -13,6 +13,7 @@ import {SelectableController} from './SelectableController';
  */
 export class CheckBoxController extends SelectableController
 {
+    // AS3: .../src/com/sulake/core/window/components/CheckBoxController.as::TEXT_FIELD_NAME
     protected static readonly TEXT_FIELD_NAME: string = '_CAPTION_TEXT';
 
     constructor(

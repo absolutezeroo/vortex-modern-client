@@ -29,6 +29,7 @@ export class CitizenshipVipQuestsPromoExtension
         log.debug('CitizenshipVipQuestsPromoExtension constructed');
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipQuestsPromoExtension.as::_disposed
     private _disposed: boolean = false;
 
     /**
@@ -39,6 +40,7 @@ export class CitizenshipVipQuestsPromoExtension
         return this._disposed;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipQuestsPromoExtension.as::_expanded
     private _expanded: boolean = true;
 
     /**
@@ -59,6 +61,7 @@ export class CitizenshipVipQuestsPromoExtension
         return this._windowCreated;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipQuestsPromoExtension.as::_vipQuestsCampaignName
     private _vipQuestsCampaignName: string = '';
 
     /**
@@ -74,6 +77,7 @@ export class CitizenshipVipQuestsPromoExtension
 	 *
 	 * Creates the promo window and attaches it to the extension view.
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipQuestsPromoExtension.as::onCitizenshipQuestPromoEnabled()
     public onCitizenshipQuestPromoEnabled(): void
     {
         if(!this._windowCreated)
@@ -94,6 +98,7 @@ export class CitizenshipVipQuestsPromoExtension
     /**
 	 * Handle button click (start quests campaign)
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipQuestsPromoExtension.as::onButtonClicked()
     public onButtonClicked(): void
     {
         // In AS3: connection.send(new StartCampaignMessageComposer(vipQuestsCampaignName))
@@ -112,6 +117,7 @@ export class CitizenshipVipQuestsPromoExtension
     /**
 	 * Dispose of this extension
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipQuestsPromoExtension.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;
@@ -122,12 +128,14 @@ export class CitizenshipVipQuestsPromoExtension
         this._disposed = true;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipQuestsPromoExtension.as::assignState()
     private assignState(): void
     {
         // State is tracked; UI layer reads expanded + windowCreated
         log.debug(`VIP quests promo: expanded=${this._expanded}`);
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/CitizenshipVipQuestsPromoExtension.as::destroyWindow()
     private destroyWindow(): void
     {
         if(this._extensionView)

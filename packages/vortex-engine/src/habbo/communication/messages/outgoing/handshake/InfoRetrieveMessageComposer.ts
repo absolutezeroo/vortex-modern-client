@@ -16,6 +16,7 @@ export class InfoRetrieveMessageComposer extends MessageComposer<ConstructorPara
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/handshake/InfoRetrieveMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

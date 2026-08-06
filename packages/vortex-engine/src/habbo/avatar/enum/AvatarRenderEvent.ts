@@ -5,5 +5,6 @@
  */
 export class AvatarRenderEvent
 {
+    // AS3: sources/win63_version/habbo/avatar/enum/AvatarRenderEvent.as::AVATAR_RENDER_READY
     public static readonly AVATAR_RENDER_READY: string = 'AVATAR_RENDER_READY';
 }

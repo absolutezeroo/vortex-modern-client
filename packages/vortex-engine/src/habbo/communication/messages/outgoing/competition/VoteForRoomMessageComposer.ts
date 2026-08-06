@@ -16,6 +16,7 @@ export class VoteForRoomMessageComposer extends MessageComposer<ConstructorParam
         this._data = [goalCode];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/competition/VoteForRoomMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

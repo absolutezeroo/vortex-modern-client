@@ -5,5 +5,6 @@
  */
 export class PerksUpdatedEvent
 {
+    // AS3: .../src/com/sulake/habbo/session/events/PerksUpdatedEvent.as::PERKS_UPDATED
     public static readonly PERKS_UPDATED = 'PUE_perks_updated';
 }

@@ -28,6 +28,7 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.LocalizationCatalogWi
  */
 export class LocalizationCatalogWidget extends CatalogWidget
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _imageElementMap: Map<string, string> = new Map();
@@ -202,6 +203,7 @@ export class LocalizationCatalogWidget extends CatalogWidget
     {
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::setLinkStyle()
     private setLinkStyle(_target: IHTMLTextWindow): void
     {
         // TODO(AS3): sources/win63_version/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::setLinkStyle()

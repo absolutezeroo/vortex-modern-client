@@ -13,9 +13,12 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureFloorHoleLogic extends FurnitureMultiStateLogic
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureFloorHoleLogic.as::STATE_HOLE
     private static readonly STATE_HOLE = 0;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureFloorHoleLogic.as::_currentState
     private _currentState: number = -1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureFloorHoleLogic.as::_currentLoc
     private _currentLoc: Vector3d | null = null;
 
     override dispose(): void
@@ -86,6 +89,7 @@ export class FurnitureFloorHoleLogic extends FurnitureMultiStateLogic
         this.handleAutomaticStateUpdate();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureFloorHoleLogic.as::handleStateUpdate()
     private handleStateUpdate(state: number): void
     {
         if(state !== this._currentState)
@@ -112,6 +116,7 @@ export class FurnitureFloorHoleLogic extends FurnitureMultiStateLogic
         }
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureFloorHoleLogic.as::handleAutomaticStateUpdate()
     private handleAutomaticStateUpdate(): void
     {
         if(this.object !== null)

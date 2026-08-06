@@ -14,6 +14,7 @@ export class GetMarketplaceOwnOffersMessageComposer extends MessageComposer<[num
         this._data = [category];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1746/_SafeCls_1881.as::getMessageArray()
     getMessageArray(): [number]
     {
         return this._data;

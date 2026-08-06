@@ -28,10 +28,15 @@ export class FurniModel implements IFurniModel
     private _categorySelections: Map<string, GroupItem | null> = new Map();
 
     private _habboInventory: HabboInventory;
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::_windowManager
     private _windowManager: IHabboWindowManager;
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::_roomEngine
     private _roomEngine: IRoomEngine;
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::_communication
     private _communication: IHabboCommunicationManager;
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::_catalog
     private _catalog: IHabboCatalog;
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::_localization
     private _localization: IHabboLocalizationManager;
 
     // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::controller
@@ -342,8 +347,10 @@ export class FurniModel implements IFurniModel
         this.requestSelectedFurniPlacement();
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -359,6 +366,7 @@ export class FurniModel implements IFurniModel
     private _furniData: GroupItem[] = [];
     private _furniDataSet: Set<GroupItem> = new Set();
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::get furniData()
     get furniData(): GroupItem[]
     {
         return this._furniData;
@@ -366,11 +374,13 @@ export class FurniModel implements IFurniModel
 
     private _showingRentedFurni: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::get showingRentedFurni()
     get showingRentedFurni(): boolean
     {
         return this._showingRentedFurni;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -389,6 +399,7 @@ export class FurniModel implements IFurniModel
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::insertFurniture()
     insertFurniture(items: Map<number, IFurnitureItemData>): {
         addedCount: number;
         removedCount: number;
@@ -473,6 +484,7 @@ export class FurniModel implements IFurniModel
         };
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::addOrUpdateItem()
     addOrUpdateItem(item: FurnitureItem, isInitializing: boolean): {
         groupItem: GroupItem;
         isNewGroup: boolean;
@@ -515,6 +527,7 @@ export class FurniModel implements IFurniModel
         return result;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::removeFurni()
     removeFurni(itemId: number): GroupItem | null
     {
         for(let i = 0; i < this._furniData.length; i++)
@@ -586,6 +599,7 @@ export class FurniModel implements IFurniModel
         this._view.clearViews();
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::getSelectedItem()
     getSelectedItem(): GroupItem | null
     {
         for(const groupItem of this._furniData)
@@ -599,6 +613,7 @@ export class FurniModel implements IFurniModel
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::removeSelections()
     removeSelections(): void
     {
         for(const groupItem of this._furniData)
@@ -646,6 +661,7 @@ export class FurniModel implements IFurniModel
         this._categorySelections.set(this._currentCategory, groupItem);
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::getItemById()
     getItemById(itemId: number): GroupItem | null
     {
         for(const groupItem of this._furniData)
@@ -659,11 +675,13 @@ export class FurniModel implements IFurniModel
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::getItemWithStripId()
     getItemWithStripId(stripId: number): GroupItem | null
     {
         return this.getItemById(stripId);
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::getGroupItemByItemTypeId()
     getGroupItemByItemTypeId(typeId: number, isWallItem: boolean): GroupItem | null
     {
         for(const groupItem of this._furniData)
@@ -707,6 +725,7 @@ export class FurniModel implements IFurniModel
         this._view.updateActionView();
     }
 
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::addLockTo()
     addLockTo(itemId: number): void
     {
         for(const groupItem of this._furniData)
@@ -718,6 +737,7 @@ export class FurniModel implements IFurniModel
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::removeLockFrom()
     removeLockFrom(itemId: number): void
     {
         for(const groupItem of this._furniData)
@@ -729,6 +749,7 @@ export class FurniModel implements IFurniModel
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::removeAllLocks()
     removeAllLocks(): void
     {
         for(const groupItem of this._furniData)
@@ -737,6 +758,7 @@ export class FurniModel implements IFurniModel
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::categorySwitch()
     categorySwitch(category: 'furni' | 'rentables'): void
     {
         if(!this._habboInventory.isVisible) return;
@@ -894,6 +916,7 @@ export class FurniModel implements IFurniModel
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::getAllStripIds()
     private getAllStripIds(): Set<number>
     {
         const ids = new Set<number>();
@@ -922,6 +945,7 @@ export class FurniModel implements IFurniModel
         return ids;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::addOrUpdateNonGroupableItem()
     private addOrUpdateNonGroupableItem(item: FurnitureItem, isInitializing: boolean): {
         groupItem: GroupItem;
         isNewGroup: boolean;
@@ -966,6 +990,7 @@ export class FurniModel implements IFurniModel
         return {groupItem, isNewGroup: true};
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::addOrUpdateGroupableItem()
     private addOrUpdateGroupableItem(item: FurnitureItem, isInitializing: boolean): {
         groupItem: GroupItem;
         isNewGroup: boolean;
@@ -1085,18 +1110,21 @@ export class FurniModel implements IFurniModel
         return new GroupItem(this, type, category, stuffData, extra, null, false, 'center', false);
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::addItemToTop()
     private addItemToTop(groupItem: GroupItem): void
     {
         this._furniDataSet.add(groupItem);
         this._furniData.unshift(groupItem);
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::addItemToBottom()
     private addItemToBottom(groupItem: GroupItem): void
     {
         this._furniDataSet.add(groupItem);
         this._furniData.push(groupItem);
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::removeItem()
     private removeItem(groupItem: GroupItem): void
     {
         if(this._furniDataSet.delete(groupItem))
@@ -1110,6 +1138,7 @@ export class FurniModel implements IFurniModel
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::moveItemToTop()
     private moveItemToTop(groupItem: GroupItem): void
     {
         this.removeItem(groupItem);

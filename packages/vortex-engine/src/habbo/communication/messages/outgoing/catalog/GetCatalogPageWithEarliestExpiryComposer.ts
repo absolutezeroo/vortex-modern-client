@@ -15,6 +15,7 @@ export class GetCatalogPageWithEarliestExpiryComposer extends MessageComposer<Co
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/catalog/GetCatalogPageWithEarliestExpiryComposer.as::getMessageArray()
     getMessageArray(): []
     {
         return this._data;

@@ -6,8 +6,11 @@
  */
 export class ChatBubbleWidth
 {
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/enum/ChatBubbleWidth.as::NORMAL
     public static readonly NORMAL: number = 350;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/enum/ChatBubbleWidth.as::THIN
     public static readonly THIN: number = 240;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/enum/ChatBubbleWidth.as::WIDE
     public static readonly WIDE: number = 2000;
 
     /**
@@ -16,6 +19,7 @@ export class ChatBubbleWidth
 	 * @param setting The room chat bubble width setting (0=WIDE, 1=NORMAL, 2=THIN)
 	 * @returns The bubble width in pixels
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/enum/ChatBubbleWidth.as::accordingToRoomChatSetting()
     static accordingToRoomChatSetting(setting: number): number
     {
         switch(setting)

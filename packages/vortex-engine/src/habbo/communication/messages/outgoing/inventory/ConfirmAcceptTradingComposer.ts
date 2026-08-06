@@ -16,6 +16,7 @@ export class ConfirmAcceptTradingComposer extends MessageComposer<ConstructorPar
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/inventory/trading/ConfirmAcceptTradingComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

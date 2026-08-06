@@ -115,6 +115,7 @@ export class ChatEntry
         return this._senderId;
     }
 
+    // AS3: .../src/com/sulake/habbo/messenger/ChatEntry.as::_senderName
     private _senderName: string | null;
 
     // AS3: .../messenger/ChatEntry.as::get senderName()

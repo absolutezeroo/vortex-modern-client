@@ -22,8 +22,11 @@ import {WidgetContainerLayout} from '../layout/WidgetContainerLayout';
  */
 export class CatalogPromoWidget implements ILandingViewWidget, ISettingsAwareWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::_landingView
     protected _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::_container
     protected _container: IWindowContainer | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::_targetCatalogPageName
     private _targetCatalogPageName: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::CatalogPromoWidget()
@@ -76,6 +79,7 @@ export class CatalogPromoWidget implements ILandingViewWidget, ISettingsAwareWid
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
@@ -93,6 +97,7 @@ export class CatalogPromoWidget implements ILandingViewWidget, ISettingsAwareWid
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CatalogPromoWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;

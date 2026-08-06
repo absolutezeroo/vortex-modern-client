@@ -15,31 +15,37 @@ export class MarketplaceBuyOfferResultEventParser implements IMessageParser
 
     private _requestedOfferId: number = -1;
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3972.as::get result()
     get result(): number
     {
         return this._result;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3972.as::get offerId()
     get offerId(): number
     {
         return this._offerId;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3972.as::get newPrice()
     get newPrice(): number
     {
         return this._newPrice;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3972.as::get requestedOfferId()
     get requestedOfferId(): number
     {
         return this._requestedOfferId;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3972.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3972.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._result = wrapper.readInt();

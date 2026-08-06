@@ -42,38 +42,66 @@ type ITabContextWindow = {
  */
 export class RoomSettingsCtrl
 {
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::TAB_BASIC
     static readonly TAB_BASIC: number = 1;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::TAB_ACCESS_RIGHTS
     static readonly TAB_ACCESS_RIGHTS: number = 2;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::TAB_ROOM_RIGHTS
     static readonly TAB_ROOM_RIGHTS: number = 3;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::TAB_CLUB_AND_CHAT
     static readonly TAB_CLUB_AND_CHAT: number = 4;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::TAB_MODERATION
     static readonly TAB_MODERATION: number = 5;
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::HC_MAXIMUM_ROOM_VISITORS
     private static readonly HC_MAXIMUM_ROOM_VISITORS: number = 75;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::MAXIMUM_ROOM_VISITORS
     private static readonly MAXIMUM_ROOM_VISITORS: number = 50;
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_flatId
     private _flatId: number = 0;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_groupId
     private _groupId: number = 0;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_originalData
     private _originalData: RoomSettingsData | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_savedFlatId
     private _savedFlatId: number = 0;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_window
     private _window: IWindowContainer | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_currentTab
     private _currentTab: number = RoomSettingsCtrl.TAB_BASIC;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_populating
     private _populating: boolean = false;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_removeTabsForNavigatorView
     private _removeTabsForNavigatorView: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_usersWithRightsListCtrl
     private _usersWithRightsListCtrl: UserListCtrl | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_friendsListCtrl
     private _friendsListCtrl: UserListCtrl | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_bannedUsersListCtrl
     private _bannedUsersListCtrl: BanListCtrl | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_confirmDialog
     private _confirmDialog: ConfirmDialogView | null = null;
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_nameInput
     private _nameInput: TextFieldManager | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_descInput
     private _descInput: TextFieldManager | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_tag1Input
     private _tag1Input: TextFieldManager | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_tag2Input
     private _tag2Input: TextFieldManager | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_passwordInput
     private _passwordInput: TextFieldManager | null = null;
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_passwordConfirmInput
     private _passwordConfirmInput: TextFieldManager | null = null;
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_chatFullHearRangeInput
     private _chatFullHearRangeInput: TextFieldManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::_tabContext
     private _tabContext: ITabContextWindow | null = null;
 
     private _roomModerationMuteSettings: number[] = [];
@@ -88,11 +116,13 @@ export class RoomSettingsCtrl
         this._bannedUsersListCtrl = new BanListCtrl(navigator);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::get disposed()
     get disposed(): boolean
     {
         return this._navigator === null;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::startRoomSettingsEdit()
     startRoomSettingsEdit(flatId: number): void
     {
         this.close();
@@ -105,6 +135,7 @@ export class RoomSettingsCtrl
         this._navigator.events.emit('HABBO_ROOM_SETTINGS_TRACKING_EVENT_DEFAULT');
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::startRoomSettingsEditFromNavigator()
     startRoomSettingsEditFromNavigator(flatId: number, groupId: number): void
     {
         this.close();
@@ -117,6 +148,7 @@ export class RoomSettingsCtrl
         this._navigator.events.emit('HABBO_ROOM_SETTINGS_TRACKING_EVENT_DEFAULT');
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::onRoomSettings()
     onRoomSettings(data: RoomSettingsData): void
     {
         if(!this._navigator) return;
@@ -135,6 +167,7 @@ export class RoomSettingsCtrl
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::onFlatControllers()
     onFlatControllers(flatId: number, controllers: RoomSettingsController[]): void
     {
         if(!this._isAcceptFlatControllerUpdate(flatId)) return;
@@ -147,6 +180,7 @@ export class RoomSettingsCtrl
         this._checkFlatControllerRefresh();
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::onFlatControllerAdded()
     onFlatControllerAdded(flatId: number, ctrl: RoomSettingsController): void
     {
         if(!this._isAcceptFlatControllerUpdate(flatId)) return;
@@ -155,6 +189,7 @@ export class RoomSettingsCtrl
         this._checkFlatControllerRefresh();
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::onFlatControllerRemoved()
     onFlatControllerRemoved(flatId: number, userId: number): void
     {
         if(!this._isAcceptFlatControllerUpdate(flatId)) return;
@@ -163,6 +198,7 @@ export class RoomSettingsCtrl
         this._checkFlatControllerRefresh();
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::onBannedUsersFromRoom()
     onBannedUsersFromRoom(flatId: number, banned: RoomSettingsBannedUser[]): void
     {
         if(!this._isAcceptBannedUsersUpdate(flatId)) return;
@@ -175,6 +211,7 @@ export class RoomSettingsCtrl
         this._checkBannedUsersFromRoomRefresh();
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::onUserUnbannedFromRoom()
     onUserUnbannedFromRoom(flatId: number, userId: number): void
     {
         if(!this._isAcceptBannedUsersUpdate(flatId)) return;
@@ -183,11 +220,13 @@ export class RoomSettingsCtrl
         this._checkBannedUsersFromRoomRefresh();
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::onFriendListUpdate()
     onFriendListUpdate(): void
     {
         this._checkFlatControllerRefresh();
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::onRoomSettingsSaveError()
     onRoomSettingsSaveError(roomId: number, errorCode: number, info: string): void
     {
         if(roomId !== this._flatId || this._savedFlatId < 1) return;
@@ -241,6 +280,7 @@ export class RoomSettingsCtrl
         this.refresh();
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::refresh()
     refresh(): void
     {
         if(!this._navigator) return;
@@ -274,6 +314,7 @@ export class RoomSettingsCtrl
         (this._window as unknown as { invalidate?(): void }).invalidate?.();
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::close()
     close(): void
     {
         this._flatId = 0;
@@ -294,6 +335,7 @@ export class RoomSettingsCtrl
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -577,6 +619,7 @@ export class RoomSettingsCtrl
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::populateForm()
     private populateForm(): void
     {
         if(!this._navigator || !this._originalData || !this._window) return;

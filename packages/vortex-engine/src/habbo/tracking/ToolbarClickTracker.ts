@@ -10,7 +10,9 @@ import type {HabboTracking} from './HabboTracking';
  */
 export class ToolbarClickTracker
 {
+    // AS3: .../src/com/sulake/habbo/tracking/ToolbarClickTracker.as::_tracking
     private _tracking: HabboTracking;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/ToolbarClickTracker.as::_eventCount
     private _eventCount: number = 0;
 
     constructor(tracking: HabboTracking)
@@ -23,6 +25,7 @@ export class ToolbarClickTracker
 	 *
 	 * @param buttonName The name of the clicked toolbar button
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/ToolbarClickTracker.as::track()
     track(buttonName: string): void
     {
         if(!this._tracking.getBoolean('toolbar.tracking.enabled'))

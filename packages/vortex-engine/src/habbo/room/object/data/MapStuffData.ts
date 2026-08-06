@@ -14,6 +14,7 @@ import {StuffDataBase} from './StuffDataBase';
 
 export class MapStuffData extends StuffDataBase implements IStuffData
 {
+    // AS3: .../src/com/sulake/habbo/room/object/data/MapStuffData.as::FORMAT_KEY
     public static readonly FORMAT_KEY = 1;
 
     private static readonly STATE_KEY = 'state';
@@ -120,6 +121,7 @@ export class MapStuffData extends StuffDataBase implements IStuffData
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/data/MapStuffData.as::getValue()
     getValue(key: string): string | null
     {
         return this._data.get(key) ?? null;

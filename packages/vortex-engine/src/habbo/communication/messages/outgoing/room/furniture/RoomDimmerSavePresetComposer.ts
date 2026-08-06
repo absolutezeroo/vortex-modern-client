@@ -19,6 +19,7 @@ export class RoomDimmerSavePresetComposer extends MessageComposer<RoomDimmerSave
         this._data = [presetNumber, effectTypeId, color, brightness, apply, false, objectId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/furniture/RoomDimmerSavePresetMessageComposer.as::getMessageArray()
     getMessageArray(): RoomDimmerSavePresetMessageArray
     {
         return this._data;

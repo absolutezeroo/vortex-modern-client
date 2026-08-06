@@ -11,6 +11,7 @@ export class GuideSessionAttachedMessageParser implements IMessageParser
 {
     private _asGuide: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionAttachedMessageEventParser.as::get asGuide()
     get asGuide(): boolean
     {
         return this._asGuide;
@@ -18,6 +19,7 @@ export class GuideSessionAttachedMessageParser implements IMessageParser
 
     private _helpRequestType: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionAttachedMessageEventParser.as::get helpRequestType()
     get helpRequestType(): number
     {
         return this._helpRequestType;
@@ -25,6 +27,7 @@ export class GuideSessionAttachedMessageParser implements IMessageParser
 
     private _helpRequestDescription: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionAttachedMessageEventParser.as::get helpRequestDescription()
     get helpRequestDescription(): string
     {
         return this._helpRequestDescription;
@@ -32,11 +35,13 @@ export class GuideSessionAttachedMessageParser implements IMessageParser
 
     private _roleSpecificWaitTime: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionAttachedMessageEventParser.as::get roleSpecificWaitTime()
     get roleSpecificWaitTime(): number
     {
         return this._roleSpecificWaitTime;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionAttachedMessageEventParser.as::flush()
     flush(): boolean
     {
         this._asGuide = false;
@@ -46,6 +51,7 @@ export class GuideSessionAttachedMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionAttachedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

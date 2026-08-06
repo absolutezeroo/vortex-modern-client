@@ -15,6 +15,7 @@ export class OpenCampaignCalendarDoorAsStaffComposer extends MessageComposer<Con
         this._data = [campaignName, dayIndex];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/campaign/OpenCampaignCalendarDoorAsStaffComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

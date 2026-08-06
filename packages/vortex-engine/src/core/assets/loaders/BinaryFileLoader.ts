@@ -16,6 +16,7 @@ export class BinaryFileLoader extends BaseFileLoader
         super(mimeType, url, id);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/loaders/BinaryFileLoader.as::_data
     protected _data: ArrayBuffer | null = null;
 
     /**
@@ -29,6 +30,7 @@ export class BinaryFileLoader extends BaseFileLoader
     /**
      * The loaded content
      */
+    // AS3: .../src/com/sulake/core/assets/loaders/BinaryFileLoader.as::get content()
     get content(): unknown 
     {
         return this._data;
@@ -37,6 +39,7 @@ export class BinaryFileLoader extends BaseFileLoader
     /**
      * The raw bytes loaded
      */
+    // AS3: .../src/com/sulake/core/assets/loaders/BinaryFileLoader.as::get bytes()
     get bytes(): ArrayBuffer | null 
     {
         return this._data;
@@ -45,6 +48,7 @@ export class BinaryFileLoader extends BaseFileLoader
     /**
      * Load content from a URL
      */
+    // AS3: .../src/com/sulake/core/assets/loaders/BinaryFileLoader.as::load()
     load(url: string): void 
     {
         this._url = url;
@@ -106,6 +110,7 @@ export class BinaryFileLoader extends BaseFileLoader
     /**
      * Dispose of this loader
      */
+    // AS3: .../src/com/sulake/core/assets/loaders/BinaryFileLoader.as::dispose()
     dispose(): void 
     {
         if(!this._disposed) 

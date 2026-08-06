@@ -15,6 +15,7 @@ export class ModToolPreferencesComposer extends MessageComposer<ConstructorParam
         this._data = [x, y, width, height];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/moderator/ModToolPreferencesComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

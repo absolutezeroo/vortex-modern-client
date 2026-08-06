@@ -71,6 +71,7 @@ export class ImageLoader extends EventDispatcher
      * A landing illustration that never arrives leaves the screen usable, so this stays a warning
      * — but it has to be visible, since nothing else reports it.
      */
+    // AS3: .../src/login/ImageLoader.as::onImageError()
     private onImageError(): void
     {
         log.warn(`Failed to load image ${this._url}`);

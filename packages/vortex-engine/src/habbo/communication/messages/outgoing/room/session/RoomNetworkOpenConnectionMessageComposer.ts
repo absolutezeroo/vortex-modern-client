@@ -15,6 +15,7 @@ export class RoomNetworkOpenConnectionMessageComposer extends MessageComposer<[n
         this._data = [roomId, homeRoomId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/roomdirectory/RoomNetworkOpenConnectionMessageComposer.as::getMessageArray()
     getMessageArray(): [number, number]
     {
         return this._data;

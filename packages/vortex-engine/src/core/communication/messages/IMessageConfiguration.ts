@@ -21,10 +21,12 @@ export interface IMessageConfiguration
     /**
 	 * Map of message ID to incoming event class
 	 */
+    // AS3: .../src/com/sulake/core/communication/messages/IMessageConfiguration.as::get events()
     readonly events: Map<number, EventClass>;
 
     /**
 	 * Map of message ID to outgoing composer class
 	 */
+    // AS3: .../src/com/sulake/core/communication/messages/IMessageConfiguration.as::get composers()
     readonly composers: Map<number, ComposerClass>;
 }

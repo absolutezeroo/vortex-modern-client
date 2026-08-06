@@ -11,7 +11,9 @@ import type {RoomObjectDataUpdateMessage} from '@habbo/room/messages/RoomObjectD
 
 export class FurnitureScoreLogic extends FurnitureLogic
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureScoreLogic.as::UPDATE_INTERVAL
     private static readonly UPDATE_INTERVAL = 50;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureScoreLogic.as::MAX_UPDATE_TIME
     private static readonly MAX_UPDATE_TIME = 3000;
 
     private _targetScore: number = 0;

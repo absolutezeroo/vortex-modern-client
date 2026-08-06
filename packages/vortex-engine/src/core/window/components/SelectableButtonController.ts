@@ -36,6 +36,7 @@ export class SelectableButtonController extends ButtonController implements ISel
     /**
 	 * Finds the nearest ancestor ISelectorWindow.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectableButtonController.as::get selector()
     public get selector(): ISelectorWindow | null
     {
         if(this._parent)
@@ -59,11 +60,13 @@ export class SelectableButtonController extends ButtonController implements ISel
     /**
 	 * Whether this window is currently selected (state flag 8).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectableButtonController.as::get isSelected()
     public get isSelected(): boolean
     {
         return this.testStateFlag(8);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/SelectableButtonController.as::set isSelected()
     public set isSelected(value: boolean)
     {
         this.setStateFlag(8, value);
@@ -103,6 +106,7 @@ export class SelectableButtonController extends ButtonController implements ISel
 	 *
 	 * @returns True if the selection succeeded
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectableButtonController.as::select()
     public select(): boolean
     {
         if(this.getStateFlag(8))
@@ -134,6 +138,7 @@ export class SelectableButtonController extends ButtonController implements ISel
 	 *
 	 * @returns True if the unselection succeeded
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectableButtonController.as::unselect()
     public unselect(): boolean
     {
         if(!this.getStateFlag(8))

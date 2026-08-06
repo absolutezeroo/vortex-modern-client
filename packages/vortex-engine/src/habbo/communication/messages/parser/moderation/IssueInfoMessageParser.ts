@@ -12,17 +12,20 @@ export class IssueInfoMessageParser implements IMessageParser
 {
     private _issueData: IssueInfoData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/IssueInfoMessageEventParser.as::get issueData()
     get issueData(): IssueInfoData | null
     {
         return this._issueData;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/IssueInfoMessageEventParser.as::flush()
     flush(): boolean
     {
         this._issueData = null;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/IssueInfoMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

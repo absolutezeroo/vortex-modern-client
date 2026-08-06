@@ -12,8 +12,11 @@ import {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
 
 export class FurnitureIceStormLogic extends FurnitureMultiStateLogic
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureIceStormLogic.as::_nextState
     private _nextState: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureIceStormLogic.as::_nextStateExtra
     private _nextStateExtra: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureIceStormLogic.as::_nextStateTimeStamp
     private _nextStateTimeStamp: number = 0;
 
     override processUpdateMessage(message: RoomObjectUpdateMessage): void

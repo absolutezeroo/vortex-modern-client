@@ -23,6 +23,7 @@ export class CommunityGoalVoteMessageComposer extends MessageComposer<Constructo
         this._data = [voteOption];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/landingview/votes/CommunityGoalVoteMessageComposer.as::getMessageArray()
     getMessageArray(): [number]
     {
         return this._data;

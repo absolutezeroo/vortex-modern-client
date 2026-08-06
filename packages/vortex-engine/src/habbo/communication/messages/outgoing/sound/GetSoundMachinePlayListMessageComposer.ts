@@ -8,6 +8,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetSoundMachinePlayListMessageComposer extends MessageComposer<[]>
 {
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/sound/GetSoundMachinePlayListMessageComposer.as::getMessageArray()
     getMessageArray(): []
     {
         return [];

@@ -15,6 +15,7 @@ export class GetDailyQuestMessageComposer extends MessageComposer<ConstructorPar
         this._data = [isEasy, dayIndex];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/quest/GetDailyQuestMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

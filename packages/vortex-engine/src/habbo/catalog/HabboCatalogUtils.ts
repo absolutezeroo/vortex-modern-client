@@ -30,10 +30,13 @@ interface IPriceEntry
  */
 export class HabboCatalogUtils implements IGetImageListener
 {
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::_catalog
     private _catalog: HabboCatalog | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::_productBitmapWrappers
     private _productBitmapWrappers: Map<number, IBitmapWrapperWindow[]> = new Map();
 
     // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalogUtils.as::_bundleDiscountFlatPriceSteps
@@ -52,11 +55,13 @@ export class HabboCatalogUtils implements IGetImageListener
         this._catalog = catalog;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::buildersClub()
     static buildersClub(layoutCode: string): boolean
     {
         return layoutCode.indexOf('builders_club') === 0 || layoutCode.indexOf('loyalty_bc') === 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::replaceCenteredImage()
     static replaceCenteredImage(target: IBitmapWrapperWindow, source: ImageBitmap, rect: {width: number; height: number} | null = null): void
     {
         const area = rect ?? source;
@@ -72,6 +77,7 @@ export class HabboCatalogUtils implements IGetImageListener
         target.bitmap = source;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -81,6 +87,7 @@ export class HabboCatalogUtils implements IGetImageListener
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -90,6 +97,7 @@ export class HabboCatalogUtils implements IGetImageListener
     // this port pre-compiles window layouts into a named registry instead (see
     // IHabboWindowManager buildWidgetLayout() doc). TODO(AS3): buildWidgetLayout() has no `vars`
     // template-substitution parameter - not needed by any current caller (all pass vars=null).
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::createWindow()
     createWindow(name: string, layer: number = 1, _vars: Map<string, string> | null = null): IWindow | null
     {
         if(this._catalog!.windowManager == null) return null;
@@ -118,6 +126,7 @@ export class HabboCatalogUtils implements IGetImageListener
         return window;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::showPriceInContainer()
     showPriceInContainer(container: IWindowContainer, offer: IPurchasableOffer, amount: number = 1, showBig: boolean = false, combo: boolean = false): void
     {
         if(offer == null) return;
@@ -127,6 +136,7 @@ export class HabboCatalogUtils implements IGetImageListener
         this.renderPriceInContainer(container, prices, showBig, combo);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::renderPriceInContainer()
     private renderPriceInContainer(container: IWindowContainer, prices: IPriceEntry[], showBig: boolean, combo: boolean): void
     {
         const list = this.createPriceContainer(container);
@@ -150,6 +160,7 @@ export class HabboCatalogUtils implements IGetImageListener
         container.addChild(list as unknown as IWindow);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::renderPriceItem()
     private renderPriceItem(list: IItemListWindow, index: number, price: IPriceEntry, showBig: boolean, combo: boolean): void
     {
         const amountText = list.getListItemByName('amount_' + index) as unknown as ITextWindow;
@@ -160,6 +171,7 @@ export class HabboCatalogUtils implements IGetImageListener
         unit.width = (showBig && combo) ? 53 : 22;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::createPriceContainer()
     private createPriceContainer(container: IWindowContainer): IItemListWindow | null
     {
         if(container == null) return null;
@@ -176,6 +188,7 @@ export class HabboCatalogUtils implements IGetImageListener
         return list;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::getPriceArray()
     private getPriceArray(offer: IPurchasableOffer, amount: number, showSeasonalAsCredits: boolean): IPriceEntry[]
     {
         const prices: IPriceEntry[] = [];
@@ -213,6 +226,7 @@ export class HabboCatalogUtils implements IGetImageListener
         return prices;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::getPriceMap()
     getPriceMap(offer: IPurchasableOffer, amount: number): Map<string, {amount: number; activityPointType?: number}>
     {
         const prices = new Map<string, {amount: number; activityPointType?: number}>();
@@ -326,6 +340,7 @@ export class HabboCatalogUtils implements IGetImageListener
         return priceBox;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::get bundleDiscountFlatPriceSteps()
     get bundleDiscountFlatPriceSteps(): number[]
     {
         return this._bundleDiscountFlatPriceSteps;
@@ -455,6 +470,7 @@ export class HabboCatalogUtils implements IGetImageListener
         widgetWindow.y = alignTop ? yOffset : container.height - widgetWindow.height - yOffset;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::setCatalogItemImage()
     setCatalogItemImage(target: IBitmapWrapperWindow, assetName: string): void
     {
         if(target == null) return;
@@ -470,11 +486,13 @@ export class HabboCatalogUtils implements IGetImageListener
         target.bitmap = image;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::calculateBundlePrice()
     calculateBundlePrice(_bundlePurchaseAllowed: boolean, unitPrice: number, amount: number): number
     {
         return unitPrice * amount;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::displayProductIcon()
     displayProductIcon(productType: string, classId: number, target: IBitmapWrapperWindow): void
     {
         if(this._catalog == null) return;
@@ -516,6 +534,7 @@ export class HabboCatalogUtils implements IGetImageListener
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::imageReady()
     imageReady(id: number, image: ImageBitmap | null): void
     {
         const pending = this._productBitmapWrappers.get(id);
@@ -530,6 +549,7 @@ export class HabboCatalogUtils implements IGetImageListener
         this._productBitmapWrappers.delete(id);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::imageFailed()
     imageFailed(_id: number): void
     {
     }

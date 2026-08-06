@@ -68,6 +68,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::applyCommonWidgetSettings()
 	 */
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::applyCommonWidgetSettings()
     public static applyCommonWidgetSettings(container: IWindowContainer | null, settings: CommonWidgetSettings): void
     {
         if(!container) return;
@@ -116,14 +117,19 @@ export class WidgetContainerLayout implements IUpdateReceiver
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::_landingView
     protected _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::_window
     protected _window: IWindowContainer | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::_dynamicWidgetLayout
     protected _dynamicWidgetLayout: DynamicLayoutManager | null = null;
     protected _movingBackgroundObjects: MovingBackgroundObjects | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::_orgWindowWidth
     protected _orgWindowWidth: number = 0;
     protected _orgWindowHeight: number = 0;
     private _widgetContainers: WidgetContainer[] = [];
     private _settings: CommonWidgetSettings | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::_schedulingStr
     private _schedulingStr: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::WidgetContainerLayout()
@@ -145,6 +151,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;
@@ -196,6 +203,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::activate()
 	 */
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::activate()
     public activate(): void
     {
         if(this._window === null)
@@ -261,6 +269,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::disable()
 	 */
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::disable()
     public disable(): void
     {
         if(this._window !== null)
@@ -364,6 +373,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::resizeWindow()
 	 */
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::resizeWindow()
     protected resizeWindow(): void
     {
         if(this._window !== null)
@@ -539,11 +549,13 @@ export class WidgetContainerLayout implements IUpdateReceiver
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::get window()
     get window(): IWindowContainer | null
     {
         return this._window;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::get landingView()
     get landingView(): HabboLandingView | null
     {
         return this._landingView;

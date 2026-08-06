@@ -34,6 +34,7 @@ export interface ICore extends IContext, ICoreConfiguration
 	 * Initialize the core. Waits for all locked components to unlock,
 	 * then dispatches COMPONENT_EVENT_RUNNING.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ICore.as::initialize()
     initialize(): void;
 
     /**
@@ -41,11 +42,13 @@ export interface ICore extends IContext, ICoreConfiguration
 	 *
 	 * @see CoreComponentContext.as lines 199-208
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/CoreComponentContext.as::hasLockedComponents()
     hasLockedComponents(): boolean;
 
     /**
 	 * Purge cached data across all components.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ICore.as::purge()
     purge(): void;
 
     /**
@@ -54,26 +57,31 @@ export interface ICore extends IContext, ICoreConfiguration
 	 * @param priority - Maximum priority level to still update (0-2)
 	 * @param updateFrequency - Updates per second during hibernation (default 1)
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ICore.as::hibernate()
     hibernate(priority: number, updateFrequency?: number): void;
 
     /**
 	 * Resume from hibernation.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ICore.as::resume()
     resume(): void;
 
     /**
 	 * Get the number of libraries still loading.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ICore.as::getNumberOfFilesPending()
     getNumberOfFilesPending(): number;
 
     /**
 	 * Get the number of libraries that have loaded.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ICore.as::getNumberOfFilesLoaded()
     getNumberOfFilesLoaded(): number;
 
     /**
 	 * Enable or disable profiler mode.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ICore.as::setProfilerMode()
     setProfilerMode(enabled: boolean): void;
 
     /**
@@ -97,21 +105,25 @@ export interface ICore extends IContext, ICoreConfiguration
 	 * @param config - Configuration object describing libraries to load
 	 * @param eventDelegate - Optional EventEmitter for progress/complete events
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ICore.as::readConfigDocument()
     readConfigDocument(config: Record<string, unknown>, eventDelegate?: EventEmitter): void;
 
     /**
 	 * Dispatch loading progress for an individual file.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/CoreComponentContext.as::updateLoadingProgress()
     updateLoadingProgress(fileName: string, bytesLoaded: number, bytesTotal: number, elapsedTime: number): void;
 
     /**
 	 * Handle library loading completion.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/CoreComponentContext.as::updateLoadingProcess()
     updateLoadingProcess(fileName?: string, status?: 'complete' | 'error'): void;
 
     /**
 	 * Handle a library loading error.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/CoreComponentContext.as::errorInLoadingProcess()
     errorInLoadingProcess(url: string, httpStatus: number, bytesLoaded: number, bytesTotal: number, errorMsg: string): void;
 
     /**

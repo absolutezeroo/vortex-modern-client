@@ -42,9 +42,13 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
     private _chatFlow: IHabboFreeFlowChat | null;
     private _chatStyleLibrary: ChatStyleLibrary | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::_avatarImageCache
     private readonly _avatarImageCache: Map<string, ImageBitmap> = new Map();
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::_petImageCache
     private readonly _petImageCache: Map<string, ImageBitmap> = new Map();
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::_avatarColorCache
     private readonly _avatarColorCache: Map<string, number> = new Map();
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::_petImageIdToFigureString
     private readonly _petImageIdToFigureString: Map<number, string> = new Map();
     private readonly _disposableBitmaps: ImageBitmap[] = [];
     private _pool: PooledChatBubble[] = [];
@@ -76,6 +80,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         this._chatFlow = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::get disposed()
     get disposed(): boolean
     {
         return this._chatFlow === null;
@@ -356,6 +361,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::get chatStyleLibrary()
     get chatStyleLibrary(): ChatStyleLibrary | null
     {
         return this._chatStyleLibrary;

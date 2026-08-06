@@ -17,6 +17,7 @@ const log = Logger.getLogger('habbo.catalog.guilds.GuildMembershipsController');
  */
 export class GuildMembershipsController
 {
+    // AS3: .../src/com/sulake/habbo/catalog/guilds/GuildMembershipsController.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _selectorWidget: GuildSelectorCatalogWidget | null = null;

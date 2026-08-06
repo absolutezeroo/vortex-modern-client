@@ -7,8 +7,10 @@ import type {EventEmitter} from 'eventemitter3';
  */
 export interface IAdManager
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/advertisement/IAdManager.as::showInterstitial()
     showInterstitial(): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/advertisement/IAdManager.as::loadRoomAdImage()
     loadRoomAdImage(roomId: number, objectId: number, objectCategory: number, imageURL: string, clickURL: string): void;
 
     get adEvents(): EventEmitter;

@@ -14,6 +14,7 @@ import {ExtraInfoListItem} from '../ExtraInfoListItem';
  */
 export class ExtraInfoBonusBadgeItem extends ExtraInfoListItem implements IGetImageListener
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoBonusBadgeItem.as::_catalog
     private _catalog: HabboCatalog;
 
     constructor(id: number, data: ExtraInfoItemData, catalog: HabboCatalog)
@@ -27,10 +28,12 @@ export class ExtraInfoBonusBadgeItem extends ExtraInfoListItem implements IGetIm
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoBonusBadgeItem.as::imageReady()
     imageReady(_id: number, _data: ImageBitmap | null): void
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoBonusBadgeItem.as::imageFailed()
     imageFailed(_id: number): void
     {
     }

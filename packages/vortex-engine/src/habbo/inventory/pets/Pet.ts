@@ -24,13 +24,16 @@ export class Pet
 
     private _id: number;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2577.as::get id()
     get id(): number
     {
         return this._id;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2577.as::_name
     private _name: string;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2577.as::get name()
     get name(): string
     {
         return this._name;
@@ -38,6 +41,7 @@ export class Pet
 
     private _figureData: PetFigureData;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2577.as::get figureData()
     get figureData(): PetFigureData
     {
         return this._figureData;
@@ -45,6 +49,7 @@ export class Pet
 
     private _level: number;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2577.as::get level()
     get level(): number
     {
         return this._level;
@@ -74,26 +79,31 @@ export class Pet
         this._isUnseen = value;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2577.as::get typeId()
     get typeId(): number
     {
         return this._figureData.typeId;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2577.as::get paletteId()
     get paletteId(): number
     {
         return this._figureData.paletteId;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2577.as::get color()
     get color(): string
     {
         return this._figureData.color;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2577.as::get breedId()
     get breedId(): number
     {
         return this._figureData.breedId;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2577.as::get customPartCount()
     get customPartCount(): number
     {
         return this._figureData.customPartCount;
@@ -104,11 +114,13 @@ export class Pet
     // rarity filter/overlay (monster plants, typeId 16).
     private _rarityLevel: number = -1;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2577.as::get rarityLevel()
     get rarityLevel(): number
     {
         return this._rarityLevel;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2577.as::get figureString()
     get figureString(): string
     {
         return this._figureData.figureString;

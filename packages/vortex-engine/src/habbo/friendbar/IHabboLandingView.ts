@@ -11,10 +11,12 @@ export interface IHabboLandingView
     /**
 	 * Activate the landing view (show it, set toolbar state to hotel view)
 	 */
+    // AS3: sources/win63_version/habbo/friendbar/IHabboLandingView.as::activate()
     activate(): void;
 
     /**
 	 * Disable the landing view (hide it)
 	 */
+    // AS3: sources/win63_version/habbo/friendbar/IHabboLandingView.as::disable()
     disable(): void;
 }

@@ -39,10 +39,12 @@ export class WiredEnvironment
     // AS3: WiredEnvironment.as::CLICK_SETTINGS_NOTIFICATION_TOGGLE_ID
     private static readonly CLICK_SETTINGS_NOTIFICATION_TOGGLE_ID: string = 'wired_click_settings_toggle';
 
+    // AS3: .../src/com/sulake/habbo/roomevents/WiredEnvironment.as::_disposed
     private _disposed: boolean = false;
 
     private _roomEvents: HabboUserDefinedRoomEvents | null;
 
+    // AS3: .../src/com/sulake/habbo/roomevents/WiredEnvironment.as::_messageEvents
     private _messageEvents: IMessageEvent[];
 
     // AS3: WiredEnvironment.as::_SafeStr_6575 (hasClickUserWired)

@@ -23,6 +23,7 @@ const log = Logger.getLogger('habbo.toolbar.memenu.MeMenuNewIconLoader');
  */
 export class MeMenuNewIconLoader implements IAvatarImageListener
 {
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuNewIconLoader.as::_toolbar
     private _toolbar: HabboToolbar | null;
     private _fullBitmap: ImageBitmap | null = null;
     private _userObjectEvent: UserObjectMessageEvent | null = null;
@@ -61,6 +62,7 @@ export class MeMenuNewIconLoader implements IAvatarImageListener
     /**
 	 * Whether the loader is disposed
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuNewIconLoader.as::get disposed()
     get disposed(): boolean
     {
         return this._toolbar == null;
@@ -72,6 +74,7 @@ export class MeMenuNewIconLoader implements IAvatarImageListener
 	 * @param _key The avatar image key
 	 * @see sources/win63_version/habbo/toolbar/memenu/MeMenuNewIconLoader.as avatarImageReady()
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuNewIconLoader.as::avatarImageReady()
     public avatarImageReady(_key: string): void
     {
         this._currentFigure = '';
@@ -83,6 +86,7 @@ export class MeMenuNewIconLoader implements IAvatarImageListener
 	 *
 	 * @param figure The user's figure string
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuNewIconLoader.as::onUserObject()
     public onUserObject(figure: string): void
     {
         this.setMeMenuToolbarIcon(figure);
@@ -93,6 +97,7 @@ export class MeMenuNewIconLoader implements IAvatarImageListener
 	 *
 	 * @param figure The new figure string
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuNewIconLoader.as::onFigureUpdate()
     public onFigureUpdate(figure: string): void
     {
         if(this.disposed) return;
@@ -105,6 +110,7 @@ export class MeMenuNewIconLoader implements IAvatarImageListener
 	 *
 	 * @see sources/win63_version/habbo/toolbar/memenu/MeMenuNewIconLoader.as dispose()
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuNewIconLoader.as::dispose()
     public dispose(): void
     {
         if(this.disposed) return;
@@ -156,6 +162,7 @@ export class MeMenuNewIconLoader implements IAvatarImageListener
 	 * @param figure Optional figure string override
 	 * @see sources/win63_version/habbo/toolbar/memenu/MeMenuNewIconLoader.as setMeMenuToolbarIcon()
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuNewIconLoader.as::setMeMenuToolbarIcon()
     private setMeMenuToolbarIcon(figure?: string): void
     {
         if(!this._toolbar) return;

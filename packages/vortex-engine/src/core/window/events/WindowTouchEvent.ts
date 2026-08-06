@@ -23,15 +23,25 @@ export class WindowTouchEvent extends WindowEvent
 
     private static readonly _touchPool: WindowTouchEvent[] = [];
 
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::localX
     public localX: number = 0;
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::localY
     public localY: number = 0;
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::stageX
     public stageX: number = 0;
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::stageY
     public stageY: number = 0;
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::altKey
     public altKey: boolean = false;
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::ctrlKey
     public ctrlKey: boolean = false;
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::shiftKey
     public shiftKey: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowTouchEvent.as::pressure
     public pressure: number = 0;
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::sizeX
     public sizeX: number = 0;
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::sizeY
     public sizeY: number = 0;
 
     /**

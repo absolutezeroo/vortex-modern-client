@@ -41,6 +41,7 @@ export class HabboAlertDialogManager extends EventEmitter<IHabboAlertDialogManag
     /**
 	 * Zero-pad a time value to two digits
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::getTimeZeroPadded()
     private static getTimeZeroPadded(value: number): string
     {
         const padded = '0' + String(value);
@@ -53,6 +54,7 @@ export class HabboAlertDialogManager extends EventEmitter<IHabboAlertDialogManag
 	 * @param message The caution message text
 	 * @param url Optional URL link
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleModeratorCaution()
     handleModeratorCaution(message: string, url: string = ''): void
     {
         this.showModerationMessage(message, url);
@@ -64,6 +66,7 @@ export class HabboAlertDialogManager extends EventEmitter<IHabboAlertDialogManag
 	 * @param message The moderator message text
 	 * @param url Optional URL link
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleModeratorMessage()
     handleModeratorMessage(message: string, url: string = ''): void
     {
         this.showModerationMessage(message, url, false);
@@ -74,6 +77,7 @@ export class HabboAlertDialogManager extends EventEmitter<IHabboAlertDialogManag
 	 *
 	 * @param message The ban message text
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleUserBannedMessage()
     handleUserBannedMessage(message: string): void
     {
         const cleanMessage = message.replace(/\\r/g, '\r');
@@ -86,6 +90,7 @@ export class HabboAlertDialogManager extends EventEmitter<IHabboAlertDialogManag
 	 *
 	 * @param minutesUntilClosing Minutes until the hotel closes
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleHotelClosingMessage()
     handleHotelClosingMessage(minutesUntilClosing: number): void
     {
         this.emit('hotelClosing', minutesUntilClosing);
@@ -98,6 +103,7 @@ export class HabboAlertDialogManager extends EventEmitter<IHabboAlertDialogManag
 	 * @param minutesUntilMaintenance Minutes until maintenance begins
 	 * @param duration Expected duration of the maintenance
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleHotelMaintenanceMessage()
     handleHotelMaintenanceMessage(minutesUntilMaintenance: number, duration: number): void
     {
         this.emit('hotelMaintenance', minutesUntilMaintenance, duration);
@@ -111,6 +117,7 @@ export class HabboAlertDialogManager extends EventEmitter<IHabboAlertDialogManag
 	 * @param openMinute Minute the hotel will reopen
 	 * @param userThrownOutAtClose Whether the user was thrown out at close
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleHotelClosedMessage()
     handleHotelClosedMessage(openHour: number, openMinute: number, userThrownOutAtClose: boolean): void
     {
         const hourStr = HabboAlertDialogManager.getTimeZeroPadded(openHour);
@@ -126,6 +133,7 @@ export class HabboAlertDialogManager extends EventEmitter<IHabboAlertDialogManag
 	 * @param openHour Hour the hotel will reopen
 	 * @param openMinute Minute the hotel will reopen
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleLoginFailedHotelClosedMessage()
     handleLoginFailedHotelClosedMessage(openHour: number, openMinute: number): void
     {
         const hourStr = HabboAlertDialogManager.getTimeZeroPadded(openHour);
@@ -135,6 +143,7 @@ export class HabboAlertDialogManager extends EventEmitter<IHabboAlertDialogManag
         log.info(`Login failed, hotel closed. Reopens at ${hourStr}:${minuteStr}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -147,6 +156,7 @@ export class HabboAlertDialogManager extends EventEmitter<IHabboAlertDialogManag
 	 * Show a moderation message.
 	 * In AS3 this creates a simpleAlert dialog. Here we emit an event.
 	 */
+    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::showModerationMessage()
     private showModerationMessage(message: string, url: string, _showHabboWay: boolean = true): void
     {
         const cleanMessage = message.replace(/\\r/g, '\r');

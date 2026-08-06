@@ -13,22 +13,27 @@ export interface IRunningNumberWidget extends IWidget
     /**
 	 * The target number to animate towards.
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/IRunningNumberWidget.as::get number()
     number: number;
     /**
 	 * The number of display digits (leading zeros).
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/IRunningNumberWidget.as::get digits()
     digits: number;
     /**
 	 * The color style index.
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/IRunningNumberWidget.as::get colorStyle()
     colorStyle: number;
     /**
 	 * The update frequency in milliseconds.
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/IRunningNumberWidget.as::get updateFrequency()
     updateFrequency: number;
 
     /**
 	 * Set the initial number (skips animation).
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/IRunningNumberWidget.as::set initialNumber()
     set initialNumber(value: number);
 }

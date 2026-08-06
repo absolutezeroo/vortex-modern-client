@@ -22,7 +22,9 @@ export class GuildEditInfoData implements IGuildManagementData
 {
     private _ownedRooms: GuildOwnedRoomData[];
     private _isOwner: boolean;
+    // AS3: .../src/unknowns/_SafePkg_1731/_SafeCls_1831.as::_groupId
     private _groupId: number;
+    // AS3: .../src/unknowns/_SafePkg_1731/_SafeCls_1831.as::_groupName
     private _groupName: string;
     private _groupDesc: string;
     private _baseRoomId: number;
@@ -33,6 +35,7 @@ export class GuildEditInfoData implements IGuildManagementData
     private _locked: boolean;
     private _url: string;
     private _badgeSettings: GuildBadgePartSetting[];
+    // AS3: .../src/unknowns/_SafePkg_1731/_SafeCls_1831.as::_badgeCode
     private _badgeCode: string;
     private _membershipCount: number;
 

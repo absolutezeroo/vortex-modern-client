@@ -23,15 +23,19 @@ export class RoomEngineObjectPlacedOnUserEvent extends RoomEngineObjectEvent
         this._droppedObjectCategory = droppedObjectCategory;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/events/RoomEngineObjectPlacedOnUserEvent.as::_droppedObjectId
     private _droppedObjectId: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineObjectPlacedOnUserEvent.as::get droppedObjectId()
     get droppedObjectId(): number
     {
         return this._droppedObjectId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/events/RoomEngineObjectPlacedOnUserEvent.as::_droppedObjectCategory
     private _droppedObjectCategory: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineObjectPlacedOnUserEvent.as::get droppedObjectCategory()
     get droppedObjectCategory(): number
     {
         return this._droppedObjectCategory;

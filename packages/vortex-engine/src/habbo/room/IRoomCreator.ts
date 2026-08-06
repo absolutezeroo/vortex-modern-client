@@ -22,17 +22,20 @@ export interface IRoomCreator
     /**
 	 * Dispose a room instance.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_89.as::disposeRoom()
     disposeRoom(roomId: number): void;
 
     /**
 	 * Set the world type for a room.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_89.as::setWorldType()
     setWorldType(roomId: number, worldType: string): void;
 
     /**
 	 * Initialize a room with configuration data.
 	 * Door parameters are passed when a door is detected from the height map.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_89.as::initializeRoom()
     initializeRoom(
         roomId: number,
         planeParser: RoomPlaneParser | null,
@@ -45,6 +48,7 @@ export interface IRoomCreator
     /**
 	 * Add floor furniture to a room.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::addObjectFurniture()
     addObjectFurniture(
         roomId: number,
         id: number,
@@ -66,6 +70,7 @@ export interface IRoomCreator
     /**
 	 * Add floor furniture by class name (for static furniture).
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::addObjectFurnitureByName()
     addObjectFurnitureByName(
         roomId: number,
         id: number,
@@ -80,6 +85,7 @@ export interface IRoomCreator
     /**
 	 * Update floor furniture.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectFurniture()
     updateObjectFurniture(
         roomId: number,
         id: number,
@@ -93,6 +99,7 @@ export interface IRoomCreator
     /**
 	 * Update floor furniture location for sliding.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectFurnitureLocation()
     updateObjectFurnitureLocation(
         roomId: number,
         id: number,
@@ -107,6 +114,7 @@ export interface IRoomCreator
     /**
 	 * Dispose floor furniture.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::disposeObjectFurniture()
     disposeObjectFurniture(
         roomId: number,
         id: number,
@@ -117,6 +125,7 @@ export interface IRoomCreator
     /**
 	 * Add wall item to a room.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::addObjectWallItem()
     addObjectWallItem(
         roomId: number,
         id: number,
@@ -134,6 +143,7 @@ export interface IRoomCreator
     /**
 	 * Update wall item.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectWallItem()
     updateObjectWallItem(
         roomId: number,
         id: number,
@@ -182,6 +192,7 @@ export interface IRoomCreator
     /**
 	 * Dispose wall item.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::disposeObjectWallItem()
     disposeObjectWallItem(
         roomId: number,
         id: number,
@@ -191,6 +202,7 @@ export interface IRoomCreator
     /**
 	 * Add user/avatar to a room.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::addObjectUser()
     addObjectUser(
         roomId: number,
         roomIndex: number,
@@ -204,6 +216,7 @@ export interface IRoomCreator
     /**
 	 * Update user position/movement.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectUser()
     updateObjectUser(
         roomId: number,
         roomIndex: number,
@@ -321,6 +334,7 @@ export interface IRoomCreator
     /**
 	 * Update user figure.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectUserFigure()
     updateObjectUserFigure(
         roomId: number,
         roomIndex: number,
@@ -334,6 +348,7 @@ export interface IRoomCreator
 	 * Update user posture.
 	 * Based on AS3: updateObjectUserPosture
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectUserPosture()
     updateObjectUserPosture(
         roomId: number,
         roomIndex: number,
@@ -345,6 +360,7 @@ export interface IRoomCreator
 	 * Update user action (expression, dance, sleep, typing, carry, use object).
 	 * Based on AS3: updateObjectUserAction
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectUserAction()
     updateObjectUserAction(
         roomId: number,
         roomIndex: number,
@@ -356,6 +372,7 @@ export interface IRoomCreator
 	 * Update user effect.
 	 * Based on AS3: updateObjectUserEffect
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectUserEffect()
     updateObjectUserEffect(
         roomId: number,
         roomIndex: number,
@@ -366,6 +383,7 @@ export interface IRoomCreator
     /**
 	 * Dispose user.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::disposeObjectUser()
     disposeObjectUser(
         roomId: number,
         roomIndex: number
@@ -374,42 +392,49 @@ export interface IRoomCreator
     /**
 	 * Set the own user ID for a room.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_89.as::setOwnUserId()
     setOwnUserId(roomId: number, roomIndex: number): void;
 
     /**
 	 * Set a furniture type alias.
 	 * Maps a furniture type name to an alias name.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::setRoomObjectAlias()
     setRoomObjectAlias(name: string, alias: string): void;
 
     /**
 	 * Store the furniture stacking height map for a room.
 	 * Based on AS3: RoomEngine.setFurniStackingHeightMap()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_89.as::setFurniStackingHeightMap()
     setFurniStackingHeightMap(roomId: number, map: FurniStackingHeightMap): void;
 
     /**
 	 * Get the furniture stacking height map for a room.
 	 * Based on AS3: RoomEngine.getFurniStackingHeightMap()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_89.as::getFurniStackingHeightMap()
     getFurniStackingHeightMap(roomId: number): FurniStackingHeightMap | null;
 
     /**
 	 * Rebuild the tile->floor-object spatial index for a room from scratch.
 	 * Based on AS3: RoomEngine.refreshTileObjectMap()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_89.as::refreshTileObjectMap()
     refreshTileObjectMap(roomId: number, reason: string): void;
 
     /**
 	 * Get the tile->floor-object spatial index for a room.
 	 * Based on AS3: RoomEngine.getTileObjectMap()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_89.as::getTileObjectMap()
     getTileObjectMap(roomId: number): TileObjectMap | null;
 
     /**
 	 * Update the room's floor/wall/landscape texture type(s).
 	 * Based on AS3: RoomEngine.updateObjectRoom()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectRoom()
     updateObjectRoom(
         roomId: number,
         floorType?: string | null,
@@ -422,11 +447,13 @@ export interface IRoomCreator
 	 * Update the room's wall/floor plane visibility.
 	 * Based on AS3: RoomEngine.updateObjectRoomVisibilities()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectRoomVisibilities()
     updateObjectRoomVisibilities(roomId: number, wallsVisible: boolean, floorVisible?: boolean): boolean;
 
     /**
 	 * Update the room's wall/floor plane thickness multipliers.
 	 * Based on AS3: RoomEngine.updateObjectRoomPlaneThicknesses()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectRoomPlaneThicknesses()
     updateObjectRoomPlaneThicknesses(roomId: number, wallThicknessMultiplier: number, floorThicknessMultiplier: number): boolean;
 }

@@ -15,6 +15,7 @@ export class DanceMessageComposer extends MessageComposer<[number]>
         this._data = [danceStyle];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/avatar/DanceMessageComposer.as::getMessageArray()
     getMessageArray(): [number]
     {
         return this._data;

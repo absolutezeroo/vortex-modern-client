@@ -15,11 +15,13 @@ export interface IHabboMessenger
     /**
 	 * Whether the messenger window is currently open.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/messenger/IHabboMessenger.as::isOpen()
     isOpen(): boolean;
 
     /**
 	 * Toggles the messenger window open/closed.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/messenger/IHabboMessenger.as::toggleMessenger()
     toggleMessenger(): void;
 
     /**
@@ -27,6 +29,7 @@ export interface IHabboMessenger
 	 *
 	 * @param userId - The user ID to start a conversation with
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/messenger/IHabboMessenger.as::startConversation()
     startConversation(userId: number): void;
 
     /**
@@ -55,6 +58,7 @@ export interface IHabboMessenger
     /**
 	 * Returns the count of unseen mini mail messages.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/messenger/IHabboMessenger.as::getUnseenMiniMailMessageCount()
     getUnseenMiniMailMessageCount(): number;
 
     /**

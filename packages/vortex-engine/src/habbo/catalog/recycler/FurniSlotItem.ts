@@ -14,6 +14,7 @@ export class FurniSlotItem
         return this._id;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/FurniSlotItem.as::set id()
     set id(value: number)
     {
         this._id = value;

@@ -26,6 +26,7 @@ export class GameDataResources implements IGameDataResources
         return this._externalVariablesUrl;
     }
 
+    // AS3: sources/win63_version/core/localization/class_2118.as::_externalVariablesHash
     private _externalVariablesHash: string = '';
 
     // AS3: sources/win63_version/core/localization/class_2118.as::getExternalVariablesHash()
@@ -42,6 +43,7 @@ export class GameDataResources implements IGameDataResources
         return this._externalTextsUrl;
     }
 
+    // AS3: sources/win63_version/core/localization/class_2118.as::_externalTextsHash
     private _externalTextsHash: string = '';
 
     // AS3: sources/win63_version/core/localization/class_2118.as::getExternalTextsHash()
@@ -74,6 +76,7 @@ export class GameDataResources implements IGameDataResources
         return this._productDataUrl;
     }
 
+    // AS3: sources/win63_version/core/localization/class_2118.as::_productDataHash
     private _productDataHash: string = '';
 
     // AS3: sources/win63_version/core/localization/class_2118.as::getProductDataHash()

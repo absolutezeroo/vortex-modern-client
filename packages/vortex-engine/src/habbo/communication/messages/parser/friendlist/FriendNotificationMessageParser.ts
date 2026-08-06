@@ -10,6 +10,7 @@ export class FriendNotificationMessageParser implements IMessageParser
 {
     private _avatarId: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/FriendNotificationEventParser.as::get avatarId()
     get avatarId(): string
     {
         return this._avatarId;
@@ -17,6 +18,7 @@ export class FriendNotificationMessageParser implements IMessageParser
 
     private _typeCode: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/FriendNotificationEventParser.as::get typeCode()
     get typeCode(): number
     {
         return this._typeCode;
@@ -24,11 +26,13 @@ export class FriendNotificationMessageParser implements IMessageParser
 
     private _message: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/FriendNotificationEventParser.as::get message()
     get message(): string
     {
         return this._message;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/FriendNotificationEventParser.as::flush()
     flush(): boolean
     {
         this._avatarId = '';
@@ -37,6 +41,7 @@ export class FriendNotificationMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/FriendNotificationEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

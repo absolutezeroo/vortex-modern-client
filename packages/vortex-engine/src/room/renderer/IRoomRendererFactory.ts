@@ -11,5 +11,6 @@ import type {IRoomRenderer} from './IRoomRenderer';
 
 export interface IRoomRendererFactory
 {
+    // AS3: sources/win63_version/room/renderer/IRoomRendererFactory.as::createRenderer()
     createRenderer(): IRoomRenderer;
 }

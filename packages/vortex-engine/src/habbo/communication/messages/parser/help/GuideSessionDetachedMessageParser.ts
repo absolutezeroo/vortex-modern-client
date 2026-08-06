@@ -9,11 +9,13 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GuideSessionDetachedMessageParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionDetachedMessageEventParser.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionDetachedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

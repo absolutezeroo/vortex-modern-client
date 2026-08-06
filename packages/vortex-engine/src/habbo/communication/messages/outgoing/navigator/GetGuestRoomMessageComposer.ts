@@ -17,6 +17,7 @@ export class GetGuestRoomMessageComposer extends MessageComposer<[number, number
         this._data = [roomId, enterRoom ? 1 : 0, roomForward ? 1 : 0];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/GetGuestRoomMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -21,6 +21,7 @@ export class NewUserExperienceGiftOfferEventParser implements IMessageParser
      * AS3 returns true without clearing anything — the list is replaced wholesale by the next
      * `parse()`, which builds a fresh vector.
      */
+    // AS3: .../src/unknowns/_SafePkg_3895/_SafeCls_3894.as::flush()
     flush(): boolean
     {
         return true;

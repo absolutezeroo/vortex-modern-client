@@ -130,13 +130,20 @@ class BigIntWrapper
  */
 export class DiffieHellman implements IKeyExchange
 {
+    // AS3: .../src/com/sulake/habbo/communication/encryption/DiffieHellman.as::_prime
     private _prime: BigIntWrapper;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/encryption/DiffieHellman.as::_generator
     private _generator: BigIntWrapper;
+    // AS3: .../src/com/sulake/habbo/communication/encryption/DiffieHellman.as::_privateKey
     private _privateKey: BigIntWrapper | null = null;
+    // AS3: .../src/com/sulake/habbo/communication/encryption/DiffieHellman.as::_publicKey
     private _publicKey: BigIntWrapper | null = null;
+    // AS3: .../src/com/sulake/habbo/communication/encryption/DiffieHellman.as::_serverPublicKey
     private _serverPublicKey: BigIntWrapper | null = null;
+    // AS3: .../src/com/sulake/habbo/communication/encryption/DiffieHellman.as::_sharedKey
     private _sharedKey: BigIntWrapper | null = null;
 
+    // AS3: .../src/com/sulake/habbo/communication/encryption/DiffieHellman.as::_minimumPublicKey
     private readonly _minimumPublicKey = new BigIntWrapper(2n);
     private readonly _minimumSharedKey = new BigIntWrapper(2n);
 
@@ -154,6 +161,7 @@ export class DiffieHellman implements IKeyExchange
     /**
 	 * Initialize with our private key
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/encryption/DiffieHellman.as::init()
     init(privateKeyHex: string, radix: number = 16): boolean
     {
         try
@@ -176,6 +184,7 @@ export class DiffieHellman implements IKeyExchange
     /**
 	 * Generate shared key from server's public key
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/encryption/DiffieHellman.as::generateSharedKey()
     generateSharedKey(serverPublicKeyHex: string, radix: number = 16): string
     {
         if(!this._privateKey)
@@ -194,6 +203,7 @@ export class DiffieHellman implements IKeyExchange
     /**
 	 * Get our public key
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/encryption/DiffieHellman.as::getPublicKey()
     getPublicKey(radix: number = 16): string
     {
         if(!this._publicKey)
@@ -207,6 +217,7 @@ export class DiffieHellman implements IKeyExchange
     /**
 	 * Get the shared key
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/encryption/DiffieHellman.as::getSharedKey()
     getSharedKey(radix: number = 16): string
     {
         if(!this._sharedKey)
@@ -219,6 +230,7 @@ export class DiffieHellman implements IKeyExchange
     /**
 	 * Validate server's public key (should be >= 2)
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/encryption/DiffieHellman.as::isValidServerPublicKey()
     isValidServerPublicKey(): boolean
     {
         if(!this._serverPublicKey) return false;
@@ -228,6 +240,7 @@ export class DiffieHellman implements IKeyExchange
     /**
 	 * Validate the shared key (should be >= 2)
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/encryption/DiffieHellman.as::isValidSharedKey()
     isValidSharedKey(): boolean
     {
         if(!this._sharedKey) return false;

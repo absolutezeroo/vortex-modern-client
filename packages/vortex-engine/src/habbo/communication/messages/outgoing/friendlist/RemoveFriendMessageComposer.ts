@@ -15,11 +15,13 @@ export class RemoveFriendMessageComposer implements IMessageComposer<unknown[]>
         this._friendIds = friendIds;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/RemoveFriendMessageComposer.as::get disposed()
     get disposed(): boolean
     {
         return false;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/RemoveFriendMessageComposer.as::getMessageArray()
     getMessageArray(): unknown[]
     {
         const result: unknown[] = [];
@@ -33,6 +35,7 @@ export class RemoveFriendMessageComposer implements IMessageComposer<unknown[]>
         return result;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/RemoveFriendMessageComposer.as::dispose()
     dispose(): void
     {
         return;

@@ -56,6 +56,7 @@ export class GenericErrorHandler extends BaseHandler
         this._messageEvents.push(event);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/GenericErrorHandler.as::onGenericError()
     private onGenericError(event: IMessageEvent): void
     {
         const genericEvent = event as GenericErrorMessageEvent;

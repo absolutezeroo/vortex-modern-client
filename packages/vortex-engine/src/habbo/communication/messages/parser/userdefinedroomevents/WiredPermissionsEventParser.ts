@@ -10,6 +10,7 @@ export class WiredPermissionsEventParser implements IMessageParser
 {
     private _canModify: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/userdefinedroomevents/wiredmenu/WiredPermissionsEventParser.as::get canModify()
     get canModify(): boolean
     {
         return this._canModify;
@@ -17,11 +18,13 @@ export class WiredPermissionsEventParser implements IMessageParser
 
     private _canRead: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/userdefinedroomevents/wiredmenu/WiredPermissionsEventParser.as::get canRead()
     get canRead(): boolean
     {
         return this._canRead;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/userdefinedroomevents/wiredmenu/WiredPermissionsEventParser.as::flush()
     flush(): boolean
     {
         this._canModify = false;
@@ -29,6 +32,7 @@ export class WiredPermissionsEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/userdefinedroomevents/wiredmenu/WiredPermissionsEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

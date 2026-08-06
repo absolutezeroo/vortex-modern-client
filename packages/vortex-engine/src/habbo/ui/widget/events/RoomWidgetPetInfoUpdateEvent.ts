@@ -132,6 +132,7 @@ export class RoomWidgetPetInfoUpdateEvent extends RoomWidgetUpdateEvent
         return this._petRace;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/events/RoomWidgetPetInfoUpdateEvent.as::_name
     private _name: string;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetPetInfoUpdateEvent.as::get name()
@@ -172,6 +173,7 @@ export class RoomWidgetPetInfoUpdateEvent extends RoomWidgetUpdateEvent
         return this._ownerId;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/events/RoomWidgetPetInfoUpdateEvent.as::_ownerName
     private _ownerName: string;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetPetInfoUpdateEvent.as::get ownerName()

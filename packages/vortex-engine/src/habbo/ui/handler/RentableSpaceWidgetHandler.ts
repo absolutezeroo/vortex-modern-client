@@ -67,6 +67,7 @@ export class RentableSpaceWidgetHandler implements IRoomWidgetHandler
      * Subscribes unconditionally — unlike most handlers there is no "already subscribed" guard, so
      * a second container would subscribe twice. Ported as written.
      */
+    // AS3: .../src/com/sulake/habbo/ui/handler/_SafeCls_3971.as::set container()
     public set container(value: IRoomWidgetHandlerContainer | null)
     {
         this._container = value;
@@ -92,6 +93,7 @@ export class RentableSpaceWidgetHandler implements IRoomWidgetHandler
      *
      * Derived from the container, not from a flag of its own.
      */
+    // AS3: .../src/com/sulake/habbo/ui/handler/_SafeCls_3971.as::get disposed()
     public get disposed(): boolean
     {
         return this._container === null;
@@ -103,6 +105,7 @@ export class RentableSpaceWidgetHandler implements IRoomWidgetHandler
      * Returns null — this handler takes no widget messages at all. The widget talks to it through
      * the public methods below instead.
      */
+    // AS3: .../src/com/sulake/habbo/ui/handler/_SafeCls_3971.as::getWidgetMessages()
     public getWidgetMessages(): string[] | null
     {
         return null;
@@ -120,6 +123,7 @@ export class RentableSpaceWidgetHandler implements IRoomWidgetHandler
      * Empty: RoomDesktop appends the open/close pair to whatever this returns, and those two are
      * the only events `processEvent()` handles.
      */
+    // AS3: .../src/com/sulake/habbo/ui/handler/_SafeCls_3971.as::getProcessedEvents()
     public getProcessedEvents(): string[]
     {
         return [];
@@ -181,6 +185,7 @@ export class RentableSpaceWidgetHandler implements IRoomWidgetHandler
      *
      * Ignores the payload and re-asks for the status, so the view is repainted from one source.
      */
+    // AS3: .../src/com/sulake/habbo/ui/handler/_SafeCls_3971.as::onRentableSpaceRentOkMessage()
     public onRentableSpaceRentOkMessage(_event: IMessageEvent): void
     {
         this._widget?.updateWidgetState();
@@ -220,6 +225,7 @@ export class RentableSpaceWidgetHandler implements IRoomWidgetHandler
      * Declared and called by nothing — the widget checks credits, not club level. Kept so the
      * class's member list matches the source.
      */
+    // AS3: .../src/com/sulake/habbo/ui/handler/_SafeCls_3971.as::getUsersClubLevel()
     public getUsersClubLevel(): number
     {
         return this._container?.sessionDataManager?.clubLevel ?? 0;

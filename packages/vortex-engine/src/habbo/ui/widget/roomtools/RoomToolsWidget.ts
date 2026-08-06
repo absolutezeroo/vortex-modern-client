@@ -25,8 +25,10 @@ const ROOM_HISTORY_MAX_LENGTH = 10;
 export class RoomToolsWidget extends RoomWidgetBase
 {
     private static _currentRoomIndex: number = 0;
+    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::_visitedRooms
     private static _visitedRooms: GuestRoomData[] = [];
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::_currentRoomName
     private _currentRoomName: string = '';
     private _toolbarCtrl: RoomToolsToolbarCtrl | null;
     private _infoCtrl: RoomToolsInfoCtrl | null;

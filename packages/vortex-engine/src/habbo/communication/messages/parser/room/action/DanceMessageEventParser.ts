@@ -10,6 +10,7 @@ export class DanceMessageEventParser implements IMessageParser
 {
     private _userId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/DanceMessageEventParser.as::get userId()
     get userId(): number
     {
         return this._userId;
@@ -17,11 +18,13 @@ export class DanceMessageEventParser implements IMessageParser
 
     private _danceStyle: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/DanceMessageEventParser.as::get danceStyle()
     get danceStyle(): number
     {
         return this._danceStyle;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/DanceMessageEventParser.as::flush()
     flush(): boolean
     {
         this._userId = 0;
@@ -29,6 +32,7 @@ export class DanceMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/DanceMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper === null)

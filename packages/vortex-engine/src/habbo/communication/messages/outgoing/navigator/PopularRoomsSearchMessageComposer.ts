@@ -16,6 +16,7 @@ export class PopularRoomsSearchMessageComposer extends MessageComposer<Construct
         this._data = [category, index];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/PopularRoomsSearchMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

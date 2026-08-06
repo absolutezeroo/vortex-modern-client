@@ -197,6 +197,7 @@ export class GuildManagementWindowCtrl
      *
      * AS3: .../GuildManagementWindowCtrl.as::onFlatCreated()
      */
+    // AS3: .../src/com/sulake/habbo/groups/GuildManagementWindowCtrl.as::onFlatCreated()
     onFlatCreated(flatId: number, flatName: string): void
     {
         if(this._window !== null && this._window.visible && this._data !== null && !this._data.exists)
@@ -216,6 +217,7 @@ export class GuildManagementWindowCtrl
      *
      * AS3: .../GuildManagementWindowCtrl.as::onSubscriptionChange()
      */
+    // AS3: .../src/com/sulake/habbo/groups/GuildManagementWindowCtrl.as::onSubscriptionChange()
     onSubscriptionChange(): void
     {
         if(this._window !== null && this._window.visible && this._data !== null && !this._data.exists && this._currentStep === GuildManagementWindowCtrl.VIEW_CONFIRM)
@@ -686,6 +688,7 @@ export class GuildManagementWindowCtrl
      *
      * AS3: .../GuildManagementWindowCtrl.as::showAlert()
      */
+    // AS3: .../src/com/sulake/habbo/groups/GuildManagementWindowCtrl.as::showAlert()
     private showAlert(title: string, message: string): void
     {
         if(this._alertOpen) return;
@@ -708,6 +711,7 @@ export class GuildManagementWindowCtrl
      *
      * AS3: .../GuildManagementWindowCtrl.as::validateView()
      */
+    // AS3: .../src/com/sulake/habbo/groups/GuildManagementWindowCtrl.as::validateView()
     private validateView(): boolean
     {
         const data = this._data;
@@ -788,6 +792,7 @@ export class GuildManagementWindowCtrl
      *
      * AS3: .../GuildManagementWindowCtrl.as::saveView()
      */
+    // AS3: .../src/com/sulake/habbo/groups/GuildManagementWindowCtrl.as::saveView()
     private saveView(): void
     {
         const data = this._data;
@@ -935,6 +940,7 @@ export class GuildManagementWindowCtrl
      *
      * AS3: .../GuildManagementWindowCtrl.as::prepareRoomSelection()
      */
+    // AS3: .../src/com/sulake/habbo/groups/GuildManagementWindowCtrl.as::prepareRoomSelection()
     private prepareRoomSelection(): void
     {
         const dropMenu = this.getBaseDropMenu();
@@ -1027,6 +1033,7 @@ export class GuildManagementWindowCtrl
      *
      * AS3: .../GuildManagementWindowCtrl.as::refreshBadgeImage()
      */
+    // AS3: .../src/com/sulake/habbo/groups/GuildManagementWindowCtrl.as::refreshBadgeImage()
     private refreshBadgeImage(): void
     {
         const data = this._data;

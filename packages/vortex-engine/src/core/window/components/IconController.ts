@@ -69,6 +69,7 @@ export class IconController extends WindowController implements IIconWindow
 	 * In AS3, uses `BitmapSkinRenderer.getLayoutByState(state)` to
 	 * get the skin dimensions and sets the rectangle accordingly.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/IconController.as::fitToSize()
     public fitToSize(): void
     {
         const factory = (this._context as unknown as {

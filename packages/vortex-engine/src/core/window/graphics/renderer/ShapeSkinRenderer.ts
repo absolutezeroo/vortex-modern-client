@@ -28,6 +28,7 @@ export class ShapeSkinRenderer extends SkinRenderer
         return alphaByte === 0 ? 1 : alphaByte / 255;
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as::snappedThickness()
     private static snappedThickness(value: number): number
     {
         return Number.isNaN(value) || value <= 0 ? 0 : Math.max(1, Math.round(value));

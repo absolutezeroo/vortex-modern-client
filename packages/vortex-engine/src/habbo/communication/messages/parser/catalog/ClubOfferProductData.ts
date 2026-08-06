@@ -7,13 +7,18 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class ClubOfferProductData
 {
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2104.as::PRODUCT_TYPE_ITEM
     static readonly PRODUCT_TYPE_ITEM: string = 'i';
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2104.as::PRODUCT_TYPE_STUFF
     static readonly PRODUCT_TYPE_STUFF: string = 's';
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2104.as::PRODUCT_TYPE_EFFECT
     static readonly PRODUCT_TYPE_EFFECT: string = 'e';
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2104.as::PRODUCT_TYPE_BADGE
     static readonly PRODUCT_TYPE_BADGE: string = 'b';
 
     private _productType: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2104.as::get productType()
     get productType(): string
     {
         return this._productType;
@@ -21,6 +26,7 @@ export class ClubOfferProductData
 
     private _furniClassId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2104.as::get furniClassId()
     get furniClassId(): number
     {
         return this._furniClassId;
@@ -28,6 +34,7 @@ export class ClubOfferProductData
 
     private _extraParam: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2104.as::get extraParam()
     get extraParam(): string
     {
         return this._extraParam;
@@ -35,6 +42,7 @@ export class ClubOfferProductData
 
     private _productCount: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2104.as::get productCount()
     get productCount(): number
     {
         return this._productCount;
@@ -42,6 +50,7 @@ export class ClubOfferProductData
 
     private _uniqueLimitedItem: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2104.as::get uniqueLimitedItem()
     get uniqueLimitedItem(): boolean
     {
         return this._uniqueLimitedItem;
@@ -49,6 +58,7 @@ export class ClubOfferProductData
 
     private _uniqueLimitedItemSeriesSize: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2104.as::get uniqueLimitedItemSeriesSize()
     get uniqueLimitedItemSeriesSize(): number
     {
         return this._uniqueLimitedItemSeriesSize;
@@ -56,6 +66,7 @@ export class ClubOfferProductData
 
     private _uniqueLimitedItemsLeft: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2104.as::get uniqueLimitedItemsLeft()
     get uniqueLimitedItemsLeft(): number
     {
         return this._uniqueLimitedItemsLeft;

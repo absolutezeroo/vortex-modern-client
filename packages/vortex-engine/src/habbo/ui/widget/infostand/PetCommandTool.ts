@@ -74,6 +74,7 @@ export class PetCommandTool
 
     private _petId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/PetCommandTool.as::_currentPetName
     private _currentPetName: string = '';
 
     // AS3 uses a flash.utils.Timer that fires once BUTTONS_DISABLED_MS after a command is issued and

@@ -60,6 +60,7 @@ export class RoomDataHandler extends BaseHandler
         this._messageEvents.push(event);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomDataHandler.as::onRoomResult()
     private onRoomResult(event: IMessageEvent): void
     {
         const resultEvent = event as GetGuestRoomResultMessageEvent;

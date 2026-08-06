@@ -18,6 +18,7 @@ export class ForwardToARandomPromotedRoomMessageComposer extends MessageComposer
         this._data = [roomCategory];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/ForwardToARandomPromotedRoomMessageComposer.as::getMessageArray()
     getMessageArray(): [string]
     {
         return this._data;

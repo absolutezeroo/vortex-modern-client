@@ -13,20 +13,33 @@ import {RoomFloorHole} from './RoomFloorHole';
 
 export class RoomPlaneParser
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::TILE_BLOCKED
     public static readonly TILE_BLOCKED: number = -110;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::TILE_HOLE
     public static readonly TILE_HOLE: number = -100;
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::FLOOR_THICKNESS
     private static readonly FLOOR_THICKNESS: number = 0.25;
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::WALL_THICKNESS
     private static readonly WALL_THICKNESS: number = 0.25;
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::MAX_WALL_ADDITIONAL_HEIGHT
     private static readonly MAX_WALL_ADDITIONAL_HEIGHT: number = 20;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::_tileMatrix
     private _tileMatrix: number[][] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::_tileMatrixOriginal
     private _tileMatrixOriginal: number[][] = [];
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::_width
     private _width: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::_height
     private _height: number = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::_planes
     private _planes: RoomPlaneData[] = [];
     private _highlightPlanes: RoomPlaneData[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::_fixedWallHeight
     private _fixedWallHeight: number = -1;
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::_floorHoles
     private _floorHoles: Map<number, RoomFloorHole> = new Map();
     private _floorHolesInverted: Map<number, RoomFloorHole> = new Map();
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::_floorHoleMatrix
     private _floorHoleMatrix: boolean[][] = [];
     private _expandedTileMatrix: number[][] = [];
 
@@ -44,99 +57,122 @@ export class RoomPlaneParser
         this._floorHolesInverted = new Map();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::_minX
     private _minX: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::get minX()
     get minX(): number
     {
         return this._minX;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::_maxX
     private _maxX: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::get maxX()
     get maxX(): number
     {
         return this._maxX;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::_minY
     private _minY: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::get minY()
     get minY(): number
     {
         return this._minY;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::_maxY
     private _maxY: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::get maxY()
     get maxY(): number
     {
         return this._maxY;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::_wallHeight
     private _wallHeight: number = 3.6;
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::get wallHeight()
     get wallHeight(): number
     {
         if(this._fixedWallHeight !== -1) return this._fixedWallHeight + 3.6;
         return this._wallHeight;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::set wallHeight()
     set wallHeight(value: number)
     {
         if(value < 0) value = 0;
         this._wallHeight = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::_wallThicknessMultiplier
     private _wallThicknessMultiplier: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::get wallThicknessMultiplier()
     get wallThicknessMultiplier(): number
     {
         return this._wallThicknessMultiplier;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::set wallThicknessMultiplier()
     set wallThicknessMultiplier(value: number)
     {
         if(value < 0) value = 0;
         this._wallThicknessMultiplier = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneParser.as::_floorThicknessMultiplier
     private _floorThicknessMultiplier: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::get floorThicknessMultiplier()
     get floorThicknessMultiplier(): number
     {
         return this._floorThicknessMultiplier;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::set floorThicknessMultiplier()
     set floorThicknessMultiplier(value: number)
     {
         if(value < 0) value = 0;
         this._floorThicknessMultiplier = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::_floorHeight
     private _floorHeight: number = 0;
 
     // Getters
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::get floorHeight()
     get floorHeight(): number
     {
         if(this._fixedWallHeight !== -1) return this._fixedWallHeight;
         return this._floorHeight;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::get tileMapWidth()
     get tileMapWidth(): number
     {
         return this._width;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::get tileMapHeight()
     get tileMapHeight(): number
     {
         return this._height;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::get planeCount()
     get planeCount(): number
     {
         return this._planes.length;
     }
 
     // Static helper methods
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getFloorHeight()
     private static getFloorHeight(tiles: number[][]): number
     {
         const length = tiles.length;
@@ -157,6 +193,7 @@ export class RoomPlaneParser
         return maxHeight;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::findEntranceTile()
     private static findEntranceTile(tiles: number[][]): IPoint | null
     {
         if(tiles === null) return null;
@@ -203,6 +240,7 @@ export class RoomPlaneParser
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::expandFloorTiles()
     private static expandFloorTiles(tiles: number[][]): number[][]
     {
         const height = tiles.length;
@@ -264,6 +302,7 @@ export class RoomPlaneParser
         return result;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::addTileTypes()
     private static addTileTypes(tiles: number[][]): void
     {
         const height = tiles.length - 1;
@@ -301,6 +340,7 @@ export class RoomPlaneParser
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::padHeightMap()
     private static padHeightMap(tiles: number[][]): void
     {
         for(const row of tiles)
@@ -317,6 +357,7 @@ export class RoomPlaneParser
         tiles.unshift(topRow);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::unpadHeightMap()
     private static unpadHeightMap(tiles: number[][]): void
     {
         tiles.shift();
@@ -330,6 +371,7 @@ export class RoomPlaneParser
     }
 
     // Public methods
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::dispose()
     dispose(): void
     {
         this._planes = [];
@@ -340,6 +382,7 @@ export class RoomPlaneParser
         this._floorHolesInverted.clear();
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::reset()
     reset(): void
     {
         this._planes = [];
@@ -356,6 +399,7 @@ export class RoomPlaneParser
         this._floorHoleMatrix = [];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::initializeTileMap()
     initializeTileMap(width: number, height: number): boolean
     {
         if(width < 0) width = 0;
@@ -393,6 +437,7 @@ export class RoomPlaneParser
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::setTileHeight()
     setTileHeight(x: number, y: number, height: number): boolean
     {
         if(x >= 0 && x < this._width && y >= 0 && y < this._height)
@@ -452,6 +497,7 @@ export class RoomPlaneParser
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getTileHeight()
     getTileHeight(x: number, y: number): number
     {
         if(x < 0 || x >= this._width || y < 0 || y >= this._height)
@@ -461,6 +507,7 @@ export class RoomPlaneParser
         return Math.abs(this._tileMatrix[y][x]);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getTileHeightInternal()
     getTileHeightInternal(x: number, y: number): number
     {
         if(x < 0 || x >= this._width || y < 0 || y >= this._height)
@@ -470,6 +517,7 @@ export class RoomPlaneParser
         return this._tileMatrix[y][x];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::initializeFromTileData()
     initializeFromTileData(fixedWallsHeight: number = -1, doorTile?: { x: number; y: number }): boolean
     {
         this._fixedWallHeight = fixedWallsHeight;
@@ -510,6 +558,7 @@ export class RoomPlaneParser
         return this._planes[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getPlaneLocation()
     getPlaneLocation(index: number): IVector3d | null
     {
         const plane = this.getPlane(index);
@@ -520,6 +569,7 @@ export class RoomPlaneParser
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getPlaneLeftSide()
     getPlaneLeftSide(index: number): IVector3d | null
     {
         const plane = this.getPlane(index);
@@ -530,6 +580,7 @@ export class RoomPlaneParser
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getPlaneRightSide()
     getPlaneRightSide(index: number): IVector3d | null
     {
         const plane = this.getPlane(index);
@@ -540,6 +591,7 @@ export class RoomPlaneParser
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getPlaneNormal()
     getPlaneNormal(index: number): IVector3d | null
     {
         const plane = this.getPlane(index);
@@ -550,6 +602,7 @@ export class RoomPlaneParser
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getPlaneNormalDirection()
     getPlaneNormalDirection(index: number): IVector3d | null
     {
         const plane = this.getPlane(index);
@@ -560,6 +613,7 @@ export class RoomPlaneParser
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getPlaneType()
     getPlaneType(index: number): number
     {
         const plane = this.getPlane(index);
@@ -570,6 +624,7 @@ export class RoomPlaneParser
         return RoomPlaneData.PLANE_UNDEFINED;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getPlaneSecondaryNormals()
     getPlaneSecondaryNormals(index: number): IVector3d[]
     {
         const plane = this.getPlane(index);
@@ -590,6 +645,7 @@ export class RoomPlaneParser
         return result;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::addFloorHole()
     addFloorHole(id: number, x: number, y: number, width: number, height: number, invert: boolean = false): void
     {
         const hole = new RoomFloorHole(x, y, width, height);
@@ -604,12 +660,14 @@ export class RoomPlaneParser
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::removeFloorHole()
     removeFloorHole(id: number): void
     {
         this._floorHoles.delete(id);
         this._floorHolesInverted.delete(id);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::resetFloorHoles()
     resetFloorHoles(): void
     {
         this._floorHoles.clear();
@@ -617,6 +675,7 @@ export class RoomPlaneParser
     }
 
     // Private methods
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::initialize()
     private initialize(entranceTile: IPoint | null): boolean
     {
         let entranceHeight = 0;
@@ -659,6 +718,7 @@ export class RoomPlaneParser
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::createWallPlanes()
     private createWallPlanes(): boolean
     {
         const tiles = this._tileMatrix;
@@ -724,6 +784,7 @@ export class RoomPlaneParser
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::generateWallData()
     private generateWallData(startPoint: IPoint, includeHoles: boolean): RoomWallData | null
     {
         const wallData = new RoomWallData();
@@ -787,6 +848,7 @@ export class RoomPlaneParser
         return wallData;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::extractTopWall()
     private extractTopWall(point: IPoint, includeHoles: boolean): IPoint | null
     {
         if(point === null) return null;
@@ -810,6 +872,7 @@ export class RoomPlaneParser
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::extractRightWall()
     private extractRightWall(point: IPoint, includeHoles: boolean): IPoint | null
     {
         if(point === null) return null;
@@ -833,6 +896,7 @@ export class RoomPlaneParser
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::extractBottomWall()
     private extractBottomWall(point: IPoint, includeHoles: boolean): IPoint | null
     {
         if(point === null) return null;
@@ -856,6 +920,7 @@ export class RoomPlaneParser
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::extractLeftWall()
     private extractLeftWall(point: IPoint, includeHoles: boolean): IPoint | null
     {
         if(point === null) return null;
@@ -879,6 +944,7 @@ export class RoomPlaneParser
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::checkWallHiding()
     private checkWallHiding(wallData: RoomWallData, originalWallData: RoomWallData | null): void
     {
         // AS3: hidePeninsulaWallChains uses param2 (originalWallData), NOT wallData
@@ -896,6 +962,7 @@ export class RoomPlaneParser
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::hidePeninsulaWallChains()
     private hidePeninsulaWallChains(wallData: RoomWallData): void
     {
         const count = wallData.count;
@@ -940,6 +1007,7 @@ export class RoomPlaneParser
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::updateWallsNextToHoles()
     private updateWallsNextToHoles(wallData: RoomWallData): void
     {
         const count = wallData.count;
@@ -985,6 +1053,7 @@ export class RoomPlaneParser
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::hideOriginallyHiddenWalls()
     private hideOriginallyHiddenWalls(wallData: RoomWallData, originalWallData: RoomWallData): void
     {
         const count = wallData.count;
@@ -1011,6 +1080,7 @@ export class RoomPlaneParser
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::resolveOriginalWallIndex()
     private resolveOriginalWallIndex(start: IPoint, end: IPoint, wallData: RoomWallData): number
     {
         const minY = Math.min(start.y, end.y);
@@ -1056,6 +1126,7 @@ export class RoomPlaneParser
         return -1;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::addWalls()
     private addWalls(wallData: RoomWallData, originalWallData: RoomWallData): void
     {
         const count = wallData.count;
@@ -1142,6 +1213,7 @@ export class RoomPlaneParser
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::addWall()
     private addWall(
         loc: IVector3d,
         leftSide: IVector3d,
@@ -1215,6 +1287,7 @@ export class RoomPlaneParser
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::addFloor()
     private addFloor(
         loc: IVector3d,
         leftSide: IVector3d,
@@ -1281,6 +1354,7 @@ export class RoomPlaneParser
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::addPlane()
     private addPlane(
         type: number,
         loc: IVector3d,
@@ -1306,6 +1380,7 @@ export class RoomPlaneParser
         return plane;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::extractPlanes()
     private extractPlanes(
         tiles: number[][],
         startX: number = 0,

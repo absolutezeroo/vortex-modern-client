@@ -8,6 +8,7 @@ import {RoomSessionEvent} from './RoomSessionEvent';
  */
 export class RoomSessionConfirmPetBreedingResultEvent extends RoomSessionEvent
 {
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingResultEvent.as::CONFIRM_PET_BREEDING_RESULT
     public static readonly CONFIRM_PET_BREEDING_RESULT = 'RSPFUE_CONFIRM_PET_BREEDING_RESULT';
 
     constructor(session: IRoomSession, breedingNestStuffId: number, result: number)
@@ -17,15 +18,19 @@ export class RoomSessionConfirmPetBreedingResultEvent extends RoomSessionEvent
         this._result = result;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingResultEvent.as::_breedingNestStuffId
     private _breedingNestStuffId: number;
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingResultEvent.as::get breedingNestStuffId()
     get breedingNestStuffId(): number
     {
         return this._breedingNestStuffId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingResultEvent.as::_result
     private _result: number;
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingResultEvent.as::get result()
     get result(): number
     {
         return this._result;

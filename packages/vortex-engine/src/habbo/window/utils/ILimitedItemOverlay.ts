@@ -14,6 +14,7 @@ export interface ILimitedItemOverlay extends IDisposable
     /**
 	 * The container window holding the overlay elements.
 	 */
+    // AS3: sources/win63_version/habbo/window/utils/ILimitedItemOverlay.as::get window()
     readonly window: IWindowContainer | null;
 
     /**

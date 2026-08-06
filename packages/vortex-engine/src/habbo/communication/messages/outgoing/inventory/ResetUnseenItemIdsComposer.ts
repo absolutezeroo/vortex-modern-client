@@ -21,6 +21,7 @@ export class ResetUnseenItemIdsComposer extends MessageComposer<number[]>
         this._data = [category, itemIds.length, ...itemIds];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_3364/_SafeCls_3842.as::getMessageArray()
     getMessageArray(): number[]
     {
         return this._data;

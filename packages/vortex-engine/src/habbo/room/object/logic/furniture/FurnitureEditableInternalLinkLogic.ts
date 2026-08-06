@@ -13,6 +13,7 @@ import {RoomObjectWidgetRequestEvent} from '@habbo/room/events/RoomObjectWidgetR
 export class FurnitureEditableInternalLinkLogic extends FurnitureLogic
 {
     private _startState: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureEditableInternalLinkLogic.as::_updateCount
     private _updateCount: number = 0;
 
     override initialize(data: unknown): void

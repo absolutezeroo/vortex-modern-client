@@ -15,8 +15,10 @@ export class RoomObjectAvatarPlayerValueUpdateMessage extends RoomObjectUpdateMe
         this._value = value;
     }
 
+    // AS3: sources/win63_version/habbo/room/messages/RoomObjectAvatarPlayerValueUpdateMessage.as::_value
     private _value: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarPlayerValueUpdateMessage.as::get value()
     get value(): number
     {
         return this._value;

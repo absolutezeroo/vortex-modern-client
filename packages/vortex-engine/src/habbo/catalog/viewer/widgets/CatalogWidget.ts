@@ -10,6 +10,7 @@ import type {ICatalogWidget} from './ICatalogWidget';
  */
 export class CatalogWidget implements ICatalogWidget
 {
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/CatalogWidget.as::_window
     protected _window: IWindowContainer;
 
     protected _events: EventEmitter | null = null;
@@ -18,6 +19,7 @@ export class CatalogWidget implements ICatalogWidget
 
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/CatalogWidget.as::_isEmbedded
     protected _isEmbedded: boolean = false;
 
     constructor(window: IWindowContainer)
@@ -26,31 +28,37 @@ export class CatalogWidget implements ICatalogWidget
         this._isEmbedded = window.tags.indexOf('EMBEDDED') > -1;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/CatalogWidget.as::set page()
     set page(page: ICatalogPage)
     {
         this._page = page;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/CatalogWidget.as::set events()
     set events(events: EventEmitter)
     {
         this._events = events;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/CatalogWidget.as::get window()
     get window(): IWindowContainer
     {
         return this._window;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/CatalogWidget.as::get events()
     get events(): EventEmitter
     {
         return this._events!;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/CatalogWidget.as::get page()
     get page(): ICatalogPage
     {
         return this._page!;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/CatalogWidget.as::dispose()
     dispose(): void
     {
         this._events = null;
@@ -59,16 +67,19 @@ export class CatalogWidget implements ICatalogWidget
         this._disposed = true;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/CatalogWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/CatalogWidget.as::init()
     init(): boolean
     {
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/CatalogWidget.as::closed()
     closed(): void
     {
     }
@@ -76,6 +87,7 @@ export class CatalogWidget implements ICatalogWidget
     // AS3 loads this via assets.getAssetByName(name).content + buildFromXML(); this port's
     // compiled window-layout registry builds ready-to-use windows directly instead (see
     // IHabboWindowManager buildWidgetLayout() doc).
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/CatalogWidget.as::attachWidgetView()
     protected attachWidgetView(name: string): void
     {
         if(this._isEmbedded) return;
@@ -90,6 +102,7 @@ export class CatalogWidget implements ICatalogWidget
         this.window.addChild(view);
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/CatalogWidget.as::getAssetBitmapData()
     protected getAssetBitmapData(name: string): ImageBitmap | null
     {
         const asset = this.page.viewer.catalog.assets!.getAssetByName(name);

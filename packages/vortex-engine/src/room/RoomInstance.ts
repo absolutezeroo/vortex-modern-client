@@ -17,8 +17,11 @@ import type {IRoomRendererBase} from './renderer/IRoomRendererBase';
 
 export class RoomInstance implements IRoomInstance
 {
+    // AS3: .../src/com/sulake/room/RoomInstance.as::_container
     private _container: IRoomInstanceContainer | null;
+    // AS3: .../src/com/sulake/room/RoomInstance.as::_managers
     private _managers: Map<string, IRoomObjectManager> = new Map();
+    // AS3: .../src/com/sulake/room/RoomInstance.as::_updateCategories
     private _updateCategories: number[] = [];
     private _numbers: Map<string, number> = new Map();
     private _strings: Map<string, string> = new Map();
@@ -34,6 +37,7 @@ export class RoomInstance implements IRoomInstance
 
     private _id: string;
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::get id()
     get id(): string
     {
         return this._id;
@@ -47,11 +51,13 @@ export class RoomInstance implements IRoomInstance
         return this._numbers.has(key) || this._strings.has(key);
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::getNumber()
     getNumber(key: string): number
     {
         return this._numbers.get(key) ?? NaN;
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::setNumber()
     setNumber(key: string, value: number, immutable: boolean = false): void
     {
         if(this._immutableNumbers.has(key))
@@ -70,11 +76,13 @@ export class RoomInstance implements IRoomInstance
         }
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::getString()
     getString(key: string): string
     {
         return this._strings.get(key) ?? '';
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::setString()
     setString(key: string, value: string, immutable: boolean = false): void
     {
         if(this._immutableStrings.has(key))
@@ -93,6 +101,7 @@ export class RoomInstance implements IRoomInstance
         }
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::addObjectUpdateCategory()
     addObjectUpdateCategory(category: number): void
     {
         const index = this._updateCategories.indexOf(category);
@@ -105,6 +114,7 @@ export class RoomInstance implements IRoomInstance
         this._updateCategories.push(category);
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::removeObjectUpdateCategory()
     removeObjectUpdateCategory(category: number): void
     {
         const index = this._updateCategories.indexOf(category);
@@ -115,6 +125,7 @@ export class RoomInstance implements IRoomInstance
         }
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::update()
     update(): void
     {
         const time = performance.now();
@@ -152,6 +163,7 @@ export class RoomInstance implements IRoomInstance
 	 *
 	 * @see AS3 RoomInstance.setRenderer() lines 319-357
 	 */
+    // AS3: .../src/com/sulake/room/RoomInstance.as::setRenderer()
     setRenderer(renderer: IRoomRendererBase | null): void
     {
         if(renderer === this._renderer)
@@ -198,11 +210,13 @@ export class RoomInstance implements IRoomInstance
 	 *
 	 * @see AS3 RoomInstance.getRenderer() lines 359-362
 	 */
+    // AS3: .../src/com/sulake/room/RoomInstance.as::getRenderer()
     getRenderer(): IRoomRendererBase | null
     {
         return this._renderer;
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::createRoomObject()
     createRoomObject(id: number, type: string, category: number): IRoomObject | null
     {
         if(this._container !== null)
@@ -218,6 +232,7 @@ export class RoomInstance implements IRoomInstance
 	 *
 	 * @see AS3 RoomInstance.createObjectInternal() lines 201-215
 	 */
+    // AS3: .../src/com/sulake/room/RoomInstance.as::createObjectInternal()
     createObjectInternal(id: number, stateCount: number, type: string, category: number): IRoomObject | null
     {
         const manager = this.createObjectManager(category);
@@ -237,6 +252,7 @@ export class RoomInstance implements IRoomInstance
         return null;
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::getObject()
     getObject(id: number, category: number): IRoomObject | null
     {
         const manager = this.getObjectManager(category);
@@ -249,6 +265,7 @@ export class RoomInstance implements IRoomInstance
         return null;
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::getObjects()
     getObjects(category: number): IRoomObject[]
     {
         const manager = this.getObjectManager(category);
@@ -256,6 +273,7 @@ export class RoomInstance implements IRoomInstance
         return manager ? manager.objects : [];
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::getObjectWithIndex()
     getObjectWithIndex(index: number, category: number): IRoomObject | null
     {
         const manager = this.getObjectManager(category);
@@ -268,6 +286,7 @@ export class RoomInstance implements IRoomInstance
         return null;
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::getObjectCount()
     getObjectCount(category: number): number
     {
         const manager = this.getObjectManager(category);
@@ -280,6 +299,7 @@ export class RoomInstance implements IRoomInstance
         return 0;
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::getObjectWithIndexAndType()
     getObjectWithIndexAndType(index: number, type: string, category: number): IRoomObject | null
     {
         const manager = this.getObjectManager(category);
@@ -292,6 +312,7 @@ export class RoomInstance implements IRoomInstance
         return null;
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::getObjectCountForType()
     getObjectCountForType(type: string, category: number): number
     {
         const manager = this.getObjectManager(category);
@@ -309,6 +330,7 @@ export class RoomInstance implements IRoomInstance
 	 *
 	 * @see AS3 RoomInstance.disposeObject() lines 273-290
 	 */
+    // AS3: .../src/com/sulake/room/RoomInstance.as::disposeObject()
     disposeObject(id: number, category: number): boolean
     {
         const manager = this.getObjectManager(category);
@@ -338,6 +360,7 @@ export class RoomInstance implements IRoomInstance
 	 *
 	 * @see AS3 RoomInstance.disposeObjects() lines 292-317
 	 */
+    // AS3: .../src/com/sulake/room/RoomInstance.as::disposeObjects()
     disposeObjects(category: number): number
     {
         const manager = this.getObjectManager(category);
@@ -368,11 +391,13 @@ export class RoomInstance implements IRoomInstance
         return count;
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::getObjectManagerIds()
     getObjectManagerIds(): number[]
     {
         return Array.from(this._managers.keys()).map(k => parseInt(k, 10));
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::hasUninitializedObjects()
     hasUninitializedObjects(): boolean
     {
         for(const manager of this._managers.values())
@@ -398,6 +423,7 @@ export class RoomInstance implements IRoomInstance
 	 *
 	 * @see AS3 RoomInstance.dispose() lines 51-96
 	 */
+    // AS3: .../src/com/sulake/room/RoomInstance.as::dispose()
     dispose(): void
     {
         for(const manager of this._managers.values())
@@ -421,6 +447,7 @@ export class RoomInstance implements IRoomInstance
         this._immutableStrings.clear();
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::createObjectManager()
     protected createObjectManager(category: number): IRoomObjectManager | null
     {
         const key = String(category);
@@ -445,11 +472,13 @@ export class RoomInstance implements IRoomInstance
         return manager;
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::getObjectManager()
     protected getObjectManager(category: number): IRoomObjectManager | null
     {
         return this._managers.get(String(category)) ?? null;
     }
 
+    // AS3: .../src/com/sulake/room/RoomInstance.as::disposeObjectManager()
     protected disposeObjectManager(category: number): boolean
     {
         const key = String(category);

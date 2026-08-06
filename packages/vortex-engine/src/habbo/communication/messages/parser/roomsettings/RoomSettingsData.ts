@@ -15,21 +15,37 @@ export class RoomSettingsData
     static readonly TRADE_MODE_NOT_WITH_CONTROLLER: number = 1;
     static readonly TRADE_MODE_ALLOWED: number = 2;
 
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get roomId()
     roomId: number = 0;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get name()
     name: string = '';
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get description()
     description: string = '';
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get doorMode()
     doorMode: number = 0;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get categoryId()
     categoryId: number = 0;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get maximumVisitors()
     maximumVisitors: number = 0;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get maximumVisitorsLimit()
     maximumVisitorsLimit: number = 0;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get tags()
     tags: string[] = [];
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get tradeMode()
     tradeMode: number = 0;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get allowPets()
     allowPets: boolean = false;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get allowFoodConsume()
     allowFoodConsume: boolean = false;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get allowWalkThrough()
     allowWalkThrough: boolean = false;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get hideWalls()
     hideWalls: boolean = false;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get wallThickness()
     wallThickness: number = 0;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get floorThickness()
     floorThickness: number = 0;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get chatSettings()
     chatSettings: RoomChatSettings | null = null;
 
     /**
@@ -37,12 +53,17 @@ export class RoomSettingsData
      * block. `RoomSettingsCtrl` does not draw them yet; they are read so the rest of the
      * packet lands on the right fields, which is what the dialog actually needs.
      */
-    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1961/_SafeCls_1961.as::leaveOnDoorTileEnabled
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::leaveOnDoorTileEnabled
     leaveOnDoorTileEnabled: boolean = false;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get idleSleepEnabled()
     idleSleepEnabled: boolean = true;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get idleSleepTimeoutSeconds()
     idleSleepTimeoutSeconds: number = 0;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get idleAutokickEnabled()
     idleAutokickEnabled: boolean = false;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get idleAutokickTimeoutSeconds()
     idleAutokickTimeoutSeconds: number = 0;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get muteAllPets()
     muteAllPets: boolean = false;
 
     /**
@@ -52,10 +73,14 @@ export class RoomSettingsData
      */
     allowNavigatorDynamicCats: boolean = false;
 
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get roomModerationSettings()
     roomModerationSettings: RoomModerationSettings | null = null;
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get hiddenByBc()
     hiddenByBc: boolean = false;
 
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get controllersById()
     controllersById: Map<number, RoomSettingsController> = new Map();
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get bannedUsersById()
     bannedUsersById: Map<number, RoomSettingsBannedUser> = new Map();
 
     /**
@@ -80,6 +105,7 @@ export class RoomSettingsData
     private _bannedListDirty: boolean = true;
     private _bannedList: RoomSettingsBannedUser[] | null = null;
 
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::getDoorModeLocalizationKey()
     static getDoorModeLocalizationKey(doorMode: number): string
     {
         switch(doorMode)
@@ -100,6 +126,7 @@ export class RoomSettingsData
         this._controllerList = null;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get controllerList()
     get controllerList(): RoomSettingsController[]
     {
         if(this._controllerList === null || this._controllerListDirty)
@@ -112,6 +139,7 @@ export class RoomSettingsData
         return this._controllerList;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::setBannedUser()
     setBannedUser(userId: number, banned: RoomSettingsBannedUser): void
     {
         this.bannedUsersById.set(userId, banned);
@@ -119,6 +147,7 @@ export class RoomSettingsData
         this._bannedList = null;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1710/_SafeCls_1961.as::get bannedUsersList()
     get bannedUsersList(): RoomSettingsBannedUser[]
     {
         if(this._bannedList === null || this._bannedListDirty)

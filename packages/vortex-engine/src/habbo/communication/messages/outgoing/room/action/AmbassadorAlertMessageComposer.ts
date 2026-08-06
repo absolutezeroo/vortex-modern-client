@@ -15,6 +15,7 @@ export class AmbassadorAlertMessageComposer extends MessageComposer<ConstructorP
         this._data = [userId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/action/AmbassadorAlertMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

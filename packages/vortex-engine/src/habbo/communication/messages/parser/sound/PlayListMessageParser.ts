@@ -48,6 +48,7 @@ export class PlayListMessageParser implements IMessageParser
      * `new class_3136(0, 0, null, null)` with the four values it just read thrown away. The read
      * order — id, length, name, creator — is what the sibling and the shared base both use.
      */
+    // AS3: sources/win63_version/habbo/communication/messages/parser/sound/PlayListMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._synchronizationCount = wrapper.readInt();

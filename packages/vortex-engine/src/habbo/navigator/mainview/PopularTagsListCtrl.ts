@@ -12,7 +12,9 @@ import { Util } from '../Util';
  */
 export class PopularTagsListCtrl implements IViewCtrl
 {
+    // AS3: sources/win63_version/habbo/navigator/mainview/PopularTagsListCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator;
+    // AS3: sources/win63_version/habbo/navigator/mainview/PopularTagsListCtrl.as::_content
     private _content: IWindowContainer | null = null;
     private _itemList: IItemListWindow | null = null;
     private _tagRenderer: TagRenderer;
@@ -23,6 +25,7 @@ export class PopularTagsListCtrl implements IViewCtrl
         this._tagRenderer = new TagRenderer(navigator);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PopularTagsListCtrl.as::dispose()
     dispose(): void
     {
         if(this._tagRenderer)
@@ -32,17 +35,20 @@ export class PopularTagsListCtrl implements IViewCtrl
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PopularTagsListCtrl.as::get content()
     get content(): IWindowContainer | null
     {
         return this._content;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PopularTagsListCtrl.as::set content()
     set content(value: IWindowContainer | null)
     {
         this._content = value;
         this._itemList = value ? value.findChildByName('item_list') as IItemListWindow : null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PopularTagsListCtrl.as::refresh()
     refresh(): void
     {
         if(!this._itemList || !this._content) return;

@@ -26,6 +26,7 @@ export class CallForHelpMessageComposer extends MessageComposer<unknown[]>
         }
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/CallForHelpMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -19,6 +19,7 @@ export class RemoveItemMessageComposer extends MessageComposer<ConstructorParame
         this._data = [objectId];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2136/_SafeCls_2734.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

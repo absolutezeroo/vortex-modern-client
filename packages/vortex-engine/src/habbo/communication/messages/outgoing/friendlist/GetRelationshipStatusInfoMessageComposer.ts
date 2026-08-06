@@ -15,6 +15,7 @@ export class GetRelationshipStatusInfoMessageComposer extends MessageComposer<Co
         this._data = [userId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/GetRelationshipStatusInfoMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

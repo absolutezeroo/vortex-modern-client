@@ -10,6 +10,7 @@ export class UseObjectMessageEventParser implements IMessageParser
 {
     private _userId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/UseObjectMessageEventParser.as::get userId()
     get userId(): number
     {
         return this._userId;
@@ -17,11 +18,13 @@ export class UseObjectMessageEventParser implements IMessageParser
 
     private _itemType: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/UseObjectMessageEventParser.as::get itemType()
     get itemType(): number
     {
         return this._itemType;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/UseObjectMessageEventParser.as::flush()
     flush(): boolean
     {
         this._userId = 0;
@@ -29,6 +32,7 @@ export class UseObjectMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/action/UseObjectMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper === null)

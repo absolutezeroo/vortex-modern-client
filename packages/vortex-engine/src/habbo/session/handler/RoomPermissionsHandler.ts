@@ -35,6 +35,7 @@ export class RoomPermissionsHandler extends BaseHandler
         connection.addMessageEvent(new YouAreOwnerMessageEvent(this.onYouAreOwner.bind(this)));
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomPermissionsHandler.as::onYouAreController()
     private onYouAreController(event: IMessageEvent): void
     {
         const parser = event.parser as YouAreControllerMessageParser;
@@ -54,6 +55,7 @@ export class RoomPermissionsHandler extends BaseHandler
         session.roomControllerLevel = parser.roomControllerLevel;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomPermissionsHandler.as::onYouAreNotController()
     private onYouAreNotController(event: IMessageEvent): void
     {
         const parser = event.parser as YouAreNotControllerMessageParser;
@@ -73,6 +75,7 @@ export class RoomPermissionsHandler extends BaseHandler
         session.roomControllerLevel = 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomPermissionsHandler.as::onYouAreOwner()
     private onYouAreOwner(_event: IMessageEvent): void
     {
         const session = this.listener?.getSession(this.roomId);

@@ -14,11 +14,13 @@ export class HabboUserBadgesMessageEvent extends MessageEvent implements IMessag
         super(callback, HabboUserBadgesMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/HabboUserBadgesMessageEvent.as::get userId()
     get userId(): number
     {
         return (this._parser as HabboUserBadgesMessageParser).userId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/HabboUserBadgesMessageEvent.as::get badges()
     get badges(): string[]
     {
         return (this._parser as HabboUserBadgesMessageParser).badges;

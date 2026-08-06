@@ -16,6 +16,7 @@ export class GetSecondsUntilMessageComposer extends MessageComposer<ConstructorP
         this._data = [goalCode];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/competition/GetSecondsUntilMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

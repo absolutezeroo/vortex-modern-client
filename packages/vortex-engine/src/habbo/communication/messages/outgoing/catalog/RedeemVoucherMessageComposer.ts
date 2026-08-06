@@ -13,6 +13,7 @@ export class RedeemVoucherMessageComposer extends MessageComposer<ConstructorPar
         this._data = [voucherCode];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/catalog/RedeemVoucherMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

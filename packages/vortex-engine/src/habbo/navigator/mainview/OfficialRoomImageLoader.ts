@@ -14,10 +14,12 @@ const logger = Logger.getLogger('habbo.navigator.mainview.OfficialRoomImageLoade
  */
 export class OfficialRoomImageLoader
 {
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomImageLoader.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
     private _imageName: string;
     private _imageUrl: string;
     private _bitmapWindow: IBitmapWrapperWindow | null;
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomImageLoader.as::_disposed
     private _disposed: boolean = false;
 
     constructor(
@@ -37,6 +39,7 @@ export class OfficialRoomImageLoader
         logger.info('[OFFICIAL ROOM ICON IMAGE DOWNLOADER] : ' + this._imageUrl);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomImageLoader.as::startLoad()
     startLoad(): void
     {
         if(!this._navigator) return;
@@ -58,11 +61,13 @@ export class OfficialRoomImageLoader
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomImageLoader.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomImageLoader.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -72,6 +77,7 @@ export class OfficialRoomImageLoader
         this._navigator = null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomImageLoader.as::onImageReady()
     private onImageReady(): void
     {
         if(this._disposed) return;
@@ -79,6 +85,7 @@ export class OfficialRoomImageLoader
         this.setImage();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomImageLoader.as::setImage()
     private setImage(): void
     {
         if(!this._navigator || this._navigator.disposed || !this._bitmapWindow || this._bitmapWindow.disposed)
@@ -105,6 +112,7 @@ export class OfficialRoomImageLoader
         this.dispose();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomImageLoader.as::onLoadError()
     private onLoadError(): void
     {
         logger.warn('Error loading image: ' + this._imageUrl);

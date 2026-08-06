@@ -78,6 +78,7 @@ export class LoginView extends Sprite
      *
      * Green is spelled "gfreen" in AS3 — see `ColouredButton`.
      */
+    // AS3: .../src/login/LoginView.as::addButtons()
     public addButtons(): void
     {
         this._cancelButton = new ColouredButton(
@@ -121,6 +122,7 @@ export class LoginView extends Sprite
      *
      * AS3 guards with `if(_saveButton != false)`, which is a truthiness test on the object.
      */
+    // AS3: .../src/login/LoginView.as::ready()
     public ready(): void
     {
         if(this._saveButton)
@@ -159,6 +161,7 @@ export class LoginView extends Sprite
      * password — AS3's `readSOLString("login")` / `restorePassword()`, which this port keeps in
      * `CommunicationUtils` under `readProperty()`.
      */
+    // AS3: .../src/login/LoginView.as::addInputFields()
     private addInputFields(): void
     {
         this._emailField = new InputField(

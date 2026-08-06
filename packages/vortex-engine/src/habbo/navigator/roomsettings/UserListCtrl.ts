@@ -24,8 +24,10 @@ export interface IRoomSettingsUserData
  */
 export class UserListCtrl
 {
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/UserListCtrl.as::DISPLAY_LIMIT
     private static readonly DISPLAY_LIMIT: number = DISPLAY_LIMIT;
 
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/UserListCtrl.as::_navigator
     protected _navigator: IHabboTransitionalNavigator;
     private _isFriendList: boolean;
     protected _userCount: number = 0;
@@ -36,16 +38,19 @@ export class UserListCtrl
         this._isFriendList = isFriendList;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/UserListCtrl.as::get disposed()
     get disposed(): boolean
     {
         return this._navigator === null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/UserListCtrl.as::get userCount()
     get userCount(): number
     {
         return this._userCount;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/UserListCtrl.as::refresh()
     refresh(list: IItemListWindow, users: IRoomSettingsUserData[], filter: string, highlightUserId: number): void
     {
         const filtered: IRoomSettingsUserData[] = [];
@@ -79,6 +84,7 @@ export class UserListCtrl
         this._userCount = filtered.length;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/UserListCtrl.as::getRowView()
     protected getRowView(): IWindowContainer
     {
         const layoutName = this._isFriendList ? 'ros_friend' : 'ros_flat_controller';
@@ -86,6 +92,7 @@ export class UserListCtrl
         return this._navigator.getXmlWindow(layoutName) as IWindowContainer;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/UserListCtrl.as::getBgColor()
     protected getBgColor(index: number, highlighted: boolean): number
     {
         if(highlighted) return 0xFFBBCCFF;
@@ -93,6 +100,7 @@ export class UserListCtrl
         return index % 2 !== 0 ? 0xFFFFFFFF : 0xFFEEEEE1;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/UserListCtrl.as::onBgMouseClick()
     protected onBgMouseClick(event: WindowEvent): void
     {
         const region = event.target as IWindowContainer;
@@ -108,6 +116,7 @@ export class UserListCtrl
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/UserListCtrl.as::refreshEntry()
     private refreshEntry(
         list: IItemListWindow,
         index: number,
@@ -141,6 +150,7 @@ export class UserListCtrl
         return false;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/UserListCtrl.as::getListEntry()
     private getListEntry(index: number): IWindowContainer
     {
         const entry = this.getRowView();
@@ -167,6 +177,7 @@ export class UserListCtrl
         return entry;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/UserListCtrl.as::refreshEntryDetails()
     private refreshEntryDetails(entry: IWindowContainer, user: IRoomSettingsUserData): void
     {
         const nameEl = entry.findChildByName('user_name_txt');
@@ -218,6 +229,7 @@ export class UserListCtrl
         this._navigator.send(new GetExtendedProfileMessageComposer(target.id));
     };
 
+    // AS3: sources/win63_version/habbo/navigator/roomsettings/UserListCtrl.as::dispose()
     dispose(): void
     {
         this._navigator = null!;

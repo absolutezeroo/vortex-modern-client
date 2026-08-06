@@ -14,6 +14,7 @@ export interface IPoint
 
 export class RoomWallData
 {
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::WALL_DIRECTION_VECTORS
     public static readonly WALL_DIRECTION_VECTORS: IVector3d[] = [
         new Vector3d(1, 0, 0),
         new Vector3d(0, 1, 0),
@@ -21,6 +22,7 @@ export class RoomWallData
         new Vector3d(0, -1, 0),
     ];
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::WALL_NORMAL_VECTORS
     public static readonly WALL_NORMAL_VECTORS: IVector3d[] = [
         new Vector3d(0, 1, 0),
         new Vector3d(-1, 0, 0),
@@ -28,22 +30,34 @@ export class RoomWallData
         new Vector3d(1, 0, 0),
     ];
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::_corners
     private _corners: IPoint[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomWallData.as::_endPoints
     private _endPoints: IPoint[] = [];
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::_directions
     private _directions: number[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomWallData.as::_lengths
     private _lengths: number[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomWallData.as::_leftTurns
     private _leftTurns: boolean[] = [];
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::_borders
     private _borders: boolean[] = [];
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::_hideWalls
     private _hideWalls: boolean[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomWallData.as::_manuallyLeftCut
     private _manuallyLeftCut: boolean[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomWallData.as::_manuallyRightCut
     private _manuallyRightCut: boolean[] = [];
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::_count
     private _count: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::get count()
     get count(): number
     {
         return this._count;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::addWall()
     addWall(corner: IPoint, direction: number, length: number, border: boolean, leftTurn: boolean): void
     {
         if(this.checkIsNotDuplicate(corner, direction, length, border, leftTurn))
@@ -60,57 +74,68 @@ export class RoomWallData
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::getCorner()
     getCorner(index: number): IPoint
     {
         return this._corners[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::getEndPoint()
     getEndPoint(index: number): IPoint
     {
         this.calculateWallEndPoints();
         return this._endPoints[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::getLength()
     getLength(index: number): number
     {
         return this._lengths[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::getDirection()
     getDirection(index: number): number
     {
         return this._directions[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::getBorder()
     getBorder(index: number): boolean
     {
         return this._borders[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::getHideWall()
     getHideWall(index: number): boolean
     {
         return this._hideWalls[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::getLeftTurn()
     getLeftTurn(index: number): boolean
     {
         return this._leftTurns[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::getManuallyLeftCut()
     getManuallyLeftCut(index: number): boolean
     {
         return this._manuallyLeftCut[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::getManuallyRightCut()
     getManuallyRightCut(index: number): boolean
     {
         return this._manuallyRightCut[index];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::setHideWall()
     setHideWall(index: number, hide: boolean): void
     {
         this._hideWalls[index] = hide;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::setLength()
     setLength(index: number, length: number): void
     {
         if(length < this._lengths[index])
@@ -120,6 +145,7 @@ export class RoomWallData
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::moveCorner()
     moveCorner(index: number, distance: number): void
     {
         if(distance > 0 && distance < this._lengths[index])
@@ -134,6 +160,7 @@ export class RoomWallData
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::checkIsNotDuplicate()
     private checkIsNotDuplicate(corner: IPoint, direction: number, length: number, border: boolean, leftTurn: boolean): boolean
     {
         for(let i = 0; i < this._count; i++)
@@ -151,6 +178,7 @@ export class RoomWallData
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomWallData.as::calculateWallEndPoints()
     private calculateWallEndPoints(): void
     {
         if(this._endPoints.length !== this._count)

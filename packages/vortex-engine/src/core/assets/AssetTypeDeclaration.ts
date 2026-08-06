@@ -27,9 +27,13 @@ export type AssetLoaderClass = new (mimeType: string, url?: string, id?: number)
  */
 export class AssetTypeDeclaration
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/AssetTypeDeclaration.as::_mimeType
     private readonly _mimeType: string;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/AssetTypeDeclaration.as::_assetClass
     private readonly _assetClass: AssetClass;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/AssetTypeDeclaration.as::_loaderClass
     private readonly _loaderClass: AssetLoaderClass | null;
+    // AS3: .../src/com/sulake/core/assets/AssetTypeDeclaration.as::_fileTypes
     private readonly _fileTypes: string[];
 
     /**
@@ -55,6 +59,7 @@ export class AssetTypeDeclaration
     /**
 	 * The MIME type for this declaration
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetTypeDeclaration.as::get mimeType()
     get mimeType(): string
     {
         return this._mimeType;
@@ -63,6 +68,7 @@ export class AssetTypeDeclaration
     /**
 	 * The asset class constructor
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetTypeDeclaration.as::get assetClass()
     get assetClass(): AssetClass
     {
         return this._assetClass;
@@ -71,6 +77,7 @@ export class AssetTypeDeclaration
     /**
 	 * The loader class constructor
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetTypeDeclaration.as::get loaderClass()
     get loaderClass(): AssetLoaderClass | null
     {
         return this._loaderClass;
@@ -79,6 +86,7 @@ export class AssetTypeDeclaration
     /**
 	 * File extensions that map to this type
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetTypeDeclaration.as::get fileTypes()
     get fileTypes(): string[]
     {
         return this._fileTypes;

@@ -55,6 +55,7 @@ export class DesktopController extends ActivatorController implements IDesktopWi
         return this;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/DesktopController.as::defaultProcedure()
     private static defaultProcedure(_event: WindowEvent, _window: IWindow): void
     {
         // No-op default procedure
@@ -63,6 +64,7 @@ export class DesktopController extends ActivatorController implements IDesktopWi
     /**
 	 * Returns the currently active window (delegates to getActiveChild).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DesktopController.as::getActiveWindow()
     public getActiveWindow(): IWindow
     {
         return this.getActiveChild() ?? this;
@@ -71,6 +73,7 @@ export class DesktopController extends ActivatorController implements IDesktopWi
     /**
 	 * Sets the active window (delegates to setActiveChild).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DesktopController.as::setActiveWindow()
     public setActiveWindow(window: IWindow): IWindow
     {
         return this.setActiveChild(window) ?? this;
@@ -85,11 +88,13 @@ export class DesktopController extends ActivatorController implements IDesktopWi
         super.groupParameterFilteredChildrenUnderPoint(point, result, paramFilter);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/DesktopController.as::setDisplayObject()
     public setDisplayObject(_displayObject: unknown): void
     {
         // No-op in TypeScript port — rendering handled by client layer
     }
 
+    // AS3: .../src/com/sulake/core/window/components/DesktopController.as::getDisplayObject()
     public getDisplayObject(): unknown
     {
         return null;

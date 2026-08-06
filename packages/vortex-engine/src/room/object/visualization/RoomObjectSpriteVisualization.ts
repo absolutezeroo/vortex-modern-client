@@ -24,10 +24,12 @@ let visualizationInstanceCounter = 0;
 export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualization
 {
     protected static readonly LAYER_SEPARATOR: string = '_';
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::ICON_LAYER_ID
     protected static readonly ICON_LAYER_ID: string = '_icon_';
     protected _scale: number = -1;
     protected _updateModelCounter: number = -1;
     protected _direction: number = -1;
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::_sprites
     private _sprites: RoomObjectSprite[] = [];
     private _instanceId: number;
     private _updateId: number = 0;
@@ -41,11 +43,13 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
 
     private _assetCollection: IGraphicAssetCollection | null = null;
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::get assetCollection()
     get assetCollection(): IGraphicAssetCollection | null
     {
         return this._assetCollection;
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::set assetCollection()
     set assetCollection(value: IGraphicAssetCollection | null)
     {
         this._assetCollection = value;
@@ -53,16 +57,19 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
 
     private _object: IRoomObject | null = null;
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::get object()
     get object(): IRoomObject | null
     {
         return this._object;
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::set object()
     set object(value: IRoomObject | null)
     {
         this._object = value;
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::get spriteCount()
     get spriteCount(): number
     {
         return this._sprites.length;
@@ -71,6 +78,7 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
     /**
 	 * Get the bounding rectangle of all visible sprites
 	 */
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::get boundingRectangle()
     get boundingRectangle(): { x: number; y: number; width: number; height: number }
     {
         if(!this._boundsDirty)
@@ -126,6 +134,7 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
         return this.getImage(0, -1);
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::normalizeColourComponent()
     private static normalizeColourComponent(value: number): number
     {
         return Math.max(0, Math.min(255, value)) / 255;
@@ -287,6 +296,7 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
         }
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::dispose()
     dispose(): void
     {
         if(this._sprites !== null)
@@ -309,21 +319,25 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
         this._object = null;
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::getUpdateID()
     getUpdateID(): number
     {
         return this._updateId;
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::getInstanceId()
     getInstanceId(): number
     {
         return this._instanceId;
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::addSprite()
     addSprite(): IRoomObjectSprite
     {
         return this.addSpriteAt(this._sprites.length);
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::addSpriteAt()
     addSpriteAt(index: number): IRoomObjectSprite
     {
         const sprite = new RoomObjectSprite();
@@ -340,6 +354,7 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
         return sprite;
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::removeSprite()
     removeSprite(sprite: IRoomObjectSprite): void
     {
         const index = this._sprites.indexOf(sprite as RoomObjectSprite);
@@ -353,6 +368,7 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
         (sprite as RoomObjectSprite).dispose();
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::getSprite()
     getSprite(index: number): IRoomObjectSprite | null
     {
         if(index >= 0 && index < this._sprites.length)
@@ -363,21 +379,25 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
         return null;
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::update()
     update(_geometry: IRoomGeometry, _time: number, _update: boolean, _skipUpdate: boolean): void
     {
         // Override in subclasses
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::getSpriteList()
     getSpriteList(): IRoomObjectSprite[] | null
     {
         return null;
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::initialize()
     initialize(_data: IRoomObjectVisualizationData): boolean
     {
         return false;
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::createSprites()
     protected createSprites(count: number): void
     {
         // Remove excess sprites
@@ -401,12 +421,14 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
         }
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::increaseUpdateId()
     protected increaseUpdateId(): void
     {
         this._updateId++;
         this._boundsDirty = true;
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::reset()
     protected reset(): void
     {
         this._scale = 0xFFFFFFFF;

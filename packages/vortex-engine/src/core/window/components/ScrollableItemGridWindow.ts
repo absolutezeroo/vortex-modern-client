@@ -66,6 +66,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets whether auto-hide scrollbar is enabled.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get autoHideScrollBar()
     public get autoHideScrollBar(): boolean
     {
         return this._autoHideScrollBar;
@@ -74,6 +75,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Sets whether auto-hide scrollbar is enabled.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::set autoHideScrollBar()
     public set autoHideScrollBar(value: boolean)
     {
         this._autoHideScrollBar = value;
@@ -83,6 +85,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the horizontal scroll position.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get scrollH()
     public get scrollH(): number
     {
         return this.itemGrid?.scrollH ?? 0;
@@ -91,6 +94,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Sets the horizontal scroll position.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::set scrollH()
     public set scrollH(value: number)
     {
         if(this.itemGrid) this.itemGrid.scrollH = value;
@@ -99,6 +103,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the vertical scroll position.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get scrollV()
     public get scrollV(): number
     {
         return this.itemGrid?.scrollV ?? 0;
@@ -107,6 +112,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Sets the vertical scroll position.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::set scrollV()
     public set scrollV(value: number)
     {
         if(this.itemGrid) this.itemGrid.scrollV = value;
@@ -115,6 +121,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the maximum horizontal scroll value.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get maxScrollH()
     public get maxScrollH(): number
     {
         return this.itemGrid?.maxScrollH ?? 0;
@@ -123,6 +130,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the maximum vertical scroll value.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get maxScrollV()
     public get maxScrollV(): number
     {
         return this.itemGrid?.maxScrollV ?? 0;
@@ -131,6 +139,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the visible region rectangle.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get visibleRegion()
     public get visibleRegion(): { x: number; y: number; width: number; height: number }
     {
         return this.itemGrid?.visibleRegion ?? {x: 0, y: 0, width: 0, height: 0};
@@ -139,6 +148,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the scrollable region rectangle.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get scrollableRegion()
     public get scrollableRegion(): { x: number; y: number; width: number; height: number }
     {
         return this.itemGrid?.scrollableRegion ?? {x: 0, y: 0, width: 0, height: 0};
@@ -147,6 +157,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the horizontal scroll step.
 	 */
+    // AS3: sources/win63_version/core/window/components/ScrollableItemGridWindow.as::get scrollStepH()
     public get scrollStepH(): number
     {
         return this.itemGrid?.scrollStepH ?? 0;
@@ -155,6 +166,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Sets the horizontal scroll step.
 	 */
+    // AS3: sources/win63_version/core/window/components/ScrollableItemGridWindow.as::set scrollStepH()
     public set scrollStepH(value: number)
     {
         if(this.itemGrid) this.itemGrid.scrollStepH = value;
@@ -163,6 +175,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the vertical scroll step.
 	 */
+    // AS3: sources/win63_version/core/window/components/ScrollableItemGridWindow.as::get scrollStepV()
     public get scrollStepV(): number
     {
         return this.itemGrid?.scrollStepV ?? 0;
@@ -171,6 +184,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Sets the vertical scroll step.
 	 */
+    // AS3: sources/win63_version/core/window/components/ScrollableItemGridWindow.as::set scrollStepV()
     public set scrollStepV(value: number)
     {
         if(this.itemGrid) this.itemGrid.scrollStepV = value;
@@ -179,6 +193,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets whether items auto-arrange.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get autoArrangeItems()
     public get autoArrangeItems(): boolean
     {
         return this.itemGrid?.autoArrangeItems ?? true;
@@ -187,6 +202,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Sets whether items auto-arrange.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::set autoArrangeItems()
     public set autoArrangeItems(value: boolean)
     {
         if(this.itemGrid) this.itemGrid.autoArrangeItems = value;
@@ -195,6 +211,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the number of columns.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get numColumns()
     public get numColumns(): number
     {
         return this.itemGrid?.numColumns ?? 0;
@@ -203,6 +220,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the number of rows.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get numRows()
     public get numRows(): number
     {
         return this.itemGrid?.numRows ?? 0;
@@ -211,6 +229,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the total number of grid items.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get numGridItems()
     public get numGridItems(): number
     {
         return this.itemGrid?.numGridItems ?? 0;
@@ -219,6 +238,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets whether grid rebuilds on resize.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get shouldRebuildGridOnResize()
     public get shouldRebuildGridOnResize(): boolean
     {
         return this.itemGrid?.shouldRebuildGridOnResize ?? true;
@@ -227,6 +247,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Sets whether grid rebuilds on resize.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::set shouldRebuildGridOnResize()
     public set shouldRebuildGridOnResize(value: boolean)
     {
         if(this.itemGrid) this.itemGrid.shouldRebuildGridOnResize = value;
@@ -235,6 +256,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the spacing between items.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get spacing()
     public get spacing(): number
     {
         return this.itemGrid?.spacing ?? 0;
@@ -243,6 +265,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Sets the spacing between items.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::set spacing()
     public set spacing(value: number)
     {
         if(this.itemGrid) this.itemGrid.spacing = value;
@@ -251,6 +274,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Sets the vertical spacing.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::set verticalSpacing()
     public set verticalSpacing(value: number)
     {
         if(this.itemGrid) this.itemGrid.verticalSpacing = value;
@@ -259,6 +283,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets whether items scale to fit.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get scaleToFitItems()
     public get scaleToFitItems(): boolean
     {
         return this.itemGrid?.scaleToFitItems ?? false;
@@ -267,6 +292,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Sets whether items scale to fit.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::set scaleToFitItems()
     public set scaleToFitItems(value: boolean)
     {
         if(this.itemGrid) this.itemGrid.scaleToFitItems = value;
@@ -275,6 +301,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets whether the grid resizes on item update.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get resizeOnItemUpdate()
     public get resizeOnItemUpdate(): boolean
     {
         return this.itemGrid?.resizeOnItemUpdate ?? false;
@@ -283,6 +310,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Sets whether the grid resizes on item update.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::set resizeOnItemUpdate()
     public set resizeOnItemUpdate(value: boolean)
     {
         if(this.itemGrid) this.itemGrid.resizeOnItemUpdate = value;
@@ -291,6 +319,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets whether columns resize to fit content.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get containerResizeToColumns()
     public get containerResizeToColumns(): boolean
     {
         return false;
@@ -299,6 +328,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Sets whether columns resize to fit content.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::set containerResizeToColumns()
     public set containerResizeToColumns(_value: boolean)
     {
         // No-op per AS3
@@ -350,6 +380,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Adds a grid item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::addGridItem()
     public addGridItem(item: IWindow): IWindow
     {
         return this.itemGrid!.addGridItem(item);
@@ -358,6 +389,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Adds a grid item at the specified index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::addGridItemAt()
     public addGridItemAt(item: IWindow, index: number): IWindow
     {
         return this.itemGrid!.addGridItemAt(item, index);
@@ -366,6 +398,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the grid item at the specified index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::getGridItemAt()
     public getGridItemAt(index: number): IWindow | null
     {
         return this.itemGrid?.getGridItemAt(index) ?? null;
@@ -374,6 +407,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the grid item with the specified ID.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::getGridItemByID()
     public getGridItemByID(id: number): IWindow | null
     {
         return this.itemGrid?.getGridItemByID(id) ?? null;
@@ -382,6 +416,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the grid item with the specified name.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::getGridItemByName()
     public getGridItemByName(name: string): IWindow | null
     {
         return this.itemGrid?.getGridItemByName(name) ?? null;
@@ -390,6 +425,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the grid item with the specified tag.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::getGridItemByTag()
     public getGridItemByTag(tag: string): IWindow | null
     {
         return this.itemGrid?.getGridItemByTag(tag) ?? null;
@@ -398,6 +434,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Gets the index of the specified grid item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::getGridItemIndex()
     public getGridItemIndex(item: IWindow): number
     {
         return this.itemGrid?.getGridItemIndex(item) ?? -1;
@@ -406,6 +443,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Removes a grid item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::removeGridItem()
     public removeGridItem(item: IWindow): IWindow | null
     {
         return this.itemGrid?.removeGridItem(item) ?? null;
@@ -414,6 +452,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Removes the grid item at the specified index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::removeGridItemAt()
     public removeGridItemAt(index: number): IWindow | null
     {
         return this.itemGrid?.removeGridItemAt(index) ?? null;
@@ -422,6 +461,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Sets the index of the specified grid item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::setGridItemIndex()
     public setGridItemIndex(item: IWindow, index: number): void
     {
         this.itemGrid?.setGridItemIndex(item, index);
@@ -430,6 +470,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Swaps two grid items.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::swapGridItems()
     public swapGridItems(a: IWindow, b: IWindow): void
     {
         this.itemGrid?.swapGridItems(a, b);
@@ -438,6 +479,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Swaps two grid items at the specified indices.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::swapGridItemsAt()
     public swapGridItemsAt(indexA: number, indexB: number): void
     {
         this.itemGrid?.swapGridItemsAt(indexA, indexB);
@@ -446,6 +488,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Removes all grid items.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::removeGridItems()
     public removeGridItems(): void
     {
         this.itemGrid?.removeGridItems();
@@ -454,6 +497,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Destroys all grid items.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::destroyGridItems()
     public destroyGridItems(): void
     {
         this.itemGrid?.destroyGridItems();
@@ -462,6 +506,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Rebuilds the grid structure.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::rebuildGridStructure()
     public rebuildGridStructure(): void
     {
         this.itemGrid?.rebuildGridStructure();
@@ -503,6 +548,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Hides the scrollbar.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::hideScrollBar()
     private hideScrollBar(): void
     {
         const sb = this.scrollBar as unknown as IWindow | null;
@@ -516,6 +562,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Shows the scrollbar.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::showScrollBar()
     private showScrollBar(): void
     {
         const sb = this.scrollBar as unknown as IWindow | null;
@@ -529,6 +576,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Updates the scrollbar visibility based on the auto-hide setting.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::updateScrollBarVisibility()
     private updateScrollBarVisibility(): void
     {
         const sb = this.scrollBar as unknown as IWindow | null;
@@ -554,6 +602,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
     /**
 	 * Handles scrollbar enable/disable events.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollableItemGridWindow.as::scrollBarEventProc()
     private scrollBarEventProc(event: WindowEvent): void
     {
         if(event.type === 'WE_ENABLED')

@@ -12,6 +12,7 @@ import type {IThemeManager} from './theme/IThemeManager';
  */
 export interface IWindowFactory
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowFactory.as::create()
     create(
         name: string,
         type: number,
@@ -27,19 +28,23 @@ export interface IWindowFactory
         layerName?: string
     ): IWindow;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowFactory.as::destroy()
     destroy(window: IWindow): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowFactory.as::buildFromXML()
     buildFromXML(
         layout: string | Document | Element,
         contextLayer?: number,
         namedWindows?: Map<string, IWindow> | null
     ): IWindow | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowFactory.as::windowToXMLString()
     windowToXMLString(window: IWindow): string;
 
     getLayoutByTypeAndStyle(type: number, style: number): string | null;
 
     getDefaultsByTypeAndStyle(type: number, style: number): DefaultAttStruct | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowFactory.as::getThemeManager()
     getThemeManager(): IThemeManager;
 }

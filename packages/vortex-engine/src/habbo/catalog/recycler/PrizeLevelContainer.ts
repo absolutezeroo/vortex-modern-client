@@ -18,6 +18,7 @@ export class PrizeLevelContainer
         return this._prizeLevelId;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/PrizeLevelContainer.as::_prizes
     private _prizes: PrizeContainer[];
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/recycler/PrizeLevelContainer.as::get prizes()

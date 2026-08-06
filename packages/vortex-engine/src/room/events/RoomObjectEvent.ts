@@ -22,13 +22,16 @@ export class RoomObjectEvent
         return this._type;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/events/RoomObjectEvent.as::_object
     private _object: IRoomObject | null;
 
+    // AS3: .../src/com/sulake/room/events/RoomObjectEvent.as::get object()
     get object(): IRoomObject | null
     {
         return this._object;
     }
 
+    // AS3: .../src/com/sulake/room/events/RoomObjectEvent.as::get objectId()
     get objectId(): number
     {
         if(this._object !== null)
@@ -39,6 +42,7 @@ export class RoomObjectEvent
         return -1;
     }
 
+    // AS3: .../src/com/sulake/room/events/RoomObjectEvent.as::get objectType()
     get objectType(): string | null
     {
         if(this._object !== null)

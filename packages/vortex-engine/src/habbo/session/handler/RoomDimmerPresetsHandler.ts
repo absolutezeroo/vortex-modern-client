@@ -59,6 +59,7 @@ export class RoomDimmerPresetsHandler extends BaseHandler
         this._messageEvents.push(event);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomDimmerPresetsHandler.as::onRoomDimmerPresets()
     private onRoomDimmerPresets(event: IMessageEvent): void
     {
         const dimmerEvent = event as RoomDimmerPresetsMessageEvent;

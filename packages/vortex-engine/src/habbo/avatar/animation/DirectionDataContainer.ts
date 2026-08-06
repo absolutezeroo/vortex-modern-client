@@ -10,8 +10,10 @@ export class DirectionDataContainer
         this._offset = parseInt(data.offset) || 0;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/animation/DirectionDataContainer.as::_offset
     private _offset: number;
 
+    // AS3: sources/win63_version/habbo/avatar/animation/DirectionDataContainer.as::get offset()
     public get offset(): number
     {
         return this._offset;

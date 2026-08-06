@@ -32,6 +32,7 @@ export class RoomObjectMoveUpdateMessage extends RoomObjectUpdateMessage
 
     private _targetLoc: IVector3d | null;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectMoveUpdateMessage.as::get targetLoc()
     get targetLoc(): IVector3d | null
     {
         if(this._targetLoc === null)
@@ -42,27 +43,34 @@ export class RoomObjectMoveUpdateMessage extends RoomObjectUpdateMessage
         return this._targetLoc;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectMoveUpdateMessage.as::get realTargetLoc()
     get realTargetLoc(): IVector3d | null
     {
         return this._targetLoc;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectMoveUpdateMessage.as::_animationTime
     private _animationTime: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectMoveUpdateMessage.as::get animationTime()
     get animationTime(): number
     {
         return this._animationTime;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectMoveUpdateMessage.as::_isSlideUpdate
     private _isSlideUpdate: boolean;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectMoveUpdateMessage.as::get isSlideUpdate()
     get isSlideUpdate(): boolean
     {
         return this._isSlideUpdate;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectMoveUpdateMessage.as::_skipPositionUpdate
     private _skipPositionUpdate: boolean;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectMoveUpdateMessage.as::get skipPositionUpdate()
     get skipPositionUpdate(): boolean
     {
         return this._skipPositionUpdate;

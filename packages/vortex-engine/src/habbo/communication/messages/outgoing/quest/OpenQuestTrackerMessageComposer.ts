@@ -7,6 +7,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class OpenQuestTrackerMessageComposer extends MessageComposer<[]>
 {
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/quest/OpenQuestTrackerMessageComposer.as::getMessageArray()
     getMessageArray(): []
     {
         return [];

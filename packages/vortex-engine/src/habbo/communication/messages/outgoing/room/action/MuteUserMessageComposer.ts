@@ -15,6 +15,7 @@ export class MuteUserMessageComposer extends MessageComposer<[number, number, nu
         this._data = [userId, minutes, roomId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/action/MuteUserMessageComposer.as::getMessageArray()
     getMessageArray(): [number, number, number]
     {
         return this._data;

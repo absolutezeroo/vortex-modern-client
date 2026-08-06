@@ -20,9 +20,13 @@ export class FloatingIdleZ implements IAvatarAddition
 {
     protected _visualization: AvatarVisualization;
     private _assetName: string | null = null;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::_startTime
     private _startTime: number;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::_offsetY
     private _offsetY: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::_scale
     private _scale: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::_state
     private _state: number = -1;
 
     constructor(id: number, visualization: AvatarVisualization) 
@@ -33,13 +37,16 @@ export class FloatingIdleZ implements IAvatarAddition
         this._state = STATE_DELAY;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::_id
     protected _id: number;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::get id()
     get id(): number 
     {
         return this._id;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::get disposed()
     get disposed(): boolean 
     {
         return this._visualization == null;
@@ -51,6 +58,7 @@ export class FloatingIdleZ implements IAvatarAddition
      * @param sprite - The sprite to animate
      * @returns True if a visual change occurred
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::animate()
     animate(sprite: IRoomObjectSprite | null): boolean 
     {
         if(!sprite) 
@@ -110,6 +118,7 @@ export class FloatingIdleZ implements IAvatarAddition
      * @param sprite - The sprite to update
      * @param scale - The current visualization scale
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::update()
     update(sprite: IRoomObjectSprite | null, scale: number): void 
     {
         if(!sprite) 
@@ -176,6 +185,7 @@ export class FloatingIdleZ implements IAvatarAddition
     /**
      * Disposes of this addition and releases references.
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::dispose()
     dispose(): void 
     {
         this._visualization = null!;
@@ -188,6 +198,7 @@ export class FloatingIdleZ implements IAvatarAddition
      * @param frame - The frame number (1 or 2)
      * @returns The asset name string
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::getAssetNameForFrame()
     protected getAssetNameForFrame(frame: number): string 
     {
         let direction = 'left';

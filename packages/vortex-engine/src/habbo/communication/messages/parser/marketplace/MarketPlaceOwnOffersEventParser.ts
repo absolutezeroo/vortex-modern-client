@@ -19,20 +19,24 @@ export class MarketPlaceOwnOffersEventParser implements IMessageParser
 {
     private static readonly MAX_OFFERS: number = 500;
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3542.as::_offers
     private _offers: MarketPlaceOfferEntry[] = [];
 
     private _creditsWaiting: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3542.as::get offers()
     get offers(): MarketPlaceOfferEntry[]
     {
         return this._offers;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3542.as::get creditsWaiting()
     get creditsWaiting(): number
     {
         return this._creditsWaiting;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3542.as::flush()
     flush(): boolean
     {
         this._offers = [];
@@ -40,6 +44,7 @@ export class MarketPlaceOwnOffersEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3542.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._offers = [];

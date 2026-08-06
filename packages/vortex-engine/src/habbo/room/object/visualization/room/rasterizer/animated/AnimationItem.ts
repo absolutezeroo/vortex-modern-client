@@ -8,9 +8,13 @@
  */
 export class AnimationItem
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/AnimationItem.as::_x
     private _x: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/AnimationItem.as::_y
     private _y: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/AnimationItem.as::_speedX
     private _speedX: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/AnimationItem.as::_speedY
     private _speedY: number = 0;
 
     constructor(x: number, y: number, speedX: number, speedY: number, bitmapData: HTMLCanvasElement)
@@ -22,8 +26,10 @@ export class AnimationItem
         this._bitmapData = bitmapData;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/AnimationItem.as::_bitmapData
     private _bitmapData: HTMLCanvasElement | null = null;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/AnimationItem.as::get bitmapData()
     get bitmapData(): HTMLCanvasElement | null
     {
         return this._bitmapData;
@@ -39,6 +45,7 @@ export class AnimationItem
 	 * @param time - Current time in milliseconds
 	 * @returns [x, y] position within the tiling area
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/AnimationItem.as::getPosition()
     getPosition(tileWidth: number, tileHeight: number, speedXScale: number, speedYScale: number, time: number): [number, number]
     {
         let posX = this._x;
@@ -60,6 +67,7 @@ export class AnimationItem
         return [pixelX, pixelY];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/AnimationItem.as::dispose()
     dispose(): void
     {
         this._bitmapData = null;

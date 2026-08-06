@@ -30,19 +30,28 @@ export interface IHabboNewNavigator extends IDisposable
     /**
 	 * Check if navigator is ready
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get isReady()
     readonly isReady: boolean;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get communication()
     readonly communication: IHabboCommunicationManager;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get sessionData()
     readonly sessionData: ISessionDataManager | null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get roomSessionManager()
     readonly roomSessionManager: IRoomSessionManager | null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get windowManager()
     readonly windowManager: IHabboWindowManager | null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get localization()
     readonly localization: IHabboLocalizationManager | null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get habboHelp()
     readonly habboHelp: IHabboHelp | null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get linkPattern()
     readonly linkPattern: string;
 
     /**
 	 * Get the legacy navigator
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get legacyNavigator()
     readonly legacyNavigator: IHabboNavigator;
 
     /**
@@ -59,23 +68,31 @@ export interface IHabboNewNavigator extends IDisposable
     /**
 	 * Get the navigator data model (from legacy navigator)
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get data()
     readonly data: NavigatorData;
 
     /**
 	 * Get the context container
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get contextContainer()
     readonly contextContainer: ContextContainer;
 
     /**
 	 * Get the search history manager
 	 */
     readonly historyManager: SearchContextHistoryManager;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get searchContextHistoryManager()
     readonly searchContextHistoryManager: SearchContextHistoryManager;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get liftDataContainer()
     readonly liftDataContainer: LiftDataContainer;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get imageLibraryBaseUrl()
     readonly imageLibraryBaseUrl: string;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get mainWindow()
     readonly mainWindow: IWindow | null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get view()
     readonly view: NavigatorView | null;
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get newResultsRendered()
     newResultsRendered: boolean;
 
     /**
@@ -86,63 +103,79 @@ export interface IHabboNewNavigator extends IDisposable
     /**
 	 * Get current search results
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get currentResults()
     readonly currentResults: NavigatorSearchResultSet | null;
 
     /**
 	 * Get collapsed categories
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get collapsedCategories()
     readonly collapsedCategories: Set<string>;
 
     /**
 	 * Open the navigator
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::open()
     open(): void;
 
     /**
 	 * Close the navigator
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::close()
     close(): void;
 
     /**
 	 * Toggle the navigator
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::toggle()
     toggle(): void;
 
     /**
 	 * Perform a search
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performSearch()
     performSearch(searchCode: string, filtering?: string, source?: string): void;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performSearchByContext()
     performSearchByContext(context: SearchContext): void;
 
     /**
 	 * Perform the last search again
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performLastSearch()
     performLastSearch(): void;
 
     /**
 	 * Perform a tag search
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performTagSearch()
     performTagSearch(tag: string): void;
 
     /**
 	 * Perform a text search
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performTextSearch()
     performTextSearch(text: string): void;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::showOwnRooms()
     showOwnRooms(): void;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performGuildBaseSearch()
     performGuildBaseSearch(): void;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performCompetitionRoomsSearch()
     performCompetitionRoomsSearch(goalId: number, roomType: number): void;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::showToolbarHover()
     showToolbarHover(point: { x: number; y: number }): void;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::hideToolbarHover()
     hideToolbarHover(force: boolean): void;
 
     /**
 	 * Go back in search history
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::goBack()
     goBack(): void;
 
     /**
@@ -153,21 +186,25 @@ export interface IHabboNewNavigator extends IDisposable
     /**
 	 * Go to a room
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::goToRoom()
     goToRoom(roomId: number, source?: string): void;
 
     /**
 	 * Go to home room
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::goToHomeRoom()
     goToHomeRoom(): void;
 
     /**
 	 * Add a saved search
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::addSavedSearch()
     addSavedSearch(searchCode: string, filtering: string): void;
 
     /**
 	 * Delete a saved search
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::deleteSavedSearch()
     deleteSavedSearch(id: number): void;
 
     /**
@@ -190,5 +227,6 @@ export interface IHabboNewNavigator extends IDisposable
 	 */
     setSearchCodeViewMode(searchCode: string, viewMode: number): void;
 
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::sendWindowPreferences()
     sendWindowPreferences(x: number, y: number, width: number, height: number, leftPaneHidden: boolean, resultsMode: number): void;
 }

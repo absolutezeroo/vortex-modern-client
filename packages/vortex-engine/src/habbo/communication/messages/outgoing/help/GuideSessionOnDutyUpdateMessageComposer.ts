@@ -15,6 +15,7 @@ export class GuideSessionOnDutyUpdateMessageComposer extends MessageComposer<Con
         this._data = [onDuty, guideDuty, helpDuty, bullyDuty];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/GuideSessionOnDutyUpdateMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

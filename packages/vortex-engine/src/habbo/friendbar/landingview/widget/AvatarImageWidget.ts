@@ -19,6 +19,7 @@ import type {AvatarUpdateEvent} from '@habbo/avatar/events/AvatarUpdateEvent';
  */
 export class AvatarImageWidget implements ILandingViewWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::_landingView
     private _landingView: HabboLandingView | null;
     private _container: IWidgetWindow | null = null;
     private _userObjectEvent: UserObjectMessageEvent | null;
@@ -44,6 +45,7 @@ export class AvatarImageWidget implements ILandingViewWidget
         avatarEditor?.events?.on?.('AVATAR_FIGURE_UPDATED', this.onAvatarFigureUpdated);
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
@@ -87,6 +89,7 @@ export class AvatarImageWidget implements ILandingViewWidget
         this.refreshAvatarInfo();
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;

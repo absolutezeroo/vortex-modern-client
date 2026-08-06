@@ -14,9 +14,12 @@ export interface IRoomRenderer extends IRoomRendererBase
 {
     roomObjectVariableAccurateZ: string | null;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRenderer.as::createCanvas()
     createCanvas(id: number, width: number, height: number, scale: number): IRoomRenderingCanvas;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRenderer.as::getCanvas()
     getCanvas(id: number): IRoomRenderingCanvas | null;
 
+    // AS3: sources/win63_version/room/renderer/IRoomRenderer.as::disposeCanvas()
     disposeCanvas(id: number): boolean;
 }

@@ -44,6 +44,7 @@ const log = Logger.getLogger('habbo.ui.RoomWidgetFactory');
 
 export class RoomWidgetFactory implements IRoomWidgetFactory
 {
+    // AS3: .../src/com/sulake/habbo/ui/widget/RoomWidgetFactory.as::_roomUI
     private _roomUI: RoomUI;
     private _disposed: boolean = false;
     // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/RoomWidgetFactory.as::var_3743 (chat widget id counter)
@@ -184,11 +185,13 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/RoomWidgetFactory.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/RoomWidgetFactory.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

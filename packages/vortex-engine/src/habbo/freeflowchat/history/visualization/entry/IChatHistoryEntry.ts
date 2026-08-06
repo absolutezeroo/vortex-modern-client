@@ -11,11 +11,18 @@ import type {Rectangle} from 'pixi.js';
  */
 export interface IChatHistoryEntry
 {
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2418.as::get bitmap()
     readonly bitmap: ImageBitmap | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2418.as::get overlap()
     readonly overlap: Rectangle | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2418.as::get userIndex()
     readonly userIndex: number;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2418.as::get webId()
     readonly webId: number;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2418.as::get roomId()
     readonly roomId: number;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2418.as::get canIgnore()
     readonly canIgnore: boolean;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2418.as::get userName()
     readonly userName: string;
 }

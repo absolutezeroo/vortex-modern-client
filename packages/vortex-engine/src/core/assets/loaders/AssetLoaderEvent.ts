@@ -44,6 +44,7 @@ export class AssetLoaderEvent
     static readonly OPEN = AssetLoaderEventType.OPEN;
 
     private readonly _type: AssetLoaderEventType;
+    // AS3: .../src/com/sulake/core/assets/loaders/AssetLoaderEvent.as::_status
     private readonly _status: number;
 
     /**
@@ -68,6 +69,7 @@ export class AssetLoaderEvent
     /**
 	 * The status code (HTTP status or custom)
 	 */
+    // AS3: .../src/com/sulake/core/assets/loaders/AssetLoaderEvent.as::get status()
     get status(): number
     {
         return this._status;
@@ -76,6 +78,7 @@ export class AssetLoaderEvent
     /**
 	 * Create a clone of this event
 	 */
+    // AS3: .../src/com/sulake/core/assets/loaders/AssetLoaderEvent.as::clone()
     clone(): AssetLoaderEvent
     {
         return new AssetLoaderEvent(this._type, this._status);
@@ -84,6 +87,7 @@ export class AssetLoaderEvent
     /**
 	 * String representation
 	 */
+    // AS3: .../src/com/sulake/core/assets/loaders/AssetLoaderEvent.as::toString()
     toString(): string
     {
         return `[AssetLoaderEvent type=${this._type} status=${this._status}]`;

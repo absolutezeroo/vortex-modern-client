@@ -8,8 +8,11 @@
  */
 export class FurniStackingHeightMap
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/FurniStackingHeightMap.as::_heightMap
     private _heightMap: number[];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/FurniStackingHeightMap.as::_isNotStackable
     private _isNotStackable: boolean[];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/FurniStackingHeightMap.as::_isRoomTile
     private _isRoomTile: boolean[];
 
     constructor(width: number, height: number)
@@ -22,15 +25,19 @@ export class FurniStackingHeightMap
         this._isRoomTile = new Array(size).fill(false);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/FurniStackingHeightMap.as::_width
     private _width: number;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/FurniStackingHeightMap.as::get width()
     get width(): number
     {
         return this._width;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/FurniStackingHeightMap.as::_height
     private _height: number;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/FurniStackingHeightMap.as::get height()
     get height(): number
     {
         return this._height;
@@ -60,6 +67,7 @@ export class FurniStackingHeightMap
     /**
 	 * Set whether stacking is blocked on a tile.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/FurniStackingHeightMap.as::setStackingBlocked()
     setStackingBlocked(x: number, y: number, blocked: boolean): void
     {
         if(x < 0 || x >= this._width || y < 0 || y >= this._height) return;
@@ -80,6 +88,7 @@ export class FurniStackingHeightMap
     /**
 	 * Set whether a position is a valid room tile.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/FurniStackingHeightMap.as::setIsRoomTile()
     setIsRoomTile(x: number, y: number, isRoom: boolean): void
     {
         if(x < 0 || x >= this._width || y < 0 || y >= this._height) return;
@@ -97,7 +106,7 @@ export class FurniStackingHeightMap
         return this._isRoomTile[y * this._width + x];
     }
 
-    // AS3: sources/win63_version/habbo/room/utils/FurniStackingHeightMap.as::validPosition()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/FurniStackingHeightMap.as::validPosition()
     private validPosition(x: number, y: number): boolean
     {
         return x >= 0 && x < this._width && y >= 0 && y < this._height;
@@ -119,7 +128,7 @@ export class FurniStackingHeightMap
 	 * @param referenceHeight - Height every scanned tile must match (±0.01); -1 derives it from
 	 *                          the target tile
 	 */
-    // AS3: sources/win63_version/habbo/room/utils/FurniStackingHeightMap.as::validateLocation()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/FurniStackingHeightMap.as::validateLocation()
     validateLocation(
         x: number, y: number,
         sizeX: number, sizeY: number,
@@ -174,6 +183,7 @@ export class FurniStackingHeightMap
         return true;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/FurniStackingHeightMap.as::dispose()
     dispose(): void
     {
         // AS3 also zeroes the dimensions: leaving them set while the arrays are empty

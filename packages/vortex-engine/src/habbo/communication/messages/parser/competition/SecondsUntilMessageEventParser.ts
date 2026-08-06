@@ -11,6 +11,7 @@ export class SecondsUntilMessageEventParser implements IMessageParser
     private _timeStr: string = '';
     private _secondsUntil: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/SecondsUntilMessageEventParser.as::flush()
     flush(): boolean
     {
         this._timeStr = '';
@@ -18,6 +19,7 @@ export class SecondsUntilMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/SecondsUntilMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;
@@ -27,11 +29,13 @@ export class SecondsUntilMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/SecondsUntilMessageEventParser.as::get timeStr()
     get timeStr(): string
     {
         return this._timeStr;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/SecondsUntilMessageEventParser.as::get secondsUntil()
     get secondsUntil(): number
     {
         return this._secondsUntil;

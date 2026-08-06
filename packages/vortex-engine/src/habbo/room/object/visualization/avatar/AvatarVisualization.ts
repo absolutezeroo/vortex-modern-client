@@ -92,41 +92,64 @@ const GEOMETRY_UPDATE_INTERVAL_MS: number = 41;
 
 export class AvatarVisualization extends RoomObjectSpriteVisualization implements IAvatarImageListener, IAvatarEffectListener 
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_lastAnimationUpdateTime
     private _lastAnimationUpdateTime: number = -1000;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_visualizationData
     private _visualizationData: AvatarVisualizationData | null = null;
     private _avatarImages: Map<string, IAvatarImage> = new Map();
     private _avatarImagesWithEffect: Map<string, IAvatarImage> = new Map();
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_updatesUntilFrameUpdate
     private _updatesUntilFrameUpdate: number = 0;
     private _isAnimating: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_figure
     private _figure: string = '';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_gender
     private _gender: string = '';
     private _pendingFrameUpdates: number = 0;
     private _shadowAssetName: string | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_currentHeadAngleDeg
     private _currentHeadAngleDeg: number = -1;
     private _currentHeadAngle: number = -1;
     private _extraSpritesStartIndex: number = 2;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_additions
     private _additions: Map<number, IAvatarAddition> | null = null;
     private _geometryUpdateCounter: number = -1;
     private _postureParameter: string = '';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_isTalking
     private _isTalking: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_isSleeping
     private _isSleeping: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_isBlinking
     private _isBlinking: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_expressionType
     private _expressionType: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_gesture
     private _gesture: number = 0;
     private _danceStyle: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_mouseHighlight
     private _mouseHighlight: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_mouseHighlightEnabled
     private _mouseHighlightEnabled: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_signType
     private _signType: number = -1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_effectType
     private _effectType: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_carryObjectType
     private _carryObjectType: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_useObjectType
     private _useObjectType: number = 0;
     private _sitOffset: number = 0;
     private _verticalOffset: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_effectJustApplied
     private _effectJustApplied: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_isSittingManual
     private _isSittingManual: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_isLaying
     private _isLaying: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_activeAvatarImage
     private _activeAvatarImage: IAvatarImage | null = null;
     private _isOwnAvatar: boolean = false;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_forceUpdate
     private _forceUpdate: boolean = false;
 
     constructor() 
@@ -134,31 +157,37 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
         super();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_angle
     private _angle: number = -1;
 
     /**
      * The body direction angle in degrees.
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::get angle()
     get angle(): number 
     {
         return this._angle;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_posture
     private _posture: string = '';
 
     /**
      * The current avatar posture string (std, sit, lay, mv, etc.).
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::get posture()
     get posture(): string 
     {
         return this._posture;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_disposed
     private _disposed: boolean = false;
 
     /**
      * Whether this visualization has been disposed.
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::get disposed()
     get disposed(): boolean 
     {
         return this._disposed;
@@ -179,6 +208,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      * @param name - The asset name to look up
      * @returns The asset name string (for sprite asset resolution)
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::getAvatarRendererAsset()
     getAvatarRendererAsset(name: string): string | null 
     {
         if(!this._visualizationData) 
@@ -368,6 +398,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      *
      * @param figureString - The figure string that is ready
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::avatarImageReady()
     avatarImageReady(_figureString: string): void 
     {
         this._forceUpdate = true;
@@ -378,6 +409,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      *
      * @param effectId - The effect ID that is ready
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::avatarEffectReady()
     avatarEffectReady(_effectId: number): void 
     {
         this._forceUpdate = true;
@@ -389,6 +421,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      * @param addition - The addition to add
      * @returns The added addition
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::addAddition()
     addAddition(addition: IAvatarAddition): IAvatarAddition 
     {
         if(!this._additions) 
@@ -412,6 +445,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      * @param id - The addition key
      * @returns The addition, or null if not found
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::getAddition()
     getAddition(id: number): IAvatarAddition | null 
     {
         return (this._additions) ? (this._additions.get(id) ?? null) : null;
@@ -422,6 +456,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      *
      * @param id - The addition key to remove
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::removeAddition()
     removeAddition(id: number): void 
     {
         const addition = this.getAddition(id);
@@ -472,6 +507,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      * @param isFullUpdate - Whether a full update was requested
      * @returns True if any model properties changed
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::updateModel()
     private updateModel(model: IRoomObjectModel, scale: number, isFullUpdate: boolean): boolean 
     {
         let changed = false;
@@ -848,6 +884,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      * @param figure - The new figure string
      * @returns True if the figure changed
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::updateFigure()
     private updateFigure(figure: string): boolean 
     {
         if(this._figure !== figure) 
@@ -864,6 +901,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     /**
      * Disposes all cached avatar images and resets the active image.
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::resetImages()
     private resetImages(): void 
     {
         for(const image of this._avatarImages.values()) 
@@ -900,6 +938,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      *
      * @param scale - The current visualization scale
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::validateActions()
     private validateActions(scale: number): void 
     {
         if(scale < 48) 
@@ -1006,6 +1045,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      * @param forceUpdate - Whether to force direction recalculation
      * @returns True if the direction changed
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::updateObject()
     private updateObject(roomObject: IRoomObject, geometry: IRoomGeometry, isFullUpdate: boolean, forceUpdate: boolean = false): boolean 
     {
         if(forceUpdate || roomObject.getUpdateID() !== this._direction || this._geometryUpdateCounter !== geometry.updateId) 
@@ -1077,6 +1117,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      *
      * @param scale - The current visualization scale
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::updateShadow()
     private updateShadow(scale: number): void 
     {
         const shadowSprite = this.getSprite(SPRITE_INDEX_SHADOW);
@@ -1143,6 +1184,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      *
      * @param avatarImage - The avatar image to apply actions to
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::updateActions()
     private updateActions(avatarImage: IAvatarImage): void 
     {
         if(avatarImage == null) 

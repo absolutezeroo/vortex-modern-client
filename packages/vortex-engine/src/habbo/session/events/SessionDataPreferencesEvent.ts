@@ -12,8 +12,10 @@ export class SessionDataPreferencesEvent
         this._uiFlags = uiFlags;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/events/SessionDataPreferencesEvent.as::_uiFlags
     private _uiFlags: number;
 
+    // AS3: .../src/com/sulake/habbo/session/events/SessionDataPreferencesEvent.as::get uiFlags()
     get uiFlags(): number
     {
         return this._uiFlags;

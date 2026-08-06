@@ -15,6 +15,7 @@ export class CallForHelpFromSelfieMessageComposer extends MessageComposer<Constr
         this._data = [message, topicId, reportedUserId, photoId, roomId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/CallForHelpFromSelfieMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

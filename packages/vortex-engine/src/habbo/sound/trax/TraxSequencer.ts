@@ -50,6 +50,7 @@ export class TraxSequencer implements IHabboSound
     // song mixes at a time and each block is written before it is read.
     private static readonly MIXING_BUFFER: Int32Array = new Int32Array(TraxSequencer.BUFFER_LENGTH);
 
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSequencer.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../TraxSequencer.as::_events
@@ -237,6 +238,7 @@ export class TraxSequencer implements IHabboSound
      * flag: cut mode rounds a sample's bar count to nearest, the legacy mode rounds it up past a
      * 12.5% threshold — the same song laid out either way is a different length.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSequencer.as::prepare()
     prepare(): boolean
     {
         if(!this._ready)
@@ -279,6 +281,7 @@ export class TraxSequencer implements IHabboSound
      * asynchronously (see `TraxStreamNode`), and the first blocks are mixed straight away so the
      * queue is never empty at the point playback actually begins.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSequencer.as::play()
     play(playLength: number = 0): boolean
     {
         if(!this.prepare()) return false;
@@ -345,6 +348,7 @@ export class TraxSequencer implements IHabboSound
      *
      * Nothing in the client calls it — kept because it is a public member of the source.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSequencer.as::render()
     render(): Float32Array[]
     {
         const blocks: Float32Array[] = [];
@@ -378,6 +382,7 @@ export class TraxSequencer implements IHabboSound
      * Walks each channel item bar by bar, placing the sample at every bar boundary it covers. A
      * sample id of 0 is silence: the position still advances, nothing is placed.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSequencer.as::prepareLegacySequence()
     private prepareLegacySequence(): boolean
     {
         if(this._channelSequences === null || this._traxData === null || this._samples === null) return false;
@@ -433,6 +438,7 @@ export class TraxSequencer implements IHabboSound
      * its item's bars sets it, and the *next* item then places its sample even if it is the
      * silence id — which is how a cut song keeps its grid when a sample does not divide evenly.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSequencer.as::prepareSequence()
     private prepareSequence(): boolean
     {
         if(this._channelSequences === null || this._traxData === null || this._samples === null) return false;
@@ -499,6 +505,7 @@ export class TraxSequencer implements IHabboSound
      * filling a bar once it is 12.5% into it, which is what lets a slightly-short loop still be
      * treated as a whole bar.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSequencer.as::getSampleBars()
     private getSampleBars(sampleLength: number): number
     {
         const bars = sampleLength / TraxSequencer.SAMPLES_PER_BAR;
@@ -515,6 +522,7 @@ export class TraxSequencer implements IHabboSound
      * `- 1` is AS3's: the loop stops on the first entry *past* the head, so one back is the
      * current one. It can legitimately be -1, meaning the channel has not started yet.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSequencer.as::getChannelSequenceOffsets()
     private getChannelSequenceOffsets(): number[]
     {
         const offsets: number[] = [];
@@ -543,6 +551,7 @@ export class TraxSequencer implements IHabboSound
      * Within a channel the block is cut at the next sample's start position, so a sample that
      * begins mid-block is placed exactly rather than on the next boundary.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSequencer.as::mixChannelsIntoBuffer()
     private mixChannelsIntoBuffer(): void
     {
         if(this._channelSequences === null) return;
@@ -659,6 +668,7 @@ export class TraxSequencer implements IHabboSound
      * Writes `frames` frames of the mixing buffer as interleaved stereo — the same value to both
      * channels, as AS3 does — and pads the rest of the block with silence.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSequencer.as::writeAudioToOutputStream()
     private writeAudioToOutputStream(frames: number): Float32Array
     {
         const block = new Float32Array(TraxSequencer.BUFFER_LENGTH * 2);
@@ -719,6 +729,7 @@ export class TraxSequencer implements IHabboSound
      * above 1 the rest is written at full level. AS3 breaks out of its loop and finishes in one of
      * two tails, which is what the two loops below are.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSequencer.as::writeMixingBufferToOutputStreamWithFade()
     private writeMixingBufferToOutputStreamWithFade(
         block: Float32Array,
         frames: number,
@@ -774,6 +785,7 @@ export class TraxSequencer implements IHabboSound
      * that, crossing into the last `fadeOutLength` samples starts the fade — and cancels any fade
      * *in* still running.
      */
+    // AS3: .../src/com/sulake/habbo/sound/trax/TraxSequencer.as::checkSongFinishing()
     private checkSongFinishing(): void
     {
         const end = this._lengthSamples < this._playLengthSamples

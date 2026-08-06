@@ -57,6 +57,7 @@ class ExperienceData
         this._experience = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::dispose()
     dispose(): void
     {
         this._image = null;
@@ -65,8 +66,11 @@ class ExperienceData
 
 export class AnimatedPetVisualization extends AnimatedFurnitureVisualization
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::POSTURE_ANIMATION_INDEX
     private static readonly POSTURE_ANIMATION_INDEX: number = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::GESTURE_ANIMATION_INDEX
     private static readonly GESTURE_ANIMATION_INDEX: number = 1;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::EXPERIENCE_BUBBLE_VISIBLE_IN_MS
     private static readonly EXPERIENCE_BUBBLE_VISIBLE_IN_MS: number = 1000;
 
     // AS3 initialises both to "" and relies on the *model* returning null for an unset
@@ -82,23 +86,30 @@ export class AnimatedPetVisualization extends AnimatedFurnitureVisualization
     private _posture: string | null = null;
     private _gesture: string | null = null;
     private _isSleeping: boolean = false;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::_headDirection
     private _headDirection: number = 0;
     private _experienceData: ExperienceData | null = null;
     private _experienceTimestamp: number = 0;
     private _gainedExperience: number = 0;
     private _petData: AnimatedPetVisualizationData | null = null;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::_paletteName
     private _paletteName: string = '';
     private _paletteIndex: number = -1;
     private _customLayerIds: number[] = [];
     private _customPartIds: number[] = [];
     private _customPaletteIds: number[] = [];
     private _petColor: number = 0xFFFFFF;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::_headOnly
     private _headOnly: boolean = false;
     private _isRiding: boolean = false;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::_animationStates
     private _animationStates: AnimationStateData[] = [];
     private _allAnimationsOver: boolean = false;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::_headSprites
     private _headSprites: (boolean | null)[] = [];
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::_nonHeadSprites
     private _nonHeadSprites: (boolean | null)[] = [];
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::_saddleSprites
     private _saddleSprites: (boolean | null)[] = [];
     private _lastDirectionX: number = -1;
 
@@ -588,6 +599,7 @@ export class AnimatedPetVisualization extends AnimatedFurnitureVisualization
     /**
 	 * Update the experience bubble display.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::updateExperienceBubble()
     private updateExperienceBubble(time: number): void
     {
         if(this._experienceData === null) return;

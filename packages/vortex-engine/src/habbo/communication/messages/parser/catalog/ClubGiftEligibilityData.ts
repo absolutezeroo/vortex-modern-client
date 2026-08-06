@@ -7,8 +7,10 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class ClubGiftEligibilityData
 {
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2368.as::_offerId
     private _offerId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2368.as::get offerId()
     get offerId(): number
     {
         return this._offerId;
@@ -16,6 +18,7 @@ export class ClubGiftEligibilityData
 
     private _isVip: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2368.as::get isVip()
     get isVip(): boolean
     {
         return this._isVip;
@@ -23,6 +26,7 @@ export class ClubGiftEligibilityData
 
     private _daysRequired: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2368.as::get daysRequired()
     get daysRequired(): number
     {
         return this._daysRequired;
@@ -30,6 +34,7 @@ export class ClubGiftEligibilityData
 
     private _isSelectable: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2368.as::get isSelectable()
     get isSelectable(): boolean
     {
         return this._isSelectable;

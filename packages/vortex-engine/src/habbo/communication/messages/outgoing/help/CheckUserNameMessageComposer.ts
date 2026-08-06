@@ -15,6 +15,7 @@ export class CheckUserNameMessageComposer extends MessageComposer<ConstructorPar
         this._data = [name];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/avatar/CheckUserNameMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

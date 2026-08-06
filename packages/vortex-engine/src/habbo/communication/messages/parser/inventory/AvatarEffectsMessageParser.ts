@@ -23,17 +23,20 @@ export class AvatarEffectsMessageParser implements IMessageParser
 {
     private _effects: IAvatarEffect[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/avatareffect/AvatarEffectsMessageEventParser.as::get effects()
     get effects(): IAvatarEffect[]
     {
         return this._effects;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/avatareffect/AvatarEffectsMessageEventParser.as::flush()
     flush(): boolean
     {
         this._effects = [];
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/avatareffect/AvatarEffectsMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         const count = wrapper.readInt();

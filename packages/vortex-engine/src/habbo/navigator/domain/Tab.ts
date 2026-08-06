@@ -48,12 +48,16 @@ export interface ITabNavigator
  */
 export class Tab
 {
+    // AS3: sources/win63_version/habbo/navigator/domain/Tab.as::_navigator
     private _navigator: ITabNavigator;
     private _id: number;
     private _defaultSearchType: number;
     private _tabPageDecorator: ITabPageDecorator;
+    // AS3: sources/win63_version/habbo/navigator/domain/Tab.as::_searchMsg
     private _searchMsg: number;
+    // AS3: sources/win63_version/habbo/navigator/domain/Tab.as::_selected
     private _selected: boolean = false;
+    // AS3: sources/win63_version/habbo/navigator/domain/Tab.as::_button
     private _button: ITabButtonWindow | null = null;
 
     constructor(
@@ -71,6 +75,7 @@ export class Tab
         this._searchMsg = searchMsg;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tab.as::sendSearchRequest()
     sendSearchRequest(): void
     {
         let searchType = this._defaultSearchType;
@@ -84,41 +89,49 @@ export class Tab
         this._navigator.mainViewCtrl?.startSearch(this._id, searchType, '-1', this._searchMsg);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tab.as::get id()
     get id(): number
     {
         return this._id;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tab.as::get defaultSearchType()
     get defaultSearchType(): number
     {
         return this._defaultSearchType;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tab.as::get selected()
     get selected(): boolean
     {
         return this._selected;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tab.as::set selected()
     set selected(value: boolean)
     {
         this._selected = value;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tab.as::get tabPageDecorator()
     get tabPageDecorator(): ITabPageDecorator
     {
         return this._tabPageDecorator;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tab.as::get searchMsg()
     get searchMsg(): number
     {
         return this._searchMsg;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tab.as::get button()
     get button(): ITabButtonWindow | null
     {
         return this._button;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/domain/Tab.as::set button()
     set button(value: ITabButtonWindow | null)
     {
         this._button = value;

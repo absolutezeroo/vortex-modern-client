@@ -183,6 +183,7 @@ export class OnBoardingHcFlow extends Sprite implements IOnBoardingHcContext
      * The room picker's thumbnails start downloading here, before the step is shown — its view is
      * not built until they have all arrived.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHc/OnBoardingHcFlow.as::init()
     public init(loginActions: number[]): void
     {
         this._loginActions = loginActions;
@@ -263,6 +264,7 @@ export class OnBoardingHcFlow extends Sprite implements IOnBoardingHcContext
      *
      * AS3 reads configuration properties off the LOCALIZATION manager, not a configuration one.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHc/OnBoardingHcFlow.as::getProperty()
     public getProperty(key: string, defaultValue: string | null = null): string
     {
         if(!this._localizationManager) return defaultValue ?? '';
@@ -303,6 +305,7 @@ export class OnBoardingHcFlow extends Sprite implements IOnBoardingHcContext
      * With the name dialog up, the editor's "I'm ready" claims the typed name; without it, the flow
      * just moves on.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHc/OnBoardingHcFlow.as::submitName()
     public submitName(): void
     {
         if(this._nameChangeDialog != null && this._nameArea?.visible)
@@ -371,6 +374,7 @@ export class OnBoardingHcFlow extends Sprite implements IOnBoardingHcContext
     /**
      * AS3: showErrorMessage(_arg_1:String)
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHc/OnBoardingHcFlow.as::showErrorMessage()
     public showErrorMessage(message: string): void
     {
         if(!this._mainSprite) return;
@@ -415,6 +419,7 @@ export class OnBoardingHcFlow extends Sprite implements IOnBoardingHcContext
      * The dialog is the Hitch variant, and it is told which gender the editor is on so its layout
      * matches.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHc/OnBoardingHcFlow.as::startNameChange()
     private startNameChange(): void
     {
         if(!this._nameArea || !this._avatarEditor) return;
@@ -462,6 +467,7 @@ export class OnBoardingHcFlow extends Sprite implements IOnBoardingHcContext
      * Also creates the header field on first pass, and recomputes the name column's x from the
      * editor's own width.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHc/OnBoardingHcFlow.as::layoutMainElements()
     private layoutMainElements(): void
     {
         const stage = this.stage;

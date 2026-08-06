@@ -19,6 +19,7 @@ export class ErrorEvent extends WarningEvent
 
     private _category: number;
 
+    // AS3: sources/win63_version/core/runtime/events/ErrorEvent.as::get category()
     get category(): number
     {
         return this._category;
@@ -26,6 +27,7 @@ export class ErrorEvent extends WarningEvent
 
     private _critical: boolean;
 
+    // AS3: sources/win63_version/core/runtime/events/ErrorEvent.as::get critical()
     get critical(): boolean
     {
         return this._critical;
@@ -33,6 +35,7 @@ export class ErrorEvent extends WarningEvent
 
     private _error: Error | null;
 
+    // AS3: sources/win63_version/core/runtime/events/ErrorEvent.as::get error()
     get error(): Error | null
     {
         return this._error;

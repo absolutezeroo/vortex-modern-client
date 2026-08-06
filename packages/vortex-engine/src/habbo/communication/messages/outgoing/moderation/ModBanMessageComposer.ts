@@ -22,6 +22,7 @@ export class ModBanMessageComposer extends MessageComposer<unknown[]>
         }
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/moderator/ModBanMessageComposer.as::getMessageArray()
     getMessageArray(): unknown[]
     {
         return this._data;

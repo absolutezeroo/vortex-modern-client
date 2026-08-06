@@ -22,13 +22,16 @@ export class AreaHideMessageData
 
     private _furniId: number;
 
+    // AS3: .../src/unknowns/_SafePkg_2184/AreaHideMessageData.as::get furniId()
     get furniId(): number
     {
         return this._furniId;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2184/AreaHideMessageData.as::_on
     private _on: boolean;
 
+    // AS3: .../src/unknowns/_SafePkg_2184/AreaHideMessageData.as::get on()
     get on(): boolean
     {
         return this._on;
@@ -36,6 +39,7 @@ export class AreaHideMessageData
 
     private _rootX: number;
 
+    // AS3: .../src/unknowns/_SafePkg_2184/AreaHideMessageData.as::get rootX()
     get rootX(): number
     {
         return this._rootX;
@@ -43,20 +47,25 @@ export class AreaHideMessageData
 
     private _rootY: number;
 
+    // AS3: .../src/unknowns/_SafePkg_2184/AreaHideMessageData.as::get rootY()
     get rootY(): number
     {
         return this._rootY;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2184/AreaHideMessageData.as::_width
     private _width: number;
 
+    // AS3: .../src/unknowns/_SafePkg_2184/AreaHideMessageData.as::get width()
     get width(): number
     {
         return this._width;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2184/AreaHideMessageData.as::_length
     private _length: number;
 
+    // AS3: .../src/unknowns/_SafePkg_2184/AreaHideMessageData.as::get length()
     get length(): number
     {
         return this._length;
@@ -64,6 +73,7 @@ export class AreaHideMessageData
 
     private _invert: boolean;
 
+    // AS3: .../src/unknowns/_SafePkg_2184/AreaHideMessageData.as::get invert()
     get invert(): boolean
     {
         return this._invert;

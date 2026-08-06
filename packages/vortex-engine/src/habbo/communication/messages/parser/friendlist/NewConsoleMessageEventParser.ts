@@ -12,6 +12,7 @@ export class NewConsoleMessageEventParser implements IMessageParser
 {
     private _chatId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/NewConsoleMessageEventParser.as::get chatId()
     get chatId(): number
     {
         return this._chatId;
@@ -47,6 +48,7 @@ export class NewConsoleMessageEventParser implements IMessageParser
 
     private _secondsSinceSent: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/NewConsoleMessageEventParser.as::get secondsSinceSent()
     get secondsSinceSent(): number
     {
         return this._secondsSinceSent;
@@ -54,6 +56,7 @@ export class NewConsoleMessageEventParser implements IMessageParser
 
     private _messageId: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/NewConsoleMessageEventParser.as::get messageId()
     get messageId(): string
     {
         return this._messageId;
@@ -61,6 +64,7 @@ export class NewConsoleMessageEventParser implements IMessageParser
 
     private _confirmationId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/NewConsoleMessageEventParser.as::get confirmationId()
     get confirmationId(): number
     {
         return this._confirmationId;
@@ -68,13 +72,16 @@ export class NewConsoleMessageEventParser implements IMessageParser
 
     private _senderId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/NewConsoleMessageEventParser.as::get senderId()
     get senderId(): number
     {
         return this._senderId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/NewConsoleMessageEventParser.as::_senderName
     private _senderName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/NewConsoleMessageEventParser.as::get senderName()
     get senderName(): string
     {
         return this._senderName;
@@ -82,11 +89,13 @@ export class NewConsoleMessageEventParser implements IMessageParser
 
     private _senderFigure: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/NewConsoleMessageEventParser.as::get senderFigure()
     get senderFigure(): string
     {
         return this._senderFigure;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/NewConsoleMessageEventParser.as::flush()
     flush(): boolean
     {
         this._chatId = 0;
@@ -100,6 +109,7 @@ export class NewConsoleMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/NewConsoleMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

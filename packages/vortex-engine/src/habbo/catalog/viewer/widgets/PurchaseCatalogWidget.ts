@@ -35,16 +35,20 @@ const CWE_EXTRA_PARAM_REQUIRED_FOR_BUY = 'CWE_EXTRA_PARAM_REQUIRED_FOR_BUY';
  */
 export class PurchaseCatalogWidget extends CatalogWidget
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::_offer
     private _offer: IPurchasableOffer | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::_additionalParameters
     private _additionalParameters: string = '';
 
     private _previewStuffData: IStuffData | null = null;
 
     private _quantity: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::_purchaseCallback
     private _purchaseCallback: ((event: WindowMouseEvent) => void) | null = null;
 
     private _noGiftOption: boolean = false;
@@ -133,6 +137,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
         this._purchaseCallback = event.callback as ((event: WindowMouseEvent) => void) | null;
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::get extraParamRequirementsMet()
     private get extraParamRequirementsMet(): boolean
     {
         return !(this._extraParamRequired && this._additionalParameters === '');
@@ -207,6 +212,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
         return product.uniqueLimitedItemsLeft === 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::enableBuyButton()
     private enableBuyButton(enabled: boolean): void
     {
         if(this._catalog!.sessionDataManager?.isAccountSafetyLocked())
@@ -217,6 +223,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
         this.enableButton('buy_button', enabled);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::enableGiftButton()
     private enableGiftButton(enabled: boolean): void
     {
         if(this._catalog!.sessionDataManager?.isAccountSafetyLocked())
@@ -227,6 +234,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
         this.enableButton('gift_button', enabled);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::enableButton()
     private enableButton(name: string, enabled: boolean): void
     {
         const button = this.window.findChildByName(name);

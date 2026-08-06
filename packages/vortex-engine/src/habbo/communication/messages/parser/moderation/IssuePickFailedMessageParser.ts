@@ -12,6 +12,7 @@ export class IssuePickFailedMessageParser implements IMessageParser
 {
     private _issues: IssueInfoData[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/IssuePickFailedMessageEventParser.as::get issues()
     get issues(): IssueInfoData[]
     {
         return this._issues;
@@ -19,6 +20,7 @@ export class IssuePickFailedMessageParser implements IMessageParser
 
     private _retryEnabled: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/IssuePickFailedMessageEventParser.as::get retryEnabled()
     get retryEnabled(): boolean
     {
         return this._retryEnabled;
@@ -26,11 +28,13 @@ export class IssuePickFailedMessageParser implements IMessageParser
 
     private _retryCount: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/IssuePickFailedMessageEventParser.as::get retryCount()
     get retryCount(): number
     {
         return this._retryCount;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/IssuePickFailedMessageEventParser.as::flush()
     flush(): boolean
     {
         this._issues = [];
@@ -39,6 +43,7 @@ export class IssuePickFailedMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/IssuePickFailedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

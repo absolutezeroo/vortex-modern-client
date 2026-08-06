@@ -10,7 +10,9 @@ import type {IRoomObjectModelController} from './IRoomObjectModelController';
 
 export class RoomObjectModel implements IRoomObjectModelController
 {
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::MAP_KEYS_PREFIX
     private static readonly MAP_KEYS_PREFIX = 'ROMC_MAP_KEYS_';
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::MAP_VALUES_PREFIX
     private static readonly MAP_VALUES_PREFIX = 'ROMC_MAP_VALUES_';
 
     private _numbers: Map<string, number> = new Map();
@@ -27,6 +29,7 @@ export class RoomObjectModel implements IRoomObjectModelController
 
     private _updateID: number = 0;
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::dispose()
     dispose(): void
     {
         this._numbers.clear();
@@ -42,31 +45,37 @@ export class RoomObjectModel implements IRoomObjectModelController
         this._immutableObjects.clear();
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::hasNumber()
     hasNumber(key: string): boolean
     {
         return this._numbers.has(key);
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::hasNumberArray()
     hasNumberArray(key: string): boolean
     {
         return this._numberArrays.has(key);
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::hasString()
     hasString(key: string): boolean
     {
         return this._strings.has(key);
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::hasStringArray()
     hasStringArray(key: string): boolean
     {
         return this._stringArrays.has(key);
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::getNumber()
     getNumber(key: string): number
     {
         return this._numbers.get(key) ?? NaN;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::getString()
     getString(key: string): string
     {
         return this._strings.get(key) ?? '';
@@ -90,6 +99,7 @@ export class RoomObjectModel implements IRoomObjectModelController
         return value !== undefined ? value.slice() : null;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::getStringToStringMap()
     getStringToStringMap(key: string): Map<string, string>
     {
         const result = new Map<string, string>();
@@ -108,6 +118,7 @@ export class RoomObjectModel implements IRoomObjectModelController
         return result;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::setNumber()
     setNumber(key: string, value: number, immutable: boolean = false): void
     {
         if(this._immutableNumbers.has(key))
@@ -127,6 +138,7 @@ export class RoomObjectModel implements IRoomObjectModelController
         }
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::setString()
     setString(key: string, value: string, immutable: boolean = false): void
     {
         if(this._immutableStrings.has(key))
@@ -146,6 +158,7 @@ export class RoomObjectModel implements IRoomObjectModelController
         }
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::setNumberArray()
     setNumberArray(key: string, value: number[], immutable: boolean = false): void
     {
         if(value === null)
@@ -185,6 +198,7 @@ export class RoomObjectModel implements IRoomObjectModelController
         this._updateID++;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::setStringArray()
     setStringArray(key: string, value: string[], immutable: boolean = false): void
     {
         if(value === null)
@@ -224,6 +238,7 @@ export class RoomObjectModel implements IRoomObjectModelController
         this._updateID++;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::setStringToStringMap()
     setStringToStringMap(key: string, value: Map<string, string>, immutable: boolean = false): void
     {
         if(value === null)
@@ -259,6 +274,7 @@ export class RoomObjectModel implements IRoomObjectModelController
         this._updateID++;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObjectModel.as::getUpdateID()
     getUpdateID(): number
     {
         return this._updateID;

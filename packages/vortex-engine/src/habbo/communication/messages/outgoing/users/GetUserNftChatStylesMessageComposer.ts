@@ -16,6 +16,7 @@ export class GetUserNftChatStylesMessageComposer extends MessageComposer<Constru
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/GetUserNftChatStylesMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

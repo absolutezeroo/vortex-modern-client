@@ -14,5 +14,6 @@ export interface IIlluminaInputHandler
 	 * @param widgetId - The widget identifier
 	 * @param message - The submitted text
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/IIlluminaInputHandler.as::onInput()
     onInput(widgetId: string, message: string): void;
 }

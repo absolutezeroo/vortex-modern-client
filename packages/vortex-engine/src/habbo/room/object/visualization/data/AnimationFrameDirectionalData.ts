@@ -10,6 +10,7 @@ import type {DirectionalOffsetData} from './DirectionalOffsetData';
 
 export class AnimationFrameDirectionalData extends AnimationFrameData
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/data/AnimationFrameDirectionalData.as::_directionalOffsets
     private _directionalOffsets: DirectionalOffsetData;
 
     constructor(

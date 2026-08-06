@@ -15,7 +15,9 @@ import type {WindowEvent} from '../events/WindowEvent';
  */
 export class ButtonController extends InteractiveController
 {
+    // AS3: .../src/com/sulake/core/window/components/ButtonController.as::TEXT_FIELD_NAME
     protected static readonly TEXT_FIELD_NAME: string = '_BTN_TEXT';
+    // AS3: .../src/com/sulake/core/window/components/ButtonController.as::CAPTION_BLEND_CHANGE
     protected static readonly CAPTION_BLEND_CHANGE: number = 0.5;
 
     constructor(

@@ -8,6 +8,7 @@
  */
 export class GraphicAssetPalette
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/object/visualization/utils/GraphicAssetPalette.as::_palette
     private _palette: number[] = [];
 
     constructor(data: Uint8Array, primaryColor: number, secondaryColor: number)
@@ -33,15 +34,19 @@ export class GraphicAssetPalette
         this._secondaryColor = secondaryColor;
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/utils/GraphicAssetPalette.as::_primaryColor
     private _primaryColor: number = 0;
 
+    // AS3: .../src/com/sulake/room/object/visualization/utils/GraphicAssetPalette.as::get primaryColor()
     get primaryColor(): number
     {
         return this._primaryColor;
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/utils/GraphicAssetPalette.as::_secondaryColor
     private _secondaryColor: number = 0;
 
+    // AS3: .../src/com/sulake/room/object/visualization/utils/GraphicAssetPalette.as::get secondaryColor()
     get secondaryColor(): number
     {
         return this._secondaryColor;
@@ -69,6 +74,7 @@ export class GraphicAssetPalette
         }
     }
 
+    // AS3: .../src/com/sulake/room/object/visualization/utils/GraphicAssetPalette.as::dispose()
     dispose(): void
     {
         this._palette = [];

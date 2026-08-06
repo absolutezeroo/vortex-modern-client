@@ -10,17 +10,20 @@ export class ChatReviewSessionOfferedToGuideMessageParser implements IMessagePar
 {
     private _acceptanceTimeout: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionOfferedToGuideMessageEventParser.as::get acceptanceTimeout()
     get acceptanceTimeout(): number
     {
         return this._acceptanceTimeout;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionOfferedToGuideMessageEventParser.as::flush()
     flush(): boolean
     {
         this._acceptanceTimeout = -1;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionOfferedToGuideMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

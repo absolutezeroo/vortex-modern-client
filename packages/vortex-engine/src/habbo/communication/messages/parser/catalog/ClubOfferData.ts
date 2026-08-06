@@ -8,8 +8,10 @@ import {ClubOfferProductData} from './ClubOfferProductData';
  */
 export class ClubOfferData
 {
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2138.as::_offerId
     private _offerId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2138.as::get offerId()
     get offerId(): number
     {
         return this._offerId;
@@ -17,6 +19,7 @@ export class ClubOfferData
 
     private _localizationId: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2138.as::get localizationId()
     get localizationId(): string
     {
         return this._localizationId;
@@ -24,6 +27,7 @@ export class ClubOfferData
 
     private _isRent: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2138.as::get isRent()
     get isRent(): boolean
     {
         return this._isRent;
@@ -31,6 +35,7 @@ export class ClubOfferData
 
     private _priceInCredits: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2138.as::get priceInCredits()
     get priceInCredits(): number
     {
         return this._priceInCredits;
@@ -38,6 +43,7 @@ export class ClubOfferData
 
     private _priceInActivityPoints: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2138.as::get priceInActivityPoints()
     get priceInActivityPoints(): number
     {
         return this._priceInActivityPoints;
@@ -45,6 +51,7 @@ export class ClubOfferData
 
     private _activityPointType: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2138.as::get activityPointType()
     get activityPointType(): number
     {
         return this._activityPointType;
@@ -52,6 +59,7 @@ export class ClubOfferData
 
     private _priceInSilver: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2138.as::get priceInSilver()
     get priceInSilver(): number
     {
         return this._priceInSilver;
@@ -59,6 +67,7 @@ export class ClubOfferData
 
     private _giftable: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2138.as::get giftable()
     get giftable(): boolean
     {
         return this._giftable;
@@ -66,6 +75,7 @@ export class ClubOfferData
 
     private _products: ClubOfferProductData[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2138.as::get products()
     get products(): ClubOfferProductData[]
     {
         return this._products;
@@ -73,6 +83,7 @@ export class ClubOfferData
 
     private _clubLevel: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2138.as::get clubLevel()
     get clubLevel(): number
     {
         return this._clubLevel;
@@ -80,6 +91,7 @@ export class ClubOfferData
 
     private _bundlePurchaseAllowed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2138.as::get bundlePurchaseAllowed()
     get bundlePurchaseAllowed(): boolean
     {
         return this._bundlePurchaseAllowed;
@@ -87,6 +99,7 @@ export class ClubOfferData
 
     private _previewImage: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2138.as::get previewImage()
     get previewImage(): string
     {
         return this._previewImage;

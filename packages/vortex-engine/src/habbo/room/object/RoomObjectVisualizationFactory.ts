@@ -164,6 +164,7 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
 	 *
 	 * @see AS3 RoomObjectVisualizationFactory.createRoomObjectVisualization()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/RoomObjectVisualizationFactory.as::createRoomObjectVisualization()
     createRoomObjectVisualization(type: string): IRoomObjectVisualization | null
     {
         switch(type)
@@ -292,6 +293,7 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
 	 *
 	 * @see AS3 RoomObjectVisualizationFactory.getRoomObjectVisualizationData()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/RoomObjectVisualizationFactory.as::getRoomObjectVisualizationData()
     getRoomObjectVisualizationData(id: string, type: string, data: unknown): IRoomObjectVisualizationData | null
     {
         // Check cache first
@@ -372,6 +374,7 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
         return vizData;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomObjectVisualizationFactory.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

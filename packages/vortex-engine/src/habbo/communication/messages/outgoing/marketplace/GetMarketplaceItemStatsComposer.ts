@@ -21,6 +21,7 @@ export class GetMarketplaceItemStatsComposer extends MessageComposer<unknown[]>
         }
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1746/_SafeCls_2146.as::getMessageArray()
     getMessageArray(): unknown[]
     {
         return this._data;

@@ -10,8 +10,11 @@ import {FurnitureFireworksVisualization} from './FurnitureFireworksVisualization
 
 export class FurnitureGiftWrappedFireworksVisualization extends FurnitureFireworksVisualization
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureGiftWrappedFireworksVisualization.as::PRESENT_DEFAULT_STATE
     private static readonly PRESENT_DEFAULT_STATE: number = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureGiftWrappedFireworksVisualization.as::MAX_PACKET_TYPE_VALUE
     private static readonly MAX_PACKET_TYPE_VALUE: number = 9;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureGiftWrappedFireworksVisualization.as::MAX_RIBBON_TYPE_VALUE
     private static readonly MAX_RIBBON_TYPE_VALUE: number = 11;
 
     private _packetType: number = 0;
@@ -67,6 +70,7 @@ export class FurnitureGiftWrappedFireworksVisualization extends FurnitureFirewor
         super.setAnimation(animationId);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureGiftWrappedFireworksVisualization.as::updateTypes()
     private updateTypes(): void
     {
         const model = this.object?.getModel();

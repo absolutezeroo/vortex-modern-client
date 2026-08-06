@@ -10,6 +10,7 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class SelectInitialRoomMessageParser implements IMessageParser
 {
+    // AS3: .../src/unknowns/_SafePkg_3895/_SafeCls_4315.as::_status
     private _status: number = 0;
     private _roomId: number = 0;
 

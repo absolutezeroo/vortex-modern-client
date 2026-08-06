@@ -113,6 +113,7 @@ export class RadioButton extends Sprite
         return this._group;
     }
 
+    // AS3: .../src/onBoardingHcUi/RadioButton.as::set group()
     public set group(value: RadioButtonGroup | null)
     {
         if(this._group === value) return;
@@ -138,6 +139,7 @@ export class RadioButton extends Sprite
         return this._selected;
     }
 
+    // AS3: .../src/onBoardingHcUi/RadioButton.as::set selected()
     public set selected(value: boolean)
     {
         if(this._selected === value) return;

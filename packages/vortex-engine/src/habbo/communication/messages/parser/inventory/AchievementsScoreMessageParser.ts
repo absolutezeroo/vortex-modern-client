@@ -10,17 +10,20 @@ export class AchievementsScoreMessageParser implements IMessageParser
 {
     private _score: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/achievements/AchievementsScoreEventParser.as::get score()
     get score(): number
     {
         return this._score;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/achievements/AchievementsScoreEventParser.as::flush()
     flush(): boolean
     {
         this._score = 0;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/achievements/AchievementsScoreEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._score = wrapper.readInt();

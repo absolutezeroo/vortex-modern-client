@@ -21,6 +21,7 @@ export class VersionCheckMessageComposer extends MessageComposer<ConstructorPara
         this._data = [versionId, clientUrl, externalVariablesUrl];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/handshake/VersionCheckMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

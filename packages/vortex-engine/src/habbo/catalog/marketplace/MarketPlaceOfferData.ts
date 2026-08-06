@@ -6,6 +6,7 @@ import type {IMarketPlaceOfferData} from './IMarketPlaceOfferData';
  */
 export class MarketPlaceOfferData implements IMarketPlaceOfferData
 {
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceOfferData.as::_offerId
     private _offerId: number;
 
     private _furniId: number;
@@ -20,16 +21,21 @@ export class MarketPlaceOfferData implements IMarketPlaceOfferData
 
     private _averagePrice: number;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceOfferData.as::_imageCallback
     private _imageCallback: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceOfferData.as::_status
     private _status: number;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceOfferData.as::_timeLeftMinutes
     private _timeLeftMinutes: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceOfferData.as::_offerCount
     private _offerCount: number;
 
     private _image: ImageBitmap | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/MarketPlaceOfferData.as::_statusTime
     private _statusTime: number = NaN;
 
     private _isUsable: boolean;

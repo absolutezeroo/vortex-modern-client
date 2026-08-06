@@ -25,21 +25,25 @@ export class CatalogWidgetUpdateRoomPreviewEvent
         return CatalogWidgetUpdateRoomPreviewEvent.UPDATE_ROOM_PREVIEW;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetUpdateRoomPreviewEvent.as::get floorType()
     get floorType(): string
     {
         return this._floorType;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetUpdateRoomPreviewEvent.as::get wallType()
     get wallType(): string
     {
         return this._wallType;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetUpdateRoomPreviewEvent.as::get landscapeType()
     get landscapeType(): string
     {
         return this._landscapeType;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetUpdateRoomPreviewEvent.as::get tileSize()
     get tileSize(): number
     {
         return this._tileSize;

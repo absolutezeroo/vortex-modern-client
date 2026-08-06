@@ -15,6 +15,7 @@ export class ChangeQueueMessageComposer extends MessageComposer<ConstructorParam
         this._data = [targetQueue];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/session/ChangeQueueMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

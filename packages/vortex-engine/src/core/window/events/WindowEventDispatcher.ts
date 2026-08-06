@@ -27,9 +27,11 @@ interface IEventListenerEntry {
 export class WindowEventDispatcher 
 {
     private _listeners: Map<string, IEventListenerEntry[]> = new Map();
+    // AS3: .../src/com/sulake/core/window/events/WindowEventDispatcher.as::_disposed
     private _disposed: boolean = false;
 
     /** Whether this dispatcher has been disposed. */
+    // AS3: .../src/com/sulake/core/window/events/WindowEventDispatcher.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
@@ -46,6 +48,7 @@ export class WindowEventDispatcher
      * @param listener - The callback function
      * @param priority - Listener priority (higher fires first, default 0)
      */
+    // AS3: .../src/com/sulake/core/window/events/WindowEventDispatcher.as::addEventListener()
     public addEventListener(type: string, listener: WindowEventListener, priority: number = 0): void
     {
         let entries = this._listeners.get(type);
@@ -91,6 +94,7 @@ export class WindowEventDispatcher
      * @param type - The event type string
      * @param listener - The callback function to remove
      */
+    // AS3: .../src/com/sulake/core/window/events/WindowEventDispatcher.as::removeEventListener()
     public removeEventListener(type: string, listener: WindowEventListener): void
     {
         if(this._disposed) return;
@@ -125,6 +129,7 @@ export class WindowEventDispatcher
      * @param event - The window event to dispatch
      * @returns `true` if the event was not prevented
      */
+    // AS3: .../src/com/sulake/core/window/events/WindowEventDispatcher.as::dispatchEvent()
     public dispatchEvent(event: WindowEvent): boolean 
     {
         if(this._disposed) return false;
@@ -155,6 +160,7 @@ export class WindowEventDispatcher
      * @param type - The event type string
      * @returns `true` if at least one listener exists
      */
+    // AS3: .../src/com/sulake/core/window/events/WindowEventDispatcher.as::hasEventListener()
     public hasEventListener(type: string): boolean 
     {
         if(this._disposed) return false;
@@ -165,6 +171,7 @@ export class WindowEventDispatcher
     /**
      * Disposes this dispatcher, clearing all listener references.
      */
+    // AS3: .../src/com/sulake/core/window/events/WindowEventDispatcher.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;

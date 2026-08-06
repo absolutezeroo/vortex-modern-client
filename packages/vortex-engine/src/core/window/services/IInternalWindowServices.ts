@@ -12,15 +12,21 @@ import type {IGestureAgentService} from './IGestureAgentService';
  */
 export interface IInternalWindowServices
 {
+    // AS3: .../src/com/sulake/core/window/services/IInternalWindowServices.as::getMouseDraggingService()
     getMouseDraggingService(): IMouseDraggingService;
 
+    // AS3: .../src/com/sulake/core/window/services/IInternalWindowServices.as::getMouseScalingService()
     getMouseScalingService(): IMouseScalingService;
 
+    // AS3: .../src/com/sulake/core/window/services/IInternalWindowServices.as::getMouseListenerService()
     getMouseListenerService(): IMouseListenerService;
 
+    // AS3: .../src/com/sulake/core/window/services/IInternalWindowServices.as::getFocusManagerService()
     getFocusManagerService(): IFocusManagerService;
 
+    // AS3: .../src/com/sulake/core/window/services/IInternalWindowServices.as::getToolTipAgentService()
     getToolTipAgentService(): IToolTipAgentService;
 
+    // AS3: .../src/com/sulake/core/window/services/IInternalWindowServices.as::getGestureAgentService()
     getGestureAgentService(): IGestureAgentService;
 }

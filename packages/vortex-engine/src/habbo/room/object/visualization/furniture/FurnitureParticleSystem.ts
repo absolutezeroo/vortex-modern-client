@@ -12,12 +12,18 @@ import {FurnitureParticleSystemEmitter} from './FurnitureParticleSystemEmitter';
 
 export class FurnitureParticleSystem
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::_emitters
     private _emitters: Map<number, FurnitureParticleSystemEmitter> = new Map();
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::_visualization
     private _visualization: AnimatedFurnitureVisualization;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::_size
     private _size: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::_canvasId
     private _canvasId: number = -1;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::_offsetY
     private _offsetY: number = 10;
     private _activeEmitter: FurnitureParticleSystemEmitter | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::_hasIgnited
     private _hasIgnited: boolean = false;
     private _canvasOffsetX: number = 0;
     private _canvasOffsetY: number = 0;
@@ -28,6 +34,7 @@ export class FurnitureParticleSystem
         this._visualization = visualization;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::dispose()
     dispose(): void
     {
         for(const emitter of this._emitters.values())
@@ -39,6 +46,7 @@ export class FurnitureParticleSystem
         this._activeEmitter = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::reset()
     reset(): void
     {
         if(this._activeEmitter !== null)
@@ -50,6 +58,7 @@ export class FurnitureParticleSystem
         this._hasIgnited = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::setAnimation()
     setAnimation(animationId: number): void
     {
         if(this._activeEmitter !== null)
@@ -61,6 +70,7 @@ export class FurnitureParticleSystem
         this._hasIgnited = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::getSpriteYOffset()
     getSpriteYOffset(_scale: number, _direction: number, layerIndex: number): number
     {
         if(this._activeEmitter !== null && this._activeEmitter.roomObjectSpriteId === layerIndex)
@@ -71,6 +81,7 @@ export class FurnitureParticleSystem
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::controlsSprite()
     controlsSprite(layerIndex: number): boolean
     {
         if(this._activeEmitter !== null)
@@ -81,6 +92,7 @@ export class FurnitureParticleSystem
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::updateSprites()
     updateSprites(): void
     {
         if(this._activeEmitter === null)
@@ -102,6 +114,7 @@ export class FurnitureParticleSystem
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::updateAnimation()
     updateAnimation(): void
     {
         if(this._activeEmitter === null)
@@ -130,6 +143,7 @@ export class FurnitureParticleSystem
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::parseData()
     parseData(data: any): void
     {
         this._size = parseInt(data.size || data['@size']) || 0;
@@ -202,6 +216,7 @@ export class FurnitureParticleSystem
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureParticleSystem.as::copyStateFrom()
     copyStateFrom(source: FurnitureParticleSystem): void
     {
         let activeId = 0;

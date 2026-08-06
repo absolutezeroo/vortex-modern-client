@@ -15,8 +15,10 @@ export class RoomObjectAvatarUseObjectUpdateMessage extends RoomObjectUpdateMess
         this._itemType = itemType;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectAvatarUseObjectUpdateMessage.as::_itemType
     private _itemType: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarUseObjectUpdateMessage.as::get itemType()
     get itemType(): number
     {
         return this._itemType;

@@ -23,12 +23,16 @@ export class LatencyTracker
     private _isTracking: boolean = false;
     private _currentTestId: number = 0;
     private _interval: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/LatencyTracker.as::_reportIndex
     private _reportIndex: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/LatencyTracker.as::_reportDelta
     private _reportDelta: number = 0;
+    // AS3: .../src/com/sulake/habbo/tracking/LatencyTracker.as::_lastTestTime
     private _lastTestTime: number = 0;
     private _lastAverageLatency: number = 0;
     private _latencies: number[] = [];
     private _latencyMap: Map<number, number> = new Map();
+    // AS3: .../src/com/sulake/habbo/tracking/LatencyTracker.as::_habboTracking
     private _habboTracking: HabboTracking | null;
 
     constructor(tracking: HabboTracking)
@@ -38,6 +42,7 @@ export class LatencyTracker
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/tracking/LatencyTracker.as::get disposed()
     get disposed(): boolean
     {
         return this._habboTracking === null;
@@ -46,6 +51,7 @@ export class LatencyTracker
     /**
 	 * Initialize the latency tracker with configuration values
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/LatencyTracker.as::init()
     init(): void
     {
         if(!this._habboTracking) return;
@@ -70,6 +76,7 @@ export class LatencyTracker
 	 * @param deltaTime Time since last update in milliseconds
 	 * @param currentTime Current time in milliseconds
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/LatencyTracker.as::update()
     update(deltaTime: number, currentTime: number): void
     {
         if(!this._isTracking)
@@ -88,6 +95,7 @@ export class LatencyTracker
 	 *
 	 * @param parser The parsed ping response data
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/LatencyTracker.as::onPingResponse()
     onPingResponse(parser: LatencyPingResponseMessageParser): void
     {
         if(!this._latencyMap || !this._latencies)
@@ -116,6 +124,7 @@ export class LatencyTracker
     /**
 	 * Dispose of the latency tracker
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/LatencyTracker.as::dispose()
     dispose(): void
     {
         if(this._disposed)
@@ -134,6 +143,7 @@ export class LatencyTracker
     /**
 	 * Send a latency ping request
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/LatencyTracker.as::testLatency()
     private testLatency(): void
     {
         this._lastTestTime = performance.now();

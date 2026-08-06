@@ -16,6 +16,7 @@ import {AvatarScaleType} from '@habbo/avatar/enum/AvatarScaleType';
 
 export class AvatarVisualizationData implements IRoomObjectVisualizationData 
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualizationData.as::_avatarRenderer
     private _avatarRenderer: IAvatarRenderManager | null = null;
     private _disposed: boolean = false;
 
@@ -41,6 +42,7 @@ export class AvatarVisualizationData implements IRoomObjectVisualizationData
      * @param data - The initialization data (unused for avatars)
      * @returns Always true
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualizationData.as::initialize()
     initialize(_data: unknown): boolean
     {
         return true;
@@ -94,6 +96,7 @@ export class AvatarVisualizationData implements IRoomObjectVisualizationData
      * @param scale - The scale identifier
      * @returns Always 0
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualizationData.as::getLayerCount()
     getLayerCount(_scale: string): number
     {
         return 0;
@@ -102,6 +105,7 @@ export class AvatarVisualizationData implements IRoomObjectVisualizationData
     /**
      * Disposes of this visualization data and releases references.
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualizationData.as::dispose()
     dispose(): void 
     {
         if(this._disposed) return;

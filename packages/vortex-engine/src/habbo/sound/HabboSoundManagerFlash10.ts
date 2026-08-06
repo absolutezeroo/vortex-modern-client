@@ -291,6 +291,7 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
      * without starting its downloads and parked in `_queuedSongs` instead. A song whose samples
      * are all cached comes back ready and plays immediately.
      */
+    // AS3: .../src/com/sulake/habbo/sound/HabboSoundManagerFlash10.as::loadTraxSong()
     loadTraxSong(songId: number, songData: string): IHabboSound | null
     {
         if(this._downloadingSong !== null) return this.addTraxSongForDownload(songId, songData);
@@ -340,6 +341,7 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
      * makes the whole song wait, which is why the sequencer refuses to start rather than playing
      * a song with holes in it.
      */
+    // AS3: .../src/com/sulake/habbo/sound/HabboSoundManagerFlash10.as::validateSampleAvailability()
     private validateSampleAvailability(sequencer: TraxSequencer, startDownloads: boolean): void
     {
         const sampleIds = sequencer.traxData?.getSampleIds() ?? [];

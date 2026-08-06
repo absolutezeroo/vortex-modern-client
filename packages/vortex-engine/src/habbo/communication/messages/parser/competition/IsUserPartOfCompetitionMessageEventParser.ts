@@ -12,6 +12,7 @@ export class IsUserPartOfCompetitionMessageEventParser implements IMessageParser
     private _isPartOf: boolean = false;
     private _targetId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/IsUserPartOfCompetitionMessageEventParser.as::flush()
     flush(): boolean
     {
         this._isPartOf = false;
@@ -19,6 +20,7 @@ export class IsUserPartOfCompetitionMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/IsUserPartOfCompetitionMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;
@@ -28,11 +30,13 @@ export class IsUserPartOfCompetitionMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/IsUserPartOfCompetitionMessageEventParser.as::get isPartOf()
     get isPartOf(): boolean
     {
         return this._isPartOf;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/IsUserPartOfCompetitionMessageEventParser.as::get targetId()
     get targetId(): number
     {
         return this._targetId;

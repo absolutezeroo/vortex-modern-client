@@ -16,6 +16,7 @@ export class BlockUserMessageComposer extends MessageComposer<ConstructorParamet
         this._data = [userId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/BlockUserMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

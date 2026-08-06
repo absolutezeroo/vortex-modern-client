@@ -19,6 +19,7 @@ export interface IResourceManager extends IDisposable
 	 * @param uri - The asset URI
 	 * @param receiver - The receiver callback
 	 */
+    // AS3: sources/win63_version/habbo/window/ResourceManager.as::retrieveAsset()
     retrieveAsset(uri: string, receiver: IAssetReceiver): void;
 
     /**
@@ -28,6 +29,7 @@ export interface IResourceManager extends IDisposable
 	 * @param uri2 - Second URI
 	 * @returns True if they resolve to the same asset
 	 */
+    // AS3: sources/win63_version/habbo/window/ResourceManager.as::isSameAsset()
     isSameAsset(uri1: string, uri2: string): boolean;
 
     /**

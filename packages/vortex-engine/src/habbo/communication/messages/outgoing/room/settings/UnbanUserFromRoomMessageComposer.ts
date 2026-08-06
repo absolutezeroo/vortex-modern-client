@@ -10,6 +10,7 @@ export class UnbanUserFromRoomMessageComposer extends MessageComposer<[number, n
         this._data = [userId, roomId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/action/UnbanUserFromRoomMessageComposer.as::getMessageArray()
     getMessageArray(): [number, number]
     {
         return this._data;

@@ -23,7 +23,9 @@ import type {RoomObjectSelectedMessage} from '@habbo/room/messages/RoomObjectSel
 
 export class FurnitureLogic extends MovingObjectLogic
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::BOUNCE_STEPS
     private static readonly BOUNCE_STEPS = 8;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::BOUNCE_STEP_HEIGHT
     private static readonly BOUNCE_STEP_HEIGHT = 0.0625;
     // AS3's update(k) advances _bouncingStep once per call with no internal throttle - real
     // AS3's engine tick itself ran at a fixed, much lower rate than this port's raw
@@ -32,18 +34,28 @@ export class FurnitureLogic extends MovingObjectLogic
     // needs the same compensating throttle or it completes ~2-3x too fast on a 60fps+ display.
     private static readonly BOUNCE_UPDATE_INTERVAL = 41;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::_mouseOver
     private _mouseOver: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::_sizeX
     private _sizeX: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::_sizeY
     private _sizeY: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::_sizeZ
     private _sizeZ: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::_centerX
     private _centerX: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::_centerY
     private _centerY: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::_centerZ
     private _centerZ: number = 0;
     private _hasLocation: boolean = false;
     private _bounceStep: number = 0;
     private _lastBounceUpdateTime: number = -Infinity;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::_storedRotateMessage
     private _storedRotateMessage: RoomObjectUpdateMessage | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::_locationOffset
     private _locationOffset: Vector3d = new Vector3d();
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::_directions
     private _directions: number[] = [];
     private _widget: string | null = null;
 
@@ -566,11 +578,13 @@ export class FurnitureLogic extends MovingObjectLogic
         return null;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::getAdClickUrl()
     protected getAdClickUrl(model: { getString(key: string): string | null }): string | null
     {
         return model.getString('furniture_ad_url');
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::handleAdClick()
     protected handleAdClick(_id: number, _type: string, _url: string): void
     {
         if(this.eventDispatcher !== null)
@@ -595,7 +609,7 @@ export class FurnitureLogic extends MovingObjectLogic
                 message.data.writeRoomObjectModel(model);
             }
 
-            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as:327-328
+            // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as:327-328
             // AS3 writes both: the string furniture_extras and the numeric furniture_extra. Only
             // the first was ported, so the numeric one was never set anywhere — see
             // RoomObjectVariableEnum.FURNITURE_EXTRA.
@@ -609,6 +623,7 @@ export class FurnitureLogic extends MovingObjectLogic
         }
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as::handleHeightUpdateMessage()
     private handleHeightUpdateMessage(message: RoomObjectHeightUpdateMessage): void
     {
         const model = this.object?.getModelController();

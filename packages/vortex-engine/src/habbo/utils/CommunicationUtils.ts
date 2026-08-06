@@ -14,19 +14,31 @@ const log = Logger.getLogger('habbo.utils.CommunicationUtils');
  */
 export class CommunicationUtils
 {
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::SOL_PROPERTY_ENVIRONMENT
     public static readonly SOL_PROPERTY_ENVIRONMENT: string = 'environment';
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::SOL_PROPERTY_LOGIN_NAME
     public static readonly SOL_PROPERTY_LOGIN_NAME: string = 'login';
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::SOL_PROPERTY_CHARACTER_ID
     public static readonly SOL_PROPERTY_CHARACTER_ID: string = 'userid';
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::SOL_PROPERTY_CHARACTER_UNIQUE_ID
     public static readonly SOL_PROPERTY_CHARACTER_UNIQUE_ID: string = 'useruniqueid';
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::SOL_PROPERTY_REMEMBER_LOGIN
     public static readonly SOL_PROPERTY_REMEMBER_LOGIN: string = 'autologin';
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::SOL_PROPERTY_LOGIN_METHOD
     public static readonly SOL_PROPERTY_LOGIN_METHOD: string = 'loginmethod';
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::SOL_PROPERTY_MACHINE_ID
     public static readonly SOL_PROPERTY_MACHINE_ID: string = 'machineid';
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::SOL_PROPERTY_APP_RATER_STATUS
     public static readonly SOL_PROPERTY_APP_RATER_STATUS: string = 'ratingstatus';
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::SOL_PROPERTY_APP_RATER_TIMESTAMP
     public static readonly SOL_PROPERTY_APP_RATER_TIMESTAMP: string = 'ratingstatustime';
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::LOGIN_METHOD_HABBO
     public static readonly LOGIN_METHOD_HABBO: string = 'habbo';
     public static readonly LOGIN_METHOD_FACEBOOK: string = 'facebook';
 
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::SOL_ID
     private static readonly SOL_ID: string = 'fuselogin';
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::SOL_PROPERTY_PASSWORD
     private static readonly SOL_PROPERTY_PASSWORD: string = 'password';
 
     private static _forcedAutoLoginEnabled: boolean = false;
@@ -34,11 +46,13 @@ export class CommunicationUtils
     /**
 	 * Whether forced auto-login is enabled.
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::get forcedAutoLoginEnabled()
     static get forcedAutoLoginEnabled(): boolean
     {
         return CommunicationUtils._forcedAutoLoginEnabled;
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::set forcedAutoLoginEnabled()
     static set forcedAutoLoginEnabled(value: boolean)
     {
         CommunicationUtils._forcedAutoLoginEnabled = value;
@@ -153,6 +167,7 @@ export class CommunicationUtils
 	 * @param key The storage key
 	 * @returns True if the property exists
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::propertyExists()
     static propertyExists(key: string): boolean
     {
         try
@@ -170,6 +185,7 @@ export class CommunicationUtils
     /**
 	 * Clear all login-related stored data.
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::clearAllLoginData()
     static clearAllLoginData(): void
     {
         CommunicationUtils.writeProperty('loginmethod', null);
@@ -183,6 +199,7 @@ export class CommunicationUtils
     /**
 	 * Reset the stored password.
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::resetPassword()
     static resetPassword(): void
     {
         if(CommunicationUtils._encryptedLocalStorage)
@@ -222,6 +239,7 @@ export class CommunicationUtils
 	 *
 	 * @returns The restored password or null
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::restorePassword()
     static restorePassword(): string | null
     {
         let value: string | null = null;
@@ -245,6 +263,7 @@ export class CommunicationUtils
 	 * @param length The number of random bytes to generate (default 16)
 	 * @returns The random hex string
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::generateRandomHexString()
     static generateRandomHexString(length: number = 16): string
     {
         let result = '';
@@ -264,6 +283,7 @@ export class CommunicationUtils
 	 * @param url The URL to process
 	 * @returns The URL without the protocol prefix
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::removeProtocol()
     static removeProtocol(url: string): string
     {
         url = url.replace('http://', '');
@@ -278,6 +298,7 @@ export class CommunicationUtils
 	 * @param key The cipher key
 	 * @returns The XOR ciphered string
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::xor()
     static xor(str: string, key: string): string
     {
         let result = '';
@@ -307,6 +328,7 @@ export class CommunicationUtils
 	 *
 	 * @returns A fingerprint string
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/CommunicationUtils.as::generateFingerprint()
     static generateFingerprint(): string
     {
         return CommunicationUtils.generateRandomHexString(32);

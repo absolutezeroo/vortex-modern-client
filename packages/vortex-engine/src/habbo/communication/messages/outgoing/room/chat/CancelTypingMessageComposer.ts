@@ -12,6 +12,7 @@ export class CancelTypingMessageComposer extends MessageComposer<[]>
         super();
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/chat/CancelTypingMessageComposer.as::getMessageArray()
     getMessageArray(): []
     {
         return [];

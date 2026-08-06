@@ -13,6 +13,7 @@ export class CompetitionVotingInfoMessageEventParser implements IMessageParser
 {
     private _goalId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionVotingInfoMessageEventParser.as::get goalId()
     get goalId(): number
     {
         return this._goalId;
@@ -20,6 +21,7 @@ export class CompetitionVotingInfoMessageEventParser implements IMessageParser
 
     private _goalCode: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionVotingInfoMessageEventParser.as::get goalCode()
     get goalCode(): string
     {
         return this._goalCode;
@@ -27,6 +29,7 @@ export class CompetitionVotingInfoMessageEventParser implements IMessageParser
 
     private _resultCode: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionVotingInfoMessageEventParser.as::get resultCode()
     get resultCode(): number
     {
         return this._resultCode;
@@ -34,16 +37,19 @@ export class CompetitionVotingInfoMessageEventParser implements IMessageParser
 
     private _votesRemaining: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionVotingInfoMessageEventParser.as::get votesRemaining()
     get votesRemaining(): number
     {
         return this._votesRemaining;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionVotingInfoMessageEventParser.as::get isVotingAllowedForUser()
     get isVotingAllowedForUser(): boolean
     {
         return this._resultCode === 0;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionVotingInfoMessageEventParser.as::flush()
     flush(): boolean
     {
         this._goalId = 0;
@@ -53,6 +59,7 @@ export class CompetitionVotingInfoMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionVotingInfoMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

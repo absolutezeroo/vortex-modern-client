@@ -11,6 +11,7 @@ export class GetGuestRoomResultMessageParser implements IMessageParser
 {
     private _enterRoom: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/GetGuestRoomResultEventParser.as::get enterRoom()
     get enterRoom(): boolean
     {
         return this._enterRoom;
@@ -18,6 +19,7 @@ export class GetGuestRoomResultMessageParser implements IMessageParser
 
     private _roomForward: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/GetGuestRoomResultEventParser.as::get roomForward()
     get roomForward(): boolean
     {
         return this._roomForward;
@@ -25,6 +27,7 @@ export class GetGuestRoomResultMessageParser implements IMessageParser
 
     private _staffPick: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/GetGuestRoomResultEventParser.as::get staffPick()
     get staffPick(): boolean
     {
         return this._staffPick;
@@ -32,6 +35,7 @@ export class GetGuestRoomResultMessageParser implements IMessageParser
 
     private _isGroupMember: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/GetGuestRoomResultEventParser.as::get isGroupMember()
     get isGroupMember(): boolean
     {
         return this._isGroupMember;
@@ -39,6 +43,7 @@ export class GetGuestRoomResultMessageParser implements IMessageParser
 
     private _openingConnection: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/GetGuestRoomResultEventParser.as::get openingConnection()
     get openingConnection(): boolean
     {
         return this._openingConnection;
@@ -46,6 +51,7 @@ export class GetGuestRoomResultMessageParser implements IMessageParser
 
     private _data: GuestRoomData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/GetGuestRoomResultEventParser.as::get data()
     get data(): GuestRoomData | null
     {
         return this._data;
@@ -53,6 +59,7 @@ export class GetGuestRoomResultMessageParser implements IMessageParser
 
     private _roomModerationSettings: RoomModerationSettings | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/GetGuestRoomResultEventParser.as::get roomModerationSettings()
     get roomModerationSettings(): RoomModerationSettings | null
     {
         return this._roomModerationSettings;
@@ -60,11 +67,13 @@ export class GetGuestRoomResultMessageParser implements IMessageParser
 
     private _chatSettings: RoomChatSettings | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/GetGuestRoomResultEventParser.as::get chatSettings()
     get chatSettings(): RoomChatSettings | null
     {
         return this._chatSettings;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/GetGuestRoomResultEventParser.as::flush()
     flush(): boolean
     {
         this._enterRoom = false;
@@ -79,6 +88,7 @@ export class GetGuestRoomResultMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/GetGuestRoomResultEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._enterRoom = wrapper.readBoolean();

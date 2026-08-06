@@ -55,11 +55,17 @@ const log = Logger.getLogger('habbo.session.RoomSessionManager');
  */
 export class RoomSessionManager extends Component implements IRoomSessionManager, IRoomHandlerListener
 {
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::_habboTracking
     private _habboTracking: IHabboTracking | null = null;
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::_freeFlowChat
     private _freeFlowChat: IHabboFreeFlowChat | null = null;
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::_avatarRenderer
     private _avatarRenderer: IAvatarRenderManager | null = null;
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::_handlers
     private _handlers: BaseHandler[] = [];
     private _sessions: Map<string, RoomSession> = new Map();
     private _pendingSession: RoomSession | null = null;
@@ -78,6 +84,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
 
     private _sessionStarting: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::get sessionStarting()
     get sessionStarting(): boolean
     {
         return this._sessionStarting;
@@ -95,6 +102,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
 	 * Whether the manager is fully initialized
 	 * In AS3 this also checks room engine initialization
 	 */
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::get initialized()
     get initialized(): boolean
     {
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as::get initialized()
@@ -163,6 +171,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
     /**
 	 * Go to a room - creates and starts a new room session
 	 */
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::gotoRoom()
     gotoRoom(roomId: number, password: string = '', roomResources: string = '', skipOpc: boolean = false): boolean
     {
         const session = new RoomSession();
@@ -180,6 +189,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
 	 *
 	 * @see sources/win63_version/habbo/session/RoomSessionManager.as gotoRoomNetwork()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::gotoRoomNetwork()
     gotoRoomNetwork(roomId: number, homeRoomId: number): boolean
     {
         const session = new RoomSession();
@@ -194,6 +204,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
     /**
 	 * Start an existing session
 	 */
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::startSession()
     startSession(session: IRoomSession): boolean
     {
         if(session.state === RoomSessionState.STARTED)
@@ -227,6 +238,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
     /**
 	 * Get an active session by room ID
 	 */
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::getSession()
     getSession(roomId: number): IRoomSession | null
     {
         const key = this.getRoomIdentifier(roomId);
@@ -268,6 +280,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
     /**
 	 * Start a game session
 	 */
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::startGameSession()
     startGameSession(): void
     {
         const session = new RoomSession();
@@ -297,6 +310,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
     /**
 	 * Dispose the game session
 	 */
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::disposeGameSession()
     disposeGameSession(): void
     {
         const key = this.getRoomIdentifier(1);
@@ -311,6 +325,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
     /**
 	 * Called by handlers when session state changes
 	 */
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::sessionUpdate()
     sessionUpdate(roomId: number, type: string): void
     {
         const session = this.getSession(roomId);
@@ -433,6 +448,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
         this.executePendingSessionRequest();
     }
 
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::createHandlers()
     private createHandlers(): void
     {
         if(!this._communication)
@@ -460,6 +476,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
         log.debug(`Created ${this._handlers.length} handlers`);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::createSession()
     private createSession(session: RoomSession): boolean
     {
         if(!this.initialized)
@@ -505,6 +522,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::executePendingSessionRequest()
     private executePendingSessionRequest(): void
     {
         if(this.initialized && this._pendingSession !== null)
@@ -515,6 +533,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::updateHandlers()
     private updateHandlers(session: IRoomSession): void
     {
         if(session !== null && this._handlers !== null)

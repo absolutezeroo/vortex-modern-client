@@ -15,6 +15,7 @@ export class ChangeUserNameMessageComposer extends MessageComposer<ConstructorPa
         this._data = [name];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/avatar/ChangeUserNameMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -10,7 +10,9 @@ import type {IRoomObject} from '@room/object/IRoomObject';
 
 export class RoomObjectDataRequestEvent extends RoomObjectEvent
 {
+    // AS3: .../src/com/sulake/habbo/room/events/RoomObjectDataRequestEvent.as::CURRENT_USER_ID
     public static readonly CURRENT_USER_ID = 'RODRE_CURRENT_USER_ID';
+    // AS3: .../src/com/sulake/habbo/room/events/RoomObjectDataRequestEvent.as::URL_PREFIX
     public static readonly URL_PREFIX = 'RODRE_URL_PREFIX';
 
     constructor(type: string, object: IRoomObject)

@@ -8,5 +8,6 @@ export interface ILocalizable
     /**
 	 * Set the localized text value
 	 */
+    // AS3: .../src/com/sulake/core/localization/ILocalizable.as::set localization()
     set localization(value: string);
 }

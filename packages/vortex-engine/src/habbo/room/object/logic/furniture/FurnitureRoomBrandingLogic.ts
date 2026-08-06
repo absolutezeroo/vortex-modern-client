@@ -14,11 +14,17 @@ import type {RoomObjectRoomAdUpdateMessage} from '@habbo/room/messages/RoomObjec
 
 export class FurnitureRoomBrandingLogic extends FurnitureLogic
 {
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureRoomBrandingLogic.as::STUFF_DATA_KEY_STATE
     public static readonly STUFF_DATA_KEY_STATE = 'state';
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureRoomBrandingLogic.as::STUFF_DATA_KEY_IMAGEURL
     public static readonly STUFF_DATA_KEY_IMAGEURL = 'imageUrl';
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureRoomBrandingLogic.as::STUFF_DATA_KEY_CLICKURL
     public static readonly STUFF_DATA_KEY_CLICKURL = 'clickUrl';
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureRoomBrandingLogic.as::STUFF_DATA_KEY_OFFSET_X
     public static readonly STUFF_DATA_KEY_OFFSET_X = 'offsetX';
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureRoomBrandingLogic.as::STUFF_DATA_KEY_OFFSET_Y
     public static readonly STUFF_DATA_KEY_OFFSET_Y = 'offsetY';
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureRoomBrandingLogic.as::STUFF_DATA_KEY_OFFSET_Z
     public static readonly STUFF_DATA_KEY_OFFSET_Z = 'offsetZ';
 
     protected _disableSelection: boolean = true;
@@ -85,6 +91,7 @@ export class FurnitureRoomBrandingLogic extends FurnitureLogic
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureRoomBrandingLogic.as::setupImageFromFurnitureData()
     private setupImageFromFurnitureData(): boolean
     {
         if(this.object === null)
@@ -183,11 +190,13 @@ export class FurnitureRoomBrandingLogic extends FurnitureLogic
         return changed;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureRoomBrandingLogic.as::forceImageUrlToUseHttps()
     private forceImageUrlToUseHttps(url: string | null): string | null
     {
         return url !== null ? url.replace('http:', 'https:') : null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureRoomBrandingLogic.as::updateOffset()
     private updateOffset(key: string, current: number, next: number): boolean
     {
         if(!isNaN(next) && current !== next)

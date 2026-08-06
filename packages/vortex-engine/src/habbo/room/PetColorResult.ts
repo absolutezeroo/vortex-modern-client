@@ -7,6 +7,7 @@
  */
 export class PetColorResult
 {
+    // AS3: sources/win63_version/habbo/room/PetColorResult.as::COLOR_TAGS
     private static readonly COLOR_TAGS: string[] = [
         'Null', 'Black', 'White', 'Grey', 'Red', 'Orange', 'Pink',
         'Green', 'Lime', 'Blue', 'Light-Blue', 'Dark-Blue', 'Yellow',
@@ -26,15 +27,19 @@ export class PetColorResult
         this._layerTags = layerTags;
     }
 
+    // AS3: sources/win63_version/habbo/room/PetColorResult.as::_primaryColor
     private _primaryColor: number;
 
+    // AS3: sources/win63_version/habbo/room/PetColorResult.as::get primaryColor()
     get primaryColor(): number
     {
         return this._primaryColor;
     }
 
+    // AS3: sources/win63_version/habbo/room/PetColorResult.as::_secondaryColor
     private _secondaryColor: number;
 
+    // AS3: sources/win63_version/habbo/room/PetColorResult.as::get secondaryColor()
     get secondaryColor(): number
     {
         return this._secondaryColor;
@@ -42,6 +47,7 @@ export class PetColorResult
 
     private _breed: number;
 
+    // AS3: sources/win63_version/habbo/room/PetColorResult.as::get breed()
     get breed(): number
     {
         return this._breed;
@@ -49,6 +55,7 @@ export class PetColorResult
 
     private _tag: string;
 
+    // AS3: sources/win63_version/habbo/room/PetColorResult.as::get tag()
     get tag(): string
     {
         return this._tag;
@@ -56,6 +63,7 @@ export class PetColorResult
 
     private _id: string;
 
+    // AS3: sources/win63_version/habbo/room/PetColorResult.as::get id()
     get id(): string
     {
         return this._id;
@@ -63,6 +71,7 @@ export class PetColorResult
 
     private _isMaster: boolean;
 
+    // AS3: sources/win63_version/habbo/room/PetColorResult.as::get isMaster()
     get isMaster(): boolean
     {
         return this._isMaster;
@@ -70,6 +79,7 @@ export class PetColorResult
 
     private _layerTags: string[];
 
+    // AS3: sources/win63_version/habbo/room/PetColorResult.as::get layerTags()
     get layerTags(): string[]
     {
         return this._layerTags;

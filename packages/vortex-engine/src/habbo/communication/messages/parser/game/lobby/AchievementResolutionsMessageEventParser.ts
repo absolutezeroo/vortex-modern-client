@@ -10,8 +10,10 @@ import {ResolutionAchievementData} from '../../quest/ResolutionAchievementData';
  */
 export class AchievementResolutionsMessageEventParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionsMessageEventParser.as::_stuffId
     private _stuffId: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionsMessageEventParser.as::get stuffId()
     get stuffId(): number
     {
         return this._stuffId;
@@ -19,18 +21,22 @@ export class AchievementResolutionsMessageEventParser implements IMessageParser
 
     private _achievements: ResolutionAchievementData[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionsMessageEventParser.as::get achievements()
     get achievements(): ResolutionAchievementData[]
     {
         return this._achievements;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionsMessageEventParser.as::_endTime
     private _endTime: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionsMessageEventParser.as::get endTime()
     get endTime(): number
     {
         return this._endTime;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionsMessageEventParser.as::flush()
     flush(): boolean
     {
         this._stuffId = -1;
@@ -39,6 +45,7 @@ export class AchievementResolutionsMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionsMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

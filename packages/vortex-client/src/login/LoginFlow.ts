@@ -210,6 +210,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
      * Builds the background, the logo, the four views and the captcha close button, kicks off the
      * two landing images, and opens on the ticket screen.
      */
+    // AS3: .../src/login/LoginFlow.as::init()
     public init(): void
     {
         this.stage?.addEventListener('resize', this._onStageResize);
@@ -272,6 +273,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
     /**
      * AS3: showScreen(_arg_1:int)
      */
+    // AS3: .../src/login/LoginFlow.as::showScreen()
     public showScreen(screen: number): void
     {
         this.hideViews();
@@ -399,6 +401,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
      * Commits the ticket's environment first (`false` = not a preview), then finishes immediately —
      * a ticket needs no web API round trip.
      */
+    // AS3: .../src/login/LoginFlow.as::initLoginWithSsoToken()
     public initLoginWithSsoToken(environmentId: string, token: string): void
     {
         this.updateEnvironment(environmentId, false);
@@ -423,6 +426,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
      *
      * A missing property is logged, not silently defaulted — AS3 prints "Add property:" for it.
      */
+    // AS3: .../src/login/LoginFlow.as::getProperty()
     public getProperty(key: string): string | null
     {
         const value = this._configuration ? this._configuration.getProperty(key) : '';
@@ -442,6 +446,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
      * — stores the choice, repoints the configuration, re-reads the localisations, and re-resolves
      * the connection host.
      */
+    // AS3: .../src/login/LoginFlow.as::updateEnvironment()
     public updateEnvironment(environmentId: string, preview: boolean): void
     {
         if(preview)
@@ -465,6 +470,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
      *
      * The balloon is built once and reused; every call restarts the three-second timer.
      */
+    // AS3: .../src/login/LoginFlow.as::showErrorMessage()
     public showErrorMessage(message: string): void
     {
         if(!this._mainSprite) return;
@@ -584,6 +590,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
      * exactly one avatar, which is precisely this case. Ticket, connection and onboarding follow on
      * their own.
      */
+    // AS3: .../src/login/LoginFlow.as::showSelectAvatar()
     public showSelectAvatar(_response: unknown): void
     {
         const session = this._communication?.getHabboWebApiSession() ?? null;
@@ -624,6 +631,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
      * The close button is added to the flow itself, above every screen, so the captcha can be
      * dismissed even though the view covers the stage.
      */
+    // AS3: .../src/login/LoginFlow.as::createCaptchaView()
     public createCaptchaView(): ICaptchaView | null
     {
         if(this._closeButton)
@@ -660,6 +668,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
      * right, and hangs the two landing illustrations off the bottom corners — the right one
      * clamped so it never crosses x=400.
      */
+    // AS3: .../src/login/LoginFlow.as::layoutMainElements()
     private layoutMainElements(): void
     {
         const stage = this.stage;
@@ -808,6 +817,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
      * unmatched codes still fall to `generic.error`. The one code that does not produce a message
      * is `pocket.auth.facebook_not_connected`, whose arm is empty.
      */
+    // AS3: .../src/login/LoginFlow.as::showError()
     private showError(error: unknown): void
     {
         const payload = error as {errors?: string[]; error?: string; message?: string} | null;
@@ -900,6 +910,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
      * embedded-asset parse to a microtask, so no property is readable yet at this point — `mount()`
      * does it once that has settled.
      */
+    // AS3: .../src/login/LoginFlow.as::createFakeContext()
     private createFakeContext(): void
     {
         this._fakeContext = new FakeContext();
@@ -920,6 +931,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
      * live.environment.list, landing.view.background_*.uri), and reusing the engine's manager would
      * force the whole core to boot before the user has authenticated.
      */
+    // AS3: .../src/login/LoginFlow.as::createConfiguration()
     private createConfiguration(): IHabboConfigurationManager
     {
         const configuration = new HabboConfigurationManager(this._fakeContext!);
@@ -936,6 +948,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
      * `loadDefaultEmbedLocalizations()` finds its texts. The port is handed the same texts among
      * the embedded assets, so they are forwarded here — without them the screens render raw keys.
      */
+    // AS3: .../src/login/LoginFlow.as::createLocalization()
     private createLocalization(): IHabboLocalizationManager
     {
         const localization = new HabboLocalizationManager(this._fakeContext!);
@@ -979,6 +992,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
      * The guard is AS3's: `dispose()` removes its frame listener, then returns early if it has
      * already run.
      */
+    // AS3: .../src/login/LoginFlow.as::dispose()
     public dispose(): void
     {
         this.removeEventListener('enterFrame', this._onEnterFrame);

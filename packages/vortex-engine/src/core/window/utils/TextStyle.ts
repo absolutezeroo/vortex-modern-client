@@ -8,41 +8,72 @@
  */
 export class TextStyle 
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::NORMAL
     public static readonly NORMAL: string = 'normal';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::ITALIC
     public static readonly ITALIC: string = 'italic';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::BOLD
     public static readonly BOLD: string = 'bold';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::UNDERLINE
     public static readonly UNDERLINE: string = 'underline';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::NONE
     public static readonly NONE: string = 'none';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::ADVANCED
     public static readonly ADVANCED: string = 'advanced';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::TOP_LEFT
     public static readonly TOP_LEFT: string = 'top-left';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::TOP
     public static readonly TOP: string = 'top';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::TOP_RIGHT
     public static readonly TOP_RIGHT: string = 'top-right';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::LEFT
     public static readonly LEFT: string = 'left';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::RIGHT
     public static readonly RIGHT: string = 'right';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::BOTTOM_LEFT
     public static readonly BOTTOM_LEFT: string = 'bottom-left';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::BOTTOM
     public static readonly BOTTOM: string = 'bottom';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::BOTTOM_RIGHT
     public static readonly BOTTOM_RIGHT: string = 'bottom-right';
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::name
     public name: string = '';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::color
     public color: number | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::fontFamily
     public fontFamily: string | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::fontSize
     public fontSize: number | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::fontStyle
     public fontStyle: string | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::fontWeight
     public fontWeight: string | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::kerning
     public kerning: boolean | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::leading
     public leading: number | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::letterSpacing
     public letterSpacing: number | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::textDecoration
     public textDecoration: string | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::textIndent
     public textIndent: number | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::antiAliasType
     public antiAliasType: string | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::sharpness
     public sharpness: number | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::thickness
     public thickness: number | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::etchingColor
     public etchingColor: number | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::etchingPosition
     public etchingPosition: string | null = null;
 
     /**
      * Compares all style properties (excluding name) for equality.
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::equals()
     public equals(other: TextStyle): boolean 
     {
         return this.color === other.color
@@ -65,6 +96,7 @@ export class TextStyle
     /**
      * Creates a deep copy of this style.
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::clone()
     public clone(): TextStyle 
     {
         const copy = new TextStyle();
@@ -92,6 +124,7 @@ export class TextStyle
     /**
      * Returns a CSS-like string representation for debugging.
      */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as::toString()
     public toString(): string 
     {
         let out = this.name + ' {\n';

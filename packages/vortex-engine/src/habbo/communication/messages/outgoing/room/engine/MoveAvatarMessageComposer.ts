@@ -15,6 +15,7 @@ export class MoveAvatarMessageComposer extends MessageComposer<[number, number]>
         this._data = [x, y];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/engine/MoveAvatarMessageComposer.as::getMessageArray()
     getMessageArray(): [number, number]
     {
         return this._data;

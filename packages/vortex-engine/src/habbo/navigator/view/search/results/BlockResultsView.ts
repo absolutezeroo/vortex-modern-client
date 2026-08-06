@@ -18,6 +18,7 @@ import type {CategoryElementFactory} from './CategoryElementFactory';
  */
 export class BlockResultsView
 {
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::_navigator
     private _navigator: HabboNewNavigator;
     /** Maps block index → search code */
     private _blockSearchCodes: Map<number, string> = new Map();
@@ -31,13 +32,16 @@ export class BlockResultsView
         this._navigator = navigator;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::_itemList
     private _itemList: IItemListWindow | null = null;
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::get itemList()
     get itemList(): IItemListWindow | null
     {
         return this._itemList;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::set itemList()
     set itemList(value: IItemListWindow)
     {
         this._itemList = value;
@@ -45,11 +49,13 @@ export class BlockResultsView
 
     private _categoryElementFactory: CategoryElementFactory | null = null;
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::set categoryElementFactory()
     set categoryElementFactory(value: CategoryElementFactory)
     {
         this._categoryElementFactory = value;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::get itemListWidth()
     get itemListWidth(): number
     {
         if(!this._itemList) return 0;
@@ -62,6 +68,7 @@ export class BlockResultsView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as displayCurrentResults()
 	 */
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::displayCurrentResults()
     displayCurrentResults(): void
     {
         if(!this._navigator.currentResults || !this._itemList || !this._categoryElementFactory)
@@ -108,6 +115,7 @@ export class BlockResultsView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as onCategoryShowMoreClicked()
 	 */
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::onCategoryShowMoreClicked()
     onCategoryShowMoreClicked(event: WindowEvent): void
     {
         if(!event.window) return;
@@ -126,6 +134,7 @@ export class BlockResultsView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as onCategoryBackClicked()
 	 */
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::onCategoryBackClicked()
     onCategoryBackClicked(_event: WindowEvent): void
     {
         this._navigator.goBack();
@@ -136,6 +145,7 @@ export class BlockResultsView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as onCategoryCollapseClicked()
 	 */
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::onCategoryCollapseClicked()
     onCategoryCollapseClicked(event: WindowEvent): void
     {
         if(!event.window) return;
@@ -155,6 +165,7 @@ export class BlockResultsView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as onCategoryExpandClicked()
 	 */
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::onCategoryExpandClicked()
     onCategoryExpandClicked(event: WindowEvent): void
     {
         if(!event.window) return;
@@ -174,6 +185,7 @@ export class BlockResultsView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as onCategoryAddQuickLinkClicked()
 	 */
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::onCategoryAddQuickLinkClicked()
     onCategoryAddQuickLinkClicked(event: WindowEvent): void
     {
         if(!event.window) return;
@@ -191,6 +203,7 @@ export class BlockResultsView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as onCategoryToggleModeClicked()
 	 */
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::onCategoryToggleModeClicked()
     onCategoryToggleModeClicked(event: WindowEvent): void
     {
         if(!event.window) return;
@@ -217,11 +230,13 @@ export class BlockResultsView
         this._blockViewModes.set(blockId, newMode);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::isMinimized()
     private isMinimized(searchCode: string): boolean
     {
         return this._navigator.isCategoryCollapsed(searchCode);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::isSingleBlock()
     private isSingleBlock(resultSet: NavigatorSearchResultSet): boolean
     {
         return resultSet.blocks.length === 1;
@@ -234,6 +249,7 @@ export class BlockResultsView
 	 * @param isExpanded - Whether to render in expanded state
 	 * @returns The rendered IWindow element
 	 */
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::renderCurrentResultsBlock()
     private renderCurrentResultsBlock(blockIndex: number, isExpanded: boolean): IWindow
     {
         const resultSet = this._navigator.currentResults;
@@ -276,6 +292,7 @@ export class BlockResultsView
 	 * @param blockId - The block index
 	 * @param expanded - Whether to render expanded or collapsed
 	 */
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as::replaceBlock()
     private replaceBlock(blockId: number, expanded: boolean): void
     {
         if(!this._itemList) return;

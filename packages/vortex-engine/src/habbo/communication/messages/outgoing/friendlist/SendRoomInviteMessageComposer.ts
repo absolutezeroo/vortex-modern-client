@@ -17,11 +17,13 @@ export class SendRoomInviteMessageComposer implements IMessageComposer<unknown[]
         this._message = message;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/SendRoomInviteMessageComposer.as::get disposed()
     get disposed(): boolean
     {
         return false;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/SendRoomInviteMessageComposer.as::getMessageArray()
     getMessageArray(): unknown[]
     {
         const result: unknown[] = [];
@@ -37,6 +39,7 @@ export class SendRoomInviteMessageComposer implements IMessageComposer<unknown[]
         return result;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/SendRoomInviteMessageComposer.as::dispose()
     dispose(): void
     {
         return;

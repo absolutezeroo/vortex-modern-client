@@ -7,14 +7,18 @@
  */
 export class CatalogWidgetGuildSelectedEvent
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetGuildSelectedEvent.as::NO_GUILD_SELECTED
     static readonly NO_GUILD_SELECTED: number = -1;
 
     private _guildId: number;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetGuildSelectedEvent.as::_color1
     private _color1: string;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetGuildSelectedEvent.as::_color2
     private _color2: string;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetGuildSelectedEvent.as::_badgeCode
     private _badgeCode: string;
 
     constructor(guildId: number, color1: string, color2: string, badgeCode: string)

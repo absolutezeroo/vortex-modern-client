@@ -72,10 +72,13 @@ function toCssColor(value: number): string
 export class InfoStandPetView
 {
     private readonly _widget: InfoStandWidget;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::_catalog
     private readonly _catalog: IHabboCatalog | null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::_window
     private _window: IItemListWindow | null = null;
     private _infoBorder: IWindowContainer | null = null;
     private _elementList: IItemListWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::_buttonsContainer
     private _buttonsContainer: IWindowContainer | null = null;
     private _currentPetId: number = 0;
     private _petDataCache: Map<number, InfoStandPetData> | null = new Map();

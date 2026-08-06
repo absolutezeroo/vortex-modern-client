@@ -13,22 +13,37 @@ import {PlaneMaterialCellColumn} from './PlaneMaterialCellColumn';
 
 export class PlaneMaterialCellMatrix
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::REPEAT_MODE_ALL
     public static readonly REPEAT_MODE_ALL: number = 1;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::REPEAT_MODE_BORDERS
     public static readonly REPEAT_MODE_BORDERS: number = 2;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::REPEAT_MODE_CENTER
     public static readonly REPEAT_MODE_CENTER: number = 3;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::REPEAT_MODE_FIRST
     public static readonly REPEAT_MODE_FIRST: number = 4;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::REPEAT_MODE_LAST
     public static readonly REPEAT_MODE_LAST: number = 5;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::REPEAT_MODE_RANDOM
     public static readonly REPEAT_MODE_RANDOM: number = 6;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::REPEAT_MODE_DEFAULT
     public static readonly REPEAT_MODE_DEFAULT: number = 1;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::ALIGN_TOP
     public static readonly ALIGN_TOP: number = 1;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::ALIGN_BOTTOM
     public static readonly ALIGN_BOTTOM: number = 2;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::ALIGN_DEFAULT
     public static readonly ALIGN_DEFAULT: number = 1;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::_columns
     private _columns: (PlaneMaterialCellColumn | null)[];
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::_repeatMode
     private _repeatMode: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::_align
     private _align: number;
     private _cachedBitmap: HTMLCanvasElement | null = null;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::_cachedBitmapNormal
     private _cachedBitmapNormal: Vector3d | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::_cachedBitmapHeight
     private _cachedBitmapHeight: number = 0;
     private _cacheUsed: boolean = false;
 
@@ -63,58 +78,72 @@ export class PlaneMaterialCellMatrix
         }
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::_isStatic
     private _isStatic: boolean = true;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::get isStatic()
     get isStatic(): boolean
     {
         return this._isStatic;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::_normalMinX
     private _normalMinX: number;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::get normalMinX()
     get normalMinX(): number
     {
         return this._normalMinX;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::_normalMaxX
     private _normalMaxX: number;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::get normalMaxX()
     get normalMaxX(): number
     {
         return this._normalMaxX;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::_normalMinY
     private _normalMinY: number;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::get normalMinY()
     get normalMinY(): number
     {
         return this._normalMinY;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::_normalMaxY
     private _normalMaxY: number;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::get normalMaxY()
     get normalMaxY(): number
     {
         return this._normalMaxY;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::nextRandomColumnIndex()
     private static nextRandomColumnIndex(count: number): number
     {
         const values = Randomizer.getValues(1, 0, count * 17631);
         return values[0] % count;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::isBottomAligned()
     isBottomAligned(): boolean
     {
         return this._align === PlaneMaterialCellMatrix.ALIGN_BOTTOM;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::dispose()
     dispose(): void
     {
         this._cachedBitmap = null;
         this._cachedBitmapNormal = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::clearCache()
     clearCache(): void
     {
         if(!this._cacheUsed) return;
@@ -138,6 +167,7 @@ export class PlaneMaterialCellMatrix
         this._cacheUsed = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::createColumn()
     createColumn(index: number, width: number, cells: PlaneMaterialCell[] | null, repeatMode: number = 1): boolean
     {
         if(index < 0 || index >= this._columns.length) return false;
@@ -158,6 +188,7 @@ export class PlaneMaterialCellMatrix
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::getColumns()
     getColumns(width: number): (PlaneMaterialCellColumn | null)[]
     {
         if(this._repeatMode === PlaneMaterialCellMatrix.REPEAT_MODE_RANDOM)
@@ -177,6 +208,7 @@ export class PlaneMaterialCellMatrix
         return this._columns;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::render()
     render(
         canvas: HTMLCanvasElement | null,
         width: number,
@@ -330,6 +362,7 @@ export class PlaneMaterialCellMatrix
         return this._cachedBitmap;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::copyCachedBitmapOnCanvas()
     private copyCachedBitmapOnCanvas(canvas: HTMLCanvasElement, renderHeight: number, offsetY: number, isTopAligned: boolean): void
     {
         if(canvas === null || this._cachedBitmap === null || canvas === this._cachedBitmap) return;
@@ -364,6 +397,7 @@ export class PlaneMaterialCellMatrix
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::getColumnsWidth()
     private getColumnsWidth(columns: HTMLCanvasElement[]): number
     {
         let total = 0;
@@ -374,6 +408,7 @@ export class PlaneMaterialCellMatrix
         return total;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::renderColumns()
     private renderColumns(
         target: HTMLCanvasElement,
         columns: HTMLCanvasElement[],
@@ -419,6 +454,7 @@ export class PlaneMaterialCellMatrix
         return {x: xPos, maxHeight};
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::renderRepeatAll()
     private renderRepeatAll(target: HTMLCanvasElement, columns: HTMLCanvasElement[]): number
     {
         if(columns.length === 0 || target === null) return 0;
@@ -437,6 +473,7 @@ export class PlaneMaterialCellMatrix
         return maxHeight;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::renderRepeatBorders()
     private renderRepeatBorders(target: HTMLCanvasElement, columns: HTMLCanvasElement[]): number
     {
         if(columns.length === 0 || target === null) return 0;
@@ -493,6 +530,7 @@ export class PlaneMaterialCellMatrix
         return maxHeight;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::renderRepeatCenter()
     private renderRepeatCenter(target: HTMLCanvasElement, columns: HTMLCanvasElement[]): number
     {
         if(columns.length === 0 || target === null) return 0;
@@ -564,6 +602,7 @@ export class PlaneMaterialCellMatrix
         return maxHeight;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::renderRepeatFirst()
     private renderRepeatFirst(target: HTMLCanvasElement, columns: HTMLCanvasElement[]): number
     {
         if(columns.length === 0 || target === null) return 0;
@@ -589,6 +628,7 @@ export class PlaneMaterialCellMatrix
         return maxHeight;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::renderRepeatLast()
     private renderRepeatLast(target: HTMLCanvasElement, columns: HTMLCanvasElement[]): number
     {
         if(columns.length === 0 || target === null) return 0;
@@ -614,6 +654,7 @@ export class PlaneMaterialCellMatrix
         return maxHeight;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellMatrix.as::renderRepeatRandom()
     private renderRepeatRandom(target: HTMLCanvasElement, columns: HTMLCanvasElement[]): number
     {
         if(columns.length === 0 || target === null) return 0;

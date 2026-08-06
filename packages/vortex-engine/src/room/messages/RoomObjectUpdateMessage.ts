@@ -19,11 +19,13 @@ export class RoomObjectUpdateMessage
         this._direction = direction;
     }
 
+    // AS3: .../src/com/sulake/room/messages/RoomObjectUpdateMessage.as::get loc()
     get loc(): IVector3d | null
     {
         return this._location;
     }
 
+    // AS3: .../src/com/sulake/room/messages/RoomObjectUpdateMessage.as::get dir()
     get dir(): IVector3d | null
     {
         return this._direction;

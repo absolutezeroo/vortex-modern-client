@@ -20,6 +20,7 @@ export class ModeratorActionMessageComposer extends MessageComposer<ConstructorP
         this._data = [actionType, message, cfhTopic];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/moderator/ModeratorActionMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

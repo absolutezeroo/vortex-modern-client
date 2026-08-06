@@ -22,6 +22,7 @@ export interface ILoginProvider
      * `_arg_3` is stored and never read by the 701 provider; kept because it is part of the
      * interface's shape.
      */
+    // AS3: .../src/com/sulake/habbo/communication/login/ILoginProvider.as::loginWithCredentials()
     loginWithCredentials(email: string, password: string, loginMode?: number): void;
 
     // AS3: function loginWithCredentialsWeb(_arg_1:String):void
@@ -32,6 +33,7 @@ export interface ILoginProvider
      *
      * Empty in `WebApiLoginProvider` — id-based selection was superseded by the uniqueId one.
      */
+    // AS3: .../src/com/sulake/habbo/communication/login/ILoginProvider.as::selectAvatar()
     selectAvatar(id: number): void;
 
     // AS3: function selectAvatarUniqueid(_arg_1:String):void

@@ -55,26 +55,31 @@ export class ImageData
     /**
 	 * The bounding rectangle of the source asset.
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/ImageData.as::get rect()
     public get rect(): { x: number; y: number; width: number; height: number }
     {
         return this._rect;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/cache/ImageData.as::_regPoint
     private _regPoint: { x: number; y: number };
 
     /**
 	 * The registration point (origin offset) of this image.
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/ImageData.as::get regPoint()
     public get regPoint(): { x: number; y: number }
     {
         return this._regPoint;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/cache/ImageData.as::_flipH
     private _flipH: boolean;
 
     /**
 	 * Whether this image is horizontally flipped.
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/ImageData.as::get flipH()
     public get flipH(): boolean
     {
         return this._flipH;
@@ -85,6 +90,7 @@ export class ImageData
     /**
 	 * The color transform applied to this image, or null if none.
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/ImageData.as::get colorTransform()
     public get colorTransform(): IColorTransformData | null
     {
         return this._colorTransform;
@@ -94,6 +100,7 @@ export class ImageData
 	 * Returns a new rectangle offset by the negative registration point.
 	 * Matches AS3: new Rectangle(0, 0, width, height).offset(-regPoint.x, -regPoint.y)
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/ImageData.as::get offsetRect()
     public get offsetRect(): { x: number; y: number; width: number; height: number }
     {
         return {
@@ -107,6 +114,7 @@ export class ImageData
     /**
 	 * Disposes the texture and nullifies references.
 	 */
+    // AS3: sources/win63_version/habbo/avatar/cache/ImageData.as::dispose()
     public dispose(): void
     {
         this._texture = null;

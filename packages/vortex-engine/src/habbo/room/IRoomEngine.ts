@@ -23,10 +23,12 @@ import type {IRoomEngineRectangle} from './RoomEngine';
 
 export interface IRoomEngine extends IDisposable {
     // Event emitter
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::get events()
     readonly events: EventEmitter;
     /**
      * The currently active room ID.
      */
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::get activeRoomId()
     readonly activeRoomId: number;
     /**
      * Whether the active room session has the local user in decorate (furni move) mode.
@@ -197,6 +199,7 @@ export interface IRoomEngine extends IDisposable {
     cancelRoomObjectInsert(): void;
 
     // CatalogObjectMover, RecyclerCatalogWidget) already null-check before use.
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::getSelectedObjectData()
     getSelectedObjectData(roomId: number): ISelectedRoomObjectData | null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::setObjectMoverIconSpriteVisible()
@@ -243,6 +246,7 @@ export interface IRoomEngine extends IDisposable {
 
     getRoomInstance(roomId: number): IRoomInstance | null;
 
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::setActiveRoom()
     setActiveRoom(roomId: number): void;
 
     getActiveRoomId(): number;
@@ -280,6 +284,7 @@ export interface IRoomEngine extends IDisposable {
         ownerName: string | null
     ): boolean;
 
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::getRoomObject()
     getRoomObject(roomId: number, objectId: number, category: number): IRoomObject | null;
 
     disposeRoomObject(roomId: number, objectId: number, category: number): boolean;
@@ -351,16 +356,20 @@ export interface IRoomEngine extends IDisposable {
     setRoomObjectUserOwnUser(roomId: number, objectId: number): boolean;
 
     // Rendering
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::update()
     update(time: number): void;
 
     initializeRoomVisuals(roomId: number, floorType: string, wallType: string, landscapeType: string, worldType: number): void;
 
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::updateObjectRoom()
     updateObjectRoom(roomId: number, floorType?: string | null, wallType?: string | null, landscapeType?: string | null, skipModelUpdate?: boolean): boolean;
 
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::updateObjectRoomVisibilities()
     updateObjectRoomVisibilities(roomId: number, wallsVisible: boolean, floorVisible?: boolean): boolean;
 
     // Canvas management
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectRoomPlaneThicknesses()
     updateObjectRoomPlaneThicknesses(roomId: number, wallThicknessMultiplier: number, floorThicknessMultiplier: number): boolean;
 
     // Room data
@@ -373,11 +382,13 @@ export interface IRoomEngine extends IDisposable {
      *
      * @returns The PixiJS Container for the canvas, or null on failure
      */
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::createRoomCanvas()
     createRoomCanvas(roomId: number, canvasId: number, width: number, height: number, scale: number): Container | null;
 
     /**
      * Modifies the dimensions of an existing room canvas.
      */
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::modifyRoomCanvas()
     modifyRoomCanvas(roomId: number, canvasId: number, width: number, height: number): boolean;
 
     /**
@@ -396,17 +407,20 @@ export interface IRoomEngine extends IDisposable {
     /**
      * AS3: sources/win63_version/habbo/room/IRoomEngine.as::setRoomCanvasMask()
      */
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::setRoomCanvasMask()
     setRoomCanvasMask(roomId: number, canvasId: number, useMask: boolean): void;
 
     /**
      * Toggles the `:showstats` FPS/render/memory overlay on the active room canvas.
      * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::setFpsCounterEnabled()
      */
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::setFpsCounterEnabled()
     setFpsCounterEnabled(enabled: boolean): void;
 
     /**
      * Handles a mouse event on the room canvas.
      */
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::handleRoomCanvasMouseEvent()
     handleRoomCanvasMouseEvent(
         canvasId: number,
         x: number,
@@ -421,16 +435,19 @@ export interface IRoomEngine extends IDisposable {
     /**
      * Gets the room geometry for a canvas.
      */
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::getRoomCanvasGeometry()
     getRoomCanvasGeometry(roomId: number, canvasId?: number): IRoomGeometry | null;
 
     /**
      * Gets the screen offset of a room canvas.
      */
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::getRoomCanvasScreenOffset()
     getRoomCanvasScreenOffset(roomId: number, canvasId?: number): { x: number; y: number } | null;
 
     /**
      * Sets the screen offset of a room canvas.
      */
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::setRoomCanvasScreenOffset()
     setRoomCanvasScreenOffset(roomId: number, canvasId: number, point: { x: number; y: number }): boolean;
 
     /**
@@ -449,12 +466,13 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/win63_version/habbo/room/class_34.as::getRoomObjectBoundingRectangle()
     getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): IRoomEngineRectangle | null;
 
-    // AS3: sources/win63_client/com/sulake/habbo/room/RoomEngine.as::getRoomObjectScreenLocation()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getRoomObjectScreenLocation()
     getRoomObjectScreenLocation(roomId: number, objectId: number, category: number, canvasId?: number): { x: number; y: number } | null;
 
     /**
      * Sets the scale of a room canvas, optionally centering on a point.
      */
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::setRoomCanvasScale()
     setRoomCanvasScale(
         roomId: number,
         canvasId: number,
@@ -466,5 +484,6 @@ export interface IRoomEngine extends IDisposable {
     /**
      * Gets the scale of a room canvas.
      */
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::getRoomCanvasScale()
     getRoomCanvasScale(roomId: number, canvasId?: number): number;
 }

@@ -93,6 +93,7 @@ export class HabboMusicController implements IHabboMusicController
     // AS3: .../HabboMusicController.as::_roomItemPlaylist
     private _roomItemPlaylist: IPlayListController | null = null;
 
+    // AS3: .../src/com/sulake/habbo/sound/music/HabboMusicController.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../HabboMusicController.as::_songStartRequests
@@ -264,6 +265,7 @@ export class HabboMusicController implements IHabboMusicController
      * made when the song is *unknown* — a second call before the answer lands is deduplicated by
      * `requestSong()`.
      */
+    // AS3: .../src/com/sulake/habbo/sound/music/HabboMusicController.as::getSongInfo()
     getSongInfo(songId: number): ISongInfo | null
     {
         const entry = this.getSongDataEntry(songId);
@@ -624,6 +626,7 @@ export class HabboMusicController implements IHabboMusicController
      * Returning true does not mean the song started: when a previous song had to be stopped first,
      * AS3 returns true and waits for that song's complete event to come back round.
      */
+    // AS3: .../src/com/sulake/habbo/sound/music/HabboMusicController.as::playSongObject()
     private playSongObject(priority: number, songId: number): boolean
     {
         if(songId === -1 || priority < 0 || priority >= HabboMusicController.PRIORITY_SLOT_COUNT) return false;

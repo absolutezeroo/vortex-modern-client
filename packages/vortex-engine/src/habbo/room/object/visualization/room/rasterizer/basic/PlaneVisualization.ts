@@ -22,8 +22,10 @@ type PlaneLayer = PlaneVisualizationLayer | PlaneVisualizationAnimationLayer;
 
 export class PlaneVisualization
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualization.as::_layers
     private _layers: (PlaneLayer | null)[];
     private _cachedBitmap: HTMLCanvasElement | null = null;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualization.as::_cachedBitmapNormal
     private _cachedBitmapNormal: Vector3d;
     private _cacheUsed: boolean = false;
 
@@ -41,20 +43,25 @@ export class PlaneVisualization
         this._cachedBitmapNormal = new Vector3d();
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualization.as::_geometry
     private _geometry: IRoomGeometry | null;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualization.as::get geometry()
     get geometry(): IRoomGeometry | null
     {
         return this._geometry;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualization.as::_hasAnimationLayers
     private _hasAnimationLayers: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualization.as::get hasAnimationLayers()
     get hasAnimationLayers(): boolean
     {
         return this._hasAnimationLayers;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualization.as::dispose()
     dispose(): void
     {
         if(this._layers !== null)
@@ -72,6 +79,7 @@ export class PlaneVisualization
         this._cachedBitmap = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualization.as::clearCache()
     clearCache(): void
     {
         if(!this._cacheUsed) return;
@@ -90,6 +98,7 @@ export class PlaneVisualization
         this._cacheUsed = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualization.as::setLayer()
     setLayer(index: number, material: PlaneMaterial | null, color: number, align: number, offset: number = 0): boolean
     {
         if(index < 0 || index >= this._layers.length) return false;
@@ -114,6 +123,7 @@ export class PlaneVisualization
 	 * @param assetTextures - Asset texture map for resolving item bitmaps
 	 * @returns Whether the layer was set successfully
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualization.as::setAnimationLayer()
     setAnimationLayer(index: number, items: IAnimationItemData[], assetTextures: Map<string, HTMLCanvasElement> | null): boolean
     {
         if(index < 0 || index >= this._layers.length) return false;
@@ -129,6 +139,7 @@ export class PlaneVisualization
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualization.as::getLayers()
     getLayers(): (PlaneLayer | null)[]
     {
         return this._layers;
@@ -142,6 +153,7 @@ export class PlaneVisualization
 	 *
 	 * @see AS3 PlaneVisualization.render()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualization.as::render()
     render(
         canvas: HTMLCanvasElement | null,
         width: number,

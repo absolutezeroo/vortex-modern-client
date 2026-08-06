@@ -9,7 +9,9 @@ import {AnimatedFurnitureVisualization} from './AnimatedFurnitureVisualization';
 
 export class FurnitureBottleVisualization extends AnimatedFurnitureVisualization
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureBottleVisualization.as::ANIMATION_ID_OFFSET_SLOW1
     private static readonly ANIMATION_ID_OFFSET_SLOW1: number = 20;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureBottleVisualization.as::ANIMATION_ID_OFFSET_SLOW2
     private static readonly ANIMATION_ID_OFFSET_SLOW2: number = 9;
     private static readonly STATE_IDLE: number = -1;
 

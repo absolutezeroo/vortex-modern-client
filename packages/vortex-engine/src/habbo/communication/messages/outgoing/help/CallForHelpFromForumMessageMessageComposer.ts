@@ -15,6 +15,7 @@ export class CallForHelpFromForumMessageMessageComposer extends MessageComposer<
         this._data = [groupId, threadId, messageId, topicId, message];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/CallForHelpFromForumMessageMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

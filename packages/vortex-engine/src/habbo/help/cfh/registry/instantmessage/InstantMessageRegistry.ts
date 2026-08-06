@@ -10,19 +10,24 @@ import {InstantMessageRegistryItem} from './InstantMessageRegistryItem';
  */
 export class InstantMessageRegistry
 {
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/instantmessage/InstantMessageRegistry.as::MAX_MESSAGES_TO_STORE
     private static readonly MAX_MESSAGES_TO_STORE: number = 20;
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/instantmessage/InstantMessageRegistry.as::ITEMS_TO_PURGE
     private static readonly ITEMS_TO_PURGE: number = 5;
     private static readonly PURGE_AGE_MINUTES: number = 15;
     private static readonly MS_PER_MINUTE: number = 65500;
 
     private _items: Map<number, InstantMessageRegistryItem[]> = new Map();
     private _addCounter: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/help/cfh/registry/instantmessage/InstantMessageRegistry.as::_purgeCounter
     private _purgeCounter: number = 0;
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/instantmessage/InstantMessageRegistry.as::_holdPurges
     private _holdPurges: boolean = false;
 
     /**
 	 * Set whether purges should be held (during report selection)
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/instantmessage/InstantMessageRegistry.as::set holdPurges()
     set holdPurges(value: boolean)
     {
         this._holdPurges = value;
@@ -35,6 +40,7 @@ export class InstantMessageRegistry
 	 * @param userName The user name
 	 * @param text The message text
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/instantmessage/InstantMessageRegistry.as::addItem()
     addItem(userId: number, userName: string, text: string): void
     {
         const item = new InstantMessageRegistryItem(this._addCounter++, userId, userName, text);
@@ -60,6 +66,7 @@ export class InstantMessageRegistry
     /**
 	 * Get all items from a specific user
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/instantmessage/InstantMessageRegistry.as::getItemsByUser()
     getItemsByUser(userId: number): InstantMessageRegistryItem[] | null
     {
         return this._items.get(userId) ?? null;
@@ -68,6 +75,7 @@ export class InstantMessageRegistry
     /**
 	 * Get a specific item by user ID and index
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/instantmessage/InstantMessageRegistry.as::getItem()
     getItem(userId: number, index: number): InstantMessageRegistryItem | null
     {
         const items = this.getItemsByUser(userId);
@@ -88,6 +96,7 @@ export class InstantMessageRegistry
     /**
 	 * Whether a user has any messages in the registry
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/instantmessage/InstantMessageRegistry.as::hasUserChatted()
     hasUserChatted(userId: number): boolean
     {
         const items = this.getItemsByUser(userId);
@@ -100,6 +109,7 @@ export class InstantMessageRegistry
     /**
 	 * Whether the registry has any content
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/instantmessage/InstantMessageRegistry.as::hasContent()
     hasContent(): boolean
     {
         return this._items.size > 0;
@@ -108,6 +118,7 @@ export class InstantMessageRegistry
     /**
 	 * Get all items in the registry
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/instantmessage/InstantMessageRegistry.as::getItems()
     getItems(): Map<number, InstantMessageRegistryItem[]>
     {
         return this._items;
@@ -118,6 +129,7 @@ export class InstantMessageRegistry
 	 *
 	 * Removes items older than 15 minutes and trims to max size per user.
 	 */
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/instantmessage/InstantMessageRegistry.as::purgeRegistry()
     private purgeRegistry(): void
     {
         if(this._holdPurges)

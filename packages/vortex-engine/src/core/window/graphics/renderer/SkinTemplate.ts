@@ -18,8 +18,10 @@ export class SkinTemplate
         this._atlas = atlas;
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinTemplate.as::_name
     private _name: string;
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinTemplate.as::get name()
     public get name(): string 
     {
         return this._name;

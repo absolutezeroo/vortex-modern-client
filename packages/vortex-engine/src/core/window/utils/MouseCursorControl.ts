@@ -12,11 +12,13 @@ export class MouseCursorControl
 {
     private static _dirty: boolean = true;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/MouseCursorControl.as::_type
     private static _type: number = 0;
 
     /**
 	 * Gets the current cursor type.
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/MouseCursorControl.as::get type()
     public static get type(): number
     {
         return MouseCursorControl._type;
@@ -27,6 +29,7 @@ export class MouseCursorControl
 	 *
 	 * @param value - The cursor type constant
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/MouseCursorControl.as::set type()
     public static set type(value: number)
     {
         if(MouseCursorControl._type !== value)
@@ -41,6 +44,7 @@ export class MouseCursorControl
     /**
 	 * Gets cursor visibility.
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/MouseCursorControl.as::get visible()
     public static get visible(): boolean
     {
         return MouseCursorControl._visible;
@@ -51,6 +55,7 @@ export class MouseCursorControl
 	 *
 	 * @param value - Whether the cursor should be visible
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/MouseCursorControl.as::set visible()
     public static set visible(value: boolean)
     {
         MouseCursorControl._visible = value;
@@ -65,11 +70,13 @@ export class MouseCursorControl
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/MouseCursorControl.as::_disposed
     private static _disposed: boolean = false;
 
     /**
 	 * Whether the cursor control has been disposed.
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/MouseCursorControl.as::get disposed()
     public static get disposed(): boolean
     {
         return MouseCursorControl._disposed;
@@ -78,6 +85,7 @@ export class MouseCursorControl
     /**
 	 * Disposes the cursor control.
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/MouseCursorControl.as::dispose()
     public static dispose(): void
     {
         if(!MouseCursorControl._disposed)
@@ -90,6 +98,7 @@ export class MouseCursorControl
 	 * Applies the current cursor type by mapping it to a CSS cursor.
 	 * Only updates the DOM if the cursor type has changed.
 	 */
+    // AS3: .../src/com/sulake/core/window/utils/MouseCursorControl.as::change()
     public static change(): void
     {
         if(!MouseCursorControl._dirty)

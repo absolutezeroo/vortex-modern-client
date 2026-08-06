@@ -10,6 +10,7 @@ export class PrizeLevelMessageData
 {
     private _prizeLevelId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/PrizeLevelMessageData.as::get prizeLevelId()
     get prizeLevelId(): number
     {
         return this._prizeLevelId;
@@ -17,6 +18,7 @@ export class PrizeLevelMessageData
 
     private _probabilityDenominator: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/PrizeLevelMessageData.as::get probabilityDenominator()
     get probabilityDenominator(): number
     {
         return this._probabilityDenominator;
@@ -24,6 +26,7 @@ export class PrizeLevelMessageData
 
     private _prizes: PrizeMessageData[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/PrizeLevelMessageData.as::get prizes()
     get prizes(): PrizeMessageData[]
     {
         return this._prizes;

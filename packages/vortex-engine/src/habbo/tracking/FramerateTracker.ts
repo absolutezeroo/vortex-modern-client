@@ -15,6 +15,7 @@ export class FramerateTracker
     private _updateCount: number = 0;
     private _averageInterval: number = 0;
     private _reportCount: number = 0;
+    // AS3: .../src/com/sulake/habbo/tracking/FramerateTracker.as::_habboTracking
     private _habboTracking: HabboTracking;
 
     constructor(tracking: HabboTracking)
@@ -25,6 +26,7 @@ export class FramerateTracker
     /**
 	 * Get the current average framerate
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/FramerateTracker.as::get frameRate()
     get frameRate(): number
     {
         return Math.round(1000 / this._averageInterval);
@@ -36,6 +38,7 @@ export class FramerateTracker
 	 * @param deltaTime Time since last update in milliseconds
 	 * @param currentTime Current time in milliseconds
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/FramerateTracker.as::trackUpdate()
     trackUpdate(deltaTime: number, currentTime: number): void
     {
         this._updateCount++;

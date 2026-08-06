@@ -11,8 +11,10 @@ import type {PlaneTexture} from './PlaneTexture';
 
 export class PlaneMaterialCell
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCell.as::_texture
     private _texture: PlaneTexture | null;
     private _cachedBitmap: HTMLCanvasElement | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCell.as::_extraItemCount
     private _extraItemCount: number = 0;
 
     constructor(
@@ -26,11 +28,13 @@ export class PlaneMaterialCell
         this._extraItemCount = extraItemCount;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCell.as::get isStatic()
     get isStatic(): boolean
     {
         return this._extraItemCount === 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCell.as::dispose()
     dispose(): void
     {
         if(this._texture !== null)
@@ -41,11 +45,13 @@ export class PlaneMaterialCell
         this._cachedBitmap = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCell.as::clearCache()
     clearCache(): void
     {
         this._cachedBitmap = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCell.as::getHeight()
     getHeight(normal: IVector3d): number
     {
         if(this._texture !== null)
@@ -59,6 +65,7 @@ export class PlaneMaterialCell
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCell.as::render()
     render(normal: IVector3d, offsetX: number, offsetY: number): HTMLCanvasElement | null
     {
         if(this._texture === null)
@@ -145,6 +152,7 @@ export class PlaneMaterialCell
         return this._cachedBitmap;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCell.as::getAssetName()
     getAssetName(normal: IVector3d): string | null
     {
         return this._texture === null ? null : this._texture.getAssetName(normal);

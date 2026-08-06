@@ -15,6 +15,7 @@ export class UpdateClothingChangeFurnitureComposer extends MessageComposer<Const
         this._data = [objectId, gender, figure];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/engine/SetClothingChangeDataMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -15,6 +15,7 @@ import {
  */
 export class AnimationAction
 {
+    // AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::DEFAULT_OFFSET
     public static readonly DEFAULT_OFFSET: { x: number; y: number } = {x: 0, y: 0};
     private _offsets: Map<number, Map<number, Map<string, { x: number; y: number }>>>;
     private _offsetFrames: number[];

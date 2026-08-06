@@ -19,6 +19,7 @@ export class RoomWidgetDanceMessage extends RoomWidgetMessage
     // AS3: RoomWidgetDanceMessage.as::_SafeStr_10129 (HabboClub dance styles)
     public static readonly CLUB_DANCES: number[] = [2, 3, 4];
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/messages/RoomWidgetDanceMessage.as::_style
     private _style: number;
 
     // AS3: RoomWidgetDanceMessage.as::RoomWidgetDanceMessage()

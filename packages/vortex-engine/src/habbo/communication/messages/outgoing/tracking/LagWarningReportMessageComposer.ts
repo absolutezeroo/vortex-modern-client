@@ -15,6 +15,7 @@ export class LagWarningReportMessageComposer extends MessageComposer<Constructor
         this._data = [warningCount];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/tracking/LagWarningReportMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

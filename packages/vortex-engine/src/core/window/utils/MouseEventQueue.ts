@@ -136,6 +136,7 @@ export class MouseEventQueue
         this._readIndex = 0;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/MouseEventQueue.as::dispose()
     public dispose(): void
     {
         if(!this._disposed)

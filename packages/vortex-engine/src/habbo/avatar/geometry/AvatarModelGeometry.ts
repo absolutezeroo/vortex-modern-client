@@ -33,7 +33,9 @@ export class AvatarModelGeometry
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as:18
     private _orderAfter: Map<string, string> = new Map();
     private _transform: Matrix4x4;
+    // AS3: .../src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::_camera
     private _camera: Vector3D;
+    // AS3: .../src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::_canvases
     private _canvases: Map<string, Map<string, AvatarCanvas>>;
 
     // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::AvatarModelGeometry()

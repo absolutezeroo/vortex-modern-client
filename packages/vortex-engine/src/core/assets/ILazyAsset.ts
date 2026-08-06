@@ -9,5 +9,6 @@ import type {IAsset} from './IAsset';
  */
 export interface ILazyAsset extends IAsset
 {
+    // AS3: .../src/com/sulake/core/assets/ILazyAsset.as::prepareLazyContent()
     prepareLazyContent(): void;
 }

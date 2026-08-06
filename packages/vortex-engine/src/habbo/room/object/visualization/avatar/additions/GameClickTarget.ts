@@ -23,8 +23,10 @@ export class GameClickTarget implements IAvatarAddition
         this._id = id;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/GameClickTarget.as::_id
     private _id: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/GameClickTarget.as::get id()
     get id(): number
     {
         return this._id;
@@ -36,8 +38,10 @@ export class GameClickTarget implements IAvatarAddition
     // pixel content never matters, only the bitmap's dimensions).
     private _texture: Texture | null = null;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/GameClickTarget.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/GameClickTarget.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -49,6 +53,7 @@ export class GameClickTarget implements IAvatarAddition
      * @param sprite - The sprite to animate
      * @returns Always false (no dynamic animation)
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/GameClickTarget.as::animate()
     animate(_sprite: IRoomObjectSprite | null): boolean
     {
         return false;
@@ -60,6 +65,7 @@ export class GameClickTarget implements IAvatarAddition
      * @param sprite - The sprite to update
      * @param _scale - The current visualization scale (unused, matches AS3)
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/GameClickTarget.as::update()
     update(sprite: IRoomObjectSprite | null, _scale: number): void
     {
         if(!sprite)
@@ -82,6 +88,7 @@ export class GameClickTarget implements IAvatarAddition
     /**
      * Disposes of this addition.
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/GameClickTarget.as::dispose()
     dispose(): void
     {
         if(!this._disposed)

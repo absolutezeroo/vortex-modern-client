@@ -17,6 +17,7 @@ export class EnterOneWayDoorMessageComposer extends MessageComposer<ConstructorP
         this._data = [objectId];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2609/_SafeCls_3749.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

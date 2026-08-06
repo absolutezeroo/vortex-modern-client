@@ -9,7 +9,9 @@ import {RoomEngineObjectEvent} from './RoomEngineObjectEvent';
 
 export class RoomEngineUseProductEvent extends RoomEngineObjectEvent
 {
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineUseProductEvent.as::USE_PRODUCT_FROM_ROOM
     public static readonly USE_PRODUCT_FROM_ROOM = 'ROSM_USE_PRODUCT_FROM_ROOM';
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineUseProductEvent.as::USE_PRODUCT_FROM_INVENTORY
     public static readonly USE_PRODUCT_FROM_INVENTORY = 'ROSM_USE_PRODUCT_FROM_INVENTORY';
 
     constructor(
@@ -26,15 +28,19 @@ export class RoomEngineUseProductEvent extends RoomEngineObjectEvent
         this._furnitureTypeId = furnitureTypeId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/events/RoomEngineUseProductEvent.as::_inventoryStripId
     private _inventoryStripId: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineUseProductEvent.as::get inventoryStripId()
     get inventoryStripId(): number
     {
         return this._inventoryStripId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/events/RoomEngineUseProductEvent.as::_furnitureTypeId
     private _furnitureTypeId: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineUseProductEvent.as::get furnitureTypeId()
     get furnitureTypeId(): number
     {
         return this._furnitureTypeId;

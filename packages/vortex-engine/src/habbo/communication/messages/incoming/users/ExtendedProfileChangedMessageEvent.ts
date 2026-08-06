@@ -14,6 +14,7 @@ export class ExtendedProfileChangedMessageEvent extends MessageEvent implements 
         super(callback, ExtendedProfileChangedMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/ExtendedProfileChangedMessageEvent.as::get userId()
     get userId(): number
     {
         return (this._parser as ExtendedProfileChangedMessageParser).userId;

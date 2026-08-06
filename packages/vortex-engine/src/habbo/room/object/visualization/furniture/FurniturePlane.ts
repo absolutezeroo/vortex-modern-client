@@ -14,23 +14,32 @@ import {Vector3d} from '@room/utils/Vector3d';
 
 export class FurniturePlane
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_geometryUpdateId
     private _geometryUpdateId: number = -1;
     private _dirX: number = 0;
     private _dirY: number = 0;
     private _dirZ: number = 0;
     private _lastScale: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_origin
     private _origin: Vector3d;
     private _origLeftSide: Vector3d;
     private _origRightSide: Vector3d;
     private _textureCache: Map<string, HTMLCanvasElement> = new Map();
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_rotated
     private _rotated: boolean = false;
     private _textureName: string | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_cornerA
     private _cornerA: Vector3d;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_cornerB
     private _cornerB: Vector3d;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_cornerC
     private _cornerC: Vector3d;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_cornerD
     private _cornerD: Vector3d;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_width
     private _width: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_height
     private _height: number = 0;
 
     constructor(location: IVector3d, leftSide: IVector3d, rightSide: IVector3d)
@@ -63,20 +72,25 @@ export class FurniturePlane
 
     private _location: Vector3d;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::get location()
     get location(): IVector3d
     {
         return this._location;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_leftSide
     private _leftSide: Vector3d;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::get leftSide()
     get leftSide(): IVector3d
     {
         return this._leftSide;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_rightSide
     private _rightSide: Vector3d;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::get rightSide()
     get rightSide(): IVector3d
     {
         return this._rightSide;
@@ -84,20 +98,25 @@ export class FurniturePlane
 
     private _visible: boolean = true;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::get visible()
     get visible(): boolean
     {
         return this._visible;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_normal
     private _normal: Vector3d;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::get normal()
     get normal(): IVector3d
     {
         return this._normal;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_bitmapData
     private _bitmapData: HTMLCanvasElement | null = null;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::get bitmapData()
     get bitmapData(): HTMLCanvasElement | null
     {
         if(this._visible && this._bitmapData !== null)
@@ -113,27 +132,34 @@ export class FurniturePlane
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_offset
     private _offset: { x: number; y: number };
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::get offset()
     get offset(): { x: number; y: number }
     {
         return this._offset;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_relativeDepth
     private _relativeDepth: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::get relativeDepth()
     get relativeDepth(): number
     {
         return this._relativeDepth;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::_color
     private _color: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::get color()
     get color(): number
     {
         return this._color;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::set color()
     set color(value: number)
     {
         this._color = value;
@@ -143,6 +169,7 @@ export class FurniturePlane
 	 * Set rotation mode (for diagonal furniture).
 	 * When rotated, left/right sides are swapped in magnitude.
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::setRotation()
     setRotation(rotated: boolean): void
     {
         if(rotated !== this._rotated)
@@ -172,6 +199,7 @@ export class FurniturePlane
 	 *
 	 * @returns true if the plane bitmap changed and needs re-rendering
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::update()
     update(geometry: IRoomGeometry, time: number): boolean
     {
         if(geometry === null || this._location === null || this._leftSide === null || this._rightSide === null || this._normal === null)
@@ -258,6 +286,7 @@ export class FurniturePlane
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::dispose()
     dispose(): void
     {
         this._bitmapData = null;
@@ -275,6 +304,7 @@ export class FurniturePlane
         this._cornerD = null!;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::updateCorners()
     private updateCorners(geometry: IRoomGeometry): void
     {
         const screenA = geometry.getScreenPosition(this._location);
@@ -338,11 +368,13 @@ export class FurniturePlane
         this._height = maxY - minY;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::getTextureIdentifier()
     private getTextureIdentifier(geometry: IRoomGeometry): string
     {
         return String(geometry.scale);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::needsNewTexture()
     private needsNewTexture(geometry: IRoomGeometry): boolean
     {
         if(this._width > 0 && this._height > 0)
@@ -353,6 +385,7 @@ export class FurniturePlane
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::getTexture()
     private getTexture(geometry: IRoomGeometry, _time: number): HTMLCanvasElement | null
     {
         const id = this.getTextureIdentifier(geometry);
@@ -394,6 +427,7 @@ export class FurniturePlane
 	 *
 	 * @see AS3 FurniturePlane.renderTexture()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::renderTexture()
     private renderTexture(texture: HTMLCanvasElement): void
     {
         if(this._bitmapData === null || texture === null) return;
@@ -423,6 +457,7 @@ export class FurniturePlane
         ctx.restore();
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePlane.as::resetTextureCache()
     private resetTextureCache(): void
     {
         this._textureCache.clear();

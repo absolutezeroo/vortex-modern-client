@@ -16,17 +16,25 @@ import type {HabboQuestEngine} from './HabboQuestEngine';
 export class ProgressBar
 {
     private _engine: HabboQuestEngine | null;
+    // AS3: .../src/com/sulake/habbo/quest/ProgressBar.as::_window
     private _window: IWindowContainer;
+    // AS3: .../src/com/sulake/habbo/quest/ProgressBar.as::_progressBarWidth
     private _progressBarWidth: number;
+    // AS3: .../src/com/sulake/habbo/quest/ProgressBar.as::_progressKey
     private _progressKey: string;
+    // AS3: .../src/com/sulake/habbo/quest/ProgressBar.as::_hasFrame
     private _hasFrame: boolean;
     private _percentageMode: boolean;
 
+    // AS3: .../src/com/sulake/habbo/quest/ProgressBar.as::_currentAmount
     private _currentAmount: number = 0;
+    // AS3: .../src/com/sulake/habbo/quest/ProgressBar.as::_maxAmount
     private _maxAmount: number = 0;
     private _changeId: number = 0;
     private _offset: number = 0;
+    // AS3: .../src/com/sulake/habbo/quest/ProgressBar.as::_startProgressWidth
     private _startProgressWidth: number = 0;
+    // AS3: .../src/com/sulake/habbo/quest/ProgressBar.as::_currentProgressWidth
     private _currentProgressWidth: number = 0;
     private _isUpdating: boolean = false;
 

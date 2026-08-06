@@ -42,15 +42,23 @@ interface IPoint
  */
 export class RoomPreviewer
 {
+    // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::PREVIEW_CANVAS_ID
     private static readonly PREVIEW_CANVAS_ID: number = 1;
+    // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::PREVIEW_OBJECT_ID
     private static readonly PREVIEW_OBJECT_ID: number = 1;
+    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::PREVIEW_OBJECT_LOCATION_X
     private static readonly PREVIEW_OBJECT_LOCATION_X: number = 2;
+    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::PREVIEW_OBJECT_LOCATION_Y
     private static readonly PREVIEW_OBJECT_LOCATION_Y: number = 2;
+    // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::ALLOWED_IMAGE_CUT
     private static readonly ALLOWED_IMAGE_CUT: number = 0.25;
 
+    // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::SCALE_NORMAL
     public static readonly SCALE_NORMAL: number = 64;
+    // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::SCALE_SMALL
     public static readonly SCALE_SMALL: number = 32;
 
+    // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::AUTOMATIC_STATE_CHANGE_INTERVAL
     private static readonly AUTOMATIC_STATE_CHANGE_INTERVAL: number = 2500;
 
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_roomEngine

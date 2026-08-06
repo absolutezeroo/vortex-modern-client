@@ -16,6 +16,7 @@ export class ForwardToACompetitionRoomMessageComposer extends MessageComposer<Co
         this._data = [goalCode, direction];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/competition/ForwardToACompetitionRoomMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

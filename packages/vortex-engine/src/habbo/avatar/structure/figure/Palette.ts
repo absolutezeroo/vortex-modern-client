@@ -28,6 +28,7 @@ export class Palette implements IPalette
         return this._id;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::_colors
     private _colors: Map<number, IPartColor>;
 
     // AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::get colors()

@@ -17,10 +17,12 @@ import type {IDisposable} from '@core/runtime/IDisposable';
  */
 export class OrderedMap<K = unknown, V = unknown> implements IDisposable 
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/utils/Map.as::_dictionary
     private _dictionary: Map<K, V> | null = new Map();
 
     private _values: V[] = [];
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/utils/Map.as::_keys
     private _keys: K[] = [];
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/utils/Map.as::get length()

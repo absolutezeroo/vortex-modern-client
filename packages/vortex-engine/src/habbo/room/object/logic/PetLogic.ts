@@ -31,17 +31,21 @@ export class PetLogic extends MovingObjectLogic
     private _expressionEndTime = 0;
 
     // Selection state
+    // AS3: .../src/com/sulake/habbo/room/object/logic/PetLogic.as::_selected
     private _selected = false;
     private _lastLocation: Vector3d | null = null;
 
     // Debug mode
+    // AS3: .../src/com/sulake/habbo/room/object/logic/PetLogic.as::_debugMode
     private _debugMode = false;
     private _debugPostureIndex = 0;
     private _debugGestureIndex = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/PetLogic.as::_headDirectionDelta
     private _headDirectionDelta = 0;
     private _directionIndex = 0;
 
     // Allowed directions for this pet type
+    // AS3: .../src/com/sulake/habbo/room/object/logic/PetLogic.as::_directions
     private _directions: number[] = [];
 
     constructor()
@@ -329,6 +333,7 @@ export class PetLogic extends MovingObjectLogic
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/PetLogic.as::updateActions()
     private updateActions(time: number, model: IRoomObjectModelController): void
     {
         const now = Date.now();
@@ -358,6 +363,7 @@ export class PetLogic extends MovingObjectLogic
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/PetLogic.as::debugMouseEvent()
     private debugMouseEvent(event: { altKey?: boolean; ctrlKey?: boolean }): void
     {
         const model = this.object?.getModelController();

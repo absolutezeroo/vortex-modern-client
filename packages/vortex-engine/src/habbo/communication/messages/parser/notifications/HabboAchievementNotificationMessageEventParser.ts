@@ -13,17 +13,20 @@ export class HabboAchievementNotificationMessageEventParser implements IMessageP
 {
     private _data: AchievementNotificationData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/HabboAchievementNotificationMessageEventParser.as::get data()
     get data(): AchievementNotificationData | null
     {
         return this._data;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/HabboAchievementNotificationMessageEventParser.as::flush()
     flush(): boolean
     {
         this._data = null;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/HabboAchievementNotificationMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

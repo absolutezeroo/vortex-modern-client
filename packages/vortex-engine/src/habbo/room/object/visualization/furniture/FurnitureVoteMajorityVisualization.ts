@@ -12,6 +12,7 @@ export class FurnitureVoteMajorityVisualization extends AnimatedFurnitureVisuali
     private static readonly ONES_SPRITE_TAG: string = 'ones_sprite';
     private static readonly TENS_SPRITE_TAG: string = 'tens_sprite';
     private static readonly HUNDREDS_SPRITE_TAG: string = 'hundreds_sprite';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVoteMajorityVisualization.as::HIDE_RESULTS_STATES
     private static readonly HIDE_RESULTS_STATES: number[] = [-1, 1];
     private static readonly HIDE_RESULT_VALUE: number = -1;
 

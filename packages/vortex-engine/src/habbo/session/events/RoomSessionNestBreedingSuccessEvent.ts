@@ -8,6 +8,7 @@ import {RoomSessionEvent} from './RoomSessionEvent';
  */
 export class RoomSessionNestBreedingSuccessEvent extends RoomSessionEvent
 {
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionNestBreedingSuccessEvent.as::NEST_BREEDING_SUCCESS
     public static readonly NEST_BREEDING_SUCCESS = 'RSPFUE_NEST_BREEDING_SUCCESS';
 
     constructor(session: IRoomSession, petId: number, rarityCategory: number)
@@ -17,15 +18,19 @@ export class RoomSessionNestBreedingSuccessEvent extends RoomSessionEvent
         this._rarityCategory = rarityCategory;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/events/RoomSessionNestBreedingSuccessEvent.as::_petId
     private _petId: number;
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionNestBreedingSuccessEvent.as::get petId()
     get petId(): number
     {
         return this._petId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/events/RoomSessionNestBreedingSuccessEvent.as::_rarityCategory
     private _rarityCategory: number;
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionNestBreedingSuccessEvent.as::get rarityCategory()
     get rarityCategory(): number
     {
         return this._rarityCategory;

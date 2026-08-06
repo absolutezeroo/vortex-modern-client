@@ -12,7 +12,9 @@ export class FurnitureGiftWrappedVisualization extends FurnitureVisualization
 {
     private static readonly EXTRAS_MULTIPLIER: number = 1000;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureGiftWrappedVisualization.as::_packetType
     private _packetType: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureGiftWrappedVisualization.as::_ribbonType
     private _ribbonType: number = 0;
 
     override update(geometry: IRoomGeometry, time: number, update: boolean, skipUpdate: boolean): void
@@ -50,6 +52,7 @@ export class FurnitureGiftWrappedVisualization extends FurnitureVisualization
         return this.type + '_' + size + '_' + layerName + '_' + this.direction + '_' + frame;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureGiftWrappedVisualization.as::updateTypes()
     private updateTypes(): void
     {
         const roomObject = this.object;

@@ -32,6 +32,7 @@ export class WindowParser implements IWindowParser
      */
     public static localizationResolver: ((key: string) => string | null) | null = null;
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::WindowParser()
@@ -47,11 +48,13 @@ export class WindowParser implements IWindowParser
         this._context = context;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::parseAndConstruct()
     public parseAndConstruct(layout: XmlLayoutInput, parent: IWindow | null, namedWindows: Map<string, IWindow> | null): IWindow | null
     {
         const root = this.resolveLayoutRoot(layout);
@@ -286,6 +289,7 @@ export class WindowParser implements IWindowParser
         return `${xml}</${typeName}>\r`;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::dispose()
     public dispose(): void 
     {
         if(!this._disposed) 
@@ -343,6 +347,7 @@ export class WindowParser implements IWindowParser
         return last;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::parseSingleWindowEntity()
     private parseSingleWindowEntity(
         node: Element,
         parent: IWindow | null,
@@ -670,6 +675,7 @@ export class WindowParser implements IWindowParser
         return map;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::parseProperties()
     private parseProperties(variablesNode: Element | null, sharedVars: Map<string, unknown>): PropertyStruct[] 
     {
         if(!variablesNode) 
@@ -789,6 +795,7 @@ export class WindowParser implements IWindowParser
         return filters;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter()
     private buildBitmapFilter(filterNode: Element, sharedVars: Map<string, unknown>): Record<string, unknown> | null 
     {
         if(filterNode.nodeName !== 'DropShadowFilter') 
@@ -874,6 +881,7 @@ export class WindowParser implements IWindowParser
         return xml;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::parseAttribute()
     private parseAttribute(
         node: Element,
         name: string,
@@ -910,6 +918,7 @@ export class WindowParser implements IWindowParser
         return raw;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::hasAttribute()
     private hasAttribute(node: Element, name: string): boolean 
     {
         return node.hasAttribute(name);

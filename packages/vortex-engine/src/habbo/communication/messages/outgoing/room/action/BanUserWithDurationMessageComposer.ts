@@ -18,6 +18,7 @@ export class BanUserWithDurationMessageComposer extends MessageComposer<[number,
         this._data = [userId, roomId, banType];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/action/BanUserWithDurationMessageComposer.as::getMessageArray()
     getMessageArray(): [number, number, string]
     {
         return this._data;

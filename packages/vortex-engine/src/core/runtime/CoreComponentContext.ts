@@ -69,6 +69,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
     private static _fileProxy: IFileProxy | null = null;
 
     /** Update receivers organized by priority level */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/CoreComponentContext.as::_updateReceiversByPriority
     private _updateReceiversByPriority: (IUpdateReceiver | null)[][] = [];
 
     /** Frame skip counters per priority level */
@@ -78,27 +79,33 @@ export class CoreComponentContext extends ComponentContext implements ICore
     private _frameUpdateHandler: (timeMs: number, deltaMs: number) => void;
 
     /** Error reporter */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/CoreComponentContext.as::_errorReporter
     private _errorReporter: ICoreErrorReporter;
 
     /** Timestamp of the last update */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::_lastUpdateTimeMs
     private _lastUpdateTimeMs: number = 0;
 
     /** Core setup flags */
     private _setupFlags: number = 0;
 
     /** Hibernation priority level (-1 = not hibernating) */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::_hibernationLevel
     private _hibernationLevel: number = -1;
 
     /** Hibernation update frequency in ms */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::_hibernationUpdateFrequency
     private _hibernationUpdateFrequency: number = 0;
 
     /** Whether to reboot on next frame */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::_rebootOnNextFrame
     private _rebootOnNextFrame: boolean = false;
 
     /** Core arguments */
     private _arguments: Map<string, unknown> = new Map();
 
     /** Number of files in config */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::_numberOfFilesInConfig
     private _numberOfFilesInConfig: number = 0;
 
     /** Number of files still pending */
@@ -115,6 +122,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as line 44
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::_loadingEventDelegate
     private _loadingEventDelegate: EventEmitter | null = null;
 
     constructor(
@@ -187,11 +195,13 @@ export class CoreComponentContext extends ComponentContext implements ICore
         return this._targetFps;
     }
 
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::get arguments()
     get arguments(): Map<string, unknown>
     {
         return this._arguments;
     }
 
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::set errorLogger()
     set errorLogger(logger: ICoreErrorLogger | null)
     {
         if(this._errorReporter)
@@ -205,6 +215,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as line 159 (get fileProxy)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::get fileProxy()
     get fileProxy(): IFileProxy | null
     {
         return CoreComponentContext._fileProxy;
@@ -215,6 +226,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as line 155 (set fileProxy)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::set fileProxy()
     set fileProxy(proxy: IFileProxy | null)
     {
         CoreComponentContext._fileProxy = proxy;
@@ -225,6 +237,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 179-208
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::initialize()
     initialize(): void
     {
         if(this.hasLockedComponents())
@@ -250,6 +263,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 199-208
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::hasLockedComponents()
     hasLockedComponents(): boolean
     {
         for(const component of this.getAttachedComponents())
@@ -263,16 +277,19 @@ export class CoreComponentContext extends ComponentContext implements ICore
         return false;
     }
 
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::clearArguments()
     clearArguments(): void
     {
         this._arguments = new Map();
     }
 
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::getNumberOfFilesPending()
     getNumberOfFilesPending(): number
     {
         return this._filesPending;
     }
 
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::getNumberOfFilesLoaded()
     getNumberOfFilesLoaded(): number
     {
         return this._numberOfFilesInConfig - this._filesPending;
@@ -289,6 +306,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 443-449
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::hibernate()
     hibernate(priority: number, updateFrequency: number = 1): void
     {
         if(!this.hibernating)
@@ -304,6 +322,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 451-456
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::resume()
     resume(): void
     {
         if(this.hibernating)
@@ -313,6 +332,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
         }
     }
 
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::setProfilerMode()
     setProfilerMode(_enabled: boolean): void
     {
         // Profiler mode is not applicable in the web version.
@@ -325,6 +345,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 707-709
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::reboot()
     reboot(): void
     {
         this._rebootOnNextFrame = true;
@@ -344,6 +365,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 257-285
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::readConfigDocument()
     readConfigDocument(config: Record<string, unknown>, eventDelegate?: EventEmitter): void
     {
         log.debug('Parsing config document');
@@ -384,6 +406,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 371-377 (updateLoadingProgress)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::updateLoadingProgress()
     updateLoadingProgress(fileName: string, bytesLoaded: number, bytesTotal: number, elapsedTime: number): void
     {
         if(this._loadingEventDelegate !== null)
@@ -405,6 +428,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 379-404 (updateLoadingProcess)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::updateLoadingProcess()
     updateLoadingProcess(fileName?: string, status?: 'complete' | 'error'): void
     {
         if(fileName)
@@ -448,6 +472,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 356-362 (errorInLoadingProcess)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::errorInLoadingProcess()
     errorInLoadingProcess(url: string, httpStatus: number, bytesLoaded: number, bytesTotal: number, errorMsg: string): void
     {
         this.error(
@@ -470,6 +495,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 319-336 (readStringFromProxy)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::readStringFromProxy()
     readStringFromProxy(key: string): string | null
     {
         try
@@ -499,6 +525,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 338-354 (writeStringToProxy)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::writeStringToProxy()
     writeStringToProxy(key: string, value: string): boolean
     {
         try
@@ -532,6 +559,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 303-305 (writeDictionaryToProxy)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::writeDictionaryToProxy()
     writeDictionaryToProxy(key: string, data: Record<string, unknown>): boolean
     {
         try
@@ -553,6 +581,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 307-309 (readDictionaryFromProxy)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::readDictionaryFromProxy()
     readDictionaryFromProxy(key: string): Record<string, unknown> | null
     {
         try
@@ -582,6 +611,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 311-313 (writeXMLToProxy)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::writeXMLToProxy()
     writeXMLToProxy(key: string, xml: string): boolean
     {
         return this.writeStringToProxy(key, xml);
@@ -595,6 +625,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 315-317 (readXMLFromProxy)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::readXMLFromProxy()
     readXMLFromProxy(key: string): string | null
     {
         return this.readStringFromProxy(key);
@@ -737,7 +768,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @returns true when the core was disposed, so callers can stop.
 	 */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/Core.as::error()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/Core.as::error()
     override error(message: string, fatal: boolean = false, code: number = -1, error?: Error): boolean
     {
         super.error(message, fatal, code, error);
@@ -805,6 +836,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
         this._frameSkipCounters.length = 0;
     }
 
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::get hibernating()
     private get hibernating(): boolean
     {
         return this._hibernationLevel > -1;
@@ -813,6 +845,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
     /**
 	 * Max priority to process (limited during hibernation).
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::get maxPriority()
     private get maxPriority(): number
     {
         return this.hibernating ? this._hibernationLevel + 1 : NUM_UPDATE_RECEIVER_LEVELS;
@@ -821,6 +854,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
     /**
 	 * Complete initialization after all components are unlocked.
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::doInitialize()
     private doInitialize(): void
     {
         this.events.emit(CoreComponentContextEvents.RUNNING);
@@ -832,6 +866,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 364-369 (finalizeLoadingEventDelegate)
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::finalizeLoadingEventDelegate()
     private finalizeLoadingEventDelegate(): void
     {
         if(this._loadingEventDelegate !== null)
@@ -846,6 +881,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 481-516
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::simpleFrameUpdateHandler()
     private simpleFrameUpdateHandler(_timeMs: number, deltaMs: number): void
     {
         for(let level = 0; level < this.maxPriority; level++)
@@ -901,6 +937,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 518-561
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::complexFrameUpdateHandler()
     private complexFrameUpdateHandler(timeMs: number, deltaMs: number): void
     {
         const frameBudget = 1000 / this._targetFps;
@@ -972,6 +1009,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 601-617
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::experimentalFrameUpdateHandler()
     private experimentalFrameUpdateHandler(_timeMs: number, _deltaMs: number): void
     {
         for(let level = 0; level < NUM_UPDATE_RECEIVER_LEVELS; level++)
@@ -995,6 +1033,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 619-643
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::debugFrameUpdateHandler()
     private debugFrameUpdateHandler(_timeMs: number, deltaMs: number): void
     {
         for(let level = 0; level < this.maxPriority; level++)

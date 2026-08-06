@@ -206,6 +206,7 @@ const log = Logger.getLogger('habbo.session.SessionDataManager');
  */
 export class SessionDataManager extends Component implements ISessionDataManager
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/SessionDataManager.as::_communicationManager
     private _communicationManager: IHabboCommunicationManager | null = null;
     private _messageEvents: IMessageEvent[] = [];
     private _customData: string = '';
@@ -213,12 +214,18 @@ export class SessionDataManager extends Component implements ISessionDataManager
     private _mysteryBoxKeyColor: string = '';
     private _nftChatStyleIds: Set<number> = new Set();
     private _purchasableChatStyleIds: Set<number> = new Set();
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_roomSessionManager
     private _roomSessionManager: IRoomSessionManager | null = null;
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_notifications
     private _notifications: IHabboNotifications | null = null;
     // Furniture data - owned by SessionDataManager (AS3 pattern)
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_floorItems
     private _floorItems: Map<number, IFurnitureData> = new Map();
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_wallItems
     private _wallItems: Map<number, IFurnitureData> = new Map();
     private _floorItemsByName: Map<string, number[]> = new Map();
     private _wallItemsByName: Map<string, number[]> = new Map();
@@ -226,11 +233,13 @@ export class SessionDataManager extends Component implements ISessionDataManager
     private _loadingFurnitureDataParser: FurnitureDataParser | null = null;
     private _furniDataReady: boolean = false;
     private _furniDataListenersNotified: boolean = false;
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_furniDataListeners
     private _furniDataListeners: Set<IFurniDataListener> = new Set();
     // Product data - owned by SessionDataManager (AS3 pattern)
     private _products: Map<string, IProductData> = new Map();
     private _productDataParser: ProductDataParser | null = null;
     private _productDataReady: boolean = false;
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_productDataListeners
     private _productDataListeners: Set<IProductDataListener> = new Set();
 
     constructor(context: IContext)
@@ -238,31 +247,37 @@ export class SessionDataManager extends Component implements ISessionDataManager
         super(context);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get communication()
     get communication(): IHabboCommunicationManager | null
     {
         return this._communicationManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get roomSessionManager()
     get roomSessionManager(): IRoomSessionManager | null
     {
         return this._roomSessionManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get windowManager()
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get localization()
     get localization(): IHabboLocalizationManager | null
     {
         return this._localization;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get notifications()
     get notifications(): IHabboNotifications | null
     {
         return this._notifications;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_newFurniDataHash
     private _newFurniDataHash: string | null = null;
 
     get newFurniDataHash(): string
@@ -270,6 +285,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return this._newFurniDataHash ?? '';
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::set newFurniDataHash()
     set newFurniDataHash(hash: string)
     {
         this._newFurniDataHash = hash;
@@ -283,6 +299,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return this._userDataManager!;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/SessionDataManager.as::_perkManager
     private _perkManager: PerkManager | null = null;
 
     get perkManager(): IPerkManager
@@ -290,6 +307,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return this._perkManager!;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/SessionDataManager.as::_ignoredUsersManager
     private _ignoredUsersManager: IgnoredUsersManager | null = null;
 
     get ignoredUsersManager(): IIgnoredUsersManager
@@ -310,8 +328,10 @@ export class SessionDataManager extends Component implements ISessionDataManager
     }
 
     // System status
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_systemOpen
     private _systemOpen: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get systemOpen()
     get systemOpen(): boolean
     {
         return this._systemOpen;
@@ -319,6 +339,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
     private _systemShutDown: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get systemShutDown()
     get systemShutDown(): boolean
     {
         return this._systemShutDown;
@@ -332,8 +353,10 @@ export class SessionDataManager extends Component implements ISessionDataManager
     }
 
     // User data
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/SessionDataManager.as::_userId
     private _userId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get userId()
     get userId(): number
     {
         return this._userId;
@@ -341,35 +364,44 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
     private _userName: string = '';
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get userName()
     get userName(): string
     {
         return this._userName;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_realName
     private _realName: string = '';
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get realName()
     get realName(): string
     {
         return this._realName;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/SessionDataManager.as::_figure
     private _figure: string = '';
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get figure()
     get figure(): string
     {
         return this._figure;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/SessionDataManager.as::_gender
     private _gender: string = '';
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get gender()
     get gender(): string
     {
         return this._gender;
     }
 
     // User status
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/SessionDataManager.as::_clubLevel
     private _clubLevel: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get clubLevel()
     get clubLevel(): number
     {
         return this._clubLevel;
@@ -384,13 +416,16 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
     private _topSecurityLevel: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get topSecurityLevel()
     get topSecurityLevel(): number
     {
         return this._topSecurityLevel;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_isAmbassador
     private _isAmbassador: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get isAmbassador()
     get isAmbassador(): boolean
     {
         return this._isAmbassador;
@@ -416,6 +451,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
     private _respectLeft: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get respectLeft()
     get respectLeft(): number
     {
         return this._respectLeft;
@@ -423,6 +459,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
     private _respectReplenishesLeft: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get respectReplenishesLeft()
     get respectReplenishesLeft(): number
     {
         return this._respectReplenishesLeft;
@@ -432,12 +469,14 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
     private _petRespectLeft: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get petRespectLeft()
     get petRespectLeft(): number
     {
         return this._petRespectLeft;
     }
 
     // Safety & Verification
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_accountSafetyLocked
     private _accountSafetyLocked: boolean = false;
 
     get accountSafetyLocked(): boolean
@@ -447,6 +486,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
     private _nameChangeAllowed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get nameChangeAllowed()
     get nameChangeAllowed(): boolean
     {
         return this._nameChangeAllowed;
@@ -454,6 +494,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
     private _isEmailVerified: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get isEmailVerified()
     get isEmailVerified(): boolean
     {
         return this._isEmailVerified;
@@ -528,6 +569,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     // UI Preferences
     private _uiFlags: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get uiFlags()
     get uiFlags(): number
     {
         return this._uiFlags;
@@ -535,6 +577,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
     private _isRoomCameraFollowDisabled: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get isRoomCameraFollowDisabled()
     get isRoomCameraFollowDisabled(): boolean
     {
         return this._isRoomCameraFollowDisabled;
@@ -570,8 +613,10 @@ export class SessionDataManager extends Component implements ISessionDataManager
     }
 
     // Mystery Box
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::_mysteryBoxColor
     private _mysteryBoxColor: string = '';
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get mysteryBoxColor()
     get mysteryBoxColor(): string
     {
         return this._mysteryBoxColor;
@@ -631,11 +676,13 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return this._noobnessLevel !== 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get isRealNoob()
     get isRealNoob(): boolean
     {
         return this._noobnessLevel === 2;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get isAnyRoomController()
     get isAnyRoomController(): boolean
     {
         return this._securityLevel >= 5;
@@ -666,11 +713,13 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return this._accountSafetyLocked;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get mysteryKeyColor()
     get mysteryKeyColor(): string
     {
         return this._mysteryBoxKeyColor;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::get perksReady()
     get perksReady(): boolean
     {
         return this._perkManager?.isReady ?? false;
@@ -768,6 +817,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * Check if a user has a specific security level
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::hasSecurity()
     hasSecurity(level: number): boolean
     {
         return this._securityLevel >= level;
@@ -776,6 +826,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * Send a message to the server
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::send()
     send(composer: IMessageComposer<unknown[]>): void
     {
         this._communicationManager?.connection?.send(composer);
@@ -784,6 +835,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * Give respect to a user
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::giveRespect()
     giveRespect(userId: number): void
     {
         if(userId >= 0 && this._respectLeft > 0)
@@ -796,6 +848,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * Give respect to a pet
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::givePetRespect()
     givePetRespect(petId: number): void
     {
         if(petId >= 0 && this._petRespectLeft > 0)
@@ -808,11 +861,13 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * Called when giving respect fails - restore the counter
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::giveRespectFailed()
     giveRespectFailed(): void
     {
         this._respectLeft++;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::replenishRespect()
     replenishRespect(): void
     {
         this.send(new ReplenishRespectMessageComposer());
@@ -828,6 +883,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 *
 	 * @see sources/win63_version/habbo/session/SessionDataManager.as setRoomCameraFollowDisabled()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::setRoomCameraFollowDisabled()
     setRoomCameraFollowDisabled(disabled: boolean): void
     {
         this._isRoomCameraFollowDisabled = disabled;
@@ -836,6 +892,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * Set friend bar state UI flag
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::setFriendBarState()
     setFriendBarState(open: boolean): void
     {
         this.setUIFlag(UIFlagsEnum.FRIEND_BAR_OPEN, open);
@@ -844,51 +901,61 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * Set room tools state UI flag
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::setRoomToolsState()
     setRoomToolsState(open: boolean): void
     {
         this.setUIFlag(UIFlagsEnum.ROOM_TOOLS_OPEN, open);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::isPerkAllowed()
     isPerkAllowed(perk: string): boolean
     {
         return this._perkManager?.isPerkAllowed(perk) ?? false;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::getPerkErrorMessage()
     getPerkErrorMessage(perk: string): string
     {
         return this._perkManager?.getPerkErrorMessage(perk) ?? '';
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::isIgnored()
     isIgnored(userId: number): boolean
     {
         return this._ignoredUsersManager?.isIgnored(userId) ?? false;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::ignoreUser()
     ignoreUser(userId: number): void
     {
         this._ignoredUsersManager?.ignoreUser(userId);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::unignoreUser()
     unignoreUser(userId: number): void
     {
         this._ignoredUsersManager?.unignoreUser(userId);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::isBlocked()
     isBlocked(userId: number): boolean
     {
         return this._blockedUsersManager?.isBlocked(userId) ?? false;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::blockUser()
     blockUser(userId: number): void
     {
         this._blockedUsersManager?.blockUser(userId);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::unblockUser()
     unblockUser(userId: number): void
     {
         this._blockedUsersManager?.unblockUser(userId);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::isAccountSafetyLocked()
     isAccountSafetyLocked(): boolean
     {
         return this._accountSafetyLocked;
@@ -951,6 +1018,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return this._badgeImageManager?.getBadgeImageWithInfo(badge) ?? new BadgeInfo(null, true);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::getGroupBadgeId()
     getGroupBadgeId(_groupId: number): string
     {
         return this._groupInfoManager?.getBadgeId(_groupId) ?? '';
@@ -987,6 +1055,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 808
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::getProductData()
     getProductData(productCode: string): IProductData | null
     {
         if(!this._productDataReady)
@@ -1000,6 +1069,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 817
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::getFloorItemData()
     getFloorItemData(itemId: number): IFurnitureData | null
     {
         return this._floorItems.get(itemId) ?? null;
@@ -1008,6 +1078,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * @see source_as_win63/habbo/session/SessionDataManager.as getFloorItemsDataByCategory()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::getFloorItemsDataByCategory()
     getFloorItemsDataByCategory(category: number): IFurnitureData[]
     {
         const result: IFurnitureData[] = [];
@@ -1026,6 +1097,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 842
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::getWallItemData()
     getWallItemData(itemId: number): IFurnitureData | null
     {
         return this._wallItems.get(itemId) ?? null;
@@ -1047,6 +1119,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Get floor item data by class name with color variant support
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 851
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::getFloorItemDataByName()
     getFloorItemDataByName(name: string, index: number = 0): IFurnitureData | null
     {
         const ids = this._floorItemsByName.get(name);
@@ -1064,6 +1137,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Get wall item data by class name with color variant support
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 867
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::getWallItemDataByName()
     getWallItemDataByName(name: string, index: number = 0): IFurnitureData | null
     {
         const ids = this._wallItemsByName.get(name);
@@ -1084,6 +1158,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Load product data if not already loaded.
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 1024
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::loadProductData()
     loadProductData(listener?: IProductDataListener): boolean
     {
         if(this._productDataReady)
@@ -1102,6 +1177,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 1122
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::getFurniData()
     getFurniData(listener: IFurniDataListener): IFurnitureData[] | null
     {
         if(this._floorItems.size === 0)
@@ -1129,6 +1205,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 1037
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::getXmlWindow()
     getXmlWindow(name: string): IWindow | null
     {
         try
@@ -1141,6 +1218,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::addProductsReadyEventListener()
     addProductsReadyEventListener(listener: IProductDataListener): void
     {
         if(this._productDataReady)
@@ -1156,6 +1234,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 1109
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::removeFurniDataListener()
     removeFurniDataListener(listener: IFurniDataListener): void
     {
         if(!this._furniDataListeners) return;
@@ -1166,6 +1245,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 1100
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::refreshFurniData()
     refreshFurniData(): void
     {
         this._floorItems = new Map();
@@ -1175,6 +1255,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         this.initFurnitureData(false);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::openHabboHomePage()
     openHabboHomePage(_userId: number, _userName: string): void
     {
         // Opening external pages is not applicable in this client
@@ -1186,6 +1267,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 *
 	 * @see sources/win63_version/habbo/session/SessionDataManager.as pickAllFurniture()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::pickAllFurniture()
     pickAllFurniture(_roomId: number): void
     {
         this.sendSpecialCommandMessage(':pickall');
@@ -1196,6 +1278,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 *
 	 * @see sources/win63_version/habbo/session/SessionDataManager.as resetScores()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::resetScores()
     resetScores(_roomId: number): void
     {
         this.sendSpecialCommandMessage(':resetscores');
@@ -1206,6 +1289,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 *
 	 * @see sources/win63_version/habbo/session/SessionDataManager.as ejectAllFurniture()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::ejectAllFurniture()
     ejectAllFurniture(_roomId: number, _message: string): void
     {
         this.sendSpecialCommandMessage(':ejectall');
@@ -1216,6 +1300,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 *
 	 * @see sources/win63_version/habbo/session/SessionDataManager.as ejectPets()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::ejectPets()
     ejectPets(_roomId: number): void
     {
         this.sendSpecialCommandMessage(':ejectpets');
@@ -1226,6 +1311,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 *
 	 * @see sources/win63_version/habbo/session/SessionDataManager.as pickAllBuilderFurniture()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::pickAllBuilderFurniture()
     pickAllBuilderFurniture(_roomId: number): void
     {
         this.sendSpecialCommandMessage(':pickallbc');
@@ -1236,6 +1322,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 *
 	 * @see sources/win63_version/habbo/session/SessionDataManager.as getCreditVaultStatus()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::getCreditVaultStatus()
     getCreditVaultStatus(): void
     {
         this.send(new CreditVaultStatusMessageComposer());
@@ -1246,6 +1333,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 *
 	 * @see sources/win63_version/habbo/session/SessionDataManager.as getIncomeRewardStatus()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::getIncomeRewardStatus()
     getIncomeRewardStatus(): void
     {
         this.send(new IncomeRewardStatusMessageComposer());
@@ -1256,6 +1344,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 *
 	 * @see sources/win63_version/habbo/session/SessionDataManager.as withdrawCreditVault()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::withdrawCreditVault()
     withdrawCreditVault(): void
     {
         this.send(new WithdrawCreditVaultMessageComposer());
@@ -1266,21 +1355,25 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 *
 	 * @see sources/win63_version/habbo/session/SessionDataManager.as claimReward()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::claimReward()
     claimReward(rewardId: number): void
     {
         this.send(new IncomeRewardClaimMessageComposer(rewardId));
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::hasNftChatStyle()
     hasNftChatStyle(styleId: number): boolean
     {
         return this._nftChatStyleIds.has(styleId);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::hasPurchasableChatStyle()
     hasPurchasableChatStyle(styleId: number): boolean
     {
         return this._purchasableChatStyleIds.has(styleId);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::sendSpecialCommandMessage()
     sendSpecialCommandMessage(command: string): void
     {
         if(this._communicationManager?.connection)
@@ -1348,6 +1441,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 *
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 191 onConfigurationComplete()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onConfigurationComplete()
     onConfigurationComplete(): void
     {
         this._products = new Map();
@@ -1401,6 +1495,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Initialize furniture data parser and start loading
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 297 initFurnitureData()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::initFurnitureData()
     private initFurnitureData(critical: boolean = true): void
     {
         if(this._loadingFurnitureDataParser)
@@ -1449,6 +1544,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Initialize product data parser and start loading
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 325 initProductData()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::initProductData()
     private initProductData(): void
     {
         if(this._productDataParser)
@@ -1473,6 +1569,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Handle furniture data ready
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 337 onFurnitureReady()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onFurnitureReady()
     private onFurnitureReady(): void
     {
         if(this._furnitureDataParser)
@@ -1499,6 +1596,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Handle product data ready
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 1050 onProductsReady()
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onProductsReady()
     private onProductsReady(): void
     {
         this._productDataReady = true;
@@ -1519,6 +1617,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     /**
 	 * Set a UI flag
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::setUIFlag()
     private setUIFlag(flag: number, enabled: boolean): void
     {
         if(enabled)
@@ -1617,6 +1716,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         this._messageEvents.push(event);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onUserObject()
     private onUserObject(event: IMessageEvent): void
     {
         if(!event) return;
@@ -1645,6 +1745,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         // log.info(`User loaded: ${this._userName} (ID: ${this._userId})`);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onUserRights()
     private onUserRights(event: IMessageEvent): void
     {
         if(!event) return;
@@ -1685,6 +1786,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         log.debug(`Noobness level: ${this._noobnessLevel}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onAvailabilityStatus()
     private onAvailabilityStatus(event: IMessageEvent): void
     {
         if(!event) return;
@@ -1706,6 +1808,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         log.debug(`Availability: Open=${this._systemOpen}, ShutDown=${this._systemShutDown}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onFigureUpdate()
     private onFigureUpdate(event: IMessageEvent): void
     {
         if(!event) return;
@@ -1827,6 +1930,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         log.debug(`Avatar effects: ${this._avatarEffects.length}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onMysteryBoxKeys()
     private onMysteryBoxKeys(event: IMessageEvent): void
     {
         if(!event) return;
@@ -1846,6 +1950,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         log.debug(`Mystery box: color=${this._mysteryBoxColor}, keyColor=${this._mysteryBoxKeyColor}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onInClientLink()
     private onInClientLink(event: IMessageEvent): void
     {
         const parser = event.parser as InClientLinkMessageParser;
@@ -1877,6 +1982,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Handle account safety lock status change
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 534
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onAccountSafetyLockStatusChanged()
     private onAccountSafetyLockStatusChanged(event: IMessageEvent): void
     {
         if(!event) return;
@@ -1894,6 +2000,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Handle user name change result
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 456
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onChangeUserNameResult()
     private onChangeUserNameResult(event: IMessageEvent): void
     {
         if(!event) return;
@@ -1917,6 +2024,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Handle user name changed notification
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 440
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onUserNameChange()
     private onUserNameChange(event: IMessageEvent): void
     {
         if(!event) return;
@@ -1941,6 +2049,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Handle NFT chat styles
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 430
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onNftChatStyles()
     private onNftChatStyles(event: IMessageEvent): void
     {
         if(!event) return;
@@ -1954,6 +2063,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         log.debug(`NFT chat styles: ${this._nftChatStyleIds.size}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onPurchasableChatStyles()
     private onPurchasableChatStyles(event: IMessageEvent): void
     {
         if(!event) return;
@@ -1965,6 +2075,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         this._purchasableChatStyleIds = new Set(parser.chatStyleIds);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onPurchasableChatStyleChanged()
     private onPurchasableChatStyleChanged(event: IMessageEvent): void
     {
         if(!event) return;
@@ -1992,6 +2103,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Handle email status result
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 501
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onEmailStatus()
     private onEmailStatus(event: IMessageEvent): void
     {
         if(!event) return;
@@ -2009,6 +2121,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Handle room ready - tracks visited rooms
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 1064
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onRoomReady()
     private onRoomReady(event: IMessageEvent): void
     {
         if(!event) return;
@@ -2024,6 +2137,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Handle user change - update own figure if applicable
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 404
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onUserChange()
     private onUserChange(event: IMessageEvent): void
     {
         if(!event) return;
@@ -2047,6 +2161,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Handle pet respect failed - restore counter
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 525
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onPetRespectFailed()
     private onPetRespectFailed(_event: IMessageEvent): void
     {
         this._petRespectLeft++;
@@ -2058,6 +2173,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Handle account preferences
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 493
 	 */
+    // AS3: .../src/com/sulake/habbo/session/SessionDataManager.as::onAccountPreferences()
     private onAccountPreferences(event: IMessageEvent): void
     {
         if(!event) return;

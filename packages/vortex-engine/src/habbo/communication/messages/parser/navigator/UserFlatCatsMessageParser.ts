@@ -11,17 +11,20 @@ export class UserFlatCatsMessageParser implements IMessageParser
 {
     private _nodes: FlatCategory[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/UserFlatCatsEventParser.as::get nodes()
     get nodes(): FlatCategory[]
     {
         return this._nodes;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/UserFlatCatsEventParser.as::flush()
     flush(): boolean
     {
         this._nodes = [];
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/UserFlatCatsEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._nodes = [];

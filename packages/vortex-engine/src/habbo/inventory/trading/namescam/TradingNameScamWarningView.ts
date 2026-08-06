@@ -52,6 +52,7 @@ export class TradingNameScamWarningView implements IDisposable
     // Name DERIVED (`_SafeStr_5571`).
     private _closeLockSecondsLeft: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/inventory/trading/namescam/TradingNameScamWarningView.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../TradingNameScamWarningView.as::TradingNameScamWarningView()

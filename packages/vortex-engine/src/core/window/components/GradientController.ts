@@ -37,8 +37,11 @@ export class GradientController extends WindowController
     // runs, so plain initializers here would clobber a value set from
     // `properties`. Defaults are primed with `??=` in finalize() instead
     // (see BubbleController for the same pattern).
+    // AS3: .../src/com/sulake/core/window/components/GradientController.as::_color1
     private _color1: number | null = null;
+    // AS3: .../src/com/sulake/core/window/components/GradientController.as::_color2
     private _color2: number | null = null;
+    // AS3: .../src/com/sulake/core/window/components/GradientController.as::_mode
     private _mode: string | null = null;
     private _direction: string | null = null;
 

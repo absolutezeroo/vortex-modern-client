@@ -10,7 +10,9 @@ import {Vector3d} from '@room/utils/Vector3d';
 
 export class RoomPlaneBitmapMaskData
 {
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskData.as::MASK_CATEGORY_WINDOW
     public static readonly MASK_CATEGORY_WINDOW = 'window';
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskData.as::MASK_CATEGORY_HOLE
     public static readonly MASK_CATEGORY_HOLE = 'hole';
 
     constructor(type: string, location: IVector3d, category: string)
@@ -21,25 +23,31 @@ export class RoomPlaneBitmapMaskData
         this._loc.assign(location);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskData.as::_type
     private _type: string;
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskData.as::get type()
     get type(): string
     {
         return this._type;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskData.as::set type()
     set type(value: string)
     {
         this._type = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskData.as::_loc
     private _loc: Vector3d | null = null;
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskData.as::get loc()
     get loc(): IVector3d | null
     {
         return this._loc;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskData.as::set loc()
     set loc(value: IVector3d)
     {
         if(this._loc === null)
@@ -49,18 +57,22 @@ export class RoomPlaneBitmapMaskData
         this._loc.assign(value);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskData.as::_category
     private _category: string;
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskData.as::get category()
     get category(): string
     {
         return this._category;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskData.as::set category()
     set category(value: string)
     {
         this._category = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneBitmapMaskData.as::dispose()
     dispose(): void
     {
         this._loc = null;

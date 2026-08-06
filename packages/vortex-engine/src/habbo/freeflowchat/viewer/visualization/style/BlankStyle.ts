@@ -25,6 +25,7 @@ export class BlankStyle implements IChatStyleInternal
         return {fontFace: 'Volter', fontSize: 9, color: 0};
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::get styleSheet()
     get styleSheet(): IChatLinkStyleSheet | null
     {
         return null;
@@ -37,61 +38,73 @@ export class BlankStyle implements IChatStyleInternal
         return new OffscreenCanvas(1, 10).transferToImageBitmap();
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::get pointerOffsetToBubbleBottom()
     get pointerOffsetToBubbleBottom(): number
     {
         return 19;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::getPointerLeftMargin()
     getPointerLeftMargin(defaultValue: number): number
     {
         return defaultValue;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::getPointerRightMargin()
     getPointerRightMargin(defaultValue: number): number
     {
         return defaultValue;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::get faceOffset()
     get faceOffset(): null
     {
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::getEmblem()
     getEmblem(_multiline: boolean = false): null
     {
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::getEmblemOffset()
     getEmblemOffset(_multiline: boolean = false): null
     {
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::get isAnonymous()
     get isAnonymous(): boolean
     {
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::get isSystemStyle()
     get isSystemStyle(): boolean
     {
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::get textFieldMargins()
     get textFieldMargins(): Rectangle
     {
         return new Rectangle(0, 0, 0, 0);
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::get overlap()
     get overlap(): Rectangle
     {
         return new Rectangle(0, 0, 0, 0);
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::get allowHTML()
     get allowHTML(): boolean
     {
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::get isNotification()
     get isNotification(): boolean
     {
         return false;

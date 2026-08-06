@@ -388,6 +388,7 @@ export class RoomLogic extends ObjectLogicBase
 	 * Handle background color smooth transitions.
 	 * Based on AS3 RoomLogic.updateBackgroundColor()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/logic/room/RoomLogic.as::updateBackgroundColor()
     private updateBackgroundColor(time: number): void
     {
         if(this.object === null || this._colorTransitioner === null || !this._colorTransitioner.updateColor(time))
@@ -407,6 +408,7 @@ export class RoomLogic extends ObjectLogicBase
 	 * Update floor/wall/landscape texture types.
 	 * Based on AS3 RoomLogic.updatePlaneTypes() lines 251-262
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/logic/room/RoomLogic.as::updatePlaneTypes()
     private updatePlaneTypes(message: RoomObjectRoomUpdateMessage, model: IRoomObjectModelController): void
     {
         switch(message.type)
@@ -427,6 +429,7 @@ export class RoomLogic extends ObjectLogicBase
 	 * Update plane masks (add/remove doors, windows).
 	 * Based on AS3 RoomLogic.updatePlaneMasks() lines 264-286
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/logic/room/RoomLogic.as::updatePlaneMasks()
     private updatePlaneMasks(message: RoomObjectRoomMaskUpdateMessage, model: IRoomObjectModelController): void
     {
         if(this._planeMaskParser === null)
@@ -465,6 +468,7 @@ export class RoomLogic extends ObjectLogicBase
 	 * Update floor/wall/landscape visibility.
 	 * Based on AS3 RoomLogic.updatePlaneVisibilities() lines 288-301
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/logic/room/RoomLogic.as::updatePlaneVisibilities()
     private updatePlaneVisibilities(message: RoomObjectRoomPlaneVisibilityUpdateMessage, model: IRoomObjectModelController): void
     {
         const value = message.visible ? 1 : 0;
@@ -485,6 +489,7 @@ export class RoomLogic extends ObjectLogicBase
 	 * Update plane properties (thickness).
 	 * Based on AS3 RoomLogic.updatePlaneProperties() lines 303-311
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/logic/room/RoomLogic.as::updatePlaneProperties()
     private updatePlaneProperties(message: RoomObjectRoomPlanePropertyUpdateMessage, model: IRoomObjectModelController): void
     {
         switch(message.type)
@@ -502,6 +507,7 @@ export class RoomLogic extends ObjectLogicBase
 	 * Update floor holes (add/remove).
 	 * Based on AS3 RoomLogic.updateFloorHoles() lines 313-323
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/logic/room/RoomLogic.as::updateFloorHoles()
     private updateFloorHoles(message: RoomObjectRoomFloorHoleUpdateMessage): void
     {
         if(this._planeParser === null) return;
@@ -523,6 +529,7 @@ export class RoomLogic extends ObjectLogicBase
 	 * Update room colors/lighting.
 	 * Based on AS3 RoomLogic.updateColors() lines 325-341
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/logic/room/RoomLogic.as::updateColors()
     private updateColors(message: RoomObjectRoomColorUpdateMessage, model: IRoomObjectModelController): void
     {
         let targetColor: number;

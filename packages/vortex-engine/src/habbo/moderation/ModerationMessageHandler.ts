@@ -154,6 +154,7 @@ export class ModerationMessageHandler
 	 * Handle moderator initialization message.
 	 * Processes initial issue list and message templates.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onModeratorInit()
     private onModeratorInit(event: IMessageEvent): void
     {
         if(!event || !this._manager)
@@ -185,6 +186,7 @@ export class ModerationMessageHandler
     /**
 	 * Handle single issue info update.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onIssueInfo()
     private onIssueInfo(event: IMessageEvent): void
     {
         if(!event || !this._manager)
@@ -213,6 +215,7 @@ export class ModerationMessageHandler
     /**
 	 * Handle issue deleted message.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onIssueDeleted()
     private onIssueDeleted(event: IMessageEvent): void
     {
         if(!event || !this._manager)
@@ -234,6 +237,7 @@ export class ModerationMessageHandler
 	 * Handle issue pick failure.
 	 * Retries auto-pick if enabled and within retry limits.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onIssuePickFailed()
     private onIssuePickFailed(event: IMessageEvent): void
     {
         const parser = event.parser as IssuePickFailedMessageParser;
@@ -271,6 +275,7 @@ export class ModerationMessageHandler
     /**
 	 * Handle moderator user info response.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onUserInfo()
     private onUserInfo(event: IMessageEvent): void
     {
         const parser = event.parser as ModeratorUserInfoParser;
@@ -286,6 +291,7 @@ export class ModerationMessageHandler
     /**
 	 * Handle moderator room info response.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onRoomInfo()
     private onRoomInfo(event: IMessageEvent): void
     {
         const parser = event.parser as ModeratorRoomInfoParser;
@@ -302,6 +308,7 @@ export class ModerationMessageHandler
 	 * Handle moderator action result.
 	 * Requests updated user info on success.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onModeratorActionResult()
     private onModeratorActionResult(event: IMessageEvent): void
     {
         const parser = event.parser as ModeratorActionResultMessageParser;
@@ -326,6 +333,7 @@ export class ModerationMessageHandler
     /**
 	 * Handle moderator tool preferences (window position/size).
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onModeratorToolPreferences()
     private onModeratorToolPreferences(event: IMessageEvent): void
     {
         if(!this._manager || !this._manager.issueManager)
@@ -351,6 +359,7 @@ export class ModerationMessageHandler
     /**
 	 * Handle CFH chatlog response.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onCfhChatlog()
     private onCfhChatlog(event: IMessageEvent): void
     {
         const parser = event.parser as CfhChatlogMessageParser;
@@ -366,6 +375,7 @@ export class ModerationMessageHandler
     /**
 	 * Handle room chatlog response.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onRoomChatlog()
     private onRoomChatlog(event: IMessageEvent): void
     {
         const parser = event.parser as RoomChatlogMessageParser;
@@ -381,6 +391,7 @@ export class ModerationMessageHandler
     /**
 	 * Handle user chatlog response.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onUserChatlog()
     private onUserChatlog(event: IMessageEvent): void
     {
         const parser = event.parser as UserChatlogMessageParser;
@@ -396,6 +407,7 @@ export class ModerationMessageHandler
     /**
 	 * Handle room visits response.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onRoomVisits()
     private onRoomVisits(event: IMessageEvent): void
     {
         const parser = event.parser as RoomVisitsMessageParser;
@@ -426,6 +438,7 @@ export class ModerationMessageHandler
     /**
 	 * Handle room entry - update current flat ID.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onRoomEnter()
     private onRoomEnter(event: IMessageEvent): void
     {
         const parser = event.parser as RoomEntryInfoMessageParser;
@@ -443,6 +456,7 @@ export class ModerationMessageHandler
     /**
 	 * Handle room exit - reset current flat ID.
 	 */
+    // AS3: .../src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onRoomExit()
     private onRoomExit(_event: IMessageEvent): void
     {
         this._manager.currentFlatId = 0;

@@ -122,6 +122,7 @@ export class RoomChatHandler extends BaseHandler
      *
      * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as::onPetRespectNotification()
      */
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomChatHandler.as::onPetRespectNotification()
     private onPetRespectNotification(event: IMessageEvent): void
     {
         const parser = event.parser as PetRespectNotificationEventParser | null;
@@ -187,6 +188,7 @@ export class RoomChatHandler extends BaseHandler
     /**
 	 * Handle normal chat message
 	 */
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomChatHandler.as::onRoomChat()
     private onRoomChat(event: IMessageEvent): void
     {
         const chatEvent = event as ChatMessageEvent;
@@ -221,6 +223,7 @@ export class RoomChatHandler extends BaseHandler
     /**
 	 * Handle whisper message
 	 */
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomChatHandler.as::onRoomWhisper()
     private onRoomWhisper(event: IMessageEvent): void
     {
         const whisperEvent = event as WhisperMessageEvent;
@@ -247,6 +250,7 @@ export class RoomChatHandler extends BaseHandler
     /**
 	 * Handle shout message
 	 */
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomChatHandler.as::onRoomShout()
     private onRoomShout(event: IMessageEvent): void
     {
         const shoutEvent = event as ShoutMessageEvent;

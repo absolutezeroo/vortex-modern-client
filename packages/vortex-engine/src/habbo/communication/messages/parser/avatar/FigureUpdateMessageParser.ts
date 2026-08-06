@@ -11,6 +11,7 @@ export class FigureUpdateMessageParser implements IMessageParser
 {
     private _figure: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/avatar/FigureUpdateEventParser.as::get figure()
     get figure(): string
     {
         return this._figure;
@@ -18,11 +19,13 @@ export class FigureUpdateMessageParser implements IMessageParser
 
     private _gender: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/avatar/FigureUpdateEventParser.as::get gender()
     get gender(): string
     {
         return this._gender;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/avatar/FigureUpdateEventParser.as::flush()
     flush(): boolean
     {
         this._figure = '';
@@ -30,6 +33,7 @@ export class FigureUpdateMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/avatar/FigureUpdateEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._figure = wrapper.readString();

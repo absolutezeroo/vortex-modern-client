@@ -40,6 +40,7 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.PetsCatalogWidget');
  */
 export class PetsCatalogWidget extends CatalogWidget implements IGetImageListener
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PetsCatalogWidget.as::_offers
     private _offers: OrderedMap<number, IPurchasableOffer> | null = null;
 
     private _petTypeIndex: number = -1;
@@ -48,16 +49,20 @@ export class PetsCatalogWidget extends CatalogWidget implements IGetImageListene
 
     private _colourIndex: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PetsCatalogWidget.as::_selectedProductCode
     private _selectedProductCode: string = '';
 
     private _pendingNameApproval: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PetsCatalogWidget.as::_availablePalettes
     private _availablePalettes: SellablePetPalette[] | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PetsCatalogWidget.as::_availableColors
     private _availableColors: number[] = [];
 
     private _widgetDisposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PetsCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _priceWindow: IWindow | null = null;

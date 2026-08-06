@@ -10,12 +10,14 @@ export class CommunityVoteReceivedEventParser implements IMessageParser
 {
     private _acknowledged: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/landingview/votes/CommunityVoteReceivedEventParser.as::flush()
     flush(): boolean
     {
         this._acknowledged = false;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/landingview/votes/CommunityVoteReceivedEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;
@@ -24,6 +26,7 @@ export class CommunityVoteReceivedEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/landingview/votes/CommunityVoteReceivedEventParser.as::get acknowledged()
     get acknowledged(): boolean
     {
         return this._acknowledged;

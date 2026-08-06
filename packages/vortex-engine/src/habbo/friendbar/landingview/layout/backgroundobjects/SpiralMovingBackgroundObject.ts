@@ -13,10 +13,13 @@ import {PathResetEvent} from './events/PathResetEvent';
  */
 export class SpiralMovingBackgroundObject extends BackgroundObject
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/SpiralMovingBackgroundObject.as::_startRadius
     private _startRadius: number;
     private _startAngle: number;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/SpiralMovingBackgroundObject.as::_posRadius
     private _posRadius: number;
     private _posAngle: number;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/backgroundobjects/SpiralMovingBackgroundObject.as::_speedRadius
     private _speedRadius: number;
     private _speedAngle: number;
     private _centerX: number;

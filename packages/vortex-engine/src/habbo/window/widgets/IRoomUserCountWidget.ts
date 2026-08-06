@@ -12,5 +12,6 @@ export interface IRoomUserCountWidget extends IWidget
     /**
 	 * Set the user count to display.
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/IRoomUserCountWidget.as::set userCount()
     set userCount(value: number);
 }

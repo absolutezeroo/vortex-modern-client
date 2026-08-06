@@ -19,8 +19,10 @@ import {SellablePetPalette} from './SellablePetPalette';
  */
 export class SellablePetPalettesMessageEventParser implements IMessageParser
 {
+    // AS3: .../src/unknowns/_SafePkg_1714/_SafeCls_1905.as::_productCode
     private _productCode: string = '';
 
+    // AS3: .../src/unknowns/_SafePkg_1714/_SafeCls_1905.as::_sellablePalettes
     private _sellablePalettes: SellablePetPalette[] = [];
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1714/_SafeCls_1905.as::get productCode()

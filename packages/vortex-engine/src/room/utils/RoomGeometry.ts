@@ -20,6 +20,7 @@ export class RoomGeometry implements IRoomGeometry
     private _z: Vector3d;
     private _locationCache: Vector3d;
     private _directionCache: Vector3d;
+    // AS3: sources/win63_version/room/utils/RoomGeometry.as::_depth
     private _depth: Vector3d;
     private _xScale: number = 1;
     private _yScale: number = 1;
@@ -72,6 +73,7 @@ export class RoomGeometry implements IRoomGeometry
         return this._updateId;
     }
 
+    // AS3: sources/win63_version/room/utils/RoomGeometry.as::_directionAxis
     private _directionAxis: Vector3d;
 
     // AS3: sources/win63_version/room/utils/RoomGeometry.as::get directionAxis()

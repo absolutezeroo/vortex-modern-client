@@ -15,6 +15,7 @@ export class UseFurnitureMessageComposer extends MessageComposer<[number, number
         this._data = [furnitureId, extraParam];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/engine/UseFurnitureMessageComposer.as::getMessageArray()
     getMessageArray(): [number, number]
     {
         return this._data;

@@ -16,6 +16,7 @@ export class PollRejectComposer extends MessageComposer<ConstructorParameters<ty
         this._data = [pollId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/poll/PollRejectComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

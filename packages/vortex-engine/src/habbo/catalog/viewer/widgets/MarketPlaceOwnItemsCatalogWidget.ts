@@ -34,24 +34,32 @@ const MAX_SEARCH_STRING_LENGTH = 40;
  */
 export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements IMarketPlaceVisualization, IGetImageListener
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::_itemTemplates
     private _itemTemplates: OrderedMap<number, IWindowContainer> = new OrderedMap();
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::_itemPools
     private _itemPools: OrderedMap<number, IWindowContainer[]> = new OrderedMap();
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::_itemList
     private _itemList: IItemListWindow | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::_allOffers
     private _allOffers: OrderedMap<number, MarketPlaceOfferData> | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::_offers
     private _offers: OrderedMap<number, MarketPlaceOfferData> | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::_offerWindowsById
     private _offerWindowsById: OrderedMap<number, IWindowContainer> = new OrderedMap();
 
     private _searchText: string = '';
 
     private _category: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::_ignoreCategorySelectionEvents
     private _ignoreCategorySelectionEvents: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::get marketPlace()
     private get marketPlace(): IMarketPlace | null
     {
         if(!this.page?.viewer?.catalog) return null;
@@ -114,6 +122,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::showRedeemInfo()
     private showRedeemInfo(visible: boolean): void
     {
         if(!this.window) return;
@@ -123,6 +132,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         if(border) border.visible = visible;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::updateBottomActionButtons()
     private updateBottomActionButtons(enabled: boolean): void
     {
         if(!this.window) return;
@@ -184,6 +194,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this.updateListSummary();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::applySearchFilter()
     private applySearchFilter(): void
     {
         if(!this._allOffers) return;
@@ -199,6 +210,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this.updateList(this._offers);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::updateStatusDisplay()
     private updateStatusDisplay(status: number, count: number = -1): void
     {
         const localization = this.marketPlace?.localization;
@@ -225,6 +237,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         statusText.caption = text;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::updateList()
     private updateList(offers: OrderedMap<number, MarketPlaceOfferData>): void
     {
         if(!offers || !this.marketPlace || !this.window) return;
@@ -358,6 +371,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this.updateListSummary();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::updateListSummary()
     private updateListSummary(): void
     {
         if(!this.marketPlace || !this._allOffers || !this._offers || !this.window) return;
@@ -414,6 +428,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::getFurniImageResult()
     private getFurniImageResult(furniId: number, furniType: number, extraData: string | null = null): ImageResult | null
     {
         const roomEngine = this.page?.viewer?.roomEngine;
@@ -504,6 +519,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::performSearch()
     private performSearch(): void
     {
         if(!this.window) return;
@@ -516,6 +532,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this.applySearchFilter();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::clearSearch()
     private clearSearch(): void
     {
         if(!this.window) return;
@@ -533,6 +550,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this.applySearchFilter();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::matchesSearch()
     private matchesSearch(offer: MarketPlaceOfferData): boolean
     {
         if(this._searchText === '') return true;
@@ -540,6 +558,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         return this.getOfferSearchText(offer).indexOf(this._searchText) >= 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::getOfferSearchText()
     private getOfferSearchText(offer: MarketPlaceOfferData): string
     {
         if(!offer || !this.marketPlace || !this.marketPlace.localization) return '';
@@ -553,11 +572,13 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         return this.normalizeSearchText(`${name} ${desc}`);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::normalizeSearchText()
     private normalizeSearchText(text: string | null): string
     {
         return text == null ? '' : text.toLowerCase();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::updateSearchUiState()
     private updateSearchUiState(): void
     {
         if(!this.window) return;
@@ -571,6 +592,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         if(cancelButton) cancelButton.visible = hasText;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::getStatusText()
     private getStatusText(offer: MarketPlaceOfferData, baseKey: string, timestampKey: string): string
     {
         const localization = this.marketPlace!.localization!;
@@ -581,11 +603,13 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         return localization.getLocalizationWithParams(timestampKey, baseText, 'timestamp', this.formatStatusTime(offer.statusTime));
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::formatStatusTime()
     private formatStatusTime(time: number): string
     {
         return new Date(time).toLocaleString();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::populateCategoryDropMenu()
     private populateCategoryDropMenu(): void
     {
         if(!this.window || this.marketPlace == null || this.marketPlace.localization == null) return;
@@ -607,6 +631,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this._ignoreCategorySelectionEvents = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::setSelectedCategory()
     private setSelectedCategory(category: number): void
     {
         this._category = category;
@@ -633,6 +658,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this.marketPlace?.requestOwnItems(category);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::clearCurrentOffersView()
     private clearCurrentOffersView(): void
     {
         this.clearVisibleItems();
@@ -643,6 +669,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this.showRedeemInfo(false);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::getDropMenuSelectionForCategory()
     private getDropMenuSelectionForCategory(category: number): number
     {
         switch(category - 2)
@@ -653,6 +680,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::getCategoryForSelection()
     private getCategoryForSelection(selection: number): number
     {
         switch(selection - 1)
@@ -663,6 +691,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::clearVisibleItems()
     private clearVisibleItems(): void
     {
         if(!this._itemList) return;
@@ -680,6 +709,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this._offerWindowsById.reset();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::claimItemWindow()
     private claimItemWindow(status: number): IWindowContainer | null
     {
         const pool = this.getItemPool(status);
@@ -691,6 +721,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         return template ? template.clone() as unknown as IWindowContainer : null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::recycleItemWindow()
     private recycleItemWindow(window: IWindowContainer | null): void
     {
         if(window == null) return;
@@ -709,6 +740,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         pool.push(window);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::getItemPool()
     private getItemPool(status: number): IWindowContainer[] | null
     {
         if(status < 0) return null;
@@ -724,6 +756,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         return pool;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::disposeItemPool()
     private disposeItemPool(pool: IWindowContainer[] | null): void
     {
         if(pool == null) return;
@@ -736,6 +769,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         pool.length = 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::resetPooledWindow()
     private resetPooledWindow(window: IWindowContainer): void
     {
         window.id = 0;
@@ -758,6 +792,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         if(rarityOverlay) rarityOverlay.visible = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::getStatusForWindow()
     private getStatusForWindow(window: IWindowContainer | null): number
     {
         if(window == null) return -1;

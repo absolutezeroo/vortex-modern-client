@@ -35,6 +35,7 @@ export class DropListItemController extends ContainerButtonController implements
     /**
 	 * Finds the nearest ancestor IDropMenuWindow.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropListItemController.as::get menu()
     public get menu(): IDropMenuWindow | null
     {
         let current: IWindow | null = this.parent;
@@ -55,11 +56,13 @@ export class DropListItemController extends ContainerButtonController implements
     /**
 	 * The wrapped child window (first child).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropListItemController.as::get value()
     public get value(): IWindow | null
     {
         return this.getChildAt(0);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/DropListItemController.as::set value()
     public set value(item: IWindow | null)
     {
         const current = this.getChildAt(0);

@@ -10,17 +10,20 @@ export class UserNftChatStylesMessageParser implements IMessageParser
 {
     private _chatStyleIds: number[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/nft/UserNftChatStylesMessageEventParser.as::get chatStyleIds()
     get chatStyleIds(): number[]
     {
         return this._chatStyleIds;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/nft/UserNftChatStylesMessageEventParser.as::flush()
     flush(): boolean
     {
         this._chatStyleIds = [];
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/nft/UserNftChatStylesMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

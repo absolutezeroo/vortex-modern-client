@@ -38,14 +38,23 @@ const MIN_DESKTOP_SIZE = 10;
  */
 export class WindowContext implements IWindowContext 
 {
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::INPUT_MODE_MOUSE
     public static readonly INPUT_MODE_MOUSE: number = 0;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::INPUT_MODE_TOUCH
     public static readonly INPUT_MODE_TOUCH: number = 1;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::ERROR_UNKNOWN
     public static readonly ERROR_UNKNOWN: number = 0;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::ERROR_INVALID_WINDOW
     public static readonly ERROR_INVALID_WINDOW: number = 1;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::ERROR_WINDOW_NOT_FOUND
     public static readonly ERROR_WINDOW_NOT_FOUND: number = 2;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::ERROR_WINDOW_ALREADY_EXISTS
     public static readonly ERROR_WINDOW_ALREADY_EXISTS: number = 3;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::ERROR_UNKNOWN_WINDOW_TYPE
     public static readonly ERROR_UNKNOWN_WINDOW_TYPE: number = 4;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::ERROR_DURING_EVENT_HANDLING
     public static readonly ERROR_DURING_EVENT_HANDLING: number = 5;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::inputEventQueue
     public static inputEventQueue: MouseEventQueue | null = null;
     /**
      * Shared renderer reference (AS3: static var_1836).
@@ -53,7 +62,9 @@ export class WindowContext implements IWindowContext
      */
     private static _renderer: IWindowRenderer | null = null;
     private static _inputEventProcessor: MouseEventProcessor | null = null;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::inputEventTrackers
     public inputEventTrackers: IInputEventTracker[] = [];
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::_localization
     protected _localization: ICoreLocalizationManager | null = null;
     protected _services: IInternalWindowServices | null = null;
     protected _parser: IWindowParser | null = null;
@@ -62,15 +73,20 @@ export class WindowContext implements IWindowContext
     protected _desktop: IWindow | null = null;
     protected _substituteParent: IWindow | null = null;
     protected _resourceManager: IResourceManager | null = null;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::_throwErrors
     protected _throwErrors: boolean = true;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::_lastError
     protected _lastError: Error | null = null;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::_lastErrorCode
     protected _lastErrorCode: number = -1;
     protected _updating: boolean = false;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::_rendering
     protected _rendering: boolean = false;
     private _resizeHost: WindowContextResizeHost | null = null;
     private _resizeListener: ((event?: Event) => void) | null = null;
     private _isListeningToResizeHost: boolean = false;
     private readonly _initialDesktopRect: { x: number; y: number; width: number; height: number };
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::_name
     private readonly _name: string;
     private _eventProcessorState: EventProcessorState;
 
@@ -116,11 +132,13 @@ export class WindowContext implements IWindowContext
 
     private static _inputMode: number = WindowContext.INPUT_MODE_MOUSE;
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::get inputMode()
     public static get inputMode(): number 
     {
         return WindowContext._inputMode;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::set inputMode()
     public static set inputMode(value: number) 
     {
         if(WindowContext.inputEventQueue) 
@@ -153,15 +171,19 @@ export class WindowContext implements IWindowContext
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::_linkEventTrackers
     private _linkEventTrackers: ILinkEventTracker[] = [];
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::get linkEventTrackers()
     public get linkEventTrackers(): ILinkEventTracker[] 
     {
         return this._linkEventTrackers;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
@@ -238,36 +260,43 @@ export class WindowContext implements IWindowContext
         this._localization = localization;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::getResourceManager()
     public getResourceManager(): IResourceManager | null 
     {
         return this._resourceManager;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::getWindowServices()
     public getWindowServices(): IInternalWindowServices 
     {
         return this._services!;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::getWindowParser()
     public getWindowParser(): IWindowParser 
     {
         return this._parser!;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::getWindowFactory()
     public getWindowFactory(): IWindowFactory 
     {
         return this._factory;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::getDesktopWindow()
     public getDesktopWindow(): IWindow | null 
     {
         return this._desktop;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::getWidgetFactory()
     public getWidgetFactory(): IWidgetFactory | null 
     {
         return this._widgetFactory;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::findWindowByName()
     public findWindowByName(name: string): IWindow | null 
     {
         if(!this._desktop) return null;
@@ -275,6 +304,7 @@ export class WindowContext implements IWindowContext
         return (this._desktop as any).findChildByName?.(name) ?? null;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::findWindowByTag()
     public findWindowByTag(tag: string): IWindow | null 
     {
         if(!this._desktop) return null;
@@ -282,6 +312,7 @@ export class WindowContext implements IWindowContext
         return (this._desktop as any).findChildByTag?.(tag) ?? null;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::groupChildrenWithTag()
     public groupChildrenWithTag(tag: string, result: IWindow[], depth: number = 0): number 
     {
         if(!this._desktop) return 0;
@@ -289,6 +320,7 @@ export class WindowContext implements IWindowContext
         return (this._desktop as any).groupChildrenWithTag?.(tag, result, depth) ?? 0;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::registerLocalizationListener()
     public registerLocalizationListener(key: string, window: IWindow): void 
     {
         if(!this._localization) 
@@ -299,6 +331,7 @@ export class WindowContext implements IWindowContext
         this._localization.registerLocalizationListener(key, window as unknown as ILocalizable);
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::removeLocalizationListener()
     public removeLocalizationListener(key: string, window: IWindow): void 
     {
         if(!this._localization) 
@@ -309,6 +342,7 @@ export class WindowContext implements IWindowContext
         this._localization.removeLocalizationListener(key, window as unknown as ILocalizable);
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::create()
     public create(
         name: string,
         caption: string,
@@ -382,6 +416,7 @@ export class WindowContext implements IWindowContext
         return window;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::destroy()
     public destroy(window: IWindow): boolean 
     {
         if(window === this._desktop) 
@@ -397,6 +432,7 @@ export class WindowContext implements IWindowContext
         return true;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::invalidate()
     public invalidate(window: IWindow, rect: {
         x: number;
         y: number;
@@ -412,6 +448,7 @@ export class WindowContext implements IWindowContext
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::update()
     public update(_deltaTime: number): void 
     {
         this._updating = true;
@@ -441,6 +478,7 @@ export class WindowContext implements IWindowContext
         this._updating = false;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::render()
     public render(_deltaTime: number): void 
     {
         this._rendering = true;
@@ -453,16 +491,19 @@ export class WindowContext implements IWindowContext
         this._rendering = false;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::getLastError()
     public getLastError(): Error | null 
     {
         return this._lastError;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::getLastErrorCode()
     public getLastErrorCode(): number 
     {
         return this._lastErrorCode;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::handleError()
     public handleError(code: number, error: Error): void 
     {
         this._lastError = error;
@@ -474,12 +515,14 @@ export class WindowContext implements IWindowContext
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::flushError()
     public flushError(): void 
     {
         this._lastError = null;
         this._lastErrorCode = -1;
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::addMouseEventTracker()
     public addMouseEventTracker(tracker: IInputEventTracker): void 
     {
         if(this.inputEventTrackers.indexOf(tracker) < 0) 
@@ -488,6 +531,7 @@ export class WindowContext implements IWindowContext
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::removeMouseEventTracker()
     public removeMouseEventTracker(tracker: IInputEventTracker): void 
     {
         const index = this.inputEventTrackers.indexOf(tracker);
@@ -498,6 +542,7 @@ export class WindowContext implements IWindowContext
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::dispose()
     public dispose(): void 
     {
         if(!this._disposed) 

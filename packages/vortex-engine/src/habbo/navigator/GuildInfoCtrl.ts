@@ -18,9 +18,12 @@ import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
  */
 export class GuildInfoCtrl implements IDisposable
 {
+    // AS3: .../src/com/sulake/habbo/navigator/GuildInfoCtrl.as::GUILD_INFO_NAME
     private static readonly GUILD_INFO_NAME: string = 'guild_info';
 
+    // AS3: .../src/com/sulake/habbo/navigator/GuildInfoCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
+    // AS3: .../src/com/sulake/habbo/navigator/GuildInfoCtrl.as::_groupId
     private _groupId: number = 0;
 
     constructor(navigator: IHabboTransitionalNavigator)
@@ -28,6 +31,7 @@ export class GuildInfoCtrl implements IDisposable
         this._navigator = navigator;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/GuildInfoCtrl.as::get disposed()
     get disposed(): boolean
     {
         return this._navigator === null;
@@ -40,6 +44,7 @@ export class GuildInfoCtrl implements IDisposable
 	 * @param roomData - Room data with group information
 	 * @param _compact - Whether to use compact display
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/GuildInfoCtrl.as::refresh()
     refresh(container: IWindowContainer, roomData: GuestRoomData, _compact: boolean = false): void
     {
         if(!this._navigator) return;
@@ -89,6 +94,7 @@ export class GuildInfoCtrl implements IDisposable
         this._groupId = roomData.habboGroupId;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/GuildInfoCtrl.as::dispose()
     dispose(): void
     {
         this._navigator = null;

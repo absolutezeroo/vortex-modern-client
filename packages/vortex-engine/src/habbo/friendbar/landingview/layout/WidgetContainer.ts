@@ -32,6 +32,7 @@ function isDisableableWidget(widget: ILandingViewWidget): widget is ILandingView
 export class WidgetContainer implements IDisposable
 {
     private _widget: ILandingViewWidget | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainer.as::_placeholderName
     private _placeholderName: string | null;
     private _dynamicSlotContainer: IWindowContainer | null;
     private _initialized: boolean = false;

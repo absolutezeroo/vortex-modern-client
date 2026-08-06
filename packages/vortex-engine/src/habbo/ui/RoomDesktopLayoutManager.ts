@@ -27,6 +27,7 @@ const BOTTOM_MARGIN = 47;
 
 export class RoomDesktopLayoutManager
 {
+    // AS3: sources/win63_version/habbo/ui/class_3019.as::_layoutContainer
     private _layoutContainer: IWindowContainer | null = null;
 
     constructor()
@@ -188,6 +189,7 @@ export class RoomDesktopLayoutManager
     /**
 	 * Removes a widget window from its container.
 	 */
+    // AS3: sources/win63_version/habbo/ui/class_3019.as::removeWidgetWindow()
     public removeWidgetWindow(name: string, window: IWindow): void
     {
         const container = this.getWidgetContainer(name, window);
@@ -201,6 +203,7 @@ export class RoomDesktopLayoutManager
     /**
 	 * Adds a room view window to the room_view container.
 	 */
+    // AS3: sources/win63_version/habbo/ui/class_3019.as::addRoomView()
     public addRoomView(window: IWindow): boolean
     {
         if(!this._layoutContainer) return false;
@@ -222,6 +225,7 @@ export class RoomDesktopLayoutManager
     /**
 	 * Gets the room view window (the first child of the room_view container).
 	 */
+    // AS3: sources/win63_version/habbo/ui/class_3019.as::getRoomView()
     public getRoomView(): IWindow | null
     {
         if(!this._layoutContainer) return null;
@@ -236,6 +240,7 @@ export class RoomDesktopLayoutManager
     /**
 	 * Gets the rectangle of the room view area.
 	 */
+    // AS3: sources/win63_version/habbo/ui/class_3019.as::get roomViewRect()
     public get roomViewRect(): { x: number; y: number; width: number; height: number } | null
     {
         if(!this._layoutContainer) return null;
@@ -262,6 +267,7 @@ export class RoomDesktopLayoutManager
 	 * so freeFlowChat's root display object can be mounted into it via
 	 * setDisplayObject(), matching AS3's layoutManager.getChatContainer().setDisplayObject(...).
 	 */
+    // AS3: sources/win63_version/habbo/ui/class_3019.as::getChatContainer()
     public getChatContainer(): IDisplayObjectWrapper | null
     {
         if(!this._layoutContainer) return null;
@@ -277,6 +283,7 @@ export class RoomDesktopLayoutManager
         return this._layoutContainer;
     }
 
+    // AS3: sources/win63_version/habbo/ui/class_3019.as::dispose()
     public dispose(): void
     {
         if(this._layoutContainer)

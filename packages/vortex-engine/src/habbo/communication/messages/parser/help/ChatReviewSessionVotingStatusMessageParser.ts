@@ -15,19 +15,23 @@ export class ChatReviewSessionVotingStatusMessageParser implements IMessageParse
     public static readonly STATUS_TIMEOUT: number = 4;
     public static readonly STATUS_ABORTED: number = 5;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionVotingStatusMessageEventParser.as::_status
     private _status: Array<number> = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionVotingStatusMessageEventParser.as::get status()
     get status(): Array<number>
     {
         return this._status;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionVotingStatusMessageEventParser.as::flush()
     flush(): boolean
     {
         this._status = [];
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionVotingStatusMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

@@ -15,6 +15,7 @@ export class GuideSessionIsTypingMessageComposer extends MessageComposer<Constru
         this._data = [isTyping];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/GuideSessionIsTypingMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

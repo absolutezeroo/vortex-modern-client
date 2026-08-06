@@ -80,6 +80,7 @@ export class AvatarSet
         return this._id;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarSet.as::_isMain
     private _isMain: boolean;
 
     // AS3: sources/win63_version/habbo/avatar/geometry/AvatarSet.as::get isMain()

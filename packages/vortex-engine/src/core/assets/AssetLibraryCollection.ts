@@ -19,6 +19,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     protected readonly _libraries: IAssetLibrary[] = [];
     protected readonly _pendingLibraries: IAssetLibrary[] = [];
     protected readonly _collectionEvents: EventEmitter = new EventEmitter();
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::_name
     private readonly _name: string;
     private _libraryCounter: number = 0;
 
@@ -28,11 +29,13 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
         this._name = name;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/AssetLibraryCollection.as::_manifest
     private _manifest: object | null = null;
 
     /**
 	 * The manifest (builds a combined manifest)
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::get manifest()
     get manifest(): object | null
     {
         return this._manifest ?? {};
@@ -49,6 +52,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * The URL (empty for collections)
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::get url()
     get url(): string
     {
         return '';
@@ -57,6 +61,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * The name of this collection
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::get name()
     get name(): string
     {
         return this._name;
@@ -65,6 +70,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Whether all libraries are ready
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::get isReady()
     get isReady(): boolean
     {
         return this._pendingLibraries.length === 0;
@@ -73,6 +79,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Total number of assets across all libraries
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::get numAssets()
     get numAssets(): number
     {
         let total = 0;
@@ -88,6 +95,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Combined array of all asset names
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::get nameArray()
     get nameArray(): string[]
     {
         const names: string[] = [];
@@ -100,11 +108,13 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
         return names;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/AssetLibraryCollection.as::_binLibrary
     protected _binLibrary: AssetLibrary | null = null;
 
     /**
 	 * Get the bin library (lazy creation)
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::get binLibrary()
     private get binLibrary(): AssetLibrary
     {
         if(!this._binLibrary)
@@ -190,6 +200,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Load from resource (delegates to bin library)
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::loadFromResource()
     loadFromResource(manifest: object, resourceData: unknown): boolean
     {
         return this.binLibrary.loadFromResource(manifest, resourceData);
@@ -198,6 +209,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Unload all libraries
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::unload()
     unload(): void
     {
         while(this._pendingLibraries.length > 0)
@@ -218,6 +230,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Load an asset from file (delegates to bin library)
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::loadAssetFromFile()
     loadAssetFromFile(name: string, url: string, mimeType?: string, id?: number): AssetLoaderStruct
     {
         return this.binLibrary.loadAssetFromFile(name, url, mimeType, id);
@@ -226,6 +239,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Check if a library exists by name
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::hasAssetLibrary()
     hasAssetLibrary(name: string): boolean
     {
         for(const lib of this._libraries)
@@ -242,6 +256,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Get a library by name
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::getAssetLibraryByName()
     getAssetLibraryByName(name: string): IAssetLibrary | null
     {
         for(const lib of this._libraries)
@@ -258,6 +273,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Get a library by URL
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::getAssetLibraryByUrl()
     getAssetLibraryByUrl(url: string): IAssetLibrary | null
     {
         for(const lib of this._libraries)
@@ -274,6 +290,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Get a library by partial URL match
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::getAssetLibraryByPartialUrl()
     getAssetLibraryByPartialUrl(partialUrl: string): IAssetLibrary | null
     {
         for(const lib of this._libraries)
@@ -290,6 +307,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Add a library to the collection
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::addAssetLibrary()
     addAssetLibrary(library: IAssetLibrary): void
     {
         if(!this._libraries.includes(library))
@@ -301,6 +319,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Remove a library from the collection
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::removeAssetLibrary()
     removeAssetLibrary(library: IAssetLibrary): void
     {
         const index = this._libraries.indexOf(library);
@@ -314,6 +333,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Get an asset by name (searches all libraries)
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::getAssetByName()
     getAssetByName(name: string): IAsset | null
     {
         for(const lib of this._libraries)
@@ -332,6 +352,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Get all assets with a given name (from all libraries)
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::getAssetsByName()
     getAssetsByName(name: string): IAsset[]
     {
         const assets: IAsset[] = [];
@@ -352,6 +373,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Get an asset by content
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::getAssetByContent()
     getAssetByContent(content: unknown): IAsset | null
     {
         for(const lib of this._libraries)
@@ -370,6 +392,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Get an asset by index
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::getAssetByIndex()
     getAssetByIndex(index: number): IAsset | null
     {
         let current = 0;
@@ -392,6 +415,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Get the index of an asset
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::getAssetIndex()
     getAssetIndex(asset: IAsset): number
     {
         let offset = 0;
@@ -414,6 +438,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Check if an asset exists
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::hasAsset()
     hasAsset(name: string): boolean
     {
         for(const lib of this._libraries)
@@ -430,6 +455,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Set an asset (delegates to bin library)
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::setAsset()
     setAsset(name: string, asset: IAsset, overwrite?: boolean): boolean
     {
         return this.binLibrary.setAsset(name, asset, overwrite);
@@ -438,6 +464,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Create an asset (delegates to bin library)
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::createAsset()
     createAsset(name: string, declaration: AssetTypeDeclaration): IAsset | null
     {
         return this.binLibrary.createAsset(name, declaration);
@@ -446,6 +473,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Remove an asset
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::removeAsset()
     removeAsset(asset: IAsset): IAsset | null
     {
         for(const lib of this._libraries)
@@ -464,6 +492,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Register a type declaration (delegates to bin library)
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::registerAssetTypeDeclaration()
     registerAssetTypeDeclaration(declaration: AssetTypeDeclaration, isShared?: boolean): boolean
     {
         return this.binLibrary.registerAssetTypeDeclaration(declaration, isShared);
@@ -472,6 +501,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Get type declaration by MIME type
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::getAssetTypeDeclarationByMimeType()
     getAssetTypeDeclarationByMimeType(mimeType: string, checkShared: boolean = true): AssetTypeDeclaration | null
     {
         if(checkShared)
@@ -495,6 +525,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Get type declaration by asset class
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::getAssetTypeDeclarationByClass()
     getAssetTypeDeclarationByClass(assetClass: new (...args: unknown[]) => IAsset, checkShared: boolean = true): AssetTypeDeclaration | null
     {
         if(checkShared)
@@ -518,6 +549,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Get type declaration by filename
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::getAssetTypeDeclarationByFileName()
     getAssetTypeDeclarationByFileName(fileName: string, checkShared: boolean = true): AssetTypeDeclaration | null
     {
         if(checkShared)
@@ -541,6 +573,7 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     /**
 	 * Get all manifests from all libraries
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibraryCollection.as::getManifests()
     getManifests(): object[]
     {
         const manifests: object[] = [];

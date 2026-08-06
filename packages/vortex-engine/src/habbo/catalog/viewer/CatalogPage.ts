@@ -61,21 +61,28 @@ const log = Logger.getLogger('habbo.catalog.viewer.CatalogPage');
  */
 export class CatalogPage implements ICatalogPage
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::LAYOUT_MAGIC_PREFIX
     protected static readonly LAYOUT_MAGIC_PREFIX: string = 'layout_';
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::MODE_NORMAL
     static readonly MODE_NORMAL: number = 0;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::MODE_SEARCH
     static readonly MODE_SEARCH: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_window
     protected _window: IWindowContainer | null = null;
 
     private _viewer: ICatalogViewer | null;
 
     private _pageId: number;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_layoutCode
     private _layoutCode: string;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_offers
     private _offers: IPurchasableOffer[];
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_localization
     private _localization: IPageLocalization;
 
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
@@ -86,8 +93,10 @@ export class CatalogPage implements ICatalogPage
     // silently skipped).
     private _widgets: ICatalogWidget[] = [];
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_widgetEvents
     private _widgetEvents: EventEmitter | null = new EventEmitter();
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _acceptSeasonCurrencyAsCredits: boolean;
@@ -96,6 +105,7 @@ export class CatalogPage implements ICatalogPage
 
     private _itemGridWidget: ItemGridCatalogWidget | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_mode
     private _mode: number;
 
     constructor(
@@ -127,71 +137,85 @@ export class CatalogPage implements ICatalogPage
         this.init();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::get window()
     get window(): IWindowContainer
     {
         return this._window!;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::get viewer()
     get viewer(): ICatalogViewer
     {
         return this._viewer!;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::get pageId()
     get pageId(): number
     {
         return this._mode === CatalogPage.MODE_SEARCH ? -12345678 : this._pageId;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::get layoutCode()
     get layoutCode(): string
     {
         return this._layoutCode;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::get offers()
     get offers(): IPurchasableOffer[]
     {
         return this._offers;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::get localization()
     get localization(): IPageLocalization
     {
         return this._localization;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::get links()
     get links(): string[]
     {
         return this._localization.getLinks(this._layoutCode);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::get hasLinks()
     get hasLinks(): boolean
     {
         return this._localization.hasLinks(this._layoutCode);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::get acceptSeasonCurrencyAsCredits()
     get acceptSeasonCurrencyAsCredits(): boolean
     {
         return this._acceptSeasonCurrencyAsCredits;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::get allowDragging()
     get allowDragging(): boolean
     {
         return this._layoutCode !== 'sold_ltd_items';
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::set searchPageId()
     set searchPageId(pageId: number)
     {
         this._searchPageId = pageId;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::get mode()
     get mode(): number
     {
         return this._mode;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::get isBuilderPage()
     get isBuilderPage(): boolean
     {
         return this._catalog!.catalogType === 'BUILDERS_CLUB';
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::selectOffer()
     selectOffer(offerId: number): void
     {
         if(this._itemGridWidget != null && offerId > -1)
@@ -216,6 +240,7 @@ export class CatalogPage implements ICatalogPage
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::dispose()
     dispose(): void
     {
         for(const widget of this._widgets)
@@ -252,6 +277,7 @@ export class CatalogPage implements ICatalogPage
         this._acceptSeasonCurrencyAsCredits = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::init()
     init(): void
     {
         if(this.createWindow(this.layoutCode))
@@ -260,6 +286,7 @@ export class CatalogPage implements ICatalogPage
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::closed()
     closed(): void
     {
         for(const widget of this._widgets)
@@ -282,6 +309,7 @@ export class CatalogPage implements ICatalogPage
     // for catalog pages is inconsistently "layout_<code>" (newer/UBUNTU pages) or "ctlg_<code>"
     // (older pages, compiled from a different source tree) - so the hasWidgetLayout() probe checks
     // both prefixes (plus the bare code) instead of AS3's single hasAsset(assetName) check.
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWindow()
     protected createWindow(layoutCode: string): boolean
     {
         const preferNewNaming = this._viewer!.viewerTags.indexOf('UBUNTU') > -1;
@@ -308,12 +336,14 @@ export class CatalogPage implements ICatalogPage
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidgets()
     private createWidgets(): void
     {
         this.createWidgetsRecursion(this._window);
         this.initializeWidgets();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidgetsRecursion()
     private createWidgetsRecursion(window: IWindowContainer | null): void
     {
         if(window == null) return;
@@ -479,6 +509,7 @@ export class CatalogPage implements ICatalogPage
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::initializeWidgets()
     private initializeWidgets(): void
     {
         // The 3x3 colour-grouping layout is the one page shape whose colour grid is
@@ -537,6 +568,7 @@ export class CatalogPage implements ICatalogPage
         widget.init();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::removeWidgets()
     private removeWidgets(widgets: ICatalogWidget[]): void
     {
         if(widgets == null || widgets.length === 0) return;
@@ -580,6 +612,7 @@ export class CatalogPage implements ICatalogPage
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::dispatchWidgetEvent()
     dispatchWidgetEvent(event: unknown): boolean
     {
         if(this._widgetEvents != null)
@@ -594,6 +627,7 @@ export class CatalogPage implements ICatalogPage
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::replaceOffers()
     replaceOffers(offers: IPurchasableOffer[], disposeOld: boolean = false): void
     {
         if(disposeOld)
@@ -607,6 +641,7 @@ export class CatalogPage implements ICatalogPage
         this._offers = offers;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::updateLimitedItemsLeft()
     updateLimitedItemsLeft(offerId: number, itemsLeft: number): void
     {
         for(const offer of this._offers)

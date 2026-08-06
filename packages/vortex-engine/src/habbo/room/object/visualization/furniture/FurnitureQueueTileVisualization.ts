@@ -10,6 +10,7 @@ import {AnimatedFurnitureVisualization} from './AnimatedFurnitureVisualization';
 export class FurnitureQueueTileVisualization extends AnimatedFurnitureVisualization
 {
     private static readonly STATE_ACTIVATE: number = 2;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureQueueTileVisualization.as::ANIMATION_ID_NORMAL
     private static readonly ANIMATION_ID_NORMAL: number = 1;
     private static readonly QUEUE_DELAY: number = 15;
 

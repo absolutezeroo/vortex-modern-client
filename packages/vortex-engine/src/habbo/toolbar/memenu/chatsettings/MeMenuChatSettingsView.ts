@@ -44,6 +44,7 @@ export class MeMenuChatSettingsView
 	 * @param settingsMenuView The parent settings menu view
 	 * @param toolbarView The toolbar view for positioning
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/chatsettings/MeMenuChatSettingsView.as::init()
     public init(settingsMenuView: MeMenuSettingsMenuView, toolbarView: ToolbarView): void
     {
         this._settingsMenuView = settingsMenuView;
@@ -63,6 +64,7 @@ export class MeMenuChatSettingsView
 	 *
 	 * @param buttonName The button name
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/chatsettings/MeMenuChatSettingsView.as::onButtonClicked()
     public onButtonClicked(buttonName: string): void
     {
         switch(buttonName)
@@ -81,6 +83,7 @@ export class MeMenuChatSettingsView
 	 *
 	 * Saves the preference and shows the parent settings menu.
 	 */
+    // AS3: sources/win63_version/habbo/toolbar/memenu/chatsettings/MeMenuChatSettingsView.as::dispose()
     public dispose(): void
     {
         if(this._settingsMenuView == null) return;

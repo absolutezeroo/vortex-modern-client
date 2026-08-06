@@ -71,6 +71,7 @@ export class Classes
      *
      * Must be called before any window creation. Safe to call multiple times.
      */
+    // AS3: .../src/com/sulake/core/window/Classes.as::init()
     public static init(): void 
     {
         if(Classes._registry) return;
@@ -243,6 +244,7 @@ export class Classes
      * @param type - The WindowType value
      * @returns The constructor, or null if not registered
      */
+    // AS3: .../src/com/sulake/core/window/Classes.as::getWindowClassByType()
     public static getWindowClassByType(type: number): (new (...args: unknown[]) => unknown) | null 
     {
         if(!Classes._registry) Classes.init();

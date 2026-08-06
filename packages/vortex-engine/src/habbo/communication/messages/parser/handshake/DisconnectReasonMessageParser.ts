@@ -11,6 +11,7 @@ export class DisconnectReasonMessageParser implements IMessageParser
 {
     private _reason: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/DisconnectReasonEventParser.as::get reason()
     get reason(): number
     {
         return this._reason;
@@ -48,12 +49,14 @@ export class DisconnectReasonMessageParser implements IMessageParser
         }
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/DisconnectReasonEventParser.as::flush()
     flush(): boolean
     {
         this._reason = -1;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/DisconnectReasonEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper.bytesAvailable >= 4)

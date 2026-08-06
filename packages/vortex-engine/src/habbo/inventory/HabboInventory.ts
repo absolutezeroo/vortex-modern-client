@@ -149,16 +149,25 @@ const log = Logger.getLogger('habbo.inventory.HabboInventory');
  */
 export class HabboInventory extends Component implements IHabboInventory, ILinkEventTracker
 {
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_catalog
     private _catalog: IHabboCatalog | null = null;
     private _toolbar: IHabboToolbar | null = null;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
     private _roomSessionManager: IRoomSessionManager | null = null;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_notifications
     private _notifications: IHabboNotifications | null = null;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_friendList
     private _friendList: IHabboFriendList | null = null;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_soundManager
     private _soundManager: IHabboSoundManager | null = null;
     private _furniMessageEvents: IMessageEvent[] = [];
     private _effectMessageEvents: IMessageEvent[] = [];
@@ -193,6 +202,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
      * `collectibles`, `wired_trading`, `recycler`), and `badges`/`effects`/`bots` are ported but
      * do not implement `IInventoryModel` yet — they have no view to hand back.
      */
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_inventories
     private _inventories: OrderedMap<string, IInventoryModel> = new OrderedMap<string, IInventoryModel>();
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::_SafeStr_4983
     private _purseTimer: ReturnType<typeof setInterval> | null = null;
@@ -203,6 +213,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         super(context, flags, assetLibrary);
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get windowManager()
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
@@ -228,6 +239,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return this._roomSessionManager.getSession(this._roomEngine.activeRoomId);
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get catalog()
     get catalog(): IHabboCatalog | null
     {
         return this._catalog;
@@ -305,6 +317,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
     private _isInitialized: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get isInitialized()
     get isInitialized(): boolean
     {
         return this._isInitialized;
@@ -319,6 +332,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
     private _hasRoomSession: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get hasRoomSession()
     get hasRoomSession(): boolean
     {
         return this._hasRoomSession;
@@ -331,6 +345,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
     private _furniModel!: FurniModel;
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get furniModel()
     get furniModel(): IFurniModel
     {
         return this._furniModel;
@@ -387,6 +402,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
     private _badgesModel!: BadgesModel;
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get badgesModel()
     get badgesModel(): IBadgesModel
     {
         return this._badgesModel;
@@ -397,6 +413,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // opened their inventory. AS3 guards `effectsModel == null` everywhere.
     private _effectsModel: EffectsModel | null = null;
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get effectsModel()
     get effectsModel(): IEffectsModel | null
     {
         return this._effectsModel;
@@ -404,6 +421,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
     private _petsModel!: PetsModel;
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get petsModel()
     get petsModel(): IPetsModel
     {
         return this._petsModel;
@@ -411,6 +429,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
     private _botsModel!: BotsModel;
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get botsModel()
     get botsModel(): IBotsModel
     {
         return this._botsModel;
@@ -418,6 +437,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
     private _tradingModel!: TradingModel;
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get tradingModel()
     get tradingModel(): ITradingModel
     {
         return this._tradingModel;
@@ -448,6 +468,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
     private _unseenItemTracker: UnseenItemTracker | null = null;
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get unseenItemTracker()
     get unseenItemTracker(): UnseenItemTracker
     {
         return this._unseenItemTracker!;
@@ -679,6 +700,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         super.dispose();
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::init()
     init(): void
     {
         if(this._isInitialized) return;
@@ -921,6 +943,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
      * sub-category name (`trading`, `wired_trading`). This returned null unconditionally before,
      * so the trade window had nowhere to be hosted even once it existed.
      */
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::getCategorySubWindowContainer()
     getCategorySubWindowContainer(category: string): IWindowContainer | null
     {
         return this._inventories.getValue(category)?.getWindowContainer() ?? null;
@@ -997,6 +1020,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::setClubStatus()
     setClubStatus(
         periods: number,
         days: number,
@@ -1408,6 +1432,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
      * AS3 takes an `isOwnUser` argument here and uses it for nothing at all; kept for the same
      * reason it kept `MAX_ITEMS_TO_TRADE`'s dead siblings — the signature is the source's.
      */
+    // AS3: .../src/com/sulake/habbo/inventory/_SafeCls_1951.as::populateItemGroups()
     private populateItemGroups(
         items: TradingFurniItemParser[],
         target: OrderedMap<string, GroupItem>,

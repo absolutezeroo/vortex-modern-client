@@ -31,16 +31,22 @@ export class PetPreviewCatalogWidget extends CatalogWidget implements IGetImageL
 {
     // AS3 declares these as plain instance fields, not constants - preserved as readonly here since
     // nothing ever writes them.
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PetPreviewCatalogWidget.as::PET_TYPE_ID
     private static readonly PET_TYPE_ID: number = 15;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PetPreviewCatalogWidget.as::BREED
     private static readonly BREED: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PetPreviewCatalogWidget.as::COLOR
     private static readonly COLOR: number = 16777215;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PetPreviewCatalogWidget.as::PALETTE_ID
     private static readonly PALETTE_ID: number = 2;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PetPreviewCatalogWidget.as::PART_ID
     private static readonly PART_ID: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PetPreviewCatalogWidget.as::_productName
     private _productName: IWindow | null = null;
 
     private _description: IWindow | null = null;
@@ -51,6 +57,7 @@ export class PetPreviewCatalogWidget extends CatalogWidget implements IGetImageL
 
     private _initialImageId: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PetPreviewCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _priceWindow: IWindow | null = null;

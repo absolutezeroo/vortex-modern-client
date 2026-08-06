@@ -19,6 +19,7 @@ export class CompetitionEntrySubmitResultMessageEventParser implements IMessageP
 
     private _goalId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionEntrySubmitResultMessageEventParser.as::get goalId()
     get goalId(): number
     {
         return this._goalId;
@@ -26,6 +27,7 @@ export class CompetitionEntrySubmitResultMessageEventParser implements IMessageP
 
     private _goalCode: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionEntrySubmitResultMessageEventParser.as::get goalCode()
     get goalCode(): string
     {
         return this._goalCode;
@@ -33,6 +35,7 @@ export class CompetitionEntrySubmitResultMessageEventParser implements IMessageP
 
     private _result: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionEntrySubmitResultMessageEventParser.as::get result()
     get result(): number
     {
         return this._result;
@@ -40,17 +43,20 @@ export class CompetitionEntrySubmitResultMessageEventParser implements IMessageP
 
     private _requiredFurnis: string[] | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionEntrySubmitResultMessageEventParser.as::get requiredFurnis()
     get requiredFurnis(): string[] | null
     {
         return this._requiredFurnis;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionEntrySubmitResultMessageEventParser.as::isMissing()
     isMissing(name: string): boolean
     {
         if(!this._missingFurnis) return false;
         return this._missingFurnis.has(name);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionEntrySubmitResultMessageEventParser.as::flush()
     flush(): boolean
     {
         this._goalId = 0;
@@ -61,6 +67,7 @@ export class CompetitionEntrySubmitResultMessageEventParser implements IMessageP
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/competition/CompetitionEntrySubmitResultMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

@@ -7,8 +7,11 @@
  */
 export class RoomContentLoadedEvent
 {
+    // AS3: sources/win63_version/room/events/RoomContentLoadedEvent.as::CONTENT_LOAD_SUCCESS
     public static readonly CONTENT_LOAD_SUCCESS = 'RCLE_SUCCESS';
+    // AS3: sources/win63_version/room/events/RoomContentLoadedEvent.as::CONTENT_LOAD_FAILURE
     public static readonly CONTENT_LOAD_FAILURE = 'RCLE_FAILURE';
+    // AS3: sources/win63_version/room/events/RoomContentLoadedEvent.as::CONTENT_LOAD_CANCEL
     public static readonly CONTENT_LOAD_CANCEL = 'RCLE_CANCEL';
 
     private _contentType: string;
@@ -18,6 +21,7 @@ export class RoomContentLoadedEvent
         this._contentType = contentType;
     }
 
+    // AS3: sources/win63_version/room/events/RoomContentLoadedEvent.as::get contentType()
     get contentType(): string
     {
         return this._contentType;

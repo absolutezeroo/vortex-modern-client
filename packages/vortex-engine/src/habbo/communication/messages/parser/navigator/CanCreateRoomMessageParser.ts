@@ -18,6 +18,7 @@ export class CanCreateRoomMessageParser implements IMessageParser
 {
     private _resultCode: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/CanCreateRoomEventParser.as::get resultCode()
     get resultCode(): number
     {
         return this._resultCode;
@@ -25,11 +26,13 @@ export class CanCreateRoomMessageParser implements IMessageParser
 
     private _roomLimit: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/CanCreateRoomEventParser.as::get roomLimit()
     get roomLimit(): number
     {
         return this._roomLimit;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/CanCreateRoomEventParser.as::flush()
     flush(): boolean
     {
         this._resultCode = 0;
@@ -37,6 +40,7 @@ export class CanCreateRoomMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/CanCreateRoomEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._resultCode = wrapper.readInt();

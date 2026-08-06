@@ -10,6 +10,7 @@ export class DeleteRoomMessageComposer extends MessageComposer<[number]>
         this._data = [roomId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/roomsettings/DeleteRoomMessageComposer.as::getMessageArray()
     getMessageArray(): [number]
     {
         return this._data;

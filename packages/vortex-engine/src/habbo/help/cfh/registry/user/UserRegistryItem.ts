@@ -17,41 +17,52 @@ export class UserRegistryItem
         this._roomName = roomName;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/help/cfh/registry/user/UserRegistryItem.as::_userId
     private _userId: number;
 
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistryItem.as::get userId()
     get userId(): number
     {
         return this._userId;
     }
 
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistryItem.as::_userName
     private _userName: string;
 
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistryItem.as::get userName()
     get userName(): string
     {
         return this._userName;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/help/cfh/registry/user/UserRegistryItem.as::_figure
     private _figure: string;
 
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistryItem.as::get figure()
     get figure(): string
     {
         return this._figure;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/help/cfh/registry/user/UserRegistryItem.as::_roomId
     private _roomId: number;
 
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistryItem.as::get roomId()
     get roomId(): number
     {
         return this._roomId;
     }
 
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistryItem.as::_roomName
     private _roomName: string;
 
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistryItem.as::get roomName()
     get roomName(): string
     {
         return this._roomName;
     }
 
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/user/UserRegistryItem.as::set roomName()
     set roomName(value: string)
     {
         this._roomName = value;

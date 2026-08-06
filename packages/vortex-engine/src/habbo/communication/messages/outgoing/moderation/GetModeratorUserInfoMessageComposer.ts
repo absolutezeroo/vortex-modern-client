@@ -15,6 +15,7 @@ export class GetModeratorUserInfoMessageComposer extends MessageComposer<Constru
         this._data = [userId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/moderator/GetModeratorUserInfoMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

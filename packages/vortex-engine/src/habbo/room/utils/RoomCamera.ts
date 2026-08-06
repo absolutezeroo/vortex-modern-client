@@ -11,6 +11,7 @@ import type {IVector3d} from '@room/utils/IVector3d';
 
 export class RoomCamera
 {
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::MOVE_SPEED_DENOMINATOR
     private static readonly MOVE_SPEED_DENOMINATOR: number = 12;
     private _targetLoc: Vector3d | null = null;
     private _moveDistance: number = 0;
@@ -31,11 +32,13 @@ export class RoomCamera
 
     private _targetId: number = -1;
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::get targetId()
     get targetId(): number
     {
         return this._targetId;
     }
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::set targetId()
     set targetId(value: number)
     {
         this._targetId = value;
@@ -43,11 +46,13 @@ export class RoomCamera
 
     private _targetCategory: number = -2;
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::get targetCategory()
     get targetCategory(): number
     {
         return this._targetCategory;
     }
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::set targetCategory()
     set targetCategory(value: number)
     {
         this._targetCategory = value;
@@ -55,11 +60,13 @@ export class RoomCamera
 
     private _targetObjectLoc: Vector3d;
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::get targetObjectLoc()
     get targetObjectLoc(): IVector3d
     {
         return this._targetObjectLoc;
     }
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::set targetObjectLoc()
     set targetObjectLoc(value: IVector3d)
     {
         this._targetObjectLoc.assign(value);
@@ -115,11 +122,13 @@ export class RoomCamera
 
     private _centeredLocX: boolean = false;
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::get centeredLocX()
     get centeredLocX(): boolean
     {
         return this._centeredLocX;
     }
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::set centeredLocX()
     set centeredLocX(value: boolean)
     {
         this._centeredLocX = value;
@@ -127,11 +136,13 @@ export class RoomCamera
 
     private _centeredLocY: boolean = false;
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::get centeredLocY()
     get centeredLocY(): boolean
     {
         return this._centeredLocY;
     }
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::set centeredLocY()
     set centeredLocY(value: boolean)
     {
         this._centeredLocY = value;
@@ -139,11 +150,13 @@ export class RoomCamera
 
     private _scale: number = 0;
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::get scale()
     get scale(): number
     {
         return this._scale;
     }
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::set scale()
     set scale(value: number)
     {
         if(this._scale !== value)
@@ -155,16 +168,19 @@ export class RoomCamera
 
     private _geometryUpdateId: number = -1;
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::get geometryUpdateId()
     get geometryUpdateId(): number
     {
         return this._geometryUpdateId;
     }
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::set geometryUpdateId()
     set geometryUpdateId(value: number)
     {
         this._geometryUpdateId = value;
     }
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::get location()
     get location(): IVector3d | null
     {
         return this._currentLoc;
@@ -258,6 +274,7 @@ export class RoomCamera
         this._roomHt = value;
     }
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::get isMoving()
     get isMoving(): boolean
     {
         return this._targetLoc !== null && this._currentLoc !== null;
@@ -267,6 +284,7 @@ export class RoomCamera
 	 * Set camera target position. Computes move distance for easing.
 	 * Based on AS3 RoomCamera.set target()
 	 */
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::set target()
     set target(value: IVector3d | null)
     {
         if(value === null)
@@ -306,6 +324,7 @@ export class RoomCamera
 	 * Initialize camera at a location. Only sets if not already initialized.
 	 * Based on AS3 RoomCamera.initializeLocation()
 	 */
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::initializeLocation()
     initializeLocation(loc: IVector3d): void
     {
         if(this._currentLoc !== null)
@@ -321,6 +340,7 @@ export class RoomCamera
 	 * Force-set camera location regardless of current state.
 	 * Based on AS3 RoomCamera.resetLocation()
 	 */
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::resetLocation()
     resetLocation(loc: IVector3d): void
     {
         if(this._currentLoc === null)
@@ -338,6 +358,7 @@ export class RoomCamera
 	 * @param time - Current timestamp (unused, kept for interface compat)
 	 * @param moveSpeed - Base move speed for this frame
 	 */
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::update()
     update(time: number, moveSpeed: number): void
     {
         if(this._followDuration <= 0 || this._targetLoc === null || this._currentLoc === null)
@@ -417,6 +438,7 @@ export class RoomCamera
     /**
 	 * Reset geometry update tracking.
 	 */
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::reset()
     reset(): void
     {
         this._geometryUpdateId = -1;
@@ -426,11 +448,13 @@ export class RoomCamera
 	 * Activate camera following for a given duration.
 	 * Based on AS3 RoomCamera.activateFollowing()
 	 */
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::activateFollowing()
     activateFollowing(duration: number): void
     {
         this._followDuration = duration;
     }
 
+    // AS3: sources/win63_version/habbo/room/utils/class_1771.as::dispose()
     dispose(): void
     {
         this._targetLoc = null;

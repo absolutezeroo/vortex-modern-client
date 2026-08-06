@@ -18,6 +18,7 @@ export class GetCurrentTimingCodeMessageComposer extends MessageComposer<Constru
         this._data = [goalCode];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/competition/GetCurrentTimingCodeMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

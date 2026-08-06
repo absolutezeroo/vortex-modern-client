@@ -10,11 +10,14 @@ import type {IApiListener} from './IApiListener';
 
 export class ApiRequest
 {
+    // AS3: .../src/com/sulake/habbo/communication/ApiRequest.as::ERROR_TYPE_INVALID_CAPTCHA
     public static readonly ERROR_TYPE_INVALID_CAPTCHA = 'invalid-captcha';
 
     private _listener: IApiListener | null = null;
+    // AS3: .../src/com/sulake/habbo/communication/ApiRequest.as::_uri
     private _uri: string;
     private _requestMethod: string;
+    // AS3: .../src/com/sulake/habbo/communication/ApiRequest.as::_currentStatus
     private _currentStatus: number = 0;
     private _abortController: AbortController | null = null;
 
@@ -27,11 +30,13 @@ export class ApiRequest
         this._uri = uri;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/ApiRequest.as::get uri()
     get uri(): string
     {
         return this._uri;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/ApiRequest.as::get requestMethod()
     get requestMethod(): string
     {
         return this._requestMethod;
@@ -46,6 +51,7 @@ export class ApiRequest
 	 * @param headers - Request headers
 	 * @param body - Request body (for POST/PUT)
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/ApiRequest.as::makeRequest()
     public makeRequest(
         listener: IApiListener,
         url: string,
@@ -110,6 +116,7 @@ export class ApiRequest
 	 * AS3: completeHandler(event)
 	 * Parses the response and calls the appropriate listener callback.
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/ApiRequest.as::completeHandler()
     private async completeHandler(response: Response): Promise<void>
     {
         if(!this._listener) return;
@@ -152,6 +159,7 @@ export class ApiRequest
 	 * AS3: ioErrorHandler(event)
 	 * Handles HTTP error responses.
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/ApiRequest.as::ioErrorHandler()
     private async ioErrorHandler(response: Response): Promise<void>
     {
         if(!this._listener) return;
@@ -202,6 +210,7 @@ export class ApiRequest
 	 * AS3: securityErrorHandler(event)
 	 * Handles network/CORS errors.
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/ApiRequest.as::securityErrorHandler()
     private securityErrorHandler(): void
     {
         if(!this._listener) return;
@@ -212,6 +221,7 @@ export class ApiRequest
     /**
 	 * AS3: dispose()
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/ApiRequest.as::dispose()
     public dispose(): void
     {
         if(this._abortController)

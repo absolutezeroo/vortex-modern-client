@@ -20,13 +20,17 @@ import type {WindowEventListener} from '@core/window/events/WindowEventDispatche
  */
 export class HoverBitmapWidget implements IWidget
 {
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::TYPE
     public static readonly TYPE: string = 'hover_bitmap';
 
     private static readonly HOVER_ASSET_KEY: string = 'hover_bitmap:hover_asset';
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::NORMAL_ASSET_KEY
     private static readonly NORMAL_ASSET_KEY: string = 'hover_bitmap:normal_asset';
 
     private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::_bitmap
     private _bitmap: IStaticBitmapWrapperWindow | null = null;
 
     private _onMouseOverBound: WindowEventListener;
@@ -56,20 +60,25 @@ export class HoverBitmapWidget implements IWidget
         }
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::_normalAsset
     private _normalAsset: string = '';
 
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::get normalAsset()
     public get normalAsset(): string
     {
         return this._normalAsset;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::set normalAsset()
     public set normalAsset(value: string)
     {
         this._normalAsset = value;
@@ -80,13 +89,16 @@ export class HoverBitmapWidget implements IWidget
         }
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::_hoverAsset
     private _hoverAsset: string = '';
 
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::get hoverAsset()
     public get hoverAsset(): string
     {
         return this._hoverAsset;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::set hoverAsset()
     public set hoverAsset(value: string)
     {
         this._hoverAsset = value;
@@ -120,6 +132,7 @@ export class HoverBitmapWidget implements IWidget
         return this._isHovering ? this._hoverAsset : this._normalAsset;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         if(this._disposed) return [];
@@ -148,6 +161,7 @@ export class HoverBitmapWidget implements IWidget
         return result;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::set properties()
     public set properties(values: PropertyStruct[])
     {
         for(const prop of values)
@@ -170,6 +184,7 @@ export class HoverBitmapWidget implements IWidget
         }
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;
@@ -196,6 +211,7 @@ export class HoverBitmapWidget implements IWidget
     /**
 	 * Handle mouse over event. Switches to hover asset.
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::onMouseOver()
     private onMouseOver(): void
     {
         this._isHovering = true;
@@ -209,6 +225,7 @@ export class HoverBitmapWidget implements IWidget
     /**
 	 * Handle mouse out event. Switches to normal asset.
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/HoverBitmapWidget.as::onMouseOut()
     private onMouseOut(): void
     {
         this._isHovering = false;

@@ -13,13 +13,16 @@ export class FrontPageItem
 
     private _position: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_1933.as::get position()
     get position(): number
     {
         return this._position;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_1933.as::_itemName
     private _itemName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_1933.as::get itemName()
     get itemName(): string
     {
         return this._itemName;
@@ -27,6 +30,7 @@ export class FrontPageItem
 
     private _itemPromoImage: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_1933.as::get itemPromoImage()
     get itemPromoImage(): string
     {
         return this._itemPromoImage;
@@ -34,6 +38,7 @@ export class FrontPageItem
 
     private _type: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_1933.as::get type()
     get type(): number
     {
         return this._type;
@@ -41,6 +46,7 @@ export class FrontPageItem
 
     private _cataloguePageLocation: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_1933.as::get cataloguePageLocation()
     get cataloguePageLocation(): string
     {
         return this._cataloguePageLocation;
@@ -48,6 +54,7 @@ export class FrontPageItem
 
     private _productOfferID: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_1933.as::get productOfferID()
     get productOfferID(): number
     {
         return this._productOfferID;
@@ -55,18 +62,22 @@ export class FrontPageItem
 
     private _productCode: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_1933.as::get productCode()
     get productCode(): string
     {
         return this._productCode;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_1933.as::_expirationTime
     private _expirationTime: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_1933.as::get offerExpires()
     get offerExpires(): boolean
     {
         return this._expirationTime > 0;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_1933.as::get secondsToExpiration()
     get secondsToExpiration(): number
     {
         return this._expirationTime - performance.now();

@@ -11,17 +11,20 @@ export class CommunityGoalProgressMessageParser implements IMessageParser
 {
     private _data: CommunityGoalProgressData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/CommunityGoalProgressMessageEventParser.as::get data()
     get data(): CommunityGoalProgressData | null
     {
         return this._data;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/CommunityGoalProgressMessageEventParser.as::flush()
     flush(): boolean
     {
         this._data = null;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/CommunityGoalProgressMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

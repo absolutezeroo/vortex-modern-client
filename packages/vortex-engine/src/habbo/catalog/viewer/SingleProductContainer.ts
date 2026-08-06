@@ -22,6 +22,7 @@ export class SingleProductContainer extends ProductContainer
         this.setIconImage(image, true);
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/SingleProductContainer.as::enableLimitedItemLayout()
     enableLimitedItemLayout(): void
     {
         this._view!.findChildByName('unique_item_background_bitmap')!.visible = true;

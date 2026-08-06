@@ -14,11 +14,13 @@ export class PetCustomPart
 
     private _layerId: number;
 
+    // AS3: sources/win63_version/habbo/avatar/pets/PetCustomPart.as::get layerId()
     public get layerId(): number
     {
         return this._layerId;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/pets/PetCustomPart.as::set layerId()
     public set layerId(value: number)
     {
         this._layerId = value;
@@ -26,11 +28,13 @@ export class PetCustomPart
 
     private _partId: number;
 
+    // AS3: sources/win63_version/habbo/avatar/pets/PetCustomPart.as::get partId()
     public get partId(): number
     {
         return this._partId;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/pets/PetCustomPart.as::set partId()
     public set partId(value: number)
     {
         this._partId = value;
@@ -38,11 +42,13 @@ export class PetCustomPart
 
     private _paletteId: number;
 
+    // AS3: sources/win63_version/habbo/avatar/pets/PetCustomPart.as::get paletteId()
     public get paletteId(): number
     {
         return this._paletteId;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/pets/PetCustomPart.as::set paletteId()
     public set paletteId(value: number)
     {
         this._paletteId = value;

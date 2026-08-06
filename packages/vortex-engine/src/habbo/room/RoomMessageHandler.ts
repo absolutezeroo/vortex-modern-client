@@ -201,12 +201,17 @@ const DISCO_TICK_MS = 1000;
 export class RoomMessageHandler implements IRoomMessageHandler 
 {
     public static readonly EFFECT_NONE = 0;
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::EFFECT_ROOM_SHAKE
     public static readonly EFFECT_ROOM_SHAKE = 1;
     public static readonly EFFECT_ROOM_ROTATE = 2;
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::EFFECT_ROOM_DISCO
     public static readonly EFFECT_ROOM_DISCO = 3;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomMessageHandler.as::_roomCreator
     private _roomCreator: IRoomCreator | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomMessageHandler.as::_currentRoomId
     private _currentRoomId: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomMessageHandler.as::_ownUserId
     private _ownUserId: number = -1;
 
     // AS3: _SafeCls_1984.as::_SafeStr_6558 (name derived: the guide's web user id, from its only
@@ -216,6 +221,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
     // AS3: _SafeCls_1984.as::_SafeStr_6723 (name derived: the requester's web user id, from its only
     // assignment `= parser.requesterUserId` in onGuideSessionStarted)
     private _requesterUserId: number = -1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomMessageHandler.as::_planeParser
     private _planeParser: RoomPlaneParser;
     private _legacyWallGeometry: LegacyWallGeometry;
     private _entryTileEvent: RoomEntryTileMessageEvent | null = null;
@@ -227,8 +233,10 @@ export class RoomMessageHandler implements IRoomMessageHandler
         this._legacyWallGeometry = new LegacyWallGeometry();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomMessageHandler.as::_connection
     private _connection: IConnection | null = null;
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::set connection()
     set connection(connection: IConnection | null) 
     {
         if(this._connection !== null) 
@@ -306,6 +314,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::dispose()
     dispose(): void 
     {
         if(!this._disposed) 
@@ -315,6 +324,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::setCurrentRoom()
     setCurrentRoom(roomId: number): void 
     {
         if(this._currentRoomId !== 0) 
@@ -328,11 +338,13 @@ export class RoomMessageHandler implements IRoomMessageHandler
         this._currentRoomId = roomId;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::resetCurrentRoom()
     resetCurrentRoom(): void 
     {
         this._currentRoomId = 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onRoomReady()
     onRoomReady(event: IMessageEvent): void 
     {
         const roomReadyEvent = event as RoomReadyMessageEvent;
@@ -366,6 +378,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle furniture aliases from server.
      * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onFurnitureAliases
      */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onFurnitureAliases()
     onFurnitureAliases(event: IMessageEvent): void 
     {
         if(this._roomCreator === null || event.connection === null) 
@@ -407,6 +420,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle a live room floor/wall/landscape texture update.
      * Based on AS3: sources/win63_version/habbo/room/class_1788.as::onRoomProperty()
      */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onRoomProperty()
     onRoomProperty(event: IMessageEvent): void 
     {
         if(this._roomCreator === null || this._currentRoomId === 0) 
@@ -446,6 +460,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle a live room wall-visibility / wall+floor thickness update.
      * Based on AS3: sources/win63_version/habbo/room/class_1788.as::onRoomVisualizationSettings()
      */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onRoomVisualizationSettings()
     onRoomVisualizationSettings(event: IMessageEvent): void 
     {
         if(this._roomCreator === null || this._currentRoomId === 0) 
@@ -512,6 +527,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle entry tile data (arrives BEFORE FloorHeightMap).
      * Based on AS3: RoomMessageHandler.onEntryTileData
      */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onEntryTileData()
     onEntryTileData(event: IMessageEvent): void 
     {
         this._entryTileEvent = event as RoomEntryTileMessageEvent;
@@ -521,6 +537,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle floor height map data. Detects door position and generates planes.
      * Based on AS3: RoomMessageHandler.onFloorHeightMap (lines 540-627)
      */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onFloorHeightMap()
     onFloorHeightMap(event: IMessageEvent): void 
     {
         const floorEvent = event as FloorHeightMapMessageEvent;
@@ -697,6 +714,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         this._roomCreator.refreshTileObjectMap(this._currentRoomId, 'RoomMessageHandler.onHeightMapUpdate()');
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onObjects()
     onObjects(event: IMessageEvent): void 
     {
         const objectsEvent = event as ObjectsMessageEvent;
@@ -726,6 +744,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onObjectAdd()
     onObjectAdd(event: IMessageEvent): void 
     {
         const addEvent = event as ObjectAddMessageEvent;
@@ -750,6 +769,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onObjectUpdate()
     onObjectUpdate(event: IMessageEvent): void 
     {
         const updateEvent = event as ObjectUpdateMessageEvent;
@@ -790,6 +810,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onObjectRemove()
     onObjectRemove(event: IMessageEvent): void 
     {
         const removeEvent = event as ObjectRemoveMessageEvent;
@@ -821,6 +842,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         );
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onObjectDataUpdate()
     onObjectDataUpdate(event: IMessageEvent): void 
     {
         const dataEvent = event as ObjectDataUpdateMessageEvent;
@@ -1799,6 +1821,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         this._roomCreator.refreshTileObjectMap(this._currentRoomId, 'RoomEngine.onObjectRemoveMultiple()');
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onItems()
     onItems(event: IMessageEvent): void
     {
         const itemsEvent = event as ItemsMessageEvent;
@@ -1828,6 +1851,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onItemAdd()
     onItemAdd(event: IMessageEvent): void 
     {
         const addEvent = event as ItemAddMessageEvent;
@@ -1852,6 +1876,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onItemUpdate()
     onItemUpdate(event: IMessageEvent): void 
     {
         const updateEvent = event as ItemUpdateMessageEvent;
@@ -1896,6 +1921,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onItemRemove()
     onItemRemove(event: IMessageEvent): void 
     {
         const removeEvent = event as ItemRemoveMessageEvent;
@@ -1924,6 +1950,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         );
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onUsers()
     onUsers(event: IMessageEvent): void 
     {
         const usersEvent = event as UsersMessageEvent;
@@ -1956,6 +1983,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onUserUpdate()
     onUserUpdate(event: IMessageEvent): void 
     {
         const updateEvent = event as UserUpdateMessageEvent;
@@ -2108,6 +2136,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onUserRemove()
     onUserRemove(event: IMessageEvent): void 
     {
         const removeEvent = event as UserRemoveMessageEvent;
@@ -2132,6 +2161,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         this._roomCreator.disposeObjectUser(this._currentRoomId, parser.roomIndex);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onSlideUpdate()
     onSlideUpdate(event: IMessageEvent): void 
     {
         const slideEvent = event as SlideObjectBundleMessageEvent;
@@ -2226,6 +2256,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::addWallItem()
     addWallItem(roomId: number, data: FurnitureWallData): void 
     {
         if(data === null || this._roomCreator === null) 
@@ -2300,6 +2331,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle user typing status update.
      * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onTypingStatus
      */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onTypingStatus()
     onTypingStatus(event: IMessageEvent): void 
     {
         const typingEvent = event as UserTypingMessageEvent;
@@ -2330,6 +2362,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle user expression update.
      * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onExpression
      */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onExpression()
     onExpression(event: IMessageEvent): void 
     {
         const expressionEvent = event as ExpressionMessageEvent;
@@ -2363,6 +2396,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle user dance update.
      * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onDance
      */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onDance()
     onDance(event: IMessageEvent): void 
     {
         const danceEvent = event as DanceMessageEvent;
@@ -2391,6 +2425,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle avatar effect update.
      * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onAvatarEffect
      */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onAvatarEffect()
     onAvatarEffect(event: IMessageEvent): void 
     {
         const effectEvent = event as AvatarEffectMessageEvent;
@@ -2419,6 +2454,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle avatar sleep status update.
      * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onAvatarSleep
      */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onAvatarSleep()
     onAvatarSleep(event: IMessageEvent): void 
     {
         const sleepEvent = event as SleepMessageEvent;
@@ -2449,6 +2485,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle carry object update.
      * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onCarryObject
      */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onCarryObject()
     onCarryObject(event: IMessageEvent): void 
     {
         if(this._roomCreator === null) 
@@ -2482,6 +2519,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle use object update.
      * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onUseObject
      */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onUseObject()
     onUseObject(event: IMessageEvent): void 
     {
         if(this._roomCreator === null) 
@@ -2515,6 +2553,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle user figure change.
      * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onUserChange
      */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onUserChange()
     onUserChange(event: IMessageEvent): void 
     {
         const changeEvent = event as UserChangeMessageEvent;

@@ -7,6 +7,7 @@ import type {NavigatorMetaDataMessageParser} from '../../communication/messages/
  */
 export class ContextContainer
 {
+    // AS3: .../src/com/sulake/habbo/navigator/context/ContextContainer.as::_navigator
     private readonly _navigator: unknown | null;
     private _topLevelContexts: Map<string, NavigatorSavedSearch[]> | null = null;
 
@@ -16,23 +17,28 @@ export class ContextContainer
         void this._navigator;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/context/ContextContainer.as::_savedSearches
     private _savedSearches: NavigatorSavedSearch[] = [];
 
+    // AS3: .../src/com/sulake/habbo/navigator/context/ContextContainer.as::get savedSearches()
     get savedSearches(): NavigatorSavedSearch[]
     {
         return this._savedSearches;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/context/ContextContainer.as::set savedSearches()
     set savedSearches(value: NavigatorSavedSearch[])
     {
         this._savedSearches = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/context/ContextContainer.as::hasContextFor()
     hasContextFor(searchCode: string): boolean
     {
         return this._topLevelContexts !== null && this._topLevelContexts.has(searchCode);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/context/ContextContainer.as::initialize()
     initialize(parser: NavigatorMetaDataMessageParser): void
     {
         this._topLevelContexts = new Map();
@@ -43,6 +49,7 @@ export class ContextContainer
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/context/ContextContainer.as::getTopLevelSearches()
     getTopLevelSearches(): string[]
     {
         if(this._topLevelContexts === null)
@@ -53,6 +60,7 @@ export class ContextContainer
         return Array.from(this._topLevelContexts.keys());
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/context/ContextContainer.as::isReady()
     isReady(): boolean
     {
         return this._topLevelContexts !== null;

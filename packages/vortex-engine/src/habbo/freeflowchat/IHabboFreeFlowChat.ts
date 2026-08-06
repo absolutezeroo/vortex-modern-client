@@ -71,6 +71,7 @@ export interface IHabboFreeFlowChat
     /**
 	 * The user's preferred chat style ID
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get preferedChatStyle()
     preferedChatStyle: number;
 
     /**
@@ -78,11 +79,13 @@ export interface IHabboFreeFlowChat
 	 * Uses IFreeFlowChatRoomSessionManager to access sessionEvents
 	 * (the correct EventEmitter, not the Component.events getter).
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomSessionManager()
     readonly roomSessionManager: IFreeFlowChatRoomSessionManager | null;
 
     /**
 	 * Reference to the session data manager
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get sessionDataManager()
     readonly sessionDataManager: ISessionDataManager | null;
 
     /**
@@ -94,18 +97,21 @@ export interface IHabboFreeFlowChat
     /**
 	 * Room engine, used to resolve room objects for pet figures / room-user names.
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomEngine()
     readonly roomEngine: IRoomEngine | null;
 
     /**
 	 * Localization manager, used by ChatBubbleFactory to build the special
 	 * system chat messages (respect, handitem, mutetime, ping, pet events...).
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get localizations()
     readonly localizations: IHabboLocalizationManager | null;
 
     /**
 	 * Avatar render manager, used by ChatBubbleFactory.getUserImage() to build
 	 * the head-only avatar image HabboFaceFocuser crops for a bubble's face slot.
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get avatarRenderManager()
     readonly avatarRenderManager: IAvatarRenderManager | null;
 
     /**
@@ -121,11 +127,13 @@ export interface IHabboFreeFlowChat
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatBorderLimited()
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatBorderLimited()
     readonly roomChatBorderLimited: boolean;
 
     /**
 	 * The chat bubble style catalog, once the internal ChatBubbleFactory has built it.
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatStyleLibrary()
     readonly chatStyleLibrary: IChatStyleLibrary | null;
 
     /**
@@ -134,6 +142,7 @@ export interface IHabboFreeFlowChat
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatBubbleFactory()
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatBubbleFactory()
     readonly chatBubbleFactory: ChatBubbleFactory | null;
 
     /**
@@ -141,6 +150,7 @@ export interface IHabboFreeFlowChat
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFlowViewer()
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFlowViewer()
     readonly chatFlowViewer: ChatFlowViewer | null;
 
     /**
@@ -149,6 +159,7 @@ export interface IHabboFreeFlowChat
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatSettings()
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatSettings()
     readonly roomChatSettings: IRoomChatSettings | null;
 
     /**
@@ -156,6 +167,7 @@ export interface IHabboFreeFlowChat
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get/set chatFontSizeMode()
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFontSizeMode()
     chatFontSizeMode: number;
 
     /**
@@ -163,6 +175,7 @@ export interface IHabboFreeFlowChat
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFontSizeScale()
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFontSizeScale()
     readonly chatFontSizeScale: number;
 
     /**
@@ -172,6 +185,7 @@ export interface IHabboFreeFlowChat
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get displayObject()
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get displayObject()
     readonly displayObject: Container | null;
 
     /**
@@ -180,6 +194,7 @@ export interface IHabboFreeFlowChat
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::getScreenPointFromRoomLocation()
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::getScreenPointFromRoomLocation()
     getScreenPointFromRoomLocation(roomId: number, location: IVector3d): IPoint;
 
     /**
@@ -190,6 +205,7 @@ export interface IHabboFreeFlowChat
 	 * TODO(AS3): always returns false - roomUI.mouseEventPositionHasContextMenu()
 	 * isn't ported (RoomUI has no context-menu hit-testing yet).
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clickHasToPropagate()
     clickHasToPropagate(event: unknown): boolean;
 
     /**
@@ -200,6 +216,7 @@ export interface IHabboFreeFlowChat
 	 * (userSelected webID/name reporting) and RWROM_GET_OBJECT_INFO widget
 	 * message AS3 also sends aren't ported (roomUI/moderation not wired in).
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::selectAvatarWithChatItem()
     selectAvatarWithChatItem(item: ChatItem): void;
 
     /**
@@ -222,16 +239,19 @@ export interface IHabboFreeFlowChat
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/_SafeCls_70.as::get/set chatMode()
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatMode()
     chatMode: number;
 
     /**
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/_SafeCls_70.as::get/set chatBubbleWidth()
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatBubbleWidth()
     chatBubbleWidth: number;
 
     /**
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/_SafeCls_70.as::get/set chatScrollSpeed()
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatScrollSpeed()
     chatScrollSpeed: number;
 
     /**
@@ -239,16 +259,19 @@ export interface IHabboFreeFlowChat
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/_SafeCls_70.as::updateChatPreferences()
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::updateChatPreferences()
     updateChatPreferences(chatMode: number, chatBubbleWidth: number, chatScrollSpeed: number): void;
 
     /**
 	 * Clear the current chat flow stage
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clear()
     clear(): void;
 
     /**
 	 * Toggle the chat history visibility
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::toggleVisibility()
     toggleVisibility(): void;
 
     /**
@@ -257,15 +280,18 @@ export interface IHabboFreeFlowChat
 	 *
 	 * @param item The chat item to insert
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::insertChat()
     insertChat(item: ChatItem): void;
 
     /**
 	 * Called when a room session has been created/entered
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomEntered()
     roomEntered(): void;
 
     /**
 	 * Called when a room session has ended/left
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomLeft()
     roomLeft(): void;
 }

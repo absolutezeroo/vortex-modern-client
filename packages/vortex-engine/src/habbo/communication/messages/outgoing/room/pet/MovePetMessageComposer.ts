@@ -23,6 +23,7 @@ export class MovePetMessageComposer extends MessageComposer<ConstructorParameter
         this._data = [petWebId, x, y, direction];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2136/_SafeCls_2560.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

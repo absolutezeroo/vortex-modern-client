@@ -16,6 +16,7 @@ export class RoomAdEventTabViewedComposer extends MessageComposer<ConstructorPar
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/RoomAdEventTabViewedComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

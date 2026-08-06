@@ -41,48 +41,61 @@ export class SelectedRoomObjectData
         this._posture = posture;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::_id
     private _id: number;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::get id()
     get id(): number
     {
         return this._id;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::_category
     private _category: number;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::get category()
     get category(): number
     {
         return this._category;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::_operation
     private _operation: string;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::get operation()
     get operation(): string
     {
         return this._operation;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::_loc
     private _loc: Vector3d | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::get loc()
     get loc(): Vector3d | null
     {
         return this._loc;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::_dir
     private _dir: Vector3d | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::get dir()
     get dir(): Vector3d | null
     {
         return this._dir;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::_typeId
     private _typeId: number;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::get typeId()
     get typeId(): number
     {
         return this._typeId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::_instanceData
     private _instanceData: string | null;
 
     get instanceData(): string | null
@@ -90,20 +103,25 @@ export class SelectedRoomObjectData
         return this._instanceData;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::_stuffData
     private _stuffData: IStuffData | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::get stuffData()
     get stuffData(): IStuffData | null
     {
         return this._stuffData;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::_state
     private _state: number;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::get state()
     get state(): number
     {
         return this._state;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::_animFrame
     private _animFrame: number;
 
     get animFrame(): number
@@ -111,13 +129,16 @@ export class SelectedRoomObjectData
         return this._animFrame;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::_posture
     private _posture: string | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::get posture()
     get posture(): string | null
     {
         return this._posture;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/utils/SelectedRoomObjectData.as::dispose()
     dispose(): void
     {
         this._loc = null;

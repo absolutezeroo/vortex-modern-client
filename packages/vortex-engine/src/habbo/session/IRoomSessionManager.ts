@@ -21,6 +21,7 @@ export interface IRoomSessionManager
     /**
 	 * Whether a session is currently starting
 	 */
+    // AS3: .../src/com/sulake/habbo/session/IRoomSessionManager.as::get sessionStarting()
     readonly sessionStarting: boolean;
 
     /**
@@ -31,6 +32,7 @@ export interface IRoomSessionManager
 	 * @param roomResources Room resources (optional)
 	 * @returns True if session was created
 	 */
+    // AS3: .../src/com/sulake/habbo/session/IRoomSessionManager.as::gotoRoom()
     gotoRoom(roomId: number, password?: string, roomResources?: string, skipOpc?: boolean): boolean;
 
     /**
@@ -40,6 +42,7 @@ export interface IRoomSessionManager
 	 * @param homeRoomId Home room ID
 	 * @returns True if session was created
 	 */
+    // AS3: .../src/com/sulake/habbo/session/IRoomSessionManager.as::gotoRoomNetwork()
     gotoRoomNetwork(roomId: number, homeRoomId: number): boolean;
 
     /**
@@ -48,6 +51,7 @@ export interface IRoomSessionManager
 	 * @param session The room session to start
 	 * @returns True if started successfully
 	 */
+    // AS3: .../src/com/sulake/habbo/session/IRoomSessionManager.as::startSession()
     startSession(session: IRoomSession): boolean;
 
     /**
@@ -56,6 +60,7 @@ export interface IRoomSessionManager
 	 * @param roomId Room ID
 	 * @returns The session or null if not found
 	 */
+    // AS3: .../src/com/sulake/habbo/session/IRoomSessionManager.as::getSession()
     getSession(roomId: number): IRoomSession | null;
 
     /**
@@ -64,15 +69,18 @@ export interface IRoomSessionManager
 	 * @param roomId Room ID
 	 * @param disposeEngine Whether to also dispose room engine data
 	 */
+    // AS3: .../src/com/sulake/habbo/session/IRoomSessionManager.as::disposeSession()
     disposeSession(roomId: number, disposeEngine?: boolean): void;
 
     /**
 	 * Start a game session (for SnowWar etc.)
 	 */
+    // AS3: .../src/com/sulake/habbo/session/IRoomSessionManager.as::startGameSession()
     startGameSession(): void;
 
     /**
 	 * Dispose the game session
 	 */
+    // AS3: .../src/com/sulake/habbo/session/IRoomSessionManager.as::disposeGameSession()
     disposeGameSession(): void;
 }

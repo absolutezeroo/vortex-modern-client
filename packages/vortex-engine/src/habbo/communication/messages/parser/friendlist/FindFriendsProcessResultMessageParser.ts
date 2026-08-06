@@ -11,17 +11,20 @@ export class FindFriendsProcessResultMessageParser implements IMessageParser
 {
     private _success: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/FindFriendsProcessResultEventParser.as::get success()
     get success(): boolean
     {
         return this._success;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/FindFriendsProcessResultEventParser.as::flush()
     flush(): boolean
     {
         this._success = false;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/friendlist/FindFriendsProcessResultEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

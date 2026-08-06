@@ -15,6 +15,7 @@ import type {IElementHandler} from '../../interfaces/elements/IElementHandler';
  */
 export class TextElementHandler implements IElementHandler
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4531.as::_window
     private _window: ITextWindow | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4531.as::initialize()

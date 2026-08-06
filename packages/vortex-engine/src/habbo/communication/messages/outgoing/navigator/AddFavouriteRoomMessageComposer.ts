@@ -16,6 +16,7 @@ export class AddFavouriteRoomMessageComposer extends MessageComposer<Constructor
         this._data = [roomId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/AddFavouriteRoomMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -9,5 +9,6 @@ import type {IItemGridWindow} from './IItemGridWindow';
  */
 export interface IScrollableGridWindow extends IItemGridWindow
 {
+    // AS3: .../src/com/sulake/core/window/components/IScrollableGridWindow.as::get autoHideScrollBar()
     autoHideScrollBar: boolean;
 }

@@ -17,6 +17,7 @@ const log = Logger.getLogger('habbo.navigator.mainview.tabpagedecorators.EventsT
  */
 export class EventsTabPageDecorator implements ITabPageDecorator
 {
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/EventsTabPageDecorator.as::_navigator
     private _navigator: ITabNavigator;
     private _filter: IDropMenuWindow | null = null;
 
@@ -25,6 +26,7 @@ export class EventsTabPageDecorator implements ITabPageDecorator
         this._navigator = navigator;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/EventsTabPageDecorator.as::refreshCustomContent()
     refreshCustomContent(container: IWindowContainer): void
     {
         const header = container.findChildByName('room_ad_header') as IWindowContainer | null;
@@ -45,6 +47,7 @@ export class EventsTabPageDecorator implements ITabPageDecorator
         header.visible = true;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/EventsTabPageDecorator.as::tabSelected()
     tabSelected(): void
     {
         if(!this._filter || (this._filter as unknown as { disposed?: boolean }).disposed) return;
@@ -54,6 +57,7 @@ export class EventsTabPageDecorator implements ITabPageDecorator
         this._filter.addEventListener('WE_SELECTED', this.onFilterSelected);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/EventsTabPageDecorator.as::refreshFooter()
     refreshFooter(container: IWindowContainer): void
     {
         const footer = container.findChildByName('room_ads_footer') as IWindowContainer | null;
@@ -70,11 +74,13 @@ export class EventsTabPageDecorator implements ITabPageDecorator
         footer.visible = true;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/EventsTabPageDecorator.as::navigatorOpenedWhileInTab()
     navigatorOpenedWhileInTab(): void
     {
         this.startSearch();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/EventsTabPageDecorator.as::get filterCategory()
     get filterCategory(): string | null
     {
         if(!this._filter || (this._filter as unknown as { disposed?: boolean }).disposed) return null;
@@ -82,15 +88,18 @@ export class EventsTabPageDecorator implements ITabPageDecorator
         return this._filter.enumerateSelection()[this._filter.selection] ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/EventsTabPageDecorator.as::setSubSelection()
     setSubSelection(_value: number): void
     {
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/EventsTabPageDecorator.as::processSearchParam()
     processSearchParam(param: string): string
     {
         return param;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/EventsTabPageDecorator.as::prepareFilter()
     private prepareFilter(): void
     {
         if(!this._filter || (this._filter as unknown as { disposed?: boolean }).disposed) return;
@@ -114,6 +123,7 @@ export class EventsTabPageDecorator implements ITabPageDecorator
         this._navigator.openCatalogRoomAdsPage();
     };
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/EventsTabPageDecorator.as::startSearch()
     private startSearch(): void
     {
         let searchType = 16;
@@ -126,6 +136,7 @@ export class EventsTabPageDecorator implements ITabPageDecorator
         this._navigator.mainViewCtrl?.startSearch(1, searchType);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/EventsTabPageDecorator.as::getSearchType()
     private getSearchType(index: number): number
     {
         switch(index)

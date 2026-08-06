@@ -6,16 +6,24 @@
 export class PropertyStruct
 {
     public static readonly HEX: string = 'hex';
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::INT
     public static readonly INT: string = 'int';
     public static readonly UINT: string = 'uint';
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::NUMBER
     public static readonly NUMBER: string = 'Number';
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::BOOLEAN
     public static readonly BOOLEAN: string = 'Boolean';
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::STRING
     public static readonly STRING: string = 'String';
     public static readonly POINT: string = 'Point';
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::RECTANGLE
     public static readonly RECTANGLE: string = 'Rectangle';
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::ARRAY
     public static readonly ARRAY: string = 'Array';
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::MAP
     public static readonly MAP: string = 'Map';
 
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::_key
     private _key: string;
     private _value: unknown;
     private _type: string;
@@ -31,11 +39,13 @@ export class PropertyStruct
         this._range = range;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::get key()
     public get key(): string
     {
         return this._key;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::get value()
     public get value(): unknown
     {
         return this._value;
@@ -48,21 +58,25 @@ export class PropertyStruct
         this._value = value;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::get type()
     public get type(): string
     {
         return this._type;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::get valid()
     public get valid(): boolean
     {
         return this._valid;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::get range()
     public get range(): string[] | null
     {
         return this._range;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::withValue()
     public withValue(newValue: unknown): PropertyStruct
     {
         let changed = true;
@@ -119,11 +133,13 @@ export class PropertyStruct
         return this;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::withNameSpace()
     public withNameSpace(namespace: string): PropertyStruct
     {
         return new PropertyStruct(`${namespace}:${this._key}`, this._value, this._type, this._valid, this._range);
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::withoutNameSpace()
     public withoutNameSpace(): PropertyStruct
     {
         return new PropertyStruct(this._key.replace(/.*:/, ''), this._value, this._type, this._valid, this._range);
@@ -135,6 +151,7 @@ export class PropertyStruct
         return new PropertyStruct(this._key, this._value, this._type, this._valid, this._range);
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/PropertyStruct.as::toString()
     public toString(): string
     {
         switch(this._type)

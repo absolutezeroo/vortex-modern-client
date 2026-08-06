@@ -48,6 +48,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 	 *
 	 * @see AS3 RoomContentLoader.CONTENT_LOADER_READY line 38
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::CONTENT_LOADER_READY
     public static readonly CONTENT_LOADER_READY = 'RCL_LOADER_READY';
 
     // AS3: sources/win63_version/habbo/room/class_1835.as::ASSET_LIBRARY_NAME_PREFIX
@@ -59,17 +60,25 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     // AS3: sources/win63_version/habbo/room/class_1835.as::COMPRESSION_INTERVAL
     private static readonly COMPRESSION_INTERVAL = 30000;
 
+    // AS3: sources/win63_version/habbo/room/class_1835.as::PLACE_HOLDER_FURNITURE
     private static readonly PLACE_HOLDER_FURNITURE = 'place_holder';
+    // AS3: sources/win63_version/habbo/room/class_1835.as::PLACE_HOLDER_WALL_ITEM
     private static readonly PLACE_HOLDER_WALL_ITEM = 'wall_place_holder';
+    // AS3: sources/win63_version/habbo/room/class_1835.as::PLACE_HOLDER_PET
     private static readonly PLACE_HOLDER_PET = 'pet_place_holder';
+    // AS3: sources/win63_version/habbo/room/class_1835.as::PLACE_HOLDER_DEFAULT
     private static readonly PLACE_HOLDER_DEFAULT = 'place_holder';
+    // AS3: sources/win63_version/habbo/room/class_1835.as::ROOM_CONTENT
     private static readonly ROOM_CONTENT = 'room';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as::TILE_CURSOR
     private static readonly TILE_CURSOR = 'tile_cursor';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as::SELECTION_ARROW
     private static readonly SELECTION_ARROW = 'selection_arrow';
 
     /**
 	 * @see AS3 RoomContentLoader.PLACE_HOLDER_TYPES line 62
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::PLACE_HOLDER_TYPES
     private static readonly PLACE_HOLDER_TYPES: string[] = [
         'place_holder',
         'wall_place_holder',
@@ -89,33 +98,41 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     ]);
 
     // --- AS3 var_2179: typeId -> className (floor items) ---
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as::_activeObjectTypes
     private _activeObjectTypes: Map<number, string> = new Map();
 
     // --- AS3 var_2532: className -> typeId (floor items) ---
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as::_activeObjectTypeIds
     private _activeObjectTypeIds: Map<string, number> = new Map();
 
     // --- AS3 var_2100: Dictionary of floor item classNames ---
     private _floorItems: Map<string, number> = new Map();
 
     // --- AS3 var_2552: typeId -> className (wall items) ---
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as::_wallItemTypes
     private _wallItemTypes: Map<number, string> = new Map();
 
     // --- AS3 var_2816: className -> typeId (wall items) ---
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as::_wallItemTypeIds
     private _wallItemTypeIds: Map<string, number> = new Map();
 
     // --- AS3 _wallItems: Dictionary of wall item classNames ---
+    // AS3: sources/win63_version/habbo/room/class_1835.as::_wallItems
     private _wallItems: Map<string, number> = new Map();
 
     // --- AS3 var_2887: typeId -> petType ---
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as::_petTypes
     private _petTypes: Map<number, string> = new Map();
 
     // --- AS3 var_2094: Dictionary petName -> typeId ---
     private _petTypeIds: Map<string, number> = new Map();
 
     // --- AS3 _petColors: typeId -> (colorId -> PetColorResult) ---
+    // AS3: sources/win63_version/habbo/room/class_1835.as::_petColors
     private _petColors: Map<number, Map<number | string, PetColorResult>> | null = null;
 
     // --- AS3 _petLayers: typeId -> (size -> (tag -> layerId)) ---
+    // AS3: sources/win63_version/habbo/room/class_1835.as::_petLayers
     private _petLayers: Map<number, Map<string, Map<string, number>>> | null = null;
 
     // --- AS3 var_2442: className -> revision ---
@@ -137,17 +154,20 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     private _assetLibraryEventDispatchers: Map<string, EventEmitter> = new Map();
 
     // --- AS3 var_1347: additional contentType -> source contentType ---
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as::_additionalObjectTypeLibraries
     private _additionalObjectTypeLibraries: Map<string, string> = new Map();
 
     // --- Converted AS3 XML assets stored as JSON by contentType. ---
     private _contentData: Map<string, RoomContentData> = new Map();
 
     // --- AS3 _visualizationFactory ---
+    // AS3: sources/win63_version/habbo/room/class_1835.as::_visualizationFactory
     private _visualizationFactory: IRoomObjectVisualizationFactory | null = null;
 
     // --- AS3 var_1827: contentType -> GraphicAssetCollection ---
     private _graphicAssetCollections: Map<string, IGraphicAssetCollection> = new Map();
     // --- AS3 _stateEvents: IEventDispatcher ---
+    // AS3: sources/win63_version/habbo/room/class_1835.as::_stateEvents
     private _stateEvents: EventEmitter | null = null;
     // --- AS3 var_4558: furniDataReady ---
     private _furniDataReady: boolean = false;
@@ -160,15 +180,19 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     private _petDownloadUrl: string = '';
     private _petDownloadNameTemplate: string = '';
     // --- AS3 var_3839/iconAssets ---
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as::_iconAssets
     private _iconAssets: IAssetLibrary | null = null;
 
     // --- AS3 var_581/iconListener ---
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as::_iconListener
     private _iconListener: IRoomContentListener | null = null;
 
     // --- AS3 var_1813: ignored furni types ---
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as::_ignoredFurniTypes
     private _ignoredFurniTypes: Set<string> | null = null;
 
     // --- AS3 _lastAssetCompressionTime ---
+    // AS3: sources/win63_version/habbo/room/class_1835.as::_lastAssetCompressionTime
     private _lastAssetCompressionTime: number = 0;
 
     private _assetLibrary: IAssetLibrary | null = null;
@@ -177,6 +201,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     private _loadingTypes: Map<string, Promise<void>> = new Map();
 
     // --- AS3 var_149: state ---
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as::_state
     private _state: number = STATE_CREATED;
 
     get state(): number
@@ -187,6 +212,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     // --- AS3 var_318: disposed ---
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/room/class_1835.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -219,11 +245,13 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
         this._iconListener = listener;
     }
 
+    // AS3: sources/win63_version/habbo/room/class_1835.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
 
     /**
 	 * @see AS3 RoomContentLoader.set sessionDataManager (line 157)
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::set sessionDataManager()
     set sessionDataManager(manager: ISessionDataManager)
     {
         this._sessionDataManager = manager;
@@ -249,6 +277,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 	 *
 	 * @see AS3 RoomContentLoader.initialize() lines 181-192
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::initialize()
     initialize(stateEvents: EventEmitter, assetLibrary: IAssetLibrary, configurationManager: IHabboConfigurationManager): void
     {
         this._stateEvents = stateEvents;
@@ -270,6 +299,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.dispose() lines 194-299
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -331,6 +361,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.setRoomObjectAlias() lines 301-310
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::setRoomObjectAlias()
     setRoomObjectAlias(alias: string, original: string): void
     {
         this._aliases.set(alias, original);
@@ -340,6 +371,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getObjectCategory() lines 312-347
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getObjectCategory()
     getObjectCategory(type: string): number
     {
         if(type === null)
@@ -388,6 +420,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getPlaceHolderType() lines 349-360
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getPlaceHolderType()
     getPlaceHolderType(type: string): string
     {
         if(this._floorItems.has(type))
@@ -411,6 +444,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getPlaceHolderTypes() lines 362-364
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getPlaceHolderTypes()
     getPlaceHolderTypes(): string[]
     {
         return RoomContentLoader.PLACE_HOLDER_TYPES;
@@ -419,6 +453,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getActiveObjectType() lines 366-372
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getActiveObjectType()
     getActiveObjectType(typeId: number): string | null
     {
         const className = this._activeObjectTypes.get(typeId) ?? null;
@@ -434,6 +469,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getActiveObjectTypeId() lines 374-376
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getActiveObjectTypeId()
     getActiveObjectTypeId(type: string): number
     {
         return this._activeObjectTypeIds.get(type) ?? -1;
@@ -442,6 +478,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getWallItemType() lines 378-384
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getWallItemType()
     getWallItemType(typeId: number, posterType: string | null = null): string | null
     {
         let className = this._wallItemTypes.get(typeId) ?? null;
@@ -457,6 +494,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getWallItemTypeId() lines 386-388
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getWallItemTypeId()
     getWallItemTypeId(type: string): number
     {
         return this._wallItemTypeIds.get(type) ?? -1;
@@ -465,6 +503,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getPetType() lines 390-392
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getPetType()
     getPetType(typeId: number): string | null
     {
         return this._petTypes.get(typeId) ?? null;
@@ -473,6 +512,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getPetTypeId() lines 394-396
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getPetTypeId()
     getPetTypeId(type: string): number
     {
         return this._petTypeIds.get(type) ?? -1;
@@ -481,6 +521,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getPetColor() lines 398-404
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getPetColor()
     getPetColor(typeId: number, colorId: number): PetColorResult | null
     {
         if(this._petColors === null) return null;
@@ -498,6 +539,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getPetColorsByTag() lines 406-417
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getPetColorsByTag()
     getPetColorsByTag(typeId: number, tag: string): PetColorResult[]
     {
         const results: PetColorResult[] = [];
@@ -523,6 +565,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getPetLayerIdForTag() lines 419-428
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getPetLayerIdForTag()
     getPetLayerIdForTag(typeId: number, tag: string, size: number = 64): number
     {
         if(this._petLayers === null) return -1;
@@ -545,6 +588,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getPetDefaultPalette() lines 430-440
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getPetDefaultPalette()
     getPetDefaultPalette(typeId: number, tag: string): PetColorResult | null
     {
         if(this._petColors === null) return null;
@@ -568,6 +612,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getActiveObjectColorIndex() lines 442-445
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getActiveObjectColorIndex()
     getActiveObjectColorIndex(typeId: number): number
     {
         const className = this._activeObjectTypes.get(typeId) ?? null;
@@ -578,6 +623,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getWallItemColorIndex() lines 447-450
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getWallItemColorIndex()
     getWallItemColorIndex(typeId: number): number
     {
         const className = this._wallItemTypes.get(typeId) ?? null;
@@ -588,6 +634,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getRoomObjectAdURL() lines 452-457
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getRoomObjectAdURL()
     getRoomObjectAdURL(type: string): string
     {
         return this._adUrls.get(type) ?? '';
@@ -596,6 +643,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getContentType() lines 459-461
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getContentType()
     getContentType(type: string): string
     {
         return type;
@@ -604,6 +652,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.hasInternalContent() lines 463-469
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::hasInternalContent()
     hasInternalContent(type: string): boolean
     {
         type = getVisualizationType(type);
@@ -945,6 +994,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.roomObjectCreated() lines 695-700
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::roomObjectCreated()
     roomObjectCreated(object: IRoomObject, roomId: string): void
     {
         const controller = object as IRoomObjectController;
@@ -960,6 +1010,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 	 *
 	 * @see AS3 RoomContentLoader.furniDataReady() lines 702-704
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::furniDataReady()
     furniDataReady(): void
     {
         this.initFurnitureData();
@@ -968,6 +1019,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.setActiveObjectType() lines 706-709
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::setActiveObjectType()
     setActiveObjectType(typeId: number, type: string): void
     {
         this._activeObjectTypes.delete(typeId);
@@ -1006,6 +1058,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getRoomObjectAlias() lines 876-885
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getRoomObjectAlias()
     private getRoomObjectAlias(type: string): string
     {
         return this._aliases.get(type) ?? type;
@@ -1014,6 +1067,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.getRoomObjectOriginalName() lines 887-896
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getRoomObjectOriginalName()
     private getRoomObjectOriginalName(type: string): string
     {
         return this._reverseAliases.get(type) ?? type;
@@ -1057,6 +1111,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
         return this._ignoredFurniTypes !== null && this._ignoredFurniTypes.has(type);
     }
 
+    // AS3: sources/win63_version/habbo/room/class_1835.as::initFurnitureData()
     private initFurnitureData(): void
     {
         if(this._sessionDataManager === null)
@@ -1090,6 +1145,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.initPetData() lines 771-781
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::initPetData()
     private initPetData(configurationManager: IHabboConfigurationManager): void
     {
         const petConfig = configurationManager.getProperty('pet.configuration');
@@ -1115,6 +1171,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.continueInitilization() lines 867-874
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::continueInitilization()
     private continueInitilization(): void
     {
         if(this._furniDataReady)
@@ -1131,6 +1188,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see AS3 RoomContentLoader.populateFurniData() lines 818-865
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::populateFurniData()
     private populateFurniData(data: IFurnitureData[]): void
     {
         for(const item of data)
@@ -1205,6 +1263,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 	 *
 	 * @see AS3 RoomContentLoader.getObjectType() lines 898-907
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getObjectType()
     private getObjectType(className: string | null): string | null
     {
         if(className === null)
@@ -1227,6 +1286,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 	 *
 	 * @see AS3 RoomContentLoader.getObjectColorIndex() lines 909-919
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getObjectColorIndex()
     private getObjectColorIndex(className: string | null): number
     {
         if(className === null)
@@ -1249,6 +1309,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 	 *
 	 * @see AS3 RoomContentLoader.getObjectRevision() lines 921-931
 	 */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::getObjectRevision()
     private getObjectRevision(type: string): number
     {
         const category = this.getObjectCategory(type);

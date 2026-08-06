@@ -12,17 +12,20 @@ export class HabboBroadcastMessageEventParser implements IMessageParser
 {
     private _messageText: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/HabboBroadcastMessageEventParser.as::get messageText()
     get messageText(): string
     {
         return this._messageText;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/HabboBroadcastMessageEventParser.as::flush()
     flush(): boolean
     {
         this._messageText = '';
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/HabboBroadcastMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

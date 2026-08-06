@@ -20,13 +20,16 @@ export class GuildSettingsData
         this._rightsLevel = data.guildRightsLevel;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/groups/GuildSettingsData.as::_guildType
     private _guildType: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/groups/GuildSettingsData.as::get guildType()
     get guildType(): number
     {
         return this._guildType;
     }
 
+    // AS3: .../src/com/sulake/habbo/groups/GuildSettingsData.as::set guildType()
     set guildType(value: number)
     {
         if(value !== this._guildType)
@@ -36,13 +39,16 @@ export class GuildSettingsData
         this._guildType = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/groups/GuildSettingsData.as::_rightsLevel
     private _rightsLevel: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/groups/GuildSettingsData.as::get rightsLevel()
     get rightsLevel(): number
     {
         return this._rightsLevel;
     }
 
+    // AS3: .../src/com/sulake/habbo/groups/GuildSettingsData.as::set rightsLevel()
     set rightsLevel(value: number)
     {
         if(value !== this._rightsLevel)
@@ -54,6 +60,7 @@ export class GuildSettingsData
 
     private _isModified: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/groups/GuildSettingsData.as::get isModified()
     get isModified(): boolean
     {
         return this._isModified;
@@ -62,6 +69,7 @@ export class GuildSettingsData
     /**
 	 * Reset the modification flag
 	 */
+    // AS3: .../src/com/sulake/habbo/groups/GuildSettingsData.as::resetModified()
     resetModified(): void
     {
         this._isModified = false;

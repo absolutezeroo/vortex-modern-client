@@ -29,7 +29,9 @@ const UNSEEN_CATEGORY_PETS = 3;
 export class PetsModel implements IPetsModel
 {
     private _controller: HabboInventory;
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsModel.as::_communication
     private _communication: IHabboCommunicationManager;
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsModel.as::_roomEngine
     private _roomEngine: IRoomEngine;
     private _localization: IHabboLocalizationManager;
     private _view: PetsView;
@@ -37,6 +39,7 @@ export class PetsModel implements IPetsModel
     private _pets: Map<number, Pet> = new Map<number, Pet>();
     private _listInitialized: boolean = false;
     private _placementPending: boolean = false;
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsModel.as::_disposed
     private _disposed: boolean = false;
 
     constructor(
@@ -55,6 +58,7 @@ export class PetsModel implements IPetsModel
         this._roomEngine.events.on('REOE_PLACED', this.onObjectPlaced);
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsModel.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -157,6 +161,7 @@ export class PetsModel implements IPetsModel
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsModel.as::categorySwitch()
     categorySwitch(category: string): void
     {
         if(category === 'pets' && this._controller.isVisible)
@@ -269,11 +274,13 @@ export class PetsModel implements IPetsModel
         this._view.selectById(parseInt(itemId, 10));
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsModel.as::getPetById()
     getPetById(id: number): Pet | null
     {
         return this._pets.get(id) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/pets/PetsModel.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

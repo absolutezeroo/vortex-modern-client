@@ -15,6 +15,7 @@ export class RoomDimmerGetPresetsComposer extends MessageComposer<[number]>
         this._data = [objectId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/furniture/RoomDimmerGetPresetsMessageComposer.as::getMessageArray()
     getMessageArray(): [number]
     {
         return this._data;

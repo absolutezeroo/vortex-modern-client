@@ -12,15 +12,20 @@ import {PlaneMask} from './PlaneMask';
 
 export class PlaneMaskManager
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::_assetCollection
     private _assetCollection: IGraphicAssetCollection | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::_masks
     private _masks: Map<string, PlaneMask> = new Map();
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::_data
     private _data: any = null;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::get data()
     get data(): any
     {
         return this._data;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::dispose()
     dispose(): void
     {
         this._assetCollection = null;
@@ -34,11 +39,13 @@ export class PlaneMaskManager
         this._masks.clear();
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::initialize()
     initialize(data: any): void
     {
         this._data = data;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::initializeAssetCollection()
     initializeAssetCollection(collection: IGraphicAssetCollection): void
     {
         if(this._data === null)
@@ -50,6 +57,7 @@ export class PlaneMaskManager
         this.parseMasks(this._data, collection);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::updateMask()
     updateMask(
         _target: any,
         maskType: string,
@@ -76,11 +84,13 @@ export class PlaneMaskManager
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::getMask()
     getMask(name: string): PlaneMask | null
     {
         return this._masks.get(name) || null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::parseMasks()
     private parseMasks(data: any, collection: IGraphicAssetCollection): void
     {
         if(data === null || collection === null)

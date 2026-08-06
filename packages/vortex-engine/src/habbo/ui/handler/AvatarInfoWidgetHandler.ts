@@ -53,7 +53,9 @@ const MONSTERPLANT_GROWN_LEVEL: number = 7;
 
 export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
 {
+    // AS3: .../src/com/sulake/habbo/ui/handler/AvatarInfoWidgetHandler.as::_disposed
     private _disposed: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/handler/AvatarInfoWidgetHandler.as::_container
     private _container: IRoomWidgetHandlerContainer | null = null;
     private _widget: AvatarInfoWidget | null = null;
 
@@ -133,6 +135,7 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/handler/AvatarInfoWidgetHandler.as::get container()
     public get container(): IRoomWidgetHandlerContainer | null
     {
         return this._container;
@@ -145,6 +148,7 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
      * the player just spent. The same message also opens a dialog in
      * `CustomUserNotificationWidgetHandler`; both handlers subscribe it independently.
      */
+    // AS3: .../src/com/sulake/habbo/ui/handler/AvatarInfoWidgetHandler.as::onCustomUserNotificationMessage()
     private onCustomUserNotificationMessage(event: IMessageEvent): void
     {
         const parser = (event as CustomUserNotificationMessageEvent).customUserNotificationParser;

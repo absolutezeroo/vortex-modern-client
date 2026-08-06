@@ -14,11 +14,16 @@ import type {IWindow} from '../IWindow';
  */
 export class WindowRendererItem
 {
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::RENDER_TYPE_NULL
     protected static readonly RENDER_TYPE_NULL: number = 0;
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::RENDER_TYPE_SKIN
     protected static readonly RENDER_TYPE_SKIN: number = 1;
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::RENDER_TYPE_FILL
     protected static readonly RENDER_TYPE_FILL: number = 2;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/WindowRendererItem.as::_skinContainer
     private _skinContainer: ISkinContainer;
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::_refresh
     private _refresh: boolean = false;
     private _previousState: number = 0xFFFFFFFF;
     private _currentState: number = 0;
@@ -29,13 +34,16 @@ export class WindowRendererItem
         this._skinContainer = skinContainer;
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/WindowRendererItem.as::_buffer
     private _buffer: OffscreenCanvas | null = null;
 
     /**
@@ -43,6 +51,7 @@ export class WindowRendererItem
 	 *
 	 * Equivalent of AS3 `WindowRendererItem.buffer` (BitmapData getter).
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::get buffer()
     public get buffer(): OffscreenCanvas | null
     {
         return this._buffer;
@@ -54,6 +63,7 @@ export class WindowRendererItem
 	 * @param window - The window to test
 	 * @returns True if the state changed since last render
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::testForStateChange()
     public testForStateChange(window: IWindow): boolean
     {
         return this._skinContainer.getTheActualState(window.type, window.style, window.state) !== this._previousState;
@@ -74,6 +84,7 @@ export class WindowRendererItem
 	 * @param flags - The invalidation flags
 	 * @returns True if the invalidation caused a change
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::invalidate()
     public invalidate(window: IWindow, flags: number): boolean
     {
         let changed = false;
@@ -123,6 +134,7 @@ export class WindowRendererItem
 	 *
 	 * @param window - The window to render
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::render()
     public render(window: IWindow): void
     {
         // Determine render type
@@ -219,6 +231,7 @@ export class WindowRendererItem
     /**
 	 * Purges cached data, disposing the buffer.
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::purge()
     public purge(): void
     {
         this._buffer = null;
@@ -226,6 +239,7 @@ export class WindowRendererItem
         this._refresh = true;
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::dispose()
     public dispose(): void
     {
         if(!this._disposed)

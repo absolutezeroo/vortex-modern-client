@@ -7,6 +7,7 @@ import {RoomWidgetMessage} from './RoomWidgetMessage';
 
 export class RoomWidgetChatTypingMessage extends RoomWidgetMessage
 {
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetChatTypingMessage.as::TYPING_STATUS
     public static readonly TYPING_STATUS: string = 'RWCTM_TYPING_STATUS';
 
     private _isTyping: boolean;
@@ -19,6 +20,7 @@ export class RoomWidgetChatTypingMessage extends RoomWidgetMessage
         this._isTyping = isTyping;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetChatTypingMessage.as::get isTyping()
     public get isTyping(): boolean
     {
         return this._isTyping;

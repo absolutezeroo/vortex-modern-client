@@ -21,11 +21,13 @@ export class RoomWidgetOpenProfileMessage extends RoomWidgetMessage
         this._trackingLocation = trackingLocation;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetOpenProfileMessage.as::get userId()
     public get userId(): number
     {
         return this._userId;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetOpenProfileMessage.as::get trackingLocation()
     public get trackingLocation(): string
     {
         return this._trackingLocation;

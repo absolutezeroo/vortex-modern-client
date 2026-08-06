@@ -6,6 +6,7 @@
  */
 export class AnimatedColor
 {
+    // AS3: .../src/com/sulake/habbo/window/utils/AnimatedColor.as::_durationMs
     private readonly _durationMs: number;
 
     private _startColor: number = 0;
@@ -81,16 +82,19 @@ export class AnimatedColor
         return previous !== this._value;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/utils/AnimatedColor.as::fromRgb()
     private static fromRgb(r: number, g: number, b: number): number
     {
         return (r << 16) | (g << 8) | b;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/utils/AnimatedColor.as::interpolateChannel()
     private static interpolateChannel(from: number, to: number, progress: number): number
     {
         return Math.round(from + (to - from) * progress);
     }
 
+    // AS3: .../src/com/sulake/habbo/window/utils/AnimatedColor.as::normalizeColor()
     private static normalizeColor(color: number): number
     {
         return color & 0xFFFFFF;

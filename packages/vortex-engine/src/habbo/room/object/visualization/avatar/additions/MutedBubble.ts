@@ -13,6 +13,7 @@ import type {AvatarVisualization} from '../AvatarVisualization';
 export class MutedBubble implements IAvatarAddition 
 {
     private _assetName: string | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/MutedBubble.as::_avatar
     private _avatar: AvatarVisualization;
 
     constructor(id: number, avatar: AvatarVisualization) 
@@ -21,20 +22,25 @@ export class MutedBubble implements IAvatarAddition
         this._avatar = avatar;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/MutedBubble.as::_id
     private _id: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/MutedBubble.as::get id()
     get id(): number 
     {
         return this._id;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/MutedBubble.as::_relativeDepth
     private _relativeDepth: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/MutedBubble.as::set relativeDepth()
     set relativeDepth(value: number) 
     {
         this._relativeDepth = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/MutedBubble.as::get disposed()
     get disposed(): boolean 
     {
         return this._avatar == null;
@@ -46,6 +52,7 @@ export class MutedBubble implements IAvatarAddition
      * @param sprite - The sprite to animate
      * @returns Always false (no dynamic animation)
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/MutedBubble.as::animate()
     animate(sprite: IRoomObjectSprite | null): boolean 
     {
         if(this._assetName && sprite) 
@@ -62,6 +69,7 @@ export class MutedBubble implements IAvatarAddition
      * @param sprite - The sprite to update
      * @param scale - The current visualization scale
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/MutedBubble.as::update()
     update(sprite: IRoomObjectSprite | null, scale: number): void 
     {
         if(!sprite) 
@@ -113,6 +121,7 @@ export class MutedBubble implements IAvatarAddition
     /**
      * Disposes of this addition and releases references.
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/MutedBubble.as::dispose()
     dispose(): void 
     {
         this._avatar = null!;

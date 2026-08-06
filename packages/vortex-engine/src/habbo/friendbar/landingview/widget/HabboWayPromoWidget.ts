@@ -17,7 +17,9 @@ import {GetCommunityGoalProgressMessageComposer} from '@habbo/communication/mess
  */
 export class HabboWayPromoWidget implements ILandingViewWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::_landingView
     private _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::_container
     private _container: IWindowContainer | null = null;
     private _communityTotalScore: number = 0;
 
@@ -64,6 +66,7 @@ export class HabboWayPromoWidget implements ILandingViewWidget
         this.refreshContent();
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/HabboWayPromoWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._landingView === null;

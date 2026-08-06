@@ -15,6 +15,7 @@ import type {WindowEvent} from '../events/WindowEvent';
  */
 export class ActivatorController extends ContainerController
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/ActivatorController.as::_activeChild
     protected _activeChild: IWindow | null = null;
 
     constructor(
@@ -58,6 +59,7 @@ export class ActivatorController extends ContainerController
     /**
 	 * Returns the currently active child window.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ActivatorController.as::getActiveChild()
     public getActiveChild(): IWindow | null
     {
         return this._activeChild;
@@ -71,6 +73,7 @@ export class ActivatorController extends ContainerController
 	 *
 	 * @returns The previously active child
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ActivatorController.as::setActiveChild()
     public setActiveChild(window: IWindow): IWindow | null
     {
         let target = window;

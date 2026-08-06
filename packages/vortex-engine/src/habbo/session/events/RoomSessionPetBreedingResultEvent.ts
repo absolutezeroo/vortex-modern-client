@@ -12,6 +12,7 @@ import type {PetBreedingResultData} from '@habbo/communication/messages/incoming
  */
 export class RoomSessionPetBreedingResultEvent extends RoomSessionEvent
 {
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionPetBreedingResultEvent.as::PET_BREEDING_RESULT
     public static readonly PET_BREEDING_RESULT = 'RSPFUE_PET_BREEDING_RESULT';
 
     constructor(session: IRoomSession, resultData: PetBreedingResultData | null, otherResultData: PetBreedingResultData | null)
@@ -23,6 +24,7 @@ export class RoomSessionPetBreedingResultEvent extends RoomSessionEvent
 
     private _resultData: PetBreedingResultData | null;
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionPetBreedingResultEvent.as::get resultData()
     get resultData(): PetBreedingResultData | null
     {
         return this._resultData;
@@ -30,6 +32,7 @@ export class RoomSessionPetBreedingResultEvent extends RoomSessionEvent
 
     private _otherResultData: PetBreedingResultData | null;
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionPetBreedingResultEvent.as::get otherResultData()
     get otherResultData(): PetBreedingResultData | null
     {
         return this._otherResultData;

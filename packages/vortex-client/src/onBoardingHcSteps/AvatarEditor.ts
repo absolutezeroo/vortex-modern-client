@@ -247,6 +247,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
      * Builds `type-setId-colour[-colour]` per selected category. The `"25"` second colour is AS3's
      * marker for a two-colour part.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHcSteps/AvatarEditor.as::getFigure()
     public getFigure(): string
     {
         const parts: string[] = [];
@@ -278,6 +279,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
      * fires the cloud puff. If the roll landed on what was already worn (all but one part equal),
      * AS3 rolls again.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHcSteps/AvatarEditor.as::setRandomFigure()
     public setRandomFigure(): void
     {
         const figure = this.getRandomFigureData();
@@ -363,6 +365,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
      * figure currently worn repaints the preview; anything else means a grid thumbnail arrived, so
      * the grids are rebuilt WITHOUT re-registering as a listener.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHcSteps/AvatarEditor.as::avatarImageReady()
     public avatarImageReady(figure: string): void
     {
         const manager = this._context.avatarRenderManager;
@@ -447,6 +450,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
      *
      * The web side answers "OK" once a club membership has been bought mid-flow.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHcSteps/AvatarEditor.as::checkForHcMembership()
     public checkForHcMembership(result: string): void
     {
         if(result !== 'OK') return;
@@ -633,6 +637,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
      * Never called by the 701 flow (`setHcVisibility(false)` and no call site), but part of the
      * class — ported so the club teaser is not silently missing if it is turned back on.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHcSteps/AvatarEditor.as::addHcTeaserBox()
     private addHcTeaserBox(): void
     {
         const teaser = new Bitmap(LoginAssets.get('onb_habbos'));
@@ -722,6 +727,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
      * `_arg_1` decides whether this pass registers as an avatar-image listener — see the class
      * header for why the redraw pass must not.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHcSteps/AvatarEditor.as::updateGrids()
     private updateGrids(withListener: boolean): void
     {
         const manager = this._context.avatarRenderManager;
@@ -880,6 +886,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
      * Five pre-selectable sets for this gender (or unisex). Club sets are skipped unless HC items
      * are on.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHcSteps/AvatarEditor.as::populateCategory()
     private populateCategory(category: string): string[]
     {
         const manager = this._context.avatarRenderManager;

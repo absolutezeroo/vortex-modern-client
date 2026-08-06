@@ -1111,13 +1111,16 @@ export class HabboMessages implements IMessageConfiguration
 
     private _events: Map<number, EventClass> = new HeaderMap<EventClass>('incoming event');
 
+    // AS3: .../src/com/sulake/habbo/communication/_SafeCls_2046.as::get events()
     get events(): Map<number, EventClass>
     {
         return this._events;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/_SafeCls_2046.as::_composers
     private _composers: Map<number, ComposerClass> = new HeaderMap<ComposerClass>('outgoing composer');
 
+    // AS3: .../src/com/sulake/habbo/communication/_SafeCls_2046.as::get composers()
     get composers(): Map<number, ComposerClass>
     {
         return this._composers;

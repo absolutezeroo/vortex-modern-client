@@ -20,10 +20,15 @@ const STATE_COMPLETE: number = 3;
 export class FloatingHeart extends ExpressionAddition 
 {
     private _assetName: string | null = null;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingHeart.as::_startTime
     private _startTime: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingHeart.as::_delta
     private _delta: number = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingHeart.as::_offsetY
     private _offsetY: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingHeart.as::_scale
     private _scale: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingHeart.as::_state
     private _state: number = -1;
 
     constructor(id: number, type: number, visualization: AvatarVisualization) 

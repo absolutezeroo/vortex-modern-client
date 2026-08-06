@@ -21,6 +21,7 @@ export class CoreCommunicationManager extends Component implements ICoreCommunic
         super(context);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/communication/CoreCommunicationManager.as::_connections
     private _connections: IConnection[] = [];
 
     /**
@@ -34,6 +35,7 @@ export class CoreCommunicationManager extends Component implements ICoreCommunic
     /**
 	 * Create a new connection
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/communication/CoreCommunicationManager.as::createConnection()
     createConnection(callback?: IConnectionCallback): IConnection
     {
         if(this._disposed)
@@ -52,6 +54,7 @@ export class CoreCommunicationManager extends Component implements ICoreCommunic
 	 *
 	 * Processes received WebSocket data and dispatches message events.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/communication/CoreCommunicationManager.as::update()
     update(_deltaTime: number): void
     {
         if(this._disposed) return;

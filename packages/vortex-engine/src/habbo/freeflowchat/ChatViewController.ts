@@ -17,8 +17,11 @@ import type {ChatFlowViewer} from './viewer/ChatFlowViewer';
  */
 export class ChatViewController implements IDisposable
 {
+    // AS3: .../src/com/sulake/habbo/freeflowchat/ChatViewController.as::_rootDisplayObject
     private _rootDisplayObject: Container | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/ChatViewController.as::_flowViewerDisplayObject
     private readonly _flowViewerDisplayObject: Container;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/ChatViewController.as::_pulldownDisplayObject
     private readonly _pulldownDisplayObject: Container | null;
     private readonly onResize = (): void =>
     {
@@ -43,6 +46,7 @@ export class ChatViewController implements IDisposable
         if(typeof window !== 'undefined') window.addEventListener('resize', this.onResize);
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/ChatViewController.as::get disposed()
     get disposed(): boolean
     {
         return this._rootDisplayObject === null;

@@ -40,6 +40,7 @@ export class ColorGridCtrl
     private _backgroundBitmap: ImageBitmap | null = null;
     // AS3: .../ColorGridCtrl.as::_SafeStr_6799
     private _foregroundBitmap: ImageBitmap | null = null;
+    // AS3: .../src/com/sulake/habbo/groups/ColorGridCtrl.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../ColorGridCtrl.as::ColorGridCtrl()
@@ -212,6 +213,7 @@ export class ColorGridCtrl
      *
      * AS3: .../ColorGridCtrl.as::getBitmap()
      */
+    // AS3: .../src/com/sulake/habbo/groups/ColorGridCtrl.as::getBitmap()
     private getBitmap(name: string): ImageBitmap | null
     {
         const bitmap = (this._groupsManager?.assets?.getAssetByName(name)?.content ?? null) as ImageBitmap | null;

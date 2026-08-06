@@ -23,11 +23,13 @@ export class CatalogWidgetToggleEvent
         return CatalogWidgetToggleEvent.CWE_TOGGLE;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetToggleEvent.as::get widgetId()
     get widgetId(): string
     {
         return this._widgetId;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetToggleEvent.as::get enabled()
     get enabled(): boolean
     {
         return this._enabled;

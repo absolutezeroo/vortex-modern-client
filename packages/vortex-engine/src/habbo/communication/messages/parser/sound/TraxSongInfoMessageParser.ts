@@ -72,6 +72,7 @@ export class TraxSongInfoMessageParser implements IMessageParser
      * reorders them. The second field is read and dropped by AS3 as well; skipping the read
      * instead would desynchronise every following song.
      */
+    // AS3: sources/win63_version/habbo/communication/messages/parser/sound/TraxSongInfoMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         const count = wrapper.readInt();

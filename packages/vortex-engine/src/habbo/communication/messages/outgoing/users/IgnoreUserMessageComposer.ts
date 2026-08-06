@@ -16,6 +16,7 @@ export class IgnoreUserMessageComposer extends MessageComposer<ConstructorParame
         this._data = [userId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/users/IgnoreUserMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

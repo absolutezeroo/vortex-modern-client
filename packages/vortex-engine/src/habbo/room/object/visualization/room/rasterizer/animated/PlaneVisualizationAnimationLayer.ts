@@ -22,8 +22,11 @@ export interface IAnimationItemData
 
 export class PlaneVisualizationAnimationLayer
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/PlaneVisualizationAnimationLayer.as::_color
     private _color: number = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/PlaneVisualizationAnimationLayer.as::_bitmapData
     private _bitmapData: HTMLCanvasElement | null = null;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/PlaneVisualizationAnimationLayer.as::_items
     private _items: AnimationItem[] = [];
 
     constructor(items: IAnimationItemData[], assetTextures: Map<string, HTMLCanvasElement> | null)
@@ -52,11 +55,13 @@ export class PlaneVisualizationAnimationLayer
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/PlaneVisualizationAnimationLayer.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/PlaneVisualizationAnimationLayer.as::clearCache()
     clearCache(): void
     {
         this._bitmapData = null;
@@ -81,6 +86,7 @@ export class PlaneVisualizationAnimationLayer
 	 * @param time - Current time in ms
 	 * @returns Rendered canvas
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/PlaneVisualizationAnimationLayer.as::render()
     render(
         canvas: HTMLCanvasElement | null,
         width: number,
@@ -156,6 +162,7 @@ export class PlaneVisualizationAnimationLayer
         return canvas;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/animated/PlaneVisualizationAnimationLayer.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

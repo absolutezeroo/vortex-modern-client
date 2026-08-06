@@ -34,6 +34,7 @@ export interface IUserUpdate
 
 export class UserUpdateMessageParser implements IMessageParser
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/UserUpdateMessageParser.as::_users
     private _users: IUserUpdate[] = [];
 
     get userCount(): number
@@ -51,12 +52,14 @@ export class UserUpdateMessageParser implements IMessageParser
         return this._users[index];
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/UserUpdateMessageParser.as::flush()
     flush(): boolean
     {
         this._users = [];
         return true;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/UserUpdateMessageParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper === null)

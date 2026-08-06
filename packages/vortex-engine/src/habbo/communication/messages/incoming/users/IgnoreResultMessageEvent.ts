@@ -14,11 +14,13 @@ export class IgnoreResultMessageEvent extends MessageEvent implements IMessageEv
         super(callback, IgnoreResultMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/IgnoreResultMessageEvent.as::get result()
     get result(): number
     {
         return (this._parser as IgnoreResultMessageParser).result;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/IgnoreResultMessageEvent.as::get userId()
     get userId(): number
     {
         return (this._parser as IgnoreResultMessageParser).ignoredUserId;

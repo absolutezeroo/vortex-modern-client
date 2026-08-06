@@ -10,18 +10,31 @@ import {HabboGroupEntryData} from './HabboGroupEntryData';
  */
 export class ExtendedProfileData
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::_userId
     private _userId: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::_userName
     private _userName: string;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::_figure
     private _figure: string;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::_motto
     private _motto: string;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::_creationDate
     private _creationDate: string;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::_achievementScore
     private _achievementScore: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::_friendCount
     private _friendCount: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::_isFriend
     private _isFriend: boolean;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::_isFriendRequestSent
     private _isFriendRequestSent: boolean;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::_isOnline
     private _isOnline: boolean;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::_guilds
     private _guilds: HabboGroupEntryData[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::_lastAccessSinceInSeconds
     private _lastAccessSinceInSeconds: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::_openProfileWindow
     private _openProfileWindow: boolean;
     private _accountLevel: number = 0;
     private _starGemCount: number = 0;
@@ -64,26 +77,31 @@ export class ExtendedProfileData
         }
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::get userId()
     get userId(): number
     {
         return this._userId;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::get userName()
     get userName(): string
     {
         return this._userName;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::get figure()
     get figure(): string
     {
         return this._figure;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::get motto()
     get motto(): string
     {
         return this._motto;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::get creationDate()
     get creationDate(): string
     {
         return this._creationDate;
@@ -94,11 +112,13 @@ export class ExtendedProfileData
         return this._achievementScore;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::get friendCount()
     get friendCount(): number
     {
         return this._friendCount;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::get isFriend()
     get isFriend(): boolean
     {
         return this._isFriend;
@@ -119,16 +139,19 @@ export class ExtendedProfileData
         return this._isOnline;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::get guilds()
     get guilds(): HabboGroupEntryData[]
     {
         return this._guilds;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::get lastAccessSinceInSeconds()
     get lastAccessSinceInSeconds(): number
     {
         return this._lastAccessSinceInSeconds;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as::get openProfileWindow()
     get openProfileWindow(): boolean
     {
         return this._openProfileWindow;

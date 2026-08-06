@@ -27,6 +27,7 @@ export class EventLogMessageComposer extends MessageComposer<ConstructorParamete
         this._data = [category, type, action, extraString, extraInt];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2176/_SafeCls_2175.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

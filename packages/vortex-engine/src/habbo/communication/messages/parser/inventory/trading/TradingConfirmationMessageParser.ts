@@ -8,11 +8,13 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class TradingConfirmationMessageParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/trading/TradingConfirmationEventParser.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/trading/TradingConfirmationEventParser.as::parse()
     parse(_wrapper: IMessageDataWrapper): boolean
     {
         return true;

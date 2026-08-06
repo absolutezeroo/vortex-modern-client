@@ -13,6 +13,7 @@ import {CatalogWidget} from './CatalogWidget';
  */
 export class BuyGuildWidget extends CatalogWidget
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BuyGuildWidget.as::_button
     private _button: IWindow | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/BuyGuildWidget.as::BuyGuildWidget()

@@ -10,12 +10,14 @@ export class WiredRewardResultMessageEventParser implements IMessageParser
 {
     private _reason: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/userdefinedroomevents/WiredRewardResultMessageEventParser.as::flush()
     flush(): boolean
     {
         this._reason = 0;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/userdefinedroomevents/WiredRewardResultMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;
@@ -24,6 +26,7 @@ export class WiredRewardResultMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/userdefinedroomevents/WiredRewardResultMessageEventParser.as::get reason()
     get reason(): number
     {
         return this._reason;

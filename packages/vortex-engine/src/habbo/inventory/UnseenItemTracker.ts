@@ -16,9 +16,12 @@ import {ResetUnseenItemIdsComposer} from '../communication/messages/outgoing/inv
  */
 export class UnseenItemTracker
 {
+    // AS3: .../src/com/sulake/habbo/inventory/UnseenItemTracker.as::_communication
     private _communication: IHabboCommunicationManager | null;
+    // AS3: .../src/com/sulake/habbo/inventory/UnseenItemTracker.as::_inventory
     private _inventory: HabboInventory;
     private _events: EventEmitter;
+    // AS3: .../src/com/sulake/habbo/inventory/UnseenItemTracker.as::_unseenItems
     private _unseenItems: Map<number, Set<number>> = new Map();
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/UnseenItemTracker.as:23
@@ -111,6 +114,7 @@ export class UnseenItemTracker
     /**
 	 * Check if an item is unseen
 	 */
+    // AS3: .../src/com/sulake/habbo/inventory/UnseenItemTracker.as::isUnseen()
     isUnseen(category: number, itemId: number): boolean
     {
         const items = this._unseenItems.get(category);
@@ -121,6 +125,7 @@ export class UnseenItemTracker
     /**
 	 * Get all unseen item IDs for a category
 	 */
+    // AS3: .../src/com/sulake/habbo/inventory/UnseenItemTracker.as::getIds()
     getIds(category: number): number[]
     {
         const items = this._unseenItems.get(category);
@@ -131,6 +136,7 @@ export class UnseenItemTracker
     /**
 	 * Get count of unseen items in a category
 	 */
+    // AS3: .../src/com/sulake/habbo/inventory/UnseenItemTracker.as::getCount()
     getCount(category: number): number
     {
         return this._unseenItems.get(category)?.size ?? 0;
@@ -183,6 +189,7 @@ export class UnseenItemTracker
     /**
 	 * Remove a single unseen item
 	 */
+    // AS3: .../src/com/sulake/habbo/inventory/UnseenItemTracker.as::removeUnseen()
     removeUnseen(category: number, itemId: number): boolean
     {
         const items = this._unseenItems.get(category);
@@ -205,6 +212,7 @@ export class UnseenItemTracker
     /**
 	 * Reset all unseen items in a category
 	 */
+    // AS3: .../src/com/sulake/habbo/inventory/UnseenItemTracker.as::resetCategory()
     resetCategory(category: number): boolean
     {
         if(this.getCount(category) === 0)
@@ -251,6 +259,7 @@ export class UnseenItemTracker
     /**
 	 * Reset category if it's empty
 	 */
+    // AS3: .../src/com/sulake/habbo/inventory/UnseenItemTracker.as::resetCategoryIfEmpty()
     resetCategoryIfEmpty(category: number): boolean
     {
         if(this.getCount(category) === 0)
@@ -269,6 +278,7 @@ export class UnseenItemTracker
     /**
 	 * Dispose the tracker
 	 */
+    // AS3: .../src/com/sulake/habbo/inventory/UnseenItemTracker.as::dispose()
     dispose(): void
     {
         this._unseenItems.clear();

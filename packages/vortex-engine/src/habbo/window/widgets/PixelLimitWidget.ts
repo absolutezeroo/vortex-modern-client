@@ -20,13 +20,17 @@ import {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class PixelLimitWidget implements IWidget
 {
+    // AS3: sources/win63_version/habbo/window/widgets/PixelLimitWidget.as::TYPE
     public static readonly TYPE: string = 'pixel_limit';
 
+    // AS3: sources/win63_version/habbo/window/widgets/PixelLimitWidget.as::LIMIT_KEY
     private static readonly LIMIT_KEY: string = 'pixel_limit:limit';
     private _batchUpdate: boolean = false;
     private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/PixelLimitWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/PixelLimitWidget.as::_bitmap
     private _bitmap: IStaticBitmapWrapperWindow | null = null;
 
     constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
@@ -53,8 +57,10 @@ export class PixelLimitWidget implements IWidget
         }
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/PixelLimitWidget.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/window/widgets/PixelLimitWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -62,11 +68,13 @@ export class PixelLimitWidget implements IWidget
 
     private _limit: number = 0;
 
+    // AS3: sources/win63_version/habbo/window/widgets/PixelLimitWidget.as::get limit()
     public get limit(): number
     {
         return this._limit;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/PixelLimitWidget.as::set limit()
     public set limit(value: number)
     {
         this._limit = Math.max(0, Math.min(100, value));
@@ -75,6 +83,7 @@ export class PixelLimitWidget implements IWidget
     /**
 	 * Compute the asset URI for the current limit value.
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/PixelLimitWidget.as::get assetUri()
     public get assetUri(): string
     {
         let step = Math.floor(this._limit / 20) * 20;
@@ -83,6 +92,7 @@ export class PixelLimitWidget implements IWidget
         return '${image.library.url}reception/challenge_meter_' + step.toString() + '.png';
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/PixelLimitWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         if(this._disposed) return [];
@@ -92,6 +102,7 @@ export class PixelLimitWidget implements IWidget
         ];
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/PixelLimitWidget.as::set properties()
     public set properties(values: PropertyStruct[])
     {
         this._batchUpdate = true;
@@ -107,6 +118,7 @@ export class PixelLimitWidget implements IWidget
         this._batchUpdate = false;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/PixelLimitWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

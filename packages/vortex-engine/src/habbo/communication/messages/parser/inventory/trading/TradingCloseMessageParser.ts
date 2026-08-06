@@ -17,16 +17,19 @@ export class TradingCloseMessageParser implements IMessageParser
 
     private _reason: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/trading/TradingCloseEventParser.as::get reason()
     get reason(): number
     {
         return this._reason;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/trading/TradingCloseEventParser.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/trading/TradingCloseEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._userId = wrapper.readInt();

@@ -15,11 +15,13 @@ export class InfoStandRentableBotView
     {
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandRentableBotView.as::get window()
     public get window(): IWindow | null
     {
         return null;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandRentableBotView.as::dispose()
     public dispose(): void
     {
     }

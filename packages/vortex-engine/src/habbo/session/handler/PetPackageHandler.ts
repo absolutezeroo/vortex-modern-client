@@ -66,6 +66,7 @@ export class PetPackageHandler extends BaseHandler
         this._messageEvents.push(event);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/PetPackageHandler.as::onOpenPetPackageRequested()
     private onOpenPetPackageRequested(event: IMessageEvent): void
     {
         const reqEvent = event as OpenPetPackageRequestedMessageEvent;
@@ -101,6 +102,7 @@ export class PetPackageHandler extends BaseHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/PetPackageHandler.as::onOpenPetPackageResult()
     private onOpenPetPackageResult(event: IMessageEvent): void
     {
         const resultEvent = event as OpenPetPackageResultMessageEvent;

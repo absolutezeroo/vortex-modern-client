@@ -15,6 +15,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class CreateGuildMessageComposer extends MessageComposer<unknown[]>
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/outgoing/users/CreateGuildMessageComposer.as::_data
     private _data: unknown[] = [];
 
     // AS3: .../_SafeCls_2496.as::_SafeCls_2496()

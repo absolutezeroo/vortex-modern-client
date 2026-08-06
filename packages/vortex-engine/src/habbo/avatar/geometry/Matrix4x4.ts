@@ -20,11 +20,13 @@ export class Matrix4x4
 
     private _data: number[];
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Matrix4x4.as::get data()
     public get data(): number[]
     {
         return this._data;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Matrix4x4.as::getXRotationMatrix()
     public static getXRotationMatrix(angle: number): Matrix4x4
     {
         const rad = angle * Math.PI / 180;
@@ -34,6 +36,7 @@ export class Matrix4x4
         return new Matrix4x4(1, 0, 0, 0, c, -s, 0, s, c);
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Matrix4x4.as::getYRotationMatrix()
     public static getYRotationMatrix(angle: number): Matrix4x4
     {
         const rad = angle * Math.PI / 180;
@@ -43,6 +46,7 @@ export class Matrix4x4
         return new Matrix4x4(c, 0, s, 0, 1, 0, -s, 0, c);
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Matrix4x4.as::getZRotationMatrix()
     public static getZRotationMatrix(angle: number): Matrix4x4
     {
         const rad = angle * Math.PI / 180;
@@ -52,6 +56,7 @@ export class Matrix4x4
         return new Matrix4x4(c, -s, 0, s, c, 0, 0, 0, 1);
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Matrix4x4.as::identity()
     public identity(): Matrix4x4
     {
         this._data = [1, 0, 0, 0, 1, 0, 0, 0, 1];
@@ -59,6 +64,7 @@ export class Matrix4x4
         return this;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Matrix4x4.as::vectorMultiplication()
     public vectorMultiplication(v: Vector3D): Vector3D
     {
         const x = v.x * this._data[0] + v.y * this._data[3] + v.z * this._data[6];
@@ -68,6 +74,7 @@ export class Matrix4x4
         return new Vector3D(x, y, z);
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Matrix4x4.as::multiply()
     public multiply(other: Matrix4x4): Matrix4x4
     {
         const a = this._data;
@@ -86,6 +93,7 @@ export class Matrix4x4
         );
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Matrix4x4.as::scalarMultiply()
     public scalarMultiply(scalar: number): void
     {
         for(let i = 0; i < this._data.length; i++)
@@ -94,6 +102,7 @@ export class Matrix4x4
         }
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Matrix4x4.as::rotateX()
     public rotateX(angle: number): Matrix4x4
     {
         const rot = Matrix4x4.getXRotationMatrix(angle);
@@ -101,6 +110,7 @@ export class Matrix4x4
         return rot.multiply(this);
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Matrix4x4.as::rotateY()
     public rotateY(angle: number): Matrix4x4
     {
         const rot = Matrix4x4.getYRotationMatrix(angle);
@@ -108,6 +118,7 @@ export class Matrix4x4
         return rot.multiply(this);
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Matrix4x4.as::rotateZ()
     public rotateZ(angle: number): Matrix4x4
     {
         const rot = Matrix4x4.getZRotationMatrix(angle);
@@ -115,6 +126,7 @@ export class Matrix4x4
         return rot.multiply(this);
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/Matrix4x4.as::transpose()
     public transpose(): Matrix4x4
     {
         return new Matrix4x4(

@@ -12,10 +12,15 @@ import {Interval} from './Interval';
  */
 export class JumpBy extends Interval
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/motion/JumpBy.as::_startX
     protected _startX: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/motion/JumpBy.as::_startY
     protected _startY: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/motion/JumpBy.as::_deltaX
     protected _deltaX: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/motion/JumpBy.as::_deltaY
     protected _deltaY: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/motion/JumpBy.as::_height
     protected _height: number;
     protected _jumps: number;
 

@@ -9,6 +9,7 @@ import {RoomEngineEvent} from './RoomEngineEvent';
 
 export class RoomEngineZoomEvent extends RoomEngineEvent
 {
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineZoomEvent.as::ROOM_ZOOM
     public static readonly ROOM_ZOOM = 'REE_ROOM_ZOOM';
 
     constructor(roomId: number, level: number, isFlipForced: boolean = false)
@@ -20,6 +21,7 @@ export class RoomEngineZoomEvent extends RoomEngineEvent
 
     private _level: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineZoomEvent.as::get level()
     get level(): number
     {
         return this._level;
@@ -27,6 +29,7 @@ export class RoomEngineZoomEvent extends RoomEngineEvent
 
     private _isFlipForced: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineZoomEvent.as::get isFlipForced()
     get isFlipForced(): boolean
     {
         return this._isFlipForced;

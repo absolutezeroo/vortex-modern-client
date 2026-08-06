@@ -61,6 +61,7 @@ export class WidgetWindowController extends WindowController implements IWidgetW
     /**
 	 * The hosted widget.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/WidgetWindowController.as::get widget()
     public get widget(): unknown
     {
         return this._widget;
@@ -69,11 +70,13 @@ export class WidgetWindowController extends WindowController implements IWidgetW
     /**
 	 * The root window of the widget.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/WidgetWindowController.as::get rootWindow()
     public get rootWindow(): IWindow | null
     {
         return this.getChildAt(0);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/WidgetWindowController.as::set rootWindow()
     public set rootWindow(value: IWindow | null)
     {
         this.removeChildAt(0);

@@ -44,6 +44,7 @@ export class NewPetsCatalogWidget extends CatalogWidget implements IGetImageList
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/NewPetsCatalogWidget.as::NORMAL_SIZE_PETS
     private static readonly NORMAL_SIZE_PETS: number[] = [15];
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/NewPetsCatalogWidget.as::_offers
     private _offers: OrderedMap<number, IPurchasableOffer> | null = null;
 
     private _nameInput: IWindow | null = null;
@@ -52,14 +53,17 @@ export class NewPetsCatalogWidget extends CatalogWidget implements IGetImageList
 
     private _paletteIndex: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/NewPetsCatalogWidget.as::_selectedProductCode
     private _selectedProductCode: string = '';
 
     private _pendingNameApproval: boolean = false;
 
     private _widgetDisposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/NewPetsCatalogWidget.as::_availablePalettes
     private _availablePalettes: SellablePetPalette[] | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/NewPetsCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _priceWindow: IWindow | null = null;

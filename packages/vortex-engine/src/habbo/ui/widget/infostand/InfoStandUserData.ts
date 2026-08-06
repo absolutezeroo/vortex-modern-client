@@ -7,25 +7,39 @@ import type {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUp
 
 export class InfoStandUserData
 {
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::get userId()
     public userId: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::get userName()
     public userName: string = '';
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::get groupId()
     public groupId: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::get groupName()
     public groupName: string = '';
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::get groupBadgeId()
     public groupBadgeId: string = '';
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::get respectLeft()
     public respectLeft: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::get respectReplenishesLeft()
     public respectReplenishesLeft: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::get carryItem()
     public carryItem: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::get userRoomId()
     public userRoomId: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::get type()
     public type: string = '';
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::get petRespectLeft()
     public petRespectLeft: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::_badges
     private _badges: string[] = [];
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::get badges()
     public get badges(): string[]
     {
         return this._badges.slice();
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::set badges()
     public set badges(value: string[])
     {
         this._badges = value;

@@ -15,8 +15,11 @@ import type {AvatarImageWidget as GenericAvatarImageWidget} from '@habbo/window/
  */
 export class SafetyQuizPromoWidget implements ILandingViewWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::_landingView
     private _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::_container
     private _container: IWindowContainer | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::SafetyQuizPromoWidget()
@@ -58,6 +61,7 @@ export class SafetyQuizPromoWidget implements ILandingViewWidget
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;
@@ -78,6 +82,7 @@ export class SafetyQuizPromoWidget implements ILandingViewWidget
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/SafetyQuizPromoWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;

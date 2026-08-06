@@ -11,6 +11,7 @@ export class AchievementsEventParser implements IMessageParser
 {
     private _achievements: AchievementData[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/achievements/AchievementsEventParser.as::get achievements()
     get achievements(): AchievementData[]
     {
         return this._achievements;
@@ -18,11 +19,13 @@ export class AchievementsEventParser implements IMessageParser
 
     private _defaultCategory: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/achievements/AchievementsEventParser.as::get defaultCategory()
     get defaultCategory(): string
     {
         return this._defaultCategory;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/achievements/AchievementsEventParser.as::flush()
     flush(): boolean
     {
         this._achievements = [];
@@ -30,6 +33,7 @@ export class AchievementsEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/achievements/AchievementsEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

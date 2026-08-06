@@ -29,6 +29,7 @@ const THUMB_COLOR_UNSEEN = 10275685;
  */
 export class GroupItem implements IGetImageListener 
 {
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::_items
     private _items: Map<number, FurnitureItem> = new Map();
     // `protected`, not private: AS3's CreditTradingItem reads `_SafeStr_4570` (the model) and
     // assigns `_window` from its own `createWindow()` override.
@@ -102,6 +103,7 @@ export class GroupItem implements IGetImageListener
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::_window
     protected _window: IWindowContainer | null = null;
 
     // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::get window()
@@ -117,6 +119,7 @@ export class GroupItem implements IGetImageListener
 
     private _alignment: string;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::get alignment()
     get alignment(): string 
     {
         return this._alignment;
@@ -148,6 +151,7 @@ export class GroupItem implements IGetImageListener
 
     private _type: number;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::get type()
     get type(): number 
     {
         return this._type;
@@ -155,6 +159,7 @@ export class GroupItem implements IGetImageListener
 
     private _category: number;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::get category()
     get category(): number 
     {
         return this._category;
@@ -162,6 +167,7 @@ export class GroupItem implements IGetImageListener
 
     private _stuffData: IStuffData | null;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::get stuffData()
     get stuffData(): IStuffData | null 
     {
         return this._stuffData;
@@ -180,11 +186,13 @@ export class GroupItem implements IGetImageListener
 
     private _isLocked: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::get isLocked()
     get isLocked(): boolean 
     {
         return this._isLocked;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::set isLocked()
     set isLocked(value: boolean) 
     {
         this._isLocked = value;
@@ -192,11 +200,13 @@ export class GroupItem implements IGetImageListener
 
     private _isSelected: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::get isSelected()
     get isSelected(): boolean 
     {
         return this._isSelected;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::set isSelected()
     set isSelected(value: boolean) 
     {
         if(this._isSelected !== value) 
@@ -206,6 +216,7 @@ export class GroupItem implements IGetImageListener
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::_hasUnseenItems
     private _hasUnseenItems: boolean = false;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::get hasUnseenItems()
@@ -224,8 +235,10 @@ export class GroupItem implements IGetImageListener
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::_name
     private _name: string = '';
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::get name()
     get name(): string 
     {
         return this._name;
@@ -236,8 +249,10 @@ export class GroupItem implements IGetImageListener
         this._name = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::_description
     private _description: string = '';
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::get description()
     get description(): string 
     {
         return this._description;
@@ -250,6 +265,7 @@ export class GroupItem implements IGetImageListener
 
     private _selectedItemIndex: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::get selectedItemIndex()
     get selectedItemIndex(): number 
     {
         if(this._selectedItemIndex >= this._items.size) 
@@ -260,6 +276,7 @@ export class GroupItem implements IGetImageListener
         return this._selectedItemIndex;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::set selectedItemIndex()
     set selectedItemIndex(value: number) 
     {
         if(value >= this._items.size) 
@@ -270,6 +287,7 @@ export class GroupItem implements IGetImageListener
         this._selectedItemIndex = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::get isWallItem()
     get isWallItem(): boolean 
     {
         const item = this.getAt(0);
@@ -277,6 +295,7 @@ export class GroupItem implements IGetImageListener
         return item?.isWallItem ?? false;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::get flatId()
     get flatId(): number 
     {
         const item = this.getAt(0);
@@ -284,6 +303,7 @@ export class GroupItem implements IGetImageListener
         return item?.flatId ?? -1;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::get isGroupable()
     get isGroupable(): boolean 
     {
         const item = this.getAt(0);
@@ -291,6 +311,7 @@ export class GroupItem implements IGetImageListener
         return item?.groupable ?? true;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::get isRented()
     get isRented(): boolean 
     {
         const item = this.getAt(0);
@@ -372,6 +393,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Add an item to the group
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::push()
     push(item: FurnitureItem, isUnseen: boolean = false): void 
     {
         const existing = this._items.get(item.id);
@@ -409,6 +431,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Remove and return the last item
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::pop()
     pop(): FurnitureItem | null 
     {
         if(this._items.size === 0) 
@@ -441,6 +464,7 @@ export class GroupItem implements IGetImageListener
         return items[items.length - 1];
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::_furniDataCache
     private _furniDataCache: IFurnitureData | null = null;
 
     /**
@@ -480,6 +504,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Get item at index
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getAt()
     getAt(index: number): FurnitureItem | null 
     {
         const items = Array.from(this._items.values());
@@ -490,6 +515,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Get item by ID
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getItem()
     getItem(itemId: number): FurnitureItem | null 
     {
         return this._items.get(itemId) ?? null;
@@ -498,6 +524,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Remove item by ID
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::remove()
     remove(itemId: number): FurnitureItem | null 
     {
         const item = this._items.get(itemId);
@@ -514,6 +541,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Replace item
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::replaceItem()
     replaceItem(itemId: number, item: FurnitureItem): void 
     {
         this._items.set(itemId, item);
@@ -524,6 +552,7 @@ export class GroupItem implements IGetImageListener
      * Get total item count
      * For POST_IT items, returns sum of quantities
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getTotalCount()
     getTotalCount(): number 
     {
         if(this._category === FurnitureCategory.POST_IT) 
@@ -546,6 +575,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Get count of unlocked items
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getUnlockedCount()
     getUnlockedCount(): number 
     {
         if(this._category === FurnitureCategory.POST_IT) 
@@ -591,6 +621,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Get count of recyclable items (unlocked and recyclable)
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getRecyclableCount()
     getRecyclableCount(): number 
     {
         let count = 0;
@@ -609,6 +640,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Lock an item by ID
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::addLockTo()
     addLockTo(itemId: number): boolean 
     {
         const item = this._items.get(itemId);
@@ -626,6 +658,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Unlock an item by ID
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::removeLockFrom()
     removeLockFrom(itemId: number): boolean 
     {
         const item = this._items.get(itemId);
@@ -696,6 +729,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Get one item available for trade
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getOneForTrade()
     getOneForTrade(): FurnitureItem | null 
     {
         // Try selected item first
@@ -724,6 +758,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Get multiple items for trade
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getItemsForTrade()
     getItemsForTrade(count: number): IFurnitureItem[] 
     {
         const result: IFurnitureItem[] = [];
@@ -753,6 +788,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Get one item for recycling (locks it)
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getOneForRecycle()
     getOneForRecycle(): FurnitureItem | null 
     {
         for(const item of this._items.values()) 
@@ -770,6 +806,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Get one item for selling on marketplace
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getOneForSelling()
     getOneForSelling(): FurnitureItem | null 
     {
         for(const item of this._items.values()) 
@@ -786,6 +823,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Get all furniture IDs in this group
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getFurniIds()
     getFurniIds(): number[] 
     {
         return Array.from(this._items.keys());
@@ -794,6 +832,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Get all non-rented furniture IDs
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getNonRentedFurnitureIds()
     getNonRentedFurnitureIds(): number[] 
     {
         const ids: number[] = [];
@@ -812,6 +851,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Minimum items to show counter in UI
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getMinimumItemsToShowCounter()
     getMinimumItemsToShowCounter(): number 
     {
         return 2;
@@ -820,6 +860,7 @@ export class GroupItem implements IGetImageListener
     /**
      * Dispose the group
      */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::dispose()
     dispose(): void 
     {
         this._items.clear();
@@ -833,11 +874,13 @@ export class GroupItem implements IGetImageListener
     }
 
     // both build the same layout per new thumbnail; no functional difference.
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::createWindow()
     protected createWindow(): void 
     {
         this._window = this._model.windowManager.buildWidgetLayout('inventory_thumb_xml') as IWindowContainer | null;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::setFinalImage()
     private setFinalImage(data: ImageBitmap | null): void 
     {
         this._iconImage = data;
@@ -846,6 +889,7 @@ export class GroupItem implements IGetImageListener
         this.updateItemImageVisual();
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::setLoadingImage()
     private setLoadingImage(data: ImageBitmap | null): void 
     {
         this._iconImage = data;
@@ -853,6 +897,7 @@ export class GroupItem implements IGetImageListener
         this.updateItemImageVisual();
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::initWindow()
     private initWindow(): void 
     {
         this.createWindow();
@@ -895,6 +940,7 @@ export class GroupItem implements IGetImageListener
         this._windowInitialized = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::updateAllThumbDataVisuals()
     private updateAllThumbDataVisuals(): void 
     {
         if(!this._window) return;
@@ -1129,6 +1175,7 @@ export class GroupItem implements IGetImageListener
     };
 
     // music discs fall back to the default roomItem/wallItem name for now.
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getFurniItemName()
     private getFurniItemName(): string 
     {
         const item = this.peek();

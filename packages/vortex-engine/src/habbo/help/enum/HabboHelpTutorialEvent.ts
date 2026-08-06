@@ -10,6 +10,8 @@ export class HabboHelpTutorialEvent
 {
     public static readonly AVATAR_TUTORIAL_START: string = 'HHTPNUFWE_AVATAR_TUTORIAL_START';
     public static readonly LIGHT_CLOTHES_ICON: string = 'HHTPNUFWE_LIGHT_CLOTHES_ICON';
+    // AS3: .../src/com/sulake/habbo/help/enum/HabboHelpTutorialEvent.as::DONE_AVATAR_EDITOR_OPENING
     public static readonly DONE_AVATAR_EDITOR_OPENING: string = 'HHTE_DONE_AVATAR_EDITOR_OPENING';
+    // AS3: .../src/com/sulake/habbo/help/enum/HabboHelpTutorialEvent.as::DONE_AVATAR_EDITOR_CLOSING
     public static readonly DONE_AVATAR_EDITOR_CLOSING: string = 'HHTE_DONE_AVATAR_EDITOR_CLOSING';
 }

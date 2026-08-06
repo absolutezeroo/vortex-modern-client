@@ -15,6 +15,7 @@ export class GetMessengerHistoryComposer extends MessageComposer<ConstructorPara
         this._data = [chatId, messageId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/GetMessengerHistoryComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

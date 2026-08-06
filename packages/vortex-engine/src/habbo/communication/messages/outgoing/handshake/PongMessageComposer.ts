@@ -16,6 +16,7 @@ export class PongMessageComposer extends MessageComposer<ConstructorParameters<t
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/handshake/PongMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

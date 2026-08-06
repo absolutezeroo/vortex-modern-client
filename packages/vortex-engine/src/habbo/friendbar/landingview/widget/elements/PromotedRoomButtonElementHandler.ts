@@ -13,6 +13,7 @@ import {ButtonElementHandler} from './ButtonElementHandler';
  */
 export class PromotedRoomButtonElementHandler extends ButtonElementHandler
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4544.as::_categoryCode
     private _categoryCode: string | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4544.as::initialize()

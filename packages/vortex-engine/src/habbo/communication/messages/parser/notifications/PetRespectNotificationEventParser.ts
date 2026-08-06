@@ -16,6 +16,7 @@ export class PetRespectNotificationEventParser implements IMessageParser
 
     private _respect: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/users/PetRespectNotificationEventParser.as::get respect()
     get respect(): number
     {
         return this._respect;
@@ -23,6 +24,7 @@ export class PetRespectNotificationEventParser implements IMessageParser
 
     private _petOwnerId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/users/PetRespectNotificationEventParser.as::get petOwnerId()
     get petOwnerId(): number
     {
         return this._petOwnerId;
@@ -30,11 +32,13 @@ export class PetRespectNotificationEventParser implements IMessageParser
 
     private _petData: IPetInfoData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/users/PetRespectNotificationEventParser.as::get petData()
     get petData(): IPetInfoData | null
     {
         return this._petData;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/users/PetRespectNotificationEventParser.as::flush()
     flush(): boolean
     {
         this._respect = 0;
@@ -43,6 +47,7 @@ export class PetRespectNotificationEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/users/PetRespectNotificationEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;
@@ -57,6 +62,7 @@ export class PetRespectNotificationEventParser implements IMessageParser
     /**
 	 * Returns whether this is a treat notification
 	 */
+    // AS3: sources/win63_version/habbo/communication/messages/parser/users/PetRespectNotificationEventParser.as::isTreat()
     isTreat(): boolean
     {
         return this._petData !== null && this._petData.figureData.typeId === PetRespectNotificationEventParser.PET_TREAT_TYPE_ID;

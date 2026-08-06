@@ -16,6 +16,7 @@ export class SetRoomSessionTagsMessageComposer extends MessageComposer<Construct
         this._data = [tag1, tag2];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/SetRoomSessionTagsMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

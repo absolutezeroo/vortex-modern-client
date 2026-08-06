@@ -12,6 +12,7 @@ import {WallDataParser} from './WallDataParser';
 
 export class ItemsMessageParser implements IMessageParser
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/ItemsMessageParser.as::_items
     private _items: FurnitureWallData[] = [];
     private _ownerMap: Map<number, string> = new Map();
 
@@ -37,12 +38,14 @@ export class ItemsMessageParser implements IMessageParser
         return data;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/ItemsMessageParser.as::flush()
     flush(): boolean
     {
         this._items.length = 0;
         return true;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/ItemsMessageParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper === null)

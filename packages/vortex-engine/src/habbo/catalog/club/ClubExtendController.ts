@@ -15,12 +15,15 @@ import {ClubExtendConfirmationDialog} from './ClubExtendConfirmationDialog';
  */
 export class ClubExtendController
 {
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendController.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _confirmationDialog: ClubExtendConfirmationDialog | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendController.as::_offer
     private _offer: ClubExtendOfferData | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendController.as::_disposed
     private _disposed: boolean = false;
 
     constructor(catalog: HabboCatalog)
@@ -28,6 +31,7 @@ export class ClubExtendController
         this._catalog = catalog;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendController.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -63,12 +67,14 @@ export class ClubExtendController
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendController.as::closeConfirmation()
     closeConfirmation(): void
     {
         this._confirmationDialog?.dispose();
         this._confirmationDialog = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendController.as::showConfirmation()
     showConfirmation(): void
     {
         this.closeConfirmation();
@@ -79,6 +85,7 @@ export class ClubExtendController
         this._confirmationDialog.showConfirmation();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendController.as::confirmSelection()
     confirmSelection(): void
     {
         if(!this._catalog || !this._catalog.connection || !this._offer) return;
@@ -102,16 +109,19 @@ export class ClubExtendController
         this.closeConfirmation();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendController.as::get windowManager()
     get windowManager(): IHabboWindowManager | null
     {
         return this._catalog?.windowManager ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendController.as::get localization()
     get localization(): IHabboLocalizationManager | null
     {
         return this._catalog?.localization ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendController.as::get assets()
     get assets(): IAssetLibrary | null
     {
         return this._catalog?.assets ?? null;
@@ -120,6 +130,7 @@ export class ClubExtendController
     // AS3's config getter just returns the catalog itself (HabboCatalog doubles as a config
     // accessor) - exposed here as the concrete HabboCatalog type instead of casting to a narrower
     // config interface, since ClubExtendConfirmationDialog also needs catalog.utils/assets off it.
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendController.as::get config()
     get config(): HabboCatalog | null
     {
         return this._catalog;

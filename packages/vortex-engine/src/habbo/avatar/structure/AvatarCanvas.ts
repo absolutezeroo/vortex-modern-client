@@ -40,6 +40,7 @@ export class AvatarCanvas
         return this._id;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::_width
     private _width: number;
 
     // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::get width()
@@ -56,6 +57,7 @@ export class AvatarCanvas
         return this._height;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::_offset
     private _offset: { x: number; y: number };
 
     // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::get offset()
@@ -64,6 +66,7 @@ export class AvatarCanvas
         return this._offset;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::_regPoint
     private _regPoint: { x: number; y: number };
 
     // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::get regPoint()

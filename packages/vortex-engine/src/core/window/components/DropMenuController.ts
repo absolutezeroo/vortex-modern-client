@@ -16,8 +16,10 @@ import {DropBaseController} from './DropBaseController';
  */
 export class DropMenuController extends DropBaseController implements IDropMenuWindow
 {
+    // AS3: .../src/com/sulake/core/window/components/DropMenuController.as::DROP_MENU_ITEM_MAX_LENGTH
     private static readonly DROP_MENU_ITEM_MAX_LENGTH: number = 200;
 
+    // AS3: .../src/com/sulake/core/window/components/DropMenuController.as::_stringArray
     private _stringArray: string[] = [];
 
     constructor(
@@ -74,6 +76,7 @@ export class DropMenuController extends DropBaseController implements IDropMenuW
 	 * Resets selection, copies items as strings, then closes the
 	 * expanded view (which will use the updated string array).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropMenuController.as::populate()
     public populate(items: unknown[]): void
     {
         this._selection = -1;
@@ -108,6 +111,7 @@ export class DropMenuController extends DropBaseController implements IDropMenuW
     /**
 	 * Returns a copy of all menu item strings.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropMenuController.as::enumerateSelection()
     public enumerateSelection(): string[]
     {
         const result: string[] = [];
@@ -126,6 +130,7 @@ export class DropMenuController extends DropBaseController implements IDropMenuW
     /**
 	 * Opens the expanded menu programmatically.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropMenuController.as::openMenu()
     public openMenu(): void
     {
         this.openExpandedMenuView();

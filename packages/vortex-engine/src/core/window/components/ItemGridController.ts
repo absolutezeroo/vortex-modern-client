@@ -65,11 +65,13 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Whether columns resize to fit content.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::get containerResizeToColumns()
     public get containerResizeToColumns(): boolean
     {
         return this._containerResizeToColumns;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::set containerResizeToColumns()
     public set containerResizeToColumns(value: boolean)
     {
         this._containerResizeToColumns = value;
@@ -86,6 +88,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
         return this._verticalSpacing;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::set verticalSpacing()
     public set verticalSpacing(value: number)
     {
         this._verticalSpacing = value;
@@ -108,11 +111,13 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Whether the grid should rebuild its structure on resize.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::get shouldRebuildGridOnResize()
     public get shouldRebuildGridOnResize(): boolean
     {
         return this._shouldRebuildGridOnResize;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::set shouldRebuildGridOnResize()
     public set shouldRebuildGridOnResize(value: boolean)
     {
         this._shouldRebuildGridOnResize = value;
@@ -206,6 +211,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * The number of columns in the grid.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::get numColumns()
     public get numColumns(): number
     {
         return this.numListItems;
@@ -214,6 +220,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * The number of rows (max items in any column).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::get numRows()
     public get numRows(): number
     {
         let max = 0;
@@ -234,6 +241,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * The total number of items across all columns.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::get numGridItems()
     public get numGridItems(): number
     {
         let count = 0;
@@ -316,6 +324,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Adds an item to the grid at the next available column position.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::addGridItem()
     public addGridItem(item: IWindow): IWindow
     {
         this.resolveColumnForNextItem(item);
@@ -326,6 +335,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Adds an item at the specified grid index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::addGridItemAt()
     public addGridItemAt(item: IWindow, index: number): IWindow
     {
         this.offsetGridItemsForwards(item, Math.min(this.numGridItems, index));
@@ -336,6 +346,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Gets the item at the specified grid index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::getGridItemAt()
     public getGridItemAt(index: number): IWindow | null
     {
         const col = this.resolveColumnByIndex(index);
@@ -348,6 +359,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Gets the item with the specified ID by searching all columns.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::getGridItemByID()
     public getGridItemByID(id: number): IWindow | null
     {
         for(let i = 0; i < this.numColumns; i++)
@@ -368,6 +380,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Gets the item with the specified name by searching all columns.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::getGridItemByName()
     public getGridItemByName(name: string): IWindow | null
     {
         for(let i = 0; i < this.numColumns; i++)
@@ -388,6 +401,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Gets the item with the specified tag by searching all columns.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::getGridItemByTag()
     public getGridItemByTag(tag: string): IWindow | null
     {
         for(let i = 0; i < this.numColumns; i++)
@@ -408,6 +422,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Gets the grid index of the specified item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::getGridItemIndex()
     public getGridItemIndex(item: IWindow): number
     {
         const col = this.resolveColumnByItem(item);
@@ -420,6 +435,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Removes an item from the grid, shifting subsequent items backwards.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::removeGridItem()
     public removeGridItem(item: IWindow): IWindow | null
     {
         const index = this.getGridItemIndex(item);
@@ -453,6 +469,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Removes the item at the specified grid index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::removeGridItemAt()
     public removeGridItemAt(index: number): IWindow | null
     {
         const item = this.getGridItemAt(index);
@@ -465,6 +482,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Sets the grid index of the specified item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::setGridItemIndex()
     public setGridItemIndex(item: IWindow, index: number): void
     {
         if(this.removeGridItem(item) === null)
@@ -478,6 +496,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Swaps two items in the grid (unimplemented per AS3).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::swapGridItems()
     public swapGridItems(_a: IWindow, _b: IWindow): void
     {
         throw new Error('ItemGridWindow / Unimplemented method!');
@@ -486,6 +505,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Swaps two items at the specified grid indices.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::swapGridItemsAt()
     public swapGridItemsAt(indexA: number, indexB: number): void
     {
         this.swapGridItems(this.getGridItemAt(indexA)!, this.getGridItemAt(indexB)!);
@@ -494,6 +514,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Removes all items from all columns without disposing them.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::removeGridItems()
     public removeGridItems(): void
     {
         for(let i = 0; i < this.numColumns; i++)
@@ -519,6 +540,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Removes and destroys all items from all columns, then destroys columns.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::destroyGridItems()
     public destroyGridItems(): void
     {
         for(let i = 0; i < this.numColumns; i++)
@@ -612,6 +634,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Rebuilds the grid structure by extracting all items and re-adding them.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::rebuildGridStructure()
     public rebuildGridStructure(): void
     {
         if(this._isRebuilding) return;
@@ -681,6 +704,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Gets the column number for a grid item index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::getColumnNumberByItemIndex()
     public getColumnNumberByItemIndex(index: number): number
     {
         return index % this.numColumns;
@@ -689,6 +713,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Gets the row number for a grid item index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::getRowNumberByItemIndex()
     public getRowNumberByItemIndex(index: number): number
     {
         return Math.floor(index / this.numColumns);
@@ -697,6 +722,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Gets the column index of a column sub-list.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::getColumnIndex()
     protected getColumnIndex(col: IItemListWindow): number
     {
         return this.getListItemIndex(col as unknown as IWindow);
@@ -705,6 +731,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Resolves the column sub-list for a given grid item index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::resolveColumnByIndex()
     protected resolveColumnByIndex(index: number): IItemListWindow | null
     {
         return this.getListItemAt(index % this.numColumns) as unknown as IItemListWindow | null;
@@ -713,6 +740,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Finds which column contains the given item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::resolveColumnByItem()
     protected resolveColumnByItem(item: IWindow): IItemListWindow | null
     {
         let i = this.numColumns;
@@ -733,6 +761,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Resolves or creates the column for the next item to be added.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::resolveColumnForNextItem()
     protected resolveColumnForNextItem(item: IWindow): IItemListWindow
     {
         if(this.numColumns === 0)
@@ -785,6 +814,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Creates a new column sub-list for the given item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::addColumnForItem()
     protected addColumnForItem(item: IWindow): IItemListWindow
     {
         const colName = this._name + '_COLUMN_' + this.numListItems;
@@ -816,6 +846,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
         return col;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::removeColumnAt()
     protected removeColumnAt(index: number): void
     {
         const col = this.removeListItemAt(index);
@@ -829,6 +860,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Event procedure for column sub-lists.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::listEventProc()
     protected listEventProc(_event: WindowEvent, _window: IWindow): void
     {
         // No-op per AS3
@@ -837,6 +869,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
     /**
 	 * Shifts grid items forwards to make room at the given index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::offsetGridItemsForwards()
     protected offsetGridItemsForwards(item: IWindow, index: number): void
     {
         const totalItems = this.numGridItems;
@@ -912,6 +945,7 @@ export class ItemGridController extends ItemListController implements IItemGridW
 	 * Shifts grid items backwards after removing from the given index.
 	 * Returns the removed item.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ItemGridController.as::offsetGridItemsBackwards()
     protected offsetGridItemsBackwards(index: number): IWindow | null
     {
         const row = this.getRowNumberByItemIndex(index);

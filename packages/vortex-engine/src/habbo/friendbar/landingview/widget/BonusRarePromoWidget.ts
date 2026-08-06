@@ -24,10 +24,13 @@ import {WidgetContainerLayout} from '../layout/WidgetContainerLayout';
  */
 export class BonusRarePromoWidget implements ILandingViewWidget, IProductDataListener, ISettingsAwareWidget, IGetImageListener
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::_landingView
     private _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::_container
     private _container: IWindowContainer | null = null;
     private _productType: string = '';
     private _productClassId: number = -1;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::_totalCoinsForBonus
     private _totalCoinsForBonus: number = 0;
     private _coinsStillRequiredToBuy: number = 0;
 
@@ -47,6 +50,7 @@ export class BonusRarePromoWidget implements ILandingViewWidget, IProductDataLis
         this._container = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::get disposed()
     get disposed(): boolean
     {
         return this._container === null;
@@ -81,6 +85,7 @@ export class BonusRarePromoWidget implements ILandingViewWidget, IProductDataLis
         this.requestBonusRareInfo();
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/BonusRarePromoWidget.as::get container()
     get container(): IWindow | null
     {
         return this._container;

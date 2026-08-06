@@ -10,6 +10,7 @@ import {Vector3d} from './Vector3d';
 
 export class ColorConverter
 {
+    // AS3: .../src/com/sulake/room/utils/ColorConverter.as::rgbToHSL()
     static rgbToHSL(rgb: number): number
     {
         const r = ((rgb >> 16) & 0xFF) / 255;
@@ -69,6 +70,7 @@ export class ColorConverter
         return (hInt << 16) + (sInt << 8) + lInt;
     }
 
+    // AS3: .../src/com/sulake/room/utils/ColorConverter.as::hslToRGB()
     static hslToRGB(hsl: number): number
     {
         const h = ((hsl >> 16) & 0xFF) / 255;
@@ -190,6 +192,7 @@ export class ColorConverter
         return (rInt << 16) + (gInt << 8) + bInt;
     }
 
+    // AS3: .../src/com/sulake/room/utils/ColorConverter.as::rgb2xyz()
     static rgb2xyz(rgb: number): IVector3d
     {
         let r = ((rgb >> 16) & 0xFF) / 255;
@@ -234,6 +237,7 @@ export class ColorConverter
         );
     }
 
+    // AS3: .../src/com/sulake/room/utils/ColorConverter.as::xyz2CieLab()
     static xyz2CieLab(xyz: IVector3d): IVector3d
     {
         let x = xyz.x / 95.047;
@@ -274,11 +278,13 @@ export class ColorConverter
         );
     }
 
+    // AS3: .../src/com/sulake/room/utils/ColorConverter.as::rgb2CieLab()
     static rgb2CieLab(rgb: number): IVector3d
     {
         return ColorConverter.xyz2CieLab(ColorConverter.rgb2xyz(rgb));
     }
 
+    // AS3: .../src/com/sulake/room/utils/ColorConverter.as::hexToUint()
     static hexToUint(hex: string): number
     {
         hex = hex.replace(/^#/, '');

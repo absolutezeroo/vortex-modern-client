@@ -13,8 +13,11 @@ import {Texture} from 'pixi.js';
 
 export class FurnitureRoomBrandingVisualization extends FurnitureVisualization
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureRoomBrandingVisualization.as::BRANDED_IMAGE_SPRITE_TAG
     private static readonly BRANDED_IMAGE_SPRITE_TAG: string = 'branded_image';
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureRoomBrandingVisualization.as::OBJECT_STATE_DEFAULT
     private static readonly OBJECT_STATE_DEFAULT: number = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureRoomBrandingVisualization.as::OBJECT_STATE_FLIPH
     private static readonly OBJECT_STATE_FLIPH: number = 1;
     private static readonly OBJECT_STATE_FLIPV: number = 2;
     private static readonly OBJECT_STATE_FLIPBOTH: number = 3;
@@ -25,6 +28,7 @@ export class FurnitureRoomBrandingVisualization extends FurnitureVisualization
     protected _brandingOffsetY: number = 0;
     protected _brandingOffsetZ: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureRoomBrandingVisualization.as::_dynamicAssetName
     private _dynamicAssetName: string | null = null;
 
     override dispose(): void
@@ -153,6 +157,7 @@ export class FurnitureRoomBrandingVisualization extends FurnitureVisualization
         return super.getLibraryAssetNameForSprite(asset, sprite);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureRoomBrandingVisualization.as::checkIfImageChanged()
     protected checkIfImageChanged(): boolean
     {
         const model = this.object?.getModel();
@@ -170,6 +175,7 @@ export class FurnitureRoomBrandingVisualization extends FurnitureVisualization
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureRoomBrandingVisualization.as::checkIfImageReady()
     protected checkIfImageReady(): boolean
     {
         const model = this.object?.getModel();
@@ -205,11 +211,13 @@ export class FurnitureRoomBrandingVisualization extends FurnitureVisualization
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureRoomBrandingVisualization.as::imageReady()
     protected imageReady(url: string): void
     {
         this._imageUrl = url;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureRoomBrandingVisualization.as::checkAndCreateImageForCurrentState()
     private checkAndCreateImageForCurrentState(scale: number): void
     {
         if(this.object === null || this._imageUrl === null || this.assetCollection === null)

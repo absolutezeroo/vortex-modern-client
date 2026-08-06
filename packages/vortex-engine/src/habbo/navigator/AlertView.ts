@@ -16,6 +16,7 @@ export class AlertView implements IDisposable
 {
     private static _alerts: Map<string, AlertView> = new Map();
     protected _window: IWindow | null = null;
+    // AS3: sources/win63_version/habbo/navigator/AlertView.as::_xmlFileName
     protected _xmlFileName: string;
     protected _caption: string | null;
 
@@ -26,15 +27,19 @@ export class AlertView implements IDisposable
         this._caption = caption;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/AlertView.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
 
+    // AS3: sources/win63_version/habbo/navigator/AlertView.as::get navigator()
     get navigator(): IHabboTransitionalNavigator | null
     {
         return this._navigator;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/AlertView.as::_disposed
     protected _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/navigator/AlertView.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -46,6 +51,7 @@ export class AlertView implements IDisposable
 	 * @param window - The window to search for
 	 * @returns The associated AlertView, or null
 	 */
+    // AS3: sources/win63_version/habbo/navigator/AlertView.as::findAlertView()
     static findAlertView(window: IWindow): AlertView | null
     {
         for(const alertView of AlertView._alerts.values())
@@ -62,6 +68,7 @@ export class AlertView implements IDisposable
     /**
 	 * Shows the alert dialog. Disposes any existing alert with the same filename.
 	 */
+    // AS3: sources/win63_version/habbo/navigator/AlertView.as::show()
     show(): void
     {
         const existing = AlertView._alerts.get(this._xmlFileName);
@@ -92,6 +99,7 @@ export class AlertView implements IDisposable
         this._window.activate();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/AlertView.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -117,6 +125,7 @@ export class AlertView implements IDisposable
 	 *
 	 * @param _window - The alert window
 	 */
+    // AS3: sources/win63_version/habbo/navigator/AlertView.as::setupAlertWindow()
     protected setupAlertWindow(_window: IWindow): void
     {
         // Override in subclasses
@@ -127,6 +136,7 @@ export class AlertView implements IDisposable
         this.dispose();
     };
 
+    // AS3: sources/win63_version/habbo/navigator/AlertView.as::getAlertWindow()
     private getAlertWindow(): IWindow | null
     {
         if(!this._navigator) return null;

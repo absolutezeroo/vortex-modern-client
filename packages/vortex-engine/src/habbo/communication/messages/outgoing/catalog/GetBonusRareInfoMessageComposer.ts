@@ -14,6 +14,7 @@ export class GetBonusRareInfoMessageComposer extends MessageComposer<Constructor
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/catalog/GetBonusRareInfoMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

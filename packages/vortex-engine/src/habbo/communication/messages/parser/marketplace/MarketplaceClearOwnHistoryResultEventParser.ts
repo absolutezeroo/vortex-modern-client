@@ -11,11 +11,13 @@ export class MarketplaceClearOwnHistoryResultEventParser implements IMessagePars
 {
     private _success: boolean = false;
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3433.as::get success()
     get success(): boolean 
     {
         return this._success;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3433.as::flush()
     flush(): boolean 
     {
         this._success = false;
@@ -23,6 +25,7 @@ export class MarketplaceClearOwnHistoryResultEventParser implements IMessagePars
         return true;
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_3433.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean 
     {
         this._success = wrapper.readBoolean();

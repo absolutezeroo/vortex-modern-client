@@ -26,6 +26,7 @@ export class ClaimNftRewardBoxMessageComposer extends MessageComposer<Constructo
         this._data = [objectId];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1741/_SafeCls_3198.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -8,20 +8,25 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class FlatAccessDeniedMessageParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FlatAccessDeniedMessageEventParser.as::_flatId
     private _flatId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FlatAccessDeniedMessageEventParser.as::get flatId()
     get flatId(): number
     {
         return this._flatId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FlatAccessDeniedMessageEventParser.as::_userName
     private _userName: string | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FlatAccessDeniedMessageEventParser.as::get userName()
     get userName(): string | null
     {
         return this._userName;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FlatAccessDeniedMessageEventParser.as::flush()
     flush(): boolean
     {
         this._flatId = 0;
@@ -29,6 +34,7 @@ export class FlatAccessDeniedMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FlatAccessDeniedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._flatId = wrapper.readInt();

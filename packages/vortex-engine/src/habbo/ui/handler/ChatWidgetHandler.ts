@@ -36,43 +36,52 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
 
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
     }
 
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::_container
     private _container: IRoomWidgetHandlerContainer | null = null;
 
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::get container()
     public get container(): IRoomWidgetHandlerContainer | null 
     {
         return this._container;
     }
 
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::set container()
     public set container(value: IRoomWidgetHandlerContainer | null) 
     {
         this._container = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::_connection
     private _connection: IConnection | null = null;
 
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::set connection()
     public set connection(value: IConnection | null) 
     {
         this._connection = value;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::_widget
     private _widget: RoomChatWidget | null = null;
 
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::set widget()
     public set widget(value: RoomChatWidget) 
     {
         this._widget = value;
     }
 
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::get type()
     public get type(): string 
     {
         return 'RWE_CHAT_WIDGET';
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::dispose()
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::dispose()
     public dispose(): void 
     {
         this._disposed = true;
@@ -80,22 +89,25 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
         this._referencePoint = null;
     }
 
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::getWidgetMessages()
     public getWidgetMessages(): string[] 
     {
         return [];
     }
 
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::processWidgetMessage()
     public processWidgetMessage(_message: RoomWidgetMessage): RoomWidgetUpdateEvent | null 
     {
         return null;
     }
 
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::getProcessedEvents()
     public getProcessedEvents(): string[] 
     {
         return ['RSCE_CHAT_EVENT', 'gce_game_chat'];
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::processEvent()
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::processEvent()
     // Older source trees (PRODUCTION-201601012205-226667486/win63_version) guard this whole method with
     // `if(container.freeFlowChat && !container.freeFlowChat.isDisabledInPreferences) return;`
     // (a user preference to fall back to the legacy bubble system). The primary source
@@ -126,16 +138,16 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
         return null;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::getUserImage()
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::getUserImage()
 
     public update(): void 
     {
         this.updateWidgetPosition();
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::getPetImage()
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::getPetImage()
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::processEvent() (RSCE_CHAT_EVENT branch)
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::processEvent() (RSCE_CHAT_EVENT branch)
     private handleChatEvent(chatEvent: RoomSessionChatEvent): void 
     {
         const container = this._container;
@@ -245,7 +257,7 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
         return null;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::updateWidgetPosition()
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::updateWidgetPosition()
     private updateWidgetPosition(): void 
     {
         const container = this._container;

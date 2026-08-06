@@ -11,16 +11,25 @@ import type {PlaneMaterialCell} from './PlaneMaterialCell';
 
 export class PlaneMaterialCellColumn
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::REPEAT_MODE_NONE
     public static readonly REPEAT_MODE_NONE: number = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::REPEAT_MODE_ALL
     public static readonly REPEAT_MODE_ALL: number = 1;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::REPEAT_MODE_BORDERS
     public static readonly REPEAT_MODE_BORDERS: number = 2;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::REPEAT_MODE_CENTER
     public static readonly REPEAT_MODE_CENTER: number = 3;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::REPEAT_MODE_FIRST
     public static readonly REPEAT_MODE_FIRST: number = 4;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::REPEAT_MODE_LAST
     public static readonly REPEAT_MODE_LAST: number = 5;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::_cells
     private _cells: PlaneMaterialCell[];
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::_repeatMode
     private _repeatMode: number;
     private _cachedBitmap: HTMLCanvasElement | null = null;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::_cachedBitmapNormal
     private _cachedBitmapNormal: Vector3d | null = null;
     private _cachedOffsetX: number = 0;
     private _cachedOffsetY: number = 0;
@@ -51,25 +60,31 @@ export class PlaneMaterialCellColumn
         this._repeatMode = repeatMode;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::_isStatic
     private _isStatic: boolean = true;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::get isStatic()
     get isStatic(): boolean
     {
         return this._isStatic;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::_width
     private _width: number;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::get width()
     get width(): number
     {
         return this._width;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::isRepeated()
     isRepeated(): boolean
     {
         return this._repeatMode !== 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::dispose()
     dispose(): void
     {
         if(this._cells !== null)
@@ -87,6 +102,7 @@ export class PlaneMaterialCellColumn
         this._cachedBitmapNormal = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::clearCache()
     clearCache(): void
     {
         if(!this._cacheUsed) return;
@@ -109,11 +125,13 @@ export class PlaneMaterialCellColumn
         this._cacheUsed = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::getCells()
     getCells(): PlaneMaterialCell[]
     {
         return this._cells;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::render()
     render(height: number, normal: IVector3d, offsetX: number, offsetY: number): HTMLCanvasElement | null
     {
         if(this._repeatMode === 0)
@@ -203,6 +221,7 @@ export class PlaneMaterialCellColumn
         return this._cachedBitmap;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::getCellsHeight()
     private getCellsHeight(cells: PlaneMaterialCell[], normal: IVector3d): number
     {
         if(cells === null || cells.length === 0) return 0;
@@ -218,6 +237,7 @@ export class PlaneMaterialCellColumn
         return total;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::renderCells()
     private renderCells(
         cells: PlaneMaterialCell[],
         yPos: number,
@@ -268,12 +288,14 @@ export class PlaneMaterialCellColumn
         return yPos;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::renderRepeatNone()
     private renderRepeatNone(normal: IVector3d): void
     {
         if(this._cells.length === 0 || this._cachedBitmap === null) return;
         this.renderCells(this._cells, 0, true, normal);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::renderRepeatAll()
     private renderRepeatAll(normal: IVector3d, offsetX: number, offsetY: number): void
     {
         if(this._cells.length === 0 || this._cachedBitmap === null) return;
@@ -286,6 +308,7 @@ export class PlaneMaterialCellColumn
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::renderRepeatBorders()
     private renderRepeatBorders(normal: IVector3d): void
     {
         if(this._cells.length === 0 || this._cachedBitmap === null) return;
@@ -347,6 +370,7 @@ export class PlaneMaterialCellColumn
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::renderRepeatCenter()
     private renderRepeatCenter(normal: IVector3d): void
     {
         if(this._cells.length === 0 || this._cachedBitmap === null) return;
@@ -423,6 +447,7 @@ export class PlaneMaterialCellColumn
         this.renderCells(secondHalf, endY, false, normal);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::renderRepeatFirst()
     private renderRepeatFirst(normal: IVector3d): void
     {
         if(this._cells.length === 0 || this._cachedBitmap === null) return;
@@ -441,6 +466,7 @@ export class PlaneMaterialCellColumn
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterialCellColumn.as::renderRepeatLast()
     private renderRepeatLast(normal: IVector3d): void
     {
         if(this._cells.length === 0 || this._cachedBitmap === null) return;

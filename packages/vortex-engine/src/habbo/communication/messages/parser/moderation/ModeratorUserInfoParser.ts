@@ -11,17 +11,20 @@ export class ModeratorUserInfoParser implements IMessageParser
 {
     private _data: ModeratorUserInfoData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/ModeratorUserInfoEventParser.as::get data()
     get data(): ModeratorUserInfoData | null
     {
         return this._data;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/ModeratorUserInfoEventParser.as::flush()
     flush(): boolean
     {
         this._data = null;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/ModeratorUserInfoEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

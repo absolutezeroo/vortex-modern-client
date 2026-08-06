@@ -29,6 +29,7 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
     private _badgePointLimits: Map<string, number> = new Map();
     private _configurationManager: IHabboConfigurationManager | null = null;
     private _communicationManager: IHabboCommunicationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::_skipExternals
     private _skipExternals: boolean = false;
     private _boundOnLoginStep: ((step: HabboCommunicationEventType) => void) | null = null;
 
@@ -102,6 +103,7 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
      * so a key present in both takes the localised value. A missing language falls back to `en`
      * once (`fallback` guards the recursion).
      */
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::loadDefaultEmbedLocalizations()
     loadDefaultEmbedLocalizations(language: string, fallback: boolean = true): boolean
     {
         const languageAssetName = `default_localizations_${language}`;
@@ -135,6 +137,7 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::getLocalizationWithParams()
     getLocalizationWithParams(key: string, defaultValue: string = '', ...params: string[]): string
     {
         if(params && params.length > 0)
@@ -148,6 +151,7 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         return this.getLocalization(key, defaultValue);
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::getLocalizationWithParamMap()
     getLocalizationWithParamMap(key: string, defaultValue: string = '', paramMap?: Map<string, string>): string
     {
         if(paramMap)
@@ -184,6 +188,7 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         return this.interpolate(localization);
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::getAchievementName()
     getAchievementName(badgeId: string): string
     {
         const badgeInfo = new BadgeBaseAndLevel(badgeId);
@@ -201,6 +206,7 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         return localization ?? '';
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::getAchievementDesc()
     getAchievementDesc(badgeId: string, limit: number): string
     {
         const badgeInfo = new BadgeBaseAndLevel(badgeId);
@@ -218,6 +224,7 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         return this.getLocalization(localizationKey);
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::getAchievementInstruction()
     getAchievementInstruction(badgeId: string): string
     {
         const badgeInfo = new BadgeBaseAndLevel(badgeId);
@@ -230,12 +237,14 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         return localization ?? '';
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::getBadgeBaseName()
     getBadgeBaseName(badgeId: string): string
     {
         const badgeInfo = new BadgeBaseAndLevel(badgeId);
         return badgeInfo.base;
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::getBadgeName()
     getBadgeName(badgeId: string): string
     {
         const badgeInfo = new BadgeBaseAndLevel(badgeId);
@@ -249,6 +258,7 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         return this.getLocalization(localizationKey);
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::getBadgeDesc()
     getBadgeDesc(badgeId: string): string
     {
         const badgeInfo = new BadgeBaseAndLevel(badgeId);
@@ -264,6 +274,7 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         return localizationKey === localization ? '' : localization;
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::getPreviousLevelBadgeId()
     getPreviousLevelBadgeId(badgeId: string): string
     {
         const badgeInfo = new BadgeBaseAndLevel(badgeId);
@@ -271,6 +282,7 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         return badgeInfo.badgeId;
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::setBadgePointLimit()
     setBadgePointLimit(badgeId: string, limit: number): void
     {
         this._badgePointLimits.set(badgeId, limit);
@@ -328,11 +340,13 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
 	 * }
 	 * ```
 	 */
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::onAuthenticated()
     private onAuthenticated(): void
     {
         this.requestLocalizationInit();
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::configureLocalizationLocations()
     private configureLocalizationLocations(): void
     {
         if(!this._configurationManager)
@@ -355,11 +369,13 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::getBadgePointLimit()
     private getBadgePointLimit(badgeId: string): number
     {
         return this._badgePointLimits.get(badgeId) ?? 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::getExistingKey()
     private getExistingKey(keys: string[]): string
     {
         for(const candidateKey of keys)
@@ -374,11 +390,13 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         return keys[0];
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::getRomanNumeral()
     private getRomanNumeral(level: number): string
     {
         return HabboLocalizationManager.ROMAN_NUMERALS[Math.max(0, level - 1)] ?? '';
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/HabboLocalizationManager.as::fixBadLocalization()
     private fixBadLocalization(localizationKey: string): string
     {
         let fixedKey = localizationKey.replace('${', '$');

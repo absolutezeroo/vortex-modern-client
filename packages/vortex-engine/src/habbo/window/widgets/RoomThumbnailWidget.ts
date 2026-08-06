@@ -15,9 +15,11 @@ import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class RoomThumbnailWidget implements IRoomThumbnailWidget
 {
+    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::TYPE
     public static readonly TYPE: string = 'room_thumbnail';
 
     private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
 
@@ -43,6 +45,7 @@ export class RoomThumbnailWidget implements IRoomThumbnailWidget
 
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -55,26 +58,31 @@ export class RoomThumbnailWidget implements IRoomThumbnailWidget
         return this._flatId;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::set flatId()
     public set flatId(value: number)
     {
         this._flatId = value;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         return [];
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::set properties()
     public set properties(_values: PropertyStruct[])
     {
         // AS3: properties setter is a no-op for this widget
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::reset()
     public reset(): void
     {
         this._flatId = 0;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

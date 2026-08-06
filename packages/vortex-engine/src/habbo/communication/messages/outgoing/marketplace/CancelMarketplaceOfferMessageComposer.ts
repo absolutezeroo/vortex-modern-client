@@ -19,6 +19,7 @@ export class CancelMarketplaceOfferMessageComposer extends MessageComposer<[numb
         this._data = [offerId];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_1746/_SafeCls_1808.as::getMessageArray()
     getMessageArray(): [number]
     {
         return this._data;

@@ -36,6 +36,7 @@ const log = Logger.getLogger('habbo.campaign.HabboCampaigns');
  */
 export class HabboCampaigns extends Component implements ILinkEventTracker
 {
+    // AS3: .../src/com/sulake/habbo/campaign/HabboCampaigns.as::_communicationManager
     private _communicationManager: IHabboCommunicationManager | null = null;
     private _lastOpenedDay: number = -1;
 
@@ -44,11 +45,13 @@ export class HabboCampaigns extends Component implements ILinkEventTracker
         super(context);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/campaign/HabboCampaigns.as::_calendarData
     private _calendarData: CampaignCalendarData | null = null;
 
     /**
 	 * Get the current calendar data
 	 */
+    // AS3: .../src/com/sulake/habbo/campaign/HabboCampaigns.as::get calendarData()
     get calendarData(): CampaignCalendarData | null
     {
         return this._calendarData;
@@ -57,6 +60,7 @@ export class HabboCampaigns extends Component implements ILinkEventTracker
     /**
 	 * ILinkEventTracker - link pattern prefix
 	 */
+    // AS3: .../src/com/sulake/habbo/campaign/HabboCampaigns.as::get linkPattern()
     get linkPattern(): string
     {
         return 'openView/';
@@ -79,6 +83,7 @@ export class HabboCampaigns extends Component implements ILinkEventTracker
     /**
 	 * Open a calendar door as a regular user
 	 */
+    // AS3: .../src/com/sulake/habbo/campaign/HabboCampaigns.as::openPackage()
     openPackage(dayIndex: number): void
     {
         if(!this._calendarData) return;
@@ -93,6 +98,7 @@ export class HabboCampaigns extends Component implements ILinkEventTracker
     /**
 	 * Open a calendar door as staff
 	 */
+    // AS3: .../src/com/sulake/habbo/campaign/HabboCampaigns.as::openPackageAsStaff()
     openPackageAsStaff(dayIndex: number): void
     {
         if(!this._calendarData) return;
@@ -107,6 +113,7 @@ export class HabboCampaigns extends Component implements ILinkEventTracker
     /**
 	 * ILinkEventTracker - handle received link
 	 */
+    // AS3: .../src/com/sulake/habbo/campaign/HabboCampaigns.as::linkReceived()
     linkReceived(link: string): void
     {
         const parts = link.split('/');

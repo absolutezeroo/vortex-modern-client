@@ -16,6 +16,7 @@ export class ToggleStaffPickMessageComposer extends MessageComposer<ConstructorP
         this._data = [roomId, picked];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/ToggleStaffPickMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

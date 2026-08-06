@@ -14,6 +14,7 @@ import type {DefaultAttStruct} from '../utils/DefaultAttStruct';
 export class SkinContainer implements ISkinContainer
 {
     protected static _statesByRenderPriority: number[] | null = null;
+    // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::MAX_STYLE_COUNT
     private static readonly MAX_STYLE_COUNT: number = 100;
     private _renderers: Map<number, (ISkinRenderer | null)[]> = new Map();
     private _defaults: Map<number, (DefaultAttStruct | null)[]> = new Map();
@@ -28,8 +29,10 @@ export class SkinContainer implements ISkinContainer
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -45,6 +48,7 @@ export class SkinContainer implements ISkinContainer
 	 * @param layout - The window layout XML
 	 * @param defaults - The default attributes
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::addSkinRenderer()
     public addSkinRenderer(type: number, style: number, intent: string, renderer: ISkinRenderer, layout: string | null, defaults: DefaultAttStruct): void
     {
         if(!this._renderers.has(type))
@@ -84,6 +88,7 @@ export class SkinContainer implements ISkinContainer
 	 * @param style - The window style
 	 * @returns The skin renderer, or null
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::getSkinRendererByTypeAndStyle()
     public getSkinRendererByTypeAndStyle(type: number, style: number): ISkinRenderer | null
     {
         const bucket = this._renderers.get(type);
@@ -110,6 +115,7 @@ export class SkinContainer implements ISkinContainer
 	 * @param style - The window style
 	 * @returns True if a renderer exists
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::skinRendererExists()
     public skinRendererExists(type: number, style: number): boolean
     {
         const bucket = this._renderers.get(type);
@@ -125,6 +131,7 @@ export class SkinContainer implements ISkinContainer
 	 * @param style - The window style
 	 * @returns The default attributes, or null
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::getDefaultAttributesByTypeAndStyle()
     public getDefaultAttributesByTypeAndStyle(type: number, style: number): DefaultAttStruct | null
     {
         const bucket = this._defaults.get(type);
@@ -151,6 +158,7 @@ export class SkinContainer implements ISkinContainer
 	 * @param style - The window style
 	 * @returns The layout XML, or null
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::getWindowLayoutByTypeAndStyle()
     public getWindowLayoutByTypeAndStyle(type: number, style: number): string | null
     {
         const bucket = this._layouts.get(type);
@@ -175,6 +183,7 @@ export class SkinContainer implements ISkinContainer
 	 * @param style - The window style
 	 * @returns The intent string, or null
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::getIntentByTypeAndStyle()
     public getIntentByTypeAndStyle(type: number, style: number): string | null
     {
         const bucket = this._intents.get(type);
@@ -191,6 +200,7 @@ export class SkinContainer implements ISkinContainer
 	 * @param state - The combined window state flags
 	 * @returns The resolved drawable state
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::getTheActualState()
     public getTheActualState(type: number, style: number, state: number): number
     {
         const renderer = this.getSkinRendererByTypeAndStyle(type, style);
@@ -212,6 +222,7 @@ export class SkinContainer implements ISkinContainer
         return 0;
     }
 
+    // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::dispose()
     public dispose(): void
     {
         if(!this._disposed)

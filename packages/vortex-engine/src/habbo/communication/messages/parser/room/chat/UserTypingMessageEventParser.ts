@@ -10,6 +10,7 @@ export class UserTypingMessageEventParser implements IMessageParser
 {
     private _userId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/chat/UserTypingMessageEventParser.as::get userId()
     get userId(): number
     {
         return this._userId;
@@ -17,11 +18,13 @@ export class UserTypingMessageEventParser implements IMessageParser
 
     private _isTyping: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/chat/UserTypingMessageEventParser.as::get isTyping()
     get isTyping(): boolean
     {
         return this._isTyping;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/chat/UserTypingMessageEventParser.as::flush()
     flush(): boolean
     {
         this._userId = 0;
@@ -29,6 +32,7 @@ export class UserTypingMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/chat/UserTypingMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper === null)

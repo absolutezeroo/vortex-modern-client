@@ -23,6 +23,7 @@ export class WebApiRequest extends ApiRequest
         this._requiresSession = requiresSession;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/WebApiRequest.as::get requiresSession()
     get requiresSession(): boolean
     {
         return this._requiresSession;

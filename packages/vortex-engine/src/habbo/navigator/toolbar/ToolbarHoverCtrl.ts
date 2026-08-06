@@ -17,14 +17,21 @@ import type {IHabboTransitionalNavigator} from '../IHabboTransitionalNavigator';
  */
 export class ToolbarHoverCtrl 
 {
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::ITEM_BG_COLOR_OVER
     private static readonly ITEM_BG_COLOR_OVER: number = 7433577;
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::ITEM_BG_COLOR_OUT
     private static readonly ITEM_BG_COLOR_OUT: number = 5723213;
 
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::_disposed
     private _disposed: boolean = false;
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::_window
     private _window: IWindowContainer | null = null;
     private _itemList: IItemListWindow | null = null;
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::_simpleItemBase
     private _simpleItemBase: IWindowContainer | null = null;
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::_hideTimeout
     private _hideTimeout: ReturnType<typeof setTimeout> | null = null;
     private _isHovering: boolean = false;
 
@@ -66,6 +73,7 @@ export class ToolbarHoverCtrl
      * @param x - X position
      * @param y - Y position
      */
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::show()
     show(x: number, y: number): void 
     {
         if(!this._window) return;
@@ -79,6 +87,7 @@ export class ToolbarHoverCtrl
     /**
      * Hides the menu (respects hover state).
      */
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::hide()
     hide(): void 
     {
         if(this._disposed || this._isHovering) return;
@@ -95,6 +104,7 @@ export class ToolbarHoverCtrl
     /**
      * Starts a delayed hide (500ms timeout).
      */
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::hideDelayed()
     hideDelayed(): void 
     {
         if(this._disposed || this._isHovering) return;
@@ -105,6 +115,7 @@ export class ToolbarHoverCtrl
     /**
      * Forces the menu to hide immediately, ignoring hover state.
      */
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::hideForced()
     hideForced(): void 
     {
         if(this._disposed) return;
@@ -118,6 +129,7 @@ export class ToolbarHoverCtrl
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::dispose()
     dispose(): void 
     {
         this._disposed = true;
@@ -135,6 +147,7 @@ export class ToolbarHoverCtrl
      * @param label - Display text
      * @param callback - Click handler
      */
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::addSimpleItem()
     private addSimpleItem(id: string, label: string, callback: (event: WindowEvent) => void): void 
     {
         if(!this._simpleItemBase || !this._itemList) return;
@@ -156,12 +169,14 @@ export class ToolbarHoverCtrl
         (this._itemList as any).addListItem?.(item);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::startHideTimeout()
     private startHideTimeout(): void 
     {
         this.stopHideTimeout();
         this._hideTimeout = setTimeout(() => this.hide(), 500);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as::stopHideTimeout()
     private stopHideTimeout(): void 
     {
         if(this._hideTimeout !== null) 

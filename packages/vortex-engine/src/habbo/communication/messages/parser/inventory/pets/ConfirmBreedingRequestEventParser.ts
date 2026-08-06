@@ -19,10 +19,13 @@ export class ConfirmBreedingRequestEventParser implements IMessageParser
 {
     private _nestId: number = 0;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_3500.as::_pet1
     private _pet1: BreedingPetInfo | null = null;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_3500.as::_pet2
     private _pet2: BreedingPetInfo | null = null;
 
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_3500.as::_rarityCategories
     private _rarityCategories: PetBreedingRarityCategory[] = [];
 
     private _resultPetType: number = 0;

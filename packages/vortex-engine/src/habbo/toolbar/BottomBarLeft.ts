@@ -33,25 +33,41 @@ const log = Logger.getLogger('habbo.toolbar.BottomBarLeft');
  */
 export class BottomBarLeft 
 {
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::DEFAULT_LOCATION
     private static readonly DEFAULT_LOCATION = {x: 0, y: 500};
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::LANDING_VIEW_LOCATION
     private static readonly LANDING_VIEW_LOCATION = {x: 0, y: 500};
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::ICON_BG_COLOR_OVER
     private static readonly ICON_BG_COLOR_OVER: number = 7433577;
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::ICON_BG_COLOR_OUT
     private static readonly ICON_BG_COLOR_OUT: number = 5723213;
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::ICON_MOUSE_OVER
     private static readonly ICON_MOUSE_OVER: string = '_hover';
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::ICON_MOUSE_OUT
     private static readonly ICON_MOUSE_OUT: string = '_normal';
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::COUNTER_MARGIN
     private static readonly COUNTER_MARGIN: number = 0;
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::ME_MENU_ICON_NAME
     private static readonly ME_MENU_ICON_NAME: string = 'icon_me_menu';
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::ICON_REGION_WIDTH
     private static readonly ICON_REGION_WIDTH: number = 45;
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::ICON_LABEL_HEIGHT
     private static readonly ICON_LABEL_HEIGHT: number = 20;
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::WINDOW_RIGHT_PADDING
     private static readonly WINDOW_RIGHT_PADDING: number = 10;
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::COLLAPSED_MARGIN
     private static readonly COLLAPSED_MARGIN: number = 185;
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::_toolbar
     private _toolbar: HabboToolbar | null;
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::_windowManager
     private _windowManager: IHabboWindowManager | null;
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::_buttonContainer
     private _buttonContainer: IWindow | null = null;
     private _leftArrow: IWindow | null = null;
     private _rightArrow: IWindow | null = null;
     private _lineSeparator: IWindow | null = null;
     private _newItemsLabel: IWindowContainer | null = null;
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::_unseenItemCounters
     private _unseenItemCounters: Map<string, unknown> = new Map();
     private _newItemsNotificationEnabled: boolean = false;
     private _newItemsLabelVisible: boolean = false;
@@ -154,21 +170,25 @@ export class BottomBarLeft
         log.debug('BottomBarLeft constructed with IWindow tree');
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::_disposed
     private _disposed: boolean = false;
 
     /**
      * Whether the view is disposed
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::get disposed()
     get disposed(): boolean 
     {
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::_window
     private _window: IWindowContainer | null = null;
 
     /**
      * The root window of the toolbar
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::get window()
     get window(): IWindow | null 
     {
         return this._window;
@@ -189,6 +209,7 @@ export class BottomBarLeft
     /**
      * Set the unseen achievement count
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::set unseenAchievementCount()
     set unseenAchievementCount(value: number) 
     {
         this._unseenAchievementCount = value;
@@ -199,6 +220,7 @@ export class BottomBarLeft
     /**
      * Set the unseen mini mail message count
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::set unseenMiniMailMessageCount()
     set unseenMiniMailMessageCount(value: number) 
     {
         this._unseenMiniMailMessageCount = value;
@@ -209,6 +231,7 @@ export class BottomBarLeft
     /**
      * Set the unseen forums count
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::set unseenForumsCount()
     set unseenForumsCount(value: number) 
     {
         this._unseenForumsCount = value;
@@ -219,6 +242,7 @@ export class BottomBarLeft
      *
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as set onDuty()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::set onDuty()
     set onDuty(value: boolean) 
     {
         if(!this._window) return;
@@ -234,6 +258,7 @@ export class BottomBarLeft
     /**
      * Total unseen count across me-menu categories
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::get unseenMeMenuCount()
     get unseenMeMenuCount(): number 
     {
         return this._unseenMiniMailMessageCount + this._unseenAchievementCount + this._unseenForumsCount;
@@ -242,6 +267,7 @@ export class BottomBarLeft
     /**
      * Get the me menu controller
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::get memenu()
     get memenu(): MeMenuNewController | null
     {
         return this._meMenuController;
@@ -250,6 +276,7 @@ export class BottomBarLeft
     /**
      * Get the progression menu controller
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::get progmenu()
     get progmenu(): ProgMenuController | null
     {
         return this._progMenuController;
@@ -258,6 +285,7 @@ export class BottomBarLeft
     /**
      * The link pattern for toolbar links
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::get linkPattern()
     get linkPattern(): string 
     {
         return 'toolbar/';
@@ -273,6 +301,7 @@ export class BottomBarLeft
      * @param state Toolbar state identifier
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as setToolbarState()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::setToolbarState()
     public setToolbarState(state: string): void 
     {
         if(!this._window) 
@@ -395,6 +424,7 @@ export class BottomBarLeft
      * @param visible Whether the icon should be visible
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as iconVisibility()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::iconVisibility()
     public iconVisibility(iconName: string, visible: boolean): void 
     {
         if(!this._window || !iconName) return;
@@ -416,6 +446,7 @@ export class BottomBarLeft
      *
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as calculateNewWidth()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::calculateNewWidth()
     public calculateNewWidth(): number 
     {
         if(!this._window) return 1;
@@ -446,6 +477,7 @@ export class BottomBarLeft
      * @returns Rectangle or null if not found
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as getIconLocation()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::getIconLocation()
     public getIconLocation(iconId: string): { x: number; y: number; width: number; height: number } | null 
     {
         if(!this._window) return null;
@@ -608,6 +640,7 @@ export class BottomBarLeft
      *
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as isNewItemsNotificationEnabled()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::isNewItemsNotificationEnabled()
     public isNewItemsNotificationEnabled(): boolean 
     {
         if(!this._toolbar) return false;
@@ -620,6 +653,7 @@ export class BottomBarLeft
      * @param link The link string
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as linkReceived()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::linkReceived()
     public linkReceived(link: string): void 
     {
         const parts = link.split('/');
@@ -648,6 +682,7 @@ export class BottomBarLeft
      *
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as getToolbarAreaWidth()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::getToolbarAreaWidth()
     public getToolbarAreaWidth(): number 
     {
         if(!this._lineSeparator || !this._lineSeparator.parent) 
@@ -697,6 +732,7 @@ export class BottomBarLeft
      * @returns The fly motion, or null if the icon was not found
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as animateToIcon()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::animateToIcon()
     public animateToIcon(iconId: string, bitmap: ImageBitmap | null, startX: number, startY: number): Motion | null 
     {
         if(!this._windowManager || !this._window) return null;
@@ -798,6 +834,7 @@ export class BottomBarLeft
      * @param bitmap - The ImageBitmap to set
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as setIconBitmap()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::setIconBitmap()
     public setIconBitmap(iconId: string, bitmap: ImageBitmap | null): void 
     {
         if(iconId !== 'HTIE_ICON_MEMENU') return;
@@ -814,6 +851,7 @@ export class BottomBarLeft
      *
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as dispose()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;
@@ -886,6 +924,7 @@ export class BottomBarLeft
      *
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as checkSize()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::checkSize()
     private checkSize(): void 
     {
         if(!this._window || !this._windowManager) 
@@ -1040,6 +1079,7 @@ export class BottomBarLeft
      *
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as setIconHoverState()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::setIconHoverState()
     private setIconHoverState(iconBmp: IWindow | null, suffix: string): void 
     {
         if(!iconBmp) return;
@@ -1076,6 +1116,7 @@ export class BottomBarLeft
      *
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as setIconBgHoverState()
      */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::setIconBgHoverState()
     private setIconBgHoverState(border: IWindowContainer | null, suffix: string): void 
     {
         if(!border) return;

@@ -163,6 +163,7 @@ export class NameChangeDialog
      * Only the OK arm advances the flow; every other code shows a message and leaves the user on
      * the dialog.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHc/NameChangeDialog.as::claimNameResponse()
     public claimNameResponse(resultCode: number, _name: unknown, _suggestions: string[]): void
     {
         this.nameIsCorrect = false;
@@ -213,6 +214,7 @@ export class NameChangeDialog
      *
      * The first guard drops answers for a name the user has already typed past.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHc/NameChangeDialog.as::checkNameResponse()
     public checkNameResponse(resultCode: number, name: string, _suggestions: string[]): void
     {
         if(this._inputField == null || this._inputField.text !== name) return;
@@ -274,6 +276,7 @@ export class NameChangeDialog
      *
      * The Illumina (style 1) layout. `HitchNameChangeDialog` overrides it wholesale.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHc/NameChangeDialog.as::init()
     protected init(): void
     {
         if(!this._context) return;
@@ -394,11 +397,13 @@ export class NameChangeDialog
      *
      * The setter's first statement is `_arg_1 = true` in the 701 source — see the class header.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHc/NameChangeDialog.as::get nameIsCorrect()
     protected get nameIsCorrect(): boolean
     {
         return this._okIcon != null && this._okIcon.visible;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHc/NameChangeDialog.as::set nameIsCorrect()
     protected set nameIsCorrect(_value: boolean)
     {
         const value = true;
@@ -534,6 +539,7 @@ export class NameChangeDialog
      *
      * `nameChangeCompleted()` is called twice when the name was already claimed — as written.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHc/NameChangeDialog.as::claimName()
     private claimName(name: string): void
     {
         if(this._nameClaimed)
@@ -563,6 +569,7 @@ export class NameChangeDialog
      *
      * Style 1 gets a balloon under the field; style 2 gets a flat alert strip sized to the text.
      */
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHc/NameChangeDialog.as::showErrorMessage()
     private showErrorMessage(message: string): void
     {
         if(!this._inputBackground || !this._dialog) return;

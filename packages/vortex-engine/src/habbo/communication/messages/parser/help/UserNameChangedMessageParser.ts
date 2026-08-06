@@ -11,6 +11,7 @@ export class UserNameChangedMessageParser implements IMessageParser
 {
     private _webId: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/users/UserNameChangedMessageEventParser.as::get webId()
     get webId(): number
     {
         return this._webId;
@@ -18,18 +19,22 @@ export class UserNameChangedMessageParser implements IMessageParser
 
     private _id: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/users/UserNameChangedMessageEventParser.as::get id()
     get id(): number
     {
         return this._id;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/users/UserNameChangedMessageEventParser.as::_newName
     private _newName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/users/UserNameChangedMessageEventParser.as::get newName()
     get newName(): string
     {
         return this._newName;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/users/UserNameChangedMessageEventParser.as::flush()
     flush(): boolean
     {
         this._webId = -1;
@@ -38,6 +43,7 @@ export class UserNameChangedMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/users/UserNameChangedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

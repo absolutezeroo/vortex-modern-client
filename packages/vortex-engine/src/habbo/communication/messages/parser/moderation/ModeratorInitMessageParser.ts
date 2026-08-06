@@ -12,11 +12,13 @@ export class ModeratorInitMessageParser implements IMessageParser
 {
     private _data: ModeratorInitData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/ModeratorInitMessageEventParser.as::get data()
     get data(): ModeratorInitData | null
     {
         return this._data;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/ModeratorInitMessageEventParser.as::flush()
     flush(): boolean
     {
         if(this._data)
@@ -28,6 +30,7 @@ export class ModeratorInitMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/moderation/ModeratorInitMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

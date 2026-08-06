@@ -12,10 +12,12 @@ export interface ILimitedItemOverlayWidget extends IWidget
     /**
 	 * The serial number of the limited item.
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/ILimitedItemOverlayWidget.as::get serialNumber()
     serialNumber: number;
 
     /**
 	 * The total series size.
 	 */
+    // AS3: sources/win63_version/habbo/window/widgets/ILimitedItemOverlayWidget.as::get seriesSize()
     seriesSize: number;
 }

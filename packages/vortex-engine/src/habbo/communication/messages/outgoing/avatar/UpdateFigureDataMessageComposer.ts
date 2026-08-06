@@ -24,6 +24,7 @@ export class UpdateFigureDataMessageComposer extends MessageComposer<[string, st
         this._data = [gender, figure];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_3022/_SafeCls_3021.as::getMessageArray()
     getMessageArray(): [string, string]
     {
         return this._data;

@@ -14,10 +14,13 @@
  */
 export class MarketPlaceOfferStatus 
 {
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/_SafeCls_1798.as::OPEN
     static readonly OPEN: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/_SafeCls_1798.as::SOLD
     static readonly SOLD: number = 2;
 
+    // AS3: .../src/com/sulake/habbo/catalog/marketplace/_SafeCls_1798.as::EXPIRED
     static readonly EXPIRED: number = 3;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_1798.as::isClearable()

@@ -15,6 +15,7 @@ export interface IHabboTracking
 	 * @param action The event action
 	 * @param label Optional numeric label
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/IHabboTracking.as::trackGoogle()
     trackGoogle(category: string, action: string, label?: number): void;
 
     /**
@@ -31,6 +32,7 @@ export interface IHabboTracking
 	 *
 	 * @param message The error message to log
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/IHabboTracking.as::logError()
     logError(message: string): void;
 
     /**
@@ -50,6 +52,7 @@ export interface IHabboTracking
 	 * @param extra Optional extra string data
 	 * @param roomId Optional room ID
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/IHabboTracking.as::trackEventLog()
     trackEventLog(type: string, value: string, unit: string, extra?: string, roomId?: number): void;
 
     /**
@@ -69,5 +72,6 @@ export interface IHabboTracking
 	 * @param talentType The talent type
 	 * @param talentId The talent identifier
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/IHabboTracking.as::trackTalentTrackOpen()
     trackTalentTrackOpen(talentType: string, talentId: string): void;
 }

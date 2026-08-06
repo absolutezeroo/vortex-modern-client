@@ -20,6 +20,7 @@ export interface IRoomObjectVisualizationFactory
 	 * @param type The visualization type string (e.g. 'room', 'furniture_static', 'user')
 	 * @returns A new visualization instance, or null if the type is unknown
 	 */
+    // AS3: .../src/com/sulake/room/object/IRoomObjectVisualizationFactory.as::createRoomObjectVisualization()
     createRoomObjectVisualization(type: string): IRoomObjectVisualization | null;
 
     /**
@@ -38,6 +39,7 @@ export interface IRoomObjectVisualizationFactory
 	 * @param data The raw visualization data (JSON from .nitro bundle)
 	 * @returns Cached or newly created visualization data, or null on failure
 	 */
+    // AS3: .../src/com/sulake/room/object/IRoomObjectVisualizationFactory.as::getRoomObjectVisualizationData()
     getRoomObjectVisualizationData(id: string, type: string, data: unknown): IRoomObjectVisualizationData | null;
 
     dispose(): void;

@@ -30,16 +30,22 @@ import {GetCommunityGoalProgressMessageComposer} from '@habbo/communication/mess
  */
 export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget, ISettingsAwareWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::METER_INITIAL_DELAY_MS
     private static readonly METER_INITIAL_DELAY_MS: number = 1500;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::METER_BUILDUP_TIME_MS
     private static readonly METER_BUILDUP_TIME_MS: number = 1000;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::CHALLENGE_LEVEL_NEEDLE_BASE_FRAMES
     private static readonly CHALLENGE_LEVEL_NEEDLE_BASE_FRAMES: number[] = [0, 8, 16, 23];
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::_landingView
     protected _landingView: HabboLandingView | null;
     protected _container: IWindowContainer | null = null;
     private _meterNeedle: IStaticBitmapWrapperWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::_communityProgress
     protected _communityProgress: CommunityGoalProgressData | null = null;
     private _progressRequestPending: boolean = false;
     private _updateElapsed: number = 0;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::_buildupProgress
     private _buildupProgress: number = 0;
     private _localizationsInitialized: boolean = false;
     private _catalogButtonInteractive: boolean = true;
@@ -108,6 +114,7 @@ export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget,
         HabboLandingView.positionAfterAndStretch(this._container, 'community_title', 'hdr_line');
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::campaignizeMeterElementAssetUri()
     private campaignizeMeterElementAssetUri(element: IWindow | null): void
     {
         if(!element || !this._communityProgress) return;
@@ -118,6 +125,7 @@ export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget,
         bitmap.assetUri = bitmap.assetUri.substr(0, extIndex) + '_' + this._communityProgress.goalCode + '.png';
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::setCampaignLocalization()
     protected setCampaignLocalization(elementName: string, localizationKey: string): void
     {
         if(!this._container || !this._communityProgress) return;
@@ -130,6 +138,7 @@ export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget,
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::getCurrentNeedleFrame()
     protected getCurrentNeedleFrame(): number
     {
         if(!this._communityProgress) return 0;
@@ -147,6 +156,7 @@ export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget,
         return baseFrame + Math.floor(this._communityProgress.percentCompletionTowardsNextLevel * (frameSpan + 0.001) / 100);
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::initializeLocalizations()
     private initializeLocalizations(): void
     {
         if(!this._container || !this._communityProgress || this._communityProgress.goalCode == null) return;
@@ -171,6 +181,7 @@ export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget,
         this._localizationsInitialized = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::refreshContent()
     private refreshContent(): void
     {
         if(!this._container) return;
@@ -239,6 +250,7 @@ export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget,
         this._container.invalidate();
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::updateMeter()
     protected updateMeter(frame: number, animateLevels: boolean = true): void
     {
         if(!this._container) return;
@@ -270,6 +282,7 @@ export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget,
         this.refreshContent();
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::requestCommunityGoalProgress()
     private requestCommunityGoalProgress(): void
     {
         if(!this._progressRequestPending)
@@ -323,6 +336,7 @@ export class CommunityGoalWidget implements IUpdateReceiver, ILandingViewWidget,
         WidgetContainerLayout.applyCommonWidgetSettings(this._container, value);
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/CommunityGoalWidget.as::get communityProgress()
     protected get communityProgress(): CommunityGoalProgressData | null
     {
         return this._communityProgress;

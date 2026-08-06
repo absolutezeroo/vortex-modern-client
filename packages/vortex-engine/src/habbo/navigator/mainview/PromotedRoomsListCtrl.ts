@@ -18,8 +18,10 @@ import { GetExtendedProfileMessageComposer } from '../../communication/messages/
  */
 export class PromotedRoomsListCtrl
 {
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::CATEGORY_SPACING
     private static readonly CATEGORY_SPACING = 5;
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator;
     private _userCountRenderer: UserCountRenderer;
     private _guestRoomListCtrl: PromotedRoomsGuestRoomListCtrl;
@@ -31,11 +33,13 @@ export class PromotedRoomsListCtrl
         this._guestRoomListCtrl = new PromotedRoomsGuestRoomListCtrl(navigator);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::get disposed()
     get disposed(): boolean
     {
         return this._navigator === null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::dispose()
     dispose(): void
     {
         this._navigator = null!;
@@ -53,6 +57,7 @@ export class PromotedRoomsListCtrl
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::refresh()
     refresh(container: IWindowContainer, categories: PromotedRoomCategoryData[]): void
     {
         Util.hideChildren(container);
@@ -81,6 +86,7 @@ export class PromotedRoomsListCtrl
             : 0;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::createEntry()
     createEntry(index: number): IWindowContainer
     {
         const entry = this._navigator.getXmlWindow('grs_promoted_room_category') as IWindowContainer;
@@ -93,6 +99,7 @@ export class PromotedRoomsListCtrl
         return entry;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::refreshEntry()
     refreshEntry(entry: IWindowContainer, category: PromotedRoomCategoryData): void
     {
         const categoryText = this._navigator.getText('promotedroomcategory.' + category.code);
@@ -186,11 +193,13 @@ export class PromotedRoomsListCtrl
         entry.height = category.open ? Util.getLowestPoint(entry) + 3 : 90;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::getCategoryContainer()
     private getCategoryContainer(parent: IWindowContainer, id: number): IWindowContainer | null
     {
         return parent.getChildByID(id) as IWindowContainer | null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::getLocationAfter()
     private getLocationAfter(entry: IWindowContainer, name: string, padding: number = 3): number
     {
         const child = entry.findChildByName(name);
@@ -200,6 +209,7 @@ export class PromotedRoomsListCtrl
         return child.x + child.width + padding;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::setProcedureAndId()
     private setProcedureAndId(
         container: IWindowContainer,
         id: number,
@@ -216,6 +226,7 @@ export class PromotedRoomsListCtrl
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::onEnterRoomButton()
     private onEnterRoomButton(event: WindowEvent, window: IWindow): void
     {
         if(event.type !== 'WME_CLICK') return;
@@ -229,6 +240,7 @@ export class PromotedRoomsListCtrl
         this._navigator.closeNavigator();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::onLeaderRegion()
     private onLeaderRegion(event: WindowEvent, window: IWindow): void
     {
         if(event.type !== 'WME_CLICK') return;
@@ -241,6 +253,7 @@ export class PromotedRoomsListCtrl
         this._navigator.send(new GetExtendedProfileMessageComposer(category.bestRoom.ownerId));
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::onToggleOpenRegion()
     private onToggleOpenRegion(event: WindowEvent, window: IWindow): void
     {
         if(event.type !== 'WME_CLICK') return;
@@ -265,11 +278,13 @@ export class PromotedRoomsListCtrl
         this._navigator.mainViewCtrl?.refresh();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::findCategory()
     private findCategory(window: IWindow): PromotedRoomCategoryData | null
     {
         return this._navigator.data.promotedRooms?.entries[window.id] ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/PromotedRoomsListCtrl.as::refreshAvatarImage()
     private refreshAvatarImage(entry: IWindowContainer, category: PromotedRoomCategoryData): void
     {
         const widgetWindow = entry.findChildByName('avatar_image_widget') as IWidgetWindow | null;

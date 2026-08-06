@@ -18,13 +18,16 @@ export class WindowRectLimits implements IRectLimiter
         this._owner = owner;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::_minWidth
     private _minWidth: number = -2147483648;
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::get minWidth()
     public get minWidth(): number
     {
         return this._minWidth;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::set minWidth()
     public set minWidth(value: number)
     {
         this._minWidth = value;
@@ -35,13 +38,16 @@ export class WindowRectLimits implements IRectLimiter
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::_maxWidth
     private _maxWidth: number = 2147483647;
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::get maxWidth()
     public get maxWidth(): number
     {
         return this._maxWidth;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::set maxWidth()
     public set maxWidth(value: number)
     {
         this._maxWidth = value;
@@ -52,13 +58,16 @@ export class WindowRectLimits implements IRectLimiter
         }
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/WindowRectLimits.as::_minHeight
     private _minHeight: number = -2147483648;
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::get minHeight()
     public get minHeight(): number
     {
         return this._minHeight;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::set minHeight()
     public set minHeight(value: number)
     {
         this._minHeight = value;
@@ -69,13 +78,16 @@ export class WindowRectLimits implements IRectLimiter
         }
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/WindowRectLimits.as::_maxHeight
     private _maxHeight: number = 2147483647;
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::get maxHeight()
     public get maxHeight(): number
     {
         return this._maxHeight;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::set maxHeight()
     public set maxHeight(value: number)
     {
         this._maxHeight = value;
@@ -86,6 +98,7 @@ export class WindowRectLimits implements IRectLimiter
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::get isEmpty()
     public get isEmpty(): boolean
     {
         return (
@@ -96,6 +109,7 @@ export class WindowRectLimits implements IRectLimiter
         );
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::setEmpty()
     public setEmpty(): void
     {
         this._minWidth = -2147483648;
@@ -104,6 +118,7 @@ export class WindowRectLimits implements IRectLimiter
         this._maxHeight = 2147483647;
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::limit()
     public limit(): void
     {
         if(!this.isEmpty && this._owner)
@@ -128,6 +143,7 @@ export class WindowRectLimits implements IRectLimiter
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::assign()
     public assign(minWidth: number, maxWidth: number, minHeight: number, maxHeight: number): void
     {
         this._minWidth = minWidth;
@@ -137,6 +153,7 @@ export class WindowRectLimits implements IRectLimiter
         this.limit();
     }
 
+    // AS3: .../src/com/sulake/core/window/utils/WindowRectLimits.as::clone()
     public clone(owner?: unknown): WindowRectLimits
     {
         const result = new WindowRectLimits(owner as IWindow);

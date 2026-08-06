@@ -12,6 +12,7 @@ const log = Logger.getLogger('core.runtime.ComponentContext');
  */
 interface IInterfaceQueue<T = unknown>
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ComponentContext.as::iid
     iid: IID<T>;
     callbacks: InterfaceCallback<T>[];
 }
@@ -54,6 +55,7 @@ export class ComponentContext extends Component implements IContext
     private readonly _interfaceQueues: Map<symbol, IInterfaceQueue> = new Map();
     private readonly _updateReceivers: IUpdateReceiverEntry[] = [];
     private _updateReceiversDirty: boolean = false;
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::_linkEventTrackers
     private readonly _linkEventTrackers: ILinkEventTracker[] = [];
     private readonly _unlockHandlers: Map<Component, () => void> = new Map();
 
@@ -77,11 +79,13 @@ export class ComponentContext extends Component implements IContext
     /**
 	 * Configuration manager
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::get configuration()
     get configuration(): ICoreConfiguration | null
     {
         return this._configuration;
     }
 
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::set configuration()
     set configuration(value: ICoreConfiguration | null)
     {
         this._configuration = value;
@@ -90,6 +94,7 @@ export class ComponentContext extends Component implements IContext
     /**
 	 * Get the root context
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::get root()
     get root(): IContext
     {
         if(!this.context || this.context === this)
@@ -143,6 +148,7 @@ export class ComponentContext extends Component implements IContext
     /**
 	 * Attach a component to this context
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::attachComponent()
     attachComponent(component: Component, interfaces: IID[]): void
     {
         if(this.disposed) return;
@@ -199,6 +205,7 @@ export class ComponentContext extends Component implements IContext
     /**
 	 * Detach a component from this context
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::detachComponent()
     detachComponent(component: Component): void
     {
         const index = this._attachedComponents.indexOf(component);
@@ -282,6 +289,7 @@ export class ComponentContext extends Component implements IContext
 	 *
 	 * @see source_as_win63/core/runtime/ComponentContext.as lines 509-515
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::addLinkEventTracker()
     addLinkEventTracker(tracker: ILinkEventTracker): void
     {
         if(this._linkEventTrackers.indexOf(tracker) < 0)
@@ -295,6 +303,7 @@ export class ComponentContext extends Component implements IContext
 	 *
 	 * @see source_as_win63/core/runtime/ComponentContext.as lines 517-524
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::removeLinkEventTracker()
     removeLinkEventTracker(tracker: ILinkEventTracker): void
     {
         const index = this._linkEventTrackers.indexOf(tracker);
@@ -310,6 +319,7 @@ export class ComponentContext extends Component implements IContext
 	 *
 	 * @see source_as_win63/core/runtime/ComponentContext.as lines 526-536
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::createLinkEvent()
     createLinkEvent(link: string): void
     {
         for(const tracker of this._linkEventTrackers)
@@ -334,7 +344,7 @@ export class ComponentContext extends Component implements IContext
 	 * @returns whether the error was handled by tearing the context down; always false here, only
 	 * CoreComponentContext can return true.
 	 */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/ComponentContext.as::error()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ComponentContext.as::error()
     error(message: string, fatal: boolean = false, code: number = -1, error?: Error): boolean
     {
         this._lastError = message;
@@ -349,6 +359,7 @@ export class ComponentContext extends Component implements IContext
     /**
 	 * Log a warning
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::warning()
     warning(message: string): void
     {
         this._lastWarning = message;
@@ -361,6 +372,7 @@ export class ComponentContext extends Component implements IContext
     /**
 	 * Log a debug message
 	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::debug()
     debug(message: string): void
     {
         this._lastDebug = message;
@@ -463,7 +475,7 @@ export class ComponentContext extends Component implements IContext
     /**
 	 * Announce that an interface is now available
 	 */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/ComponentContext.as::announceInterfaceAvailability()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ComponentContext.as::announceInterfaceAvailability()
     private announceInterfaceAvailability<T>(iid: IID<T>, provider: Component | T): void
     {
         const queue = (this._interfaceQueues.get(iid) ?? null) as IInterfaceQueue<T> | null;

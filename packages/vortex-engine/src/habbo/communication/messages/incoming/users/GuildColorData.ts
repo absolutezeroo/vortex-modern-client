@@ -17,6 +17,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 export class GuildColorData
 {
     private _id: number;
+    // AS3: .../src/unknowns/_SafePkg_1731/_SafeCls_2699.as::_color
     private _color: number;
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1731/_SafeCls_2699.as::_SafeCls_2699()

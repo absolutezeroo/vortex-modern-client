@@ -10,6 +10,7 @@ export class CanCreateRoomEventMessageParser implements IMessageParser
 {
     private _canCreateEvent: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/CanCreateRoomEventEventParser.as::get canCreateEvent()
     get canCreateEvent(): boolean
     {
         return this._canCreateEvent;
@@ -17,11 +18,13 @@ export class CanCreateRoomEventMessageParser implements IMessageParser
 
     private _errorCode: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/CanCreateRoomEventEventParser.as::get errorCode()
     get errorCode(): number
     {
         return this._errorCode;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/CanCreateRoomEventEventParser.as::flush()
     flush(): boolean
     {
         this._canCreateEvent = false;
@@ -29,6 +32,7 @@ export class CanCreateRoomEventMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/CanCreateRoomEventEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._canCreateEvent = wrapper.readBoolean();

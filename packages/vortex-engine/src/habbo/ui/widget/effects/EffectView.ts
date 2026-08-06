@@ -20,12 +20,16 @@ const UPDATE_TIMER_MS: number = 1000;
 export class EffectView
 {
     private _widget: EffectsWidget;
+    // AS3: .../src/com/sulake/habbo/ui/widget/effects/EffectView.as::_window
     private _window: IWindowContainer | null = null;
     private _effect: Effect;
+    // AS3: .../src/com/sulake/habbo/ui/widget/effects/EffectView.as::_bar
     private _bar: IWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/effects/EffectView.as::_maxWidth
     private _maxWidth: number = 0;
     private _timeLeftText: ITextWindow | null = null;
     private _timer: ReturnType<typeof setInterval> | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/effects/EffectView.as::_hilite
     private _hilite: IWindow | null = null;
 
     // AS3: EffectView.as::EffectView()

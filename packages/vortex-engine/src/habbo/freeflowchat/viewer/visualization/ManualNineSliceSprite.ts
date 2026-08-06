@@ -22,8 +22,11 @@ export class ManualNineSliceSprite extends Container
     private readonly _sprite: Sprite;
     private _bakedTexture: Texture | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::_leftWidth
     private readonly _leftWidth: number;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::_centerWidth
     private readonly _centerWidth: number;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/ManualNineSliceSprite.as::_rightWidth
     private readonly _rightWidth: number;
     private readonly _topHeight: number;
     private readonly _middleHeight: number;

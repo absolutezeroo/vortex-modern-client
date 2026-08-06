@@ -8,8 +8,10 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class FlatCreatedMessageParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FlatCreatedEventParser.as::_flatId
     private _flatId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FlatCreatedEventParser.as::get flatId()
     get flatId(): number
     {
         return this._flatId;
@@ -17,11 +19,13 @@ export class FlatCreatedMessageParser implements IMessageParser
 
     private _flatName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FlatCreatedEventParser.as::get flatName()
     get flatName(): string
     {
         return this._flatName;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FlatCreatedEventParser.as::flush()
     flush(): boolean
     {
         this._flatId = 0;
@@ -29,6 +33,7 @@ export class FlatCreatedMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/navigator/FlatCreatedEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._flatId = wrapper.readInt();

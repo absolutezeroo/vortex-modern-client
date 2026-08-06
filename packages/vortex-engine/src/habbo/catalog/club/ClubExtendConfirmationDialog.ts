@@ -33,6 +33,7 @@ export class ClubExtendConfirmationDialog
 
     private _window: IWindowContainer | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::_offer
     private _offer: ClubExtendOfferData | null;
 
     private _laterRegion: IRegionWindow | null = null;
@@ -41,18 +42,22 @@ export class ClubExtendConfirmationDialog
 
     private _creditIconElement: IBitmapWrapperWindow | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::_creditImages
     private _creditImages: (ImageBitmap | null)[] = new Array(CREDIT_IMAGE_COUNT).fill(null);
 
     private _animationTriggerTimer: ReturnType<typeof setInterval> | null = null;
 
     private _animationFrameTimer: ReturnType<typeof setInterval> | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::_animationFrame
     private _animationFrame: number = 0;
 
     private _animationFrameToggle: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::_localizationKey
     private _localizationKey: string = 'catalog.club.extend.';
 
     constructor(controller: ClubExtendController, offer: ClubExtendOfferData)
@@ -61,6 +66,7 @@ export class ClubExtendConfirmationDialog
         this._offer = offer;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -85,6 +91,7 @@ export class ClubExtendConfirmationDialog
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::showConfirmation()
     showConfirmation(): void
     {
         if(!this._offer || !this._controller || this._disposed) return;
@@ -211,6 +218,7 @@ export class ClubExtendConfirmationDialog
         if(element) element.caption = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::setActivityPointIconStyle()
     private setActivityPointIconStyle(name: string): void
     {
         const element = this._window?.findChildByName(name);
@@ -232,6 +240,7 @@ export class ClubExtendConfirmationDialog
         if(this._laterLink) this._laterLink.textColor = LINK_COLOR_HOVER;
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::startAnimation()
     private startAnimation(): void
     {
         if(this._animationTriggerTimer != null) this.clearAnimation();
@@ -240,6 +249,7 @@ export class ClubExtendConfirmationDialog
         this._animationTriggerTimer = setInterval(() => this.onAnimationTrigger(), ANIMATION_TRIGGER_INTERVAL_MS);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::clearAnimation()
     private clearAnimation(): void
     {
         this._animationFrame = 0;
@@ -258,6 +268,7 @@ export class ClubExtendConfirmationDialog
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::setAnimationFrame()
     private setAnimationFrame(): void
     {
         if(!this._creditIconElement) return;
@@ -270,6 +281,7 @@ export class ClubExtendConfirmationDialog
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::startAnimationFrame()
     private startAnimationFrame(): void
     {
         let ticks = 0;
@@ -292,17 +304,20 @@ export class ClubExtendConfirmationDialog
         }, ANIMATION_FRAME_INTERVAL_MS);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::onAnimationTrigger()
     private onAnimationTrigger(): void
     {
         this.startAnimationFrame();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::onAnimationFrame()
     private onAnimationFrame(): void
     {
         this._animationFrame += 1;
         this.setAnimationFrame();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::onAnimationFrameComplete()
     private onAnimationFrameComplete(): void
     {
         this._animationFrame = 0;
@@ -331,6 +346,7 @@ export class ClubExtendConfirmationDialog
         if(source && element) HabboCatalogUtils.replaceCenteredImage(element, source);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::loadAssetFromUrl()
     private loadAssetFromUrl(elementName: string, assetName: string, url: string, mimeType: string): boolean
     {
         const existing = this.getBitmapFromAsset(assetName);
@@ -354,6 +370,7 @@ export class ClubExtendConfirmationDialog
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::onTeaserLoaded()
     private onTeaserLoaded(assetName: string): void
     {
         if(this._disposed) return;
@@ -383,6 +400,7 @@ export class ClubExtendConfirmationDialog
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::createWindow()
     private createWindow(name: string): IWindowContainer | null
     {
         if(!this._controller?.assets || !this._controller?.windowManager || this._disposed) return null;

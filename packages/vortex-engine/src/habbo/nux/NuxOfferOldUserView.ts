@@ -64,6 +64,7 @@ export class NuxOfferOldUserView
      *
      * Reached only from `onClose()` below, which nothing attaches — see its note.
      */
+    // AS3: .../src/com/sulake/habbo/nux/NuxOfferOldUserView.as::hide()
     private hide(): void
     {
         this._nuxDialogs?.destroyNuxOfferView();
@@ -75,6 +76,7 @@ export class NuxOfferOldUserView
      * Dead in AS3: `show()` hides the close button instead of listening to it, so no path
      * reaches this handler. Ported to keep the class's member list matching the source.
      */
+    // AS3: .../src/com/sulake/habbo/nux/NuxOfferOldUserView.as::onClose()
     private onClose(): void
     {
         this.hide();
@@ -85,6 +87,7 @@ export class NuxOfferOldUserView
      *
      * Closes the view itself — the component sends the "start verifying" status.
      */
+    // AS3: .../src/com/sulake/habbo/nux/NuxOfferOldUserView.as::onVerify()
     private onVerify(): void
     {
         this._nuxDialogs?.onVerify();
@@ -97,6 +100,7 @@ export class NuxOfferOldUserView
      * Deliberately does *not* hide: the view stays up until the never-again confirm is accepted,
      * and it is `HabboNuxDialogs.onNeverAgainConfirmClose()` that destroys it.
      */
+    // AS3: .../src/com/sulake/habbo/nux/NuxOfferOldUserView.as::onReject()
     private onReject(): void
     {
         this._nuxDialogs?.onReject();

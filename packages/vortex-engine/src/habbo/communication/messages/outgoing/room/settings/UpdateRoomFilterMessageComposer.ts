@@ -20,6 +20,7 @@ export class UpdateRoomFilterMessageComposer extends MessageComposer<[number, bo
         this._data = [roomId, add, word];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/roomsettings/UpdateRoomFilterMessageComposer.as::getMessageArray()
     getMessageArray(): [number, boolean, string]
     {
         return this._data;

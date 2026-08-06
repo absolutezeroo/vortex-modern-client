@@ -19,6 +19,7 @@ export class ArcFour implements IEncryption
     /**
 	 * Initialize the cipher with a key (Key-Scheduling Algorithm)
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/encryption/ArcFour.as::init()
     init(key: ByteArray): void
     {
         // Initialize S-box with identity permutation
@@ -47,6 +48,7 @@ export class ArcFour implements IEncryption
     /**
 	 * Encrypt data in-place
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/encryption/ArcFour.as::encipher()
     encipher(data: ByteArray): void
     {
         const bytes = data.getUint8ArrayView();
@@ -61,6 +63,7 @@ export class ArcFour implements IEncryption
 	 * Decrypt data in-place
 	 * RC4 is symmetric - encryption and decryption are the same
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/encryption/ArcFour.as::decipher()
     decipher(data: ByteArray): void
     {
         this.encipher(data);
@@ -69,6 +72,7 @@ export class ArcFour implements IEncryption
     /**
 	 * Save current cipher state
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/encryption/ArcFour.as::mark()
     mark(): void
     {
         this._markedI = this._i;
@@ -79,6 +83,7 @@ export class ArcFour implements IEncryption
     /**
 	 * Restore to marked state
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/encryption/ArcFour.as::reset()
     reset(): void
     {
         this._i = this._markedI;
@@ -89,6 +94,7 @@ export class ArcFour implements IEncryption
     /**
 	 * Generate next keystream byte (PRGA)
 	 */
+    // AS3: .../src/com/sulake/habbo/communication/encryption/ArcFour.as::next()
     private next(): number
     {
         this._i = (this._i + 1) & 0xFF;

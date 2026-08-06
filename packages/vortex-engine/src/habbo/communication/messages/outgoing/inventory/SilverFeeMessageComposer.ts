@@ -19,6 +19,7 @@ export class SilverFeeMessageComposer extends MessageComposer<ConstructorParamet
         this._data = [addFee];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/inventory/trading/SilverFeeMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

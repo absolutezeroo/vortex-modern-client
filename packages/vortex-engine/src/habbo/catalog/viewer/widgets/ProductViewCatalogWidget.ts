@@ -59,33 +59,55 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.ProductViewCatalogWid
  */
 export class ProductViewCatalogWidget extends CatalogWidget implements IGetImageListener, IDragAndDropDoneReceiver
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_MODE_NONE
     private static readonly PREVIEW_MODE_NONE: number = 0;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_MODE_AVATAR
     private static readonly PREVIEW_MODE_AVATAR: number = 1;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_MODE_FLOOR_FURNITURE
     private static readonly PREVIEW_MODE_FLOOR_FURNITURE: number = 2;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_MODE_WALL_ITEM
     private static readonly PREVIEW_MODE_WALL_ITEM: number = 3;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_AVATAR_DEFAULT_BODY_DIRECTION
     private static readonly PREVIEW_AVATAR_DEFAULT_BODY_DIRECTION: number = 2;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_AVATAR_DEFAULT_HEAD_DIRECTION
     private static readonly PREVIEW_AVATAR_DEFAULT_HEAD_DIRECTION: number = 3;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_ACTION_STAND
     private static readonly PREVIEW_ACTION_STAND: number = 0;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_ACTION_WALK
     private static readonly PREVIEW_ACTION_WALK: number = 1;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_ACTION_DANCE
     private static readonly PREVIEW_ACTION_DANCE: number = 2;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_ACTION_SIT
     private static readonly PREVIEW_ACTION_SIT: number = 3;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_ACTION_LAY
     private static readonly PREVIEW_ACTION_LAY: number = 4;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_ACTION_WAVE
     private static readonly PREVIEW_ACTION_WAVE: number = 5;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_ACTION_COUNT
     private static readonly PREVIEW_ACTION_COUNT: number = 6;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_ZOOM_NORMAL
     private static readonly PREVIEW_ZOOM_NORMAL: number = 1;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_ZOOM_IN
     private static readonly PREVIEW_ZOOM_IN: number = 2;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_ZOOM_IN_CAMERA_OFFSET_Y
     private static readonly PREVIEW_ZOOM_IN_CAMERA_OFFSET_Y: number = 41;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_ZOOM_MOVE_SPEED_DENOMINATOR
     private static readonly PREVIEW_ZOOM_MOVE_SPEED_DENOMINATOR: number = 9;
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_ZOOM_SPEED_SLOW
     private static readonly PREVIEW_ZOOM_SPEED_SLOW: number = 0.12;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_SIT_OFFSETS
     private static readonly PREVIEW_SIT_OFFSETS = new Vector3d(2, 2, 0.55);
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_LAY_OFFSETS
     private static readonly PREVIEW_LAY_OFFSETS = new Vector3d(1, 1, 0.8);
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::_productName
     private _productName: IWindow | null = null;
 
     private _productDescription: IWindow | null = null;
@@ -116,12 +138,16 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
     private readonly _syncCanvasPositionBound = (): void => this.syncCanvasPosition();
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::_previewOffset
     private _previewOffset: {x: number; y: number} = {x: 0, y: 0};
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::_bundleGrid
     private _bundleGrid: IItemGridWindow | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::_gridItemLayout
     private _gridItemLayout: IWindow | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::_overrideStuffData
     private _overrideStuffData: IStuffData | null = null;
 
     private _lastSelectEvent: SelectProductEvent | null = null;
@@ -134,6 +160,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
     private _hasRoomCanvas: boolean = true;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::_offer
     private _offer: IPurchasableOffer | null = null;
 
     private _mouseIsDown: boolean = false;
@@ -146,6 +173,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
     private _toggleZoomButton: IWindow | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::_previewMode
     private _previewMode: number = ProductViewCatalogWidget.PREVIEW_MODE_NONE;
 
     private _floorFurnitureCanRotate: boolean = false;
@@ -158,8 +186,10 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
     private _zoomState: number = ProductViewCatalogWidget.PREVIEW_ZOOM_NORMAL;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::_previewZoomAnimationProgress
     private _previewZoomAnimationProgress: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::_previewZoomAnimationTargetProgress
     private _previewZoomAnimationTargetProgress: number = 0;
 
     private _zoomAnimationMaxDelta: number = 0;
@@ -1247,6 +1277,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::imageFailed()
     imageFailed(_id: number): void
     {
     }
@@ -1306,6 +1337,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.setPreviewMode(ProductViewCatalogWidget.PREVIEW_MODE_NONE);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onDragAndDropDone()
     onDragAndDropDone(_success: boolean, _extraParam: string): void
     {
     }

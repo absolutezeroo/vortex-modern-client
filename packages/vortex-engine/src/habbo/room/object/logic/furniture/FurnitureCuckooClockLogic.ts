@@ -13,6 +13,7 @@ import type {RoomObjectDataUpdateMessage} from '@habbo/room/messages/RoomObjectD
 
 export class FurnitureCuckooClockLogic extends FurnitureMultiStateLogic
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureCuckooClockLogic.as::_state
     private _state: number = -1;
     private _lastLocation: IVector3d | null = null;
 
@@ -46,6 +47,7 @@ export class FurnitureCuckooClockLogic extends FurnitureMultiStateLogic
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurnitureCuckooClockLogic.as::playSoundAt()
     private playSoundAt(height: number): void
     {
         const pitch = Math.pow(2, height - 1.2);

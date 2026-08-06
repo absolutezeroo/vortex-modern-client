@@ -137,6 +137,7 @@ export class ElementRegistry
     /**
 	 * Dispose and clear all descriptors.
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::dispose()
     dispose(): void
     {
         this._descriptors.clear();

@@ -14,15 +14,19 @@ export class AchievementCategory
         this._code = code;
     }
 
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategory.as::_code
     private _code: string;
 
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategory.as::get code()
     get code(): string
     {
         return this._code;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/quest/AchievementCategory.as::_achievements
     private _achievements: AchievementData[] = [];
 
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategory.as::get achievements()
     get achievements(): AchievementData[]
     {
         return this._achievements;
@@ -33,6 +37,7 @@ export class AchievementCategory
 	 *
 	 * @param data The achievement data to add
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategory.as::add()
     add(data: AchievementData): void
     {
         this._achievements.push(data);
@@ -43,6 +48,7 @@ export class AchievementCategory
 	 *
 	 * @param data The updated achievement data
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategory.as::update()
     update(data: AchievementData): void
     {
         for(let i = 0; i < this._achievements.length; i++)
@@ -61,6 +67,7 @@ export class AchievementCategory
 	 *
 	 * @returns The total progress across all achievements
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategory.as::getProgress()
     getProgress(): number
     {
         let progress = 0;
@@ -79,6 +86,7 @@ export class AchievementCategory
 	 *
 	 * @returns The maximum progress across all achievements
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementCategory.as::getMaxProgress()
     getMaxProgress(): number
     {
         let maxProgress = 0;

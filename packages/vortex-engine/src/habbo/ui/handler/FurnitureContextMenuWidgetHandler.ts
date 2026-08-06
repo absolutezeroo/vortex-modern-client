@@ -56,6 +56,7 @@ const CONTEXT_MENU_PURCHASABLE_CLOTHING: string = 'PURCHASABLE_CLOTHING';
 
 export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
 {
+    // AS3: .../src/com/sulake/habbo/ui/handler/FurnitureContextMenuWidgetHandler.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: FurnitureContextMenuWidgetHandler.as::_container

@@ -39,6 +39,7 @@ export class CustomUserNotificationWidgetHandler implements IRoomWidgetHandler
      *
      * Set by the widget's own constructor, which casts its handler to this class.
      */
+    // AS3: .../src/com/sulake/habbo/ui/handler/CustomUserNotificationWidgetHandler.as::set widget()
     public set widget(value: CustomUserNotificationWidget | null)
     {
         this._widget = value;
@@ -49,6 +50,7 @@ export class CustomUserNotificationWidgetHandler implements IRoomWidgetHandler
      *
      * Subscribes on first assignment only — a second container never re-subscribes, as in AS3.
      */
+    // AS3: .../src/com/sulake/habbo/ui/handler/CustomUserNotificationWidgetHandler.as::set container()
     public set container(value: IRoomWidgetHandlerContainer | null)
     {
         this._container = value;
@@ -92,6 +94,7 @@ export class CustomUserNotificationWidgetHandler implements IRoomWidgetHandler
      *
      * Returns null, not an empty array — AS3 distinguishes the two here.
      */
+    // AS3: .../src/com/sulake/habbo/ui/handler/CustomUserNotificationWidgetHandler.as::getProcessedEvents()
     public getProcessedEvents(): string[] | null
     {
         return null;
@@ -114,6 +117,7 @@ export class CustomUserNotificationWidgetHandler implements IRoomWidgetHandler
      * by `AvatarInfoWidgetHandler`, which refunds the failed respect — both handlers subscribe the
      * same message.
      */
+    // AS3: .../src/com/sulake/habbo/ui/handler/CustomUserNotificationWidgetHandler.as::onFurnitureUsageRequirementMissingMessage()
     public onFurnitureUsageRequirementMissingMessage(event: IMessageEvent): void
     {
         const parser = (event as CustomUserNotificationMessageEvent).customUserNotificationParser;

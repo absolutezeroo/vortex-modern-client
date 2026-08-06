@@ -21,6 +21,7 @@ export class PetInfoMessageEventParser implements IMessageParser
 {
     private _petId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/pets/PetInfoMessageEventParser.as::_name
     private _name: string = '';
 
     private _level: number = 0;
@@ -45,6 +46,7 @@ export class PetInfoMessageEventParser implements IMessageParser
 
     private _age: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/pets/PetInfoMessageEventParser.as::_ownerName
     private _ownerName: string = '';
 
     private _breedId: number = 0;

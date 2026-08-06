@@ -20,11 +20,13 @@ export class GuideHelpManager
         log.debug('GuideHelpManager initialized');
     }
 
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::_disposed
     private _disposed: boolean = false;
 
     /**
 	 * Whether this manager has been disposed
 	 */
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -43,6 +45,7 @@ export class GuideHelpManager
     /**
 	 * Show the guide tool window
 	 */
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::showGuideTool()
     showGuideTool(): void
     {
         log.debug('Show guide tool');
@@ -65,6 +68,7 @@ export class GuideHelpManager
     /**
 	 * Open the report window for guide reporting
 	 */
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::openReportWindow()
     openReportWindow(): void
     {
         log.debug('Open report window');
@@ -73,6 +77,7 @@ export class GuideHelpManager
     /**
 	 * Open the tour popup
 	 */
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::openTourPopup()
     openTourPopup(): void
     {
         log.debug('Open tour popup');
@@ -83,6 +88,7 @@ export class GuideHelpManager
 	 *
 	 * @param localizationCode The localization key for the feedback message
 	 */
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::showFeedback()
     showFeedback(localizationCode: string): void
     {
         log.debug('Show feedback:', localizationCode);
@@ -91,6 +97,7 @@ export class GuideHelpManager
     /**
 	 * Dispose of this manager
 	 */
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

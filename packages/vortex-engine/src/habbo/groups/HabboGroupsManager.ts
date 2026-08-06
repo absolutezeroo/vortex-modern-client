@@ -94,6 +94,7 @@ const log = Logger.getLogger('habbo.groups.HabboGroupsManager');
  */
 export class HabboGroupsManager extends Component implements IHabboGroupsManager, ILinkEventTracker
 {
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::GROUPS_TRACKING_CATEGORY
     public static readonly GROUPS_TRACKING_CATEGORY: string = 'HabboGroups';
 
     /**
@@ -106,15 +107,24 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     private static readonly JOIN_FAILED_HC_REQUIRED: number = 4;
 
     private _communicationManager: IHabboCommunicationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::_navigator
     private _navigator: IHabboNavigator | null = null;
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::_newNavigator
     private _newNavigator: IHabboNewNavigator | null = null;
     private _friendList: IHabboFriendList | null = null;
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::_catalog
     private _catalog: unknown | null = null;
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::_habboTracking
     private _habboTracking: IHabboTracking | null = null;
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::_messageEvents
     private _messageEvents: IMessageEvent[] = [];
     private _groupDetailsById: Map<number, HabboGroupDetailsData> = new Map();
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_5106
@@ -159,6 +169,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     /**
 	 * The URL prefix pattern this tracker handles
 	 */
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::get linkPattern()
     get linkPattern(): string
     {
         return 'group/';
@@ -251,6 +262,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
 	 *
 	 * @param link The full link string
 	 */
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::linkReceived()
     linkReceived(link: string): void
     {
         const parts = link.split('/');
@@ -274,6 +286,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
 	 * @param isStaff Whether the requesting user is staff
 	 * @param groupId The group ID to show badge info for
 	 */
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::showGroupBadgeInfo()
     showGroupBadgeInfo(isStaff: boolean, groupId: number): void
     {
         this.openGroupInfo(groupId);
@@ -286,6 +299,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
 	 *
 	 * @param groupId The group ID to open info for
 	 */
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::openGroupInfo()
     openGroupInfo(groupId: number): void
     {
         log.debug('openGroupInfo:', groupId);
@@ -308,6 +322,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
 	 *
 	 * @param userId The user ID whose profile to show
 	 */
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::showExtendedProfile()
     showExtendedProfile(userId: number): void
     {
         log.debug('showExtendedProfile:', userId);
@@ -319,6 +334,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
 	 *
 	 * @param groupId The group ID whose forum to open
 	 */
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::openGroupForum()
     openGroupForum(groupId: number): void
     {
         this.context.createLinkEvent('groupforum/' + groupId);
@@ -380,6 +396,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         return this._windowManager?.buildWidgetLayout(name) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -445,6 +462,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this._communicationManager?.connection?.send(composer);
     }
 
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::addMessageEvent()
     private addMessageEvent(event: IMessageEvent): void
     {
         if(!this._communicationManager)
@@ -483,6 +501,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this._extendedProfileWindowCtrl.onUserBadges(badgesEvent.userId, badgesEvent.badges);
     }
 
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::onGroupDetails()
     private onGroupDetails(event: IMessageEvent): void
     {
         const detailsEvent = event as HabboGroupDetailsMessageEvent;
@@ -507,6 +526,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         // ExtendedProfileWindowCtrl::onGroupDetails(), which the port's ExtendedProfileWindowCtrl does not implement.
     }
 
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::onGroupDetailsChanged()
     private onGroupDetailsChanged(event: IMessageEvent): void
     {
         const changedEvent = event as GroupDetailsChangedMessageEvent;
@@ -524,6 +544,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::onGroupDeactivated()
     private onGroupDeactivated(event: IMessageEvent): void
     {
         const deactivatedEvent = event as HabboGroupDeactivatedMessageEvent;
@@ -665,6 +686,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
      *
      * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onRoomEnter()
      */
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::onRoomEnter()
     private onRoomEnter(event: IMessageEvent): void
     {
         const parser = (event as RoomEntryInfoMessageEvent).getParser() as RoomEntryInfoMessageParser | null;
@@ -710,6 +732,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
      *
      * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::requestGuildEditorData()
      */
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::requestGuildEditorData()
     private requestGuildEditorData(): void
     {
         if(this._guildEditorData === null) this.send(new GetGuildEditorDataMessageComposer());

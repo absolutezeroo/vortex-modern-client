@@ -35,9 +35,11 @@ export interface IDependencyEventListener
  */
 export class ComponentDependency<T = unknown>
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ComponentDependency.as::_identifier
     private readonly _identifier: IID<T>;
     private readonly _setter: ((instance: T | null) => void) | null;
     private readonly _required: boolean;
+    // AS3: .../src/com/sulake/core/runtime/ComponentDependency.as::_eventListeners
     private readonly _eventListeners: IDependencyEventListener[] | null;
 
     constructor(
@@ -56,6 +58,7 @@ export class ComponentDependency<T = unknown>
     /**
 	 * The interface identifier for this dependency
 	 */
+    // AS3: .../src/com/sulake/core/runtime/ComponentDependency.as::get identifier()
     get identifier(): IID<T>
     {
         return this._identifier;
@@ -80,6 +83,7 @@ export class ComponentDependency<T = unknown>
     /**
 	 * Event listeners to attach when the dependency is resolved
 	 */
+    // AS3: .../src/com/sulake/core/runtime/ComponentDependency.as::get eventListeners()
     get eventListeners(): IDependencyEventListener[] | null
     {
         return this._eventListeners;

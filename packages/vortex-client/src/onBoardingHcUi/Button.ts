@@ -123,6 +123,7 @@ export class Button extends LocalizedSprite
         return this._centred;
     }
 
+    // AS3: .../src/onBoardingHcUi/Button.as::set centred()
     public set centred(value: boolean)
     {
         this._centred = value;
@@ -158,6 +159,7 @@ export class Button extends LocalizedSprite
         return this._active;
     }
 
+    // AS3: .../src/onBoardingHcUi/Button.as::set active()
     public set active(value: boolean)
     {
         this._active = value;
@@ -183,6 +185,7 @@ export class Button extends LocalizedSprite
         return this._localizedText;
     }
 
+    // AS3: .../src/onBoardingHcUi/Button.as::set localizedText()
     public set localizedText(value: string)
     {
         this._localizedText = value;
@@ -222,6 +225,7 @@ export class Button extends LocalizedSprite
      * Builds the caption and the four (or five) skins, sizes them to the rectangle, and stacks
      * them. Called again by `set localizedText()` when the localisation resolves.
      */
+    // AS3: .../src/onBoardingHcUi/Button.as::onAddedToStage()
     protected onAddedToStage(): void
     {
         this.x = this._rectangle.x;
@@ -333,6 +337,7 @@ export class Button extends LocalizedSprite
      * Picks one of the four states and shows the matching skin. Without a rollover skin the hover
      * feedback is a glow filter instead.
      */
+    // AS3: .../src/onBoardingHcUi/Button.as::refresh()
     private refresh(): void
     {
         if(this._background == null) return;

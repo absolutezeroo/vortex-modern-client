@@ -20,25 +20,33 @@ export interface IHighScoreEntry
 
 export class HighScoreStuffData extends StuffDataBase implements IStuffData
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/HighScoreStuffData.as::FORMAT_KEY
     public static readonly FORMAT_KEY = 6;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/HighScoreStuffData.as::_state
     private _state: string = '';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/HighScoreStuffData.as::_scoreType
     private _scoreType: number = 0;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/HighScoreStuffData.as::get scoreType()
     get scoreType(): number
     {
         return this._scoreType;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/HighScoreStuffData.as::_clearType
     private _clearType: number = 0;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/HighScoreStuffData.as::get clearType()
     get clearType(): number
     {
         return this._clearType;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/HighScoreStuffData.as::_entries
     private _entries: IHighScoreEntry[] = [];
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/HighScoreStuffData.as::get entries()
     get entries(): IHighScoreEntry[]
     {
         return this._entries;

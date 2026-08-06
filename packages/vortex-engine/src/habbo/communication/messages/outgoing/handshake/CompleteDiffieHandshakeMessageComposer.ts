@@ -17,6 +17,7 @@ export class CompleteDiffieHandshakeMessageComposer extends PreEncryptionMessage
         this._data = [publicKey];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/handshake/CompleteDiffieHandshakeMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

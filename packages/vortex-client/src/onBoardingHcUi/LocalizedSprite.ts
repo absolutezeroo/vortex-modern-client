@@ -37,6 +37,7 @@ export class LocalizedSprite extends Sprite implements ILocalizable
      * The manager pushes the resolved text back through here. AS3 checks `this is Button` because
      * only a Button has somewhere to put it.
      */
+    // AS3: .../src/onBoardingHcUi/LocalizedSprite.as::set localization()
     public set localization(value: string)
     {
         const button = this as unknown as {localizedText?: string};
@@ -75,6 +76,7 @@ export class LocalizedSprite extends Sprite implements ILocalizable
      *
      * AS3 reads the caption back off the Button to know which key to unsubscribe.
      */
+    // AS3: .../src/onBoardingHcUi/LocalizedSprite.as::dispose()
     public dispose(): void
     {
         const button = this as unknown as {label?: string};

@@ -21,20 +21,25 @@ export class ExpressionAddition implements IExpressionAddition
         this._visualization = visualization;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/ExpressionAddition.as::_id
     protected _id: number;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/ExpressionAddition.as::get id()
     get id(): number 
     {
         return this._id;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/ExpressionAddition.as::_type
     private _type: number = -1;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/ExpressionAddition.as::get type()
     get type(): number 
     {
         return this._type;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/ExpressionAddition.as::get disposed()
     get disposed(): boolean 
     {
         return this._visualization == null;
@@ -46,6 +51,7 @@ export class ExpressionAddition implements IExpressionAddition
      * @param sprite - The sprite to update
      * @param scale - The current visualization scale
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/ExpressionAddition.as::update()
     update(_sprite: IRoomObjectSprite | null, _scale: number): void
     {
         // Override in subclasses
@@ -57,6 +63,7 @@ export class ExpressionAddition implements IExpressionAddition
      * @param sprite - The sprite to animate
      * @returns Always false in base class
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/ExpressionAddition.as::animate()
     animate(_sprite: IRoomObjectSprite | null): boolean
     {
         return false;
@@ -65,6 +72,7 @@ export class ExpressionAddition implements IExpressionAddition
     /**
      * Disposes of this expression addition and releases references.
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/ExpressionAddition.as::dispose()
     dispose(): void 
     {
         this._visualization = null!;

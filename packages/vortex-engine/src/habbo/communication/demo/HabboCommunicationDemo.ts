@@ -30,7 +30,9 @@ const log = Logger.getLogger('habbo.communication.demo.HabboCommunicationDemo');
  */
 export class HabboCommunicationDemo extends Component implements IHabboCommunicationDemo
 {
+    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::ERROR_TYPE_IO_ERROR
     static readonly ERROR_TYPE_IO_ERROR: string = 'ioError';
+    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::ERROR_CODE_MAINTENANCE
     static readonly ERROR_CODE_MAINTENANCE: string = 'maintenance';
 
     private _incomingMessages: IncomingMessages | null = null;
@@ -43,21 +45,25 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
         super(context);
     }
 
+    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
 
     /**
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as communication
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::get communication()
     get communication(): IHabboCommunicationManager | null
     {
         return this._communication;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/demo/HabboCommunicationDemo.as::_ssoTicket
     private _ssoTicket: string | null = null;
 
     /**
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as ssoTicket
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::set ssoTicket()
     set ssoTicket(value: string)
     {
         this._ssoTicket = value;
@@ -239,6 +245,7 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
 	 *
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as sendConnectionParameters()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::sendConnectionParameters()
     sendConnectionParameters(connection: IConnection): void
     {
         connection.send(new VersionCheckMessageComposer(
@@ -299,6 +306,7 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
 	 *
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as handleErrorMessage()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::handleErrorMessage()
     handleErrorMessage(errorCode: number, messageId: number): void
     {
         switch(true)
@@ -335,6 +343,7 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
 	 *
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as handleLoginFailedHotelClosedMessage()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::handleLoginFailedHotelClosedMessage()
     handleLoginFailedHotelClosedMessage(openHour: number, openMinute: number): void
     {
         log.warn(`Hotel is closed. Opens at ${openHour}:${String(openMinute).padStart(2, '0')}`);
@@ -349,6 +358,7 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
 	 *
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as dispatchLoginStepEvent()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::dispatchLoginStepEvent()
     dispatchLoginStepEvent(step: HabboCommunicationEventType): void
     {
         if(!this._communication?.events) return;

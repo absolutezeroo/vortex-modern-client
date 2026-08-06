@@ -5,6 +5,7 @@
  */
 export class Long
 {
+    // AS3: .../src/com/sulake/core/communication/util/Long.as::get value()
     public readonly value: number;
 
     constructor(value: number)

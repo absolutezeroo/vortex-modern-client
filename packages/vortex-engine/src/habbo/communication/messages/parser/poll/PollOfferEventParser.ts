@@ -10,6 +10,7 @@ export class PollOfferEventParser implements IMessageParser
 {
     private _id: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/PollOfferEventParser.as::get id()
     get id(): number
     {
         return this._id;
@@ -17,13 +18,16 @@ export class PollOfferEventParser implements IMessageParser
 
     private _type: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/PollOfferEventParser.as::get type()
     get type(): string
     {
         return this._type;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/PollOfferEventParser.as::_headline
     private _headline: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/PollOfferEventParser.as::get headline()
     get headline(): string
     {
         return this._headline;
@@ -31,11 +35,13 @@ export class PollOfferEventParser implements IMessageParser
 
     private _summary: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/PollOfferEventParser.as::get summary()
     get summary(): string
     {
         return this._summary;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/PollOfferEventParser.as::flush()
     flush(): boolean
     {
         this._id = -1;
@@ -45,6 +51,7 @@ export class PollOfferEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/PollOfferEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

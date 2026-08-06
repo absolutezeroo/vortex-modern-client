@@ -10,6 +10,7 @@ export class AvatarData
 {
     private _id: number;
     private _uniqueId: string;
+    // AS3: .../src/com/sulake/habbo/communication/login/AvatarData.as::_name
     private _name: string;
     private _motto: string;
     private _figure: string;
@@ -18,6 +19,7 @@ export class AvatarData
     private _lastAccess: number;
     private _habboClubMember: boolean;
     private _buildersClubMember: boolean;
+    // AS3: .../src/com/sulake/habbo/communication/login/AvatarData.as::_creationTime
     private _creationTime: string;
 
     constructor(data: Record<string, unknown>)
@@ -35,41 +37,49 @@ export class AvatarData
         this._creationTime = (data.creationTime as string) ?? '';
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/login/AvatarData.as::get id()
     get id(): number
     {
         return this._id;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/login/AvatarData.as::set id()
     set id(value: number)
     {
         this._id = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/login/AvatarData.as::get uniqueId()
     get uniqueId(): string
     {
         return this._uniqueId;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/login/AvatarData.as::get name()
     get name(): string
     {
         return this._name;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/login/AvatarData.as::set name()
     set name(value: string)
     {
         this._name = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/login/AvatarData.as::get motto()
     get motto(): string
     {
         return this._motto;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/login/AvatarData.as::get figure()
     get figure(): string
     {
         return this._figure;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/login/AvatarData.as::get gender()
     get gender(): string
     {
         return this._gender;

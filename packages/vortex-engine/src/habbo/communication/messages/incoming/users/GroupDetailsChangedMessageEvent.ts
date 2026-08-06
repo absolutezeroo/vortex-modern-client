@@ -14,6 +14,7 @@ export class GroupDetailsChangedMessageEvent extends MessageEvent implements IMe
         super(callback, GroupDetailsChangedMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/GroupDetailsChangedMessageEvent.as::get groupId()
     get groupId(): number
     {
         return (this._parser as GroupDetailsChangedMessageParser).groupId;

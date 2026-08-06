@@ -31,6 +31,7 @@ const STATIC_CHAT_STYLE_MAX = 1000;
 export class RoomChatInputView
 {
     private _widget: RoomChatInputWidget | null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::_window
     private _window: IWindowContainer | null = null;
     private _input: (ITextFieldWindow & IFocusWindow) | null = null;
     private _inputBorder: IWindow | null = null;
@@ -59,6 +60,7 @@ export class RoomChatInputView
         this.createWindow();
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::get window()
     public get window(): IWindowContainer | null
     {
         return this._window;
@@ -329,6 +331,7 @@ export class RoomChatInputView
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::checkSpecialKeywordForInput()
     private checkSpecialKeywordForInput(): void
     {
         if(!this._input || !this._widget || this._input.text === '') return;
@@ -344,17 +347,20 @@ export class RoomChatInputView
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::onIdleTimerComplete()
     private onIdleTimerComplete(): void
     {
         this._isTyping = false;
         this.sendTypingMessage();
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::onTypingTimerComplete()
     private onTypingTimerComplete(): void
     {
         this.sendTypingMessage();
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::sendTypingMessage()
     private sendTypingMessage(): void
     {
         if(!this._widget || this._widget.floodBlocked) return;
@@ -362,6 +368,7 @@ export class RoomChatInputView
         this._widget.messageListener?.processWidgetMessage(new RoomWidgetChatTypingMessage(this._isTyping));
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::setInputFieldFocus()
     private setInputFieldFocus(): void
     {
         if(!this._input) return;

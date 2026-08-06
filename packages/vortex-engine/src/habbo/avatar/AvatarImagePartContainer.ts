@@ -45,6 +45,7 @@ export class AvatarImagePartContainer
 
     private _bodyPartId: string;
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::get bodyPartId()
     public get bodyPartId(): string
     {
         return this._bodyPartId;
@@ -52,6 +53,7 @@ export class AvatarImagePartContainer
 
     private _partType: string;
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::get partType()
     public get partType(): string
     {
         return this._partType;
@@ -59,6 +61,7 @@ export class AvatarImagePartContainer
 
     private _flippedPartType: string;
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::get flippedPartType()
     public get flippedPartType(): string
     {
         return this._flippedPartType;
@@ -66,20 +69,25 @@ export class AvatarImagePartContainer
 
     private _partId: string;
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::get partId()
     public get partId(): string
     {
         return this._partId;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::_color
     private _color: IPartColor | null;
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::get color()
     public get color(): IPartColor | null
     {
         return this._color;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::_action
     private _action: IActionDefinition;
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::get action()
     public get action(): IActionDefinition
     {
         return this._action;
@@ -87,11 +95,13 @@ export class AvatarImagePartContainer
 
     private _isColorable: boolean;
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::get isColorable()
     public get isColorable(): boolean
     {
         return this._isColorable;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::set isColorable()
     public set isColorable(value: boolean)
     {
         this._isColorable = value;
@@ -99,6 +109,7 @@ export class AvatarImagePartContainer
 
     private _isBlendable: boolean;
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::get isBlendable()
     public get isBlendable(): boolean
     {
         return this._isBlendable;
@@ -111,6 +122,7 @@ export class AvatarImagePartContainer
         alphaMultiplier: number
     };
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::get blendTransform()
     public get blendTransform(): {
         redMultiplier: number;
         greenMultiplier: number;
@@ -123,11 +135,13 @@ export class AvatarImagePartContainer
 
     private _paletteMapId: number;
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::get paletteMapId()
     public get paletteMapId(): number
     {
         return this._paletteMapId;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::getFrameIndex()
     public getFrameIndex(frameCounter: number): number
     {
         if(!this._frames || this._frames.length === 0) return 0;
@@ -143,6 +157,7 @@ export class AvatarImagePartContainer
         return index;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::getFrameDefinition()
     public getFrameDefinition(frameCounter: number): AnimationFrame | null
     {
         const index = frameCounter % this._frames.length;
@@ -160,6 +175,7 @@ export class AvatarImagePartContainer
         return null;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::getCacheableKey()
     public getCacheableKey(frameCounter: number): string
     {
         const index = frameCounter % this._frames.length;
@@ -179,6 +195,7 @@ export class AvatarImagePartContainer
         return this._partId + ':' + index;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/AvatarImagePartContainer.as::toString()
     public toString(): string
     {
         return [this._bodyPartId, this._partType, this._partId].join(':');

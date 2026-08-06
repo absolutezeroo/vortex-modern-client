@@ -30,6 +30,7 @@ export class PetBreedingResultData
         this._hasMutation = hasMutation;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/room/pets/class_3688.as::_stuffId
     private _stuffId: number;
 
     // AS3: sources/win63_version/habbo/communication/messages/incoming/room/pets/class_3688.as::get stuffId()
@@ -62,6 +63,7 @@ export class PetBreedingResultData
         return this._userId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/room/pets/class_3688.as::_userName
     private _userName: string;
 
     // AS3: sources/win63_version/habbo/communication/messages/incoming/room/pets/class_3688.as::get userName()

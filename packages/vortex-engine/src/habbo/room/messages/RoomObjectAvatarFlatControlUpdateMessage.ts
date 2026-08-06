@@ -15,8 +15,10 @@ export class RoomObjectAvatarFlatControlUpdateMessage extends RoomObjectUpdateMe
         this._rawData = rawData;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectAvatarFlatControlUpdateMessage.as::_rawData
     private _rawData: string;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarFlatControlUpdateMessage.as::get rawData()
     get rawData(): string
     {
         return this._rawData;

@@ -16,6 +16,7 @@ export class NavigatorAddSavedSearchComposer extends MessageComposer<Constructor
         this._data = [searchCode, filtering];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/newnavigator/NavigatorAddSavedSearchComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

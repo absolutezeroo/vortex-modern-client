@@ -14,6 +14,7 @@ export class HabboGroupJoinFailedMessageEvent extends MessageEvent implements IM
         super(callback, HabboGroupJoinFailedMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/HabboGroupJoinFailedMessageEvent.as::get reason()
     get reason(): number
     {
         return (this._parser as HabboGroupJoinFailedMessageParser).reason;

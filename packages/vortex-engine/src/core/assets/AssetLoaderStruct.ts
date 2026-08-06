@@ -13,6 +13,7 @@ import type {IAssetLoader} from './loaders/IAssetLoader';
 export class AssetLoaderStruct implements IDisposable
 {
     private readonly _events: EventEmitter = new EventEmitter();
+    // AS3: .../src/com/sulake/core/assets/AssetLoaderStruct.as::_assetName
     private readonly _assetName: string;
 
     constructor(assetName: string, assetLoader: IAssetLoader)
@@ -21,11 +22,13 @@ export class AssetLoaderStruct implements IDisposable
         this._assetLoader = assetLoader;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/AssetLoaderStruct.as::_assetLoader
     private _assetLoader: IAssetLoader | null;
 
     /**
 	 * The loader for this asset
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLoaderStruct.as::get assetLoader()
     get assetLoader(): IAssetLoader | null
     {
         return this._assetLoader;
@@ -44,6 +47,7 @@ export class AssetLoaderStruct implements IDisposable
     /**
 	 * The name of the asset being loaded
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLoaderStruct.as::get assetName()
     get assetName(): string
     {
         return this._assetName;
@@ -60,6 +64,7 @@ export class AssetLoaderStruct implements IDisposable
     /**
 	 * Dispose of this struct and its loader
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLoaderStruct.as::dispose()
     dispose(): void
     {
         if(!this._disposed)

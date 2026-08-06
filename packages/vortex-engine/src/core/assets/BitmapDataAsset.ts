@@ -36,10 +36,14 @@ export interface IRectangle
  */
 export class BitmapDataAsset implements ILazyAsset
 {
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::name
     public name: string = '';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/BitmapDataAsset.as::_unknown
     private _unknown: unknown = null;
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::_bitmap
     private _bitmap: Texture | null = null;
     private readonly _declaration: AssetTypeDeclaration;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/BitmapDataAsset.as::_url
     private readonly _url: string;
 
     constructor(declaration: AssetTypeDeclaration, url: string = '')
@@ -49,36 +53,46 @@ export class BitmapDataAsset implements ILazyAsset
         BitmapDataAsset._instances++;
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::_instances
     private static _instances: number = 0;
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::get instances()
     static get instances(): number
     {
         return BitmapDataAsset._instances;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/BitmapDataAsset.as::_allocatedByteCount
     private static _allocatedByteCount: number = 0;
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::get allocatedByteCount()
     static get allocatedByteCount(): number
     {
         return BitmapDataAsset._allocatedByteCount;
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::_offset
     private _offset: IPoint = {x: 0, y: 0};
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::get offset()
     get offset(): IPoint
     {
         return this._offset;
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::_rectangle
     private _rectangle: IRectangle | null = null;
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::get rectangle()
     get rectangle(): IRectangle | null
     {
         if(!this._rectangle && this._bitmap)
@@ -94,25 +108,31 @@ export class BitmapDataAsset implements ILazyAsset
         return this._rectangle;
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::_flipH
     private _flipH: boolean = false;
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::get flipH()
     get flipH(): boolean
     {
         return this._flipH;
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::_flipV
     private _flipV: boolean = false;
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::get flipV()
     get flipV(): boolean
     {
         return this._flipV;
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::get url()
     get url(): string
     {
         return this._url;
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::get content()
     get content(): Texture | null
     {
         if(!this._bitmap)
@@ -123,11 +143,13 @@ export class BitmapDataAsset implements ILazyAsset
         return this._bitmap;
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::get declaration()
     get declaration(): AssetTypeDeclaration
     {
         return this._declaration;
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::dispose()
     dispose(): void
     {
         if(!this._disposed)
@@ -154,6 +176,7 @@ export class BitmapDataAsset implements ILazyAsset
         }
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::setUnknownContent()
     setUnknownContent(content: unknown): void
     {
         if(content === null)
@@ -175,6 +198,7 @@ export class BitmapDataAsset implements ILazyAsset
         this._unknown = content;
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::prepareLazyContent()
     prepareLazyContent(): void
     {
         if(this._unknown === null)
@@ -225,6 +249,7 @@ export class BitmapDataAsset implements ILazyAsset
         this._unknown = null;
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::setFromOtherAsset()
     setFromOtherAsset(asset: IAsset): void
     {
         if(asset instanceof BitmapDataAsset)
@@ -237,6 +262,7 @@ export class BitmapDataAsset implements ILazyAsset
         throw new Error('Provided asset should be of type BitmapDataAsset');
     }
 
+    // AS3: .../src/com/sulake/core/assets/BitmapDataAsset.as::setParamsDesc()
     setParamsDesc(params: Map<string, string>): void
     {
         for(const [key, value] of params)

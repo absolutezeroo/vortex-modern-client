@@ -16,6 +16,7 @@ export class RemoveItemFromTradeComposer extends MessageComposer<ConstructorPara
         this._data = [itemId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/inventory/trading/RemoveItemFromTradeComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

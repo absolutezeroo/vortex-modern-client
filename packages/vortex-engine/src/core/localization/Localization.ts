@@ -5,6 +5,7 @@ import type {ICoreLocalizationManager} from './ICoreLocalizationManager';
 interface IParameterData
 {
     id: string;
+    // AS3: .../src/com/sulake/core/localization/Localization.as::get value()
     value: string;
 }
 
@@ -15,9 +16,13 @@ interface IParameterData
  */
 export class Localization implements ILocalization
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/Localization.as::_manager
     private readonly _manager: ICoreLocalizationManager;
+    // AS3: .../src/com/sulake/core/localization/Localization.as::_key
     private readonly _key: string;
+    // AS3: .../src/com/sulake/core/localization/Localization.as::_parameters
     private _parameters: Map<string, IParameterData> | null = null;
+    // AS3: .../src/com/sulake/core/localization/Localization.as::_listeners
     private _listeners: Set<ILocalizable> | null = null;
 
     constructor(manager: ICoreLocalizationManager, key: string, value: string | null = null)
@@ -27,29 +32,35 @@ export class Localization implements ILocalization
         this._value = value;
     }
 
+    // AS3: sources/win63_version/core/localization/Localization.as::_value
     private _value: string | null;
 
+    // AS3: .../src/com/sulake/core/localization/Localization.as::get value()
     get value(): string
     {
         return this.fillParameterValues();
     }
 
+    // AS3: .../src/com/sulake/core/localization/Localization.as::get isInitialized()
     get isInitialized(): boolean
     {
         return this._value !== null;
     }
 
+    // AS3: .../src/com/sulake/core/localization/Localization.as::get raw()
     get raw(): string
     {
         return this._value ?? '';
     }
 
+    // AS3: .../src/com/sulake/core/localization/Localization.as::setValue()
     setValue(value: string): void
     {
         this._value = value;
         this.updateListeners();
     }
 
+    // AS3: .../src/com/sulake/core/localization/Localization.as::registerListener()
     registerListener(listener: ILocalizable): void
     {
         if(!this._listeners)
@@ -62,6 +73,7 @@ export class Localization implements ILocalization
         listener.localization = this._manager.interpolate(this.value);
     }
 
+    // AS3: .../src/com/sulake/core/localization/Localization.as::removeListener()
     removeListener(listener: ILocalizable): void
     {
         if(this._listeners)
@@ -70,6 +82,7 @@ export class Localization implements ILocalization
         }
     }
 
+    // AS3: .../src/com/sulake/core/localization/Localization.as::registerParameter()
     registerParameter(name: string, value: string, id: string = '%'): void
     {
         if(!this._parameters)
@@ -85,6 +98,7 @@ export class Localization implements ILocalization
         this.updateListeners();
     }
 
+    // AS3: .../src/com/sulake/core/localization/Localization.as::updateListeners()
     updateListeners(): void
     {
         const interpolatedValue = this._manager.interpolate(this.value);
@@ -98,6 +112,7 @@ export class Localization implements ILocalization
         }
     }
 
+    // AS3: .../src/com/sulake/core/localization/Localization.as::fillParameterValues()
     private fillParameterValues(): string
     {
         let result = this._value;

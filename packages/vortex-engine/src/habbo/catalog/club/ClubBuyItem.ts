@@ -11,8 +11,10 @@ import type {ClubBuyOfferData} from './ClubBuyOfferData';
  */
 export class ClubBuyItem
 {
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyItem.as::_offer
     private _offer: ClubBuyOfferData;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyItem.as::_window
     private _window: IWindowContainer | null;
 
     private _page: ICatalogPage;
@@ -44,6 +46,7 @@ export class ClubBuyItem
         this._window?.findChildByName('item_buy')?.addEventListener(WindowMouseEvent.CLICK, this.onBuy);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyItem.as::dispose()
     dispose(): void
     {
         this._window?.dispose();
@@ -54,6 +57,7 @@ export class ClubBuyItem
         (this._page.viewer.catalog as HabboCatalog).showPurchaseConfirmation(this._offer, this._page.pageId);
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyItem.as::get window()
     get window(): IWindowContainer | null
     {
         return this._window;

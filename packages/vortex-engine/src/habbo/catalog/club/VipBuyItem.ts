@@ -11,12 +11,16 @@ import type {ClubBuyOfferData} from './ClubBuyOfferData';
  */
 export class VipBuyItem implements IDisposable
 {
+    // AS3: .../src/com/sulake/habbo/catalog/club/VipBuyItem.as::_offer
     private _offer: ClubBuyOfferData;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/VipBuyItem.as::_window
     private _window: IWindowContainer | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/VipBuyItem.as::_catalog
     private _catalog: HabboCatalog;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/VipBuyItem.as::_disposed
     private _disposed: boolean = false;
 
     constructor(offer: ClubBuyOfferData, catalog: HabboCatalog, _contextId: string)
@@ -62,6 +66,7 @@ export class VipBuyItem implements IDisposable
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/VipBuyItem.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -71,6 +76,7 @@ export class VipBuyItem implements IDisposable
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/VipBuyItem.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -88,6 +94,7 @@ export class VipBuyItem implements IDisposable
         this._catalog.showPurchaseConfirmation(this._offer, this._offer.page?.pageId);
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/VipBuyItem.as::get window()
     get window(): IWindowContainer | null
     {
         return this._window;

@@ -18,10 +18,13 @@ export class RoomWidgetConfirmPetBreedingEvent extends RoomWidgetUpdateEvent
 
     private _nestId: number;
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/events/RoomWidgetConfirmPetBreedingEvent.as::_pet1
     private _pet1: ConfirmPetBreedingPetData;
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/events/RoomWidgetConfirmPetBreedingEvent.as::_pet2
     private _pet2: ConfirmPetBreedingPetData;
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/events/RoomWidgetConfirmPetBreedingEvent.as::_rarityCategories
     private _rarityCategories: BreedingRarityCategoryData[];
 
     private _resultPetTypeId: number;

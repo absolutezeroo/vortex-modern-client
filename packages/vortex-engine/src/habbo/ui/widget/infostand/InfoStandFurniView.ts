@@ -47,18 +47,22 @@ export class InfoStandFurniView
     private static readonly PICKUP_MODE_EJECT = 1;
     private static readonly PICKUP_MODE_PICKUP = 2;
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::_window
     protected _window: IItemListWindow | null = null;
     protected _customVariables: IWindowContainer | null = null; // var_459
     protected _variableTemplateItem: IWindow | null = null; // var_4576
     protected _infoBorder: IWindowContainer | null = null; // var_31
     protected _buttonList: IItemListWindow | null = null; // var_34
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::_catalog
     protected _catalog: IHabboCatalog | null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::_habboTracking
     protected _habboTracking: IHabboTracking | null;
     protected _catalogButton: IWindow | null = null; // var_350
     protected _bcPlaceButton: IWindow | null = null; // var_2510
     protected _rentButton: IWindow | null = null; // var_356
     protected _extendButton: IWindow | null = null; // var_348
     protected _buyoutButton: IWindow | null = null; // var_344
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::_pickupMode
     private _pickupMode: number = InfoStandFurniView.PICKUP_MODE_NONE; // var_570
     private _ownerId: number = 0; // var_1820
     protected _widget: InfoStandWidget; // var_16

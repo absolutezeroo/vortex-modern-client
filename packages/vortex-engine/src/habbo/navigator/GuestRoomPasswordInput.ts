@@ -12,7 +12,9 @@ import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
  */
 export class GuestRoomPasswordInput
 {
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomPasswordInput.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomPasswordInput.as::_window
     private _window: IWindow | null = null;
     private _roomData: GuestRoomData | null = null;
 
@@ -28,6 +30,7 @@ export class GuestRoomPasswordInput
 	 * @param posX - Optional X position
 	 * @param posY - Optional Y position
 	 */
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomPasswordInput.as::show()
     show(roomData: GuestRoomData, posX: number = -1, posY: number = -1): void
     {
         this._roomData = roomData;
@@ -69,6 +72,7 @@ export class GuestRoomPasswordInput
     /**
 	 * Re-shows the dialog with retry message.
 	 */
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomPasswordInput.as::showRetry()
     showRetry(): void
     {
         if(this._roomData)
@@ -79,6 +83,7 @@ export class GuestRoomPasswordInput
         this.setInfoText('${navigator.password.retryinfo}');
     }
 
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomPasswordInput.as::dispose()
     dispose(): void
     {
         if(this._window)
@@ -91,6 +96,7 @@ export class GuestRoomPasswordInput
         this._roomData = null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomPasswordInput.as::createWindow()
     private createWindow(): void
     {
         if(this._window) return;
@@ -122,6 +128,7 @@ export class GuestRoomPasswordInput
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomPasswordInput.as::setInfoText()
     private setInfoText(text: string): void
     {
         if(!this._window) return;
@@ -156,6 +163,7 @@ export class GuestRoomPasswordInput
         this._window = null;
     };
 
+    // AS3: sources/win63_version/habbo/navigator/GuestRoomPasswordInput.as::hide()
     private hide(): void
     {
         if(!this._window) return;

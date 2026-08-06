@@ -11,17 +11,20 @@ export class CallForHelpReplyMessageParser implements IMessageParser
 {
     private _message: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/CallForHelpReplyMessageEventParser.as::get message()
     get message(): string
     {
         return this._message;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/CallForHelpReplyMessageEventParser.as::flush()
     flush(): boolean
     {
         this._message = '';
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/CallForHelpReplyMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

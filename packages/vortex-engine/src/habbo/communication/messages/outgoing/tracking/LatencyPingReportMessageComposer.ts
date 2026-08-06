@@ -15,6 +15,7 @@ export class LatencyPingReportMessageComposer extends MessageComposer<Constructo
         this._data = [averageLatency, adjustedAverage, sampleCount];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/tracking/LatencyPingReportMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

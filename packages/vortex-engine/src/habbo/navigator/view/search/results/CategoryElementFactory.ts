@@ -19,8 +19,10 @@ import {NavigatorSearchAction} from '@habbo/communication/messages/incoming/newn
 // AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::CategoryElementFactory
 export class CategoryElementFactory
 {
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::MARGIN_LAYOUT_CATEGORY_CONTAINER
     private static readonly MARGIN_LAYOUT_CATEGORY_CONTAINER: number = 13;
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::_navigator
     private _navigator: HabboNewNavigator;
     private _roomEntryElementFactory: RoomEntryElementFactory;
 
@@ -32,6 +34,7 @@ export class CategoryElementFactory
 
     private _blockResultsView: BlockResultsView | null = null;
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::set blockResultsView()
     set blockResultsView(value: BlockResultsView)
     {
         this._blockResultsView = value;
@@ -39,6 +42,7 @@ export class CategoryElementFactory
 
     private _categoryTemplate: IWindowContainer | null = null;
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::set categoryTemplate()
     set categoryTemplate(value: IWindowContainer)
     {
         this._categoryTemplate = value;
@@ -46,6 +50,7 @@ export class CategoryElementFactory
 
     private _collapsedCategoryTemplate: IWindowContainer | null = null;
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::set collapsedCategoryTemplate()
     set collapsedCategoryTemplate(value: IWindowContainer)
     {
         this._collapsedCategoryTemplate = value;
@@ -53,6 +58,7 @@ export class CategoryElementFactory
 
     private _noResultsTemplate: IWindowContainer | null = null;
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::set noResultsTemplate()
     set noResultsTemplate(value: IWindowContainer)
     {
         this._noResultsTemplate = value;
@@ -270,6 +276,7 @@ export class CategoryElementFactory
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as getCollapsedCategoryElement()
 	 */
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::getCollapsedCategoryElement()
     getCollapsedCategoryElement(title: string, showMoreId: number = -1, actionAllowed: number = 0): IWindowContainer
     {
         const container = this._collapsedCategoryTemplate!.clone() as IWindowContainer;
@@ -342,6 +349,7 @@ export class CategoryElementFactory
         return this._noResultsTemplate!.clone() as IWindowContainer;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::getNoResultsELement()
     getNoResultsELement(): IWindowContainer
     {
         return this.getNoResultsElement();

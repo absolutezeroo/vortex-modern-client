@@ -15,6 +15,7 @@ export class GuideSessionGuideDecidesMessageComposer extends MessageComposer<Con
         this._data = [accepted];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/GuideSessionGuideDecidesMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

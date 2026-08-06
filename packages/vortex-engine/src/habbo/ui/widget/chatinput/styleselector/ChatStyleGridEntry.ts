@@ -13,11 +13,13 @@ export class ChatStyleGridEntry
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleGridEntry.as::get id()
     get id(): number
     {
         return this._id;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleGridEntry.as::get bitmap()
     get bitmap(): ImageBitmap
     {
         return this._bitmap;

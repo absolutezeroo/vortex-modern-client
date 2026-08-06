@@ -19,6 +19,7 @@ import {CatalogWidget} from './CatalogWidget';
  */
 export class TotalPriceCatalogWidget extends CatalogWidget
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _priceCredits: number = 0;
@@ -99,6 +100,7 @@ export class TotalPriceCatalogWidget extends CatalogWidget
         this.updateCurrencyIndicators();
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as::clear()
     private clear(): void
     {
         this._amountTextPrimary = null;

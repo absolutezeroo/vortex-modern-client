@@ -10,7 +10,9 @@ import type {IRoomObject} from '@room/object/IRoomObject';
 
 export class RoomObjectFloorHoleEvent extends RoomObjectEvent
 {
+    // AS3: .../src/com/sulake/habbo/room/events/RoomObjectFloorHoleEvent.as::ADD_HOLE
     public static readonly ADD_HOLE = 'ROFHO_ADD_HOLE';
+    // AS3: .../src/com/sulake/habbo/room/events/RoomObjectFloorHoleEvent.as::REMOVE_HOLE
     public static readonly REMOVE_HOLE = 'ROFHO_REMOVE_HOLE';
 
     constructor(type: string, object: IRoomObject)

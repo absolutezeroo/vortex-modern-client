@@ -17,6 +17,7 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureRoomBackgroundColorLogic extends FurnitureMultiStateLogic
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureRoomBackgroundColorLogic.as::_roomColorUpdated
     private _roomColorUpdated: boolean = false;
 
     override getEventTypes(): string[]
@@ -94,6 +95,7 @@ export class FurnitureRoomBackgroundColorLogic extends FurnitureMultiStateLogic
         super.mouseEvent(event, geometry);
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureRoomBackgroundColorLogic.as::setupObject()
     private setupObject(): void
     {
         if(this.object === null || this.object.getModelController() === null)

@@ -16,5 +16,6 @@ export interface IAssetReceiver extends IDisposable
 	 * @param asset - The decoded bitmap
 	 * @param uri - The resolved asset URI
 	 */
+    // AS3: sources/win63_version/core/window/components/StaticBitmapWrapperController.as::receiveAsset()
     receiveAsset(asset: ImageBitmap, uri: string): void;
 }

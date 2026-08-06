@@ -52,6 +52,7 @@ export class ChatBubbleMessage
         return this._type;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/_SafeCls_2676.as::_text
     private _text: string;
 
     // AS3: .../window/widgets/_SafeCls_2676.as::get textValue()

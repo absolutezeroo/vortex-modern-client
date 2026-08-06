@@ -9,18 +9,22 @@ import {PurchaseOKMessageOfferData} from '../../incoming/catalog/PurchaseOKMessa
  */
 export class PurchaseOKMessageEventParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/PurchaseOKMessageEventParser.as::_offer
     private _offer: PurchaseOKMessageOfferData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/PurchaseOKMessageEventParser.as::get offer()
     get offer(): PurchaseOKMessageOfferData | null
     {
         return this._offer;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/PurchaseOKMessageEventParser.as::flush()
     flush(): boolean
     {
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/PurchaseOKMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

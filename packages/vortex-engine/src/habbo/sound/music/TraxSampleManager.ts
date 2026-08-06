@@ -47,6 +47,7 @@ export class TraxSampleManager
     // Name DERIVED (`_SafeStr_9361`): read once from `trax.player.sample.memory.purge.enabled`.
     private _purgeEnabled: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/sound/music/TraxSampleManager.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../TraxSampleManager.as::TraxSampleManager()
@@ -76,6 +77,7 @@ export class TraxSampleManager
      * as a `Sound` and later pulls the raw floats out with `extract()`; here `decodeAudioData()`
      * does both at once, so the decoded frames arrive in the same shape `TraxSample` wants.
      */
+    // AS3: .../src/com/sulake/habbo/sound/music/TraxSampleManager.as::loadSample()
     loadSample(sampleId: number): void
     {
         if(this._soundManager === null || this._loadingSamples.has(sampleId)) return;
@@ -164,6 +166,7 @@ export class TraxSampleManager
      * last outstanding sample lands, the song that was waiting is announced as loaded, and only
      * then is memory considered.
      */
+    // AS3: .../src/com/sulake/habbo/sound/music/TraxSampleManager.as::processLoadedSamples()
     private processLoadedSamples(): void
     {
         if(this._loadedSamples.length === 0) return;
@@ -196,6 +199,7 @@ export class TraxSampleManager
      * that is what `samplesIdsInUse` is for — and neither is one no song has claimed yet
      * (`usageCount === 0`), which is AS3's guard against purging something mid-load.
      */
+    // AS3: .../src/com/sulake/habbo/sound/music/TraxSampleManager.as::processSampleMemoryUsage()
     private processSampleMemoryUsage(): void
     {
         if(this._traxSamples === null) return;

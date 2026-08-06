@@ -13,8 +13,10 @@ import {WiredValidationErrorParameter} from '@habbo/communication/messages/incom
  */
 export class WiredValidationErrorParser implements IMessageParser
 {
+    // AS3: .../src/com/sulake/habbo/communication/messages/parser/userdefinedroomevents/_SafeCls_3324.as::_localizationKey
     private _localizationKey: string = '';
 
+    // AS3: .../src/com/sulake/habbo/communication/messages/parser/userdefinedroomevents/_SafeCls_3324.as::_parameters
     private _parameters: WiredValidationErrorParameter[] = [];
 
     // AS3: _SafeCls_3324.as::get localizationKey()

@@ -112,6 +112,7 @@ export class QuestMessageHandler implements IDisposable
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -120,6 +121,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Dispose of this handler and remove all message events
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -196,6 +198,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle single quest data update
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onQuest()
     private onQuest(event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -212,6 +215,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle quest list
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onQuests()
     private onQuests(event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -230,6 +234,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle seasonal quest list
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onSeasonalQuests()
     private onSeasonalQuests(event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -248,6 +253,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle quest completion
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onQuestCompleted()
     private onQuestCompleted(event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -273,6 +279,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle quest cancellation
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onQuestCancelled()
     private onQuestCancelled(event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -288,6 +295,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle achievement list
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onAchievements()
     private onAchievements(event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -305,6 +313,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle single achievement update
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onAchievement()
     private onAchievement(event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -320,6 +329,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle resolution achievements
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onAchievementResolutions()
     private onAchievementResolutions(event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -338,6 +348,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle resolution progress
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onAchievementResolutionProgress()
     private onAchievementResolutionProgress(event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -359,6 +370,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle resolution completed
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onAchievementResolutionCompleted()
     private onAchievementResolutionCompleted(event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -376,6 +388,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle competition voting info
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onCompetitionVotingInfo()
     private onCompetitionVotingInfo(event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -395,6 +408,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle competition entry submit result
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onCompetitionEntrySubmitResult()
     private onCompetitionEntrySubmitResult(event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -413,6 +427,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle room entry
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onRoomEnter()
     private onRoomEnter(_event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -424,6 +439,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle room exit
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onRoomExit()
     private onRoomExit(_event: IMessageEvent): void
     {
         if(!this._engine) return;
@@ -437,6 +453,7 @@ export class QuestMessageHandler implements IDisposable
     /**
 	 * Handle achievement level-up notification
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onLevelUp()
     private onLevelUp(event: IMessageEvent): void
     {
         if(!this._engine) return;

@@ -57,21 +57,26 @@ let sharedChatBubbleFactory: ChatBubbleFactory | null = null;
 
 export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
 {
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::_timeoutTime
     private _timeoutTime: number = 0;
     private _stepAccumulated: number = 0;
     private _container: IWindow;
     private _contentList: IItemListWindow;
     private _activeContent: IWindow;
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::_itemList
     private _itemList: RoomChatItem[] = [];
     private _buffer: RoomChatItem[] = [];
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::_movingItems
     private _movingItems: RoomChatItem[] = [];
     private _widgetId: number;
     private _itemCounter: number = 0;
     private _cameraScaleRatio: number = 1;
     private _siteUrl: string;
     private _historyMaxCount: number;
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::_cameraOffset
     private _cameraOffset: {x: number; y: number} = {x: 0, y: 0};
     private _animating: boolean = false;
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::_config
     private _config: IHabboConfigurationManager;
     private _historyItemHeight: number = 150;
     private _chatAreaHeight: number;
@@ -80,6 +85,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
     private _areaMarginLeft: number = 100;
     private _areaMarginRight: number = 205;
     private _baseAreaHeight: number;
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::_maxFastLevels
     private _maxFastLevels: number;
     private _context: UpdateReceiverContext | null;
 
@@ -149,11 +155,13 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         }
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::get chatBubbleFactory()
     public static get chatBubbleFactory(): ChatBubbleFactory | null
     {
         return sharedChatBubbleFactory;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::get chatBubbleFactory()
     public get chatBubbleFactory(): ChatBubbleFactory | null
     {
         return sharedChatBubbleFactory;
@@ -165,16 +173,19 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         return this._container;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::get config()
     public get config(): IHabboConfigurationManager
     {
         return this._config;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::get handler()
     public get handler(): ChatWidgetHandler
     {
         return this._handler as ChatWidgetHandler;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::clearChatItems()
     private clearChatItems(): void
     {
         this._movingItems = [];
@@ -309,6 +320,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         this.addChatItem(item);
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::addChatItem()
     private addChatItem(item: RoomChatItem): void
     {
         if(this._cameraScaleRatio !== 1) item.senderX /= this._cameraScaleRatio;
@@ -359,6 +371,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         this.alignItems();
     };
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::processBuffer()
     private processBuffer(): void
     {
         if(this._animating) return;
@@ -400,6 +413,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         }
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::activateItemFromBuffer()
     private activateItemFromBuffer(): void
     {
         if(this._buffer.length === 0) return;
@@ -471,6 +485,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
 
     private _pendingLevels: number = 1;
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::checkLastItemAllowsAdding()
     private checkLastItemAllowsAdding(candidate: RoomChatItem): boolean
     {
         if(this._itemList.length === 0) return true;
@@ -517,6 +532,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         }
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::animationStart()
     private animationStart(): void
     {
         if(this._animating) return;
@@ -525,6 +541,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         this._animating = true;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::animationStop()
     private animationStop(): void
     {
         this._animating = false;
@@ -678,6 +695,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         }
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::setChatItemRenderable()
     private setChatItemRenderable(item: RoomChatItem): void
     {
         if(item.y < -32)
@@ -723,6 +741,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         return total;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::getAreaBottom()
     private getAreaBottom(): number
     {
         if(this.historyViewerActive()) return this._activeContent.height;
@@ -730,6 +749,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         return this._chatAreaHeight + this._container.y;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::getItemSpacing()
     private getItemSpacing(a: RoomChatItem, b: RoomChatItem): number
     {
         const bubbleHeight = this.chatBubbleFactory?.getActualBubbleHeight(a.chatStyle) ?? 0;
@@ -739,6 +759,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         return 10;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::purgeItems()
     private purgeItems(): void
     {
         if(this.historyViewerActive()) return;
@@ -798,6 +819,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         }
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::getFreeItemId()
     private getFreeItemId(): string
     {
         return `chat_${this._widgetId}_item_${this._itemCounter++}`;
@@ -816,17 +838,22 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         this.messageListener?.processWidgetMessage(new RoomWidgetChatSelectAvatarMessage('RWCSAM_MESSAGE_SELECT_AVATAR', userId, userName, roomId));
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::onItemMouseDown()
     public onItemMouseDown(_userId: number, _userCategory: number, _roomId: number, _event: WindowMouseEvent): void
     {
         // TODO(AS3): history viewer drag-to-scroll not ported.
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::onItemMouseOver()
     public onItemMouseOver(_userId: number, _userCategory: number, _roomId: number, _event: WindowMouseEvent): void {}
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::onItemMouseOut()
     public onItemMouseOut(_userId: number, _userCategory: number, _roomId: number, _event: WindowMouseEvent): void {}
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::onPulldownMouseDown()
     public onPulldownMouseDown(_event: WindowMouseEvent): void {}
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::onPulldownCloseButtonClicked()
     public onPulldownCloseButtonClicked(_event: WindowMouseEvent): void {}
 
     // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::stretchAreaBottomBy()
@@ -866,11 +893,13 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         if(realign) this.alignItems();
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::historyViewerActive()
     private historyViewerActive(): boolean
     {
         return false;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::historyViewerVisible()
     private historyViewerVisible(): boolean
     {
         return false;
@@ -882,6 +911,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         // TODO(AS3): no-op, history viewer not ported.
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::historyViewerMinimized()
     private historyViewerMinimized(): boolean
     {
         return this._contentList.height <= 1;
@@ -941,18 +971,21 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         // TODO(AS3): no-op, history viewer not ported.
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::enableDragTooltips()
     public enableDragTooltips(): void
     {
         for(const item of this._itemList) item.enableDragTooltip();
         for(const item of this._buffer) item.enableDragTooltip();
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::disableDragTooltips()
     public disableDragTooltips(): void
     {
         for(const item of this._itemList) item.disableDragTooltip();
         for(const item of this._buffer) item.disableDragTooltip();
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::get isGameSession()
     public get isGameSession(): boolean
     {
         return this.handler.container?.roomSession?.isGameSession ?? false;

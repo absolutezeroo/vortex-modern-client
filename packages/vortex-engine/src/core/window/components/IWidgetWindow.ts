@@ -8,6 +8,7 @@ import type {IIterable} from '../utils/IIterable';
  */
 export interface IWidgetWindow extends IWindow, IIterable
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IWidgetWindow.as::get widget()
     readonly widget: unknown;
     rootWindow: IWindow | null;
 }

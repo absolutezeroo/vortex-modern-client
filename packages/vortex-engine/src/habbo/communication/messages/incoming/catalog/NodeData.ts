@@ -9,13 +9,16 @@ export class NodeData
 {
     private _visible: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2971.as::get visible()
     get visible(): boolean
     {
         return this._visible;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2971.as::_icon
     private _icon: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2971.as::get icon()
     get icon(): number
     {
         return this._icon;
@@ -23,34 +26,43 @@ export class NodeData
 
     private _pageId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2971.as::get pageId()
     get pageId(): number
     {
         return this._pageId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2971.as::_pageName
     private _pageName: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2971.as::get pageName()
     get pageName(): string
     {
         return this._pageName;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2971.as::_localization
     private _localization: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2971.as::get localization()
     get localization(): string
     {
         return this._localization;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2971.as::_children
     private _children: NodeData[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2971.as::get children()
     get children(): NodeData[]
     {
         return this._children;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2971.as::_offerIds
     private _offerIds: number[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/class_2971.as::get offerIds()
     get offerIds(): number[]
     {
         return this._offerIds;

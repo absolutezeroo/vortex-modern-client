@@ -7,9 +7,12 @@ import type {IGraphicContext} from './IGraphicContext';
  */
 export interface IGraphicContextHost
 {
+    // AS3: .../src/com/sulake/core/window/graphics/IGraphicContextHost.as::get name()
     readonly name: string;
 
+    // AS3: .../src/com/sulake/core/window/graphics/IGraphicContextHost.as::getGraphicContext()
     getGraphicContext(createIfMissing: boolean): IGraphicContext | null;
 
+    // AS3: .../src/com/sulake/core/window/graphics/IGraphicContextHost.as::hasGraphicsContext()
     hasGraphicsContext(): boolean;
 }

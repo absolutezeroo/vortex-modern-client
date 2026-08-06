@@ -117,6 +117,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as::CORE_RATIO
      */
+    // AS3: .../src/binaryData/HabboAir.as::CORE_RATIO
     private static readonly CORE_RATIO: number = 0.6;
 
     /**
@@ -127,6 +128,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as::INIT_STEPS
      */
+    // AS3: .../src/binaryData/HabboAir.as::INIT_STEPS
     private static readonly INIT_STEPS: number = 3;
 
     /**
@@ -158,12 +160,14 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as _loadingScreen
      */
+    // AS3: .../src/binaryData/HabboAir.as::_loadingScreen
     private _loadingScreen: IVortexLoadingScreen | null = null;
     /**
      * Number of completed initialization steps.
      *
      * @see sources/win63_2021_version/HabboAirMain.as _completedInitSteps
      */
+    // AS3: .../src/binaryData/HabboAir.as::_completedInitSteps
     private _completedInitSteps: number = 0;
     /**
      * Whether the room engine has finished initialization.
@@ -190,11 +194,13 @@ export class VortexMain implements IVortexMain
     private _nuxDialogs: HabboNuxDialogs | null = null;
 
     private _phoneNumber: HabboPhoneNumber | null = null;
+    // AS3: sources/win63_version/habbo/room/class_34.as::_adManager
     private _adManager: AdManager | null = null;
     private _tracking: HabboTracking | null = null;
     private _groupsManager: HabboGroupsManager | null = null;
     private _notifications: HabboNotifications | null = null;
     private _soundManager: HabboSoundManagerFlash10 | null = null;
+    // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::_freeFlowChat
     private _freeFlowChat: HabboFreeFlowChat | null = null;
     private _friendBar: HabboFriendBar | null = null;
     private _messenger: HabboMessenger | null = null;
@@ -229,8 +235,10 @@ export class VortexMain implements IVortexMain
         return this._assets;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::_catalog
     private _catalog: HabboCatalog | null = null;
 
+    // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get catalog()
     get catalog(): IHabboCatalog 
     {
         if(!this._catalog) 
@@ -267,10 +275,12 @@ export class VortexMain implements IVortexMain
         return this._roomUI;
     }
 
+    // AS3: sources/win63_version/habbo/room/class_34.as::_toolbar
     private _toolbar: HabboToolbar | null = null;
     private _questEngine: HabboQuestEngine | null = null;
     private _habboHelp: HabboHelp | null = null;
 
+    // AS3: sources/win63_version/habbo/room/class_34.as::get toolbar()
     get toolbar(): IHabboToolbar 
     {
         if(!this._toolbar) 
@@ -293,8 +303,10 @@ export class VortexMain implements IVortexMain
         return this._avatarRenderManager;
     }
 
+    // AS3: sources/win63_version/habbo/room/class_34.as::_windowManager
     private _windowManager: HabboWindowManager | null = null;
 
+    // AS3: sources/win63_version/habbo/room/class_34.as::get windowManager()
     get windowManager(): IHabboWindowManager 
     {
         if(!this._windowManager) 
@@ -316,8 +328,10 @@ export class VortexMain implements IVortexMain
         return this._furniEditor;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/Habbo.as::_disposed
     protected _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -383,8 +397,10 @@ export class VortexMain implements IVortexMain
         return this._communicationDemo;
     }
 
+    // AS3: sources/win63_version/habbo/room/class_34.as::_roomManager
     private _roomManager: RoomManager | null = null;
 
+    // AS3: sources/win63_version/habbo/room/class_34.as::get roomManager()
     get roomManager(): RoomManager 
     {
         if(!this._roomManager) 
@@ -407,8 +423,10 @@ export class VortexMain implements IVortexMain
         return this._roomMessageHandler;
     }
 
+    // AS3: sources/win63_version/habbo/room/class_34.as::_roomSessionManager
     private _roomSessionManager: RoomSessionManager | null = null;
 
+    // AS3: sources/win63_version/habbo/room/class_34.as::get roomSessionManager()
     get roomSessionManager(): RoomSessionManager 
     {
         if(!this._roomSessionManager) 
@@ -419,6 +437,7 @@ export class VortexMain implements IVortexMain
         return this._roomSessionManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get localization()
     get localization(): HabboLocalizationManager 
     {
         if(!this._localizationManager) 
@@ -429,8 +448,10 @@ export class VortexMain implements IVortexMain
         return this._localizationManager;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::_roomEngine
     private _roomEngine: RoomEngine | null = null;
 
+    // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get roomEngine()
     get roomEngine(): RoomEngine 
     {
         if(!this._roomEngine) 
@@ -441,8 +462,10 @@ export class VortexMain implements IVortexMain
         return this._roomEngine;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::_sessionDataManager
     private _sessionDataManager: SessionDataManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get sessionDataManager()
     get sessionDataManager(): ISessionDataManager 
     {
         if(!this._sessionDataManager) 
@@ -500,6 +523,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as dispose()
      */
+    // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::dispose()
     dispose(): void 
     {
         if(this._disposed) return;
@@ -573,6 +597,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
      */
+    // AS3: .../src/binaryData/HabboAir.as::prepareCore()
     async prepareCore(config?: IVortexConfig): Promise<void> 
     {
         const ctx = Core.instantiate(
@@ -1020,6 +1045,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as (ticker integration)
      */
+    // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::update()
     private update(ticker: Ticker): void 
     {
         if(this._disposed) return;
@@ -1055,6 +1081,7 @@ export class VortexMain implements IVortexMain
      * @see sources/PRODUCTION-201601012205-226667486/src/HabboMain.as::onExitFrame()
      * @see sources/win63_2023_version/HabboAirMain.as::onExitFrame()
      */
+    // AS3: .../src/binaryData/HabboAir.as::onExitFrame()
     private onExitFrame(): void 
     {
         if(this._bootFinalized || !this._roomEngineReady || !this._coreRunning) return;
@@ -1079,6 +1106,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as addInitializationProgressListeners()
      */
+    // AS3: .../src/binaryData/HabboAir.as::addInitializationProgressListeners()
     private addInitializationProgressListeners(): void 
     {
         // AS3: simpleQueueInterface(new IIDHabboConfigurationManager(), onConfigurationComplete)
@@ -1151,6 +1179,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as updateProgressBar()
      */
+    // AS3: .../src/binaryData/HabboAir.as::updateProgressBar()
     private updateProgressBar(): void 
     {
         if(this._loadingScreen != null) 
@@ -1166,6 +1195,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as onConfigurationComplete()
      */
+    // AS3: .../src/binaryData/HabboAir.as::onConfigurationComplete()
     private onConfigurationComplete(): void 
     {
         Vortex.trackLoginStep('client.init.config.loaded');
@@ -1178,6 +1208,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as onLocalizationComplete()
      */
+    // AS3: .../src/binaryData/HabboAir.as::onLocalizationComplete()
     private onLocalizationComplete(): void 
     {
         Vortex.trackLoginStep('client.init.localization.loaded');
@@ -1207,6 +1238,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as onRoomEngineReady()
      */
+    // AS3: .../src/binaryData/HabboAir.as::onRoomEngineReady()
     private onRoomEngineReady(): void 
     {
         this._roomEngineReady = true;
@@ -1223,6 +1255,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as onCoreRunning()
      */
+    // AS3: .../src/binaryData/HabboAir.as::onCoreRunning()
     private onCoreRunning(): void 
     {
         this._coreRunning = true;
@@ -1239,6 +1272,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as startSendingHeartBeat()
      */
+    // AS3: .../src/binaryData/HabboAir.as::startSendingHeartBeat()
     private startSendingHeartBeat(): void 
     {
         const config = this._configurationManager;
@@ -1270,6 +1304,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_version/Habbo.as sendHeartBeat()
      */
+    // AS3: .../src/binaryData/HabboAir.as::sendHeartBeat()
     private sendHeartBeat(): void 
     {
         Vortex.instance.vortexEvents.emit('heartbeat');
@@ -1280,6 +1315,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_version/HabboMain.as onCoreError()
      */
+    // AS3: .../src/binaryData/HabboAir.as::onCoreError()
     private onCoreError(message: string): void 
     {
         log.error(`Core error: ${message}`);
@@ -1292,6 +1328,7 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_version/HabboMain.as onCoreReboot()
      */
+    // AS3: .../src/binaryData/HabboAir.as::onCoreReboot()
     private onCoreReboot(): void 
     {
         log.warn('Core reboot requested');

@@ -27,11 +27,13 @@ export class UserDataManager implements IUserDataManager
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::set connection()
     set connection(connection: IConnection | null)
     {
         this._connection = connection;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -43,11 +45,13 @@ export class UserDataManager implements IUserDataManager
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::getUserData()
     getUserData(webId: number): IUserData | null
     {
         return this.getUserDataByType(webId, UserDataType.USER);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::getUserDataByType()
     getUserDataByType(webId: number, type: number): IUserData | null
     {
         const typeMap = this._usersByTypeAndWebId.get(type);
@@ -60,11 +64,13 @@ export class UserDataManager implements IUserDataManager
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::getUserDataByIndex()
     getUserDataByIndex(roomIndex: number): IUserData | null
     {
         return this._usersByRoomIndex.get(roomIndex) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::getUserDataByName()
     getUserDataByName(name: string): IUserData | null
     {
         for(const userData of this._usersByRoomIndex.values())
@@ -78,11 +84,13 @@ export class UserDataManager implements IUserDataManager
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::getPetUserData()
     getPetUserData(webId: number): IUserData | null
     {
         return this.getUserDataByType(webId, UserDataType.PET);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::getRentableBotUserData()
     getRentableBotUserData(webId: number): IUserData | null
     {
         return this.getUserDataByType(webId, UserDataType.RENTABLE_BOT);
@@ -103,6 +111,7 @@ export class UserDataManager implements IUserDataManager
         return this._userBadges.get(userId) ?? [];
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::setUserData()
     setUserData(userData: IUserData): void
     {
         if(!userData) return;
@@ -126,12 +135,14 @@ export class UserDataManager implements IUserDataManager
         this._usersByRoomIndex.set(userData.roomObjectId, userData);
     }
 
+    // AS3: sources/win63_version/habbo/session/UserDataManager.as::setUserBadges()
     setUserBadges(userId: number, badges: string[]): void
     {
         this._userBadges.delete(userId);
         this._userBadges.set(userId, badges);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::removeUserDataByRoomIndex()
     removeUserDataByRoomIndex(roomIndex: number): void
     {
         const userData = this._usersByRoomIndex.get(roomIndex);
@@ -149,6 +160,7 @@ export class UserDataManager implements IUserDataManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::updateFigure()
     updateFigure(roomIndex: number, figure: string, sex: string, hasSaddle: boolean, isRiding: boolean): void
     {
         const userData = this.getUserDataByIndex(roomIndex);
@@ -162,6 +174,7 @@ export class UserDataManager implements IUserDataManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::updatePetLevel()
     updatePetLevel(roomIndex: number, level: number): void
     {
         const userData = this.getUserDataByIndex(roomIndex);
@@ -172,6 +185,7 @@ export class UserDataManager implements IUserDataManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::updatePetBreedingStatus()
     updatePetBreedingStatus(roomIndex: number, canBreed: boolean, canHarvest: boolean, canRevive: boolean, hasBreedingPermission: boolean): void
     {
         const userData = this.getUserDataByIndex(roomIndex);
@@ -185,6 +199,7 @@ export class UserDataManager implements IUserDataManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::updateCustom()
     updateCustom(roomIndex: number, custom: string): void
     {
         const userData = this.getUserDataByIndex(roomIndex);
@@ -195,6 +210,7 @@ export class UserDataManager implements IUserDataManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::updateAchievementScore()
     updateAchievementScore(roomIndex: number, score: number): void
     {
         const userData = this.getUserDataByIndex(roomIndex);
@@ -216,6 +232,7 @@ export class UserDataManager implements IUserDataManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::markAsBlocked()
     markAsBlocked(roomIndex: number, blocked: boolean = true): void
     {
         const userData = this.getUserDataByIndex(roomIndex);
@@ -226,6 +243,7 @@ export class UserDataManager implements IUserDataManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::updateNameByIndex()
     updateNameByIndex(roomIndex: number, name: string): void
     {
         const userData = this.getUserDataByIndex(roomIndex);
@@ -249,6 +267,7 @@ export class UserDataManager implements IUserDataManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::getAllUserIds()
     getAllUserIds(): number[]
     {
         const userIds: number[] = [];

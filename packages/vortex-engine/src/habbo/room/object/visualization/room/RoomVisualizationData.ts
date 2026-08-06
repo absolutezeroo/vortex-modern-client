@@ -19,22 +19,28 @@ export class RoomVisualizationData implements IRoomObjectVisualizationData
         this._wallRasterizer = new WallRasterizer();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::_floorRasterizer
     private _floorRasterizer: FloorRasterizer;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::get floorRasterizer()
     get floorRasterizer(): IPlaneRasterizer
     {
         return this._floorRasterizer;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::_wallRasterizer
     private _wallRasterizer: WallRasterizer;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::get wallRasterizer()
     get wallRasterizer(): IPlaneRasterizer
     {
         return this._wallRasterizer;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::_initialized
     private _initialized: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::get initialized()
     get initialized(): boolean
     {
         return this._initialized;
@@ -47,6 +53,7 @@ export class RoomVisualizationData implements IRoomObjectVisualizationData
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::initialize()
     initialize(data: unknown): boolean
     {
         this.reset();
@@ -68,6 +75,7 @@ export class RoomVisualizationData implements IRoomObjectVisualizationData
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::initializeAssetCollection()
     initializeAssetCollection(textures: Map<string, HTMLCanvasElement>): void
     {
         if(this._initialized) return;
@@ -78,12 +86,14 @@ export class RoomVisualizationData implements IRoomObjectVisualizationData
         this._initialized = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::clearCache()
     clearCache(): void
     {
         this._floorRasterizer.clearCache();
         this._wallRasterizer.clearCache();
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -92,6 +102,7 @@ export class RoomVisualizationData implements IRoomObjectVisualizationData
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::reset()
     protected reset(): void
     {
         // Override in subclasses if needed

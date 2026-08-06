@@ -7,6 +7,7 @@ export class CatalogWidgetShowWarningTextEvent
 {
     static readonly CWE_SHOW_WARNING_TEXT: string = 'CWE_SHOW_WARNING_TEXT';
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetShowWarningTextEvent.as::_text
     private _text: string;
 
     constructor(text: string)
@@ -19,6 +20,7 @@ export class CatalogWidgetShowWarningTextEvent
         return CatalogWidgetShowWarningTextEvent.CWE_SHOW_WARNING_TEXT;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetShowWarningTextEvent.as::get text()
     get text(): string
     {
         return this._text;

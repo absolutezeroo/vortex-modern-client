@@ -101,6 +101,7 @@ export class TradingNameScamDetector
      *
      * The two `> 2` tests in the dump are the constants above, inlined by the decompiler.
      */
+    // AS3: .../src/com/sulake/habbo/inventory/trading/namescam/_SafeCls_3934.as::compareNames()
     private static compareNames(
         name: string,
         other: string,

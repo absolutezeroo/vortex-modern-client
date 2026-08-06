@@ -18,8 +18,11 @@ export interface ITextFormat
     font?: string | null;
     size?: number | null;
     color?: number | null;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get bold()
     bold?: boolean | null;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get italic()
     italic?: boolean | null;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get underline()
     underline?: boolean | null;
 }
 
@@ -33,38 +36,62 @@ export interface ITextFormat
  */
 export interface ITextWindow extends IWindow, IScrollableWindow
 {
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get bold()
     readonly bold: boolean;
     // TextController has had a setter all along; the interface declared it read-only, so
     // callers that need it (the mannequin's name field, SearchView's placeholder) had to
     // cast around the type.
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get italic()
     italic: boolean;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get underline()
     underline: boolean;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get fontFace()
     readonly fontFace: string;
     // AS3 ITextWindow exposes fontSize as read/write; TextController already implements the setter.
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get fontSize()
     fontSize: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get length()
     readonly length: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get numLines()
     readonly numLines: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get textHeight()
     readonly textHeight: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get textWidth()
     readonly textWidth: number;
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get text()
     text: string;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get textColor()
     textColor: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get textBackground()
     textBackground: boolean;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get textBackgroundColor()
     textBackgroundColor: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get maxChars()
     maxChars: number;
     // AS3-settable line cap (TextController implements it); used by wired TextPreset multiline mode.
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get maxLines()
     maxLines: number;
     // AS3-settable overflow ellipsis replacement (TextController implements it); wired overflow mode.
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get overflowReplace()
     overflowReplace: string;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get multiline()
     multiline: boolean;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get wordWrap()
     wordWrap: boolean;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get autoSize()
     autoSize: string;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get etchingColor()
     etchingColor: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get etchingPosition()
     etchingPosition: string;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get border()
     border: boolean;
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::appendText()
     appendText(text: string): void;
 
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::replaceText()
     replaceText(beginIndex: number, endIndex: number, newText: string): void;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getCharIndexAtPoint()

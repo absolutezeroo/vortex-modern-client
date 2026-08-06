@@ -32,6 +32,7 @@ export class TradeOpenFailedEventParser implements IMessageParser
         return this._reason;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/trading/TradeOpenFailedEventParser.as::_otherUserName
     private _otherUserName: string = '';
 
     // AS3: .../TradeOpenFailedEventParser.as::get otherUserName()

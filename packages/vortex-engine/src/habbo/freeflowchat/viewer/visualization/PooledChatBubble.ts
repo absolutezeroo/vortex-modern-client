@@ -43,9 +43,11 @@ export class PooledChatBubble extends Container
 {
     private _chatFlow: IHabboFreeFlowChat | null;
     private _chatItem: ChatItem | null = null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::_style
     private _style: IChatStyleInternal | null = null;
     private _face: ImageBitmap | null = null;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::_background
     private _background: Container | null = null;
     private readonly _pointer: Sprite = new Sprite();
     private readonly _emblem: Sprite = new Sprite();
@@ -56,6 +58,7 @@ export class PooledChatBubble extends Container
     private _minHeight: number = -1;
     private _useDesktopMargins: boolean = false;
     private _readyToRecycle: boolean = false;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::_hasHitDesktopMargin
     private _hasHitDesktopMargin: boolean = false;
 
     private _proxyX: number = 0;
@@ -382,6 +385,7 @@ export class PooledChatBubble extends Container
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get proxyX()
     get proxyX(): number
     {
         return this._proxyX;
@@ -430,6 +434,7 @@ export class PooledChatBubble extends Container
         this._useDesktopMargins = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get roomPanOffsetX()
     get roomPanOffsetX(): number
     {
         return this._roomPanOffsetX;
@@ -486,6 +491,7 @@ export class PooledChatBubble extends Container
         return this._style.isSystemStyle ? this.height : Math.min(MAX_TEXT_HEIGHT_BASE * (this._chatFlow?.chatFontSizeScale ?? 1), this.height);
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get overlap()
     get overlap()
     {
         return this._style?.overlap ?? null;
@@ -499,21 +505,25 @@ export class PooledChatBubble extends Container
         return this.userScreenPos.x - (offset?.x ?? 0);
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get hasHitDesktopMargin()
     get hasHitDesktopMargin(): boolean
     {
         return this._hasHitDesktopMargin;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get roomId()
     get roomId(): number
     {
         return this._chatItem?.roomId ?? 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get timeStamp()
     get timeStamp(): number
     {
         return this._chatItem?.timeStamp ?? 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get readyToRecycle()
     get readyToRecycle(): boolean
     {
         return this._readyToRecycle;

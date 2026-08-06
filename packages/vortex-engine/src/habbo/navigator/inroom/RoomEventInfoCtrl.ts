@@ -12,10 +12,14 @@ import type {RoomEventData} from '@habbo/communication/messages/incoming/navigat
  */
 export class RoomEventInfoCtrl implements IDisposable
 {
+    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventInfoCtrl.as::TOOLBAR_EXTENSION_ID
     private static readonly TOOLBAR_EXTENSION_ID: string = 'room_event_info';
 
+    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventInfoCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
+    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventInfoCtrl.as::_window
     private _window: IWindowContainer | null = null;
+    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventInfoCtrl.as::_expanded
     private _expanded: boolean = true;
 
     constructor(navigator: IHabboTransitionalNavigator)
@@ -23,6 +27,7 @@ export class RoomEventInfoCtrl implements IDisposable
         this._navigator = navigator;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventInfoCtrl.as::get disposed()
     get disposed(): boolean
     {
         return this._navigator === null;
@@ -33,11 +38,13 @@ export class RoomEventInfoCtrl implements IDisposable
         return this._expanded;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventInfoCtrl.as::set expanded()
     set expanded(value: boolean)
     {
         this._expanded = value;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventInfoCtrl.as::dispose()
     dispose(): void
     {
         if(this._navigator)
@@ -54,6 +61,7 @@ export class RoomEventInfoCtrl implements IDisposable
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventInfoCtrl.as::refresh()
     refresh(): void
     {
         if(!this._navigator) return;
@@ -141,6 +149,7 @@ export class RoomEventInfoCtrl implements IDisposable
                 : this._window.height;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventInfoCtrl.as::close()
     close(): void
     {
         if(this._window !== null && this._window.visible)

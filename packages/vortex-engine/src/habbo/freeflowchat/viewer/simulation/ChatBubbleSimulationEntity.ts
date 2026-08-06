@@ -17,13 +17,16 @@ import type {PooledChatBubble} from '@habbo/freeflowchat/viewer/visualization/Po
 export class ChatBubbleSimulationEntity
 {
     /** AS3: ChatBubbleSimulationEntity.as::VISUALIZATION_OVERLAP_VERTICAL */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::VISUALIZATION_OVERLAP_VERTICAL
     static readonly VISUALIZATION_OVERLAP_VERTICAL = 10;
 
     /** AS3: ChatBubbleSimulationEntity.as::MOVE_NEGATIVE_FEEDBACK */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::MOVE_NEGATIVE_FEEDBACK
     protected static readonly MOVE_NEGATIVE_FEEDBACK = 0.1;
 
     private static readonly WIDE_RECT_MARGIN = 2500;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatBubbleSimulationEntity.as::_visualization
     protected _visualization: PooledChatBubble | null;
     protected _x: number;
     protected _y: number;

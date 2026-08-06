@@ -15,6 +15,7 @@ export class ExtendedProfileMessageEvent extends MessageEvent implements IMessag
         super(callback, ExtendedProfileMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/ExtendedProfileMessageEvent.as::get data()
     get data(): ExtendedProfileData | null
     {
         return (this._parser as ExtendedProfileMessageParser).data;

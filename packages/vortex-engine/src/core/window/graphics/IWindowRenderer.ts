@@ -21,6 +21,7 @@ export interface IWindowRenderer extends IDisposable
     /**
 	 * Renders all queued dirty windows.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/IWindowRenderer.as::render()
     render(): void;
 
     /**
@@ -58,6 +59,7 @@ export interface IWindowRenderer extends IDisposable
 	 * @param context - The window context to invalidate
 	 * @param rect - The invalidation rectangle
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/IWindowRenderer.as::invalidate()
     invalidate(context: IWindowContext, rect: { x: number; y: number; width: number; height: number }): void;
 
     /**
@@ -74,5 +76,6 @@ export interface IWindowRenderer extends IDisposable
 	 * @param window - The window to purge, or null for all
 	 * @param recursive - Whether to recurse into children
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/IWindowRenderer.as::purge()
     purge(window?: IWindow | null, recursive?: boolean): void;
 }

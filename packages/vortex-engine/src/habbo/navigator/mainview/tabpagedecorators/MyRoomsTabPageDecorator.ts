@@ -26,6 +26,7 @@ const SUB_ITEMS: [number, string][] = [
  */
 export class MyRoomsTabPageDecorator implements ITabPageDecorator
 {
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::_navigator
     private _navigator: ITabNavigator;
     private _filter: IDropMenuWindow | null = null;
 
@@ -34,6 +35,7 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
         this._navigator = navigator;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::refreshCustomContent()
     refreshCustomContent(container: IWindowContainer): void
     {
         const header = container.findChildByName('me_header') as IWindowContainer | null;
@@ -54,6 +56,7 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
         header.visible = true;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::tabSelected()
     tabSelected(): void
     {
         if(!this._filter || (this._filter as unknown as { disposed?: boolean }).disposed) return;
@@ -63,6 +66,7 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
         this._filter.addEventListener('WE_SELECTED', this.onFilterSelected);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::refreshFooter()
     refreshFooter(container: IWindowContainer): void
     {
         const footer = container.findChildByName('me_footer') as IWindowContainer | null;
@@ -80,11 +84,13 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
         footer.visible = true;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::navigatorOpenedWhileInTab()
     navigatorOpenedWhileInTab(): void
     {
         this.startSearch();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::get filterCategory()
     get filterCategory(): string | null
     {
         if(!this._filter || (this._filter as unknown as { disposed?: boolean }).disposed) return null;
@@ -92,6 +98,7 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
         return this._filter.enumerateSelection()[this._filter.selection] ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::setSubSelection()
     setSubSelection(value: number): void
     {
         if(!this._filter || (this._filter as unknown as { disposed?: boolean }).disposed) return;
@@ -110,11 +117,13 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
         this._filter.selection = 0;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::processSearchParam()
     processSearchParam(param: string): string
     {
         return param;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::prepareSubNavi()
     private prepareSubNavi(): void
     {
         if(!this._filter || (this._filter as unknown as { disposed?: boolean }).disposed) return;
@@ -143,6 +152,7 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
         }
     };
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::startSearch()
     private startSearch(): void
     {
         const selection = (this._filter && !(this._filter as unknown as { disposed?: boolean }).disposed)
@@ -152,6 +162,7 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
         this._navigator.mainViewCtrl?.startSearch(3, this.getSearchTypeForIndex(selection));
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::getSearchTypeForIndex()
     private getSearchTypeForIndex(index: number): number
     {
         return SUB_ITEMS[index]?.[0] ?? SUB_ITEMS[0][0];

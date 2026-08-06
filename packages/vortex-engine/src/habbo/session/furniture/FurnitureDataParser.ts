@@ -20,10 +20,13 @@ export interface IFurnitureDataParserEvents
  */
 export class FurnitureDataParser
 {
+    // AS3: .../src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::_floorItems
     private _floorItems: Map<number, IFurnitureData>;
+    // AS3: .../src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::_wallItems
     private _wallItems: Map<number, IFurnitureData>;
     private _floorItemsByName: Map<string, number[]>;
     private _wallItemsByName: Map<string, number[]>;
+    // AS3: .../src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::_localization
     private _localization: IHabboLocalizationManager | null;
     private _critical: boolean;
     private _events: EventEmitter<IFurnitureDataParserEvents> = new EventEmitter();
@@ -573,6 +576,7 @@ export class FurnitureDataParser
         return colours;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::removePatternFrom()
     private removePatternFrom(values: string[], pattern: string): void
     {
         let index = 0;

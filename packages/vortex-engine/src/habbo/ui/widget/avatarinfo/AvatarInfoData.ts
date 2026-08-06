@@ -13,25 +13,45 @@ import type {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUp
 
 export class AvatarInfoData
 {
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get isIgnored()
     public isIgnored: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get canTrade()
     public canTrade: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get canTradeReason()
     public canTradeReason: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get canBeKicked()
     public canBeKicked: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get canBeBanned()
     public canBeBanned: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get canBeMuted()
     public canBeMuted: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get canBeAskedAsFriend()
     public canBeAskedAsFriend: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get amIOwner()
     public amIOwner: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get amIAnyRoomController()
     public amIAnyRoomController: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get respectLeft()
     public respectLeft: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get respectReplenishesLeft()
     public respectReplenishesLeft: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get isOwnUser()
     public isOwnUser: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get allowNameChange()
     public allowNameChange: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get isGuildRoom()
     public isGuildRoom: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get carryItemType()
     public carryItemType: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get myRoomControllerLevel()
     public myRoomControllerLevel: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get targetRoomControllerLevel()
     public targetRoomControllerLevel: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get isFriend()
     public isFriend: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get isAmbassador()
     public isAmbassador: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/_SafeCls_2798.as::get isBlocked()
     public isBlocked: boolean = false;
 
     // AS3: _SafeCls_2798.as::populate()

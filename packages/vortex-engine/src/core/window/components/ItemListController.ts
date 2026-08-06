@@ -21,8 +21,10 @@ import {SmoothScroller} from '../utils/SmoothScroller';
  */
 export class ItemListController extends WindowController implements IItemListWindow 
 {
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::_scrollAreaWidth
     protected _scrollAreaWidth: number = 0;
     protected _scrollAreaHeight: number = 0;
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::_container
     protected _container: IWindowContainer | null = null;
     protected _isResizing: boolean = false;
     protected _isUpdating: boolean = false;
@@ -33,6 +35,7 @@ export class ItemListController extends WindowController implements IItemListWin
     // finalize() runs, so a `= true` initializer here would clobber a value
     // already applied from `properties`. Default primed with `??=` in
     // finalize() instead.
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::_arrangeListItems
     protected _arrangeListItems: boolean | null = null;
     private readonly _containerEventHandlerBound: (event: WindowEvent) => void;
 
@@ -119,11 +122,13 @@ export class ItemListController extends WindowController implements IItemListWin
 
     private _isPartOfGridWindow: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get isPartOfGridWindow()
     public get isPartOfGridWindow(): boolean 
     {
         return this._isPartOfGridWindow;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::set isPartOfGridWindow()
     public set isPartOfGridWindow(value: boolean) 
     {
         this._isPartOfGridWindow = value;
@@ -134,6 +139,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the horizontal scroll position (0..1).
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get scrollH()
     public get scrollH(): number 
     {
         return this._scrollH;
@@ -142,6 +148,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Sets the horizontal scroll position and repositions the container.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::set scrollH()
     public set scrollH(value: number) 
     {
         this.setScrollH(value, false);
@@ -152,6 +159,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the vertical scroll position (0..1).
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get scrollV()
     public get scrollV(): number 
     {
         return this._scrollV;
@@ -160,6 +168,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Sets the vertical scroll position and repositions the container.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::set scrollV()
     public set scrollV(value: number) 
     {
         this.setScrollV(value, false);
@@ -170,6 +179,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the spacing between list items.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get spacing()
     public get spacing(): number 
     {
         return this._spacing;
@@ -178,6 +188,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Sets the spacing between list items.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::set spacing()
     public set spacing(value: number) 
     {
         if(value !== this._spacing) 
@@ -187,11 +198,13 @@ export class ItemListController extends WindowController implements IItemListWin
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::_scaleToFitItems
     protected _scaleToFitItems: boolean = false;
 
     /**
      * Gets whether items are scaled to fit the list.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get scaleToFitItems()
     public get scaleToFitItems(): boolean 
     {
         return this._scaleToFitItems;
@@ -200,6 +213,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Sets whether items are scaled to fit the list.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::set scaleToFitItems()
     public set scaleToFitItems(value: boolean) 
     {
         if(this._scaleToFitItems !== value) 
@@ -209,11 +223,13 @@ export class ItemListController extends WindowController implements IItemListWin
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::_resizeOnItemUpdate
     protected _resizeOnItemUpdate: boolean = false;
 
     /**
      * Gets whether the list resizes when items are updated.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get resizeOnItemUpdate()
     public get resizeOnItemUpdate(): boolean 
     {
         return this._resizeOnItemUpdate;
@@ -222,6 +238,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Sets whether the list resizes when items are updated.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::set resizeOnItemUpdate()
     public set resizeOnItemUpdate(value: boolean) 
     {
         this._resizeOnItemUpdate = value;
@@ -241,13 +258,16 @@ export class ItemListController extends WindowController implements IItemListWin
         }
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::_inverseResizeOnItemUpdate
     protected _inverseResizeOnItemUpdate: boolean = false;
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get inverseResizeOnItemUpdate()
     public get inverseResizeOnItemUpdate(): boolean 
     {
         return this._inverseResizeOnItemUpdate;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::set inverseResizeOnItemUpdate()
     public set inverseResizeOnItemUpdate(value: boolean) 
     {
         this._inverseResizeOnItemUpdate = value;
@@ -278,6 +298,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the horizontal scroll step size.
      */
+    // AS3: sources/win63_version/core/window/components/ItemListController.as::get scrollStepH()
     public get scrollStepH(): number
     {
         return this._scrollStepH ?? 25;
@@ -286,6 +307,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Sets the horizontal scroll step size.
      */
+    // AS3: sources/win63_version/core/window/components/ItemListController.as::set scrollStepH()
     public set scrollStepH(value: number)
     {
         this._scrollStepH = value;
@@ -296,6 +318,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the vertical scroll step size.
      */
+    // AS3: sources/win63_version/core/window/components/ItemListController.as::get scrollStepV()
     public get scrollStepV(): number
     {
         return this._scrollStepV ?? 25;
@@ -304,6 +327,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Sets the vertical scroll step size.
      */
+    // AS3: sources/win63_version/core/window/components/ItemListController.as::set scrollStepV()
     public set scrollStepV(value: number) 
     {
         this._scrollStepV = value;
@@ -312,6 +336,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the maximum horizontal scroll value in pixels.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get maxScrollH()
     public get maxScrollH(): number 
     {
         return Math.max(0, this._scrollAreaWidth - this.width);
@@ -320,11 +345,13 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the maximum vertical scroll value in pixels.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get maxScrollV()
     public get maxScrollV(): number 
     {
         return Math.max(0, this._scrollAreaHeight - this.height);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get scrollableWindow()
     public get scrollableWindow(): IWindow 
     {
         return this;
@@ -333,6 +360,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the visible region rectangle.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get visibleRegion()
     public get visibleRegion(): { x: number; y: number; width: number; height: number } 
     {
         return {
@@ -346,6 +374,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the scrollable region rectangle.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get scrollableRegion()
     public get scrollableRegion(): { x: number; y: number; width: number; height: number } 
     {
         if(this._container) 
@@ -364,6 +393,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets whether items are automatically arranged.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get autoArrangeItems()
     public get autoArrangeItems(): boolean
     {
         return this._arrangeListItems ?? true;
@@ -372,6 +402,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Sets whether items are automatically arranged.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::set autoArrangeItems()
     public set autoArrangeItems(value: boolean) 
     {
         this._arrangeListItems = value;
@@ -381,6 +412,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Returns the first item in the list.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get firstListItem()
     public get firstListItem(): IWindow | null 
     {
         return this.numListItems > 0 ? this.getListItemAt(0) : null;
@@ -389,6 +421,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Returns the last item in the list.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get lastListItem()
     public get lastListItem(): IWindow | null 
     {
         return this.numListItems > 0 ? this.getListItemAt(this.numListItems - 1) : null;
@@ -460,11 +493,13 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the number of items in the list.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get numListItems()
     public get numListItems(): number 
     {
         return this._container !== null ? this._container.numChildren : 0;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::get isScrollHorizontal()
     protected get isScrollHorizontal(): boolean 
     {
         return this._isHorizontal;
@@ -514,6 +549,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Adds an item to the end of the list.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::addListItem()
     public addListItem(item: IWindow): IWindow
     {
         if(!this._container) return item;
@@ -550,6 +586,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Adds an item at the specified index.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::addListItemAt()
     public addListItemAt(item: IWindow, index: number): IWindow
     {
         if(!this._container) return item;
@@ -563,6 +600,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the item at the specified index.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::getListItemAt()
     public getListItemAt(index: number): IWindow | null 
     {
         return this._container ? this._container.getChildAt(index) : null;
@@ -571,6 +609,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the item with the specified ID.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::getListItemByID()
     public getListItemByID(id: number): IWindow | null 
     {
         return this._container ? this._container.getChildByID(id) : null;
@@ -579,6 +618,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the item with the specified name.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::getListItemByName()
     public getListItemByName(name: string): IWindow | null 
     {
         return this._container ? this._container.getChildByName(name) : null;
@@ -587,6 +627,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the item with the specified tag.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::getListItemByTag()
     public getListItemByTag(tag: string): IWindow | null 
     {
         return this._container ? this._container.getChildByTag(tag) : null;
@@ -595,6 +636,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets the index of the specified item.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::getListItemIndex()
     public getListItemIndex(item: IWindow): number 
     {
         return this._container ? this._container.getChildIndex(item) : -1;
@@ -603,6 +645,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Removes the specified item from the list.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::removeListItem()
     public removeListItem(item: IWindow): IWindow | null 
     {
         if(!this._container) return null;
@@ -620,6 +663,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Removes the item at the specified index.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::removeListItemAt()
     public removeListItemAt(index: number): IWindow | null 
     {
         return this._container ? this._container.removeChildAt(index) : null;
@@ -628,6 +672,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Sets the index of the specified item.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::setListItemIndex()
     public setListItemIndex(item: IWindow, index: number): void 
     {
         if(this._container) 
@@ -639,6 +684,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Swaps two items in the list.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::swapListItems()
     public swapListItems(a: IWindow, b: IWindow): void 
     {
         if(this._container) 
@@ -651,6 +697,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Swaps two items at the specified indices.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::swapListItemsAt()
     public swapListItemsAt(indexA: number, indexB: number): void 
     {
         if(this._container) 
@@ -663,6 +710,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Groups list items with the specified ID.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::groupListItemsWithID()
     public groupListItemsWithID(id: number, result: IWindow[], depth: number = 0): number 
     {
         return this._container ? this._container.groupChildrenWithID(id, result, depth) : 0;
@@ -671,6 +719,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Groups list items with the specified tag.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::groupListItemsWithTag()
     public groupListItemsWithTag(tag: string, result: IWindow[], depth: number = 0): number 
     {
         return this._container ? this._container.groupChildrenWithTag(tag, result, depth) : 0;
@@ -679,6 +728,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Removes all items from the list without disposing them.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::removeListItems()
     public removeListItems(): void 
     {
         if(!this._container) return;
@@ -697,6 +747,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Removes and disposes all items in the list.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::destroyListItems()
     public destroyListItems(): void 
     {
         if(!this._container) return;
@@ -717,6 +768,7 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Arranges items in the list based on current settings.
      */
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::arrangeListItems()
     public arrangeListItems(): void 
     {
         this.updateScrollAreaRegion();
@@ -1001,31 +1053,37 @@ export class ItemListController extends WindowController implements IItemListWin
         return useHorizontal ? this.horizontalSmoothScroller : this.verticalSmoothScroller;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::getHorizontalScrollPosition()
     private getHorizontalScrollPosition(): number 
     {
         return this.scrollH;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::setHorizontalSmoothScrollPosition()
     private setHorizontalSmoothScrollPosition(value: number): void 
     {
         this.setScrollH(value, true);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::getHorizontalMaxScroll()
     private getHorizontalMaxScroll(): number 
     {
         return this.maxScrollH;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::getVerticalScrollPosition()
     private getVerticalScrollPosition(): number 
     {
         return this.scrollV;
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::setVerticalSmoothScrollPosition()
     private setVerticalSmoothScrollPosition(value: number): void 
     {
         this.setScrollV(value, true);
     }
 
+    // AS3: .../src/com/sulake/core/window/components/ItemListController.as::getVerticalMaxScroll()
     private getVerticalMaxScroll(): number 
     {
         return this.maxScrollV;

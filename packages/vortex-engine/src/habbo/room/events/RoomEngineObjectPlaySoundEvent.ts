@@ -9,7 +9,9 @@ import {RoomEngineObjectEvent} from './RoomEngineObjectEvent';
 
 export class RoomEngineObjectPlaySoundEvent extends RoomEngineObjectEvent
 {
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineObjectPlaySoundEvent.as::PLAY_SOUND
     public static readonly PLAY_SOUND = 'REPSE_PLAY_SOUND';
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineObjectPlaySoundEvent.as::PLAY_SOUND_AT_PITCH
     public static readonly PLAY_SOUND_AT_PITCH = 'REPSE_PLAY_SOUND_AT_PITCH';
 
     constructor(
@@ -28,6 +30,7 @@ export class RoomEngineObjectPlaySoundEvent extends RoomEngineObjectEvent
 
     private _soundId: string;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineObjectPlaySoundEvent.as::get soundId()
     get soundId(): string
     {
         return this._soundId;
@@ -35,6 +38,7 @@ export class RoomEngineObjectPlaySoundEvent extends RoomEngineObjectEvent
 
     private _pitch: number;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineObjectPlaySoundEvent.as::get pitch()
     get pitch(): number
     {
         return this._pitch;

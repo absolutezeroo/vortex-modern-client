@@ -10,10 +10,13 @@ import type {ExtraInfoItemData} from './ExtraInfoItemData';
  */
 export class ExtraInfoListItem implements IDisposable
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::ALIGN_TOP
     static readonly ALIGN_TOP: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::ALIGN_BOTTOM
     static readonly ALIGN_BOTTOM: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::ALIGN_OVERLAY
     static readonly ALIGN_OVERLAY: number = 2;
 
     private _id: number;
@@ -24,6 +27,7 @@ export class ExtraInfoListItem implements IDisposable
 
     private _alwaysOnTop: boolean;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::_disposed
     private _disposed: boolean = false;
 
     private _creationSeconds: number = 0;
@@ -48,72 +52,86 @@ export class ExtraInfoListItem implements IDisposable
         this._alwaysOnTop = alwaysOnTop;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::dispose()
     dispose(): void
     {
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::get id()
     get id(): number
     {
         return this._id;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::set id()
     set id(value: number)
     {
         this._id = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::get data()
     get data(): ExtraInfoItemData
     {
         return this._data;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::set data()
     set data(value: ExtraInfoItemData)
     {
         this._data = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::get alignment()
     get alignment(): number
     {
         return this._alignment;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::get alwaysOnTop()
     get alwaysOnTop(): boolean
     {
         return this._alwaysOnTop;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::get creationSeconds()
     get creationSeconds(): number
     {
         return this._creationSeconds;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::set creationSeconds()
     set creationSeconds(value: number)
     {
         this._creationSeconds = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::get isItemRemoved()
     get isItemRemoved(): boolean
     {
         return this._isItemRemoved;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::get removalSeconds()
     get removalSeconds(): number
     {
         return this._removalSeconds;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::set removalSeconds()
     set removalSeconds(value: number)
     {
         this._removalSeconds = value;
         this._isItemRemoved = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoListItem.as::getRenderedWindow()
     getRenderedWindow(): IWindowContainer | null
     {
         return null;

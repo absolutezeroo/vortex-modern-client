@@ -27,11 +27,13 @@ export class HabboGroupInfoManager implements IHabboGroupInfoManager
         this.registerMessageEvents();
     }
 
+    // AS3: .../src/com/sulake/habbo/session/HabboGroupInfoManager.as::get disposed()
     get disposed(): boolean
     {
         return this._communication === null;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/HabboGroupInfoManager.as::getBadgeId()
     getBadgeId(groupId: number): string | null
     {
         return this._groupBadges.get(groupId) ?? null;
@@ -67,6 +69,7 @@ export class HabboGroupInfoManager implements IHabboGroupInfoManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/HabboGroupInfoManager.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -98,6 +101,7 @@ export class HabboGroupInfoManager implements IHabboGroupInfoManager
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/HabboGroupInfoManager.as::onRoomReady()
     private onRoomReady(_event: IMessageEvent): void
     {
         this.requestGroupBadges();

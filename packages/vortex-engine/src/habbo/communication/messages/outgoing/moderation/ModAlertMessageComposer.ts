@@ -20,6 +20,7 @@ export class ModAlertMessageComposer extends MessageComposer<unknown[]>
         }
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/moderator/ModAlertMessageComposer.as::getMessageArray()
     getMessageArray(): unknown[]
     {
         return this._data;

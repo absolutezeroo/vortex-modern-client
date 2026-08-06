@@ -10,7 +10,9 @@ import type {IRoomObjectManager} from './IRoomObjectManager';
 
 export interface IRoomInstanceContainer
 {
+    // AS3: .../src/com/sulake/room/IRoomInstanceContainer.as::createRoomObject()
     createRoomObject(roomId: string, objectId: number, type: string, category: number): IRoomObject | null;
 
+    // AS3: .../src/com/sulake/room/IRoomInstanceContainer.as::createRoomObjectManager()
     createRoomObjectManager(): IRoomObjectManager;
 }

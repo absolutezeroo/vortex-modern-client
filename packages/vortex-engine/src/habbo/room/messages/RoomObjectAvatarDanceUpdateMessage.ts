@@ -15,8 +15,10 @@ export class RoomObjectAvatarDanceUpdateMessage extends RoomObjectUpdateMessage
         this._danceStyle = danceStyle;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/messages/RoomObjectAvatarDanceUpdateMessage.as::_danceStyle
     private _danceStyle: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarDanceUpdateMessage.as::get danceStyle()
     get danceStyle(): number
     {
         return this._danceStyle;

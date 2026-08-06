@@ -13,6 +13,7 @@ export class GetProductOfferComposer extends MessageComposer<ConstructorParamete
         this._data = [offerId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/catalog/GetProductOfferComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

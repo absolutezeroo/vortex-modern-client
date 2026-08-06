@@ -20,7 +20,9 @@ export class RoomObject implements IRoomObjectController
 {
     private static _instanceCounter: number = 0;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/object/RoomObject.as::_id
     private _id: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/object/RoomObject.as::_type
     private _type: string = '';
     private _location: Vector3d;
     private _direction: Vector3d;
@@ -28,10 +30,14 @@ export class RoomObject implements IRoomObjectController
     private _directionCache: Vector3d;
     private _states: number[];
     private _model: RoomObjectModel;
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::_visualization
     private _visualization: IRoomObjectVisualization | null = null;
     private _eventHandler: IRoomObjectEventHandler | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/object/RoomObject.as::_updateID
     private _updateID: number = 0;
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::_avatarLibraryAssetName
     private _avatarLibraryAssetName: string | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/object/RoomObject.as::_instanceId
     private _instanceId: number = 0;
     private _initialized: boolean = false;
 
@@ -54,6 +60,7 @@ export class RoomObject implements IRoomObjectController
         this._instanceId = RoomObject._instanceCounter++;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::dispose()
     dispose(): void
     {
         this._avatarLibraryAssetName = null;
@@ -66,31 +73,37 @@ export class RoomObject implements IRoomObjectController
         }
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::setInitialized()
     setInitialized(value: boolean): void
     {
         this._initialized = value;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::isInitialized()
     isInitialized(): boolean
     {
         return this._initialized;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::getId()
     getId(): number
     {
         return this._id;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::getInstanceId()
     getInstanceId(): number
     {
         return this._instanceId;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::getType()
     getType(): string
     {
         return this._type;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::getLocation()
     getLocation(): IVector3d
     {
         this._locationCache.assign(this._location);
@@ -98,6 +111,7 @@ export class RoomObject implements IRoomObjectController
         return this._locationCache;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::getDirection()
     getDirection(): IVector3d
     {
         this._directionCache.assign(this._direction);
@@ -105,16 +119,19 @@ export class RoomObject implements IRoomObjectController
         return this._directionCache;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::getModel()
     getModel(): IRoomObjectModel
     {
         return this._model;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::getModelController()
     getModelController(): IRoomObjectModelController
     {
         return this._model;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::getState()
     getState(index: number): number
     {
         if(index >= 0 && index < this._states.length)
@@ -125,11 +142,13 @@ export class RoomObject implements IRoomObjectController
         return -1;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::getVisualization()
     getVisualization(): IRoomObjectVisualization | null
     {
         return this._visualization;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::setLocation()
     setLocation(location: IVector3d): void
     {
         if(location === null)
@@ -146,6 +165,7 @@ export class RoomObject implements IRoomObjectController
         }
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::setDirection()
     setDirection(direction: IVector3d): void
     {
         if(direction === null)
@@ -162,6 +182,7 @@ export class RoomObject implements IRoomObjectController
         }
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::setState()
     setState(state: number, index: number): boolean
     {
         if(index >= 0 && index < this._states.length)
@@ -178,6 +199,7 @@ export class RoomObject implements IRoomObjectController
         return false;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::setVisualization()
     setVisualization(visualization: IRoomObjectVisualization | null): void
     {
         if(visualization !== this._visualization)
@@ -196,6 +218,7 @@ export class RoomObject implements IRoomObjectController
         }
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::setEventHandler()
     setEventHandler(handler: IRoomObjectEventHandler | null): void
     {
         if(handler === this._eventHandler)
@@ -219,21 +242,25 @@ export class RoomObject implements IRoomObjectController
         }
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::getEventHandler()
     getEventHandler(): IRoomObjectEventHandler | null
     {
         return this._eventHandler;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::getUpdateID()
     getUpdateID(): number
     {
         return this._updateID;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::getMouseHandler()
     getMouseHandler(): IRoomObjectMouseHandler | null
     {
         return this.getEventHandler();
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::getAvatarLibraryAssetName()
     getAvatarLibraryAssetName(): string
     {
         if(!this._avatarLibraryAssetName)
@@ -244,6 +271,7 @@ export class RoomObject implements IRoomObjectController
         return this._avatarLibraryAssetName;
     }
 
+    // AS3: .../src/com/sulake/room/object/RoomObject.as::tearDown()
     tearDown(): void
     {
         if(this._eventHandler)

@@ -9,9 +9,13 @@ import {AnimatedFurnitureVisualization} from './AnimatedFurnitureVisualization';
 
 export class FurniturePartyBeamerVisualization extends AnimatedFurnitureVisualization
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePartyBeamerVisualization.as::AREA_DIAMETER_SMALL
     private static readonly AREA_DIAMETER_SMALL: number = 15;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePartyBeamerVisualization.as::AREA_DIAMETER_LARGE
     private static readonly AREA_DIAMETER_LARGE: number = 31;
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePartyBeamerVisualization.as::ANIM_SPEED_FAST
     private static readonly ANIM_SPEED_FAST: number = 2;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurniturePartyBeamerVisualization.as::ANIM_SPEED_SLOW
     private static readonly ANIM_SPEED_SLOW: number = 1;
 
     private _positions: number[] | null = null;
@@ -66,6 +70,7 @@ export class FurniturePartyBeamerVisualization extends AnimatedFurnitureVisualiz
         return super.getSpriteYOffset(scale, direction, layerIndex);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePartyBeamerVisualization.as::getNewPoint()
     private getNewPoint(scale: number, index: number): { x: number; y: number }
     {
         let position = this._positions![index];
@@ -126,6 +131,7 @@ export class FurniturePartyBeamerVisualization extends AnimatedFurnitureVisualiz
         return {x: position, y: yOffset};
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePartyBeamerVisualization.as::initItems()
     private initItems(scale: number): void
     {
         let diameter: number;
@@ -157,6 +163,7 @@ export class FurniturePartyBeamerVisualization extends AnimatedFurnitureVisualiz
         ];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurniturePartyBeamerVisualization.as::getRandomAmplitudeFactor()
     private getRandomAmplitudeFactor(): number
     {
         return Math.random() * 30 / 100 + 0.15;

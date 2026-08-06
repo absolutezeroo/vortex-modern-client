@@ -8,6 +8,7 @@ import type {ChatItem} from '../../data/ChatItem';
  */
 export class ChatColours
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/viewer/enum/ChatColours.as::COLOUR_ARRAY
     public static readonly COLOUR_ARRAY: [string, number][] = [
         ['@red@', 0x8B0909],
         ['@cyan@', 0x007F7F],

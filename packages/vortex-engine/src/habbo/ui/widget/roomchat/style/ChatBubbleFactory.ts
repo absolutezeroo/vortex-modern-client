@@ -33,9 +33,10 @@ const NORMAL_STYLE_DESCRIPTOR = {
 
 export class ChatBubbleFactory
 {
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::_styles
     private _styles: Map<number, ChatBubbleStyle> = new Map();
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::ChatBubbleFactory()
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::ChatBubbleFactory()
     constructor(assets: IAssetLibrary, windowManager: IHabboWindowManager)
     {
         try
@@ -48,7 +49,7 @@ export class ChatBubbleFactory
         }
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getBubbleWindow()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getBubbleWindow()
     public getBubbleWindow(styleId: number, chatType: number): IRegionWindow | null
     {
         const style = this.getSafeChatBubbleStyle(styleId);
@@ -68,13 +69,13 @@ export class ChatBubbleFactory
         }
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getPointerBitmapData()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getPointerBitmapData()
     public getPointerBitmapData(styleId: number): ImageBitmap | null
     {
         return this.getSafeChatBubbleStyle(styleId)?.pointerBitmapData ?? null;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::buildBubbleImage()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::buildBubbleImage()
     public buildBubbleImage(styleId: number, _chatType: number, middleWidth: number, height: number, userColor: number): ImageBitmap | null
     {
         const style = this.getSafeChatBubbleStyle(styleId);
@@ -143,13 +144,13 @@ export class ChatBubbleFactory
         return canvas.transferToImageBitmap();
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getStyleIds()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getStyleIds()
     public getStyleIds(): number[]
     {
         return Array.from(this._styles.keys());
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getAllowedUserInputStyleIds()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getAllowedUserInputStyleIds()
     public getAllowedUserInputStyleIds(): number[]
     {
         return this.getStyleIds().filter((id) =>
@@ -160,25 +161,25 @@ export class ChatBubbleFactory
         });
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getStaffOverrideableStyleIds()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getStaffOverrideableStyleIds()
     public getStaffOverrideableStyleIds(): number[]
     {
         return this.getStyleIds().filter((id) => this._styles.get(id)?.isStaffOverrideable);
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getStyleSelectorPreviewBitmap()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getStyleSelectorPreviewBitmap()
     public getStyleSelectorPreviewBitmap(styleId: number): ImageBitmap | null
     {
         return this.getSafeChatBubbleStyle(styleId)?.selectorPreviewIconBitmapData ?? null;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getActualBubbleHeight()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getActualBubbleHeight()
     public getActualBubbleHeight(styleId: number): number
     {
         return this.getSafeChatBubbleStyle(styleId)?.middleBitmapData?.height ?? 0;
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getSafeChatBubbleStyle()
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::getSafeChatBubbleStyle()
     private getSafeChatBubbleStyle(styleId: number): ChatBubbleStyle | null
     {
         if(!this._styles.has(styleId))

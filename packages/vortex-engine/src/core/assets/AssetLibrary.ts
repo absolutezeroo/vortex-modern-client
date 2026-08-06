@@ -61,8 +61,10 @@ export class AssetLibrary extends Component implements IAssetLibrary
      */
     private static _instanceCount: number = 0;
     private readonly _libraryEvents: EventEmitter = new EventEmitter();
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::_name
     private readonly _name: string;
     private readonly _assetMap: Map<string, IAsset> = new Map();
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::_assetNameArray
     private readonly _assetNameArray: string[] = [];
     private readonly _pendingLoads: Map<string, AssetLoaderStruct> = new Map();
     private readonly _localTypesByMime: Map<string, AssetTypeDeclaration> = new Map();
@@ -111,6 +113,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * The URL this library was loaded from
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::get url()
     get url(): string 
     {
         return this._url;
@@ -121,6 +124,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * The manifest object
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::get manifest()
     get manifest(): object | null 
     {
         return this._manifest ?? {};
@@ -131,6 +135,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Whether the library is ready
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::get isReady()
     get isReady(): boolean 
     {
         return this._isReady;
@@ -147,6 +152,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * The name of this library
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::get name()
     get name(): string 
     {
         return this._name;
@@ -155,6 +161,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Number of assets in this library
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::get numAssets()
     get numAssets(): number 
     {
         return this._assetMap.size;
@@ -163,6 +170,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Array of all asset names
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::get nameArray()
     get nameArray(): string[] 
     {
         return [...this._assetNameArray];
@@ -240,6 +248,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Load assets from a resource manifest
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::loadFromResource()
     loadFromResource(manifest: object, _resourceData: unknown): boolean 
     {
         this._manifest = manifest;
@@ -250,6 +259,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Unload all assets
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::unload()
     unload(): void 
     {
         // Dispose pending loaders
@@ -281,6 +291,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Load a single asset from a file
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::loadAssetFromFile()
     loadAssetFromFile(name: string, url: string, mimeType?: string, id: number = -1): AssetLoaderStruct 
     {
         // Check if asset already exists
@@ -351,6 +362,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Get an asset by name
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::getAssetByName()
     getAssetByName(name: string): IAsset | null 
     {
         return this._assetMap.get(name) ?? null;
@@ -359,6 +371,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Get an asset by its content
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::getAssetByContent()
     getAssetByContent(content: unknown): IAsset | null 
     {
         return this._assetByContent.get(content) ?? null;
@@ -367,6 +380,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Get an asset by index
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::getAssetByIndex()
     getAssetByIndex(index: number): IAsset | null 
     {
         if(index < 0 || index >= this._assetNameArray.length) 
@@ -380,6 +394,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Get the index of an asset
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::getAssetIndex()
     getAssetIndex(asset: IAsset): number 
     {
         for(const [name, a] of this._assetMap) 
@@ -396,6 +411,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Check if an asset exists
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::hasAsset()
     hasAsset(name: string): boolean 
     {
         return this._assetMap.has(name);
@@ -404,6 +420,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Store an asset
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::setAsset()
     setAsset(name: string, asset: IAsset, overwrite: boolean = true): boolean 
     {
         const exists = this._assetMap.has(name);
@@ -438,6 +455,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Create a new asset of the specified type
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::createAsset()
     createAsset(name: string, declaration: AssetTypeDeclaration): IAsset | null 
     {
         if(this.hasAsset(name) || !declaration) 
@@ -459,6 +477,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Remove an asset
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::removeAsset()
     removeAsset(asset: IAsset): IAsset | null 
     {
         if(!asset) return null;
@@ -509,6 +528,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Get a type declaration by MIME type
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::getAssetTypeDeclarationByMimeType()
     getAssetTypeDeclarationByMimeType(mimeType: string, checkShared: boolean = true): AssetTypeDeclaration | null 
     {
         if(checkShared) 
@@ -527,6 +547,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Get a type declaration by asset class
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::getAssetTypeDeclarationByClass()
     getAssetTypeDeclarationByClass(assetClass: new (...args: unknown[]) => IAsset, checkShared: boolean = true): AssetTypeDeclaration | null 
     {
         if(checkShared) 
@@ -554,6 +575,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Get a type declaration by file extension
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::getAssetTypeDeclarationByFileName()
     getAssetTypeDeclarationByFileName(fileName: string, checkShared: boolean = true): AssetTypeDeclaration | null 
     {
         // Extract extension

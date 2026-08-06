@@ -13,6 +13,7 @@ export class PlaneMaterial
     private _matrices: PlaneMaterialCellMatrix[] = [];
     private _cacheUsed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterial.as::dispose()
     dispose(): void
     {
         if(this._matrices !== null)
@@ -28,6 +29,7 @@ export class PlaneMaterial
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterial.as::clearCache()
     clearCache(): void
     {
         if(!this._cacheUsed) return;
@@ -42,6 +44,7 @@ export class PlaneMaterial
         this._cacheUsed = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterial.as::addMaterialCellMatrix()
     addMaterialCellMatrix(
         numColumns: number,
         repeatMode: number,
@@ -57,6 +60,7 @@ export class PlaneMaterial
         return matrix;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterial.as::getMaterialCellMatrix()
     getMaterialCellMatrix(normal: IVector3d): PlaneMaterialCellMatrix | null
     {
         if(normal === null) return null;
@@ -78,6 +82,7 @@ export class PlaneMaterial
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/PlaneMaterial.as::render()
     render(
         canvas: HTMLCanvasElement | null,
         width: number,

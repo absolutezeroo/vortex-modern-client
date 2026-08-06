@@ -13,13 +13,20 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureSoundBlockLogic extends FurnitureMultiStateLogic
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureSoundBlockLogic.as::HIGHEST_SEMITONE
     private static readonly HIGHEST_SEMITONE = 12;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureSoundBlockLogic.as::LOWEST_SEMITONE
     private static readonly LOWEST_SEMITONE = -12;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureSoundBlockLogic.as::STATE_UNINITIALIZED
     private static readonly STATE_UNINITIALIZED = -1;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureSoundBlockLogic.as::_state
     private _state: number = -1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureSoundBlockLogic.as::_sampleId
     private _sampleId: number = -1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureSoundBlockLogic.as::_noPitch
     private _noPitch: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/logic/furniture/FurnitureSoundBlockLogic.as::_lastLocZ
     private _lastLocZ: number = 0;
 
     override dispose(): void

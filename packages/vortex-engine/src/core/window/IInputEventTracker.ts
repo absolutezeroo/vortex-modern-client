@@ -8,5 +8,6 @@ import type {IWindow} from './IWindow';
  */
 export interface IInputEventTracker
 {
+    // AS3: .../src/com/sulake/core/window/IInputEventTracker.as::eventReceived()
     eventReceived(event: WindowEvent, window: IWindow): void;
 }

@@ -23,8 +23,10 @@ export class VipBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalog
 {
     private _controller: ClubBuyController | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::_offers
     private _offers: VipBuyItem[] = [];
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _isGift: boolean;
@@ -37,6 +39,7 @@ export class VipBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalog
         this._isGift = isGift;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::get isGift()
     get isGift(): boolean
     {
         return this._isGift;
@@ -64,6 +67,7 @@ export class VipBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalog
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::reset()
     reset(): void
     {
         for(const item of this._offers)
@@ -74,6 +78,7 @@ export class VipBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalog
         this._offers = [];
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::initClubType()
     initClubType(clubType: number): void
     {
         if(this.disposed) return;
@@ -116,6 +121,7 @@ export class VipBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalog
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::initLinks()
     private initLinks(): void
     {
         if(!this.window) return;
@@ -149,6 +155,7 @@ export class VipBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalog
         this._catalog?.utils.showVipBenefits();
     };
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::showOffer()
     showOffer(offer: ClubBuyOfferData): void
     {
         if(this.disposed || !offer.vip) return;

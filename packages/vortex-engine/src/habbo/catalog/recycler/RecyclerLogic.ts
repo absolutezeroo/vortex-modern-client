@@ -16,24 +16,32 @@ const log = Logger.getLogger('habbo.catalog.recycler.RecyclerLogic');
  */
 export class RecyclerLogic implements IRecycler
 {
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::STATUS_OFF
     private static readonly STATUS_OFF: number = 0;
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::STATUS_READY
     private static readonly STATUS_READY: number = 1;
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::STATUS_WAITING_FOR_SERVER
     private static readonly STATUS_WAITING_FOR_SERVER: number = 2;
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::_localStatus
     private _localStatus: number = RecyclerLogic.STATUS_OFF;
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::_systemStatus
     private _systemStatus: number = 0;
 
     private _nextRecycleAllowedTimestamp: number = 0;
 
     private _slots: (FurniSlotItem | null)[] = [];
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::_catalog
     private _catalog: HabboCatalog | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::_windowManager
     private _windowManager: IHabboWindowManager | null;
 
     private _visualization: IRecyclerVisualization | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::_prizes
     private _prizes: PrizeLevelContainer[] | null = null;
 
     private _pendingPrizeCallback: ((prizes: PrizeLevelContainer[]) => void) | null = null;
@@ -48,16 +56,19 @@ export class RecyclerLogic implements IRecycler
         this._numberOfSlots = catalog.getInteger('recycler.number_of_slots', 5);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::get statusActive()
     private get statusActive(): boolean
     {
         return this._localStatus !== RecyclerLogic.STATUS_OFF;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::get systemActive()
     private get systemActive(): boolean
     {
         return this._systemStatus !== 2;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::get ready()
     private get ready(): boolean
     {
         return this.active && this._localStatus === RecyclerLogic.STATUS_READY;
@@ -352,6 +363,7 @@ export class RecyclerLogic implements IRecycler
         this.updateRecyclerButton();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::verifyRoomSessionStatus()
     private verifyRoomSessionStatus(): void
     {
         if(!this._catalog?.privateRoomSessionActive && this.ready)
@@ -360,6 +372,7 @@ export class RecyclerLogic implements IRecycler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::updateRecyclerSlots()
     private updateRecyclerSlots(): void
     {
         if(this._visualization == null || !this.statusActive) return;
@@ -367,6 +380,7 @@ export class RecyclerLogic implements IRecycler
         this._visualization.updateSlots();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::updateRecyclerButton()
     private updateRecyclerButton(): void
     {
         if(this._visualization == null || !this.statusActive) return;
@@ -374,6 +388,7 @@ export class RecyclerLogic implements IRecycler
         this._visualization.updateRecycleButton();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::isPoolFull()
     private isPoolFull(): boolean
     {
         if(this._slots == null) return false;
@@ -387,6 +402,7 @@ export class RecyclerLogic implements IRecycler
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/recycler/RecyclerLogic.as::isTradingActive()
     private isTradingActive(): boolean
     {
         return this._catalog?.tradingActive ?? false;

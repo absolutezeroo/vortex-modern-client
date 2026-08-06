@@ -43,7 +43,9 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
 {
     private static readonly DEFAULT_STYLE_ID: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::_assets
     private _assets: IAssetLibrary | null;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::_styles
     private readonly _styles: Map<number, ChatStyle> = new Map();
     private readonly _styleAttributes: Map<number, IChatStyleAttributes> = new Map();
 
@@ -366,6 +368,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;

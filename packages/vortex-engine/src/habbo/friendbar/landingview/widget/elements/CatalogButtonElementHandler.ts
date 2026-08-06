@@ -11,6 +11,7 @@ import {ButtonElementHandler} from './ButtonElementHandler';
  */
 export class CatalogButtonElementHandler extends ButtonElementHandler
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/CatalogButtonElementHandler.as::_pageName
     private _pageName: string | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/CatalogButtonElementHandler.as::initialize()

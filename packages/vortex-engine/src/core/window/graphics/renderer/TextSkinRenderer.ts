@@ -16,32 +16,49 @@ export interface ITextWindowShape
     // AS3: TextController.as::get border() / get borderColor() — Flash's TextField
     // paints these itself; see drawBorder().
     border?: boolean;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get borderColor()
     borderColor?: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get textColor()
     textColor?: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get fontSize()
     fontSize?: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get fontFace()
     fontFace?: string;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get bold()
     bold?: boolean;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get italic()
     italic?: boolean;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get underline()
     underline?: boolean;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get multiline()
     multiline?: boolean;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get wordWrap()
     wordWrap?: boolean;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get etchingColor()
     etchingColor?: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get etchingPosition()
     etchingPosition?: string;
     // AS3: TextController.as::get antiAliasType() / get sharpness() /
     // get thickness() / get gridFitType() — Flash's four text-quality knobs.
     // Inert against ctx.fillText(); consumed by GlyphAtlas at bake time.
     antiAliasType?: string;
     _antiAliasType?: string;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get sharpness()
     sharpness?: number;
     _sharpness?: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get thickness()
     thickness?: number;
     _thickness?: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get gridFitType()
     gridFitType?: string;
     _gridFitType?: string;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get autoSize()
     autoSize?: string;
     _autoSize?: string;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get spacing()
     spacing?: number;
     _spacing?: number;
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get leading()
     leading?: number;
     _leading?: number;
     marginLeft?: number;

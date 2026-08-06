@@ -42,21 +42,34 @@ const log = Logger.getLogger('habbo.quest.AchievementController');
  */
 export class AchievementController implements IDisposable
 {
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::CATEGORIES_COLUMN_COUNT
     private static readonly CATEGORIES_COLUMN_COUNT: number = 3;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::CATEGORY_SPACING_X
     private static readonly CATEGORY_SPACING_X: number = 8;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::CATEGORY_SPACING_Y
     private static readonly CATEGORY_SPACING_Y: number = 5;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::CATEGORY_SPACING_TOP
     private static readonly CATEGORY_SPACING_TOP: number = 6;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::CATEGORY_ROWS_MAX
     private static readonly CATEGORY_ROWS_MAX: number = 3;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::ACHIEVEMENT_ROWS_MIN
     private static readonly ACHIEVEMENT_ROWS_MIN: number = 2;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::ACHIEVEMENT_ROWS_MAX
     private static readonly ACHIEVEMENT_ROWS_MAX: number = 4;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::ACHIEVEMENT_COLUMNS
     private static readonly ACHIEVEMENT_COLUMNS: number = 6;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::IN_LEVEL_PROGRESS_BAR_WIDTH
     private static readonly IN_LEVEL_PROGRESS_BAR_WIDTH: number = 180;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::TOTAL_PROGRESS_BAR_WIDTH
     private static readonly TOTAL_PROGRESS_BAR_WIDTH: number = 246;
     private static readonly UNSEEN_HIGHLIGHT_COLOR: number = 12910463;
     private static readonly WINDOW_BOTTOM_MARGIN: number = 45;
     private static readonly WINDOW_TOP_Y: number = 20;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::ACHIEVEMENT_TOP_SPACING
     private static readonly ACHIEVEMENT_TOP_SPACING: number = 3;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::IN_LEVEL_PROGRESS_BAR_LOC
     private static readonly IN_LEVEL_PROGRESS_BAR_LOC = {x: 115, y: 93};
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::TOTAL_PROGRESS_BAR_LOC
     private static readonly TOTAL_PROGRESS_BAR_LOC = {x: 72, y: 1};
     private static readonly PENDING_LEVEL_DELAY_MS: number = 2000;
     private static readonly COLUMN_LAYOUT_START_Y: number = 0;
@@ -71,6 +84,7 @@ export class AchievementController implements IDisposable
         this._engine = engine;
     }
 
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::_categories
     private _categories: AchievementCategories | null = null;
 
     // AS3: _window — the Achievements panel, built lazily by prepareWindow(). Stays null
@@ -90,6 +104,7 @@ export class AchievementController implements IDisposable
     private _selectedCategory: AchievementCategory | null = null;
     // AS3: _SafeStr_4628 — the achievement currently shown in the details panel.
     private _selectedAchievement: AchievementData | null = null;
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::_pendingCategorySelect
     private _pendingCategorySelect: string | null = null;
     // AS3: _SafeStr_7067 — the just-arrived next-level data, held until the progress
     // bar's 2s "hold at max" pause finishes (switchIntoPendingLevel).
@@ -110,6 +125,7 @@ export class AchievementController implements IDisposable
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -316,6 +332,7 @@ export class AchievementController implements IDisposable
 	 * @param badge The badge identifier prefix
 	 * @returns The user's level, or 0 if not found
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::getAchievementLevel()
     getAchievementLevel(category: string, badge: string): number
     {
         if(this._categories === null)
@@ -1135,6 +1152,7 @@ export class AchievementController implements IDisposable
     /**
 	 * Dispose of this controller and release resources
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/AchievementController.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

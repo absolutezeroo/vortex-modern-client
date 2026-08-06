@@ -15,9 +15,11 @@ import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class RarityItemGridOverlayWidget implements IRarityItemGridOverlayWidget 
 {
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemGridOverlayWidget.as::TYPE
     public static readonly TYPE: string = 'rarity_item_overlay_grid';
 
     private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemGridOverlayWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
 
     private _root: IWindowContainer | null = null;
@@ -39,8 +41,10 @@ export class RarityItemGridOverlayWidget implements IRarityItemGridOverlayWidget
         }
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemGridOverlayWidget.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemGridOverlayWidget.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
@@ -48,26 +52,31 @@ export class RarityItemGridOverlayWidget implements IRarityItemGridOverlayWidget
 
     private _rarityLevel: number = 0;
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemGridOverlayWidget.as::get rarityLevel()
     public get rarityLevel(): number 
     {
         return this._rarityLevel;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemGridOverlayWidget.as::set rarityLevel()
     public set rarityLevel(value: number) 
     {
         this._rarityLevel = value;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemGridOverlayWidget.as::get properties()
     public get properties(): PropertyStruct[] 
     {
         return [];
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemGridOverlayWidget.as::set properties()
     public set properties(_values: PropertyStruct[]) 
     {
         // AS3: properties setter is a no-op for this widget
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RarityItemGridOverlayWidget.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;

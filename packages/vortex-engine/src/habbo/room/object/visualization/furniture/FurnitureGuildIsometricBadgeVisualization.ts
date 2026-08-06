@@ -11,12 +11,18 @@ import {FurnitureGuildCustomizedVisualization} from './FurnitureGuildCustomizedV
 
 export class FurnitureGuildIsometricBadgeVisualization extends FurnitureGuildCustomizedVisualization
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureGuildIsometricBadgeVisualization.as::PRIMARY_COLOUR_SPRITE_TAG
     private static readonly PRIMARY_COLOUR_SPRITE_TAG: string = 'COLOR1';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureGuildIsometricBadgeVisualization.as::SECONDARY_COLOUR_SPRITE_TAG
     private static readonly SECONDARY_COLOUR_SPRITE_TAG: string = 'COLOR2';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureGuildIsometricBadgeVisualization.as::DEFAULT_COLOR_1
     private static readonly DEFAULT_COLOR_1: number = 15658734;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureGuildIsometricBadgeVisualization.as::DEFAULT_COLOR_2
     private static readonly DEFAULT_COLOR_2: number = 4934475;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureGuildIsometricBadgeVisualization.as::_color1
     private _color1: number = FurnitureGuildIsometricBadgeVisualization.DEFAULT_COLOR_1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureGuildIsometricBadgeVisualization.as::_color2
     private _color2: number = FurnitureGuildIsometricBadgeVisualization.DEFAULT_COLOR_2;
 
     protected override updateModel(scale: number): boolean

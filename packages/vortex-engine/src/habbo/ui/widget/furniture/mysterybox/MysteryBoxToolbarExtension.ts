@@ -50,6 +50,7 @@ export const KEY_COLORS: Record<string, number> = {
 
 export class MysteryBoxToolbarExtension
 {
+    // AS3: .../src/com/sulake/habbo/ui/widget/furniture/mysterybox/MysteryBoxToolbarExtension.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: MysteryBoxToolbarExtension.as::_window

@@ -19,6 +19,7 @@ export class RoomWidgetMessage
         this._type = type;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetMessage.as::get type()
     public get type(): string
     {
         return this._type;

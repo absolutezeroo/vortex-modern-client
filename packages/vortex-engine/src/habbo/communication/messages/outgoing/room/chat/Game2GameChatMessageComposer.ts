@@ -17,6 +17,7 @@ export class Game2GameChatMessageComposer extends MessageComposer<[string]>
         this._data = [message];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_3158/Game2GameChatMessageComposer.as::getMessageArray()
     getMessageArray(): [string]
     {
         return this._data;

@@ -21,11 +21,15 @@ type Rectangle = { x: number; y: number; width: number; height: number };
  */
 export class WindowRenderer implements IWindowRenderer
 {
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::RECT
     private static readonly RECT: Rectangle = {x: 0, y: 0, width: 0, height: 0};
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::MAX_DIRTY_REGIONS_PER_WINDOW
     private static readonly MAX_DIRTY_REGIONS_PER_WINDOW: number = 3;
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::MAX_DISTANCE_BEFORE_COMBINE
     private static readonly MAX_DISTANCE_BEFORE_COMBINE: number = 10;
 
     private _debug: boolean = false;
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::_disposed
     private _disposed: boolean = false;
     private _renderVersion: number = 0;
 
@@ -60,16 +64,19 @@ export class WindowRenderer implements IWindowRenderer
         this._windowDisposedCallback = this.windowDisposedCallback.bind(this);
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::get debug()
     public get debug(): boolean
     {
         return this._debug;
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::set debug()
     public set debug(value: boolean)
     {
         this._debug = value;
@@ -85,6 +92,7 @@ export class WindowRenderer implements IWindowRenderer
         return this._renderQueue.length > 0;
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::areRectanglesCloseEnough()
     private static areRectanglesCloseEnough(a: Rectangle, b: Rectangle, distance: number): boolean
     {
         if((a.x < (b.x + b.width))
@@ -101,6 +109,7 @@ export class WindowRenderer implements IWindowRenderer
         return (dx <= distance) && (dy <= distance);
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::childRectToClippedDrawRegion()
     private static childRectToClippedDrawRegion(window: IWindow, drawLocation: Point, clipRegion: Rectangle): boolean
     {
         if(window.testParamFlag(WindowParam.USE_PARENT_GRAPHIC_CONTEXT))
@@ -185,6 +194,7 @@ export class WindowRenderer implements IWindowRenderer
         return (clipRegion.width > 0) && (clipRegion.height > 0);
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::getDrawLocationAndClipRegion()
     private static getDrawLocationAndClipRegion(window: IWindow, dirtyRegion: Rectangle, drawLocation: Point, clipRegion: Rectangle): boolean
     {
         clipRegion.x = 0;
@@ -253,6 +263,7 @@ export class WindowRenderer implements IWindowRenderer
         return visible && (clipRegion.width > 0) && (clipRegion.height > 0);
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::render()
     public render(): void
     {
         let renderQueueLength = this._renderQueue.length;
@@ -293,6 +304,7 @@ export class WindowRenderer implements IWindowRenderer
         }
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::addToRenderQueue()
     public addToRenderQueue(window: IWindow, rect: Rectangle | null, flags: number): void
     {
         if(!rect)
@@ -450,6 +462,7 @@ export class WindowRenderer implements IWindowRenderer
         }
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::flushRenderQueue()
     public flushRenderQueue(): void
     {
         if(this._renderQueue.length || this._dirtyRegions.length)
@@ -460,6 +473,7 @@ export class WindowRenderer implements IWindowRenderer
         }
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::invalidate()
     public invalidate(context: IWindowContext, _rect: Rectangle): void
     {
         const desktop = context.getDesktopWindow() as IWindowContainer | null;
@@ -482,6 +496,7 @@ export class WindowRenderer implements IWindowRenderer
         }
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::getDrawBufferForRenderable()
     public getDrawBufferForRenderable(window: IWindow): OffscreenCanvas | null
     {
         let item = this._rendererItems.get(window) ?? null;
@@ -496,6 +511,7 @@ export class WindowRenderer implements IWindowRenderer
         return item ? item.buffer : null;
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::purge()
     public purge(window: IWindow | null = null, recursive: boolean = true): void
     {
         if(window)
@@ -554,6 +570,7 @@ export class WindowRenderer implements IWindowRenderer
         }
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::registerRenderable()
     public registerRenderable(window: IWindow): WindowRendererItem
     {
         let item = this._rendererItems.get(window) ?? null;
@@ -573,6 +590,7 @@ export class WindowRenderer implements IWindowRenderer
         return item;
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::removeRenderable()
     public removeRenderable(window: IWindow): void
     {
         window.removeEventListener(WindowDisposeEvent.WE_DISPOSED, this._windowDisposedCallback);
@@ -586,6 +604,7 @@ export class WindowRenderer implements IWindowRenderer
         }
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::renderWindowBranch()
     private renderWindowBranch(window: IWindow, dirtyRegion: Rectangle, visibleRegion: Rectangle, drawBuffer: OffscreenCanvas | null): void
     {
         const graphicHost = window as unknown as IGraphicContextHost;
@@ -738,6 +757,7 @@ export class WindowRenderer implements IWindowRenderer
         }
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::getWindowRendererItem()
     protected getWindowRendererItem(window: IWindow): WindowRendererItem
     {
         let item = this._rendererItems.get(window) ?? null;
@@ -750,6 +770,7 @@ export class WindowRenderer implements IWindowRenderer
         return item;
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::windowDisposedCallback()
     protected windowDisposedCallback(event: WindowDisposeEvent): void
     {
         if(event.window)
@@ -839,6 +860,7 @@ export class WindowRenderer implements IWindowRenderer
         };
     }
 
+    // AS3: sources/win63_version/core/window/graphics/WindowRenderer.as::dispose()
     public dispose(): void
     {
         if(this._disposed)

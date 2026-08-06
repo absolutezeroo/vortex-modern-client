@@ -22,10 +22,15 @@ import {IID_HabboTracking} from '@iid/IIDHabboTracking';
  */
 export class AbstractView extends Component
 {
+    // AS3: sources/win63_version/habbo/friendbar/view/AbstractView.as::_windowManager
     protected _windowManager: IHabboWindowManager | null = null;
+    // AS3: sources/win63_version/habbo/friendbar/view/AbstractView.as::_avatarManager
     protected _avatarManager: IAvatarRenderManager | null = null;
+    // AS3: sources/win63_version/habbo/friendbar/view/AbstractView.as::_localizationManager
     protected _localizationManager: IHabboLocalizationManager | null = null;
+    // AS3: sources/win63_version/habbo/friendbar/view/AbstractView.as::_sessionDataManager
     protected _sessionDataManager: ISessionDataManager | null = null;
+    // AS3: sources/win63_version/habbo/friendbar/view/AbstractView.as::_tracking
     protected _tracking: IHabboTracking | null = null;
 
     constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)

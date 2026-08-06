@@ -9,13 +9,16 @@ import {AnimatedFurnitureVisualization} from '../furniture/AnimatedFurnitureVisu
 
 export class TileCursorVisualization extends AnimatedFurnitureVisualization
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/TileCursorVisualization.as::_tileHeight
     private _tileHeight: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/TileCursorVisualization.as::get tileHeight()
     get tileHeight(): number
     {
         return this._tileHeight;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/TileCursorVisualization.as::set tileHeight()
     set tileHeight(value: number)
     {
         this._tileHeight = value;

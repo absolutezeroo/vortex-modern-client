@@ -5,5 +5,6 @@
  */
 export class HabboGroupsEditorData
 {
+    // AS3: .../src/com/sulake/habbo/groups/events/HabboGroupsEditorData.as::EDIT_INFO
     public static readonly EDIT_INFO = 'HGE_EDIT_INFO';
 }

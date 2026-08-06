@@ -10,6 +10,7 @@ export class FigureSetIdsMessageParser implements IMessageParser
 {
     private _figureSetIds: number[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/clothing/FigureSetIdsEventParser.as::get figureSetIds()
     get figureSetIds(): number[]
     {
         return this._figureSetIds;
@@ -17,11 +18,13 @@ export class FigureSetIdsMessageParser implements IMessageParser
 
     private _boundFurnitureNames: string[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/clothing/FigureSetIdsEventParser.as::get boundFurnitureNames()
     get boundFurnitureNames(): string[]
     {
         return this._boundFurnitureNames;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/clothing/FigureSetIdsEventParser.as::flush()
     flush(): boolean
     {
         this._figureSetIds = [];
@@ -29,6 +32,7 @@ export class FigureSetIdsMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/clothing/FigureSetIdsEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         let count = wrapper.readInt();

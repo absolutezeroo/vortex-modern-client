@@ -25,6 +25,7 @@ export interface IProductDataParserEvents
  */
 export class ProductDataParser
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/product/ProductDataParser.as::_products
     private _products: Map<string, IProductData>;
     private _disposed: boolean = false;
 
@@ -45,6 +46,7 @@ export class ProductDataParser
     /**
 	 * Dispose the parser
 	 */
+    // AS3: .../src/com/sulake/habbo/session/product/ProductDataParser.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

@@ -14,6 +14,7 @@ export class HabboGroupDeactivatedMessageEvent extends MessageEvent implements I
         super(callback, HabboGroupDeactivatedMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/HabboGroupDeactivatedMessageEvent.as::get groupId()
     get groupId(): number
     {
         return (this._parser as HabboGroupDeactivatedMessageParser).groupId;

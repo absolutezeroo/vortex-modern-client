@@ -22,6 +22,7 @@ export class WarningEvent
 
     private _message: string;
 
+    // AS3: sources/win63_version/core/runtime/events/WarningEvent.as::get message()
     get message(): string
     {
         return this._message;

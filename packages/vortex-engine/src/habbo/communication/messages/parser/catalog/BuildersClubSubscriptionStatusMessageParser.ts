@@ -10,6 +10,7 @@ export class BuildersClubSubscriptionStatusMessageParser implements IMessagePars
 {
     private _secondsLeft: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/BuildersClubSubscriptionStatusMessageEventParser.as::get secondsLeft()
     get secondsLeft(): number
     {
         return this._secondsLeft;
@@ -17,6 +18,7 @@ export class BuildersClubSubscriptionStatusMessageParser implements IMessagePars
 
     private _furniLimit: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/BuildersClubSubscriptionStatusMessageEventParser.as::get furniLimit()
     get furniLimit(): number
     {
         return this._furniLimit;
@@ -24,6 +26,7 @@ export class BuildersClubSubscriptionStatusMessageParser implements IMessagePars
 
     private _maxFurniLimit: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/BuildersClubSubscriptionStatusMessageEventParser.as::get maxFurniLimit()
     get maxFurniLimit(): number
     {
         return this._maxFurniLimit;
@@ -31,11 +34,13 @@ export class BuildersClubSubscriptionStatusMessageParser implements IMessagePars
 
     private _secondsLeftWithGrace: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/BuildersClubSubscriptionStatusMessageEventParser.as::get secondsLeftWithGrace()
     get secondsLeftWithGrace(): number
     {
         return this._secondsLeftWithGrace;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/BuildersClubSubscriptionStatusMessageEventParser.as::flush()
     flush(): boolean
     {
         this._secondsLeft = 0;
@@ -45,6 +50,7 @@ export class BuildersClubSubscriptionStatusMessageParser implements IMessagePars
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/BuildersClubSubscriptionStatusMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._secondsLeft = wrapper.readInt();

@@ -7,9 +7,12 @@ import type {IInteractiveWindow} from './IInteractiveWindow';
  */
 export interface IDropMenuWindow extends IInteractiveWindow
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IDropMenuWindow.as::get selection()
     selection: number;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IDropMenuWindow.as::get numMenuItems()
     readonly numMenuItems: number;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IDropMenuWindow.as::populate()
     populate(items: unknown[]): void;
 
     populateWithStrings(items: string[]): void;

@@ -13,16 +13,19 @@ export interface IBadgeImageWidget extends IWidget
     /**
 	 * The badge type: "normal", "group", or "perk".
 	 */
+    // AS3: .../src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::get type()
     type: string;
 
     /**
 	 * The badge identifier string.
 	 */
+    // AS3: .../src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::get badgeId()
     badgeId: string;
 
     /**
 	 * The group ID for group-type badges. Set to 0 to disable.
 	 */
+    // AS3: .../src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::get groupId()
     groupId: number;
 
     /**

@@ -8,9 +8,13 @@
  */
 export class SkinTemplateEntity 
 {
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinTemplateEntity.as::get id()
     public readonly id: number;
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinTemplateEntity.as::get name()
     public readonly name: string;
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinTemplateEntity.as::get type()
     public readonly type: string;
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinTemplateEntity.as::get region()
     public readonly region: { x: number; y: number; width: number; height: number };
 
     constructor(

@@ -15,16 +15,21 @@ import {CatalogNode} from './CatalogNode';
  */
 export class CatalogNodeRenderable extends CatalogNode
 {
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::_window
     private _window: IWindowContainer | null = null;
 
     private _childList: IItemListWindow | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::_isOpen
     private _isOpen: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::_active
     private _active: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::_itemNormalColor
     private _itemNormalColor: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::_itemSelectedEtchingColor
     private _itemSelectedEtchingColor: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::_renderDepth
@@ -35,6 +40,7 @@ export class CatalogNodeRenderable extends CatalogNode
         super(navigator, data, depth, parent);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::get window()
     get window(): IWindowContainer | null
     {
         return this._window;
@@ -103,6 +109,7 @@ export class CatalogNodeRenderable extends CatalogNode
         list.arrangeListItems();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::removeFromList()
     removeFromList(list: IItemListWindow): void
     {
         list.removeListItem(this._window!);
@@ -137,6 +144,7 @@ export class CatalogNodeRenderable extends CatalogNode
         this._isOpen = false;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::refreshChildren()
     private refreshChildren(): void
     {
         if(this._childList == null) return;
@@ -162,6 +170,7 @@ export class CatalogNodeRenderable extends CatalogNode
         this._childList.arrangeListItems();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::showChildren()
     private showChildren(): void
     {
         if(this._childList == null)
@@ -195,6 +204,7 @@ export class CatalogNodeRenderable extends CatalogNode
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::removeChildren()
     private removeChildren(): void
     {
         for(const child of this.children)
@@ -213,6 +223,7 @@ export class CatalogNodeRenderable extends CatalogNode
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::createChildList()
     private createChildList(): void
     {
         this._childList = this.navigator!.listTemplate.clone() as IItemListWindow;
@@ -282,6 +293,7 @@ export class CatalogNodeRenderable extends CatalogNode
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::onOut()
     private onOut(_event: WindowMouseEvent): void
     {
         if(!this._active)
@@ -290,6 +302,7 @@ export class CatalogNodeRenderable extends CatalogNode
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::onOver()
     private onOver(_event: WindowMouseEvent): void
     {
         if(!this._active)
@@ -298,6 +311,7 @@ export class CatalogNodeRenderable extends CatalogNode
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::setInactiveLook()
     private setInactiveLook(): void
     {
         if(this._window != null)
@@ -319,6 +333,7 @@ export class CatalogNodeRenderable extends CatalogNode
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::setActiveLook()
     private setActiveLook(): void
     {
         if(this._window != null)
@@ -340,11 +355,13 @@ export class CatalogNodeRenderable extends CatalogNode
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::onButtonClicked()
     private onButtonClicked(_event: WindowMouseEvent): void
     {
         this.navigator!.activateNode(this);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::updateChildListHeight()
     updateChildListHeight(): void
     {
         if(this._childList == null) return;

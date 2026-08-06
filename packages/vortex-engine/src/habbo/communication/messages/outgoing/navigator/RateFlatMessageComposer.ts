@@ -16,6 +16,7 @@ export class RateFlatMessageComposer extends MessageComposer<ConstructorParamete
         this._data = [rating];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/RateFlatMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

@@ -10,6 +10,7 @@ export class ConcurrentUsersGoalProgressMessageParser implements IMessageParser
 {
     private _state: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/ConcurrentUsersGoalProgressMessageEventParser.as::get state()
     get state(): number
     {
         return this._state;
@@ -17,6 +18,7 @@ export class ConcurrentUsersGoalProgressMessageParser implements IMessageParser
 
     private _userCount: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/ConcurrentUsersGoalProgressMessageEventParser.as::get userCount()
     get userCount(): number
     {
         return this._userCount;
@@ -24,11 +26,13 @@ export class ConcurrentUsersGoalProgressMessageParser implements IMessageParser
 
     private _userCountGoal: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/ConcurrentUsersGoalProgressMessageEventParser.as::get userCountGoal()
     get userCountGoal(): number
     {
         return this._userCountGoal;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/ConcurrentUsersGoalProgressMessageEventParser.as::flush()
     flush(): boolean
     {
         this._state = -1;
@@ -37,6 +41,7 @@ export class ConcurrentUsersGoalProgressMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/ConcurrentUsersGoalProgressMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

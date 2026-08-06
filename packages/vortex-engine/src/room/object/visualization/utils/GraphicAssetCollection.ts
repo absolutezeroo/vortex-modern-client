@@ -14,9 +14,11 @@ import {GraphicAssetPalette} from './GraphicAssetPalette';
 
 export class GraphicAssetCollection implements IGraphicAssetCollection
 {
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::PALETTE_ASSET_DISPOSE_THRESHOLD
     private static readonly PALETTE_ASSET_DISPOSE_THRESHOLD: number = 10;
 
     private _name: string = '';
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::_assets
     private _assets: Map<string, GraphicAsset> = new Map();
     private _palettes: Map<string, GraphicAssetPalette> = new Map();
     // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::var_2811
@@ -32,6 +34,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         return this._disposed;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::dispose()
     dispose(): void
     {
         if(this._disposed)
@@ -65,12 +68,14 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         this._textures.clear();
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::addReference()
     addReference(): void
     {
         this._referenceCount++;
         this._lastReferenceTimestamp = Date.now();
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::removeReference()
     removeReference(): void
     {
         this._referenceCount--;
@@ -83,6 +88,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         }
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::getReferenceCount()
     getReferenceCount(): number
     {
         return this._referenceCount;
@@ -104,6 +110,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
 	 * }
 	 * ```
 	 */
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::define()
     define(data: Record<string, unknown>): boolean
     {
         if(data === null)
@@ -130,6 +137,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         return true;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::getAsset()
     getAsset(name: string): IGraphicAsset | null
     {
         const existing = this._assets.get(name);
@@ -142,6 +150,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         return null;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::getAssetWithPalette()
     getAssetWithPalette(name: string, paletteName: string): IGraphicAsset | null
     {
         const key = name + '@' + paletteName;
@@ -203,6 +212,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         return asset;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::getPaletteNames()
     getPaletteNames(): string[]
     {
         return Array.from(this._palettes.keys());
@@ -227,6 +237,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         return this._paletteXML.get(paletteName) ?? null;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::addAsset()
     addAsset(
         name: string,
         texture: Texture,
@@ -260,6 +271,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         return false;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::disposeAsset()
     disposeAsset(name: string): void
     {
         const asset = this._assets.get(name);
@@ -310,6 +322,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         }
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::defineAssets()
     private defineAssets(assets: unknown): void
     {
         for(const [name, assetDef] of GraphicAssetCollection.getAssetDefinitions(assets))
@@ -491,6 +504,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         return defaultValue;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::definePalettes()
     private definePalettes(palettes: Record<string, Record<string, unknown>>): void
     {
         for(const id in palettes)
@@ -550,6 +564,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         }
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::createAsset()
     private createAsset(
         name: string,
         libraryName: string,
@@ -572,6 +587,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         return true;
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::replaceAsset()
     private replaceAsset(
         name: string,
         libraryName: string,
@@ -645,6 +661,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         }
     }
 
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::disposePaletteAssets()
     private disposePaletteAssets(force: boolean = true): void
     {
         if(this._paletteAssetNames !== null)

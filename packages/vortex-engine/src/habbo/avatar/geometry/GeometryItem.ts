@@ -9,6 +9,7 @@ import {getXmlAttribute, getXmlRoot} from '../structure/AvatarXmlUtils';
  */
 export class GeometryItem extends Node3D
 {
+    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::_radius
     private _radius: number;
 
     // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::GeometryItem()
@@ -44,6 +45,7 @@ export class GeometryItem extends Node3D
         return this._id;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::_normal
     private _normal: Vector3D;
 
     // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::get normal()
@@ -52,6 +54,7 @@ export class GeometryItem extends Node3D
         return this._normal;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::_isDoubleSided
     private _isDoubleSided: boolean = false;
 
     // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::get isDoubleSided()

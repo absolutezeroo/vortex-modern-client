@@ -17,6 +17,7 @@ export class GetInterstitialMessageComposer extends MessageComposer<ConstructorP
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/advertisement/GetInterstitialMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

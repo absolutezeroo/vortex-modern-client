@@ -21,7 +21,9 @@ export class ChatFlowViewer implements IUpdateReceiver, IDisposable
 {
     private _chatFlow: IHabboFreeFlowChat | null;
     private readonly _chatFlowStage: ChatFlowStage;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::_rootDisplayObject
     private readonly _rootDisplayObject: Container = new Container();
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::_bubbles
     private readonly _bubbles: PooledChatBubble[] = [];
 
     private _lastRoomId: number = 0;
@@ -35,6 +37,7 @@ export class ChatFlowViewer implements IUpdateReceiver, IDisposable
         chatFlow.registerUpdateReceiver(this, 1);
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::get disposed()
     get disposed(): boolean
     {
         return this._rootDisplayObject === null || this._chatFlow === null;
@@ -114,6 +117,7 @@ export class ChatFlowViewer implements IUpdateReceiver, IDisposable
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::get rootDisplayObject()
     get rootDisplayObject(): Container
     {
         return this._rootDisplayObject;

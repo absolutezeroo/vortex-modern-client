@@ -44,6 +44,7 @@ export class AvatarDataContainer implements IAvatarDataContainer
 
     private _ink: number;
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AvatarDataContainer.as::get ink()
     public get ink(): number
     {
         return this._ink;
@@ -56,6 +57,7 @@ export class AvatarDataContainer implements IAvatarDataContainer
         alphaMultiplier: number
     };
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AvatarDataContainer.as::get colorTransform()
     public get colorTransform(): {
         redMultiplier: number;
         greenMultiplier: number;
@@ -68,6 +70,7 @@ export class AvatarDataContainer implements IAvatarDataContainer
 
     private _paletteIsGrayscale: boolean = true;
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AvatarDataContainer.as::get paletteIsGrayscale()
     public get paletteIsGrayscale(): boolean
     {
         return this._paletteIsGrayscale;
@@ -75,6 +78,7 @@ export class AvatarDataContainer implements IAvatarDataContainer
 
     private _reds: number[];
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AvatarDataContainer.as::get reds()
     public get reds(): number[]
     {
         return this._reds;
@@ -82,6 +86,7 @@ export class AvatarDataContainer implements IAvatarDataContainer
 
     private _greens: number[];
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AvatarDataContainer.as::get greens()
     public get greens(): number[]
     {
         return this._greens;
@@ -89,6 +94,7 @@ export class AvatarDataContainer implements IAvatarDataContainer
 
     private _blues: number[];
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AvatarDataContainer.as::get blues()
     public get blues(): number[]
     {
         return this._blues;
@@ -96,11 +102,13 @@ export class AvatarDataContainer implements IAvatarDataContainer
 
     private _alphas: number[];
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AvatarDataContainer.as::get alphas()
     public get alphas(): number[]
     {
         return this._alphas;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/animation/AvatarDataContainer.as::generatePaletteMapForGrayscale()
     private generatePaletteMapForGrayscale(bgColor: number, fgColor: number): {
         reds: number[];
         greens: number[];

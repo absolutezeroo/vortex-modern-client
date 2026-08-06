@@ -27,9 +27,13 @@ import {SmoothScroller} from '../utils/SmoothScroller';
 // AS3: sources/win63_version/core/window/components/ScrollBarController.as::ScrollBarController()
 export class ScrollBarController extends InteractiveController implements IScrollbarWindow
 {
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::SCROLL_BUTTON_INCREMENT
     private static readonly SCROLL_BUTTON_INCREMENT: string = 'increment';
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::SCROLL_BUTTON_DECREMENT
     private static readonly SCROLL_BUTTON_DECREMENT: string = 'decrement';
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::SCROLL_SLIDER_TRACK
     private static readonly SCROLL_SLIDER_TRACK: string = 'slider_track';
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::SCROLL_SLIDER_BAR
     private static readonly SCROLL_SLIDER_BAR: string = 'slider_bar';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::SCROLL_STEP_SIZE
@@ -42,8 +46,10 @@ export class ScrollBarController extends InteractiveController implements IScrol
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::getSmoothScrollAxisSize()
     private static readonly SMOOTH_SCROLL_AXIS_UNIT: number = 25;
 
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::_offset
     protected _offset: number = 0;
     protected _scrollStep: number = 0.1;
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::_targetName
     private _targetName: string | null = null;
     private _isUpdatingLift: boolean = false;
     private _initialized: boolean = false;
@@ -120,6 +126,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Gets the scrollable target window.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::get scrollable()
     public get scrollable(): IScrollableWindow | null
     {
         return this._scrollable;
@@ -128,6 +135,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Sets the scrollable target window. Binds resize/scroll event listeners.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::set scrollable()
     public set scrollable(value: IScrollableWindow | null)
     {
         if(this._scrollable !== null && !this._scrollable.disposed)
@@ -152,6 +160,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
         }
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/ScrollBarController.as::_horizontal
     private _horizontal: boolean | null = null;
 
     /**
@@ -175,6 +184,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Gets the horizontal scroll position (0..1).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::get scrollH()
     public get scrollH(): number
     {
         return this.horizontal ? this._offset : 0;
@@ -183,6 +193,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Sets the horizontal scroll position.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::set scrollH()
     public set scrollH(value: number)
     {
         if(this.horizontal)
@@ -197,6 +208,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Gets the vertical scroll position (0..1).
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::get scrollV()
     public get scrollV(): number
     {
         return this.horizontal ? 0 : this._offset;
@@ -205,6 +217,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Sets the vertical scroll position.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::set scrollV()
     public set scrollV(value: number)
     {
         if(this.vertical)
@@ -263,6 +276,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Gets the track child window.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::get track()
     protected get track(): WindowController | null
     {
         return this.findChildByName(ScrollBarController.SCROLL_SLIDER_TRACK) as WindowController | null;
@@ -271,6 +285,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Gets the lift (thumb) child window inside the track.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::get lift()
     protected get lift(): WindowController | null
     {
         const trackWindow = this.track;
@@ -558,6 +573,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Handles scroll button events for increment, decrement, and track click.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::scrollButtonEventProc()
     private scrollButtonEventProc(event: WindowEvent, window: IWindow): void
     {
         let updateLift = false;
@@ -656,6 +672,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
 	 * Searches by name first, then checks if parent is scrollable,
 	 * then checks parent's siblings.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::resolveScrollTarget()
     private resolveScrollTarget(): boolean
     {
         if(this._scrollable !== null)
@@ -718,6 +735,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Called when the scrollable target resizes.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::onScrollableResized()
     private onScrollableResized(_event: WindowEvent): void
     {
         this.updateLiftSizeAndPosition();
@@ -727,6 +745,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Called when the scrollable target scrolls.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::onScrollableScrolled()
     private onScrollableScrolled(_event: WindowEvent): void
     {
         this.updateLiftSizeAndPosition();

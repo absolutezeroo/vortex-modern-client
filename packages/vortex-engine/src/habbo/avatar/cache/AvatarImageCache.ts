@@ -25,30 +25,46 @@ import {ImageData} from './ImageData';
  */
 export class AvatarImageCache
 {
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::DEFAULT_MAX_CACHE_STORAGE_TIME_MS
     public static readonly DEFAULT_MAX_CACHE_STORAGE_TIME_MS: number = 60000;
 
     private static readonly UNDERSCORE: string = '_';
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::DEF_SEPARATOR
     private static readonly DEF_SEPARATOR: string = '.';
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::BASE_ACTION
     private static readonly BASE_ACTION: string = 'std';
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::LAY_BASE_ACTION
     private static readonly LAY_BASE_ACTION: string = 'lay';
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::PART_FACE
     private static readonly PART_FACE: string = 'fc';
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::PART_EYES
     private static readonly PART_EYES: string = 'ey';
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::PART_RIGHT_ITEM
     private static readonly PART_RIGHT_ITEM: string = 'ri';
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::ACTION_WAVE
     private static readonly ACTION_WAVE: string = 'wav';
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::ACTION_DRINK
     private static readonly ACTION_DRINK: string = 'drk';
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::ACTION_BLOW
     private static readonly ACTION_BLOW: string = 'blw';
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::ACTION_SIGN
     private static readonly ACTION_SIGN: string = 'sig';
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::ACTION_RESPECT
     private static readonly ACTION_RESPECT: string = 'respect';
 
     private _structure: AvatarStructure;
     private _avatar: IAvatarImage;
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::_assets
     private _assets: AssetAliasCollection;
     private _scale: string;
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::_cache
     private _cache: Map<string, AvatarImageBodyPartCache>;
     private _canvas: AvatarCanvas | null;
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::_disposed
     private _disposed: boolean;
     private _geometryType: string;
     private _defaultActionAssetPartDefinition: string;
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::_unionImages
     private _unionImages: ImageData[];
     private _serverRenderData: any[];
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::_largeScaledSmall
@@ -82,6 +98,7 @@ export class AvatarImageCache
 	 * @param setType - The body part set identifier (e.g. 'full', 'head')
 	 * @param direction - The avatar direction (0-7)
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::setDirection()
     public setDirection(setType: string, direction: number): void
     {
         const bodyPartIds = this._structure.getBodyPartsUnordered(setType);
@@ -100,6 +117,7 @@ export class AvatarImageCache
 	 * @param action - The active action data
 	 * @param frameCount - The current frame count
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::setAction()
     public setAction(action: IActiveActionData, frameCount: number): void
     {
         const bodyPartIds = this._structure.getActiveBodyPartIds(action, this._avatar);
@@ -118,6 +136,7 @@ export class AvatarImageCache
 	 *
 	 * @param geometryType - The geometry type string
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::setGeometryType()
     public setGeometryType(geometryType: string): void
     {
         if(this._geometryType === geometryType) return;
@@ -144,6 +163,7 @@ export class AvatarImageCache
 	 *
 	 * @param maxIdleTime - Maximum idle time in ms before eviction
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::disposeInactiveActions()
     public disposeInactiveActions(maxIdleTime: number = AvatarImageCache.DEFAULT_MAX_CACHE_STORAGE_TIME_MS): void
     {
         const now = Date.now();
@@ -159,6 +179,7 @@ export class AvatarImageCache
 	 *
 	 * @param action - The action to reset to
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::resetBodyPartCache()
     public resetBodyPartCache(action: IActiveActionData): void
     {
         for(const cache of this._cache.values())
@@ -178,6 +199,7 @@ export class AvatarImageCache
 	 * @param forceUpdate - If true, bypasses cache and forces re-render
 	 * @returns The body part container, or null if rendering fails
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::getImageContainer()
     public getImageContainer(bodyPartId: string, frameIndex: number, forceUpdate: boolean = false): AvatarImageBodyPartContainer | null
     {
         let bodyPartCache = this.getBodyPartCache(bodyPartId);
@@ -356,6 +378,7 @@ export class AvatarImageCache
     /**
 	 * Returns and clears the accumulated server render data.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::getServerRenderData()
     public getServerRenderData(): any[]
     {
         const data = this._serverRenderData;
@@ -371,6 +394,7 @@ export class AvatarImageCache
 	 * @param bodyPartId - The body part identifier
 	 * @returns The body part cache
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::getBodyPartCache()
     public getBodyPartCache(bodyPartId: string): AvatarImageBodyPartCache
     {
         let cache = this._cache.get(bodyPartId) || null;
@@ -387,6 +411,7 @@ export class AvatarImageCache
     /**
 	 * Disposes all caches and clears references.
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;
@@ -445,6 +470,7 @@ export class AvatarImageCache
 	 * @param forceUpdate - Whether this is a forced re-render
 	 * @returns The composited body part container, or null if no parts render
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::renderBodyPart()
     private renderBodyPart(
         direction: number,
         partList: AvatarImagePartContainer[],
@@ -668,6 +694,7 @@ export class AvatarImageCache
         return new AvatarImageBodyPartContainer(unionImage.texture, containerRegPoint, isCacheable, faceOffset);
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::tryResolveAsset()
     private tryResolveAsset(
         assetPartDefinition: string,
         partType: string,
@@ -715,6 +742,7 @@ export class AvatarImageCache
 			+ AvatarImageCache.UNDERSCORE + frame;
     }
 
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::getDefaultActionFromGeometryType()
     private getDefaultActionFromGeometryType(geometryType: string): string
     {
         return geometryType === 'horizontal' ? AvatarImageCache.LAY_BASE_ACTION : AvatarImageCache.BASE_ACTION;
@@ -728,6 +756,7 @@ export class AvatarImageCache
 	 * @param isFlipped - Whether the composite should be flipped
 	 * @returns The composited image data, or null if empty
 	 */
+    // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::createUnionImage()
     private createUnionImage(imageDataList: ImageData[], isFlipped: boolean): ImageData
     {
         // Compute the union bounding rect from all offset rects

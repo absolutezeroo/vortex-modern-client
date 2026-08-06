@@ -15,6 +15,7 @@ export class GetCommunityGoalHallOfFameMessageComposer extends MessageComposer<C
         this._data = [code];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/quest/GetCommunityGoalHallOfFameMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

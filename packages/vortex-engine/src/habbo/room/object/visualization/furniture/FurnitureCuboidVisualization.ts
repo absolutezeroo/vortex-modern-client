@@ -16,7 +16,9 @@ import {FurniturePlane} from './FurniturePlane';
 
 export class FurnitureCuboidVisualization extends RoomObjectSpriteVisualization
 {
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureCuboidVisualization.as::_planes
     private _planes: FurniturePlane[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureCuboidVisualization.as::_planesInitialized
     private _planesInitialized: boolean = false;
     private _updateCounter: number = 0;
 
@@ -52,6 +54,7 @@ export class FurnitureCuboidVisualization extends RoomObjectSpriteVisualization
         this._planes = [];
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureCuboidVisualization.as::defineSprites()
     protected defineSprites(): void
     {
         this.createSprites(1);
@@ -64,6 +67,7 @@ export class FurnitureCuboidVisualization extends RoomObjectSpriteVisualization
 	 *
 	 * @see AS3 FurnitureCuboidVisualization.initializePlanes()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureCuboidVisualization.as::initializePlanes()
     protected initializePlanes(): void
     {
         if(this._planesInitialized) return;
@@ -98,6 +102,7 @@ export class FurnitureCuboidVisualization extends RoomObjectSpriteVisualization
 	 *
 	 * @see AS3 FurnitureCuboidVisualization.updatePlanes()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureCuboidVisualization.as::updatePlanes()
     protected updatePlanes(geometry: IRoomGeometry, time: number): void
     {
         const roomObject = this.object;

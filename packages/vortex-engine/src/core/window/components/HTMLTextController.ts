@@ -16,6 +16,7 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  */
 export class HTMLTextController extends TextFieldController implements IHTMLTextWindow
 {
+    // AS3: sources/win63_version/core/window/components/HTMLTextController.as::HTML_STYLESHEET_KEY
     private static readonly HTML_STYLESHEET_KEY: string = 'html_stylesheet';
     private _htmlContent: string = '';
 
@@ -41,6 +42,7 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
 
     private static _defaultLinkTarget: string = 'default';
 
+    // AS3: sources/win63_version/core/window/components/HTMLTextController.as::get defaultLinkTarget()
     public static get defaultLinkTarget(): string
     {
         return HTMLTextController._defaultLinkTarget;
@@ -49,6 +51,7 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
     /**
 	 * The default link target for all HTMLTextController instances.
 	 */
+    // AS3: sources/win63_version/core/window/components/HTMLTextController.as::set defaultLinkTarget()
     public static set defaultLinkTarget(value: string)
     {
         HTMLTextController._defaultLinkTarget = value;
@@ -74,26 +77,31 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
     /**
 	 * The link target for hyperlinks in this window.
 	 */
+    // AS3: sources/win63_version/core/window/components/HTMLTextController.as::get linkTarget()
     public get linkTarget(): string
     {
         return this._linkTarget === 'default' ? HTMLTextController._defaultLinkTarget : this._linkTarget;
     }
 
+    // AS3: sources/win63_version/core/window/components/HTMLTextController.as::set linkTarget()
     public set linkTarget(value: string)
     {
         this._linkTarget = value;
     }
 
+    // AS3: sources/win63_version/core/window/components/HTMLTextController.as::_htmlStyleSheetString
     private _htmlStyleSheetString: string | null = null;
 
     /**
 	 * The CSS stylesheet string for HTML rendering.
 	 */
+    // AS3: sources/win63_version/core/window/components/HTMLTextController.as::get htmlStyleSheetString()
     public get htmlStyleSheetString(): string | null
     {
         return this._htmlStyleSheetString;
     }
 
+    // AS3: sources/win63_version/core/window/components/HTMLTextController.as::set htmlStyleSheetString()
     public set htmlStyleSheetString(value: string | null)
     {
         this._htmlStyleSheetString = value;
@@ -188,6 +196,7 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
 	 *
 	 * In AS3, this replaced `<a href="http://...">` with `<a href="event:http://...">`.
 	 */
+    // AS3: sources/win63_version/core/window/components/HTMLTextController.as::convertLinksToEvents()
     private static convertLinksToEvents(html: string): string
     {
         html = html.replace(/<a[^>]+(http:\/\/[^"']+)['"][^>]*>(.*?)<\/a>/gi, "<a href='event:$1'>$2</a>");

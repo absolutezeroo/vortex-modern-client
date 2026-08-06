@@ -23,6 +23,7 @@ export class NewUserExperienceNotCompleteEventParser implements IMessageParser
      *
      * Reads nothing: AS3's body is `return true`.
      */
+    // AS3: .../src/unknowns/_SafePkg_3895/_SafeCls_4042.as::parse()
     parse(_wrapper: IMessageDataWrapper): boolean
     {
         return true;

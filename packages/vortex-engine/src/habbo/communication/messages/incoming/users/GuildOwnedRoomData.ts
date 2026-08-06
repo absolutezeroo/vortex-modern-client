@@ -12,6 +12,7 @@
 export class GuildOwnedRoomData
 {
     private _roomId: number;
+    // AS3: .../src/unknowns/_SafePkg_1731/_SafeCls_3030.as::_roomName
     private _roomName: string;
     private _hasControllers: boolean;
 

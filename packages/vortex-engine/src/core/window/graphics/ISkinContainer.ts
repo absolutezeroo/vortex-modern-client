@@ -19,6 +19,7 @@ export interface ISkinContainer extends IDisposable
 	 * @param style - The window style
 	 * @returns The skin renderer, or null
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/ISkinContainer.as::getSkinRendererByTypeAndStyle()
     getSkinRendererByTypeAndStyle(type: number, style: number): ISkinRenderer | null;
 
     /**
@@ -28,6 +29,7 @@ export interface ISkinContainer extends IDisposable
 	 * @param style - The window style
 	 * @returns The default attribute struct, or null
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/ISkinContainer.as::getDefaultAttributesByTypeAndStyle()
     getDefaultAttributesByTypeAndStyle(type: number, style: number): DefaultAttStruct | null;
 
     /**
@@ -38,5 +40,6 @@ export interface ISkinContainer extends IDisposable
 	 * @param state - The combined window state flags
 	 * @returns The resolved drawable state
 	 */
+    // AS3: .../src/com/sulake/core/window/graphics/ISkinContainer.as::getTheActualState()
     getTheActualState(type: number, style: number, state: number): number;
 }

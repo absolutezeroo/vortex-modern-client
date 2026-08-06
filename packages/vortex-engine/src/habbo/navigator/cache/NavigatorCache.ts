@@ -7,14 +7,17 @@ import {NavigatorCacheEntry} from './NavigatorCacheEntry';
  */
 export class NavigatorCache
 {
+    // AS3: .../src/com/sulake/habbo/navigator/cache/NavigatorCache.as::EXPIRATION_TIME
     private static readonly EXPIRATION_TIME: number = 4000;
 
+    // AS3: .../src/com/sulake/habbo/navigator/cache/NavigatorCache.as::_entriesByKey
     private _entriesByKey: Map<string, NavigatorCacheEntry> = new Map();
 
     constructor()
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/cache/NavigatorCache.as::put()
     put(key: string, payload: NavigatorSearchResultSet): void
     {
         this.removeExpiredEntries();
@@ -22,6 +25,7 @@ export class NavigatorCache
         this._entriesByKey.set(key, new NavigatorCacheEntry(key, payload, currentTime, this.expiresAt(currentTime)));
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/cache/NavigatorCache.as::getEntry()
     getEntry(key: string): NavigatorSearchResultSet | null
     {
         const entry = this._entriesByKey.get(key);
@@ -39,11 +43,13 @@ export class NavigatorCache
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/cache/NavigatorCache.as::removeEntry()
     removeEntry(key: string): void
     {
         this._entriesByKey.delete(key);
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/cache/NavigatorCache.as::removeExpiredEntries()
     private removeExpiredEntries(): void
     {
         const currentTime = performance.now();
@@ -57,6 +63,7 @@ export class NavigatorCache
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/navigator/cache/NavigatorCache.as::expiresAt()
     private expiresAt(currentTime: number): number
     {
         return currentTime + NavigatorCache.EXPIRATION_TIME;

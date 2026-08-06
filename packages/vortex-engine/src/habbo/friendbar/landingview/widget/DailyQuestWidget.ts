@@ -25,14 +25,18 @@ import {GenericWidget} from './GenericWidget';
  */
 export class DailyQuestWidget implements IDisposable, ILandingViewWidget, ISlotAwareWidget, IConfigurableWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::_landingView
     private _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::_container
     private _container: IWindowContainer | null = null;
     private _quest: QuestMessageData | null = null;
     private _easyQuestCount: number = 0;
     private _hardQuestCount: number = 0;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::_index
     private _index: number = 0;
     private _hdrLineRightEdge: number = 0;
     private _slot: number = 0;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::_configurationCode
     private _configurationCode: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::DailyQuestWidget()
@@ -143,6 +147,7 @@ export class DailyQuestWidget implements IDisposable, ILandingViewWidget, ISlotA
         this.refreshContent();
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::refreshContent()
     private refreshContent(): void
     {
         if(!this._container || !this._landingView) return;
@@ -208,6 +213,7 @@ export class DailyQuestWidget implements IDisposable, ILandingViewWidget, ISlotA
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::setupDifficultyText()
     private setupDifficultyText(regionName: string, underline: boolean): void
     {
         const region = this._container?.findChildByName(regionName) as IWindowContainer | null;
@@ -220,16 +226,19 @@ export class DailyQuestWidget implements IDisposable, ILandingViewWidget, ISlotA
         region.width = label.width;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::getChainSpecificKey()
     private getChainSpecificKey(key: string): string
     {
         return 'quests.' + this._quest?.campaignCode + '.' + this._quest?.chainCode + '.' + key;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::getChainSpecificText()
     private getChainSpecificText(key: string): string
     {
         return '${' + this.getChainSpecificKey(key) + '}';
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::getText()
     private getText(key: string): string
     {
         return '${' + key + '}';
@@ -292,6 +301,7 @@ export class DailyQuestWidget implements IDisposable, ILandingViewWidget, ISlotA
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/DailyQuestWidget.as::sendGetDailyQuest()
     private sendGetDailyQuest(isEasy: boolean): void
     {
         this._landingView?.send(new GetDailyQuestMessageComposer(isEasy, this._index));

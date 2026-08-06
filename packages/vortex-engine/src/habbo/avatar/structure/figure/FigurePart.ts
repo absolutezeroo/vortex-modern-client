@@ -57,6 +57,7 @@ export class FigurePart implements IFigurePart
         return this._colorLayerIndex;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePart.as::_index
     private _index: number;
 
     // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePart.as::get index()

@@ -14,8 +14,11 @@ import type {RoomObjectDataUpdateMessage} from '@habbo/room/messages/RoomObjectD
 
 export class FurniturePushableLogic extends FurnitureMultiStateLogic
 {
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurniturePushableLogic.as::ANIMATION_NOT_MOVING
     private static readonly ANIMATION_NOT_MOVING = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurniturePushableLogic.as::ANIMATION_MOVING
     private static readonly ANIMATION_MOVING = 1;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurniturePushableLogic.as::MAX_ANIMATION_COUNT
     private static readonly MAX_ANIMATION_COUNT = 10;
 
     private _lastLocation: Vector3d = new Vector3d();
@@ -113,11 +116,13 @@ export class FurniturePushableLogic extends FurnitureMultiStateLogic
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurniturePushableLogic.as::getUpdateIntervalValue()
     protected getUpdateIntervalValue(state: number): number
     {
         return state / 10;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/logic/furniture/FurniturePushableLogic.as::getAnimationValue()
     protected getAnimationValue(state: number): number
     {
         return state % 10;

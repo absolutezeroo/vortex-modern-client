@@ -15,8 +15,10 @@ export class RoomObjectAvatarGuideStatusUpdateMessage extends RoomObjectUpdateMe
         this._guideStatus = guideStatus;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarGuideStatusUpdateMessage.as::_guideStatus
     private _guideStatus: number;
 
+    // AS3: .../src/com/sulake/habbo/room/messages/RoomObjectAvatarGuideStatusUpdateMessage.as::get guideStatus()
     get guideStatus(): number
     {
         return this._guideStatus;

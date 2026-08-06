@@ -30,22 +30,28 @@ const STEP_SIZE_MAX = 55;
  */
 export class RecyclerEngineAnimator implements IDisposable
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::_arrow
     private _arrow: IStaticBitmapWrapperWindow | null;
 
     private _recycleMachine: IStaticBitmapWrapperWindow | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::_onFinish
     private _onFinish: (() => void) | null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::_startTime
     private _startTime: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::_stepBeginTime
     private _stepBeginTime: number = 0;
 
     private _fromAngle: number = 0;
 
     private _toAngle: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::_animationTime
     private _animationTime: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::_shakeLastTime
     private _shakeLastTime: number = 0;
 
     private _timer: ReturnType<typeof setInterval> | null = null;
@@ -56,8 +62,10 @@ export class RecyclerEngineAnimator implements IDisposable
 
     private _baseY: number;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::_easterEggMode
     private _easterEggMode: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::RecyclerEngineAnimator()
@@ -71,6 +79,7 @@ export class RecyclerEngineAnimator implements IDisposable
         this.setRotation(0);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::rand()
     private static rand(min: number, max: number): number
     {
         return min + Math.random() * (max - min);
@@ -111,11 +120,13 @@ export class RecyclerEngineAnimator implements IDisposable
         this.startTimer();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::startTimer()
     private startTimer(): void
     {
         this._timer = setInterval(() => this.onTimerTick(), TICK_INTERVAL_MS);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::stopTimer()
     private stopTimer(): void
     {
         if(this._timer != null)
@@ -125,6 +136,7 @@ export class RecyclerEngineAnimator implements IDisposable
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::setRotation()
     private setRotation(angle: number): void
     {
         if(!this._arrow) return;
@@ -133,6 +145,7 @@ export class RecyclerEngineAnimator implements IDisposable
         this._arrow.invalidate();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::setShake()
     private setShake(dx: number, dy: number): void
     {
         if(!this._recycleMachine) return;
@@ -141,6 +154,7 @@ export class RecyclerEngineAnimator implements IDisposable
         this._recycleMachine.y = this._baseY + dy;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::onTimerTick()
     private onTimerTick(): void
     {
         const now = performance.now();
@@ -180,6 +194,7 @@ export class RecyclerEngineAnimator implements IDisposable
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::nextStep()
     private nextStep(finishStep: boolean = false, firstStep: boolean = false): void
     {
         this._fromAngle = this._arrow?.rotation ?? 0;

@@ -27,15 +27,21 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
  */
 export class DailyQuestElementHandler implements IElementHandler, IFloatableElementHandler, IDisposable
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::_landingView
     private _landingView: HabboLandingView | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::_container
     private _container: IWindowContainer | null = null;
     private _quest: QuestMessageData | null = null;
     private _easyQuestCount: number = 0;
     private _hardQuestCount: number = 0;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::_index
     private _index: number = 0;
     private _isFloating: boolean = false;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::_disposed
     private _disposed: boolean = false;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::_campaignCode
     private _campaignCode: string = '';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::_chainCode
     private _chainCode: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::moveChildrenToRow()
@@ -126,6 +132,7 @@ export class DailyQuestElementHandler implements IElementHandler, IFloatableElem
         this._landingView?.send(new GetDailyQuestMessageComposer(true, 0));
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -143,6 +150,7 @@ export class DailyQuestElementHandler implements IElementHandler, IFloatableElem
         this.refreshContent();
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::refreshContent()
     private refreshContent(): void
     {
         if(!this._container) return;
@@ -185,6 +193,7 @@ export class DailyQuestElementHandler implements IElementHandler, IFloatableElem
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::setupDifficultyText()
     private setupDifficultyText(difficultyContainer: IWindowContainer, name: string, underline: boolean): void
     {
         const region = difficultyContainer.findChildByName(name) as IWindowContainer | null;
@@ -217,16 +226,19 @@ export class DailyQuestElementHandler implements IElementHandler, IFloatableElem
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::getChainSpecificKey()
     private getChainSpecificKey(key: string): string
     {
         return 'quests.' + this._quest?.campaignCode + '.' + this._quest?.chainCode + '.' + key;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::getChainSpecificText()
     private getChainSpecificText(key: string): string
     {
         return '${' + this.getChainSpecificKey(key) + '}';
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::getText()
     private getText(key: string): string
     {
         return '${' + key + '}';
@@ -287,6 +299,7 @@ export class DailyQuestElementHandler implements IElementHandler, IFloatableElem
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4543.as::sendGetDailyQuest()
     private sendGetDailyQuest(easy: boolean): void
     {
         this._landingView?.send(new GetDailyQuestMessageComposer(easy, this._index));

@@ -12,6 +12,7 @@ export class CompleteDiffieHandshakeMessageParser implements IMessageParser
 {
     private _encryptedPublicKey: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/CompleteDiffieHandshakeEventParser.as::get encryptedPublicKey()
     get encryptedPublicKey(): string
     {
         return this._encryptedPublicKey;
@@ -19,11 +20,13 @@ export class CompleteDiffieHandshakeMessageParser implements IMessageParser
 
     private _serverClientEncryption: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/CompleteDiffieHandshakeEventParser.as::get serverClientEncryption()
     get serverClientEncryption(): boolean
     {
         return this._serverClientEncryption;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/CompleteDiffieHandshakeEventParser.as::flush()
     flush(): boolean
     {
         this._encryptedPublicKey = '';
@@ -31,6 +34,7 @@ export class CompleteDiffieHandshakeMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/CompleteDiffieHandshakeEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper.bytesAvailable < 2) return false;

@@ -23,11 +23,15 @@ import {SessionDataPreferencesEvent} from '@habbo/session/events/SessionDataPref
 
 export class RoomToolsWidgetHandler implements IRoomWidgetHandler
 {
+    // AS3: .../src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::_disposed
     private _disposed: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::_communicationManagerMessageEvents
     private _communicationManagerMessageEvents: IMessageEvent[] = [];
+    // AS3: .../src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::_communicationManager
     private _communicationManager: IHabboCommunicationManager | null = null;
     private _navigatorRef: IHabboNavigator | null = null;
     private _widget: RoomToolsWidget | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::_container
     private _container: IRoomWidgetHandlerContainer | null = null;
 
     // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set widget()
@@ -93,6 +97,7 @@ export class RoomToolsWidgetHandler implements IRoomWidgetHandler
         this._container?.sessionDataManager?.events.on(SessionDataPreferencesEvent.PREFERENCES_UPDATED, this.onSessionDataPreferences);
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::get container()
     public get container(): IRoomWidgetHandlerContainer | null
     {
         return this._container;
@@ -160,6 +165,7 @@ export class RoomToolsWidgetHandler implements IRoomWidgetHandler
         this._navigatorRef = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::get navigator()
     public get navigator(): IHabboNavigator | null
     {
         return this._navigatorRef;

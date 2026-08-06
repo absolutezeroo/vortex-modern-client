@@ -62,6 +62,7 @@ export class TradingView implements IInventoryView
     // AS3: .../TradingView.as::_assets
     private _assets: IAssetLibrary | null;
 
+    // AS3: .../src/com/sulake/habbo/inventory/trading/TradingView.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../TradingView.as::_visible
@@ -98,6 +99,7 @@ export class TradingView implements IInventoryView
      * used as a 3-slot stack (grid index, group item, own-side flag). AS3 pops three and pushes
      * three, so only the most recent hover is ever waiting.
      */
+    // AS3: .../src/com/sulake/habbo/inventory/trading/TradingView.as::_waitingSongInfo
     private _waitingSongInfo: [number, GroupItem, boolean] | null = null;
 
     // AS3: .../TradingView.as::TradingView()
@@ -995,6 +997,7 @@ export class TradingView implements IInventoryView
      * view calls it too. That view is unported, so this is an instance method reading the model
      * directly; the shape is worth restoring when collectibles lands.
      */
+    // AS3: .../src/com/sulake/habbo/inventory/trading/TradingView.as::thumbEventProc()
     private thumbEventProc(event: WindowEvent, window: IWindow, isOwnUser: boolean): void
     {
         if(isOwnUser && event.type === 'WME_CLICK')
@@ -1095,6 +1098,7 @@ export class TradingView implements IInventoryView
      *
      * `canRequest` is false on the repaint pass, so a song that never resolves cannot loop.
      */
+    // AS3: .../src/com/sulake/habbo/inventory/trading/TradingView.as::getTraxSongFurniName()
     private getTraxSongFurniName(
         groupItem: GroupItem,
         fallbackName: string,

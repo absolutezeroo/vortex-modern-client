@@ -24,6 +24,7 @@ export class CloseIssueDefaultActionMessageComposer extends MessageComposer<unkn
         this._data.push(sanctionTypeId);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/moderator/CloseIssueDefaultActionMessageComposer.as::getMessageArray()
     getMessageArray(): unknown[]
     {
         return this._data;

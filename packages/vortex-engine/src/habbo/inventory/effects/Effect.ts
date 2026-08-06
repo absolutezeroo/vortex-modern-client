@@ -12,6 +12,7 @@ export class Effect
     // library's decoded content for `fx_icon_<type>`). Consumed by EffectView.
     private _icon: ImageBitmap | null = null;
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::get icon()
     get icon(): ImageBitmap | null
     {
         return this._icon;
@@ -24,11 +25,13 @@ export class Effect
 
     private _type: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::get type()
     get type(): number
     {
         return this._type;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::set type()
     set type(value: number)
     {
         this._type = value;
@@ -36,11 +39,13 @@ export class Effect
 
     private _subType: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::get subType()
     get subType(): number
     {
         return this._subType;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::set subType()
     set subType(value: number)
     {
         this._subType = value;
@@ -48,11 +53,13 @@ export class Effect
 
     private _duration: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::get duration()
     get duration(): number
     {
         return this._duration;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::set duration()
     set duration(value: number)
     {
         this._duration = value;
@@ -64,6 +71,7 @@ export class Effect
 	 * Get seconds remaining
 	 * Calculates based on activation time if active
 	 */
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::get secondsLeft()
     get secondsLeft(): number
     {
         if(this._isActive)
@@ -77,6 +85,7 @@ export class Effect
         return this._secondsLeft;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::set secondsLeft()
     set secondsLeft(value: number)
     {
         this._secondsLeft = value;
@@ -84,11 +93,13 @@ export class Effect
 
     private _amountInInventory: number = 1;
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::get amountInInventory()
     get amountInInventory(): number
     {
         return this._amountInInventory;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::set amountInInventory()
     set amountInInventory(value: number)
     {
         this._amountInInventory = value;
@@ -96,11 +107,13 @@ export class Effect
 
     private _isPermanent: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::get isPermanent()
     get isPermanent(): boolean
     {
         return this._isPermanent;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::set isPermanent()
     set isPermanent(value: boolean)
     {
         this._isPermanent = value;
@@ -108,11 +121,13 @@ export class Effect
 
     private _isActive: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::get isActive()
     get isActive(): boolean
     {
         return this._isActive;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::set isActive()
     set isActive(value: boolean)
     {
         if(value && !this._isActive)
@@ -125,11 +140,13 @@ export class Effect
 
     private _isInUse: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::get isInUse()
     get isInUse(): boolean
     {
         return this._isInUse;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::set isInUse()
     set isInUse(value: boolean)
     {
         this._isInUse = value;
@@ -137,11 +154,13 @@ export class Effect
 
     private _isSelected: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::get isSelected()
     get isSelected(): boolean
     {
         return this._isSelected;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::set isSelected()
     set isSelected(value: boolean)
     {
         this._isSelected = value;
@@ -150,6 +169,7 @@ export class Effect
     /**
 	 * Called when one effect instance expires
 	 */
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::setOneEffectExpired()
     setOneEffectExpired(): void
     {
         this._amountInInventory--;

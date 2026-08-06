@@ -15,6 +15,7 @@ export class ChangePostureMessageComposer extends MessageComposer<[number]>
         this._data = [posture];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/avatar/ChangePostureMessageComposer.as::getMessageArray()
     getMessageArray(): [number]
     {
         return this._data;

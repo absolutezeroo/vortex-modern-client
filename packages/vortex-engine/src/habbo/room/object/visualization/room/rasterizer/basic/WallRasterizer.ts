@@ -80,6 +80,7 @@ export class WallRasterizer extends PlaneRasterizer
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/rasterizer/basic/WallRasterizer.as::parseWalls()
     protected parseWalls(planes: IAssetPlane[]): void
     {
         if(planes === null) return;

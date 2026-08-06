@@ -12,6 +12,8 @@ import type {IItemListWindow} from './IItemListWindow';
  */
 export interface IHeaderWindow extends IWindowContainer
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IHeaderWindow.as::get title()
     readonly title: ILabelWindow;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IHeaderWindow.as::get controls()
     readonly controls: IItemListWindow;
 }

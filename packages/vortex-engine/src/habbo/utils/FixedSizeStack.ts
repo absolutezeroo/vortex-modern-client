@@ -10,6 +10,7 @@ export class FixedSizeStack
 {
     private _buffer: number[] = [];
     private _capacity: number;
+    // AS3: .../src/com/sulake/habbo/utils/FixedSizeStack.as::_index
     private _index: number = 0;
 
     /**
@@ -25,6 +26,7 @@ export class FixedSizeStack
     /**
 	 * Reset the stack, clearing all stored values.
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/FixedSizeStack.as::reset()
     reset(): void
     {
         this._buffer = [];
@@ -37,6 +39,7 @@ export class FixedSizeStack
 	 *
 	 * @param value The integer value to add
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/FixedSizeStack.as::addValue()
     addValue(value: number): void
     {
         if(this._buffer.length < this._capacity)
@@ -56,6 +59,7 @@ export class FixedSizeStack
 	 *
 	 * @returns The maximum value, or Number.MIN_SAFE_INTEGER if empty
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/FixedSizeStack.as::getMax()
     getMax(): number
     {
         let max = -2147483648;
@@ -76,6 +80,7 @@ export class FixedSizeStack
 	 *
 	 * @returns The minimum value, or Number.MAX_SAFE_INTEGER if empty
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/FixedSizeStack.as::getMin()
     getMin(): number
     {
         let min = 2147483647;

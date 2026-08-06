@@ -12,7 +12,9 @@ import {Interval} from './Interval';
  */
 export class DropBounce extends Interval
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/motion/DropBounce.as::_height
     private _height: number;
+    // AS3: .../src/com/sulake/core/window/motion/DropBounce.as::_offset
     private _offset: number = 0;
 
     constructor(target: IWindow, duration: number, height: number)
@@ -44,6 +46,7 @@ export class DropBounce extends Interval
         super.stop();
     }
 
+    // AS3: .../src/com/sulake/core/window/motion/DropBounce.as::getBounceOffset()
     protected getBounceOffset(t: number): number
     {
         if(t < 0.364)

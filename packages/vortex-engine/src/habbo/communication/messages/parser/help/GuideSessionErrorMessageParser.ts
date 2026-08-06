@@ -16,17 +16,20 @@ export class GuideSessionErrorMessageParser implements IMessageParser
 
     private _errorCode: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionErrorMessageEventParser.as::get errorCode()
     get errorCode(): number
     {
         return this._errorCode;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionErrorMessageEventParser.as::flush()
     flush(): boolean
     {
         this._errorCode = 0;
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/GuideSessionErrorMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

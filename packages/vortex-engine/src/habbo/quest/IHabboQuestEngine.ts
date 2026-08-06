@@ -12,16 +12,19 @@ export interface IHabboQuestEngine extends ILinkEventTracker
     /**
 	 * Ensure achievements data has been requested from the server
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::ensureAchievementsInitialized()
     ensureAchievementsInitialized(): void;
 
     /**
 	 * Show the achievements panel
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::showAchievements()
     showAchievements(): void;
 
     /**
 	 * Show the quests panel
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::showQuests()
     showQuests(): void;
 
     /**
@@ -31,16 +34,19 @@ export interface IHabboQuestEngine extends ILinkEventTracker
 	 * @param badge The badge identifier
 	 * @returns The user's level for the achievement, or 0 if not found
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::getAchievementLevel()
     getAchievementLevel(category: string, badge: string): number;
 
     /**
 	 * Request seasonal quests from the server
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::requestSeasonalQuests()
     requestSeasonalQuests(): void;
 
     /**
 	 * Request all quests from the server
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::requestQuests()
     requestQuests(): void;
 
     /**
@@ -48,11 +54,13 @@ export interface IHabboQuestEngine extends ILinkEventTracker
 	 *
 	 * @param questId The quest ID to activate
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::activateQuest()
     activateQuest(questId: number): void;
 
     /**
 	 * Navigate to a random quest room
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::goToQuestRooms()
     goToQuestRooms(): void;
 
     /**
@@ -64,5 +72,6 @@ export interface IHabboQuestEngine extends ILinkEventTracker
     /**
 	 * Clear the "don't show again" flag on the room-competition submission window
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::reenableRoomCompetitionWindow()
     reenableRoomCompetitionWindow(): void;
 }

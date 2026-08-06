@@ -16,6 +16,7 @@ export class RespectPetMessageComposer extends MessageComposer<ConstructorParame
         this._data = [petId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/pets/RespectPetMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

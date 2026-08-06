@@ -16,12 +16,14 @@ export class UniqueMachineIdMessageParser implements IMessageParser
         return this._machineId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UniqueMachineIDEventParser.as::flush()
     flush(): boolean
     {
         this._machineId = '';
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/handshake/UniqueMachineIDEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper.bytesAvailable >= 2)

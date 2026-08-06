@@ -48,32 +48,52 @@ const log = Logger.getLogger('habbo.help.HabboHelp');
  */
 export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracker
 {
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::REPORT_TYPE_EMERGENCY
     public static readonly REPORT_TYPE_EMERGENCY: number = 1;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::REPORT_TYPE_GUIDE
     public static readonly REPORT_TYPE_GUIDE: number = 2;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::REPORT_TYPE_IM
     public static readonly REPORT_TYPE_IM: number = 3;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::REPORT_TYPE_ROOM
     public static readonly REPORT_TYPE_ROOM: number = 4;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::REPORT_TYPE_BULLY
     public static readonly REPORT_TYPE_BULLY: number = 6;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::REPORT_TYPE_THREAD
     public static readonly REPORT_TYPE_THREAD: number = 7;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::REPORT_TYPE_MESSAGE
     public static readonly REPORT_TYPE_MESSAGE: number = 8;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::REPORT_TYPE_PHOTO
     public static readonly REPORT_TYPE_PHOTO: number = 9;
 
     private _communication: IHabboCommunicationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_localizationManager
     private _localizationManager: IHabboLocalizationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_roomSessionManager
     private _roomSessionManager: IRoomSessionManager | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_navigator
     private _navigator: IHabboNavigator | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_tracking
     private _tracking: IHabboTracking | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_friendList
     private _friendList: IHabboFriendList | null = null;
     private _imRegistry: InstantMessageRegistry;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/help/HabboHelp.as::_chatEventHandler
     private _chatEventHandler: ChatEventHandler | null = null;
     private _imEventHandler: InstantMessageEventHandler | null = null;
     private _cfhManager: CallForHelpManager | null = null;
     private _guideManager: GuideHelpManager | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/help/HabboHelp.as::_nameChangeController
     private _nameChangeController: NameChangeController | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_sanctionInfo
     private _sanctionInfo: SanctionInfo | null = null;
     private _messageHandler: HelpMessageHandler | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/help/HabboHelp.as::_currentRoomId
     private _currentRoomId: number = 0;
 
     constructor(context: IContext)
@@ -85,16 +105,19 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         this._imRegistry = new InstantMessageRegistry();
     }
 
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_chatRegistry
     private _chatRegistry: ChatRegistry;
 
     /**
 	 * The chat registry for CFH reports
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get chatRegistry()
     get chatRegistry(): ChatRegistry
     {
         return this._chatRegistry;
     }
 
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_userRegistry
     private _userRegistry: UserRegistry;
 
     // --- Getters ---
@@ -102,21 +125,25 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * The user registry for CFH reports
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get userRegistry()
     get userRegistry(): UserRegistry
     {
         return this._userRegistry;
     }
 
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_outsideRoom
     private _outsideRoom: boolean = false;
 
     /**
 	 * Whether the user is outside a room
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get outsideRoom()
     get outsideRoom(): boolean
     {
         return this._outsideRoom;
     }
 
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::set outsideRoom()
     set outsideRoom(value: boolean)
     {
         this._outsideRoom = value;
@@ -125,6 +152,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * The instant message registry for CFH reports
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get instantMessageRegistry()
     get instantMessageRegistry(): InstantMessageRegistry
     {
         return this._imRegistry;
@@ -133,6 +161,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * The Call For Help manager
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get callForHelpManager()
     get callForHelpManager(): CallForHelpManager | null
     {
         return this._cfhManager;
@@ -141,6 +170,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * The guide help manager
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get guideHelpManager()
     get guideHelpManager(): GuideHelpManager | null
     {
         return this._guideManager;
@@ -149,6 +179,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * The communication manager
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get communicationManager()
     get communicationManager(): IHabboCommunicationManager | null
     {
         return this._communication;
@@ -226,6 +257,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * The own user ID (from name change controller)
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get ownUserId()
     get ownUserId(): number
     {
         return this._nameChangeController?.ownUserId ?? 0;
@@ -234,6 +266,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * ILinkEventTracker - link pattern prefix
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get linkPattern()
     get linkPattern(): string
     {
         return 'help/';
@@ -323,6 +356,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 *
 	 * @param userId The user ID to report
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::reportBully()
     reportBully(userId: number): void
     {
         if(this._cfhManager)
@@ -380,6 +414,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::reportUser()
     reportUser(userId: number, roomId: number, _userName: string): void
     {
         if(this._cfhManager)
@@ -396,6 +431,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 * @param roomName The room name
 	 * @param roomDescription The room description
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::reportRoom()
     reportRoom(roomId: number, roomName: string, _roomDescription: string): void
     {
         if(this._cfhManager)
@@ -411,6 +447,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 * @param groupId The group ID
 	 * @param threadId The thread ID
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::reportThread()
     reportThread(groupId: number, threadId: number): void
     {
         if(this._cfhManager)
@@ -426,6 +463,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 * @param threadId The thread ID
 	 * @param messageId The message ID
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::reportMessage()
     reportMessage(groupId: number, threadId: number, messageId: number): void
     {
         if(this._cfhManager)
@@ -444,6 +482,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 * @param roomId The room ID
 	 * @returns Whether the report was submitted
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::reportSelfie()
     reportSelfie(extraDataId: string, description: string, userId: number, roomObjectId: number, roomId: number): boolean
     {
         if(this._cfhManager)
@@ -471,6 +510,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 * @param roomId The room ID
 	 * @returns Whether the report was submitted
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::reportPhoto()
     reportPhoto(extraDataId: string, topicId: number, userId: number, roomObjectId: number, roomId: number): boolean
     {
         if(this._cfhManager)
@@ -491,6 +531,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * Request a guide
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::requestGuide()
     requestGuide(): void
     {
         if(this.getBoolean('guides.enabled') && this._guideManager)
@@ -502,6 +543,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * Start the name change flow
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::startNameChange()
     startNameChange(): void
     {
         if(this._nameChangeController)
@@ -529,6 +571,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * Show the Habbo Way page
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::showHabboWay()
     showHabboWay(): void
     {
         log.debug('Show Habbo Way');
@@ -537,6 +580,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * Show the safety booklet
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::showSafetyBooklet()
     showSafetyBooklet(): void
     {
         log.debug('Show safety booklet');
@@ -545,6 +589,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * Show the tour popup
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::showTourPopup()
     showTourPopup(): void
     {
         if(this._guideManager)
@@ -560,6 +605,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 *
 	 * @param link The full link string
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::linkReceived()
     linkReceived(link: string): void
     {
         if(link === 'help/tour')
@@ -586,6 +632,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * Send a message through the communication manager
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::sendMessage()
     sendMessage(composer: IMessageComposer<any>): void
     {
         if(this._communication?.connection)
@@ -601,6 +648,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 *
 	 * @param event The message event to register
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::addMessageEvent()
     addMessageEvent(event: IMessageEvent): void
     {
         if(this._communication)
@@ -612,6 +660,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * Dispose of this component and all sub-managers
 	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

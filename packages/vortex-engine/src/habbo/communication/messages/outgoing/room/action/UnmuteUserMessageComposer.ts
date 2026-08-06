@@ -15,6 +15,7 @@ export class UnmuteUserMessageComposer extends MessageComposer<[number, number]>
         this._data = [userId, roomId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/action/UnmuteUserMessageComposer.as::getMessageArray()
     getMessageArray(): [number, number]
     {
         return this._data;

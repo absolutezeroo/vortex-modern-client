@@ -11,16 +11,19 @@ export interface IExtensionView
     /**
 	 * Whether the extension view is visible
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IExtensionView.as::get visible()
     visible: boolean;
 
     /**
 	 * The screen height available to the extension view
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IExtensionView.as::get screenHeight()
     readonly screenHeight: number;
 
     /**
 	 * Extra margin applied to the extension view
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IExtensionView.as::get extraMargin()
     extraMargin: number;
 
     /**
@@ -31,6 +34,7 @@ export interface IExtensionView
 	 * @param index Optional insertion index (-1 for end)
 	 * @param params Optional parameters
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IExtensionView.as::attachExtension()
     attachExtension(id: string, element: unknown, index?: number, params?: unknown[] | null): void;
 
     /**
@@ -38,6 +42,7 @@ export interface IExtensionView
 	 *
 	 * @param id Extension identifier
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IExtensionView.as::detachExtension()
     detachExtension(id: string): void;
 
     /**
@@ -46,10 +51,12 @@ export interface IExtensionView
 	 * @param id Extension identifier
 	 * @returns True if the extension is attached
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IExtensionView.as::hasExtension()
     hasExtension(id: string): boolean;
 
     /**
 	 * Refresh the layout of the extension view
 	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IExtensionView.as::refreshItemWindow()
     refreshItemWindow(): void;
 }

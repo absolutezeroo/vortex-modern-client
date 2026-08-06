@@ -35,6 +35,7 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
     private static _receptionShown: boolean = false;
 
     private _data: AvatarInfoData | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/OwnAvatarMenuView.as::_mode
     private _mode: number = MODE_NORMAL;
 
     // AS3: OwnAvatarMenuView.as::OwnAvatarMenuView()

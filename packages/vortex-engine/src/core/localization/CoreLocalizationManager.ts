@@ -24,14 +24,18 @@ const log = Logger.getLogger('core.localization.CoreLocalizationManager');
  */
 export class CoreLocalizationManager extends Component implements ICoreLocalizationManager 
 {
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::INTERPOLATION_DEPTH_LIMIT
     private static readonly INTERPOLATION_DEPTH_LIMIT = 3;
 
     protected _localizations: Map<string, Localization> = new Map();
     protected _definitions: Map<string, LocalizationDefinition> = new Map();
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::_acceptEmptyMap
     protected _acceptEmptyMap: Map<string, boolean> = new Map();
     protected _nonExistingKeys: string[] = [];
     protected _activeDefinitionId: string = '';
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::_activeEnvironmentId
     protected _activeEnvironmentId: string = '';
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::_gameDataResources
     protected _gameDataResources: GameDataResources | null = null;
 
     constructor(context: IContext, flags: number = 0) 
@@ -39,6 +43,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         super(context, flags);
     }
 
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::registerLocalizationDefinition()
     public registerLocalizationDefinition(id: string, name: string, url: string, code: string): void 
     {
         if(!this._definitions.has(id)) 
@@ -86,21 +91,25 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         return false;
     }
 
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::getLocalizationDefinitions()
     public getLocalizationDefinitions(): Map<string, ILocalizationDefinition> 
     {
         return this._definitions;
     }
 
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::getLocalizationDefinition()
     public getLocalizationDefinition(id: string): ILocalizationDefinition | null 
     {
         return this._definitions.get(id) ?? null;
     }
 
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::getActiveLocalizationDefinition()
     public getActiveLocalizationDefinition(): ILocalizationDefinition | null 
     {
         return this.getLocalizationDefinition(this._activeDefinitionId);
     }
 
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::getActiveEnvironmentId()
     public getActiveEnvironmentId(): string 
     {
         return this._activeEnvironmentId;
@@ -189,11 +198,13 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         this.loadExternalTextUrls([url], acceptEmpty);
     }
 
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::hasLocalization()
     public hasLocalization(key: string): boolean 
     {
         return this._localizations.has(key);
     }
 
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::getLocalization()
     public getLocalization(key: string, defaultValue: string = ''): string 
     {
         const localization = this._localizations.get(key);
@@ -222,6 +233,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         return value;
     }
 
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::updateLocalization()
     public updateLocalization(key: string, value: string): void 
     {
         let localization = this._localizations.get(key);
@@ -267,6 +279,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         return true;
     }
 
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::registerParameter()
     public registerParameter(key: string, paramName: string, paramValue: string, paramId: string = '%'): string 
     {
         let localization = this._localizations.get(key);
@@ -283,16 +296,19 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         return localization.value;
     }
 
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::getLocalizationRaw()
     public getLocalizationRaw(key: string): ILocalization | null 
     {
         return this._localizations.get(key) ?? null;
     }
 
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::getKeys()
     public getKeys(): string[] 
     {
         return Array.from(this._localizations.keys());
     }
 
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::printNonExistingKeys()
     public printNonExistingKeys(): void 
     {
         if(this._nonExistingKeys.length > 0) 
@@ -306,6 +322,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         }
     }
 
+    // AS3: .../src/com/sulake/core/localization/CoreLocalizationManager.as::getGameDataResources()
     public getGameDataResources(): IGameDataResources | null 
     {
         return this._gameDataResources;

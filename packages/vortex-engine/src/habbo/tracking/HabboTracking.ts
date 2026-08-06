@@ -43,22 +43,32 @@ const log = Logger.getLogger('habbo.tracking.HabboTracking');
  */
 export class HabboTracking extends Component implements IHabboTracking, IUpdateReceiver
 {
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::ERROR_DATA_FLAG_COUNT
     private static readonly ERROR_DATA_FLAG_COUNT: number = 11;
 
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::_messageEvents
     private _messageEvents: IMessageEvent[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/HabboTracking.as::_errorContextFlags
     private _errorContextFlags: number[] = [];
     private _hasFatalError: boolean = false;
 
     // Sub-trackers
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/HabboTracking.as::_framerateTracker
     private _framerateTracker: FramerateTracker | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/HabboTracking.as::_latencyTracker
     private _latencyTracker: LatencyTracker | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/HabboTracking.as::_lagWarningLogger
     private _lagWarningLogger: LagWarningLogger | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/HabboTracking.as::_toolbarClickTracker
     private _toolbarClickTracker: ToolbarClickTracker | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/tracking/HabboTracking.as::_performanceTracker
     private _performanceTracker: PerformanceTracker | null = null;
 
     // State
     private _hasEnteredRoom: boolean = false;
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::_currentTime
     private _currentTime: number = -1;
     private _invalidTimeCounter: number = 0;
     private _timeLeapCounter: number = 0;
@@ -91,6 +101,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
 	 *
 	 * @param composer The message composer to send
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::send()
     send(composer: IMessageComposer<unknown[]>): void
     {
         if(this._communication?.connection?.connected)
@@ -106,6 +117,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
 	 * @param action The event action
 	 * @param label Optional numeric label
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::trackGoogle()
     trackGoogle(category: string, action: string, label: number = -1): void
     {
         log.debug(`[GA] ${category}/${action}${label >= 0 ? '/' + label : ''}`);
@@ -118,6 +130,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
 	 * @param action The event action
 	 * @param labels Optional array of label values
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::legacyTrackGoogle()
     legacyTrackGoogle(category: string, action: string, labels?: unknown[]): void
     {
         log.debug(`[GA Legacy] ${category}/${action}`, labels ?? '');
@@ -128,6 +141,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
 	 *
 	 * @param message The error message
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::logError()
     logError(message: string): void
     {
         log.error('logError:', message);
@@ -156,6 +170,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
 	 * @param extra Optional extra string data
 	 * @param roomId Optional room ID
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::trackEventLog()
     trackEventLog(type: string, value: string, unit: string, extra: string = '', roomId: number = 0): void
     {
         if(this._communication?.connection?.connected)
@@ -175,6 +190,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
 	 * @param extra Optional extra string data
 	 * @param roomId Optional room ID
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::trackEventLogOncePerSession()
     trackEventLogOncePerSession(type: string, value: string, unit: string, extra: string = '', roomId: number = 0): void
     {
         const key = type + value + unit;
@@ -192,6 +208,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
 	 * @param talentType The talent type
 	 * @param talentId The talent identifier
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::trackTalentTrackOpen()
     trackTalentTrackOpen(talentType: string, talentId: string): void
     {
         this.trackEventLog('Talent', talentType, 'talent.open', talentId);
@@ -203,6 +220,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
 	 * @param step The login step identifier
 	 * @param extra Optional extra data
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::trackLoginStep()
     trackLoginStep(step: string, extra?: string): void
     {
         log.debug('Track Login Step:', step, extra ?? '');
@@ -222,6 +240,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
 	 *
 	 * @param deltaTime Time since last update in milliseconds
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::update()
     update(deltaTime: number): void
     {
         const currentTime = performance.now();
@@ -347,6 +366,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
     /**
 	 * Register a message event with the communication manager
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::addMessageEvent()
     private addMessageEvent(event: IMessageEvent): void
     {
         if(this._communication)
@@ -359,6 +379,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
     /**
 	 * Set an error context flag at the given index
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::setErrorContextFlag()
     private setErrorContextFlag(value: number, index: number): void
     {
         if(index >= 0 && index < this._errorContextFlags.length)
@@ -370,6 +391,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
     /**
 	 * Handler for AuthenticationOK message
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::onAuthOK()
     private onAuthOK(_event: IMessageEvent): void
     {
         this.legacyTrackGoogle('authentication', 'authok');
@@ -379,6 +401,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
     /**
 	 * Handler for latency ping response
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::onPingResponse()
     private onPingResponse(event: IMessageEvent): void
     {
         if(this._latencyTracker)
@@ -391,6 +414,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
     /**
 	 * Handler for room entry
 	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::onRoomEnter()
     private onRoomEnter(event: IMessageEvent): void
     {
         if(!this._hasEnteredRoom)

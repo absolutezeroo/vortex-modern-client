@@ -17,6 +17,7 @@ export class InClientLinkMessageEvent extends MessageEvent implements IMessageEv
         super(callback, InClientLinkMessageParser);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/users/InClientLinkMessageEvent.as::get link()
     get link(): string
     {
         return (this._parser as InClientLinkMessageParser).link;

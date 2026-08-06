@@ -11,17 +11,20 @@ export class CallForHelpDisabledNotifyMessageParser implements IMessageParser
 {
     private _infoUrl: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/CallForHelpDisabledNotifyMessageEventParser.as::get infoUrl()
     get infoUrl(): string
     {
         return this._infoUrl;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/CallForHelpDisabledNotifyMessageEventParser.as::flush()
     flush(): boolean
     {
         this._infoUrl = '';
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/CallForHelpDisabledNotifyMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

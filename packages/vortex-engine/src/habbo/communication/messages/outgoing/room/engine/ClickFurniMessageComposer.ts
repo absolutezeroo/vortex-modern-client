@@ -21,6 +21,7 @@ export class ClickFurniMessageComposer extends MessageComposer<[number, number]>
         this._param = param;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/engine/ClickFurniMessageComposer.as::getMessageArray()
     getMessageArray(): [number, number]
     {
         return [this._objectId, this._param];

@@ -87,6 +87,7 @@ export class RentableSpaceStatusMessageEventParser implements IMessageParser
      *
      * Returns true without clearing anything, as AS3 does.
      */
+    // AS3: .../src/unknowns/_SafePkg_2942/_SafeCls_4163.as::flush()
     flush(): boolean
     {
         return true;

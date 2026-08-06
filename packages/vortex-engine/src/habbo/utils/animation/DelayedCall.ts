@@ -38,6 +38,7 @@ export class DelayedCall implements IAnimatable
     /**
 	 * The current accumulated time in seconds.
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/DelayedCall.as::get currentTime()
     get currentTime(): number
     {
         return this._currentTime;
@@ -48,6 +49,7 @@ export class DelayedCall implements IAnimatable
     /**
 	 * The total delay time in seconds.
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/DelayedCall.as::get totalTime()
     get totalTime(): number
     {
         return this._totalTime;
@@ -59,11 +61,13 @@ export class DelayedCall implements IAnimatable
 	 * The number of times the callback will be invoked.
 	 * 0 means infinite repeats.
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/DelayedCall.as::get repeatCount()
     get repeatCount(): number
     {
         return this._repeatCount;
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/animation/DelayedCall.as::set repeatCount()
     set repeatCount(value: number)
     {
         this._repeatCount = value;
@@ -84,6 +88,7 @@ export class DelayedCall implements IAnimatable
     /**
 	 * Whether this delayed call has completed.
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/DelayedCall.as::get isComplete()
     get isComplete(): boolean
     {
         return this._repeatCount === 1 && this._currentTime >= this._totalTime;
@@ -97,6 +102,7 @@ export class DelayedCall implements IAnimatable
 	 * @param args Optional arguments
 	 * @returns This instance for chaining
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/DelayedCall.as::reset()
     reset(callback: (...args: unknown[]) => void, delay: number, args: unknown[] = []): DelayedCall
     {
         this._currentTime = 0;
@@ -115,6 +121,7 @@ export class DelayedCall implements IAnimatable
 	 *
 	 * @param time The time delta in seconds
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/DelayedCall.as::advanceTime()
     advanceTime(time: number): void
     {
         const previousTime = this._currentTime;
@@ -166,6 +173,7 @@ export class DelayedCall implements IAnimatable
 	 * Immediately complete this delayed call,
 	 * advancing time to trigger the callback.
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/animation/DelayedCall.as::complete()
     complete(): void
     {
         const remaining = this._totalTime - this._currentTime;

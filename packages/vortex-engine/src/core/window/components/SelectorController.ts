@@ -19,6 +19,7 @@ import {InteractiveController} from './InteractiveController';
 export class SelectorController extends InteractiveController implements ISelectorWindow
 {
     protected _bringToFront: boolean = true;
+    // AS3: .../src/com/sulake/core/window/components/SelectorController.as::_selected
     private _selected: ISelectableWindow | null = null;
 
     constructor(
@@ -41,6 +42,7 @@ export class SelectorController extends InteractiveController implements ISelect
     /**
 	 * The number of selectable children.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorController.as::get numSelectables()
     public get numSelectables(): number
     {
         return this.numChildren;
@@ -71,6 +73,7 @@ export class SelectorController extends InteractiveController implements ISelect
     /**
 	 * Returns the currently selected child.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorController.as::getSelected()
     public getSelected(): ISelectableWindow | null
     {
         return this._selected;
@@ -79,6 +82,7 @@ export class SelectorController extends InteractiveController implements ISelect
     /**
 	 * Sets the selected child, deselecting the previous one.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorController.as::setSelected()
     public setSelected(selectable: ISelectableWindow): void
     {
         if(selectable !== null)
@@ -125,6 +129,7 @@ export class SelectorController extends InteractiveController implements ISelect
     /**
 	 * Adds a selectable child.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorController.as::addSelectable()
     public addSelectable(selectable: ISelectableWindow): ISelectableWindow
     {
         return this.addChild(selectable as unknown as IWindow) as unknown as ISelectableWindow;
@@ -133,6 +138,7 @@ export class SelectorController extends InteractiveController implements ISelect
     /**
 	 * Adds a selectable child at the specified index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorController.as::addSelectableAt()
     public addSelectableAt(selectable: ISelectableWindow, index: number): ISelectableWindow
     {
         return this.addChildAt(selectable as unknown as IWindow, index) as unknown as ISelectableWindow;
@@ -141,6 +147,7 @@ export class SelectorController extends InteractiveController implements ISelect
     /**
 	 * Returns the selectable child at the specified index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorController.as::getSelectableAt()
     public getSelectableAt(index: number): ISelectableWindow | null
     {
         return this.getChildAt(index) as unknown as ISelectableWindow | null;
@@ -149,6 +156,7 @@ export class SelectorController extends InteractiveController implements ISelect
     /**
 	 * Returns the selectable child with the specified ID.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorController.as::getSelectableByID()
     public getSelectableByID(id: number): ISelectableWindow | null
     {
         return this.getChildByID(id) as unknown as ISelectableWindow | null;
@@ -157,6 +165,7 @@ export class SelectorController extends InteractiveController implements ISelect
     /**
 	 * Returns the selectable child with the specified tag.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorController.as::getSelectableByTag()
     public getSelectableByTag(tag: string): ISelectableWindow | null
     {
         return this.getChildByTag(tag) as unknown as ISelectableWindow | null;
@@ -165,6 +174,7 @@ export class SelectorController extends InteractiveController implements ISelect
     /**
 	 * Returns the selectable child with the specified name.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorController.as::getSelectableByName()
     public getSelectableByName(name: string): ISelectableWindow | null
     {
         return this.getChildByName(name) as unknown as ISelectableWindow | null;
@@ -173,6 +183,7 @@ export class SelectorController extends InteractiveController implements ISelect
     /**
 	 * Returns the index of the specified selectable child.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorController.as::getSelectableIndex()
     public getSelectableIndex(selectable: ISelectableWindow): number
     {
         return this.getChildIndex(selectable as unknown as IWindow);
@@ -181,6 +192,7 @@ export class SelectorController extends InteractiveController implements ISelect
     /**
 	 * Removes a selectable child.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/SelectorController.as::removeSelectable()
     public removeSelectable(selectable: ISelectableWindow): ISelectableWindow | null
     {
         const index = this.getChildIndex(selectable as unknown as IWindow);

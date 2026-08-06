@@ -16,6 +16,7 @@ export class GuildBaseSearchMessageComposer extends MessageComposer<ConstructorP
         this._data = [guildId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/GuildBaseSearchMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

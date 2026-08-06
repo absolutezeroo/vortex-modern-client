@@ -10,6 +10,7 @@ export class ChatReviewSessionStartedMessageParser implements IMessageParser
 {
     private _votingTimeout: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionStartedMessageEventParser.as::get votingTimeout()
     get votingTimeout(): number
     {
         return this._votingTimeout;
@@ -17,11 +18,13 @@ export class ChatReviewSessionStartedMessageParser implements IMessageParser
 
     private _chatRecord: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionStartedMessageEventParser.as::get chatRecord()
     get chatRecord(): string
     {
         return this._chatRecord;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionStartedMessageEventParser.as::flush()
     flush(): boolean
     {
         this._votingTimeout = -1;
@@ -29,6 +32,7 @@ export class ChatReviewSessionStartedMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/help/ChatReviewSessionStartedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

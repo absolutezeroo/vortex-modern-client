@@ -23,13 +23,20 @@ import {InteractiveController} from './InteractiveController';
  */
 export class DropBaseController extends InteractiveController
 {
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::CAPTION_BLEND_CHANGE
     protected static readonly CAPTION_BLEND_CHANGE: number = 0.5;
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::TEXT_FIELD_NAME
     protected static readonly TEXT_FIELD_NAME: string = '_DROPLIST_TITLETEXT';
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::ITEM_LIST_NAME
     protected static readonly ITEM_LIST_NAME: string = '_DROPLIST_ITEMLIST';
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::REGION_NAME
     protected static readonly REGION_NAME: string = '_DROPLIST_REGION';
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::SUB_WINDOW_MAX_DESKTOP_PADDING
     private static readonly SUB_WINDOW_MAX_DESKTOP_PADDING: number = 30;
 
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::_itemArray
     protected _itemArray: IWindow[] = [];
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::_menuIsOpen
     protected _menuIsOpen: boolean = false;
     protected _justOpened: boolean = false;
     protected _subMenu: DropBaseController | null = null;
@@ -80,6 +87,7 @@ export class DropBaseController extends InteractiveController
     /**
 	 * The current selection index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::get selection()
     public get selection(): number
     {
         return this._selection;
@@ -89,6 +97,7 @@ export class DropBaseController extends InteractiveController
 	 * Sets the current selection, dispatches WE_SELECT/WE_SELECTED events,
 	 * and closes the expanded menu.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::set selection()
     public set selection(value: number)
     {
         if(value > this.numMenuItems - 1)
@@ -138,6 +147,7 @@ export class DropBaseController extends InteractiveController
     /**
 	 * The number of menu items.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::get numMenuItems()
     public get numMenuItems(): number
     {
         return this._itemArray.length;
@@ -184,6 +194,7 @@ export class DropBaseController extends InteractiveController
     /**
 	 * Returns the title label child window.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::getTitleLabel()
     public getTitleLabel(): ILabelWindow | null
     {
         return this.getChildByName('_DROPLIST_TITLETEXT') as unknown as ILabelWindow | null;
@@ -192,6 +203,7 @@ export class DropBaseController extends InteractiveController
     /**
 	 * Returns the item list child window.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::getItemList()
     public getItemList(): IItemListWindow | null
     {
         return this.getChildByName('_DROPLIST_ITEMLIST') as unknown as IItemListWindow | null;
@@ -200,6 +212,7 @@ export class DropBaseController extends InteractiveController
     /**
 	 * Returns the clickable region child window.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::getRegion()
     public getRegion(): IRegionWindow | null
     {
         return this.getChildByName('_DROPLIST_REGION') as unknown as IRegionWindow | null;
@@ -212,6 +225,7 @@ export class DropBaseController extends InteractiveController
 	 *
 	 * @returns True if the open succeeded
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::open()
     public open(): boolean
     {
         if(this.getStateFlag(0))
@@ -245,6 +259,7 @@ export class DropBaseController extends InteractiveController
 	 *
 	 * @returns True if the close succeeded
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::close()
     public close(): boolean
     {
         if(!this.getStateFlag(0))
@@ -287,6 +302,7 @@ export class DropBaseController extends InteractiveController
     /**
 	 * Replaces the item array with the given items.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::populate()
     public populate(items: IWindow[]): void
     {
         this._menuIsOpen = true;
@@ -392,6 +408,7 @@ export class DropBaseController extends InteractiveController
 	 * Creates the submenu window via context.create(), populates it with
 	 * the current items, and dispatches WE_EXPANDED.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::openExpandedMenuView()
     protected openExpandedMenuView(): void
     {
         if(!this._menuIsOpen)
@@ -418,6 +435,7 @@ export class DropBaseController extends InteractiveController
 	 * Destroys the submenu, restores the selected item into the collapsed
 	 * view, and dispatches WE_COLLAPSE.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::closeExpandedMenuView()
     protected closeExpandedMenuView(): void
     {
         if(this.close())
@@ -504,6 +522,7 @@ export class DropBaseController extends InteractiveController
 	 * Wraps each item in a DropListItemController, adds it to the submenu's
 	 * item list, and adjusts sizing.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::populateExpandedMenu()
     protected populateExpandedMenu(items: IWindow[], subMenu: DropBaseController, procedure: ((event: unknown, window: IWindow) => void) | null): void
     {
         const itemList = subMenu.getItemList();
@@ -634,6 +653,7 @@ export class DropBaseController extends InteractiveController
     /**
 	 * Fits the submenu within the parent's bounds.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::fitToParent()
     protected fitToParent(subMenu: IWindow): void
     {
         const subRect = {x: 0, y: 0, width: 0, height: 0};
@@ -675,6 +695,7 @@ export class DropBaseController extends InteractiveController
     /**
 	 * Fits the submenu within the desktop bounds.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::fitToDesktop()
     protected fitToDesktop(subMenu: IWindow): void
     {
         const subRect = {x: 0, y: 0, width: 0, height: 0};
@@ -712,6 +733,7 @@ export class DropBaseController extends InteractiveController
     /**
 	 * Maps a window to its item array index.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::resolveSelection()
     protected resolveSelection(window: IWindow): number
     {
         let index = this._itemArray.indexOf(window);
@@ -736,6 +758,7 @@ export class DropBaseController extends InteractiveController
     /**
 	 * Gets or creates the expanded submenu window.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::getExpandedMenuView()
     private getExpandedMenuView(): DropBaseController
     {
         const rect = {x: 0, y: 0, width: 0, height: 0};

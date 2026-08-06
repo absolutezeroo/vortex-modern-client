@@ -17,7 +17,9 @@ import {WindowController} from '../WindowController';
  */
 export class HeaderController extends ContainerController implements IHeaderWindow
 {
+    // AS3: .../src/com/sulake/core/window/components/HeaderController.as::TAG_TITLE_ELEMENT
     private static readonly TAG_TITLE_ELEMENT: string = '_TITLE';
+    // AS3: .../src/com/sulake/core/window/components/HeaderController.as::TAG_CONTROLS_ELEMENT
     private static readonly TAG_CONTROLS_ELEMENT: string = '_CONTROLS';
 
     constructor(
@@ -43,6 +45,7 @@ export class HeaderController extends ContainerController implements IHeaderWind
     /**
 	 * Returns the title label window.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/HeaderController.as::get title()
     public get title(): ILabelWindow
     {
         return this.findChildByTag(HeaderController.TAG_TITLE_ELEMENT) as unknown as ILabelWindow;
@@ -51,6 +54,7 @@ export class HeaderController extends ContainerController implements IHeaderWind
     /**
 	 * Returns the controls item list window.
 	 */
+    // AS3: .../src/com/sulake/core/window/components/HeaderController.as::get controls()
     public get controls(): IItemListWindow
     {
         return this.findChildByTag(HeaderController.TAG_CONTROLS_ELEMENT) as unknown as IItemListWindow;

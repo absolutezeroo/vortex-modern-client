@@ -10,6 +10,7 @@ export class RoomEntryUtils
 	 *
 	 * @param doorMode The door mode value (0 = open, 1 = doorbell, 2 = password, 3 = invisible)
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/view/search/results/RoomEntryUtils.as::getDoorModeIconAsset()
     static getDoorModeIconAsset(doorMode: number): string
     {
         switch(doorMode - 1)
@@ -31,6 +32,7 @@ export class RoomEntryUtils
 	 * @param groupColor The group color (-1 means no modulation)
 	 * @param baseColor The base background color
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/view/search/results/RoomEntryUtils.as::getModulatedBackgroundColor()
     static getModulatedBackgroundColor(groupColor: number, baseColor: number): number
     {
         if(groupColor === -1)
@@ -58,6 +60,7 @@ export class RoomEntryUtils
 	 *
 	 * @param isFavorite Whether the room is favorited
 	 */
+    // AS3: .../src/com/sulake/habbo/navigator/view/search/results/RoomEntryUtils.as::getFavoriteIcon()
     static getFavoriteIcon(isFavorite: boolean): string
     {
         return 'newnavigator_icon_fav_' + (isFavorite ? 'yes' : 'no');

@@ -23,6 +23,8 @@
  */
 export class ImageResult 
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/ImageResult.as::id
     public id: number = 0;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/ImageResult.as::data
     public data: ImageBitmap | null = null;
 }

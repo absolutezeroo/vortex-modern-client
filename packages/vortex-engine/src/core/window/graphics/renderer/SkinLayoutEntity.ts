@@ -19,13 +19,21 @@ export class SkinLayoutEntity
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayoutEntity.as::COLORIZE_METHOD_HSV_LAYER
     public static readonly COLORIZE_METHOD_HSV_LAYER: string = 'hsv_layer';
 
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayoutEntity.as::get id()
     public readonly id: number;
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayoutEntity.as::get name()
     public readonly name: string;
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayoutEntity.as::colorize
     public readonly colorize: boolean;
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayoutEntity.as::color
     public readonly color: number;
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayoutEntity.as::blend
     public readonly blend: number;
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayoutEntity.as::scaleH
     public readonly scaleH: number;
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayoutEntity.as::scaleV
     public readonly scaleV: number;
+    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayoutEntity.as::region
     public readonly region: { x: number; y: number; width: number; height: number };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayoutEntity.as::colorizeMethod

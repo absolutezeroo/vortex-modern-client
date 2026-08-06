@@ -32,33 +32,56 @@ import {InternalLinkButtonElementHandler} from './InternalLinkButtonElementHandl
  */
 export class ElementHandlerFactory
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::CAPTION
     public static readonly CAPTION: string = 'caption';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::TITLE
     public static readonly TITLE: string = 'title';
     public static readonly SUBCAPTION: string = 'subcaption';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::BODYTEXT
     public static readonly BODYTEXT: string = 'bodytext';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::SPACING
     public static readonly SPACING: string = 'spacing';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::CATALOGBUTTON
     public static readonly CATALOGBUTTON: string = 'catalogbutton';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::PROMOTEDROOMBUTTON
     public static readonly PROMOTEDROOMBUTTON: string = 'promotedroombutton';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::LINK
     public static readonly LINK: string = 'link';
     public static readonly GOTOROOMBUTTON: string = 'gotoroombutton';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::REQUESTBADGEBUTTON
     public static readonly REQUESTBADGEBUTTON: string = 'requestbadgebutton';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::REQUESTBADGEBUTTONSECOND
     public static readonly REQUESTBADGEBUTTONSECOND: string = 'requestbadgebuttonsecond';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::REQUESTBADGEBUTTONTHIRD
     public static readonly REQUESTBADGEBUTTONTHIRD: string = 'requestbadgebuttonthird';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::REQUESTBADGEBUTTONFOURTH
     public static readonly REQUESTBADGEBUTTONFOURTH: string = 'requestbadgebuttonfourth';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::REQUESTBADGEBUTTONFIFTH
     public static readonly REQUESTBADGEBUTTONFIFTH: string = 'requestbadgebuttonfifth';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::CREDITHABBLETBUTTON
     public static readonly CREDITHABBLETBUTTON: string = 'credithabbletbutton';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::COMMUNITYGOALTIMER
     public static readonly COMMUNITYGOALTIMER: string = 'communitygoaltimer';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::CUSTOMTIMER
     public static readonly CUSTOMTIMER: string = 'customtimer';
     public static readonly GOTOHOMEROOMBUTTON: string = 'gotohomeroombutton';
     public static readonly GOTOCOMPETITIONROOMBUTTON: string = 'gotocompetitionroombutton';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::REWARDBADGE
     public static readonly REWARDBADGE: string = 'rewardbadge';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::IMAGE
     public static readonly IMAGE: string = 'image';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::SUBMITCOMPETITIONROOM
     public static readonly SUBMITCOMPETITIONROOM: string = 'submitcompetitionroom';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::CONCURRENTUSERSMETER
     public static readonly CONCURRENTUSERSMETER: string = 'concurrentusersmeter';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::CONCURRENTUSERSINFO
     public static readonly CONCURRENTUSERSINFO: string = 'concurrentusersinfo';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::DAILYQUEST
     public static readonly DAILYQUEST: string = 'dailyquest';
     public static readonly BUYVIPBUTTON: string = 'buyvipbutton';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::COMMUNITYGOALSCORE
     public static readonly COMMUNITYGOALSCORE: string = 'communitygoalscore';
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::INTERNAL_LINK_BUTTON
     public static readonly INTERNAL_LINK_BUTTON: string = 'internallinkbutton';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4506.as::createHandler()

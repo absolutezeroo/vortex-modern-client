@@ -62,47 +62,59 @@ export class WindowEvent
     public static readonly WE_CANCEL: string = 'WE_CANCEL';
     public static readonly WE_CHANGE: string = 'WE_CHANGE';
     public static readonly WE_SCROLL: string = 'WE_SCROLL';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::UNKNOWN
     public static readonly UNKNOWN: string = '';
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::_pool
     private static readonly _pool: WindowEvent[] = [];
 
     protected _prevented: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::_recycled
     protected _recycled: boolean = false;
     protected _poolRef: WindowEvent[] = WindowEvent._pool;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::_type
     protected _type: string = '';
 
     /** The event type identifier. */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::get type()
     public get type(): string
     {
         return this._type;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::_window
     protected _window: IWindow | null = null;
 
     /** The target window that dispatched this event. */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::get window()
     public get window(): IWindow | null
     {
         return this._window;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::_related
     protected _related: IWindow | null = null;
 
     /** The related window (parent, child, etc.). */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::get related()
     public get related(): IWindow | null
     {
         return this._related;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::_cancelable
     protected _cancelable: boolean = false;
 
     /** Whether this event supports cancellation. */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::get cancelable()
     public get cancelable(): boolean
     {
         return this._cancelable;
     }
 
     /** The target window that dispatched this event. */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::get target()
     public get target(): IWindow | null
     {
         return this._window;
@@ -117,6 +129,7 @@ export class WindowEvent
 	 * @param cancelable - Whether the event can be cancelled
 	 * @returns A pooled or new WindowEvent instance
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::allocate()
     public static allocate(type: string, window: IWindow | null, related: IWindow | null, cancelable: boolean = false): WindowEvent
     {
         const event: WindowEvent = (WindowEvent._pool.length > 0)
@@ -138,6 +151,7 @@ export class WindowEvent
 	 *
 	 * @throws Error if the event has already been recycled
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::recycle()
     public recycle(): void
     {
         if(this._recycled)
@@ -157,6 +171,7 @@ export class WindowEvent
 	 *
 	 * @returns A new WindowEvent with the same properties
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::clone()
     public clone(): WindowEvent
     {
         return WindowEvent.allocate(this._type, this._window, this._related, this._cancelable);
@@ -166,6 +181,7 @@ export class WindowEvent
 	 * Prevents the default window operation.
 	 * Alias for {@link preventWindowOperation}.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::preventDefault()
     public preventDefault(): void
     {
         this.preventWindowOperation();
@@ -174,6 +190,7 @@ export class WindowEvent
     /**
 	 * Returns whether the default action has been prevented.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::isDefaultPrevented()
     public isDefaultPrevented(): boolean
     {
         return this._prevented;
@@ -184,6 +201,7 @@ export class WindowEvent
 	 *
 	 * @throws Error if the event is not cancelable
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::preventWindowOperation()
     public preventWindowOperation(): void
     {
         if(this._cancelable)
@@ -199,6 +217,7 @@ export class WindowEvent
     /**
 	 * Returns whether the window operation has been prevented.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::isWindowOperationPrevented()
     public isWindowOperationPrevented(): boolean
     {
         return this._prevented;
@@ -207,6 +226,7 @@ export class WindowEvent
     /**
 	 * Stops propagation of this event.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::stopPropagation()
     public stopPropagation(): void
     {
         this._prevented = true;
@@ -215,6 +235,7 @@ export class WindowEvent
     /**
 	 * Stops immediate propagation of this event.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::stopImmediatePropagation()
     public stopImmediatePropagation(): void
     {
         this._prevented = true;
@@ -223,6 +244,7 @@ export class WindowEvent
     /**
 	 * Returns a string representation of this event.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as::toString()
     public toString(): string
     {
         return `WindowEvent { type: ${this._type} cancelable: ${this._cancelable} window: ${this._window} }`;

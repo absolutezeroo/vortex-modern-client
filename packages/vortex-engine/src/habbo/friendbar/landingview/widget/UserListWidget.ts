@@ -19,8 +19,11 @@ import {GetExtendedProfileMessageComposer} from '@habbo/communication/messages/o
  */
 export class UserListWidget implements ILandingViewWidget
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::_landingView
     protected _landingView: HabboLandingView | null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::_container
     private _container: IWindowContainer | null = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::_popup
     private _popup: IWindowContainer | null = null;
     private _startOffset: number = 150;
     private _avatarOffsetsY: number[] = [0, 10, 5, 0, 5, 10, 0, 10, 5, 10];
@@ -86,6 +89,7 @@ export class UserListWidget implements ILandingViewWidget
         this.backToDefaultPopup();
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::refreshList()
     private refreshList(): void
     {
         if(!this._container) return;
@@ -121,11 +125,13 @@ export class UserListWidget implements ILandingViewWidget
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::getAvatarContainer()
     private getAvatarContainer(index: number): IWindowContainer | null
     {
         return this._container?.getChildByID(index) as IWindowContainer | null ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::createAvatarContainer()
     private createAvatarContainer(index: number): IWindowContainer
     {
         const entryContainer = this._landingView!.getXmlWindow('user_entry') as IWindowContainer;
@@ -151,6 +157,7 @@ export class UserListWidget implements ILandingViewWidget
         return entryContainer;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::setupVariation()
     private setupVariation(entryContainer: IWindowContainer, index: number): void
     {
         const avatarWidgetWindow = entryContainer.findChildByName('avatar_image_widget') as IWidgetWindow | null;
@@ -177,6 +184,7 @@ export class UserListWidget implements ILandingViewWidget
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::getEntry()
     private getEntry(window: IWindow): HallOfFameEntryData | null
     {
         return this.users?.[window.id] ?? null;
@@ -220,6 +228,7 @@ export class UserListWidget implements ILandingViewWidget
         }
     };
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::showPopup()
     private showPopup(entry: HallOfFameEntryData, anchor: IWindow): void
     {
         if(!this._container) return;
@@ -243,6 +252,7 @@ export class UserListWidget implements ILandingViewWidget
         this._popup.visible = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::backToDefaultPopup()
     private backToDefaultPopup(): void
     {
         if(!this._container) return;
@@ -264,48 +274,58 @@ export class UserListWidget implements ILandingViewWidget
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::get landingView()
     protected get landingView(): HabboLandingView | null
     {
         return this._landingView;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::getText()
     protected getText(key: string): string
     {
         return '${' + key + '}';
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::registerMessageListeners()
     protected registerMessageListeners(): void
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::get users()
     protected get users(): HallOfFameEntryData[] | null
     {
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::refreshPopup()
     protected refreshPopup(_entry: HallOfFameEntryData, _popup: IWindowContainer): void
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::getPopupXml()
     protected getPopupXml(): string | null
     {
         return null;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::hasExtraLink()
     protected hasExtraLink(): boolean
     {
         return false;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::extraLinkClicked()
     protected extraLinkClicked(_entry: HallOfFameEntryData): void
     {
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::set avatarOffsetsY()
     protected set avatarOffsetsY(value: number[])
     {
         this._avatarOffsetsY = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/UserListWidget.as::set avatarContainerWidths()
     protected set avatarContainerWidths(value: number[])
     {
         this._avatarContainerWidths = value;

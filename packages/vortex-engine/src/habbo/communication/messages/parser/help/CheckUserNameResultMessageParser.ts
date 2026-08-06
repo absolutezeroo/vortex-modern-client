@@ -11,13 +11,16 @@ export class CheckUserNameResultMessageParser implements IMessageParser
 {
     private _resultCode: number = -1;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/avatar/CheckUserNameResultMessageEventParser.as::get resultCode()
     get resultCode(): number
     {
         return this._resultCode;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/avatar/CheckUserNameResultMessageEventParser.as::_name
     private _name: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/avatar/CheckUserNameResultMessageEventParser.as::get name()
     get name(): string
     {
         return this._name;
@@ -25,11 +28,13 @@ export class CheckUserNameResultMessageParser implements IMessageParser
 
     private _nameSuggestions: string[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/avatar/CheckUserNameResultMessageEventParser.as::get nameSuggestions()
     get nameSuggestions(): string[]
     {
         return this._nameSuggestions;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/avatar/CheckUserNameResultMessageEventParser.as::flush()
     flush(): boolean
     {
         this._resultCode = -1;
@@ -38,6 +43,7 @@ export class CheckUserNameResultMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/avatar/CheckUserNameResultMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

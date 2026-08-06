@@ -38,6 +38,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _id: number;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get id()
     get id(): number
     {
         return this._id;
@@ -45,6 +46,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _ref: number;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get ref()
     get ref(): number
     {
         return this._ref;
@@ -52,6 +54,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _type: number;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get type()
     get type(): number
     {
         return this._type;
@@ -59,6 +62,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _category: number;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get category()
     get category(): number
     {
         return this._category;
@@ -66,11 +70,13 @@ export class FurnitureItem implements IFurnitureItem
 
     private _stuffData: IStuffData | null;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get stuffData()
     get stuffData(): IStuffData | null
     {
         return this._stuffData;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::set stuffData()
     set stuffData(value: IStuffData | null)
     {
         this._stuffData = value;
@@ -78,6 +84,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _extra: number;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get extra()
     get extra(): number
     {
         return this._extra;
@@ -85,6 +92,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _recyclable: boolean;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get recyclable()
     get recyclable(): boolean
     {
         return this._recyclable;
@@ -92,6 +100,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _tradeable: boolean;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get tradeable()
     get tradeable(): boolean
     {
         return this._tradeable;
@@ -99,6 +108,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _groupable: boolean;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get groupable()
     get groupable(): boolean
     {
         return this._groupable;
@@ -106,6 +116,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _sellable: boolean;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get sellable()
     get sellable(): boolean
     {
         return this._sellable;
@@ -113,6 +124,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _isWallItem: boolean;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get isWallItem()
     get isWallItem(): boolean
     {
         return this._isWallItem;
@@ -120,6 +132,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _isRented: boolean;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get isRented()
     get isRented(): boolean
     {
         return this._isRented;
@@ -131,6 +144,7 @@ export class FurnitureItem implements IFurnitureItem
 	 * Get seconds until expiration
 	 * Calculates remaining time if rent period has started
 	 */
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get secondsToExpiration()
     get secondsToExpiration(): number
     {
         if(this._secondsToExpiration === -1)
@@ -157,6 +171,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _hasRentPeriodStarted: boolean;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get hasRentPeriodStarted()
     get hasRentPeriodStarted(): boolean
     {
         return this._hasRentPeriodStarted;
@@ -164,18 +179,22 @@ export class FurnitureItem implements IFurnitureItem
 
     private _locked: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get locked()
     get locked(): boolean
     {
         return this._locked;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::set locked()
     set locked(value: boolean)
     {
         this._locked = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::_flatId
     private _flatId: number;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get flatId()
     get flatId(): number
     {
         return this._flatId;
@@ -183,6 +202,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _slotId: string | null;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get slotId()
     get slotId(): string | null
     {
         return this._slotId;
@@ -190,6 +210,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _songId: number;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get songId()
     get songId(): number
     {
         return this._songId;
@@ -197,13 +218,16 @@ export class FurnitureItem implements IFurnitureItem
 
     private _creationDay: number;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get creationDay()
     get creationDay(): number
     {
         return this._creationDay;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::_creationMonth
     private _creationMonth: number;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get creationMonth()
     get creationMonth(): number
     {
         return this._creationMonth;
@@ -211,6 +235,7 @@ export class FurnitureItem implements IFurnitureItem
 
     private _creationYear: number;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::get creationYear()
     get creationYear(): number
     {
         return this._creationYear;
@@ -219,6 +244,7 @@ export class FurnitureItem implements IFurnitureItem
     /**
 	 * Update item from new data
 	 */
+    // AS3: .../src/com/sulake/habbo/inventory/items/FurnitureItem.as::update()
     update(data: IFurnitureItemData): void
     {
         this._ref = data.roomItemId;

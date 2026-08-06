@@ -15,6 +15,7 @@ export class ActivateQuestMessageComposer extends MessageComposer<ConstructorPar
         this._data = [questId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/quest/ActivateQuestMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

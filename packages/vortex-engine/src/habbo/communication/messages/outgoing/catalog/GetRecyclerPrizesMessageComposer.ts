@@ -7,6 +7,7 @@ export class GetRecyclerPrizesMessageComposer extends MessageComposer<[]>
 {
     private _data: [] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/catalog/GetRecyclerPrizesMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

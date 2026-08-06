@@ -17,6 +17,7 @@ export class DiceOffMessageComposer extends MessageComposer<ConstructorParameter
         this._data = [objectId];
     }
 
+    // AS3: .../src/unknowns/_SafePkg_2609/_SafeCls_3356.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

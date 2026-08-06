@@ -15,6 +15,7 @@ export class ChatMessageComposer extends MessageComposer<[string, number, number
         this._data = [message, styleId, trackingId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/chat/ChatMessageComposer.as::getMessageArray()
     getMessageArray(): [string, number, number]
     {
         return this._data;

@@ -81,6 +81,7 @@ const PET_TYPE_MONSTERPLANT: number = 16;
 export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuParentWidget, IUpdateReceiver
 {
     private _config: IHabboConfigurationManager | null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::_catalog
     private _catalog: IHabboCatalog | null;
     private _data: AvatarInfoData = new AvatarInfoData();
     // AS3: AvatarInfoWidget.as::_activeView (obfuscated `_SafeStr_4550`; named from removeView(),
@@ -191,6 +192,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         return this._catalog;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::get friendList()
     public get friendList(): IHabboFriendList | null
     {
         return this.container?.friendList ?? null;
@@ -994,6 +996,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         return this._isDancing;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::set isDancing()
     public set isDancing(value: boolean)
     {
         this._isDancing = value;
@@ -1081,6 +1084,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         return this.container?.config?.getBoolean('use_minimized_own_avatar_menu') ?? false;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::set useMinimizedOwnAvatarMenu()
     public set useMinimizedOwnAvatarMenu(value: boolean)
     {
         this.container?.config?.setProperty('use_minimized_own_avatar_menu', value ? '1' : '0');

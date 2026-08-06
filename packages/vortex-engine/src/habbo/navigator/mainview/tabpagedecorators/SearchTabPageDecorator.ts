@@ -14,6 +14,7 @@ import type { ITabNavigator } from '../../domain/Tab';
  */
 export class SearchTabPageDecorator implements ITabPageDecorator
 {
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/SearchTabPageDecorator.as::_navigator
     private _navigator: ITabNavigator;
 
     constructor(navigator: ITabNavigator)
@@ -21,38 +22,46 @@ export class SearchTabPageDecorator implements ITabPageDecorator
         this._navigator = navigator;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/SearchTabPageDecorator.as::refreshCustomContent()
     refreshCustomContent(container: IWindowContainer): void
     {
         this.refreshRoomCompetitionsHeader(container);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/SearchTabPageDecorator.as::tabSelected()
     tabSelected(): void
     {
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/SearchTabPageDecorator.as::refreshFooter()
     refreshFooter(_container: IWindowContainer): void
     {
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/SearchTabPageDecorator.as::navigatorOpenedWhileInTab()
     navigatorOpenedWhileInTab(): void
     {
         this._navigator.mainViewCtrl?.open();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/SearchTabPageDecorator.as::get filterCategory()
     get filterCategory(): string | null
     {
         return null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/SearchTabPageDecorator.as::setSubSelection()
     setSubSelection(_value: number): void
     {
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/SearchTabPageDecorator.as::processSearchParam()
     processSearchParam(param: string): string
     {
         return param;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/SearchTabPageDecorator.as::refreshRoomCompetitionsHeader()
     private refreshRoomCompetitionsHeader(container: IWindowContainer): void
     {
         const header = container.findChildByName('room_competitions_header') as IWindowContainer | null;

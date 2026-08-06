@@ -39,23 +39,34 @@ const STATE_CONTENT = 3;
  */
 export class FurniView
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/inventory/furni/FurniView.as::_model
     private _model: FurniModel;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chooser/furni/FurniView.as::_window
     private _window: IWindowContainer | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/inventory/furni/FurniView.as::_grid
     private _grid: FurniGridView | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/inventory/furni/FurniView.as::_isInitialized
     private _isInitialized: boolean = false;
     private _state: number = STATE_NULL;
     private _currentFilterCategory: string = '';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/inventory/furni/FurniView.as::_rentablesPlacementSelection
     private _rentablesPlacementSelection: number = 2;
 
     private _actionButtonList: IItemListWindow | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/inventory/furni/FurniView.as::_placeInRoomButton
     private _placeInRoomButton: IWindow | null = null;
     private _extendRentButton: IWindow | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/inventory/furni/FurniView.as::_buyRentedItemButton
     private _buyRentedItemButton: IWindow | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/inventory/furni/FurniView.as::_gotoRoomButton
     private _gotoRoomButton: IWindow | null = null;
     private _useButton: IWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniView.as::_offerInTradingCountButton
     private _offerInTradingCountButton: ITextFieldWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniView.as::_offerInTradingButton
     private _offerInTradingButton: IWindow | null = null;
     private _sellButton: IWindow | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/inventory/furni/FurniView.as::_roomPreviewer
     private _roomPreviewer: RoomPreviewer | null = null;
 
     constructor(model: FurniModel)
@@ -63,6 +74,7 @@ export class FurniView
         this._model = model;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniView.as::get disposed()
     get disposed(): boolean
     {
         return false;
@@ -74,6 +86,7 @@ export class FurniView
         return !!this._window?.visible;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniView.as::get isInitialized()
     get isInitialized(): boolean
     {
         return this._isInitialized;
@@ -85,11 +98,13 @@ export class FurniView
         return this._grid ? this._grid.currentPageItems : null;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniView.as::get grid()
     get grid(): FurniGridView | null
     {
         return this._grid;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniView.as::dispose()
     dispose(): void
     {
         if(this._window)
@@ -279,7 +294,7 @@ export class FurniView
 
             if(previewWidget) previewWidget.visible = true;
 
-            // AS3: sources/win63_client/com/sulake/habbo/inventory/furni/FurniView.as::updateActionView()
+            // AS3: .../src/com/sulake/habbo/inventory/furni/FurniView.as::updateActionView()
             // nextItemButton/viewItemButton only apply to "external image" wall items
             // (photo/moodlight-style frames with cyclable custom images) — hidden for
             // every other item. Previously never set, so they always showed.
@@ -291,7 +306,7 @@ export class FurniView
             if(viewItemButton) viewItemButton.visible = isExternalImageWallItem;
             if(nextItemButton) nextItemButton.visible = isExternalImageWallItem;
 
-            // AS3: sources/win63_client/com/sulake/habbo/inventory/furni/FurniView.as::updateActionView()
+            // AS3: .../src/com/sulake/habbo/inventory/furni/FurniView.as::updateActionView()
             // Limited/rarity preview badges — same data GroupItem already shows on the
             // grid thumbnail (updateItemImageVisual()), but for the big preview panel's
             // own overlay widgets, which were never given visibility/data at all.
@@ -595,6 +610,7 @@ export class FurniView
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniView.as::removeButtons()
     private removeButtons(): void
     {
         if(!this._actionButtonList) return;
@@ -609,6 +625,7 @@ export class FurniView
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniView.as::updateContainerVisibility()
     private updateContainerVisibility(): void
     {
         if(!this._isInitialized || !this._window) return;

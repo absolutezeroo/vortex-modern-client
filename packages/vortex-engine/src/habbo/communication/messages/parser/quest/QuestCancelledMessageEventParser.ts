@@ -13,6 +13,7 @@ export class QuestCancelledMessageEventParser implements IMessageParser
 {
     private _expired: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestCancelledMessageEventParser.as::get expired()
     get expired(): boolean
     {
         return this._expired;
@@ -20,11 +21,13 @@ export class QuestCancelledMessageEventParser implements IMessageParser
 
     private _quest: QuestMessageData | null = null;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestCancelledMessageEventParser.as::get quest()
     get quest(): QuestMessageData | null
     {
         return this._quest;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestCancelledMessageEventParser.as::flush()
     flush(): boolean
     {
         this._expired = false;
@@ -32,6 +35,7 @@ export class QuestCancelledMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/QuestCancelledMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

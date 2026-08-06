@@ -16,6 +16,7 @@ import {SelectableController} from './SelectableController';
  */
 export class RadioButtonController extends SelectableController implements IRadioButtonWindow
 {
+    // AS3: .../src/com/sulake/core/window/components/RadioButtonController.as::TEXT_FIELD_NAME
     protected static readonly TEXT_FIELD_NAME: string = '_CAPTION_TEXT';
 
     constructor(

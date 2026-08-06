@@ -16,6 +16,7 @@ export class UpdateRoomCategoryAndTradeSettingsComposer extends MessageComposer<
         this._data = [roomId, categoryNodeId, tradeMode];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/roomsettings/UpdateRoomCategoryAndTradeSettingsComposer.as::getMessageArray()
     getMessageArray(): [number, number, number]
     {
         return this._data;

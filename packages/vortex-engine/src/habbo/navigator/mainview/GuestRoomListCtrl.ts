@@ -22,7 +22,9 @@ const HILITE_COLOR = 0xFFB8B2EA;
  */
 export class GuestRoomListCtrl implements IViewCtrl
 {
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::_navigator
     protected _navigator: IHabboTransitionalNavigator;
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::_content
     private _content: IWindowContainer | null = null;
     private _itemList: IItemListWindow | null = null;
     private _scrollbar: IScrollbarWindow | null = null;
@@ -32,6 +34,7 @@ export class GuestRoomListCtrl implements IViewCtrl
     private _lastMouseX: number = 0;
     private _isFastHorizontalMove: boolean = false;
     private _adIndex: number;
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::_showRoomNumbers
     private _showRoomNumbers: boolean;
 
     private readonly _onAddFavouriteClick: (event: WindowEvent) => void;
@@ -48,6 +51,7 @@ export class GuestRoomListCtrl implements IViewCtrl
         this._onRemoveFavouriteClick = (e) => this.handleRemoveFavouriteClick(e);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::dispose()
     dispose(): void
     {
         if(this._roomPopupCtrl)
@@ -63,11 +67,13 @@ export class GuestRoomListCtrl implements IViewCtrl
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::get content()
     get content(): IWindowContainer | null
     {
         return this._content;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::set content()
     set content(value: IWindowContainer | null)
     {
         this._content = value;
@@ -80,6 +86,7 @@ export class GuestRoomListCtrl implements IViewCtrl
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::refresh()
     refresh(): void
     {
         if(!this._itemList || !this._content) return;
@@ -122,25 +129,30 @@ export class GuestRoomListCtrl implements IViewCtrl
         }
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::getRooms()
     getRooms(): GuestRoomData[]
     {
         return this._navigator?.data?.guestRoomSearchResults?.rooms ?? [];
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::beforeEnterRoom()
     beforeEnterRoom(_index: number): void
     {
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::get navigator()
     get navigator(): IHabboTransitionalNavigator
     {
         return this._navigator;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::get roomPopupCtrl()
     get roomPopupCtrl(): RoomPopupCtrl
     {
         return this._roomPopupCtrl;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::getListEntry()
     protected getListEntry(index: number): IWindowContainer
     {
         const entry = this._navigator.getXmlWindow('grs_guest_room_details_phase_one') as IWindowContainer;
@@ -169,11 +181,13 @@ export class GuestRoomListCtrl implements IViewCtrl
         return entry;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::getBgColor()
     protected getBgColor(index: number): number
     {
         return index % 2 !== 0 ? 0xFFFFFFFF : 0xFFBBBBB2;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::refreshEntryDetails()
     protected refreshEntryDetails(entry: IWindowContainer, room: GuestRoomData): void
     {
         entry.visible = true;
@@ -206,11 +220,13 @@ export class GuestRoomListCtrl implements IViewCtrl
         entry.name = 'guestroom_' + room.ownerName + '_' + room.roomName;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::onMouseMove()
     protected onMouseMove(event: WindowEvent): void
     {
         this.checkFastHorizontalMove(event);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::onMouseOver()
     protected onMouseOver(event: WindowEvent): void
     {
         const target = event.target as IWindowContainer;
@@ -228,6 +244,7 @@ export class GuestRoomListCtrl implements IViewCtrl
         this._roomPopupCtrl.showPopup(target);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::onMouseOut()
     protected onMouseOut(event: WindowEvent): void
     {
         const target = event.target as IWindow;
@@ -240,6 +257,7 @@ export class GuestRoomListCtrl implements IViewCtrl
         this._roomPopupCtrl.closePopup();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::onMouseClick()
     protected onMouseClick(event: WindowEvent): void
     {
         const target = event.target as IWindowContainer;
@@ -273,6 +291,7 @@ export class GuestRoomListCtrl implements IViewCtrl
         this._roomPopupCtrl.hideInstantly();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::refreshEntry()
     private refreshEntry(show: boolean, index: number, room: GuestRoomData | null): boolean
     {
         let entry = this._itemList!.getListItemAt(index) as IWindowContainer | null;
@@ -302,6 +321,7 @@ export class GuestRoomListCtrl implements IViewCtrl
         return false;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::getVisibleEntryCount()
     private getVisibleEntryCount(): number
     {
         if(!this._itemList) return 0;
@@ -319,11 +339,13 @@ export class GuestRoomListCtrl implements IViewCtrl
         return count;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::getRoomAt()
     protected getRoomAt(index: number): GuestRoomData | null
     {
         return this.getRooms()[index] ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::hilite()
     private hilite(entry: IWindowContainer): void
     {
         if(this._lastHovered !== null && !this._lastHovered.disposed)
@@ -337,6 +359,7 @@ export class GuestRoomListCtrl implements IViewCtrl
         entry.color = HILITE_COLOR;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::checkFastHorizontalMove()
     private checkFastHorizontalMove(event: WindowEvent): void
     {
         const stageX = (event as unknown as { stageX?: number }).stageX ?? 0;
@@ -346,6 +369,7 @@ export class GuestRoomListCtrl implements IViewCtrl
         this._isFastHorizontalMove = delta > 2;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::refreshRoomName()
     private refreshRoomName(entry: IWindowContainer, room: GuestRoomData): void
     {
         const nameText = entry.findChildByName('roomname') as ITextWindow | null;
@@ -363,6 +387,7 @@ export class GuestRoomListCtrl implements IViewCtrl
         Util.cutTextToWidth(nameText, room.roomName, maxWidth);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::refreshFavouriteIcon()
     private refreshFavouriteIcon(entry: IWindowContainer, room: GuestRoomData): void
     {
         const isFav = this._navigator.data.isRoomFavourite(room.flatId);
@@ -372,11 +397,13 @@ export class GuestRoomListCtrl implements IViewCtrl
         this.refreshRegion(entry, 'favourite', isFav && !isHome, this._onRemoveFavouriteClick);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::isHome()
     private isHome(room: GuestRoomData): boolean
     {
         return room.flatId === this._navigator.data.homeRoomId;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/mainview/GuestRoomListCtrl.as::refreshRegion()
     private refreshRegion(
         entry: IWindowContainer,
         name: string,

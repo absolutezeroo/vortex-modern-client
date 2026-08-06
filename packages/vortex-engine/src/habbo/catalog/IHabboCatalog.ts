@@ -24,20 +24,35 @@ import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications
  */
 export interface IHabboCatalog
 {
+    // AS3: sources/win63_version/habbo/catalog/IHabboCatalog.as::get assets()
     readonly assets: IAssetLibrary | null;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get windowManager()
     readonly windowManager: IHabboWindowManager | null;
+    // AS3: sources/win63_version/habbo/catalog/IHabboCatalog.as::get events()
     readonly events: EventEmitter;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get localization()
     readonly localization: IHabboLocalizationManager | null;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get connection()
     readonly connection: IConnection | null;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get videoOffers()
     readonly videoOffers: { readonly enabled: boolean };
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get privateRoomSessionActive()
     readonly privateRoomSessionActive: boolean;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get tradingActive()
     readonly tradingActive: boolean;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get imageGalleryHost()
     readonly imageGalleryHost: string;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get buildersClubEnabled()
     readonly buildersClubEnabled: boolean;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get catalogType()
     readonly catalogType: string;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get collectorHub()
     readonly collectorHub: unknown | null;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get utils()
     readonly utils: HabboCatalogUtils;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get currentCatalogNavigator()
     readonly currentCatalogNavigator: ICatalogNavigator | null;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get frontPageItems()
     readonly frontPageItems: FrontPageItem[] | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get specialItemsController()
     readonly specialItemsController: unknown;
@@ -50,18 +65,28 @@ export interface IHabboCatalog
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get builderSecondsLeftWithGrace()
     readonly builderSecondsLeftWithGrace: number;
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getSeasonalCurrencyActivityPointType()
     getSeasonalCurrencyActivityPointType(): number;
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::redeemVoucher()
     redeemVoucher(voucher: string): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::loadCatalogPage()
     loadCatalogPage(pageId: number, offerId: number, catalogType: string): void;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::sendGetProductOffer()
     sendGetProductOffer(offerId: number): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getRecyclerStatus()
     getRecyclerStatus(): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getRecyclerPrizes()
     getRecyclerPrizes(): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::sendRecycleItems()
     sendRecycleItems(items: number[]): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::toggleCatalog()
     toggleCatalog(catalogType: string, forceOpen?: boolean, showMainWindow?: boolean): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::openCatalog()
     openCatalog(): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::openCatalogPage()
     openCatalogPage(pageName: string, catalogType?: string | null): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::openRoomAdCatalogPageInExtendedMode()
     openRoomAdCatalogPageInExtendedMode(
         roomId: string,
         roomName: string,
@@ -70,46 +95,87 @@ export interface IHabboCatalog
         expiration: Date,
         categoryId: number
     ): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::openCatalogPageById()
     openCatalogPageById(pageId: number, offerId: number, catalogType: string): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::openCatalogPageByOfferId()
     openCatalogPageByOfferId(offerId: number, catalogType: string): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::openInventoryCategory()
     openInventoryCategory(category: string): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::openCreditsHabblet()
     openCreditsHabblet(): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::setupInventoryForRecycler()
     setupInventoryForRecycler(enabled: boolean): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::requestInventoryFurniToRecycler()
     requestInventoryFurniToRecycler(): number;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::returnInventoryFurniFromRecycler()
     returnInventoryFurniFromRecycler(itemId: number): boolean;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getProductData()
     getProductData(localizationId: string): IProductData | null;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getFurnitureData()
     getFurnitureData(classId: number, productType: string): IFurnitureData | null;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getPixelEffectIcon()
     getPixelEffectIcon(effectId: number): ImageBitmap | null;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getSubscriptionProductIcon()
     getSubscriptionProductIcon(productId: number): ImageBitmap | null;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::isDraggable()
     isDraggable(offer: IPurchasableOffer): boolean;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::setImageFromAsset()
     setImageFromAsset(target: unknown, assetName: string | null, onAssetReady?: ((event: unknown) => void) | null): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getPurse()
     getPurse(): IHabboCatalogPurse;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getEarnings()
     getEarnings(): ICatalogEarnings;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getRecycler()
     getRecycler(): IRecycler | null;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getMarketPlace()
     getMarketPlace(): IMarketPlace | null;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getPublicMarketPlaceOffers()
     getPublicMarketPlaceOffers(minPrice: number, maxPrice: number, searchString: string, category: number, combineUniques?: boolean): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getOwnMarketPlaceOffers()
     getOwnMarketPlaceOffers(category?: number): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::cancelAllMarketPlaceOffers()
     cancelAllMarketPlaceOffers(): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::clearOwnMarketPlaceHistory()
     clearOwnMarketPlaceHistory(status: number): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::buyMarketPlaceOffer()
     buyMarketPlaceOffer(offerId: number): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::redeemSoldMarketPlaceOffers()
     redeemSoldMarketPlaceOffers(): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::redeemExpiredMarketPlaceOffer()
     redeemExpiredMarketPlaceOffer(offerId: number): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getMarketplaceItemStats()
     getMarketplaceItemStats(category: number, furniId: number, extraData?: string | null): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::showNotEnoughCreditsAlert()
     showNotEnoughCreditsAlert(): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::showNotEnoughActivityPointsAlert()
     showNotEnoughActivityPointsAlert(activityPointType: number): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getHabboClubOffers()
     getHabboClubOffers(clubType: number): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::openClubCenter()
     openClubCenter(): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::openVault()
     openVault(): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::verifyClubLevel()
     verifyClubLevel(clubLevel?: number): boolean;
     giftReceiver: string;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::buySnowWarTokensOffer()
     buySnowWarTokensOffer(localizationId: string): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::showVipBenefits()
     showVipBenefits(): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::displayProductIcon()
     displayProductIcon(productType: string, classId: number, target: unknown): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::openRentConfirmationWindow()
     openRentConfirmationWindow(data: unknown, isWallItem: boolean, extraParam?: number, price?: number, rent?: boolean): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::toggleBuilderCatalog()
     toggleBuilderCatalog(): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getCatalogNavigator()
     getCatalogNavigator(catalogType: string): ICatalogNavigator | null;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getOfferCenter()
     getOfferCenter(extension: unknown): unknown | null;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::itemAddedToInventory()
     itemAddedToInventory(classId: number, itemId: number, category: number): void;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getActivityPointName()
     getActivityPointName(activityPointType: number): string;
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::canPlaceWithBC()
     canPlaceWithBC(): boolean;
 }

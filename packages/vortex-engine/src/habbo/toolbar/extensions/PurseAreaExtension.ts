@@ -23,12 +23,17 @@ import {formatPurseAmount} from './purse/PurseAmountFormatter';
  */
 export class PurseAreaExtension 
 {
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::MENU_HELP
     private static readonly MENU_HELP: string = 'HELP';
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::_toolbar
     private _toolbar: HabboToolbar | null;
     private _windowManager: IHabboWindowManager | null;
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::_catalog
     private _catalog: IHabboCatalog | null;
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::_window
     private _window: IWindowContainer | null = null;
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::_clubArea
     private _clubArea: PurseClubArea | null = null;
 
     constructor(
@@ -83,16 +88,19 @@ export class PurseAreaExtension
         return this._diamonds;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::get disposed()
     get disposed(): boolean 
     {
         return this._toolbar === null;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::get earningsUnseenIndicator()
     private get earningsUnseenIndicator(): IStaticBitmapWrapperWindow | null 
     {
         return this._window?.findChildByName('earnings_unseen_indicator') as IStaticBitmapWrapperWindow | null;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::getClubArea()
     public getClubArea(): PurseClubArea | null 
     {
         return this._clubArea;
@@ -136,6 +144,7 @@ export class PurseAreaExtension
         }
     };
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::getIconLocation()
     public getIconLocation(name: string): { x: number; y: number; width: number; height: number } | null 
     {
         const child = this._window?.findChildByName(name);
@@ -148,11 +157,13 @@ export class PurseAreaExtension
         return rect;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::getIcon()
     public getIcon(name: string): IWindow | null 
     {
         return this._window?.findChildByName(name) ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::refreshIndicators()
     public refreshIndicators(): void 
     {
         const indicator = this.earningsUnseenIndicator;
@@ -163,6 +174,7 @@ export class PurseAreaExtension
         }
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::dispose()
     public dispose(): void 
     {
         if(this.disposed) return;
@@ -189,6 +201,7 @@ export class PurseAreaExtension
         this._toolbar = null;
     }
 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::updateCreditAndPointValues()
     private updateCreditAndPointValues(): void 
     {
         if(!this._catalog) return;

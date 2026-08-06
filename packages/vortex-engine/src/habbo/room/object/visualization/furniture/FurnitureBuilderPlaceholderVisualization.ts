@@ -9,7 +9,9 @@ import {FurnitureVisualization} from './FurnitureVisualization';
 
 export class FurnitureBuilderPlaceholderVisualization extends FurnitureVisualization
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureBuilderPlaceholderVisualization.as::_sizeX
     private _sizeX: number = -1;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureBuilderPlaceholderVisualization.as::_sizeY
     private _sizeY: number = -1;
 
     protected override updateModel(scale: number): boolean
@@ -105,6 +107,7 @@ export class FurnitureBuilderPlaceholderVisualization extends FurnitureVisualiza
         return super.getSpriteZOffset(scale, direction, this.getIndex(scale, layerIndex));
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureBuilderPlaceholderVisualization.as::instantiateSprites()
     private instantiateSprites(scale: number): void
     {
         if(this.data === null)
@@ -118,6 +121,7 @@ export class FurnitureBuilderPlaceholderVisualization extends FurnitureVisualiza
         this.updateSprites(scale, true, 0);
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureBuilderPlaceholderVisualization.as::getIndex()
     private getIndex(scale: number, layerIndex: number): number
     {
         if(this.data !== null)

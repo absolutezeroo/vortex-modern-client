@@ -14,13 +14,18 @@ import type {IRoomObjectManager} from './IRoomObjectManager';
 
 export interface IRoomObjectFactory
 {
+    // AS3: .../src/com/sulake/room/IRoomObjectFactory.as::get events()
     readonly events: EventEmitter;
 
+    // AS3: .../src/com/sulake/room/IRoomObjectFactory.as::addObjectEventListener()
     addObjectEventListener(callback: (event: unknown) => void): void;
 
+    // AS3: .../src/com/sulake/room/IRoomObjectFactory.as::removeObjectEventListener()
     removeObjectEventListener(callback: (event: unknown) => void): void;
 
+    // AS3: .../src/com/sulake/room/IRoomObjectFactory.as::createRoomObjectLogic()
     createRoomObjectLogic(type: string): IRoomObjectEventHandler | null;
 
+    // AS3: .../src/com/sulake/room/IRoomObjectFactory.as::createRoomObjectManager()
     createRoomObjectManager(): IRoomObjectManager;
 }

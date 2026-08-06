@@ -7,7 +7,9 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
  */
 export interface IViewCtrl
 {
+    // AS3: sources/win63_version/habbo/navigator/IViewCtrl.as::get content()
     content: IWindowContainer | null;
 
+    // AS3: sources/win63_version/habbo/navigator/IViewCtrl.as::refresh()
     refresh(): void;
 }

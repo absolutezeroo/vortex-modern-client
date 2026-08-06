@@ -20,30 +20,37 @@ export interface IWindowContext extends IDisposable
 {
     inputEventTrackers: IInputEventTracker[];
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as::getWindowServices()
     getWindowServices(): IInternalWindowServices;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as::getWindowParser()
     getWindowParser(): IWindowParser;
 
     getWindowFactory(): IWindowFactory;
 
     getWidgetFactory(): IWidgetFactory | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as::getDesktopWindow()
     getDesktopWindow(): IWindow | null;
 
     getResourceManager(): IResourceManager | null;
 
     setLocalizationManager(localization: ICoreLocalizationManager | null): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as::registerLocalizationListener()
     registerLocalizationListener(key: string, window: IWindow): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as::removeLocalizationListener()
     removeLocalizationListener(key: string, window: IWindow): void;
 
     findWindowByName(name: string): IWindow | null;
 
     findWindowByTag(tag: string): IWindow | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as::groupChildrenWithTag()
     groupChildrenWithTag(tag: string, result: IWindow[], depth?: number): number;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as::create()
     create(
         name: string,
         caption: string,
@@ -63,8 +70,10 @@ export interface IWindowContext extends IDisposable
 
     render(deltaTime: number): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as::destroy()
     destroy(window: IWindow): boolean;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as::invalidate()
     invalidate(window: IWindow, rect: {
         x: number;
         y: number;
@@ -72,12 +81,15 @@ export interface IWindowContext extends IDisposable
         height: number
     } | null, flags: number): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as::getLastError()
     getLastError(): Error | null;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as::getLastErrorCode()
     getLastErrorCode(): number;
 
     handleError(code: number, error: Error): void;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as::flushError()
     flushError(): void;
 
     addMouseEventTracker(tracker: IInputEventTracker): void;

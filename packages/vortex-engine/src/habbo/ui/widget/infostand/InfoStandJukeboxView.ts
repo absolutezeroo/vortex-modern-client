@@ -20,6 +20,7 @@ export class InfoStandJukeboxView
         return null;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandJukeboxView.as::dispose()
     public dispose(): void
     {
     }

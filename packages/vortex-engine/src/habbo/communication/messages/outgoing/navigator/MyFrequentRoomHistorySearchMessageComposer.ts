@@ -16,6 +16,7 @@ export class MyFrequentRoomHistorySearchMessageComposer extends MessageComposer<
         this._data = [];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/navigator/MyFrequentRoomHistorySearchMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

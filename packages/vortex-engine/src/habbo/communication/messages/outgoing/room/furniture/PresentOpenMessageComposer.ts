@@ -15,6 +15,7 @@ export class PresentOpenMessageComposer extends MessageComposer<ConstructorParam
         this._data = [objectId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/furniture/PresentOpenMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

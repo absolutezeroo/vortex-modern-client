@@ -13,6 +13,7 @@ export class GetCatalogPageComposer extends MessageComposer<ConstructorParameter
         this._data = [pageId, offerId, catalogType];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/catalog/GetCatalogPageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

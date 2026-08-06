@@ -9,8 +9,10 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class AvailabilityStatusMessageParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/availability/AvailabilityStatusMessageEventParser.as::_isOpen
     private _isOpen: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/availability/AvailabilityStatusMessageEventParser.as::get isOpen()
     get isOpen(): boolean
     {
         return this._isOpen;
@@ -18,6 +20,7 @@ export class AvailabilityStatusMessageParser implements IMessageParser
 
     private _onShutDown: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/availability/AvailabilityStatusMessageEventParser.as::get onShutDown()
     get onShutDown(): boolean
     {
         return this._onShutDown;
@@ -25,11 +28,13 @@ export class AvailabilityStatusMessageParser implements IMessageParser
 
     private _isAuthenticHabbo: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/availability/AvailabilityStatusMessageEventParser.as::get isAuthenticHabbo()
     get isAuthenticHabbo(): boolean
     {
         return this._isAuthenticHabbo;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/availability/AvailabilityStatusMessageEventParser.as::flush()
     flush(): boolean
     {
         this._isOpen = false;
@@ -38,6 +43,7 @@ export class AvailabilityStatusMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/availability/AvailabilityStatusMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._isOpen = wrapper.readBoolean();

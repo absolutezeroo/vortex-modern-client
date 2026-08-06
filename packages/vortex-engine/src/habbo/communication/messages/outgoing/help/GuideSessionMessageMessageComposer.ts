@@ -15,6 +15,7 @@ export class GuideSessionMessageMessageComposer extends MessageComposer<Construc
         this._data = [message];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/GuideSessionMessageMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

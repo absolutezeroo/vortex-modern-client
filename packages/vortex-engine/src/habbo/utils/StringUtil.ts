@@ -15,6 +15,7 @@ export class StringUtil
 	 * @param length The desired minimum length
 	 * @returns The padded string
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/StringUtil.as::addLeftZeroPadding()
     static addLeftZeroPadding(str: string, length: number): string
     {
         while(str.length < length)
@@ -31,6 +32,7 @@ export class StringUtil
 	 * @param str The string to strip font tags from
 	 * @returns The string with font tags removed
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/StringUtil.as::stripFontTag()
     static stripFontTag(str: string): string
     {
         return str.replace(/<\/?font[^>]*>/gi, '');
@@ -42,6 +44,7 @@ export class StringUtil
 	 * @param str The string to trim
 	 * @returns The trimmed string, or empty string if null/undefined
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/StringUtil.as::trim()
     static trim(str: string): string
     {
         return str ? str.trim() : '';
@@ -53,6 +56,7 @@ export class StringUtil
 	 * @param str The string to process
 	 * @returns The string with all spaces removed
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/StringUtil.as::removeWhiteSpace()
     static removeWhiteSpace(str: string): string
     {
         return str ? str.replace(/ /g, '') : '';
@@ -64,6 +68,7 @@ export class StringUtil
 	 * @param str The string to convert
 	 * @returns The alphanumeric lowercase string
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/StringUtil.as::toAlphaNumericLow()
     static toAlphaNumericLow(str: string): string
     {
         return str.toLowerCase().replace(/\W/g, '');
@@ -75,6 +80,7 @@ export class StringUtil
 	 * @param str The string to check
 	 * @returns The string, or empty string if null/undefined
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/StringUtil.as::nonNull()
     static nonNull(str: string | null): string
     {
         return str ?? '';
@@ -86,6 +92,7 @@ export class StringUtil
 	 * @param str The string to check
 	 * @returns True if the string is empty
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/StringUtil.as::isEmpty()
     static isEmpty(str: string | null): boolean
     {
         return str === null || str.length === 0;
@@ -97,6 +104,7 @@ export class StringUtil
 	 * @param str The string to check
 	 * @returns True if the string is blank
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/StringUtil.as::isBlank()
     static isBlank(str: string | null): boolean
     {
         if(str === null)

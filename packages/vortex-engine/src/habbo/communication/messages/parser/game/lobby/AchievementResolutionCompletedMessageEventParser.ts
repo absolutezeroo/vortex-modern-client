@@ -11,6 +11,7 @@ export class AchievementResolutionCompletedMessageEventParser implements IMessag
 {
     private _stuffCode: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionCompletedMessageEventParser.as::get stuffCode()
     get stuffCode(): string
     {
         return this._stuffCode;
@@ -18,11 +19,13 @@ export class AchievementResolutionCompletedMessageEventParser implements IMessag
 
     private _badgeCode: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionCompletedMessageEventParser.as::get badgeCode()
     get badgeCode(): string
     {
         return this._badgeCode;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionCompletedMessageEventParser.as::flush()
     flush(): boolean
     {
         this._stuffCode = '';
@@ -30,6 +33,7 @@ export class AchievementResolutionCompletedMessageEventParser implements IMessag
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/game/lobby/AchievementResolutionCompletedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

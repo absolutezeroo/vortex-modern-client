@@ -12,11 +12,15 @@ import {RoomObjectTileCursorUpdateMessage} from '@habbo/room/messages/RoomObject
 
 export class RoomTileCursorLogic extends ObjectLogicBase
 {
+    // AS3: .../src/com/sulake/habbo/room/object/logic/room/RoomTileCursorLogic.as::STATE_ENABLED
     private static readonly STATE_ENABLED: number = 0;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/room/RoomTileCursorLogic.as::STATE_DISABLED
     private static readonly STATE_DISABLED: number = 1;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/room/RoomTileCursorLogic.as::STATE_SHOW_TILE_HEIGHT
     private static readonly STATE_SHOW_TILE_HEIGHT: number = 6;
 
     private _lastSourceEventId: string | null = null;
+    // AS3: .../src/com/sulake/habbo/room/object/logic/room/RoomTileCursorLogic.as::_hiddenOnPurpose
     private _hiddenOnPurpose: boolean = false;
 
     override getEventTypes(): string[]

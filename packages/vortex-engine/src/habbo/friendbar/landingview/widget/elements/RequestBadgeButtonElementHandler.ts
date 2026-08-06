@@ -21,6 +21,7 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
  */
 export class RequestBadgeButtonElementHandler extends ButtonElementHandler implements IFloatableElementHandler
 {
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/_SafeCls_4537.as::_badgeRequestCode
     private _badgeRequestCode: string = '';
     private _isFloating: boolean = true;
 

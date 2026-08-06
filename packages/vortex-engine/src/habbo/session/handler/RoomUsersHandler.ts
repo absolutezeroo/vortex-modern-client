@@ -184,6 +184,7 @@ export class RoomUsersHandler extends BaseHandler
     /**
 	 * Handle users entering the room
 	 */
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onUsers()
     private onUsers(event: IMessageEvent): void
     {
         const usersEvent = event as UsersMessageEvent;
@@ -250,6 +251,7 @@ export class RoomUsersHandler extends BaseHandler
     /**
 	 * Handle user leaving the room
 	 */
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onUserRemove()
     private onUserRemove(event: IMessageEvent): void
     {
         const removeEvent = event as UserRemoveMessageEvent;
@@ -276,6 +278,7 @@ export class RoomUsersHandler extends BaseHandler
         session.userDataManager.removeUserDataByRoomIndex(parser.roomIndex);
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onBlockUserUpdate()
     private onBlockUserUpdate(event: IMessageEvent): void
     {
         const blockEvent = event as BlockUserUpdateMessageEvent;
@@ -611,6 +614,7 @@ export class RoomUsersHandler extends BaseHandler
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onDoorbell()
     private onDoorbell(event: IMessageEvent): void
     {
         const doorbellEvent = event as DoorbellMessageEvent;
@@ -694,6 +698,7 @@ export class RoomUsersHandler extends BaseHandler
     /**
 	 * Handle user badges update
 	 */
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onUserBadges()
     private onUserBadges(event: IMessageEvent): void
     {
         const badgesEvent = event as HabboUserBadgesMessageEvent;

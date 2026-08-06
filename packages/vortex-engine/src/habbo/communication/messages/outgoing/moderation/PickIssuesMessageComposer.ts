@@ -26,6 +26,7 @@ export class PickIssuesMessageComposer extends MessageComposer<unknown[]>
         this._data.push(pickerName);
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/moderator/PickIssuesMessageComposer.as::getMessageArray()
     getMessageArray(): unknown[]
     {
         return this._data;

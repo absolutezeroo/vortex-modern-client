@@ -23,10 +23,15 @@ import {GuildColorData} from './GuildColorData';
  */
 export class GuildEditorData
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/GuildEditorData.as::_baseParts
     private _baseParts: GuildBadgePartData[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/GuildEditorData.as::_layerParts
     private _layerParts: GuildBadgePartData[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/GuildEditorData.as::_badgeColors
     private _badgeColors: GuildColorData[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/GuildEditorData.as::_guildPrimaryColors
     private _guildPrimaryColors: GuildColorData[] = [];
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/GuildEditorData.as::_guildSecondaryColors
     private _guildSecondaryColors: GuildColorData[] = [];
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1731/_SafeCls_2215.as::_SafeCls_2215()

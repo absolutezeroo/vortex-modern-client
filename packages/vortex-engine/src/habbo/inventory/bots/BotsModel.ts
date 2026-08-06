@@ -8,8 +8,10 @@ import type {Bot} from './Bot';
  */
 export class BotsModel implements IBotsModel
 {
+    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -29,6 +31,7 @@ export class BotsModel implements IBotsModel
         return this._bots;
     }
 
+    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -155,6 +158,7 @@ export class BotsModel implements IBotsModel
         }
     }
 
+    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::resetUnseenItems()
     resetUnseenItems(): number[]
     {
         const resetIds: number[] = [];
@@ -181,6 +185,7 @@ export class BotsModel implements IBotsModel
         }
     }
 
+    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::isUnseen()
     isUnseen(id: number): boolean
     {
         return this._bots.get(id)?.isUnseen ?? false;

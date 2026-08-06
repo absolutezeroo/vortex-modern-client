@@ -40,8 +40,10 @@ const log = Logger.getLogger('habbo.roomevents.IncomingMessages');
  */
 export class IncomingMessages implements IDisposable
 {
+    // AS3: .../src/com/sulake/habbo/roomevents/_SafeCls_1951.as::_roomEvents
     private _roomEvents: HabboUserDefinedRoomEvents | null;
 
+    // AS3: .../src/com/sulake/habbo/roomevents/_SafeCls_1951.as::_messageEvents
     private _messageEvents: IMessageEvent[];
 
     // AS3: _SafeCls_1951.as::_SafeCls_1951()

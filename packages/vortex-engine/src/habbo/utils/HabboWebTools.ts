@@ -31,20 +31,28 @@ export interface IHabboWebToolsEvents
  */
 export class HabboWebTools
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/utils/HabboWebTools.as::ADVERTISEMENT
     public static readonly ADVERTISEMENT: string = 'advertisement';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::_SafeStr_11147
     // AS3 name unrecoverable (obfuscated in WIN63 and win63_version, absent entirely from
     // PRODUCTION which predates it) - derived from its value. Unused anywhere in the AS3 tree
     // (dead field, same as ADVERTISEMENT above); kept for interface completeness.
     public static readonly TARGET_SELF: string = '_self';
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::WINDOW_HABBO_MAIN
     public static readonly WINDOW_HABBO_MAIN: string = 'habboMain';
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::OPEN_INTERNAL_LINK_FROM_WEB_CALLBACK
     public static readonly OPEN_INTERNAL_LINK_FROM_WEB_CALLBACK: string = 'openlink';
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::GOTO_ROOM_FROM_WEB_CALLBACK
     public static readonly GOTO_ROOM_FROM_WEB_CALLBACK: string = 'openroom';
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::HABBLET_AVATARS
     public static readonly HABBLET_AVATARS: string = 'avatars';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::HABBLET_PRIVACY
     public static readonly HABBLET_PRIVACY: string = 'privacy';
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::HABBLET_MINI_MAIL
     public static readonly HABBLET_MINI_MAIL: string = 'minimail';
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::HABBLET_ROOM_ENTER_AD
     public static readonly HABBLET_ROOM_ENTER_AD: string = 'roomenterad';
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::HABBLET_NEWS
     public static readonly HABBLET_NEWS: string = 'news';
     private static readonly _toolEvents = new EventEmitter<IHabboWebToolsEvents>();
 
@@ -72,6 +80,7 @@ export class HabboWebTools
         return HabboWebTools._baseUrl;
     }
 
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::set baseUrl()
     static set baseUrl(value: string)
     {
         HabboWebTools._baseUrl = value;
@@ -92,6 +101,7 @@ export class HabboWebTools
 	 * @param url The URL to open
 	 * @param target The window target name (defaults to WINDOW_HABBO_MAIN)
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::openWebPage()
     static openWebPage(url: string, target: string = ''): void
     {
         if(!url) return;
@@ -110,6 +120,7 @@ export class HabboWebTools
 	 *
 	 * @param url The URL to open
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::openPage()
     static openPage(url: string): void
     {
         if(!url) return;
@@ -123,6 +134,7 @@ export class HabboWebTools
 	 *
 	 * @param url The URL to open
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::openWebPageAndMinimizeClient()
     static openWebPageAndMinimizeClient(url: string): void
     {
         if(!url) return;
@@ -191,6 +203,7 @@ export class HabboWebTools
 	 *
 	 * @param message The event message to log
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::logEventLog()
     static logEventLog(message: string): void
     {
         log.debug('EventLog: ' + message);
@@ -199,6 +212,7 @@ export class HabboWebTools
     /**
 	 * Send a heartbeat signal (no-op in browser context)
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::sendHeartBeat()
     static sendHeartBeat(): void
     {
         // No-op: Flash ExternalInterface heartbeat not needed in browser
@@ -209,6 +223,7 @@ export class HabboWebTools
 	 *
 	 * @param roomId The visited room ID
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::roomVisited()
     static roomVisited(roomId: number): void
     {
         HabboWebTools._toolEvents.emit('roomVisited', roomId);
@@ -219,6 +234,7 @@ export class HabboWebTools
     /**
 	 * Trigger a logout
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::logOut()
     static logOut(): void
     {
         HabboWebTools._toolEvents.emit('logout');
@@ -232,6 +248,7 @@ export class HabboWebTools
 	 * @param reason The disconnect reason code
 	 * @param message The disconnect message
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::sendDisconnectToWeb()
     static sendDisconnectToWeb(reason: number, message: string): void
     {
         HabboWebTools._toolEvents.emit('disconnect', reason, message);
@@ -244,6 +261,7 @@ export class HabboWebTools
 	 *
 	 * @param figure The new figure string
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::updateFigure()
     static updateFigure(figure: string): void
     {
         HabboWebTools._toolEvents.emit('figureUpdated', figure);
@@ -270,6 +288,7 @@ export class HabboWebTools
 	 * @param habblet The habblet type to open
 	 * @param params Optional parameters
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::openWebHabblet()
     static openWebHabblet(habblet: string, params?: string): void
     {
         log.debug('openWebHabblet: ' + habblet + (params ? ', params=' + params : ''));
@@ -281,6 +300,7 @@ export class HabboWebTools
 	 * @param habblet The habblet type to close
 	 * @param params Optional parameters
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::closeWebHabblet()
     static closeWebHabblet(habblet: string, params?: string): void
     {
         log.debug('closeWebHabblet: ' + habblet + (params ? ', params=' + params : ''));
@@ -291,6 +311,7 @@ export class HabboWebTools
 	 *
 	 * @param params Optional parameters
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::openMinimail()
     static openMinimail(params?: string): void
     {
         HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_MINI_MAIL, params);
@@ -299,6 +320,7 @@ export class HabboWebTools
     /**
 	 * Open the news habblet
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::openNews()
     static openNews(): void
     {
         HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_NEWS);
@@ -307,6 +329,7 @@ export class HabboWebTools
     /**
 	 * Close the news habblet
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::closeNews()
     static closeNews(): void
     {
         HabboWebTools.closeWebHabblet(HabboWebTools.HABBLET_NEWS);
@@ -315,6 +338,7 @@ export class HabboWebTools
     /**
 	 * Open the avatars page
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::openAvatars()
     static openAvatars(): void
     {
         HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_AVATARS);
@@ -332,6 +356,7 @@ export class HabboWebTools
     /**
 	 * Open the room enter ad
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::openRoomEnterAd()
     static openRoomEnterAd(): void
     {
         HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_ROOM_ENTER_AD, '');
@@ -342,6 +367,7 @@ export class HabboWebTools
 	 *
 	 * @param gameId The game identifier
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::showGame()
     static showGame(gameId: string): void
     {
         log.debug('showGame: ' + gameId);
@@ -350,6 +376,7 @@ export class HabboWebTools
     /**
 	 * Hide the external game
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/HabboWebTools.as::hideGame()
     static hideGame(): void
     {
         log.debug('hideGame');

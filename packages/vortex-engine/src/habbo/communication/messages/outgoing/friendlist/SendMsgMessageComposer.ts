@@ -15,6 +15,7 @@ export class SendMsgMessageComposer extends MessageComposer<ConstructorParameter
         this._data = [recipientId, message, clientMessageId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/friendlist/SendMsgMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

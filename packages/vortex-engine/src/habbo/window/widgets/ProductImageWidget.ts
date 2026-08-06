@@ -33,8 +33,10 @@ export class ProductImageWidget implements IWidget, IGetImageListener
     public static readonly TYPE: string = 'product_image';
 
     private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductImageWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductImageWidget.as::_disposed
     private _disposed: boolean = false;
     private _productInfo: IProductDisplayInfo | null = null;
     private _pivot: number = 0;
@@ -131,6 +133,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         this.refresh();
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductImageWidget.as::refresh()
     private refresh(): void
     {
         if(this._productInfo)
@@ -139,36 +142,43 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get placeholderImage()
     private get placeholderImage(): IStaticBitmapWrapperWindow | null
     {
         return (this._root?.findChildByName('placeholder_image') as unknown as IStaticBitmapWrapperWindow) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get productPreviewBitmap()
     private get productPreviewBitmap(): IBitmapWrapperWindow | null
     {
         return (this._root?.findChildByName('product_preview') as unknown as IBitmapWrapperWindow) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get avatarImageWidget()
     private get avatarImageWidget(): IWidgetWindow | null
     {
         return (this._root?.findChildByName('avatar_image_widget') as unknown as IWidgetWindow) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get badgeImageWidget()
     private get badgeImageWidget(): IWidgetWindow | null
     {
         return (this._root?.findChildByName('badge_image_widget') as unknown as IWidgetWindow) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get petImageWidget()
     private get petImageWidget(): IWidgetWindow | null
     {
         return (this._root?.findChildByName('pet_image_widget') as unknown as IWidgetWindow) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get effectImageWidget()
     private get effectImageWidget(): IWidgetWindow | null
     {
         return (this._root?.findChildByName('effect_image_widget') as unknown as IWidgetWindow) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get unknownImageWindow()
     private get unknownImageWindow(): IStaticBitmapWrapperWindow | null
     {
         return (this._root?.findChildByName('unknown_image') as unknown as IStaticBitmapWrapperWindow) ?? null;
@@ -378,6 +388,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         }
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductImageWidget.as::centerWindow()
     private centerWindow(window: IWidgetWindow): void
     {
         if(!this._root) return;
@@ -459,6 +470,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         if(placeholder) placeholder.visible = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/window/widgets/ProductImageWidget.as::setPreviewImage()
     private setPreviewImage(data: ImageBitmap | null): void
     {
         const preview = this.productPreviewBitmap;

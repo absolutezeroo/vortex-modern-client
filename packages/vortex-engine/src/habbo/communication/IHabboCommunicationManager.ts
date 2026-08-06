@@ -31,16 +31,19 @@ export interface IHabboCommunicationManager
     /**
 	 * Get the main Habbo connection
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/IHabboCommunicationManager.as::get connection()
     readonly connection: IConnection | null;
 
     /**
 	 * AS3: get mode()
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/IHabboCommunicationManager.as::get mode()
     mode: number;
 
     /**
 	 * AS3: get port()
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/IHabboCommunicationManager.as::get port()
     readonly port: number;
 
     /**
@@ -67,6 +70,7 @@ export interface IHabboCommunicationManager
 	 * Initialize connection to Habbo server
 	 * @param type Connection type (e.g., 'habbo', 'debug')
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/IHabboCommunicationManager.as::initConnection()
     initConnection(type: string): void;
 
     /**
@@ -82,6 +86,7 @@ export interface IHabboCommunicationManager
     /**
 	 * AS3: addHabboConnectionMessageEvent()
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/IHabboCommunicationManager.as::addHabboConnectionMessageEvent()
     addHabboConnectionMessageEvent(event: IMessageEvent): IMessageEvent;
 
     /**
@@ -92,6 +97,7 @@ export interface IHabboCommunicationManager
     /**
 	 * AS3: removeHabboConnectionMessageEvent()
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/IHabboCommunicationManager.as::removeHabboConnectionMessageEvent()
     removeHabboConnectionMessageEvent(event: IMessageEvent): void;
 
     /**
@@ -102,6 +108,7 @@ export interface IHabboCommunicationManager
     /**
 	 * AS3: initializeEncryption()
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/IHabboCommunicationManager.as::initializeEncryption()
     initializeEncryption(): IEncryption;
 
     /**
@@ -114,11 +121,13 @@ export interface IHabboCommunicationManager
     /**
 	 * AS3: initializeKeyExchange()
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/IHabboCommunicationManager.as::initializeKeyExchange()
     initializeKeyExchange(prime: string, generator: string): IKeyExchange;
 
     /**
 	 * AS3: setMessageQueueErrorDebugData()
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/IHabboCommunicationManager.as::setMessageQueueErrorDebugData()
     setMessageQueueErrorDebugData(): void;
 
     /**
@@ -138,6 +147,7 @@ export interface IHabboCommunicationManager
 	 * Reads connection.info.host and connection.info.port from configuration
 	 * and updates the internal host/port list.
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/IHabboCommunicationManager.as::updateHostParameters()
     updateHostParameters(): void;
 
     /**

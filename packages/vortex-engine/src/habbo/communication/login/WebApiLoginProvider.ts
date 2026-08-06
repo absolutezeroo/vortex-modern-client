@@ -103,6 +103,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
      * lifecycle (`dispose()` is called when the login flow is torn down), and the session uses this
      * to skip dead listeners, so it reports the truth.
      */
+    // AS3: .../src/com/sulake/habbo/communication/login/WebApiLoginProvider.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -121,6 +122,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
      * `createHabboWebApiSession()`, which disposes the first. Only the second survives, so the port
      * keeps the surviving call and drops the discarded one.
      */
+    // AS3: .../src/com/sulake/habbo/communication/login/WebApiLoginProvider.as::init()
     public init(communication: IHabboCommunicationManager | null): void
     {
         this._communication = communication;
@@ -187,6 +189,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
      * (which would have called `showInvalidLoginError`) is unreachable; ported as written rather
      * than "corrected", since the reachable behaviour is what the client actually does.
      */
+    // AS3: .../src/com/sulake/habbo/communication/login/WebApiLoginProvider.as::habboWebApiError()
     public habboWebApiError(
         uri: string,
         _status: number,
@@ -308,6 +311,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
     /**
      * AS3: habboWebApiResponse(_arg_1:String, _arg_2:Object)
      */
+    // AS3: .../src/com/sulake/habbo/communication/login/WebApiLoginProvider.as::habboWebApiResponse()
     public habboWebApiResponse(uri: string, data: Record<string, unknown>): void
     {
         log.debug(`Got Habbo Web Api Response: ${uri}`, data);
@@ -458,6 +462,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
      * `habboWebApiResponse()`. Ported because it is part of the class and is what an auto-login
      * would go through.
      */
+    // AS3: .../src/com/sulake/habbo/communication/login/WebApiLoginProvider.as::onUserList()
     public onUserList(avatars: AvatarData[]): void
     {
         if(this._autoLogin)
@@ -494,6 +499,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
      * The pending error is shown BEFORE the token is applied: it is the failure that triggered the
      * captcha in the first place, and the user has to see why they were challenged.
      */
+    // AS3: .../src/com/sulake/habbo/communication/login/WebApiLoginProvider.as::handleCaptchaResult()
     public handleCaptchaResult(token: string): void
     {
         this.removeCaptchaView();
@@ -527,6 +533,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
      * An existing session is disposed first, so a hotel switch does not keep talking to the old
      * host. The `url.prefix` fallback is forced to https — the API refuses plaintext.
      */
+    // AS3: .../src/com/sulake/habbo/communication/login/WebApiLoginProvider.as::createHabboWebApiSession()
     private createHabboWebApiSession(): IHabboWebApiSession | null
     {
         if(!this._communication) return null;
@@ -585,6 +592,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
     /**
      * AS3: fetchAvatars()
      */
+    // AS3: .../src/com/sulake/habbo/communication/login/WebApiLoginProvider.as::fetchAvatars()
     private fetchAvatars(): void
     {
         if(this._session == null) return;

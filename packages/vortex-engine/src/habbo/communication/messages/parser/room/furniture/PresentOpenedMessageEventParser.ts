@@ -10,6 +10,7 @@ export class PresentOpenedMessageEventParser implements IMessageParser
 {
     private _itemType: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/PresentOpenedMessageEventParser.as::get itemType()
     get itemType(): string
     {
         return this._itemType;
@@ -17,6 +18,7 @@ export class PresentOpenedMessageEventParser implements IMessageParser
 
     private _classId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/PresentOpenedMessageEventParser.as::get classId()
     get classId(): number
     {
         return this._classId;
@@ -24,6 +26,7 @@ export class PresentOpenedMessageEventParser implements IMessageParser
 
     private _productCode: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/PresentOpenedMessageEventParser.as::get productCode()
     get productCode(): string
     {
         return this._productCode;
@@ -31,6 +34,7 @@ export class PresentOpenedMessageEventParser implements IMessageParser
 
     private _placedItemId: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/PresentOpenedMessageEventParser.as::get placedItemId()
     get placedItemId(): number
     {
         return this._placedItemId;
@@ -38,25 +42,31 @@ export class PresentOpenedMessageEventParser implements IMessageParser
 
     private _placedItemType: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/PresentOpenedMessageEventParser.as::get placedItemType()
     get placedItemType(): string
     {
         return this._placedItemType;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/PresentOpenedMessageEventParser.as::_placedInRoom
     private _placedInRoom: boolean = false;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/PresentOpenedMessageEventParser.as::get placedInRoom()
     get placedInRoom(): boolean
     {
         return this._placedInRoom;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/PresentOpenedMessageEventParser.as::_petFigureString
     private _petFigureString: string = '';
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/PresentOpenedMessageEventParser.as::get petFigureString()
     get petFigureString(): string
     {
         return this._petFigureString;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/PresentOpenedMessageEventParser.as::flush()
     flush(): boolean
     {
         this._itemType = '';
@@ -69,6 +79,7 @@ export class PresentOpenedMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/PresentOpenedMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

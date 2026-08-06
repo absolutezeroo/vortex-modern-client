@@ -15,6 +15,7 @@ export class FurniListRemoveMessageParser implements IMessageParser
         return this._itemId;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/furni/FurniListRemoveEventParser.as::flush()
     flush(): boolean
     {
         this._itemId = 0;
@@ -22,6 +23,7 @@ export class FurniListRemoveMessageParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/inventory/furni/FurniListRemoveEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         this._itemId = wrapper.readInt();

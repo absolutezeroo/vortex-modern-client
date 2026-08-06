@@ -43,6 +43,7 @@ export class PartColor implements IPartColor
         return this._id;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::_index
     private _index: number;
 
     // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get index()
@@ -75,6 +76,7 @@ export class PartColor implements IPartColor
         return this._rgb;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::_r
     private _r: number;
 
     // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get r()
@@ -83,6 +85,7 @@ export class PartColor implements IPartColor
         return this._r;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::_g
     private _g: number;
 
     // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get g()
@@ -91,6 +94,7 @@ export class PartColor implements IPartColor
         return this._g;
     }
 
+    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::_b
     private _b: number;
 
     // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get b()

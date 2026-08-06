@@ -40,6 +40,7 @@ import {EnforceCategoryCtrl} from '../roomsettings/EnforceCategoryCtrl';
  */
 export class LegacyNavigator implements IHabboTransitionalNavigator
 {
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::_newNavigator
     private _newNavigator: HabboNewNavigator | null;
     private _oldNavigator: HabboNavigator | null;
     private _fakeMainViewCtrl: FakeMainViewCtrl;
@@ -66,6 +67,7 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
 
     private _roomSettingsCtrl: RoomSettingsCtrl;
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get roomSettingsCtrl()
     get roomSettingsCtrl(): RoomSettingsCtrl
     {
         return this._roomSettingsCtrl;
@@ -73,6 +75,7 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
 
     private _roomInfoViewCtrl: RoomInfoViewCtrl;
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get roomInfoViewCtrl()
     get roomInfoViewCtrl(): RoomInfoViewCtrl
     {
         return this._roomInfoViewCtrl;
@@ -80,13 +83,16 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
 
     private _roomCreateViewCtrl: RoomCreateViewCtrl;
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get roomCreateViewCtrl()
     get roomCreateViewCtrl(): RoomCreateViewCtrl
     {
         return this._roomCreateViewCtrl;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::_passwordInput
     private _passwordInput: GuestRoomPasswordInput;
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get passwordInput()
     get passwordInput(): GuestRoomPasswordInput
     {
         return this._passwordInput;
@@ -94,13 +100,16 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
 
     private _doorbell: GuestRoomDoorbell;
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get doorbell()
     get doorbell(): GuestRoomDoorbell
     {
         return this._doorbell;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::_officialRoomEntryManager
     private _officialRoomEntryManager: OfficialRoomEntryManager;
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get officialRoomEntryManager()
     get officialRoomEntryManager(): OfficialRoomEntryManager
     {
         return this._officialRoomEntryManager;
@@ -108,6 +117,7 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
 
     private _roomEventViewCtrl: RoomEventViewCtrl;
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get roomEventViewCtrl()
     get roomEventViewCtrl(): RoomEventViewCtrl
     {
         return this._roomEventViewCtrl;
@@ -115,6 +125,7 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
 
     private _roomEventInfoCtrl: RoomEventInfoCtrl;
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get roomEventInfoCtrl()
     get roomEventInfoCtrl(): RoomEventInfoCtrl
     {
         return this._roomEventInfoCtrl;
@@ -122,6 +133,7 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
 
     private _roomFilterCtrl: RoomFilterCtrl;
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get roomFilterCtrl()
     get roomFilterCtrl(): RoomFilterCtrl
     {
         return this._roomFilterCtrl;
@@ -129,31 +141,37 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
 
     private _enforceCategoryCtrl: EnforceCategoryCtrl;
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get enforceCategoryCtrl()
     get enforceCategoryCtrl(): EnforceCategoryCtrl
     {
         return this._enforceCategoryCtrl;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get disposed()
     get disposed(): boolean
     {
         return this._oldNavigator === null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get events()
     get events(): EventEmitter
     {
         return this._events;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get assets()
     get assets(): IAssetLibrary | null
     {
         return (this._oldNavigator as unknown as { assets?: IAssetLibrary })?.assets ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get sessionData()
     get sessionData(): ISessionDataManager | null
     {
         return (this._oldNavigator as unknown as { _sessionData?: ISessionDataManager })?._sessionData ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get tabs()
     get tabs(): Tabs
     {
         return this._tabs;
@@ -176,161 +194,193 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
             ?.removeUpdateReceiver?.(receiver);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get windowManager()
     get windowManager(): IHabboWindowManager | null
     {
         return this._newNavigator?.windowManager ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get data()
     get data(): NavigatorData
     {
         return this._oldNavigator!.data;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get mainViewCtrl()
     get mainViewCtrl(): ITransitionalMainViewCtrl
     {
         return this._fakeMainViewCtrl;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get communication()
     get communication(): IHabboCommunicationManager
     {
         return this._oldNavigator!.communication;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get toolbar()
     get toolbar(): IHabboToolbar | null
     {
         return (this._oldNavigator as any)?._toolbar ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get habboHelp()
     get habboHelp(): IHabboHelp | null
     {
         return (this._oldNavigator as any)?.habboHelp ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get roomSessionManager()
     get roomSessionManager(): IRoomSessionManager | null
     {
         return (this._oldNavigator as any)?._roomSessionManager ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get homeRoomId()
     get homeRoomId(): number
     {
         return this._oldNavigator?.homeRoomId ?? 0;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get enteredGuestRoomData()
     get enteredGuestRoomData(): GuestRoomData | null
     {
         return this._oldNavigator?.enteredGuestRoomData ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::get visibleEventCategories()
     get visibleEventCategories(): EventCategory[]
     {
         return this._oldNavigator?.data.visibleEventCategories ?? [];
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::send()
     send(composer: IMessageComposer<unknown[]>): void
     {
         this._oldNavigator?.send(composer);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::getXmlWindow()
     getXmlWindow(xmlFileName: string, style: number = 1): IWindow | null
     {
         return this._oldNavigator?.getXmlWindow(xmlFileName, style) ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::getText()
     getText(key: string): string
     {
         return this._oldNavigator?.getText(key) ?? key;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::registerParameter()
     registerParameter(key: string, param: string, value: string): string
     {
         return this._oldNavigator?.registerParameter(key, param, value) ?? key;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::getButton()
     getButton(assetName: string, stateSuffix: string, callback: (event: WindowEvent, window: IWindow) => void, x: number = 0, y: number = 0, index: number = 0): IWindowContainer | null
     {
         return this._oldNavigator?.getButton(assetName, stateSuffix, callback, x, y, index) ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::refreshButton()
     refreshButton(container: IWindowContainer, name: string, visible: boolean, callback: (event: WindowEvent, window: IWindow) => void, index: number, tooltip: string | null = null): void
     {
         this._oldNavigator?.refreshButton(container, name, visible, callback, index, tooltip);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::getButtonImage()
     getButtonImage(assetName: string, suffix: string = '_png'): unknown | null
     {
         return this._oldNavigator?.getButtonImage(assetName, suffix) ?? null;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::openCatalogClubPage()
     openCatalogClubPage(source: string): void
     {
         this._oldNavigator?.openCatalogClubPage(source);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::openCatalogRoomAdsPage()
     openCatalogRoomAdsPage(): void
     {
         this._oldNavigator?.openCatalogRoomAdsPage();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::openCatalogRoomAdsExtendPage()
     openCatalogRoomAdsExtendPage(eventName: string, eventDesc: string, eventDate: Date, eventCatId: number): void
     {
         this._oldNavigator?.openCatalogRoomAdsExtendPage(eventName, eventDesc, eventDate, eventCatId);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::showFavouriteRooms()
     showFavouriteRooms(): void
     {
         this._newNavigator?.performSearch('favorites');
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::showHistoryRooms()
     showHistoryRooms(): void
     {
         this._newNavigator?.performSearch('history');
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::showFrequentRooms()
     showFrequentRooms(): void
     {
         this._newNavigator?.performSearch('history_freq');
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::goToMainView()
     goToMainView(): void
     {
         this._roomCreateViewCtrl.hide();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::goToRoom()
     goToRoom(roomId: number, closeNavigator: boolean, password: string = '', _roomCategory: number = -1, skipOpc: boolean = false): void
     {
         this._oldNavigator?.goToRoom(roomId, false, password, -1, skipOpc);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::isPerkAllowed()
     isPerkAllowed(perkCode: string): boolean
     {
         return this._oldNavigator?.isPerkAllowed(perkCode) ?? false;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::trackGoogle()
     trackGoogle(category: string, action: string, value: number = -1): void
     {
         this._oldNavigator?.trackGoogle(category, action, value);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::trackNavigationDataPoint()
     trackNavigationDataPoint(category: string, action: string, label: string = '', value: number = 0): void
     {
         this._oldNavigator?.trackNavigationDataPoint(category, action, label, value);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::getBoolean()
     getBoolean(key: string): boolean
     {
         return this._oldNavigator?.getBoolean(key) ?? false;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::getInteger()
     getInteger(key: string, defaultValue: number): number
     {
         return this._oldNavigator?.getInteger(key, defaultValue) ?? defaultValue;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::getProperty()
     getProperty(key: string, params?: Record<string, string>): string
     {
         return this._oldNavigator?.getProperty(key, params) ?? '';
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::goToHomeRoom()
     goToHomeRoom(): boolean
     {
         this._newNavigator?.goToHomeRoom();
@@ -338,51 +388,61 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::performTagSearch()
     performTagSearch(tag: string): void
     {
         this._newNavigator?.performTagSearch(tag);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::performTextSearch()
     performTextSearch(text: string): void
     {
         this._newNavigator?.performTextSearch(text);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::performGuildBaseSearch()
     performGuildBaseSearch(): void
     {
         this._newNavigator?.performSearch('groups');
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::performCompetitionRoomsSearch()
     performCompetitionRoomsSearch(_goalId: number, _pageIndex: number): void
     {
         this._newNavigator?.performSearch('competition');
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::showOwnRooms()
     showOwnRooms(): void
     {
         this._newNavigator?.performSearch('myworld_view');
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::goToPrivateRoom()
     goToPrivateRoom(roomId: number): void
     {
         this._newNavigator?.goToRoom(roomId);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::hasRoomRightsButIsNotOwner()
     hasRoomRightsButIsNotOwner(roomId: number): boolean
     {
         return this._oldNavigator?.hasRoomRightsButIsNotOwner(roomId) ?? false;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::removeRoomRights()
     removeRoomRights(roomId: number): void
     {
         this._oldNavigator?.removeRoomRights(roomId);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::goToRoomNetwork()
     goToRoomNetwork(roomId: number, useHomeRoom: boolean): void
     {
         this._oldNavigator?.goToRoomNetwork(roomId, useHomeRoom);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::startRoomCreation()
     startRoomCreation(): void
     {
         (this._newNavigator as any)?.createRoom?.();
@@ -393,36 +453,43 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
         this._oldNavigator?.createRoom(name, description, model, categoryId, maxUsers, tradeMode);
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::openNavigator()
     openNavigator(): void
     {
         this._newNavigator?.open();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::closeNavigator()
     closeNavigator(): void
     {
         this._newNavigator?.close();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::toggleRoomInfoVisibility()
     toggleRoomInfoVisibility(): void
     {
         this._roomInfoViewCtrl?.toggle();
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::canRateRoom()
     canRateRoom(): boolean
     {
         return this._oldNavigator?.canRateRoom() ?? false;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::isRoomFavorite()
     isRoomFavorite(roomId: number): boolean
     {
         return this._oldNavigator?.isRoomFavorite(roomId) ?? false;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::isRoomHome()
     isRoomHome(roomId: number): boolean
     {
         return this._oldNavigator?.isRoomHome(roomId) ?? false;
     }
 
+    // AS3: sources/win63_version/habbo/navigator/transitional/LegacyNavigator.as::dispose()
     dispose(): void
     {
         this._roomSettingsCtrl.dispose();

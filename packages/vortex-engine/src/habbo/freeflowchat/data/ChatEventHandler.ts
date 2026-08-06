@@ -23,7 +23,9 @@ import {ChatItem} from './ChatItem';
 // CHAT_STYLE_SNOWWAR_RED/BLUE stay declared and dead until that module exists.
 export class ChatEventHandler
 {
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::CHAT_STYLE_SNOWWAR_RED
     public static readonly CHAT_STYLE_SNOWWAR_RED: number = 120;
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::CHAT_STYLE_SNOWWAR_BLUE
     public static readonly CHAT_STYLE_SNOWWAR_BLUE: number = 121;
 
     private _freeFlowChat: IHabboFreeFlowChat | null;
@@ -48,6 +50,7 @@ export class ChatEventHandler
         );
     }
 
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::get disposed()
     get disposed(): boolean
     {
         return this._freeFlowChat === null;
@@ -56,6 +59,7 @@ export class ChatEventHandler
     /**
 	 * Dispose of the handler and remove event listeners.
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -77,6 +81,7 @@ export class ChatEventHandler
 	 *
 	 * @param event The room session chat event
 	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::onRoomChat()
     private onRoomChat(event: RoomSessionChatEvent): void
     {
         if(!this._freeFlowChat) return;

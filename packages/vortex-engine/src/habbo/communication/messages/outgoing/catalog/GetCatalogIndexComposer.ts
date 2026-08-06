@@ -13,6 +13,7 @@ export class GetCatalogIndexComposer extends MessageComposer<ConstructorParamete
         this._data = [catalogType];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/catalog/GetCatalogIndexComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

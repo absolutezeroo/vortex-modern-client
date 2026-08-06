@@ -9,6 +9,7 @@ import {RoomEngineToWidgetEvent} from './RoomEngineToWidgetEvent';
 
 export class RoomEngineAreaHideStateWidgetEvent extends RoomEngineToWidgetEvent
 {
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineAreaHideStateWidgetEvent.as::UPDATE_STATE_AREA_HIDE
     public static readonly UPDATE_STATE_AREA_HIDE = 'RETWE_UPDATE_STATE_AREA_HIDE';
 
     constructor(roomId: number, objectId: number, category: number, isOn: boolean)
@@ -19,6 +20,7 @@ export class RoomEngineAreaHideStateWidgetEvent extends RoomEngineToWidgetEvent
 
     private _isOn: boolean;
 
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineAreaHideStateWidgetEvent.as::get isOn()
     get isOn(): boolean
     {
         return this._isOn;

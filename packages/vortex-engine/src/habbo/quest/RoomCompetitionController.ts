@@ -21,6 +21,7 @@ export class RoomCompetitionController implements IDisposable
         this._engine = engine;
     }
 
+    // AS3: .../src/com/sulake/habbo/quest/RoomCompetitionController.as::_goalCode
     private _goalCode: string = '';
 
     /**
@@ -61,11 +62,13 @@ export class RoomCompetitionController implements IDisposable
         return this._isSubmitMode;
     }
 
+    // AS3: .../src/com/sulake/habbo/quest/RoomCompetitionController.as::_dontShowAgain
     private _dontShowAgain: boolean = false;
 
     /**
 	 * Set whether to suppress competition window display
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/RoomCompetitionController.as::set dontShowAgain()
     set dontShowAgain(value: boolean)
     {
         this._dontShowAgain = value;
@@ -73,6 +76,7 @@ export class RoomCompetitionController implements IDisposable
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/quest/RoomCompetitionController.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -86,6 +90,7 @@ export class RoomCompetitionController implements IDisposable
 	 * @param votesRemaining Number of votes remaining
 	 * @param isAllowed Whether voting is allowed for this user
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/RoomCompetitionController.as::onCompetitionVotingInfo()
     onCompetitionVotingInfo(goalId: number, goalCode: string, votesRemaining: number, isAllowed: boolean): void
     {
         this._goalId = goalId;
@@ -102,6 +107,7 @@ export class RoomCompetitionController implements IDisposable
 	 * @param category The competition category
 	 * @param doorId The door ID
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/RoomCompetitionController.as::onCompetitionEntrySubmitResult()
     onCompetitionEntrySubmitResult(result: number, category: string, doorId: number): void
     {
         log.debug(`Competition entry submit result: result=${result}, category=${category}, doorId=${doorId}`);
@@ -112,6 +118,7 @@ export class RoomCompetitionController implements IDisposable
 	 *
 	 * @param roomId The room ID entered
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/RoomCompetitionController.as::onRoomEnter()
     onRoomEnter(roomId: number): void
     {
         if(!this._dontShowAgain && this._engine)
@@ -123,6 +130,7 @@ export class RoomCompetitionController implements IDisposable
     /**
 	 * Handle room exit
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/RoomCompetitionController.as::onRoomExit()
     onRoomExit(): void
     {
         this._goalCode = '';
@@ -132,6 +140,7 @@ export class RoomCompetitionController implements IDisposable
     /**
 	 * Handle room context changes (furniture added/removed, settings saved)
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/RoomCompetitionController.as::onContextChanged()
     onContextChanged(): void
     {
         log.debug('Room competition: context changed');
@@ -140,6 +149,7 @@ export class RoomCompetitionController implements IDisposable
     /**
 	 * Send the room competition init message
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/RoomCompetitionController.as::sendRoomCompetitionInit()
     sendRoomCompetitionInit(): void
     {
         log.debug('Sending room competition init');
@@ -148,6 +158,7 @@ export class RoomCompetitionController implements IDisposable
     /**
 	 * Dispose of this controller and release resources
 	 */
+    // AS3: .../src/com/sulake/habbo/quest/RoomCompetitionController.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

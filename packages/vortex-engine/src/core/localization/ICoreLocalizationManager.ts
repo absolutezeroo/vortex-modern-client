@@ -44,16 +44,19 @@ export interface ICoreLocalizationManager
     /**
 	 * Load localization data from a URL
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::loadLocalizationFromURL()
     loadLocalizationFromURL(url: string, environmentId: string, acceptEmpty?: boolean): void;
 
     /**
 	 * Check if a localization key exists
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::hasLocalization()
     hasLocalization(key: string): boolean;
 
     /**
 	 * Get a localized string value
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::getLocalization()
     getLocalization(key: string, defaultValue?: string): string;
 
     /**
@@ -64,51 +67,61 @@ export interface ICoreLocalizationManager
     /**
 	 * Update a localization value
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::updateLocalization()
     updateLocalization(key: string, value: string): void;
 
     /**
 	 * Register a parameter for a localization key
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::registerParameter()
     registerParameter(key: string, paramName: string, paramValue: string, paramId?: string): string;
 
     /**
 	 * Get raw localization object
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::getLocalizationRaw()
     getLocalizationRaw(key: string): ILocalization | null;
 
     /**
 	 * Get all localization keys
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::getKeys()
     getKeys(): string[];
 
     /**
 	 * Register a localization definition
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::registerLocalizationDefinition()
     registerLocalizationDefinition(id: string, name: string, url: string, code: string): void;
 
     /**
 	 * Activate a localization definition
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::activateLocalizationDefinition()
     activateLocalizationDefinition(id: string): boolean;
 
     /**
 	 * Get all localization definitions
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::getLocalizationDefinitions()
     getLocalizationDefinitions(): Map<string, ILocalizationDefinition>;
 
     /**
 	 * Get a specific localization definition
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::getLocalizationDefinition()
     getLocalizationDefinition(id: string): ILocalizationDefinition | null;
 
     /**
 	 * Get the currently active localization definition
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::getActiveLocalizationDefinition()
     getActiveLocalizationDefinition(): ILocalizationDefinition | null;
 
     /**
 	 * Print all non-existing keys that were requested
 	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::printNonExistingKeys()
     printNonExistingKeys(): void;
 
     /**

@@ -11,6 +11,7 @@ import {AlertView} from './AlertView';
  */
 export class ClubPromoAlertView extends AlertView
 {
+    // AS3: sources/win63_version/habbo/navigator/ClubPromoAlertView.as::_text
     private _text: string;
     private _promoText: string;
 

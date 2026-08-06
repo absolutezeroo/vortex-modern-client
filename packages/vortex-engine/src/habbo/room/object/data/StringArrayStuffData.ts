@@ -14,6 +14,7 @@ import {StuffDataBase} from './StuffDataBase';
 
 export class StringArrayStuffData extends StuffDataBase implements IStuffData
 {
+    // AS3: .../src/com/sulake/habbo/room/object/data/StringArrayStuffData.as::FORMAT_KEY
     public static readonly FORMAT_KEY = 2;
 
     private _data: string[] = [];
@@ -85,6 +86,7 @@ export class StringArrayStuffData extends StuffDataBase implements IStuffData
         return true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/object/data/StringArrayStuffData.as::getValue()
     getValue(index: number): string
     {
         if(index >= 0 && index < this._data.length)

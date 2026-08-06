@@ -13,17 +13,20 @@ export class SeasonalQuestsMessageEventParser implements IMessageParser
 {
     private _quests: QuestMessageData[] = [];
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/SeasonalQuestsMessageEventParser.as::get quests()
     get quests(): QuestMessageData[]
     {
         return this._quests;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/SeasonalQuestsMessageEventParser.as::flush()
     flush(): boolean
     {
         this._quests = [];
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/quest/SeasonalQuestsMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

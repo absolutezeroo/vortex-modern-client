@@ -8,13 +8,20 @@
  */
 export class FilterMode
 {
+    // AS3: sources/win63_version/habbo/navigator/view/search/class_3893.as::DEFAULT
     static readonly DEFAULT: number = 0;
+    // AS3: sources/win63_version/habbo/navigator/view/search/class_3893.as::OWNER
     static readonly OWNER: number = 1;
+    // AS3: sources/win63_version/habbo/navigator/view/search/class_3893.as::ROOMNAME
     static readonly ROOMNAME: number = 2;
+    // AS3: sources/win63_version/habbo/navigator/view/search/class_3893.as::TAG
     static readonly TAG: number = 3;
+    // AS3: sources/win63_version/habbo/navigator/view/search/class_3893.as::GROUP
     static readonly GROUP: number = 4;
+    // AS3: sources/win63_version/habbo/navigator/view/search/class_3893.as::ANYTHING
     static readonly ANYTHING: number = 5;
 
+    // AS3: sources/win63_version/habbo/navigator/view/search/class_3893.as::FILTER_PREFIX
     static readonly FILTER_PREFIX: string[] = ['', 'owner:', 'roomname:', 'tag:', 'group:', ''];
 
     /**
@@ -23,6 +30,7 @@ export class FilterMode
 	 * @param input - The raw filter string from the search input
 	 * @returns The filter mode index matching a prefix, or DEFAULT (0) if none
 	 */
+    // AS3: sources/win63_version/habbo/navigator/view/search/class_3893.as::filterInInput()
     static filterInInput(input: string): number
     {
         for(let i = 1; i < FilterMode.FILTER_PREFIX.length; i++)

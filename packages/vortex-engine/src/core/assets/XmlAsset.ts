@@ -11,8 +11,10 @@ import type {AssetTypeDeclaration} from './AssetTypeDeclaration';
  */
 export class XmlAsset implements ILazyAsset
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/XmlAsset.as::_unknown
     private _unknown: unknown = null;
     private readonly _declaration: AssetTypeDeclaration;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/assets/XmlAsset.as::_url
     private readonly _url: string;
 
     constructor(declaration: AssetTypeDeclaration, url: string = '')
@@ -21,15 +23,19 @@ export class XmlAsset implements ILazyAsset
         this._url = url;
     }
 
+    // AS3: .../src/com/sulake/core/assets/XmlAsset.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/core/assets/XmlAsset.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/core/assets/XmlAsset.as::_content
     private _content: Document | null = null;
 
+    // AS3: .../src/com/sulake/core/assets/XmlAsset.as::get content()
     get content(): Document | null
     {
         if(!this._content)
@@ -40,16 +46,19 @@ export class XmlAsset implements ILazyAsset
         return this._content;
     }
 
+    // AS3: .../src/com/sulake/core/assets/XmlAsset.as::get url()
     get url(): string
     {
         return this._url;
     }
 
+    // AS3: .../src/com/sulake/core/assets/XmlAsset.as::get declaration()
     get declaration(): AssetTypeDeclaration
     {
         return this._declaration;
     }
 
+    // AS3: .../src/com/sulake/core/assets/XmlAsset.as::dispose()
     dispose(): void
     {
         if(!this._disposed)
@@ -60,12 +69,14 @@ export class XmlAsset implements ILazyAsset
         }
     }
 
+    // AS3: .../src/com/sulake/core/assets/XmlAsset.as::setUnknownContent()
     setUnknownContent(content: unknown): void
     {
         this._content = null;
         this._unknown = content;
     }
 
+    // AS3: .../src/com/sulake/core/assets/XmlAsset.as::prepareLazyContent()
     prepareLazyContent(): void
     {
         if(this._unknown === null)
@@ -111,6 +122,7 @@ export class XmlAsset implements ILazyAsset
         this._unknown = null;
     }
 
+    // AS3: .../src/com/sulake/core/assets/XmlAsset.as::setFromOtherAsset()
     setFromOtherAsset(asset: IAsset): void
     {
         if(asset instanceof XmlAsset)
@@ -122,10 +134,12 @@ export class XmlAsset implements ILazyAsset
         throw new Error('Provided asset is not of type XmlAsset');
     }
 
+    // AS3: .../src/com/sulake/core/assets/XmlAsset.as::setParamsDesc()
     setParamsDesc(_params: Map<string, string>): void
     {
     }
 
+    // AS3: .../src/com/sulake/core/assets/XmlAsset.as::toString()
     toString(): string
     {
         return `[XmlAsset url=${this._url}]`;

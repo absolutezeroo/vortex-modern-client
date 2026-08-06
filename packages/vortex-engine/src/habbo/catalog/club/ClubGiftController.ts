@@ -28,10 +28,12 @@ export class ClubGiftController
 
     private _giftsAvailable: number = 0;
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::_offers
     private _offers: ClubOfferData[] = [];
 
     private _giftData: Map<number, ClubGiftEligibilityData> = new Map();
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::_catalog
     private _catalog: HabboCatalog | null;
 
     private _confirmationDialog: ClubGiftConfirmationDialog | null = null;
@@ -41,6 +43,7 @@ export class ClubGiftController
         this._catalog = catalog;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::dispose()
     dispose(): void
     {
         this._catalog = null;
@@ -48,22 +51,26 @@ export class ClubGiftController
         this._confirmationDialog = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::set widget()
     set widget(widget: ClubGiftWidget)
     {
         this._widget = widget;
         this._catalog?.connection?.send(new GetClubGiftMessageComposer());
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::get daysUntilNextGift()
     get daysUntilNextGift(): number
     {
         return this._daysUntilNextGift;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::get giftsAvailable()
     get giftsAvailable(): number
     {
         return this._giftsAvailable;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::setInfo()
     setInfo(daysUntilNextGift: number, giftsAvailable: number, offers: ClubOfferData[], giftData: Map<number, ClubGiftEligibilityData>): void
     {
         this._daysUntilNextGift = daysUntilNextGift;
@@ -74,12 +81,14 @@ export class ClubGiftController
         this._widget?.update();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::selectGift()
     selectGift(offer: IPurchasableOffer): void
     {
         this.closeConfirmation();
         this._confirmationDialog = new ClubGiftConfirmationDialog(this, offer);
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::confirmSelection()
     confirmSelection(productCode: string): void
     {
         if(!productCode || !this._catalog || !this._catalog.connection) return;
@@ -90,57 +99,68 @@ export class ClubGiftController
         this.closeConfirmation();
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::closeConfirmation()
     closeConfirmation(): void
     {
         this._confirmationDialog?.dispose();
         this._confirmationDialog = null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::getOffers()
     getOffers(): ClubOfferData[]
     {
         return this._offers;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::getGiftData()
     getGiftData(): Map<number, ClubGiftEligibilityData>
     {
         return this._giftData;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::get hasClub()
     get hasClub(): boolean
     {
         return (this._catalog?.getPurse()?.clubDays ?? 0) > 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::get windowManager()
     get windowManager(): IHabboWindowManager | null
     {
         return this._catalog?.windowManager ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::get localization()
     get localization(): IHabboLocalizationManager | null
     {
         return this._catalog?.localization ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::get assets()
     get assets(): IAssetLibrary | null
     {
         return this._catalog?.assets ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::get roomEngine()
     get roomEngine(): IRoomEngine | null
     {
         return this._catalog?.roomEngine ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::getProductData()
     getProductData(localizationId: string): IProductData | null
     {
         return this._catalog?.getProductData(localizationId) ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::get purse()
     get purse(): Purse | null
     {
         return this._catalog?.getPurse() ?? null;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubGiftController.as::get catalog()
     get catalog(): HabboCatalog | null
     {
         return this._catalog;

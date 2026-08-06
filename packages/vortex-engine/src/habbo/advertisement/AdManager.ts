@@ -27,7 +27,9 @@ const log = Logger.getLogger('habbo.advertisement.AdManager');
  */
 export class AdManager extends Component implements IAdManager
 {
+    // AS3: .../src/com/sulake/habbo/advertisement/AdManager.as::_communicationManager
     private _communicationManager: IHabboCommunicationManager | null = null;
+    // AS3: .../src/com/sulake/habbo/advertisement/AdManager.as::_billboardImageLoaders
     private _billboardImageLoaders: Map<string, AdImageRequest[]> = new Map();
     private _interstitialEvent: IMessageEvent | null = null;
 
@@ -59,6 +61,7 @@ export class AdManager extends Component implements IAdManager
     /**
 	 * Request interstitial ad display
 	 */
+    // AS3: .../src/com/sulake/habbo/advertisement/AdManager.as::showInterstitial()
     showInterstitial(): void
     {
         this._communicationManager!.connection!.send(new GetInterstitialMessageComposer());
@@ -67,6 +70,7 @@ export class AdManager extends Component implements IAdManager
     /**
 	 * Load a billboard ad image for a room object
 	 */
+    // AS3: .../src/com/sulake/habbo/advertisement/AdManager.as::loadRoomAdImage()
     loadRoomAdImage(roomId: number, objectId: number, objectCategory: number, imageURL: string, clickURL: string): void
     {
         if(!imageURL || imageURL.length === 0) return;
@@ -94,6 +98,7 @@ export class AdManager extends Component implements IAdManager
         this.loadBillboardImage(imageURL);
     }
 
+    // AS3: .../src/com/sulake/habbo/advertisement/AdManager.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -122,6 +127,7 @@ export class AdManager extends Component implements IAdManager
     /**
 	 * Handle interstitial message from server
 	 */
+    // AS3: .../src/com/sulake/habbo/advertisement/AdManager.as::onInterstitial()
     private onInterstitial(event: IMessageEvent): void
     {
         const parser = event.parser as InterstitialMessageParser;
@@ -169,6 +175,7 @@ export class AdManager extends Component implements IAdManager
     /**
 	 * Billboard image loaded successfully
 	 */
+    // AS3: .../src/com/sulake/habbo/advertisement/AdManager.as::onBillboardImageReady()
     private onBillboardImageReady(imageURL: string): void
     {
         const requests = this._billboardImageLoaders.get(imageURL);
@@ -192,6 +199,7 @@ export class AdManager extends Component implements IAdManager
     /**
 	 * Billboard image failed to load
 	 */
+    // AS3: .../src/com/sulake/habbo/advertisement/AdManager.as::onBillboardImageLoadError()
     private onBillboardImageLoadError(imageURL: string): void
     {
         const requests = this._billboardImageLoaders.get(imageURL);

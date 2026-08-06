@@ -99,6 +99,7 @@ export class AvatarView extends Sprite
      *
      * Resets the selection on every call — the guard below only protects the construction.
      */
+    // AS3: .../src/login/AvatarView.as::init()
     public init(): void
     {
         this._selectedIndex = 0;
@@ -181,6 +182,7 @@ export class AvatarView extends Sprite
      *
      * Seven at most — AS3 breaks on `index > 6`.
      */
+    // AS3: .../src/login/AvatarView.as::populateAvatars()
     public populateAvatars(avatars: AvatarData[]): void
     {
         // TS-only: AS3 empties the array and leaves the sprites on the display list, which is
@@ -279,6 +281,7 @@ export class AvatarView extends Sprite
      * Against a local web API there is no imaging endpoint to hit, so AS3 falls back to
      * habbo.com's and renders the figure string instead of the user name.
      */
+    // AS3: .../src/login/AvatarView.as::getAvatarUrl()
     private getAvatarUrl(avatar: AvatarData): string
     {
         let url = `${this._baseUrl}/habbo-imaging/avatarimage?user=${avatar.name}`;
@@ -308,6 +311,7 @@ export class AvatarView extends Sprite
      *
      * The glow sits centred on the avatar, the halo below its feet.
      */
+    // AS3: .../src/login/AvatarView.as::hilightAvatar()
     private hilightAvatar(target: DisplayObject | null): void
     {
         if(!target || !this._avatarGlow || !this._avatarHalo) return;

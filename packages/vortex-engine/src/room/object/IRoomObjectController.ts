@@ -14,21 +14,30 @@ import type {IRoomObjectVisualization} from './visualization/IRoomObjectVisualiz
 
 export interface IRoomObjectController extends IRoomObject
 {
+    // AS3: .../src/com/sulake/room/object/IRoomObjectController.as::dispose()
     dispose(): void;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObjectController.as::setInitialized()
     setInitialized(value: boolean): void;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObjectController.as::setLocation()
     setLocation(location: IVector3d): void;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObjectController.as::setDirection()
     setDirection(direction: IVector3d): void;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObjectController.as::setVisualization()
     setVisualization(visualization: IRoomObjectVisualization | null): void;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObjectController.as::setState()
     setState(state: number, index: number): boolean;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObjectController.as::setEventHandler()
     setEventHandler(handler: IRoomObjectEventHandler | null): void;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObjectController.as::getEventHandler()
     getEventHandler(): IRoomObjectEventHandler | null;
 
+    // AS3: .../src/com/sulake/room/object/IRoomObjectController.as::getModelController()
     getModelController(): IRoomObjectModelController;
 }

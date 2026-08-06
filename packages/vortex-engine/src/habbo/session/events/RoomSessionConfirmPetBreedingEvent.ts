@@ -15,6 +15,7 @@ import type {
  */
 export class RoomSessionConfirmPetBreedingEvent extends RoomSessionEvent
 {
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingEvent.as::CONFIRM_PET_BREEDING
     public static readonly CONFIRM_PET_BREEDING = 'RSPFUE_CONFIRM_PET_BREEDING';
 
     constructor(session: IRoomSession, nestId: number, pet1: BreedingPetInfo | null, pet2: BreedingPetInfo | null, rarityCategories: PetBreedingRarityCategory[], resultPetTypeId: number)
@@ -29,27 +30,34 @@ export class RoomSessionConfirmPetBreedingEvent extends RoomSessionEvent
 
     private _nestId: number;
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingEvent.as::get nestId()
     get nestId(): number
     {
         return this._nestId;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingEvent.as::_pet1
     private _pet1: BreedingPetInfo | null;
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingEvent.as::get pet1()
     get pet1(): BreedingPetInfo | null
     {
         return this._pet1;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingEvent.as::_pet2
     private _pet2: BreedingPetInfo | null;
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingEvent.as::get pet2()
     get pet2(): BreedingPetInfo | null
     {
         return this._pet2;
     }
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingEvent.as::_rarityCategories
     private _rarityCategories: PetBreedingRarityCategory[];
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingEvent.as::get rarityCategories()
     get rarityCategories(): PetBreedingRarityCategory[]
     {
         return this._rarityCategories;
@@ -57,6 +65,7 @@ export class RoomSessionConfirmPetBreedingEvent extends RoomSessionEvent
 
     private _resultPetTypeId: number;
 
+    // AS3: .../src/com/sulake/habbo/session/events/RoomSessionConfirmPetBreedingEvent.as::get resultPetTypeId()
     get resultPetTypeId(): number
     {
         return this._resultPetTypeId;

@@ -14,8 +14,10 @@ import {StuffDataBase} from './StuffDataBase';
 
 export class LegacyStuffData extends StuffDataBase implements IStuffData
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/LegacyStuffData.as::FORMAT_KEY
     public static readonly FORMAT_KEY = 0;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/LegacyStuffData.as::_data
     private _data: string = '';
 
     override initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void
@@ -47,6 +49,7 @@ export class LegacyStuffData extends StuffDataBase implements IStuffData
         return this._data === data.getLegacyString();
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/data/LegacyStuffData.as::setString()
     setString(value: string): void
     {
         this._data = value;

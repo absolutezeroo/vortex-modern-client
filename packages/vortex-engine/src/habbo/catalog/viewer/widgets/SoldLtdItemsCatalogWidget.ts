@@ -13,6 +13,7 @@ import {CatalogWidget} from './CatalogWidget';
  */
 export class SoldLtdItemsCatalogWidget extends CatalogWidget
 {
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/SoldLtdItemsCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
     constructor(window: IWindowContainer, catalog: HabboCatalog)

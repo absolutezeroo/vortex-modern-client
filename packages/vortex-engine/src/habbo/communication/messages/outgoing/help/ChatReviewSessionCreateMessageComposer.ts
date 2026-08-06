@@ -15,6 +15,7 @@ export class ChatReviewSessionCreateMessageComposer extends MessageComposer<Cons
         this._data = [roomId, reportedUserId];
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/ChatReviewSessionCreateMessageComposer.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

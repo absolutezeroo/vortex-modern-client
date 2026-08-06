@@ -15,17 +15,21 @@ export class LegacyWallGeometry
     private static readonly L = 'l';
     private static readonly R = 'r';
     private _heightMap: number[][] = [];
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::_width
     private _width: number = 0;
     private _height: number = 0;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::_floorHeight
     private _floorHeight: number = 0;
 
     private _scale: number = 64;
 
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::get scale()
     get scale(): number
     {
         return this._scale;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::set scale()
     set scale(value: number)
     {
         this._scale = value;
@@ -33,6 +37,7 @@ export class LegacyWallGeometry
 
     private _disposed: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -42,6 +47,7 @@ export class LegacyWallGeometry
 	 * Initialize height map grid.
 	 * Based on AS3 LegacyWallGeometry.initialize()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::initialize()
     initialize(width: number, height: number, floorHeight: number): void
     {
         if(width <= this._width && height <= this._height)
@@ -75,6 +81,7 @@ export class LegacyWallGeometry
 	 * Set tile height at position.
 	 * Based on AS3 LegacyWallGeometry._Str_3982()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::setTileHeight()
     setTileHeight(x: number, y: number, height: number): boolean
     {
         if(x < 0 || x >= this._width || y < 0 || y >= this._height)
@@ -97,6 +104,7 @@ export class LegacyWallGeometry
 	 * Get tile height at position.
 	 * Based on AS3 LegacyWallGeometry.getTileHeight()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::getTileHeight()
     getTileHeight(x: number, y: number): number
     {
         if(x < 0 || x >= this._width || y < 0 || y >= this._height)
@@ -118,6 +126,7 @@ export class LegacyWallGeometry
 	 * @param localY - Local pixel Y offset (vertical) within wall tile
 	 * @param dir - Direction: 'l' (left wall) or 'r' (right wall)
 	 */
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::getLocation()
     getLocation(wallX: number, wallY: number, localX: number, localY: number, dir: string): IVector3d
     {
         // WIN63's getLocation (_SafeCls_1855.as:129-148) is the 15-line world conversion
@@ -151,6 +160,7 @@ export class LegacyWallGeometry
 	 * Get direction angle from direction string.
 	 * Based on AS3 LegacyWallGeometry.getDirection()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::getDirection()
     getDirection(dir: string): number
     {
         if(dir === LegacyWallGeometry.R)
@@ -165,6 +175,7 @@ export class LegacyWallGeometry
 	 * Get floor altitude with half-step adjustment.
 	 * Based on AS3 LegacyWallGeometry.getFloorAltitude()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::getFloorAltitude()
     getFloorAltitude(x: number, y: number): number
     {
         // AS3 truncates every height to int before comparing (`var _loc4_:int = ...`,
@@ -193,6 +204,7 @@ export class LegacyWallGeometry
 	 * Check if position is a valid room tile.
 	 * Based on AS3 LegacyWallGeometry.isRoomTile()
 	 */
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::isRoomTile()
     isRoomTile(x: number, y: number): boolean
     {
         return x >= 0 && x < this._width
@@ -326,12 +338,14 @@ export class LegacyWallGeometry
         return ':w=' + wallX + ',' + wallY + ' l=' + localX + ',' + localY + ' ' + side;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::dispose()
     dispose(): void
     {
         this.reset();
         this._disposed = true;
     }
 
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::reset()
     private reset(): void
     {
         this._heightMap = [];

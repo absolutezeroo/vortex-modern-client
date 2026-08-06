@@ -152,6 +152,7 @@ export class Vortex implements IVortex
 	 *
 	 * @see sources/win63_2021_version/HabboAir.as _loadingScreen
 	 */
+    // AS3: .../src/binaryData/HabboAir.as::_loadingScreen
     private _loadingScreen: IVortexLoadingScreen | null = null;
 
     /**
@@ -239,6 +240,7 @@ export class Vortex implements IVortex
         return this._application;
     }
 
+    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::get communication()
     get communication(): ICoreCommunicationManager
     {
         return this.context.queueInterface(IID_CoreCommunicationManager)!;
@@ -307,11 +309,13 @@ export class Vortex implements IVortex
         return this._habboMain!.catalog;
     }
 
+    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::get localization()
     get localization(): IHabboLocalizationManager
     {
         return this._habboMain!.localization;
     }
 
+    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::get windowManager()
     get windowManager(): IHabboWindowManager
     {
         return this._habboMain!.windowManager;
@@ -363,6 +367,7 @@ export class Vortex implements IVortex
 	 *
 	 * @see sources/win63_2021_version/HabboAir.as trackLoginStep()
 	 */
+    // AS3: .../src/binaryData/HabboAir.as::trackLoginStep()
     public static trackLoginStep(step: string, extra?: string): void
     {
         const message = extra ? `${step} (${extra})` : step;
@@ -380,6 +385,7 @@ export class Vortex implements IVortex
 	 *
 	 * @see sources/win63_2021_version/HabboAir.as reportCrash()
 	 */
+    // AS3: .../src/binaryData/HabboAir.as::reportCrash()
     public static reportCrash(message: string, category: string, isFatal: boolean, error?: Error): void
     {
         const report: ICrashReport = {
@@ -464,6 +470,7 @@ export class Vortex implements IVortex
 	 *
 	 * @see sources/win63_2021_version/HabboAir.as dispose()
 	 */
+    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;
@@ -585,6 +592,7 @@ export class Vortex implements IVortex
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as unloading()
 	 */
+    // AS3: .../src/binaryData/HabboAir.as::unloading()
     unloading(): void
     {
         try

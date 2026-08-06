@@ -30,6 +30,7 @@ export class RoomWidgetFurniActionMessage extends RoomWidgetMessage
 
     private _furniId: number;
     private _furniCategory: number;
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetFurniActionMessage.as::_offerId
     private _offerId: number;
     private _objectData: string | null;
 
@@ -43,21 +44,25 @@ export class RoomWidgetFurniActionMessage extends RoomWidgetMessage
         this._objectData = objectData;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetFurniActionMessage.as::get furniId()
     public get furniId(): number
     {
         return this._furniId;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetFurniActionMessage.as::get furniCategory()
     public get furniCategory(): number
     {
         return this._furniCategory;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetFurniActionMessage.as::get objectData()
     public get objectData(): string | null
     {
         return this._objectData;
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetFurniActionMessage.as::get offerId()
     public get offerId(): number
     {
         return this._offerId;

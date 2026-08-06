@@ -15,9 +15,11 @@ import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class RoomUserCountWidget implements IRoomUserCountWidget
 {
+    // AS3: sources/win63_version/habbo/window/widgets/RoomUserCountWidget.as::TYPE
     public static readonly TYPE: string = 'room_user_count';
 
     private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/RoomUserCountWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
 
@@ -40,6 +42,7 @@ export class RoomUserCountWidget implements IRoomUserCountWidget
 
     private _disposed: boolean = false;
 
+    // AS3: sources/win63_version/habbo/window/widgets/RoomUserCountWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -52,21 +55,25 @@ export class RoomUserCountWidget implements IRoomUserCountWidget
         return this._userCount;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RoomUserCountWidget.as::set userCount()
     public set userCount(value: number)
     {
         this._userCount = value;
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RoomUserCountWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         return [];
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RoomUserCountWidget.as::set properties()
     public set properties(_values: PropertyStruct[])
     {
         // AS3: properties setter is a no-op for this widget
     }
 
+    // AS3: sources/win63_version/habbo/window/widgets/RoomUserCountWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

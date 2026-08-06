@@ -7,20 +7,24 @@ import {ClubBuyOfferData} from '@habbo/catalog/club/ClubBuyOfferData';
  */
 export class HabboClubOffersMessageEventParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/HabboClubOffersMessageEventParser.as::_offers
     private _offers: ClubBuyOfferData[] = [];
 
     private _source: number = 0;
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/HabboClubOffersMessageEventParser.as::get offers()
     get offers(): ClubBuyOfferData[]
     {
         return this._offers;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/HabboClubOffersMessageEventParser.as::get source()
     get source(): number
     {
         return this._source;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/HabboClubOffersMessageEventParser.as::flush()
     flush(): boolean
     {
         this._offers = [];
@@ -28,6 +32,7 @@ export class HabboClubOffersMessageEventParser implements IMessageParser
         return true;
     }
 
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/HabboClubOffersMessageEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;
