@@ -684,6 +684,33 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **Trading, slice 3: the hover tooltip — `ItemPopupCtrl`**, 2026-08-06.
+  - **Ported from the 370-line AS3**: one window re-parented under whichever thumb is hovered,
+    the 250 ms open / 100 ms close delays, the left/right placement with the arrow pointing back
+    at the cell, the limited-item serial overlay, and the three content shapes (product previewer,
+    external image, plain bitmap). `HabboInventory.getItemImage()` came with it — the large
+    direction-180 scale-64 render the tooltip shows, which is a different request from the small
+    grid icon.
+  - **The hover half of `TradingView.thumbEventProc()` is now real**, including the credits tile's
+    own text and icon, the poster and Ecotron-box name rules, and AS3's own
+    `isExternalImagetype()` helper.
+  - ⚠️ **The arrow assets are the `_png` trap again.** AS3 asks for `popup_arrow_right_png`; this
+    port registers images under the bare basename, so the suffixed lookup would have returned null
+    and the tooltip would have had no pointer, silently. Noted at the lookup — see
+    `project_asset_name_no_png_suffix`.
+  - **Two deliberate deviations, both noted at the line**: AS3 *crops* an oversized picture into a
+    new 180x200 BitmapData (and *scales* an external one through a Matrix); here the bitmap is set
+    as it is and the window clamped to the same maxima. Identical for every image under the cap,
+    which is every inventory icon.
+  - **Verified in a browser**: the constructor throws on a null window or asset library as AS3
+    does and starts hidden; a plain item sets the name, centres its picture and drives the serial
+    overlay from the stuff data (12/100, hidden again at 0); placement is exact — RIGHT lands at
+    `parent.width + BOUNDS_MARGIN` with the arrow at `-arrow.width + 1`, LEFT mirrors it; and the
+    delays fire at 250 ms and 100 ms.
+  - **Still out on trading**: `namescam/` (5 files), the NFT half (waits on
+    `habbo/inventory/collectibles`), and the Trax song title in the tooltip (waits on the sound
+    manager's music controller).
+
 - ✅ **Trading, slice 2: the trade window, and the map that had nowhere to host it**, 2026-08-06.
   - **`TradingView` ported (1,053 l. of AS3)** and owned by the model, as in AS3: both windows
     (normal + minimised), the two grids with their per-cell ids, the accept/cancel pair driven by
@@ -789,9 +816,9 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     in `Headers.cs`. The two fragment fixes are verified against the AS3 helper and by typecheck,
     not against a live multi-fragment session.
   - **What the sweep leaves open, in order of product weight:**
-    - **Trading landed 2026-08-06** (both entries above): the twelve answers are subscribed,
-      `TradingModel` is faithful and `TradingView` is ported and hosted. What remains is
-      `ItemPopupCtrl` (370 l., shared with other tabs), `namescam/` (5 files) and the NFT half.
+    - **Trading landed 2026-08-06** (three entries above): messages, model, window and tooltip.
+      What remains is `namescam/` (5 files), the NFT half (waits on `habbo/inventory/collectibles`)
+      and the Trax song title (waits on the sound manager).
     - **Inventory, the rest of the 35:** collectibles (no module), bots add/remove, post-it
       placed, not-enough-credits, badge point limits, `onUserBadges`, marketplace (4 handlers, and
       `inventory/marketplace/` is an empty directory here).

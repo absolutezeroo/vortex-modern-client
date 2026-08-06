@@ -118,6 +118,9 @@ import type {FurniListRemoveMultipleMessageParser} from '../communication/messag
 import type {FurniListItemParser} from '../communication/messages/parser/inventory/furni/FurniListItemParser';
 import type {IFurnitureItemData} from './items/FurnitureItemData';
 import {FurnitureItem} from './items/FurnitureItem';
+import type {IFurnitureItem} from './items/IFurnitureItem';
+import type {IGetImageListener} from '@habbo/room/IGetImageListener';
+import {Vector3d} from '@room/utils/Vector3d';
 import {ScrSendUserInfoEvent} from '../communication/messages/incoming/users/ScrSendUserInfoEvent';
 import type {ScrSendUserInfoMessageParser} from '../communication/messages/parser/users/ScrSendUserInfoMessageParser';
 import {AvatarEffectsMessageEvent} from '../communication/messages/incoming/inventory/AvatarEffectsMessageEvent';
@@ -807,6 +810,47 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     updateSubView(): void
     {
         this._view.updateSubCategoryView();
+    }
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getItemImage()
+     *
+     * The big picture the hover tooltip shows — direction 180, scale 64, which is a different
+     * request from the small grid icon `GroupItem` asks for.
+     *
+     * AS3 returns `ImageResult.data` directly and so does this: a miss returns null and the
+     * tooltip shows no picture, exactly as AS3's `null` BitmapData would. The listener AS3 passes
+     * is null too, so nothing is repainted when a late image arrives.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getItemImage()
+    getItemImage(item: IFurnitureItem): ImageBitmap | null
+    {
+        if(!this._roomEngine) return null;
+
+        const direction = new Vector3d(180, 0, 0);
+
+        const result = !item.isWallItem
+            ? this._roomEngine.getFurnitureImage(
+                item.type,
+                direction,
+                64,
+                null as unknown as IGetImageListener,
+                0,
+                String(item.extra),
+                -1,
+                -1,
+                item.stuffData
+            )
+            : this._roomEngine.getWallItemImage(
+                item.type,
+                direction,
+                64,
+                null as unknown as IGetImageListener,
+                0,
+                item.stuffData?.getLegacyString() ?? ''
+            );
+
+        return result?.data ?? null;
     }
 
     // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::updateUnseenItemCounts()

@@ -16,6 +16,10 @@ import type {GroupItem} from '../items/GroupItem';
 import type {OrderedMap} from '@core/utils/OrderedMap';
 import {TradingState} from './TradingState';
 import {Util} from '../Util';
+import {ItemPopupCtrl} from '../ItemPopupCtrl';
+import type {HabboInventory} from '../HabboInventory';
+import {CreditTradingItem} from '../items/CreditTradingItem';
+import {FurnitureCategory} from '../enum';
 import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('habbo.inventory.trading.TradingView');
@@ -24,10 +28,8 @@ const log = Logger.getLogger('habbo.inventory.trading.TradingView');
  * The trade window: two item grids, the accept/cancel pair, the countdown, the silver-fee row and
  * the per-side notices.
  *
- * Two AS3 dependencies are deliberately left out of this slice, both marked `TODO(AS3)` where they
- * belong: `ItemPopupCtrl` (the hover tooltip, 370 l. of its own and shared with the furni and
- * collectibles views) and the sound manager it needs to name a Trax disc. Clicking a thumb to take
- * it back out of the trade — the other half of `thumbEventProc` — works.
+ * One AS3 dependency is still out, marked `TODO(AS3)` where it belongs: the sound manager, which
+ * names a Trax disc in the hover tooltip. Everything else, tooltip included, is here.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/trading/TradingView.as
  */
@@ -84,9 +86,14 @@ export class TradingView implements IInventoryView
     // AS3: .../TradingView.as::_minimized
     private _minimized: boolean = false;
 
+    // AS3: .../TradingView.as::_itemPopup
+    private _itemPopup: ItemPopupCtrl | null = null;
+
     // AS3: .../TradingView.as::TradingView()
-    // TODO(AS3): AS3 also builds `item_popup_xml` into an `ItemPopupCtrl` here and subscribes the
-    // sound manager's `SIR_TRAX_SONG_INFO_RECEIVED`. Neither is ported; see the class note.
+    // AS3 builds `item_popup_xml` into an `ItemPopupCtrl` here, hidden, and subscribes the sound
+    // manager's `SIR_TRAX_SONG_INFO_RECEIVED`.
+    // TODO(AS3): that subscription, and the `getTraxSongFurniName()` path it feeds, wait on the
+    // sound manager — a Trax disc shows its furniture name instead of its song title.
     constructor(
         model: TradingModel,
         windowManager: IHabboWindowManager | null,
@@ -99,6 +106,17 @@ export class TradingView implements IInventoryView
         this._assets = assets;
         this._localization = localization;
         this._visible = false;
+
+        const popupWindow = windowManager?.buildWidgetLayout('item_popup_xml') as IWindowContainer | null;
+
+        if(popupWindow !== null && popupWindow !== undefined && assets !== null)
+        {
+            this._itemPopup = new ItemPopupCtrl(popupWindow, assets, windowManager, model.getInventory());
+        }
+        else
+        {
+            log.warn('item_popup_xml did not build — trade thumbs will have no tooltip');
+        }
     }
 
     // AS3: .../TradingView.as::updateItemsGrid()
@@ -954,13 +972,12 @@ export class TradingView implements IInventoryView
      * AS3: .../TradingView.as::thumbEventProc()
      *
      * Clicking one of *your* tiles takes it back out of the trade; the id carried by the cell is
-     * the index the model expects, counting across the furniture list into the NFT one.
+     * the index the model expects, counting across the furniture list into the NFT one. Hovering
+     * either side's tile opens the tooltip beside it.
      *
-     * TODO(AS3): the `WME_OVER`/`WME_OUT` half drives `ItemPopupCtrl` — the hover tooltip with the
-     * item's name, icon, serial number and, for a Trax disc, its song title from the sound
-     * manager. Neither the popup controller nor the sound manager is ported, so hovering does
-     * nothing yet. AS3's version is `static` and takes both sides' maps as parameters because the
-     * collectibles view calls it too; that shape is worth restoring with the popup.
+     * AS3's version is `static` and takes both sides' maps as parameters because the collectibles
+     * view calls it too. That view is unported, so this is an instance method reading the model
+     * directly; the shape is worth restoring when collectibles lands.
      */
     private thumbEventProc(event: WindowEvent, window: IWindow, isOwnUser: boolean): void
     {
@@ -968,6 +985,98 @@ export class TradingView implements IInventoryView
         {
             this._model?.requestRemoveItemFromTrading(window.id);
         }
+
+        if(event.type === 'WME_OUT')
+        {
+            this._itemPopup?.hideDelayed();
+
+            return;
+        }
+
+        if(event.type !== 'WME_OVER' || this._model === null || this._itemPopup === null) return;
+
+        const items = isOwnUser ? this._model.ownUserItems : this._model.otherUserItems;
+        const furnitureCount = items?.length ?? 0;
+
+        // Past the furniture count the id addresses the NFT list.
+        // TODO(AS3): AS3 reads the `CollectibleGroupedItem` there and shows the collector-hub
+        // product name through the popup's product previewer. `habbo/inventory/collectibles` is
+        // unported, so an NFT tile has no tooltip.
+        if(window.id >= furnitureCount) return;
+
+        const groupItem = items?.getWithIndex(window.id) ?? null;
+
+        if(groupItem === null) return;
+
+        // The credits tile carries its own text and icon rather than resolving furni data.
+        if(groupItem instanceof CreditTradingItem)
+        {
+            if(!isOwnUser)
+            {
+                this._itemPopup.updateContent(
+                    window as unknown as IWindowContainer,
+                    groupItem.getItemTooltipText(),
+                    groupItem.getItemIcon(),
+                    null,
+                    null,
+                    ItemPopupCtrl.LOCATION_RIGHT,
+                    false
+                );
+                this._itemPopup.show();
+            }
+
+            return;
+        }
+
+        const item = groupItem.peek();
+
+        if(item === null) return;
+
+        const inventory = this._model.getInventory();
+        const image = inventory?.getItemImage(item) ?? null;
+        let name = item.isWallItem
+            ? `\${wallItem.name.${item.type}}`
+            : `\${roomItem.name.${item.type}}`;
+
+        if(item.category === FurnitureCategory.POSTER)
+        {
+            name = `\${poster_${item.stuffData?.getLegacyString() ?? ''}_name}`;
+        }
+
+        // An Ecotron box shows its name with the date it was made.
+        if(item.category === FurnitureCategory.ECOTRON_BOX)
+        {
+            const created = new Date(item.creationYear, item.creationMonth - 1, item.creationDay);
+
+            name = `${this._localization?.getLocalization(`roomItem.name.${item.type}`) ?? ''} `
+                + created.toLocaleDateString();
+        }
+
+        // TODO(AS3): category 8 (a Trax disc) resolves its song title through
+        // `getTraxSongFurniName()` and the sound manager's music controller, which is unported —
+        // the disc shows its furniture name instead.
+
+        this._itemPopup.updateContent(
+            window as unknown as IWindowContainer,
+            name,
+            image,
+            null,
+            item.stuffData,
+            ItemPopupCtrl.LOCATION_RIGHT,
+            TradingView.isExternalImageType(inventory, item.type)
+        );
+        this._itemPopup.show();
+    }
+
+    // AS3: .../TradingView.as::isExternalImagetype()
+    // AS3's own static helper — the flag lives on the furniture data, not on the item.
+    private static isExternalImageType(inventory: HabboInventory | null, type: number): boolean
+    {
+        if(inventory === null) return false;
+
+        const furnitureData = inventory.getFurnitureData(type, 'i');
+
+        return furnitureData !== null && furnitureData.isExternalImageType;
     }
 
     // AS3: .../TradingView.as::get silverFeeContainer()
@@ -994,6 +1103,9 @@ export class TradingView implements IInventoryView
         }
 
         this.cancelConfirmCountdown();
+
+        this._itemPopup?.dispose();
+        this._itemPopup = null;
 
         this._model = null;
         this._windowManager = null;
