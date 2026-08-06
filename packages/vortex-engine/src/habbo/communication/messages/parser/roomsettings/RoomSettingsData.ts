@@ -58,6 +58,23 @@ export class RoomSettingsData
     controllersById: Map<number, RoomSettingsController> = new Map();
     bannedUsersById: Map<number, RoomSettingsBannedUser> = new Map();
 
+    /**
+     * One-shot latches for the two lists that are fetched lazily when their tab is first shown.
+     *
+     * AS3 carries this state in the dictionaries themselves: `controllersById`/`bannedUsersById`
+     * start null, and `refreshFlatControllers()`/`refreshBannedUsers()` assign an empty
+     * `Dictionary` right before sending the request, so the request fires once per settings
+     * dialog. These maps are non-null from construction, so the "not requested yet" state has to
+     * live somewhere — without it, a room with zero controllers (or zero bans) answers with an
+     * empty list, the list stays empty, and the refresh triggered by the answer asks again, in a
+     * loop, until the server rate-limits the session.
+     */
+    // TS-only: no AS3 counterpart; stands in for the null-vs-empty `Dictionary` state above.
+    controllersRequested: boolean = false;
+
+    // TS-only: no AS3 counterpart; stands in for the null-vs-empty `Dictionary` state above.
+    bannedUsersRequested: boolean = false;
+
     private _controllerListDirty: boolean = true;
     private _controllerList: RoomSettingsController[] | null = null;
     private _bannedListDirty: boolean = true;

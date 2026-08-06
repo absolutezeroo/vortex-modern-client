@@ -939,8 +939,9 @@ export class RoomSettingsCtrl
 
         let controllers: IRoomSettingsUserData[];
 
-        if(this._originalData.controllersById.size === 0 && this._originalData.controllerList.length === 0)
+        if(!this._originalData.controllersRequested)
         {
+            this._originalData.controllersRequested = true;
             this._navigator.send(new GetFlatControllersMessageComposer(this._originalData.roomId));
             controllers = [];
         }
@@ -984,8 +985,9 @@ export class RoomSettingsCtrl
 
         let banned: IRoomSettingsUserData[];
 
-        if(this._originalData.bannedUsersById.size === 0 && this._originalData.bannedUsersList.length === 0)
+        if(!this._originalData.bannedUsersRequested)
         {
+            this._originalData.bannedUsersRequested = true;
             this._navigator.send(new GetBannedUsersFromRoomMessageComposer(this._originalData.roomId));
             banned = [];
         }
