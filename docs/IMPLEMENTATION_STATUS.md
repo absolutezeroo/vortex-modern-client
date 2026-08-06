@@ -242,10 +242,10 @@ Re-ranked **2026-08-03**, biggest product gap first.
    (`HabboGameManager`, `IncomingMessages`, `events/`, 2 obfuscated), and the rest is one large
    self-contained minigame, not infrastructure anything else waits on. Size it accordingly.
    `nux` (4/4), `phonenumber` (7/7) and `userclassification` (1/1) left this list on 2026-08-05.
-   `habbo/sound` left it on 2026-08-02 at 10/29 — effects play. `music/` was opened on 2026-08-06
-   with `HabboMusicController` (the metadata/priority spine, see Recent Work); what remains there
-   is the two play-list controllers (710 l.), plus `trax/` (1495 l.) and `furni/` (206 l.) — the
-   jukebox play lists, the Trax sequencer and furniture samples.
+   `habbo/sound` left it on 2026-08-02 at 10/29 — effects play. **`music/` was completed on
+   2026-08-06** (controller + both play-list controllers, see Recent Work); what remains in
+   `habbo/sound` is `trax/` (1495 l., the sequencer — the last thing between the music module and
+   audible playback) and `furni/` (206 l., furniture samples).
 4. **Protocol batches, in gap order**: `game`, `users`, `collectibles`, `catalog`, `room`,
    `inventory`, `groupforums`. Read the naming caveat in the message section before trusting any
    per-category count.
@@ -684,6 +684,35 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 ---
 
 ## Recent Work Recorded
+
+- ✅ **`habbo/sound/music` finished: both play-list controllers**, 2026-08-06.
+  - **`JukeboxPlayListController` (281 l.) and `SoundMachinePlayListController` (429 l.)**, built
+    and disposed by the music controller on the room's own furniture events — the `TODO(AS3)`s the
+    previous entry left. `IPlayListController` was already declared and, like the music controller
+    before it, had nothing constructing it.
+  - **Seven more messages**: `NowPlaying` (398), `JukeboxSongDisks` (2257), `JukeboxPlayListFull`
+    (949), `PlayList` (1242), `PlayListSongAdded` (2785), `GetNowPlaying` (3707) and
+    `GetSoundMachinePlayList` (3633), plus `PlayListStatusEvent`.
+  - 🐛 **Two more decompiler-corrupted loops, repaired against an intact sibling.**
+    `PlayListMessageEventParser` has both `while(0 < count)` with an untested counter *and*
+    `new class_3136(0, 0, null, null)` — the four values it just read thrown away.
+    `PlayListSongAddedMessageEventParser` reads the same four fields and is undamaged, which is
+    what fixes the order: id, length, name, creator. `JukeboxSongDisksMessageEventParser` has the
+    same untested-counter shape. Third time this pattern has appeared (see the badges parser).
+  - **The two controllers differ in who drives them, and it shows.** The jukebox is told what is
+    playing and how far in — `syncCount` in milliseconds, handed to `playSong()` as seconds — and
+    only *requests* the next song so its samples are ready. The sound machine picks its own next
+    track, wrapping at the end, and resolves a room's position by walking the list subtracting
+    each song's length until the offset falls inside one.
+  - **Verified in a browser**: all four headers resolve; the repaired parser reads three entries
+    leaving no bytes; **90 000 ms into a 135 000 ms list lands inside the second track with a
+    30-second play-head**; the next-entry scan wraps 13 → 11 and steps 11 → 12; an empty list is
+    ignored rather than replacing a good one; the jukebox's now-playing sets its state and emits
+    `NPE_SONG_CHANGED` on the *sound manager's* bus at priority 0, and a current song of -1 stops
+    it; a disc whose song is unknown becomes a placeholder entry (length -1) and is requested; and
+    the room events build a jukebox controller, then a sound-machine one, then null it on dispose.
+  - **`music/` is now complete except what needs the sequencer** — `trax/` (1,495 l.) is the last
+    dependency between this module and audible playback.
 
 - ✅ **`habbo/sound/music` opened: `HabboMusicController`, and the Trax title that needed it**,
   2026-08-06.

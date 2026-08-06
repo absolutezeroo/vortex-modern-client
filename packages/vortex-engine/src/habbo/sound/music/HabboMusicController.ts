@@ -30,6 +30,11 @@ import {
 import {
     GetUserSongDisksMessageComposer
 } from '@habbo/communication/messages/outgoing/sound/GetUserSongDisksMessageComposer';
+import {
+    GetJukeboxPlayListMessageComposer
+} from '@habbo/communication/messages/outgoing/sound/GetJukeboxPlayListMessageComposer';
+import {JukeboxPlayListController} from './JukeboxPlayListController';
+import {SoundMachinePlayListController} from './SoundMachinePlayListController';
 
 const log = Logger.getLogger('habbo.sound.music.HabboMusicController');
 
@@ -37,6 +42,9 @@ const log = Logger.getLogger('habbo.sound.music.HabboMusicController');
  * Everything about Trax songs that is not the playback itself: the metadata cache, the batched
  * request queue behind it, your song-disk inventory, and the four-slot priority stack that decides
  * which song a room should be hearing.
+ *
+ * The room's own play list — a jukebox or a sound machine — is built here when the furniture
+ * appears and disposed when it goes.
  *
  * **Playback needs the Trax sequencer, which is unported.** `HabboSoundManagerFlash10.loadTraxSong()`
  * is a documented stub returning null, so every song entry's `soundObject` stays null and the play
@@ -734,13 +742,20 @@ export class HabboMusicController implements IHabboMusicController
     };
 
     // AS3: .../HabboMusicController.as::onSoundMachineInit()
-    // TODO(AS3): AS3 builds a `SoundMachinePlayListController` here (429 l.), and a
-    // `JukeboxPlayListController` (281 l.) below, each with its own play-list messages. Neither is
-    // ported, so a room's jukebox or sound machine has no play list — the room-event hooks are
-    // wired and the disposal path is correct, which is what the rest of the controller depends on.
+    // The previous playlist goes first: a room can only have one, and swapping furniture swaps it.
     private onSoundMachineInit = (): void =>
     {
         this.disposeRoomPlaylist();
+
+        if(this._soundManager === null || this._roomEvents === null || this._connection === null) return;
+
+        this._roomItemPlaylist = new SoundMachinePlayListController(
+            this._soundManager,
+            this,
+            this._events,
+            this._roomEvents,
+            this._connection
+        );
     };
 
     // AS3: .../HabboMusicController.as::onSoundMachineDispose()
@@ -750,12 +765,20 @@ export class HabboMusicController implements IHabboMusicController
     };
 
     // AS3: .../HabboMusicController.as::onJukeboxInit()
-    // TODO(AS3): as above — AS3 also sends `GetJukeboxPlayListMessageComposer` right after
-    // building the controller. The composer is ported (header 1281); the send waits for the
-    // play-list controller that would consume the answer.
+    // AS3 asks for the play list here rather than leaving it to the controller it just built.
     private onJukeboxInit = (): void =>
     {
         this.disposeRoomPlaylist();
+
+        if(this._soundManager === null || this._connection === null) return;
+
+        this._roomItemPlaylist = new JukeboxPlayListController(
+            this._soundManager,
+            this,
+            this._events,
+            this._connection
+        );
+        this._connection.send(new GetJukeboxPlayListMessageComposer());
     };
 
     // AS3: .../HabboMusicController.as::onJukeboxDispose()

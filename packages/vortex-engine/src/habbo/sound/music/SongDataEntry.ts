@@ -34,6 +34,11 @@ export class SongDataEntry implements ISongInfo
     // AS3: .../SongDataEntry.as::_diskId
     private _diskId: number = -1;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2389/_SafeCls_2388.as::_startPlayHeadPos
+    // Inherited from the same base the four fields above are. `SoundMachinePlayListController`
+    // sets it from the room's synchronisation offset and clears it the moment it is used.
+    private _startPlayHeadPos: number = 0;
+
     // AS3: .../SongDataEntry.as::SongDataEntry()
     constructor(id: number, length: number, name: string, creator: string, soundObject: IHabboSound | null)
     {
@@ -98,6 +103,18 @@ export class SongDataEntry implements ISongInfo
     set songData(value: string)
     {
         this._songData = value;
+    }
+
+    // AS3: .../_SafeCls_2388.as::get startPlayHeadPos()
+    get startPlayHeadPos(): number
+    {
+        return this._startPlayHeadPos;
+    }
+
+    // AS3: .../_SafeCls_2388.as::set startPlayHeadPos()
+    set startPlayHeadPos(value: number)
+    {
+        this._startPlayHeadPos = value;
     }
 
     // AS3: .../SongDataEntry.as::get diskId()

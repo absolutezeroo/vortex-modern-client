@@ -465,6 +465,23 @@ import {
 } from './messages/outgoing/preferences/TryPhoneNumberMessageComposer';
 import {VerifyCodeMessageComposer} from './messages/outgoing/preferences/VerifyCodeMessageComposer';
 import {TraxSongInfoMessageEvent} from './messages/incoming/sound/TraxSongInfoMessageEvent';
+import {NowPlayingMessageEvent} from './messages/incoming/sound/NowPlayingMessageEvent';
+import {
+    JukeboxSongDisksMessageEvent
+} from './messages/incoming/sound/JukeboxSongDisksMessageEvent';
+import {
+    JukeboxPlayListFullMessageEvent
+} from './messages/incoming/sound/JukeboxPlayListFullMessageEvent';
+import {PlayListMessageEvent} from './messages/incoming/sound/PlayListMessageEvent';
+import {
+    PlayListSongAddedMessageEvent
+} from './messages/incoming/sound/PlayListSongAddedMessageEvent';
+import {
+    GetNowPlayingMessageComposer
+} from './messages/outgoing/sound/GetNowPlayingMessageComposer';
+import {
+    GetSoundMachinePlayListMessageComposer
+} from './messages/outgoing/sound/GetSoundMachinePlayListMessageComposer';
 import {
     UserSongDisksInventoryMessageEvent
 } from './messages/incoming/sound/UserSongDisksInventoryMessageEvent';
@@ -1252,6 +1269,14 @@ export class HabboMessages implements IMessageConfiguration
         // names a Trax disc anywhere it is shown.
         this._events.set(2278, TraxSongInfoMessageEvent);
         this._events.set(1930, UserSongDisksInventoryMessageEvent);
+        // The room play lists, `_events[398]/[2257]/[949]/[1242]/[2785]` in WIN63's registry:
+        // what a jukebox is playing, the discs in it, its "no room left" refusal, and a sound
+        // machine's list plus its single-song addition.
+        this._events.set(398, NowPlayingMessageEvent);
+        this._events.set(2257, JukeboxSongDisksMessageEvent);
+        this._events.set(949, JukeboxPlayListFullMessageEvent);
+        this._events.set(1242, PlayListMessageEvent);
+        this._events.set(2785, PlayListSongAddedMessageEvent);
 
         // === INVENTORY - UNSEEN ===
         this._events.set(3059, UnseenItemsMessageEvent);
@@ -2452,6 +2477,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3130, GetSongInfoMessageComposer);
         this._composers.set(1685, GetUserSongDisksMessageComposer);
         this._composers.set(1281, GetJukeboxPlayListMessageComposer);
+        // `_composers[3707]`/`[3633]`: the jukebox's now-playing request (which is what fetches
+        // its list) and the sound machine's list request. Neither carries a payload.
+        this._composers.set(3707, GetNowPlayingMessageComposer);
+        this._composers.set(3633, GetSoundMachinePlayListMessageComposer);
 
         // === INVENTORY - STAR GEMS / VAULT / REWARD ===
         // TODO(AS3): GiveStarGemToUserMessageComposer has no entry in the authoritative revision
