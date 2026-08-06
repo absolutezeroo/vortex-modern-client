@@ -684,6 +684,55 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🔄 **Trading, slice 1 of 2: the whole network side, and a model that now matches AS3**,
+  2026-08-06. **The trade window itself (`TradingView`, 1,053 l.) is NOT ported** — a trade runs
+  to completion over the wire and nothing draws it. Every one of AS3's ~20 view calls is marked
+  `TODO(AS3)` at the exact line it belongs to, not dropped.
+  - **The 12 answers are subscribed at last.** Seven were registered and read by nobody; five did
+    not exist. New: `TradeOpenFailedEvent` (2855), `TradingOtherNotAllowedEvent` (814),
+    `TradingYouAreNotAllowedEvent` (2294), `TradeSilverSetMessageEvent` (1490),
+    `TradeSilverFeeMessageEvent` (3497), plus the `AddItemsToTradeComposer` (3370) and
+    `SilverFeeMessageComposer` (2717). **All seven headers came from WIN63's own registry** and
+    every one is corroborated by the emulator. `win63_version` carries the whole trading message
+    set unobfuscated, so no name here is derived.
+  - **`TradingModel` rewritten from the AS3, 315 → ~900 lines.** The port had a plausible
+    skeleton with an invented `ITradingUser` record and a 4-member `ITradingModel` widened to 12.
+    AS3's interface really is 4 members; the model really does hold both sides flat. Now faithful:
+    the full 7-state machine with its per-transition side effects (and its two `throw`s), NFT and
+    silver-fee state, `handleMessageEvent()`'s dispatch, and every `request*` composer.
+  - **Two parsers were renamed to AS3's own accessors**, because the port's names hid the
+    asymmetry the code depends on: `TradingOpenMessageParser` was `userOne/userTwo` where AS3 says
+    `userID`/`otherUserID` — `onTradingOpen()` *swaps* the two when the second id is ours — and
+    `TradingItemListMessageParser` returned two `{userId, items, …}` records where AS3 has eight
+    flat accessors. Read order unchanged in both, and nothing consumed the old shapes.
+  - 🐛 **`FurniModel.updateItemLocks()` took a parameter AS3 does not have**, so nothing ever
+    passed one and no item was ever shown as locked. AS3 computes the list itself from the trading
+    model; it does that now, and an offered item greys out in the furni grid. (Its early return
+    also skips the action-view refresh, which the port did on both paths.)
+  - **Two type escape hatches removed rather than cast around.** `IFurnitureItemData.slotId` was
+    `string` where AS3's is a nullable `String` — the trading item parser returns null outright —
+    which forced an `as unknown as` at the call site. Widened through `IFurnitureItem` too.
+  - **`ErrorReportStorage.setDebugData()` was not the AS3 name.** It is `addDebugData()`, and it
+    removes the key before re-adding so the newest entry sorts last in the dump. Renamed, 8 call
+    sites updated.
+  - ⚠️ **Two emulator-side stubs found while checking the wire.**
+    `TradeSilverSetMessageComposerSerializer` and `TradeSilverFeeMessageComposerSerializer` have
+    **empty `Serialize()` bodies** in `vortex-emulator`, while the client reads two ints and one
+    int respectively — if either is ever sent, the client hits end-of-buffer. Nothing sends them
+    today. Also note `Headers.cs` carries placeholder 9014 for `RemoveNftFromTradeEvent` with a
+    comment saying no such composer exists in the 701 client: it does, at
+    `_composers[521] = _SafeCls_3173`, called from `TradingModel.requestRemoveItemFromTrading()`.
+  - **Verified in a browser, driving the real model**: all 12 event headers and 3 composer headers
+    resolve to the right classes; the three new parsers read the emulator's exact order and leave
+    no bytes; a full trade runs `RUNNING → COUNTDOWN → CONFIRMING → CONFIRMED → COMPLETED →
+    READY`, sending `AcceptTradingComposer` then `ConfirmAcceptTradingComposer` and closing
+    itself; an accept lands on the side its user id names; `AddItemsToTradeComposer([11,22,33])`
+    serialises `[3,11,22,33]`; and an unlisted transition throws, as AS3 does.
+  - **Slice 2 is TradingView**, and it needs four unported pieces first: `IInventoryView`,
+    `ItemPopupCtrl`, `CreditTradingItem` and the inventory's trading sub-page hosting. The four
+    layouts already ship (`inventory_trading_xml`, `…_minimized_xml`, `…_name_scam_warning_xml`,
+    `…_wired_xml`). `namescam/` (5 files) and the NFT/collectibles half go with it.
+
 - ✅ **Priority-0 sweep of `habbo/catalog` and `habbo/inventory` — and the badge list nobody
   read**, 2026-08-06.
   - 📏 **The measurement.** Catalog subscribes **31 of AS3's 45** registrations
@@ -711,12 +760,9 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     in `Headers.cs`. The two fragment fixes are verified against the AS3 helper and by typecheck,
     not against a live multi-fragment session.
   - **What the sweep leaves open, in order of product weight:**
-    - **Trading is the big one.** Seven trading events (`TradingOpen/Close/ItemList/Accept/
-      Confirmation/Completed/NotOpen`, headers 953/699/560/2275/1070/3138/3556) are ported,
-      registered and **subscribed by nobody** — but this is not a wiring job: `TradingModel` is a
-      315-line skeleton against AS3's 1,108, `TradingView` (1,053 l.) and `namescam/` (5 files) are
-      unported, and 4 more events (`OpenFailed`, `OtherNotAllowed`, `YouAreNotAllowed`,
-      wired-trading) do not exist here at all. Size it as a feature, ~2,600 lines.
+    - **Trading was the big one — slice 1 landed 2026-08-06** (see the entry above): the twelve
+      answers are subscribed and `TradingModel` is faithful. What remains is `TradingView`
+      (1,053 l.), `namescam/` (5 files) and the NFT half.
     - **Inventory, the rest of the 35:** collectibles (no module), bots add/remove, post-it
       placed, not-enough-credits, badge point limits, `onUserBadges`, marketplace (4 handlers, and
       `inventory/marketplace/` is an empty directory here).

@@ -678,20 +678,30 @@ export class FurniModel implements IFurniModel
     }
 
     // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::updateItemLocks()
-    // TODO(AS3): AS3 computes lockedRefIds itself from tradingModel/recyclerModel/
-    // marketplaceModel (none wired yet) — callers pass the list explicitly for now.
-    updateItemLocks(lockedRefIds: number[] = []): void
+    // AS3 takes no argument: it asks each model that can hold your furniture hostage which items
+    // it is holding. The trading half is live now — an item offered in a trade shows as locked in
+    // the furni grid, and unlocks when the offer changes.
+    //
+    // TODO(AS3): AS3 also concatenates `recyclerModel.getOwnItemsInRecycler()` and the
+    // marketplace's pending offer item. `habbo/inventory/recycler` and the inventory-side
+    // marketplace model are both unported, so those two sources contribute nothing here.
+    //
+    // Note the early return: with nothing locked AS3 clears the locks and stops — it does *not*
+    // refresh the action view, where the port used to refresh it on both paths.
+    updateItemLocks(): void
     {
+        const lockedRefIds: number[] = [...(this._habboInventory.tradingModel?.getOwnItemIdsInTrade() ?? [])];
+
         if(lockedRefIds.length === 0)
         {
             this.removeAllLocks();
+
+            return;
         }
-        else
+
+        for(const groupItem of this._furniData)
         {
-            for(const groupItem of this._furniData)
-            {
-                groupItem.updateLocks(lockedRefIds);
-            }
+            groupItem.updateLocks(lockedRefIds);
         }
 
         this._view.updateActionView();
@@ -1068,7 +1078,9 @@ export class FurniModel implements IFurniModel
     // and get a real icon anyway via GroupItem's normal getFurnitureIcon() path.
     // Also always auto-requests icons instead of AS3's isInitializing-gated
     // deferral (FurniModel.initListImages()'s paced loader isn't ported yet).
-    private createGroupItem(type: number, category: number, stuffData: IStuffData | null, extra: number): GroupItem
+    // AS3 declares this public — the inventory's trading handler calls it to build the group
+    // items for both sides' offers (`_SafeCls_1951.populateItemGroups()`).
+    createGroupItem(type: number, category: number, stuffData: IStuffData | null, extra: number): GroupItem
     {
         return new GroupItem(this, type, category, stuffData, extra, null, false, 'center', false);
     }

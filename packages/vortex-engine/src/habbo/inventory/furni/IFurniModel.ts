@@ -92,7 +92,7 @@ export interface IFurniModel
     /**
 	 * Update item locks based on list of locked reference IDs
 	 */
-    updateItemLocks(lockedRefIds: number[]): void;
+    updateItemLocks(): void;
 
     /**
 	 * Lock a specific item

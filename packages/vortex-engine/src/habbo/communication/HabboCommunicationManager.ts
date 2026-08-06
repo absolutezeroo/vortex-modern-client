@@ -438,25 +438,25 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
 
     messageReceived(messageId: string): void
     {
-        ErrorReportStorage.setDebugData('rece_msg_time', String(Date.now()));
+        ErrorReportStorage.addDebugData('rece_msg_time', String(Date.now()));
         this.appendMessageQueue('R', messageId);
     }
 
     messageSent(messageId: string): void
     {
-        ErrorReportStorage.setDebugData('sent_msg_time', String(Date.now()));
+        ErrorReportStorage.addDebugData('sent_msg_time', String(Date.now()));
         this.appendMessageQueue('S', messageId);
     }
 
     messageParseError(message: IMessageDataWrapper): void
     {
-        ErrorReportStorage.setDebugData('sent_msg_data', String(message));
+        ErrorReportStorage.addDebugData('sent_msg_data', String(message));
         this.setMessageQueueErrorDebugData();
     }
 
     setMessageQueueErrorDebugData(): void
     {
-        ErrorReportStorage.setDebugData('MESSAGE_QUEUE', this._messageQueue);
+        ErrorReportStorage.addDebugData('MESSAGE_QUEUE', this._messageQueue);
     }
 
     protected override initComponent(): void

@@ -495,7 +495,7 @@ export class FriendsView implements ITabView, IFriendsView
     {
         if(this._friendList === null)
         {
-            ErrorReportStorage.setDebugData('FriendsView', 'refreshFigure: _friendList is null!');
+            ErrorReportStorage.addDebugData('FriendsView', 'refreshFigure: _friendList is null!');
 
             return;
         }
@@ -504,7 +504,7 @@ export class FriendsView implements ITabView, IFriendsView
 
         if(face === null)
         {
-            ErrorReportStorage.setDebugData('FriendsView', 'refreshFigure: child is null!');
+            ErrorReportStorage.addDebugData('FriendsView', 'refreshFigure: child is null!');
 
             return;
         }

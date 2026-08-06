@@ -5,3 +5,8 @@ export {TradingItemListMessageEvent} from './TradingItemListMessageEvent';
 export {TradingCompletedMessageEvent} from './TradingCompletedMessageEvent';
 export {TradingConfirmationMessageEvent} from './TradingConfirmationMessageEvent';
 export {TradingNotOpenMessageEvent} from './TradingNotOpenMessageEvent';
+export {TradeOpenFailedEvent} from './TradeOpenFailedEvent';
+export {TradingOtherNotAllowedEvent} from './TradingOtherNotAllowedEvent';
+export {TradingYouAreNotAllowedEvent} from './TradingYouAreNotAllowedEvent';
+export {TradeSilverSetMessageEvent} from './TradeSilverSetMessageEvent';
+export {TradeSilverFeeMessageEvent} from './TradeSilverFeeMessageEvent';

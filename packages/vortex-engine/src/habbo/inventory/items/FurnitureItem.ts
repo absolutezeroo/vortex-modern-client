@@ -181,9 +181,9 @@ export class FurnitureItem implements IFurnitureItem
         return this._flatId;
     }
 
-    private _slotId: string;
+    private _slotId: string | null;
 
-    get slotId(): string
+    get slotId(): string | null
     {
         return this._slotId;
     }

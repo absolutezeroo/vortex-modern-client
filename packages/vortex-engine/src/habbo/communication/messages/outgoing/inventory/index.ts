@@ -26,7 +26,9 @@ export {UnacceptTradingComposer} from './UnacceptTradingComposer';
 export {ConfirmAcceptTradingComposer} from './ConfirmAcceptTradingComposer';
 export {ConfirmDeclineTradingComposer} from './ConfirmDeclineTradingComposer';
 export {AddItemToTradeComposer} from './AddItemToTradeComposer';
+export {AddItemsToTradeComposer} from './AddItemsToTradeComposer';
 export {RemoveItemFromTradeComposer} from './RemoveItemFromTradeComposer';
+export {SilverFeeMessageComposer} from './SilverFeeMessageComposer';
 
 // Unseen
 export {ResetUnseenItemIdsComposer} from './ResetUnseenItemIdsComposer';

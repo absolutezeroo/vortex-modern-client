@@ -2,51 +2,67 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 
 /**
- * Parser for trading open message
+ * Who is trading with whom, and whether each side is allowed to.
  *
- * @see source_as_win63/habbo/communication/messages/parser/inventory/trading/TradingOpenEventParser.as
+ * The accessor names are AS3's (`userID`/`otherUserID`), not the `userOne`/`userTwo` this port
+ * used: the two sides are not symmetric — `_SafeCls_1951.onTradingOpen()` swaps them when the
+ * *second* id is ours, so calling them "one" and "two" hid which one the swap is about.
+ *
+ * AS3: sources/win63_version/habbo/communication/messages/parser/inventory/trading/TradingOpenEventParser.as
  */
 export class TradingOpenMessageParser implements IMessageParser
 {
-    private _userOneId: number = 0;
+    private _userId: number = -1;
 
-    get userOneId(): number
+    // AS3: .../TradingOpenEventParser.as::get userID()
+    get userId(): number
     {
-        return this._userOneId;
+        return this._userId;
     }
 
-    private _userOneCanTrade: boolean = false;
+    private _userCanTrade: boolean = false;
 
-    get userOneCanTrade(): boolean
+    // AS3: .../TradingOpenEventParser.as::get userCanTrade()
+    get userCanTrade(): boolean
     {
-        return this._userOneCanTrade;
+        return this._userCanTrade;
     }
 
-    private _userTwoId: number = 0;
+    private _otherUserId: number = -1;
 
-    get userTwoId(): number
+    // AS3: .../TradingOpenEventParser.as::get otherUserID()
+    get otherUserId(): number
     {
-        return this._userTwoId;
+        return this._otherUserId;
     }
 
-    private _userTwoCanTrade: boolean = false;
+    private _otherUserCanTrade: boolean = false;
 
-    get userTwoCanTrade(): boolean
+    // AS3: .../TradingOpenEventParser.as::get otherUserCanTrade()
+    get otherUserCanTrade(): boolean
     {
-        return this._userTwoCanTrade;
+        return this._otherUserCanTrade;
     }
 
+    // AS3: .../TradingOpenEventParser.as::flush()
+    // AS3 resets the ids to -1, not 0.
     flush(): boolean
     {
+        this._userId = -1;
+        this._userCanTrade = false;
+        this._otherUserId = -1;
+        this._otherUserCanTrade = false;
+
         return true;
     }
 
+    // AS3: .../TradingOpenEventParser.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
-        this._userOneId = wrapper.readInt();
-        this._userOneCanTrade = wrapper.readInt() === 1;
-        this._userTwoId = wrapper.readInt();
-        this._userTwoCanTrade = wrapper.readInt() === 1;
+        this._userId = wrapper.readInt();
+        this._userCanTrade = wrapper.readInt() === 1;
+        this._otherUserId = wrapper.readInt();
+        this._otherUserCanTrade = wrapper.readInt() === 1;
 
         return true;
     }

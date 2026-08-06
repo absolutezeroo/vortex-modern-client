@@ -91,9 +91,13 @@ export interface IFurnitureItem
     readonly flatId: number;
 
     /**
-	 * Slot ID for certain item types
+	 * Slot ID for certain item types.
+	 *
+	 * Nullable, as AS3's `String` is: `FurnitureItem` copies it straight from the item data, and
+	 * the trading item parser has no slot to report and returns null.
 	 */
-    readonly slotId: string;
+    // AS3: sources/win63_version/habbo/inventory/items/FurnitureItem.as::get slotId()
+    readonly slotId: string | null;
 
     /**
 	 * Song ID for music items

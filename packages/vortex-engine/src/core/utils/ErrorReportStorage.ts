@@ -9,8 +9,12 @@ export class ErrorReportStorage
 {
     private static _data: Map<string, string> = new Map();
 
-    static setDebugData(key: string, value: string): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/ErrorReportStorage.as::addDebugData()
+    // AS3 removes the key before re-adding it, so the newest entry is last in the joined dump —
+    // a plain `set()` would leave an existing key at its original position.
+    static addDebugData(key: string, value: string): void
     {
+        this._data.delete(key);
         this._data.set(key, value);
     }
 

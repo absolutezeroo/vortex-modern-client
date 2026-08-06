@@ -117,6 +117,9 @@ import {
     PetBreedingEvent,
     PetInventoryMessageEvent,
     PetRemovedFromInventoryEvent,
+    TradeOpenFailedEvent,
+    TradeSilverFeeMessageEvent,
+    TradeSilverSetMessageEvent,
     TradingAcceptMessageEvent,
     TradingCloseMessageEvent,
     TradingCompletedMessageEvent,
@@ -124,6 +127,8 @@ import {
     TradingItemListMessageEvent,
     TradingNotOpenMessageEvent,
     TradingOpenMessageEvent,
+    TradingOtherNotAllowedEvent,
+    TradingYouAreNotAllowedEvent,
     UnseenItemsMessageEvent,
 } from './messages/incoming/inventory';
 
@@ -984,6 +989,7 @@ import {NewUserExperienceScriptProceedComposer,} from './messages/outgoing/hands
 // Outgoing Composers - Inventory
 import {
     AcceptTradingComposer,
+    AddItemsToTradeComposer,
     AddItemToTradeComposer,
     AvatarEffectActivatedComposer,
     AvatarEffectSelectedComposer,
@@ -1006,6 +1012,7 @@ import {
     ResetUnseenItemIdsComposer,
     ResetUnseenItemsComposer,
     SetActivatedBadgesComposer,
+    SilverFeeMessageComposer,
     UnacceptTradingComposer,
     WithdrawCreditVaultMessageComposer,
 } from './messages/outgoing/inventory';
@@ -1217,6 +1224,16 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1070, TradingCompletedMessageEvent);
         this._events.set(3138, TradingConfirmationMessageEvent);
         this._events.set(3556, TradingNotOpenMessageEvent);
+        // The five the trade window needs to explain a refusal or price a web3 trade. IDs from
+        // WIN63's registry (`_SafeStr_4546[2855]/[814]/[2294]/[1490]/[3497]`), each corroborated by
+        // the emulator (TradeOpenFailed / TradingOtherNotAllowed / TradingYouAreNotAllowed /
+        // TradeSilverSet / TradeSilverFee MessageComposer). All five route to
+        // `TradingModel.handleMessageEvent()`, as they do in AS3.
+        this._events.set(2855, TradeOpenFailedEvent);
+        this._events.set(814, TradingOtherNotAllowedEvent);
+        this._events.set(2294, TradingYouAreNotAllowedEvent);
+        this._events.set(1490, TradeSilverSetMessageEvent);
+        this._events.set(3497, TradeSilverFeeMessageEvent);
 
         // === INVENTORY - UNSEEN ===
         this._events.set(3059, UnseenItemsMessageEvent);
@@ -2405,6 +2422,11 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1217, ConfirmDeclineTradingComposer);
         this._composers.set(2177, AddItemToTradeComposer);
         this._composers.set(573, RemoveItemFromTradeComposer);
+        // The bulk add and the silver-fee toggle, `_composers[3370]`/`_composers[2717]` in WIN63's
+        // registry, both corroborated by the emulator. 3370 is NOT interchangeable with 2177: AS3
+        // sends the single-item composer when exactly one item survives its filter.
+        this._composers.set(3370, AddItemsToTradeComposer);
+        this._composers.set(2717, SilverFeeMessageComposer);
 
         // === INVENTORY - STAR GEMS / VAULT / REWARD ===
         // TODO(AS3): GiveStarGemToUserMessageComposer has no entry in the authoritative revision

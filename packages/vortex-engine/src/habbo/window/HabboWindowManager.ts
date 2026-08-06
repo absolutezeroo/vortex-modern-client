@@ -883,13 +883,13 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
 
         if(event.type === WindowMouseEvent.CLICK) 
         {
-            ErrorReportStorage.setDebugData('click_time', Date.now().toString());
-            ErrorReportStorage.setDebugData('click_target', `${window.name}: ${window.toString()}`);
+            ErrorReportStorage.addDebugData('click_time', Date.now().toString());
+            ErrorReportStorage.addDebugData('click_target', `${window.name}: ${window.toString()}`);
         }
         else if(event.type === WindowMouseEvent.UP) 
         {
-            ErrorReportStorage.setDebugData('mouse_up_time', Date.now().toString());
-            ErrorReportStorage.setDebugData('mouse_up_target', `${window.name}: ${window.toString()}`);
+            ErrorReportStorage.addDebugData('mouse_up_time', Date.now().toString());
+            ErrorReportStorage.addDebugData('mouse_up_target', `${window.name}: ${window.toString()}`);
         }
     }
 

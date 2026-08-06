@@ -52,6 +52,32 @@ import type {
 } from '../communication/messages/parser/inventory/pets';
 import {BotsModel} from './bots/BotsModel';
 import {TradingModel} from './trading/TradingModel';
+import {
+    TradeOpenFailedEvent,
+    TradeSilverFeeMessageEvent,
+    TradeSilverSetMessageEvent,
+    TradingAcceptMessageEvent,
+    TradingCloseMessageEvent,
+    TradingCompletedMessageEvent,
+    TradingConfirmationMessageEvent,
+    TradingItemListMessageEvent,
+    TradingNotOpenMessageEvent,
+    TradingOpenMessageEvent,
+    TradingOtherNotAllowedEvent,
+    TradingYouAreNotAllowedEvent
+} from '../communication/messages/incoming/inventory/trading';
+import type {
+    TradingItemListMessageParser
+} from '../communication/messages/parser/inventory/trading/TradingItemListMessageParser';
+import type {
+    TradingOpenMessageParser
+} from '../communication/messages/parser/inventory/trading/TradingOpenMessageParser';
+import type {
+    TradingFurniItemParser
+} from '../communication/messages/parser/inventory/trading/TradingFurniItemParser';
+import {OrderedMap} from '@core/utils/OrderedMap';
+import {ErrorReportStorage} from '@core/utils/ErrorReportStorage';
+import type {GroupItem} from './items/GroupItem';
 import {Purse} from './purse/Purse';
 import {UnseenItemTracker} from './UnseenItemTracker';
 import {InventoryMainView} from './InventoryMainView';
@@ -66,6 +92,8 @@ import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
+import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
+import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
 import {
@@ -120,6 +148,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     private _roomSessionManager: IRoomSessionManager | null = null;
     private _sessionDataManager: ISessionDataManager | null = null;
     private _localization: IHabboLocalizationManager | null = null;
+    private _notifications: IHabboNotifications | null = null;
     private _furniMessageEvents: IMessageEvent[] = [];
     private _effectMessageEvents: IMessageEvent[] = [];
     private _furniListFragments: Map<number, FurniListItemParser> = new Map();
@@ -131,6 +160,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // TS-only: no AS3 counterpart; the dump's inventory message handler keeps one flat
     // `_messageEvents` vector, where this port already splits it per feature (furni/pet/effect).
     private _badgeMessageEvents: IMessageEvent[] = [];
+    // TS-only: no AS3 counterpart; same per-feature split as the vectors above.
+    private _tradingMessageEvents: IMessageEvent[] = [];
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::_badgeFragments
     // Name DERIVED, not recovered: the field is `_SafeStr_7439` and is obfuscated in every tree.
     // A Vector sized to totalFragments in onBadges(), nulled again once assembled.
@@ -194,6 +225,46 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     get web3tradeEnabled(): boolean
     {
         return this.getBoolean('web3trade.enabled');
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get activeTradingModel()
+    // TODO(AS3): AS3 falls through to `wiredTradingModel` when the normal one is idle —
+    // `inventory/wired_trading/` (WiredTradingModel + its view) is unported, so only the normal
+    // trade can be active here.
+    get activeTradingModel(): TradingModel | null
+    {
+        if(this._tradingModel && this._tradingModel.running)
+        {
+            return this._tradingModel;
+        }
+
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get tradingActive()
+    get tradingActive(): boolean
+    {
+        return this.activeTradingModel !== null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::onTradeActiveChanged()
+    // `tradeComplete` is AS3's parameter: only a trade that *finished* refreshes the collectibles
+    // model, and only when web3 trading is on at all.
+    onTradeActiveChanged(tradeComplete: boolean = false): void
+    {
+        this._view?.disableNonTradingTabs(this.tradingActive);
+
+        if(this.web3tradeEnabled)
+        {
+            this._view?.showCollectiblesTab(this.tradingActive);
+
+            if(tradeComplete)
+            {
+                // TODO(AS3): `collectiblesModel.onTradeComplete()` — habbo/inventory/collectibles
+                // is unported (0 files), so a completed web3 trade does not refresh that tab.
+                void tradeComplete;
+            }
+        }
     }
 
     private _isInitialized: boolean = false;
@@ -427,6 +498,17 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
                 },
                 true
             ),
+            // AS3 declares IIDHabboNotifications as a *required* dependency (HabboInventory.as:161)
+            // and hands it to both trading models. VortexMain attaches it, so requiring it here
+            // cannot deadlock the component.
+            new ComponentDependency(
+                IID_HabboNotifications,
+                (notifications: IHabboNotifications | null) =>
+                {
+                    this._notifications = notifications;
+                },
+                true
+            ),
             new ComponentDependency(
                 IID_HabboToolbar,
                 (toolbar: IHabboToolbar | null) =>
@@ -561,7 +643,11 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._localization!
         );
         this._botsModel = new BotsModel();
-        this._tradingModel = new TradingModel(this._communication?.connection ?? null);
+        // AS3: HabboInventory.as:497 — `new TradingModel(this, _windowManager, _communication,
+        // assets, _roomEngine, _localization, _soundManager, _notifications)`. The four the view
+        // needs (window manager, assets, room engine, sound manager) are left out until
+        // TradingView is ported; the model documents that at its constructor.
+        this._tradingModel = new TradingModel(this, this._communication, this._localization, this._notifications);
 
         this._isInitialized = true;
     }
@@ -890,6 +976,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this.registerBotMessageEvents();
         this.registerEffectMessageEvents();
         this.registerBadgeMessageEvents();
+        this.registerTradingMessageEvents();
         this.registerClubMessageEvents();
         log.debug('Inventory initialized');
     }
@@ -1033,6 +1120,233 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this.setInventoryCategoryInit('bots');
         this._botsModel.updateView();
     };
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as
+     * — the trading branch of the same block. All ten answers were registered in the header table
+     * and **subscribed by nobody**, so a trade opened by the other side reached the client, was
+     * parsed, and vanished.
+     *
+     * Eight of them are pure delegation to `TradingModel.handleMessageEvent()`, exactly as in AS3;
+     * the open and the item list are unpacked here first, because they need the session's own
+     * user id, the room's user data and the furni model to build their group items.
+     *
+     * TODO(AS3): the same block also registers `onTradeNfts`
+     * (`incoming/inventory/trading/nft/TradeNftAssetsMessageEvent`, header 2159) and the four wired
+     * trading answers. Both sets are unported — NFT trading needs `habbo/inventory/collectibles`
+     * and wired trading needs `habbo/inventory/wired_trading`, neither of which exists here.
+     */
+    private registerTradingMessageEvents(): void
+    {
+        if(!this._communication) return;
+
+        this._tradingMessageEvents.push(
+            this._communication.addMessageEvent(new TradingOpenMessageEvent(this.onTradingOpen)),
+            this._communication.addMessageEvent(new TradeOpenFailedEvent(this.onTradingMessage)),
+            this._communication.addMessageEvent(new TradingCloseMessageEvent(this.onTradingMessage)),
+            this._communication.addMessageEvent(new TradingCompletedMessageEvent(this.onTradingMessage)),
+            this._communication.addMessageEvent(new TradingAcceptMessageEvent(this.onTradingMessage)),
+            this._communication.addMessageEvent(new TradingConfirmationMessageEvent(this.onTradingMessage)),
+            this._communication.addMessageEvent(new TradingNotOpenMessageEvent(this.onTradingMessage)),
+            this._communication.addMessageEvent(new TradingOtherNotAllowedEvent(this.onTradingMessage)),
+            this._communication.addMessageEvent(new TradingYouAreNotAllowedEvent(this.onTradingMessage)),
+            this._communication.addMessageEvent(new TradeSilverSetMessageEvent(this.onTradingMessage)),
+            this._communication.addMessageEvent(new TradeSilverFeeMessageEvent(this.onTradingMessage)),
+            this._communication.addMessageEvent(new TradingItemListMessageEvent(this.onTradingItemList))
+        );
+    }
+
+    // AS3: .../_SafeCls_1951.as::onTradingOpenFailed(), onTradingClose(), onTradingCompleted(),
+    // onTradingAccepted(), onTradingConfirmation(), onTradingNotOpen(), onTradingOtherNotAllowed(),
+    // onTradingYouAreNotAllowed(), onTradeSilverSet(), onTradeSilverFee()
+    // Ten identical AS3 methods, each `tradingModel?.handleMessageEvent(event)`. One here.
+    private onTradingMessage = (event: IMessageEvent): void =>
+    {
+        this._tradingModel?.handleMessageEvent(event);
+    };
+
+    /**
+     * AS3: .../_SafeCls_1951.as::onTradingOpen()
+     *
+     * The message names its two sides in wire order, not "you and them": when the *second* id is
+     * ours, AS3 swaps the pairs so `startTrading()` always receives our own side first. The last
+     * argument records whether the swap happened, i.e. whether we opened the trade — the name-scam
+     * check is the only thing that reads it.
+     */
+    private onTradingOpen = (event: IMessageEvent): void =>
+    {
+        if(!this._tradingModel)
+        {
+            ErrorReportStorage.addDebugData('IncomingEvent', 'Trading open - inventory is null!');
+
+            return;
+        }
+
+        const sessionData = this._sessionDataManager;
+        const roomSession = this.roomSession;
+
+        if(!sessionData)
+        {
+            ErrorReportStorage.addDebugData('IncomingEvent', 'Trading open - sessionData not available!');
+
+            return;
+        }
+
+        if(!roomSession)
+        {
+            ErrorReportStorage.addDebugData('IncomingEvent', 'Trading open - roomSession not available!');
+
+            return;
+        }
+
+        this.toggleInventorySubPage('trading');
+
+        const parser = event.parser as TradingOpenMessageParser | null;
+
+        if(!parser)
+        {
+            ErrorReportStorage.addDebugData('IncomingEvent', `event is of unknown type:${event}!`);
+
+            return;
+        }
+
+        let userId = parser.userId;
+        const ownUserData = roomSession.userDataManager.getUserData(userId);
+
+        if(!ownUserData)
+        {
+            ErrorReportStorage.addDebugData('IncomingEvent', 'Trading open - failed to retrieve own user data!');
+
+            return;
+        }
+
+        let userName = ownUserData.name;
+        let userCanTrade = parser.userCanTrade;
+        let otherUserId = parser.otherUserId;
+        const otherUserData = roomSession.userDataManager.getUserData(otherUserId);
+
+        if(!otherUserData)
+        {
+            ErrorReportStorage.addDebugData('IncomingEvent', 'Trading open - failed to retrieve other user data!');
+
+            return;
+        }
+
+        let otherUserName = otherUserData.name;
+        let otherUserCanTrade = parser.otherUserCanTrade;
+        const selfInitiated = otherUserId === sessionData.userId;
+
+        if(selfInitiated)
+        {
+            const swappedId = userId;
+            const swappedName = userName;
+            const swappedCanTrade = userCanTrade;
+
+            userId = otherUserId;
+            userName = otherUserName;
+            userCanTrade = otherUserCanTrade;
+            otherUserId = swappedId;
+            otherUserName = swappedName;
+            otherUserCanTrade = swappedCanTrade;
+        }
+
+        this._tradingModel.startTrading(
+            userId,
+            userName,
+            userCanTrade,
+            otherUserId,
+            otherUserName,
+            otherUserCanTrade,
+            selfInitiated
+        );
+    };
+
+    /**
+     * AS3: .../_SafeCls_1951.as::onTradingItemList()
+     *
+     * TODO(AS3): AS3 opens by prepending a credits tile to the *second* user's list when
+     * `trading.warning.enabled` is on and they staked credits
+     * (`furniModel.createCreditGroupItem()` → `CreditTradingItem`). Neither the factory nor
+     * `inventory/items/CreditTradingItem` is ported — it is a view-side item (it carries its own
+     * tooltip text and icon) and belongs with TradingView.
+     */
+    private onTradingItemList = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as TradingItemListMessageParser | null;
+
+        if(!parser || !this._tradingModel) return;
+
+        const furniModel = this._furniModel;
+
+        if(!furniModel) return;
+
+        const firstUserItems = new OrderedMap<string, GroupItem>();
+        const secondUserItems = new OrderedMap<string, GroupItem>();
+        const ownUserId = this._sessionDataManager?.userId ?? -1;
+
+        this.populateItemGroups(parser.firstUserItemArray, firstUserItems, parser.firstUserId === ownUserId);
+        this.populateItemGroups(parser.secondUserItemArray, secondUserItems, parser.secondUserId === ownUserId);
+
+        this._tradingModel.updateItemGroupMaps(parser, firstUserItems, secondUserItems);
+    };
+
+    /**
+     * AS3: .../_SafeCls_1951.as::populateItemGroups()
+     *
+     * The grouping key decides what stacks in the trade window: normally item type + type id, but
+     * a poster keys on its legacy string and guild furni on its four colour values, and anything
+     * non-groupable — or an external-image furni, whatever its flag says — keys on its own item id
+     * so it never merges with another.
+     *
+     * AS3 takes an `isOwnUser` argument here and uses it for nothing at all; kept for the same
+     * reason it kept `MAX_ITEMS_TO_TRADE`'s dead siblings — the signature is the source's.
+     */
+    private populateItemGroups(
+        items: TradingFurniItemParser[],
+        target: OrderedMap<string, GroupItem>,
+        _isOwnUser: boolean
+    ): void
+    {
+        for(const item of items)
+        {
+            const typeId = item.itemTypeId;
+            const category = item.category;
+            let key = item.itemType + String(typeId);
+
+            if(!item.isGroupable || this.isFurniExternalImage(item.itemTypeId))
+            {
+                key = 'itemid' + item.itemId;
+            }
+
+            if(category === FurnitureCategory.POSTER)
+            {
+                key = String(typeId) + 'poster' + (item.stuffData?.getLegacyString() ?? '');
+            }
+            else if(category === FurnitureCategory.GUILD_FURNI)
+            {
+                key = TradingModel.getGuildFurniType(typeId, item.stuffData);
+            }
+
+            const groupable = item.isGroupable && !this.isFurniExternalImage(item.itemTypeId);
+            let groupItem = groupable ? target.getValue(key) : null;
+
+            if(groupItem === null)
+            {
+                groupItem = this._furniModel.createGroupItem(typeId, category, item.stuffData, item.extra);
+                target.add(key, groupItem);
+            }
+
+            groupItem.push(new FurnitureItem(item));
+        }
+    }
+
+    // AS3: .../_SafeCls_1951.as::isFurniExternalImage()
+    private isFurniExternalImage(typeId: number): boolean
+    {
+        const furnitureData = this.getFurnitureData(typeId, 'i');
+
+        return furnitureData !== null && furnitureData.isExternalImageType;
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as:200
     // — the badge branch of the same registration block the furni/pet ones above come from.
