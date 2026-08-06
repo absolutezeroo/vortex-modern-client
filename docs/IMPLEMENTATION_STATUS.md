@@ -244,8 +244,9 @@ Re-ranked **2026-08-03**, biggest product gap first.
    `nux` (4/4), `phonenumber` (7/7) and `userclassification` (1/1) left this list on 2026-08-05.
    `habbo/sound` left it on 2026-08-02 at 10/29 — effects play. **`music/` was completed on
    2026-08-06** (controller + both play-list controllers, see Recent Work); what remains in
-   `habbo/sound` is `trax/` (1495 l., the sequencer — the last thing between the music module and
-   audible playback) and `furni/` (206 l., furniture samples).
+   `habbo/sound` is the second half of `trax/` (the 817-line sequencer and its audio graph — the
+   last thing between the music module and audible playback; its numeric core landed 2026-08-06)
+   and `furni/` (206 l., furniture samples).
 4. **Protocol batches, in gap order**: `game`, `users`, `collectibles`, `catalog`, `room`,
    `inventory`, `groupforums`. Read the naming caveat in the message section before trusting any
    per-category count.
@@ -684,6 +685,36 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 ---
 
 ## Recent Work Recorded
+
+- 🔄 **`habbo/sound/trax`, part 1: the numeric core**, 2026-08-06. **No audio yet** — the
+  sequencer and its audio graph are part 2; this is everything underneath them.
+  - **Ported (707 l. of AS3):** `TraxData` + `TraxChannel` + `TraxChannelItem` (a song's structure,
+    parsed from the one string the server sends), `TraxSample` (the decode and the two mixing
+    operations) and `TraxChannelSample` (the play offset a shared sample cannot hold itself).
+  - **The packing is kept, deliberately.** AS3 stores decoded audio in a `Vector.<int>` with two
+    16-bit values — or four 8-bit ones — per entry, and the sequencer's mixing arithmetic is
+    written against exactly that layout. Unpacking to `Float32Array` would mean rewriting the
+    mixer's numerics, which is the one place a silent, *audible* bug could hide. `Int32Array` here,
+    with every accumulation forced through `| 0` because AS3's `int` wraps at 32 bits and the
+    packing relies on it.
+  - **Two AS3 quirks kept and documented:** `TraxSample.dispose()` never sets `_disposed`, so
+    `disposed` always answers false and a second call repeats an idempotent body; and it nulls its
+    usage array, which would make the one unguarded getter throw — emptied here instead, same
+    answer everywhere it is actually read.
+  - **Verified in a browser against the arithmetic itself**: the song string parses to 2 channels
+    with deduplicated sample ids (including the id-0 silence entry) and its `meta` segment
+    (cut mode, tempo 120); a malformed item abandons the rest of the song but keeps the channels
+    already parsed, as AS3's early return does; a 16-bit/44 kHz sample quantises **-1 → -32767,
+    0 → 1, 0.5 → 16385, 0.25 → 8193** and ignores the right channel entirely; `addSample()` mixes
+    where `setSample()` overwrites; the 32-sample fade-out ramps down to silence at the loop point;
+    11 kHz averages four frames into one value (**-1, 0, 0.5, 0.25 → -2047**) and writes it four
+    times; running past the end zero-fills; and `TraxChannelSample` carries its offset forward
+    between blocks.
+  - **Part 2 is `TraxSequencer` (817 l.) and the audio graph.** Flash streams through
+    `SampleDataEvent` — the runtime pulls 8192 frames at a time; the Web Audio equivalent is an
+    `AudioWorklet` fed from a ring buffer, with AS3's "audio buffer under run" logging mapping onto
+    the worklet's starvation signal. Until it lands, `loadTraxSong()` stays the documented stub and
+    nothing plays.
 
 - ✅ **`habbo/sound/music` finished: both play-list controllers**, 2026-08-06.
   - **`JukeboxPlayListController` (281 l.) and `SoundMachinePlayListController` (429 l.)**, built
