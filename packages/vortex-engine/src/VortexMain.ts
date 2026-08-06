@@ -695,7 +695,9 @@ export class VortexMain implements IVortexMain
         ctx.attachComponent(this._newNavigator, [IID_HabboNewNavigator]);
 
         // 10. Inventory
-        this._inventory = new HabboInventory(ctx);
+        // The asset library is what AS3's HabboInventoryCom SWF supplies; without it the trade
+        // window's credit tile has no icon to resolve.
+        this._inventory = new HabboInventory(ctx, 0, this._assets);
         ctx.attachComponent(this._inventory, [IID_HabboInventory]);
 
         // 11. Room Engine (depends on RoomManager via IID_RoomManager)

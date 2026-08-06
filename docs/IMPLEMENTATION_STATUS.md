@@ -684,10 +684,39 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **Trading, slice 2: the trade window, and the map that had nowhere to host it**, 2026-08-06.
+  - **`TradingView` ported (1,053 l. of AS3)** and owned by the model, as in AS3: both windows
+    (normal + minimised), the two grids with their per-cell ids, the accept/cancel pair driven by
+    the state machine, the 3-second confirm countdown, the silver-fee row, the per-side "account
+    disabled" notices and the three alert popups. `IInventoryView` and `CreditTradingItem` came
+    with it.
+  - 🐛 **`getCategorySubWindowContainer()` returned null unconditionally**, so even a finished
+    trade window had nowhere to be hosted. AS3 resolves it — and `getCategoryWindowContainer()`
+    and `updateView(category)` — through an `_inventories` map keyed by category name, built in
+    `init()`. The map is ported; `furni`, `trading` and `pets` register in it. The port had been
+    switching on the category name in two of the three, and returning null in the third.
+  - **Three more members were private or mistyped where AS3 has them public**: `GroupItem`'s
+    `iconImage`/`iconCallbackId` (the view assigns them when a late icon arrives),
+    `FurniModel.createGroupItem()`, and `PetsModel.getWindowContainer()` returned `unknown` where
+    its own view returns `IWindowContainer | null` — the widening is what hid it from
+    `IInventoryModel`. `PetsModel.selectItemById()` took a number against AS3's string.
+  - **A re-entrancy was verified rather than "fixed".** Closing from CONFIRMING sends the cancel
+    composer **twice**: `close()` sets CANCELLED, whose setter calls `close()` again, and the
+    inner call still sees a non-READY state. AS3 does exactly this; the behaviour is now
+    documented at `close()` instead of being tidied away.
+  - **Verified in a browser**: the shipped `inventory_trading_xml` carries all 21 tags and names
+    the view looks up; the window builds both layouts on first `getWindowContainer()`; an accept
+    flips the lock icon to `inventory_trading_trading_locked_icon` and the button caption to
+    `${inventory.trading.modify}`; the confirmation drives caption/enabled/help through
+    countdown → confirm and registers `inventory.trading.countdown:counter=3`; clicking accept
+    while CONFIRMING sends `ConfirmAcceptTradingComposer`; and a close from the other side raises
+    `${inventory.trading.info.closed}` and leaves the state READY.
+  - **Still out**: `ItemPopupCtrl` (370 l., the hover tooltip — shared with the furni and
+    collectibles views, so it is its own slice), `namescam/` (5 files), and the NFT half, which
+    waits on `habbo/inventory/collectibles`.
+
 - 🔄 **Trading, slice 1 of 2: the whole network side, and a model that now matches AS3**,
-  2026-08-06. **The trade window itself (`TradingView`, 1,053 l.) is NOT ported** — a trade runs
-  to completion over the wire and nothing draws it. Every one of AS3's ~20 view calls is marked
-  `TODO(AS3)` at the exact line it belongs to, not dropped.
+  2026-08-06.
   - **The 12 answers are subscribed at last.** Seven were registered and read by nobody; five did
     not exist. New: `TradeOpenFailedEvent` (2855), `TradingOtherNotAllowedEvent` (814),
     `TradingYouAreNotAllowedEvent` (2294), `TradeSilverSetMessageEvent` (1490),
@@ -760,9 +789,9 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     in `Headers.cs`. The two fragment fixes are verified against the AS3 helper and by typecheck,
     not against a live multi-fragment session.
   - **What the sweep leaves open, in order of product weight:**
-    - **Trading was the big one — slice 1 landed 2026-08-06** (see the entry above): the twelve
-      answers are subscribed and `TradingModel` is faithful. What remains is `TradingView`
-      (1,053 l.), `namescam/` (5 files) and the NFT half.
+    - **Trading landed 2026-08-06** (both entries above): the twelve answers are subscribed,
+      `TradingModel` is faithful and `TradingView` is ported and hosted. What remains is
+      `ItemPopupCtrl` (370 l., shared with other tabs), `namescam/` (5 files) and the NFT half.
     - **Inventory, the rest of the 35:** collectibles (no module), bots add/remove, post-it
       placed, not-enough-credits, badge point limits, `onUserBadges`, marketplace (4 handlers, and
       `inventory/marketplace/` is an empty directory here).

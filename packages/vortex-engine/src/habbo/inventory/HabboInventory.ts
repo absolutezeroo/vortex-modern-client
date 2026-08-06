@@ -76,6 +76,8 @@ import type {
     TradingFurniItemParser
 } from '../communication/messages/parser/inventory/trading/TradingFurniItemParser';
 import {OrderedMap} from '@core/utils/OrderedMap';
+import type {IInventoryModel} from './IInventoryModel';
+import type {IAssetLibrary} from '@core/assets';
 import {ErrorReportStorage} from '@core/utils/ErrorReportStorage';
 import type {GroupItem} from './items/GroupItem';
 import {Purse} from './purse/Purse';
@@ -170,13 +172,26 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // `_messageEvents` vector, where this port splits it per feature (furni/pet/effect/badge).
     private _clubMessageEvents: IMessageEvent[] = [];
     private _initializedCategories: Set<string> = new Set();
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::_inventories
+     *
+     * Every category model, keyed by the category name the window uses. AS3 resolves
+     * `getCategoryWindowContainer()`, `getCategorySubWindowContainer()` and `updateView()` through
+     * it rather than switching on the name, which is how the trading sub-window finds its host.
+     *
+     * TODO(AS3): AS3 registers eleven models here. Four are missing entirely (`marketplace`,
+     * `collectibles`, `wired_trading`, `recycler`), and `badges`/`effects`/`bots` are ported but
+     * do not implement `IInventoryModel` yet — they have no view to hand back.
+     */
+    private _inventories: OrderedMap<string, IInventoryModel> = new OrderedMap<string, IInventoryModel>();
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::_SafeStr_4983
     private _purseTimer: ReturnType<typeof setInterval> | null = null;
     private _view!: InventoryMainView;
 
-    constructor(context: IContext)
+    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
     {
-        super(context);
+        super(context, flags, assetLibrary);
     }
 
     get windowManager(): IHabboWindowManager | null
@@ -647,7 +662,27 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         // assets, _roomEngine, _localization, _soundManager, _notifications)`. The four the view
         // needs (window manager, assets, room engine, sound manager) are left out until
         // TradingView is ported; the model documents that at its constructor.
-        this._tradingModel = new TradingModel(this, this._communication, this._localization, this._notifications);
+        this._tradingModel = new TradingModel(
+            this,
+            this._windowManager,
+            this._communication,
+            this.assets,
+            this._localization,
+            this._notifications
+        );
+
+        // AS3: HabboInventory.as:482-506 — each model is added to `_inventories` as it is built.
+        // `rentables` is only a second entry for the furni model when rent furni is NOT merged,
+        // which is AS3's own condition and false here.
+        this._inventories.add('furni', this._furniModel);
+
+        if(!this.mergeRentFurni)
+        {
+            this._inventories.add('rentables', this._furniModel);
+        }
+
+        this._inventories.add('trading', this._tradingModel);
+        this._inventories.add('pets', this._petsModel);
 
         this._isInitialized = true;
     }
@@ -786,43 +821,30 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._view.updateUnseenBotCount(this._unseenItemTracker.getCount(5));
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::getCategoryWindowContainer()
-    // TODO(AS3): only furni/rentables have a ported View so far. PetsView/
-    // BadgesView/BotsView/EffectsView/TradingView/CollectiblesView/MarketplaceView
-    // resolve to "no content" until ported, matching InventoryMainView's existing
-    // null-guard (setViewToCategory returns early when this is null).
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getCategoryWindowContainer()
+    // A category with no registered model has no content — AS3 returns null too, and
+    // InventoryMainView already guards for it.
     getCategoryWindowContainer(category: string): IWindowContainer | null
     {
-        if(category === 'furni' || category === 'rentables')
-        {
-            return this._furniModel.getWindowContainer();
-        }
-
-        if(category === 'pets')
-        {
-            return this._petsModel.getWindowContainer() as IWindowContainer | null;
-        }
-
-        return null;
+        return this._inventories.getValue(category)?.getWindowContainer() ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::getCategorySubWindowContainer()
-    getCategorySubWindowContainer(_category: string): IWindowContainer | null
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getCategorySubWindowContainer()
+     *
+     * The same lookup as above — the *sub*-window is simply the model registered under a
+     * sub-category name (`trading`, `wired_trading`). This returned null unconditionally before,
+     * so the trade window had nowhere to be hosted even once it existed.
+     */
+    getCategorySubWindowContainer(category: string): IWindowContainer | null
     {
-        return null;
+        return this._inventories.getValue(category)?.getWindowContainer() ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::updateView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::updateView()
     updateView(category: string): void
     {
-        if(category === 'furni' || category === 'rentables')
-        {
-            this._furniModel.updateView();
-        }
-        else if(category === 'pets')
-        {
-            this._petsModel.updateView();
-        }
+        this._inventories.getValue(category)?.updateView();
     }
 
     // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::isInventoryCategoryInit()

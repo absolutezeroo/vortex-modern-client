@@ -30,12 +30,35 @@ const THUMB_COLOR_UNSEEN = 10275685;
 export class GroupItem implements IGetImageListener 
 {
     private _items: Map<number, FurnitureItem> = new Map();
-    private _model: FurniModel;
+    // `protected`, not private: AS3's CreditTradingItem reads `_SafeStr_4570` (the model) and
+    // assigns `_window` from its own `createWindow()` override.
+    protected _model: FurniModel;
     private _windowInitialized: boolean = false;
     private _presetIcon: ImageBitmap | null;
     private _isNoAutoRequestImage: boolean;
     private _iconImage: ImageBitmap | null = null;
     private _iconCallbackId: number = -1;
+
+    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::get iconImage()
+    get iconImage(): ImageBitmap | null
+    {
+        return this._iconImage;
+    }
+
+    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::set iconImage()
+    // Public in AS3 because TradingView assigns it directly when a late icon arrives for an item
+    // that is already sitting in a trade grid.
+    set iconImage(value: ImageBitmap | null)
+    {
+        this._iconImage = value;
+    }
+
+    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::get iconCallbackId()
+    get iconCallbackId(): number
+    {
+        return this._iconCallbackId;
+    }
+
     private _isImageInitAttempted: boolean = false;
     private _bgColorWindow: IWindow | null = null;
     private _wasDragCandidate: boolean = false;
@@ -79,7 +102,7 @@ export class GroupItem implements IGetImageListener
         }
     }
 
-    private _window: IWindowContainer | null = null;
+    protected _window: IWindowContainer | null = null;
 
     // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::get window()
     get window(): IWindowContainer | null 

@@ -2,6 +2,7 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
 import {PlacePetComposer} from '@habbo/communication/messages/outgoing/room/pet/PlacePetComposer';
 
@@ -150,6 +151,12 @@ export class PetsModel implements IPetsModel
     }
 
     // AS3: PetsModel.as::categorySwitch()
+    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::subCategorySwitch()
+    // Empty in AS3 too — the pets tab has no sub-page of its own. Required by IInventoryModel.
+    subCategorySwitch(_category: string): void
+    {
+    }
+
     categorySwitch(category: string): void
     {
         if(category === 'pets' && this._controller.isVisible)
@@ -159,7 +166,7 @@ export class PetsModel implements IPetsModel
     }
 
     // AS3: PetsModel.as::getWindowContainer()
-    getWindowContainer(): unknown
+    getWindowContainer(): IWindowContainer | null
     {
         return this._view.getWindowContainer();
     }
@@ -255,9 +262,11 @@ export class PetsModel implements IPetsModel
     }
 
     // AS3: PetsModel.as::selectItemById()
-    selectItemById(id: number): void
+    // AS3 takes a String and parses it — the id travels as a string through IInventoryModel,
+    // because the link handler that produces it (`inventory/open/<category>/<id>`) has strings.
+    selectItemById(itemId: string): void
     {
-        this._view.selectById(id);
+        this._view.selectById(parseInt(itemId, 10));
     }
 
     getPetById(id: number): Pet | null

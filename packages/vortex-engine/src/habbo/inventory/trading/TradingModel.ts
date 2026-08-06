@@ -1,4 +1,9 @@
 import type {ITradingModel} from './ITradingModel';
+import type {IInventoryModel} from '../IInventoryModel';
+import {TradingView} from './TradingView';
+import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import type {IAssetLibrary} from '@core/assets';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {TradingStateType} from './TradingState';
 import {MAX_ITEMS_TO_TRADE, TradingState} from './TradingState';
 import type {HabboInventory} from '../HabboInventory';
@@ -55,7 +60,7 @@ import {
 import {
     TradingYouAreNotAllowedEvent
 } from '@habbo/communication/messages/incoming/inventory/trading/TradingYouAreNotAllowedEvent';
-import type {
+import {
     TradeOpenFailedEventParser
 } from '@habbo/communication/messages/parser/inventory/trading/TradeOpenFailedEventParser';
 import type {
@@ -77,19 +82,16 @@ import type {
 const log = Logger.getLogger('habbo.inventory.trading.TradingModel');
 
 /**
- * The state of one trade, and the only place that talks to the server about it.
+ * The state of one trade, and the only place that talks to the server about it. It owns the
+ * `TradingView` it drives, as AS3 does.
  *
- * **TradingView is not ported yet**, and AS3's model drives it constantly — it constructs the
- * view, and 14 of the methods below end by telling it to redraw. Every one of those calls is
- * marked `TODO(AS3)` at the exact place it belongs rather than dropped silently, so the trade
- * currently runs to completion over the wire with no window to show it. `getWindowContainer()`,
- * `startConfirmCountdown()`, `cancelConfirmCountdown()` and the four `alert*`/`show*Notification`
- * paths are view-only and stay stubs until it lands. The name-scam warning
- * (`inventory/trading/namescam/`, 5 files) is unported for the same reason.
+ * Still unported around the edges, each marked `TODO(AS3)` where it belongs: the name-scam warning
+ * (`inventory/trading/namescam/`, 5 files), the NFT/collectibles half of both item lists, and the
+ * hover tooltip inside the view.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/trading/TradingModel.as
  */
-export class TradingModel implements ITradingModel
+export class TradingModel implements ITradingModel, IInventoryModel
 {
     // AS3: .../TradingModel.as::SHOW_NAME_SCAM_WARNING_FOR_SELF_INITIATED_TRADES
     private static readonly SHOW_NAME_SCAM_WARNING_FOR_SELF_INITIATED_TRADES: boolean = true;
@@ -105,6 +107,9 @@ export class TradingModel implements ITradingModel
 
     // AS3: .../TradingModel.as::_notifications
     private _notifications: IHabboNotifications | null;
+
+    // AS3: .../TradingModel.as::_view
+    private _view: TradingView;
 
     private _disposed: boolean = false;
 
@@ -180,12 +185,16 @@ export class TradingModel implements ITradingModel
     private _otherPlayerSilver: number = 0;
 
     // AS3: .../TradingModel.as::TradingModel()
-    // AS3 also takes the window manager, the asset library, the room engine and the sound manager,
-    // and uses all four to build `TradingView` + `TradingNameScamWarningController` right here.
-    // TODO(AS3): restore those four parameters and both constructions when TradingView lands.
+    // AS3 builds both the view and the name-scam warning controller here.
+    // TODO(AS3): the second construction — `new TradingNameScamWarningController(windowManager,
+    // assets, localization, communication)` — waits on `inventory/trading/namescam/`. AS3 also
+    // hands the room engine and the sound manager to the view, for the item icons and the Trax
+    // song titles the hover tooltip shows; both belong with `ItemPopupCtrl`.
     constructor(
         inventory: HabboInventory | null,
+        windowManager: IHabboWindowManager | null,
         communication: IHabboCommunicationManager | null,
+        assets: IAssetLibrary | null,
         localization: IHabboLocalizationManager | null,
         notifications: IHabboNotifications | null
     )
@@ -194,6 +203,7 @@ export class TradingModel implements ITradingModel
         this._communication = communication;
         this._localization = localization;
         this._notifications = notifications;
+        this._view = new TradingView(this, windowManager, assets, localization);
     }
 
     // AS3: .../TradingModel.as::getGuildFurniType()
@@ -428,15 +438,25 @@ export class TradingModel implements ITradingModel
         this._tradingOpen = true;
         this.state = TradingState.RUNNING;
 
-        // TODO(AS3): .../TradingModel.as::startTrading() — AS3 then calls view.setup(ownUserId,
-        // ownUserCanTrade, otherUserId, otherUserCanTrade), view.updateItemList() for both users,
-        // view.updateUserInterface() and view.clearItemLists(). No TradingView yet.
+        this._view.setup(ownUserId, ownUserCanTrade, otherUserId, otherUserCanTrade);
+        this._view.updateItemList(this._ownUserId);
+        this._view.updateItemList(this._otherUserId);
+        this._view.updateUserInterface();
+        this._view.clearItemLists();
 
         this._inventory?.toggleInventoryPage('furni');
         this._inventory?.events.emit('HABBO_INVENTORY_TRACKING_EVENT_TRADING');
     }
 
-    // AS3: .../TradingModel.as::close()
+    /**
+     * AS3: .../TradingModel.as::close()
+     *
+     * Re-entrant, and deliberately left that way: from CONFIRMING or CONFIRMED, `state = CANCELLED`
+     * calls `close()` again from inside the setter, and that inner call still sees a non-READY
+     * state, so the cancel composer goes out **twice**. AS3 does exactly this — the second
+     * `state = CANCELLED` is the no-op the setter guards on, and the inner call is what actually
+     * lands the state on READY. Verified against the source before being left alone.
+     */
     close(): void
     {
         if(this._tradingOpen)
@@ -452,8 +472,8 @@ export class TradingModel implements ITradingModel
             this._tradingOpen = false;
         }
 
-        // TODO(AS3): .../TradingModel.as::close() — AS3 also hides the name-scam warning and calls
-        // view.setMinimized(false). Neither exists yet.
+        // TODO(AS3): AS3 also hides the name-scam warning here; `namescam/` is unported.
+        this._view.setMinimized(false);
     }
 
     // AS3: .../TradingModel.as::getRoomUserNamesForNameScamDetection()
@@ -511,9 +531,7 @@ export class TradingModel implements ITradingModel
     // the inventory's sub-view. Only the second half exists here.
     categorySwitch(category: string): void
     {
-        // TODO(AS3): view.setMinimized(category !== 'furni' && category !== 'collectibles').
-        void category;
-
+        this._view.setMinimized(category !== 'furni' && category !== 'collectibles');
         this._inventory?.updateSubView();
     }
 
@@ -555,7 +573,7 @@ export class TradingModel implements ITradingModel
                 if(value === TradingState.CANCELLED)
                 {
                     this._state = value;
-                    // TODO(AS3): view.setMinimized(false).
+                    this._view.setMinimized(false);
                     changed = true;
                 }
 
@@ -573,7 +591,7 @@ export class TradingModel implements ITradingModel
                 if(value === TradingState.CANCELLED)
                 {
                     this._state = value;
-                    // TODO(AS3): view.setMinimized(false).
+                    this._view.setMinimized(false);
                     changed = true;
 
                     break;
@@ -609,7 +627,7 @@ export class TradingModel implements ITradingModel
                 if(value === TradingState.CANCELLED)
                 {
                     this._state = value;
-                    // TODO(AS3): view.setMinimized(false).
+                    this._view.setMinimized(false);
                     changed = true;
                     this.close();
                 }
@@ -620,7 +638,7 @@ export class TradingModel implements ITradingModel
                 if(value === TradingState.COMPLETED || value === TradingState.CANCELLED)
                 {
                     this._state = value;
-                    // TODO(AS3): view.setMinimized(false).
+                    this._view.setMinimized(false);
                     changed = true;
                     this.close();
                 }
@@ -661,7 +679,8 @@ export class TradingModel implements ITradingModel
 
         if(changed)
         {
-            // TODO(AS3): view.updateUserInterface().
+            this._view.updateUserInterface();
+
             return;
         }
 
@@ -718,7 +737,9 @@ export class TradingModel implements ITradingModel
         this._ownUserAccepts = false;
         this._otherUserAccepts = false;
 
-        // TODO(AS3): view.updateItemList() for both users, then view.updateUserInterface().
+        this._view.updateItemList(this._ownUserId);
+        this._view.updateItemList(this._otherUserId);
+        this._view.updateUserInterface();
 
         this._inventory.furniModel?.updateItemLocks();
     }
@@ -747,8 +768,11 @@ export class TradingModel implements ITradingModel
         this._ownUserNumNftItems = ownUserNumNftItems;
         this._otherUserNumNftItems = otherUserNumNftItems;
 
-        // TODO(AS3): view.updateItemList() for both users, then view.updateUserInterface(), then
-        // `_inventory.collectiblesModel.updateItemLocks()` — no collectibles model in this port.
+        this._view.updateItemList(this._ownUserId);
+        this._view.updateItemList(this._otherUserId);
+        this._view.updateUserInterface();
+
+        // TODO(AS3): `_inventory.collectiblesModel.updateItemLocks()` — no collectibles model here.
     }
 
     // AS3: .../TradingModel.as::getOwnItemIdsInTrade()
@@ -776,10 +800,9 @@ export class TradingModel implements ITradingModel
     }
 
     // AS3: .../TradingModel.as::getWindowContainer()
-    // TODO(AS3): returns `view.getWindowContainer()`. No TradingView yet.
-    getWindowContainer(): null
+    getWindowContainer(): IWindowContainer | null
     {
-        return null;
+        return this._view.getWindowContainer();
     }
 
     // AS3: .../TradingModel.as::requestInitialization()
@@ -820,15 +843,15 @@ export class TradingModel implements ITradingModel
     }
 
     // AS3: .../TradingModel.as::startConfirmCountdown()
-    // TODO(AS3): delegates to view.startConfirmCountdown() — the 10-second timer lives in the view.
     startConfirmCountdown(): void
     {
+        this._view.startConfirmCountdown();
     }
 
     // AS3: .../TradingModel.as::cancelConfirmCountdown()
-    // TODO(AS3): delegates to view.cancelConfirmCountdown().
     cancelConfirmCountdown(): void
     {
+        this._view.cancelConfirmCountdown();
     }
 
     // AS3: .../TradingModel.as::confirmCountdownReady()
@@ -852,16 +875,14 @@ export class TradingModel implements ITradingModel
             const parser = event.parser as TradeOpenFailedEventParser | null;
             const reason = parser?.reason ?? 0;
 
-            if(reason === 7 || reason === 8)
+            if(reason === TradeOpenFailedEventParser.REASON_OWN_TRADING_DISABLED
+                || reason === TradeOpenFailedEventParser.REASON_OTHER_TRADING_DISABLED)
             {
-                // TODO(AS3): view.alertPopup(ALERT_ALREADY_OPEN).
-                log.warn(`Trade open refused, reason ${reason} — no TradingView to show the alert`);
+                this._view.alertPopup(TradingView.ALERT_ALREADY_OPEN);
             }
             else
             {
-                // TODO(AS3): view.alertTradeOpenFailed(event) — the per-reason message, which also
-                // uses the parser's otherUserName.
-                log.warn(`Trade open refused, reason ${reason} — no TradingView to show the alert`);
+                this._view.alertTradeOpenFailed(reason, parser?.otherUserName ?? '');
             }
 
             return;
@@ -884,7 +905,7 @@ export class TradingModel implements ITradingModel
                 this._otherUserAccepts = parser.accepted;
             }
 
-            // TODO(AS3): view.updateUserInterface().
+            this._view.updateUserInterface();
 
             return;
         }
@@ -932,17 +953,16 @@ export class TradingModel implements ITradingModel
             {
                 if(this._inventory?.getBoolean('trading.commiterror.enabled'))
                 {
-                    // TODO(AS3): view.windowManager.simpleAlert(
-                    //   '${inventory.trading.notification.title}',
-                    //   '${inventory.trading.notification.commiterror.caption}',
-                    //   '${inventory.trading.notification.commiterror.info}')
-                    log.warn('Trade commit error — no TradingView to show the alert');
+                    this._view.windowManager?.simpleAlert(
+                        '${inventory.trading.notification.title}',
+                        '${inventory.trading.notification.commiterror.caption}',
+                        '${inventory.trading.notification.commiterror.info}'
+                    );
                 }
             }
             else if(parser !== null && parser.userId !== this._ownUserId)
             {
-                // TODO(AS3): view.alertPopup(ALERT_OTHER_CANCELLED).
-                log.warn('The other side cancelled the trade — no TradingView to show the alert');
+                this._view.alertPopup(TradingView.ALERT_OTHER_CANCELLED);
             }
 
             this.close();
@@ -960,16 +980,14 @@ export class TradingModel implements ITradingModel
 
         if(event instanceof TradingOtherNotAllowedEvent)
         {
-            // TODO(AS3): view.showOtherUserNotification('${inventory.trading.warning.others_account_disabled}').
-            log.warn('The other account may not trade — no TradingView to show the notice');
+            this._view.showOtherUserNotification('${inventory.trading.warning.others_account_disabled}');
 
             return;
         }
 
         if(event instanceof TradingYouAreNotAllowedEvent)
         {
-            // TODO(AS3): view.showOwnUserNotification('${inventory.trading.warning.own_account_disabled}').
-            log.warn('This account may not trade — no TradingView to show the notice');
+            this._view.showOwnUserNotification('${inventory.trading.warning.own_account_disabled}');
 
             return;
         }
@@ -983,7 +1001,7 @@ export class TradingModel implements ITradingModel
             this._playerSilver = parser.playerSilver;
             this._otherPlayerSilver = parser.otherPlayerSilver;
 
-            // TODO(AS3): view.updateUserInterface().
+            this._view.updateUserInterface();
 
             return;
         }
@@ -996,7 +1014,7 @@ export class TradingModel implements ITradingModel
 
             this._requiredSilverFee = parser.silverFee;
 
-            // TODO(AS3): view.updateUserInterface().
+            this._view.updateUserInterface();
 
             return;
         }
@@ -1218,7 +1236,9 @@ export class TradingModel implements ITradingModel
     {
         if(this._disposed) return;
 
-        // TODO(AS3): dispose the TradingView and the name-scam warning controller.
+        if(!this._view.disposed) this._view.dispose();
+
+        // TODO(AS3): AS3 also disposes the name-scam warning controller; `namescam/` is unported.
 
         this._inventory = null;
         this._communication = null;

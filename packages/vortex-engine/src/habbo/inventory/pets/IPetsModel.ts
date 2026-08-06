@@ -31,5 +31,7 @@ export interface IPetsModel extends IDisposable
     placePetToRoom(id: number, skipServer?: boolean): boolean;
     resetUnseenItems(): void;
     isUnseen(id: number): boolean;
-    selectItemById(id: number): void;
+    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::selectItemById()
+    // A string, as `IInventoryModel` declares it — AS3's PetsModel parses it to an int itself.
+    selectItemById(itemId: string): void;
 }
