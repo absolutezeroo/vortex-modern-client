@@ -37,6 +37,10 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {Logger} from '@core/utils/Logger';
 import type {AvatarInfoWidget} from '@habbo/ui/widget/avatarinfo/AvatarInfoWidget';
+import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import {
+    CustomUserNotificationMessageEvent
+} from '@habbo/communication/messages/incoming/room/furniture/CustomUserNotificationMessageEvent';
 
 const logger = Logger.getLogger('habbo.ui.handler.AvatarInfoWidgetHandler');
 
@@ -52,6 +56,9 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
     private _disposed: boolean = false;
     private _container: IRoomWidgetHandlerContainer | null = null;
     private _widget: AvatarInfoWidget | null = null;
+
+    // AS3: AvatarInfoWidgetHandler.as::_SafeStr_5791
+    private _customUserNotificationEvent: IMessageEvent | null = null;
 
     // AS3: AvatarInfoWidgetHandler.as::set widget()
     public set widget(value: AvatarInfoWidget | null)
@@ -103,6 +110,17 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
 
         if(!value) return;
 
+        // AS3: AvatarInfoWidgetHandler.as::set container() — subscribed once, guarded on the
+        // event field so a second container does not double-register.
+        if(!this._customUserNotificationEvent && value.connection)
+        {
+            this._customUserNotificationEvent = new CustomUserNotificationMessageEvent(
+                this.onCustomUserNotificationMessage.bind(this)
+            );
+
+            value.connection.addMessageEvent(this._customUserNotificationEvent);
+        }
+
         value.toolbar?.toolbarEvents.on(HabboToolbarEvent.TOOLBAR_CLICK, this.onToolbarClicked);
 
         const sessionEvents = value.roomSessionManager?.sessionEvents;
@@ -118,6 +136,27 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
     public get container(): IRoomWidgetHandlerContainer | null
     {
         return this._container;
+    }
+
+    /**
+     * AS3: AvatarInfoWidgetHandler.as::onCustomUserNotificationMessage()
+     *
+     * AS3 switches on `code - 4`, i.e. only the two respect-vote failures, and refunds the respect
+     * the player just spent. The same message also opens a dialog in
+     * `CustomUserNotificationWidgetHandler`; both handlers subscribe it independently.
+     */
+    private onCustomUserNotificationMessage(event: IMessageEvent): void
+    {
+        const parser = (event as CustomUserNotificationMessageEvent).customUserNotificationParser;
+
+        if(!parser) return;
+
+        switch(parser.code)
+        {
+            case 4:
+            case 5:
+                this._container?.sessionDataManager?.giveRespectFailed();
+        }
     }
 
     // AS3: AvatarInfoWidgetHandler.as::onToolbarClicked()
@@ -527,8 +566,16 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
     {
         if(this._disposed) return;
 
+        // AS3 unsubscribes before nulling the container, because the setter drops the reference the
+        // connection is reached through.
+        if(this._customUserNotificationEvent && this._container?.connection)
+        {
+            this._container.connection.removeMessageEvent(this._customUserNotificationEvent);
+        }
+
         this.container = null;
         this._widget = null;
+        this._customUserNotificationEvent = null;
         this._disposed = true;
     }
 

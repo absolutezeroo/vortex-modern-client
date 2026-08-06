@@ -911,6 +911,10 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_ROOM_DIMMER');
                     desktop.createWidget('RWE_FURNI_PRESENT_WIDGET');
                     desktop.createWidget('RWE_MANNEQUIN');
+                    // AS3: RoomUI.as:956 — the refusal dialogs (VIP/costume gates, failed respect).
+                    desktop.createWidget('RWE_CUSTOM_USER_NOTIFICATION');
+                    // AS3: RoomUI.as:975 — the rentable-space rent dialog.
+                    desktop.createWidget('RWE_RENTABLESPACE');
                     desktop.createWidget('RWE_FRIEND_FURNI_ENGRAVING');
                     // AS3: RoomUI.as:964
                     desktop.createWidget('RWE_FRIEND_FURNI_CONFIRM');

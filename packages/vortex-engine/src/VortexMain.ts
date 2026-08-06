@@ -18,6 +18,8 @@ import {RoomSessionManager} from '@habbo/session/RoomSessionManager';
 import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
 import {SessionDataManager} from '@habbo/session/SessionDataManager';
 import {HabboCampaigns} from '@habbo/campaign/HabboCampaigns';
+import {HabboNuxDialogs} from '@habbo/nux/HabboNuxDialogs';
+import {HabboPhoneNumber} from '@habbo/phonenumber/HabboPhoneNumber';
 import {AdManager} from '@habbo/advertisement/AdManager';
 import {HabboTracking} from '@habbo/tracking/HabboTracking';
 import {HabboGroupsManager} from '@habbo/groups/HabboGroupsManager';
@@ -48,6 +50,8 @@ import {Vortex} from './Vortex';
 import {PacketLogger} from '@core/communication/PacketLogger';
 import {IID_HabboAdManager} from '@iid/IIDHabboAdManager';
 import {IID_HabboCampaigns} from '@iid/IIDHabboCampaigns';
+import {IID_HabboNuxDialogs} from '@iid/IIDHabboNuxDialogs';
+import {IID_HabboPhoneNumber} from '@iid/IIDHabboPhoneNumber';
 import {IID_HabboGroupsManager} from '@iid/IIDHabboGroupsManager';
 import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
 import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
@@ -182,6 +186,10 @@ export class VortexMain implements IVortexMain
     private _habboCommunicationManager: HabboCommunicationManager | null = null;
     private _localizationManager: HabboLocalizationManager | null = null;
     private _campaigns: HabboCampaigns | null = null;
+
+    private _nuxDialogs: HabboNuxDialogs | null = null;
+
+    private _phoneNumber: HabboPhoneNumber | null = null;
     private _adManager: AdManager | null = null;
     private _tracking: HabboTracking | null = null;
     private _groupsManager: HabboGroupsManager | null = null;
@@ -698,22 +706,36 @@ export class VortexMain implements IVortexMain
         this._avatarRenderManager = new AvatarRenderManager(ctx);
         ctx.attachComponent(this._avatarRenderManager, [IID_AvatarRenderManager]);
 
-        // 12b. Campaign Calendar
+        // 12b. Phone number (SMS identity verification)
+        // AS3 attaches this against IIDHabboPhoneNumber from HabboToolbar.as:152 — the first of
+        // the three the toolbar's constructor puts up, before NUX and the calendar. It depends on
+        // IID_HabboToolbar, which is only attached at step 12j below; the DI resolves it then,
+        // exactly as AS3 does (the toolbar attaches this from inside its own constructor).
+        this._phoneNumber = new HabboPhoneNumber(ctx);
+        ctx.attachComponent(this._phoneNumber, [IID_HabboPhoneNumber]);
+
+        // 12c. NUX dialogs
+        // AS3 attaches this against IIDHabboNuxDialogs from HabboToolbar.as:154, immediately
+        // before the campaign calendar below — same constructor, same order.
+        this._nuxDialogs = new HabboNuxDialogs(ctx);
+        ctx.attachComponent(this._nuxDialogs, [IID_HabboNuxDialogs]);
+
+        // 12d. Campaign Calendar
         // AS3 attaches this against IIDHabboCampaigns from HabboToolbar.as:155.
         this._campaigns = new HabboCampaigns(ctx);
         ctx.attachComponent(this._campaigns, [IID_HabboCampaigns]);
 
-        // 12c. Advertisement Manager
+        // 12e. Advertisement Manager
         // AS3 registers this via the HabboAdManagerCom SWF library; this port constructs it
         // directly, so the IID has to be announced here or nothing can resolve it.
         this._adManager = new AdManager(ctx);
         ctx.attachComponent(this._adManager, [IID_HabboAdManager]);
 
-        // 12d. Tracking
+        // 12f. Tracking
         this._tracking = new HabboTracking(ctx);
         ctx.attachComponent(this._tracking, [IID_HabboTracking]);
 
-        // 12e. Groups Manager
+        // 12g. Groups Manager
         // AS3 registers this via the HabboGroupsCom SWF library. Consumers waiting on the IID:
         // HabboCatalog.ts:481, RoomUI.ts:310.
         // The asset library is what AS3's HabboGroupsCom SWF supplies; without it
@@ -722,7 +744,7 @@ export class VortexMain implements IVortexMain
         this._groupsManager = new HabboGroupsManager(ctx, 0, this._assets);
         ctx.attachComponent(this._groupsManager, [IID_HabboGroupsManager]);
 
-        // 12f. Notifications
+        // 12h. Notifications
         // AS3 registers this via the HabboNotificationsCom SWF library. Consumers waiting on the
         // IID: HabboQuestEngine.ts:194, SessionDataManager.ts:715.
         this._notifications = new HabboNotifications(ctx);
@@ -738,11 +760,11 @@ export class VortexMain implements IVortexMain
         this._soundManager = new HabboSoundManagerFlash10(ctx, 0, this._assets);
         ctx.attachComponent(this._soundManager, [IID_HabboSoundManager]);
 
-        // 12g. Catalog
+        // 12i. Catalog
         this._catalog = new HabboCatalog(ctx, this._assets);
         ctx.attachComponent(this._catalog, [IID_HabboCatalog]);
 
-        // 12h. Toolbar
+        // 12j. Toolbar
         this._toolbar = new HabboToolbar(ctx);
         ctx.attachComponent(this._toolbar, [IID_HabboToolbar]);
 
@@ -754,24 +776,24 @@ export class VortexMain implements IVortexMain
         this._questEngine = new HabboQuestEngine(ctx);
         ctx.attachComponent(this._questEngine, [IID_HabboQuestEngine]);
 
-        // 12i. FreeFlowChat
+        // 12k. FreeFlowChat
         this._freeFlowChat = new HabboFreeFlowChat(ctx, 0, this._assets);
         ctx.attachComponent(this._freeFlowChat, [IID_HabboFreeFlowChat]);
 
-        // 12j. Window Manager
+        // 12l. Window Manager
         this._windowManager = new HabboWindowManager(ctx);
         this.applyWindowAssets(config?.windowAssets ?? null);
         ctx.attachComponent(this._windowManager, [IID_HabboWindowManager]);
 
-        // 12k. Room UI
+        // 12m. Room UI
         this._roomUI = new RoomUI(ctx, 0, this._assets);
         ctx.attachComponent(this._roomUI, [IID_RoomUI]);
 
-        // 12l. Habbo Club Center
+        // 12n. Habbo Club Center
         this._clubCenter = new HabboClubCenter(ctx);
         ctx.attachComponent(this._clubCenter, [IID_HabboClubCenter]);
 
-        // 12m. User-Defined Room Events (Wired)
+        // 12o. User-Defined Room Events (Wired)
         // AS3 registers this via a *Com SWF library; this port constructs it directly. Attached
         // after all of its required DI dependencies (communication, localization, roomEngine,
         // roomSessionManager, sessionDataManager, notifications, toolbar, windowManager, roomUI).
@@ -780,7 +802,7 @@ export class VortexMain implements IVortexMain
         this._userDefinedRoomEvents = new HabboUserDefinedRoomEvents(ctx);
         ctx.attachComponent(this._userDefinedRoomEvents, [IID_HabboUserDefinedRoomEvents]);
 
-        // 12n. Furni editor (Vortex-specific, not from AS3). Attached after the window manager,
+        // 12p. Furni editor (Vortex-specific, not from AS3). Attached after the window manager,
         // which it depends on. Its own capability flag arrives during the handshake, so until the
         // server says otherwise it stays inert and offers no UI.
         this._furniEditor = new HabboFurniEditor(ctx);

@@ -22,8 +22,13 @@ export interface IRoomWidgetHandler extends IDisposable
 
     /**
 	 * Gets the list of widget message types this handler processes.
+	 *
+	 * `null` is admitted for the same reason as `getProcessedEvents()` below: AS3 returns a null
+	 * `Array` from handlers whose widget never sends them a message (`_SafeCls_3971`, the
+	 * rentable-space handler, talks to its widget through direct method calls instead), and `[]`
+	 * from the rest. RoomDesktop iterates the result, so both mean "no messages".
 	 */
-    getWidgetMessages(): string[];
+    getWidgetMessages(): string[] | null;
 
     /**
 	 * Processes a widget message.
@@ -32,8 +37,13 @@ export interface IRoomWidgetHandler extends IDisposable
 
     /**
 	 * Gets the list of event types this handler processes.
+	 *
+	 * `null` is distinct from an empty array and AS3 uses both: `CustomUserNotificationWidgetHandler`
+	 * returns null (its `Array` is never allocated) while others return `[]`. RoomDesktop iterates
+	 * the result, so both mean "subscribe to nothing" — but the signature has to admit null or a
+	 * faithful handler cannot be written.
 	 */
-    getProcessedEvents(): string[];
+    getProcessedEvents(): string[] | null;
 
     /**
 	 * Processes an event.

@@ -1,10 +1,14 @@
 import {MessageComposer} from '@core/communication/messages/MessageComposer';
 
 /**
- * Send event log for tracking
- * Message ID: 2297
+ * Send event log for tracking.
  *
- * @see source_as_win63/habbo/communication/messages/outgoing/tracking/class_955.as (EventLogMessageComposer)
+ * Header 3809, from WIN63's registry (`_composers[3809] = _SafeCls_2175`), which is what
+ * `HabboMessages` registers; the emulator corroborates it as `EventLogMessageEvent`. The
+ * "Message ID: 2297" this comment used to carry matched no registration in either tree.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2176/_SafeCls_2175.as
+ * @see sources/win63_version/habbo/communication/messages/outgoing/tracking/class_955.as (EventLogMessageComposer)
  */
 export class EventLogMessageComposer extends MessageComposer<ConstructorParameters<typeof EventLogMessageComposer>>
 {

@@ -17,6 +17,12 @@ import {RoomChatWidget} from './widget/roomchat/RoomChatWidget';
 import {EffectsWidget} from './widget/effects/EffectsWidget';
 import {AvatarInfoWidget} from './widget/avatarinfo/AvatarInfoWidget';
 import {TrophyFurniWidget} from './widget/furniture/trophy/TrophyFurniWidget';
+import {
+    CustomUserNotificationWidget
+} from './widget/furniture/requirementsmissing/CustomUserNotificationWidget';
+import {
+    RentableSpaceDisplayWidget
+} from './widget/furniture/rentablespace/RentableSpaceDisplayWidget';
 import {StickieFurniWidget} from './widget/furniture/stickie/StickieFurniWidget';
 import {SpamWallPostItFurniWidget} from './widget/furniture/stickie/SpamWallPostItFurniWidget';
 import {DimmerFurniWidget} from './widget/furniture/dimmer/DimmerFurniWidget';
@@ -149,6 +155,16 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                 return new TrophyFurniWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets,
                     this._roomUI.localization, this._roomUI.config
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_CUSTOM_USER_NOTIFICATION"
+            case 'RWE_CUSTOM_USER_NOTIFICATION':
+                return new CustomUserNotificationWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_RENTABLESPACE"
+            case 'RWE_RENTABLESPACE':
+                return new RentableSpaceDisplayWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
                 );
             // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNITURE_CONTEXT_MENU"
             case 'RWE_FURNITURE_CONTEXT_MENU':

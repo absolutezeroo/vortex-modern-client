@@ -58,6 +58,8 @@ import {InfoStandWidgetHandler} from './handler/InfoStandWidgetHandler';
 import {RoomToolsWidgetHandler} from './handler/RoomToolsWidgetHandler';
 import {EffectsWidgetHandler} from './handler/EffectsWidgetHandler';
 import {AvatarInfoWidgetHandler} from './handler/AvatarInfoWidgetHandler';
+import {CustomUserNotificationWidgetHandler} from './handler/CustomUserNotificationWidgetHandler';
+import {RentableSpaceWidgetHandler} from './handler/RentableSpaceWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
 import {FurnitureTrophyWidgetHandler} from './handler/FurnitureTrophyWidgetHandler';
@@ -767,6 +769,14 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:792
                 handler = new FurnitureTrophyWidgetHandler();
                 break;
+            case 'RWE_CUSTOM_USER_NOTIFICATION':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:870
+                handler = new CustomUserNotificationWidgetHandler();
+                break;
+            case 'RWE_RENTABLESPACE':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:900
+                handler = new RentableSpaceWidgetHandler();
+                break;
             case 'RWE_FURNI_PET_PACKAGE_WIDGET':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:798
                 handler = new PetPackageFurniWidgetHandler();
@@ -870,7 +880,8 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
         handler.container = this;
 
-        for(const messageType of handler.getWidgetMessages())
+        // Null-tolerant for the same reason as getProcessedEvents() below — see IRoomWidgetHandler.
+        for(const messageType of (handler.getWidgetMessages() ?? []))
         {
             let list = this._widgetMessageHandlers.get(messageType);
 
@@ -883,7 +894,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             list.push(handler);
         }
 
-        for(const eventType of [...handler.getProcessedEvents(), 'RETWE_OPEN_WIDGET', 'RETWE_CLOSE_WIDGET'])
+        // `getProcessedEvents()` may be null — AS3 returns a null Array from handlers that process
+        // no room events at all (CustomUserNotificationWidgetHandler), distinct from the `[]` the
+        // others return. Both mean the same thing here.
+        for(const eventType of [...(handler.getProcessedEvents() ?? []), 'RETWE_OPEN_WIDGET', 'RETWE_CLOSE_WIDGET'])
         {
             let list = this._widgetEventHandlers.get(eventType);
 

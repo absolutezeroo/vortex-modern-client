@@ -411,6 +411,54 @@ import {
 // nux/ barrels are generated and do not list these yet.
 import {SelectInitialRoomMessageEvent} from './messages/incoming/nux/SelectInitialRoomMessageEvent';
 import {SelectInitialRoomMessageComposer} from './messages/outgoing/nux/SelectInitialRoomMessageComposer';
+// The NUX dialogs (habbo/nux/HabboNuxDialogs): the phone-verification offer and the gift picker.
+import {
+    NewUserExperienceNotCompleteEvent
+} from './messages/incoming/nux/NewUserExperienceNotCompleteEvent';
+import {NewUserExperienceGiftOfferEvent} from './messages/incoming/nux/NewUserExperienceGiftOfferEvent';
+import {
+    CustomUserNotificationMessageEvent
+} from './messages/incoming/room/furniture/CustomUserNotificationMessageEvent';
+// The rentable-space furniture (habbo/ui/handler/RentableSpaceWidgetHandler).
+import {
+    RentableSpaceStatusMessageEvent
+} from './messages/incoming/room/furniture/RentableSpaceStatusMessageEvent';
+import {
+    RentableSpaceRentOkMessageEvent
+} from './messages/incoming/room/furniture/RentableSpaceRentOkMessageEvent';
+import {
+    RentableSpaceRentFailedMessageEvent
+} from './messages/incoming/room/furniture/RentableSpaceRentFailedMessageEvent';
+import {
+    RentableSpaceStatusMessageComposer
+} from './messages/outgoing/room/furniture/RentableSpaceStatusMessageComposer';
+import {
+    RentableSpaceRentMessageComposer
+} from './messages/outgoing/room/furniture/RentableSpaceRentMessageComposer';
+import {
+    RentableSpaceCancelRentMessageComposer
+} from './messages/outgoing/room/furniture/RentableSpaceCancelRentMessageComposer';
+import {
+    NewUserExperienceGetGiftsMessageComposer
+} from './messages/outgoing/nux/NewUserExperienceGetGiftsMessageComposer';
+import {
+    SetPhoneNumberVerificationStatusMessageComposer
+} from './messages/outgoing/preferences/SetPhoneNumberVerificationStatusMessageComposer';
+// SMS identity verification (habbo/phonenumber/HabboPhoneNumber). AS3 files these under
+// incoming|outgoing/gifts/; this port keeps the phone composers in outgoing/preferences/.
+import {
+    PhoneCollectionStateMessageEvent
+} from './messages/incoming/gifts/PhoneCollectionStateMessageEvent';
+import {
+    TryPhoneNumberResultMessageEvent
+} from './messages/incoming/gifts/TryPhoneNumberResultMessageEvent';
+import {
+    TryVerificationCodeResultMessageEvent
+} from './messages/incoming/gifts/TryVerificationCodeResultMessageEvent';
+import {
+    TryPhoneNumberMessageComposer
+} from './messages/outgoing/preferences/TryPhoneNumberMessageComposer';
+import {VerifyCodeMessageComposer} from './messages/outgoing/preferences/VerifyCodeMessageComposer';
 import {UpdateFigureDataMessageComposer} from './messages/outgoing/avatar/UpdateFigureDataMessageComposer';
 import {CheckUserNameResultMessageEvent} from './messages/incoming/help/CheckUserNameResultMessageEvent';
 import {ChangeUserNameMessageComposer} from './messages/outgoing/help/ChangeUserNameMessageComposer';
@@ -1530,6 +1578,33 @@ export class HabboMessages implements IMessageConfiguration
         // The name-check answer, `_SafeStr_4546[382] = _SafeCls_3600`. Without it the onboarding
         // name dialog spins its wait indicator forever — the reply arrives and is dropped.
         this._events.set(382, CheckUserNameResultMessageEvent);
+        // The two NUX dialog notices. IDs from WIN63's registry (`_SafeStr_4546[752] =
+        // _SafeCls_3189`, `_SafeStr_4546[3307] = _SafeCls_2677`), corroborated by the emulator as
+        // NewUserExperienceNotCompleteComposer / NewUserExperienceGiftOfferComposer. Both are
+        // handled by HabboNuxDialogs; 752 carries no payload.
+        this._events.set(752, NewUserExperienceNotCompleteEvent);
+        this._events.set(3307, NewUserExperienceGiftOfferEvent);
+
+        // === ROOM WIDGETS ===
+        // The furniture-refusal / failed-respect notice, `_events[169] = _SafeCls_3982`,
+        // corroborated by the emulator as CustomUserNotificationMessageComposer. Two handlers read
+        // it: CustomUserNotificationWidgetHandler opens the dialog, AvatarInfoWidgetHandler refunds
+        // the respect on codes 4-5.
+        this._events.set(169, CustomUserNotificationMessageEvent);
+        // The rentable-space answers, `_events[2800]/[2158]/[3117]`, all three corroborated by the
+        // emulator (RentableSpaceStatus/RentOk/RentFailed MessageComposer).
+        this._events.set(2800, RentableSpaceStatusMessageEvent);
+        this._events.set(2158, RentableSpaceRentOkMessageEvent);
+        this._events.set(3117, RentableSpaceRentFailedMessageEvent);
+
+        // === PHONE NUMBER (SMS identity verification) ===
+        // IDs from WIN63's registry (`_events[2833]/[2845]/[712]`). The emulator corroborates
+        // 2845 and 712 (TryPhoneNumberResultMessageComposer / TryVerificationCodeResultMessageComposer)
+        // but has no constant at all for 2833, so that one rests on the client registry alone.
+        // All three are handled by HabboPhoneNumber, and 2833 is what starts the whole flow.
+        this._events.set(2833, PhoneCollectionStateMessageEvent);
+        this._events.set(2845, TryPhoneNumberResultMessageEvent);
+        this._events.set(712, TryVerificationCodeResultMessageEvent);
 
         // === HELP (FAQ) ===
         // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/help/FaqTextMessageEvent.as
@@ -1847,6 +1922,10 @@ export class HabboMessages implements IMessageConfiguration
         // `_composers[3339] = _SafeCls_3021`), corroborated by the emulator.
         this._composers.set(3267, SelectInitialRoomMessageComposer);
         this._composers.set(3339, UpdateFigureDataMessageComposer);
+        // The NUX gift claim, `_composers[3490] = _SafeCls_2936`, corroborated by the emulator as
+        // NewUserExperienceGetGiftsMessageEvent. Its length prefix counts integers, not items —
+        // see the composer.
+        this._composers.set(3490, NewUserExperienceGetGiftsMessageComposer);
         // Name check/claim. The onboarding dialog claims on 879 (`_composers[879] = _SafeCls_3401`);
         // the paid rename in habbo/help/namechange uses 1703 and a different composer class, so the
         // two are not interchangeable. The check is shared: `_composers[413] = _SafeCls_3569`.
@@ -2160,6 +2239,20 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1332, SetIgnoreRoomInvitesMessageComposer);
         this._composers.set(3917, SetRoomCameraPreferencesMessageComposer);
         this._composers.set(2056, ResetPhoneNumberStateMessageComposer);
+        // The answer to the phone-verification offer, `_composers[1983] = _SafeCls_2666`,
+        // corroborated as SetPhoneNumberVerificationStatusMessageEvent. Shared by HabboNuxDialogs
+        // (statuses 0 and 2) and habbo/phonenumber.
+        this._composers.set(1983, SetPhoneNumberVerificationStatusMessageComposer);
+        // The two submissions of the SMS flow, `_composers[2890] = _SafeCls_2910` and
+        // `_composers[1846] = _SafeCls_2748`, corroborated as TryPhoneNumberMessageEvent /
+        // VerifyCodeMessageEvent.
+        this._composers.set(2890, TryPhoneNumberMessageComposer);
+        this._composers.set(1846, VerifyCodeMessageComposer);
+        // The rentable-space requests, `_composers[2626]/[3165]/[61]`, corroborated by the emulator
+        // as RentableSpaceStatus/Rent/CancelRent MessageEvent.
+        this._composers.set(2626, RentableSpaceStatusMessageComposer);
+        this._composers.set(3165, RentableSpaceRentMessageComposer);
+        this._composers.set(61, RentableSpaceCancelRentMessageComposer);
         // The personal word filter. Headers read from WIN63's own registry
         // (habbo/communication/_SafeCls_2046.as, _composers[801]/[2656]/[2209]).
         // vortex-emulator's Headers.cs names all three differently, with no verification
