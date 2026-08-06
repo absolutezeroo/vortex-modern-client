@@ -213,21 +213,29 @@ Re-ranked **2026-08-03**, biggest product gap first.
    the port does, and diff — being alert to alias names. Then check each ported class has a
    constructor call, not just a definition. Candidates not yet swept: `habbo/inventory`,
    `habbo/catalog`, `habbo/moderation`, `habbo/friendlist`, `habbo/help`.
-1. **`habbo/ui/widget/furniture` — 44/54**, measured 2026-08-03. Ten left, smallest first:
-   `AchievementResolutionTrophyFurniWidget` (150), `VimeoDisplayWidget` (150),
-   `CustomUserNotificationWidget` (174), `GuildFurnitureContextMenuView` (185),
-   `RentableSpaceDisplayWidget` (194), `HighScoreDisplayWidget` (248), `AreaHideFurniWidget` (358),
-   `YoutubeDisplayWidget` (448), `ExternalImageWidget` (758), `_SafeCls_3218` (32).
-   **Size these by the feature, not the file.** The trophy widget above is 150 lines but its only
-   dispatcher, `FurnitureBadgeDisplayWidgetHandler`, is 331 lines and unported — the real slice is
-   ~480 lines plus a badge-info composer/event/parser, a badge-rarity enum and two `HabboGroups`
-   helpers. Porting the widget alone would add another entry to priority 0's list.
+1. **`habbo/ui/widget/furniture` — 46/54, and `habbo/ui/handler` — 25/47**, re-measured
+   2026-08-05. Eight widgets left, smallest first: `AchievementResolutionTrophyFurniWidget` (150),
+   `VimeoDisplayWidget` (150), `GuildFurnitureContextMenuView` (185), `HighScoreDisplayWidget`
+   (248), `AreaHideFurniWidget` (358), `YoutubeDisplayWidget` (448), `ExternalImageWidget` (758),
+   `_SafeCls_3218` (32, the video-player state enum). Their handlers, where known:
+   `FurnitureBadgeDisplayWidgetHandler` (331), `_SafeCls_3964` (148, high score), `_SafeCls_3849`
+   (207, YouTube), `_SafeCls_3484` (123, Vimeo), `FurnitureAreaHideWidgetHandler` (139),
+   `ExternalImageWidgetHandler` (162).
+   **Track the handlers with them — they are the bigger half.** 22 of AS3's 47 `ui/handler` files
+   are unported (~4,300 lines), and a widget whose handler is missing receives nothing at all.
+   **Size these by the feature, not the file.** The trophy widget is 150 lines but its only
+   dispatcher is that 331-line badge handler — the real slice is ~480 lines plus a badge-info
+   composer/event/parser, a badge-rarity enum and two `HabboGroups` helpers. Porting a widget alone
+   adds another entry to priority 0's list.
 2. **Finish `habbo/roomevents`** (395/448). It is 88% there and the remainder is enumerated:
    `VariableManagementDetailController`, the `chests` tab + `wiredChest`, the `WiredMenuEvent`
    toolbar dispatch, and Bloc C's 16 `TODO(AS3)`s — several of which Bloc E has now unblocked.
-3. **Whole modules still at zero**: `habbo/game` (0/63, and the `game` protocol at 122 files is the
-   #1 message gap), `habbo/nux` (0/4), `habbo/phonenumber` (0/7), `habbo/userclassification` (0/1).
-   `game` depends on nothing in flight. `habbo/sound` left this list on 2026-08-02 at 10/29 —
+3. **Whole modules still at zero**: `habbo/game` — 0/63, and the `game` protocol at 122 files is
+   the #1 message gap. **But 58 of those 63 files are `snowwar/`**: the manager itself is 5 files
+   (`HabboGameManager`, `IncomingMessages`, `events/`, 2 obfuscated), and the rest is one large
+   self-contained minigame, not infrastructure anything else waits on. Size it accordingly.
+   `nux` (4/4), `phonenumber` (7/7) and `userclassification` (1/1) left this list on 2026-08-05.
+   `habbo/sound` left it on 2026-08-02 at 10/29 —
    effects play; what remains there is music: `music/` (1688 l.), `trax/` (1495 l.) and `furni/`
    (206 l.), i.e. the jukebox, the Trax sequencer and furniture samples.
 4. **Protocol batches, in gap order**: `game`, `users`, `collectibles`, `catalog`, `room`,
@@ -669,6 +677,132 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **The rentable-space furniture, end to end — and `FriendlyTime` was rendering hardcoded
+  English client-wide**, 2026-08-05.
+  - **The slice.** `RentableSpaceDisplayWidget` + `RentableSpaceWidgetHandler` + its six messages
+    (status/rent-ok/rent-failed events with parsers, and the status/rent/cancel composers), wired
+    into `RoomWidgetFactory`, `RoomDesktop` and `RoomUI`. `habbo/ui/widget/furniture` is now
+    **46/54**, `habbo/ui/handler` **25/47**.
+  - **All six message names came from AS3, not the emulator.** `win63_version` carries the whole
+    `{incoming,outgoing,parser}/room/furniture/RentableSpace*` set unobfuscated; the emulator
+    corroborates every one of the six headers (2800/2158/3117, 2626/3165/61). Only the handler's own
+    class name is derived — `_SafeCls_3971` is obfuscated in every tree, identified by
+    `implements IRoomWidgetHandler` plus its `RWE_RENTABLESPACE` type, and named after that.
+  - 🐛 **`FriendlyTime` had lost its localization.** The port's version took no localization manager
+    and concatenated English words — `"5 days"`, `"just now"` — where AS3 resolves
+    `friendlytime.days` with an `amount` parameter, because word order differs per language. That is
+    **9 call sites across 6 modules**: group profiles, room info, quests (×3), the wired monitor,
+    the infostand's rent expiry and the club centre (×2). One of them already carried a note saying
+    the parameter had been dropped. Now faithful — `getFriendlyTime` / `getShortFriendlyTime` /
+    `getLocalization` all take the manager first, as AS3 does, and every caller passes one. Note the
+    suffix is appended to the *key*, not the text: `('.ago')` looks up `friendlytime.days.ago`.
+  - **A second interface had to admit null.** `IRoomWidgetHandler.getWidgetMessages()` said
+    `string[]`, but AS3 returns a null `Array` from this handler (its widget calls it directly
+    instead of sending widget messages). Widened to `string[] | null`, `RoomDesktop` spreads `?? []`
+    — the same fix `getProcessedEvents()` needed earlier today, for the same reason.
+  - **Two AS3 quirks kept rather than tidied**, both noted at the declaration: the container setter
+    subscribes with no already-subscribed guard (a second container would subscribe twice), and
+    `getUsersClubLevel()` is dead — the widget gates on credits, never on club level.
+  - **Verified in a browser**: the handler answers `RWE_RENTABLESPACE`, returns null widget-messages
+    and `[]` processed-events, and reports `disposed` before a container is set; all six headers
+    resolve to the right classes; the rent composer's payload is `[4242]`; and the status parser
+    reads **bool, int, int, str, int, int** — AS3's exact order — deriving `canRent` from a zero
+    error code and blanking `renterId`/`renterName` to -1/"" when the space is free while keeping
+    them when it is rented. `FriendlyTime` was probed against a fake manager: it emits
+    `friendlytime.days` / `friendlytime.days.ago` / `friendlytime.hours.short` with
+    `('amount', '10')`, and falls back to the bare key when handed no manager.
+
+- ✅ **`habbo/ui/widget/furniture` 45/54, and the measurement that matters: `habbo/ui/handler` is
+  23/47**, 2026-08-05.
+  - 📏 **The tracked gap was the wrong one.** Priority 1 has counted widgets (44/54) since
+    2026-08-03, but the handler layer behind them is a separate, larger hole nothing measured:
+    **24 of AS3's 47 `ui/handler` files are unported, ~4,700 lines** — `MeMenuWidgetHandler` (481),
+    `CraftingWidgetHandler` (379), `CameraWidgetHandler` (356), `FurnitureBadgeDisplayWidgetHandler`
+    (331), `PlayListEditorWidgetHandler` (264), `FurniChooserWidgetHandler` (211) and 18 more. A
+    widget without its handler receives nothing, so the two counts have to move together. Re-measure
+    with `comm -23` over the two basename lists, the same recipe as the widget count.
+  - **First slice closed end to end: the refusal dialogs.** `CustomUserNotificationWidget` (5
+    variants — VIP hopper, VIP gate, costume hopper, and the two failed-respect notices) +
+    `CustomUserNotificationWidgetHandler`, plus the message they both hang off:
+    `CustomUserNotificationMessageEvent` / `…Parser` at header 169.
+  - 🐛 **Header 169 was registered nowhere, and a second already-"ported" handler was missing its
+    half of it.** AS3 subscribes `_SafeCls_3982` from *two* places: the notification handler opens
+    the dialog, and `AvatarInfoWidgetHandler.onCustomUserNotificationMessage()` refunds the respect
+    on codes 4-5. The port's `AvatarInfoWidgetHandler` had neither the subscription nor the method,
+    so a failed respect vote silently kept the point — an orphan inside a file that counted as done.
+    Both handlers now subscribe independently, as in AS3, and `dispose()` unsubscribes before
+    nulling the container (the setter drops the reference the connection is reached through).
+  - **Wired at all three points AS3 wires it**: `RoomWidgetFactory.createWidget()`,
+    `RoomDesktop.createWidgetHandler()` and `RoomUI`'s `createDesktopWidget('RWE_CUSTOM_USER_NOTIFICATION')`
+    (AS3 `RoomUI.as:956`).
+  - **`IRoomWidgetHandler.getProcessedEvents()` had to admit null.** AS3 returns a null `Array` from
+    this handler and `[]` from the others; the port's signature said `string[]`, so the faithful
+    handler would not compile. Widened to `string[] | null` — every existing implementer still
+    satisfies it — and `RoomDesktop` now spreads `?? []`.
+  - ⚠️ **One branch could not be finished:** owning a costume should open the avatar editor on its
+    effects tab (`container.avatarEditor.openEditor(…)` / `loadOwnAvatarInEditor(0)`).
+    `IRoomWidgetHandlerContainer` declares `avatarEditor` in AS3 but not here, because
+    HabboAvatarEditor has no ported manager — the same gap already marked in `HabboCatalog` and
+    `HabboLandingView`. Marked `TODO(AS3)`; the not-owned branch (open the `costumes` catalog page)
+    works.
+  - **Verified in a browser**: widget, handler, factory and desktop all import; the handler answers
+    `RWE_CUSTOM_USER_NOTIFICATION` — the exact string both switches test — `getProcessedEvents()`
+    returns null and the desktop tolerates it; the five type constants match what the handler passes
+    to `open()`; header 169 resolves to `CustomUserNotificationMessageEvent`; and the parser reads
+    exactly one integer, returns it as `code`, and answers false to a null wrapper.
+
+- ✅ **`habbo/nux` 4/4, `habbo/phonenumber` 7/7 and `habbo/userclassification` 1/1 — three modules
+  off the "still at zero" list, with their 9 messages and both components wired**, 2026-08-05.
+  - **What landed.** `HabboNuxDialogs` + its three views (phone-verification offer, gift picker,
+    noob-lobby nag); `HabboPhoneNumber` + its four (collect dialog, verify dialog, and the two
+    toolbar-badge minimized forms) + `ClientPhoneVerificationStatusEnum` / `PhoneNumberStatusEnum`;
+    `UserClassificationData`. Plus `habbo/utils/TextWindowUtils` (its one caller is the collect
+    dialog) and 13 message classes — 5 events, 4 composers, 3 parsers and 4 parser DTOs.
+  - **Both components are attached, not just written** (priority 0's failure mode). AS3 puts all
+    three up from `HabboToolbar`'s own constructor (`HabboToolbar.as:152-154`: phone, nux,
+    campaigns); the port's `VortexMain` now does the same in the same order at steps 12b/12c,
+    ahead of the campaign calendar that was already there. `HabboPhoneNumber` depends on
+    `IID_HabboToolbar`, attached later at 12j — deferred resolution, exactly as in AS3, where the
+    toolbar attaches this from inside its own constructor.
+  - **Names: 11 of 13 message classes were recovered from AS3, not derived.** `win63_version` keeps
+    the whole `incoming|outgoing|parser/{nux,gifts}` set unobfuscated
+    (`NewUserExperienceGiftOfferEvent`, `TryVerificationCodeResultMessageEventParser`,
+    `VerifyCodeMessageComposer`, …), PRODUCTION supplies `NewUserExperienceGiftOptions` /
+    `NewUserExperienceGift` and both enum class names. Four identifiers exist in no tree and say so
+    at the declaration: `NewUserExperienceProductOffer`, `NewUserExperienceGiftSelection`,
+    `UserClassificationData`'s constants 1 and 3, and `ClientPhoneVerificationStatusEnum`'s
+    constant 1 — all four are unreferenced everywhere, so nothing constrains them but their value.
+  - 🐛 **The primary tree lost the country-name lookup, and the loss is invisible.**
+    `PhoneNumberCollectView.createWindow()` reads `new JSONDecoder("{}", false)` in WIN63 — only
+    the fallback. Ported as-is, every country name is undefined and the drop list renders blank
+    while throwing nothing. `sources/win63_version/habbo/phonenumber/PhoneNumberCollectView.as`
+    keeps the real expression, `getLocalization("phone.number.collect.countries") || "{}"`, and
+    that is what shipped. Same class of decompiler damage as the `order-before` E4X case in
+    CLAUDE.md, found the same way — by cross-referencing when a constant looked too empty to be
+    real.
+  - **Verified in a browser, not by reading.** `HabboPhoneNumber` ↔ `VerificationCodeInputView` is
+    a genuine import cycle (the view calls the component's static `getTimer()`), and a cycle that
+    resolves the wrong way leaves one side `undefined` until first use. All 14 new modules import
+    clean through Vite, the cycle resolves (`getTimer()` returns a number across it), and the
+    registry answers all 9 new headers with the right class: events 752/3307/2833/2845/712,
+    composers 3490/1983/2890/1846. Full client boot could not be exercised — the client only
+    bootstraps after a server login, and no emulator was running.
+  - ⚠️ **Server-side, the NUX flow is inert.** `vortex-emulator`'s handlers for 3490 and 1983 are
+    empty `ValueTask.CompletedTask` stubs whose parsers read no payload, and nothing anywhere
+    constructs `NewUserExperienceGiftOfferEventMessageComposer` or its NotComplete sibling — so
+    752 and 3307 are never sent. The client side is complete and correct; the dialogs simply have
+    nothing to open them until the emulator grows the flow. The link-event path
+    (`nux/lobbyoffer/show`) and the home-room timer are client-driven and do work.
+  - ⚠️ **One member could not be finished:** `TextWindowUtils.setHTMLLinkStyle()` computes its four
+    Flash link styles and drops them — this port's `ITextWindow` has no `styleSheet`, and the
+    Canvas2D text renderer has no `flash.text.StyleSheet` notion at all. Left as a `TODO(AS3)` on
+    the method naming the three pieces it needs. Links render in the layout's own colour.
+  - **Two wrong comments corrected while in the area**, both about provenance:
+    `ResetPhoneNumberStateMessageComposer` claimed its class was "obfuscated in every available
+    tree" — `win63_version` has it unobfuscated under `outgoing/gifts/`; and
+    `EventLogMessageComposer` (reused by the noob-lobby nag) documented itself as "Message ID:
+    2297" while being registered at 3809, a number matching no registration in either tree.
+
 - ✅ **Four UI defects reported from a live session: room-settings placeholders, a DOM input that
   outlived its window, the purse's "Get" for HC holders, and the stub purchase dialog**, 2026-08-05.
   - 🐛 **`%displayed%/%total%` rendered verbatim in the Rights tab.** `RoomSettingsCtrl.refreshFlatControllers()`
@@ -722,7 +856,6 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     the dialog shows what the catalog page behind it shows. The trigger case is catalog-seed data,
     not display code: the emulator names that offer `classic3_plant*3` and neither the live nor the
     dumped productdata carries it, though both carry other `code*n` bundles (`barchair_silo*10`).
-
 
 - ✅ **vortex-glaze: the widget library now covers every buildable window type — and the `iconbutton`
   tag it exposed had never parsed at all**, 2026-08-04.
