@@ -3,6 +3,7 @@ import type {IAssetLibrary} from '@core/assets';
 import type {IAvatarEffectListener} from './IAvatarEffectListener';
 import type {AvatarStructure} from './AvatarStructure';
 import {EffectAssetDownloadLibrary} from './EffectAssetDownloadLibrary';
+import type {AssetAliasCollection} from './alias/AssetAliasCollection';
 import {getXmlAttribute, getXmlChildElements, getXmlRoot} from './structure/AvatarXmlUtils';
 
 /**
@@ -49,17 +50,30 @@ export class EffectAssetDownloadManager extends EventEmitter
     private _downloadUrl: string;
     private _assetLibrary: IAssetLibrary;
 
+    /**
+     * There is no AS3 counterpart: an effect's SWF is loaded into the shared
+     * `AssetLibraryCollection` there, and `AssetAliasCollection` resolves against that
+     * collection, so nothing has to be handed over. This port instead builds one
+     * `GraphicAssetCollection` per .nitro bundle, and only `AvatarAssetDownloadManager` was
+     * registering them - which left effect sprites (the hoverboard, the spotlight cone)
+     * unresolvable by name.
+     */
+    // TS-only: no AS3 counterpart; the per-bundle GraphicAssetCollection is this port's own.
+    private _aliasCollection: AssetAliasCollection | null;
+
     constructor(
         downloadUrl: string,
         structure: AvatarStructure,
-        assetLibrary: IAssetLibrary
-    ) 
+        assetLibrary: IAssetLibrary,
+        aliasCollection: AssetAliasCollection | null = null
+    )
     {
         super();
 
         this._structure = structure;
         this._downloadUrl = downloadUrl;
         this._assetLibrary = assetLibrary;
+        this._aliasCollection = aliasCollection;
         this._effectMap = new Map();
         this._incompleteEffects = new Map();
         this._listeners = new Map();
@@ -277,18 +291,59 @@ export class EffectAssetDownloadManager extends EventEmitter
     }
 
     /**
+     * Flattens a library's animation payload into the individual animations to register.
+     *
+     * Accepts either shape: a bundle's `{"<display name>": {name, frames}}` map, or a single
+     * animation object of the kind AS3's XML resource produces. An entry only counts when it
+     * carries its own `name`, which is the key `AnimationManager` registers it under.
+     */
+    // TS-only: no AS3 counterpart - AS3's effect resource holds exactly one animation, so it
+    // has nothing to flatten. See onLibraryComplete() for why the .nitro shape differs.
+    private static getAnimations(animation: unknown): unknown[]
+    {
+        if(!animation || typeof animation !== 'object') return [];
+
+        const record = animation as Record<string, unknown>;
+
+        if(typeof record.name === 'string') return [animation];
+
+        return Object.values(record).filter((entry) =>
+        {
+            return !!entry && typeof entry === 'object' && typeof (entry as Record<string, unknown>).name === 'string';
+        });
+    }
+
+    /**
      * Callback invoked when a library finishes downloading.
      *
-     * Registers the library's animation data with the avatar structure, checks which
-     * pending effects are now complete, notifies their listeners, removes the library
-     * from current downloads, and triggers the next batch of downloads.
+     * Registers the library's assets, aliases and animation data with the avatar structure,
+     * checks which pending effects are now complete, notifies their listeners, removes the
+     * library from current downloads, and triggers the next batch of downloads.
      */
-    private onLibraryComplete(library: EffectAssetDownloadLibrary): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::libraryComplete()
+    private onLibraryComplete(library: EffectAssetDownloadLibrary): void
     {
-        // Register animation data with the structure
-        if(library.animation) 
+        // Register the library's assets and aliases so effect sprites resolve by name. See
+        // _aliasCollection's declaration for why this has no AS3 counterpart.
+        if(this._aliasCollection)
         {
-            this._structure.registerAnimation(library.animation);
+            this._aliasCollection.onAvatarAssetsLibraryReady(library.name);
+        }
+
+        // Register animation data with the structure.
+        //
+        // AS3 (_SafeCls_67.as:229) passes ONE animation: the effect SWF holds a single
+        // `<animation name="fx.2">` XML, and `AnimationManager.registerAnimation()` keys it by
+        // `data.name` accordingly. A .nitro bundle instead carries a *map* of them keyed by
+        // display name - Dance1.nitro is `{"Dance 1": {name: "dance.1", frames: [...]}}` - so
+        // handing that map straight through registered the whole object under `''`, and every
+        // `getAnimation("dance.1")` / `getAnimation("fx.N")` lookup missed. Nothing failed
+        // loudly: an animated action whose animation is missing renders its
+        // `assetpartdefinition`, which for both Dance and AvatarEffect is `std` - so dances and
+        // effects came out as a plain standing avatar. Register each entry under its own name.
+        for(const animation of EffectAssetDownloadManager.getAnimations(library.animation))
+        {
+            this._structure.registerAnimation(animation);
         }
 
         // Check which pending effects are now complete

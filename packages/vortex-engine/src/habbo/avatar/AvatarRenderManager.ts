@@ -574,7 +574,8 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
             this._effectAssetDownloadManager = new EffectAssetDownloadManager(
                 effectDownloadUrl,
                 this._structure,
-                this._assetLibrary
+                this._assetLibrary,
+                this._aliasCollection
             );
 
             this.loadEffectMap();
