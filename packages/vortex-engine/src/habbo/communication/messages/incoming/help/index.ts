@@ -19,7 +19,6 @@ export * from './GuideSessionDetachedMessageEvent';
 export * from './GuideSessionEndedMessageEvent';
 export * from './GuideSessionErrorMessageEvent';
 export * from './GuideSessionInvitedToGuideRoomMessageEvent';
-export * from './GuideSessionInviteRequesterMessageEvent';
 export * from './GuideSessionMessageMessageEvent';
 export * from './GuideSessionPartnerIsTypingMessageEvent';
 export * from './GuideSessionRequesterRoomMessageEvent';

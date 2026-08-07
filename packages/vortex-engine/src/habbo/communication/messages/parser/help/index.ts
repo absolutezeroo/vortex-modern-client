@@ -19,7 +19,6 @@ export * from './GuideSessionDetachedMessageParser';
 export * from './GuideSessionEndedMessageParser';
 export * from './GuideSessionErrorMessageParser';
 export * from './GuideSessionInvitedToGuideRoomMessageParser';
-export * from './GuideSessionInviteRequesterMessageParser';
 export * from './GuideSessionMessageMessageParser';
 export * from './GuideSessionPartnerIsTypingMessageParser';
 export * from './GuideSessionRequesterRoomMessageParser';

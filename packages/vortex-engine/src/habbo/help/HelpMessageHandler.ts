@@ -17,7 +17,6 @@ import {
     GuideSessionDetachedMessageEvent,
     GuideSessionEndedMessageEvent,
     GuideSessionInvitedToGuideRoomMessageEvent,
-    GuideSessionInviteRequesterMessageEvent,
     GuideSessionMessageMessageEvent,
     GuideSessionRequesterRoomMessageEvent,
     GuideSessionStartedMessageEvent,
@@ -106,6 +105,12 @@ export class HelpMessageHandler
         this.addMessageEvent(new CallForHelpDisabledNotifyMessageEvent(this.onCallForHelpDisabledNotify.bind(this)));
 
         // Sanction and topics
+        // TODO(AS3): `SanctionStatusMessageEvent` is deliberately left unregistered, so this
+        // subscription never fires. It was ported from win63_version, where the message is one
+        // flat sanction (name, length, reason, probation, …). The 2026 client's message in that
+        // position (`_SafeCls_1807`, header 1746) carries a `sanctions()` **list** instead — a
+        // different shape, so registering the old reader against the new id would misparse the
+        // wire. Porting the current shape is the fix; the header is 1746 when it is done.
         this.addMessageEvent(new SanctionStatusMessageEvent(this.onSanctionStatus.bind(this)));
         this.addMessageEvent(new CfhTopicsInitMessageEvent(this.onCfhTopicsInit.bind(this)));
         this.addMessageEvent(new GuideReportingStatusMessageEvent(this.onGuideReportingStatus.bind(this)));
@@ -119,7 +124,6 @@ export class HelpMessageHandler
         this.addMessageEvent(new GuideSessionEndedMessageEvent(this.onGuideSessionEnded.bind(this)));
 
         // Guide invite events
-        this.addMessageEvent(new GuideSessionInviteRequesterMessageEvent(this.onGuideSessionInviteRequester.bind(this)));
         this.addMessageEvent(new GuideSessionInvitedToGuideRoomMessageEvent(this.onGuideSessionInvitedToGuideRoom.bind(this)));
         this.addMessageEvent(new GuideSessionRequesterRoomMessageEvent(this.onGuideSessionRequesterRoom.bind(this)));
 
@@ -212,11 +216,6 @@ export class HelpMessageHandler
     }
 
     // --- Guide invite handlers ---
-
-    private onGuideSessionInviteRequester(_event: IMessageEvent): void
-    {
-        log.trace('GuideSessionInviteRequester received');
-    }
 
     private onGuideSessionInvitedToGuideRoom(_event: IMessageEvent): void
     {

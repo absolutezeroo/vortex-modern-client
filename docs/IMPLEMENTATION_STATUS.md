@@ -754,6 +754,25 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   - **Verified in a browser**: all 38 ids resolve to the expected class, every one constructs, and
     every one carries its parser. The event table went from 369 to 407 entries with no duplicate
     id.
+  - **Then the same filter was run over *every* incoming directory, not just these three.** It
+    found 101 ported-but-unregistered classes, of which only **five were also subscribed** — the
+    ones that actually cost something. Three are now registered: `IsUserPartOfCompetition` (1148),
+    `SecondsUntil` (3620) and `IsBadgeRequestFulfilled` (2121), each resolved through the *landing
+    view element* that registers it, because two of the three answer a handler called `onInfo` and
+    the handler name alone could not tell them apart. **win63_version lists those three at
+    1685/1557/2295 — all stale.**
+  - 🐛 **One of the remaining two was a duplicate of a message already ported.**
+    `GuideSessionInviteRequesterMessageEvent` carries a `@see` pointing at
+    `GuideSessionInvitedToGuideRoomMessageEvent.as` — the same AS3 message, already ported and now
+    registered at 776 — and in AS3 `GuideSessionInviteRequester` is a **composer**, not an event.
+    Both port handlers were trace-only stubs. The duplicate event, its parser and its subscription
+    are removed.
+  - ⚠️ **The last one is a revision mismatch, and is deliberately left unregistered.** The port's
+    `SanctionStatusMessageEvent` came from win63_version, where the message is one flat sanction.
+    The 2026 client's message in that position (`_SafeCls_1807`, header 1746) carries a
+    `sanctions()` **list**. Registering the old reader against the new id would misparse the wire,
+    so the subscription stays inert behind a `TODO(AS3)` that names the header for whoever ports
+    the current shape. **The event table is 410 entries, no duplicate id.**
 
 - ✅ **`habbo/sound` COMPLETE: `furni/`, the last file**, 2026-08-06.
   - **`FurniSamplePlaybackManager` (206 l.)**, constructed by the sound manager on the room

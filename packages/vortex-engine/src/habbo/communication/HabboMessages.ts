@@ -494,6 +494,13 @@ import {
 } from './messages/outgoing/sound/GetJukeboxPlayListMessageComposer';
 import {UpdateFigureDataMessageComposer} from './messages/outgoing/avatar/UpdateFigureDataMessageComposer';
 import {CheckUserNameResultMessageEvent} from './messages/incoming/help/CheckUserNameResultMessageEvent';
+import {
+    IsUserPartOfCompetitionMessageEvent
+} from './messages/incoming/competition/IsUserPartOfCompetitionMessageEvent';
+import {SecondsUntilMessageEvent} from './messages/incoming/competition/SecondsUntilMessageEvent';
+import {
+    IsBadgeRequestFulfilledEvent
+} from './messages/incoming/inventory/badges/IsBadgeRequestFulfilledEvent';
 import {ModeratorInitMessageEvent} from './messages/incoming/moderation/ModeratorInitMessageEvent';
 import {ModeratorToolPreferencesMessageEvent} from './messages/incoming/moderation/ModeratorToolPreferencesMessageEvent';
 import {ModeratorUserInfoMessageEvent} from './messages/incoming/moderation/ModeratorUserInfoMessageEvent';
@@ -1679,6 +1686,19 @@ export class HabboMessages implements IMessageConfiguration
         // The name-check answer, `_SafeStr_4546[382] = _SafeCls_3600`. Without it the onboarding
         // name dialog spins its wait indicator forever — the reply arrives and is dropped.
         this._events.set(382, CheckUserNameResultMessageEvent);
+
+        // === LANDING VIEW ELEMENTS ===
+        // Three more that were subscribed and never routed. Each id is resolved through the
+        // *element* that registers it, which is how they were told apart: WIN63 names them
+        // `_SafeCls_4528` ("click_submittedroom"), `_SafeCls_4534` (the countdown) and
+        // `_SafeCls_4537` ("click_requestbadge_"), and two of the three answer a handler
+        // called `onInfo`, so the handler name alone could not have separated them.
+        //
+        // win63_version lists these at 1685/1557/2295 — all three stale. Its registry is a
+        // different build and is never the authority.
+        this._events.set(1148, IsUserPartOfCompetitionMessageEvent);
+        this._events.set(3620, SecondsUntilMessageEvent);
+        this._events.set(2121, IsBadgeRequestFulfilledEvent);
 
         // === MODERATION TOOLS ===
         // The whole incoming set: ported, subscribed by `ModerationMessageHandler`, and in
