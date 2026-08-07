@@ -103,8 +103,6 @@ export class PollContentsEventParser implements IMessageParser
     }
 
     /**
-     * AS3: sources/win63_version/habbo/communication/messages/parser/poll/PollContentsEventParser.as::parseQuestion()
-     *
      * Choices are only on the wire for the two selection types (1 radio, 2 checkbox); the text
      * types carry an answer count but no choices.
      *
@@ -112,6 +110,7 @@ export class PollContentsEventParser implements IMessageParser
      * dialog reads `choiceText`/`choiceType` — a mismatch that throws nothing and renders an
      * empty answer list. It builds the real `PollQuestion`/`PollChoice` now.
      */
+    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/PollContentsEventParser.as::parseQuestion()
     private parseQuestion(wrapper: IMessageDataWrapper): PollQuestion
     {
         const question = new PollQuestion();

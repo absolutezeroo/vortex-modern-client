@@ -174,8 +174,6 @@ export class PollContentDialog implements IPollDialog
     };
 
     /**
-     * AS3: .../widget/poll/PollContentDialog.as::nextQuestion()
-     *
      * Renders whatever `getNextQuestion()` hands back, or finishes the poll when it hands back
      * nothing. The answer container is emptied by disposing child 0 repeatedly — the list
      * re-indexes as it shrinks.
@@ -183,6 +181,7 @@ export class PollContentDialog implements IPollDialog
      * The default branch of the type switch **recurses**: an unknown question type is skipped
      * rather than rendered, which is the only place a question is silently dropped.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/poll/PollContentDialog.as::nextQuestion()
     private nextQuestion(): void
     {
         this._currentQuestion = this.getNextQuestion();
@@ -261,8 +260,6 @@ export class PollContentDialog implements IPollDialog
     }
 
     /**
-     * AS3: .../widget/poll/PollContentDialog.as::getNextQuestion()
-     *
      * The NPS branch first: if the last answer set a `choiceType`, look through the children of
      * the question just served for one whose `questionCategory` matches, and serve that instead
      * of advancing. Clearing `_parentQuestionIndex` is what stops a parent yielding twice.
@@ -270,6 +267,7 @@ export class PollContentDialog implements IPollDialog
      * Otherwise advance the top-level cursor, remember the new index as the potential parent, and
      * return that question — or null when the array is exhausted.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/poll/PollContentDialog.as::getNextQuestion()
     private getNextQuestion(): PollQuestion | null
     {
         const questions = this._questions;
@@ -338,12 +336,11 @@ export class PollContentDialog implements IPollDialog
     }
 
     /**
-     * AS3: .../widget/poll/PollContentDialog.as::populateSelectionList()
-     *
      * The layout ships with one row; the list is grown to `length` by cloning it `length - 1`
      * times, then every row is filled. The row's selectable child gets its index as `id`, which
      * is how the radio answer maps a selection back to a choice.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/poll/PollContentDialog.as::populateSelectionList()
     private populateSelectionList(question: PollQuestion, list: IWindowContainer): void
     {
         const itemList = list.findChildByName('poll_answer_itemlist') as IItemListWindow | null;
@@ -402,12 +399,11 @@ export class PollContentDialog implements IPollDialog
     }
 
     /**
-     * AS3: .../widget/poll/PollContentDialog.as::resolveRadionButtonTypeAnswer()
-     *
      * The selector's chosen row carries the choice index as its `id`. Picking it is also what
      * arms the NPS follow-up: the chosen choice's `choiceType` becomes `_pendingChoiceType` —
      * but only in an NPS poll, where a plain poll resets it to 0.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/poll/PollContentDialog.as::resolveRadionButtonTypeAnswer()
     private resolveRadioButtonTypeAnswer(question: PollQuestion): string[]
     {
         const answers: string[] = [];
@@ -496,8 +492,6 @@ export class PollContentDialog implements IPollDialog
     }
 
     /**
-     * AS3: .../widget/poll/PollContentDialog.as::answerPollQuestion()
-     *
      * Which question is being answered differs by poll kind: an NPS poll answers the question it
      * is *showing* (which may be a child), a plain one indexes the top-level array. Clearing
      * `_pendingChoiceType` before resolving is what makes a non-radio answer end the branch.
@@ -506,6 +500,7 @@ export class PollContentDialog implements IPollDialog
      * hold, and a checkbox answer cannot exceed the choice count it was built from. They are
      * kept because removing them would be an invented correction, and both are cheap.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/poll/PollContentDialog.as::answerPollQuestion()
     private answerPollQuestion(): void
     {
         const question = (this._npsPoll && this._currentQuestion !== null)
@@ -579,11 +574,10 @@ export class PollContentDialog implements IPollDialog
     }
 
     /**
-     * AS3: .../widget/poll/PollContentDialog.as::showCancelConfirm()
-     *
      * Built on layer 2 so it sits above the question window, and only once — a second close
      * click while the confirmation is up does nothing, because the guard is on the field.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/poll/PollContentDialog.as::showCancelConfirm()
     private showCancelConfirm(): void
     {
         if(this._cancelConfirmWindow !== null) return;
@@ -637,12 +631,11 @@ export class PollContentDialog implements IPollDialog
     };
 
     /**
-     * AS3: .../widget/poll/PollContentDialog.as::answerableQuestionCount()
-     *
      * Not a count of answerable questions: it is the top-level count plus one for every parent
      * that has *any* children, however many. In an NPS poll at most one child per parent is ever
      * served, so this happens to be right; the name is AS3's.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/poll/PollContentDialog.as::answerableQuestionCount()
     private answerableQuestionCount(): void
     {
         const questions = this._questions ?? [];

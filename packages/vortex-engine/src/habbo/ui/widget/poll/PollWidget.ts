@@ -85,11 +85,10 @@ export class PollWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: .../widget/poll/PollWidget.as::pollFinished()
-     *
      * Thanks first, then teardown — `showThanks()` needs the session's end message, so the order
      * matters.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/poll/PollWidget.as::pollFinished()
     pollFinished(id: number): void
     {
         const session = this._sessions?.get(id) ?? null;
@@ -114,11 +113,10 @@ export class PollWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: .../widget/poll/PollWidget.as::showPollOffer()
-     *
      * A second offer for a live poll logs and **re-offers on the existing session** rather than
      * replacing it — `showOffer()` disposes the previous offer window itself.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/poll/PollWidget.as::showPollOffer()
     private showPollOffer = (event: RoomWidgetPollUpdateEvent): void =>
     {
         if(this._sessions === null) return;
