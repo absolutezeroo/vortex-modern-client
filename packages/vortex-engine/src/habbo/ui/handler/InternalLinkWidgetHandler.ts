@@ -39,6 +39,7 @@ export class InternalLinkWidgetHandler implements IRoomWidgetHandler
      * Unlike every other handler this one keeps no `_disposed` flag: a null container *is* the
      * disposed state, because `dispose()` only nulls the container.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/_SafeCls_3630.as::get disposed()
     get disposed(): boolean
     {
         return this._container === null;
@@ -81,6 +82,7 @@ export class InternalLinkWidgetHandler implements IRoomWidgetHandler
      * An empty link is not followed. `createLinkEvent` is the client-wide link bus, the same one
      * the notification bubbles and the club centre use.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/_SafeCls_3630.as::processEvent()
     processEvent(event: RoomEngineToWidgetEvent): void
     {
         if(event.type !== RoomEngineToWidgetEvent.REQUEST_INTERNAL_LINK) return;

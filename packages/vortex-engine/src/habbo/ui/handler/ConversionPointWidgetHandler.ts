@@ -51,6 +51,7 @@ export class ConversionPointWidgetHandler implements IRoomWidgetHandler
      * The type is checked *before* the cast here, unlike its siblings which cast first — so a
      * message of another type never reaches the cast at all.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ConversionPointWidgetHandler.as::processWidgetMessage()
     processWidgetMessage(message: RoomWidgetMessage): RoomWidgetUpdateEvent | null
     {
         if(message.type === RoomWidgetConversionPointMessage.CONVERSION_POINT)

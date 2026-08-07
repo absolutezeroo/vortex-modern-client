@@ -128,6 +128,7 @@ export class LoadingBarWidget extends RoomWidgetBase
      * `scale(0, -imageHeight)`, which is a *resize* by a delta, not a zoom. The effect is that
      * the frame ends up as tall as the bar minus the artwork, so the artwork overhangs.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/loadingbar/LoadingBarWidget.as::createWindow()
     private createWindow(): boolean
     {
         if(this._window !== null) return true;

@@ -676,6 +676,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
      * this port drives from elsewhere; wiring it here would start the session twice. Both halves
      * need the same follow-up, so neither is guessed at here.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::init()
     public init(): void
     {
         log.debug(`RoomDesktop initialized for room ${this._session.roomId}`);
