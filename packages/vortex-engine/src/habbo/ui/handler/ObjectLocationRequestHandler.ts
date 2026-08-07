@@ -1,0 +1,171 @@
+import type {IRoomWidgetHandler} from '../IRoomWidgetHandler';
+import type {IRoomWidgetHandlerContainer} from '../IRoomWidgetHandlerContainer';
+import type {RoomWidgetMessage} from '../widget/messages/RoomWidgetMessage';
+import type {RoomWidgetUpdateEvent} from '../widget/events/RoomWidgetUpdateEvent';
+import type {IRoomEngineRectangle} from '@habbo/room/RoomEngine';
+import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {RoomWidgetGetObjectLocationMessage} from '../widget/messages/RoomWidgetGetObjectLocationMessage';
+import {RoomWidgetUserLocationUpdateEvent} from '../widget/events/RoomWidgetUserLocationUpdateEvent';
+
+/**
+ * Answers "where is this object on screen?" — the one handler whose whole job is a synchronous
+ * return value rather than a dispatch.
+ *
+ * It is also the only handler whose `type` is **null**: it is created for `RWE_LOCATION_WIDGET`
+ * but never identifies itself, so it can never be the target of an open/close-widget event. It
+ * has no widget either — the factory has no case for that type in AS3 — which is why the handler
+ * has to survive `createWidget()` returning null.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ObjectLocationRequestHandler.as
+ */
+export class ObjectLocationRequestHandler implements IRoomWidgetHandler
+{
+    // AS3: .../handler/ObjectLocationRequestHandler.as::_disposed
+    private _disposed: boolean = false;
+
+    // AS3: .../handler/ObjectLocationRequestHandler.as::_container
+    private _container: IRoomWidgetHandlerContainer | null = null;
+
+    // AS3: .../handler/ObjectLocationRequestHandler.as::get disposed()
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
+
+    // AS3: .../handler/ObjectLocationRequestHandler.as::get type()
+    // Null in AS3, and kept null here — see the class note.
+    get type(): string
+    {
+        return null as unknown as string;
+    }
+
+    // AS3: .../handler/ObjectLocationRequestHandler.as::set container()
+    set container(value: IRoomWidgetHandlerContainer | null)
+    {
+        this._container = value;
+    }
+
+    // AS3: .../handler/ObjectLocationRequestHandler.as::getWidgetMessages()
+    getWidgetMessages(): string[]
+    {
+        return [
+            RoomWidgetGetObjectLocationMessage.GET_OBJECT_LOCATION,
+            RoomWidgetGetObjectLocationMessage.GET_GAME_OBJECT_LOCATION
+        ];
+    }
+
+    /**
+     * The two cases differ only in how the room object is identified: a user is looked up by
+     * (webId, type) through the user-data manager to get its room index, while a game object is
+     * addressed by room index directly.
+     *
+     * Both offset the results by the room view's origin, so the caller gets coordinates it can
+     * place a window at. AS3 builds the event even when the user is not in the room, leaving both
+     * fields null — the caller reads the rectangle to tell that apart, not the event.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ObjectLocationRequestHandler.as::processWidgetMessage()
+    processWidgetMessage(message: RoomWidgetMessage): RoomWidgetUpdateEvent | null
+    {
+        if(this._container === null) return null;
+
+        if(!(message instanceof RoomWidgetGetObjectLocationMessage)) return null;
+
+        const session = this._container.roomSession;
+
+        let rectangle: IRoomEngineRectangle | null = null;
+        let screenLocation: {x: number; y: number} | null = null;
+
+        switch(message.type)
+        {
+            case RoomWidgetGetObjectLocationMessage.GET_OBJECT_LOCATION:
+            {
+                if(session === null || session.userDataManager === null) return null;
+
+                const userData = session.userDataManager.getUserDataByType(message.objectId, message.objectType);
+
+                if(userData !== null)
+                {
+                    [rectangle, screenLocation] = this.locate(session.roomId, userData.roomObjectId);
+                }
+
+                break;
+            }
+
+            case RoomWidgetGetObjectLocationMessage.GET_GAME_OBJECT_LOCATION:
+                // AS3 does not null-check the session on this branch; the port does, because the
+                // room id read would throw rather than return an empty answer.
+                if(session === null) return null;
+
+                [rectangle, screenLocation] = this.locate(session.roomId, message.objectId);
+
+                break;
+
+            default:
+                return null;
+        }
+
+        return new RoomWidgetUserLocationUpdateEvent(message.objectId, rectangle, screenLocation);
+    }
+
+    // AS3: .../handler/ObjectLocationRequestHandler.as::processWidgetMessage()
+    // The two branches' shared tail, which AS3 writes out twice. The offset is applied only when
+    // all three parts are present, as there.
+    private locate(roomId: number, roomIndex: number): [IRoomEngineRectangle | null, {x: number; y: number} | null]
+    {
+        const engine = this._container?.roomEngine ?? null;
+
+        if(engine === null) return [null, null];
+
+        const canvasId = this._container?.getFirstCanvasId() ?? 1;
+        const category = RoomObjectCategoryEnum.OBJECT_CATEGORY_USER;
+
+        const rectangle = engine.getRoomObjectBoundingRectangle(roomId, roomIndex, category, canvasId);
+        const screenLocation = engine.getRoomObjectScreenLocation(roomId, roomIndex, category, canvasId);
+        const viewRect = this._container?.getRoomViewRect() ?? null;
+
+        if(rectangle === null || viewRect === null || screenLocation === null)
+        {
+            return [rectangle, screenLocation];
+        }
+
+        // AS3 mutates the Rectangle and Point in place with offset(); these are plain objects
+        // here, so the shifted copies are built instead.
+        return [
+            {
+                left: rectangle.left + viewRect.x,
+                top: rectangle.top + viewRect.y,
+                right: rectangle.right + viewRect.x,
+                bottom: rectangle.bottom + viewRect.y,
+                width: rectangle.width,
+                height: rectangle.height
+            },
+            {x: screenLocation.x + viewRect.x, y: screenLocation.y + viewRect.y}
+        ];
+    }
+
+    // AS3: .../handler/ObjectLocationRequestHandler.as::getProcessedEvents()
+    // Empty: it answers messages and listens to nothing.
+    getProcessedEvents(): string[]
+    {
+        return [];
+    }
+
+    // AS3: .../handler/ObjectLocationRequestHandler.as::processEvent()
+    // Empty in AS3 too.
+    processEvent(_event: unknown): void
+    {
+    }
+
+    // AS3: .../handler/ObjectLocationRequestHandler.as::update()
+    // Empty in AS3 too.
+    update(): void
+    {
+    }
+
+    // AS3: .../handler/ObjectLocationRequestHandler.as::dispose()
+    dispose(): void
+    {
+        this._disposed = true;
+        this._container = null;
+    }
+}

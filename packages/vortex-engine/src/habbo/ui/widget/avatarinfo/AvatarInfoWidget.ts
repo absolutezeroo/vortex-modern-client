@@ -944,6 +944,15 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     // with the view's own userId/userType; this port reads the bounding rectangle directly, which
     // needs the room index. The menu bubbles carry it; the use-product/breed bubbles are set up
     // with -1 (they only know the pet's webID), so it is resolved here.
+    //
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::update()
+    // — route this through `ObjectLocationRequestHandler`, which is now ported and registered for
+    // both RWGOI_ message types. It is deliberately *not* done in the same change as the handler:
+    // AS3 takes `screenLocation` from `getRoomObjectScreenLocation()`, which projects the object's
+    // own location (an avatar's feet), while the block below computes
+    // `(left + width/2, bottom)` off the bounding box. Those are near but not equal, so swapping
+    // the source would move every bubble — it needs its own before/after check rather than being
+    // folded into a handler port.
     private positionView(view: AvatarContextInfoButtonView, deltaTime: number): void
     {
         const container = this.container;

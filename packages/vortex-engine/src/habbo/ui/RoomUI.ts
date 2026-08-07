@@ -992,6 +992,8 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_ME_MENU');
                     desktop.createWidget('RWE_AVATAR_INFO');
                     desktop.createWidget('RWE_ROOM_TOOLS');
+                    // AS3: RoomUI.as:925 — answers "where is this object on screen?"; no window.
+                    desktop.createWidget('RWE_LOCATION_WIDGET');
                     desktop.createWidget('RWE_FURNITURE_CONTEXT_MENU');
                     desktop.createWidget('RWE_EFFECTS');
                     // AS3: RoomUI.as:941. The furni widgets are created eagerly at room entry,

@@ -84,6 +84,7 @@ import {LoadingBarWidgetHandler} from './handler/LoadingBarWidgetHandler';
 import {FurnitureAreaHideWidgetHandler} from './handler/FurnitureAreaHideWidgetHandler';
 import {ConversionPointWidgetHandler} from './handler/ConversionPointWidgetHandler';
 import {PollWidgetHandler} from './handler/PollWidgetHandler';
+import {ObjectLocationRequestHandler} from './handler/ObjectLocationRequestHandler';
 import {RoomQueueWidgetHandler} from './handler/RoomQueueWidgetHandler';
 import {FurnitureContextMenuWidgetHandler} from './handler/FurnitureContextMenuWidgetHandler';
 import {RoomWidgetFurniToWidgetMessage} from './widget/messages/RoomWidgetFurniToWidgetMessage';
@@ -879,6 +880,11 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             // AS3: RoomDesktop.as:807-809 "RWE_LOADINGBAR"
             case 'RWE_LOADINGBAR':
                 handler = new LoadingBarWidgetHandler();
+                break;
+            // AS3: RoomDesktop.as:858-860 "RWE_LOCATION_WIDGET". No widget behind it — the
+            // handler answers a message synchronously and is the whole feature.
+            case 'RWE_LOCATION_WIDGET':
+                handler = new ObjectLocationRequestHandler();
                 break;
             // AS3: RoomDesktop.as:810-812 "RWE_ROOM_POLL"
             case 'RWE_ROOM_POLL':
