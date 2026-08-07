@@ -63,6 +63,12 @@ export interface IHabboInventory
 
     // Purse & Tracking
     readonly purse: IPurse;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get clubDays()
+    readonly clubDays: number;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get clubPeriods()
+    readonly clubPeriods: number;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get clubLevel()
     readonly clubLevel: number;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get unseenItemTracker()

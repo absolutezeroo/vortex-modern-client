@@ -269,6 +269,20 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return true;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get clubDays()
+    // A forwarder to the purse, as in AS3. The room-queue handler reads it to decide whether the
+    // club queue applies to you and whether the club upsell is shown.
+    get clubDays(): number
+    {
+        return this._purse.clubDays;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get clubPeriods()
+    get clubPeriods(): number
+    {
+        return this._purse.clubPeriods;
+    }
+
     // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get web3tradeEnabled()
     get web3tradeEnabled(): boolean
     {

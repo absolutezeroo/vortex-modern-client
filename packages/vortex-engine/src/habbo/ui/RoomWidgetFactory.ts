@@ -38,6 +38,7 @@ import {BackgroundColorFurniWidget} from './widget/furniture/backgroundcolor/Bac
 import {CreditFurniWidget} from './widget/furniture/credit/CreditFurniWidget';
 import {EcotronBoxFurniWidget} from './widget/furniture/ecotronbox/EcotronBoxFurniWidget';
 import {DoorbellWidget} from './widget/doorbell/DoorbellWidget';
+import {RoomQueueWidget} from './widget/roomqueue/RoomQueueWidget';
 import {PetPackageFurniWidget} from './widget/furniture/petpackage/PetPackageFurniWidget';
 import {FurnitureContextMenuWidget} from './widget/furniture/contextmenu/FurnitureContextMenuWidget';
 
@@ -88,6 +89,18 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
             case 'RWE_FURNI_PET_PACKAGE_WIDGET':
                 return new PetPackageFurniWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_ROOM_QUEUE"
+            case 'RWE_ROOM_QUEUE':
+                return new RoomQueueWidget(
+                    handler,
+                    this._roomUI.windowManager,
+                    this._roomUI.assets,
+                    this._roomUI.localization,
+                    // AS3 passes `_roomUI` itself here: the parameter is typed as core's
+                    // configuration interface, which every Component implements. This port's
+                    // RoomUI exposes the manager it resolved instead, which is the same object.
+                    this._roomUI.config
                 );
             // AS3: RoomWidgetFactory.as::createWidget() "RWE_DOORBELL"
             case 'RWE_DOORBELL':

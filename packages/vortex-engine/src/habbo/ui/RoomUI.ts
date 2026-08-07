@@ -932,6 +932,8 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_FURNI_ECOTRONBOX_WIDGET');
                     // AS3: RoomUI.as:944 — the doorbell list, for a room locked to ringing.
                     desktop.createWidget('RWE_DOORBELL');
+                    // AS3: RoomUI.as:946 — the entry queue, for a room that is full.
+                    desktop.createWidget('RWE_ROOM_QUEUE');
                     desktop.createWidget('RWE_FURNI_CREDIT_WIDGET');
                     desktop.createWidget('RWE_ROOM_BACKGROUND_COLOR');
                     desktop.createWidget('RWE_FURNI_PLACEHOLDER');
