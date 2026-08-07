@@ -83,6 +83,7 @@ import {InternalLinkWidgetHandler} from './handler/InternalLinkWidgetHandler';
 import {LoadingBarWidgetHandler} from './handler/LoadingBarWidgetHandler';
 import {FurnitureAreaHideWidgetHandler} from './handler/FurnitureAreaHideWidgetHandler';
 import {ConversionPointWidgetHandler} from './handler/ConversionPointWidgetHandler';
+import {ExternalImageWidgetHandler} from './handler/ExternalImageWidgetHandler';
 import {PollWidgetHandler} from './handler/PollWidgetHandler';
 import {ObjectLocationRequestHandler} from './handler/ObjectLocationRequestHandler';
 import {FriendRequestWidgetHandler} from './handler/FriendRequestWidgetHandler';
@@ -936,6 +937,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             // AS3: RoomDesktop.as:810-812 "RWE_ROOM_POLL"
             case 'RWE_ROOM_POLL':
                 handler = new PollWidgetHandler();
+                break;
+            // AS3: RoomDesktop.as:912-914 "RWE_EXTERNAL_IMAGE"
+            case 'RWE_EXTERNAL_IMAGE':
+                handler = new ExternalImageWidgetHandler();
                 break;
             // AS3: RoomDesktop.as::createWidgetHandler() "RWE_CONVERSION_TRACKING"
             case 'RWE_CONVERSION_TRACKING':

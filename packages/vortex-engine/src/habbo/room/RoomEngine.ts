@@ -1260,6 +1260,26 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this._roomManager.getRoom(roomIdStr);
     }
 
+    /**
+     * Every object of one category in the **active** room. Unlike `getRoomObject()`, this takes no
+     * room id — AS3 resolves the room from `activeRoomId` itself, so a caller cannot ask about a
+     * room it is not standing in.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getObjectsByCategory()
+    getObjectsByCategory(category: number): IRoomObject[]
+    {
+        let room: IRoomInstance | null = null;
+
+        if(this._roomManager !== null)
+        {
+            room = this._roomManager.getRoom(this.getRoomIdentifier(this._activeRoomId));
+        }
+
+        if(room === null) return [];
+
+        return room.getObjects(category);
+    }
+
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::_Str_22095() (getGenericRoomObjectThumbnail)
     // TS simplification: uses a simple incrementing id counter instead of AS3's
     // reserve/free NumberIdGenerator pool (no functional difference for callers,

@@ -221,11 +221,18 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         return this._catalog;
     }
 
-    // TS-only: RoomWidgetFactory needs these two to construct the present widget, which AS3
-    // builds with the same eight arguments.
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get inventory()
+    // Was marked TS-only; AS3 declares it at RoomUI.as:1240 and RoomWidgetFactory reads it there
+    // for the same reason this port does.
     public get inventory(): IHabboInventory | null
     {
         return this._inventory;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get habboHelp()
+    public get habboHelp(): IHabboHelp | null
+    {
+        return this._habboHelp;
     }
 
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get roomEngine()
@@ -1046,6 +1053,8 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_AREA_HIDE');
                     // AS3: RoomUI.as:945 — the survey offer and questionnaire.
                     desktop.createWidget('RWE_ROOM_POLL');
+                    // AS3: RoomUI.as:972 — the photo / selfie wall item, full size.
+                    desktop.createWidget('RWE_EXTERNAL_IMAGE');
 
                     this._isInRoom = true;
 

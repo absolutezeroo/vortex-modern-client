@@ -45,6 +45,7 @@ import {PollWidget} from './widget/poll/PollWidget';
 import {FriendRequestWidget} from './widget/friendrequest/FriendRequestWidget';
 import {HighScoreDisplayWidget} from './widget/furniture/highscore/HighScoreDisplayWidget';
 import {WordQuizWidget} from './widget/wordquiz/WordQuizWidget';
+import {ExternalImageWidget} from './widget/furniture/externalimage/ExternalImageWidget';
 import {UsersChooserWidget} from './widget/chooser/users/UsersChooserWidget';
 import {FurniChooserWidget} from './widget/chooser/furni/FurniChooserWidget';
 import {AchievementResolutionTrophyFurniWidget} from './widget/furniture/trophy/AchievementResolutionTrophyFurniWidget';
@@ -130,6 +131,20 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
             case 'RWE_USER_CHOOSER':
                 return new UsersChooserWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_EXTERNAL_IMAGE"
+            case 'RWE_EXTERNAL_IMAGE':
+                return new ExternalImageWidget(
+                    handler,
+                    this._roomUI.windowManager,
+                    this._roomUI.assets,
+                    this._roomUI.localization,
+                    this._roomUI.inventory,
+                    this._roomUI.habboHelp,
+                    this._roomUI.roomEngine,
+                    // AS3 passes `_roomUI` twice here — once as the IRoomEngine holder above and
+                    // once as the plain Component this widget reads config and the stage off.
+                    this._roomUI
                 );
             // AS3: RoomWidgetFactory.as::createWidget() "RWE_WORD_QUIZZ"
             case 'RWE_WORD_QUIZZ':

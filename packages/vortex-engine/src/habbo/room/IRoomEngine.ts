@@ -314,6 +314,13 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::deleteRoomObject()
     deleteRoomObject(objectId: number, category: number): boolean;
 
+    /**
+     * Every object of one category in the **active** room — no room id, AS3 resolves it from
+     * `activeRoomId` itself. Backs the external-image widget's next/previous browsing.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getObjectsByCategory()
+    getObjectsByCategory(category: number): IRoomObject[];
+
     // User updates
     updateRoomObjectUser(
         roomId: number,
