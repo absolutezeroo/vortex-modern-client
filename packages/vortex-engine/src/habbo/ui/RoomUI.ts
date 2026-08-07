@@ -930,6 +930,8 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     // types, so the widget must exist before the furni is ever clicked.
                     desktop.createWidget('RWE_FURNI_PET_PACKAGE_WIDGET');
                     desktop.createWidget('RWE_FURNI_ECOTRONBOX_WIDGET');
+                    // AS3: RoomUI.as:944 — the doorbell list, for a room locked to ringing.
+                    desktop.createWidget('RWE_DOORBELL');
                     desktop.createWidget('RWE_FURNI_CREDIT_WIDGET');
                     desktop.createWidget('RWE_ROOM_BACKGROUND_COLOR');
                     desktop.createWidget('RWE_FURNI_PLACEHOLDER');

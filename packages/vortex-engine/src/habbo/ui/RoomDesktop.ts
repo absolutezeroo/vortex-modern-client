@@ -78,6 +78,7 @@ import {FurnitureBackgroundColorWidgetHandler} from './handler/FurnitureBackgrou
 import {FurnitureCreditWidgetHandler} from './handler/FurnitureCreditWidgetHandler';
 import {FurnitureEcotronBoxWidgetHandler} from './handler/FurnitureEcotronBoxWidgetHandler';
 import {PetPackageFurniWidgetHandler} from './handler/PetPackageFurniWidgetHandler';
+import {DoorbellWidgetHandler} from './handler/DoorbellWidgetHandler';
 import {FurnitureContextMenuWidgetHandler} from './handler/FurnitureContextMenuWidgetHandler';
 import {RoomWidgetFurniToWidgetMessage} from './widget/messages/RoomWidgetFurniToWidgetMessage';
 import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
@@ -831,6 +832,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case 'RWE_RENTABLESPACE':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:900
                 handler = new RentableSpaceWidgetHandler();
+                break;
+            // AS3: RoomDesktop.as::createWidgetHandler() "RWE_DOORBELL"
+            case 'RWE_DOORBELL':
+                handler = new DoorbellWidgetHandler();
                 break;
             case 'RWE_FURNI_PET_PACKAGE_WIDGET':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:798

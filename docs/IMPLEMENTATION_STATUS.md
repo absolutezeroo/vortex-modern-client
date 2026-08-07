@@ -719,6 +719,30 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     colour multiply, uncoloured mask on top. Part/colour catalogue and `?user=` lookups are read
     from the hotel database (`group_badge_parts`, `group_colors`, `players`), not mirrored.
 
+- 🔄 **Priority 1 opened: the doorbell, first of the 20 missing widget types**, 2026-08-07.
+  - 📏 **The gap was re-measured by widget *type*, not by filename**, because the port renames the
+    obfuscated handlers (`_SafeCls_3971` is `RentableSpaceWidgetHandler` here). By type: **20 of
+    AS3's 47 handler types have no port handler**, across 22 files — and **not one of those 20 has
+    a ported widget either**. Every one is a full slice (handler + widget + wiring), not a
+    connection job. That is the honest size of priority 1.
+  - **Ported: the doorbell, end to end** — `DoorbellWidgetHandler` (109 l.), `DoorbellWidget`
+    (146), `DoorbellView` (158), `RoomWidgetDoorbellEvent` and `RoomWidgetLetUserInMessage`, wired
+    at all three points AS3 wires them (factory, desktop handler, and `RoomUI`'s room-entry
+    creation, in AS3's own order at line 944). Both layouts already shipped, and the session
+    already dispatched `RSDE_DOORBELL` — only the widget layer was missing.
+  - **Two AS3 details kept rather than smoothed:** `unregisterUpdateEvents()` does *not* call its
+    super where `registerUpdateEvents()` does; and the 51st caller at a full door is **denied**,
+    not ignored — the cap is enforced by answering, which is why `deny()` is what enforces it.
+  - **One deliberate deviation:** AS3 *throws* when a doorbell layout fails to build. Here it warns
+    and returns null — a missing layout is a build problem, and throwing would take the whole room
+    UI down with it.
+  - **Verified in a browser**: all three session events map to their widget events and an unknown
+    one is ignored; the widget message reaches `roomSession.letUserIn` with the right flag and
+    returns null; a repeated ring does not duplicate the row; accepting sends `Alice:true` and
+    drops it; a doorbell answered **elsewhere** clears the row *without* sending anything; the
+    50-cap holds and the 51st is denied (`overflow:false`); `denyAll()` sends 50 denials and
+    empties the list; and unregistering stops the widget hearing the bus.
+
 - ✅ **Priority-0 sweep finished — and it found 38 messages the dispatcher could never route**,
   2026-08-06. `habbo/moderation`, `habbo/friendlist` and `habbo/help` swept; **priority 0 is now
   closed**.

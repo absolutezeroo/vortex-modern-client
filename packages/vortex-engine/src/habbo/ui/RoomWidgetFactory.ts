@@ -37,6 +37,7 @@ import {PlaceholderWidget} from './widget/furniture/placeholder/PlaceholderWidge
 import {BackgroundColorFurniWidget} from './widget/furniture/backgroundcolor/BackgroundColorFurniWidget';
 import {CreditFurniWidget} from './widget/furniture/credit/CreditFurniWidget';
 import {EcotronBoxFurniWidget} from './widget/furniture/ecotronbox/EcotronBoxFurniWidget';
+import {DoorbellWidget} from './widget/doorbell/DoorbellWidget';
 import {PetPackageFurniWidget} from './widget/furniture/petpackage/PetPackageFurniWidget';
 import {FurnitureContextMenuWidget} from './widget/furniture/contextmenu/FurnitureContextMenuWidget';
 
@@ -86,6 +87,11 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
             // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_PET_PACKAGE_WIDGET"
             case 'RWE_FURNI_PET_PACKAGE_WIDGET':
                 return new PetPackageFurniWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_DOORBELL"
+            case 'RWE_DOORBELL':
+                return new DoorbellWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
                 );
             // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_ECOTRONBOX_WIDGET"
