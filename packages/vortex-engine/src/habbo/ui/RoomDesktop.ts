@@ -90,6 +90,7 @@ import {HighScoreDisplayWidgetHandler} from './handler/HighScoreDisplayWidgetHan
 import {WordQuizWidgetHandler} from './handler/WordQuizWidgetHandler';
 import {UserChooserWidgetHandler} from './handler/UserChooserWidgetHandler';
 import {FurniChooserWidgetHandler} from './handler/FurniChooserWidgetHandler';
+import {FurnitureBadgeDisplayWidgetHandler} from './handler/FurnitureBadgeDisplayWidgetHandler';
 import {FriendRequestEvent} from '@habbo/friendlist/events/FriendRequestEvent';
 import {RoomQueueWidgetHandler} from './handler/RoomQueueWidgetHandler';
 import {FurnitureContextMenuWidgetHandler} from './handler/FurnitureContextMenuWidgetHandler';
@@ -902,6 +903,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             // AS3: RoomDesktop.as:807-809 "RWE_LOADINGBAR"
             case 'RWE_LOADINGBAR':
                 handler = new LoadingBarWidgetHandler();
+                break;
+            // AS3: RoomDesktop.as:873-875 "RWE_FURNI_ACHIEVEMENT_RESOLUTION_ENGRAVING"
+            case 'RWE_FURNI_ACHIEVEMENT_RESOLUTION_ENGRAVING':
+                handler = new FurnitureBadgeDisplayWidgetHandler();
                 break;
             // AS3: RoomDesktop.as:816-818 "RWE_FURNI_CHOOSER"
             case 'RWE_FURNI_CHOOSER':

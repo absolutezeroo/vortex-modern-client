@@ -100,6 +100,7 @@ import {
     AvatarEffectExpiredMessageEvent,
     AvatarEffectsMessageEvent,
     BadgeReceivedEvent,
+    BadgeInformationEvent,
     BadgesMessageEvent,
     BotInventoryMessageEvent,
     ConfirmBreedingRequestEvent,
@@ -1074,6 +1075,7 @@ import {
     ConfirmPetBreedingComposer,
     CreditVaultStatusMessageComposer,
     GetBadgesComposer,
+    GetBadgeInformationComposer,
     GetBotInventoryComposer,
     GetCreditsInfoComposer,
     GetPetInventoryComposer,
@@ -1283,6 +1285,9 @@ export class HabboMessages implements IMessageConfiguration
         // habbo/inventory/_SafeCls_1951.as:200 and habbo/notifications/_SafeCls_1951.as:129).
         // Corroborated by the emulator's own BadgeReceivedComposer = 2840.
         this._events.set(2840, BadgeReceivedEvent);
+        // AS3: WIN63's registry, `_SafeStr_4546[1153] = _SafeCls_3875` — the badge-display
+        // furni's rarity/owner-count lookup. The emulator does not implement it.
+        this._events.set(1153, BadgeInformationEvent);
 
         // === INVENTORY - PETS ===
         this._events.set(1200, PetInventoryMessageEvent);
@@ -2491,6 +2496,9 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(41, RequestFurniInventoryComposer);
         this._composers.set(540, GetCreditsInfoComposer);
         this._composers.set(770, GetBadgesComposer);
+        // AS3: WIN63's registry, `_composers[3159] = _SafeCls_3448`. The emulator's only 3159
+        // is an unrelated server->client composer, a different table, so not a conflict.
+        this._composers.set(3159, GetBadgeInformationComposer);
         this._composers.set(2764, SetActivatedBadgesComposer);
         this._composers.set(3891, GetPetInventoryComposer);
         this._composers.set(3148, GetBotInventoryComposer);

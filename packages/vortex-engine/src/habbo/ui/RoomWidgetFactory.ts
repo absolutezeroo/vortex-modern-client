@@ -47,6 +47,7 @@ import {HighScoreDisplayWidget} from './widget/furniture/highscore/HighScoreDisp
 import {WordQuizWidget} from './widget/wordquiz/WordQuizWidget';
 import {UsersChooserWidget} from './widget/chooser/users/UsersChooserWidget';
 import {FurniChooserWidget} from './widget/chooser/furni/FurniChooserWidget';
+import {AchievementResolutionTrophyFurniWidget} from './widget/furniture/trophy/AchievementResolutionTrophyFurniWidget';
 import {RoomWidgetBase} from './widget/RoomWidgetBase';
 import {PetPackageFurniWidget} from './widget/furniture/petpackage/PetPackageFurniWidget';
 import {FurnitureContextMenuWidget} from './widget/furniture/contextmenu/FurnitureContextMenuWidget';
@@ -109,6 +110,15 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                     // AS3 passes `_roomUI` itself here: the parameter is typed as core's
                     // configuration interface, which every Component implements. This port's
                     // RoomUI exposes the manager it resolved instead, which is the same object.
+                    this._roomUI.config
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_ACHIEVEMENT_RESOLUTION_ENGRAVING"
+            case 'RWE_FURNI_ACHIEVEMENT_RESOLUTION_ENGRAVING':
+                return new AchievementResolutionTrophyFurniWidget(
+                    handler,
+                    this._roomUI.windowManager,
+                    this._roomUI.assets,
+                    this._roomUI.localization,
                     this._roomUI.config
                 );
             // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_CHOOSER"

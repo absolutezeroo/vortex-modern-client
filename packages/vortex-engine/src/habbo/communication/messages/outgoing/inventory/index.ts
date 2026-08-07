@@ -3,6 +3,7 @@ export {RequestFurniInventoryComposer} from './RequestFurniInventoryComposer';
 
 // Badges
 export {GetBadgesComposer} from './GetBadgesComposer';
+export {GetBadgeInformationComposer} from './GetBadgeInformationComposer';
 export {SetActivatedBadgesComposer} from './SetActivatedBadgesComposer';
 export {RequestABadgeComposer} from './RequestABadgeComposer';
 export {GetIsBadgeRequestFulfilledComposer} from './GetIsBadgeRequestFulfilledComposer';

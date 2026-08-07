@@ -1032,6 +1032,8 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     // AS3: RoomUI.as:958 — "who is in this room". AS3 passes the widget's previous
                     // state here so a chooser left open reopens itself after a room change; this
                     // port has no cross-room widget cache yet, so it always starts closed.
+                    // AS3: RoomUI.as:963 — the achievement-resolution / badge-display trophy.
+                    desktop.createWidget('RWE_FURNI_ACHIEVEMENT_RESOLUTION_ENGRAVING');
                     // AS3: RoomUI.as:957 — "what furniture is in this room".
                     desktop.createWidget('RWE_FURNI_CHOOSER');
                     desktop.createWidget('RWE_USER_CHOOSER');
