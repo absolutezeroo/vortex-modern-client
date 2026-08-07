@@ -11,6 +11,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class SetAreaHideDataMessageComposer extends MessageComposer<[number, number, number, number, number, boolean, boolean, boolean]>
 {
+    // TS-only: AS3 keeps five separate fields; this port stores the composed array once.
     private _data: [number, number, number, number, number, boolean, boolean, boolean];
 
     // AS3: .../src/unknowns/_SafePkg_2609/_SafeCls_3376.as::_SafeCls_3376()

@@ -28,11 +28,10 @@ const log = Logger.getLogger('habbo.ui.widget.furniture.areahide.AreaHideFurniWi
 export class AreaHideFurniWidget extends RoomWidgetBase
 {
     /**
-     * AS3: .../furniture/areahide/AreaHideFurniWidget.as::AUTO_SAVE
-     *
      * `true` in the shipped client, which makes the Apply button dead weight: it is hidden on
      * creation and `onClickApply()` returns immediately. Every settings change saves itself.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/furniture/areahide/AreaHideFurniWidget.as::AUTO_SAVE
     private static readonly AUTO_SAVE: boolean = true;
 
     // AS3: .../furniture/areahide/AreaHideFurniWidget.as::_textNames
@@ -128,11 +127,10 @@ export class AreaHideFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: .../furniture/areahide/AreaHideFurniWidget.as::open()
-     *
      * Called directly by the handler, not through the event bus. The three checkboxes are set
      * *before* `updateAreaSelecting()` so that the highlight reflects the saved rectangle.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/furniture/areahide/AreaHideFurniWidget.as::open()
     open(
         objectId: number,
         isOn: boolean,
@@ -172,11 +170,10 @@ export class AreaHideFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: .../furniture/areahide/AreaHideFurniWidget.as::updateStatus()
-     *
      * The server confirming a toggle. Three conditions, all required: the window is up, it is
      * *this* object, and the state actually changed — a repeat is dropped rather than redrawn.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/furniture/areahide/AreaHideFurniWidget.as::updateStatus()
     updateStatus(objectId: number, isOn: boolean): void
     {
         if(this.isActive && objectId === this._objectId && isOn !== this._isOn)
@@ -195,12 +192,11 @@ export class AreaHideFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: .../furniture/areahide/AreaHideFurniWidget.as::updateAreaSelecting()
-     *
      * The floor selection is only offered while the area is **off**: once it is hiding things,
      * the manager is released. Note the highlight is set on every call, not only on activation,
      * so a rectangle change while off is reflected immediately.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/furniture/areahide/AreaHideFurniWidget.as::updateAreaSelecting()
     private updateAreaSelecting(): void
     {
         if(this._areaSelectionManager === null) return;
@@ -298,12 +294,11 @@ export class AreaHideFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: .../furniture/areahide/AreaHideFurniWidget.as::refreshUI()
-     *
      * While the area is on, everything is dimmed and the button says "off". While it is off, the
      * three action buttons each have their own condition: Apply needs unsaved changes, Select
      * needs the manager and no pick in flight, Clear just needs the manager.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/furniture/areahide/AreaHideFurniWidget.as::refreshUI()
     private refreshUI(): void
     {
         const onOff = this.onOffButton;
@@ -475,8 +470,6 @@ export class AreaHideFurniWidget extends RoomWidgetBase
     };
 
     /**
-     * AS3: .../furniture/areahide/AreaHideFurniWidget.as::get selectButton()
-     *
      * The `deactivate()` on the window is AS3's, and only on this one getter of the seven —
      * it drops keyboard focus every time the Select button is looked up, which is on every
      * `refreshUI()`. Kept: it is load-bearing for the floor pick, which needs the room to have

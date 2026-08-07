@@ -86,12 +86,11 @@ export class FurnitureAreaHideWidgetHandler implements IRoomWidgetHandler
     }
 
     /**
-     * AS3: .../handler/FurnitureAreaHideWidgetHandler.as::processEvent()
-     *
      * The open request reads the whole configuration off the room object's model — the rectangle
      * as four numbers and the three flags as `== 1` comparisons, because the model stores them as
      * numbers. The state confirmation carries only the id and the flag.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/FurnitureAreaHideWidgetHandler.as::processEvent()
     processEvent(event: RoomEngineToWidgetEvent): void
     {
         if(this._widget === null) return;
