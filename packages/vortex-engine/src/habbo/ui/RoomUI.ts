@@ -26,6 +26,8 @@ import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboInventory} from '@iid/IIDHabboInventory';
 import {IID_HabboFurniEditor} from '@iid/IIDHabboFurniEditor';
 import {IID_HabboHelp} from '@iid/IIDHabboHelp';
+import {IID_HabboFriendBarView} from '@iid/IIDHabboFriendBarView';
+import type {IHabboFriendBarView} from '@habbo/friendbar/view/IHabboFriendBarView';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboGroupsManager} from '@iid/IIDHabboGroupsManager';
 import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
@@ -209,6 +211,10 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_habboHelp
     private _habboHelp: IHabboHelp | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_friendBarView
+    // Needed by the UI help bubbles, which look their target icons up through it.
+    private _friendBarView: IHabboFriendBarView | null = null;
+
     // AS3: RoomUI.as::_userDefinedRoomEvents — DI-resolved; injected into every RoomDesktop.
     private _userDefinedRoomEvents: IHabboUserDefinedRoomEvents | null = null;
 
@@ -233,6 +239,18 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     public get habboHelp(): IHabboHelp | null
     {
         return this._habboHelp;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get toolbar()
+    public get toolbar(): IHabboToolbar | null
+    {
+        return this._toolbar;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get friendBarView()
+    public get friendBarView(): IHabboFriendBarView | null
+    {
+        return this._friendBarView;
     }
 
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get roomEngine()
@@ -486,6 +504,31 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     }
                 },
                 false
+            ),
+            /**
+             * AS3 declares this dependency with the FBE_BAR_RESIZE_EVENT listener attached
+             * (RoomUI.as:532-538). `bottomBarResizeHandler()` already existed in this port but was
+             * only ever reached through the explicit `triggerbottomBarResize()`; wiring the event
+             * is what AS3 specifies and is what makes a real bar resize reach the desktops.
+             *
+             * `HabboFriendBar` provides this IID, so the required flag cannot lock the component.
+             */
+            new ComponentDependency(
+                IID_HabboFriendBarView,
+                // The IID is declared `createIID<unknown>`, like every other view-layer IID in
+                // `iid/`, so the setter takes unknown and narrows here.
+                (view: unknown) =>
+                {
+                    this._friendBarView = (view as IHabboFriendBarView | null) ?? null;
+                },
+                true,
+                // Wrapped rather than passed bare: `Component` attaches these with
+                // `events.on(type, callback)` and no context, so a plain method reference would
+                // run with the emitter as `this`.
+                [{
+                    type: FriendBarResizeEvent.FRIENDBAR_RESIZE_EVENT,
+                    callback: (...args: unknown[]) => this.bottomBarResizeHandler(args[0] as FriendBarResizeEvent)
+                }]
             ),
             new ComponentDependency(
                 IID_HabboHelp,
@@ -1055,6 +1098,10 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_ROOM_POLL');
                     // AS3: RoomUI.as:972 — the photo / selfie wall item, full size.
                     desktop.createWidget('RWE_EXTERNAL_IMAGE');
+                    // AS3: RoomUI.as:973 — the guided-tour help bubbles. Order matters: the widget
+                    // pulls RWE_ROOM_TOOLS and RWE_CHAT_INPUT_WIDGET off the desktop in its own
+                    // constructor, so both must already have been created above.
+                    desktop.createWidget('RWE_UI_HELP_BUBBLE');
 
                     this._isInRoom = true;
 

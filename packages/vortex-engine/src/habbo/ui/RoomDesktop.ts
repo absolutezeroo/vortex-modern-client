@@ -84,6 +84,7 @@ import {LoadingBarWidgetHandler} from './handler/LoadingBarWidgetHandler';
 import {FurnitureAreaHideWidgetHandler} from './handler/FurnitureAreaHideWidgetHandler';
 import {ConversionPointWidgetHandler} from './handler/ConversionPointWidgetHandler';
 import {ExternalImageWidgetHandler} from './handler/ExternalImageWidgetHandler';
+import {UiHelpBubbleWidgetHandler} from './handler/UiHelpBubbleWidgetHandler';
 import {PollWidgetHandler} from './handler/PollWidgetHandler';
 import {ObjectLocationRequestHandler} from './handler/ObjectLocationRequestHandler';
 import {FriendRequestWidgetHandler} from './handler/FriendRequestWidgetHandler';
@@ -941,6 +942,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             // AS3: RoomDesktop.as:912-914 "RWE_EXTERNAL_IMAGE"
             case 'RWE_EXTERNAL_IMAGE':
                 handler = new ExternalImageWidgetHandler();
+                break;
+            // AS3: RoomDesktop.as:915-917 "RWE_UI_HELP_BUBBLE"
+            case 'RWE_UI_HELP_BUBBLE':
+                handler = new UiHelpBubbleWidgetHandler();
                 break;
             // AS3: RoomDesktop.as::createWidgetHandler() "RWE_CONVERSION_TRACKING"
             case 'RWE_CONVERSION_TRACKING':
