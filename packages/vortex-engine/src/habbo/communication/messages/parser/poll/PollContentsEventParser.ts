@@ -1,5 +1,7 @@
 import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
+import {PollQuestion} from './PollQuestion';
+import {PollChoice} from './PollChoice';
 
 /**
  * Parser for poll contents events
@@ -43,10 +45,10 @@ export class PollContentsEventParser implements IMessageParser
     }
 
     // AS3: sources/win63_version/habbo/communication/messages/parser/poll/PollContentsEventParser.as::_questionArray
-    private _questionArray: unknown[] = [];
+    private _questionArray: PollQuestion[] = [];
 
     // AS3: sources/win63_version/habbo/communication/messages/parser/poll/PollContentsEventParser.as::get questionArray()
-    get questionArray(): unknown[]
+    get questionArray(): PollQuestion[]
     {
         return this._questionArray;
     }
@@ -87,13 +89,12 @@ export class PollContentsEventParser implements IMessageParser
             const question = this.parseQuestion(wrapper);
             const childCount = wrapper.readInt();
 
-            const children: unknown[] = [];
             for(let j = 0; j < childCount; j++)
             {
-                children.push(this.parseQuestion(wrapper));
+                question.children.push(this.parseQuestion(wrapper));
             }
 
-            this._questionArray.push({...question, children});
+            this._questionArray.push(question);
         }
 
         this._npsPoll = wrapper.readBoolean();
@@ -101,39 +102,39 @@ export class PollContentsEventParser implements IMessageParser
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/communication/messages/parser/poll/PollContentsEventParser.as::parseQuestion()
-    private parseQuestion(wrapper: IMessageDataWrapper): Record<string, unknown>
+    /**
+     * AS3: sources/win63_version/habbo/communication/messages/parser/poll/PollContentsEventParser.as::parseQuestion()
+     *
+     * Choices are only on the wire for the two selection types (1 radio, 2 checkbox); the text
+     * types carry an answer count but no choices.
+     *
+     * This used to return an anonymous object with `{value, text, type}` choices, where the
+     * dialog reads `choiceText`/`choiceType` — a mismatch that throws nothing and renders an
+     * empty answer list. It builds the real `PollQuestion`/`PollChoice` now.
+     */
+    private parseQuestion(wrapper: IMessageDataWrapper): PollQuestion
     {
-        const questionId = wrapper.readInt();
-        const sortOrder = wrapper.readInt();
-        const questionType = wrapper.readInt();
-        const questionText = wrapper.readString();
-        const questionCategory = wrapper.readInt();
-        const questionAnswerType = wrapper.readInt();
-        const questionAnswerCount = wrapper.readInt();
+        const question = new PollQuestion();
 
-        const questionChoices: unknown[] = [];
+        question.questionId = wrapper.readInt();
+        question.sortOrder = wrapper.readInt();
+        question.questionType = wrapper.readInt();
+        question.questionText = wrapper.readString();
+        question.questionCategory = wrapper.readInt();
+        question.questionAnswerType = wrapper.readInt();
+        question.questionAnswerCount = wrapper.readInt();
 
-        if(questionType === 1 || questionType === 2)
+        if(question.questionType === PollQuestion.QUESTION_TYPE_RADIO
+            || question.questionType === PollQuestion.QUESTION_TYPE_CHECKBOX)
         {
-            for(let i = 0; i < questionAnswerCount; i++)
+            for(let i = 0; i < question.questionAnswerCount; i++)
             {
-                const choiceValue = wrapper.readString();
-                const choiceText = wrapper.readString();
-                const choiceType = wrapper.readInt();
-                questionChoices.push({value: choiceValue, text: choiceText, type: choiceType});
+                question.questionChoices.push(
+                    new PollChoice(wrapper.readString(), wrapper.readString(), wrapper.readInt())
+                );
             }
         }
 
-        return {
-            questionId,
-            sortOrder,
-            questionType,
-            questionText,
-            questionCategory,
-            questionAnswerType,
-            questionAnswerCount,
-            questionChoices,
-        };
+        return question;
     }
 }

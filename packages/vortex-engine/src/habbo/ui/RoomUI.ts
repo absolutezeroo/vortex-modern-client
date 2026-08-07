@@ -63,6 +63,9 @@ import type {IRoomSession} from '@habbo/session/IRoomSession';
 // Events
 import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
 import {RoomSessionErrorMessageEvent} from '@habbo/session/events/RoomSessionErrorMessageEvent';
+import {RoomSessionDoorbellEvent} from '@habbo/session/events/RoomSessionDoorbellEvent';
+import {RoomSessionQueueEvent} from '@habbo/session/events/RoomSessionQueueEvent';
+import {RoomSessionPollEvent} from '@habbo/session/events/RoomSessionPollEvent';
 import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
@@ -93,6 +96,37 @@ const ROOM_SESSION_DIALOG_EVENTS: readonly string[] = [
     RoomSessionErrorMessageEvent.BOT_LIMIT_REACHED,
     'RSEME_SELECTED_TILE_NOT_FREE_FOR_BOT',
     'RSEME_BOT_NAME_NOT_ACCEPTED',
+];
+
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as — the entries of the
+// same listener table whose callback is roomSessionEventHandler, in the source's own order.
+//
+// These are the session events that reach the room desktop, and through it every widget handler
+// that claimed them in `getProcessedEvents()`. Without this list a handler is registered and never
+// called: the doorbell and the room queue were both in that state until the poll slice needed the
+// same route and exposed it.
+const ROOM_SESSION_DESKTOP_EVENTS: readonly string[] = [
+    'RSCE_CHAT_EVENT',
+    'RSCE_FLOOD_EVENT',
+    'RSUBE_BADGES',
+    RoomSessionDoorbellEvent.RSDE_DOORBELL,
+    RoomSessionDoorbellEvent.RSDE_REJECTED,
+    RoomSessionDoorbellEvent.RSDE_ACCEPTED,
+    'RSPE_PRESENT_OPENED',
+    'RSOPPE_OPEN_PET_PACKAGE_REQUESTED',
+    'RSOPPE_OPEN_PET_PACKAGE_RESULT',
+    RoomSessionQueueEvent.QUEUE_STATUS,
+    RoomSessionPollEvent.CONTENT,
+    RoomSessionPollEvent.ERROR,
+    RoomSessionPollEvent.OFFER,
+    // The three question events keep AS3's `RWPUW_` prefix and its two typos
+    // ("QUESION", "FINSIHED") — they are matched literally on both sides.
+    'RWPUW_QUESTION_ANSWERED',
+    'RWPUW_QUESION_FINSIHED',
+    'RWPUW_NEW_QUESTION',
+    'RSDPE_PRESETS',
+    'RSFRE_FRIEND_REQUEST',
+    'RSDE_DANCE',
 ];
 
 export class RoomUI extends Component implements IRoomUI, IUpdateReceiver 
@@ -338,6 +372,12 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         for(const type of ROOM_SESSION_DIALOG_EVENTS)
                         {
                             mgr.sessionEvents.on(type, this.roomSessionDialogEventHandler, this);
+                        }
+
+                        // AS3: the same table's roomSessionEventHandler entries.
+                        for(const type of ROOM_SESSION_DESKTOP_EVENTS)
+                        {
+                            mgr.sessionEvents.on(type, this.roomSessionEventHandler, this);
                         }
                     }
                 },
@@ -760,6 +800,27 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     // PetPlacingError (3195) and its bot/kick siblings reached RoomUsersHandler, were turned into a
     // RoomSessionErrorMessageEvent, and then died with no subscriber — the placement simply failed
     // in silence.
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::roomSessionEventHandler()
+     *
+     * The route from a room session to the widget handlers. AS3 forwards to the *current* desktop
+     * only, guarded on the event carrying a session and the room engine being up; this port keeps
+     * both guards and the same single-desktop target.
+     *
+     * A widget handler naming a session event in `getProcessedEvents()` is registered by
+     * `RoomDesktop.createWidget()`, but nothing called it before this existed — the doorbell and
+     * the room queue were both wired, registered and dead.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::roomSessionEventHandler()
+    private roomSessionEventHandler(event: RoomSessionEvent): void
+    {
+        if(this._roomEngine === null) return;
+
+        if(event.session === null || event.session === undefined) return;
+
+        this._currentDesktop?.processEvent(event);
+    }
+
     private roomSessionDialogEventHandler(event: RoomSessionEvent): void
     {
         let errorTitle = '${error.title}';
@@ -967,6 +1028,8 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_CONVERSION_TRACKING');
                     // AS3: RoomUI.as:955 — the area-hide configuration window.
                     desktop.createWidget('RWE_AREA_HIDE');
+                    // AS3: RoomUI.as:945 — the survey offer and questionnaire.
+                    desktop.createWidget('RWE_ROOM_POLL');
 
                     this._isInRoom = true;
 

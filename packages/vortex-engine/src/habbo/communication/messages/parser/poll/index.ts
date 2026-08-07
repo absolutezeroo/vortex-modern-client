@@ -4,3 +4,5 @@ export * from './PollContentsEventParser';
 export * from './QuestionEventParser';
 export * from './QuestionAnsweredEventParser';
 export * from './QuestionFinishedEventParser';
+export * from './PollQuestion';
+export * from './PollChoice';
