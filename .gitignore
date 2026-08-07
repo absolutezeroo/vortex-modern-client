@@ -13,6 +13,8 @@ tools/
 !packages/vortex-client/tools/*.mjs
 !packages/vortex-glaze/tools/
 !packages/vortex-glaze/tools/*.mjs
+!packages/vortex-imager/tools/
+!packages/vortex-imager/tools/*.mjs
 *.bundle
 *.log
 .DS_Store

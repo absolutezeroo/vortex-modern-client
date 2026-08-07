@@ -1,0 +1,168 @@
+/**
+ * Runtime configuration, read once from the environment.
+ *
+ * Only the hotel-shaped values live here. Everything the avatar pipeline needs — where the
+ * avatar libraries are, what the figure map is called, which revision is current — is *not*
+ * configured: it comes from the hotel's own `external_variables`, exactly as it does in the
+ * client. Hard-coding those here is how an imager drifts a build behind the client and starts
+ * rendering last month's clothes.
+ */
+import {readFileSync} from 'node:fs';
+import {dirname, resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+
+export interface IDatabaseConfig
+{
+    host: string;
+    port: number;
+    user: string;
+    password: string;
+    database: string;
+    connectionLimit: number;
+}
+
+export interface IImagerConfig
+{
+    host: string;
+    port: number;
+
+    /** Root of the hotel's asset host, e.g. `http://vortex-assets.local`. */
+    assetsBaseUrl: string;
+
+    /**
+	 * Filesystem path the asset host serves, when the imager runs on the same machine.
+	 * Set it and every asset read skips HTTP entirely; leave it unset and the imager
+	 * fetches over the network like the client does.
+	 */
+    assetsRoot: string | null;
+
+    /** URL of `external_variables` — the same one the client is pointed at. */
+    externalVariablesUrl: string;
+
+    /** Hotel environment suffix in `common_configuration_txt` (`en`, `s2`, …). */
+    environmentId: string;
+
+    /** Directory holding the embedded avatar XMLs (geometry, part sets, animation, figure). */
+    avatarConfigDir: string;
+
+    /** `null` disables username lookups; `?figure=` still works. */
+    database: IDatabaseConfig | null;
+
+    /** Rendered images held in memory. */
+    cacheMaxEntries: number;
+
+    /** How long a rendered image stays cached, in milliseconds. */
+    cacheTtlMs: number;
+
+    /**
+	 * Value for `Access-Control-Allow-Origin`. Required, not optional: the client tags avatar
+	 * and badge images with `crossOrigin = "anonymous"` (`ImageLoader`, `BadgeImageManager`,
+	 * `RoomPicker`), which makes the browser refuse any response without this header. `*` is
+	 * the right default — these images are public and no request carries credentials — but it
+	 * can be narrowed to the hotel's origin.
+	 */
+    corsOrigin: string;
+
+    logLevel: string;
+}
+
+function env(key: string, fallback: string): string
+{
+    const value = process.env[key];
+
+    return value === undefined || value === '' ? fallback : value;
+}
+
+function envOrNull(key: string): string | null
+{
+    const value = process.env[key];
+
+    return value === undefined || value === '' ? null : value;
+}
+
+function envNumber(key: string, fallback: number): number
+{
+    const value = process.env[key];
+
+    if(value === undefined || value === '') return fallback;
+
+    const parsed = Number(value);
+
+    return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+/**
+ * Reads `.env` next to the package, if there is one. Values already in the environment win,
+ * so a systemd unit or a docker `-e` still overrides the file.
+ *
+ * Node's own `--env-file` would do this, but it aborts when the file is absent — and the file
+ * is optional here, since every setting has a working default.
+ */
+function loadEnvFile(): void
+{
+    let contents: string;
+
+    try
+    {
+        contents = readFileSync(resolve(HERE, '../.env'), 'utf8');
+    }
+    catch
+    {
+        return;
+    }
+
+    for(const line of contents.split(/\r?\n/))
+    {
+        const trimmed = line.trim();
+
+        if(trimmed.length === 0 || trimmed.startsWith('#')) continue;
+
+        const separator = trimmed.indexOf('=');
+
+        if(separator <= 0) continue;
+
+        const key = trimmed.slice(0, separator).trim();
+        const value = trimmed.slice(separator + 1).trim().replace(/^["']|["']$/g, '');
+
+        if(process.env[key] === undefined) process.env[key] = value;
+    }
+}
+
+export function loadConfig(): IImagerConfig
+{
+    loadEnvFile();
+
+    const assetsBaseUrl = env('IMAGER_ASSETS_BASE_URL', 'http://vortex-assets.local').replace(/\/+$/, '');
+    const database = envOrNull('IMAGER_DB_DATABASE');
+
+    return {
+        host: env('IMAGER_HOST', '0.0.0.0'),
+        port: envNumber('IMAGER_PORT', 8081),
+        assetsBaseUrl,
+        assetsRoot: envOrNull('IMAGER_ASSETS_ROOT'),
+        externalVariablesUrl: env('IMAGER_EXTERNAL_VARIABLES_URL', `${assetsBaseUrl}/gamedata/external_variables/1`),
+        environmentId: env('IMAGER_ENVIRONMENT_ID', 'en'),
+        // The client ships these as embedded assets; the imager reads the same files out of
+        // the client package so both render against one copy.
+        avatarConfigDir: env(
+            'IMAGER_AVATAR_CONFIG_DIR',
+            resolve(HERE, '../../vortex-client/src/assets/configurations')
+        ),
+        database: database === null
+            ? null
+            : {
+                host: env('IMAGER_DB_HOST', '127.0.0.1'),
+                port: envNumber('IMAGER_DB_PORT', 3306),
+                user: env('IMAGER_DB_USER', 'root'),
+                password: env('IMAGER_DB_PASSWORD', ''),
+                database,
+                connectionLimit: envNumber('IMAGER_DB_POOL', 4)
+            },
+        cacheMaxEntries: envNumber('IMAGER_CACHE_ENTRIES', 2000),
+        cacheTtlMs: envNumber('IMAGER_CACHE_TTL_MS', 6 * 60 * 60 * 1000),
+        corsOrigin: env('IMAGER_CORS_ORIGIN', '*'),
+        logLevel: env('IMAGER_LOG_LEVEL', 'info')
+    };
+}

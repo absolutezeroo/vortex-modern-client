@@ -685,6 +685,40 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **`vortex-imager` — external avatar + guild-badge imager, and two engine bugs it exposed**,
+  2026-08-07. New package `packages/vortex-imager`: a Fastify service answering the
+  `/habbo-imaging/…` routes the hotel config already points at (`habbo.imaging.avatar.url`,
+  `group.badge.url`, `group_logo_url_template`).
+  - **It runs the client's own renderer, not a second one.** `esbuild`'s `alias` rewrites every
+    `pixi.js` import in the engine's transitive graph — 130 files rooted at `AvatarRenderManager`,
+    importing exactly three symbols (`Texture`, `Spritesheet`, `Assets`) — to a Node shim over
+    `@napi-rs/canvas`. `OffscreenCanvas`, `createImageBitmap`, `DOMParser`/`Document`/`Element`
+    and `localStorage` are shimmed alongside it. The boot mirrors `VortexMain.prepareCore()` with
+    the real `HabboConfigurationManager` pointed at the hotel's own `external_variables`, so the
+    imager resolves the current asset build the same way and at the same time the client does.
+  - 🐛 **Effect and dance animations were registered under the empty string.**
+    `EffectAssetDownloadManager.onLibraryComplete()` passed a .nitro bundle's whole `animations`
+    *map* (`{"Dance 1": {name: "dance.1", …}}`) to `registerAnimation()`, which keys by
+    `data.name` — undefined for a map. Every `getAnimation("dance.1")` / `getAnimation("fx.N")`
+    missed. Nothing failed loudly: an animated action with no animation renders its
+    `assetpartdefinition`, and for both `Dance` and `AvatarEffect` that is `std` — so dances and
+    effects came out as a plain standing avatar, in the room as well as here. Each entry is now
+    registered under its own name.
+  - 🐛 **Effect libraries were never registered with the `AssetAliasCollection`.** Only
+    `AvatarAssetDownloadManager` did it, so `getAsset("h_std_fx2_1_1_2_0")` always returned null
+    and no effect sprite — hoverboard, halo, hearts — could ever be drawn. AS3 needs no equivalent
+    (its effect SWF lands in the shared `AssetLibraryCollection`); this port builds one
+    `GraphicAssetCollection` per bundle, so the wiring is port-specific and marked `TS-only`.
+  - ⚠️ **Two small-scale gaps left open, and worked around in the imager rather than in the
+    engine.** `AvatarScaleType.SMALL` (`sh`) cannot render on this asset build — `hh_human_body`
+    ships 244 assets, all `h_*`, no `sh_*` — and the port of `LARGE_TO_SMALL` (`h_50`) never
+    halves the parts, so `h`-sized parts land almost entirely outside the 45x72 canvas. Both
+    render a fully transparent avatar with nothing logged. `size=s` composites at full scale and
+    halves the finished image instead; see `packages/vortex-imager/src/avatar/AvatarRequest.ts`.
+  - **Badges are `BadgeEditorPartItem.getComposite()` ported verbatim** — 39x39, 13x13 grid cells,
+    colour multiply, uncoloured mask on top. Part/colour catalogue and `?user=` lookups are read
+    from the hotel database (`group_badge_parts`, `group_colors`, `players`), not mirrored.
+
 - ✅ **Priority-0 sweep finished — and it found 38 messages the dispatcher could never route**,
   2026-08-06. `habbo/moderation`, `habbo/friendlist` and `habbo/help` swept; **priority 0 is now
   closed**.
