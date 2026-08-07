@@ -104,6 +104,7 @@ export class RoomQueueWidget extends RoomWidgetBase
      * refreshes the club flags and redraws. All four localisation keys are registered every time,
      * not just the one about to be shown, because the caption is chosen after.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomqueue/RoomQueueWidget.as::onQueueStatus()
     private onQueueStatus = (event: RoomWidgetRoomQueueUpdateEvent): void =>
     {
         if(event === null || event === undefined) return;
@@ -174,6 +175,7 @@ export class RoomQueueWidget extends RoomWidgetBase
      * The club half of the window is shown to people who do **not** have Habbo Club — it is the
      * upsell, so the flag is inverted.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomqueue/RoomQueueWidget.as::showInterface()
     private showInterface(): void
     {
         if(!this.createWindow() || this._window === null) return;

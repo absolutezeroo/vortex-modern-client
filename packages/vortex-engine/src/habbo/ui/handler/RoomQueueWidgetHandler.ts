@@ -29,6 +29,8 @@ export class RoomQueueWidgetHandler implements IRoomWidgetHandler
     // AS3: .../RoomQueueWidgetHandler.as::TARGET_VISITOR
     private static readonly TARGET_VISITOR: number = 2;
 
+    // TS-only: AS3's `disposed` reads a flag the base Disposable owns; this port's handlers are
+    // plain classes and each keeps its own.
     private _disposed: boolean = false;
 
     // AS3: .../RoomQueueWidgetHandler.as::_container
@@ -69,6 +71,7 @@ export class RoomQueueWidgetHandler implements IRoomWidgetHandler
      * Leaving the queue is `roomSession.quit()` — the same call as leaving a room, because a
      * queued visitor is already in a session.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomQueueWidgetHandler.as::processWidgetMessage()
     processWidgetMessage(message: RoomWidgetMessage): RoomWidgetUpdateEvent | null
     {
         if(this._container === null || this._container.roomSession === null) return null;
@@ -114,6 +117,7 @@ export class RoomQueueWidgetHandler implements IRoomWidgetHandler
      * A `queueSetTarget` outside 1-2 produces no event at all — AS3 leaves the status string null
      * and returns.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomQueueWidgetHandler.as::processEvent()
     processEvent(event: RoomSessionQueueEvent): void
     {
         if(this._container === null) return;
