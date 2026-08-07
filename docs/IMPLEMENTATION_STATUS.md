@@ -685,6 +685,53 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **Wall-item placement (category 20) — the last of the three placement categories**, 2026-08-07.
+  Placing a wall item from the inventory was refused up front in
+  `RoomEngine.initializeRoomObjectInsert()`, on a stale claim: that no AS3 tree carried the inverse
+  of `LegacyWallGeometry.getLocation()`. It does, and this port already had it —
+  `LegacyWallGeometry.getOldLocation()/getOldLocationString()` (`_SafeCls_1855.as`), the
+  `":w=wallX,wallY l=localX,localY side"` encode the server parses.
+  - **The geometry moved to where AS3 keeps it.** `RoomMessageHandler` held one private
+    `LegacyWallGeometry` for the whole client; AS3 has one *per room* on `RoomInstanceData` and
+    reads it back through `getLegacyGeometry(roomId)` (`_SafeCls_1984.as:569/906/979/1399`). It now
+    lives on `IRoomEngineRoomInstanceData`, with `getLegacyGeometry()` on `RoomEngine` +
+    `IRoomCreator`. That also fixes a latent bug: one shared instance meant a wall item placed after
+    a room change was positioned against the previous room's height map. Note `addWallItem()` reads
+    it from its own `roomId` argument, not `_currentRoomId` — AS3 does the same, at that one site.
+  - **Ported**: `validateWallItemLocation()` (the two-pass clamp: slide the point back onto the wall,
+    then reject when even the clamped point cannot fit), `handleWallItemMove()`, the category-20 arm
+    of `handleObjectPlace()`, and `updateObjectRoomWindow()` (`_SafeCls_90.as`) — which also closes
+    the standing TODO in `updateObjectWallItemLocation()`, where a wired-moved window kept its hole
+    at the old spot.
+  - **Routing**: `RoomObjectWallMouseEvent` was already dispatched by `RoomLogic` and already
+    reached `onRoomObjectEvent()` — where it was swallowed by the generic `RoomObjectMouseEvent`
+    arm it inherits from. It now branches first, into `handleWallMouseEvent()`. The category-20
+    exclusion in `handleTileMouseEvent()` is gone too: AS3 wants the tile path to *dispose* a wall
+    ghost, which is what makes it vanish when the cursor leaves the wall.
+  - **`placeObject()`** takes AS3's two `placedOnFloor`/`placedOnWall` parameters (which kind of
+    event confirmed the placement) and emits them on `REOE_PLACED` — `FurniModel.onObjectPlaced()`
+    needs them to re-arm, and its wall gate (`objectId === ref`) is satisfied because the server
+    sends `roomItemId` as `+|itemId|` for wall items and `-|itemId|` for floor ones. The direction
+    now stays in degrees until after the wall string is built, since `getOldLocationString()`
+    switches on 90 vs 180 and would have seen 2 vs 4.
+  - 🐛 **The stickie test cannot be transcribed literally, and transcribing it literally broke the
+    whole feature.** AS3 selects the stickie composer with
+    `getModelController().getString("furniture_is_stickie") != null`. But `FurnitureStickieLogic`
+    sets that flag to the **empty string**, and this port's `RoomObjectModel.getString()` returns
+    `''` for a missing key too — so the literal transcription is true for every object and false for
+    none, and every wall item went out as a `PlacePostItMessageComposer` the server drops. The
+    symptom was precise and misleading: the ghost followed the wall correctly and the click placed
+    nothing. `hasString()` is the distinction AS3's null return actually carries.
+  - `PlaceObjectMessageComposer` regained its real AS3 signature (`_SafeCls_2135`:
+    `id, category, wallLocation, x, y, rotation`) and its `switch(category - 10)` — one composer,
+    `"id x y rot"` for floor and `"id :w=…"` for wall. The stickie branch
+    (`furniture_is_stickie` → `PlacePostItMessageComposer`) is reachable now that the wall string is,
+    and is wired.
+  - **Still open**: *moving* an already-placed wall item. `modifyRoomObject()`'s `OBJECT_MOVE` still
+    refuses category 20 — that one needs the move composer (`_SafeCls_2682`, `id + locationString`),
+    which is not ported. Also left as TODOs in `placeObject()`: the `free_placement_room` alert and
+    `setPlacedObjectData()`.
+
 - ✅ **`vortex-imager` — external avatar + guild-badge imager, and two engine bugs it exposed**,
   2026-08-07. New package `packages/vortex-imager`: a Fastify service answering the
   `/habbo-imaging/…` routes the hotel config already points at (`habbo.imaging.avatar.url`,

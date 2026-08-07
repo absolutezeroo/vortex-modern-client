@@ -13,6 +13,10 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * {@link PlaceObjectMessageComposer} fallback. The location is the legacy wall-location string
  * built by `getOldLocationString()`, the same one a category-20 placement uses.
  *
+ * That AS3 test is transcribed as `hasString(...)` at the call site, not as a comparison against
+ * null — the flag's value *is* the empty string, and this port's `getString()` returns `''` for an
+ * absent key as well. See the comment there.
+ *
  * The name comes from vortex-emulator; no unobfuscated tree carries this composer.
  */
 export class PlacePostItMessageComposer extends MessageComposer<[number, string]>

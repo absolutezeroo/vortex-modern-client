@@ -16,6 +16,7 @@ import type {IStuffData} from './object/data/IStuffData';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
 import type {FurniStackingHeightMap} from './utils/FurniStackingHeightMap';
 import type {TileObjectMap} from './utils/TileObjectMap';
+import type {LegacyWallGeometry} from './utils/LegacyWallGeometry';
 
 export interface IRoomCreator
 {
@@ -121,6 +122,12 @@ export interface IRoomCreator
         pickerId?: number,
         refresh?: boolean
     ): boolean;
+
+    /**
+	 * The room's legacy wall geometry — the height map wall items are positioned against.
+	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_89.as::getLegacyGeometry()
+    getLegacyGeometry(roomId: number): LegacyWallGeometry | null;
 
     /**
 	 * Add wall item to a room.

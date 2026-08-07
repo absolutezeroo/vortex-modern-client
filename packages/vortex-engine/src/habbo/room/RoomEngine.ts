@@ -78,6 +78,7 @@ import {PetFigureData as AvatarPetFigureData, PetFigureData} from '@habbo/avatar
 import type {IRoomObjectModelController} from '@room/object/IRoomObjectModelController';
 import {SelectedRoomObjectData} from './utils/SelectedRoomObjectData';
 import {TileObjectMap} from './utils/TileObjectMap';
+import {LegacyWallGeometry} from './utils/LegacyWallGeometry';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
 import {Logger} from "@core";
 import {RoomVisualizationData} from './object/visualization/room/RoomVisualizationData';
@@ -117,6 +118,7 @@ import {
 } from '@habbo/communication/messages/outgoing/room/furniture/UseWallItemMessageComposer';
 import {PlacePetComposer} from '@habbo/communication/messages/outgoing/room/pet/PlacePetComposer';
 import {PlaceBotMessageComposer} from '@habbo/communication/messages/outgoing/room/bot/PlaceBotMessageComposer';
+import {PlacePostItMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/PlacePostItMessageComposer';
 import {
     RemoveBotFromFlatMessageComposer
 } from '@habbo/communication/messages/outgoing/room/bot/RemoveBotFromFlatMessageComposer';
@@ -142,6 +144,7 @@ import {RoomObjectRoomUpdateMessage} from './messages/RoomObjectRoomUpdateMessag
 import {RoomObjectRoomPlaneVisibilityUpdateMessage} from './messages/RoomObjectRoomPlaneVisibilityUpdateMessage';
 import {RoomObjectRoomPlanePropertyUpdateMessage} from './messages/RoomObjectRoomPlanePropertyUpdateMessage';
 import {RoomObjectTileMouseEvent} from './events/RoomObjectTileMouseEvent';
+import {RoomObjectWallMouseEvent} from './events/RoomObjectWallMouseEvent';
 import {RoomObjectStateChangeEvent} from './events/RoomObjectStateChangeEvent';
 import {RoomObjectWidgetRequestEvent} from './events/RoomObjectWidgetRequestEvent';
 import {RoomObjectFurnitureActionEvent} from './events/RoomObjectFurnitureActionEvent';
@@ -184,6 +187,11 @@ interface IRoomEngineRoomInstanceData {
     furniStackingHeightMap: FurniStackingHeightMap | null;
     // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get tileObjectMap()
     tileObjectMap: TileObjectMap | null;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get legacyGeometry()
+    // AS3 constructs it eagerly in the RoomInstanceData constructor (_SafeCls_2223.as:35), so it is
+    // never null for a live room — RoomMessageHandler fills its height map from the floor heightmap
+    // message and the wall-item paths read it back.
+    legacyGeometry: LegacyWallGeometry;
     selectedObjectData: SelectedRoomObjectData | null;
 }
 
@@ -651,15 +659,6 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::initializeRoomObjectInsert()
-    // TODO(AS3): only floor-item placement (category 10) gets the real ghost-object
-    // mechanism below. Wall items (category 20) are still rejected up front: finalizing
-    // a wall placement needs PlaceObjectMessageComposer's wallLocation string encode
-    // (world position -> "w=x,y l=x,y r|l" — see WallDataParser.ts for the decode
-    // direction), and no AS3 source available here has the inverse of
-    // LegacyWallGeometry.getLocation() to port that encode from — inventing it would
-    // violate the AS3-fidelity mandate. Avatar/pet placement (category 100) is a
-
     // AS3: sources/win63_version/habbo/room/class_34.as::contentLoaded()
     contentLoaded(type: string, success: boolean): void 
     {
@@ -725,7 +724,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this._contentLoader?.getWallItemType(type, param) ?? null;
     }
 
-    // separate, unstarted feature.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::initializeRoomObjectInsert()
     initializeRoomObjectInsert(
         source: string,
         itemId: number,
@@ -739,17 +738,8 @@ export class RoomEngine extends Component implements IRoomEngine,
     ): boolean 
     {
         // AS3's initializeRoomObjectInsert() has no category guard at all — it accepts whatever it is
-        // handed and lets handleObjectPlace() build the right kind of ghost. Wall items (category 20)
-        // are still refused here because finalizing one needs PlaceObjectMessageComposer's
-        // wallLocation encode, which no available AS3 tree contains the inverse of (see the class
-        // header). Floor furniture (10) and users/pets/bots (100) both have a real ghost path.
-        if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
-        {
-            log.warn('Wall item placement is not implemented yet (category 20)');
-
-            return false;
-        }
-
+        // handed and lets handleObjectPlace() build the right kind of ghost. All three categories now
+        // have one: floor furniture (10), wall items (20) and users/pets/bots (100).
         this._objectPlacementSource = source;
 
         this.setSelectedObjectData(
@@ -1247,6 +1237,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             instanceData.roomCamera.dispose();
             instanceData.furniStackingHeightMap?.dispose();
             instanceData.tileObjectMap?.dispose();
+            instanceData.legacyGeometry.dispose();
             instanceData.selectedObjectData?.dispose();
             this._roomInstanceData.delete(roomId);
         }
@@ -1303,8 +1294,22 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this._roomInstanceData.get(roomId)?.furniStackingHeightMap ?? null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getLegacyGeometry()
+    // AS3 reads the geometry back off the engine everywhere it is needed — RoomMessageHandler's
+    // heightmap/wall-item handlers (_SafeCls_1984.as:569/906/979/1399) and the wall-item placement
+    // in _SafeCls_1821.as all go through this accessor. It is per room, which is why it lives on the
+    // room instance data and not as one field on whoever happened to fill it in first.
+    getLegacyGeometry(roomId: number): LegacyWallGeometry | null
+    {
+        // AS3 goes through getRoomInstanceData(), the creating variant — not the plain map lookup
+        // getFurniStackingHeightMap() uses. That matters: the floor heightmap message can land
+        // before anything else has touched the room's instance data, and the geometry it fills in
+        // has to be the one the placement paths read back later.
+        return this.getRoomInstanceData(roomId).legacyGeometry;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getTileObjectMap()
-    getTileObjectMap(roomId: number): TileObjectMap | null 
+    getTileObjectMap(roomId: number): TileObjectMap | null
     {
         return this._roomInstanceData.get(roomId)?.tileObjectMap ?? null;
     }
@@ -1356,7 +1361,9 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(operation === 'OBJECT_PLACE')
         {
-            this.handleObjectPlace(roomId, tileX, tileY);
+            // The cached move is a tile, never a wall — this guard above only lets category 10
+            // through, and the cache is written from handleTileMouseEvent() alone.
+            this.handleObjectPlace(roomId, {tileX, tileY}, null);
         }
         else
         {
@@ -2800,11 +2807,10 @@ export class RoomEngine extends Component implements IRoomEngine,
             object.getEventHandler()?.processUpdateMessage(message);
         }
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::
-        // updateObjectWallItemLocation() ends with updateObjectRoomWindow(roomId, id), which
-        // re-emits the wall item's plane mask at its new position (RORMUM_ADD_MASK /
-        // RORMUM_REMOVE_MASK on the room object). updateObjectRoomWindow() is not ported yet, so a
-        // window furni moved by wired keeps its mask at the old spot until it is re-added.
+        // AS3: _SafeCls_90.as::updateObjectWallItemLocation() ends here — the wall item moved, so
+        // its plane mask has to be re-emitted at the new position or a window furni moved by wired
+        // keeps its hole at the old spot.
+        this.updateObjectRoomWindow(roomId, id);
 
         return true;
     }
@@ -3065,6 +3071,46 @@ export class RoomEngine extends Component implements IRoomEngine,
         );
 
         return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectRoomWindow()
+    // Re-emits a window wall item's plane mask onto the room object, so the wall it hangs on is cut
+    // open at its new position. `visible=false`, or a wall item that no longer exists, removes the
+    // mask instead — which is what makes the ghost of a window stop punching a hole in the wall the
+    // moment the placement leaves it.
+    updateObjectRoomWindow(roomId: number, id: number, visible: boolean = true): void
+    {
+        const maskId = `${RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL}_${id}`;
+        const wallItem = this.getObjectWallItem(roomId, id);
+        let message: RoomObjectRoomMaskUpdateMessage | null = null;
+
+        if(wallItem !== null)
+        {
+            const model = wallItem.getModel();
+
+            if(model !== null && model.getNumber(RoomObjectVariableEnum.FURNITURE_USES_PLANE_MASK) > 0)
+            {
+                message = visible
+                    ? new RoomObjectRoomMaskUpdateMessage(
+                        RoomObjectRoomMaskUpdateMessage.ADD_MASK,
+                        maskId,
+                        model.getString(RoomObjectVariableEnum.FURNITURE_PLANE_MASK_TYPE),
+                        wallItem.getLocation()
+                    )
+                    : new RoomObjectRoomMaskUpdateMessage(RoomObjectRoomMaskUpdateMessage.REMOVE_MASK, maskId);
+            }
+        }
+        else
+        {
+            message = new RoomObjectRoomMaskUpdateMessage(RoomObjectRoomMaskUpdateMessage.REMOVE_MASK, maskId);
+        }
+
+        const roomObject = this.getObjectRoom(roomId);
+
+        if(roomObject !== null && roomObject.getEventHandler() !== null && message !== null)
+        {
+            roomObject.getEventHandler()?.processUpdateMessage(message);
+        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getObjectRoom()
@@ -4577,7 +4623,17 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // never gets created in the first place).
-    private handleObjectPlace(roomId: number, tileX: number, tileY: number): void 
+    //
+    // AS3 takes the RoomObjectMouseEvent itself and casts it twice — `as RoomObjectTileMouseEvent`
+    // and `as RoomObjectWallMouseEvent` — then uses which of the two came back non-null to decide
+    // whether the hovered surface can hold the pending item at all. This port passes the outcome of
+    // those two casts instead, because its tile path also runs from a cached coordinate pair
+    // (recalibrateMovements) that never had an event. Exactly one of the two is non-null.
+    private handleObjectPlace(
+        roomId: number,
+        tileEvent: {tileX: number; tileY: number} | null,
+        wallEvent: RoomObjectWallMouseEvent | null
+    ): void
     {
         const instanceData = this._roomInstanceData.get(roomId);
         let data = instanceData?.selectedObjectData ?? null;
@@ -4587,10 +4643,26 @@ export class RoomEngine extends Component implements IRoomEngine,
         let object = this.getRoomObject(roomId, data.id, data.category) as IRoomObjectController | null;
 
         const isUserCategory = data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER;
+        const isWallCategory = data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL;
 
         if(object === null)
         {
-            if(isUserCategory)
+            // AS3 builds each ghost only from the matching kind of event: a floor item or a pet
+            // needs a tile under the cursor, a wall item needs a wall. Hovering the wrong surface
+            // creates nothing, and the rest of this pass then runs against a null object — which is
+            // how the mover icon comes back on while the cursor is somewhere the item cannot go.
+            if(isWallCategory)
+            {
+                if(wallEvent !== null)
+                {
+                    // AS3 passes state 0 and usage policy 0 for the ghost and no owner at all; the
+                    // real values only arrive with the server's echo once the item is placed.
+                    this.addObjectWallItem(
+                        roomId, data.id, data.typeId, data.loc, data.dir, 0, data.instanceData ?? '', 0, 0, '', 0
+                    );
+                }
+            }
+            else if(isUserCategory && tileEvent !== null)
             {
                 // AS3: _SafeCls_1821.as::handleObjectPlace() — the category-100 branch. The ghost is
                 // built at the origin facing 180; handleUserPlace() below moves it onto the hovered
@@ -4610,7 +4682,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                     (ghost.getModel() as IRoomObjectModelController | null)?.setString('figure_posture', data.posture);
                 }
             }
-            else
+            else if(!isUserCategory && !isWallCategory && tileEvent !== null)
             {
                 this.addObjectFurniture(
                     roomId, data.id, data.typeId, data.loc, data.dir, data.state,
@@ -4621,8 +4693,8 @@ export class RoomEngine extends Component implements IRoomEngine,
             object = this.getRoomObject(roomId, data.id, data.category) as IRoomObjectController | null;
 
             // AS3 only resolves allowed directions for category 10; a user ghost keeps the 180 it
-            // was created with.
-            if(object !== null && !isUserCategory)
+            // was created with, and a wall item takes the direction of the wall it lands on.
+            if(object !== null && !isUserCategory && !isWallCategory)
             {
                 const allowedDirections = object.getModel()?.getNumberArray(RoomObjectVariableEnum.FURNITURE_ALLOWED_DIRECTIONS) ?? null;
 
@@ -4653,15 +4725,31 @@ export class RoomEngine extends Component implements IRoomEngine,
             const stackingMap = this.getFurniStackingHeightMap(roomId);
             let success: boolean;
 
-            if(isUserCategory)
+            if(isWallCategory)
             {
-                success = this.handleUserPlace(object, tileX + 0.5, tileY + 0.5, stackingMap);
+                success = wallEvent !== null && this.handleWallItemMove(
+                    object, data,
+                    wallEvent.wallLocation, wallEvent.wallWidth, wallEvent.wallHeight,
+                    wallEvent.x, wallEvent.y, wallEvent.direction
+                );
+
+                if(!success) this.disposeObjectWallItem(roomId, data.id);
+
+                // AS3 calls this on both outcomes, with the outcome as the argument: a window ghost
+                // that found a spot cuts its hole in the wall, one that did not takes it back out.
+                this.updateObjectRoomWindow(roomId, data.id, success);
+            }
+            else if(isUserCategory)
+            {
+                success = tileEvent !== null
+                    && this.handleUserPlace(object, tileEvent.tileX + 0.5, tileEvent.tileY + 0.5, stackingMap);
 
                 if(!success) this.disposeObjectUser(roomId, data.id);
             }
             else
             {
-                success = this.handleFurnitureMove(object, data, tileX + 0.5, tileY + 0.5, stackingMap);
+                success = tileEvent !== null
+                    && this.handleFurnitureMove(object, data, tileEvent.tileX + 0.5, tileEvent.tileY + 0.5, stackingMap);
 
                 if(!success) this.disposeObjectFurniture(roomId, data.id);
             }
@@ -4670,11 +4758,95 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleWallItemMove()
+    // The wall-item counterpart of handleFurnitureMove(): the wall plane under the cursor arrives as
+    // a RoomObjectWallMouseEvent, and its own direction becomes the item's — a wall item does not
+    // rotate, it faces the wall it was dropped on.
+    private handleWallItemMove(
+        object: IRoomObjectController,
+        data: SelectedRoomObjectData,
+        wallLocation: IVector3d | null,
+        wallWidth: IVector3d | null,
+        wallHeight: IVector3d | null,
+        x: number,
+        y: number,
+        direction: number
+    ): boolean
+    {
+        const location = this.validateWallItemLocation(object, wallLocation, wallWidth, wallHeight, x, y, data);
+
+        if(location === null) return false;
+
+        object.setLocation(location);
+        object.setDirection(new Vector3d(direction));
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::validateWallItemLocation()
+    // Clamps the hovered point on the wall so the whole item still fits on that wall, then converts
+    // it back to a world position. `x` runs along the wall and `y` down it, both in the plane's own
+    // units; `wallWidth`/`wallHeight` are the plane's two side vectors, so their lengths are how far
+    // the point may travel before the item hangs off the edge.
+    //
+    // The clamp is written twice on purpose: the first pass pulls an out-of-range point back to the
+    // nearest legal one, and the second rejects outright when even the clamped point does not fit —
+    // an item wider than the wall, which no amount of sliding can place.
+    //
+    // `data` is null-checked and never read, exactly as in AS3.
+    private validateWallItemLocation(
+        object: IRoomObjectController,
+        wallLocation: IVector3d | null,
+        wallWidth: IVector3d | null,
+        wallHeight: IVector3d | null,
+        x: number,
+        y: number,
+        data: SelectedRoomObjectData | null
+    ): IVector3d | null
+    {
+        const model = object.getModel();
+
+        if(model === null || wallLocation === null || wallWidth === null || wallHeight === null || data === null)
+        {
+            return null;
+        }
+
+        const sizeX = model.getNumber(RoomObjectVariableEnum.FURNITURE_SIZE_X);
+        const sizeZ = model.getNumber(RoomObjectVariableEnum.FURNITURE_SIZE_Z);
+        const centerZ = model.getNumber(RoomObjectVariableEnum.FURNITURE_CENTER_Z);
+
+        const minX = sizeX / 2;
+        const maxX = wallWidth.length - sizeX / 2;
+        const minY = centerZ;
+        const maxY = wallHeight.length - (sizeZ - centerZ);
+
+        if(x < minX || x > maxX || y < minY || y > maxY)
+        {
+            if(x < minX && x <= maxX) x = minX;
+            else if(x >= minX && x > maxX) x = maxX;
+
+            if(y < minY && y <= maxY) y = minY;
+            else if(y >= minY && y > maxY) y = maxY;
+        }
+
+        if(x < minX || x > maxX || y < minY || y > maxY)
+        {
+            return null;
+        }
+
+        const offset = Vector3d.sum(
+            Vector3d.product(wallWidth, x / wallWidth.length),
+            Vector3d.product(wallHeight, y / wallHeight.length)
+        );
+
+        return Vector3d.sum(wallLocation, offset);
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleUserPlace()
-    // AS3 reads tile validity and height off the room's LegacyWallGeometry
-    // (`roomEngine.getLegacyGeometry()`), which this port does not have. FurniStackingHeightMap
-    // carries the same two facts — RoomMessageHandler fills its isRoomTile/tileHeight straight from
-    // the HeightMap message — so it stands in for the geometry here.
+    // TODO(AS3): AS3 takes both coordinates as `int` and reads tile validity and height off the
+    // room's LegacyWallGeometry (`roomEngine.getLegacyGeometry()` — no longer missing here), so the
+    // ghost lands on the tile corner at the floor's own altitude. This arm keeps the fractional tile
+    // centre and FurniStackingHeightMap, whose height includes whatever furniture is stacked there.
     private handleUserPlace(
         object: IRoomObjectController,
         x: number,
@@ -4695,7 +4867,10 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::placeObject()
-    private placeObject(roomId: number): void
+    // `placedOnFloor`/`placedOnWall` are AS3's own two parameters: which kind of mouse event
+    // confirmed the placement. They ride out on REOE_PLACED, where FurniModel.onObjectPlaced()
+    // needs them to tell a floor placement's re-arm from a wall one.
+    private placeObject(roomId: number, placedOnFloor: boolean, placedOnWall: boolean): void
     {
         const data = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
 
@@ -4703,21 +4878,40 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const object = this.getRoomObject(roomId, data.id, data.category) as IRoomObjectController | null;
 
+        let wallLocation = '';
         let x = 0;
         let y = 0;
         let z = 0;
         let rotation = 0;
         const placedInRoom = object !== null && object.getId() === data.id;
 
-        if(object !== null) 
+        if(object !== null)
         {
-            const direction = object.getDirection();
             const location = object.getLocation();
 
             x = location.x;
             y = location.y;
             z = location.z;
-            rotation = (Math.round(direction.x / 45) % 8 + 8) % 8;
+
+            // AS3 keeps the direction in degrees until after the wall string is built
+            // (`_loc7_:int = int(getDirection().x)`, then `_loc7_ = (_loc7_ / 45 % 8 + 8) % 8`).
+            // The order matters: getOldLocationString() switches on 90 vs 180 and would see 2 vs 4
+            // if the eighths conversion ran first.
+            const degrees = Math.trunc(object.getDirection().x);
+
+            if(data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+            {
+                const legacyGeometry = this.getLegacyGeometry(roomId);
+
+                if(legacyGeometry !== null)
+                {
+                    wallLocation = legacyGeometry.getOldLocationString(location, degrees) ?? '';
+                }
+            }
+
+            // AS3 truncates the whole expression on assignment to an int local, where this port
+            // used to round it. Identical for every real furniture direction (all multiples of 45).
+            rotation = Math.trunc(((degrees / 45) % 8 + 8) % 8);
 
             // AS3: _SafeCls_1821.as::placeObject() — the id is un-negated *before* the composer is
             // built, not after. Pets and bots arrive here with a negative id (PetsModel passes
@@ -4727,12 +4921,9 @@ export class RoomEngine extends Component implements IRoomEngine,
 
             if(sentId < 0 && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) sentId *= -1;
 
-            // TODO(AS3): the stickie-note branch sits between the bot case and the fallback below.
-            // PlacePostItMessageComposer (1122) is now ported, but its wall-location argument is
-            // not reachable: AS3 builds it with `getLegacyGeometry(roomId).getOldLocationString()`
-            // and this port has no LegacyWallGeometry at all (same gap as the category-20 variant —
-            // see PlaceObjectMessageComposer.ts). Stickies therefore still fall through to the
-            // generic composer below.
+            // TODO(AS3): the free_placement_room guard sits here — AS3 alerts "One free placement
+            // furni already in room!" and returns without sending when
+            // `getRoom(roomId).getObjectCountForType('free_placement_room', 10) > 1`.
             if(this._connection !== null && this._objectPlacementSource === 'inventory')
             {
                 if(data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER && data.typeId === USER_TYPE_PET)
@@ -4746,9 +4937,27 @@ export class RoomEngine extends Component implements IRoomEngine,
                 {
                     this._connection.send(new PlaceBotMessageComposer(sentId, Math.trunc(x), Math.trunc(y)));
                 }
+                else if(object.getModel()?.hasString(RoomObjectVariableEnum.FURNITURE_IS_STICKIE))
+                {
+                    // AS3 picks the stickie composer off the object's own model, not off its
+                    // category — a stickie is a wall item, but it does not take the wall item
+                    // message. Ahead of the generic fallback, exactly as here.
+                    //
+                    // AS3 writes `getString("furniture_is_stickie") != null`, which cannot be
+                    // transcribed literally: FurnitureStickieLogic sets the flag to the EMPTY
+                    // STRING (`setString('furniture_is_stickie', '')`), and this port's
+                    // RoomObjectModel.getString() returns `''` for a missing key too — so the test
+                    // is true for every object and false for none. `hasString()` is the distinction
+                    // AS3's null return actually carries. Written the literal way, every wall item
+                    // went out as a stickie and the server dropped it: the ghost followed the wall
+                    // and the click placed nothing.
+                    this._connection.send(new PlacePostItMessageComposer(sentId, wallLocation));
+                }
                 else
                 {
-                    this._connection.send(new PlaceObjectMessageComposer(sentId, Math.trunc(x), Math.trunc(y), rotation));
+                    this._connection.send(new PlaceObjectMessageComposer(
+                        sentId, data.category, wallLocation, Math.trunc(x), Math.trunc(y), rotation
+                    ));
                 }
             }
         }
@@ -4769,13 +4978,17 @@ export class RoomEngine extends Component implements IRoomEngine,
             objectId = -objectId;
         }
 
+        // AS3 records what was just placed before clearing the selection — the pickup/undo paths
+        // read it back through getPlacedObjectData(). Neither is ported, so this is only noted.
+        // TODO(AS3): _SafeCls_1821.as::placeObject() calls
+        // `_roomEngine.setPlacedObjectData(roomId, new SelectedRoomObjectData(id, category, ...))`.
         this.resetSelectedObjectData(roomId);
 
         this.events.emit(
             'REOE_PLACED',
             new RoomEngineObjectPlacedEvent(
                 'REOE_PLACED', roomId, objectId, category,
-                '', x, y, z, rotation, placedInRoom, true, false, instanceData
+                wallLocation, x, y, z, rotation, placedInRoom, placedOnFloor, placedOnWall, instanceData
             )
         );
     }
@@ -4884,6 +5097,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                 roomCamera: new RoomCamera(),
                 furniStackingHeightMap: null,
                 tileObjectMap: null,
+                legacyGeometry: new LegacyWallGeometry(),
                 selectedObjectData: null
             };
 
@@ -5414,6 +5628,15 @@ export class RoomEngine extends Component implements IRoomEngine,
         {
             this.handleTileMouseEvent(event);
         }
+        // AS3 does not branch here at all: handleRoomObjectMouseEvent() takes every room-object
+        // mouse event and each handler casts to the subtype it wants. This port dispatches on the
+        // subtype instead, so a wall event has to be picked out before the generic
+        // RoomObjectMouseEvent arm — RoomObjectWallMouseEvent extends it, and being swallowed there
+        // is why hovering a wall did nothing while a wall item was pending.
+        else if(event instanceof RoomObjectWallMouseEvent)
+        {
+            this.handleWallMouseEvent(event);
+        }
         else if(event instanceof RoomObjectMouseEvent)
         {
             this.handleObjectMouseEvent(event);
@@ -5797,16 +6020,18 @@ export class RoomEngine extends Component implements IRoomEngine,
             // is being dragged. AS3 gates on neither category nor tile-vs-wall event here; it hands
             // the event to handleObjectPlace(), which branches internally (10 furniture, 20 wall,
             // 100 user/pet/bot). Restricting this to category 10 is what kept the pet ghost from
-            // ever being built, even once initializeRoomObjectInsert() started accepting it.
+            // ever being built, even once initializeRoomObjectInsert() started accepting it — and
+            // excluding category 20 kept a wall-item ghost alive over the floor, where AS3 disposes
+            // it (handleObjectPlace()'s wall arm finds no wall event and gives up).
             const selectedObjectData = this._roomInstanceData.get(this._activeRoomId)?.selectedObjectData ?? null;
 
-            if(selectedObjectData !== null && selectedObjectData.category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+            if(selectedObjectData !== null)
             {
-                if(selectedObjectData.operation === 'OBJECT_PLACE') 
+                if(selectedObjectData.operation === 'OBJECT_PLACE')
                 {
-                    this.handleObjectPlace(this._activeRoomId, tileX, tileY);
+                    this.handleObjectPlace(this._activeRoomId, {tileX, tileY}, null);
                 }
-                else if(selectedObjectData.operation === 'OBJECT_MOVE') 
+                else if(selectedObjectData.operation === 'OBJECT_MOVE')
                 {
                     this.handleObjectMove(this._activeRoomId, tileX, tileY);
                 }
@@ -5816,14 +6041,18 @@ export class RoomEngine extends Component implements IRoomEngine,
         {
             const selectedObjectData = this._roomInstanceData.get(this._activeRoomId)?.selectedObjectData ?? null;
 
-            if(selectedObjectData !== null && selectedObjectData.operation === 'OBJECT_PLACE') 
+            if(selectedObjectData !== null && selectedObjectData.operation === 'OBJECT_PLACE')
             {
                 // AS3: _SafeCls_1821.as::placeObject() — sends the ghost's own current
                 // (already tile-snapped/direction-validated) location, then disposes it;
                 // the real furniture only appears once the server echoes the add back.
-                this.placeObject(this._activeRoomId);
+                //
+                // AS3 passes which kind of event confirmed the placement straight through
+                // (`placeObject(roomId, tileEvent != null, wallEvent != null)`); this is the tile
+                // arm, so the placement is on the floor.
+                this.placeObject(this._activeRoomId, true, false);
             }
-            else if(selectedObjectData !== null && selectedObjectData.operation === 'OBJECT_MOVE') 
+            else if(selectedObjectData !== null && selectedObjectData.operation === 'OBJECT_MOVE')
             {
                 // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_MOVE_TO" case
                 this.confirmObjectMove(this._activeRoomId);
@@ -5832,6 +6061,32 @@ export class RoomEngine extends Component implements IRoomEngine,
             {
                 this._connection.send(new MoveAvatarMessageComposer(tileX, tileY));
             }
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectMouseMove()
+    // The wall counterpart of handleTileMouseEvent(). AS3 has no such split — one
+    // handleRoomObjectMouseMove()/handleRoomObjectMouseClick() pair takes both kinds of event and
+    // lets handleObjectPlace()/placeObject() sort out which surface is under the cursor — so this
+    // routes to the same two methods, with the wall event where the tile event would go.
+    //
+    // Only a pending placement is handled: a wall carries no tile cursor, nothing walks to it, and
+    // OBJECT_MOVE of an already-placed wall item is a separate flow (see modifyRoomObject()).
+    private handleWallMouseEvent(event: RoomObjectWallMouseEvent): void
+    {
+        if(this._activeRoomId < 0) return;
+
+        const selectedObjectData = this._roomInstanceData.get(this._activeRoomId)?.selectedObjectData ?? null;
+
+        if(selectedObjectData === null || selectedObjectData.operation !== 'OBJECT_PLACE') return;
+
+        if(event.type === RoomObjectMouseEvent.ROE_MOUSE_MOVE)
+        {
+            this.handleObjectPlace(this._activeRoomId, null, event);
+        }
+        else if(event.type === RoomObjectMouseEvent.ROE_MOUSE_CLICK)
+        {
+            this.placeObject(this._activeRoomId, false, true);
         }
     }
 
@@ -5910,7 +6165,13 @@ export class RoomEngine extends Component implements IRoomEngine,
             {
                 if(selectedObjectData.operation === 'OBJECT_PLACE')
                 {
-                    this.placeObject(this._activeRoomId);
+                    // This path exists only because the ghost captured a click AS3's ghost would
+                    // have let through, so there is no tile/wall event here to read the surface
+                    // from. The pending item's own category answers it: a wall item's ghost only
+                    // ever sits on a wall, anything else on the floor.
+                    const onWall = selectedObjectData.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL;
+
+                    this.placeObject(this._activeRoomId, !onWall, onWall);
 
                     return;
                 }

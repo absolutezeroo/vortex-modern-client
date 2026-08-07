@@ -189,7 +189,7 @@ import type {RoomEntryTileMessageParser} from '../communication/messages/parser/
 
 // Room Object
 import {RoomPlaneParser} from './object/RoomPlaneParser';
-import {LegacyWallGeometry} from './utils/LegacyWallGeometry';
+import type {LegacyWallGeometry} from './utils/LegacyWallGeometry';
 import {Logger} from "@core";
 import type {IRoomMessageHandler} from "@habbo/room/IRoomMessageHandler";
 
@@ -223,14 +223,23 @@ export class RoomMessageHandler implements IRoomMessageHandler
     private _requesterUserId: number = -1;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomMessageHandler.as::_planeParser
     private _planeParser: RoomPlaneParser;
-    private _legacyWallGeometry: LegacyWallGeometry;
     private _entryTileEvent: RoomEntryTileMessageEvent | null = null;
 
-    constructor(roomCreator: IRoomCreator) 
+    constructor(roomCreator: IRoomCreator)
     {
         this._roomCreator = roomCreator;
         this._planeParser = new RoomPlaneParser();
-        this._legacyWallGeometry = new LegacyWallGeometry();
+    }
+
+    // TS-only: AS3 has no such accessor — every one of its wall-geometry reads is written out in
+    // full as `_roomCreator.getLegacyGeometry(_currentRoomId)` (_SafeCls_1984.as:569/906/979/1399).
+    // This handler holds the same two values in the same two fields, so the call is folded into one
+    // getter rather than repeated at six sites. It replaces a private `new LegacyWallGeometry()`:
+    // that single instance was shared across every room the client ever entered, so a wall item
+    // placed after a room change was positioned against the previous room's height map.
+    private get legacyWallGeometry(): LegacyWallGeometry | null
+    {
+        return this._roomCreator?.getLegacyGeometry(this._currentRoomId) ?? null;
     }
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomMessageHandler.as::_connection
@@ -625,13 +634,18 @@ export class RoomMessageHandler implements IRoomMessageHandler
         const doorFound = doorX >= 0 && doorY >= 0;
 
         // Initialize legacy wall geometry with height data for wall item positioning
-        this._legacyWallGeometry.initialize(width, height, parser.fixedWallsHeight);
+        const legacyWallGeometry = this.legacyWallGeometry;
 
-        for(let y = 0; y < height; y++) 
+        if(legacyWallGeometry !== null)
         {
-            for(let x = 0; x < width; x++) 
+            legacyWallGeometry.initialize(width, height, parser.fixedWallsHeight);
+
+            for(let y = 0; y < height; y++)
             {
-                this._legacyWallGeometry.setTileHeight(x, y, parser.getTileHeight(x, y));
+                for(let x = 0; x < width; x++)
+                {
+                    legacyWallGeometry.setTileHeight(x, y, parser.getTileHeight(x, y));
+                }
             }
         }
 
@@ -1493,14 +1507,18 @@ export class RoomMessageHandler implements IRoomMessageHandler
             return;
         }
 
-        // AS3 reads the room's LegacyWallGeometry off the engine (getLegacyGeometry); this port
-        // keeps its own instance on the handler, initialised from the heightmap, and already uses
-        // it for every other wall-item placement.
+        const legacyWallGeometry = this.legacyWallGeometry;
+
+        if(legacyWallGeometry === null)
+        {
+            return;
+        }
+
         const side = data.isDirectionRight ? 'r' : 'l';
-        const oldLocation = this._legacyWallGeometry.getLocation(
+        const oldLocation = legacyWallGeometry.getLocation(
             data.oldWallX, data.oldWallY, data.oldOffsetX, data.oldOffsetY, side
         );
-        const newLocation = this._legacyWallGeometry.getLocation(
+        const newLocation = legacyWallGeometry.getLocation(
             data.newWallX, data.newWallY, data.newOffsetX, data.newOffsetY, side
         );
 
@@ -1900,14 +1918,16 @@ export class RoomMessageHandler implements IRoomMessageHandler
 
         const data = parser.data;
 
-        if(data !== null) 
+        const legacyWallGeometry = this.legacyWallGeometry;
+
+        if(data !== null && legacyWallGeometry !== null)
         {
             // Convert wall coordinates to 3D world position using LegacyWallGeometry
-            const location = this._legacyWallGeometry.getLocation(
+            const location = legacyWallGeometry.getLocation(
                 data.wallX, data.wallY, data.localX, data.localY, data.dir
             );
             const direction = new Vector3d(
-                this._legacyWallGeometry.getDirection(data.dir)
+                legacyWallGeometry.getDirection(data.dir)
             );
 
             this._roomCreator.updateObjectWallItem(
@@ -2264,15 +2284,25 @@ export class RoomMessageHandler implements IRoomMessageHandler
             return;
         }
 
+        // AS3 resolves the geometry from this method's own `roomId` argument, not from
+        // `_currentRoomId` (_SafeCls_1984.as::addWallItem() line 979) — every other wall-item
+        // handler here uses the current room, this one uses the one it was handed.
+        const legacyWallGeometry = this._roomCreator.getLegacyGeometry(roomId);
+
+        if(legacyWallGeometry === null)
+        {
+            return;
+        }
+
         // Convert wall coordinates to 3D world position using LegacyWallGeometry.
         // AS3 (_SafeCls_1984.as) branches on the wire format: the new format carries
         // wallX/wallY/localX/localY, the old one only y/z. The port always took the new
         // path, so old-format wall items were positioned with the wrong calculation.
         const location = data.isOldFormat
-            ? this._legacyWallGeometry.getLocationOldFormat(data.y, data.z, data.dir)
-            : this._legacyWallGeometry.getLocation(data.wallX, data.wallY, data.localX, data.localY, data.dir);
+            ? legacyWallGeometry.getLocationOldFormat(data.y, data.z, data.dir)
+            : legacyWallGeometry.getLocation(data.wallX, data.wallY, data.localX, data.localY, data.dir);
         const direction: IVector3d = new Vector3d(
-            this._legacyWallGeometry.getDirection(data.dir)
+            legacyWallGeometry.getDirection(data.dir)
         );
 
         this._roomCreator.addObjectWallItem(

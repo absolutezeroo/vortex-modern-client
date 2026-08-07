@@ -42,6 +42,10 @@ export interface IRoomEngineServices
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/IRoomEngineServices.as::getRoomObjectCount()
     getRoomObjectCount(roomId: number, category: number): number;
 
+    // Wall item plane masks
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::updateObjectRoomWindow()
+    updateObjectRoomWindow(roomId: number, id: number, visible?: boolean): void;
+
     // Tile cursor
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/IRoomEngineServices.as::getTileCursor()
     getTileCursor(roomId: number): IRoomObjectController | null;
