@@ -28,6 +28,7 @@ import {HabboSoundManagerFlash10} from '@habbo/sound/HabboSoundManagerFlash10';
 import {HabboToolbar} from '@habbo/toolbar/HabboToolbar';
 import {HabboQuestEngine} from '@habbo/quest/HabboQuestEngine';
 import {HabboHelp} from '@habbo/help/HabboHelp';
+import {ModerationManager} from '@habbo/moderation/ModerationManager';
 import {HabboFreeFlowChat} from '@habbo/freeflowchat/HabboFreeFlowChat';
 import {AvatarRenderManager} from '@habbo/avatar/AvatarRenderManager';
 import {HabboWindowManager} from '@habbo/window/HabboWindowManager';
@@ -84,6 +85,7 @@ import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
 import {IID_HabboHelp} from '@iid/IIDHabboHelp';
+import {IID_HabboModeration} from '@iid/IIDHabboModeration';
 import {IID_HabboClubCenter} from '@iid/IIDHabboClubCenter';
 import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents';
 import {IID_HabboFurniEditor} from '@iid/IIDHabboFurniEditor';
@@ -279,6 +281,7 @@ export class VortexMain implements IVortexMain
     private _toolbar: HabboToolbar | null = null;
     private _questEngine: HabboQuestEngine | null = null;
     private _habboHelp: HabboHelp | null = null;
+    private _moderation: ModerationManager | null = null;
 
     // AS3: sources/win63_version/habbo/room/class_34.as::get toolbar()
     get toolbar(): IHabboToolbar 
@@ -556,6 +559,7 @@ export class VortexMain implements IVortexMain
         // Nullify Habbo manager refs (inverse init order)
         this._clubCenter = null;
         this._userDefinedRoomEvents = null;
+        this._moderation = null;
         this._habboHelp = null;
         this._messenger = null;
         this._friendList = null;
@@ -946,6 +950,20 @@ export class VortexMain implements IVortexMain
         // one hard dependency is the communication manager.
         this._habboHelp = new HabboHelp(ctx);
         ctx.attachComponent(this._habboHelp, [IID_HabboHelp]);
+
+        // Moderation (ModeratorInit and the rest of the moderation message set). Same shape as the
+        // help component above: everything under habbo/moderation was ported — the manager, the
+        // issue manager, the message handler, the parsers — and nothing ever constructed it, so
+        // IID_HabboModeration was declared and never provided. Every moderation message the server
+        // sent logged "No registered handler", because registering the message *event* only maps an
+        // id to a parser; the callback comes from ModerationMessageHandler, which lives in
+        // initComponent(). AS3 registers this via the HabboModerationCom SWF library, and its two
+        // consumers (RoomUI, HabboFreeFlowChat) take it as an optional dependency.
+        //
+        // Attached after the help component so its own hard dependencies are already up: the
+        // communication manager (line 670) and the session data manager (line 712).
+        this._moderation = new ModerationManager(ctx);
+        ctx.attachComponent(this._moderation, [IID_HabboModeration]);
 
         log.debug('Friend List initialized');
     }

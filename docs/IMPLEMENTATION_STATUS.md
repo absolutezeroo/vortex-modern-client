@@ -704,6 +704,25 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   - One deliberate write into ported code, confined to `SpriteLighting.ts`: it sets
     `ExtendedSprite.tint`, records the renderer's own colour first, and restores it on disable.
 
+- ✅ **Moderation wired into the boot** (incoming 757 `ModeratorInit` and the other thirteen),
+  2026-08-08. Everything under `habbo/moderation/` was already ported — `ModerationManager`,
+  `IssueManager`, `ModerationMessageHandler`, all fourteen events and parsers, all fourteen ids in
+  the header table — and **nothing ever constructed the manager**, so `IID_HabboModeration` was
+  declared and never provided. `VortexMain` now attaches it next to `HabboHelp`, which was dormant
+  for exactly the same reason.
+  - The distinction that made this invisible: registering a message *event* only maps an id to a
+    parser. The callback comes from `ModerationMessageHandler`, and that is created in the manager's
+    `initComponent()` — so with no manager, every moderation packet reached the dispatcher and found
+    no subscriber. The header table's own comment claimed the set was "subscribed by
+    ModerationMessageHandler", which was true of the code and false of the running client.
+  - Attached after the help component so its two hard dependencies are already up (communication
+    manager, session data manager) — a hard dependency on an unprovided IID locks a component
+    forever with no log. `HabboCommunicationManager.initComponent()` creates the connection object
+    eagerly, so the handler finds one to subscribe against.
+  - Still open: the two AS3 consumers. `RoomUI` and `HabboFreeFlowChat` both take
+    `IIDHabboModeration` as an optional dependency (`RoomUI.as:508`,
+    `HabboFreeFlowChat.as:212`); neither port declares it, so nothing yet *uses* the manager.
+
 - ✅ **Chat flood control (incoming 3614)**, 2026-08-08. `FloodControlMessageParser` (one int, the
   seconds) + `FloodControlMessageEvent`, header **3614** from WIN63's registry
   (`_SafeCls_2046.as::_events[3614] = _SafeCls_3307`), corroborated by vortex-emulator's
