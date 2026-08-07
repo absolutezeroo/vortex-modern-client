@@ -85,6 +85,8 @@ import {FurnitureAreaHideWidgetHandler} from './handler/FurnitureAreaHideWidgetH
 import {ConversionPointWidgetHandler} from './handler/ConversionPointWidgetHandler';
 import {PollWidgetHandler} from './handler/PollWidgetHandler';
 import {ObjectLocationRequestHandler} from './handler/ObjectLocationRequestHandler';
+import {FriendRequestWidgetHandler} from './handler/FriendRequestWidgetHandler';
+import {FriendRequestEvent} from '@habbo/friendlist/events/FriendRequestEvent';
 import {RoomQueueWidgetHandler} from './handler/RoomQueueWidgetHandler';
 import {FurnitureContextMenuWidgetHandler} from './handler/FurnitureContextMenuWidgetHandler';
 import {RoomWidgetFurniToWidgetMessage} from './widget/messages/RoomWidgetFurniToWidgetMessage';
@@ -408,9 +410,25 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::set friendList()
-    public set friendList(value: IHabboFriendList | null) 
+    // AS3: RoomDesktop.as:430-437 — the setter also subscribes. This is the *only* route by
+    // which FRE_ACCEPTED/FRE_DECLINED reach a widget handler: they come off the friend-list
+    // component's own bus, not the room session's, so `RoomUI`'s session-event table cannot
+    // carry them. `FriendRequestWidgetHandler` claims both.
+    public set friendList(value: IHabboFriendList | null)
     {
+        if(this._friendList !== null)
+        {
+            this._friendList.events.off(FriendRequestEvent.ACCEPTED, this.processEvent, this);
+            this._friendList.events.off(FriendRequestEvent.DECLINED, this.processEvent, this);
+        }
+
         this._friendList = value;
+
+        if(this._friendList !== null)
+        {
+            this._friendList.events.on(FriendRequestEvent.ACCEPTED, this.processEvent, this);
+            this._friendList.events.on(FriendRequestEvent.DECLINED, this.processEvent, this);
+        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::_freeFlowChat
@@ -880,6 +898,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             // AS3: RoomDesktop.as:807-809 "RWE_LOADINGBAR"
             case 'RWE_LOADINGBAR':
                 handler = new LoadingBarWidgetHandler();
+                break;
+            // AS3: RoomDesktop.as::createWidgetHandler() "RWE_FRIEND_REQUEST"
+            case 'RWE_FRIEND_REQUEST':
+                handler = new FriendRequestWidgetHandler();
                 break;
             // AS3: RoomDesktop.as:858-860 "RWE_LOCATION_WIDGET". No widget behind it — the
             // handler answers a message synchronously and is the whole feature.
@@ -1376,6 +1398,14 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._widgetMessageHandlers.clear();
         this._widgetEventHandlers.clear();
         this._updateListeners.length = 0;
+
+        // AS3: RoomDesktop.as:633-638 — the other half of the friendList setter's subscription.
+        if(this._friendList !== null)
+        {
+            this._friendList.events.off(FriendRequestEvent.ACCEPTED, this.processEvent, this);
+            this._friendList.events.off(FriendRequestEvent.DECLINED, this.processEvent, this);
+            this._friendList = null;
+        }
 
         if(this._canvasWrapper) 
         {

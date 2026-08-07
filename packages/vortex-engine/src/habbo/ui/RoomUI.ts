@@ -990,6 +990,8 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_CHAT_INPUT_WIDGET');
                     desktop.createWidget('RWE_INFOSTAND');
                     desktop.createWidget('RWE_ME_MENU');
+                    // AS3: RoomUI.as:931 — the in-room friend-request bubbles.
+                    desktop.createWidget('RWE_FRIEND_REQUEST');
                     desktop.createWidget('RWE_AVATAR_INFO');
                     desktop.createWidget('RWE_ROOM_TOOLS');
                     // AS3: RoomUI.as:925 — answers "where is this object on screen?"; no window.
