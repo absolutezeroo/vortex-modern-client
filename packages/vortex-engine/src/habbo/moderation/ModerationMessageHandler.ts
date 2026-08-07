@@ -26,6 +26,14 @@ import {RoomVisitsMessageEvent} from '@habbo/communication/messages/incoming/mod
 import {
     UserClassificationMessageEvent
 } from '@habbo/communication/messages/incoming/moderation/UserClassificationMessageEvent';
+import {CfhTopicsInitMessageEvent} from '@habbo/communication/messages/incoming/help/CfhTopicsInitMessageEvent';
+import type {CfhTopicsInitMessageParser} from '@habbo/communication/messages/parser/help/CfhTopicsInitMessageParser';
+import {
+    CfhSanctionMessageEvent
+} from '@habbo/communication/messages/incoming/moderation/CfhSanctionMessageEvent';
+import type {
+    CfhSanctionMessageParser
+} from '@habbo/communication/messages/parser/moderation/CfhSanctionMessageParser';
 import {RoomEntryInfoMessageEvent} from '@habbo/communication/messages/incoming/room/engine/RoomEntryInfoMessageEvent';
 import {
     CloseConnectionMessageEvent
@@ -132,6 +140,8 @@ export class ModerationMessageHandler
         this.addMessageEvent(new UserChatlogMessageEvent(this.onUserChatlog.bind(this)));
         this.addMessageEvent(new RoomVisitsMessageEvent(this.onRoomVisits.bind(this)));
         this.addMessageEvent(new UserClassificationMessageEvent(this.onUserClassification.bind(this)));
+        this.addMessageEvent(new CfhTopicsInitMessageEvent(this.onCfhTopics.bind(this)));
+        this.addMessageEvent(new CfhSanctionMessageEvent(this.onSanctions.bind(this)));
         this.addMessageEvent(new RoomEntryInfoMessageEvent(this.onRoomEnter.bind(this)));
         this.addMessageEvent(new CloseConnectionMessageEvent(this.onRoomExit.bind(this)));
     }
@@ -423,6 +433,33 @@ export class ModerationMessageHandler
     /**
 	 * Handle user classification response.
 	 */
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/moderation/ModerationMessageHandler.as::onCfhTopics()
+     *
+     * The same message the help module subscribes — AS3 registers it from both places, and both
+     * need it: help builds the report dialog's category list from it, moderation stores it on the
+     * issue manager so a picked issue can name its topic.
+     */
+    private onCfhTopics(event: IMessageEvent): void
+    {
+        const parser = event.parser as CfhTopicsInitMessageParser | null;
+
+        if(parser === null) return;
+
+        this._manager.cfhTopics = parser.callForHelpCategories;
+    }
+
+    // AS3: .../moderation/ModerationMessageHandler.as::onSanctions()
+    private onSanctions(event: IMessageEvent): void
+    {
+        const parser = event.parser as CfhSanctionMessageParser | null;
+
+        if(parser === null) return;
+
+        log.debug(`Got sanction data...${[parser.issueId, parser.accountId, parser.sanctionType?.name]}`);
+        this._manager.issueManager?.updateSanctionData(parser.issueId, parser.accountId, parser.sanctionType);
+    }
+
     private onUserClassification(event: IMessageEvent): void
     {
         const parser = event.parser as UserClassificationMessageParser;

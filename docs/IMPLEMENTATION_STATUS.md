@@ -685,6 +685,42 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **Priority-0 sweep finished — and it found 38 messages the dispatcher could never route**,
+  2026-08-06. `habbo/moderation`, `habbo/friendlist` and `habbo/help` swept; **priority 0 is now
+  closed**.
+  - 🐛 **The whole moderation and help incoming sets were in no header table at all.** 14
+    moderation events and 24 help/guide/CFH events were ported, parsed and — for 34 of them —
+    *subscribed*, but `HabboMessages` had no entry for their ids, so the dispatcher had nothing to
+    route the packet to. The mod tools and the entire guide/call-for-help system received nothing,
+    silently. All 38 registered.
+  - **How the ids were derived, since none of them could be guessed:** `win63_version` registers
+    the same handlers with **unobfuscated class names**, WIN63 registers them obfuscated and owns
+    the only authoritative header table. A handler spelled identically in both trees pins one to
+    the other. Three could not be resolved that way and are **reported, not guessed**:
+    `SanctionStatusMessageEvent` and `GuideSessionInviteRequesterMessageEvent` (no win63_version
+    registration under that handler) and `MyCfhReportStatusMessageEvent` (not ported).
+  - ⚠️ **The name trap, caught in the act.** WIN63 registers `_SafeCls_1807` under a handler called
+    `onMySanctionStatusMessageEvent`, which reads like the port's `SanctionStatusMessageEvent` —
+    but its parser exposes a single `sanctions()` *list* where the port's exposes ten
+    single-sanction fields. Different message. Header 1746 was **not** assigned to it.
+  - **Two moderation subscriptions were missing too**, both now wired: `onCfhTopics` (AS3
+    subscribes that one message from *both* help and moderation — help builds the report dialog's
+    categories, moderation stores them on the issue manager) and `onSanctions`, whose message
+    (`CfhSanctionMessageEvent` + parser, header 1634) had to be ported. `ModerationManager` gains
+    the `cfhTopics` setter AS3 has.
+  - **A duplicate was avoided by checking first:** `UserClassificationMessageEvent` already
+    existed under `incoming/moderation/` and was already subscribed — the earlier sweep missed it
+    because the port names the file after the message and AS3 names the handler
+    `onRoomUserClassification`. It only needed its header (543). A near-duplicate written in the
+    meantime was deleted.
+  - 📏 **Final counts:** `moderation` 15/17 registrations (the two missing ones are now wired, so
+    17/17) but **8/43 files**; `friendlist` **12/12 and 41/40 files — nothing missing at all**;
+    `help` 22/41 registrations, 27/34 files. **No orphan classes in any of the three** — nothing
+    defined-but-never-constructed. The remaining gaps are unported features, not wiring.
+  - **Verified in a browser**: all 38 ids resolve to the expected class, every one constructs, and
+    every one carries its parser. The event table went from 369 to 407 entries with no duplicate
+    id.
+
 - ✅ **`habbo/sound` COMPLETE: `furni/`, the last file**, 2026-08-06.
   - **`FurniSamplePlaybackManager` (206 l.)**, constructed by the sound manager on the room
     engine's own event bus — the third and last thing AS3 builds in `init()`. Furniture that makes

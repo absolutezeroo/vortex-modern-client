@@ -60,6 +60,13 @@ export class ModerationManager extends Component implements IHabboModeration
     /**
 	 * The issue manager for this moderation component.
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/moderation/ModerationManager.as::set cfhTopics()
+    // A setter with no getter in AS3 either — the topics live on the issue manager from here on.
+    set cfhTopics(topics: unknown[])
+    {
+        this._issueManager?.setCfhTopics(topics);
+    }
+
     // AS3: .../src/com/sulake/habbo/moderation/ModerationManager.as::get issueManager()
     get issueManager(): IssueManager | null
     {

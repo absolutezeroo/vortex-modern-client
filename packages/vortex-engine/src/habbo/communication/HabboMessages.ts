@@ -494,6 +494,44 @@ import {
 } from './messages/outgoing/sound/GetJukeboxPlayListMessageComposer';
 import {UpdateFigureDataMessageComposer} from './messages/outgoing/avatar/UpdateFigureDataMessageComposer';
 import {CheckUserNameResultMessageEvent} from './messages/incoming/help/CheckUserNameResultMessageEvent';
+import {ModeratorInitMessageEvent} from './messages/incoming/moderation/ModeratorInitMessageEvent';
+import {ModeratorToolPreferencesMessageEvent} from './messages/incoming/moderation/ModeratorToolPreferencesMessageEvent';
+import {ModeratorUserInfoMessageEvent} from './messages/incoming/moderation/ModeratorUserInfoMessageEvent';
+import {ModeratorRoomInfoMessageEvent} from './messages/incoming/moderation/ModeratorRoomInfoMessageEvent';
+import {ModeratorActionResultMessageEvent} from './messages/incoming/moderation/ModeratorActionResultMessageEvent';
+import {IssueInfoMessageEvent} from './messages/incoming/moderation/IssueInfoMessageEvent';
+import {IssueDeletedMessageEvent} from './messages/incoming/moderation/IssueDeletedMessageEvent';
+import {IssuePickFailedMessageEvent} from './messages/incoming/moderation/IssuePickFailedMessageEvent';
+import {CfhChatlogMessageEvent} from './messages/incoming/moderation/CfhChatlogMessageEvent';
+import {RoomChatlogMessageEvent} from './messages/incoming/moderation/RoomChatlogMessageEvent';
+import {UserChatlogMessageEvent} from './messages/incoming/moderation/UserChatlogMessageEvent';
+import {RoomVisitsMessageEvent} from './messages/incoming/moderation/RoomVisitsMessageEvent';
+import {UserClassificationMessageEvent} from './messages/incoming/moderation/UserClassificationMessageEvent';
+import {CfhSanctionMessageEvent} from './messages/incoming/moderation/CfhSanctionMessageEvent';
+import {CallForHelpDisabledNotifyMessageEvent} from './messages/incoming/help/CallForHelpDisabledNotifyMessageEvent';
+import {CallForHelpReplyMessageEvent} from './messages/incoming/help/CallForHelpReplyMessageEvent';
+import {CallForHelpResultMessageEvent} from './messages/incoming/help/CallForHelpResultMessageEvent';
+import {CallForHelpPendingCallsMessageEvent} from './messages/incoming/help/CallForHelpPendingCallsMessageEvent';
+import {CallForHelpPendingCallsDeletedMessageEvent} from './messages/incoming/help/CallForHelpPendingCallsDeletedMessageEvent';
+import {CfhTopicsInitMessageEvent} from './messages/incoming/help/CfhTopicsInitMessageEvent';
+import {IssueCloseNotificationMessageEvent} from './messages/incoming/help/IssueCloseNotificationMessageEvent';
+import {ChatReviewSessionStartedMessageEvent} from './messages/incoming/help/ChatReviewSessionStartedMessageEvent';
+import {ChatReviewSessionResultsMessageEvent} from './messages/incoming/help/ChatReviewSessionResultsMessageEvent';
+import {ChatReviewSessionDetachedMessageEvent} from './messages/incoming/help/ChatReviewSessionDetachedMessageEvent';
+import {ChatReviewSessionOfferedToGuideMessageEvent} from './messages/incoming/help/ChatReviewSessionOfferedToGuideMessageEvent';
+import {ChatReviewSessionVotingStatusMessageEvent} from './messages/incoming/help/ChatReviewSessionVotingStatusMessageEvent';
+import {GuideOnDutyStatusMessageEvent} from './messages/incoming/help/GuideOnDutyStatusMessageEvent';
+import {GuideReportingStatusMessageEvent} from './messages/incoming/help/GuideReportingStatusMessageEvent';
+import {GuideSessionAttachedMessageEvent} from './messages/incoming/help/GuideSessionAttachedMessageEvent';
+import {GuideSessionDetachedMessageEvent} from './messages/incoming/help/GuideSessionDetachedMessageEvent';
+import {GuideSessionInvitedToGuideRoomMessageEvent} from './messages/incoming/help/GuideSessionInvitedToGuideRoomMessageEvent';
+import {GuideSessionMessageMessageEvent} from './messages/incoming/help/GuideSessionMessageMessageEvent';
+import {GuideSessionPartnerIsTypingMessageEvent} from './messages/incoming/help/GuideSessionPartnerIsTypingMessageEvent';
+import {GuideSessionRequesterRoomMessageEvent} from './messages/incoming/help/GuideSessionRequesterRoomMessageEvent';
+import {GuideTicketCreationResultMessageEvent} from './messages/incoming/help/GuideTicketCreationResultMessageEvent';
+import {GuideTicketResolutionMessageEvent} from './messages/incoming/help/GuideTicketResolutionMessageEvent';
+import {QuizDataMessageEvent} from './messages/incoming/help/QuizDataMessageEvent';
+import {QuizResultsMessageEvent} from './messages/incoming/help/QuizResultsMessageEvent';
 import {ChangeUserNameMessageComposer} from './messages/outgoing/help/ChangeUserNameMessageComposer';
 import {CheckUserNameMessageComposer} from './messages/outgoing/help/CheckUserNameMessageComposer';
 
@@ -1641,6 +1679,58 @@ export class HabboMessages implements IMessageConfiguration
         // The name-check answer, `_SafeStr_4546[382] = _SafeCls_3600`. Without it the onboarding
         // name dialog spins its wait indicator forever — the reply arrives and is dropped.
         this._events.set(382, CheckUserNameResultMessageEvent);
+
+        // === MODERATION TOOLS ===
+        // The whole incoming set: ported, subscribed by `ModerationMessageHandler`, and in
+        // no header table, so the mod tools received nothing at all. Each id is the WIN63
+        // registry entry for the class that handler registers, with the readable name from
+        // win63_version, which spells the same handler identically.
+        this._events.set(757, ModeratorInitMessageEvent);
+        this._events.set(1898, ModeratorToolPreferencesMessageEvent);
+        this._events.set(2589, ModeratorUserInfoMessageEvent);
+        this._events.set(251, ModeratorRoomInfoMessageEvent);
+        this._events.set(2960, ModeratorActionResultMessageEvent);
+        this._events.set(3585, IssueInfoMessageEvent);
+        this._events.set(122, IssueDeletedMessageEvent);
+        this._events.set(940, IssuePickFailedMessageEvent);
+        this._events.set(3880, CfhChatlogMessageEvent);
+        this._events.set(2886, RoomChatlogMessageEvent);
+        this._events.set(3732, UserChatlogMessageEvent);
+        this._events.set(497, RoomVisitsMessageEvent);
+        this._events.set(543, UserClassificationMessageEvent);
+        this._events.set(1634, CfhSanctionMessageEvent);
+
+        // === HELP / GUIDE / CALL FOR HELP ===
+        // Twenty-four answers that were ported, parsed and — for twenty of them —
+        // subscribed, but were **in no header table at all**, so the dispatcher had
+        // nothing to route the packet to and the whole guide/CFH system received
+        // nothing. Each id is the WIN63 registry entry for the class `habbo/help`
+        // registers against that handler; the readable class name comes from
+        // win63_version, which spells the same handler identically.
+        this._events.set(421, CallForHelpDisabledNotifyMessageEvent);
+        this._events.set(2807, CallForHelpReplyMessageEvent);
+        this._events.set(2631, CallForHelpResultMessageEvent);
+        this._events.set(2987, CallForHelpPendingCallsMessageEvent);
+        this._events.set(2440, CallForHelpPendingCallsDeletedMessageEvent);
+        this._events.set(1762, CfhTopicsInitMessageEvent);
+        this._events.set(3943, IssueCloseNotificationMessageEvent);
+        this._events.set(286, ChatReviewSessionStartedMessageEvent);
+        this._events.set(508, ChatReviewSessionResultsMessageEvent);
+        this._events.set(645, ChatReviewSessionDetachedMessageEvent);
+        this._events.set(734, ChatReviewSessionOfferedToGuideMessageEvent);
+        this._events.set(1881, ChatReviewSessionVotingStatusMessageEvent);
+        this._events.set(1923, GuideOnDutyStatusMessageEvent);
+        this._events.set(3725, GuideReportingStatusMessageEvent);
+        this._events.set(3274, GuideSessionAttachedMessageEvent);
+        this._events.set(2755, GuideSessionDetachedMessageEvent);
+        this._events.set(776, GuideSessionInvitedToGuideRoomMessageEvent);
+        this._events.set(485, GuideSessionMessageMessageEvent);
+        this._events.set(3656, GuideSessionPartnerIsTypingMessageEvent);
+        this._events.set(2022, GuideSessionRequesterRoomMessageEvent);
+        this._events.set(1167, GuideTicketCreationResultMessageEvent);
+        this._events.set(667, GuideTicketResolutionMessageEvent);
+        this._events.set(3999, QuizDataMessageEvent);
+        this._events.set(548, QuizResultsMessageEvent);
         // The two NUX dialog notices. IDs from WIN63's registry (`_SafeStr_4546[752] =
         // _SafeCls_3189`, `_SafeStr_4546[3307] = _SafeCls_2677`), corroborated by the emulator as
         // NewUserExperienceNotCompleteComposer / NewUserExperienceGiftOfferComposer. Both are
