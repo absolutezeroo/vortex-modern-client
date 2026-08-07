@@ -10,6 +10,7 @@ export * from './RoomDimmerSavePresetComposer';
 export * from './RoomDimmerChangeStateComposer';
 export * from './UpdateClothingChangeFurnitureComposer';
 export * from './UseFurnitureMessageComposer';
+export * from './SetAreaHideDataMessageComposer';
 export * from './GetRentableSpaceConfigMessageComposer';
 export * from './ConfigureRentableSpaceMessageComposer';
 export * from './ThrowDiceMessageComposer';

@@ -40,6 +40,7 @@ import {EcotronBoxFurniWidget} from './widget/furniture/ecotronbox/EcotronBoxFur
 import {DoorbellWidget} from './widget/doorbell/DoorbellWidget';
 import {RoomQueueWidget} from './widget/roomqueue/RoomQueueWidget';
 import {LoadingBarWidget} from './widget/loadingbar/LoadingBarWidget';
+import {AreaHideFurniWidget} from './widget/furniture/areahide/AreaHideFurniWidget';
 import {RoomWidgetBase} from './widget/RoomWidgetBase';
 import {PetPackageFurniWidget} from './widget/furniture/petpackage/PetPackageFurniWidget';
 import {FurnitureContextMenuWidget} from './widget/furniture/contextmenu/FurnitureContextMenuWidget';
@@ -103,6 +104,15 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                     // configuration interface, which every Component implements. This port's
                     // RoomUI exposes the manager it resolved instead, which is the same object.
                     this._roomUI.config
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_AREA_HIDE"
+            case 'RWE_AREA_HIDE':
+                return new AreaHideFurniWidget(
+                    handler,
+                    this._roomUI.windowManager,
+                    this._roomUI.assets,
+                    this._roomUI.localization,
+                    this._roomUI.roomEngine
                 );
             // AS3: RoomWidgetFactory.as::createWidget() "RWE_LOADINGBAR"
             case 'RWE_LOADINGBAR':

@@ -965,6 +965,8 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_INTERNAL_LINK');
                     // AS3: RoomUI.as:948 — the event-log forwarder; no window either.
                     desktop.createWidget('RWE_CONVERSION_TRACKING');
+                    // AS3: RoomUI.as:955 — the area-hide configuration window.
+                    desktop.createWidget('RWE_AREA_HIDE');
 
                     this._isInRoom = true;
 

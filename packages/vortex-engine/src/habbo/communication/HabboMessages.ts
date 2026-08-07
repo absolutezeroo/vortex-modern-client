@@ -873,6 +873,7 @@ import {
     SetObjectDataMessageComposer,
     SetRandomStateMessageComposer,
     UseFurnitureMessageComposer,
+    SetAreaHideDataMessageComposer,
     UseWallItemMessageComposer,
 } from './messages/outgoing/room/furniture';
 
@@ -2230,6 +2231,8 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3894, RoomDimmerChangeStateComposer);
         this._composers.set(1220, UpdateClothingChangeFurnitureComposer);
         this._composers.set(3353, UseFurnitureMessageComposer);
+        // AS3: AreaHideFurniWidget.as::updateData() — the area-hide rectangle and its three flags.
+        this._composers.set(1954, SetAreaHideDataMessageComposer);
         // AS3: _SafeCls_1821.as::changeRoomObjectState() — the three siblings of UseFurniture
         // above. Floor items split on the isRandom flag (3353 / 1942); wall items take 3590.
         this._composers.set(1942, SetRandomStateMessageComposer);

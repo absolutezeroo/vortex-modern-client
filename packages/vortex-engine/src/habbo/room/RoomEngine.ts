@@ -5633,6 +5633,11 @@ export class RoomEngine extends Component implements IRoomEngine,
             case RoomObjectWidgetRequestEvent.ROWRE_INTERNAL_LINK:
                 this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_INTERNAL_LINK, roomId, objectId, category);
                 break;
+            // AS3: _SafeCls_1821.as:1494-1495. The two names do not match on purpose: the
+            // room-object side says HIDE_AREA, the widget side says AREA_HIDE.
+            case RoomObjectWidgetRequestEvent.ROWRE_HIDE_AREA:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_AREA_HIDE, roomId, objectId, category);
+                break;
             // Double-clicking a pet product already standing in the room. Unlike its siblings this
             // one does not go through RoomEngineToWidgetEvent: AS3 dispatches the use-product event
             // itself, which AvatarInfoWidgetHandler picks up to raise one bubble per eligible pet.

@@ -81,6 +81,7 @@ import {PetPackageFurniWidgetHandler} from './handler/PetPackageFurniWidgetHandl
 import {DoorbellWidgetHandler} from './handler/DoorbellWidgetHandler';
 import {InternalLinkWidgetHandler} from './handler/InternalLinkWidgetHandler';
 import {LoadingBarWidgetHandler} from './handler/LoadingBarWidgetHandler';
+import {FurnitureAreaHideWidgetHandler} from './handler/FurnitureAreaHideWidgetHandler';
 import {ConversionPointWidgetHandler} from './handler/ConversionPointWidgetHandler';
 import {RoomQueueWidgetHandler} from './handler/RoomQueueWidgetHandler';
 import {FurnitureContextMenuWidgetHandler} from './handler/FurnitureContextMenuWidgetHandler';
@@ -869,6 +870,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             // type in AS3 either — the handler is the whole feature, see InternalLinkWidgetHandler.
             case 'RWE_INTERNAL_LINK':
                 handler = new InternalLinkWidgetHandler();
+                break;
+            // AS3: RoomDesktop.as:867-869 "RWE_AREA_HIDE"
+            case 'RWE_AREA_HIDE':
+                handler = new FurnitureAreaHideWidgetHandler();
                 break;
             // AS3: RoomDesktop.as:807-809 "RWE_LOADINGBAR"
             case 'RWE_LOADINGBAR':
