@@ -44,6 +44,7 @@ import {AreaHideFurniWidget} from './widget/furniture/areahide/AreaHideFurniWidg
 import {PollWidget} from './widget/poll/PollWidget';
 import {FriendRequestWidget} from './widget/friendrequest/FriendRequestWidget';
 import {HighScoreDisplayWidget} from './widget/furniture/highscore/HighScoreDisplayWidget';
+import {WordQuizWidget} from './widget/wordquiz/WordQuizWidget';
 import {RoomWidgetBase} from './widget/RoomWidgetBase';
 import {PetPackageFurniWidget} from './widget/furniture/petpackage/PetPackageFurniWidget';
 import {FurnitureContextMenuWidget} from './widget/furniture/contextmenu/FurnitureContextMenuWidget';
@@ -107,6 +108,11 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                     // configuration interface, which every Component implements. This port's
                     // RoomUI exposes the manager it resolved instead, which is the same object.
                     this._roomUI.config
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_WORD_QUIZZ"
+            case 'RWE_WORD_QUIZZ':
+                return new WordQuizWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
                 );
             // AS3: RoomWidgetFactory.as::createWidget() "RWE_HIGH_SCORE_DISPLAY"
             case 'RWE_HIGH_SCORE_DISPLAY':

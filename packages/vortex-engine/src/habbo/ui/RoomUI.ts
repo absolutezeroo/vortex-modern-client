@@ -1027,6 +1027,8 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_CLOTHING_CHANGE');
                     // AS3: RoomUI.as:966 — the scoreboard bubble over a high-score furni.
                     desktop.createWidget('RWE_HIGH_SCORE_DISPLAY');
+                    // AS3: RoomUI.as:974 — the room-wide like/dislike quiz.
+                    desktop.createWidget('RWE_WORD_QUIZZ');
                     // AS3: RoomUI.as:967 — no window of its own; the handler follows the link the
                     // clicked furni carries.
                     desktop.createWidget('RWE_INTERNAL_LINK');
