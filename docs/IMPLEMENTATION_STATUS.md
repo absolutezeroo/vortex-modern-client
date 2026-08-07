@@ -244,8 +244,8 @@ Re-ranked **2026-08-03**, biggest product gap first.
    `nux` (4/4), `phonenumber` (7/7) and `userclassification` (1/1) left this list on 2026-08-05.
    `habbo/sound` left it on 2026-08-02 at 10/29 — effects play. **`music/` was completed on
    2026-08-06** (controller + both play-list controllers, see Recent Work); what remains in
-   `habbo/sound` is `furni/` (206 l., furniture samples) — **`music/` and `trax/` both completed
-   2026-08-06**, and Trax songs play.
+   **`habbo/sound` is complete as of 2026-08-06** (29/29): effects, music, the Trax sequencer and
+   furniture samples. Songs play.
 4. **Protocol batches, in gap order**: `game`, `users`, `collectibles`, `catalog`, `room`,
    `inventory`, `groupforums`. Read the naming caveat in the message section before trusting any
    per-category count.
@@ -684,6 +684,27 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 ---
 
 ## Recent Work Recorded
+
+- ✅ **`habbo/sound` COMPLETE: `furni/`, the last file**, 2026-08-06.
+  - **`FurniSamplePlaybackManager` (206 l.)**, constructed by the sound manager on the room
+    engine's own event bus — the third and last thing AS3 builds in `init()`. Furniture that makes
+    a sound now loads its sample once per object, retriggers it on play, follows its pitch, and
+    drops it when the object goes.
+  - **Its volume is wired too:** `updateVolumeSetting()` had two `TODO(AS3)`s where AS3 pushes the
+    furni channel down to this manager — muting the client silenced music but not furniture.
+    Both closed, and both managers now dispose with the sound manager as AS3 disposes them.
+  - **The same `dispose()` slip as `TraxSample`**: AS3 never sets `_disposed` here either. Kept,
+    and for a sharper reason — the flag *is* read, inside its own load callback, so setting it
+    would change behaviour rather than tidy it.
+  - **Verified in a browser** against a real decoded sample: the manager subscribes to all four
+    room events; an object whose `sampleId` is -1 is ignored outright; a real one loads, registers
+    as an update receiver and takes the pitch from its initialisation event; `updateVolume(0.25)`
+    reaches the loaded sound; disposing the object unregisters *and* disposes it; a play event for
+    a disposed object is harmless; and `dispose()` unsubscribes all four listeners.
+    The pitch itself is not readable from outside — AS3 has only `setPitch()`, no getter — so what
+    is verified there is that the call path runs and the sound is registered for the update tick
+    that drives it.
+  - **`habbo/sound` is now 29/29.** It leaves priority 3's list entirely.
 
 - ✅ **`habbo/sound/trax` finished: the sequencer, and Trax songs actually play**, 2026-08-06.
   - **`TraxSequencer` (817 l.) + `TraxSampleManager` (245 l.) + the audio graph.** The last

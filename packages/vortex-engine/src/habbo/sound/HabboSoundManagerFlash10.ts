@@ -22,6 +22,7 @@ import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
 import type {IHabboSoundManager} from './IHabboSoundManager';
 import type {IHabboMusicController} from './IHabboMusicController';
 import {TraxSampleManager} from './music/TraxSampleManager';
+import {FurniSamplePlaybackManager} from './furni/FurniSamplePlaybackManager';
 import {TraxSequencer} from './trax/TraxSequencer';
 import {TraxData} from './trax/TraxData';
 import {OrderedMap} from '@core/utils/OrderedMap';
@@ -120,6 +121,9 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
 
     // AS3: .../sound/HabboSoundManagerFlash10.as::_traxSampleManager
     private _traxSampleManager: TraxSampleManager | null = null;
+
+    // AS3: .../sound/HabboSoundManagerFlash10.as::_furniSamplePlaybackManager
+    private _furniSamplePlaybackManager: FurniSamplePlaybackManager | null = null;
 
     // AS3: .../sound/HabboSoundManagerFlash10.as::_downloadingSong
     // Name DERIVED (`_SafeStr_5349`): the one song whose samples are being fetched right now.
@@ -468,8 +472,9 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
         // when a download fails.
         this._traxSampleManager = new TraxSampleManager(this, this.onSampleLoadError);
 
-        // TODO(AS3): AS3 also constructs `FurniSamplePlaybackManager` here (furni/, 206 l.),
-        // which is unported — furniture samples do not play.
+        // AS3: HabboSoundManagerFlash10.as:425 — the furniture sample player, on the room
+        // engine's own event bus.
+        this._furniSamplePlaybackManager = new FurniSamplePlaybackManager(this, this._roomEngine.events);
         this._roomEngine.events.on(RoomEngineObjectPlaySoundEvent.PLAY_SOUND, this._onRoomEngineObjectPlaySound);
         this._roomEngine.events.on(RoomEngineObjectPlaySoundEvent.PLAY_SOUND_AT_PITCH, this._onRoomEngineObjectPlaySound);
 
@@ -509,8 +514,8 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
             this._traxVolume = 0;
 
             this._musicController?.updateVolume(0);
+            this._furniSamplePlaybackManager?.updateVolume(0);
 
-            // TODO(AS3): AS3 also calls `_furniSamplePlaybackManager.updateVolume(0)` here.
             return;
         }
 
@@ -519,8 +524,7 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
         this._traxVolume = trax;
 
         this._musicController?.updateVolume(trax);
-
-        // TODO(AS3): AS3 also calls `_furniSamplePlaybackManager.updateVolume(furni)` here.
+        this._furniSamplePlaybackManager?.updateVolume(furni);
     }
 
     /**
@@ -658,6 +662,20 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
         {
             this._musicController.dispose();
             this._musicController = null;
+        }
+
+        // AS3: HabboSoundManagerFlash10.as:134/149 — the sample manager and the furni player are
+        // disposed here too, in that order.
+        if(this._traxSampleManager !== null)
+        {
+            this._traxSampleManager.dispose();
+            this._traxSampleManager = null;
+        }
+
+        if(this._furniSamplePlaybackManager !== null)
+        {
+            this._furniSamplePlaybackManager.dispose();
+            this._furniSamplePlaybackManager = null;
         }
 
         for(const sound of this._genericSamples.values())
