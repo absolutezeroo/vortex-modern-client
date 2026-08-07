@@ -34,13 +34,12 @@ export class HighScoreDisplayWidget extends RoomWidgetBase
     private static readonly RELATIVE_OFFSET_Y: number = -400;
 
     /**
-     * AS3: .../furniture/highscore/HighScoreDisplayWidget.as::SCORETYPE_LOCALIZATION_KEY_POSTFIX
-     *
      * Five entries against only three declared `SCORETYPE_*` constants (0-2) — the last two,
      * `fastesttime` and `longesttime`, have no constant in any tree. They are the reason the
      * time formatting is selected by `indexOf("time") >= 0` on the postfix rather than by a
      * comparison against a score-type constant.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/furniture/highscore/HighScoreDisplayWidget.as::SCORETYPE_LOCALIZATION_KEY_POSTFIX
     private static readonly SCORETYPE_LOCALIZATION_KEY_POSTFIX: string[] = [
         'perteam', 'mostwins', 'classic', 'fastesttime', 'longesttime'
     ];
