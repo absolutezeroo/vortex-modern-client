@@ -742,6 +742,7 @@ import {
     GetHeightMapMessageComposer,
     MoveAvatarMessageComposer,
     MoveObjectMessageComposer,
+    MoveWallItemMessageComposer,
     PickupObjectMessageComposer,
     PlaceObjectMessageComposer,
     PlacePostItMessageComposer,
@@ -2468,13 +2469,17 @@ export class HabboMessages implements IMessageConfiguration
         // the current TS port). Left unresolved rather than guessing a header.
         this._composers.set(1935, GetHeightMapMessageComposer);
         this._composers.set(2364, MoveAvatarMessageComposer);
-        // TODO(AS3): header fixed to match sources/WIN63-202607011411-782849652 (_SafeCls_2135 via
-        // HabboCatalog.as placement send), but field shape may also need re-verification - the
-        // AS3 composer takes 6 params, the TS constructor only 4 (itemId, x, y, rotation).
+        // Header from sources/WIN63-202607011411-782849652 (_SafeCls_2135 via HabboCatalog.as's
+        // placement send). The constructor now carries AS3's full six arguments — id, category,
+        // wallLocation, x, y, rotation — and the category picks between the floor and wall shapes.
         this._composers.set(1974, PlaceObjectMessageComposer);
         // AS3: _SafeCls_1821.as::placeObject() — the "furniture_is_stickie" branch, checked
         // before the generic PlaceObject fallback above.
         this._composers.set(1122, PlacePostItMessageComposer);
+        // AS3: _SafeCls_2046.as::_composers[2999] = _SafeCls_2682 — the wall-item move, sent by
+        // modifyRoomObject()'s "OBJECT_MOVE_TO" case when the moved object is category 20.
+        // Corroborated by vortex-emulator's MoveWallItemMessageEvent = 2999.
+        this._composers.set(2999, MoveWallItemMessageComposer);
         this._composers.set(1482, MoveObjectMessageComposer);
         // AS3: ClickFurniMessageComposer header 443 (win63 registry); sent on a plain furni click.
         this._composers.set(443, ClickFurniMessageComposer);

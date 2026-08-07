@@ -126,6 +126,9 @@ import {MoveBotMessageComposer} from '@habbo/communication/messages/outgoing/roo
 import {MovePetMessageComposer} from '@habbo/communication/messages/outgoing/room/pet/MovePetMessageComposer';
 import {MoveObjectMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveObjectMessageComposer';
 import {
+    MoveWallItemMessageComposer
+} from '@habbo/communication/messages/outgoing/room/engine/MoveWallItemMessageComposer';
+import {
     PickupObjectMessageComposer
 } from '@habbo/communication/messages/outgoing/room/engine/PickupObjectMessageComposer';
 import {RoomEngineObjectPlacedEvent} from './events/RoomEngineObjectPlacedEvent';
@@ -268,10 +271,45 @@ export class RoomEngine extends Component implements IRoomEngine,
     private _imageIdCounter: number = 0;
     private _ticker: Ticker | null = null;
     private _canvasSyncCallbacks: Set<() => void> = new Set();
-    // AS3 _SafeCls_1821.as::_moveMouseEventCache — the last mouse-move over a tile, replayed
-    // by recalibrateMovements() so an in-progress drag/place ghost re-snaps after the tile
-    // map rebuilds. The port caches the tile coords (all handleObjectMove/Place need).
-    private _moveMouseEventCache: Vector3d | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::_moveMouseEventCache
+    // The last mouse-move over the room, replayed by recalibrateMovements() so an in-progress
+    // drag/place ghost re-snaps after the tile map rebuilds — and so the *next* item of a repeated
+    // placement gets its ghost immediately instead of waiting for the mouse to move again.
+    //
+    // It caches the event, not tile coordinates: AS3 replays it through handleRoomObjectMouseMove(),
+    // which needs to know whether the cursor was over a floor tile or a wall. Caching only x/y made
+    // repeated placement impossible to replay for a wall item, which has neither.
+    private _moveMouseEventCache: {
+        tileEvent: {tileX: number; tileY: number} | null;
+        wallEvent: RoomObjectWallMouseEvent | null;
+    } | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::setMouseEventId()
+    // (name derived: AS3 has no dedicated field, it reuses the per-(category, type) mouse-event-id
+    // map that processRoomCanvasMouseEvent() maintains — see setMouseEventId(0, "click", eventId) in
+    // handleRoomObjectMouseClick()'s category-100 arm, which consumes a click for the room bucket so
+    // the floor does not act on it a second time.)
+    //
+    // This port needs its own slot for it. One physical click reaches placeObject() TWICE: the
+    // placement ghost is a category-10 object, the room planes are category 0, and
+    // processRoomCanvasMouseEvent() dedups per category *bucket* — so the two deliveries never
+    // collide and both arrive. That was harmless while the first call left no selection behind, but
+    // repeated placement re-arms the next item synchronously inside the first call, so the second
+    // delivery found a fresh OBJECT_PLACE and placed a second item on the same spot.
+    private _lastPlacementEventId: string | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::_repeatedPlacement
+    // Set from initializeRoomObjectInsert()'s last argument. The inventory passes true, so placing
+    // one item of a stack immediately re-arms the next; the catalog and the infostand pass nothing.
+    // Names derived — obfuscated in every tree (_SafeStr_8143/_SafeStr_8228/_SafeStr_6975).
+    private _repeatedPlacement: boolean = false;
+    // AS3: .../_SafeCls_1821.as::_repeatedPlacementTypeId — the type of the last item placed while
+    // repeating, so the direction below is only reused for another item of the same type.
+    private _repeatedPlacementTypeId: number = -1;
+    // AS3: .../_SafeCls_1821.as::_repeatedPlacementDirection — the direction the last item was
+    // placed at, in degrees. Carrying it over is what makes a row of furni come out aligned instead
+    // of resetting to the default rotation on every copy.
+    private _repeatedPlacementDirection: number = -1;
     private _selectedObject: { roomId: number; id: number; category: number } | null = null;
     // AS3: _SafeCls_1821.as::processRoomCanvasMouseEvent() dedups per (category-bucket, event type):
     // getMouseEventId(category, type) keyed on BOTH the bucketed category and the type. The key is
@@ -734,27 +772,64 @@ export class RoomEngine extends Component implements IRoomEngine,
         stuffData: unknown = null,
         state: number = -1,
         animFrame: number = -1,
-        posture: string | null = null
-    ): boolean 
+        posture: string | null = null,
+        repeatedPlacement: boolean = false
+    ): boolean
     {
         // AS3's initializeRoomObjectInsert() has no category guard at all — it accepts whatever it is
         // handed and lets handleObjectPlace() build the right kind of ghost. All three categories now
         // have one: floor furniture (10), wall items (20) and users/pets/bots (100).
         this._objectPlacementSource = source;
+        this._repeatedPlacement = repeatedPlacement;
+
+        let direction = new Vector3d(0);
+
+        // AS3: the next copy of the same floor furni comes up already rotated the way the last one
+        // was placed. Only for category 10, only for the same type, and only while repeating —
+        // anything else clears the carry-over so a new selection starts from the default direction.
+        if(repeatedPlacement
+            && category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE
+            && type === this._repeatedPlacementTypeId
+            && this._repeatedPlacementDirection >= 0)
+        {
+            direction = new Vector3d(this._repeatedPlacementDirection);
+        }
+        else
+        {
+            this.clearRepeatedPlacementData();
+        }
 
         this.setSelectedObjectData(
-            this._activeRoomId, itemId, category, new Vector3d(-100, -100), new Vector3d(0),
+            this._activeRoomId, itemId, category, new Vector3d(-100, -100), direction,
             'OBJECT_PLACE', type, extra, stuffData as IStuffData | null, state, animFrame, posture
         );
         this.setObjectMoverIconSprite(type, category, false, extra, posture);
         this.setObjectMoverIconSpriteVisible(false);
 
+        // AS3 replays the cached mouse-move here, with the operation check turned OFF. That replay is
+        // what makes repeated placement continuous: the item just placed cleared the selection, so
+        // without it the next one has no ghost until the mouse moves again — and if the cursor is
+        // already where you want the next copy, it never does.
+        if(repeatedPlacement)
+        {
+            this.recalibrateMovements(this._activeRoomId, false);
+        }
+
         return true;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::cancelRoomObjectInsert()
-    cancelRoomObjectInsert(): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::clearRepeatedPlacementData()
+    private clearRepeatedPlacementData(): void
     {
+        this._repeatedPlacementTypeId = -1;
+        this._repeatedPlacementDirection = -1;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::cancelRoomObjectInsert()
+    cancelRoomObjectInsert(): void
+    {
+        this._repeatedPlacement = false;
+        this.clearRepeatedPlacementData();
         this.resetSelectedObjectData(this._activeRoomId);
     }
 
@@ -1352,42 +1427,54 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::recalibrateMovements()
-    // After the tile map rebuilds, replay the cached mouse-move so an in-progress
-    // OBJECT_MOVE/OBJECT_PLACE drag ghost re-snaps to the new stacking height instead
-    // of keeping the stale one until the next real mouse-move.
-    private recalibrateMovements(roomId: number): void
+    // Replays the cached mouse-move, so an in-progress OBJECT_MOVE/OBJECT_PLACE ghost re-snaps
+    // instead of keeping a stale position until the next real mouse-move. Two callers, and the
+    // second argument is what separates them:
+    //  - after the tile map rebuilds (`checkOperation` left true): only replay when something is
+    //    actually being moved or placed;
+    //  - from initializeRoomObjectInsert()'s repeated-placement arm (`false`): replay
+    //    unconditionally, because the selection was only just created and the point is to build its
+    //    ghost right now.
+    private recalibrateMovements(roomId: number, checkOperation: boolean = true): void
     {
-        const selectedObjectData = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
+        if(checkOperation)
+        {
+            const selectedObjectData = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
 
-        if(selectedObjectData === null)
+            if(selectedObjectData === null)
+            {
+                return;
+            }
+
+            const operation = selectedObjectData.operation;
+
+            if(operation !== 'OBJECT_MOVE' && operation !== 'OBJECT_PLACE')
+            {
+                return;
+            }
+        }
+
+        const cache = this._moveMouseEventCache;
+
+        if(cache === null)
         {
             return;
         }
 
-        const operation = selectedObjectData.operation;
+        // AS3 replays through handleRoomObjectMouseMove(), which re-reads the operation off the
+        // selection rather than taking it from the caller — so this reads it again here rather than
+        // reusing the one the guard above may have looked at.
+        const data = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
 
-        if(operation !== 'OBJECT_MOVE' && operation !== 'OBJECT_PLACE')
+        if(data === null) return;
+
+        if(data.operation === 'OBJECT_PLACE')
         {
-            return;
+            this.handleObjectPlace(roomId, cache.tileEvent, cache.wallEvent);
         }
-
-        if(this._moveMouseEventCache === null || selectedObjectData.category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+        else if(data.operation === 'OBJECT_MOVE')
         {
-            return;
-        }
-
-        const tileX = this._moveMouseEventCache.x;
-        const tileY = this._moveMouseEventCache.y;
-
-        if(operation === 'OBJECT_PLACE')
-        {
-            // The cached move is a tile, never a wall — this guard above only lets category 10
-            // through, and the cache is written from handleTileMouseEvent() alone.
-            this.handleObjectPlace(roomId, {tileX, tileY}, null);
-        }
-        else
-        {
-            this.handleObjectMove(roomId, tileX, tileY);
+            this.handleObjectMove(roomId, cache.tileEvent, cache.wallEvent);
         }
     }
 
@@ -1814,13 +1901,11 @@ export class RoomEngine extends Component implements IRoomEngine,
             // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_MOVE" case
             case 'OBJECT_MOVE': {
                 // AS3 puts no category condition on this case at all, because it can finish a move
-                // for all three. Floor furni (10) and bots/plants (100) now both have a working
-                // path — handleObjectMove() treats the two identically, as AS3 does
-                // (_SafeCls_1821.as:1112). Wall items (20) are still refused: confirmObjectMove()
-                // has no wall-move composer to end the drag with (its own TODO), so starting one
-                // would only strand the item ghosted. InfoStandWidgetHandler's move button is the
-                // caller that can reach here with category 20.
-                if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL) return false;
+                // for all three, and neither does this port any more. Floor furni (10) and
+                // bots/plants (100) go through handleObjectMove()'s tile arm, which treats the two
+                // identically as AS3 does (_SafeCls_1821.as:1112); wall items (20) go through its
+                // wall arm and end on MoveWallItemMessageComposer. InfoStandWidgetHandler's move
+                // button is the caller that reaches here with category 20.
                 if(!object) return false;
 
                 const controller = object as IRoomObjectController;
@@ -4890,11 +4975,19 @@ export class RoomEngine extends Component implements IRoomEngine,
     // `placedOnFloor`/`placedOnWall` are AS3's own two parameters: which kind of mouse event
     // confirmed the placement. They ride out on REOE_PLACED, where FurniModel.onObjectPlaced()
     // needs them to tell a floor placement's re-arm from a wall one.
-    private placeObject(roomId: number, placedOnFloor: boolean, placedOnWall: boolean): void
+    //
+    // `eventId` is not an AS3 parameter — see _lastPlacementEventId for why this port needs it.
+    private placeObject(roomId: number, placedOnFloor: boolean, placedOnWall: boolean, eventId: string): void
     {
+        // One click, one placement. Both the ghost's own object click and the room plane's tile
+        // click carry the same event id, and both reach here.
+        if(eventId !== '' && eventId === this._lastPlacementEventId) return;
+
         const data = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
 
         if(data === null) return;
+
+        this._lastPlacementEventId = eventId;
 
         const object = this.getRoomObject(roomId, data.id, data.category) as IRoomObjectController | null;
 
@@ -4980,6 +5073,16 @@ export class RoomEngine extends Component implements IRoomEngine,
                     ));
                 }
             }
+        }
+
+        // AS3: _SafeCls_1821.as::placeObject() — remember what was just placed, so the next copy of
+        // the same floor furni comes up at the same rotation. Read back by
+        // initializeRoomObjectInsert() when the inventory re-arms; floor furniture only, since it is
+        // the only category whose direction the player controls.
+        if(this._repeatedPlacement && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE && object !== null)
+        {
+            this._repeatedPlacementTypeId = data.typeId;
+            this._repeatedPlacementDirection = Math.trunc(object.getDirection().x);
         }
 
         const instanceData = data.instanceData;
@@ -5130,19 +5233,60 @@ export class RoomEngine extends Component implements IRoomEngine,
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectMove()
     // TS scope: category 10 (floor furniture) only, matching modifyRoomObject()'s OBJECT_MOVE case.
-    private handleObjectMove(roomId: number, tileX: number, tileY: number): void 
+    // Takes the two casts AS3 makes on the incoming event, for the reason spelled out on
+    // handleObjectPlace(). Exactly one of the two is non-null.
+    private handleObjectMove(
+        roomId: number,
+        tileEvent: {tileX: number; tileY: number} | null,
+        wallEvent: RoomObjectWallMouseEvent | null
+    ): void
     {
         const data = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
 
-        if(data === null) return;
+        if(data === null || data.loc === null || data.dir === null) return;
 
         const object = this.getRoomObject(roomId, data.id, data.category) as IRoomObjectController | null;
 
         if(object === null) return;
 
-        const stackingMap = this.getFurniStackingHeightMap(roomId);
-        const success = this.handleFurnitureMove(object, data, tileX + 0.5, tileY + 0.5, stackingMap);
+        let success: boolean;
 
+        if(data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+        {
+            success = wallEvent !== null && this.handleWallItemMove(
+                object, data,
+                wallEvent.wallLocation, wallEvent.wallWidth, wallEvent.wallHeight,
+                wallEvent.x, wallEvent.y, wallEvent.direction
+            );
+
+            if(!success)
+            {
+                // Unlike a placement, a move has somewhere to fall back to: the item is already in
+                // the room, so AS3 puts it back where the drag started rather than disposing it.
+                object.setLocation(data.loc);
+                object.setDirection(data.dir);
+            }
+
+            this.updateObjectRoomWindow(roomId, data.id, success);
+        }
+        else
+        {
+            const stackingMap = this.getFurniStackingHeightMap(roomId);
+
+            success = tileEvent !== null
+                && this.handleFurnitureMove(object, data, tileEvent.tileX + 0.5, tileEvent.tileY + 0.5, stackingMap);
+
+            if(!success)
+            {
+                // AS3 re-runs the move against the drag's *original* tile, so a furni dragged over
+                // an illegal spot snaps back instead of hanging at the last valid one. The port
+                // used to leave it where it was.
+                this.handleFurnitureMove(object, data, data.loc.x, data.loc.y, stackingMap);
+            }
+        }
+
+        // Alpha 0 rather than 0.5 on failure: AS3 hides the dragged object outright while the
+        // cursor is somewhere it cannot go, and shows the mover icon in its place.
         this.setObjectAlphaMultiplier(object, success ? 0.5 : 0);
         this.setObjectMoverIconSpriteVisible(!success);
     }
@@ -5200,14 +5344,29 @@ export class RoomEngine extends Component implements IRoomEngine,
             );
         }
 
-        // TODO(AS3): AS3's modifyRoomObject() "OBJECT_MOVE_TO" case (_SafeCls_1821.as:2399-2416)
-        // has a third branch for data.category === OBJECT_CATEGORY_WALL (20): it fetches the
-        // room's LegacyWallGeometry (roomEngine.getLegacyGeometry(), not yet exposed by this
-        // port's IRoomEngine) and sends getOldLocationString(object.getLocation(), direction)
-        // through a dedicated wall-move composer (_SafeCls_2682: objectId, category,
-        // locationString) - neither the composer nor getLegacyGeometry() exist in this port yet,
-        // so moving an already-placed wall item never reaches the server. Mirrors
-        // PlaceObjectMessageComposer.ts's own documented wall-placement gap on the place side.
+        // AS3: the `param3 == 20` branch of the same case (_SafeCls_1821.as:2399-2416). Unlike the
+        // other two, this one sends no coordinates — the whole destination is the legacy
+        // wall-location string, and the send is skipped entirely when it comes back null (a
+        // direction that is neither 90 nor 180 cannot name a wall).
+        else if(this._connection !== null && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+        {
+            const legacyGeometry = this.getLegacyGeometry(roomId);
+
+            if(legacyGeometry !== null)
+            {
+                // AS3 keeps the direction in degrees here, as it does in placeObject(): this is the
+                // 90/180 getOldLocationString() switches on, not the eighths the floor path sends.
+                const degrees = Math.trunc(object.getDirection().x) % 360;
+                const wallLocation = legacyGeometry.getOldLocationString(object.getLocation(), degrees);
+
+                if(wallLocation !== null)
+                {
+                    this._connection.send(new MoveWallItemMessageComposer(
+                        data.id, RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL, wallLocation
+                    ));
+                }
+            }
+        }
 
         // AS3 line 2419-2421: reset the (now OBJECT_MOVE_TO-tagged) selection so the moved object
         // keeps its new position and the selection is cleared - required for a repeatable move.
@@ -6018,8 +6177,11 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(event.type === RoomObjectMouseEvent.ROE_MOUSE_MOVE)
         {
-            // Cache the tile for recalibrateMovements() (AS3 _moveMouseEventCache).
-            this._moveMouseEventCache = new Vector3d(tileX, tileY, tileZ);
+            // Cache the move for recalibrateMovements() (AS3 _moveMouseEventCache), which replays
+            // it to re-snap a ghost after a tile-map rebuild or to build the next one of a repeated
+            // placement. tileZ is not kept: neither handleObjectPlace() nor handleObjectMove() reads
+            // it — they re-derive the height from the stacking map.
+            this._moveMouseEventCache = {tileEvent: {tileX, tileY}, wallEvent: null};
 
             const tileCursor = this.getTileCursor(this._activeRoomId);
 
@@ -6053,7 +6215,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                 }
                 else if(selectedObjectData.operation === 'OBJECT_MOVE')
                 {
-                    this.handleObjectMove(this._activeRoomId, tileX, tileY);
+                    this.handleObjectMove(this._activeRoomId, {tileX, tileY}, null);
                 }
             }
         }
@@ -6070,7 +6232,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                 // AS3 passes which kind of event confirmed the placement straight through
                 // (`placeObject(roomId, tileEvent != null, wallEvent != null)`); this is the tile
                 // arm, so the placement is on the floor.
-                this.placeObject(this._activeRoomId, true, false);
+                this.placeObject(this._activeRoomId, true, false, event.eventId);
             }
             else if(selectedObjectData !== null && selectedObjectData.operation === 'OBJECT_MOVE')
             {
@@ -6090,23 +6252,50 @@ export class RoomEngine extends Component implements IRoomEngine,
     // lets handleObjectPlace()/placeObject() sort out which surface is under the cursor — so this
     // routes to the same two methods, with the wall event where the tile event would go.
     //
-    // Only a pending placement is handled: a wall carries no tile cursor, nothing walks to it, and
-    // OBJECT_MOVE of an already-placed wall item is a separate flow (see modifyRoomObject()).
+    // Only a pending placement or move is handled: a wall carries no tile cursor and nothing walks
+    // to it, so there is no third branch here the way handleTileMouseEvent() has one.
     private handleWallMouseEvent(event: RoomObjectWallMouseEvent): void
     {
         if(this._activeRoomId < 0) return;
 
+        if(event.type === RoomObjectMouseEvent.ROE_MOUSE_MOVE)
+        {
+            // Cached before the operation check, as AS3 does — handleRoomObjectMouseMove() writes
+            // _moveMouseEventCache on its second line, ahead of reading the selection. One field for
+            // both surfaces there, since it caches the event itself. Caching only under an active
+            // selection would leave a repeated wall placement replaying a stale tile.
+            this._moveMouseEventCache = {tileEvent: null, wallEvent: event};
+        }
+
         const selectedObjectData = this._roomInstanceData.get(this._activeRoomId)?.selectedObjectData ?? null;
 
-        if(selectedObjectData === null || selectedObjectData.operation !== 'OBJECT_PLACE') return;
+        if(selectedObjectData === null) return;
+
+        const operation = selectedObjectData.operation;
+
+        if(operation !== 'OBJECT_PLACE' && operation !== 'OBJECT_MOVE') return;
 
         if(event.type === RoomObjectMouseEvent.ROE_MOUSE_MOVE)
         {
-            this.handleObjectPlace(this._activeRoomId, null, event);
+            if(operation === 'OBJECT_PLACE')
+            {
+                this.handleObjectPlace(this._activeRoomId, null, event);
+            }
+            else
+            {
+                this.handleObjectMove(this._activeRoomId, null, event);
+            }
         }
         else if(event.type === RoomObjectMouseEvent.ROE_MOUSE_CLICK)
         {
-            this.placeObject(this._activeRoomId, false, true);
+            if(operation === 'OBJECT_PLACE')
+            {
+                this.placeObject(this._activeRoomId, false, true, event.eventId);
+            }
+            else
+            {
+                this.confirmObjectMove(this._activeRoomId);
+            }
         }
     }
 
@@ -6191,7 +6380,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                     // ever sits on a wall, anything else on the floor.
                     const onWall = selectedObjectData.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL;
 
-                    this.placeObject(this._activeRoomId, !onWall, onWall);
+                    this.placeObject(this._activeRoomId, !onWall, onWall, event.eventId);
 
                     return;
                 }
@@ -6549,7 +6738,11 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(category === null) return;
 
+        // AS3: `_loc5_ == 10 || _loc5_ == 20 || _loc8_ == "monsterplant" || _loc8_ == "rentable_bot"`
+        // (_SafeCls_1821.as:1063). Category 20 was missing here, so ALT-drag and decorate-drag never
+        // started on a wall item however complete the rest of the move path was.
         if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE
+            && category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL
             && objType !== 'monsterplant' && objType !== 'rentable_bot') return;
 
         const altOnly = event.altKey && !event.ctrlKey && !event.shiftKey;

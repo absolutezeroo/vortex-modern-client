@@ -194,7 +194,10 @@ export interface IRoomEngine extends IDisposable {
         stuffData?: unknown,
         state?: number,
         animFrame?: number,
-        posture?: string | null
+        posture?: string | null,
+        // AS3's last argument: place repeatedly. The inventory passes true so one stack can be laid
+        // out without reopening it between items; the catalog and the infostand leave it false.
+        repeatedPlacement?: boolean
     ): boolean;
 
     // AS3: sources/win63_version/habbo/room/class_34.as::cancelRoomObjectInsert()

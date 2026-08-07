@@ -1158,7 +1158,10 @@ export class GroupItem implements IGetImageListener
             case WindowMouseEvent.OUT:
                 if(!this._wasDragCandidate || this._model.isTradingOpen) return;
 
-                if(this._model.requestSelectedFurniPlacement()) 
+                // AS3 passes true here (GroupItem.as:985) and only here: a drag out of the grid
+                // refuses wallpaper/floor/landscape outright instead of turning into a room-property
+                // request, which is what the two buttons in FurniView do.
+                if(this._model.requestSelectedFurniPlacement(true))
                 {
                     this._wasDragCandidate = false;
                 }

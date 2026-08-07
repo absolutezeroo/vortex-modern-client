@@ -200,11 +200,18 @@ export class FurniModel implements IFurniModel
     }
 
     // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::requestSelectedFurniPlacement()
-    // TODO(AS3): category 2/3/4 (wallpaper/floor/landscape) should go through
-    // RequestRoomPropertySet instead of the mover — not ported yet, so those
-    // items report failure here for now.
-    requestSelectedFurniPlacement(useLastSelectedIndex: boolean = true): boolean
+    // AS3 takes TWO booleans, in this order. The port had only the second one, so
+    // attemptPlaceNextFurni()'s `(false)` — AS3's `refuseRoomProperties = false` — was landing on
+    // `useLastSelectedIndex` instead. Harmless in that path (the index is set just before the call)
+    // but wrong, and it hid the fact that the first argument was never ported at all.
+    //
+    // TODO(AS3): with `refuseRoomProperties` false, AS3 sends RequestRoomPropertySet for categories
+    // 2/3/4 (wallpaper/floor/landscape) rather than routing them to the mover. That composer is not
+    // ported, so both values of the flag still report failure for those categories.
+    requestSelectedFurniPlacement(refuseRoomProperties: boolean = false, useLastSelectedIndex: boolean = true): boolean
     {
+        void refuseRoomProperties;
+
         const groupItem = this.getSelectedItem();
 
         if(groupItem === null) return false;
@@ -244,16 +251,22 @@ export class FurniModel implements IFurniModel
         // so a poster went to the mover with the wrong placement payload.
         let success: boolean;
 
+        // AS3 passes `true` as the last argument on BOTH calls — repeated placement. Without it the
+        // engine re-arms the next item of a stack but never builds its ghost, so placing stopped
+        // after one item unless you jiggled the mouse. AS3 also passes the stuff data's own state
+        // in the second call, where the port was letting it default to -1.
         if(item.category === FurnitureCategory.POSTER || this.isExternalImageItem(item))
         {
             success = this._roomEngine.initializeRoomObjectInsert(
-                'inventory', item.id, category, item.type, item.stuffData?.getLegacyString() ?? '', null
+                'inventory', item.id, category, item.type, item.stuffData?.getLegacyString() ?? '',
+                null, -1, -1, null, true
             );
         }
         else
         {
             success = this._roomEngine.initializeRoomObjectInsert(
-                'inventory', item.id, category, item.type, item.extra.toString(), item.stuffData
+                'inventory', item.id, category, item.type, item.extra.toString(),
+                item.stuffData, item.stuffData?.state ?? -1, -1, null, true
             );
         }
 

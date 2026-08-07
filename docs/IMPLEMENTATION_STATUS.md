@@ -704,6 +704,47 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   - One deliberate write into ported code, confined to `SpriteLighting.ts`: it sets
     `ExtendedSprite.tint`, records the renderer's own colour first, and restores it on disable.
 
+- ✅ **Wall-item *move*, and the unported repeated-placement subsystem**, 2026-08-07. Follows the
+  wall-placement entry below; both were blocked on the same missing `getLegacyGeometry()`.
+  - **Moving an already-placed wall item.** New `MoveWallItemMessageComposer` — header **2999** from
+    WIN63's own registry (`_SafeCls_2046.as::_composers[2999] = _SafeCls_2682`), corroborated by
+    vortex-emulator's `MoveWallItemMessageEvent = 2999`, whose parser reads an int and a string.
+    AS3's constructor takes `(objectId, category, locationString)` and pushes only the first and the
+    third — the category is accepted and dropped. `handleObjectMove()` gained the same tile/wall
+    split `handleObjectPlace()` has, `confirmObjectMove()` its category-20 arm, and
+    `modifyRoomObject()`'s `OBJECT_MOVE` no longer refuses category 20.
+  - 🐛 **`handleObjectMouseDown()` omitted category 20**, so ALT-drag and decorate-drag never started
+    on a wall item no matter how complete the rest of the move path was. AS3 gates on
+    `category == 10 || category == 20 || monsterplant || rentable_bot` (`_SafeCls_1821.as:1063`).
+  - **A floor drag onto an illegal tile now snaps back.** AS3's tile arm re-runs the move against the
+    drag's *original* location when the hovered one fails; the port left the item at the last valid
+    spot. Behaviour change for category 10, in the method being restructured.
+  - ⭐ **Repeated placement was never ported at all** — this is why placing a stack stopped after one
+    item. `initializeRoomObjectInsert()` takes one more argument in AS3, which `FurniModel` passes as
+    `true` on both of its calls, and it drives a whole small subsystem: a `_repeatedPlacement` flag,
+    the last placed type and direction (`clearRepeatedPlacementData()`), and — the load-bearing part
+    — `recalibrateMovements(roomId, false)` at the end of the arm. That second argument turns the
+    operation check *off* so the cached mouse-move is replayed unconditionally, building the next
+    item's ghost immediately. Without it the next item is armed but invisible until the mouse moves
+    again, and if the cursor is already where the next copy goes, it never does. Carrying the
+    direction over is what makes a row come out aligned instead of resetting each copy.
+  - 🐛 **One click reaches `placeObject()` twice, and repeated placement turned that into a second
+    item.** `processRoomCanvasMouseEvent()` dedups per category *bucket*: the ghost is category 10
+    (bucket -2), the room planes are category 0 (bucket 0), so a click on the same pixel is delivered
+    to both and both confirm. Harmless while the first call left no selection behind — with the
+    synchronous re-arm, the second delivery found a fresh OBJECT_PLACE and placed the next item on
+    the same spot, two at a time and stacked. The confirmation now carries the click's `eventId`
+    (one per canvas frame, the same key the bucket dedup uses) and refuses a repeat. AS3 needs no
+    equivalent field: its ghost is mouse-transparent and only a click on the room object confirms,
+    and where it does need this it reuses the same map (`setMouseEventId(0, "click", …)`).
+  - `_moveMouseEventCache` now caches the move *event* (tile or wall), not tile coordinates — AS3
+    replays it through `handleRoomObjectMouseMove()`, which has to know which surface was under the
+    cursor. Coordinates alone could never replay a wall item's repeated placement.
+  - 🐛 **`requestSelectedFurniPlacement()` had one parameter where AS3 has two**, so
+    `attemptPlaceNextFurni()`'s `(false)` — AS3's `refuseRoomProperties` — was landing on
+    `useLastSelectedIndex`. Latent in that path, but it hid that the first argument was never ported;
+    `GroupItem` is the one caller that passes `true` (`GroupItem.as:985`).
+
 - ✅ **Wall-item placement (category 20) — the last of the three placement categories**, 2026-08-07.
   Placing a wall item from the inventory was refused up front in
   `RoomEngine.initializeRoomObjectInsert()`, on a stale claim: that no AS3 tree carried the inverse
