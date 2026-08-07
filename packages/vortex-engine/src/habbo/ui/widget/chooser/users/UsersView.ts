@@ -40,12 +40,11 @@ export class UsersView
     private static readonly WINDOW_MARGIN: number = 10;
 
     /**
-     * AS3: .../chooser/users/UsersView.as::DROPDOWN_INDEX_REMAP_FROM
-     *
      * Names DERIVED. The type dropdown's selections map onto user types 1:1 except the last:
      * selection 3 means user type **4**. There is no type 3 in the list, so the dropdown's fourth
      * entry has to be remapped by hand.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chooser/users/UsersView.as::DROPDOWN_INDEX_REMAP_FROM
     private static readonly DROPDOWN_INDEX_REMAP_FROM: number = 3;
 
     // AS3: .../chooser/users/UsersView.as::DROPDOWN_INDEX_REMAP_TO
@@ -166,12 +165,11 @@ export class UsersView
     }
 
     /**
-     * AS3: .../chooser/users/UsersView.as::populateWithFilters()
-     *
      * Both filters at once: the search matches anywhere in the lower-cased name, and the type
      * dropdown filters by exact type — with selection 0 meaning "all", so the `> 0` test is what
      * makes the first entry a no-op.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chooser/users/UsersView.as::populateWithFilters()
     private populateWithFilters(): void
     {
         const search = (this.searchTextInput?.text ?? '').toLowerCase();
