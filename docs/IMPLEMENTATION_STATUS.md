@@ -685,6 +685,25 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **Room dynamic lighting — not a port, and deliberately outside every count on this page**,
+  2026-08-07. `packages/vortex-client/src/lighting/`, disabled by default (Ctrl+Shift+L for the
+  debug panel). N point lights from the moodlight and glowing furni, shadows cast from each object's
+  real texture, and per-sprite lighting through the engine's own `RoomObjectSprite.color` channel.
+  Contract and limitations in `docs/architectures/room-lighting-architecture.md`.
+  - **It must not enter the module rows above.** These files have no AS3 counterpart on either side
+    of the ratio, which is why they live in `vortex-client/src/lighting/` and not under `habbo/` —
+    the gap-measurement recipe walks the AS3-mirroring trees, and this is not one of them. Counting
+    them would inflate TS coverage against an AS3 denominator that does not exist.
+  - **Two room-geometry conventions found here apply to anything drawn over the room**, not just to
+    lighting, and both are silent when wrong: a tile is *centred* on its index
+    (`RoomPlaneParser`: `planeX = x / 4 - 0.5`, so tile `t` spans `[t-0.5, t+0.5]` — and world→tile
+    is `Math.round`, not the `Math.floor` `handleUserPlace()` uses); and the room is centred in the
+    canvas by a `+ canvas.width / 2` term present in neither the geometry nor `screenOffset`, spelled
+    out in `getRoomObjectScreenLocation()` and `getRoomObjectBoundingRectangle()`. Use the engine's
+    own conversion rather than reimplementing from `RoomGeometry`.
+  - One deliberate write into ported code, confined to `SpriteLighting.ts`: it sets
+    `ExtendedSprite.tint`, records the renderer's own colour first, and restores it on disable.
+
 - ✅ **Wall-item placement (category 20) — the last of the three placement categories**, 2026-08-07.
   Placing a wall item from the inventory was refused up front in
   `RoomEngine.initializeRoomObjectInsert()`, on a stale claim: that no AS3 tree carried the inverse
