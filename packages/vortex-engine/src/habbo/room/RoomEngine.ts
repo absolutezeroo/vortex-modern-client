@@ -5633,6 +5633,13 @@ export class RoomEngine extends Component implements IRoomEngine,
             case RoomObjectWidgetRequestEvent.ROWRE_INTERNAL_LINK:
                 this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_INTERNAL_LINK, roomId, objectId, category);
                 break;
+            // AS3: _SafeCls_1821.as:1524-1528
+            case RoomObjectWidgetRequestEvent.ROWRE_HIGH_SCORE_DISPLAY:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_HIGH_SCORE_DISPLAY, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_HIDE_HIGH_SCORE_DISPLAY:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_HIDE_HIGH_SCORE_DISPLAY, roomId, objectId, category);
+                break;
             // AS3: _SafeCls_1821.as:1494-1495. The two names do not match on purpose: the
             // room-object side says HIDE_AREA, the widget side says AREA_HIDE.
             case RoomObjectWidgetRequestEvent.ROWRE_HIDE_AREA:

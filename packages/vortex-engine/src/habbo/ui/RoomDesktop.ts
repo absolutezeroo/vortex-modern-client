@@ -86,6 +86,7 @@ import {ConversionPointWidgetHandler} from './handler/ConversionPointWidgetHandl
 import {PollWidgetHandler} from './handler/PollWidgetHandler';
 import {ObjectLocationRequestHandler} from './handler/ObjectLocationRequestHandler';
 import {FriendRequestWidgetHandler} from './handler/FriendRequestWidgetHandler';
+import {HighScoreDisplayWidgetHandler} from './handler/HighScoreDisplayWidgetHandler';
 import {FriendRequestEvent} from '@habbo/friendlist/events/FriendRequestEvent';
 import {RoomQueueWidgetHandler} from './handler/RoomQueueWidgetHandler';
 import {FurnitureContextMenuWidgetHandler} from './handler/FurnitureContextMenuWidgetHandler';
@@ -898,6 +899,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             // AS3: RoomDesktop.as:807-809 "RWE_LOADINGBAR"
             case 'RWE_LOADINGBAR':
                 handler = new LoadingBarWidgetHandler();
+                break;
+            // AS3: RoomDesktop.as:883-885 "RWE_HIGH_SCORE_DISPLAY"
+            case 'RWE_HIGH_SCORE_DISPLAY':
+                handler = new HighScoreDisplayWidgetHandler();
                 break;
             // AS3: RoomDesktop.as::createWidgetHandler() "RWE_FRIEND_REQUEST"
             case 'RWE_FRIEND_REQUEST':
