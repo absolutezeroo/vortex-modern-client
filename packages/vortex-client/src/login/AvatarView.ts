@@ -13,8 +13,7 @@
 import {Logger} from '@core/utils/Logger';
 import type {AvatarData} from '@habbo/communication/login/AvatarData';
 import {Bitmap} from '../onBoardingHcUi/display/Bitmap';
-import type {DisplayObject} from '../onBoardingHcUi/display/DisplayObject';
-import type {DisplayMouseEvent} from '../onBoardingHcUi/display/DisplayObject';
+import type {DisplayMouseEvent, DisplayObject} from '../onBoardingHcUi/display/DisplayObject';
 import {Sprite} from '../onBoardingHcUi/display/DisplayObjectContainer';
 import {Rectangle} from '../onBoardingHcUi/display/Geom';
 import {Timer} from '../onBoardingHcUi/display/Timer';
@@ -284,11 +283,12 @@ export class AvatarView extends Sprite
     // AS3: .../src/login/AvatarView.as::getAvatarUrl()
     private getAvatarUrl(avatar: AvatarData): string
     {
-        let url = `${this._baseUrl}/habbo-imaging/avatarimage?user=${avatar.name}`;
+        const avatarUrl = 'http://localhost:8081';
+        let url = `${avatarUrl}/habbo-imaging/avatarimage?user=${avatar.name}`;
 
         if(this._baseUrl.indexOf('local') > -1 || this._baseUrl.indexOf('127.0.0.1') > -1)
         {
-            url = `https://www.habbo.com/habbo-imaging/avatarimage?size=m&figure=${avatar.figure}&direction=2`;
+            url = `http://localhost:8081/habbo-imaging/avatarimage?size=m&figure=${avatar.figure}&direction=2`;
         }
 
         return url;
