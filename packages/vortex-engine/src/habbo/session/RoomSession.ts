@@ -735,11 +735,21 @@ export class RoomSession implements IRoomSession
     }
 
     // AS3: .../src/com/sulake/habbo/session/RoomSession.as::sendConversionPoint()
-    sendConversionPoint(type: string, value: string, extra: string, category: string | null = null, action: number = 0): void
+    // The parameter names used to read (type, value, extra, category, action), which is the same
+    // five slots in the same order but describing the wrong fields. ConversionPointWidgetHandler
+    // is what names them: it passes category, pointType, action, extraString, extraInt — matching
+    // the composer's own field names. Positions, and therefore the wire, are unchanged.
+    sendConversionPoint(
+        category: string,
+        pointType: string,
+        action: string,
+        extraString: string | null = null,
+        extraInt: number = 0
+    ): void
     {
         if(this._connection === null) return;
 
-        this._connection.send(new EventLogMessageComposer(type, value, extra, category ?? '', action));
+        this._connection.send(new EventLogMessageComposer(category, pointType, action, extraString ?? '', extraInt));
     }
 
     // AS3: .../src/com/sulake/habbo/session/RoomSession.as::sendPeerUsersClassificationMessage()

@@ -169,7 +169,7 @@ export interface IRoomSession
 
     // Tracking methods
     // AS3: .../src/com/sulake/habbo/session/IRoomSession.as::sendConversionPoint()
-    sendConversionPoint(type: string, value: string, extra: string, category?: string | null, action?: number): void;
+    sendConversionPoint(category: string, pointType: string, action: string, extraString?: string | null, extraInt?: number): void;
 
     // AS3: .../src/com/sulake/habbo/session/IRoomSession.as::sendPeerUsersClassificationMessage()
     sendPeerUsersClassificationMessage(data: string): void;

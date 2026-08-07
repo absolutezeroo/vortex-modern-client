@@ -592,6 +592,14 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         // Set the layout
         desktop.layout = 'room_desktop_layout_xml';
 
+        // AS3: RoomUI.as:1124-1125 — these two are created **here**, with the desktop and before
+        // init(), not in the REE_INITIALIZED block below where every other widget is built. That
+        // is deliberate: a room you are queued for never initializes, so a queue window created at
+        // room entry would never exist when it is needed. Same for the loading bar, which has to
+        // be up while the room is still loading.
+        desktop.createWidget('RWE_LOADINGBAR');
+        desktop.createWidget('RWE_ROOM_QUEUE');
+
         // Initialize
         desktop.init();
 
@@ -932,8 +940,6 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_FURNI_ECOTRONBOX_WIDGET');
                     // AS3: RoomUI.as:944 — the doorbell list, for a room locked to ringing.
                     desktop.createWidget('RWE_DOORBELL');
-                    // AS3: RoomUI.as:946 — the entry queue, for a room that is full.
-                    desktop.createWidget('RWE_ROOM_QUEUE');
                     desktop.createWidget('RWE_FURNI_CREDIT_WIDGET');
                     desktop.createWidget('RWE_ROOM_BACKGROUND_COLOR');
                     desktop.createWidget('RWE_FURNI_PLACEHOLDER');
@@ -954,6 +960,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_CUSTOM_STACK_HEIGHT');
                     desktop.createWidget('RWE_ROOM_LINK');
                     desktop.createWidget('RWE_CLOTHING_CHANGE');
+                    // AS3: RoomUI.as:967 — no window of its own; the handler follows the link the
+                    // clicked furni carries.
+                    desktop.createWidget('RWE_INTERNAL_LINK');
+                    // AS3: RoomUI.as:948 — the event-log forwarder; no window either.
+                    desktop.createWidget('RWE_CONVERSION_TRACKING');
 
                     this._isInRoom = true;
 

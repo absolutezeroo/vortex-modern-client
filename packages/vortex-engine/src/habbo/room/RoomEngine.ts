@@ -5628,6 +5628,11 @@ export class RoomEngine extends Component implements IRoomEngine,
             case RoomObjectWidgetRequestEvent.ROWRE_MYSTERYTROPHY_OPEN_DIALOG:
                 this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_MYSTERYTROPHY_OPEN_DIALOG, roomId, objectId, category);
                 break;
+            // AS3: _SafeCls_1821.as:1530-1531. No widget behind this one — the handler follows the
+            // link itself, which is why it is wired here with nothing else to port.
+            case RoomObjectWidgetRequestEvent.ROWRE_INTERNAL_LINK:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_INTERNAL_LINK, roomId, objectId, category);
+                break;
             // Double-clicking a pet product already standing in the room. Unlike its siblings this
             // one does not go through RoomEngineToWidgetEvent: AS3 dispatches the use-product event
             // itself, which AvatarInfoWidgetHandler picks up to raise one bubble per eligible pet.

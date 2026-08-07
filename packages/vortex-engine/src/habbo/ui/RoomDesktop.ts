@@ -79,6 +79,9 @@ import {FurnitureCreditWidgetHandler} from './handler/FurnitureCreditWidgetHandl
 import {FurnitureEcotronBoxWidgetHandler} from './handler/FurnitureEcotronBoxWidgetHandler';
 import {PetPackageFurniWidgetHandler} from './handler/PetPackageFurniWidgetHandler';
 import {DoorbellWidgetHandler} from './handler/DoorbellWidgetHandler';
+import {InternalLinkWidgetHandler} from './handler/InternalLinkWidgetHandler';
+import {LoadingBarWidgetHandler} from './handler/LoadingBarWidgetHandler';
+import {ConversionPointWidgetHandler} from './handler/ConversionPointWidgetHandler';
 import {RoomQueueWidgetHandler} from './handler/RoomQueueWidgetHandler';
 import {FurnitureContextMenuWidgetHandler} from './handler/FurnitureContextMenuWidgetHandler';
 import {RoomWidgetFurniToWidgetMessage} from './widget/messages/RoomWidgetFurniToWidgetMessage';
@@ -653,8 +656,27 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         }
     }
 
-    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::init()
-    public init(): void 
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::init()
+     *
+     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as
+     * ::init() / ::onRoomContentLoaded() / ::checkInterrupts() — the loading bar's trigger.
+     * The widget and its handler are ported (`RWE_LOADINGBAR`), but nothing raises
+     * `RoomWidgetLoadingBarUpdateEvent` yet, so the bar never appears.
+     *
+     * The AS3 mechanism is a pending-resource list: `init()` fills `_pendingResources`, and while
+     * it is non-empty it clears `_resourcesReady` and dispatches SHOW; `onRoomContentLoaded()`
+     * removes each content type as it arrives and, when the list empties, raises the flag and
+     * calls `checkInterrupts()`, which starts the room session and dispatches HIDE.
+     *
+     * It is not ported because the decompilation lost the fill: `init()` reads
+     * `_pendingResources = []` immediately followed by `if(_pendingResources.length > 0)`, so the
+     * branch is dead in the source and there is no intact sibling to recover the list from. The
+     * remaining half — `checkInterrupts()` — also owns `roomSessionManager.startSession()`, which
+     * this port drives from elsewhere; wiring it here would start the session twice. Both halves
+     * need the same follow-up, so neither is guessed at here.
+     */
+    public init(): void
     {
         log.debug(`RoomDesktop initialized for room ${this._session.roomId}`);
     }
@@ -842,6 +864,19 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case 'RWE_DOORBELL':
                 handler = new DoorbellWidgetHandler();
                 break;
+            // AS3: RoomDesktop.as:886-888 "RWE_INTERNAL_LINK". The factory has no case for this
+            // type in AS3 either — the handler is the whole feature, see InternalLinkWidgetHandler.
+            case 'RWE_INTERNAL_LINK':
+                handler = new InternalLinkWidgetHandler();
+                break;
+            // AS3: RoomDesktop.as:807-809 "RWE_LOADINGBAR"
+            case 'RWE_LOADINGBAR':
+                handler = new LoadingBarWidgetHandler();
+                break;
+            // AS3: RoomDesktop.as::createWidgetHandler() "RWE_CONVERSION_TRACKING"
+            case 'RWE_CONVERSION_TRACKING':
+                handler = new ConversionPointWidgetHandler();
+                break;
             case 'RWE_FURNI_PET_PACKAGE_WIDGET':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:798
                 handler = new PetPackageFurniWidgetHandler();
@@ -977,9 +1012,14 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
         const widget = (this._widgetFactory?.createWidget(type, handler) ?? null) as IRoomWidget | null;
 
-        if(!widget) 
+        if(!widget)
         {
-            handler.dispose();
+            // AS3: RoomDesktop.as:985-988 returns here and does **not** dispose the handler — it
+            // stays in the two tables it was just added to. That is not an oversight: a
+            // widget-less type like RWE_INTERNAL_LINK is a handler and nothing else, and disposing
+            // it here would null its container while leaving it subscribed, so it would keep being
+            // called and keep doing nothing.
+            log.debug(`No widget for ${type} — the handler stays registered on its own`);
 
             return;
         }

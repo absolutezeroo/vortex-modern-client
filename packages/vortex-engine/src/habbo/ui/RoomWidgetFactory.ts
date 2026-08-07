@@ -39,6 +39,8 @@ import {CreditFurniWidget} from './widget/furniture/credit/CreditFurniWidget';
 import {EcotronBoxFurniWidget} from './widget/furniture/ecotronbox/EcotronBoxFurniWidget';
 import {DoorbellWidget} from './widget/doorbell/DoorbellWidget';
 import {RoomQueueWidget} from './widget/roomqueue/RoomQueueWidget';
+import {LoadingBarWidget} from './widget/loadingbar/LoadingBarWidget';
+import {RoomWidgetBase} from './widget/RoomWidgetBase';
 import {PetPackageFurniWidget} from './widget/furniture/petpackage/PetPackageFurniWidget';
 import {FurnitureContextMenuWidget} from './widget/furniture/contextmenu/FurnitureContextMenuWidget';
 
@@ -102,6 +104,20 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                     // RoomUI exposes the manager it resolved instead, which is the same object.
                     this._roomUI.config
                 );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_LOADINGBAR"
+            case 'RWE_LOADINGBAR':
+                return new LoadingBarWidget(
+                    handler,
+                    this._roomUI.windowManager,
+                    this._roomUI.assets,
+                    this._roomUI.localization,
+                    this._roomUI.config
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_CONVERSION_TRACKING" — a bare
+            // RoomWidgetBase, with no window and no behaviour. It exists only so createWidget()
+            // returns non-null; the handler is the feature.
+            case 'RWE_CONVERSION_TRACKING':
+                return new RoomWidgetBase(handler, this._roomUI.windowManager);
             // AS3: RoomWidgetFactory.as::createWidget() "RWE_DOORBELL"
             case 'RWE_DOORBELL':
                 return new DoorbellWidget(
