@@ -1029,6 +1029,10 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_HIGH_SCORE_DISPLAY');
                     // AS3: RoomUI.as:974 — the room-wide like/dislike quiz.
                     desktop.createWidget('RWE_WORD_QUIZZ');
+                    // AS3: RoomUI.as:958 — "who is in this room". AS3 passes the widget's previous
+                    // state here so a chooser left open reopens itself after a room change; this
+                    // port has no cross-room widget cache yet, so it always starts closed.
+                    desktop.createWidget('RWE_USER_CHOOSER');
                     // AS3: RoomUI.as:967 — no window of its own; the handler follows the link the
                     // clicked furni carries.
                     desktop.createWidget('RWE_INTERNAL_LINK');

@@ -367,6 +367,16 @@ export class RoomEngine extends Component implements IRoomEngine,
         return room !== null && room.getNumber(RoomVariableEnum.FREE_FURNI_MOVEMENTS_MODE) !== 0;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get activeRoomHasChooserDisabled()
+    // AS3 body: isRoomVariableActive(_activeRoomId, "chooser_disabled"). When set, the user and
+    // furni chooser windows refuse to populate — a room can opt out of being listed.
+    get activeRoomHasChooserDisabled(): boolean
+    {
+        const room = this.getRoomInstance(this._activeRoomId);
+
+        return room !== null && room.getNumber(RoomVariableEnum.CHOOSER_DISABLED) !== 0;
+    }
+
     protected override get dependencies(): Array<ComponentDependency<any>> 
     {
         return [
