@@ -24,6 +24,7 @@ import {Stage} from './onBoardingHcUi/display/Stage';
 import {LoginAssets} from './onBoardingHcUi/LoginAssets';
 import {ChangelogWindow} from './changelog/ChangelogWindow';
 import {installWindowDebugger} from './debugger/WindowDebuggerOverlay';
+import {RoomLightingController} from './lighting/RoomLightingController';
 import {
     type IWindowLayoutXmlData,
     parseElementDescriptionXml,
@@ -1259,9 +1260,15 @@ export class VortexApp
      * Sets up room state tracking by listening to room engine events.
      * Updates `_isInRoom` to control mouse event routing.
      */
-    private setupRoomStateTracking(): void 
+    private setupRoomStateTracking(): void
     {
         const vortex = Vortex.instance;
+
+        // Not a port: the room lighting layer has no AS3 counterpart (see
+        // docs/architectures/room-lighting-architecture.md). Installed disabled — one ticker
+        // callback that returns on its first line, and touches nothing in the room until
+        // `VortexLighting.on()` is called.
+        RoomLightingController.install();
 
         vortex.roomEngine.events.on(RoomEngineEvent.REE_INITIALIZED, (event: RoomEngineEvent) =>
         {
