@@ -704,6 +704,18 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   - One deliberate write into ported code, confined to `SpriteLighting.ts`: it sets
     `ExtendedSprite.tint`, records the renderer's own colour first, and restores it on disable.
 
+- ✅ **Chat flood control (incoming 3614)**, 2026-08-08. `FloodControlMessageParser` (one int, the
+  seconds) + `FloodControlMessageEvent`, header **3614** from WIN63's registry
+  (`_SafeCls_2046.as::_events[3614] = _SafeCls_3307`), corroborated by vortex-emulator's
+  `FloodControlMessageComposer = 3614`; subscribed by `RoomChatHandler`, where the port already
+  carried the commented-out registration as a TODO.
+  - The *consumer* was already built and wired: `ChatInputWidgetHandler` listens for
+    `RSCE_FLOOD_EVENT` and turns it into `RoomWidgetFloodControlEvent.FLOOD_CONTROL`. Only the
+    producer was missing — the inverse of the usual "ported but never wired" shape, and just as
+    silent, since an event nobody emits looks exactly like a feature nobody wants.
+  - AS3 does not route this through `dispatchChatEvent()`: it builds the event by hand with
+    userId `-1` and the seconds in the **text** field, which is how the widget reads it back.
+
 - ✅ **Wall-item *move*, and the unported repeated-placement subsystem**, 2026-08-07. Follows the
   wall-placement entry below; both were blocked on the same missing `getLegacyGeometry()`.
   - **Moving an already-placed wall item.** New `MoveWallItemMessageComposer` — header **2999** from

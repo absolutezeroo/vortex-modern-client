@@ -19,8 +19,17 @@ import type {
 } from '../../communication/messages/parser/notifications/PetRespectNotificationEventParser';
 import type {ChatMessageEventParser, IChatLink} from '../../communication/messages/parser/room/chat/ChatMessageEventParser';
 
+import {FloodControlMessageEvent} from '../../communication/messages/incoming/room/chat/FloodControlMessageEvent';
+import type {
+    FloodControlMessageParser
+} from '../../communication/messages/parser/room/chat/FloodControlMessageParser';
+
 // Events
 import {RoomSessionChatEvent} from '../events/RoomSessionChatEvent';
+
+import {Logger} from '@core';
+
+const log = Logger.getLogger('habbo.session.handler.RoomChatHandler');
 
 /**
  * Room chat handler
@@ -51,9 +60,11 @@ export class RoomChatHandler extends BaseHandler
         this.addMessageEvent(connection, new PetSupplementedNotificationEvent(this.onPetSupplementedNotification.bind(this)));
         this.addMessageEvent(connection, new PetRespectNotificationEvent(this.onPetRespectNotification.bind(this)));
 
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as::RoomChatHandler()
+        this.addMessageEvent(connection, new FloodControlMessageEvent(this.onFloodControl.bind(this)));
+
         // TODO: Register additional message events when implemented
         // this.addMessageEvent(connection, new RespectNotificationMessageEvent(this.onRespectNotification.bind(this)));
-        // this.addMessageEvent(connection, new FloodControlMessageEvent(this.onFloodControl.bind(this)));
     }
 
     override dispose(): void
@@ -143,6 +154,36 @@ export class RoomChatHandler extends BaseHandler
 
         // AS3 passes no giver here, unlike its supplement sibling one method down.
         this.dispatchChatEvent(petData.roomObjectId, '', chatType, 1);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as::onFloodControl()
+    // The server is refusing this player's chat for N seconds. AS3 does not go through
+    // dispatchChatEvent(): it builds the event by hand with a different type (RSCE_FLOOD_EVENT), a
+    // userId of -1, and the seconds carried as the *text* field. `ChatInputWidgetHandler` was
+    // already listening for it and reading it back that way.
+    private onFloodControl(event: IMessageEvent): void
+    {
+        const parser = event.parser as FloodControlMessageParser | null;
+
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        const seconds = parser.seconds;
+
+        log.debug(`received flood control event for ${seconds} seconds`);
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionChatEvent.RSCE_FLOOD_EVENT,
+                new RoomSessionChatEvent(
+                    RoomSessionChatEvent.RSCE_FLOOD_EVENT, session, -1, `${seconds}`, 0, 0, null
+                )
+            );
+        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as::onPetSupplementedNotification()

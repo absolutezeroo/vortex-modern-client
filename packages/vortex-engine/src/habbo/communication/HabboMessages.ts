@@ -279,6 +279,7 @@ import {
 // Incoming Events - Room Chat
 import {
     ChatMessageEvent,
+    FloodControlMessageEvent,
     ShoutMessageEvent,
     UserTypingMessageEvent,
     WhisperMessageEvent,
@@ -1444,6 +1445,10 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1776, ShoutMessageEvent);
         this._events.set(3072, WhisperMessageEvent);
         this._events.set(206, UserTypingMessageEvent);
+        // AS3: _SafeCls_2046.as::_events[3614] = _SafeCls_3307 — the server refusing this player's
+        // chat for N seconds, subscribed by RoomChatHandler. Corroborated by vortex-emulator's
+        // FloodControlMessageComposer = 3614.
+        this._events.set(3614, FloodControlMessageEvent);
 
         // === ROOM ACTION ===
         // AS3: header corrected 1783 -> 1036 (_SafeCls_3215, onExpression,
