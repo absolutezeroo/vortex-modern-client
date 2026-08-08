@@ -1,6 +1,7 @@
 import type {ICategoryModel} from '../common/ICategoryModel';
 import type {ICategoryModelOwner} from '../common/ICategoryModelOwner';
 import {CategoryBaseModel} from '../common/CategoryBaseModel';
+import {HeadView} from './HeadView';
 
 /**
  * The hair and headwear page: hair, hat, head accessory, eye accessory and face accessory.
@@ -21,12 +22,9 @@ export class HeadModel extends CategoryBaseModel implements ICategoryModel
     /**
      * AS3: .../avatar/head/HeadModel.as::init()
      *
-     * The `_initialised` flag is set **before** the view is built, as in AS3 — so a view
-     * constructor that re-entered `getWindowContainer()` would not recurse.
-     *
-     * TODO(AS3): the view (`HeadView`) is not ported yet, so `_view` stays null and the page
-     * builds its grids without windows. Everything `CategoryBaseModel` does with `_view` is
-     * already null-guarded; wire it up with the view slice.
+     * The `_initialised` flag is set **before** the view is built, as in AS3 — `HeadView.init()`
+     * calls straight back into `switchCategory()`, and the flag is what stops that re-entering
+     * here.
      */
     protected override init(): void
     {
@@ -38,5 +36,11 @@ export class HeadModel extends CategoryBaseModel implements ICategoryModel
         this.initCategory('ea');
         this.initCategory('fa');
         this._initialised = true;
+
+        if(this._view === null)
+        {
+            this._view = new HeadView(this);
+            this._view.init();
+        }
     }
 }

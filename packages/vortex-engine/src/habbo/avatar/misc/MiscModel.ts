@@ -2,6 +2,7 @@ import type {ICategoryModel} from '../common/ICategoryModel';
 import type {ICategoryModelOwner} from '../common/ICategoryModelOwner';
 import {CategoryBaseModel} from '../common/CategoryBaseModel';
 import {CategoryData} from '../common/CategoryData';
+import {MiscView} from './MiscView';
 
 /**
  * The pets-and-props page: a held pet and a miscellaneous item.
@@ -25,8 +26,9 @@ export class MiscModel extends CategoryBaseModel implements ICategoryModel
     /**
      * AS3: .../avatar/misc/MiscModel.as::init()
      *
-     * TODO(AS3): the view (`MiscView`) is not ported yet, so `_view` stays null and the page
-     * builds its grids without windows. Wire it up with the view slice.
+     * The `_initialised` flag is set **before** the view is built, as in AS3 — `MiscView.init()`
+     * calls straight back into `switchCategory()`, and the flag is what stops that re-entering
+     * here.
      */
     protected override init(): void
     {
@@ -39,6 +41,12 @@ export class MiscModel extends CategoryBaseModel implements ICategoryModel
         this.ensureEmptyCategory('mc');
 
         this._initialised = true;
+
+        if(this._view === null)
+        {
+            this._view = new MiscView(this);
+            this._view.init();
+        }
     }
 
     // AS3: .../avatar/misc/MiscModel.as::ensureEmptyCategory()

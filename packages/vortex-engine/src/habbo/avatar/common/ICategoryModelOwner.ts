@@ -2,6 +2,8 @@ import type {IAvatarImage} from '../IAvatarImage';
 import type {IAvatarRenderManager} from '../IAvatarRenderManager';
 import type {IAvatarImageListener} from '../IAvatarImageListener';
 import type {FigureData} from '../figuredata/FigureData';
+import type {IAvatarEditorView} from '../view/IAvatarEditorView';
+import type {IHabboAvatarEditorHost} from '../IHabboAvatarEditorHost';
 import type {CategoryData} from './CategoryData';
 import type {ICategoryModel} from './ICategoryModel';
 import type {IFigureSetOwnership} from './IFigureSetOwnership';
@@ -26,6 +28,27 @@ export interface ICategoryModelOwner
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditor.as::get figureData()
     readonly figureData: FigureData | null;
+
+    /**
+     * The editor's window. Every `CategoryBaseView` reaches through it twice — for its own page
+     * container (`getCategoryContainer()`) and for the one shared grid (`gridView`).
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditor.as::get view()
+    readonly view: IAvatarEditorView | null;
+
+    /**
+     * The manager, for the two things a page's view asks of it: the clothes catalogue page id and
+     * the call that opens it. Reached as `controller.manager.…` in AS3.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditor.as::get manager()
+    readonly manager: IHabboAvatarEditorHost | null;
+
+    /**
+     * Read *and written* — `BodyView`'s two gender tabs assign it, which resets every page and
+     * swaps the figure model underneath the whole editor.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditor.as::get gender()
+    gender: string;
 
     /**
      * Builds a part type's whole grid — every wearable thumbnail and both colour palettes,

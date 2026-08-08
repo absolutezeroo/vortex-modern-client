@@ -1,3 +1,4 @@
+import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IAvatarImage} from './IAvatarImage';
 import type {IAvatarRenderManager} from './IAvatarRenderManager';
@@ -9,12 +10,17 @@ import type {IAvatarEditorSaveListener} from './IAvatarEditorSaveListener';
 import type {IAvatarEditorView} from './view/IAvatarEditorView';
 import type {ICategoryModel} from './common/ICategoryModel';
 import type {ICategoryModelOwner} from './common/ICategoryModelOwner';
+import type {
+    IAvatarEditorGridColorItem,
+    IAvatarEditorGridPartItem
+} from './common/IAvatarEditorGridItem';
 import type {IFigureSetOwnership} from './common/IFigureSetOwnership';
 import type {ISideContentModel} from './common/ISideContent';
 import type {IHabboAvatarEditorHost} from './IHabboAvatarEditorHost';
 import {Logger} from '@core/utils/Logger';
 import {OrderedMap} from '@core/utils/OrderedMap';
 import {AvatarEditorIdEnum} from './enum/AvatarEditorIdEnum';
+import {AvatarEditorView} from './AvatarEditorView';
 import {AvatarUpdateEvent} from './events/AvatarUpdateEvent';
 import {CategoryData} from './common/CategoryData';
 import {FigureData} from './figuredata/FigureData';
@@ -386,7 +392,7 @@ export class HabboAvatarEditor implements ICategoryModelOwner
     }
 
     // AS3: .../avatar/HabboAvatarEditor.as::getCategoryWindowContainer()
-    public getCategoryWindowContainer(categoryId: string): unknown
+    public getCategoryWindowContainer(categoryId: string): IWindow | null
     {
         return this._categories?.getValue(categoryId)?.getWindowContainer() ?? null;
     }
@@ -398,7 +404,7 @@ export class HabboAvatarEditor implements ICategoryModelOwner
     }
 
     // AS3: .../avatar/HabboAvatarEditor.as::getSideContentWindowContainer()
-    public getSideContentWindowContainer(name: string): unknown
+    public getSideContentWindowContainer(name: string): IWindowContainer | null
     {
         return this._sideContent?.getValue(name)?.getWindowContainer() ?? null;
     }
@@ -727,6 +733,33 @@ export class HabboAvatarEditor implements ICategoryModelOwner
         return this._currentNftTokenId !== null;
     }
 
+    /**
+     * AS3: .../avatar/HabboAvatarEditor.as::loadNftFigure()
+     *
+     * Two ways in. A preview already staged by `setNftOutfit()` is simply worn. Otherwise the
+     * *saved* NFT is looked up on the NFT page by token id and staged first — so arriving at the
+     * page re-dresses the avatar in the NFT it already owns.
+     *
+     * TODO(AS3): the second branch needs `NftAvatarsModel.getNftAvatarByTokenId()`, and
+     * `nft/NftAvatarsModel.as` (145 l.) is not ported — the page is not even added in `init()`. A
+     * saved NFT is therefore not restored when the user opens the page; a staged preview is.
+     */
+    // AS3: .../avatar/HabboAvatarEditor.as::loadNftFigure()
+    public loadNftFigure(): void
+    {
+        if(this._setNftOutfit !== null)
+        {
+            this.loadAvatarInEditor(this._setNftOutfit.figure, this._setNftOutfit.gender, this._clubMemberLevel);
+
+            return;
+        }
+
+        if(this._currentNftTokenId !== null)
+        {
+            log.debug('Saved NFT outfit not restored — NftAvatarsModel is not ported');
+        }
+    }
+
     // AS3: .../avatar/HabboAvatarEditor.as::loadRollbackFigure()
     // Only undoes when an NFT preview is actually in progress.
     public loadRollbackFigure(): void
@@ -790,7 +823,7 @@ export class HabboAvatarEditor implements ICategoryModelOwner
      * hot looks only when it is in the requested list, or when there is no list at all.
      *
      * TODO(AS3): three pages are not ported yet — `hotlooks`, `effects` and `nfts`, whose models
-     * need the view layer and the outfit classes. They are simply not added, so the editor comes
+     * need the outfit classes and the effects grid. They are simply not added, so the editor comes
      * up with five pages instead of eight. The wardrobe side panel is likewise absent.
      */
     // AS3: .../avatar/HabboAvatarEditor.as::init()
@@ -802,6 +835,11 @@ export class HabboAvatarEditor implements ICategoryModelOwner
 
         this._categories = new OrderedMap<string, ICategoryModel>();
         this._sideContent = new OrderedMap<string, ISideContentModel>();
+
+        // Built **before** the figures and the pages, as in AS3 — its constructor calls `update()`,
+        // which walks an empty category map and returns on an empty `currentViewId`, so nothing it
+        // touches exists yet on purpose.
+        this._view = new AvatarEditorView(this, categories);
 
         this._figures = new Map<string, FigureData>();
         this._figures.set(FigureData.MALE, new FigureData(this, null));
@@ -865,25 +903,29 @@ export class HabboAvatarEditor implements ICategoryModelOwner
     }
 
     /**
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/common/
-     * AvatarEditorGridPartItem.as — not ported (514 l., window-backed). Delegated to the host so
-     * the view slice can supply the real thing without touching this class; until then the host
-     * returns a plain data item that satisfies `IAvatarEditorGridPartItem` and draws nothing.
+     * TS-only: stands in for AS3's inline
+     * `new AvatarEditorGridPartItem(AvatarEditorView.THUMB_WINDOW.clone(), …)`.
+     *
+     * Delegated to the manager so this class does not have to import the window layer for the sake
+     * of one `clone()`; the manager builds the real, window-backed item.
      */
-    // TS-only: stands in for AS3's inline `new AvatarEditorGridPartItem(...)`.
     private createPartItem(
         model: ICategoryModel,
         partSet: IFigurePartSet | null,
         colours: unknown[] | null,
         colourable: boolean,
         disabled: boolean
-    ): {iconImage: ImageBitmap | null} | null
+    ): IAvatarEditorGridPartItem | null
     {
         return this._manager?.createGridPartItem(model, partSet, colours, colourable, disabled) ?? null;
     }
 
     // TS-only: the colour half of `createPartItem()` — same reasoning.
-    private createColorItem(model: ICategoryModel, colour: unknown, disabled: boolean): unknown
+    private createColorItem(
+        model: ICategoryModel,
+        colour: unknown,
+        disabled: boolean
+    ): IAvatarEditorGridColorItem | null
     {
         return this._manager?.createGridColorItem(model, colour, disabled) ?? null;
     }

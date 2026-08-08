@@ -931,6 +931,60 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     registration would double-parse. The guide button uses the cached answer and is not refreshed
     by a later push. And the clothes button still opens nothing — see the avatar-editor entry.
 
+- 🔄 **Avatar editor, slice 7: the window — `AvatarEditorView`, the grid, and the five pages**,
+  2026-08-08. `AvatarEditorView` (657 l. AS3), `AvatarEditorGridView` (248), `CategoryBaseView`
+  (107) and the five category views `BodyView` (125) / `HeadView` (139) / `TorsoView` (135) /
+  `LegsView` (123) / `MiscView` (117) — **1,651 l. of AS3**. `common/` is now **12 of 12**, and
+  the editor draws for the first time: `HabboAvatarEditor.init()` builds the view, each model
+  builds its own, and the manager's grid items now receive a real cloned window instead of null.
+  - **One grid serves every page.** `AvatarEditorGridView` wraps a single `grid_container` and is
+    re-filled on each tab or part-type change rather than rebuilt — which is why it has to remember
+    the part type: a click arrives with only a grid index, and the part type is what turns it back
+    into a selection.
+  - **The two templates are lifted out of the layout and never put back.** `THUMB_WINDOW` and
+    `COLOUR_WINDOW` are `public static var`s on `AvatarEditorView`, found by name in
+    `AvatarEditorContent`, removed from it, and assigned **only when still null** — so the first
+    editor built in a session decides what every later one's thumbnails look like. This is what
+    slice 6's grid items were missing.
+  - **Tabs are pruned by hand, backwards.** The strip does not re-flow: every tab after a removed
+    one is shifted left by its width in a nested loop. Probe-confirmed — a restricted
+    `['generic','head']` editor leaves exactly two tabs at x 0 and 52.
+  - 🐛 **`_categoryContainers` collects the pages of removed tabs too**: the name list is filled
+    *before* the availability test, so a pruned tab's `<id>_content` container is still detached and
+    stored. Harmless (nothing shows it) and kept.
+  - 🐛 **`setViewToCategory()` removes the outgoing page before fetching the incoming one**, so a
+    page whose view is not built leaves `contentArea` empty rather than unchanged. That is the
+    visible symptom of the three unported pages: the tab lights, the panel goes blank. Kept and
+    probe-confirmed.
+  - 🐛 **`update()` assigns the wardrobe button's visibility twice**, the second time without the
+    club test — so a non-subscriber sees the button. Kept: deleting the dead line would delete the
+    evidence that the club rule was meant to apply.
+  - 🐛 **`dispose()` is dead from the halfway point.** It nulls `_window`, then guards the whole
+    child-clearing tail on `_window` being non-null — so the three loops never run and `_editor` is
+    never cleared. Kept verbatim; the leak is AS3's. The tail also looks up `figureContainer`, a
+    name that does not exist in the layout (the preview is `avatarWidget`).
+  - 🐛 **`embedToContext()` guards its removals with `if(index)`, not `if(index >= 0)`** — index 0
+    is skipped — and in the no-context branch calls `removeChildAt` on the argument it has just
+    established is null. That line is only reachable when the index is non-zero, which cannot
+    happen right after `addChild()`, so AS3 never actually throws. Both kept.
+  - 🐛 **`getFrame()` tests `_frame != null` twice**, the second time after returning on it — the
+    dispose-and-rebuild branch is unreachable. Kept.
+  - ⚠️ **`AvatarEditorGridViewEffects` (160 l.) and `AvatarEditorNameChangeView` (358 l.) are not
+    ported**, so `effectsGridView` is null and the name-change button logs a warning. Both are
+    constructed inline by `AvatarEditorView` in AS3; both carry a `TODO(AS3)` at the call site.
+  - 🔌 **The manager had no `IID_HabboWindowManager` dependency** — without it the editor has no way
+    to build `AvatarEditorContent` and would have come up as a working model with no window at all,
+    the failure mode this port keeps producing. Added, optional like the other five.
+  - **`ICategoryModel.controller` is no longer `unknown`**: narrowed to `ICategoryModelOwner`, which
+    gained `view`, `manager` and a read/**write** `gender` — `BodyView`'s two gender tabs assign it.
+  - **Probe-verified**: `showPalettes` gives 0 → both hidden, 1 → full 210px, 2 → 100/100 with the
+    second at x 110 (10px gap); a `GET_MORE` tile opens `catalog.clothes.page` while `REMOVE_ITEM`
+    takes the ordinary select-by-index route; a palette click resolves its layer from which of the
+    two grids holds it; the tab bitmap toggle is idempotent (`_off` is stripped before being
+    re-appended); `HeadView.switchCategory('zz')` throws with **no** tab lit, because AS3 dims the
+    old one first; `BodyView`'s hover-out restores by gender rather than by hover state; save
+    disables the button, saves, and closes by instance id; rotate steps 4→5→6→7→0.
+
 - 🔄 **Avatar editor, slice 6: the two grid items**, 2026-08-08.
   `AvatarEditorGridPartItem` (514 l. AS3) and `AvatarEditorGridColorItem` (145), plus
   `getAssetByName()` exposed on `IAvatarRenderManager`. `common/` is now **10 of 12** — only
@@ -1155,19 +1209,23 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     (`GetWardrobeMessageEvent` 2210, `SaveWardrobeOutfitMessageEvent` 116,
     `WardrobeMessageComposer` 1484), with WIN63's own registry as the primary source.
 
-- ⏸ **The avatar editor's *view* layer is unported** (everything else landed in slices 1-5),
-  measured 2026-08-08. `habbo/avatar/`'s *editor*
-  side is ≈**7,200 l. across ~45 files** — core 2,269 (`HabboAvatarEditor` 968, `AvatarEditorView`
-  657, `HabboAvatarEditorManager` 305, `AvatarEditorMessageHandler` 239), `common/` 2,036,
-  `wardrobe/` 828, `effects/` 648, `figuredata/` 418, `nft/` 342, `generic/` 252, `hotlooks/` 230,
-  `misc/` 169. The port's `habbo/avatar/{common,wardrobe,hotlooks,figuredata,generic,effects,nft,
-  view}/` directories **exist and are empty** — only the avatar *renderer* is ported.
-  - The DI symbol `IID_HabboAvatarEditor` exists and nothing provides it, so every dependency on it
-    resolves to null. `HabboCatalog`, `HabboLandingView`, `FurnitureClothingChangeWidgetHandler`,
-    `MeMenuWidgetHandler` and `MeMenuMainView` all carry the same placeholder `TODO(AS3)`.
-  - The interface to implement is `habbo/avatar/_SafeCls_68.as` (name DERIVED: `IHabboAvatarEditor`,
-    from `IIDHabboAvatarEditor`): `openEditor`, `embedEditorToContext`, `loadAvatarInEditor`,
-    `loadOwnAvatarInEditor`, `get events`, `close`. It is a multi-session slice of its own.
+- ⏸ **What is left of the avatar editor after slice 7**, measured 2026-08-08. The editor side of
+  `habbo/avatar/` is ≈**7,200 l. across ~45 files**; slices 1-7 have taken the core (2,269),
+  `common/` (2,036, now 12 of 12), `figuredata/` (418), `generic/` (252) and the five simple pages.
+  What remains, all of it view-side or outfit-side:
+  - `wardrobe/` (828 l., 6 files) — `Outfit`, `NftOutfit`, `OutfitView`, `WardrobeModel`,
+    `WardrobeSlot`, `WardrobeView`. Until it lands `getSideContentWindowContainer('wardrobe')`
+    returns null and the side panel collapses to 1px.
+  - `effects/` (648) — `EffectsModel`, `EffectsView`, `EffectsParamView`,
+    `AvatarEditorGridItemEffect`, `AvatarEditorGridViewEffects`. `AvatarEditorView.effectsGridView`
+    is null without it.
+  - `nft/` (342) + `hotlooks/` (230) — the two remaining pages, plus what
+    `HabboAvatarEditor.loadNftFigure()` needs to restore a *saved* NFT.
+  - `view/AvatarEditorNameChangeView.as` (358) + `AvatarEditorNameSuggestionListRenderer.as` (120)
+    — the name-change dialog; `AvatarEditorMessageHandler.onCheckUserNameResult()` drops its answer
+    until then.
+  - The editor is otherwise reachable and draws: `IID_HabboAvatarEditor` is provided by
+    `HabboAvatarEditorManager` (slice 5) and wired at all nine call sites.
 
 - 🔄 **Priority 1, slice 17: `RWE_ME_MENU` — the handler and its whole message layer**,
   2026-08-08. `MeMenuWidgetHandler` (481 l. AS3) + the 5 missing widget messages + the 6 missing

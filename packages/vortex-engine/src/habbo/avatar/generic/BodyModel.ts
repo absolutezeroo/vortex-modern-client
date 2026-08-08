@@ -2,6 +2,7 @@ import type {CategoryData} from '../common/CategoryData';
 import type {IAvatarImageListener} from '../IAvatarImageListener';
 import type {ICategoryModel} from '../common/ICategoryModel';
 import type {ICategoryModelOwner} from '../common/ICategoryModelOwner';
+import {BodyView} from './BodyView';
 import {CategoryBaseModel} from '../common/CategoryBaseModel';
 
 /**
@@ -39,8 +40,9 @@ export class BodyModel extends CategoryBaseModel implements ICategoryModel, IAva
     /**
      * AS3: .../avatar/generic/BodyModel.as::init()
      *
-     * TODO(AS3): the view (`BodyView`) is not ported yet, so `_view` stays null. Wire it up with
-     * the view slice.
+     * The `_initialised` flag is set **before** the view is built, as in AS3 — `BodyView.init()`
+     * calls back into this page through `updateGridView()`, and the flag is what stops that
+     * re-entering here.
      */
     protected override init(): void
     {
@@ -49,6 +51,12 @@ export class BodyModel extends CategoryBaseModel implements ICategoryModel, IAva
         this.initCategory(BodyModel.HEAD_PART_TYPE);
 
         this._initialised = true;
+
+        if(this._view === null)
+        {
+            this._view = new BodyView(this);
+            this._view.init();
+        }
     }
 
     /**

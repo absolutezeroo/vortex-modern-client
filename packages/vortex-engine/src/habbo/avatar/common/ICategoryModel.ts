@@ -1,5 +1,6 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {CategoryData} from './CategoryData';
+import type {ICategoryModelOwner} from './ICategoryModelOwner';
 import type {IFigureSetOwnership} from './IFigureSetOwnership';
 
 /**
@@ -23,12 +24,9 @@ export interface ICategoryModel
     // AS3: .../avatar/common/_SafeCls_2660.as::reset()
     reset(): void;
 
-    /**
-     * TODO(AS3): typed `unknown` because `HabboAvatarEditor` is not ported yet — AS3 types this
-     * `HabboAvatarEditor`. Narrow it when that class lands.
-     */
     // AS3: .../avatar/common/_SafeCls_2660.as::get controller()
-    readonly controller: unknown;
+    // AS3 types this `HabboAvatarEditor`; narrowed to the surface the pages and their views use.
+    readonly controller: ICategoryModelOwner | null;
 
     // AS3: .../avatar/common/_SafeCls_2660.as::getWindowContainer()
     getWindowContainer(): IWindow | null;

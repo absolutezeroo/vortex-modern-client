@@ -8,6 +8,7 @@ import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
+import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IAvatarRenderManager} from './IAvatarRenderManager';
 import type {IAvatarEditorSaveListener} from './IAvatarEditorSaveListener';
 import type {IFigurePartSet} from './structure/figure/IFigurePartSet';
@@ -24,9 +25,11 @@ import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboInventory} from '@iid/IIDHabboInventory';
+import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {AvatarEditorIdEnum} from './enum/AvatarEditorIdEnum';
 import {AvatarEditorMessageHandler} from './AvatarEditorMessageHandler';
+import {AvatarEditorView} from './AvatarEditorView';
 import {HabboAvatarEditor} from './HabboAvatarEditor';
 import {AvatarEditorGridPartItem} from './common/AvatarEditorGridPartItem';
 import {AvatarEditorGridColorItem} from './common/AvatarEditorGridColorItem';
@@ -69,6 +72,9 @@ export class HabboAvatarEditorManager extends Component
     // AS3: .../avatar/HabboAvatarEditorManager.as::_sessionData
     private _sessionData: ISessionDataManager | null = null;
 
+    // AS3: .../avatar/HabboAvatarEditorManager.as::_windowManager
+    private _windowManager: IHabboWindowManager | null = null;
+
     // AS3: .../avatar/HabboAvatarEditorManager.as::_handler
     // Name DERIVED (`_SafeStr_4574`).
     private _handler: IAvatarEditorMessageHandler | null = null;
@@ -93,6 +99,18 @@ export class HabboAvatarEditorManager extends Component
     public get sessionData(): ISessionDataManager | null
     {
         return this._sessionData;
+    }
+
+    // AS3: .../avatar/HabboAvatarEditorManager.as::get windowManager()
+    public get windowManager(): IHabboWindowManager | null
+    {
+        return this._windowManager;
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/IHabboCatalog.as::openCatalogPage()
+    public openCatalogPage(pageName: string): void
+    {
+        this._catalog?.openCatalogPage(pageName);
     }
 
     // AS3: .../avatar/HabboAvatarEditorManager.as::get handler()
@@ -314,11 +332,11 @@ export class HabboAvatarEditorManager extends Component
      * TS-only: stands in for AS3's inline
      * `new AvatarEditorGridPartItem(AvatarEditorView.THUMB_WINDOW.clone(), ...)`.
      *
-     * TODO(AS3): the **window argument is null** until `AvatarEditorView` lands — AS3 clones a
-     * static template held on that class. The item itself is the real one: it computes its
-     * colour-layer count from the part's own sprites and holds the part set and flags. With a null
-     * window `updateThumbVisualization()` returns early, so nothing is drawn and the sprite
-     * compositing never runs.
+     * The template is lifted out of the `AvatarEditorContent` layout by the first
+     * `AvatarEditorView` built in the session and kept on that class, so it exists from the moment
+     * any editor has a window. Before that — and it can happen, since `generateDataContent()` is
+     * reachable from a page built without one — the clone is null and the item simply draws
+     * nothing.
      */
     public createGridPartItem(
         model: ICategoryModel,
@@ -326,22 +344,32 @@ export class HabboAvatarEditorManager extends Component
         colours: unknown[] | null,
         colourable: boolean,
         disabled: boolean
-    ): {iconImage: ImageBitmap | null} | null
+    ): AvatarEditorGridPartItem | null
     {
         return new AvatarEditorGridPartItem(
-            null, model, partSet, (colours ?? []) as (IPartColor | null)[], colourable, disabled
+            (AvatarEditorView.THUMB_WINDOW?.clone() as IWindowContainer | null) ?? null,
+            model,
+            partSet,
+            (colours ?? []) as (IPartColor | null)[],
+            colourable,
+            disabled
         );
     }
 
-    /**
-     * TS-only: the colour equivalent, standing in for
-     * `new AvatarEditorGridColorItem(AvatarEditorView.COLOUR_WINDOW.clone(), ...)`.
-     *
-     * TODO(AS3): same null window as above.
-     */
-    public createGridColorItem(model: ICategoryModel, colour: unknown, disabled: boolean): unknown
+    // TS-only: the colour equivalent, standing in for
+    // `new AvatarEditorGridColorItem(AvatarEditorView.COLOUR_WINDOW.clone(), ...)`.
+    public createGridColorItem(
+        model: ICategoryModel,
+        colour: unknown,
+        disabled: boolean
+    ): AvatarEditorGridColorItem | null
     {
-        return new AvatarEditorGridColorItem(null, model, colour as IPartColor | null, disabled);
+        return new AvatarEditorGridColorItem(
+            (AvatarEditorView.COLOUR_WINDOW?.clone() as IWindowContainer | null) ?? null,
+            model,
+            colour as IPartColor | null,
+            disabled
+        );
     }
 
     // AS3: .../avatar/HabboAvatarEditorManager.as::dispose()
@@ -400,6 +428,13 @@ export class HabboAvatarEditorManager extends Component
             new ComponentDependency(
                 IID_SessionDataManager,
                 (session: ISessionDataManager | null) => { this._sessionData = session; },
+                false
+            ),
+            // Without this the editor has no way to build `AvatarEditorContent` and comes up as a
+            // working model with no window at all — the failure mode this port keeps producing.
+            new ComponentDependency(
+                IID_HabboWindowManager,
+                (manager: IHabboWindowManager | null) => { this._windowManager = manager; },
                 false
             )
         ];

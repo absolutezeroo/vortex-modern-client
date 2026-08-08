@@ -1,3 +1,4 @@
+import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IPartColor} from '../structure/figure/IPartColor';
 import type {IFigurePartSet} from '../structure/figure/IFigurePartSet';
 
@@ -13,6 +14,10 @@ import type {IFigurePartSet} from '../structure/figure/IFigurePartSet';
  */
 export interface IAvatarEditorGridPartItem
 {
+    // AS3: .../avatar/common/AvatarEditorGridPartItem.as::get view()
+    // The cloned thumbnail window. What `AvatarEditorGridView` actually puts in the grid.
+    readonly view: IWindowContainer | null;
+
     // AS3: .../avatar/common/AvatarEditorGridPartItem.as::get id()
     readonly id: number;
 
@@ -59,6 +64,10 @@ export interface IAvatarEditorGridPartItem
  */
 export interface IAvatarEditorGridColorItem
 {
+    // AS3: .../avatar/common/AvatarEditorGridColorItem.as::get view()
+    // The cloned swatch window, added to one of the two palette grids.
+    readonly view: IWindowContainer | null;
+
     // AS3: .../avatar/common/AvatarEditorGridColorItem.as::get partColor()
     readonly partColor: IPartColor | null;
 

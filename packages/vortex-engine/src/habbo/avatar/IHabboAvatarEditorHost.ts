@@ -1,9 +1,14 @@
 import type {EventEmitter} from 'eventemitter3';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
+import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IAvatarRenderManager} from './IAvatarRenderManager';
 import type {IFigurePartSet} from './structure/figure/IFigurePartSet';
 import type {ICategoryModel} from './common/ICategoryModel';
+import type {
+    IAvatarEditorGridColorItem,
+    IAvatarEditorGridPartItem
+} from './common/IAvatarEditorGridItem';
 import type {IFigureSetOwnership} from './common/IFigureSetOwnership';
 import type {IAvatarEditorMessageHandler} from './IAvatarEditorMessageHandler';
 
@@ -31,6 +36,25 @@ export interface IHabboAvatarEditorHost
 
     // AS3: .../avatar/HabboAvatarEditorManager.as::get sessionData()
     readonly sessionData: ISessionDataManager | null;
+
+    /**
+     * The window manager, for the two layouts the editor builds (`AvatarEditorContent`,
+     * `AvatarEditorFrame`) and the bare container `embedToContext()` falls back on.
+     */
+    // AS3: .../avatar/HabboAvatarEditorManager.as::get windowManager()
+    readonly windowManager: IHabboWindowManager | null;
+
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::getProperty()
+    // Only one key is read through it: `catalog.clothes.page`.
+    getProperty(key: string): string;
+
+    // AS3: .../src/com/sulake/habbo/catalog/IHabboCatalog.as::openCatalogPage()
+    // Flattened from `manager.catalog.openCatalogPage(...)`, like `openClubCenter()` above.
+    openCatalogPage(pageName: string): void;
+
+    // AS3: .../avatar/HabboAvatarEditorManager.as::close()
+    // The save and cancel buttons both end here; what "close" does depends on the editor id.
+    close(editorId: number): void;
 
     // AS3: .../avatar/HabboAvatarEditorManager.as::get handler()
     readonly handler: IAvatarEditorMessageHandler | null;
@@ -75,11 +99,11 @@ export interface IHabboAvatarEditorHost
     getAssetBitmap(name: string): ImageBitmap | null;
 
     /**
-     * TS-only: AS3 builds `AvatarEditorGridPartItem` inline, cloning `AvatarEditorView.THUMB_WINDOW`.
+     * TS-only: stands in for AS3's inline
+     * `new AvatarEditorGridPartItem(AvatarEditorView.THUMB_WINDOW.clone(), …)`.
      *
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/common/
-     * AvatarEditorGridPartItem.as — not ported (514 l., window-backed). The manager currently
-     * returns a plain data item satisfying `IAvatarEditorGridPartItem`; the view slice replaces it.
+     * Delegated to the manager rather than inlined in `HabboAvatarEditor` so the editor core does
+     * not have to import the window layer for the sake of one `clone()`.
      */
     // TS-only: stands in for AS3's inline `new AvatarEditorGridPartItem(...)`.
     createGridPartItem(
@@ -88,14 +112,13 @@ export interface IHabboAvatarEditorHost
         colours: unknown[] | null,
         colourable: boolean,
         disabled: boolean
-    ): {iconImage: ImageBitmap | null} | null;
+    ): IAvatarEditorGridPartItem | null;
 
-    /**
-     * TS-only: the colour equivalent.
-     *
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/common/
-     * AvatarEditorGridColorItem.as — not ported (145 l., window-backed).
-     */
-    // TS-only: stands in for AS3's inline `new AvatarEditorGridColorItem(...)`.
-    createGridColorItem(model: ICategoryModel, colour: unknown, disabled: boolean): unknown;
+    // TS-only: the colour equivalent, standing in for
+    // `new AvatarEditorGridColorItem(AvatarEditorView.COLOUR_WINDOW.clone(), …)`.
+    createGridColorItem(
+        model: ICategoryModel,
+        colour: unknown,
+        disabled: boolean
+    ): IAvatarEditorGridColorItem | null;
 }
