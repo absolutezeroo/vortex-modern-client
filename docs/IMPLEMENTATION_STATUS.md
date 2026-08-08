@@ -954,6 +954,22 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     (25711)". `25711` is `0x646F`, i.e. the `do` of `<!doctype`. The guard only tested
     `<!doctype html` and `<html`; it now rejects any text/markup start and reports the **URL** and
     the first bytes.
+  - 🔌 **Fixed: every clothing thumbnail resolved its sprites against the wrong index.** AS3 asks
+    `avatarRenderManager.getAssetByName("h_std_ch_3216_2_0")` and Flash's flat library answers. This
+    port's `.nitro` bundles key their spritesheet frames **library-prefixed** —
+    `hh_human_shirt_h_std_ch_210_0_0` — and keep the unprefixed names, offsets and `source` aliases
+    in a separate `assets` map, so the raw library lookup returns null for **every** sprite and
+    `renderThumb()` fell back to the download icon each time. That is what the grid of grey
+    person-glyphs was.
+    - Measured by unpacking `hh_human_shirt.nitro` (gzip, not zlib — pako's `inflate` auto-detects,
+      Python needs `wbits=47`): 1,029 frames, all prefixed; `assets` keyed `h_std_ch_1_0_0`.
+    - `IAvatarRenderManager` gained `getSpriteAsset()`, forwarding to the **same
+      `AssetAliasCollection` the room renderer uses**, which resolves both the prefix and the
+      `source` aliases. `getAssetByName()` stays as-is for the flat window-manager images.
+    - Probe-confirmed: the lookup now goes through `getSpriteAsset('h_std_ch_3216_2_0')`, never
+      touches the raw library, and composites the sprite into the tile (green at its centre)
+      instead of returning the download icon — while a part with no sprite at any direction still
+      falls back to `downloadFigure()`.
   - **The download→repaint chain is intact** (verified by reading it end to end):
     `AvatarEditorGridPartItem.analyzePartLayers()` → `downloadFigure()` →
     `AvatarAssetDownloadManager.loadFigureSetData()` registers the listener and calls

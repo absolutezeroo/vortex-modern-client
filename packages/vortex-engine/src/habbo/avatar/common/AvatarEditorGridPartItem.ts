@@ -2,16 +2,32 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
-import type {BitmapDataAsset} from '@core/assets/BitmapDataAsset';
 import type {IAvatarImageListener} from '../IAvatarImageListener';
 import type {IAvatarRenderManager} from '../IAvatarRenderManager';
 import type {IFigurePart} from '../structure/figure/IFigurePart';
+import {AvatarTextureUtils} from '../AvatarTextureUtils';
 import type {IFigurePartSet} from '../structure/figure/IFigurePartSet';
 import type {IPartColor} from '../structure/figure/IPartColor';
 import type {IAvatarEditorGridPartItem} from './IAvatarEditorGridItem';
 import type {ICategoryModel} from './ICategoryModel';
 
 /** TS-only: the rectangle union `analyzePartLayers()` accumulates. */
+/**
+ * What `getSprite()` hands back: the pieces of AS3's `BitmapDataAsset` this class actually reads.
+ *
+ * TS-only: the port resolves sprites to `IGraphicAsset`, whose texture and offsets are shaped
+ * differently — see `getSprite()`.
+ */
+interface IThumbSprite
+{
+    // TS-only: AS3 reads `BitmapDataAsset.content`, a BitmapData.
+    content: ImageBitmap;
+    // TS-only: AS3 reads `BitmapDataAsset.offset`, the negated draw origin.
+    offset: {x: number; y: number};
+    // TS-only: AS3 reads `BitmapDataAsset.rectangle`.
+    rectangle: {width: number; height: number};
+}
+
 interface IThumbRect
 {
     // TS-only: `flash.geom.Rectangle.x`.
@@ -420,7 +436,7 @@ export class AvatarEditorGridPartItem implements IAvatarEditorGridPartItem, IAva
 
         for(const part of parts)
         {
-            let asset: BitmapDataAsset | null = null;
+            let asset: IThumbSprite | null = null;
 
             if(directionFound)
             {
@@ -528,7 +544,7 @@ export class AvatarEditorGridPartItem implements IAvatarEditorGridPartItem, IAva
 
         for(const part of parts)
         {
-            let asset: BitmapDataAsset | null = null;
+            let asset: IThumbSprite | null = null;
 
             if(directionFound)
             {
@@ -568,12 +584,30 @@ export class AvatarEditorGridPartItem implements IAvatarEditorGridPartItem, IAva
     }
 
     // TS-only: AS3 builds the sprite name inline in both loops, identically.
-    private getSprite(part: IFigurePart, direction: number): BitmapDataAsset | null
+    private getSprite(part: IFigurePart, direction: number): IThumbSprite | null
     {
         const name = `${AvatarEditorGridPartItem.SPRITE_PREFIX}${part.type}_${part.id}_${direction}`
             + `_${AvatarEditorGridPartItem.SPRITE_FRAME}`;
 
-        return (this._renderManager?.getAssetByName(name) ?? null) as BitmapDataAsset | null;
+        // AS3 asks the flat Flash library. This port's bundles key their frames by
+        // `<library>_<name>` and keep the offsets in a separate map, so the sprite has to come
+        // through the same alias collection the room renderer uses — see
+        // `IAvatarRenderManager.getSpriteAsset()`.
+        const asset = this._renderManager?.getSpriteAsset(name) ?? null;
+
+        if(asset === null) return null;
+
+        const content = AvatarTextureUtils.toImageBitmap(asset.texture);
+
+        if(content === null) return null;
+
+        return {
+            content,
+            // AS3's `BitmapDataAsset.offset` is the *negated* draw origin, which is why every
+            // caller writes `-asset.offset.x`. `IGraphicAsset` stores it the other way round.
+            offset: {x: -asset.offsetX, y: -asset.offsetY},
+            rectangle: {width: asset.width, height: asset.height}
+        };
     }
 
     // TS-only: `flash.geom.Rectangle.union()`, which starts from an empty rect at the origin —

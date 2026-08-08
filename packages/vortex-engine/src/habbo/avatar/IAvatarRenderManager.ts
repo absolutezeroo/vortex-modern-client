@@ -5,6 +5,7 @@ import type {IAvatarImage} from './IAvatarImage';
 import type {IAvatarImageListener} from './IAvatarImageListener';
 import type {IAvatarEffectListener} from './IAvatarEffectListener';
 import type {IFigureData} from './structure/IFigureData';
+import type {IGraphicAsset} from '@room/object/visualization/utils/IGraphicAsset';
 
 /**
  * Interface for the avatar render manager component.
@@ -38,6 +39,22 @@ export interface IAvatarRenderManager
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::getAssetByName()
     getAssetByName(name: string): IAsset | null;
+
+    /**
+     * Resolves an avatar **sprite** by its figure name, e.g. `h_std_ch_3216_2_0`.
+     *
+     * TS-only: AS3 needs no such method — Flash's asset library is flat, so
+     * `getAssetByName("h_std_…")` finds the sprite directly and that is exactly what
+     * `AvatarEditorGridPartItem` calls. This port's `.nitro` bundles register their spritesheet
+     * frames **library-prefixed** (`hh_human_shirt_h_std_ch_210_0_0`) and carry a separate `assets`
+     * map of unprefixed names, offsets and `source` aliases — so the equivalent lookup is the one
+     * the room renderer already uses, `AssetAliasCollection.getAsset()`, which resolves both.
+     *
+     * Calling `getAssetByName()` with a sprite name returns null instead, which is why every
+     * clothing thumbnail came up as the download icon.
+     */
+    // TS-only: see the note above — AS3 has no counterpart because its library is flat.
+    getSpriteAsset(name: string): IGraphicAsset | null;
 
     // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_581.as::getFigureData()
     getFigureData(): IFigureData;

@@ -11,6 +11,7 @@ import type {IAvatarImageListener} from './IAvatarImageListener';
 import type {IAvatarEffectListener} from './IAvatarEffectListener';
 import type {IFigureData} from './structure/IFigureData';
 import {AvatarStructure} from './AvatarStructure';
+import type {IGraphicAsset} from '@room/object/visualization/utils/IGraphicAsset';
 import {AssetAliasCollection} from './alias/AssetAliasCollection';
 import {AvatarFigureContainer} from './AvatarFigureContainer';
 import {AvatarImage} from './AvatarImage';
@@ -180,6 +181,13 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
     public getAssetByName(name: string): IAsset | null
     {
         return this._assetLibrary?.getAssetByName(name) ?? null;
+    }
+
+    // TS-only: see `IAvatarRenderManager.getSpriteAsset()` for why the raw library lookup above
+    // cannot find a sprite in this port and the alias collection can.
+    public getSpriteAsset(name: string): IGraphicAsset | null
+    {
+        return this._aliasCollection.getAsset(name);
     }
 
     // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::getFigureData()
