@@ -293,7 +293,19 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
         if(!canvasWrapper) return;
 
-        const canvas = this._roomPreviewer.getRoomCanvas(root.width, root.height);
+        // AS3: `getRoomCanvas(var_624.width, var_624.height)` — the size of the `room_canvas`
+        // wrapper, **not** of the root. The root is resized to the host window just above (AS3 does
+        // the same), but the wrapper keeps the size the layout gives it: 162 x 168, wider than the
+        // 125-px viewport.
+        //
+        // That difference is load-bearing. The widget shifts the whole canvas by its
+        // `room_previewer:offsetx/offsety` (-65, -30 for the avatar editor) while the room engine
+        // separately shifts the content inside the canvas by the same amounts via `addViewOffset`.
+        // Over AS3's wider surface the display shift merely chooses which part of it you see. Built
+        // at exactly the viewport size — which this used to do — the same shift throws half the
+        // image off the left edge, and the previewed object frames off-centre.
+        const wrapperWindow = canvasWrapper as unknown as IWindow;
+        const canvas = this._roomPreviewer.getRoomCanvas(wrapperWindow.width, wrapperWindow.height);
 
         if(canvas) 
         {
