@@ -543,6 +543,10 @@ import {QuizDataMessageEvent} from './messages/incoming/help/QuizDataMessageEven
 import {QuizResultsMessageEvent} from './messages/incoming/help/QuizResultsMessageEvent';
 import {ChangeUserNameMessageComposer} from './messages/outgoing/help/ChangeUserNameMessageComposer';
 import {CheckUserNameMessageComposer} from './messages/outgoing/help/CheckUserNameMessageComposer';
+import {GetWardrobeMessageComposer} from './messages/outgoing/wardrobe/GetWardrobeMessageComposer';
+import {SaveWardrobeOutfitMessageComposer} from './messages/outgoing/wardrobe/SaveWardrobeOutfitMessageComposer';
+import {WardrobeMessageEvent} from './messages/incoming/wardrobe/WardrobeMessageEvent';
+import {AvatarEffectSelectedMessageEvent} from './messages/incoming/wardrobe/AvatarEffectSelectedMessageEvent';
 
 // Incoming Events - Help (name change events)
 import {
@@ -1264,6 +1268,10 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1577, AvatarEffectAddedMessageEvent);
         this._events.set(3814, AvatarEffectActivatedMessageEvent);
         this._events.set(2236, AvatarEffectExpiredMessageEvent);
+        // The avatar editor's two remaining incoming messages. 3629 is *not* the room-effect push
+        // (that is 2624, AvatarEffectMessageEvent) — both ids are real and carry different payloads.
+        this._events.set(1484, WardrobeMessageEvent);
+        this._events.set(3629, AvatarEffectSelectedMessageEvent);
 
         // === INVENTORY - FURNI ===
         this._events.set(2694, FurniListMessageEvent);
@@ -2115,6 +2123,8 @@ export class HabboMessages implements IMessageConfiguration
         // the paid rename in habbo/help/namechange uses 1703 and a different composer class, so the
         // two are not interchangeable. The check is shared: `_composers[413] = _SafeCls_3569`.
         this._composers.set(413, CheckUserNameMessageComposer);
+        this._composers.set(2210, GetWardrobeMessageComposer);
+        this._composers.set(116, SaveWardrobeOutfitMessageComposer);
         this._composers.set(879, ChangeUserNameMessageComposer);
         this._composers.set(407, RateFlatMessageComposer);
         this._composers.set(2985, ToggleStaffPickMessageComposer);

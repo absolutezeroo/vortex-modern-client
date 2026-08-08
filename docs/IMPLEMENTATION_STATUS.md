@@ -931,7 +931,33 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     registration would double-parse. The guide button uses the cached answer and is not refreshed
     by a later push. And the clothes button still opens nothing — see the avatar-editor entry.
 
-- ⏸ **The avatar editor is entirely unported**, measured 2026-08-08. `habbo/avatar/`'s *editor*
+- 🔄 **Avatar editor, slice 1: the wire layer**, 2026-08-08. The four messages
+  `AvatarEditorMessageHandler` needs that the port did not have — `WardrobeMessageEvent` (1484) +
+  its parser + the `WardrobeOutfit` DTO, `AvatarEffectSelectedMessageEvent` (3629) + parser,
+  `GetWardrobeMessageComposer` (2210) and `SaveWardrobeOutfitMessageComposer` (116), all registered
+  in `HabboMessages`. Self-contained: no editor code depends on it yet, and nothing depends on the
+  editor.
+  - **Its handler needs 11 messages; 7 were already ported.** Measured against
+    `AvatarEditorMessageHandler.as`'s constructor and its three send methods: `AvatarEffect` (2624),
+    `AvatarEffectAdded` (1577), `UserRights` (3599), `AvatarEffectExpired` (2236),
+    `CheckUserNameResult` (382), `AvatarEffectActivated` (3814) and `CheckUserName` (413) already
+    existed.
+  - ⚠️ **3629 is not a duplicate of 2624.** A previous round recorded "room-effect header fixed to
+    2624 (was 3629)", which is right — but 3629 is a *separate, real* event: WIN63 registers
+    `_SafeStr_4546[3629] = _SafeCls_3136`, an effect-**selected** push carrying a bare type, where
+    2624 carries a user id and an effect id. Both are now registered, and the probe confirms they
+    resolve to different classes.
+  - **Wire order verified rather than assumed.** The wardrobe parser reads **state, then count,
+    then (slot, figure, gender) per outfit** — a reader starting with the count is a byte out.
+    Probe-confirmed with a scripted wrapper that records its own read sequence:
+    `int,int,(int,string,string)×2`. And `SaveWardrobeOutfit` pushes its arguments **in order**,
+    unlike its neighbour `UpdateFigureDataMessageComposer`, which reverses them.
+  - All three composers/events corroborated against the emulator's `Headers.cs`
+    (`GetWardrobeMessageEvent` 2210, `SaveWardrobeOutfitMessageEvent` 116,
+    `WardrobeMessageComposer` 1484), with WIN63's own registry as the primary source.
+
+- ⏸ **The avatar editor is unported apart from its wire layer** (see the slice above), measured
+  2026-08-08. `habbo/avatar/`'s *editor*
   side is ≈**7,200 l. across ~45 files** — core 2,269 (`HabboAvatarEditor` 968, `AvatarEditorView`
   657, `HabboAvatarEditorManager` 305, `AvatarEditorMessageHandler` 239), `common/` 2,036,
   `wardrobe/` 828, `effects/` 648, `figuredata/` 418, `nft/` 342, `generic/` 252, `hotlooks/` 230,
