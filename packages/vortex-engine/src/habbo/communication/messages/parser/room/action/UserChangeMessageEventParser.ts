@@ -73,7 +73,20 @@ export class UserChangeMessageEventParser implements IMessageParser
         return true;
     }
 
-    // AS3: .../src/unknowns/_SafePkg_2184/_SafeCls_2646.as::parse()
+    /**
+     * AS3: .../src/unknowns/_SafePkg_2184/_SafeCls_2646.as::parse()
+     *
+     * The read order below is AS3's, field for field: id, figure, sex, customInfo,
+     * achievementScore, an unused string, a count-prefixed list of unused int triplets, then
+     * badgesRank. **Do not make the tail conditional** — the last four are load-bearing framing
+     * even though three of their values are discarded.
+     *
+     * Header 3798. The server used to write only the first five, so the sixth read threw
+     * `End of buffer` and the message was dropped whole; a figure or motto change made outside the
+     * room never landed. Diagnosed and completed server-side on 2026-08-08
+     * (`Revision20260701/Serializers/.../UserChangeMessageComposerSerializer.cs`), which now writes
+     * all nine.
+     */
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(wrapper === null)

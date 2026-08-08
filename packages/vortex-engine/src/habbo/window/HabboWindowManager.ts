@@ -1255,6 +1255,12 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         return this._resourceManager?.hasAsset(name) ?? false;
     }
 
+    // TS-only: forwards `IResourceManager.getAsset()`.
+    public getAsset(name: string): ImageBitmap | null
+    {
+        return this._resourceManager?.getAsset(name) ?? null;
+    }
+
     /**
      * Returns the default attributes for a given window type and style.
      *

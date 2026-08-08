@@ -233,6 +233,10 @@ export interface IHabboWindowManager extends IDisposable {
     // component asset library.
     hasAsset(name: string): boolean;
 
+    // TS-only: the decoded bitmap behind `hasAsset()`, for callers that must composite
+    // synchronously — see `IResourceManager.getAsset()`.
+    getAsset(name: string): ImageBitmap | null;
+
     // TS-only
     loadSkinAssets(skins: Map<string, ISkinData>, atlases: Map<string, ImageBitmap>): void;
 

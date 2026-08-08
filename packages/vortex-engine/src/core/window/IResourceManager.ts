@@ -62,4 +62,16 @@ export interface IResourceManager extends IDisposable
 	 * @returns True if `retrieveAsset()` would be able to resolve this name
 	 */
     hasAsset(name: string): boolean;
+
+    /**
+	 * The decoded bitmap for a name, or null when it is not in the cache yet.
+	 *
+	 * TS-only: AS3 reads `assets.getAssetByName(name).content` off a component asset library, which
+	 * is always resolved by the time anything asks. This port keeps window images here instead, and
+	 * `retrieveAsset()` is receiver-based — so a caller that has to composite *now*
+	 * (`AvatarEditorGridColorItem.setupColor()` tints the shared chip) needs the cached value
+	 * directly. Returns null for a name registered only as a lazy URL and never requested.
+	 */
+    // TS-only: see the note above; AS3 reads a component asset library instead.
+    getAsset(name: string): ImageBitmap | null;
 }

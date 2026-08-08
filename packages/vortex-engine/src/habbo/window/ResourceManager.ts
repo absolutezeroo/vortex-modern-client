@@ -153,6 +153,13 @@ export class ResourceManager implements IResourceManager
         return this._assets.has(resolvedName) || this._assetUrls.has(resolvedName);
     }
 
+    // TS-only: see `IResourceManager.getAsset()` for why a synchronous read exists alongside the
+    // receiver-based `retrieveAsset()`.
+    public getAsset(name: string): ImageBitmap | null
+    {
+        return this._assets.get(name) ?? null;
+    }
+
     // AS3: sources/win63_version/habbo/window/ResourceManager.as::isSameAsset()
     public isSameAsset(uri1: string, uri2: string): boolean 
     {

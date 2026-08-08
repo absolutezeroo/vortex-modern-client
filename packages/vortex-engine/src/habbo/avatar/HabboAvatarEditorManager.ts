@@ -342,9 +342,21 @@ export class HabboAvatarEditorManager extends Component
 
     // TS-only: AS3 reads `windowManager.assets.getAssetByName(name).content` inline — see
     // `IHabboAvatarEditorHost`.
+    /**
+     * AS3 reads `windowManager.assets.getAssetByName(name).content` — one flat Flash library
+     * holding both the layouts and the images. This port splits them: layouts live in the window
+     * manager's widget-layout registry, **images in its `ResourceManager`**, and a DI component's
+     * own `assets` library holds neither.
+     *
+     * Reading `this.assets` therefore returned null for every image — which is why every colour
+     * swatch stayed white: `AvatarEditorGridColorItem.setupColor()` could not fetch the greyscale
+     * chip to tint, and returned before touching it. The component library is still tried as a
+     * fallback, since nothing guarantees it is empty.
+     */
     public getAssetBitmap(name: string): ImageBitmap | null
     {
-        return (this.assets?.getAssetByName(name)?.content ?? null) as ImageBitmap | null;
+        return this._windowManager?.getAsset(name)
+            ?? ((this.assets?.getAssetByName(name)?.content ?? null) as ImageBitmap | null);
     }
 
     /**
