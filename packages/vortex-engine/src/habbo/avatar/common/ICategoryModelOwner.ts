@@ -65,6 +65,13 @@ export interface ICategoryModelOwner
     openHabboClubAdWindow(): void;
 
     /**
+     * Applies an effect to the edited figure and flags it so the save pushes it into the
+     * inventory. `EffectsModel` is the only caller; −1 means "wear nothing".
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditor.as::setAvatarEffectType()
+    setAvatarEffectType(effectType: number): void;
+
+    /**
      * Whether the user owns a given sellable figure set.
      *
      * AS3 reaches this as `controller.manager.inventory`; flattened here because the manager is

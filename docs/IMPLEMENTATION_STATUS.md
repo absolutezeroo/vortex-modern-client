@@ -931,6 +931,50 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     registration would double-parse. The guide button uses the cached answer and is not refreshed
     by a later push. And the clothes button still opens nothing — see the avatar-editor entry.
 
+- 🔄 **Avatar editor, slice 9: `effects/` — the effects page**, 2026-08-08. All five files,
+  **648 l. of AS3**: `AvatarEditorGridViewEffects` (160), `EffectsParamView` (177),
+  `AvatarEditorGridItemEffect` (127), `EffectsModel` (101), `EffectsView` (83). Plus the interface
+  behind them, `habbo/avatar/_SafeCls_3781.as` → **`IAvatarEffect`** (name DERIVED: it is declared
+  in `habbo/avatar/`, not `habbo/inventory/`, i.e. it is the *editor's* view of an effect;
+  `habbo/inventory/_SafeCls_1973.as` is the inventory's own, narrower one). `AvatarEditorView`'s
+  `effectsGridView` is no longer null and `HabboAvatarEditor` adds the page — **the me-menu's
+  effects button now leads somewhere.**
+  - **Two grids share one window.** `AvatarEditorGridViewEffects` wraps the *same*
+    `grid_container` as `AvatarEditorGridView`; neither knows about the other, and whichever page
+    is showing refills it. That is why the effects grid hides both palettes unconditionally — an
+    effect has no colours and the previous page may have left them up.
+  - **The grid always leads with a null-effect tile.** "Wear nothing" is index 0, so a real effect
+    sits at its inventory index **plus one** — `EffectsModel.selectPart()` is built around that
+    offset. Probe-confirmed: three effects give four tiles, and type 22 (second in the inventory)
+    reports grid index 2.
+  - **Selection fires on `WME_DOWN`, not on click** — unlike every clothing tile. Probe-confirmed:
+    a `WME_CLICK` on an effect tile does nothing at all.
+  - **`selectPart(-1)` means "restore what is worn"**, the sentinel `EffectsView.reset()` passes.
+    It resolves the worn effect's grid position and marks it selected **without** calling
+    `setAvatarEffectType()`, because nothing changed. Probe-confirmed: no application recorded.
+  - 🐛 **The first deselect always targets index 0.** AS3 reads a missing `Dictionary` entry, gets
+    `undefined`, and coerces it to `0` at the `int` parameter — so the very first selection
+    un-highlights the "wear nothing" tile whether or not it was lit. Reproduced with `?? 0`.
+  - 🐛 **`updateView(null)` runs twice** when the null tile is picked: once inside the branch and
+    once at the shared tail. Kept.
+  - 🐛 **The countdown never stops at zero** — `onSecondsTimer` post-decrements a local copy with no
+    floor, so a lapsed effect ticks into negative seconds until the view is given something else.
+    Kept.
+  - **The bar is two rectangles, not a scaled asset**: opaque black, then the elapsed fraction in
+    `0x20BF20`. A **permanent** effect substitutes the duration for the remaining time, so it reads
+    full even at zero seconds left — probe-confirmed green at the last pixel.
+  - **The time label is three localisation keys with placeholders**, substituted into the caption's
+    *resolved* text. Probe-confirmed: 90 s → `01:30`, 3 725 s → `01:02:05` (the hours segment is
+    dropped entirely under an hour), 200 000 s → `2 days`, permanent → its own string.
+  - **`Effect.iconImage` was missing from the port** — AS3 returns the same `_SafeStr_5528` field
+    from both `icon` and `iconImage`, and `IAvatarEffect` declares the second. Added as an alias
+    with its own trace.
+  - **`AvatarEditorGridItemEffect` composites nothing**, unlike its clothing counterpart: the icon
+    arrives ready-made from the inventory. Probe-confirmed: the null tile shows the generic
+    remove-selection icon at a stack count of 1 with the badge hidden; a stack of 3 shows the badge
+    reading "3"; an owned-but-inactive effect gets no duration bar at all, which is how the grid
+    distinguishes "running" from "in the backpack".
+
 - 🔄 **Avatar editor, slice 8: `wardrobe/` — the side panel and the outfit tile**, 2026-08-08.
   All six files, **828 l. of AS3**: `WardrobeModel` (157), `WardrobeSlot` (224), `WardrobeView`
   (114), `Outfit` (112), `OutfitView` (150), `NftOutfit` (71). `HabboAvatarEditor.init()` now adds
@@ -1262,13 +1306,10 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     (`GetWardrobeMessageEvent` 2210, `SaveWardrobeOutfitMessageEvent` 116,
     `WardrobeMessageComposer` 1484), with WIN63's own registry as the primary source.
 
-- ⏸ **What is left of the avatar editor after slice 8**, measured 2026-08-08. The editor side of
-  `habbo/avatar/` is ≈**7,200 l. across ~45 files**; slices 1-8 have taken the core (2,269),
-  `common/` (2,036, 12 of 12), `wardrobe/` (828, 6 of 6), `figuredata/` (418), `generic/` (252) and
-  the five simple pages. What remains:
-  - `effects/` (648) — `EffectsModel`, `EffectsView`, `EffectsParamView`,
-    `AvatarEditorGridItemEffect`, `AvatarEditorGridViewEffects`. `AvatarEditorView.effectsGridView`
-    is null without it.
+- ⏸ **What is left of the avatar editor after slice 9**, measured 2026-08-08. The editor side of
+  `habbo/avatar/` is ≈**7,200 l. across ~45 files**; slices 1-9 have taken the core (2,269),
+  `common/` (2,036, 12 of 12), `wardrobe/` (828, 6 of 6), `effects/` (648, 5 of 5), `figuredata/`
+  (418), `generic/` (252) and the five simple pages. What remains:
   - `nft/` (342) + `hotlooks/` (230) — the two remaining pages, plus what
     `HabboAvatarEditor.loadNftFigure()` needs to restore a *saved* NFT.
   - `view/AvatarEditorNameChangeView.as` (358) + `AvatarEditorNameSuggestionListRenderer.as` (120)

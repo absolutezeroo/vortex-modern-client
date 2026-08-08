@@ -2,6 +2,7 @@ import type {EventEmitter} from 'eventemitter3';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import type {IAvatarEffect} from './IAvatarEffect';
 import type {IAvatarRenderManager} from './IAvatarRenderManager';
 import type {IFigurePartSet} from './structure/figure/IFigurePartSet';
 import type {ICategoryModel} from './common/ICategoryModel';
@@ -77,6 +78,9 @@ export interface IHabboAvatarEditorHost
     readonly effectInventory: {
         setEffectSelected(effectType: number): void;
         deselectAllEffects(force: boolean): void;
+        // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::getAvatarEffects()
+        // What the effects page's whole grid comes from — unfiltered and unsorted.
+        getAvatarEffects(): IAvatarEffect[];
     } | null;
 
     // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::getBoolean()

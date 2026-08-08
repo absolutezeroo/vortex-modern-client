@@ -23,6 +23,25 @@ export class Effect
         this._icon = value;
     }
 
+    /**
+     * AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::get iconImage()
+     *
+     * A second name for `icon` — AS3 returns the same `_SafeStr_5528` from both, and its setter
+     * writes the same field. Declared by `IAvatarEffect`, which the avatar editor's effects page
+     * consumes; nothing in the inventory reads it under this name.
+     */
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::get iconImage()
+    get iconImage(): ImageBitmap | null
+    {
+        return this._icon;
+    }
+
+    // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::set iconImage()
+    set iconImage(value: ImageBitmap | null)
+    {
+        this._icon = value;
+    }
+
     private _type: number = 0;
 
     // AS3: .../src/com/sulake/habbo/inventory/effects/Effect.as::get type()

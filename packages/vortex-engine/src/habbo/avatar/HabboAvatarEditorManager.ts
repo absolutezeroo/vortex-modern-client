@@ -137,10 +137,7 @@ export class HabboAvatarEditorManager extends Component
 
     // AS3: .../avatar/HabboAvatarEditorManager.as::get inventory()
     // The effect half of the same manager; separate because the two surfaces are unrelated.
-    public get effectInventory(): {
-        setEffectSelected(effectType: number): void;
-        deselectAllEffects(force: boolean): void;
-    } | null
+    public get effectInventory(): IHabboAvatarEditorHost['effectInventory']
     {
         return this._inventory;
     }

@@ -23,6 +23,7 @@ import {AvatarEditorIdEnum} from './enum/AvatarEditorIdEnum';
 import {AvatarEditorView} from './AvatarEditorView';
 import {AvatarUpdateEvent} from './events/AvatarUpdateEvent';
 import {CategoryData} from './common/CategoryData';
+import {EffectsModel} from './effects/EffectsModel';
 import {FigureData} from './figuredata/FigureData';
 import {BodyModel} from './generic/BodyModel';
 import {HeadModel} from './head/HeadModel';
@@ -861,6 +862,10 @@ export class HabboAvatarEditor implements ICategoryModelOwner
         {
             log.debug('hotlooks page requested but not ported yet');
         }
+
+        // Added unconditionally, as in AS3 — the *tab* is what `AvatarEditorView` prunes when the
+        // `effects.in.avatar.editor` configuration is off, not the model.
+        this._categories.add('effects', new EffectsModel(this));
 
         this._initialised = true;
     }

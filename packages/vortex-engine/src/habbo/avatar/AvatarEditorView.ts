@@ -10,6 +10,7 @@ import type {IAvatarEditorGridView} from './common/ICategoryView';
 import type {IAvatarEditorView} from './view/IAvatarEditorView';
 import {Logger} from '@core/utils/Logger';
 import {AvatarEditorGridView} from './common/AvatarEditorGridView';
+import {AvatarEditorGridViewEffects} from './effects/AvatarEditorGridViewEffects';
 
 const log = Logger.getLogger('habbo.avatar.AvatarEditorView');
 
@@ -641,11 +642,9 @@ export class AvatarEditorView implements IAvatarEditorView
 
         this._gridView = new AvatarEditorGridView(gridContainer);
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/effects/
-        // AvatarEditorGridViewEffects.as (160 l.) — not ported. AS3 builds it here over the **same**
-        // `grid_container`, so the effects page reuses this grid with its own item type. Until it
-        // lands `effectsGridView` is null and the effects page draws nothing.
-        this._effectsGridView = null;
+        // The **same** `grid_container`, wrapped a second time. The two grids coexist over one
+        // window and neither knows about the other; whichever page is showing refills it.
+        this._effectsGridView = new AvatarEditorGridViewEffects(gridContainer);
 
         if(this._tabs !== null)
         {
