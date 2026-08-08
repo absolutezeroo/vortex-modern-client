@@ -1,5 +1,5 @@
 import {EventEmitter} from 'eventemitter3';
-import {Application} from 'pixi.js';
+import {Application, TextureSource} from 'pixi.js';
 import {Core} from '@core/Core';
 import {VortexMain} from './VortexMain';
 import {IID_CoreCommunicationManager} from '@iid/IIDCoreCommunicationManager';
@@ -529,6 +529,16 @@ export class Vortex implements IVortex
         try
         {
             log.info('Initializing Vortex...');
+
+            // Flash's `Bitmap.smoothing` defaults to **false**, and every canvas2D path in this
+            // port already sets `imageSmoothingEnabled = false` to match. The PixiJS layer was the
+            // one that did not: its textures defaulted to linear filtering, which is invisible
+            // while a surface is drawn 1:1 and turns to mush the moment one is scaled — the room
+            // previewer upscales its canvas by `room_previewer:zoom` (2 in the avatar editor), and
+            // that preview came out blurred.
+            //
+            // Set before the Application so every texture created afterwards inherits it.
+            TextureSource.defaultOptions.scaleMode = 'nearest';
 
             // 1. Create PixiJS application (= AS3 stage setup in HabboAir.tryInit)
             this._application = new Application();

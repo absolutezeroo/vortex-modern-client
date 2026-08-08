@@ -1,4 +1,5 @@
 import type {Container} from 'pixi.js';
+import {Graphics} from 'pixi.js';
 import type {IRoomPreviewerWidget} from './IRoomPreviewerWidget';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
@@ -75,6 +76,18 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
     }
 
     private _roomPreviewer: RoomPreviewer | null = null;
+
+    /**
+     * Clips the preview canvas to the widget's own rectangle.
+     *
+     * TS-only: in AS3 the canvas Bitmap is a child of this widget's window, so the window system
+     * clips it for free. This port parents it onto the root PixiJS stage (see the deviation note in
+     * `createRoomPreviewer`), where nothing clips it — and `room_previewer:zoom` then scales it past
+     * the widget on every side. `RoomRenderingCanvas`'s own mask does not help: it is drawn at the
+     * *canvas's* size and is scaled by the same zoom.
+     */
+    // TS-only: see the note above; AS3 needs no mask because its canvas is a window child.
+    private _canvasMask: Graphics | null = null;
 
     // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::get roomPreviewer()
     public get roomPreviewer(): RoomPreviewer | null 
@@ -208,6 +221,10 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         {
             PreviewCanvasStack.unregister(this._canvasDisplayObject);
             this._roomEngine?.unregisterCanvasSyncCallback(this._syncCanvasPositionBound);
+            this._canvasDisplayObject.mask = null;
+            this._canvasMask?.parent?.removeChild(this._canvasMask);
+            this._canvasMask?.destroy();
+            this._canvasMask = null;
             this._canvasDisplayObject.parent?.removeChild(this._canvasDisplayObject);
             this._canvasDisplayObject = null;
             this._canvasWrapper = null;
@@ -343,6 +360,27 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         this._canvasDisplayObject.x = globalPosition.x + this._offsetX;
         this._canvasDisplayObject.y = globalPosition.y + this._offsetY;
 
+        // Clip to the widget, in stage coordinates — see `_canvasMask`.
+        if(this._canvasMask === null)
+        {
+            this._canvasMask = new Graphics();
+            this._canvasMask.label = 'room_previewer_clip';
+        }
+
+        this._canvasMask.clear();
+        this._canvasMask.rect(
+            globalPosition.x, globalPosition.y,
+            this._canvasWrapper.width, this._canvasWrapper.height
+        );
+        this._canvasMask.fill(0xFFFFFF);
+
+        if(this._canvasMask.parent !== this._canvasDisplayObject.parent)
+        {
+            this._canvasDisplayObject.parent?.addChild(this._canvasMask);
+        }
+
+        this._canvasDisplayObject.mask = this._canvasMask;
+
         // TS deviation: this canvas and the main room view's canvas both get
         // parented directly onto the same shared PixiJS stage (see file header
         // comment / RoomEngine.createRoomCanvas()), so their relative stacking
@@ -407,7 +445,28 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
             this._roomPreviewer.zoomOut();
         }
 
-        this._roomPreviewer.addViewOffset = {x: this._offsetX, y: this._offsetY};
+        // AS3 pushes the widget's offset into `addViewOffset` here **as well as** onto the canvas
+        // display object below, because there the display object is a Bitmap parented inside this
+        // widget's own window: its x/y are local, and the window clips.
+        //
+        // This port parents the canvas onto the root PixiJS stage instead (see the deviation note
+        // in syncCanvasPosition) and folds the offset into that global placement. Feeding the same
+        // offset to the room engine as well applies it a second time, in a different space: the
+        // framing then converges on the object's centre *minus* the offset, and for the avatar
+        // editor (-65, -30) that walks the preview off the avatar and onto the wall behind it —
+        // visibly, over the eight frames the engine takes to get there.
+        //
+        // The two axes do not behave alike, and the reason is the zoom. The engine's offset lives in
+        // *canvas* coordinates and is therefore multiplied by `room_previewer:zoom` (2 for the
+        // avatar editor) on its way to the screen; the display-object offset is already in screen
+        // pixels. Horizontally, one screen-space application is what frames correctly — a second,
+        // doubled one walked the preview off the avatar and onto the wall behind it. Vertically the
+        // engine's contribution is still needed: without it the framing sits ~30px low and the
+        // preview shows only the top of the head.
+        //
+        // Deviation, driven by observation rather than by the source, which applies both offsets on
+        // both axes.
+        this._roomPreviewer.addViewOffset = {x: 0, y: this._offsetY};
 
         if(this._canvasDisplayObject) 
         {

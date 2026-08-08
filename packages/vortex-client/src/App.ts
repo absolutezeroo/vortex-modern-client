@@ -1353,6 +1353,13 @@ export class VortexApp
             // - color_chooser_* / badge_part_* / position_*: the group creation wizard - every
             //   ColorGridCtrl swatch cell, and the badge editor's empty/add/picker markers and
             //   3x3 position grid, all via HabboGroupsManager.getButtonImage().
+            // - avatar_editor_*: the whole avatar editor reads bitmaps programmatically -
+            //   AvatarEditorGridColorItem tints the shared `..._clr_13x21_2` chip per swatch,
+            //   HabboAvatarEditor sets the remove-selection and get-more icons on its two synthetic
+            //   tiles, AvatarEditorGridPartItem paints the download icon and the selection hilite,
+            //   and WardrobeSlot asks for the empty-slot artwork. Without these the palettes render
+            //   white and the remove tile renders nothing - exactly the silent failure this comment
+            //   warns about.
             // - LIBRARY_IMAGE_NAMES: the rest, one-off lookups by exact name.
             //
             // This list grows once per feature that reads a bitmap from the library, which is a
@@ -1361,6 +1368,7 @@ export class VortexApp
             // the images/ bundle; re-run that when a bitmap comes out blank.
             if(name.startsWith('ctlg_') || name.startsWith('fx_icon_') || name.startsWith('memenu_fx_')
                 || name.startsWith('color_chooser_') || name.startsWith('badge_part_') || name.startsWith('position_')
+                || name.startsWith('avatar_editor_')
                 || LIBRARY_IMAGE_NAMES.has(name))
             {
                 const declaration = vortex.assets.getAssetTypeDeclarationByMimeType('application/octet-stream')
