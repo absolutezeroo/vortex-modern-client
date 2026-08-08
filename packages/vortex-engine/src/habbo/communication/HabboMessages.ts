@@ -544,6 +544,13 @@ import {QuizResultsMessageEvent} from './messages/incoming/help/QuizResultsMessa
 import {ChangeUserNameMessageComposer} from './messages/outgoing/help/ChangeUserNameMessageComposer';
 import {CheckUserNameMessageComposer} from './messages/outgoing/help/CheckUserNameMessageComposer';
 import {GetWardrobeMessageComposer} from './messages/outgoing/wardrobe/GetWardrobeMessageComposer';
+import {GetHotLooksMessageComposer} from './messages/outgoing/nftwardrobe/GetHotLooksMessageComposer';
+import {GetUserNftWardrobeMessageComposer} from './messages/outgoing/nftwardrobe/GetUserNftWardrobeMessageComposer';
+import {SaveUserNftWardrobeMessageComposer} from './messages/outgoing/nftwardrobe/SaveUserNftWardrobeMessageComposer';
+import {GetSelectedNftWardrobeOutfitMessageComposer} from './messages/outgoing/nftwardrobe/GetSelectedNftWardrobeOutfitMessageComposer';
+import {HotLooksMessageEvent} from './messages/incoming/nftwardrobe/HotLooksMessageEvent';
+import {UserNftWardrobeMessageEvent} from './messages/incoming/nftwardrobe/UserNftWardrobeMessageEvent';
+import {SelectedNftWardrobeOutfitMessageEvent} from './messages/incoming/nftwardrobe/SelectedNftWardrobeOutfitMessageEvent';
 import {SaveWardrobeOutfitMessageComposer} from './messages/outgoing/wardrobe/SaveWardrobeOutfitMessageComposer';
 import {WardrobeMessageEvent} from './messages/incoming/wardrobe/WardrobeMessageEvent';
 import {AvatarEffectSelectedMessageEvent} from './messages/incoming/wardrobe/AvatarEffectSelectedMessageEvent';
@@ -1272,6 +1279,10 @@ export class HabboMessages implements IMessageConfiguration
         // (that is 2624, AvatarEffectMessageEvent) — both ids are real and carry different payloads.
         this._events.set(1484, WardrobeMessageEvent);
         this._events.set(3629, AvatarEffectSelectedMessageEvent);
+        // The avatar editor's hot-looks and NFT-wardrobe pages.
+        this._events.set(3853, HotLooksMessageEvent);
+        this._events.set(2116, UserNftWardrobeMessageEvent);
+        this._events.set(582, SelectedNftWardrobeOutfitMessageEvent);
 
         // === INVENTORY - FURNI ===
         this._events.set(2694, FurniListMessageEvent);
@@ -2125,6 +2136,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(413, CheckUserNameMessageComposer);
         this._composers.set(2210, GetWardrobeMessageComposer);
         this._composers.set(116, SaveWardrobeOutfitMessageComposer);
+        this._composers.set(3834, GetHotLooksMessageComposer);
+        this._composers.set(2203, GetUserNftWardrobeMessageComposer);
+        this._composers.set(3428, SaveUserNftWardrobeMessageComposer);
+        this._composers.set(3521, GetSelectedNftWardrobeOutfitMessageComposer);
         this._composers.set(879, ChangeUserNameMessageComposer);
         this._composers.set(407, RateFlatMessageComposer);
         this._composers.set(2985, ToggleStaffPickMessageComposer);
