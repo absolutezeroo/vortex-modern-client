@@ -556,6 +556,12 @@ export class FurniModel implements IFurniModel
                     this._furniDataSet.delete(groupItem);
                     this._furniData.splice(i, 1);
 
+                    // AS3: `if(_view && _view.grid) _view.grid.itemWasUpdated(groupItem)`. Dropping
+                    // the group from the model does not touch the grid window — without this the
+                    // last copy of a placed item left its cell behind, empty, and the rest of the
+                    // page never reflowed around it.
+                    this._view?.grid?.itemWasUpdated(groupItem);
+
                     // If this was selected, select first item
                     if(groupItem.isSelected)
                     {

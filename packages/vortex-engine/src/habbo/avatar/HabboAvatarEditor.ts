@@ -10,10 +10,7 @@ import type {IAvatarEditorSaveListener} from './IAvatarEditorSaveListener';
 import type {IAvatarEditorView} from './view/IAvatarEditorView';
 import type {ICategoryModel} from './common/ICategoryModel';
 import type {ICategoryModelOwner} from './common/ICategoryModelOwner';
-import type {
-    IAvatarEditorGridColorItem,
-    IAvatarEditorGridPartItem
-} from './common/IAvatarEditorGridItem';
+import type {IAvatarEditorGridColorItem, IAvatarEditorGridPartItem} from './common/IAvatarEditorGridItem';
 import type {IFigureSetOwnership} from './common/IFigureSetOwnership';
 import type {ISideContentModel} from './common/ISideContent';
 import type {IHabboAvatarEditorHost} from './IHabboAvatarEditorHost';
@@ -32,9 +29,15 @@ import {LegsModel} from './legs/LegsModel';
 import {MiscModel} from './misc/MiscModel';
 import {TorsoModel} from './torso/TorsoModel';
 import {WardrobeModel} from './wardrobe/WardrobeModel';
-import {UpdateFigureDataMessageComposer} from '@habbo/communication/messages/outgoing/avatar/UpdateFigureDataMessageComposer';
-import {SaveUserNftWardrobeMessageComposer} from '@habbo/communication/messages/outgoing/nftwardrobe/SaveUserNftWardrobeMessageComposer';
-import {GetSelectedNftWardrobeOutfitMessageComposer} from '@habbo/communication/messages/outgoing/nftwardrobe/GetSelectedNftWardrobeOutfitMessageComposer';
+import {
+    UpdateFigureDataMessageComposer
+} from '@habbo/communication/messages/outgoing/avatar/UpdateFigureDataMessageComposer';
+import {
+    SaveUserNftWardrobeMessageComposer
+} from '@habbo/communication/messages/outgoing/nftwardrobe/SaveUserNftWardrobeMessageComposer';
+import {
+    GetSelectedNftWardrobeOutfitMessageComposer
+} from '@habbo/communication/messages/outgoing/nftwardrobe/GetSelectedNftWardrobeOutfitMessageComposer';
 
 /**
  * One editor instance: two figures (one per gender), the eight category pages, the wardrobe, and
@@ -961,13 +964,35 @@ export class HabboAvatarEditor implements ICategoryModelOwner
             const left = (a as {partSet: IFigurePartSet | null}).partSet;
             const right = (b as {partSet: IFigurePartSet | null}).partSet;
 
-            if(left?.isSellable === true && right?.isSellable !== true) return 1;
-            if(right?.isSellable === true && left?.isSellable !== true) return -1;
+            // A synthetic tile — "remove item" — has no part set, and AS3 reads every field it
+            // compares through `?.`: `clubLevel` comes back NaN, so both `<` and `>` are false and
+            // the item keeps its inserted position, which for the remove tile is first. (The
+            // decompiler shows `?.` on the clubLevel/isSellable reads but a bare `.` on the id
+            // read, which would dereference null; the guarded reading is the one that matches the
+            // shipped client, where the cross is first.)
+            //
+            // Treating it as clubLevel 0 / id 0 instead put it *last* whenever
+            // `avatareditor.show.clubitems.first` is on and the sort runs descending. Returning 0
+            // reproduces AS3: `Array.prototype.sort` is stable, so insertion order survives.
+            if(left === null || right === null) return 0;
+
+            if(left?.isSellable === true && right?.isSellable !== true)
+            {
+                return 1;
+            }
+
+            if(right?.isSellable === true && left?.isSellable !== true)
+            {
+                return -1;
+            }
 
             const leftClub = left?.clubLevel ?? 0;
             const rightClub = right?.clubLevel ?? 0;
 
-            if(leftClub !== rightClub) return descending ? rightClub - leftClub : leftClub - rightClub;
+            if(leftClub !== rightClub)
+            {
+                return descending ? rightClub - leftClub : leftClub - rightClub;
+            }
 
             const leftId = left?.id ?? 0;
             const rightId = right?.id ?? 0;
@@ -991,7 +1016,10 @@ export class HabboAvatarEditor implements ICategoryModelOwner
             const leftClub = left === null ? -1 : left.clubLevel;
             const rightClub = right === null ? -1 : right.clubLevel;
 
-            if(leftClub !== rightClub) return leftClub - rightClub;
+            if(leftClub !== rightClub)
+            {
+                return leftClub - rightClub;
+            }
 
             return (left?.index ?? 0) - (right?.index ?? 0);
         });

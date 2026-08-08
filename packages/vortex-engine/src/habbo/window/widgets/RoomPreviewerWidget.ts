@@ -490,7 +490,12 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         //
         // Deviation, driven by observation rather than by the source, which applies both offsets on
         // both axes.
-        this._roomPreviewer.addViewOffset = {x: 0, y: this._offsetY};
+        // ...and it is expressed in *canvas* coordinates, which the half-scale render above shrinks
+        // by `1 / zoom`. Left as-is, the layout's -30 would only shift the preview 30 screen px
+        // where it used to shift 60, dropping the avatar low enough to lose its feet off the bottom
+        // while leaving dead space above. Scaling it by the zoom keeps the shift constant in screen
+        // pixels, which is the space the layout's number was chosen in.
+        this._roomPreviewer.addViewOffset = {x: 0, y: this._offsetY * Math.max(1, this._zoom)};
 
         if(this._canvasDisplayObject) 
         {
