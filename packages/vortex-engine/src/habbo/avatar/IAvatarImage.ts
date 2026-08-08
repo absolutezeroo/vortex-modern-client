@@ -1,3 +1,4 @@
+import type {Texture} from 'pixi.js';
 import type {IAvatarDataContainer} from './animation/IAvatarDataContainer';
 import type {IAnimationLayerData} from './animation/IAnimationLayerData';
 import type {ISpriteDataContainer} from './animation/ISpriteDataContainer';
@@ -21,11 +22,19 @@ export interface IAvatarImage
     // AS3: .../src/com/sulake/habbo/avatar/AvatarImage.as::get disposed()
     disposed?: boolean;
 
-    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getCroppedImage()
-    getCroppedImage(setType: string, scale?: number): any;
+    /**
+     * AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getCroppedImage()
+     *
+     * AS3 returns a `BitmapData`; this port returns a PixiJS `Texture` over an `OffscreenCanvas`.
+     * Typed rather than `any` because the difference matters at every call site — a texture handed
+     * to `drawImage()` or to `IBitmapWrapperWindow.bitmap` fails at runtime, not at build time.
+     * Convert with `AvatarTextureUtils`.
+     */
+    getCroppedImage(setType: string, scale?: number): Texture | null;
 
     // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getImage()
-    getImage(setType: string, hightlight: boolean, scale?: number): any;
+    // Same `Texture`-not-`BitmapData` caveat as `getCroppedImage()` above.
+    getImage(setType: string, hightlight: boolean, scale?: number): Texture | null;
 
     // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getServerRenderData()
     getServerRenderData(): any[];

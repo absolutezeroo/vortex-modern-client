@@ -2,6 +2,7 @@ import type {CategoryData} from '../common/CategoryData';
 import type {IAvatarImageListener} from '../IAvatarImageListener';
 import type {ICategoryModel} from '../common/ICategoryModel';
 import type {ICategoryModelOwner} from '../common/ICategoryModelOwner';
+import {AvatarTextureUtils} from '../AvatarTextureUtils';
 import {BodyView} from './BodyView';
 import {CategoryBaseModel} from '../common/CategoryBaseModel';
 
@@ -159,6 +160,10 @@ export class BodyModel extends CategoryBaseModel implements ICategoryModel, IAva
      *
      * `filter` non-null repaints only the thumbnail whose figure string equals it; that is the
      * late-render path from `avatarImageReady()`.
+     *
+     * The render has to be converted: `getCroppedImage()` hands back a PixiJS `Texture` where AS3
+     * returns a `BitmapData`, and `iconImage` is composited with `drawImage()`, which rejects a
+     * texture outright. See `AvatarTextureUtils`.
      */
     // AS3: .../avatar/generic/BodyModel.as::updateIconImage()
     private updateIconImage(category: CategoryData, filter: string | null = null): void
@@ -181,7 +186,7 @@ export class BodyModel extends CategoryBaseModel implements ICategoryModel, IAva
 
             if(image === null) continue;
 
-            part.iconImage = image.getCroppedImage(BodyModel.CROP_HEAD) as ImageBitmap | null;
+            part.iconImage = AvatarTextureUtils.toImageBitmap(image.getCroppedImage(BodyModel.CROP_HEAD));
             image.dispose?.();
         }
     }
