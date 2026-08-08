@@ -931,6 +931,46 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     registration would double-parse. The guide button uses the cached answer and is not refreshed
     by a later push. And the clothes button still opens nothing — see the avatar-editor entry.
 
+- 🔄 **Avatar editor, slice 4: `CategoryBaseModel` + the five simple pages**, 2026-08-08.
+  The shared page behaviour (344 l. AS3) and `BodyModel` (127), `HeadModel` (43), `TorsoModel` (42),
+  `LegsModel` (41), `MiscModel` (52). Three of the eight pages are left — hot looks, effects and
+  NFTs, 374 l., each with machinery of its own.
+  - **A fourth narrow interface**, `ICategoryModelOwner`. AS3's `CategoryBaseModel` holds a whole
+    `HabboAvatarEditor` and reaches through it for six things; `BodyModel` also goes two levels
+    deep for `controller.manager.avatarRenderManager`. Flattened to five members so the pages port
+    and verify before the editor exists — the same technique as slices 2 and 3.
+  - ✅ **Two grid-item members were missing from slice 3's interfaces**, caught by reading
+    `CategoryBaseModel` rather than assuming: `isDisabledForWearing` (on **both** items — it is what
+    makes a dimmed club item revert instead of apply) and `iconImage` (written by `BodyModel` per
+    face). Added.
+  - **Which page owns which part types**, probe-confirmed against AS3: body `hd`; head
+    `hr ha he ea fa`; torso `cc ch ca cp`; legs `lg sh wa`; misc `pt mc`.
+  - **`MiscModel` is the only simple page that does more than declare.** `generateDataContent()`
+    returns **null**, not an empty grid, for a part type with nothing wearable in it — and most
+    users own no props — so the page would end up holding no `CategoryData` at all and
+    `selectPart()` would be a silent no-op. `ensureEmptyCategory()` fills the gap. Probe-confirmed
+    both ways: misc gets two empty grids, head under the same conditions gets **null**.
+  - 🐛 **`BodyModel` does not revert a dimmed club colour**, where `CategoryBaseModel` does. It
+    opens the advert and leaves the grid showing the unaffordable choice. It also dereferences the
+    selected colour unguarded, and its `switchCategory()` skips the lazy `init()` the base runs.
+    All three kept; probe-confirmed the divergence (head reverts to index 1, body stays on 2, both
+    open the advert).
+  - **The face grid is rendered, not iconified.** `BodyModel` draws one head per candidate face on
+    the figure's *current* colours, and repaints them all when the skin colour changes. A late
+    render repaints **only** the thumbnail whose figure string matches — probe-confirmed: 2 renders
+    for 3 thumbnails (the synthetic one is skipped), then exactly 1 on a late callback.
+  - ⚠️ **`getCurrentColorIndex()` can return `undefined`.** `selectColorIds()` builds
+    `new Array(n)`, and a colour the palette does not contain leaves a **hole** — AS3 arrays behave
+    the same way, so this is faithful, not a port defect. It surfaced in the probe as a missing
+    key. Callers treat it as an index; nothing currently breaks, but it is worth knowing before
+    the views index a palette with it.
+  - **Probe-verified** besides the above: `init()` is lazy and runs exactly once (5 part types
+    generated on first touch, still 5 after two more calls); the grid restores its part *and*
+    colour from the figure; selecting writes back (`hr-100-61.hd-180-7`); selecting the synthetic
+    "remove" thumbnail writes set id 0; a whole-page club strip fixing both `hr` and `ha` and
+    leaving `hasClubItemsOverLevel()` false; the sellable sweep under owned and unowned; `reset()`
+    rebuilding (5 → 10 generations) while `dispose()` does not.
+
 - 🔄 **Avatar editor, slice 3: `common/` — the selection model**, 2026-08-08. `CategoryData`
   (519 l. AS3), `TabUtils`, and the five interfaces of `common/` — **8 of the 12 files**, ~1,100 l.
   of the 2,036. The four left are window-backed and belong with the view: `AvatarEditorGridPartItem`

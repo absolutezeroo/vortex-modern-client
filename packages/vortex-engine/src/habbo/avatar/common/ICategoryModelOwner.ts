@@ -1,0 +1,70 @@
+import type {IAvatarImage} from '../IAvatarImage';
+import type {IAvatarImageListener} from '../IAvatarImageListener';
+import type {FigureData} from '../figuredata/FigureData';
+import type {CategoryData} from './CategoryData';
+import type {ICategoryModel} from './ICategoryModel';
+import type {IFigureSetOwnership} from './IFigureSetOwnership';
+
+/**
+ * The editor surface a category page uses.
+ *
+ * TS-only: AS3's `CategoryBaseModel` holds a whole `HabboAvatarEditor` and reaches through it for
+ * six things — the figure being edited, the grid content for a part type, the club advert, the
+ * inventory and (from `BodyModel` alone) the avatar renderer. Narrowed to exactly those, the same
+ * technique slices 2 and 3 used, so the eight category models port and verify before
+ * `HabboAvatarEditor` exists. It will satisfy this interface as written, apart from the two
+ * members reached via `manager` — see `inventory` and `createAvatarImage` below.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditor.as
+ */
+export interface ICategoryModelOwner
+{
+    /**
+     * The figure currently being edited. Read for the part/colour selection a category restores
+     * itself from, and written when the user picks something.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditor.as::get figureData()
+    readonly figureData: FigureData | null;
+
+    /**
+     * Builds a part type's whole grid — every wearable thumbnail and both colour palettes,
+     * filtered by gender, club level and ownership, and sorted.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditor.as::generateDataContent()
+    generateDataContent(model: ICategoryModel, partType: string): CategoryData | null;
+
+    /**
+     * Opens the club advert. A category calls this instead of applying the choice when the user
+     * clicks a dimmed club item.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditor.as::openHabboClubAdWindow()
+    openHabboClubAdWindow(): void;
+
+    /**
+     * Whether the user owns a given sellable figure set.
+     *
+     * AS3 reaches this as `controller.manager.inventory`; flattened here because the manager is
+     * not otherwise needed. See `IFigureSetOwnership` for why it may be null in this port.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditorManager.as::get inventory()
+    readonly inventory: IFigureSetOwnership | null;
+
+    /**
+     * Renders a figure so a thumbnail can show it. Only `BodyModel` uses this, to draw each
+     * candidate face on the user's own colours.
+     *
+     * AS3 reaches it as `controller.manager.avatarRenderManager.createAvatarImage(...)`; flattened
+     * for the same reason as `inventory`.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/_SafeCls_581.as::createAvatarImage()
+    // The port's IAvatarRenderManager takes a fifth `effectListener` argument that AS3's
+    // four-argument call site leaves off; kept optional here so `HabboAvatarEditorManager` can
+    // forward straight through.
+    createAvatarImage(
+        figureString: string,
+        scale: string,
+        gender: string | null,
+        listener: IAvatarImageListener | null,
+        effectListener?: unknown
+    ): IAvatarImage | null;
+}

@@ -29,6 +29,17 @@ export interface IAvatarEditorGridPartItem
     // AS3: .../avatar/common/AvatarEditorGridPartItem.as::set isSelected()
     isSelected: boolean;
 
+    // AS3: .../avatar/common/AvatarEditorGridPartItem.as::get isDisabledForWearing()
+    // True for a club item the user cannot afford, shown dimmed rather than hidden when
+    // `avatareditor.show.clubitems.dimmed` is on. Clicking one reverts the selection and opens the
+    // club advert instead.
+    readonly isDisabledForWearing: boolean;
+
+    // AS3: .../avatar/common/AvatarEditorGridPartItem.as::set iconImage()
+    // The thumbnail's picture. Written by `HabboAvatarEditor` for the two synthetic entries and,
+    // for the face grid, by `BodyModel` with a rendered head per candidate face.
+    iconImage: ImageBitmap | null;
+
     // AS3: .../avatar/common/AvatarEditorGridPartItem.as::set colors()
     // Write-only from `CategoryData`'s side — it pushes the palette selection into every thumbnail
     // so each redraws itself in the chosen colours.
@@ -53,6 +64,10 @@ export interface IAvatarEditorGridColorItem
 
     // AS3: .../avatar/common/AvatarEditorGridColorItem.as::set isSelected()
     isSelected: boolean;
+
+    // AS3: .../avatar/common/AvatarEditorGridColorItem.as::get isDisabledForWearing()
+    // The colour equivalent of the part flag above — same dimmed-club-item treatment.
+    readonly isDisabledForWearing: boolean;
 
     // AS3: .../avatar/common/AvatarEditorGridColorItem.as::dispose()
     dispose(): void;
