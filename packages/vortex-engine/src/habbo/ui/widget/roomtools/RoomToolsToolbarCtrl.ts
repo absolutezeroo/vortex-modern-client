@@ -338,6 +338,20 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
                 // sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as
                 // case "button_chat_history": var_16.freeFlowChat.toggleVisibility();
                 break;
+            // AS3: `(handler.container.roomEngine as Component).context.createLinkEvent(
+            // "questengine/achievements/wired_games")`. `IRoomEngine` declares no `context` in
+            // either tree, so the same cast `FurnitureRoomLinkHandler.navigateTo()` documents is
+            // used here. Without this case the entry simply did not react to a click.
+            case 'button_achievements':
+            {
+                const context = (this.handler?.container?.roomEngine as unknown as {context?: {
+                    createLinkEvent(link: string): void;
+                }} | null)?.context ?? null;
+
+                context?.createLinkEvent('questengine/achievements/wired_games');
+                break;
+            }
+
             case 'button_like':
                 this.handler?.rateRoom();
                 this._window?.findChildByName('button_like')?.disable();
