@@ -385,13 +385,32 @@ export class NitroBundleLoader extends BinaryFileLoader
         return files;
     }
 
+    /**
+     * A `.nitro` URL that does not exist comes back as a web page, not as a 404 the loader can see
+     * — Apache serves its error document, Vite serves the SPA shell — and the bundle parser then
+     * reads two characters of markup as a length and reports something like "filename length out of
+     * range (25711)", which says nothing about the real problem.
+     *
+     * The old check tested only `<!doctype html` and `<html`, so anything else HTML-ish (an XML
+     * declaration, a comment, a PHP error page, a JSON error body) still reached the parser. This
+     * one rejects any text/markup start.
+     */
+    // TS-only: no AS3 counterpart — AS3 loads through Flash's own asset library, which fails the
+    // request rather than handing a page body to the parser.
     private validateNotHtmlResponse(data: ArrayBuffer): void
     {
-        const prefix = new TextDecoder('utf-8').decode(new Uint8Array(data, 0, Math.min(data.byteLength, 64))).trimStart().toLowerCase();
+        const prefix = new TextDecoder('utf-8')
+            .decode(new Uint8Array(data, 0, Math.min(data.byteLength, 64)))
+            .trimStart();
+        const lower = prefix.toLowerCase();
 
-        if(prefix.startsWith('<!doctype html') || prefix.startsWith('<html'))
+        if(lower.startsWith('<!doctype') || lower.startsWith('<html') || lower.startsWith('<?xml')
+            || lower.startsWith('<') || lower.startsWith('{'))
         {
-            throw new Error('Invalid Nitro bundle: received HTML response instead of binary bundle');
+            throw new Error(
+                `Invalid Nitro bundle: the server returned text, not a bundle — the file is probably `
+                + `missing. url=${this._url} body=${JSON.stringify(prefix.slice(0, 48))}`
+            );
         }
     }
 }

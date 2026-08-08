@@ -931,6 +931,35 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     registration would double-parse. The guide button uses the cached answer and is not refreshed
     by a later push. And the clothes button still opens nothing — see the avatar-editor entry.
 
+- 🐛 **Avatar editor, first run against the live client**, 2026-08-08. The editor opens and draws
+  — window, tab strip, category tabs, grid, palettes, wardrobe column, preview and save bar are all
+  on screen. Two problems surfaced, one code and one assets.
+  - **Fixed: `BodyModel.updateIconImage()` handed a PixiJS `Texture` to `drawImage()`.** It cast
+    `getCroppedImage()`'s result to `ImageBitmap`; this port's `AvatarImage` returns a `Texture`
+    over an `OffscreenCanvas` where AS3 returns a `BitmapData`. The cast compiled and threw at
+    runtime the moment the body page was built — and because the throw unwound through
+    `initCategory` → `init` → `getWindowContainer` → `setViewToCategory`, it **aborted the page
+    build mid-flight**. Routed through `AvatarTextureUtils.toImageBitmap()`.
+    - **The hole is closed**: `IAvatarImage.getCroppedImage()`/`getImage()` were typed `any` and are
+      now `Texture | null`, so this class of mistake is a build error. No other call site needed
+      changing — the two catalogue consumers already read the texture's canvas resource properly.
+  - **Measured, not code: 497 of the 2,730 libraries `figuremap.xml` references are absent from the
+    asset host.** Re-measure by diffing the `<lib id>` values against
+    `gordon/vortex-assets-PRODUCTION-*/`. Those clothing items can never render whatever the client
+    does; the core libraries (`hh_human_body`, `hh_human_leg`, `hh_human_shirt`, `hh_human_shoe`)
+    are present and serve HTTP 200 with valid headers.
+  - **`NitroBundleLoader`'s error was actively misleading.** A missing `.nitro` comes back as a web
+    page, not as a visible 404 — Apache serves its error document, Vite serves the SPA shell — and
+    the parser read two characters of markup as a length, reporting "filename length out of range
+    (25711)". `25711` is `0x646F`, i.e. the `do` of `<!doctype`. The guard only tested
+    `<!doctype html` and `<html`; it now rejects any text/markup start and reports the **URL** and
+    the first bytes.
+  - **The download→repaint chain is intact** (verified by reading it end to end):
+    `AvatarEditorGridPartItem.analyzePartLayers()` → `downloadFigure()` →
+    `AvatarAssetDownloadManager.loadFigureSetData()` registers the listener and calls
+    `avatarImageReady()` when the libraries complete, and a *failed* library still emits `COMPLETE`
+    so one missing file cannot stall the queue.
+
 - ✅ **Avatar editor, slice 11: the rename dialog — the editor is COMPLETE**, 2026-08-08. Both
   `view/` files, **478 l. of AS3**: `AvatarEditorNameChangeView` (358) and
   `AvatarEditorNameSuggestionListRenderer` (120). With this the editor's ≈**7,200 l.** are ported
