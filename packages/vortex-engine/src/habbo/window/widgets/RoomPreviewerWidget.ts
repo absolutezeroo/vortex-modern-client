@@ -33,6 +33,10 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
     // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::SCALE_KEY
     private static readonly SCALE_KEY: string = 'room_previewer:scale';
+
+    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::SCALE_NORMAL
+    // The larger of the two geometry scales `RoomPreviewer` offers; the other is 32.
+    private static readonly GEOMETRY_SCALE_NORMAL: number = 64;
     private static readonly OFFSET_X_KEY: string = 'room_previewer:offsetx';
     private static readonly OFFSET_Y_KEY: string = 'room_previewer:offsety';
     private static readonly ZOOM_KEY: string = 'room_previewer:zoom';
@@ -436,7 +440,20 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
     {
         if(!this._roomPreviewer || !this._roomPreviewer.isRoomEngineReady) return;
 
-        if(this._scale === 64) 
+        // AS3 picks the geometry scale from `room_previewer:scale` alone (`var_337 == 64 ?
+        // zoomIn() : zoomOut()`) and applies `room_previewer:zoom` on top as a raster scale of the
+        // canvas Bitmap. Reproduced literally, the avatar editor — scale 64, zoom 2 — renders a
+        // ~130px avatar and doubles it to ~260px inside a 210px box, so its legs are always cut off.
+        //
+        // Deviation, agreed deliberately: divide the geometry scale by the zoom, so the zoom
+        // becomes a pure pixel doubling of a half-scale render rather than a magnification of a
+        // full-scale one. Same final size, and crisp now that textures sample nearest — the
+        // standard pixel-art composition. It is stacked on top of an older deviation (the canvas is
+        // parented to the PixiJS stage, not into this widget's window), which is why matching AS3's
+        // numbers here does not reproduce AS3's result.
+        //
+        // `RoomPreviewer` offers only the two AS3 scales, so this is a choice between them.
+        if(this._scale / Math.max(1, this._zoom) >= RoomPreviewerWidget.GEOMETRY_SCALE_NORMAL) 
         {
             this._roomPreviewer.zoomIn();
         }
