@@ -1,0 +1,266 @@
+import type {IConnection} from '@core/communication/connection/IConnection';
+import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import type {HabboAvatarEditor} from './HabboAvatarEditor';
+import type {IAvatarEditorMessageHandler} from './IAvatarEditorMessageHandler';
+import type {IOutfit} from './IOutfit';
+import {Logger} from '@core/utils/Logger';
+import {AvatarEditorIdEnum} from './enum/AvatarEditorIdEnum';
+import {AvatarEffectActivatedMessageEvent} from '@habbo/communication/messages/incoming/inventory/AvatarEffectActivatedMessageEvent';
+import {AvatarEffectAddedMessageEvent} from '@habbo/communication/messages/incoming/inventory/AvatarEffectAddedMessageEvent';
+import {AvatarEffectExpiredMessageEvent} from '@habbo/communication/messages/incoming/inventory/AvatarEffectExpiredMessageEvent';
+import {AvatarEffectMessageEvent} from '@habbo/communication/messages/incoming/room/action/AvatarEffectMessageEvent';
+import {AvatarEffectSelectedMessageEvent} from '@habbo/communication/messages/incoming/wardrobe/AvatarEffectSelectedMessageEvent';
+import {CheckUserNameResultMessageEvent} from '@habbo/communication/messages/incoming/help/CheckUserNameResultMessageEvent';
+import {UserRightsMessageEvent} from '@habbo/communication/messages/incoming/handshake/UserRightsMessageEvent';
+import {WardrobeMessageEvent} from '@habbo/communication/messages/incoming/wardrobe/WardrobeMessageEvent';
+import {SelectedNftWardrobeOutfitMessageEvent} from '@habbo/communication/messages/incoming/nftwardrobe/SelectedNftWardrobeOutfitMessageEvent';
+import {CheckUserNameMessageComposer} from '@habbo/communication/messages/outgoing/help/CheckUserNameMessageComposer';
+import {GetWardrobeMessageComposer} from '@habbo/communication/messages/outgoing/wardrobe/GetWardrobeMessageComposer';
+import {SaveWardrobeOutfitMessageComposer} from '@habbo/communication/messages/outgoing/wardrobe/SaveWardrobeOutfitMessageComposer';
+
+const log = Logger.getLogger('habbo.avatar.AvatarEditorMessageHandler');
+
+/**
+ * The editor's network side: eight incoming messages and three requests.
+ *
+ * **Every** incoming handler looks the editor up by `AvatarEditorIdEnum.MAIN_EDITOR` and does
+ * nothing if it is absent — so an effect push while the furniture editor is open, and the main one
+ * is not, is silently dropped. That is AS3's, and it is why the editor must exist before any of
+ * this matters.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarEditorMessageHandler.as
+ */
+export class AvatarEditorMessageHandler implements IAvatarEditorMessageHandler
+{
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::NAME_OK
+    // Name DERIVED: `_SafeCls_2167._SafeStr_6694`, the result code a free name comes back with.
+    private static readonly NAME_OK: number = 0;
+
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::_connection
+    // AS3 holds the whole communication manager and uses only its connection.
+    private _connection: IConnection | null;
+
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::_manager
+    // Name DERIVED (`_SafeStr_4593`).
+    private _manager: {getEditor(editorId: number): HabboAvatarEditor | null} | null;
+
+    // TS-only: kept so `dispose()` can unregister. AS3 never unregisters — see `dispose()`.
+    private _events: IMessageEvent[] = [];
+
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::AvatarEditorMessageHandler()
+    constructor(manager: {getEditor(editorId: number): HabboAvatarEditor | null}, connection: IConnection | null)
+    {
+        this._manager = manager;
+        this._connection = connection;
+
+        this.register(new AvatarEffectMessageEvent(this.onRoomAvatarEffects));
+        this.register(new AvatarEffectAddedMessageEvent(this.onAvatarEffectAdded));
+        this.register(new UserRightsMessageEvent(this.onUserRights));
+        this.register(new WardrobeMessageEvent(this.onWardrobe));
+        this.register(new AvatarEffectSelectedMessageEvent(this.onAvatarEffectSelected));
+        this.register(new AvatarEffectExpiredMessageEvent(this.onAvatarEffectExpired));
+        this.register(new CheckUserNameResultMessageEvent(this.onCheckUserNameResult));
+        this.register(new AvatarEffectActivatedMessageEvent(this.onAvatarEffectActivated));
+        this.register(new SelectedNftWardrobeOutfitMessageEvent(this.onUserNftWardrobeMessage));
+    }
+
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::saveWardrobeOutfit()
+    // AS3 disposes the composer after sending; this port's connection does not take ownership, so
+    // there is nothing to dispose.
+    public saveWardrobeOutfit(slotId: number, outfit: IOutfit): void
+    {
+        this._connection?.send(new SaveWardrobeOutfitMessageComposer(slotId, outfit.figure, outfit.gender));
+    }
+
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::getWardrobe()
+    public getWardrobe(): void
+    {
+        this._connection?.send(new GetWardrobeMessageComposer());
+    }
+
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::checkName()
+    public checkName(name: string): void
+    {
+        this._connection?.send(new CheckUserNameMessageComposer(name));
+    }
+
+    /**
+     * AS3 nulls its two fields and **leaves all eight message events registered** on the
+     * connection — a leak, and one that keeps firing into a null manager afterwards. Every handler
+     * null-checks the manager first, so nothing throws; unregistering here anyway, because the
+     * port's connection exposes `removeMessageEvent` and a live listener into a disposed handler
+     * has no upside.
+     */
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::dispose()
+    public dispose(): void
+    {
+        for(const event of this._events) this._connection?.removeMessageEvent(event);
+
+        this._events = [];
+        this._connection = null;
+        this._manager = null;
+    }
+
+    // TS-only: AS3 repeats `addHabboConnectionMessageEvent(new X(cb))` eight times inline.
+    private register(event: IMessageEvent): void
+    {
+        this._connection?.addMessageEvent(event);
+        this._events.push(event);
+    }
+
+    // TS-only: every handler below begins with this same lookup.
+    private get editor(): HabboAvatarEditor | null
+    {
+        return this._manager?.getEditor(AvatarEditorIdEnum.MAIN_EDITOR) ?? null;
+    }
+
+    /**
+     * TODO(AS3): the name-change view (`view/AvatarEditorNameChangeView.as`) is not ported, so the
+     * result is logged and dropped. AS3 sets `checkedName` on it when the code is OK and calls
+     * `setNameNotAvailableView(code, name, suggestions)` otherwise.
+     */
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::onCheckUserNameResult()
+    private onCheckUserNameResult = (event: IMessageEvent): void =>
+    {
+        if(this.editor === null) return;
+
+        const parser = (event as {parser?: unknown}).parser as {resultCode?: number; name?: string} | null;
+
+        if(parser == null) return;
+
+        log.debug(
+            `Name check result ${parser.resultCode} for "${parser.name}" dropped — `
+            + 'AvatarEditorNameChangeView is not ported'
+        );
+
+        void AvatarEditorMessageHandler.NAME_OK;
+    };
+
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::onWardrobe()
+    private onWardrobe = (rawEvent: IMessageEvent): void =>
+    {
+        // TODO(AS3): `wardrobe.updateSlots(state, outfits)` — `WardrobeModel` is not ported, so the
+        // slots are dropped. The wire layer that carries them is (slice 1).
+        const event = rawEvent as WardrobeMessageEvent;
+        const wardrobe = this.editor?.wardrobe ?? null;
+
+        if(wardrobe === null)
+        {
+            log.debug(`Wardrobe with ${event.outfits.length} outfits dropped — WardrobeModel is not ported`);
+
+            return;
+        }
+
+        (wardrobe as unknown as {updateSlots(state: number, outfits: unknown[]): void})
+            .updateSlots(event.state, event.outfits);
+    };
+
+    /**
+     * Maps the club level to **2 or 0** — not to the level itself. Any non-zero club makes the
+     * editor treat the user as a full subscriber.
+     */
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::onUserRights()
+    private onUserRights = (event: IMessageEvent): void =>
+    {
+        const editor = this.editor;
+
+        if(editor === null) return;
+
+        const clubLevel = ((event as {parser?: unknown}).parser as {clubLevel?: number} | null)?.clubLevel ?? 0;
+
+        editor.clubMemberLevel = clubLevel !== 0 ? 2 : 0;
+        editor.update();
+    };
+
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::onAvatarEffectAdded()
+    // Only resets the effects page — the new effect is not selected.
+    private onAvatarEffectAdded = (): void =>
+    {
+        this.editor?.effects?.reset();
+    };
+
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::onAvatarEffectActivated()
+    private onAvatarEffectActivated = (event: IMessageEvent): void =>
+    {
+        const editor = this.editor;
+
+        if(editor === null) return;
+
+        editor.effects?.reset();
+
+        const type = ((event as {parser?: unknown}).parser as {type?: number} | null)?.type ?? -1;
+
+        if(editor.figureData === null) return;
+
+        editor.figureData.avatarEffectType = type;
+        editor.figureData.updateView();
+    };
+
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::onAvatarEffectExpired()
+    // Clears the worn effect **only if it is the one that expired**.
+    private onAvatarEffectExpired = (event: IMessageEvent): void =>
+    {
+        const editor = this.editor;
+
+        if(editor === null) return;
+
+        editor.effects?.reset();
+
+        const type = ((event as {parser?: unknown}).parser as {type?: number} | null)?.type ?? -1;
+        const figureData = editor.figureData;
+
+        if(figureData === null || figureData.avatarEffectType !== type) return;
+
+        figureData.avatarEffectType = -1;
+        figureData.updateView();
+    };
+
+    /**
+     * TODO(AS3): AS3 gates this on `parser.userId == manager.roomDesktop.roomSession.ownUserRoomId`
+     * — an effect on *someone else* in the room must not change the editor's preview. This port's
+     * manager has no `roomDesktop` (it would be a `RoomUI` dependency, and the editor is in the
+     * engine layer), so the guard cannot be evaluated and the whole handler is skipped rather than
+     * applied unguarded. Wire it when the room-desktop route exists.
+     */
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::onRoomAvatarEffects()
+    private onRoomAvatarEffects = (event: IMessageEvent): void =>
+    {
+        if(this.editor === null) return;
+
+        void event;
+
+        log.debug('Room avatar effect ignored — the own-user guard needs a room desktop the manager does not have');
+    };
+
+    // AS3: .../avatar/AvatarEditorMessageHandler.as::onAvatarEffectSelected()
+    // No `effects.reset()` here, unlike the activated and expired handlers.
+    private onAvatarEffectSelected = (event: IMessageEvent): void =>
+    {
+        const figureData = this.editor?.figureData ?? null;
+
+        if(figureData === null) return;
+
+        figureData.avatarEffectType = ((event as {parser?: unknown}).parser as {type?: number} | null)?.type ?? -1;
+        figureData.updateView();
+    };
+
+    /**
+     * Registered by the *editor* in AS3, not by this handler — moved here so all nine
+     * registrations live together and are unregistered together.
+     */
+    // AS3: .../avatar/HabboAvatarEditor.as::onUserNftWardrobeMessage()
+    private onUserNftWardrobeMessage = (event: IMessageEvent): void =>
+    {
+        const parser = (event as {parser?: unknown}).parser as {
+            currentTokenId?: string | null;
+            fallbackFigureString?: string;
+            fallbackFigureGender?: string;
+        } | null;
+
+        if(parser == null) return;
+
+        this.editor?.applySelectedNftOutfit(
+            parser.currentTokenId ?? null, parser.fallbackFigureString ?? '', parser.fallbackFigureGender ?? ''
+        );
+    };
+}

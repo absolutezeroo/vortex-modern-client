@@ -9,6 +9,7 @@ import {
 import {
     RoomWidgetClothingChangeUpdateEvent
 } from '@habbo/ui/widget/events/RoomWidgetClothingChangeUpdateEvent';
+import {AvatarEditorIdEnum} from '@habbo/avatar/enum/AvatarEditorIdEnum';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 
 const log = Logger.getLogger('habbo.ui.handler.FurnitureClothingChangeWidgetHandler');
@@ -116,13 +117,11 @@ export class FurnitureClothingChangeWidgetHandler implements IRoomWidgetHandler
     }
 
     /**
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/FurnitureClothingChangeWidgetHandler.as::processWidgetMessage()
-     * "RWCCM_REQUEST_EDITOR" reads the furni's `furniture_clothing_boy`/`_girl` outfit (falling
-     * back to the defaults above), then calls
-     * `container.avatarEditor.openEditor(1, this, ["torso", "legs"], false, title)` and
-     * `loadAvatarInEditor(...)`. `IRoomWidgetHandlerContainer` exposes no `avatarEditor` in this
-     * port — `habbo/avatar`'s editor component is unported — so picking a gender resolves the
-     * outfit and stops there. The chooser itself works; only the editor it would open does not.
+     * Opens the editor on the furni's own outfit, restricted to the torso and legs pages — you
+     * dress the *mannequin*, not yourself, so the head and the rest are not offered.
+     *
+     * `this` is passed as the save listener, which is what diverts the save away from the server
+     * and into `saveFigure()` below.
      */
     // AS3: .../handler/FurnitureClothingChangeWidgetHandler.as::processWidgetMessage() "RWCCM_REQUEST_EDITOR"
     private openEditor(request: RoomWidgetClothingChangeMessage): void
@@ -145,16 +144,52 @@ export class FurnitureClothingChangeWidgetHandler implements IRoomWidgetHandler
             ? model.getString(RoomObjectVariableEnum.FURNITURE_CLOTHING_GIRL) || FurnitureClothingChangeWidgetHandler.DEFAULT_GIRL_CLOTHES
             : model.getString(RoomObjectVariableEnum.FURNITURE_CLOTHING_BOY) || FurnitureClothingChangeWidgetHandler.DEFAULT_BOY_CLOTHES;
 
-        log.warn(`Clothing editor requested for object ${this._objectId} (${isGirl ? 'F' : 'M'}, "${outfit}") - the avatar editor is not reachable from the widget container`);
+        const editor = this._container?.avatarEditor ?? null;
+
+        if(editor === null)
+        {
+            log.warn('Clothing editor requested, but nothing is attached to IID_HabboAvatarEditor');
+
+            return;
+        }
+
+        // AS3 tests `openEditor(...)` for truth and only then loads the figure and shows the
+        // gender chooser — the window it returns is the condition.
+        const window = editor.openEditor(
+            AvatarEditorIdEnum.FURNITURE_EDITOR,
+            this,
+            ['torso', 'legs'],
+            false,
+            '${widget.furni.clothingchange.editor.title}'
+        );
+
+        if(window === null) return;
+
+        editor.loadAvatarInEditor(AvatarEditorIdEnum.FURNITURE_EDITOR, outfit, isGirl ? 'F' : 'M', 0);
+
+        this._container?.desktopEvents.emit(
+            RoomWidgetClothingChangeUpdateEvent.SHOW_GENDER_SELECTION,
+            new RoomWidgetClothingChangeUpdateEvent(
+                RoomWidgetClothingChangeUpdateEvent.SHOW_GENDER_SELECTION,
+                request.objectId, request.objectCategory, request.roomId
+            )
+        );
     }
 
     /**
-     * TODO(AS3): AS3 implements `IAvatarEditorListener.saveFigure()`, which sends the chosen
-     * outfit back to the furni. Unreachable while the editor above is.
+     * AS3: .../handler/FurnitureClothingChangeWidgetHandler.as::saveFigure()
+     *
+     * The save listener the editor was opened with. Sends the outfit to the furni and closes the
+     * editor — note the argument order, `(objectId, gender, figure)`, which is the reverse of the
+     * `(figure, gender)` this receives.
      */
     // AS3: .../handler/FurnitureClothingChangeWidgetHandler.as::saveFigure()
-    public saveFigure(_figure: string, _gender: string): void
+    public saveFigure(figure: string, gender: string): void
     {
+        if(this._container === null) return;
+
+        this._container.roomSession?.sendUpdateClothingChangeFurniture(this._objectId, gender, figure);
+        this._container.avatarEditor?.close(AvatarEditorIdEnum.FURNITURE_EDITOR);
     }
 
     // AS3: .../handler/FurnitureClothingChangeWidgetHandler.as::getProcessedEvents()
@@ -175,10 +210,13 @@ export class FurnitureClothingChangeWidgetHandler implements IRoomWidgetHandler
         // AS3 no-op.
     }
 
-    /** AS3 also closes the avatar editor here; see the TODO on `openEditor()`. */
     // AS3: .../handler/FurnitureClothingChangeWidgetHandler.as::dispose()
+    // Closes the furniture editor, which for id 1 hides *and* disposes it — see
+    // `HabboAvatarEditorManager.close()`.
     public dispose(): void
     {
+        this._container?.avatarEditor?.close(AvatarEditorIdEnum.FURNITURE_EDITOR);
+
         this._disposed = true;
         this._container = null;
     }

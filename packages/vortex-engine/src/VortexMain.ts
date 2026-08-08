@@ -85,6 +85,8 @@ import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
 import {IID_HabboHelp} from '@iid/IIDHabboHelp';
+import {IID_HabboAvatarEditor} from '@iid/IIDHabboAvatarEditor';
+import {HabboAvatarEditorManager} from '@habbo/avatar/HabboAvatarEditorManager';
 import {IID_HabboModeration} from '@iid/IIDHabboModeration';
 import {IID_HabboClubCenter} from '@iid/IIDHabboClubCenter';
 import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents';
@@ -282,6 +284,7 @@ export class VortexMain implements IVortexMain
     private _questEngine: HabboQuestEngine | null = null;
     private _habboHelp: HabboHelp | null = null;
     private _moderation: ModerationManager | null = null;
+    private _avatarEditor: HabboAvatarEditorManager | null = null;
 
     // AS3: sources/win63_version/habbo/room/class_34.as::get toolbar()
     get toolbar(): IHabboToolbar 
@@ -964,6 +967,17 @@ export class VortexMain implements IVortexMain
         // communication manager (line 670) and the session data manager (line 712).
         this._moderation = new ModerationManager(ctx);
         ctx.attachComponent(this._moderation, [IID_HabboModeration]);
+
+        // The avatar editor. Same shape again: IID_HabboAvatarEditor was declared in `iid/` and
+        // provided by nothing, so five components (HabboCatalog, HabboLandingView, RoomUI,
+        // MeMenuWidgetHandler via the room desktop, and FurnitureClothingChangeWidgetHandler) held
+        // null forever and every "change clothes" path was a no-op.
+        //
+        // Attached last of the managers so its five optional dependencies are already up: the
+        // avatar renderer, the communication manager, the inventory, the catalogue and the session.
+        // AS3 registers it via HabboAvatarEditorManagerBootstrap.
+        this._avatarEditor = new HabboAvatarEditorManager(ctx, 0, this._assets);
+        ctx.attachComponent(this._avatarEditor, [IID_HabboAvatarEditor]);
 
         log.debug('Friend List initialized');
     }

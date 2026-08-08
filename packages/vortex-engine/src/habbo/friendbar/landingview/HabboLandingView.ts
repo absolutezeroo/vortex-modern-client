@@ -39,6 +39,7 @@ import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
 import {IID_HabboHelp} from '@iid/IIDHabboHelp';
 import {IID_HabboAvatarEditor} from '@iid/IIDHabboAvatarEditor';
+import type {IHabboAvatarEditor} from '@habbo/avatar/IHabboAvatarEditor';
 import {IID_HabboGameManager} from '@iid/IIDHabboGameManager';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import {HabboToolbarEnum} from '@habbo/toolbar/HabboToolbarEnum';
@@ -147,14 +148,12 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
         return this._habboHelp;
     }
 
-    // TODO(AS3): HabboAvatarEditor has no ported manager/interface yet (IID_HabboAvatarEditor
-    // is typed `unknown`) - field kept for interface parity with
-    // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get avatarEditor(),
-    // always null until that manager is implemented.
-    private _avatarEditor: unknown = null;
+    // AS3: .../src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::_avatarEditor
+    // Provided since `HabboAvatarEditorManager` landed.
+    private _avatarEditor: IHabboAvatarEditor | null = null;
 
     // AS3: .../src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get avatarEditor()
-    get avatarEditor(): unknown
+    get avatarEditor(): IHabboAvatarEditor | null
     {
         return this._avatarEditor;
     }
@@ -312,7 +311,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
                 IID_HabboAvatarEditor,
                 (avatarEditor: unknown) =>
                 {
-                    this._avatarEditor = avatarEditor;
+                    this._avatarEditor = (avatarEditor as IHabboAvatarEditor | null) ?? null;
                 },
                 false
             ),

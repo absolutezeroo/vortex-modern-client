@@ -35,14 +35,15 @@ export class AvatarImageWidget implements ILandingViewWidget
         landingView.communicationManager?.addHabboConnectionMessageEvent(this._userObjectEvent);
         landingView.communicationManager?.addHabboConnectionMessageEvent(this._userChangeEvent);
 
-        // TODO(AS3): `landingView.avatarEditor` has no ported manager yet (see
-        // HabboLandingView.ts::avatarEditor TODO) - AS3 listens for
-        // AVATAR_FIGURE_UPDATED on it here. Nothing in the engine currently
-        // emits that event, so this is a harmless no-op until HabboAvatarEditor
-        // is implemented; guarded structurally rather than assuming a shape.
-        const avatarEditor = landingView.avatarEditor as {events?: {on?: (type: string, cb: (e: AvatarUpdateEvent) => void) => void}} | null;
-
-        avatarEditor?.events?.on?.('AVATAR_FIGURE_UPDATED', this.onAvatarFigureUpdated);
+        // AS3: .../landingview/widget/AvatarImageWidget.as:32 — refreshes the landing-view avatar
+        // when the editor saves.
+        //
+        // ⚠ AS3 listens for **"AVATAR_FIGURE_UPDATED"**, and `HabboAvatarEditor.saveCurrentSelection()`
+        // raises `AvatarUpdateEvent`, whose type is **"AVATAR_UPDATE"**. The two strings do not
+        // match in the source either, so this listener never fires in AS3 — the landing-view
+        // avatar is refreshed by the figure-update *packet* instead. Kept verbatim rather than
+        // "corrected": pointing it at AVATAR_UPDATE would add a redraw AS3 does not do.
+        landingView.avatarEditor?.events?.on('AVATAR_FIGURE_UPDATED', this.onAvatarFigureUpdated);
     }
 
     // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::get container()
@@ -65,6 +66,11 @@ export class AvatarImageWidget implements ILandingViewWidget
             this._landingView?.communicationManager?.removeHabboConnectionMessageEvent(this._userChangeEvent);
             this._userChangeEvent = null;
         }
+
+        // AS3 removes the same AVATAR_FIGURE_UPDATED listener here — see the note where it is
+        // attached: the string does not match what the editor raises, so neither call does
+        // anything, but both are kept so the pair stays symmetric.
+        this._landingView?.avatarEditor?.events?.off('AVATAR_FIGURE_UPDATED', this.onAvatarFigureUpdated);
 
         this._landingView = null;
         this._container = null;

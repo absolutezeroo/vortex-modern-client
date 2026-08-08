@@ -1,12 +1,16 @@
 /**
- * Interface representing an avatar outfit (figure + gender).
+ * Anything the wardrobe can save: a figure and the gender it was built for.
  *
- * @see sources/win63_version/habbo/avatar/IOutfit.as
+ * Implemented by `WardrobeSlot` and `Outfit`, and taken by
+ * `AvatarEditorMessageHandler.saveWardrobeOutfit()`.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/IOutfit.as
  */
 export interface IOutfit
 {
-    // AS3: sources/win63_version/habbo/avatar/IOutfit.as::get figure()
+    // AS3: .../avatar/IOutfit.as::get figure()
     readonly figure: string;
-    // AS3: sources/win63_version/habbo/avatar/IOutfit.as::get gender()
+
+    // AS3: .../avatar/IOutfit.as::get gender()
     readonly gender: string;
 }

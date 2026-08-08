@@ -32,6 +32,7 @@ import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
 import {IID_HabboAvatarEditor} from '@iid/IIDHabboAvatarEditor';
+import type {IHabboAvatarEditor} from '@habbo/avatar/IHabboAvatarEditor';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
@@ -205,7 +206,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_notifications
     private _notifications: IHabboNotifications | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_avatarEditor
-    private _avatarEditor: unknown = null;
+    private _avatarEditor: IHabboAvatarEditor | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_roomSessionManager
     private _roomSessionManager: IRoomSessionManager | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::roomSession (_SafeStr_5616)
@@ -329,7 +330,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get avatarEditor()
-    get avatarEditor(): unknown
+    get avatarEditor(): IHabboAvatarEditor | null
     {
         return this._avatarEditor;
     }
@@ -613,16 +614,13 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 },
                 false
             ),
-            // TODO(AS3): HabboAvatarEditor has no ported manager/interface yet (IID_HabboAvatarEditor
-            // is typed `unknown`) - field kept for interface parity with
-            // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get avatarEditor(),
-            // always null until that manager is implemented. Same placeholder pattern already used
-            // by HabboLandingView.ts.
+            // Provided since `HabboAvatarEditorManager` landed. The IID is declared
+            // `createIID<unknown>`, so the setter narrows here.
             new ComponentDependency(
                 IID_HabboAvatarEditor,
                 (avatarEditor: unknown) =>
                 {
-                    this._avatarEditor = avatarEditor;
+                    this._avatarEditor = (avatarEditor as IHabboAvatarEditor | null) ?? null;
                 },
                 false
             ),

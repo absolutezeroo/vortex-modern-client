@@ -9,6 +9,7 @@ import {Logger} from '@core/utils/Logger';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import {HabboToolbarIconEnum} from '@habbo/toolbar/HabboToolbarIconEnum';
 import {HabboHelpTutorialEvent} from '@habbo/help/enum/HabboHelpTutorialEvent';
+import {AvatarEditorIdEnum} from '@habbo/avatar/enum/AvatarEditorIdEnum';
 import {MiniMailMessageEvent} from '@habbo/messenger/events/MiniMailMessageEvent';
 import type {PurseEvent} from '@habbo/catalog/purse/PurseEvent';
 import {RoomWidgetAvatarExpressionMessage} from '../widget/messages/RoomWidgetAvatarExpressionMessage';
@@ -464,14 +465,7 @@ export class MeMenuWidgetHandler implements IRoomWidgetHandler
     // AS3: .../handler/MeMenuWidgetHandler.as::dispose()
     dispose(): void
     {
-        const editor = this._container?.avatarEditor ?? null;
-
-        if(editor !== null)
-        {
-            // TODO(AS3): AS3 calls `avatarEditor.close(0)` here. `IID_HabboAvatarEditor` has no
-            // ported manager, so this is unreachable — see IRoomWidgetHandlerContainer.
-            log.debug('Avatar editor close skipped — no ported manager behind IID_HabboAvatarEditor');
-        }
+        this._container?.avatarEditor?.close(AvatarEditorIdEnum.MAIN_EDITOR);
 
         this._disposed = true;
         this.container = null;
@@ -727,19 +721,24 @@ export class MeMenuWidgetHandler implements IRoomWidgetHandler
     /**
      * TS-only: the `RWCM_OPEN_AVATAR_EDITOR` case, extracted.
      *
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/
-     * MeMenuWidgetHandler.as::processWidgetMessage() — AS3 calls
-     * `avatarEditor.openEditor(0, null, null, true)` then `loadOwnAvatarInEditor(0)`, and only
-     * then raises `HHTE_DONE_AVATAR_EDITOR_OPENING`. `IID_HabboAvatarEditor` has no ported
-     * manager, so the two editor calls cannot be written yet; the tutorial event is raised
-     * regardless, exactly where AS3 raises it, so the help flow is not left hanging.
+     * The order is AS3's: open, load the user's own figure, *then* tell the help module the editor
+     * opened — a tutorial listening for that event can assume the figure is already in.
      */
-    // TS-only: the RWCM_OPEN_AVATAR_EDITOR case, extracted — see the TODO above.
     private openAvatarEditor(): void
     {
         if(this._container === null) return;
 
-        log.warn('Avatar editor requested, but no manager is attached to IID_HabboAvatarEditor');
+        const editor = this._container.avatarEditor;
+
+        if(editor === null)
+        {
+            log.warn('Avatar editor requested, but nothing is attached to IID_HabboAvatarEditor');
+        }
+        else
+        {
+            editor.openEditor(AvatarEditorIdEnum.MAIN_EDITOR, null, null, true);
+            editor.loadOwnAvatarInEditor(AvatarEditorIdEnum.MAIN_EDITOR);
+        }
 
         this._container.habboHelp?.events?.emit(
             HabboHelpTutorialEvent.DONE_AVATAR_EDITOR_OPENING,

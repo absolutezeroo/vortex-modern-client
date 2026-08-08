@@ -85,6 +85,7 @@ import {FurnitureAreaHideWidgetHandler} from './handler/FurnitureAreaHideWidgetH
 import {ConversionPointWidgetHandler} from './handler/ConversionPointWidgetHandler';
 import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 import type {IHabboQuestEngine} from '@habbo/quest/IHabboQuestEngine';
+import type {IHabboAvatarEditor} from '@habbo/avatar/IHabboAvatarEditor';
 import type {IHabboMessenger} from '@habbo/messenger/IHabboMessenger';
 import {ExternalImageWidgetHandler} from './handler/ExternalImageWidgetHandler';
 import {UiHelpBubbleWidgetHandler} from './handler/UiHelpBubbleWidgetHandler';
@@ -427,17 +428,16 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     }
 
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_avatarEditor
-    // TODO(AS3): no ported manager behind IID_HabboAvatarEditor — see IRoomWidgetHandlerContainer.
-    private _avatarEditor: unknown | null = null;
+    private _avatarEditor: IHabboAvatarEditor | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get avatarEditor()
-    public get avatarEditor(): unknown | null
+    public get avatarEditor(): IHabboAvatarEditor | null
     {
         return this._avatarEditor;
     }
 
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set avatarEditor()
-    public set avatarEditor(value: unknown | null)
+    public set avatarEditor(value: IHabboAvatarEditor | null)
     {
         this._avatarEditor = value;
     }

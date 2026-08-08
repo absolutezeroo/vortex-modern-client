@@ -1,3 +1,4 @@
+import {AvatarEditorIdEnum} from '@habbo/avatar/enum/AvatarEditorIdEnum';
 /**
  * AvatarInfoWidget — the RWE_AVATAR_INFO widget, own-avatar slice.
  *
@@ -1108,10 +1109,16 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     }
 
     // AS3: AvatarInfoWidget.as::openAvatarEditor()
-    // TODO(AS3): avatarEditor.openEditor(...) — the avatar editor isn't ported;
-    // route through the link-event system when available.
+    // The own-avatar bubble's "change looks" button. Same pair as the me-menu's clothes button —
+    // open on the main id, then load the user's own figure.
     public openAvatarEditor(): void
     {
+        const editor = this.handler?.container?.avatarEditor ?? null;
+
+        if(editor === null) return;
+
+        editor.openEditor(AvatarEditorIdEnum.MAIN_EDITOR, null, null, true);
+        editor.loadOwnAvatarInEditor(AvatarEditorIdEnum.MAIN_EDITOR);
     }
 
     // AS3: AvatarInfoWidget.as::set isUserDecorating()

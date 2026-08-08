@@ -28,6 +28,7 @@ import type {IHabboFurniEditor} from '@habbo/vortex/furnieditor/IHabboFurniEdito
 import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 import type {IHabboQuestEngine} from '@habbo/quest/IHabboQuestEngine';
+import type {IHabboAvatarEditor} from '@habbo/avatar/IHabboAvatarEditor';
 import type {IHabboMessenger} from '@habbo/messenger/IHabboMessenger';
 import type {IRoomWidgetFactory} from './IRoomWidgetFactory';
 import type {IRoomWidgetHandler} from './IRoomWidgetHandler';
@@ -77,15 +78,9 @@ export interface IRoomWidgetHandlerContainer
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get messenger()
     // Only its event bus is used from here — the me-menu relays the two mini-mail notifications.
     readonly messenger: IHabboMessenger | null;
-    /**
-     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get avatarEditor()
-     *
-     * TODO(AS3): typed `unknown` because `IID_HabboAvatarEditor` has no ported manager yet — the
-     * same placeholder `HabboCatalog` and `HabboLandingView` already use. Always null until that
-     * manager exists, which is what makes the me-menu's `RWCM_OPEN_AVATAR_EDITOR` case a no-op.
-     */
     // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get avatarEditor()
-    readonly avatarEditor: unknown | null;
+    // Provided since `HabboAvatarEditorManager` landed; the me-menu's "clothes" button opens it.
+    readonly avatarEditor: IHabboAvatarEditor | null;
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboTracking()
     readonly habboTracking: IHabboTracking | null;
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboGroupsManager()

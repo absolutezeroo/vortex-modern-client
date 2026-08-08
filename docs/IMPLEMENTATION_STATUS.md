@@ -931,6 +931,53 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     registration would double-parse. The guide button uses the cached answer and is not refreshed
     by a later push. And the clothes button still opens nothing — see the avatar-editor entry.
 
+- ✅ **Avatar editor, slice 5: the core, the manager, and `IID_HabboAvatarEditor` wired**,
+  2026-08-08. `HabboAvatarEditor` (968 l. AS3), `HabboAvatarEditorManager` (305),
+  `AvatarEditorMessageHandler` (239), `IHabboAvatarEditor`, `AvatarEditorIdEnum`, `IOutfit`,
+  `IAvatarEditorSaveListener`, `AvatarUpdateEvent`. **The editor is now reachable**: the me-menu's
+  clothes button, the own-avatar bubble, the clothing-change furni and the `avatareditor/open`
+  link all open it.
+  - 🔌 **`IID_HabboAvatarEditor` had never been provided.** It was declared in `iid/` and
+    resolved to null in **seven** places, so every "change clothes" path in the client was a
+    silent no-op. `VortexMain` now attaches `HabboAvatarEditorManager` alongside the other
+    managers, and all seven were re-typed from `unknown` and given their real calls:
+    `RoomUI`, `RoomDesktop`, `IRoomWidgetHandlerContainer`, `MeMenuWidgetHandler` (open + close),
+    `FurnitureClothingChangeWidgetHandler` (open, `saveFigure`, close), `AvatarInfoWidget`,
+    `HabboCatalog`, `HabboLandingView` and `AvatarImageWidget`.
+  - ⚠️ **Two of those were not on my first list** and were only found by grepping for stale
+    TODOs before committing: `AvatarInfoWidget.openAvatarEditor()` (the own-avatar bubble's
+    "change looks", an empty method) and `AvatarImageWidget` (the landing-view refresh). Grep for
+    the symbol, do not work from a list.
+  - **The view layer is the remaining gap, and it is explicit.** `IAvatarEditorView` is an
+    interface with a `TODO(AS3)`; `_view` is null, so nothing is *drawn*. Everything else runs: the
+    figure model, five of the eight pages, the grid generation, the save path and all nine
+    messages.
+  - 🐛 **`close()`'s switch has its `case 2` after the `default`**, so the bot editor is never
+    disposed. Probe-confirmed the four behaviours: id 0 hides and keeps, id 1 hides + disposes +
+    forgets, id 2 does **nothing at all**, anything else disposes + forgets without hiding.
+  - 🐛 **`embedEditorToContext()` disposes the old editor and then calls `add()`** — which
+    refuses a key already present, and the disposed editor was never removed from the map. So the
+    replacement is never stored and every later `getEditor()` returns the disposed one. Kept:
+    `setValue()` would silently change which editor the message handler talks to.
+  - 🐛 **`AvatarImageWidget` listens for `"AVATAR_FIGURE_UPDATED"`** while the editor raises
+    `AvatarUpdateEvent`, whose type is `"AVATAR_UPDATE"`. The strings do not match in AS3 either,
+    so the listener never fires there; kept verbatim rather than "fixed", since pointing it at the
+    real type would add a redraw AS3 does not do.
+  - **Probe-verified end to end** against a stub host: gender filtering (male grid gets the unisex
+    and male sets, female the unisex and female), the club and sellable filters, **two** palettes
+    both built, the "remove" tile appearing only when the part is *not* mandatory, opening sending
+    `GetSelectedNftWardrobeOutfitMessageComposer`, saving sending `UpdateFigureDataMessageComposer`
+    **and** raising `AVATAR_UPDATE`, a save listener diverting **everything** (1 capture, 0
+    messages, 0 events), the four `close()` semantics, and the three wired call sites — me-menu
+    open+loadOwn, me-menu close on dispose, and the clothing furni sending
+    `(77, 'F', 'hd-180-7')` then closing editor 1.
+  - ⚠️ **Three `TODO(AS3)` carry real behaviour gaps**, each documented at the site:
+    `hasFigureSetIdInInventory()` and `getLastActivatedEffect()` do not exist on
+    `IHabboInventory`, so sellable items are hidden and the last effect is not restored on close;
+    and `onRoomAvatarEffects` is skipped entirely because its own-user guard needs a room desktop
+    the engine-layer manager does not have — applying it unguarded would let *another* user's
+    effect change your preview.
+
 - 🔄 **Avatar editor, slice 4: `CategoryBaseModel` + the five simple pages**, 2026-08-08.
   The shared page behaviour (344 l. AS3) and `BodyModel` (127), `HeadModel` (43), `TorsoModel` (42),
   `LegsModel` (41), `MiscModel` (52). Three of the eight pages are left — hot looks, effects and
@@ -1071,8 +1118,8 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     (`GetWardrobeMessageEvent` 2210, `SaveWardrobeOutfitMessageEvent` 116,
     `WardrobeMessageComposer` 1484), with WIN63's own registry as the primary source.
 
-- ⏸ **The avatar editor is unported apart from its wire layer** (see the slice above), measured
-  2026-08-08. `habbo/avatar/`'s *editor*
+- ⏸ **The avatar editor's *view* layer is unported** (everything else landed in slices 1-5),
+  measured 2026-08-08. `habbo/avatar/`'s *editor*
   side is ≈**7,200 l. across ~45 files** — core 2,269 (`HabboAvatarEditor` 968, `AvatarEditorView`
   657, `HabboAvatarEditorManager` 305, `AvatarEditorMessageHandler` 239), `common/` 2,036,
   `wardrobe/` 828, `effects/` 648, `figuredata/` 418, `nft/` 342, `generic/` 252, `hotlooks/` 230,

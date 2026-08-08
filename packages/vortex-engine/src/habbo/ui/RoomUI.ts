@@ -32,6 +32,7 @@ import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
 import type {IHabboQuestEngine} from '@habbo/quest/IHabboQuestEngine';
 import {IID_HabboMessenger} from '@iid/IIDHabboMessenger';
 import {IID_HabboAvatarEditor} from '@iid/IIDHabboAvatarEditor';
+import type {IHabboAvatarEditor} from '@habbo/avatar/IHabboAvatarEditor';
 import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 import type {IHabboMessenger} from '@habbo/messenger/IHabboMessenger';
 import type {IHabboFriendBarView} from '@habbo/friendbar/view/IHabboFriendBarView';
@@ -234,8 +235,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     private _messenger: IHabboMessenger | null = null;
 
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_avatarEditor
-    // TODO(AS3): no ported manager behind IID_HabboAvatarEditor yet — stays null.
-    private _avatarEditor: unknown | null = null;
+    private _avatarEditor: IHabboAvatarEditor | null = null;
 
     // AS3: RoomUI.as::_userDefinedRoomEvents — DI-resolved; injected into every RoomDesktop.
     private _userDefinedRoomEvents: IHabboUserDefinedRoomEvents | null = null;
@@ -597,13 +597,16 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 },
                 false
             ),
-            // TODO(AS3): IID_HabboAvatarEditor has no ported manager, so this never resolves and
-            // the field stays null — the same placeholder HabboCatalog and HabboLandingView use.
-            // Optional, or it would lock RoomUI forever.
+            // Optional like every other manager here — a required dependency that failed to
+            // resolve would lock RoomUI forever with no log.
             new ComponentDependency(
                 IID_HabboAvatarEditor,
-                (avatarEditor: unknown) =>
+                (raw: unknown) =>
                 {
+                    // The IID is declared `createIID<unknown>`, as every view-layer IID in `iid/`
+                    // is, so the setter takes unknown and narrows here.
+                    const avatarEditor = (raw as IHabboAvatarEditor | null) ?? null;
+
                     this._avatarEditor = avatarEditor;
 
                     for(const desktop of this._desktops.values())
