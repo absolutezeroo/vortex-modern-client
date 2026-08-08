@@ -1,0 +1,59 @@
+import type {IPartColor} from '../structure/figure/IPartColor';
+import type {IFigurePartSet} from '../structure/figure/IFigurePartSet';
+
+/**
+ * One clothing thumbnail in a category's grid, as `CategoryData` sees it.
+ *
+ * TS-only: AS3's `CategoryData` holds concrete `AvatarEditorGridPartItem`s, which are window-backed
+ * (514 l., a thumbnail with its own rendered avatar). It touches only the six members below.
+ * Extracted so the selection model ports and verifies before the view layer exists;
+ * `AvatarEditorGridPartItem` will satisfy this as written.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/common/AvatarEditorGridPartItem.as
+ */
+export interface IAvatarEditorGridPartItem
+{
+    // AS3: .../avatar/common/AvatarEditorGridPartItem.as::get id()
+    readonly id: number;
+
+    // AS3: .../avatar/common/AvatarEditorGridPartItem.as::get partSet()
+    // Null for the two synthetic thumbnails, "REMOVE_ITEM" and "GET_MORE" — which is why every
+    // caller in `CategoryData` null-checks it before reading `clubLevel` or `isSellable`.
+    readonly partSet: IFigurePartSet | null;
+
+    // AS3: .../avatar/common/AvatarEditorGridPartItem.as::get colorLayerCount()
+    // How many of the selected colours this part actually wears; `getSelectedColorIds()` slices
+    // its answer to this, floored at 1.
+    readonly colorLayerCount: number;
+
+    // AS3: .../avatar/common/AvatarEditorGridPartItem.as::set isSelected()
+    isSelected: boolean;
+
+    // AS3: .../avatar/common/AvatarEditorGridPartItem.as::set colors()
+    // Write-only from `CategoryData`'s side — it pushes the palette selection into every thumbnail
+    // so each redraws itself in the chosen colours.
+    colors: (IPartColor | null)[];
+
+    // AS3: .../avatar/common/AvatarEditorGridPartItem.as::dispose()
+    dispose(): void;
+}
+
+/**
+ * One colour swatch in a category's palette, as `CategoryData` sees it.
+ *
+ * TS-only: the same narrowing as `IAvatarEditorGridPartItem` — AS3's concrete
+ * `AvatarEditorGridColorItem` is window-backed (145 l.) and only these three members are read here.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/common/AvatarEditorGridColorItem.as
+ */
+export interface IAvatarEditorGridColorItem
+{
+    // AS3: .../avatar/common/AvatarEditorGridColorItem.as::get partColor()
+    readonly partColor: IPartColor | null;
+
+    // AS3: .../avatar/common/AvatarEditorGridColorItem.as::set isSelected()
+    isSelected: boolean;
+
+    // AS3: .../avatar/common/AvatarEditorGridColorItem.as::dispose()
+    dispose(): void;
+}

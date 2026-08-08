@@ -931,6 +931,49 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     registration would double-parse. The guide button uses the cached answer and is not refreshed
     by a later push. And the clothes button still opens nothing — see the avatar-editor entry.
 
+- 🔄 **Avatar editor, slice 3: `common/` — the selection model**, 2026-08-08. `CategoryData`
+  (519 l. AS3), `TabUtils`, and the five interfaces of `common/` — **8 of the 12 files**, ~1,100 l.
+  of the 2,036. The four left are window-backed and belong with the view: `AvatarEditorGridPartItem`
+  (514), `CategoryBaseModel` (344), `AvatarEditorGridView` (248), `AvatarEditorGridColorItem` (145),
+  `CategoryBaseView` (107).
+  - **Three obfuscated interfaces named from their implementors**, not guessed: `_SafeCls_2660` →
+    `ICategoryModel` (only `CategoryBaseModel` implements it, and it is what `HabboAvatarEditor`'s
+    `_categories` map holds), `_SafeCls_4089` → `ICategoryView` (**eight** implementors — the six
+    that extend `CategoryBaseView` plus `HotLooksView` and `NftAvatarsView`, which implement it
+    directly), `_SafeCls_3071` → `IAvatarEditorGridView` (only `AvatarEditorGridView`).
+  - **A category is a whole *page*, not a part type.** Each owns several part types — the torso page
+    edits `ch`, `cc`, `ca` and `cp` — which is why every `ICategoryModel` method is keyed by part
+    type rather than by the page.
+  - **There are two palettes, holding the same colours twice.** A part may be dyed in two
+    independent layers, so `HabboAvatarEditor` builds the colour list twice and each layer keeps its
+    own selection; `getSelectedColorIds()` then trims the pair to however many layers the *selected
+    part* wears, floored at 1. Probe-confirmed: the same input `[2, 3]` yields `[2]` for a
+    one-layer part and `[2, 3]` for a two-layer one, and selecting a colour in one layer leaves the
+    other untouched.
+  - **Two more narrow interfaces instead of window classes** — the same technique as slice 2.
+    `CategoryData` holds concrete grid items (514 + 145 l., each a thumbnail with its own rendered
+    avatar) but touches six members of one and three of the other; extracted as
+    `IAvatarEditorGridPartItem` / `IAvatarEditorGridColorItem`.
+  - ⚠️ **`hasFigureSetIdInInventory()` does not exist in this port.** AS3 passes the whole
+    `IHabboInventory` to the two sellable-item methods and calls only that one predicate; it is
+    backed by a `Vector.<int>` of owned figure-set ids fed by a setter at `HabboInventory.as:1086`,
+    and **neither the list nor the setter is ported**. Extracted as `IFigureSetOwnership` with a
+    `TODO(AS3)`: until it is implemented, passing null reports every sellable item as unowned,
+    which *hides* them rather than showing an unowned one.
+  - 🐛 **One AS3 index bug kept.** In `getSelectedColorIds()`, the guard
+    `_loc7_.length <= _loc8_` compares a palette's length against the **layer index** where it
+    plainly means the *palette* index it reads two lines later. Harmless for the real two-layer,
+    many-swatch palettes — it can only skip a layer whose palette is shorter than its own index —
+    so it is ported as written.
+  - **Probe-verified**: selection by id and by index with correct deselection; an unknown id and an
+    out-of-range index both keeping the previous selection; `getCurrentPart()` yielding null with
+    nothing selected (AS3 reads `_parts[-1]`); the two-layer independence and trimming above; all
+    four null bail-outs of `getSelectedColorIds()`; club stripping falling back to index 0 and
+    **skipping to index 1 when index 0 is the synthetic "remove item" thumbnail**; colour stripping
+    replacing only the over-level layer and doing nothing when the palette holds nothing
+    affordable; the sellable checks under owned/unowned/null inventory; full disposal; and
+    `TabUtils.setElementImage()` being idempotent (`tab_head` → `tab_head_off` → `tab_head_off`).
+
 - 🔄 **Avatar editor, slice 2: `FigureData` — the editable figure**, 2026-08-08. The model every
   category page reads and writes: a part→set map, a part→colours map, and the string
   serialisation joining them (336 l. AS3).

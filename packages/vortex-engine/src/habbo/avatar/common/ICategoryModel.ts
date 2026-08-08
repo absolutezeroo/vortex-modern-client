@@ -1,0 +1,59 @@
+import type {IWindow} from '@core/window/IWindow';
+import type {CategoryData} from './CategoryData';
+import type {IFigureSetOwnership} from './IFigureSetOwnership';
+
+/**
+ * One page of the avatar editor — body, head, torso, legs, misc, hot looks, effects or NFTs.
+ *
+ * Interface name DERIVED: the AS3 file is `_SafeCls_2660.as` and the identifier exists in no tree.
+ * Named for its sole implementor, `CategoryBaseModel`, and for `HabboAvatarEditor`'s `_categories`
+ * map, which holds nothing else.
+ *
+ * A "category" here is a whole page, and each page owns several *part types* — the torso page
+ * edits `ch`, `cc`, `ca` and `cp` — which is why every method below is keyed by part type rather
+ * than by the page.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/common/_SafeCls_2660.as
+ */
+export interface ICategoryModel
+{
+    // AS3: .../avatar/common/_SafeCls_2660.as::dispose()
+    dispose(): void;
+
+    // AS3: .../avatar/common/_SafeCls_2660.as::reset()
+    reset(): void;
+
+    /**
+     * TODO(AS3): typed `unknown` because `HabboAvatarEditor` is not ported yet — AS3 types this
+     * `HabboAvatarEditor`. Narrow it when that class lands.
+     */
+    // AS3: .../avatar/common/_SafeCls_2660.as::get controller()
+    readonly controller: unknown;
+
+    // AS3: .../avatar/common/_SafeCls_2660.as::getWindowContainer()
+    getWindowContainer(): IWindow | null;
+
+    // AS3: .../avatar/common/_SafeCls_2660.as::switchCategory()
+    switchCategory(partType?: string): void;
+
+    // AS3: .../avatar/common/_SafeCls_2660.as::getCategoryData()
+    getCategoryData(partType: string): CategoryData | null;
+
+    // AS3: .../avatar/common/_SafeCls_2660.as::selectPart()
+    selectPart(partType: string, index: number): void;
+
+    // AS3: .../avatar/common/_SafeCls_2660.as::selectColor()
+    selectColor(partType: string, index: number, layer: number): void;
+
+    // AS3: .../avatar/common/_SafeCls_2660.as::hasClubItemsOverLevel()
+    hasClubItemsOverLevel(clubLevel: number): boolean;
+
+    // AS3: .../avatar/common/_SafeCls_2660.as::hasInvalidSellableItems()
+    hasInvalidSellableItems(inventory: IFigureSetOwnership | null): boolean;
+
+    // AS3: .../avatar/common/_SafeCls_2660.as::stripClubItemsOverLevel()
+    stripClubItemsOverLevel(clubLevel: number): boolean;
+
+    // AS3: .../avatar/common/_SafeCls_2660.as::stripInvalidSellableItems()
+    stripInvalidSellableItems(): boolean;
+}
