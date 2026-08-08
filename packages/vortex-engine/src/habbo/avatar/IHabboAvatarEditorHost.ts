@@ -49,6 +49,10 @@ export interface IHabboAvatarEditorHost
     // Only one key is read through it: `catalog.clothes.page`.
     getProperty(key: string): string;
 
+    // AS3: .../src/com/sulake/habbo/localization/IHabboLocalizationManager.as::getLocalization()
+    // Flattened from `manager.localization.getLocalization(...)`; one caller, the NFT caption.
+    getLocalization(key: string): string;
+
     // AS3: .../src/com/sulake/habbo/catalog/IHabboCatalog.as::openCatalogPage()
     // Flattened from `manager.catalog.openCatalogPage(...)`, like `openClubCenter()` above.
     openCatalogPage(pageName: string): void;

@@ -17,13 +17,14 @@ import type {
 import type {IFigureSetOwnership} from './common/IFigureSetOwnership';
 import type {ISideContentModel} from './common/ISideContent';
 import type {IHabboAvatarEditorHost} from './IHabboAvatarEditorHost';
-import {Logger} from '@core/utils/Logger';
 import {OrderedMap} from '@core/utils/OrderedMap';
 import {AvatarEditorIdEnum} from './enum/AvatarEditorIdEnum';
 import {AvatarEditorView} from './AvatarEditorView';
 import {AvatarUpdateEvent} from './events/AvatarUpdateEvent';
 import {CategoryData} from './common/CategoryData';
 import {EffectsModel} from './effects/EffectsModel';
+import {HotLooksModel} from './hotlooks/HotLooksModel';
+import {NftAvatarsModel} from './nft/NftAvatarsModel';
 import {FigureData} from './figuredata/FigureData';
 import {BodyModel} from './generic/BodyModel';
 import {HeadModel} from './head/HeadModel';
@@ -34,8 +35,6 @@ import {WardrobeModel} from './wardrobe/WardrobeModel';
 import {UpdateFigureDataMessageComposer} from '@habbo/communication/messages/outgoing/avatar/UpdateFigureDataMessageComposer';
 import {SaveUserNftWardrobeMessageComposer} from '@habbo/communication/messages/outgoing/nftwardrobe/SaveUserNftWardrobeMessageComposer';
 import {GetSelectedNftWardrobeOutfitMessageComposer} from '@habbo/communication/messages/outgoing/nftwardrobe/GetSelectedNftWardrobeOutfitMessageComposer';
-
-const log = Logger.getLogger('habbo.avatar.HabboAvatarEditor');
 
 /**
  * One editor instance: two figures (one per gender), the eight category pages, the wardrobe, and
@@ -744,9 +743,8 @@ export class HabboAvatarEditor implements ICategoryModelOwner
      * *saved* NFT is looked up on the NFT page by token id and staged first — so arriving at the
      * page re-dresses the avatar in the NFT it already owns.
      *
-     * TODO(AS3): the second branch needs `NftAvatarsModel.getNftAvatarByTokenId()`, and
-     * `nft/NftAvatarsModel.as` (145 l.) is not ported — the page is not even added in `init()`. A
-     * saved NFT is therefore not restored when the user opens the page; a staged preview is.
+     * The second branch stages before loading, which means opening the page on a saved NFT leaves a
+     * rollback point behind: switching away without saving restores whatever was on screen.
      */
     // AS3: .../avatar/HabboAvatarEditor.as::loadNftFigure()
     public loadNftFigure(): void
@@ -758,10 +756,15 @@ export class HabboAvatarEditor implements ICategoryModelOwner
             return;
         }
 
-        if(this._currentNftTokenId !== null)
-        {
-            log.debug('Saved NFT outfit not restored — NftAvatarsModel is not ported');
-        }
+        if(this._currentNftTokenId === null) return;
+
+        const page = this._categories?.getValue('nfts') as NftAvatarsModel | null;
+        const outfit = page?.getNftAvatarByTokenId(this._currentNftTokenId) ?? null;
+
+        if(outfit === null) return;
+
+        this.setNftOutfit(outfit);
+        this.loadAvatarInEditor(outfit.figure, outfit.gender, this._clubMemberLevel);
     }
 
     // AS3: .../avatar/HabboAvatarEditor.as::loadRollbackFigure()
@@ -858,14 +861,18 @@ export class HabboAvatarEditor implements ICategoryModelOwner
         this._categories.add('legs', new LegsModel(this));
         this._categories.add('misc', new MiscModel(this));
 
+        // The one page built conditionally, because its constructor fires a request at the server
+        // — an editor restricted to other pages should not ask for hot looks it will never show.
         if(categories === null || categories.indexOf('hotlooks') > -1)
         {
-            log.debug('hotlooks page requested but not ported yet');
+            this._categories.add('hotlooks', new HotLooksModel(this));
         }
 
-        // Added unconditionally, as in AS3 — the *tab* is what `AvatarEditorView` prunes when the
-        // `effects.in.avatar.editor` configuration is off, not the model.
+        // These two are added unconditionally, as in AS3 — the *tab* is what `AvatarEditorView`
+        // prunes when the configuration is off, not the model. `NftAvatarsModel` therefore fires
+        // its request whatever the editor was opened for.
         this._categories.add('effects', new EffectsModel(this));
+        this._categories.add('nfts', new NftAvatarsModel(this));
 
         this._initialised = true;
     }

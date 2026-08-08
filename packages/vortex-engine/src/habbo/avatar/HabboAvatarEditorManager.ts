@@ -113,6 +113,14 @@ export class HabboAvatarEditorManager extends Component
         this._catalog?.openCatalogPage(pageName);
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/IHabboLocalizationManager.as::getLocalization()
+    // Reached through the window manager rather than through a dependency of its own — it is the
+    // only localisation the editor needs, and the window manager already holds one.
+    public getLocalization(key: string): string
+    {
+        return this._windowManager?.localization?.getLocalization(key, key) ?? key;
+    }
+
     // AS3: .../avatar/HabboAvatarEditorManager.as::get handler()
     public get handler(): IAvatarEditorMessageHandler | null
     {

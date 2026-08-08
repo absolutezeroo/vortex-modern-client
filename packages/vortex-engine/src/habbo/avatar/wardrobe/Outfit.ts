@@ -1,5 +1,5 @@
-import type {HabboAvatarEditor} from '../HabboAvatarEditor';
 import type {IAvatarImageListener} from '../IAvatarImageListener';
+import type {ICategoryModelOwner} from '../common/ICategoryModelOwner';
 import type {IOutfit} from '../IOutfit';
 import {FigureData} from '../figuredata/FigureData';
 import {OutfitView} from './OutfitView';
@@ -24,8 +24,9 @@ export class Outfit implements IOutfit, IAvatarImageListener
     private static readonly RENDER_DIRECTION: number = 4;
 
     // AS3: .../avatar/wardrobe/Outfit.as::_controller
-    // Name DERIVED (`_SafeStr_4593`).
-    private _controller: HabboAvatarEditor | null;
+    // Name DERIVED (`_SafeStr_4593`). AS3 types it `HabboAvatarEditor`; narrowed here to the three
+    // members this class touches — the window manager, `zoom.enabled`, and the renderer.
+    private _controller: ICategoryModelOwner | null;
 
     // AS3: .../avatar/wardrobe/Outfit.as::_figure
     // Name DERIVED (`_SafeStr_5551`).
@@ -49,7 +50,7 @@ export class Outfit implements IOutfit, IAvatarImageListener
      * The view is built **before** the gender is normalised and before the figure is stored, so its
      * "enabled" flag is decided on the raw argument — an empty figure gives a disabled tile.
      */
-    constructor(controller: HabboAvatarEditor | null, figure: string, gender: string)
+    constructor(controller: ICategoryModelOwner | null, figure: string, gender: string)
     {
         this._controller = controller;
         this._view = new OutfitView(controller?.manager?.windowManager ?? null, figure !== '');

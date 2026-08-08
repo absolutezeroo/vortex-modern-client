@@ -931,6 +931,45 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     registration would double-parse. The guide button uses the cached answer and is not refreshed
     by a later push. And the clothes button still opens nothing — see the avatar-editor entry.
 
+- 🔄 **Avatar editor, slice 10: `nft/` + `hotlooks/` — the last two pages**, 2026-08-08. All five
+  files, **572 l. of AS3**: `NftAvatarsModel` (145), `HotLooksModel` (128), `HotLooksView` (102),
+  `NftAvatarsView` (102), `NftWardrobeParamView` (95). **`HabboAvatarEditor` now builds all eight
+  pages plus the wardrobe**, and `loadNftFigure()`'s saved-NFT branch works for the first time.
+  - **The only two parts of the editor that talk to the connection themselves.** Both models
+    register their own message event and fire their own request **from the constructor** — i.e. at
+    editor `init()`, long before anyone opens the tab. Everything else in the editor goes through
+    `AvatarEditorMessageHandler`. Probe-confirmed: constructing either sends its composer and
+    leaves exactly one listener registered.
+  - 🐛 **`HotLooksModel.dispose()` leaks its listener.** It calls `super.dispose()` **first**, which
+    nulls `_controller`, then guards the unregistration on `controller && controller.manager && …`
+    — now false. A disposed model keeps receiving pushes and keeps building `Outfit`s into a map it
+    has already dropped. `NftAvatarsModel.dispose()` does the same two steps in the **opposite**
+    order and gets it right. Probe-confirmed both ways: one listener left behind, zero. Kept.
+  - 🐛 **Neither arrival handler tells its view.** Both append to their list — never clearing, so a
+    second answer doubles the grid — and neither calls `update()`. Looks and avatars that arrive
+    after the page was last opened only appear when it is re-entered. Kept.
+  - **Hot looks are bucketed per gender**, keyed by `gender.toUpperCase()`, and the page's getter
+    reads the editor's *current* gender — so switching sex swaps the whole grid. Probe-confirmed:
+    `m`/`M`/`F` sorts into `[M1, M2]` and `[F1]`.
+  - **Both grids resolve a click through `window.parent`.** The procedure sits on the outfit tile's
+    container, but the port dispatches it with the window the event actually landed on — a child —
+    so the grid index has to be looked up on the parent. Verified against `WindowController.update()`,
+    which calls `proc(event, this)` after `procedure` has bubbled up from the parent.
+  - 🐛 **`selectNftAvatar()`'s highlight bookkeeping sits outside its guards**, so clicking a tile
+    whose render never arrived un-lights the previous selection, lights nothing, and leaves the grid
+    with no active tile — while staging and wearing nothing. Probe-confirmed.
+  - 🐛 **An unknown NFT collection makes the caption read `null #<id>`** — `getLocalizedCollectionName()`
+    returns null and the string is built by concatenation. The *colour* path has a real white
+    default; the name path does not. Kept.
+  - **The caption's colours are not the tile's.** Avatar and clothes reuse their tile's *active*
+    background, but genesis gets `0xFF1E3B21`, a colour that appears nowhere else. Probe-confirmed
+    across all four cases.
+  - **`ICategoryModelOwner` gained four members** the two pages reach: `clubMemberLevel`,
+    `loadAvatarInEditor()`, `setNftOutfit()` and `getLocalization()` on the host. `Outfit` and
+    `NftOutfit` were retyped from the concrete editor to this interface — they touch three of its
+    members, and it is what `HotLooksModel` has to hand.
+  - **`HabboAvatarEditor` no longer needs a logger**: every "not ported yet" line it carried is gone.
+
 - 🔄 **Avatar editor, slice 9: `effects/` — the effects page**, 2026-08-08. All five files,
   **648 l. of AS3**: `AvatarEditorGridViewEffects` (160), `EffectsParamView` (177),
   `AvatarEditorGridItemEffect` (127), `EffectsModel` (101), `EffectsView` (83). Plus the interface
@@ -1306,17 +1345,17 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     (`GetWardrobeMessageEvent` 2210, `SaveWardrobeOutfitMessageEvent` 116,
     `WardrobeMessageComposer` 1484), with WIN63's own registry as the primary source.
 
-- ⏸ **What is left of the avatar editor after slice 9**, measured 2026-08-08. The editor side of
-  `habbo/avatar/` is ≈**7,200 l. across ~45 files**; slices 1-9 have taken the core (2,269),
-  `common/` (2,036, 12 of 12), `wardrobe/` (828, 6 of 6), `effects/` (648, 5 of 5), `figuredata/`
-  (418), `generic/` (252) and the five simple pages. What remains:
-  - `nft/` (342) + `hotlooks/` (230) — the two remaining pages, plus what
-    `HabboAvatarEditor.loadNftFigure()` needs to restore a *saved* NFT.
-  - `view/AvatarEditorNameChangeView.as` (358) + `AvatarEditorNameSuggestionListRenderer.as` (120)
-    — the name-change dialog; `AvatarEditorMessageHandler.onCheckUserNameResult()` drops its answer
-    until then.
-  - The editor is otherwise reachable and draws: `IID_HabboAvatarEditor` is provided by
-    `HabboAvatarEditorManager` (slice 5) and wired at all nine call sites.
+- ⏸ **What is left of the avatar editor after slice 10**, measured 2026-08-08. The editor side of
+  `habbo/avatar/` is ≈**7,200 l. across ~45 files**; slices 1-10 have taken the core (2,269),
+  `common/` (2,036, 12 of 12), `wardrobe/` (828, 6 of 6), `effects/` (648, 5 of 5), `nft/` (342,
+  3 of 3), `hotlooks/` (230, 2 of 2), `figuredata/` (418), `generic/` (252) and the five simple
+  pages. **All eight pages and the wardrobe are built.** What remains:
+  - `view/AvatarEditorNameChangeView.as` (358) + `view/AvatarEditorNameSuggestionListRenderer.as`
+    (120) — the name-change dialog. `AvatarEditorView`'s `avatar_name_change` button logs a warning
+    instead of opening it, and `AvatarEditorMessageHandler.onCheckUserNameResult()` drops its
+    answer. This is the last unported piece.
+  - `IID_HabboAvatarEditor` is provided by `HabboAvatarEditorManager` (slice 5) and wired at all
+    nine call sites.
 
 - 🔄 **Priority 1, slice 17: `RWE_ME_MENU` — the handler and its whole message layer**,
   2026-08-08. `MeMenuWidgetHandler` (481 l. AS3) + the 5 missing widget messages + the 6 missing

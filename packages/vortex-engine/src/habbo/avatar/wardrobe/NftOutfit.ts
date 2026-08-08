@@ -1,4 +1,4 @@
-import type {HabboAvatarEditor} from '../HabboAvatarEditor';
+import type {ICategoryModelOwner} from '../common/ICategoryModelOwner';
 import {Outfit} from './Outfit';
 
 /**
@@ -45,7 +45,7 @@ export class NftOutfit extends Outfit
 
     // AS3: .../avatar/wardrobe/NftOutfit.as::NftOutfit()
     constructor(
-        controller: HabboAvatarEditor | null,
+        controller: ICategoryModelOwner | null,
         id: string,
         figure: string,
         gender: string,

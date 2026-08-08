@@ -72,6 +72,25 @@ export interface ICategoryModelOwner
     setAvatarEffectType(effectType: number): void;
 
     /**
+     * The club level the *editor* is working with, which is not always the session's — see
+     * `HabboAvatarEditor.get clubMemberLevel()`. The two outfit pages pass it straight back into
+     * `loadAvatarInEditor()`.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditor.as::get clubMemberLevel()
+    readonly clubMemberLevel: number;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditor.as::loadAvatarInEditor()
+    // How the hot-looks and NFT pages actually wear what you clicked.
+    loadAvatarInEditor(figure: string, gender: string, clubLevel?: number): void;
+
+    /**
+     * Stages an NFT outfit as the *pending* one, capturing the current figure so it can be rolled
+     * back. Only the NFT page and the wardrobe call it — the wardrobe with null, to clear it.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditor.as::setNftOutfit()
+    setNftOutfit(outfit: {id: string; figure: string; gender: string} | null): void;
+
+    /**
      * Whether the user owns a given sellable figure set.
      *
      * AS3 reaches this as `controller.manager.inventory`; flattened here because the manager is
