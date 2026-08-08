@@ -69,6 +69,8 @@ export interface IHabboInventory
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get clubPeriods()
     readonly clubPeriods: number;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::get clubPastPeriods()
+    readonly clubPastPeriods: number;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get clubLevel()
     readonly clubLevel: number;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get unseenItemTracker()

@@ -1,3 +1,4 @@
+import type {EventEmitter} from 'eventemitter3';
 /**
  * Interface for the Habbo messenger system.
  * Provides methods for managing conversations, online status,
@@ -7,6 +8,11 @@
  */
 export interface IHabboMessenger
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/messenger/IHabboMessenger.as::get events()
+    // Carries the two mini-mail notifications the me-menu relays. `HabboMessenger` is a Component
+    // and has always had this; the interface did not expose it.
+    readonly events: EventEmitter;
+
     /**
 	 * Whether the user is following someone to a group room.
 	 */

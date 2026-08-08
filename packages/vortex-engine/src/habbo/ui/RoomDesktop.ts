@@ -83,8 +83,11 @@ import {InternalLinkWidgetHandler} from './handler/InternalLinkWidgetHandler';
 import {LoadingBarWidgetHandler} from './handler/LoadingBarWidgetHandler';
 import {FurnitureAreaHideWidgetHandler} from './handler/FurnitureAreaHideWidgetHandler';
 import {ConversionPointWidgetHandler} from './handler/ConversionPointWidgetHandler';
+import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
+import type {IHabboMessenger} from '@habbo/messenger/IHabboMessenger';
 import {ExternalImageWidgetHandler} from './handler/ExternalImageWidgetHandler';
 import {UiHelpBubbleWidgetHandler} from './handler/UiHelpBubbleWidgetHandler';
+import {MeMenuWidgetHandler} from './handler/MeMenuWidgetHandler';
 import {PollWidgetHandler} from './handler/PollWidgetHandler';
 import {ObjectLocationRequestHandler} from './handler/ObjectLocationRequestHandler';
 import {FriendRequestWidgetHandler} from './handler/FriendRequestWidgetHandler';
@@ -375,6 +378,52 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     public set habboHelp(value: IHabboHelp | null)
     {
         this._habboHelp = value;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_soundManager
+    private _soundManager: IHabboSoundManager | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get soundManager()
+    public get soundManager(): IHabboSoundManager | null
+    {
+        return this._soundManager;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set soundManager()
+    public set soundManager(value: IHabboSoundManager | null)
+    {
+        this._soundManager = value;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_messenger
+    private _messenger: IHabboMessenger | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get messenger()
+    public get messenger(): IHabboMessenger | null
+    {
+        return this._messenger;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set messenger()
+    public set messenger(value: IHabboMessenger | null)
+    {
+        this._messenger = value;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_avatarEditor
+    // TODO(AS3): no ported manager behind IID_HabboAvatarEditor — see IRoomWidgetHandlerContainer.
+    private _avatarEditor: unknown | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get avatarEditor()
+    public get avatarEditor(): unknown | null
+    {
+        return this._avatarEditor;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set avatarEditor()
+    public set avatarEditor(value: unknown | null)
+    {
+        this._avatarEditor = value;
     }
 
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_habboTracking
@@ -942,6 +991,17 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             // AS3: RoomDesktop.as:912-914 "RWE_EXTERNAL_IMAGE"
             case 'RWE_EXTERNAL_IMAGE':
                 handler = new ExternalImageWidgetHandler();
+                break;
+            /**
+             * AS3: RoomDesktop.as::createWidgetHandler() "RWE_ME_MENU"
+             *
+             * `RoomWidgetFactory` has no case for this type yet, so `createWidget()` returns null
+             * and the handler stays registered on its own — the same path `RWE_INTERNAL_LINK`
+             * takes. That is deliberate: the handler is the whole message layer and works as soon
+             * as something sends it a message; `widget/memenu/` is the next slice.
+             */
+            case 'RWE_ME_MENU':
+                handler = new MeMenuWidgetHandler();
                 break;
             // AS3: RoomDesktop.as:915-917 "RWE_UI_HELP_BUBBLE"
             case 'RWE_UI_HELP_BUBBLE':

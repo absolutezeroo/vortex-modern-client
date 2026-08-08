@@ -283,6 +283,14 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return this._purse.clubPeriods;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get clubPastPeriods()
+    // Note the purse here is `inventory/purse/Purse`, not the catalogue's — the two are different
+    // classes with different members, and only this one has `clubPastPeriods`.
+    get clubPastPeriods(): number
+    {
+        return this._purse.clubPastPeriods;
+    }
+
     // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get web3tradeEnabled()
     get web3tradeEnabled(): boolean
     {

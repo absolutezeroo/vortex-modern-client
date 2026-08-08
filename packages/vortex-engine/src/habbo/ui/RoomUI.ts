@@ -27,6 +27,11 @@ import {IID_HabboInventory} from '@iid/IIDHabboInventory';
 import {IID_HabboFurniEditor} from '@iid/IIDHabboFurniEditor';
 import {IID_HabboHelp} from '@iid/IIDHabboHelp';
 import {IID_HabboFriendBarView} from '@iid/IIDHabboFriendBarView';
+import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
+import {IID_HabboMessenger} from '@iid/IIDHabboMessenger';
+import {IID_HabboAvatarEditor} from '@iid/IIDHabboAvatarEditor';
+import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
+import type {IHabboMessenger} from '@habbo/messenger/IHabboMessenger';
 import type {IHabboFriendBarView} from '@habbo/friendbar/view/IHabboFriendBarView';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboGroupsManager} from '@iid/IIDHabboGroupsManager';
@@ -214,6 +219,17 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_friendBarView
     // Needed by the UI help bubbles, which look their target icons up through it.
     private _friendBarView: IHabboFriendBarView | null = null;
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_soundManager
+    // Needed by the me-menu's settings tab.
+    private _soundManager: IHabboSoundManager | null = null;
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_messenger
+    private _messenger: IHabboMessenger | null = null;
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_avatarEditor
+    // TODO(AS3): no ported manager behind IID_HabboAvatarEditor yet — stays null.
+    private _avatarEditor: unknown | null = null;
 
     // AS3: RoomUI.as::_userDefinedRoomEvents — DI-resolved; injected into every RoomDesktop.
     private _userDefinedRoomEvents: IHabboUserDefinedRoomEvents | null = null;
@@ -530,6 +546,54 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     callback: (...args: unknown[]) => this.bottomBarResizeHandler(args[0] as FriendBarResizeEvent)
                 }]
             ),
+            /**
+             * Both are attached (VortexMain), but both stay optional: a required dependency that
+             * never resolves locks the component forever with no log — the hole that kept the
+             * friend bar from ever building — and the room UI must come up whether or not sound
+             * and the console are present.
+             */
+            new ComponentDependency(
+                IID_HabboSoundManager,
+                (soundManager: IHabboSoundManager | null) =>
+                {
+                    this._soundManager = soundManager;
+
+                    for(const desktop of this._desktops.values())
+                    {
+                        desktop.soundManager = soundManager;
+                    }
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboMessenger,
+                (messenger: IHabboMessenger | null) =>
+                {
+                    this._messenger = messenger;
+
+                    for(const desktop of this._desktops.values())
+                    {
+                        desktop.messenger = messenger;
+                    }
+                },
+                false
+            ),
+            // TODO(AS3): IID_HabboAvatarEditor has no ported manager, so this never resolves and
+            // the field stays null — the same placeholder HabboCatalog and HabboLandingView use.
+            // Optional, or it would lock RoomUI forever.
+            new ComponentDependency(
+                IID_HabboAvatarEditor,
+                (avatarEditor: unknown) =>
+                {
+                    this._avatarEditor = avatarEditor;
+
+                    for(const desktop of this._desktops.values())
+                    {
+                        desktop.avatarEditor = avatarEditor;
+                    }
+                },
+                false
+            ),
             new ComponentDependency(
                 IID_HabboHelp,
                 (help: IHabboHelp | null) =>
@@ -671,6 +735,9 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         desktop.avatarRenderManager = this._avatarRenderManager;
         desktop.furniEditor = this._furniEditor;
         desktop.habboHelp = this._habboHelp;
+        desktop.soundManager = this._soundManager;
+        desktop.messenger = this._messenger;
+        desktop.avatarEditor = this._avatarEditor;
         desktop.userDefinedRoomEvents = this._userDefinedRoomEvents;
         desktop.habboTracking = this._habboTracking;
         desktop.habboGroupsManager = this._habboGroupsManager;

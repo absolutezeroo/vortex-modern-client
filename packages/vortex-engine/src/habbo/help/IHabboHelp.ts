@@ -1,3 +1,4 @@
+import type {EventEmitter} from 'eventemitter3';
 /**
  * Interface for the help component
  *
@@ -8,6 +9,14 @@
  */
 export interface IHabboHelp
 {
+    /**
+     * The help module's own event bus, which carries the tutorial events. `HabboHelp` is a
+     * Component and has always had it; the interface simply never exposed it, because nothing in
+     * the port raised or listened for a `HabboHelpTutorialEvent` until the me-menu did.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/IHabboHelp.as::get events()
+    readonly events: EventEmitter;
+
     // AS3: .../src/com/sulake/habbo/help/IHabboHelp.as::reportBully()
     reportBully(userId: number): void;
 
