@@ -10,6 +10,7 @@ import {AvatarEffectAddedMessageEvent} from '@habbo/communication/messages/incom
 import {AvatarEffectExpiredMessageEvent} from '@habbo/communication/messages/incoming/inventory/AvatarEffectExpiredMessageEvent';
 import {AvatarEffectMessageEvent} from '@habbo/communication/messages/incoming/room/action/AvatarEffectMessageEvent';
 import {AvatarEffectSelectedMessageEvent} from '@habbo/communication/messages/incoming/wardrobe/AvatarEffectSelectedMessageEvent';
+import type {CheckUserNameResultMessageParser} from '@habbo/communication/messages/parser/help/CheckUserNameResultMessageParser';
 import {CheckUserNameResultMessageEvent} from '@habbo/communication/messages/incoming/help/CheckUserNameResultMessageEvent';
 import {UserRightsMessageEvent} from '@habbo/communication/messages/incoming/handshake/UserRightsMessageEvent';
 import {WardrobeMessageEvent} from '@habbo/communication/messages/incoming/wardrobe/WardrobeMessageEvent';
@@ -115,25 +116,24 @@ export class AvatarEditorMessageHandler implements IAvatarEditorMessageHandler
     }
 
     /**
-     * TODO(AS3): the name-change view (`view/AvatarEditorNameChangeView.as`) is not ported, so the
-     * result is logged and dropped. AS3 sets `checkedName` on it when the code is OK and calls
-     * `setNameNotAvailableView(code, name, suggestions)` otherwise.
+     * AS3: .../avatar/AvatarEditorMessageHandler.as::onCheckUserNameResult()
+     *
+     * Routed at the **dialog**, not at the editor — and dropped when it has never been opened,
+     * which is the usual case: the rename dialog is built lazily on its first click.
      */
     // AS3: .../avatar/AvatarEditorMessageHandler.as::onCheckUserNameResult()
-    private onCheckUserNameResult = (event: IMessageEvent): void =>
+    private onCheckUserNameResult = (rawEvent: IMessageEvent): void =>
     {
-        if(this.editor === null) return;
+        const dialog = this.editor?.view?.avatarEditorNameChangeView ?? null;
 
-        const parser = (event as {parser?: unknown}).parser as {resultCode?: number; name?: string} | null;
+        if(dialog === null) return;
 
-        if(parser == null) return;
+        const parser = (rawEvent as CheckUserNameResultMessageEvent).getParser() as CheckUserNameResultMessageParser | null;
 
-        log.debug(
-            `Name check result ${parser.resultCode} for "${parser.name}" dropped — `
-            + 'AvatarEditorNameChangeView is not ported'
-        );
+        if(parser === null) return;
 
-        void AvatarEditorMessageHandler.NAME_OK;
+        if(parser.resultCode === AvatarEditorMessageHandler.NAME_OK) dialog.checkedName = parser.name;
+        else dialog.setNameNotAvailableView(parser.resultCode, parser.name, parser.nameSuggestions);
     };
 
     // AS3: .../avatar/AvatarEditorMessageHandler.as::onWardrobe()

@@ -121,6 +121,20 @@ export class HabboAvatarEditorManager extends Component
         return this._windowManager?.localization?.getLocalization(key, key) ?? key;
     }
 
+    // AS3: .../src/com/sulake/habbo/localization/IHabboLocalizationManager.as::registerParameter()
+    public registerLocalizationParameter(key: string, parameter: string, value: string): void
+    {
+        this._windowManager?.registerLocalizationParameter(key, parameter, value);
+    }
+
+    // AS3: .../src/com/sulake/core/window/ICoreWindowManager.as::getDesktop()
+    // AS3 reads `windowManager.getDesktop(1).width` inline; flattened because the editor wants the
+    // number and nothing else from the desktop.
+    public get desktopWidth(): number
+    {
+        return this._windowManager?.getDesktop(1)?.width ?? 0;
+    }
+
     // AS3: .../avatar/HabboAvatarEditorManager.as::get handler()
     public get handler(): IAvatarEditorMessageHandler | null
     {

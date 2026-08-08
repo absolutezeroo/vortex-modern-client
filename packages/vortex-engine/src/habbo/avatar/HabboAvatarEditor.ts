@@ -826,12 +826,13 @@ export class HabboAvatarEditor implements ICategoryModelOwner
     }
 
     /**
-     * Runs once. Builds both gender figures pre-loaded with the defaults, then the eight pages —
-     * hot looks only when it is in the requested list, or when there is no list at all.
+     * Runs once. Builds the wardrobe, then the view, then both gender figures pre-loaded with the
+     * defaults, then the eight pages — hot looks only when it is in the requested list, or when
+     * there is no list at all.
      *
-     * TODO(AS3): three pages are not ported yet — `hotlooks`, `effects` and `nfts`, whose models
-     * need the outfit classes and the effects grid. They are simply not added, so the editor comes
-     * up with five pages instead of eight. The wardrobe side panel is likewise absent.
+     * The order matters twice. The view is built **before** the pages, because every page's own
+     * view fetches its container from it. And the wardrobe goes in before the view, because the
+     * view's constructor calls `update()`, which asks for the side panel.
      */
     // AS3: .../avatar/HabboAvatarEditor.as::init()
     private init(categories: string[] | null = null): void

@@ -931,6 +931,40 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     registration would double-parse. The guide button uses the cached answer and is not refreshed
     by a later push. And the clothes button still opens nothing — see the avatar-editor entry.
 
+- ✅ **Avatar editor, slice 11: the rename dialog — the editor is COMPLETE**, 2026-08-08. Both
+  `view/` files, **478 l. of AS3**: `AvatarEditorNameChangeView` (358) and
+  `AvatarEditorNameSuggestionListRenderer` (120). With this the editor's ≈**7,200 l.** are ported
+  end to end — **no `TODO(AS3)` left anywhere under `habbo/avatar/`'s editor side**, and
+  `HabboAvatarEditor` no longer needs a logger because it has nothing left to report as missing.
+  - **`AvatarEditorMessageHandler.onCheckUserNameResult()` finally routes.** It aims at the
+    *dialog*, not the editor, and the dialog is built lazily on the first rename click — so a
+    result arriving before then is still dropped. That is AS3's shape, not a gap.
+  - **The dialog never sends the rename.** `select_name_button` has **no case** in the window
+    procedure, and neither does `cancel_selection_button`; the only click AS3 handles is
+    `check_name_button`. So the dialog can validate a name and then do nothing with it. Kept.
+  - 🐛 **`nameCheckWaitEnd(false)` skips enabling the select button but never disables it**, so a
+    rejection following a successful check leaves the button lit on a name the server has just
+    refused. Probe-confirmed.
+  - 🐛 **Result code 1 has an empty case** — it clears the wait state and leaves whatever message
+    the previous code wrote. The 2016 build does the same, so it is deliberate. Probe-confirmed:
+    the text after code 1 is still the merge-hotel-down message.
+  - 🐛 **`_pendingName` is only ever assigned null**, so the guard in `set checkedName()` can only
+    fire when the server returns a null name. Kept.
+  - **Picking a suggestion enables the select button** for a name that has never been checked —
+    `nameSelected()` calls `nameCheckWaitEnd(true)`. Probe-confirmed.
+  - **The suggestion box is hand-laid-out, not an item list.** Each chip is built, measured, and
+    either placed or **disposed** — too wide for the box, or past the forced 150px ceiling, and it
+    is thrown away rather than clipped, so the box silently shows fewer names than the server sent.
+    Probe-confirmed: three 40px chips in a 100px box land at (4,4), (49,4), (4,25) and `render()`
+    returns 41; 500px chips place none and return 0; a 40px-tall stack caps at three rows.
+  - **`CheckUserNameResultMessageEvent` was two codes short.** AS3 declares eight on the event class
+    itself; the port had six. Added 6 and 7 to match its sibling `ChangeUserNameResultMessageEvent`,
+    and documented that **every** identifier is obfuscated in every tree — including 2016 — so all
+    eight names are derived, six of them from the localisation key the dialog picks per code.
+  - **The host gained three members**: `registerLocalizationParameter()` for the `%name%`
+    substitution, and `desktopWidth` so the dialog can slide back on screen. Probe-confirmed:
+    opening at x 600 with a 300-wide dialog on an 800-wide desktop clamps to 500; at x 100 it stays.
+
 - 🔄 **Avatar editor, slice 10: `nft/` + `hotlooks/` — the last two pages**, 2026-08-08. All five
   files, **572 l. of AS3**: `NftAvatarsModel` (145), `HotLooksModel` (128), `HotLooksView` (102),
   `NftAvatarsView` (102), `NftWardrobeParamView` (95). **`HabboAvatarEditor` now builds all eight
@@ -1345,17 +1379,29 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     (`GetWardrobeMessageEvent` 2210, `SaveWardrobeOutfitMessageEvent` 116,
     `WardrobeMessageComposer` 1484), with WIN63's own registry as the primary source.
 
-- ⏸ **What is left of the avatar editor after slice 10**, measured 2026-08-08. The editor side of
-  `habbo/avatar/` is ≈**7,200 l. across ~45 files**; slices 1-10 have taken the core (2,269),
-  `common/` (2,036, 12 of 12), `wardrobe/` (828, 6 of 6), `effects/` (648, 5 of 5), `nft/` (342,
-  3 of 3), `hotlooks/` (230, 2 of 2), `figuredata/` (418), `generic/` (252) and the five simple
-  pages. **All eight pages and the wardrobe are built.** What remains:
-  - `view/AvatarEditorNameChangeView.as` (358) + `view/AvatarEditorNameSuggestionListRenderer.as`
-    (120) — the name-change dialog. `AvatarEditorView`'s `avatar_name_change` button logs a warning
-    instead of opening it, and `AvatarEditorMessageHandler.onCheckUserNameResult()` drops its
-    answer. This is the last unported piece.
-  - `IID_HabboAvatarEditor` is provided by `HabboAvatarEditorManager` (slice 5) and wired at all
-    nine call sites.
+- ✅ **The avatar editor is COMPLETE**, measured 2026-08-08 after slice 11. Its ≈**7,200 l. across
+  ~45 files** are ported end to end: core (2,269), `common/` (2,036, 12/12), `wardrobe/` (828, 6/6),
+  `effects/` (648, 5/5), `view/` (478, 2/2), `figuredata/` (418), `nft/` (342, 3/3), `hotlooks/`
+  (230, 2/2), `generic/` (252) and the five simple pages. All eight pages, the wardrobe side panel
+  and the rename dialog are built; `IID_HabboAvatarEditor` is provided by `HabboAvatarEditorManager`
+  and wired at all nine call sites.
+  - **Re-measure**: `grep -rn "TODO(AS3)" packages/vortex-engine/src/habbo/avatar/*.ts
+    packages/vortex-engine/src/habbo/avatar/{common,wardrobe,effects,nft,hotlooks,view,figuredata,generic,head,torso,legs,misc}/`.
+    Five survive, and **none of them is an unported AS3 file** — measured 2026-08-08:
+    - three are the same **inventory-side** gap: `IHabboInventory` has neither
+      `hasFigureSetIdInInventory()` nor `getLastActivatedEffect()`, so every sellable clothing item
+      reports as unowned (and is therefore hidden) and the last activated effect is not restored on
+      close. `IFigureSetOwnership`, `HabboAvatarEditorManager.get inventory()` and its `close()`
+      carry one each.
+    - one is a room-session gate in `AvatarEditorMessageHandler` (`parser.userId ==
+      roomSession.ownUserRoomId`) that needs the room desktop.
+    - one is the judgement call flagged in slice 6: `AvatarEditorGridPartItem.avatarImageReady()` is
+      **empty** in AS3 and is ported as a repaint, with the exact line to revert named.
+  - The `avatar/` directory also holds the *renderer* (`AvatarImage`, `AvatarStructure`, `cache/`,
+    `geometry/`, …) — a separate subsystem with its own gaps, not counted here.
+  - Two AS3 defects still shape what the user sees, both deliberate and documented at their
+    declarations: the wardrobe's empty-slot artwork can never load (its lookup name is misspelled in
+    AS3), and the rename dialog cannot actually send a rename.
 
 - 🔄 **Priority 1, slice 17: `RWE_ME_MENU` — the handler and its whole message layer**,
   2026-08-08. `MeMenuWidgetHandler` (481 l. AS3) + the 5 missing widget messages + the 6 missing

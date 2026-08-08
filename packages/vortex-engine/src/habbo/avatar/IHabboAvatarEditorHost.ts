@@ -50,8 +50,19 @@ export interface IHabboAvatarEditorHost
     getProperty(key: string): string;
 
     // AS3: .../src/com/sulake/habbo/localization/IHabboLocalizationManager.as::getLocalization()
-    // Flattened from `manager.localization.getLocalization(...)`; one caller, the NFT caption.
+    // Flattened from `manager.localization.getLocalization(...)`.
     getLocalization(key: string): string;
+
+    // AS3: .../src/com/sulake/habbo/localization/IHabboLocalizationManager.as::registerParameter()
+    // The `%name%` substitution the name-change dialog performs before reading a key back.
+    registerLocalizationParameter(key: string, parameter: string, value: string): void;
+
+    /**
+     * The width of the window layer the editor lives on, so a dialog opened at the editor's right
+     * edge can be pushed back on screen. AS3 reads `windowManager.getDesktop(1).width`.
+     */
+    // AS3: .../src/com/sulake/core/window/ICoreWindowManager.as::getDesktop()
+    readonly desktopWidth: number;
 
     // AS3: .../src/com/sulake/habbo/catalog/IHabboCatalog.as::openCatalogPage()
     // Flattened from `manager.catalog.openCatalogPage(...)`, like `openClubCenter()` above.

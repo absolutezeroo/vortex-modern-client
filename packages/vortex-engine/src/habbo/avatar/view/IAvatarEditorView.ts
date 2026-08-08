@@ -3,6 +3,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IFrameWindow} from '@core/window/components/IFrameWindow';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IAvatarEditorGridView} from '../common/ICategoryView';
+import type {AvatarEditorNameChangeView} from './AvatarEditorNameChangeView';
 
 /**
  * The window side of the avatar editor.
@@ -27,15 +28,10 @@ export interface IAvatarEditorView
     // The same container wrapped by the effects page's own grid class.
     readonly effectsGridView: IAvatarEditorGridView | null;
 
-    /**
-     * AS3: .../avatar/AvatarEditorView.as::get avatarEditorNameChangeView()
-     *
-     * TODO(AS3): typed `unknown` because `view/AvatarEditorNameChangeView.as` (358 l.) is not
-     * ported. `AvatarEditorMessageHandler.onCheckUserNameResult()` is its only consumer and
-     * null-checks it, so a name-check result is currently dropped rather than shown.
-     */
     // AS3: .../avatar/AvatarEditorView.as::get avatarEditorNameChangeView()
-    readonly avatarEditorNameChangeView: unknown;
+    // Null until the rename button is clicked once — the dialog is built lazily, which is why
+    // `AvatarEditorMessageHandler.onCheckUserNameResult()` drops a result that arrives before then.
+    readonly avatarEditorNameChangeView: AvatarEditorNameChangeView | null;
 
     // AS3: .../avatar/AvatarEditorView.as::get effectsParamViewContainer()
     readonly effectsParamViewContainer: IWindowContainer | null;

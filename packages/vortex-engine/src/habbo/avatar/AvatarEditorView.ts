@@ -11,6 +11,7 @@ import type {IAvatarEditorView} from './view/IAvatarEditorView';
 import {Logger} from '@core/utils/Logger';
 import {AvatarEditorGridView} from './common/AvatarEditorGridView';
 import {AvatarEditorGridViewEffects} from './effects/AvatarEditorGridViewEffects';
+import {AvatarEditorNameChangeView} from './view/AvatarEditorNameChangeView';
 
 const log = Logger.getLogger('habbo.avatar.AvatarEditorView');
 
@@ -138,8 +139,8 @@ export class AvatarEditorView implements IAvatarEditorView
     private _effectsGridView: IAvatarEditorGridView | null = null;
 
     // AS3: .../avatar/AvatarEditorView.as::_avatarEditorNameChangeView
-    // Name DERIVED (`_SafeStr_8336`).
-    private _avatarEditorNameChangeView: unknown = null;
+    // Name DERIVED (`_SafeStr_8336`): built on the first rename click and never disposed.
+    private _avatarEditorNameChangeView: AvatarEditorNameChangeView | null = null;
 
     /**
      * AS3: .../avatar/AvatarEditorView.as::AvatarEditorView()
@@ -185,9 +186,8 @@ export class AvatarEditorView implements IAvatarEditorView
     }
 
     // AS3: .../avatar/AvatarEditorView.as::get avatarEditorNameChangeView()
-    // TODO(AS3): always null — `view/AvatarEditorNameChangeView.as` (358 l.) is not ported. See
-    // `windowEventProc()`.
-    public get avatarEditorNameChangeView(): unknown
+    // Null until the rename button is clicked once; `AvatarEditorMessageHandler` null-checks it.
+    public get avatarEditorNameChangeView(): AvatarEditorNameChangeView | null
     {
         return this._avatarEditorNameChangeView;
     }
@@ -472,12 +472,18 @@ export class AvatarEditorView implements IAvatarEditorView
                 break;
 
             case 'avatar_name_change':
-                // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/view/
-                // AvatarEditorNameChangeView.as (358 l.) — not ported. AS3 focuses an existing view
-                // or constructs one at the editor's right-hand edge; the button does nothing here,
-                // and `AvatarEditorMessageHandler.onCheckUserNameResult()` therefore drops its
-                // answer.
-                log.warn('avatar_name_change clicked but AvatarEditorNameChangeView is not ported');
+                // Built once and kept — a second click focuses the dialog rather than replacing it.
+                // Placed at the editor body's right-hand edge; the dialog itself slides back on
+                // screen if that would overflow the desktop.
+                if(this._avatarEditorNameChangeView !== null)
+                {
+                    this._avatarEditorNameChangeView.focus();
+                    break;
+                }
+
+                this._avatarEditorNameChangeView = new AvatarEditorNameChangeView(
+                    this, (this._window?.x ?? 0) + (this._window?.width ?? 0), this._window?.y ?? 0
+                );
                 break;
         }
     };
