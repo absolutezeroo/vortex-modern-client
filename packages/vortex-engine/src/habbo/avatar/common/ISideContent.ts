@@ -1,4 +1,5 @@
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {HabboAvatarEditor} from '../HabboAvatarEditor';
 
 /**
  * A panel beside the editor's pages rather than one of them — the wardrobe is the only one.
@@ -16,12 +17,10 @@ export interface ISideContentModel
     // AS3: .../avatar/common/ISideContentModel.as::reset()
     reset(): void;
 
-    /**
-     * TODO(AS3): typed `unknown` because `HabboAvatarEditor` is not ported yet — AS3 types this
-     * `HabboAvatarEditor`. Narrow it when that class lands.
-     */
     // AS3: .../avatar/common/ISideContentModel.as::get controller()
-    readonly controller: unknown;
+    // Typed to the concrete editor, as in AS3 — `WardrobeSlot` reaches nine members through it,
+    // which is well past what a narrow interface would be worth.
+    readonly controller: HabboAvatarEditor | null;
 
     // AS3: .../avatar/common/ISideContentModel.as::getWindowContainer()
     getWindowContainer(): IWindowContainer | null;

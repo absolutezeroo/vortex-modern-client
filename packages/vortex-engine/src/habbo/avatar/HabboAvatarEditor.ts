@@ -29,6 +29,7 @@ import {HeadModel} from './head/HeadModel';
 import {LegsModel} from './legs/LegsModel';
 import {MiscModel} from './misc/MiscModel';
 import {TorsoModel} from './torso/TorsoModel';
+import {WardrobeModel} from './wardrobe/WardrobeModel';
 import {UpdateFigureDataMessageComposer} from '@habbo/communication/messages/outgoing/avatar/UpdateFigureDataMessageComposer';
 import {SaveUserNftWardrobeMessageComposer} from '@habbo/communication/messages/outgoing/nftwardrobe/SaveUserNftWardrobeMessageComposer';
 import {GetSelectedNftWardrobeOutfitMessageComposer} from '@habbo/communication/messages/outgoing/nftwardrobe/GetSelectedNftWardrobeOutfitMessageComposer';
@@ -263,12 +264,14 @@ export class HabboAvatarEditor implements ICategoryModelOwner
     }
 
     // AS3: .../avatar/HabboAvatarEditor.as::get wardrobe()
-    // Null until `init()` has run, which is what the `_initialised` guard is for.
-    public get wardrobe(): ISideContentModel | null
+    // Null until `init()` has run, which is what the `_initialised` guard is for. Typed to the
+    // concrete model, as in AS3 — `AvatarEditorMessageHandler` calls `updateSlots()` on it, which
+    // `ISideContentModel` does not declare.
+    public get wardrobe(): WardrobeModel | null
     {
         if(!this._initialised) return null;
 
-        return this._sideContent?.getValue('wardrobe') ?? null;
+        return (this._sideContent?.getValue('wardrobe') as WardrobeModel | null) ?? null;
     }
 
     // AS3: .../avatar/HabboAvatarEditor.as::get effects()
@@ -835,6 +838,7 @@ export class HabboAvatarEditor implements ICategoryModelOwner
 
         this._categories = new OrderedMap<string, ICategoryModel>();
         this._sideContent = new OrderedMap<string, ISideContentModel>();
+        this._sideContent.add('wardrobe', new WardrobeModel(this));
 
         // Built **before** the figures and the pages, as in AS3 — its constructor calls `update()`,
         // which walks an empty category map and returns on an empty `currentViewId`, so nothing it

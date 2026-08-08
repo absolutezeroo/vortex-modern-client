@@ -139,20 +139,12 @@ export class AvatarEditorMessageHandler implements IAvatarEditorMessageHandler
     // AS3: .../avatar/AvatarEditorMessageHandler.as::onWardrobe()
     private onWardrobe = (rawEvent: IMessageEvent): void =>
     {
-        // TODO(AS3): `wardrobe.updateSlots(state, outfits)` — `WardrobeModel` is not ported, so the
-        // slots are dropped. The wire layer that carries them is (slice 1).
         const event = rawEvent as WardrobeMessageEvent;
-        const wardrobe = this.editor?.wardrobe ?? null;
 
-        if(wardrobe === null)
-        {
-            log.debug(`Wardrobe with ${event.outfits.length} outfits dropped — WardrobeModel is not ported`);
-
-            return;
-        }
-
-        (wardrobe as unknown as {updateSlots(state: number, outfits: unknown[]): void})
-            .updateSlots(event.state, event.outfits);
+        // Null until the panel has been opened once — `get wardrobe()` gates on the editor's own
+        // `_initialised`. AS3 dereferences it unguarded and would throw; the answer is simply
+        // dropped here, and the panel re-requests it when it is next built.
+        this.editor?.wardrobe?.updateSlots(event.state, event.outfits);
     };
 
     /**

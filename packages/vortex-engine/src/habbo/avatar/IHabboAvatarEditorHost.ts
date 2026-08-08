@@ -82,6 +82,10 @@ export interface IHabboAvatarEditorHost
     // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::getBoolean()
     getBoolean(key: string): boolean;
 
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::getInteger()
+    // One key: `avatareditor.wardrobe.slots`, defaulted to 10.
+    getInteger(key: string, defaultValue: number): number;
+
     // AS3: .../src/com/sulake/habbo/catalog/IHabboCatalog.as::verifyClubLevel()
     verifyClubLevel(): boolean;
 

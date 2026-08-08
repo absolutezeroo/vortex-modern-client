@@ -931,6 +931,59 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     registration would double-parse. The guide button uses the cached answer and is not refreshed
     by a later push. And the clothes button still opens nothing — see the avatar-editor entry.
 
+- 🔄 **Avatar editor, slice 8: `wardrobe/` — the side panel and the outfit tile**, 2026-08-08.
+  All six files, **828 l. of AS3**: `WardrobeModel` (157), `WardrobeSlot` (224), `WardrobeView`
+  (114), `Outfit` (112), `OutfitView` (150), `NftOutfit` (71). `HabboAvatarEditor.init()` now adds
+  the wardrobe to `_sideContent`, so `AvatarEditorView.setSideContent('wardrobe')` finds a real
+  panel instead of collapsing the container to 1px — and `AvatarEditorMessageHandler.onWardrobe()`
+  delivers its outfits instead of logging them away.
+  - **The panel is built out of two detached templates.** `avatareditor_wardrobe_base` ships one
+    column and one slot; both are pulled out of the layout in `WardrobeView`'s constructor and kept
+    only by reference. The column is cloned per column needed, and the slot template is handed to
+    `WardrobeModel`, which clones it per slot. Column count is `trunc((slots + 6) / 7)` — the
+    integer-ceiling idiom, exact: probe-confirmed 7 → 1, 10 → 2, 14 → 2, 15 → 3.
+  - **Entitlement splits at slot 5**: the first five come with club, the rest with VIP. A club-only
+    user therefore gets five usable slots and five dead ones — probe-confirmed
+    `[true×5, false×5]`.
+  - **`init()` requests the outfits before the slots exist.** View, then `getWardrobe()`, then the
+    slots — so the server's answer always lands on slots that are already there, which is what
+    `updateSlots()`'s `if(!_initialised) return` guards. Every `reset()` costs a fresh layout build
+    *and* a fresh round trip.
+  - 🐛 **The empty-slot artwork can never load.** `WardrobeSlot.updateView()` asks for
+    `avatar_editor_wardrobe_empty_slot`; `HabboWindowManagerCom.as` declares it as
+    `avatar_editor_wardrobe_**wardrobe**_empty_slot`. The lookup returns null in the real client
+    too, `updateView()` returns early, and the consequence is bigger than a missing picture:
+    **`set_button.visible = false` and `get_button.visible = false` are unreachable**, because
+    every disabled or empty slot takes that branch and bails before reaching them. Proved by
+    probe — supplying the artwork makes both buttons hide correctly; withholding it leaves them
+    visible and nothing painted. Kept as written.
+  - 🐛 **`updateSlots()`'s two null checks record debug data and then fall through** into the loop
+    that would have thrown. The `ErrorReportStorage` entry is the point, not the guard. Kept.
+  - 🐛 **`OutfitView.windowEventProc()` is never attached** — declared private, assigned to nothing.
+    Its body is also inverted: everything sits inside `if(type != "WME_CLICK")`. Kept as the only
+    record of what its two colour constants were for.
+  - 🐛 **`WardrobeView.dispose()` disposes the two templates inside the `if(_window)` branch**, so a
+    view whose window failed to build leaks exactly the two objects that do exist. Kept.
+  - **`Outfit` and `WardrobeSlot` compose differently**: the outfit tile bottom-aligns the avatar in
+    a 35×60 frame, the wardrobe slot centres it on both axes in 22×48. Probe-confirmed against real
+    pixels — blue at (17, 59) and transparent at (17, 5) for the tile; the avatar's colour dead
+    centre and a transparent corner for the slot.
+  - **`NftOutfit` picks its colours from the contract key**: orange for `habbo:avatar`, grey for
+    `habbo:clothes`, dark-green-on-gold for `habbo:avatar_genesis` (the only one with a gradient),
+    white otherwise. `−1` is what `OutfitView` reads as "no gradient".
+  - **`ISideContentModel.controller` and `HabboAvatarEditor.wardrobe` are no longer `unknown`** —
+    typed to the concrete editor and `WardrobeModel`, as AS3 types them. `WardrobeSlot` reaches
+    nine members through the controller, well past what a narrow interface would be worth.
+  - **New TS-only helper `AvatarTextureUtils`**: this port's renderer returns a PixiJS `Texture`
+    where AS3 returns a `BitmapData`, and `IBitmapWrapperWindow.bitmap` wants an `ImageBitmap`. It
+    reads `texture.source.resource` directly rather than `renderer.extract.canvas()` — a
+    freshly-composed avatar texture has not been through a render pass, and `extract` reads back a
+    blank square for one that has not.
+  - **Probe-verified**: `set_button` saves through the handler with the *current* figure and
+    repaints before the server answers; `get_button`/`get_figure` clear any staged NFT and then
+    load; both are gated on `verifyClubLevel()`; `updateSlots()` routes by `slotId`, ignoring
+    position, and drops an id no slot has; gender normalises `f` → `F`.
+
 - 🔄 **Avatar editor, slice 7: the window — `AvatarEditorView`, the grid, and the five pages**,
   2026-08-08. `AvatarEditorView` (657 l. AS3), `AvatarEditorGridView` (248), `CategoryBaseView`
   (107) and the five category views `BodyView` (125) / `HeadView` (139) / `TorsoView` (135) /
@@ -1209,13 +1262,10 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     (`GetWardrobeMessageEvent` 2210, `SaveWardrobeOutfitMessageEvent` 116,
     `WardrobeMessageComposer` 1484), with WIN63's own registry as the primary source.
 
-- ⏸ **What is left of the avatar editor after slice 7**, measured 2026-08-08. The editor side of
-  `habbo/avatar/` is ≈**7,200 l. across ~45 files**; slices 1-7 have taken the core (2,269),
-  `common/` (2,036, now 12 of 12), `figuredata/` (418), `generic/` (252) and the five simple pages.
-  What remains, all of it view-side or outfit-side:
-  - `wardrobe/` (828 l., 6 files) — `Outfit`, `NftOutfit`, `OutfitView`, `WardrobeModel`,
-    `WardrobeSlot`, `WardrobeView`. Until it lands `getSideContentWindowContainer('wardrobe')`
-    returns null and the side panel collapses to 1px.
+- ⏸ **What is left of the avatar editor after slice 8**, measured 2026-08-08. The editor side of
+  `habbo/avatar/` is ≈**7,200 l. across ~45 files**; slices 1-8 have taken the core (2,269),
+  `common/` (2,036, 12 of 12), `wardrobe/` (828, 6 of 6), `figuredata/` (418), `generic/` (252) and
+  the five simple pages. What remains:
   - `effects/` (648) — `EffectsModel`, `EffectsView`, `EffectsParamView`,
     `AvatarEditorGridItemEffect`, `AvatarEditorGridViewEffects`. `AvatarEditorView.effectsGridView`
     is null without it.
