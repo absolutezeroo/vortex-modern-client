@@ -346,6 +346,13 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
             roomEngine.registerCanvasSyncCallback(this._syncCanvasPositionBound);
             this.syncCanvasPosition();
+
+            // `refresh()` only ever runs from the layout's property setters, and everything it does
+            // needs the rendering canvas: `zoomIn()`/`zoomOut()` reach it through
+            // `setRoomCanvasScale()`, which returns silently when the canvas is not registered yet
+            // (`if(!canvas) return`). Whether the properties land before or after this point is not
+            // something the widget controls, so re-run it here, once the canvas certainly exists.
+            this.refresh();
         }
     }
 
