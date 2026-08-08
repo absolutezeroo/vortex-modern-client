@@ -27,6 +27,7 @@ import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IHabboFurniEditor} from '@habbo/vortex/furnieditor/IHabboFurniEditor';
 import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
+import type {IHabboQuestEngine} from '@habbo/quest/IHabboQuestEngine';
 import type {IHabboMessenger} from '@habbo/messenger/IHabboMessenger';
 import type {IRoomWidgetFactory} from './IRoomWidgetFactory';
 import type {IRoomWidgetHandler} from './IRoomWidgetHandler';
@@ -67,6 +68,9 @@ export interface IRoomWidgetHandlerContainer
     readonly habboHelp: IHabboHelp | null;
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get config()
     readonly config: IHabboConfigurationManager | null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get questEngine()
+    // The me-menu's achievements button is its only consumer here.
+    readonly questEngine: IHabboQuestEngine | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get soundManager()
     // The me-menu's settings tab reads and writes the three volumes through this.
     readonly soundManager: IHabboSoundManager | null;

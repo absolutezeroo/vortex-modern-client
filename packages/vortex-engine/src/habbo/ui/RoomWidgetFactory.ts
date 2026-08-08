@@ -47,6 +47,7 @@ import {HighScoreDisplayWidget} from './widget/furniture/highscore/HighScoreDisp
 import {WordQuizWidget} from './widget/wordquiz/WordQuizWidget';
 import {ExternalImageWidget} from './widget/furniture/externalimage/ExternalImageWidget';
 import {UiHelpBubblesWidget} from './widget/uihelpbubbles/UiHelpBubblesWidget';
+import {MeMenuWidget} from './widget/memenu/MeMenuWidget';
 import {UsersChooserWidget} from './widget/chooser/users/UsersChooserWidget';
 import {FurniChooserWidget} from './widget/chooser/furni/FurniChooserWidget';
 import {AchievementResolutionTrophyFurniWidget} from './widget/furniture/trophy/AchievementResolutionTrophyFurniWidget';
@@ -132,6 +133,17 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
             case 'RWE_USER_CHOOSER':
                 return new UsersChooserWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_ME_MENU"
+            case 'RWE_ME_MENU':
+                return new MeMenuWidget(
+                    handler,
+                    this._roomUI.windowManager,
+                    this._roomUI.assets,
+                    this._roomUI.localization,
+                    // AS3 passes `_roomUI` itself, typed as core's configuration interface. This
+                    // port hands over the manager it resolved, which is the same object.
+                    this._roomUI.config
                 );
             // AS3: RoomWidgetFactory.as::createWidget() "RWE_UI_HELP_BUBBLE"
             case 'RWE_UI_HELP_BUBBLE':

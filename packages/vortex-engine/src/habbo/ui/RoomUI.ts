@@ -28,6 +28,8 @@ import {IID_HabboFurniEditor} from '@iid/IIDHabboFurniEditor';
 import {IID_HabboHelp} from '@iid/IIDHabboHelp';
 import {IID_HabboFriendBarView} from '@iid/IIDHabboFriendBarView';
 import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
+import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
+import type {IHabboQuestEngine} from '@habbo/quest/IHabboQuestEngine';
 import {IID_HabboMessenger} from '@iid/IIDHabboMessenger';
 import {IID_HabboAvatarEditor} from '@iid/IIDHabboAvatarEditor';
 import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
@@ -219,6 +221,10 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_friendBarView
     // Needed by the UI help bubbles, which look their target icons up through it.
     private _friendBarView: IHabboFriendBarView | null = null;
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_questEngine
+    // Needed by the me-menu's achievements button.
+    private _questEngine: IHabboQuestEngine | null = null;
 
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_soundManager
     // Needed by the me-menu's settings tab.
@@ -553,6 +559,19 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
              * and the console are present.
              */
             new ComponentDependency(
+                IID_HabboQuestEngine,
+                (questEngine: IHabboQuestEngine | null) =>
+                {
+                    this._questEngine = questEngine;
+
+                    for(const desktop of this._desktops.values())
+                    {
+                        desktop.questEngine = questEngine;
+                    }
+                },
+                false
+            ),
+            new ComponentDependency(
                 IID_HabboSoundManager,
                 (soundManager: IHabboSoundManager | null) =>
                 {
@@ -735,6 +754,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         desktop.avatarRenderManager = this._avatarRenderManager;
         desktop.furniEditor = this._furniEditor;
         desktop.habboHelp = this._habboHelp;
+        desktop.questEngine = this._questEngine;
         desktop.soundManager = this._soundManager;
         desktop.messenger = this._messenger;
         desktop.avatarEditor = this._avatarEditor;

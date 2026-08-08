@@ -84,6 +84,7 @@ import {LoadingBarWidgetHandler} from './handler/LoadingBarWidgetHandler';
 import {FurnitureAreaHideWidgetHandler} from './handler/FurnitureAreaHideWidgetHandler';
 import {ConversionPointWidgetHandler} from './handler/ConversionPointWidgetHandler';
 import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
+import type {IHabboQuestEngine} from '@habbo/quest/IHabboQuestEngine';
 import type {IHabboMessenger} from '@habbo/messenger/IHabboMessenger';
 import {ExternalImageWidgetHandler} from './handler/ExternalImageWidgetHandler';
 import {UiHelpBubbleWidgetHandler} from './handler/UiHelpBubbleWidgetHandler';
@@ -378,6 +379,21 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     public set habboHelp(value: IHabboHelp | null)
     {
         this._habboHelp = value;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_questEngine
+    private _questEngine: IHabboQuestEngine | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get questEngine()
+    public get questEngine(): IHabboQuestEngine | null
+    {
+        return this._questEngine;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set questEngine()
+    public set questEngine(value: IHabboQuestEngine | null)
+    {
+        this._questEngine = value;
     }
 
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_soundManager
@@ -992,14 +1008,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case 'RWE_EXTERNAL_IMAGE':
                 handler = new ExternalImageWidgetHandler();
                 break;
-            /**
-             * AS3: RoomDesktop.as::createWidgetHandler() "RWE_ME_MENU"
-             *
-             * `RoomWidgetFactory` has no case for this type yet, so `createWidget()` returns null
-             * and the handler stays registered on its own — the same path `RWE_INTERNAL_LINK`
-             * takes. That is deliberate: the handler is the whole message layer and works as soon
-             * as something sends it a message; `widget/memenu/` is the next slice.
-             */
+            // AS3: RoomDesktop.as::createWidgetHandler() "RWE_ME_MENU"
             case 'RWE_ME_MENU':
                 handler = new MeMenuWidgetHandler();
                 break;
