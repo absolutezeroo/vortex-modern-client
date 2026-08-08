@@ -46,6 +46,14 @@ export class RoomPreviewer
     private static readonly PREVIEW_CANVAS_ID: number = 1;
     // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::PREVIEW_OBJECT_ID
     private static readonly PREVIEW_OBJECT_ID: number = 1;
+
+    // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::addAvatarIntoRoom()
+    // Name DERIVED: the 135 AS3 passes as the head direction.
+    private static readonly PREVIEW_HEAD_DIRECTION: number = 135;
+
+    // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::addAvatarIntoRoom()
+    // Name DERIVED: the 1 AS3 passes as the user type — a plain user, not a pet or a bot.
+    private static readonly PREVIEW_USER_TYPE: number = 1;
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::PREVIEW_OBJECT_LOCATION_X
     private static readonly PREVIEW_OBJECT_LOCATION_X: number = 2;
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::PREVIEW_OBJECT_LOCATION_Y
@@ -364,14 +372,21 @@ export class RoomPreviewer
             this._currentPreviewObjectCategory = 100;
             this._currentPreviewObjectData = figure;
 
-            // AS3 passes headDirection 135 and ownerId 1; IRoomEngine.addRoomObjectUser
-            // only accepts location/direction/type, so those extra arguments are
-            // applied afterwards via updateUser* below.
-            if(this._roomEngine!.addRoomObjectUser(
+            // AS3: `addObjectUser(roomId, 1, Vector3d(2,2,0), Vector3d(90,0,0), 135, 1, figure)`.
+            //
+            // This used to call `addRoomObjectUser()` with the **figure** in its `type` parameter.
+            // That parameter is the object *type* — it picks the logic and the visualization — so
+            // the preview created an object typed `hd-180-1.ch-…`, which resolves to neither, and
+            // no avatar was ever built. `addObjectUser()` is the AS3-shaped call: it takes the user
+            // type and the figure separately and delivers the figure through the object's own
+            // update message.
+            if(this._roomEngine!.addObjectUser(
                 this._previewRoomId,
                 RoomPreviewer.PREVIEW_OBJECT_ID,
                 new Vector3d(RoomPreviewer.PREVIEW_OBJECT_LOCATION_X, RoomPreviewer.PREVIEW_OBJECT_LOCATION_Y, 0),
                 new Vector3d(90, 0, 0),
+                RoomPreviewer.PREVIEW_HEAD_DIRECTION,
+                RoomPreviewer.PREVIEW_USER_TYPE,
                 figure
             ))
             {

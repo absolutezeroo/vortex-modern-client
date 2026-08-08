@@ -259,6 +259,25 @@ export interface IRoomEngine extends IDisposable {
     // Object management
     addRoomObjectUser(roomId: number, id: number, location: IVector3d, direction: IVector3d, type: string): boolean;
 
+    /**
+     * Adds a user-category object **and gives it its figure**.
+     *
+     * `addRoomObjectUser()` above is the low level: its `type` is the object type — `user`, `pet`,
+     * a pet's real content type — which decides the logic and visualization, and it has no figure
+     * argument at all. Passing a figure string there creates an object of a type that resolves to
+     * nothing, which is how the avatar-editor preview came up empty.
+     */
+    // AS3: sources/win63_version/habbo/room/RoomEngine.as::addObjectUser()
+    addObjectUser(
+        roomId: number,
+        roomIndex: number,
+        location: IVector3d,
+        direction: IVector3d,
+        headDirection: number,
+        userType: number,
+        figure: string
+    ): boolean;
+
     addRoomObjectFurniture(
         roomId: number,
         id: number,
