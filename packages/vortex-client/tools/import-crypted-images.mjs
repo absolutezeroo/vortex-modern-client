@@ -171,6 +171,7 @@ function main()
     );
 
     const embedToRawFile = buildEmbedToRawFile(cryptedImagesDir, obfuscatedNameMap);
+    const linkageToRawFile = buildLinkageToRawFile(cryptedImagesDir, obfuscatedNameMap);
 
     console.log(`Found ${embedToRawFile.size} embeds with real pixel data in ${path.relative(repoRoot, cryptedImagesDir)}.`);
 
@@ -183,9 +184,18 @@ function main()
 
         const targetPath = path.join(args.imagesDir, `${embedShortName}.png`);
 
+        // A short name that is ALSO a *Com.as field name is not a free slot. buildEmbedToRawFile()
+        // is first-wins across every embed that strips to the same stem, so writing `rawPath`
+        // blind hands the field the pixels of whichever file readdir reached first: `move_1` is
+        // HabboGames' 106x115 sprite, but three other embeds strip to `move_1` too and one of them
+        // is a 26x13 wired arrow. Where the name is a declared field, its own linkage decides.
+        const ownLinkage = [...(fieldNameToLinkages.get(embedShortName) ?? [])]
+            .find((linkage) => /_(png|gif|jpg)\$/i.test(linkage) && linkageToRawFile.has(linkage));
+        const sourcePath = ownLinkage ? linkageToRawFile.get(ownLinkage) : rawPath;
+
         if(args.write)
         {
-            fs.copyFileSync(rawPath, targetPath);
+            fs.copyFileSync(sourcePath, targetPath);
         }
 
         existingImages.add(embedShortName.toLowerCase());
@@ -193,8 +203,6 @@ function main()
     }
 
     console.log(`${args.write ? 'Base-populated' : '[dry-run] would base-populate'} ${basePopulated} image(s) under their own embed name.`);
-
-    const linkageToRawFile = buildLinkageToRawFile(cryptedImagesDir, obfuscatedNameMap);
 
     // Resolves one true field name to the file its pixels should be copied from.
     //
