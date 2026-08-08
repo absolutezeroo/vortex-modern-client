@@ -931,6 +931,38 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     registration would double-parse. The guide button uses the cached answer and is not refreshed
     by a later push. And the clothes button still opens nothing — see the avatar-editor entry.
 
+- 🔄 **Avatar editor, slice 2: `FigureData` — the editable figure**, 2026-08-08. The model every
+  category page reads and writes: a part→set map, a part→colours map, and the string
+  serialisation joining them (336 l. AS3).
+  - ✅ **`structure/figure/` was already ported and is reusable as-is.** Checked before writing
+    anything: `ISetType`, `IPalette`, `IPartColor`, `IFigurePartSet` and `IFigureData` all exist,
+    because the avatar *renderer* needs the same figure structure the editor does. The editor reads
+    it through `avatarRenderManager.getFigureData()`, which the port already exposes. That removes
+    a whole layer from the estimate.
+  - **Two narrow interfaces instead of the editor.** AS3's `FigureData` holds a whole
+    `HabboAvatarEditor` and a concrete `FigureDataView`, but calls exactly **one** method on the
+    first (`getDefaultColour()`) and one on the second (`update()`). Both extracted —
+    `IFigureDataOwner`, `IFigureDataView` — so the model ports and verifies before
+    `AvatarEditorView` exists. `HabboAvatarEditor` will satisfy the first as written.
+  - **Only fifteen part types are writable**, and the list is hoisted out of AS3's two identical
+    `switch` statements into one set — they are the same list in the source, and a part accepted by
+    one but not the other would yield a figure with a colour and no set. `bd` (body) is a real
+    `AvatarFigurePartType` and is **not** in it: the body is not editable.
+  - **Probe-verified round trips.** `hr-100.hd-180-7.…wa-2007` comes back as
+    `hr-100-0.…wa-2007-0` — a group with no colour is given colour **0**, so bare groups gain a
+    suffix; the female default, whose every group already carries a colour, is byte-identical.
+    `lg-716-66-62` keeps both colours. Exactly 15 types accepted and **0** leaked past the filter.
+  - **A negative set id removes the part** — that is how the "no item" thumbnail clears a slot —
+    but its colour entry is left behind. And `getFigureStringWithFace()` yields the **empty
+    string**, not a bare `hd-<id>`, for a head with no colour recorded: AS3 guards on the colour
+    before reading the set id.
+  - **Which mutations refresh the preview, measured**: `loadAvatarData` 1, a batched
+    `savePartData(update=false)` 0, an unbatched one **2** (the set and the colour each refresh),
+    the `avatarEffectType` setter **0** — every caller pairs it with an explicit `updateView()` —
+    and the `direction` setter 1.
+  - Malformed input is swallowed rather than thrown: `parseFigureString` does no validation and
+    lets `NaN` fail the `>= 0` test in `savePartSetId()`.
+
 - 🔄 **Avatar editor, slice 1: the wire layer**, 2026-08-08. The four messages
   `AvatarEditorMessageHandler` needs that the port did not have — `WardrobeMessageEvent` (1484) +
   its parser + the `WardrobeOutfit` DTO, `AvatarEffectSelectedMessageEvent` (3629) + parser,
