@@ -1,3 +1,4 @@
+import type {IAsset} from '@core/assets/IAsset';
 import type EventEmitter from 'eventemitter3';
 import type {IAvatarFigureContainer} from './IAvatarFigureContainer';
 import type {IAvatarImage} from './IAvatarImage';
@@ -26,6 +27,17 @@ export interface IAvatarRenderManager
         listener: IAvatarImageListener | null,
         effectListener: IAvatarEffectListener | null
     ): IAvatarImage | null;
+
+    /**
+     * The renderer's own asset library, by name.
+     *
+     * AS3's `_SafeCls_582` extends `Component`, so `getAssetByName()` comes from the base and any
+     * holder of the interface can call it — which `AvatarEditorGridPartItem` does, to composite a
+     * clothing thumbnail out of the individual body-part sprites. The port keeps that library
+     * private to `AvatarRenderManager`, so it has to be exposed deliberately.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::getAssetByName()
+    getAssetByName(name: string): IAsset | null;
 
     // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_581.as::getFigureData()
     getFigureData(): IFigureData;

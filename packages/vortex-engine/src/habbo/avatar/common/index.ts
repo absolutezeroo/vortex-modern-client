@@ -1,3 +1,5 @@
+export * from './AvatarEditorGridColorItem';
+export * from './AvatarEditorGridPartItem';
 export * from './CategoryBaseModel';
 export * from './CategoryData';
 export * from './IAvatarEditorGridItem';

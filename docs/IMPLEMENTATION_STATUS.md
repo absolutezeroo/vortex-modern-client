@@ -931,6 +931,43 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     registration would double-parse. The guide button uses the cached answer and is not refreshed
     by a later push. And the clothes button still opens nothing — see the avatar-editor entry.
 
+- 🔄 **Avatar editor, slice 6: the two grid items**, 2026-08-08.
+  `AvatarEditorGridPartItem` (514 l. AS3) and `AvatarEditorGridColorItem` (145), plus
+  `getAssetByName()` exposed on `IAvatarRenderManager`. `common/` is now **10 of 12** — only
+  `AvatarEditorGridView` (248) and `CategoryBaseView` (107) are left, and both belong with
+  `AvatarEditorView`.
+  - **A clothing thumbnail is composited, not iconified.** `AvatarEditorGridPartItem` finds each of
+    the part set's sprites in the renderer's own asset library, unions their bounds to crop the
+    picture to the clothing, then draws them in avatar draw order with the user's chosen colours
+    multiplied into the dyeable layers. Sprites not downloaded yet → a download icon and a
+    `downloadFigure()` call.
+  - **The direction search is per-thumbnail, not per-sprite.** `THUMB_DIRECTIONS = [2,6,0,4,3,1]`
+    is walked until *any* sprite of the first part exists; every later part then reuses that same
+    direction, so a thumbnail is never half-profile-half-front. Probe-confirmed with a fixture
+    where only direction 6 exists.
+  - **`getAssetByName()` was missing from `IAvatarRenderManager`.** AS3's render manager extends
+    `Component` and inherits it, so any interface holder can call it; the port kept the library
+    private. Exposed with the real AS3 trace.
+  - 🐛 **`_downloadIcon` is static and nulled by every instance's `dispose()`**, so disposing one
+    thumbnail forces the next to re-fetch. Kept.
+  - ⚠️ **`avatarImageReady()` is empty in AS3** — the class implements the listener interface
+    *solely* to be passed to `downloadFigure()`, so a thumbnail showing the download icon would
+    never repaint. Ported as a repaint with a `TODO(AS3)` saying exactly which line to revert if
+    the empty body turns out to be deliberate rather than a decompilation loss.
+  - **The colour chip is one shared greyscale bitmap**, tinted per swatch — not a coloured
+    rectangle. And its border has three visual states drawn from **two** assets (`_3` is both
+    selected *and* hovered), which is why hover-out has to consult `isSelected`.
+  - **Probe-verified against real pixels**: a white chip × (1, 0.5, 0) reads back
+    `[255,128,0,255]`; a grey-200 sprite × (1,0,0) reads `[200,0,0]`; the draw-order sort turns
+    `hr,bd,ha,sh,ch` into `bd,sh,ch,hr,ha`; `colorLayerCount` comes from the sprites' own
+    `colorLayerIndex` (2, not the part count); a synthetic tile is id **−1**; the disabled alpha
+    reads **51** (255 × 0.2); hover raises the background to 0.5 only when unselected; and the
+    not-downloaded path both calls `downloadFigure()` and paints the icon.
+  - ⚠️ **The manager now builds the real items with a `null` window** — AS3 clones a static
+    template held on `AvatarEditorView`, which is not ported. The items are otherwise real (the
+    colour-layer count is now computed rather than hardcoded to 1); with a null window
+    `updateThumbVisualization()` returns early and nothing is drawn.
+
 - ✅ **Avatar editor, slice 5: the core, the manager, and `IID_HabboAvatarEditor` wired**,
   2026-08-08. `HabboAvatarEditor` (968 l. AS3), `HabboAvatarEditorManager` (305),
   `AvatarEditorMessageHandler` (239), `IHabboAvatarEditor`, `AvatarEditorIdEnum`, `IOutfit`,

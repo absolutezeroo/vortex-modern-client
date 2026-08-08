@@ -1,4 +1,5 @@
 import type {IAvatarImage} from '../IAvatarImage';
+import type {IAvatarRenderManager} from '../IAvatarRenderManager';
 import type {IAvatarImageListener} from '../IAvatarImageListener';
 import type {FigureData} from '../figuredata/FigureData';
 import type {CategoryData} from './CategoryData';
@@ -56,6 +57,20 @@ export interface ICategoryModelOwner
      * AS3 reaches it as `controller.manager.avatarRenderManager.createAvatarImage(...)`; flattened
      * for the same reason as `inventory`.
      */
+    /**
+     * The renderer, for the grid items — `AvatarEditorGridPartItem` composites a thumbnail out of
+     * its sprites. AS3 reaches it as `controller.manager.avatarRenderManager`.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditorManager.as::get avatarRenderManager()
+    readonly avatarRenderManager: IAvatarRenderManager | null;
+
+    /**
+     * A named bitmap from the window manager's library — the colour chip, the download icon.
+     * AS3 reaches it as `controller.manager.windowManager.assets.getAssetByName(...)`.
+     */
+    // TS-only: flattens that two-level reach; see `IHabboAvatarEditorHost.getAssetBitmap()`.
+    getAssetBitmap(name: string): ImageBitmap | null;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/_SafeCls_581.as::createAvatarImage()
     // The port's IAvatarRenderManager takes a fifth `effectListener` argument that AS3's
     // four-argument call site leaves off; kept optional here so `HabboAvatarEditorManager` can

@@ -11,6 +11,7 @@ import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IAvatarRenderManager} from './IAvatarRenderManager';
 import type {IAvatarEditorSaveListener} from './IAvatarEditorSaveListener';
 import type {IFigurePartSet} from './structure/figure/IFigurePartSet';
+import type {IPartColor} from './structure/figure/IPartColor';
 import type {ICategoryModel} from './common/ICategoryModel';
 import type {IFigureSetOwnership} from './common/IFigureSetOwnership';
 import type {IHabboAvatarEditor} from './IHabboAvatarEditor';
@@ -27,6 +28,8 @@ import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {AvatarEditorIdEnum} from './enum/AvatarEditorIdEnum';
 import {AvatarEditorMessageHandler} from './AvatarEditorMessageHandler';
 import {HabboAvatarEditor} from './HabboAvatarEditor';
+import {AvatarEditorGridPartItem} from './common/AvatarEditorGridPartItem';
+import {AvatarEditorGridColorItem} from './common/AvatarEditorGridColorItem';
 
 const log = Logger.getLogger('habbo.avatar.HabboAvatarEditorManager');
 
@@ -308,12 +311,14 @@ export class HabboAvatarEditorManager extends Component
     }
 
     /**
-     * TS-only: stands in for AS3's inline `new AvatarEditorGridPartItem(...)`.
+     * TS-only: stands in for AS3's inline
+     * `new AvatarEditorGridPartItem(AvatarEditorView.THUMB_WINDOW.clone(), ...)`.
      *
-     * TODO(AS3): `common/AvatarEditorGridPartItem.as` (514 l., window-backed) is not ported. This
-     * returns a plain data item that satisfies `IAvatarEditorGridPartItem` so the selection model
-     * is exercised end to end — it holds the part set, the colours and the flags, and draws
-     * nothing. Replace with the real class in the view slice.
+     * TODO(AS3): the **window argument is null** until `AvatarEditorView` lands — AS3 clones a
+     * static template held on that class. The item itself is the real one: it computes its
+     * colour-layer count from the part's own sprites and holds the part set and flags. With a null
+     * window `updateThumbVisualization()` returns early, so nothing is drawn and the sprite
+     * compositing never runs.
      */
     public createGridPartItem(
         model: ICategoryModel,
@@ -323,36 +328,20 @@ export class HabboAvatarEditorManager extends Component
         disabled: boolean
     ): {iconImage: ImageBitmap | null} | null
     {
-        void model;
-        void colours;
-
-        return {
-            id: partSet?.id ?? 0,
-            partSet,
-            colorLayerCount: colourable ? (partSet?.parts?.length ?? 1) : 1,
-            isSelected: false,
-            isDisabledForWearing: disabled,
-            iconImage: null,
-            colors: [],
-            dispose(): void {}
-        } as unknown as {iconImage: ImageBitmap | null};
+        return new AvatarEditorGridPartItem(
+            null, model, partSet, (colours ?? []) as (IPartColor | null)[], colourable, disabled
+        );
     }
 
     /**
-     * TS-only: the colour equivalent of `createGridPartItem()`.
+     * TS-only: the colour equivalent, standing in for
+     * `new AvatarEditorGridColorItem(AvatarEditorView.COLOUR_WINDOW.clone(), ...)`.
      *
-     * TODO(AS3): `common/AvatarEditorGridColorItem.as` (145 l., window-backed) is not ported.
+     * TODO(AS3): same null window as above.
      */
     public createGridColorItem(model: ICategoryModel, colour: unknown, disabled: boolean): unknown
     {
-        void model;
-
-        return {
-            partColor: colour,
-            isSelected: false,
-            isDisabledForWearing: disabled,
-            dispose(): void {}
-        };
+        return new AvatarEditorGridColorItem(null, model, colour as IPartColor | null, disabled);
     }
 
     // AS3: .../avatar/HabboAvatarEditorManager.as::dispose()

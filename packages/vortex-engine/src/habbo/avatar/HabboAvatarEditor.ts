@@ -1,5 +1,6 @@
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IAvatarImage} from './IAvatarImage';
+import type {IAvatarRenderManager} from './IAvatarRenderManager';
 import type {IAvatarImageListener} from './IAvatarImageListener';
 import type {IFigurePartSet} from './structure/figure/IFigurePartSet';
 import type {IPalette} from './structure/figure/IPalette';
@@ -199,6 +200,20 @@ export class HabboAvatarEditor implements ICategoryModelOwner
     public get inventory(): IFigureSetOwnership | null
     {
         return this._manager?.inventory ?? null;
+    }
+
+    // AS3: .../avatar/HabboAvatarEditorManager.as::get avatarRenderManager()
+    // TS-only shape: `ICategoryModelOwner` wants this flat; AS3's grid items reach it as
+    // `controller.manager.avatarRenderManager`.
+    public get avatarRenderManager(): IAvatarRenderManager | null
+    {
+        return this._manager?.avatarRenderManager ?? null;
+    }
+
+    // TS-only: flattens AS3's `manager.windowManager.assets.getAssetByName(name).content`.
+    public getAssetBitmap(name: string): ImageBitmap | null
+    {
+        return this._manager?.getAssetBitmap(name) ?? null;
     }
 
     // AS3: .../avatar/HabboAvatarEditor.as::get gender()

@@ -1,3 +1,4 @@
+import type {IAsset} from '@core/assets/IAsset';
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
 import {IID_HabboConfigurationManager} from '@iid/IIDHabboConfigurationManager';
 import {IID_AssetLibrary} from '@iid/IIDAssetLibrary';
@@ -172,6 +173,13 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
             scale,
             this._effectAssetDownloadManager
         );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::getAssetByName()
+    // Inherited from Component in AS3; forwarded here because the port keeps the library private.
+    public getAssetByName(name: string): IAsset | null
+    {
+        return this._assetLibrary?.getAssetByName(name) ?? null;
     }
 
     // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::getFigureData()
