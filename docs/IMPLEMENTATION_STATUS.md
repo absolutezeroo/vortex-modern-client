@@ -970,6 +970,33 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
       touches the raw library, and composites the sprite into the tile (green at its centre)
       instead of returning the download icon — while a part with no sprite at any direction still
       falls back to `downloadFigure()`.
+  - 🔌 **Fixed: the avatar preview was empty because `FigureDataView` had never been ported.**
+    `figuredata/` held `FigureData` and two interfaces; the concrete view (82 l. AS3) that actually
+    draws the preview was missing, so `FigureData._view` stayed null and every `updateView()` was a
+    no-op. AS3's `FigureData` constructor builds `new FigureDataView(this)` unconditionally — the
+    port's optional second parameter now defaults to exactly that.
+    - It has **two** drawing paths: a real avatar in the preview room when the room engine is up
+      (which is what makes the rotate button work), and a flat rendered image otherwise, re-rendered
+      from `avatarImageReady()` once the sprites arrive.
+    - `IFigureDataOwner` had been narrowed to a single member back when no view existed; it now
+      carries the `view` and `avatarRenderManager` reach AS3's `FigureData` always had.
+    - `AvatarTextureUtils` gained `toCanvas()`: `IRoomPreviewerWidget.showPreview()` takes an
+      `HTMLCanvasElement`, the port's stand-in for the raw `BitmapData` AS3 passes it.
+    - The chain checks out: the layout declares `avatarWidget` with `widget_type=room_previewer`,
+      and `HabboWidgetFactory` registers `room_previewer` → `RoomPreviewerWidget`.
+  - 🔌 **Fixed: colour swatches were all white.** `AvatarEditorGridColorItem` tints a shared
+    greyscale chip, and could not fetch it: AS3 reads one flat Flash library holding both layouts
+    and images, while this port keeps layouts in the window manager's registry, **images in its
+    `ResourceManager`**, and a DI component's own `assets` library holds neither —
+    `HabboAvatarEditorManager.getAssetBitmap()` was reading that component library. `IResourceManager`
+    gained a synchronous `getAsset()` (`retrieveAsset()` is receiver-based and `setupColor()` has to
+    composite immediately), forwarded by the window manager.
+  - 🐛 **Fixed server-side: `UserChange` (3798) was four fields short.** The client reads nine —
+    id, figure, sex, customInfo, achievementScore, an unused string, a count-prefixed list of unused
+    int triplets, badgesRank — and the emulator wrote the first five, so the sixth read threw
+    `End of buffer` and the message was dropped whole: a figure or motto change made outside the
+    room never landed. The parser is faithful AS3 and was **not** touched; the serializer was
+    completed and covered by `UserChangeWireTests`. See that parser's note.
   - **The download→repaint chain is intact** (verified by reading it end to end):
     `AvatarEditorGridPartItem.analyzePartLayers()` → `downloadFigure()` →
     `AvatarAssetDownloadManager.loadFigureSetData()` registers the listener and calls

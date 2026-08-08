@@ -1,6 +1,7 @@
 import type {IAvatarImageListener} from '../IAvatarImageListener';
 import type {IFigureDataOwner} from './IFigureDataOwner';
 import type {IFigureDataView} from './IFigureDataView';
+import {FigureDataView} from './FigureDataView';
 
 /**
  * The editable figure: a part type → set id map, a part type → colour ids map, and the string
@@ -98,7 +99,12 @@ export class FigureData implements IAvatarImageListener
     {
         this._direction = FigureData.DEFAULT_DIRECTION;
         this._avatarEditor = avatarEditor;
-        this._view = view;
+
+        // AS3 builds its own `FigureDataView(this)` here unconditionally. The parameter is this
+        // port's addition, kept so a caller can inject one; left null it now behaves as AS3 does.
+        // The editor's window already exists by this point — `HabboAvatarEditor.init()` builds the
+        // view before the figures, precisely so this lookup finds the preview slot.
+        this._view = view ?? new FigureDataView(this);
     }
 
     // AS3: .../avatar/figuredata/FigureData.as::get disposed()

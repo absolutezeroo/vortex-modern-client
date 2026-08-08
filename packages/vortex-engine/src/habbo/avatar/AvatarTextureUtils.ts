@@ -39,6 +39,38 @@ export class AvatarTextureUtils
     }
 
     /**
+     * The same conversion as `toImageBitmap()`, but into an `HTMLCanvasElement`.
+     *
+     * TS-only: `IRoomPreviewerWidget.showPreview()` takes a canvas — it is the port's stand-in for
+     * the raw `BitmapData` AS3 hands it — so the avatar preview needs this shape rather than an
+     * `ImageBitmap`.
+     */
+    // TS-only: see the class note.
+    public static toCanvas(texture: Texture | null): HTMLCanvasElement | null
+    {
+        const source = AvatarTextureUtils.toCanvasSource(texture);
+
+        if(source === null) return null;
+
+        const canvas = document.createElement('canvas');
+
+        canvas.width = source.frame.width;
+        canvas.height = source.frame.height;
+
+        const context = canvas.getContext('2d');
+
+        if(context === null) return null;
+
+        context.drawImage(
+            source.resource,
+            source.frame.x, source.frame.y, source.frame.width, source.frame.height,
+            0, 0, source.frame.width, source.frame.height
+        );
+
+        return canvas;
+    }
+
+    /**
      * The drawable behind a texture, plus the sub-rectangle of it the texture actually covers.
      *
      * Separate from `toImageBitmap()` because the wardrobe composes *into* a fixed-size slot rather
