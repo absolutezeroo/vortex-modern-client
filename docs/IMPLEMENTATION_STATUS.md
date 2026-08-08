@@ -879,7 +879,7 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     `RWE_EXTERNAL_IMAGE`, `RWE_UI_HELP_BUBBLE` and `RWE_ME_MENU`'s **handler** were all on this
     list and were ported 2026-08-07/08 — **42/47** now, re-measured with the recipe below (both
     measurements returned 42). `RWE_ME_MENU`'s *views* are still missing: the switch label and the
-    whole message layer exist, `widget/memenu/` (6 files, 1,312 l.) does not.
+    whole message layer exist, `widget/memenu/` (9 files, 1,904 l.) does not.
   - **Re-measure recipe** (both must agree):
     ```
     ls packages/vortex-engine/src/habbo/ui/handler/*.ts | wc -l
@@ -894,7 +894,9 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 - 🔄 **Priority 1, slice 17: `RWE_ME_MENU` — the handler and its whole message layer**,
   2026-08-08. `MeMenuWidgetHandler` (481 l. AS3) + the 5 missing widget messages + the 6 missing
   widget events, plus the container/manager wiring they needed. `handler/` goes **41/47 → 42/47**.
-  `widget/memenu/` (6 files, 1,312 l.) is the next slice — this one is the back end only.
+  `widget/memenu/` (**9 files, 1,904 l.**) is the next slice — this one is the back end only.
+  Corrected from a first count of 6 files / 1,312 l., which came from a non-recursive glob and
+  missed the `soundsettings/` subdirectory (3 files, 592 l.). `find`, not `ls widget/<dir>/*.as`.
   - **The only handler that subscribes to five managers at once** — inventory, toolbar, help,
     catalogue and messenger — and it does so from its own `container` setter, unsubscribing the
     previous container first. Everything it learns is re-broadcast as a widget update event; the
