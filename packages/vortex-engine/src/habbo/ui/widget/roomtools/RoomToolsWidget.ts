@@ -197,6 +197,34 @@ export class RoomToolsWidget extends RoomWidgetBase
         return chatInputWidget?.getChatInputY?.() ?? 0;
     }
 
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::getCurrentRoomZoomText()
+     *
+     * The *level*, not the scale: the table runs 0.5..16, so log2 plus one turns it into the 0..5
+     * the toolbar shows. An unknown or non-positive scale reads as 1x, i.e. level 1.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::getCurrentRoomZoomText()
+    public getCurrentRoomZoomText(): string
+    {
+        let scale = this._desktop !== null ? this._desktop.getCurrentRoomCanvasZoomScale() : Number.NaN;
+
+        if(Number.isNaN(scale) || scale <= 0) scale = 1;
+
+        return (Math.round(Math.log(scale) / Math.LN2) + 1).toString();
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::canZoomRoom()
+    public canZoomRoom(direction: number): boolean
+    {
+        return this._desktop !== null && this._desktop.canZoomRoomCanvas(direction);
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::zoomRoom()
+    public zoomRoom(direction: number): void
+    {
+        this._desktop?.zoomRoomCanvas(direction);
+    }
+
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::getRoomToolbarRight()
     public getRoomToolbarRight(): number
     {

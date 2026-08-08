@@ -509,7 +509,10 @@ export interface IRoomEngine extends IDisposable {
         canvasId: number,
         scale: number,
         point?: { x: number; y: number } | null,
-        offset?: { x: number; y: number } | null
+        offset?: { x: number; y: number } | null,
+        mirror?: boolean,
+        allowFractionalScale?: boolean,
+        unusedFlag?: boolean
     ): void;
 
     /**

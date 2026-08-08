@@ -209,6 +209,19 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::ROOM_ZOOM_SCALES
+    private static readonly ROOM_ZOOM_SCALES: readonly number[] = [0.5, 1, 2, 4, 8, 16];
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_pendingZoomScale
+    // Name DERIVED (`_SafeStr_5890`): NaN when no zoom is in flight. `update()` eases the canvas
+    // toward it and clears it on arrival.
+    private _pendingZoomScale: number = NaN;
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_pendingZoomPoint
+    // Name DERIVED (`_SafeStr_6244`): the anchor the zoom is centred on, null for the toolbar
+    // buttons and set by the mouse-wheel path.
+    private _pendingZoomPoint: {x: number; y: number} | null = null;
+
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get roomEngine()
     public get roomEngine(): IRoomEngine | null 
     {
@@ -1239,31 +1252,24 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
     /**
      * Handles mouse wheel for zoom.
+     *
+     * TS-only: AS3 has no wheel zoom at all — it zooms on ctrl+alt+click and from the room-tools
+     * buttons — so this is the port's own binding, and it now steps the same scale table those two
+     * use. It used to walk an invented 1.1 ladder straight into `setRoomCanvasScale()`, which is
+     * fine only while that method skips AS3's snap-to-whole-step; with the snap ported, 1.1 floors
+     * back to 1 and the wheel would do nothing.
      */
+    // TS-only: the wheel binding itself; the zoom it drives is AS3's.
     public handleMouseWheel(deltaY: number, x: number, y: number): void 
     {
-        if(!this._roomEngine || this._canvasIds.length === 0) return;
+        if(this._roomEngine === null || this._canvasIds.length === 0) return;
 
-        const canvasId = this._canvasIds[0];
-        const roomId = this._session.roomId;
-        const currentScale = this._roomEngine.getRoomCanvasScale(roomId, canvasId);
+        const current = this.getCurrentRoomCanvasZoomScale();
+        const next = RoomDesktop.getNextZoomScale(current, deltaY < 0 ? 1 : -1);
 
-        // Zoom in/out based on wheel direction
-        let newScale: number;
+        if(Math.abs(next - current) <= 0.001) return;
 
-        if(deltaY < 0) 
-        {
-            newScale = Math.min(currentScale * 1.1, 2.0);
-        }
-        else 
-        {
-            newScale = Math.max(currentScale / 1.1, 0.5);
-        }
-
-        if(newScale !== currentScale) 
-        {
-            this._roomEngine.setRoomCanvasScale(roomId, canvasId, newScale, {x, y});
-        }
+        this.animateRoomCanvasScale(next, {x, y});
     }
 
     /**
@@ -1450,9 +1456,11 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
      * Updates color transitions, widget handlers, and zoom momentum.
      */
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::update()
-    public update(): void 
+    public update(elapsed: number = 0): void 
     {
         if(this._disposed) return;
+
+        this.updateRoomCanvasZoomAnimation(elapsed);
 
         const time = Date.now();
 
@@ -1472,6 +1480,216 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         {
             listener.update();
         }
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::update()
+     *
+     * The head of AS3's `update()`: one eased step of a zoom in flight, taken in log2 space so the
+     * canvas moves at a constant *perceptual* rate rather than a constant number of pixels. Within
+     * 0.01 of the target it snaps, applies the exact target and clears the pending state.
+     *
+     * Every call passes `allowFractionalScale` — the intermediate scales are fractional, and
+     * `setRoomCanvasScale()` would otherwise snap each one back to a whole step and freeze the
+     * animation where it started.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::update()
+    private updateRoomCanvasZoomAnimation(elapsed: number): void
+    {
+        if(Number.isNaN(this._pendingZoomScale)) return;
+        if(this._roomEngine === null) return;
+
+        const roomId = this._session.roomId;
+        const canvasId = this.getFirstCanvasId();
+        const current = RoomDesktop.scaleToZoomAnimationValue(
+            this._roomEngine.getRoomCanvasScale(roomId, canvasId)
+        );
+        const target = RoomDesktop.scaleToZoomAnimationValue(this._pendingZoomScale);
+        const difference = target - current;
+
+        if(Math.abs(difference) <= 0.01)
+        {
+            this._roomEngine.setRoomCanvasScale(
+                roomId, canvasId, this._pendingZoomScale, this._pendingZoomPoint, null, false, true
+            );
+
+            this._pendingZoomScale = Number.NaN;
+
+            return;
+        }
+
+        const step = RoomDesktop.getZoomAnimationStep(current, target, elapsed);
+        const next = current + (difference < 0 ? -Math.min(step, -difference) : Math.min(step, difference));
+
+        this._roomEngine.setRoomCanvasScale(
+            roomId, canvasId, RoomDesktop.zoomLevelToScale(next), this._pendingZoomPoint, null, false, true
+        );
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::animateRoomCanvasScale()
+     *
+     * Does not scale anything itself — it records the target, clamped to the scale table, and
+     * `update()` walks the canvas there over the following frames.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::animateRoomCanvasScale()
+    public animateRoomCanvasScale(scale: number, point: {x: number; y: number} | null = null): void
+    {
+        if(this._roomEngine === null || Number.isNaN(scale) || !this.canUseAnimatedRoomZoom()) return;
+
+        this._pendingZoomScale = RoomDesktop.clampRoomCanvasZoomScale(scale);
+        this._pendingZoomPoint = point;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::getCurrentRoomCanvasZoomScale()
+    // Snapped to the nearest table entry, so a canvas mid-animation still reports a whole step.
+    public getCurrentRoomCanvasZoomScale(): number
+    {
+        const scale = this.getCurrentControllableRoomCanvasScale();
+
+        return Number.isNaN(scale) ? 1 : RoomDesktop.getNearestZoomScale(scale);
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::canZoomRoomCanvas()
+    // False at either end of the table — which is what greys the toolbar's +/- buttons out.
+    public canZoomRoomCanvas(direction: number): boolean
+    {
+        if(!this.canUseAnimatedRoomZoom() || direction === 0) return false;
+
+        const current = this.getCurrentRoomCanvasZoomScale();
+
+        return Math.abs(RoomDesktop.getNextZoomScale(current, direction) - current) > 0.001;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::zoomRoomCanvas()
+    public zoomRoomCanvas(direction: number): void
+    {
+        if(!this.canUseAnimatedRoomZoom() || direction === 0) return;
+
+        const current = this.getCurrentRoomCanvasZoomScale();
+        const next = RoomDesktop.getNextZoomScale(current, direction);
+
+        if(Math.abs(next - current) <= 0.001) return;
+
+        this.animateRoomCanvasScale(next);
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::getNextZoomScale()
+     *
+     * The next entry strictly past the current one, with a 0.001 tolerance so a scale sitting on a
+     * table value does not match itself. Returns the input unchanged at either end.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::getNextZoomScale()
+    private static getNextZoomScale(scale: number, direction: number): number
+    {
+        const scales = RoomDesktop.ROOM_ZOOM_SCALES;
+
+        if(Number.isNaN(scale) || direction === 0) return scale;
+
+        if(direction > 0)
+        {
+            if(scale >= scales[scales.length - 1] - 0.001) return scale;
+
+            for(const candidate of scales)
+            {
+                if(candidate > scale + 0.001) return candidate;
+            }
+
+            return scales[scales.length - 1];
+        }
+
+        if(scale <= scales[0] + 0.001) return scale;
+
+        for(let index = scales.length - 1; index >= 0; index--)
+        {
+            if(scales[index] < scale - 0.001) return scales[index];
+        }
+
+        return scales[0];
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::canUseAnimatedRoomZoom()
+    // Gated on the hotel's `zoom.enabled` flag, so a hotel with it off has no zoom controls at all.
+    private canUseAnimatedRoomZoom(): boolean
+    {
+        if(this._roomEngine === null) return false;
+
+        // AS3 reads the flag through the room engine (`(_roomEngine as Component).getBoolean`);
+        // here it comes off the same configuration manager, which RoomDesktop already holds.
+        return this._config?.getBoolean('zoom.enabled') === true;
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::getCurrentControllableRoomCanvasScale()
+     *
+     * The **pending** target wins over the canvas's actual scale, so pressing + twice quickly steps
+     * twice rather than fighting the running animation.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::getCurrentControllableRoomCanvasScale()
+    private getCurrentControllableRoomCanvasScale(): number
+    {
+        if(!this.canUseAnimatedRoomZoom()) return Number.NaN;
+
+        if(!Number.isNaN(this._pendingZoomScale)) return this._pendingZoomScale;
+
+        return this._roomEngine?.getRoomCanvasScale(this._session.roomId, this.getFirstCanvasId()) ?? Number.NaN;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::clampRoomCanvasZoomScale()
+    private static clampRoomCanvasZoomScale(scale: number): number
+    {
+        const scales = RoomDesktop.ROOM_ZOOM_SCALES;
+
+        return Math.max(scales[0], Math.min(scales[scales.length - 1], scale));
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::getNearestZoomScale()
+    private static getNearestZoomScale(scale: number): number
+    {
+        const scales = RoomDesktop.ROOM_ZOOM_SCALES;
+        let nearest = scales[0];
+        let distance = Math.abs(scale - nearest);
+
+        for(const candidate of scales)
+        {
+            const candidateDistance = Math.abs(scale - candidate);
+
+            if(candidateDistance < distance)
+            {
+                nearest = candidate;
+                distance = candidateDistance;
+            }
+        }
+
+        return nearest;
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::getZoomAnimationStep()
+     *
+     * The step is taken in **log2 space**, so every doubling takes the same wall-clock time. The
+     * frame delta is capped at 50ms so a stalled frame does not jump the zoom.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::getZoomAnimationStep()
+    private static getZoomAnimationStep(from: number, to: number, elapsed: number): number
+    {
+        const remaining = Math.abs(to - from);
+        const frame = elapsed > 0 ? Math.min(elapsed, 50) : 1000 / 60;
+
+        return Math.min(remaining, 0.14 * frame / (1000 / 60));
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::scaleToZoomAnimationValue()
+    private static scaleToZoomAnimationValue(scale: number): number
+    {
+        return Math.log(scale) / Math.LN2;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::zoomLevelToScale()
+    private static zoomLevelToScale(level: number): number
+    {
+        return Math.pow(2, level);
     }
 
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::dispose()

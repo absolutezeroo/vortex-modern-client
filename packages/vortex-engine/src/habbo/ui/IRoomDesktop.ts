@@ -43,4 +43,23 @@ export interface IRoomDesktop
 
     // AS3: sources/win63_version/habbo/ui/IRoomDesktop.as::getWidget()
     getWidget(type: string): unknown | null;
+
+    /**
+	 * The room canvas's zoom scale, snapped to the nearest whole step.
+	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomDesktop.as::getCurrentRoomCanvasZoomScale()
+    getCurrentRoomCanvasZoomScale(): number;
+
+    /**
+	 * Whether a zoom step in that direction would change anything — false at either end of the
+	 * scale table, which is what greys the toolbar's +/- buttons out.
+	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomDesktop.as::canZoomRoomCanvas()
+    canZoomRoomCanvas(direction: number): boolean;
+
+    /**
+	 * Steps the room canvas one entry up or down the scale table, animated.
+	 */
+    // AS3: .../src/com/sulake/habbo/ui/IRoomDesktop.as::zoomRoomCanvas()
+    zoomRoomCanvas(direction: number): void;
 }

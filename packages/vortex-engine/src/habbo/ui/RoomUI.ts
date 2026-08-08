@@ -852,11 +852,14 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
      * Called each frame. Updates all active desktops.
      */
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::update()
-    public update(_time: number): void 
+    public update(time: number): void 
     {
         for(const desktop of this._desktops.values()) 
         {
-            desktop.update();
+            // AS3 forwards its `update(param1:uint)` argument — the frame delta in ms — and the
+            // zoom animation's step size is measured from it, so dropping it froze the zoom at one
+            // fixed step per frame regardless of frame rate.
+            desktop.update(time);
         }
     }
 

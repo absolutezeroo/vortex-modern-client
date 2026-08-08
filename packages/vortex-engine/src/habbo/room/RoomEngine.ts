@@ -4011,15 +4011,42 @@ export class RoomEngine extends Component implements IRoomEngine,
         canvasId: number,
         scale: number,
         _point?: { x: number; y: number } | null,
-        _offset?: { x: number; y: number } | null
+        _offset?: { x: number; y: number } | null,
+        mirror: boolean = false,
+        allowFractionalScale: boolean = false,
+        _unusedFlag: boolean = false
     ): void 
     {
+        // AS3: `if(!getBoolean("zoom.enabled")) return;` — the hotel-wide switch, read off the
+        // Component configuration RoomEngine inherits from.
+        if(this._configurationManager?.getBoolean('zoom.enabled') !== true) return;
+
+        // AS3 snaps the scale to a whole step unless the caller opts out. The zoom *animation*
+        // opts out (`allowFractionalScale`), because it walks through fractional scales on its way
+        // to the target; every other caller gets the snap. `mirror` (RoomUI's `isFlipForced`)
+        // takes -1, which flips the canvas rather than scaling it.
+        if(!allowFractionalScale)
+        {
+            scale = mirror ? -1 : (scale < 1 ? 0.5 : Math.floor(scale));
+        }
+
         const key = roomId * 1000 + canvasId;
         const canvas = this._renderingCanvases.get(key);
 
         if(!canvas) return;
 
+        // AS3 passes a fourth argument to setScale(); the canvas declares it and never reads it
+        // (`_SafeCls_3073.as::setScale()`), so `_unusedFlag` stops here on purpose.
         canvas.setScale(scale, _point, _offset);
+
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as
+        // ::syncRoomCameraLocationToCanvasOffset() runs here — the camera-location half of the
+        // zoom is not ported, so a zoom does not carry the camera with it.
+
+        this.events.emit(
+            RoomEngineEvent.REE_ROOM_ZOOMED,
+            new RoomEngineEvent(RoomEngineEvent.REE_ROOM_ZOOMED, roomId)
+        );
     }
 
     /**

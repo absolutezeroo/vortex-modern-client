@@ -13,6 +13,9 @@ import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import type {ITextWindow} from '@core/window/components/ITextWindow';
+import {WindowUtils} from '@core/window/utils/WindowUtils';
+import type {Component} from '@core/runtime/Component';
 import type {Motion} from '@core/window/motion/Motion';
 import {EaseOut} from '@core/window/motion/EaseOut';
 import {MoveTo} from '@core/window/motion/MoveTo';
@@ -34,6 +37,31 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
 {
     private _history: RoomToolsHistory | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::_disposed
+    // The ctrl carries its own flag, separate from the base's: it is an update receiver, and a
+    // receiver must be able to answer `disposed` for the context to drop it.
+    private _disposed: boolean = false;
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::_isRegisteredForUpdates
+    private _isRegisteredForUpdates: boolean = false;
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::_zoomControlsPrimed
+    // Name DERIVED (`_SafeStr_9622`): false until the first `updateZoomControls()` has written the
+    // caption, so the three cache fields below are not trusted before then.
+    private _zoomControlsPrimed: boolean = false;
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::_cachedZoomText
+    // Name DERIVED (`_SafeStr_9032`).
+    private _cachedZoomText: string = '';
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::_cachedCanZoomIn
+    // Name DERIVED (`_SafeStr_9978`).
+    private _cachedCanZoomIn: boolean = false;
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::_cachedCanZoomOut
+    // Name DERIVED (`_SafeStr_10169`).
+    private _cachedCanZoomOut: boolean = false;
+
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::RoomToolsToolbarCtrl()
     constructor(widget: RoomToolsWidget, windowManager: IHabboWindowManager, assets: IAssetLibrary | null) 
     {
@@ -49,6 +77,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         }
 
         this.updateVisuals();
+        this.ensureUpdateRegistration();
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::get right()
@@ -67,8 +96,19 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::dispose()
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::get disposed()
+    public get disposed(): boolean
+    {
+        return this._disposed;
+    }
+
     public override dispose(): void 
     {
+        if(this._disposed) return;
+
+        // AS3 unregisters first — the ctrl keeps ticking against a disposed window otherwise.
+        this.removeUpdateRegistration();
+
         if(this._history) 
         {
             this._history.dispose();
@@ -80,6 +120,8 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         shareWindow?.dispose();
 
         super.dispose();
+
+        this._disposed = true;
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::updateRoomHistoryButtons()
@@ -295,6 +337,106 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         if(sideBarExpand) sideBarExpand.visible = this._collapsed;
 
         this.updatePosition();
+        this.updateZoomControls();
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::update()
+     *
+     * Registered as an update receiver, so this runs every frame. AS3's body also drives the
+     * collapse easing by hand; this port animates that through `Motions` instead, so only the zoom
+     * half is here — and that half is *why* the ctrl is registered at all: nothing notifies it when
+     * the room canvas zooms, so it polls.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::update()
+    public update(_deltaTime: number): void
+    {
+        this.updateZoomControls();
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::updateZoomControls()
+     *
+     * Writes the `Zoom level: %zoom_level%` caption and greys the +/- buttons at the ends of the
+     * scale table. Called once per frame, hence the four-field cache: without it this would
+     * re-resolve a localization and walk two window subtrees on every tick.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::updateZoomControls()
+    private updateZoomControls(): void
+    {
+        if(!this._window || !this._widget) return;
+
+        const zoomText = this._window.findChildByName('zoom_text') as ITextWindow | null;
+        const canZoomIn = this._widget.canZoomRoom(1);
+        const canZoomOut = this._widget.canZoomRoom(-1);
+        const caption = this._widget.getCurrentRoomZoomText();
+
+        if(
+            this._zoomControlsPrimed
+            && caption === this._cachedZoomText
+            && canZoomIn === this._cachedCanZoomIn
+            && canZoomOut === this._cachedCanZoomOut
+        )
+        {
+            return;
+        }
+
+        if(zoomText)
+        {
+            zoomText.caption = this._widget.localizations?.registerParameter(
+                'room.zoom.text', 'zoom_level', caption
+            ) ?? caption;
+        }
+
+        const zoomIn = this._window.findChildByName('zoom_in_btn');
+        const zoomOut = this._window.findChildByName('zoom_out_btn');
+
+        if(zoomIn) WindowUtils.disableSection(zoomIn, !canZoomIn);
+        if(zoomOut) WindowUtils.disableSection(zoomOut, !canZoomOut);
+
+        this._zoomControlsPrimed = true;
+        this._cachedZoomText = caption;
+        this._cachedCanZoomIn = canZoomIn;
+        this._cachedCanZoomOut = canZoomOut;
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::ensureUpdateRegistration()
+     *
+     * The update component is the **room engine** — AS3 casts it to Component and registers there,
+     * so the ctrl ticks for exactly as long as there is a room engine to zoom.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::ensureUpdateRegistration()
+    private ensureUpdateRegistration(): void
+    {
+        const component = this.getUpdateComponent();
+
+        if(!this._isRegisteredForUpdates && component !== null)
+        {
+            component.registerUpdateReceiver(this, 1);
+            this._isRegisteredForUpdates = true;
+        }
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::removeUpdateRegistration()
+    private removeUpdateRegistration(): void
+    {
+        const component = this.getUpdateComponent();
+
+        if(this._isRegisteredForUpdates && component !== null)
+        {
+            component.removeUpdateReceiver(this);
+        }
+
+        this._isRegisteredForUpdates = false;
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::getUpdateComponent()
+    private getUpdateComponent(): Component | null
+    {
+        const roomEngine = this.handler?.container?.roomEngine ?? null;
+
+        return (roomEngine as unknown as Component | null) ?? null;
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::onWindowEvent()
@@ -315,6 +457,14 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         {
             case 'button_settings':
                 this.handler?.toggleRoomInfoWindow();
+                break;
+            case 'zoom_in_btn':
+                this._widget?.zoomRoom(1);
+                this.updateZoomControls();
+                break;
+            case 'zoom_out_btn':
+                this._widget?.zoomRoom(-1);
+                this.updateZoomControls();
                 break;
             case 'button_zoom':
                 this._widget?.messageListener?.processWidgetMessage(new RoomWidgetZoomToggleMessage());
