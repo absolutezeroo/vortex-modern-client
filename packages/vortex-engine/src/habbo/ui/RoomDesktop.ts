@@ -701,6 +701,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
     // AS3 declares `moderation` on IRoomWidgetHandlerContainer; RoomUI DI-resolves the component
     // and injects it the same way it does userDefinedRoomEvents above.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::get moderation()
     private _moderation: IHabboModeration | null = null;
 
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get moderation()

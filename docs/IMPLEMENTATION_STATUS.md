@@ -62,12 +62,12 @@ node scripts/todo-inventory.mjs --json
 `packages/*/dist` is excluded: it is gitignored build output carrying a duplicate of every `.d.ts`
 marker, which inflates a naive `grep -c` by ~90.
 
-**2026-08-09 — 447 TODO in `packages/*/src` (389 `TODO(AS3)`, 58 plain):**
+**2026-08-09 — 433 TODO in `packages/*/src` (376 `TODO(AS3)`, 57 plain), from 447 earlier the same day:**
 
 | Blocker                                                     | Count |
 |-------------------------------------------------------------|-------|
-| Local micro-gap, no blocker cited                            | 266   |
-| A whole unported module                                      | 115   |
+| Local micro-gap, no blocker cited                            | 252   |
+| A whole unported module                                      | 107   |
 | Wire / server (composer, parser, header)                     | 35    |
 | Flash-only (BitmapData, filter, shader, Timer)               | 20    |
 | Settled decision — will not be ported (legacy, dead, moot)    | 19    |
@@ -97,6 +97,59 @@ The failure modes, in the order they cost the most:
 **Two silent omissions surfaced that no marker mentioned at all** — `onCreditBalance()` never calling `updatePurse()`, and `RoomEngineObjectPlacedEvent` dropping AS3's `placementSource`. Neither would ever have been found by working the TODO list, which is the argument for reading the AS3 method in full even when the marker looks narrow.
 
 Subsystems that went from dead to working: catalog→room drag placement (NORMAL and BUILDERS_CLUB), club-purchase page memory, catalog-preview furniture and wall-item rotation plus automatic state cycling, inventory trade offering, wired inspection from the infostand, and the wired dialog's variable-overview/logs header buttons.
+
+### Continued 2026-08-09 — 447 → 433, and two wire faults found by porting
+
+Three further passes, each picked by looking for the *shared root* under several markers rather
+than working the list top to bottom. That framing is the point: all three closed more markers than
+they touched files.
+
+**Bundle discounts (four markers, one root).** `PurchaseConfirmationDialog`, `SpinnerCatalogWidget`,
+`BundlePurchaseExtraInfoWidget` and `ProductViewCatalogWidget` each carried a marker saying
+bundle-quantity discounts could not work. All four pointed at the same thing:
+`HabboCatalog.bundleDiscountRuleset` was a hardcoded `return null`, because
+`BundleDiscountRulesetMessageEvent` (1073) and `GetBundleDiscountRulesetComposer` (317) were never
+ported. Porting the message — plus its DTO and `HabboCatalogUtils.getDiscountItemsCount()` and its
+three private helpers — made the getter real and the four call sites fell out. Headers from WIN63's
+registry (`_SafeCls_2046.as:931` and `:1179`), corroborated by the emulator, whose serializer
+already wrote the five fields in the AS3 read order.
+
+The DTO's class name is **derived and says so at its declaration**: obfuscated as `_SafeCls_1903`
+in WIN63, differently as `class_1766` in win63_version, and absent from the 2016 tree. Its members
+are all real AS3 names, so the accessors are recovered even though the class is not.
+
+**A decompiler artifact that would have shipped as dead code.** `win63_version`'s
+`SpinnerCatalogWidget.refresh()` reads `visible = 0 > 0` with the computed local discarded — port
+that literally and the container is permanently hidden. The primary tree has the real `_loc1_ > 0`.
+Same family as the dropped E4X `@` already recorded in `CLAUDE.md`: when a decompile reads as dead
+code, check the other tree before believing it.
+
+**`selectAvatar` (three markers, one root).** `IRoomEngine`, `ChatInputWidgetHandler` and
+`HabboFreeFlowChat` all said avatar selection was unported — clicking a user, clicking their chat
+bubble, or picking one from the `@Name` autocomplete. `RoomEngine` now has
+`selectAvatar()`/`getSelectedAvatarId()` and the body of the AS3 handler's `setSelectedAvatar()`
+(`_SafeCls_1821.as:2115`), flattened in the same way `selectRoomObject()` already is.
+
+That pass found a **wire fault in the emulator, not the client**: `LookToMessageComposer` (2508 per
+WIN63's registry) had no port at all, and the emulator maps its `LookToMessageEvent` to 9103 — a
+placeholder its own comment flagged as unresolved. Its parser already read the right two ints, so
+only the header was wrong; corrected there with the citation. Header order held: WIN63 first, the
+emulator as corroboration, and when they disagreed the registry won.
+
+Two interface gaps were filled rather than worked around on the way:
+`IRoomWidgetHandlerContainer` never declared `moderation` though AS3 does (RoomUI now DI-resolves it
+optionally and injects it per desktop, exactly as it already does `userDefinedRoomEvents`), and
+`IRoomDesktop` never declared `processWidgetMessage` though `RoomDesktop` implements it.
+
+**A scroll fix that was not a fidelity bug.** The chat-bubble chooser and the guild badge colour
+palette could not be scrolled to a chosen row. The entire wheel path turned out faithful —
+`ItemListController.as:573/582` really does construct two `SmoothScroller`s with the defaults the
+port passes, and `scrollBySteps`, `wheelDeltaToScrollDelta`, the `0.01` epsilon and
+`getVerticalMaxScroll` all match line for line. The cause was the one piece with no AS3 counterpart:
+`NativeWheelDelta.LINES_PER_NOTCH`, mapping a browser notch to Flash's 3 lines. Downstream that is a
+fixed pixel intent divided by the scrollable overflow, so on a short grid one notch covered 25-47%
+of the range. One line per notch puts those at 8-16%. Recorded here because the instinct to look for
+an unfaithful port was wrong twice over: nothing downstream was touched.
 
 ### Three measurement tools, and what they are each for
 

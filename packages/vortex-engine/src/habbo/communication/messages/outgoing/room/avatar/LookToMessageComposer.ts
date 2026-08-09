@@ -13,6 +13,8 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class LookToMessageComposer extends MessageComposer<[number, number]>
 {
+    // TS-only: the port's composers hold one tuple where AS3 holds two int fields (var_3909,
+    // var_3957); both are read back only by getMessageArray().
     private _data: [number, number];
 
     constructor(x: number, y: number)
