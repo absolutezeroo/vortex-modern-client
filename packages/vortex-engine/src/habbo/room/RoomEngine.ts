@@ -124,6 +124,9 @@ import {
 } from '@habbo/communication/messages/outgoing/room/bot/RemoveBotFromFlatMessageComposer';
 import {MoveBotMessageComposer} from '@habbo/communication/messages/outgoing/room/bot/MoveBotMessageComposer';
 import {MovePetMessageComposer} from '@habbo/communication/messages/outgoing/room/pet/MovePetMessageComposer';
+import {
+    GetGuildFurniContextMenuInfoMessageComposer
+} from '@habbo/communication/messages/outgoing/room/furniture/GetGuildFurniContextMenuInfoMessageComposer';
 import {MoveObjectMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveObjectMessageComposer';
 import {
     MoveWallItemMessageComposer
@@ -6107,10 +6110,23 @@ export class RoomEngine extends Component implements IRoomEngine,
                     new RoomEngineUseProductEvent(RoomEngineUseProductEvent.USE_PRODUCT_FROM_ROOM, roomId, objectId, category)
                 );
                 break;
+            // The only case here that does not raise a widget event: AS3 sends the request itself
+            // and lets the reply (`GuildFurniContextMenuInfo`, 3220) open the bubble, because the
+            // guild's name and membership flags only exist server-side. The guild id rides along
+            // from the object's own model.
+            case RoomObjectWidgetRequestEvent.ROWRE_GUILD_FURNI_CONTEXT_MENU:
+            {
+                const guildId = event.object?.getModel()?.getNumber(
+                    RoomObjectVariableEnum.FURNITURE_GUILD_CUSTOMIZED_GUILD_ID
+                ) ?? 0;
+
+                this.connection?.send(new GetGuildFurniContextMenuInfoMessageComposer(objectId, guildId));
+                break;
+            }
             default:
                 // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectWidgetRequestEvent()
                 // continues past ROWRE_CLOTHING_CHANGE with the playlist-editor, mannequin,
-                // guild-context-menu, monsterplant/clothing confirmation,
+                // monsterplant/clothing confirmation,
                 // area-hide, effectbox dialog, achievement-resolution, friend-furni,
                 // badge-display, high-score and link cases (the mysterybox and mysterytrophy
                 // dialogs above are done). Their RETWE_* constants already exist on

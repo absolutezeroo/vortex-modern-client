@@ -4,6 +4,7 @@ import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperW
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IRarityItemGridOverlayWidget} from '@habbo/window/widgets/IRarityItemGridOverlayWidget';
+import {drawIntoBitmapSlot} from '@core/utils/BitmapSlot';
 
 import type {Pet} from './Pet';
 import type {PetsView} from './PetsView';
@@ -16,9 +17,10 @@ import type {PetsView} from './PetsView';
  * Mirrors the pet-specific subset of GroupItem. Two documented port deviations from AS3:
  * - the thumbnail window is built via `windowManager.buildWidgetLayout('inventory_thumb_xml')`
  *   (the port's asset path) rather than AS3's raw `getAssetByName`/`buildFromXML`;
- * - the pet image is assigned straight into the "bitmap" child (`bitmap.bitmap = data`) instead of
- *   AS3's manual BitmapData copyPixels centering — RoomEngine delivers an already-composed
- *   ImageBitmap, and the window's bitmap wrapper centers it. Same as GroupItem.updateItemImageVisual.
+ * - the pet image arrives asynchronously from RoomEngine rather than as a synchronous BitmapData.
+ *   AS3's manual copyPixels centering IS ported, through drawIntoBitmapSlot(): the earlier note
+ *   here said the wrapper centres for us, which is wrong — it stretches, and every pet thumbnail
+ *   came out distorted.
  */
 export class PetsGridItem
 {
@@ -149,7 +151,12 @@ export class PetsGridItem
 
         if(bitmap !== null)
         {
-            bitmap.bitmap = data;
+            // AS3: PetsGridItem.as::setPetImage() blits the render into a bitmap the size of this
+            // slot — see drawIntoBitmapSlot(). Assigning it directly let the wrapper stretch every
+            // pet to 40x40.
+            const slot = bitmap as unknown as IWindow;
+
+            bitmap.bitmap = drawIntoBitmapSlot(data, slot.width, slot.height);
         }
     }
 

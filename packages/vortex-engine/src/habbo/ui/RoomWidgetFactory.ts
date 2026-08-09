@@ -306,7 +306,7 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
             case 'RWE_FURNITURE_CONTEXT_MENU':
                 return new FurnitureContextMenuWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets,
-                    this._roomUI.localization, this._roomUI.catalog
+                    this._roomUI.localization, this._roomUI.habboGroupsManager, this._roomUI.catalog
                 );
             case 'RWE_CHAT_WIDGET':
                 return new RoomChatWidget(

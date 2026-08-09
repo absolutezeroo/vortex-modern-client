@@ -862,6 +862,7 @@ import {
     FriendFurniCancelLockEvent,
     FriendFurniOtherLockConfirmedEvent,
     FriendFurniStartConfirmationEvent,
+    GuildFurniContextMenuInfoMessageEvent,
 } from './messages/incoming/room/furniture';
 
 // Outgoing Composers - Sound
@@ -880,6 +881,7 @@ import {
     CreditFurniRedeemMessageComposer,
     DiceOffMessageComposer,
     EnterOneWayDoorMessageComposer,
+    GetGuildFurniContextMenuInfoMessageComposer,
     GetItemDataMessageComposer,
     GetRentableSpaceConfigMessageComposer,
     OpenMysteryTrophyMessageComposer,
@@ -1898,6 +1900,8 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2716, FriendFurniStartConfirmationEvent);
         this._events.set(3451, FriendFurniOtherLockConfirmedEvent);
         this._events.set(267, FriendFurniCancelLockEvent);
+        // Guild-customised furni: the bubble's own data, answering composer 826.
+        this._events.set(3220, GuildFurniContextMenuInfoMessageEvent);
         this._events.set(3884, MiniMailNewMessageEvent);
         this._events.set(74, MiniMailUnreadCountEvent);
         this._events.set(2641, FriendListFragmentMessageEvent);
@@ -2311,6 +2315,7 @@ export class HabboMessages implements IMessageConfiguration
         // === MYSTERY BOX ===
         // AS3: MysteryBoxOpenDialogView.as::waitWindowProcedure() cancel_button
         this._composers.set(1063, MysteryBoxWaitingCanceledMessageComposer);
+        this._composers.set(826, GetGuildFurniContextMenuInfoMessageComposer);
         // Vortex-custom (not in official AS3 dumps): vortex-client commit f3bba54 "feat(rentablespace):
         // add config message, compositors and updated display widget"
         this._composers.set(4600, GetRentableSpaceConfigMessageComposer);

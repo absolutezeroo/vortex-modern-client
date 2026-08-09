@@ -6,6 +6,7 @@ import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperW
 import {Logger} from '@core/utils/Logger';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import {textureToBitmap} from '@habbo/avatar/AvatarImageSnapshot';
+import {drawIntoBitmapSlot} from '@core/utils/BitmapSlot';
 import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 
@@ -506,7 +507,14 @@ export class BotsView implements IAvatarImageListener
 
         const previewImage = this._window.findChildByName('preview_image') as IBitmapWrapperWindow | null;
 
-        if(previewImage !== null) previewImage.bitmap = data;
+        if(previewImage !== null)
+        {
+            // AS3: updatePreview() builds `new BitmapData(preview.width, preview.height)` and
+            // copyPixels() the render into its centre — see drawIntoBitmapSlot().
+            const slot = previewImage as unknown as IWindow;
+
+            previewImage.bitmap = drawIntoBitmapSlot(data, slot.width, slot.height);
+        }
 
         this._previewHasImage = data !== null;
     }

@@ -7,9 +7,7 @@
  * "active view", so only one bubble can be on screen at a time. `_activeView` is that slot; the
  * per-frame `update()` is registered only while something occupies it.
  *
- * This port carries the mystery-box and mystery-trophy views. The guild, random-teleport,
- * monsterplant-seed, friend-furni, generic-usable, purchasable-clothing and effect-box views are
- * TODO(AS3) stubs — none of them is ported, and the room engine does not raise their requests yet.
+ * All eleven sub-views are ported and built here, as AS3 does.
  */
 import {Logger} from '@core/utils/Logger';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
@@ -17,6 +15,7 @@ import type {IUpdateReceiver} from '@core/runtime/IContext';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
@@ -38,6 +37,9 @@ import {EffectBoxOpenDialogView} from '@habbo/ui/widget/furniture/effectbox/Effe
 import {MysteryBoxContextMenuView} from '@habbo/ui/widget/furniture/mysterybox/MysteryBoxContextMenuView';
 import {MysteryBoxOpenDialogView} from '@habbo/ui/widget/furniture/mysterybox/MysteryBoxOpenDialogView';
 import {MysteryTrophyOpenDialogView} from '@habbo/ui/widget/furniture/mysterytrophy/MysteryTrophyOpenDialogView';
+import {
+    GuildFurnitureContextMenuView
+} from '@habbo/ui/widget/furniture/guildfurnicontextmenu/GuildFurnitureContextMenuView';
 import {FurnitureContextInfoView} from './FurnitureContextInfoView';
 
 const log = Logger.getLogger('habbo.ui.widget.furniture.contextmenu.FurnitureContextMenuWidget');
@@ -52,6 +54,9 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
 
     // AS3: FurnitureContextMenuWidget.as::_selectedObject
     private _selectedObject: IRoomObject | null = null;
+
+    // AS3: FurnitureContextMenuWidget.as::_SafeStr_5789
+    private _guildFurnitureContextMenuView: GuildFurnitureContextMenuView | null = null;
 
     // AS3: FurnitureContextMenuWidget.as::_SafeStr_5601
     private _mysteryBoxContextMenuView: MysteryBoxContextMenuView | null = null;
@@ -98,6 +103,7 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
         windowManager: IHabboWindowManager,
         assets: IAssetLibrary | null,
         localizations: IHabboLocalizationManager | null,
+        groupsManager: IHabboGroupsManager | null,
         catalog: IHabboCatalog | null
     )
     {
@@ -105,6 +111,7 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
 
         this._catalog = catalog;
 
+        this._guildFurnitureContextMenuView = new GuildFurnitureContextMenuView(this, groupsManager, windowManager);
         this._mysteryBoxContextMenuView = new MysteryBoxContextMenuView(this);
         this._friendFurniContextMenuView = new FriendFurniContextMenuView(this);
         this._genericUsableContextMenuView = new GenericUsableFurnitureContextMenuView(this);
@@ -115,9 +122,6 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
         this._effectBoxOpenDialogView = new EffectBoxOpenDialogView(this);
         this._mysteryBoxOpenDialogView = new MysteryBoxOpenDialogView(this);
         this._mysteryTrophyOpenDialogView = new MysteryTrophyOpenDialogView(this);
-
-        // TODO(AS3): FurnitureContextMenuWidget.as::FurnitureContextMenuWidget() also builds
-        // GuildFurnitureContextMenuView. It is not ported.
 
         this.handler.widget = this;
 
@@ -167,6 +171,41 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
             this.removeUpdateReceiver();
             this._selectedObject = null;
         }
+    }
+
+    /**
+     * The only bubble whose caption is not the furni's own name: `setup()`'s third argument
+     * carries the guild's, and the view paints it into the layout's `name` field.
+     *
+     * The four flags land on the view rather than here because `updateButtons()` re-reads them
+     * every time the window is rebuilt.
+     */
+    // AS3: FurnitureContextMenuWidget.as::showGuildFurnitureContextMenu()
+    public showGuildFurnitureContextMenu(
+        object: IRoomObject,
+        guildId: number,
+        guildName: string,
+        guildHomeRoomId: number,
+        userIsMember: boolean,
+        guildHasReadableForum: boolean
+    ): void
+    {
+        if(this._guildFurnitureContextMenuView === null) return;
+
+        this._selectedObject = object;
+
+        this._guildFurnitureContextMenuView.guildId = guildId;
+        this._guildFurnitureContextMenuView.guildHomeRoomId = guildHomeRoomId;
+        this._guildFurnitureContextMenuView.userIsMember = userIsMember;
+        this._guildFurnitureContextMenuView.guildHasReadableForum = guildHasReadableForum;
+
+        if(this._activeView !== null) this.removeView(this._activeView, false);
+
+        this._activeView = this._guildFurnitureContextMenuView;
+
+        FurnitureContextInfoView.setup(this._activeView, object, guildName);
+
+        this.registerUpdateReceiver();
     }
 
     /**
@@ -398,13 +437,20 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
         if(this._selectedObject !== null && this._selectedObject.getId() === event.objectId)
         {
             this.removeView(this._activeView, false);
-
-            // TODO(AS3): AS3 also calls removePlantSeedConfirmationView() here — the monsterplant
-            // confirmation view is not ported.
-
+            this.removePlantSeedConfirmationView();
             this.removeUpdateReceiver();
             this._selectedObject = null;
         }
+    }
+
+    /**
+     * The seed confirmation is a window, not a bubble, so `removeView()` does not reach it — it
+     * has to be closed by name when the furni it belongs to leaves the room.
+     */
+    // AS3: FurnitureContextMenuWidget.as::removePlantSeedConfirmationView()
+    private removePlantSeedConfirmationView(): void
+    {
+        this._monsterPlantSeedConfirmationView?.close();
     }
 
     private registerUpdateReceiver(): void
@@ -449,23 +495,40 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
         this.removeUpdateReceiver();
         this.removeView(this._activeView, false);
 
-        if(this._mysteryBoxContextMenuView !== null)
-        {
-            this._mysteryBoxContextMenuView.dispose();
-            this._mysteryBoxContextMenuView = null;
-        }
+        // AS3 disposes all eleven sub-views here; the port used to drop only three of them, so
+        // the other eight kept their windows and listeners for the life of the page.
+        this._guildFurnitureContextMenuView?.dispose();
+        this._guildFurnitureContextMenuView = null;
 
-        if(this._mysteryBoxOpenDialogView !== null)
-        {
-            this._mysteryBoxOpenDialogView.dispose();
-            this._mysteryBoxOpenDialogView = null;
-        }
+        this._randomTeleportContextMenuView?.dispose();
+        this._randomTeleportContextMenuView = null;
 
-        if(this._mysteryTrophyOpenDialogView !== null)
-        {
-            this._mysteryTrophyOpenDialogView.dispose();
-            this._mysteryTrophyOpenDialogView = null;
-        }
+        this._monsterPlantSeedContextMenuView?.dispose();
+        this._monsterPlantSeedContextMenuView = null;
+
+        this._monsterPlantSeedConfirmationView?.dispose();
+        this._monsterPlantSeedConfirmationView = null;
+
+        this._mysteryBoxContextMenuView?.dispose();
+        this._mysteryBoxContextMenuView = null;
+
+        this._friendFurniContextMenuView?.dispose();
+        this._friendFurniContextMenuView = null;
+
+        this._genericUsableContextMenuView?.dispose();
+        this._genericUsableContextMenuView = null;
+
+        this._effectBoxOpenDialogView?.dispose();
+        this._effectBoxOpenDialogView = null;
+
+        this._mysteryBoxOpenDialogView?.dispose();
+        this._mysteryBoxOpenDialogView = null;
+
+        this._mysteryTrophyOpenDialogView?.dispose();
+        this._mysteryTrophyOpenDialogView = null;
+
+        this._purchasableClothingConfirmationView?.dispose();
+        this._purchasableClothingConfirmationView = null;
 
         this._catalog = null;
         this._selectedObject = null;

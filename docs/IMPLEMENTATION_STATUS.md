@@ -226,16 +226,21 @@ Re-ranked **2026-08-03**, biggest product gap first.
    separate handler class (`_SafeCls_1951.as`, obfuscated in every tree), so grepping only the
    manager finds nothing and reads as "no messages". Find the registrations with
    `grep -rln "IMessageEvent" <module>/` first.
-1. **`habbo/ui/widget/furniture` — 46/54, and `habbo/ui/handler` — 25/47**, re-measured
-   2026-08-05. Eight widgets left, smallest first: `AchievementResolutionTrophyFurniWidget` (150),
-   `VimeoDisplayWidget` (150), `GuildFurnitureContextMenuView` (185), `HighScoreDisplayWidget`
-   (248), `AreaHideFurniWidget` (358), `YoutubeDisplayWidget` (448), `ExternalImageWidget` (758),
-   `_SafeCls_3218` (32, the video-player state enum). Their handlers, where known:
-   `FurnitureBadgeDisplayWidgetHandler` (331), `_SafeCls_3964` (148, high score), `_SafeCls_3849`
-   (207, YouTube), `_SafeCls_3484` (123, Vimeo), `FurnitureAreaHideWidgetHandler` (139),
-   `ExternalImageWidgetHandler` (162).
-   **Track the handlers with them — they are the bigger half.** 22 of AS3's 47 `ui/handler` files
-   are unported (~4,300 lines), and a widget whose handler is missing receives nothing at all.
+1. **`habbo/ui/widget/furniture` — 51/54, and `habbo/ui/handler` — 42/47**, re-measured
+   2026-08-09 (the 2026-08-05 figures below were badly stale — 46/54 and 25/47 — because they
+   counted obfuscated AS3 filenames as unported when the port carries them under recovered
+   names; match handlers by the `RWE_*` id they declare, not by filename).
+   **What is actually left in `widget/furniture` is one feature: video.**
+   `YoutubeDisplayWidget` (448), `VimeoDisplayWidget` (150) and `_SafeCls_3218` (32, the
+   player-state enum), plus their handlers `_SafeCls_3849` (207, `RWE_YOUTUBE`) and
+   `_SafeCls_3484` (123, `RWE_VIMEO`) — ~960 lines. **It needs a deliberate deviation, not a
+   port**: AS3 loads an embedded Flash player SWF through `flash.display.Loader`, which has no
+   faithful equivalent; the web answer is a YouTube/Vimeo iframe, so decide the substitution
+   before starting.
+   The other 4 unported `ui/handler` files are whole unported clusters, not furniture:
+   `CameraWidgetHandler`, `RoomThumbnailCameraWidgetHandler`, `CraftingWidgetHandler`,
+   `PlayListEditorWidgetHandler` (`widget/camera/` 0/9, `crafting/` 0/13, `playlisteditor/` 0/9).
+   **Track handlers with their widgets** — a widget whose handler is missing receives nothing.
    **Size these by the feature, not the file.** The trophy widget is 150 lines but its only
    dispatcher is that 331-line badge handler — the real slice is ~480 lines plus a badge-info
    composer/event/parser, a badge-rarity enum and two `HabboGroups` helpers. Porting a widget alone
@@ -690,6 +695,33 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 ---
 
 ## Recent Work Recorded
+
+- 🆕 **Guild-furni context menu, end to end**, 2026-08-09. Double-clicking a guild-customised
+  furni did nothing: the room engine logged "Unmapped room-object widget request", so the request
+  never left the client.
+  - **The whole chain was missing, not just the view.** Outgoing
+    `GetGuildFurniContextMenuInfoMessageComposer` (826) and incoming
+    `GuildFurniContextMenuInfoMessageEvent` (3220) + parser — both ids from WIN63's own registry
+    (`_composers[826]`, `_SafeStr_4546[3220]`), corroborated by the emulator. All three class
+    names are **DERIVED**: the AS3 ones live in `src/unknowns/` and are obfuscated in every tree.
+  - `RoomEngine.handleObjectWidgetRequestEvent()` gained the `ROWRE_GUILD_FURNI_CONTEXT_MENU`
+    case. It is the one case there that raises no widget event: AS3 sends 826 itself, with the
+    guild id read off the object's own `furniture_guild_customized_guild_id`, and lets the reply
+    open the bubble — the guild's name and membership flags exist only server-side.
+  - `GuildFurnitureContextMenuView` (join / open-forum rows, the guild name as a link into the
+    group profile, `groupforum/<id>` through the link bus) is ported; the shipped
+    `guild_furni_menu.xml` carries every child name it addresses. `FurnitureContextMenuWidget`
+    builds it, and `showGuildFurnitureContextMenu()` — the only caller of
+    `FurnitureContextInfoView.setup()`'s third argument — is real.
+  - **Three unrelated defects found in the same files**, all of the same family: the widget's
+    `dispose()` dropped 3 of its 11 sub-views (the other 8 kept windows and listeners for the life
+    of the page); `removePlantSeedConfirmationView()` was never called on furni removal even
+    though the view it closes is built; and the handler's `dispose()` unregistered neither of its
+    two message events, leaving them subscribed to a connection it then nulled. `sendJoinToGroup`
+    was a comment where AS3 sends `JoinHabboGroupMessageComposer` — the composer already existed.
+  - **The doc was stale in the widget's own header**, which claimed seven sub-views including this
+    one were "TODO(AS3) stubs — none of them is ported"; six of the seven were built in the
+    constructor three lines below it.
 
 - 🆕 **Priority-0 sweep: `habbo/help` and `habbo/moderation`**, 2026-08-09. Both modules run the
   recipe from priority 0; only one of them had anything to find.

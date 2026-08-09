@@ -2,6 +2,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import {drawIntoBitmapSlot} from '@core/utils/BitmapSlot';
 
 import type {Bot} from './Bot';
 import type {BotsView} from './BotsView';
@@ -14,10 +15,10 @@ import type {BotsView} from './BotsView';
  * Two documented port deviations, both shared with PetsGridItem:
  * - the thumbnail window is built via `windowManager.buildWidgetLayout('inventory_thumb_xml')`
  *   (the port's asset path) rather than AS3's raw `getAssetByName`/`buildFromXML`;
- * - the head render is assigned straight into the "bitmap" child instead of AS3's manual
- *   BitmapData copyPixels centering — the window's bitmap wrapper centers it — and it arrives
- *   through a promise, because turning the renderer's texture into an ImageBitmap has no
- *   synchronous browser equivalent (see BotsView.getItemImage()).
+ * - the head render arrives through a promise, because turning the renderer's texture into an
+ *   ImageBitmap has no synchronous browser equivalent (see BotsView.getItemImage()). AS3's manual
+ *   BitmapData copyPixels centering IS ported, in drawIntoBitmapSlot() — an earlier note here
+ *   claimed the wrapper centred for us, and it does not: it stretches.
  */
 export class BotGridItem
 {
@@ -114,7 +115,10 @@ export class BotGridItem
 
         if(bitmap !== null)
         {
-            bitmap.bitmap = data;
+            // AS3 blits the head render into a bitmap the size of this slot rather than handing the
+            // render over — see drawIntoBitmapSlot(). Assigning it directly let the wrapper stretch
+            // it to 40x40.
+            bitmap.bitmap = drawIntoBitmapSlot(data, (bitmap as unknown as IWindow).width, (bitmap as unknown as IWindow).height);
         }
 
         if(data !== null) this._hasImage = true;

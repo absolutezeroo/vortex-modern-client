@@ -22,6 +22,15 @@ import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
 import {RoomWidgetUseProductMessage} from '@habbo/ui/widget/messages/RoomWidgetUseProductMessage';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {FigureSetIdsMessageEvent} from '@habbo/communication/messages/incoming/inventory/FigureSetIdsMessageEvent';
+import {
+    GuildFurniContextMenuInfoMessageEvent
+} from '@habbo/communication/messages/incoming/room/furniture/GuildFurniContextMenuInfoMessageEvent';
+import type {
+    GuildFurniContextMenuInfoParser
+} from '@habbo/communication/messages/parser/room/furniture/GuildFurniContextMenuInfoParser';
+import {
+    JoinHabboGroupMessageComposer
+} from '@habbo/communication/messages/outgoing/users/JoinHabboGroupMessageComposer';
 import type {
     FigureSetIdsMessageParser
 } from '@habbo/communication/messages/parser/inventory/FigureSetIdsMessageParser';
@@ -80,8 +89,11 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
     // AS3: FurnitureContextMenuWidgetHandler.as::_SafeStr_7270
     private _pendingPurchasableClothingGender: string | null = null;
 
-    // TS-only: kept so the listener survives the setter; AS3 uses a local.
+    // AS3: FurnitureContextMenuWidgetHandler.as::_SafeStr_6275
     private _figureSetIdsEvent: IMessageEvent | null = null;
+
+    // AS3: FurnitureContextMenuWidgetHandler.as::_SafeStr_6438
+    private _guildFurniContextMenuInfoEvent: IMessageEvent | null = null;
 
     // AS3: FurnitureContextMenuWidgetHandler.as::_SafeStr_7268 (request timestamp, -1 = none)
     private _pendingPurchasableClothingTime: number = -1;
@@ -177,7 +189,8 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
     }
 
     /**
-     * AS3 also registers `GuildFurniContextMenuInfo` and `FigureSetIds` message events here.
+     * Both of the handler's own incoming messages are registered here rather than in the
+     * constructor, because the connection is handed over after construction.
      */
     // AS3: FurnitureContextMenuWidgetHandler.as::set connection()
     public set connection(value: IConnection | null)
@@ -191,9 +204,14 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
             this._connection.addMessageEvent(this._figureSetIdsEvent);
         }
 
-        // TODO(AS3): AS3 also adds `_SafeCls_2773`
-        // (GuildFurniContextMenuInfoMessageEvent → onGuildFurniContextMenuInfo); that message and
-        // the guild menu view it feeds are both unported.
+        if(this._connection !== null && this._guildFurniContextMenuInfoEvent === null)
+        {
+            this._guildFurniContextMenuInfoEvent = new GuildFurniContextMenuInfoMessageEvent(
+                this.onGuildFurniContextMenuInfo
+            );
+
+            this._connection.addMessageEvent(this._guildFurniContextMenuInfoEvent);
+        }
     }
 
     public get connection(): IConnection | null
@@ -366,11 +384,38 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
     }
 
     // AS3: FurnitureContextMenuWidgetHandler.as::sendJoinToGroupMessage()
-    public sendJoinToGroupMessage(_groupId: number): void
+    public sendJoinToGroupMessage(groupId: number): void
     {
-        // TODO(AS3): sends `_SafeCls_3683` (JoinHabboGroupMessageComposer) on the connection. Only
-        // the unported guild context menu calls this.
+        this._connection?.send(new JoinHabboGroupMessageComposer(groupId));
     }
+
+    /**
+     * The server's answer to the guild-furni double click. AS3 drops it silently when the object
+     * has already left the room, which is why the bubble is opened from the object and not from
+     * the id in the message.
+     */
+    // AS3: FurnitureContextMenuWidgetHandler.as::onGuildFurniContextMenuInfo()
+    private onGuildFurniContextMenuInfo = (event: IMessageEvent): void =>
+    {
+        if(this._widget === null) return;
+
+        const parser = event.parser as GuildFurniContextMenuInfoParser | null;
+
+        if(parser === null) return;
+
+        const object = this.getRoomObject(parser.objectId);
+
+        if(object === null) return;
+
+        this._widget.showGuildFurnitureContextMenu(
+            object,
+            parser.guildId,
+            parser.guildName,
+            parser.guildHomeRoomId,
+            parser.userIsMember,
+            parser.guildHasReadableForum
+        );
+    };
 
     /**
      * First half of the outfit purchase: ask the server to redeem the furni, and remember what
@@ -510,6 +555,20 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
         }
 
         this.unsetContainer();
+
+        // AS3 unregisters both of its message events here; the port kept them subscribed to a
+        // connection it then dropped.
+        if(this._connection !== null && this._guildFurniContextMenuInfoEvent !== null)
+        {
+            this._connection.removeMessageEvent(this._guildFurniContextMenuInfoEvent);
+            this._guildFurniContextMenuInfoEvent = null;
+        }
+
+        if(this._connection !== null && this._figureSetIdsEvent !== null)
+        {
+            this._connection.removeMessageEvent(this._figureSetIdsEvent);
+            this._figureSetIdsEvent = null;
+        }
 
         this._connection = null;
         this._widget = null;

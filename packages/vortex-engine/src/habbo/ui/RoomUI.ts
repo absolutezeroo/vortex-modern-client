@@ -249,6 +249,12 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         return this._catalog;
     }
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get habboGroupsManager()
+    public get habboGroupsManager(): IHabboGroupsManager | null
+    {
+        return this._habboGroupsManager;
+    }
+
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get inventory()
     // Was marked TS-only; AS3 declares it at RoomUI.as:1240 and RoomWidgetFactory reads it there
     // for the same reason this port does.

@@ -1,4 +1,5 @@
 export * from './FriendFurniStartConfirmationEvent';
+export * from './GuildFurniContextMenuInfoMessageEvent';
 export * from './FriendFurniOtherLockConfirmedEvent';
 export * from './FriendFurniCancelLockEvent';
 export * from './RoomDimmerPresetsMessageEvent';

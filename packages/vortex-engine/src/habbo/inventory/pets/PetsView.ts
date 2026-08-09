@@ -11,6 +11,7 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
 import {Vector3d} from '@room/utils/Vector3d';
+import {drawIntoBitmapSlot} from '@core/utils/BitmapSlot';
 
 import type {Pet} from './Pet';
 import type {PetsModel} from './PetsModel';
@@ -537,7 +538,14 @@ export class PetsView implements IGetImageListener
 
         const previewImage = this._window.findChildByName('preview_image') as IBitmapWrapperWindow | null;
 
-        if(previewImage !== null) previewImage.bitmap = data;
+        if(previewImage !== null)
+        {
+            // AS3: PetsView.as::updatePreview() composes the render into a bitmap the size of the
+            // preview slot — see drawIntoBitmapSlot().
+            const slot = previewImage as unknown as IWindow;
+
+            previewImage.bitmap = drawIntoBitmapSlot(data, slot.width, slot.height);
+        }
     }
 
     private setPreviewText(name: string, caption: string): void
