@@ -9,6 +9,10 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * comment already flags as UNRESOLVED and a pre-existing mismatch. Its parser reads the same two
  * ints in the same order, so only the header is wrong there.
  *
+ * `win63_version` is cited only for the readable class name: this message is obfuscated in the
+ * primary tree, which is where every member trace below points, because that tree is the
+ * authority on behaviour and this one has shipped two bad decompiles today alone.
+ *
  * @see sources/win63_version/habbo/communication/messages/outgoing/room/avatar/LookToMessageComposer.as
  */
 export class LookToMessageComposer extends MessageComposer<[number, number]>
@@ -23,7 +27,7 @@ export class LookToMessageComposer extends MessageComposer<[number, number]>
         this._data = [x, y];
     }
 
-    // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/avatar/LookToMessageComposer.as::getMessageArray()
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2424/_SafeCls_3064.as::getMessageArray()
     getMessageArray(): [number, number]
     {
         return this._data;

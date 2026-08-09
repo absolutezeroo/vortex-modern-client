@@ -7,6 +7,10 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  * artifact, not the shipped code. Checked before porting for exactly that reason.
  *
  * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1714/_SafeCls_3083.as
+ * `win63_version` is cited only for the readable class name: this message is obfuscated in the
+ * primary tree, which is where every member trace below points, because that tree is the
+ * authority on behaviour and this one has shipped two bad decompiles today alone.
+ *
  * @see sources/win63_version/habbo/communication/messages/parser/catalog/GiftWrappingConfigurationEventParser.as
  */
 export class GiftWrappingConfigurationEventParser implements IMessageParser
