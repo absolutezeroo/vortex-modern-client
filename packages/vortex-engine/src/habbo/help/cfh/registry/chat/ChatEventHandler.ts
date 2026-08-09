@@ -18,6 +18,8 @@ export class ChatEventHandler
 {
     // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatEventHandler.as::_help
     private _help: HabboHelp | null;
+    // TS-only: no AS3 counterpart; AS3 passes the method reference itself to
+    // addEventListener/removeEventListener, where TS needs a stable bound one to `off()` with.
     private _onRoomChatBound: (event: RoomSessionChatEvent) => void;
 
     // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatEventHandler.as::ChatEventHandler()
