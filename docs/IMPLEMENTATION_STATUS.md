@@ -62,13 +62,13 @@ node scripts/todo-inventory.mjs --json
 `packages/*/dist` is excluded: it is gitignored build output carrying a duplicate of every `.d.ts`
 marker, which inflates a naive `grep -c` by ~90.
 
-**2026-08-09 — 467 TODO in `packages/*/src` (407 `TODO(AS3)`, 60 plain):**
+**2026-08-09 — 455 TODO in `packages/*/src` (395 `TODO(AS3)`, 60 plain):**
 
 | Blocker                                                     | Count |
 |-------------------------------------------------------------|-------|
-| Local micro-gap, no blocker cited                            | 281   |
-| A whole unported module                                      | 112   |
-| Wire / server (composer, parser, header)                     | 36    |
+| Local micro-gap, no blocker cited                            | 266   |
+| A whole unported module                                      | 115   |
+| Wire / server (composer, parser, header)                     | 35    |
 | Flash-only (BitmapData, filter, shader, Timer)               | 20    |
 | Settled decision — will not be ported (legacy, dead, moot)    | 19    |
 
@@ -82,6 +82,21 @@ precise one barely moves it. Judge a pass by which markers it closed, not by the
 `changeObjectState` deserves its own note. A name-based grep found four hits on `RoomEngine` and suggested it was already there; the body showed those belong to `class_1947`'s method — the room-object *event* handler that asks the server to toggle a real furni — which this port flattened into `RoomEngine` under the same name. The engine's own `changeObjectState()` (cycle a preview's automatic state locally, no server round trip) was missing entirely. The flattened one is now `sendObjectStateChange()`, with its AS3 trace unchanged.
 
 What this restored: furniture and wall-item rotation in the catalog/inventory preview (both were hard `return false`, so the rotate buttons were permanently greyed), the automatic state cycling that animates a previewed furni every 2.5 s, wall/floor visibility, engine-freeze during rebuilds, and the immediate engine pass after a rotation. **One behaviour change to watch:** `isZoomEnabled()` returned a hard-coded `true`; it now reads `zoom.enabled` off the engine and defaults to false when unset, matching AS3 and the port's other `zoom.enabled` call sites — that selects the room-geometry zoom path instead of the canvas-scale one.
+
+### What the 2026-08-09 sweep actually taught
+
+Nine passes, 502 → 455 markers. The reusable finding is not the count — it is that **a marker stating why it is blocked is a claim, and roughly half of them were wrong**. Cheapest first step, every time: check the claim against the code *before* opening the AS3.
+
+The failure modes, in the order they cost the most:
+
+1. **Grepped the wrong place.** The Builders Club placement composers were tagged "unported, header unresolved" after searching `outgoing/room/furniture/`; they were in `outgoing/catalog/`, registered, and implemented by the emulator. *This one was written during this same session* — the trap is not age. Check the header registry, not a guessed directory.
+2. **Trusted a name over a body.** `changeObjectState` had four hits on `RoomEngine`, so it read as ported; those belong to `class_1947`'s method, flattened in under the same name, and the engine's own version was absent. Same shape as the `hideMainWindow()` regression already recorded in `.claude/rules/00-mandate.md`.
+3. **Comments drifted off their methods.** Two `TODO(AS3)` blocks in `RoomEngine.ts` sat above unrelated declarations, describing code they were never about. Worse than a stale marker: it invites "verification" against the wrong method.
+4. **Blocker named the wrong collaborator.** The catalog mover markers blamed a missing `CatalogObjectMover`; AS3 never owns one. `disposeObjectFurniture`'s blamed the stuff-data factory (present) rather than the synchronous-icon problem (real).
+
+**Two silent omissions surfaced that no marker mentioned at all** — `onCreditBalance()` never calling `updatePurse()`, and `RoomEngineObjectPlacedEvent` dropping AS3's `placementSource`. Neither would ever have been found by working the TODO list, which is the argument for reading the AS3 method in full even when the marker looks narrow.
+
+Subsystems that went from dead to working: catalog→room drag placement (NORMAL and BUILDERS_CLUB), club-purchase page memory, catalog-preview furniture and wall-item rotation plus automatic state cycling, inventory trade offering, wired inspection from the infostand, and the wired dialog's variable-overview/logs header buttons.
 
 Six modules are absent from the port entirely and each blocks a cluster: `habbo/game` (only
 `.gitkeep`), `catalog/habbicons`, `inventory/collectibles`, `inventory/recycler`,
