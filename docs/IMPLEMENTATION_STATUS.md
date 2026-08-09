@@ -62,7 +62,7 @@ node scripts/todo-inventory.mjs --json
 `packages/*/dist` is excluded: it is gitignored build output carrying a duplicate of every `.d.ts`
 marker, which inflates a naive `grep -c` by ~90.
 
-**2026-08-09 — 455 TODO in `packages/*/src` (395 `TODO(AS3)`, 60 plain):**
+**2026-08-09 — 447 TODO in `packages/*/src` (389 `TODO(AS3)`, 58 plain):**
 
 | Blocker                                                     | Count |
 |-------------------------------------------------------------|-------|
@@ -97,6 +97,26 @@ The failure modes, in the order they cost the most:
 **Two silent omissions surfaced that no marker mentioned at all** — `onCreditBalance()` never calling `updatePurse()`, and `RoomEngineObjectPlacedEvent` dropping AS3's `placementSource`. Neither would ever have been found by working the TODO list, which is the argument for reading the AS3 method in full even when the marker looks narrow.
 
 Subsystems that went from dead to working: catalog→room drag placement (NORMAL and BUILDERS_CLUB), club-purchase page memory, catalog-preview furniture and wall-item rotation plus automatic state cycling, inventory trade offering, wired inspection from the infostand, and the wired dialog's variable-overview/logs header buttons.
+
+### Three measurement tools, and what they are each for
+
+The TODO count only measures what someone remembered to mark. Two blind spots it cannot see got their own scripts on 2026-08-09, and a third mode was added to this one:
+
+| Command | Question it answers |
+|---|---|
+| `node scripts/todo-inventory.mjs` | What is marked, classified by what actually blocks it |
+| `node scripts/todo-inventory.mjs --stale` | Which markers name a blocker that has since landed |
+| `node scripts/todo-inventory.mjs --orphans` | Which trace comments drifted off their declaration |
+| `node scripts/wire-coverage.mjs` | What the server implements that the client cannot reach |
+| `node scripts/unwired-messages.mjs` | What we wrote and never registered |
+
+**`wire-coverage` found the largest single defect of the day.** The whole moderation toolset was dead: 23 composers ported, none registered, every button reaching a composer the connection had no header for, and not one error logged. The player half — reporting — was the same, 20 ported and 2 registered, so a working queue would have had nothing to work on. Send gaps went 149 → 98 once both were wired, plus room competitions, which were unreachable for the same reason.
+
+The discipline that made it safe is worth repeating: **resolve every id against WIN63's registry and compare the constructor arity before registering anything.** All 23 moderation composers matched; a third of the help ones did not — `CallForHelpMessageComposer` sent five fields where the class takes seven. Registering those would have put truncated reports on the wire, which no server rejects and no log shows. Two wrong headers surfaced the same way: `ChangeUserName` was registered at 879, which the registry gives to `ClaimNewUserName` — a different message taking the same single string, so it would have been silently mishandled.
+
+**`--orphans` reports 63 hits and exists because the same defect appeared three times in one branch.** A trace comment that lost its declaration does not merely go stale, it describes whatever follows it — which invites verifying a claim against a method it was never about. Not every hit is a defect; a marker documenting a wholly absent feature legitimately stands alone.
+
+**Re-run `--stale` after every port.** Porting a member mechanically invalidates the markers that cited it as their blocker, and nothing re-runs the detector on its own: the catalog's drag-into-room markers stayed "not ported yet" for several commits after the thing they named had shipped, in the same branch.
 
 Six modules are absent from the port entirely and each blocks a cluster: `habbo/game` (only
 `.gitkeep`), `catalog/habbicons`, `inventory/collectibles`, `inventory/recycler`,

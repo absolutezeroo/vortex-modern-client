@@ -216,6 +216,59 @@ function findStaleCandidates(blocks, srcFiles)
     return candidates;
 }
 
+/**
+ * Finds `// AS3:` / `// TODO(AS3):` blocks that have drifted off their declaration.
+ *
+ * In this codebase a trace comment sits directly on the member it describes, so a blank line right
+ * after the block means the member it was attached to is gone — the comment now describes whatever
+ * happens to follow it. That is worse than a stale marker: it invites verifying a claim against the
+ * wrong method, which happened three times on the 2026-08-09 branch alone (`getRoomObjectImage`'s
+ * note sitting on `addRoomObjectFurniture`, `disposeObjectFurniture`'s on
+ * `unregisterCanvasSyncCallback`, `roomPreviewer`'s on `multiplePurchaseEnabled`).
+ *
+ * Not every hit is a defect — a marker documenting a whole absent feature legitimately stands
+ * alone. Read the block and the code under it before moving anything.
+ */
+function findOrphanedComments(files)
+{
+    const orphans = [];
+
+    for(const file of files)
+    {
+        const lines = readFileSync(file, 'utf8').split('\n');
+        let i = 0;
+
+        while(i < lines.length)
+        {
+            const trimmed = lines[i].trim();
+
+            if(!trimmed.startsWith('// AS3:') && !trimmed.startsWith('// TODO(AS3)'))
+            {
+                i++;
+
+                continue;
+            }
+
+            let end = i;
+
+            while(end < lines.length && lines[end].trim().startsWith('//')) end++;
+
+            if(end < lines.length && lines[end].trim() === '')
+            {
+                orphans.push({
+                    file: relative(ROOT, file).replaceAll('\\', '/'),
+                    line: i + 1,
+                    text: trimmed.slice(0, 100),
+                });
+            }
+
+            i = end;
+        }
+    }
+
+    return orphans;
+}
+
 function table(rows, headers)
 {
     const widths = headers.map((header, i) => Math.max(header.length, ...rows.map((row) => String(row[i]).length)));
@@ -255,6 +308,25 @@ function main()
         {
             // package without a src/ — nothing to scan
         }
+    }
+
+    if(args.includes('--orphans'))
+    {
+        const orphans = findOrphanedComments(srcFiles);
+
+        console.log(`\nCommentaires AS3/TODO détachés de leur déclaration — ${orphans.length} :\n`);
+        console.log('  Un bloc suivi d\'une ligne vide a perdu le membre qu\'il décrivait, et décrit');
+        console.log('  donc maintenant ce qui le suit. Tous ne sont pas des défauts : un marqueur qui');
+        console.log('  documente une fonctionnalité entièrement absente est légitimement seul.\n');
+
+        for(const orphan of orphans)
+        {
+            console.log(`  ${orphan.file}:${orphan.line}`);
+            console.log(`    ${orphan.text}`);
+        }
+
+        console.log('');
+        process.exit(0);
     }
 
     let blocks = [];
