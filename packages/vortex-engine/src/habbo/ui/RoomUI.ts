@@ -317,11 +317,6 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         return this._communicationManager;
     }
 
-    // AS3: sources/win63_version/habbo/ui/RoomUI.as::get desktop()
-    // AS3 tracks a single active room desktop (var_22); the TS port keys desktops
-    // by room identifier in a Map to support the underlying multi-session
-    // architecture, so this exposes "the most recently created desktop" as the
-
     private _isInRoom: boolean = false;
 
     /**
@@ -332,6 +327,9 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         return this._isInRoom;
     }
 
+    // AS3 tracks a single active room desktop (var_22); the TS port keys desktops
+    // by room identifier in a Map to support the underlying multi-session
+    // architecture, so this exposes "the most recently created desktop" as the
     // AS3-equivalent single current desktop.
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get desktop()
     public get desktop(): IRoomDesktop | null 

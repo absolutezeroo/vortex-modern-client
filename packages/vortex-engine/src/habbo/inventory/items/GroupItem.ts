@@ -175,10 +175,6 @@ export class GroupItem implements IGetImageListener
 
     private _extra: number;
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::createWindow()
-    // TS deviation: uses the generic buildWidgetLayout() cache-per-call mechanism
-    // instead of AS3's own template+clone cache (FurniModel.createItemWindow()) —
-
     get extra(): number 
     {
         return this._extra;
@@ -723,9 +719,6 @@ export class GroupItem implements IGetImageListener
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::getFurniItemName()
-    // TODO(AS3): skips the TRAX_SONG (category 8) async song-title lookup —
-
     /**
      * Unlock all items
      */
@@ -922,6 +915,8 @@ export class GroupItem implements IGetImageListener
         }
     }
 
+    // TS deviation: uses the generic buildWidgetLayout() cache-per-call mechanism
+    // instead of AS3's own template+clone cache (FurniModel.createItemWindow()) —
     // both build the same layout per new thumbnail; no functional difference.
     // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::createWindow()
     protected createWindow(): void 
@@ -1226,6 +1221,7 @@ export class GroupItem implements IGetImageListener
         }
     };
 
+    // TODO(AS3): skips the TRAX_SONG (category 8) async song-title lookup —
     // music discs fall back to the default roomItem/wallItem name for now.
     // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getFurniItemName()
     private getFurniItemName(): string 

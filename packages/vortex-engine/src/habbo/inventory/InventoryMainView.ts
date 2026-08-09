@@ -592,9 +592,6 @@ export class InventoryMainView
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::emptyFurnimaticSlots()
-    // TODO(AS3): sources/win63_version/habbo/inventory/InventoryMainView.as::emptyFurnimaticSlots()
-
     // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::resetUnseenCounters()
     private resetUnseenCounters(category: string): void 
     {
@@ -673,6 +670,7 @@ export class InventoryMainView
         this.emptyFurnimaticSlots();
     }
 
+    // TODO(AS3): sources/win63_version/habbo/inventory/InventoryMainView.as::emptyFurnimaticSlots()
     // Requires IRecycler/FurniSlotItem (habbo/catalog/recycler), not yet ported.
     // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::emptyFurnimaticSlots()
     private emptyFurnimaticSlots(): void 

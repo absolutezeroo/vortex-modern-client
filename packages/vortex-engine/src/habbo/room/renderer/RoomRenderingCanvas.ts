@@ -363,6 +363,8 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this._displayTransformDirty = true;
     }
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::initialize()
+    // Creates/updates a Sprite named "mask" and assigns it to _display.mask when
     /**
      * Initialize canvas dimensions.
      * AS3: initialize(width, height)
@@ -377,9 +379,6 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this.updateMask();
         this._displayTransformDirty = true;
     }
-
-    // AS3: sources/win63_version/room/renderer/class_3523.as::initialize()
-    // Creates/updates a Sprite named "mask" and assigns it to _display.mask when
 
     /**
      * Set the display zoom scale.

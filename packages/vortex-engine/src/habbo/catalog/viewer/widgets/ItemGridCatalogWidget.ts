@@ -373,10 +373,6 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::loadGraphics()
-    // The guild-recolor preview branch (var_3738/StringArrayStuffData.setArray()) is not ported -
-    // StringArrayStuffData only supports construction from a room-object model/message wrapper in
-
     protected createGridItem(gridItem: IGridItem): IWindowContainer 
     {
         const container = gridItem as unknown as IProductContainer;
@@ -409,6 +405,8 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         return view;
     }
 
+    // The guild-recolor preview branch (var_3738/StringArrayStuffData.setArray()) is not ported -
+    // StringArrayStuffData only supports construction from a room-object model/message wrapper in
     // this port, not the ad-hoc string array AS3 builds here for a not-yet-owned guild furni item.
     // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::loadGraphics()
     protected loadGraphics(offer: IPurchasableOffer): void 

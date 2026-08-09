@@ -155,6 +155,11 @@ export class ChatStyleSelector implements IDisposable
     // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::_selected
     private _selected: ChatStyleGridEntry | null = null;
 
+    // TODO(AS3): AS3 also tints/masks a "chat_bg_preview" live bubble-background preview
+    // behind the chat input box here - chatinput_window_new's actual layout (verified
+    // against the raw source XML) has no such element, and AS3's own null-check on it
+    // early-returns BEFORE reaching setInputFieldColor() too, so in this layout picking a
+    // style has no visible side effect on the input field either - this is a faithful
     // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::get selected()
     private get selected(): ChatStyleGridEntry | null 
     {
@@ -252,13 +257,6 @@ export class ChatStyleSelector implements IDisposable
         this._fontSizeMode = clampFontSize(mode);
         this.updateFontSizeSelectionHighlight();
     }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::set selected()
-    // TODO(AS3): AS3 also tints/masks a "chat_bg_preview" live bubble-background preview
-    // behind the chat input box here - chatinput_window_new's actual layout (verified
-    // against the raw source XML) has no such element, and AS3's own null-check on it
-    // early-returns BEFORE reaching setInputFieldColor() too, so in this layout picking a
-    // style has no visible side effect on the input field either - this is a faithful
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::alignMenuToSelector()
     alignMenuToSelector(): void 

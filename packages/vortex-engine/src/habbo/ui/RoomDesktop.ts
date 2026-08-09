@@ -899,6 +899,9 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         log.debug(`RoomDesktop initialized for room ${this._session.roomId}`);
     }
 
+    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createRoomView()
+    // The room DisplayObject is local to room_canvas_wrapper. Pixi renders it on
+    // the root stage, so keep the root-stage container at the wrapper's global
     /**
      * Creates the room view and canvas for rendering.
      * Called when the room engine signals REE_INITIALIZED.
@@ -1013,10 +1016,6 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             container: canvasDisplayObject
         });
     }
-
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createRoomView()
-    // The room DisplayObject is local to room_canvas_wrapper. Pixi renders it on
-    // the root stage, so keep the root-stage container at the wrapper's global
 
     /**
      * Creates a widget by type code.
@@ -1474,7 +1473,6 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 ));
 
                 return;
-            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_MANNEQUIN" — unlike the
             // others this one is not translated into a widget message: the mannequin handler
             // subscribes to the engine event itself (`getProcessedEvents()`), so it only has to
             // reach the handler list, which the generic path below does.

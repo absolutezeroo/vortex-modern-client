@@ -1620,6 +1620,10 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.connection?.send(new RecycleItemsMessageComposer(items));
     }
 
+    // TODO(AS3): several secondary effects are not wired yet, each because their backing system
+    // isn't ported: new-additions badge clearing (markNewAdditionPageOpened() needs
+    // MarkCatalogNewAdditionsPageOpenedComposer), recycler activate/cancel on open/close
+    // (Recycler isn't ported), refreshBuilderStatus() (Builders Club membership timers aren't
     // tracked). The core open/close/navigate flow is real.
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::toggleCatalog()
     public toggleCatalog(catalogType: string, forceOpen: boolean = false, showMainWindow: boolean = true): void 
@@ -1728,12 +1732,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::toggleCatalog()
-    // TODO(AS3): several secondary effects are not wired yet, each because their backing system
-    // isn't ported: new-additions badge clearing (markNewAdditionPageOpened() needs
-    // MarkCatalogNewAdditionsPageOpenedComposer), recycler activate/cancel on open/close
-    // (Recycler isn't ported), refreshBuilderStatus() (Builders Club membership timers aren't
-
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::openCatalog()
     public openCatalog(): void
     {
@@ -1757,6 +1755,8 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.currentCatalogNavigator!.openPage(pageName);
     }
 
+    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::openRoomAdCatalogPageInExtendedMode()
+    // Needs RoomAdPurchaseData + getRoomAdsPurchaseInfo() - the room-ad purchase flow isn't
     // ported (same deferred area as the in-room "buy this placed item" flow noted in Offer.ts).
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::openRoomAdCatalogPageInExtendedMode()
     public openRoomAdCatalogPageInExtendedMode(
@@ -1769,9 +1769,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     ): void 
     {
     }
-
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::openRoomAdCatalogPageInExtendedMode()
-    // Needs RoomAdPurchaseData + getRoomAdsPurchaseInfo() - the room-ad purchase flow isn't
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::openCatalogPageById()
     public openCatalogPageById(pageId: number, offerId: number, catalogType: string): void 
@@ -1839,6 +1836,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this._sessionDataManager?.getProductData(localizationId) ?? null;
     }
 
+    // The decompiled source computes the result into a local but always `return null`s
     // instead of returning it - reconstructed to return the looked-up data.
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getFurnitureData()
     public getFurnitureData(classId: number, productType: string): IFurnitureData | null 
@@ -1848,9 +1846,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         return null;
     }
-
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::getFurnitureData()
-    // The decompiled source computes the result into a local but always `return null`s
 
     /**
 	 * Overrides the product count the server sent, for two bundles it gets wrong.
@@ -2088,6 +2083,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.dispatchRoomChangedToCatalogPages();
     };
 
+    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::setImageFromAsset()
+    // Real logic loads a named asset from the asset library and, on a cache miss, retrieves
+    // it via retrievePreviewAsset() (async network fetch) before applying it - that fetch
     // path isn't wired up yet. The synchronous cache-hit path is implemented for real.
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::setImageFromAsset()
     public setImageFromAsset(target: unknown, assetName: string | null, _onAssetReady?: ((event: unknown) => void) | null): void 
@@ -2100,10 +2098,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         (target as { bitmap: ImageBitmap | null }).bitmap = asset.content as ImageBitmap;
     }
-
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::setImageFromAsset()
-    // Real logic loads a named asset from the asset library and, on a cache miss, retrieves
-    // it via retrievePreviewAsset() (async network fetch) before applying it - that fetch
 
     public getPurse(): Purse
     {
@@ -2566,15 +2560,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::init()
-    // TODO(AS3): several one-time setup steps are still skipped, each because their backing
-    // system isn't ported yet: refreshFurniData(), getGiftWrappingConfiguration(),
-    // initBundleDiscounts().
-    // createClubGiftController()/createClubBuyController()/createClubExtendController() (the
-    // club/ purchase controllers - separate from the already-ported clubcenter/ status display),
-    // createMarketPlace(), createRecycler(), and createGroupMembershipsController() are now real -
-    // see below. The core main-window/navigator/
-
     /**
      * The purchased item has landed in the inventory. If it is the one already standing in the room
      * as a ghost, this is what makes the placement real — it sends the placement the user already
@@ -2805,6 +2790,14 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::init()
+    // TODO(AS3): several one-time setup steps are still skipped, each because their backing
+    // system isn't ported yet: refreshFurniData(), getGiftWrappingConfiguration(),
+    // initBundleDiscounts().
+    // createClubGiftController()/createClubBuyController()/createClubExtendController() (the
+    // club/ purchase controllers - separate from the already-ported clubcenter/ status display),
+    // createMarketPlace(), createRecycler(), and createGroupMembershipsController() are now real -
+    // see below. The core main-window/navigator/
     // viewer setup is real.
     /**
 	 * @param catalogType - The catalog type to activate once the states exist
@@ -3169,9 +3162,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::onCatalogIndex()
-    // TODO(AS3): the new-additions auto-open branch (var_2609/var_4292/newAdditionsPageOpenDisabled)
-
     private hideMainWindow(): void
     {
         if(this._windowManager != null && this._mainWindow != null && this._mainWindow.parent != null)
@@ -3251,6 +3241,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     };
 
+    // TODO(AS3): the new-additions auto-open branch (var_2609/var_4292/newAdditionsPageOpenDisabled)
     // isn't ported - always falls through to loadFrontPage() for a fresh index.
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::onCatalogIndex()
     private onCatalogIndex(event: IMessageEvent): void 
@@ -3470,7 +3461,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.events.emit(PurseUpdateEvent.UPDATE, new PurseUpdateEvent());
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onSubscriptionInfo()
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onSubscriptionInfo()
     private onSubscriptionInfo(event: IMessageEvent): void
     {

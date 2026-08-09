@@ -871,9 +871,6 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this._contentLoader?.getActiveObjectType(type) ?? null;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::resetSelectedObjectData()
-    // TS scope: only handles the OBJECT_PLACE branch — this storage never sees OBJECT_MOVE/
-
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getWallItemType()
     getWallItemType(type: number, param: string | null = null): string | null 
     {
@@ -951,12 +948,6 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.resetSelectedObjectData(this._activeRoomId);
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::setObjectMoverIconSprite()
-    // real isometric render (getFurnitureImage with forceGeneric=true), not the flat
-    // inventory-grid thumbnail — matches AS3's getGenericRoomObjectImage() call here.
-    // This is only ever shown as a fallback: while a valid tile is hovered, the real
-    // ghost object built by handleObjectPlace() is shown instead and this icon is
-
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::getSelectedObjectData()
     getSelectedObjectData(roomId: number): ISelectedRoomObjectData | null 
     {
@@ -975,6 +966,9 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this._moverIconSprite?.visible ?? false;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureIcon()
+    // `stuffData` typed `unknown` because it's currently unused by
+    // getGenericRoomObjectThumbnail() (Phase 1), and callers may hold either
     // of this codebase's two separate IStuffData interfaces (inventory vs room).
     getFurnitureIcon(type: number, listener: IGetImageListener, param: string | null = null, stuffData: unknown = null): ImageResult 
     {
@@ -1067,10 +1061,6 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         return this.getGenericRoomObjectImage('room', payload, new Vector3d(), scale, listener);
     }
-
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureIcon()
-    // `stuffData` typed `unknown` because it's currently unused by
-    // getGenericRoomObjectThumbnail() (Phase 1), and callers may hold either
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetImage()
     getPetImage(
@@ -1823,14 +1813,6 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::initializeRoomForGettingImage()
-    // TODO(AS3): the tile-height/geometry init (AS3 builds a RoomPlaneParser XML and feeds it to
-    // eventHandler.initialize()) isn't ported - the RoomVisualization event handler's initialize()
-    // data-shape contract for a "room" object isn't confirmed on this port (RoomPreviewer's own
-    // room setup goes through the higher-level IRoomEngine.initializeRoom(), a different path that
-    // doesn't apply to a single free-standing "room" object). Floor/wall/landscape type + the door
-    // mask are wired for real below; the room's tile geometry is not, so getRoomImage() output will
-
     addRoomObjectWallItem(
         roomId: number,
         id: number,
@@ -2069,6 +2051,8 @@ export class RoomEngine extends Component implements IRoomEngine,
         return false;
     }
 
+    // AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObjectDataWithMap()
+    // TODO(AS3): ad-furni branding save — needs SetObjectDataMessageComposer, which
     // doesn't exist yet. Low value without the branding widget itself.
     /**
 	 * Save a floor furniture's stuff data — the ad-furni branding path.
@@ -2599,9 +2583,6 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         return true;
     }
-
-    // AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObjectDataWithMap()
-    // TODO(AS3): ad-furni branding save — needs SetObjectDataMessageComposer, which
 
     getRoomOwnObjectId(roomId: number): number 
     {
@@ -4471,6 +4452,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             new SelectedRoomObjectData(id, category, operation, loc, dir, typeId, instanceData, stuffData, state, animFrame, posture);
     }
 
+    // TS scope: only handles the OBJECT_PLACE branch — this storage never sees OBJECT_MOVE/
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::resetSelectedObjectData()
     private resetSelectedObjectData(roomId: number): void 
     {
@@ -4520,6 +4502,10 @@ export class RoomEngine extends Component implements IRoomEngine,
         data.dispose();
     }
 
+    // real isometric render (getFurnitureImage with forceGeneric=true), not the flat
+    // inventory-grid thumbnail — matches AS3's getGenericRoomObjectImage() call here.
+    // This is only ever shown as a fallback: while a valid tile is hovered, the real
+    // ghost object built by handleObjectPlace() is shown instead and this icon is
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::setObjectMoverIconSprite()
     // Fallback icon shown only while no valid tile is hovered (the real ghost object built by
     // handleObjectPlace()/handleObjectMove() is shown instead otherwise).
@@ -5359,6 +5345,13 @@ export class RoomEngine extends Component implements IRoomEngine,
         return result;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::initializeRoomForGettingImage()
+    // TODO(AS3): the tile-height/geometry init (AS3 builds a RoomPlaneParser XML and feeds it to
+    // eventHandler.initialize()) isn't ported - the RoomVisualization event handler's initialize()
+    // data-shape contract for a "room" object isn't confirmed on this port (RoomPreviewer's own
+    // room setup goes through the higher-level IRoomEngine.initializeRoom(), a different path that
+    // doesn't apply to a single free-standing "room" object). Floor/wall/landscape type + the door
+    // mask are wired for real below; the room's tile geometry is not, so getRoomImage() output will
     // have the right materials but not necessarily the right shape until this is filled in.
     private initializeRoomForGettingImage(object: IRoomObjectController, payload: string | null): void 
     {

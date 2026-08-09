@@ -515,9 +515,6 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectNameMessage()
-    // TODO(AS3): category 100 (user) branch dispatches RoomWidgetRoomObjectNameEvent —
-
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::getProcessedEvents()
     public getProcessedEvents(): string[] 
     {
@@ -949,18 +946,12 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         container.roomEngine.modifyRoomObject(furniId, furniCategory, 'OBJECT_PICKUP');
     }
 
+    // TODO(AS3): category 100 (user) branch dispatches RoomWidgetRoomObjectNameEvent —
     // not ported (user view is a stub).
     // AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectNameMessage()
     private handleGetObjectNameMessage(_message: RoomWidgetRoomObjectMessage): void 
     {
     }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetFurniInfoMessage() (image portion)
-    // Renders the *live placed object* (real colors/extras/state, read straight off the room
-    // object's own model) via RoomEngine.getRoomObjectImage() at scale 64 - matches AS3's first
-    // attempt. AS3 reads the result synchronously and re-requests at scale 1 if the image is
-    // null or larger than the panel's 140x200 slot; ImageBitmap conversion is always async in
-    // the browser (see ImageResult.ts), so that same fallback check happens in imageReady()/
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectInfoMessage()
     private handleGetObjectInfoMessage(message: RoomWidgetRoomObjectMessage): void 
@@ -1197,6 +1188,11 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         log.debug(`handleOpenProfileMessage: sent GetExtendedProfileMessageComposer(${message.userId}) -> ${sent}`);
     }
 
+    // Renders the *live placed object* (real colors/extras/state, read straight off the room
+    // object's own model) via RoomEngine.getRoomObjectImage() at scale 64 - matches AS3's first
+    // attempt. AS3 reads the result synchronously and re-requests at scale 1 if the image is
+    // null or larger than the panel's 140x200 slot; ImageBitmap conversion is always async in
+    // the browser (see ImageResult.ts), so that same fallback check happens in imageReady()/
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetFurniInfoMessage()
     private handleGetFurniInfoMessage(message: RoomWidgetRoomObjectMessage, roomId: number): void 
     {

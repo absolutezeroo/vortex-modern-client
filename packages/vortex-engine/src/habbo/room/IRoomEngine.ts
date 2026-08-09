@@ -38,7 +38,6 @@ export interface IRoomEngine extends IDisposable {
     /**
      * Whether the room is currently in game mode.
      */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::get isGameMode()
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::set isGameMode()
     isGameMode: boolean;
 
@@ -103,8 +102,6 @@ export interface IRoomEngine extends IDisposable {
         forceGeneric?: boolean
     ): ImageResult;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getGenericRoomObjectImage()
-
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getWallItemImage()
     getWallItemImage(
         type: number,
@@ -164,6 +161,7 @@ export interface IRoomEngine extends IDisposable {
         backgroundColor?: number
     ): ImageResult;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getGenericRoomObjectImage()
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getSelectedObjectData()
     // TODO(AS3): the concrete RoomEngine.as (obfuscated class_34.as) implementation of this
     // covers full room-object selection (placement AND already-placed objects being moved/
