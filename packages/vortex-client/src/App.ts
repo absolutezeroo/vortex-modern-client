@@ -3,6 +3,7 @@ import {Vortex} from 'vortex-engine';
 import {AssetTypeDeclaration} from '@core/assets/AssetTypeDeclaration';
 import {UnknownAsset} from '@core/assets/UnknownAsset';
 import {SoundAsset} from '@core/assets/SoundAsset';
+import {XmlAsset} from '@core/assets/XmlAsset';
 import {SoundContext} from '@habbo/sound/SoundContext';
 import {HabboToolbarEnum} from '@habbo/toolbar/HabboToolbarEnum';
 import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
@@ -376,6 +377,54 @@ async function registerChatStyleImageAssets(vortex: Vortex, imageBundle: AssetBu
  * AS3 has no equivalent: there the mp3s are `[Embed]`s inside HabboSoundManagerFlash10Com,
  * already `flash.media.Sound` objects by the time the library is handed over.
  */
+/**
+ * Registers every window layout into the *asset library*, under its file basename.
+ *
+ * The layouts already go into the window manager's widget-layout registry (see
+ * `readWindowAssets()`), which serves `buildWidgetLayout(name)`. But a whole family of ported
+ * views does what AS3 does and reads the layout out of its component's asset library instead —
+ * `assets.getAssetByName("settings_xml").content` — and nothing ever put a layout there: the
+ * library only held images, sounds, the avatar configurations and the chat styles. Every one of
+ * those lookups returned null, and each site turned that into "Missing layout X" and gave up.
+ *
+ * The name is the **file basename**, which `tools/build-window-assets.mjs` takes from the
+ * `*Com.as` field name — the exact string AS3 passes to `getAssetByName()`. Deliberately *not*
+ * the internal `<layout name="...">`: that is a Flash-authoring label AS3 never reads, it differs
+ * from the real name for 633 of 783 layouts, and 86 of those internal names are shared by two or
+ * more files (see CLAUDE.md → Assets).
+ */
+function registerWindowLayoutAssets(vortex: Vortex, xmlBundle: AssetBundle): void
+{
+    const keys = xmlBundle.listKeys('window-layouts/').filter((key) => key.endsWith('.xml'));
+
+    if(keys.length === 0)
+    {
+        log.warn('No window layouts in the bundle - every layout lookup will fail.');
+
+        return;
+    }
+
+    const declaration = vortex.assets.getAssetTypeDeclarationByMimeType('text/xml')
+        ?? new AssetTypeDeclaration('text/xml', XmlAsset, null, 'xml');
+
+    for(const key of keys)
+    {
+        const xml = xmlBundle.getText(key);
+
+        if(!xml) continue;
+
+        const assetName = key.slice('window-layouts/'.length, -'.xml'.length);
+        const asset = new XmlAsset(declaration, assetName);
+
+        // Left as the raw string: XmlAsset parses it lazily on first `content` access, and most
+        // layouts are never asked for.
+        asset.setUnknownContent(xml);
+        vortex.assets.setAsset(assetName, asset, true);
+    }
+
+    log.debug(`Registered ${keys.length} window layout assets`);
+}
+
 async function registerSoundAssets(vortex: Vortex, xmlBundle: AssetBundle): Promise<void>
 {
     const keys = xmlBundle.listKeys('sounds/').filter((key) => key.endsWith('.mp3'));
@@ -756,6 +805,10 @@ export class VortexApp
         // The sound manager reads these synchronously through Component.assets the first
         // time anything calls playSound().
         await registerSoundAssets(vortex, xmlBundle);
+
+        // Same reason, for the views that read their layout out of the asset library rather
+        // than through buildWidgetLayout().
+        registerWindowLayoutAssets(vortex, xmlBundle);
 
         return vortex;
     }

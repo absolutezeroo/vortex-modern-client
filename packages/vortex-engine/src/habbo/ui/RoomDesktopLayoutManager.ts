@@ -126,9 +126,13 @@ export class RoomDesktopLayoutManager
     {
         if(!this._layoutContainer || !window) return null;
 
+        // By *name*, not by tag: `room_desktop_layout_xml` declares this one container as
+        // `name="background_widgets"` with no tags at all, and AS3 looks it up accordingly
+        // (`getChildByName`). Searching by tag matched nothing, so both widgets that land here
+        // were refused a container — "No container found for widget: RWE_HIGH_SCORE_DISPLAY".
         if(name === 'RWE_HIGH_SCORE_DISPLAY' || name === 'RWE_WORD_QUIZZ')
         {
-            return this._layoutContainer.getChildByTag('background_widgets') as IWindowContainer | null;
+            return this._layoutContainer.getChildByName('background_widgets') as IWindowContainer | null;
         }
 
         if(name === 'RWE_CHAT_INPUT_WIDGET')
