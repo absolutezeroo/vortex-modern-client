@@ -787,6 +787,8 @@ import {
     ChangeMottoMessageComposer,
     ChangePostureMessageComposer,
     DanceMessageComposer,
+    DropCarryItemMessageComposer,
+    PassCarryItemMessageComposer,
     PassCarryItemToPetMessageComposer,
     SignMessageComposer,
 } from './messages/outgoing/room/avatar';
@@ -2391,6 +2393,8 @@ export class HabboMessages implements IMessageConfiguration
         // Hand the carried item to a pet, from InfoStandWidgetHandler.as "RWUAM_GIVE_CARRY_ITEM_TO_PET":
         //   1429 -> _SafeCls_2543 (PassCarryItemToPet)
         this._composers.set(1429, PassCarryItemToPetMessageComposer);
+        this._composers.set(1101, PassCarryItemMessageComposer);
+        this._composers.set(1545, DropCarryItemMessageComposer);
 
         // === POLL ===
         this._composers.set(743, PollStartComposer);

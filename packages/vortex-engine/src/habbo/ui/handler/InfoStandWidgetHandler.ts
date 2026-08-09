@@ -43,6 +43,8 @@ import {
 import {
     PassCarryItemToPetMessageComposer
 } from '@habbo/communication/messages/outgoing/room/avatar/PassCarryItemToPetMessageComposer';
+import {PassCarryItemMessageComposer} from '@habbo/communication/messages/outgoing/room/avatar/PassCarryItemMessageComposer';
+import {DropCarryItemMessageComposer} from '@habbo/communication/messages/outgoing/room/avatar/DropCarryItemMessageComposer';
 import {
     GetExtendedProfileMessageComposer
 } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
@@ -415,6 +417,16 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
                 break;
             case RoomWidgetUserActionMessage.GIVE_CARRY_ITEM_TO_PET:
                 container.connection?.send(new PassCarryItemToPetMessageComposer(petId));
+                break;
+            // The avatar-to-avatar hand-off. AS3 passes the same id every other user action in this
+            // switch uses, so a pet target would be a pet id here — that is what the separate
+            // GIVE_CARRY_ITEM_TO_PET case above is for.
+            case RoomWidgetUserActionMessage.PASS_CARRY_ITEM:
+                container.connection?.send(new PassCarryItemMessageComposer(petId));
+                break;
+            // No target and no body: the server knows what you are holding.
+            case RoomWidgetUserActionMessage.DROP_CARRY_ITEM:
+                container.connection?.send(new DropCarryItemMessageComposer());
                 break;
             default:
                 log.debug(`TODO(AS3): unimplemented user-action message ${message.type}`);
