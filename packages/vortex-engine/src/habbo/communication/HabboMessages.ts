@@ -37,6 +37,13 @@ import {
     GuideSessionOnDutyUpdateMessageComposer,
     GuideSessionRequesterCancelsMessageComposer,
     GuideSessionResolvedMessageComposer,
+    CallForHelpMessageComposer,
+    CallForHelpFromIMMessageComposer,
+    CallForHelpFromPhotoMessageComposer,
+    CallForHelpFromForumMessageMessageComposer,
+    CallForHelpFromForumThreadMessageComposer,
+    ChatReviewSessionCreateMessageComposer,
+    GetCfhStatusMessageComposer,
 } from './messages/outgoing/help';
 import type {
     ComposerClass,
@@ -2736,14 +2743,17 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2847, GuideSessionRequesterCancelsMessageComposer);
         this._composers.set(3831, GuideSessionResolvedMessageComposer);
 
-        // TODO(AS3): seven more help composers are ported but deliberately left unregistered,
-        // because their bodies were written against an older revision and no longer match the
-        // class the primary registry maps their id to. Registering them would put the wrong
-        // shape on the wire, which is worse than leaving them unreachable. Each needs its body
-        // re-ported first: CallForHelp (732, `_SafeCls_2540` takes two trailing strings this
-        // port omits), CallForHelpFromIM (838), CallForHelpFromPhoto (1964),
-        // CallForHelpFromForumMessage (2991), CallForHelpFromForumThread (380),
-        // ChatReviewSessionCreate (3970) and GetCfhStatus (3458).
+        // The remaining seven, whose bodies were re-ported against the primary tree on
+        // 2026-08-09 — every one of them was missing fields or had the wrong parameter
+        // order, so registering them before the fix would have put a malformed report on
+        // the wire. Arity re-checked against the mapped class after the rewrite.
+        this._composers.set(732, CallForHelpMessageComposer);
+        this._composers.set(838, CallForHelpFromIMMessageComposer);
+        this._composers.set(1964, CallForHelpFromPhotoMessageComposer);
+        this._composers.set(2991, CallForHelpFromForumMessageMessageComposer);
+        this._composers.set(380, CallForHelpFromForumThreadMessageComposer);
+        this._composers.set(3970, ChatReviewSessionCreateMessageComposer);
+        this._composers.set(3458, GetCfhStatusMessageComposer);
         this._composers.set(1246, GetRecyclerStatusMessageComposer);
         this._composers.set(2516, GetRecyclerPrizesMessageComposer);
         this._composers.set(2956, RecycleItemsMessageComposer);

@@ -1,22 +1,42 @@
 import {MessageComposer} from '@core/communication/messages/MessageComposer';
 
 /**
- * Sends a call for help report from a forum message.
+ * Reports a single forum message (header 2991).
  *
- * @see source_as_win63/habbo/communication/messages/outgoing/help/CallForHelpFromForumMessageMessageComposer.as
+ * The two trailing strings are the reporter's own name and e-mail, read from the
+ * `help_message_name` / `help_message_email` inputs of the report form — the guest-reporting flow
+ * fills them, the in-client one sends empty strings. This port was missing both fields entirely,
+ * which is why the composer stayed unregistered until now.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2542/_SafeCls_3451.as
+ * (obfuscated in the primary dump; `_composers[2991] = _SafeCls_3451` in the registry
+ * sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as, and the
+ * class name is recovered from
+ * sources/win63_version/habbo/communication/messages/outgoing/help/CallForHelpFromForumMessageMessageComposer.as).
  */
-export class CallForHelpFromForumMessageMessageComposer extends MessageComposer<ConstructorParameters<typeof CallForHelpFromForumMessageMessageComposer>>
+export class CallForHelpFromForumMessageMessageComposer extends MessageComposer<unknown[]>
 {
-    private _data: ConstructorParameters<typeof CallForHelpFromForumMessageMessageComposer>;
+    // AS3: _SafeCls_3451.as::_SafeStr_4642
+    private _data: unknown[];
 
-    constructor(groupId: number, threadId: number, messageId: number, topicId: number, message: string)
+    // AS3: _SafeCls_3451.as::CallForHelpFromForumMessageMessageComposer()
+    constructor(
+        groupId: number,
+        threadId: number,
+        messageId: number,
+        topicId: number,
+        message: string,
+        reporterName: string,
+        reporterEmail: string
+    )
     {
         super();
-        this._data = [groupId, threadId, messageId, topicId, message];
+
+        this._data = [groupId, threadId, messageId, topicId, message, reporterName, reporterEmail];
     }
 
-    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/CallForHelpFromForumMessageMessageComposer.as::getMessageArray()
-    getMessageArray()
+    // AS3: _SafeCls_3451.as::getMessageArray()
+    getMessageArray(): unknown[]
     {
         return this._data;
     }
