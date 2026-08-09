@@ -45,6 +45,18 @@ import {
     ChatReviewSessionCreateMessageComposer,
     GetCfhStatusMessageComposer,
 } from './messages/outgoing/help';
+import {
+    ForwardToACompetitionRoomMessageComposer,
+    GetSecondsUntilMessageComposer,
+    RoomCompetitionInitMessageComposer,
+    SubmitRoomToCompetitionMessageComposer,
+    VoteForRoomMessageComposer,
+} from './messages/outgoing/competition';
+import {GetInterstitialMessageComposer} from './messages/outgoing/advertisement/GetInterstitialMessageComposer';
+import {FriendRequestQuestCompleteMessageComposer} from './messages/outgoing/quest/FriendRequestQuestCompleteMessageComposer';
+import {SanctionStatusMessageEvent} from './messages/incoming/help/SanctionStatusMessageEvent';
+import {CompetitionEntryMessageEvent} from './messages/incoming/quest/CompetitionEntryMessageEvent';
+import {EpicPopupMessageEvent} from './messages/incoming/quest/EpicPopupMessageEvent';
 import type {
     ComposerClass,
     EventClass,
@@ -1834,6 +1846,13 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(3732, UserChatlogMessageEvent);
         this._events.set(497, RoomVisitsMessageEvent);
         this._events.set(543, UserClassificationMessageEvent);
+
+        // Three more the audit found unwired. Their ids come from the AS3 registry's *incoming*
+        // table (`_SafeStr_4546`, not `_composers`) — grepping the wrong map is what made them
+        // look absent at first.
+        this._events.set(1746, SanctionStatusMessageEvent);
+        this._events.set(3222, CompetitionEntryMessageEvent);
+        this._events.set(3547, EpicPopupMessageEvent);
         this._events.set(1634, CfhSanctionMessageEvent);
 
         // === HELP / GUIDE / CALL FOR HELP ===
@@ -2754,6 +2773,26 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(380, CallForHelpFromForumThreadMessageComposer);
         this._composers.set(3970, ChatReviewSessionCreateMessageComposer);
         this._composers.set(3458, GetCfhStatusMessageComposer);
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
+        // The rest of what `scripts/unwired-messages.mjs` turned up: classes this port wrote
+        // and never plugged in. Room competitions were the whole of it — entering, voting and
+        // submitting a room were all unreachable.
+        this._composers.set(431, ForwardToACompetitionRoomMessageComposer);
+        this._composers.set(1814, GetSecondsUntilMessageComposer);
+        this._composers.set(1477, RoomCompetitionInitMessageComposer);
+        this._composers.set(2612, SubmitRoomToCompetitionMessageComposer);
+        this._composers.set(2615, VoteForRoomMessageComposer);
+
+        this._composers.set(1369, GetInterstitialMessageComposer);
+        this._composers.set(3074, FriendRequestQuestCompleteMessageComposer);
+
+        // TODO(AS3): five more stay unregistered on purpose — none has an entry in WIN63's
+        // registry, so this client revision has no header for them and inventing one would put
+        // an unaddressable message on the wire. The emulator flags its own ids for the first
+        // three as UNRESOLVED, which agrees: ForwardToASubmittableRoom,
+        // ForwardToRandomCompetitionRoom, GetIsUserPartOfCompetition, GetIsBadgeRequestFulfilled
+        // and WiredDebugCommand.
         this._composers.set(1246, GetRecyclerStatusMessageComposer);
         this._composers.set(2516, GetRecyclerPrizesMessageComposer);
         this._composers.set(2956, RecycleItemsMessageComposer);
