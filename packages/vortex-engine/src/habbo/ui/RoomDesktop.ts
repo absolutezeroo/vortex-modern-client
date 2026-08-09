@@ -40,6 +40,7 @@ import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
 import type {IHabboModeration} from '@habbo/moderation/IHabboModeration';
+import type {IDesktopWindow} from '@core/window/components/IDesktopWindow';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IUserData} from '@habbo/session/IUserData';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
@@ -714,6 +715,27 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     public set moderation(value: IHabboModeration | null)
     {
         this._moderation = value;
+    }
+
+    /**
+     * Whether the point a mouse event happened at is covered by more than one input-accepting
+     * window - i.e. something (a context menu, a dialog) sits over the room canvas there.
+     *
+     * AS3 counts the windows under the point and tests `> 1` rather than `> 0`: the desktop itself
+     * is always the first hit, so one hit means nothing is over the room.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::mouseEventPositionHasInputEventWindow()
+    public mouseEventPositionHasInputEventWindow(event: { global: { x: number; y: number } }, contextLayer: number): boolean
+    {
+        const desktop = this._windowManager?.getDesktop(contextLayer) as IDesktopWindow | null;
+
+        if(!desktop) return false;
+
+        const result: IWindow[] = [];
+
+        desktop.groupParameterFilteredChildrenUnderPoint({x: event.global.x, y: event.global.y}, result, 1);
+
+        return result.length > 1;
     }
 
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set layout()

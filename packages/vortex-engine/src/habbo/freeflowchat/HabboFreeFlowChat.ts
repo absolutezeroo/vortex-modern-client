@@ -426,12 +426,9 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clickHasToPropagate()
-    // TODO(AS3): always false — roomUI.mouseEventPositionHasContextMenu() isn't ported
-    // (RoomUI has no context-menu hit-testing yet, and HabboFreeFlowChat has no roomUI
-    // dependency wired in — see IHabboFreeFlowChat.ts's doc comment on this method).
-    clickHasToPropagate(_event: unknown): boolean
+    clickHasToPropagate(event: { global: { x: number; y: number } }): boolean
     {
-        return false;
+        return this._roomUI ? this._roomUI.mouseEventPositionHasContextMenu(event) : false;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::selectAvatarWithChatItem()

@@ -339,6 +339,17 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         return this._currentDesktop;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::mouseEventPositionHasContextMenu()
+    public mouseEventPositionHasContextMenu(event: { global: { x: number; y: number } }): boolean
+    {
+        if(this._currentDesktop != null)
+        {
+            return this._currentDesktop.mouseEventPositionHasInputEventWindow(event, 0);
+        }
+
+        return false;
+    }
+
     /**
      * Sets visibility of the active desktop.
      */

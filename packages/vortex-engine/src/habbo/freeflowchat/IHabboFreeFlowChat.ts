@@ -202,11 +202,9 @@ export interface IHabboFreeFlowChat
 	 * instead of selecting the speaker's avatar.
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clickHasToPropagate()
-	 * TODO(AS3): always returns false - roomUI.mouseEventPositionHasContextMenu()
-	 * isn't ported (RoomUI has no context-menu hit-testing yet).
 	 */
     // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clickHasToPropagate()
-    clickHasToPropagate(event: unknown): boolean;
+    clickHasToPropagate(event: { global: { x: number; y: number } }): boolean;
 
     /**
 	 * Selects the avatar that sent a chat item (bubble click handler).

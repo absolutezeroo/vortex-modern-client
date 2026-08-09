@@ -47,6 +47,12 @@ export interface IRoomDesktop
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomDesktop.as::processWidgetMessage()
     processWidgetMessage(message: unknown): unknown;
 
+    /**
+	 * Whether more than one input-accepting window sits under the event's point.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::mouseEventPositionHasInputEventWindow()
+    mouseEventPositionHasInputEventWindow(event: { global: { x: number; y: number } }, contextLayer: number): boolean;
+
     // AS3: sources/win63_version/habbo/ui/IRoomDesktop.as::getWidget()
     getWidget(type: string): unknown | null;
 
