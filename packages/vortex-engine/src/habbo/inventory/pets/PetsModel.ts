@@ -87,6 +87,17 @@ export class PetsModel implements IPetsModel
         return this._pets;
     }
 
+    /**
+     * The room's "pets allowed" flag changed, or a room was entered. AS3 re-runs the whole view
+     * update rather than touching a flag: the grid, the preview and the container visibility all
+     * read the room state, so there is nothing narrower to refresh.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::updatePetsAllowed()
+    updatePetsAllowed(): void
+    {
+        this._view.update();
+    }
+
     // AS3: PetsModel.as::isListInitialized()
     isListInitialized(): boolean
     {

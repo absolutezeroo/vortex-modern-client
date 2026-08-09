@@ -16,6 +16,8 @@ export interface IPetsModel extends IDisposable
     readonly roomSession: IRoomSession | null;
     readonly localization: IHabboLocalizationManager;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::updatePetsAllowed()
+    updatePetsAllowed(): void;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::isListInitialized()
     isListInitialized(): boolean;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::setListInitialized()

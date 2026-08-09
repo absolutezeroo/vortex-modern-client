@@ -116,6 +116,7 @@ import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
+import {RoomSessionPropertyUpdateEvent} from '@habbo/session/events/RoomSessionPropertyUpdateEvent';
 import {
     GetBadgesComposer,
     GetBotInventoryComposer,
@@ -624,11 +625,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
                     // manually, matching the IID_HabboToolbar dependency below.
                     this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this.onRoomSessionEvent);
                     this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this.onRoomSessionEvent);
+                    this._roomSessionManager?.sessionEvents.off(RoomSessionPropertyUpdateEvent.RSDUE_ALLOW_PETS, this.onRoomSessionEvent);
 
                     this._roomSessionManager = manager;
 
                     manager?.sessionEvents.on(RoomSessionEvent.RSE_STARTED, this.onRoomSessionEvent);
                     manager?.sessionEvents.on(RoomSessionEvent.RSE_ENDED, this.onRoomSessionEvent);
+                    manager?.sessionEvents.on(RoomSessionPropertyUpdateEvent.RSDUE_ALLOW_PETS, this.onRoomSessionEvent);
                 },
                 false
             ),
@@ -707,15 +710,10 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._view?.onHabboToolbarEvent(event);
     };
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::roomSessionEventHandler()
-    // TODO(AS3): the RSDUE_ALLOW_PETS case (petsModel.updatePetsAllowed()) and RSE_ENDED's
-    // deselectAllEffects() aren't ported - PetsModel.ts has no updatePetsAllowed() and the
-    // avatar-effects inventory tab (EffectsModel) isn't ported at all yet. This only restores
-    // the RSE_STARTED -> furniModel.updateView() refresh, which is what re-evaluates the
-    // "place in room"/rent/use action buttons against the now-current room session - without it,
-    // HabboInventory.roomSession (recomputed from roomSessionManager.getSession() on every
-    // access) could still be null/stale if the inventory was opened mid room-entry, and nothing
-    // ever re-ran updateActionButtons() afterwards.
+    /**
+     * AS3 also stores the session itself here (`_SafeStr_5616`); this port recomputes `roomSession`
+     * from `roomSessionManager.getSession()` on every access, so there is nothing to keep.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::roomSessionEventHandler()
     private onRoomSessionEvent = (event: RoomSessionEvent): void =>
     {
@@ -725,9 +723,22 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         // inventory was closed.
         if(!this.isInitialized) return;
 
-        if(event.type === RoomSessionEvent.RSE_STARTED)
+        switch(event.type)
         {
-            this._furniModel?.updateView();
+            case RoomSessionEvent.RSE_STARTED:
+                this._petsModel?.updatePetsAllowed();
+                // Re-evaluates the "place in room"/rent/use action buttons against the now-current
+                // session; without it nothing re-runs updateActionButtons() after a mid-entry open.
+                this._furniModel?.updateView();
+                break;
+
+            case RoomSessionEvent.RSE_ENDED:
+                this.deselectAllEffects();
+                break;
+
+            case RoomSessionPropertyUpdateEvent.RSDUE_ALLOW_PETS:
+                this._petsModel?.updatePetsAllowed();
+                break;
         }
     };
 
@@ -738,6 +749,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._toolbar?.toolbarEvents.off(HabboToolbarEvent.TOOLBAR_CLICK, this.onHabboToolbarEvent);
         this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this.onRoomSessionEvent);
         this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this.onRoomSessionEvent);
+        this._roomSessionManager?.sessionEvents.off(RoomSessionPropertyUpdateEvent.RSDUE_ALLOW_PETS, this.onRoomSessionEvent);
 
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::dispose()
         if(this._purseTimer !== null)
