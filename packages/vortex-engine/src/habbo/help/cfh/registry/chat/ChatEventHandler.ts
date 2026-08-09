@@ -1,5 +1,8 @@
-import type {ChatRegistry} from './ChatRegistry';
+import type {RoomSessionChatEvent} from '@habbo/session/events/RoomSessionChatEvent';
+import type {IChatStyleInternal} from '@habbo/freeflowchat/viewer/visualization/style/IChatStyleInternal';
 import {Logger} from '@core/utils/Logger';
+
+import type {HabboHelp} from '../../../HabboHelp';
 
 const log = Logger.getLogger('habbo.help.cfh.registry.chat.ChatEventHandler');
 
@@ -9,19 +12,29 @@ const log = Logger.getLogger('habbo.help.cfh.registry.chat.ChatEventHandler');
  * Captures chat messages from room sessions and stores them
  * in the ChatRegistry for later use in Call For Help reports.
  *
- * @see source_as_win63/habbo/help/cfh/registry/chat/ChatEventHandler.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/cfh/registry/chat/ChatEventHandler.as
  */
 export class ChatEventHandler
 {
-    private _registry: ChatRegistry;
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatEventHandler.as::_help
+    private _help: HabboHelp | null;
+    private _onRoomChatBound: (event: RoomSessionChatEvent) => void;
 
-    constructor(registry: ChatRegistry)
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatEventHandler.as::ChatEventHandler()
+    constructor(help: HabboHelp)
     {
-        this._registry = registry;
+        this._help = help;
+
+        this._onRoomChatBound = this.onRoomChat.bind(this);
+
+        // AS3 dereferences `roomSessionManager` with no null check: `HabboHelp` declares that
+        // dependency as required, so initComponent() — which builds this handler — cannot run
+        // before it resolves. `sessionEvents`, not `events`: IRoomSessionManager keeps the
+        // session emitter under its own name (see the note on IRoomSessionManager).
+        this._help.roomSessionManager!.sessionEvents.on('RSCE_CHAT_EVENT', this._onRoomChatBound);
+
         log.debug('ChatEventHandler initialized');
     }
-
-    private _disposed: boolean = false;
 
     /**
 	 * Whether this handler has been disposed
@@ -29,23 +42,46 @@ export class ChatEventHandler
     // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatEventHandler.as::get disposed()
     get disposed(): boolean
     {
-        return this._disposed;
+        return this._help === null;
     }
 
     /**
-	 * Handle a room chat event by adding it to the registry
+	 * Store a room chat line in the CFH chat registry
 	 *
-	 * @param roomId The room ID
-	 * @param roomName The room name
-	 * @param userId The user ID who sent the message
-	 * @param userName The user name
-	 * @param text The chat message text
+	 * Skipped for anything that is not a real user, for blocked users, and for
+	 * notification-style bubbles (server/system lines, which are not reportable).
 	 */
-    onChatEvent(roomId: number, roomName: string, userId: number, userName: string, text: string): void
+    // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatEventHandler.as::onRoomChat()
+    private onRoomChat(event: RoomSessionChatEvent): void
     {
-        if(this._disposed) return;
+        if(!this._help) return;
 
-        this._registry.addItem(roomId, roomName, userId, userName, text);
+        const userData = this._help.roomSessionManager
+            ?.getSession(event.session.roomId)
+            ?.userDataManager.getUserDataByIndex(event.userId) ?? null;
+
+        const guestRoomData = this._help.navigator?.enteredGuestRoomData ?? null;
+
+        if(!userData || userData.type !== 1 || !guestRoomData) return;
+
+        if(this._help.sessionDataManager?.isBlocked(userData.webID)) return;
+
+        const roomName = guestRoomData.roomName;
+
+        // AS3 reads `event.style`; this port names the same field `styleId`. AS3 also
+        // dereferences the style unconditionally — here a missing style keeps the line
+        // rather than dropping it, since only `isNotification` would have excluded it.
+        const style = this._help.freeFlowChat?.chatStyleLibrary?.getStyle(event.styleId) as IChatStyleInternal | null;
+
+        if(style?.isNotification) return;
+
+        this._help.chatRegistry.addItem(
+            event.session.roomId,
+            roomName,
+            userData.webID,
+            userData.name,
+            event.text
+        );
     }
 
     /**
@@ -54,8 +90,10 @@ export class ChatEventHandler
     // AS3: .../src/com/sulake/habbo/help/cfh/registry/chat/ChatEventHandler.as::dispose()
     dispose(): void
     {
-        if(this._disposed) return;
+        if(this.disposed) return;
 
-        this._disposed = true;
+        this._help?.roomSessionManager?.sessionEvents.off('RSCE_CHAT_EVENT', this._onRoomChatBound);
+
+        this._help = null;
     }
 }

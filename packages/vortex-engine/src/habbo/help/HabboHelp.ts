@@ -25,6 +25,16 @@ import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import {IID_HabboNavigator} from '@iid/IIDHabboNavigator';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
+import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
+import {UsersMessageEvent} from '@habbo/communication/messages/incoming/room/engine/UsersMessageEvent';
+import {RoomEntryInfoMessageEvent} from '@habbo/communication/messages/incoming/room/engine/RoomEntryInfoMessageEvent';
+import {RoomReadyMessageEvent} from '@habbo/communication/messages/incoming/room/session/RoomReadyMessageEvent';
+import {GetGuestRoomResultMessageEvent} from '@habbo/communication/messages/incoming/navigator/GetGuestRoomResultMessageEvent';
+import type {UsersMessageParser} from '@habbo/communication/messages/parser/room/engine/UsersMessageParser';
+import type {RoomEntryInfoMessageParser} from '@habbo/communication/messages/parser/room/engine/RoomEntryInfoMessageParser';
+import type {RoomReadyMessageParser} from '@habbo/communication/messages/parser/room/session/RoomReadyMessageParser';
+import type {GetGuestRoomResultMessageParser} from '@habbo/communication/messages/parser/navigator/GetGuestRoomResultMessageParser';
+import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
@@ -82,6 +92,10 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     private _tracking: IHabboTracking | null = null;
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_friendList
     private _friendList: IHabboFriendList | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_freeFlowChat
+    private _freeFlowChat: IHabboFreeFlowChat | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_messageEvents
+    private _messageEvents: IMessageEvent[] = [];
     private _imRegistry: InstantMessageRegistry;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/help/HabboHelp.as::_chatEventHandler
     private _chatEventHandler: ChatEventHandler | null = null;
@@ -233,9 +247,15 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         return this._friendList;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::get freeFlowChat()
+    get freeFlowChat(): IHabboFreeFlowChat | null
+    {
+        return this._freeFlowChat;
+    }
+
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as
-    // ~16 further public members confirmed absent (soundManager/freeFlowChat getters - neither
-    // has a DI dependency wired here yet, unlike the getters above; newUserTourEnabled/newIdentity/
+    // ~15 further public members confirmed absent (the soundManager getter - it has no DI
+    // dependency wired here yet, unlike the getters above; newUserTourEnabled/newIdentity/
     // citizenshipEnabled/safetyQuizDisabled/guardiansEnabled/callForHelpCategories/reportedUserId/
     // reportedUserName/reportedUserRoomId/reportedUserExtraDataId/reportedUserRoomObjectId;
     // startEmergencyRequest()/closeHabboWay()/closeSafetyBooklet()/showHabboWayQuiz()/
@@ -343,6 +363,14 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
                 (friendList: IHabboFriendList | null) =>
                 {
                     this._friendList = friendList;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboFreeFlowChat,
+                (freeFlowChat: IHabboFreeFlowChat | null) =>
+                {
+                    this._freeFlowChat = freeFlowChat;
                 },
                 false
             ),
@@ -641,6 +669,75 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         }
     }
 
+    // --- Registry feeds ---
+
+    /**
+	 * Register every real user in the room into the CFH user registry
+	 *
+	 * Own avatar and non-user entities (pets, bots) are skipped, as in AS3.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::onUsers()
+    private onUsers(event: IMessageEvent): void
+    {
+        const parser = event.parser as UsersMessageParser | null;
+
+        if(!parser) return;
+
+        for(let i = 0; i < parser.userCount; i++)
+        {
+            const user = parser.getUser(i);
+
+            if(!user) continue;
+
+            if(user.webID !== this.ownUserId && user.userType === 1)
+            {
+                this._userRegistry.registerUser(user.webID, user.name, user.figure);
+            }
+        }
+    }
+
+    /**
+	 * Register the room being entered, before its name is known
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::onRoomReady()
+    private onRoomReady(event: IMessageEvent): void
+    {
+        const parser = event.parser as RoomReadyMessageParser | null;
+
+        if(!parser) return;
+
+        this._userRegistry.registerRoom(parser.roomId, '');
+    }
+
+    /**
+	 * Fill in the room name once the guest-room data arrives
+	 *
+	 * `registerRoom()` back-fills it onto the users registered by `onRoomReady()`.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::onGuestRoomResult()
+    private onGuestRoomResult(event: IMessageEvent): void
+    {
+        const parser = event.parser as GetGuestRoomResultMessageParser | null;
+        const data = parser?.data ?? null;
+
+        if(!data) return;
+
+        this._userRegistry.registerRoom(data.flatId, data.roomName);
+    }
+
+    /**
+	 * Track the room the user is in — the room id every report is filed against
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::onRoomEnter()
+    private onRoomEnter(event: IMessageEvent): void
+    {
+        const parser = event.parser as RoomEntryInfoMessageParser | null;
+
+        if(!parser) return;
+
+        this._currentRoomId = parser.guestRoomId;
+    }
+
     // --- Utility methods ---
 
     /**
@@ -654,6 +751,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         if(this._communication)
         {
             this._communication.addMessageEvent(event);
+            this._messageEvents.push(event);
         }
     }
 
@@ -667,6 +765,19 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 
         // Remove link event tracker
         this.context.removeLinkEventTracker(this);
+
+        // AS3: HabboHelp.dispose() unregisters its own `_messageEvents` vector — the four
+        // registry feeds above plus the two InstantMessageEventHandler registers through
+        // addMessageEvent(). HelpMessageHandler owns (and removes) its own set separately.
+        if(this._communication)
+        {
+            for(const event of this._messageEvents)
+            {
+                this._communication.removeMessageEvent(event);
+            }
+        }
+
+        this._messageEvents = [];
 
         // Dispose message handler
         if(this._messageHandler)
@@ -724,15 +835,24 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 
     protected override initComponent(): void
     {
+        // AS3 registers these five in initComponent() itself, ahead of the sub-managers, because
+        // they feed the CFH registries the report flow reads back. TODO(AS3): the sixth,
+        // `onGameStageStarting` (snowwar's own user list), needs habbo/game, which is unported.
+        this.addMessageEvent(new UsersMessageEvent(this.onUsers.bind(this)));
+        this.addMessageEvent(new RoomReadyMessageEvent(this.onRoomReady.bind(this)));
+        this.addMessageEvent(new GetGuestRoomResultMessageEvent(this.onGuestRoomResult.bind(this)));
+        this.addMessageEvent(new RoomEntryInfoMessageEvent(this.onRoomEnter.bind(this)));
+
         // Create sub-managers
         this._cfhManager = new CallForHelpManager();
         this._guideManager = new GuideHelpManager();
         this._nameChangeController = new NameChangeController(this._communication);
         this._sanctionInfo = new SanctionInfo();
 
-        // Create registry handlers
-        this._chatEventHandler = new ChatEventHandler(this._chatRegistry);
-        this._imEventHandler = new InstantMessageEventHandler(this._imRegistry);
+        // Create registry handlers — both take the component, as AS3 does: they subscribe
+        // themselves (room chat / the two IM events) rather than waiting to be called.
+        this._chatEventHandler = new ChatEventHandler(this);
+        this._imEventHandler = new InstantMessageEventHandler(this);
 
         // Create message handler (registers all help events)
         this._messageHandler = new HelpMessageHandler(this, this._communication!);

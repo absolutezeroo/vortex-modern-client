@@ -211,8 +211,14 @@ Re-ranked **2026-08-03**, biggest product gap first.
    The recipe that found all four: for a module, list what AS3 registers/constructs
    (`grep -o "addHabboConnectionMessageEvent(new _SafeCls_[0-9]*(on[A-Za-z]*" <file>.as`), list what
    the port does, and diff — being alert to alias names. Then check each ported class has a
-   constructor call, not just a definition. Candidates not yet swept: `habbo/moderation`,
-   `habbo/friendlist`, `habbo/help`.
+   constructor call, not just a definition. Candidate not yet swept: `habbo/friendlist`.
+
+   **`habbo/help` and `habbo/moderation` were swept 2026-08-09** — findings under Recent Work.
+   Help had the module's whole CFH capture layer unwired (three registries fed by nobody);
+   moderation had nothing, its gap is unported UI. A third failure mode showed up in help and is
+   worth grepping for elsewhere: a handler ported as a *passive* object — same class name, same
+   method bodies, but the AS3 constructor's `addEventListener`/`addMessageEvent` calls dropped, so
+   it waits to be called by a caller that never existed.
 
    **`habbo/catalog` and `habbo/inventory` were swept 2026-08-06** — counts and findings under
    Recent Work. Neither had an unconstructed class; the gap in both is subscriptions. Note the
@@ -684,6 +690,40 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 ---
 
 ## Recent Work Recorded
+
+- 🆕 **Priority-0 sweep: `habbo/help` and `habbo/moderation`**, 2026-08-09. Both modules run the
+  recipe from priority 0; only one of them had anything to find.
+  - **`habbo/help` — three CFH registries ported, none of them fed.** `UserRegistry`,
+    `ChatRegistry` and `InstantMessageRegistry` were all complete and all empty at runtime:
+    `registerUser()`/`registerRoom()` had **zero call sites in the whole repo**, and both event
+    handlers were passive objects whose `onChatEvent()`/`onInstantMessage()` nobody called. AS3's
+    handlers subscribe *themselves* in their constructors — `ChatEventHandler` to
+    `roomSessionManager`'s `RSCE_CHAT_EVENT`, `InstantMessageEventHandler` to `NewConsole` and
+    `RoomInvite` through `help.addMessageEvent()` — so both now take the component, as AS3 does,
+    instead of a bare registry.
+  - **Four of AS3's `initComponent()` registrations were missing**, which is why nothing fed the
+    user registry: `Users`, `RoomReady`, `GetGuestRoomResult` and `RoomEntryInfo`. All four events
+    and parsers already existed; only the subscriptions were absent. The fifth,
+    `onGameStageStarting`, is snowwar's own user list and stays a `TODO(AS3)` until `habbo/game`
+    exists.
+  - **`_currentRoomId` was never assigned** — declared, read by `reportBully()` and
+    `startPhotoReportingInNewCfhFlow()`, written by nobody, so every report carried room 0.
+    `onRoomEnter` sets it now, as AS3's `_SafeStr_4551` does.
+  - `HabboHelp.addMessageEvent()` now tracks into `_messageEvents` and `dispose()` unregisters
+    them, matching AS3's vector — required, since `InstantMessageEventHandler` registers through
+    it and unregisters nothing itself. `IID_HabboFreeFlowChat` was added as an optional
+    dependency with its `freeFlowChat` getter: the chat handler needs `chatStyleLibrary` to skip
+    notification-style bubbles, exactly as AS3 does.
+  - **`habbo/moderation` has no wiring gap** — it is a porting gap. The message layer was wired on
+    2026-08-08, `ModerationManager` is attached, and it constructs `IssueManager` +
+    `ModerationMessageHandler`, which build `IssueBundle`s from incoming issues. The 35 unported
+    files are the mod-tool UI (`IssueBrowser`, the 4 issue views, `ModActionCtrl`, `RoomToolCtrl`,
+    `UserInfoCtrl`, `WindowTracker`, `new_mod_tool_tabs/`). One duplicate noted, not acted on:
+    `moderation/ModActionDefinition.ts` has no consumer — the parser uses its own
+    `ModActionDefinitionData`, and the UI that would read the former is unported.
+  - **Verification**: `tsc --noEmit` clean, ESLint clean (2 pre-existing `any` warnings),
+    headless boot clean. The registries only fill against a live session, so the behaviour itself
+    is untested — this is wiring verified by construction, not by observation.
 
 - 🆕 **Bots — catalog, inventory, placement**, 2026-08-09. The bots tab existed as a layout, a tab
   button and a data-only `BotsModel` that implemented nothing; the category was never registered,
