@@ -57,6 +57,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
      * `scroll_step_h`/`scroll_step_v` layout property that fed it, and no shipped layout declares
      * one. That default was 25, so every arrow click moved two thirds further than the real client.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::onWindowEvent()
     public static readonly SCROLL_BUTTON_STEP: number = 15;
 
     protected _scrollStep: number = 0.1;
