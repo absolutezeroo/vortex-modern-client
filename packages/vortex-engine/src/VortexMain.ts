@@ -799,7 +799,10 @@ export class VortexMain implements IVortexMain
         ctx.attachComponent(this._catalog, [IID_HabboCatalog]);
 
         // 12j. Toolbar
-        this._toolbar = new HabboToolbar(ctx);
+        // AS3 hands it the asset library (`HabboToolbar(context, flags, assets)`) and it needs it:
+        // SettingsExtension and the settings views build their windows from layouts they read out
+        // of `assets` by name.
+        this._toolbar = new HabboToolbar(ctx, 0, this._assets);
         ctx.attachComponent(this._toolbar, [IID_HabboToolbar]);
 
         // 12h-bis. Quest engine (achievements / quests). AS3 registers this via the

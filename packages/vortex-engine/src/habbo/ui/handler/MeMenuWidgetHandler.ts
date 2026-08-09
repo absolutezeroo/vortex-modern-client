@@ -5,6 +5,7 @@ import type {RoomWidgetUpdateEvent} from '../widget/events/RoomWidgetUpdateEvent
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import type {MeMenuWidget} from '@habbo/ui/widget/memenu/MeMenuWidget';
 import {Logger} from '@core/utils/Logger';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import {HabboToolbarIconEnum} from '@habbo/toolbar/HabboToolbarIconEnum';
@@ -133,12 +134,9 @@ export class MeMenuWidgetHandler implements IRoomWidgetHandler
      *
      * Name DERIVED (`_SafeStr_4549`): write-only, as in every widget-owning handler — the widget
      * assigns itself here and nothing reads it back.
-     *
-     * TODO(AS3): typed `unknown` because `widget/memenu/` is not ported yet. AS3 types it
-     * `MeMenuWidget`; narrow this the moment that class lands.
      */
     // AS3: .../handler/MeMenuWidgetHandler.as::_widget
-    private _widget: unknown | null = null;
+    private _widget: MeMenuWidget | null = null;
 
     // AS3: .../handler/MeMenuWidgetHandler.as::get disposed()
     get disposed(): boolean
@@ -153,7 +151,7 @@ export class MeMenuWidgetHandler implements IRoomWidgetHandler
     }
 
     // AS3: .../handler/MeMenuWidgetHandler.as::set widget()
-    set widget(value: unknown | null)
+    set widget(value: MeMenuWidget | null)
     {
         this._widget = value;
     }

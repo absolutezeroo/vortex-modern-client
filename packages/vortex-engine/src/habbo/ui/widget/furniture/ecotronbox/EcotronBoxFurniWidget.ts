@@ -19,6 +19,7 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
 import {RoomWidgetBase} from '@habbo/ui/widget/RoomWidgetBase';
 import {RoomWidgetEcotronBoxDataUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetEcotronBoxDataUpdateEvent';
+import {RoomWidgetPresentDataUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetPresentDataUpdateEvent';
 import {RoomWidgetRoomObjectUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetRoomObjectUpdateEvent';
 import {RoomWidgetEcotronBoxOpenMessage} from '@habbo/ui/widget/messages/RoomWidgetEcotronBoxOpenMessage';
 
@@ -33,15 +34,6 @@ const WINDOW_Y: number = 100;
 
 // AS3: EcotronBoxFurniWidget.as::showInterface() — the window's own name.
 const WINDOW_NAME: string = 'ecotronboxcardui_container';
-
-/**
- * AS3: EcotronBoxFurniWidget.as::RoomWidgetPresentDataUpdateEvent.UPDATE_PACKAGEINFO
- *
- * TODO(AS3): the constant belongs to `RoomWidgetPresentDataUpdateEvent`, which is part of the
- * unported `widget/furniture/present/` cluster. The literal is used until that lands; the widget
- * only ever needs the type, never the event's payload.
- */
-const PRESENT_UPDATE_PACKAGEINFO: string = 'RWPDUE_PACKAGEINFO';
 
 export class EcotronBoxFurniWidget extends RoomWidgetBase
 {
@@ -100,7 +92,7 @@ export class EcotronBoxFurniWidget extends RoomWidgetBase
         dispatcher.on(RoomWidgetEcotronBoxDataUpdateEvent.UPDATE_PACKAGEINFO, this.onObjectUpdate, this);
         dispatcher.on(RoomWidgetEcotronBoxDataUpdateEvent.UPDATE_CONTENTS, this.onObjectUpdate, this);
         dispatcher.on(RoomWidgetRoomObjectUpdateEvent.FURNI_REMOVED, this.onRoomObjectRemoved, this);
-        dispatcher.on(PRESENT_UPDATE_PACKAGEINFO, this.onPresentUpdate, this);
+        dispatcher.on(RoomWidgetPresentDataUpdateEvent.UPDATE_PACKAGEINFO, this.onPresentUpdate, this);
 
         super.registerUpdateEvents(dispatcher);
     }
@@ -112,7 +104,7 @@ export class EcotronBoxFurniWidget extends RoomWidgetBase
 
         dispatcher.off(RoomWidgetEcotronBoxDataUpdateEvent.UPDATE_PACKAGEINFO, this.onObjectUpdate, this);
         dispatcher.off(RoomWidgetEcotronBoxDataUpdateEvent.UPDATE_CONTENTS, this.onObjectUpdate, this);
-        dispatcher.off(PRESENT_UPDATE_PACKAGEINFO, this.onPresentUpdate, this);
+        dispatcher.off(RoomWidgetPresentDataUpdateEvent.UPDATE_PACKAGEINFO, this.onPresentUpdate, this);
         dispatcher.off(RoomWidgetRoomObjectUpdateEvent.FURNI_REMOVED, this.onRoomObjectRemoved, this);
     }
 
@@ -160,9 +152,9 @@ export class EcotronBoxFurniWidget extends RoomWidgetBase
      * A present dialog opening closes this card — the two share the screen.
      */
     // AS3: EcotronBoxFurniWidget.as::onPresentUpdate()
-    private onPresentUpdate(event: {type: string}): void
+    private onPresentUpdate(event: RoomWidgetPresentDataUpdateEvent): void
     {
-        if(event.type === PRESENT_UPDATE_PACKAGEINFO)
+        if(event.type === RoomWidgetPresentDataUpdateEvent.UPDATE_PACKAGEINFO)
         {
             this.hideInterface();
         }

@@ -2,6 +2,7 @@ import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IRoomHandlerListener} from '../IRoomHandlerListener';
 import {BaseHandler} from './BaseHandler';
+import {RoomShakingEffect} from '@room/utils/RoomShakingEffect';
 
 // Message events
 import {UsersMessageEvent} from '../../communication/messages/incoming/room/engine/UsersMessageEvent';
@@ -215,6 +216,10 @@ export class RoomUsersHandler extends BaseHandler
         // Collect added users for the event
         const addedUsers: IUserData[] = [];
 
+        // AS3 flags the loop when the easter-egg bot is among the users, then shakes the room
+        // once the loop finishes — not inside it, so a second Macklebee cannot re-init the effect.
+        let shakeRoom = false;
+
         for(let i = 0; i < parser.userCount; i++)
         {
             const roomUserData = parser.getUser(i);
@@ -222,6 +227,11 @@ export class RoomUsersHandler extends BaseHandler
             if(roomUserData !== null)
             {
                 const userData = RoomUsersHandler.createUserDataFromRoomUser(roomUserData);
+
+                if(roomUserData.userType === 4 && roomUserData.ownerId === -1 && roomUserData.name === 'Macklebee')
+                {
+                    shakeRoom = true;
+                }
 
                 // AS3 reports a user as "added" only when its room index is not already
                 // present — a repeated Users packet for an existing occupant is an update,
@@ -236,12 +246,11 @@ export class RoomUsersHandler extends BaseHandler
             }
         }
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onUsers()
-        // AS3 flags the loop above when any user has userType === 4, ownerId === -1 and
-        // name === 'Macklebee' (an easter-egg bot), then calls RoomShakingEffect.init(250, 5000) +
-        // RoomShakingEffect.turnVisualizationOn() once the loop finishes. RoomShakingEffect isn't
-        // ported (an unrelated room-canvas visual effect, not a session concern), so the room-shake
-        // never fires here.
+        if(shakeRoom)
+        {
+            RoomShakingEffect.init(250, 5000);
+            RoomShakingEffect.turnVisualizationOn();
+        }
 
         // Dispatch user data update event
         if(this.listener.sessionEvents)

@@ -7,6 +7,7 @@ import type {IHabboMusicController} from '../IHabboMusicController';
 import type {IPlayListController} from '../IPlayListController';
 import type {ISongInfo} from '../ISongInfo';
 import type {HabboSoundManagerFlash10} from '../HabboSoundManagerFlash10';
+import {TraxSequencer} from '../trax/TraxSequencer';
 import {SongDataEntry} from './SongDataEntry';
 import {SongStartRequestData} from './SongStartRequestData';
 import {NowPlayingEvent} from '../events/NowPlayingEvent';
@@ -46,11 +47,10 @@ const log = Logger.getLogger('habbo.sound.music.HabboMusicController');
  * The room's own play list — a jukebox or a sound machine — is built here when the furniture
  * appears and disposed when it goes.
  *
- * **Playback needs the Trax sequencer, which is unported.** `HabboSoundManagerFlash10.loadTraxSong()`
- * is a documented stub returning null, so every song entry's `soundObject` stays null and the play
- * paths below stop exactly where AS3 stops for a song whose samples have not loaded — at the
- * `soundObject == null || !ready` guards. Nothing here pretends otherwise; the structure is
- * complete and the one missing collaborator is the sequencer.
+ * Playback runs on the Trax sequencer (`habbo/sound/trax`), built by
+ * `HabboSoundManagerFlash10.loadTraxSong()`. A song whose samples have not all decoded comes back
+ * not-ready, and the play paths below stop exactly where AS3 stops — at the
+ * `soundObject == null || !ready` guards.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/sound/music/HabboMusicController.as
  */
@@ -350,19 +350,59 @@ export class HabboMusicController implements IHabboMusicController
         }
     }
 
+    /**
+     * Drops the sequencer of every cached song that used one of the unloaded samples, so the next
+     * play rebuilds it against the samples that are actually still decoded. The currently playing
+     * song is exempt.
+     */
     // AS3: .../HabboMusicController.as::samplesUnloaded()
-    // TODO(AS3): AS3 drops the sequencer of every cached song that used one of the unloaded
-    // samples, comparing against `TraxSequencer.traxData.getSampleIds()`. `habbo/sound/trax` is
-    // unported, so no song ever holds a sequencer and there is nothing to drop.
-    samplesUnloaded(_sampleIds: number[]): void
+    samplesUnloaded(sampleIds: number[]): void
     {
+        if(this._songDataEntries === null) return;
+
+        for(let i = 0; i < this._songDataEntries.length; i++)
+        {
+            const entry = this._songDataEntries.getWithIndex(i);
+            const sequencer = entry?.soundObject instanceof TraxSequencer ? entry.soundObject : null;
+
+            if(entry === null || sequencer === null || entry.id === this._playingSongId || !sequencer.ready) continue;
+
+            const songSampleIds = sequencer.traxData?.getSampleIds() ?? [];
+
+            // AS3 loops the unloaded ids rather than breaking on the first hit, so a song using two
+            // of them is dropped twice — harmless, and the second pass re-logs. Kept verbatim.
+            for(const sampleId of sampleIds)
+            {
+                if(songSampleIds.indexOf(sampleId) !== -1)
+                {
+                    entry.soundObject = null;
+                    sequencer.dispose();
+
+                    log.debug(`Unloaded ${entry.name} by ${entry.creator}`);
+                }
+            }
+        }
     }
 
     // AS3: .../HabboMusicController.as::get samplesIdsInUse()
-    // TODO(AS3): same dependency — AS3 collects the sample ids of every queued song's sequencer.
     get samplesIdsInUse(): number[]
     {
-        return [];
+        let sampleIds: number[] = [];
+
+        for(const request of this._songStartRequests)
+        {
+            if(request === null) continue;
+
+            const entry = this._songDataEntries?.getValue(request.songId) ?? null;
+            const sequencer = entry?.soundObject instanceof TraxSequencer ? entry.soundObject : null;
+
+            if(sequencer !== null)
+            {
+                sampleIds = sampleIds.concat(sequencer.traxData?.getSampleIds() ?? []);
+            }
+        }
+
+        return sampleIds;
     }
 
     // AS3: .../HabboMusicController.as::addSongStartRequest()

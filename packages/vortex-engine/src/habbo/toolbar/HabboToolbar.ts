@@ -1,5 +1,6 @@
 import {EventEmitter} from 'eventemitter3';
 import {Component, ComponentDependency, type IContext,} from '@core/runtime';
+import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import {IID_RoomUI} from '@iid/IIDRoomUI';
@@ -151,9 +152,17 @@ export class HabboToolbar extends Component implements IHabboToolbar
     //   port (only their IIDs and empty placeholder directories exist under
     //   habbo/nux and habbo/phonenumber) - attaching stub instances here would be
     //   inventing modules that don't exist, so there is nothing to attach yet.
-    constructor(context: IContext)
+    /**
+	 * The asset library is not optional in practice: `SettingsExtension` and the three settings
+	 * views read their layouts straight out of it (`assets.getAssetByName("settings_xml")`), as
+	 * AS3 does. This constructor used to take only the context and call `super(context)`, so
+	 * `Component._assets` stayed null whatever the caller passed — every one of those lookups
+	 * returned null and the settings menu could not be built.
+	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::HabboToolbar()
+    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
     {
-        super(context);
+        super(context, flags, assetLibrary);
     }
 
     // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::_avatarRenderManager
