@@ -30,12 +30,14 @@ import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
+import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
 import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
 import {IID_HabboAvatarEditor} from '@iid/IIDHabboAvatarEditor';
 import type {IHabboAvatarEditor} from '@habbo/avatar/IHabboAvatarEditor';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
+import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
 import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
@@ -177,6 +179,22 @@ import {Offer} from './viewer/Offer';
 import {ClubBuyOfferData} from './club/ClubBuyOfferData';
 import {Product} from './viewer/Product';
 import {CatalogWindowState} from './CatalogWindowState';
+import {PlacedObjectPurchaseData} from './purchase/PlacedObjectPurchaseData';
+import {PlaceObjectFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceObjectFromCatalogComposer';
+import {PlaceWallItemFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceWallItemFromCatalogComposer';
+import {FurnitureCategory} from '@habbo/inventory/enum/FurnitureCategory';
+import {PlaceObjectMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/PlaceObjectMessageComposer';
+import type {IDragAndDropDoneReceiver} from './viewer/IDragAndDropDoneReceiver';
+import {CatalogWidgetRoomChangedEvent} from './viewer/widgets/events/CatalogWidgetRoomChangedEvent';
+import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
+import type {RoomEngineObjectPlacedEvent} from '@habbo/room/events/RoomEngineObjectPlacedEvent';
+import type {RoomEngineObjectPlacedOnUserEvent} from '@habbo/room/events/RoomEngineObjectPlacedOnUserEvent';
+import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
+import {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
+import {Vector3d} from '@room/utils/Vector3d';
+import type {IRoomObjectController} from '@room/object/IRoomObjectController';
+import type {IUserData} from '@habbo/session';
 import {HabboCatalogUtils} from './HabboCatalogUtils';
 import {WindowToggle} from '@habbo/utils/WindowToggle';
 import {CatalogEvent} from './event/CatalogEvent';
@@ -209,6 +227,18 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     private _avatarEditor: IHabboAvatarEditor | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_roomSessionManager
     private _roomSessionManager: IRoomSessionManager | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_soundManager
+    private _soundManager: IHabboSoundManager | null = null;
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_9727
+     *
+     * Name DERIVED: obfuscated in every tree. Starts true and is cleared by the first credit
+     * balance, which is how the login-time balance push avoids playing the purchase chime.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_9727
+    private _firstCreditBalancePending: boolean = true;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::roomSession (_SafeStr_5616)
     private _roomSession: IRoomSession | null = null;
     private _mainWindow: IWindowContainer | null = null;
@@ -540,13 +570,32 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 },
                 false
             ),
+            // AS3 registers the two placement callbacks on this dependency, not by hand — which is
+            // why they unsubscribe with the dependency. Deferred reads of the arrow properties:
+            // this array is built inside the base Component constructor, before this class's own
+            // field initializers have run (same reason as the groups dependency below).
             new ComponentDependency(
                 IID_RoomEngine,
-                (manager: IRoomEngine | null) => 
+                (manager: IRoomEngine | null) =>
                 {
                     this._roomEngine = manager;
                 },
-                false
+                false,
+                [
+                    {
+                        type: RoomEngineObjectEvent.REOE_PLACED,
+                        callback: (...args: unknown[]) => this.onObjectPlacedInRoom(args[0] as RoomEngineObjectPlacedEvent)
+                    },
+                    {
+                        type: RoomEngineObjectEvent.REOE_PLACED_ON_USER,
+                        callback: (...args: unknown[]) => this.onObjectPlaceOnUser(args[0] as RoomEngineObjectPlacedOnUserEvent)
+                    }
+                    // TODO(AS3): AS3 also registers REOE_SELECTED -> onObjectSelected(), which
+                    // eagerly inits the BUILDERS_CLUB navigator on the first room-object click and
+                    // dispatches CatalogUserEvent(CATALOG_USER_SELECTED) for a clicked avatar.
+                    // `CatalogUserEvent` has no port (only the type constant on `CatalogEvent`),
+                    // and nothing consumes it yet.
+                ]
             ),
             new ComponentDependency(
                 IID_HabboToolbar,
@@ -571,6 +620,14 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 (tracking: IHabboTracking | null) =>
                 {
                     this._tracking = tracking;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboSoundManager,
+                (soundManager: IHabboSoundManager | null) =>
+                {
+                    this._soundManager = soundManager;
                 },
                 false
             ),
@@ -661,16 +718,37 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._pagesVisibleInBuilderMode = null;
     }
 
+    /**
+     * AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_6471 / _SafeStr_10150 / _SafeStr_9864
+     *
+     * Names DERIVED: all three obfuscated in every tree. A `toggleCatalog()` call that arrived
+     * before the product data was loaded, held until `productDataReady()` can replay it. The type
+     * being non-null is the "something is pending" flag.
+     */
+    private _pendingToggleCatalogType: string | null = null;
+    private _pendingToggleForceOpen: boolean = false;
+    private _pendingToggleShowMainWindow: boolean = true;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::productDataReady()
-    // TODO(AS3): AS3 also resumes a deferred toggleCatalog() call here when init() previously
-    // failed and stashed pending args (_SafeStr_6471/_SafeStr_10150/_SafeStr_9864) - this port's
-    // toggleCatalog() hard-bails on init() failure instead of stashing args to retry, so there is
-    // nothing to resume yet; fixing that is a separate change to toggleCatalog() itself.
     productDataReady(): void
     {
         this._productDataReady = true;
         this._searchIndexStale = true;
         this.events.emit(CatalogEvent.CATALOG_INITIALIZED, new CatalogEvent(CatalogEvent.CATALOG_INITIALIZED));
+
+        // Only replay while the catalog still has no states: a toggle that has since succeeded by
+        // another route must not be re-run. AS3 clears the stash *before* the call, so a second
+        // failure re-stashes cleanly instead of recursing on a stale copy.
+        if(this._catalogStates == null && this._pendingToggleCatalogType !== null)
+        {
+            const catalogType = this._pendingToggleCatalogType;
+            const forceOpen = this._pendingToggleForceOpen;
+            const showMainWindow = this._pendingToggleShowMainWindow;
+
+            this._pendingToggleCatalogType = null;
+
+            this.toggleCatalog(catalogType, forceOpen, showMainWindow);
+        }
     }
 
     // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::get roomAdPurchaseData()
@@ -814,17 +892,38 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         ));
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::doNotCloseAfterVipPurchase()
-    // Sibling of the pre-existing rememberPageDuringVipPurchase()/forgetPageDuringVipPurchase()
-    // stubs below - all three back the same deferred "reopen the remembered page after a club
-    // purchase" flow (see onSubscriptionInfo()'s own TODO).
+    /**
+     * AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_5631
+     *
+     * Name DERIVED: obfuscated in every tree. The page to reopen once the club purchase comes back
+     * — non-null is also the signal that a purchase is in flight, which is what
+     * `doNotCloseAfterVipPurchase()` tests.
+     */
+    private _pageToReopenAfterVipPurchase: string | null = null;
+
+    /**
+     * AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_6885
+     *
+     * Name DERIVED: obfuscated in every tree. A one-shot veto on the next `hideMainWindow()`, so
+     * the club purchase flow can leave the catalog standing. It clears itself on use.
+     */
+    private _suppressNextHideMainWindow: boolean = false;
+
+    /**
+     * Arms the one-shot hide veto, but only if a page is actually remembered — a purchase that
+     * never went through `rememberPageDuringVipPurchase()` still closes the catalog normally.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::doNotCloseAfterVipPurchase()
     doNotCloseAfterVipPurchase(): void
     {
+        this._suppressNextHideMainWindow = this._pageToReopenAfterVipPurchase !== null;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::forgetPageDuringVipPurchase()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::forgetPageDuringVipPurchase()
     forgetPageDuringVipPurchase(): void
     {
+        this._pageToReopenAfterVipPurchase = null;
+        this._suppressNextHideMainWindow = false;
     }
 
     // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::sendRoomAdPurchaseInitiatedEvent()
@@ -845,19 +944,425 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.connection?.send(new GetRoomAdsPurchaseInfoMessageComposer());
     }
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::rememberPageDuringVipPurchase()
-    // Stores the page name to return to after a club upsell purchase; not wired to any caller yet
-    // (PurchaseCatalogWidget's onBuyClub isn't attached to a button in the ported layouts).
-    rememberPageDuringVipPurchase(_pageId: number): void 
+    /**
+     * A page id that resolves to no node still remembers something — AS3 falls back to
+     * `"frontpage"` rather than leaving the field null, because null would also switch off
+     * `doNotCloseAfterVipPurchase()`.
+     *
+     * No caller yet: `PurchaseCatalogWidget`'s onBuyClub is not attached to a button in the ported
+     * layouts, so this is reachable only once that button exists.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::rememberPageDuringVipPurchase()
+    rememberPageDuringVipPurchase(pageId: number): void
     {
+        const node = this.currentCatalogNavigator?.getNodeById(pageId) ?? null;
+
+        this._pageToReopenAfterVipPurchase = node !== null ? node.pageName : 'frontpage';
     }
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::requestSelectedItemToMover()
-    // CatalogObjectMover (habbo/catalog/viewer/CatalogObjectMover.ts) is now ported, but this
-    // drag-offer-into-room-canvas flow (owning an instance of it, feeding it the purchased offer)
-    // isn't wired up yet.
-    requestSelectedItemToMover(_receiver: unknown, _offer: IPurchasableOffer, _placeMany: boolean = false): void
+    /**
+     * The offer currently being dragged out of the catalog into the room. Distinct from
+     * `_placedOfferData` below: this one lives from the drag starting until the room object is
+     * placed or the drag is cancelled.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_offerInFurniPlacing
+    private _offerInFurniPlacing: IPurchasableOffer | null = null;
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_offerPlacingCallbackReceiver
+    private _offerPlacingCallbackReceiver: IDragAndDropDoneReceiver | null = null;
+
+    /**
+     * AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_5130
+     *
+     * Name DERIVED: obfuscated in every tree. It gates all three placement callbacks — a
+     * REOE_PLACED that did not come from a catalog drag must not touch any of this state — and is
+     * also what `onPurchaseOK()` reads to decide whether to fly the icon to the toolbar.
+     */
+    private _placingFurni: boolean = false;
+
+    /**
+     * AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_9457
+     *
+     * Name DERIVED: obfuscated in every tree. Remembers `requestSelectedItemToMover()`'s
+     * `placeMany` argument so the Builders Club branch can immediately re-arm the mover for the
+     * next copy instead of closing the catalog.
+     */
+    private _placeManyInMover: boolean = false;
+
+    /**
+     * AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_4676
+     *
+     * Name DERIVED: obfuscated in every tree. The ghost furni already standing in the room while
+     * the purchase is in flight — see `PlacedObjectPurchaseData`.
+     */
+    private _placedOfferData: PlacedObjectPurchaseData | null = null;
+
+    /**
+     * Hands an offer to the room engine's object-inserter, so the next click in the room places it.
+     * Note AS3 never involves `CatalogObjectMover` here — that class is the *widget*'s drag icon;
+     * the catalog side of the flow is `initializeRoomObjectInsert()` plus the three placement
+     * callbacks below.
+     *
+     * The window is hidden only once the insert is accepted, which is what keeps the catalog open
+     * when the offer turns out not to be placeable.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::requestSelectedItemToMover()
+    requestSelectedItemToMover(receiver: IDragAndDropDoneReceiver | null, offer: IPurchasableOffer, placeMany: boolean = false): void
     {
+        if(!this.isDraggable(offer)) return;
+
+        const product = offer.product;
+
+        if(product === null) return;
+
+        let category: number = 0;
+
+        switch(product.productType)
+        {
+            case 's':
+                category = RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE;
+                break;
+            case 'i':
+                category = RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL;
+                break;
+        }
+
+        // AS3 passes the offer id negated: the inserter keys placement previews by object id, and a
+        // negative one cannot collide with a real room object's.
+        const accepted = this._roomEngine?.initializeRoomObjectInsert(
+            'catalog',
+            -offer.offerId,
+            category,
+            product.productClassId,
+            product.extraParam ? product.extraParam.toString() : '',
+            null,
+            -1,
+            -1,
+            null,
+            placeMany
+        ) ?? false;
+
+        if(accepted)
+        {
+            this._offerInFurniPlacing = offer;
+            this._offerPlacingCallbackReceiver = receiver;
+
+            this.hideMainWindow();
+
+            this._placingFurni = true;
+            this._placeManyInMover = placeMany;
+        }
+    }
+
+    /**
+     * Drops whatever the mover is holding. Called on every catalog open/close and page switch, so a
+     * drag can never survive into an unrelated catalog state.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::cancelFurniInMover()
+    cancelFurniInMover(): void
+    {
+        if(this._offerInFurniPlacing !== null)
+        {
+            this._roomEngine?.cancelRoomObjectInsert();
+
+            this._placingFurni = false;
+            this._offerInFurniPlacing = null;
+        }
+    }
+
+    /**
+     * Brings the catalog back after a drag ends. `showWindow` is false on the paths that are about
+     * to re-arm the mover (place-many) or close the catalog themselves.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::resetObjectMover()
+    private resetObjectMover(showWindow: boolean = true): void
+    {
+        if(showWindow && this._placingFurni)
+        {
+            // AS3 passes the state to both calls; this port's showMainWindow() already acts on the
+            // active state's container, which is the same window for the same `_catalogType`.
+            this.showMainWindow();
+            this.dispatchRoomChangedToCatalogPage(this.getCatalogState(this._catalogType));
+        }
+
+        this._placingFurni = false;
+        this._offerPlacingCallbackReceiver = null;
+    }
+
+    /**
+     * Tells the open page its room context changed, so widgets gated on being in a room (the place
+     * button, the Builders Club placement status) re-evaluate.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::dispatchRoomChangedToCatalogPage()
+    private dispatchRoomChangedToCatalogPage(state: CatalogWindowState | null): void
+    {
+        if(state !== null && state.catalogViewer != null && state.catalogViewer.currentPage != null)
+        {
+            state.catalogViewer.currentPage.dispatchWidgetEvent(new CatalogWidgetRoomChangedEvent());
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::dispatchRoomChangedToCatalogPages()
+    private dispatchRoomChangedToCatalogPages(): void
+    {
+        if(this._catalogStates == null) return;
+
+        for(const state of this._catalogStates.values())
+        {
+            this.dispatchRoomChangedToCatalogPage(state);
+        }
+    }
+
+    /**
+     * The item landed somewhere in the room. AS3 immediately draws it locally at half alpha — the
+     * ghost — and remembers where, so `itemAddedToInventory()` can turn it into the real placement
+     * when the server confirms, or `resetPlacedOfferData()` can take it away again if it doesn't.
+     *
+     * A wall item whose class is floor/wallpaper/landscape is a decoration, not an object: it
+     * "lands" on the floor or the wall rather than in the room, and applies through `updateRoom()`.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onObjectPlacedInRoom()
+    private onObjectPlacedInRoom = (event: RoomEngineObjectPlacedEvent): void =>
+    {
+        if(!this._placingFurni || event.type !== RoomEngineObjectEvent.REOE_PLACED || event.placementSource !== 'catalog') return;
+
+        this.resetPlacedOfferData(true);
+
+        if(this._offerInFurniPlacing === null || this._offerInFurniPlacing.disposed)
+        {
+            this.resetObjectMover();
+
+            return;
+        }
+
+        const category = event.category;
+        const product = this._offerInFurniPlacing.product;
+        const className = product?.furnitureData?.className ?? '';
+        let placed: boolean;
+
+        if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+        {
+            switch(className)
+            {
+                case 'floor':
+                case 'wallpaper':
+                case 'landscape':
+                    placed = event.placedOnFloor || event.placedOnWall;
+                    break;
+                default:
+                    placed = event.placedInRoom;
+            }
+        }
+        else
+        {
+            placed = event.placedInRoom;
+        }
+
+        if(!placed)
+        {
+            this.resetObjectMover();
+
+            return;
+        }
+
+        this._placedOfferData = new PlacedObjectPurchaseData(
+            event.roomId,
+            event.objectId,
+            event.category,
+            event.wallLocation,
+            event.x,
+            event.y,
+            event.direction,
+            this._offerInFurniPlacing
+        );
+
+        // Captured before the callback, as AS3 does: the Builders Club branch below can re-arm the
+        // mover, and `requestSelectedItemToMover()` overwrites `_offerPlacingCallbackReceiver`.
+        // AS3 passes null as the second argument here; this port's interface types it `string`.
+        const receiver = this._offerPlacingCallbackReceiver;
+
+        receiver?.onDragAndDropDone(true, '');
+
+        switch(this._catalogType)
+        {
+            case 'NORMAL':
+                if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+                {
+                    this._roomEngine?.addObjectFurniture(
+                        event.roomId,
+                        event.objectId,
+                        product?.productClassId ?? 0,
+                        new Vector3d(event.x, event.y, event.z),
+                        new Vector3d(event.direction, 0, 0),
+                        0,
+                        new LegacyStuffData(),
+                        NaN,
+                        -1,
+                        0,
+                        0,
+                        '',
+                        true,
+                        true,
+                        -1
+                    );
+                }
+                else if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+                {
+                    switch(className)
+                    {
+                        case 'floor':
+                        case 'wallpaper':
+                        case 'landscape':
+                            this.updateRoom(className, product?.extraParam ?? '');
+                            break;
+                        default:
+                            // AS3 multiplies the direction by 45 here and nowhere else: wall items
+                            // carry a direction index, the room object wants degrees.
+                            this._roomEngine?.addObjectWallItem(
+                                event.roomId,
+                                event.objectId,
+                                product?.productClassId ?? 0,
+                                new Vector3d(event.x, event.y, event.z),
+                                new Vector3d(event.direction * 45, 0, 0),
+                                0,
+                                event.instanceData ?? '',
+                                0,
+                                0,
+                                '',
+                                -1
+                            );
+                    }
+                }
+
+                // Half alpha is what makes it read as "not yours yet".
+                {
+                    const object = this._roomEngine?.getRoomObject(event.roomId, event.objectId, event.category) as IRoomObjectController | null;
+
+                    object?.getModelController().setNumber(RoomObjectVariableEnum.FURNITURE_ALPHA_MULTIPLIER, 0.5);
+                }
+
+                break;
+            case 'BUILDERS_CLUB':
+            {
+                // A Builders Club placement is a *purchase*: nothing is drawn locally, the server
+                // is asked to place it and the real object arrives from the room engine. That is
+                // why this branch has no addObjectFurniture()/half-alpha ghost.
+                let pageId = this._offerInFurniPlacing.page?.pageId ?? CatalogNavigator.DUMMY_PAGE_ID_FOR_OFFER_SEARCH;
+
+                // A search-result offer reports the dummy page id; resolve it back to a real page
+                // through the offer, since the server keys the purchase by page.
+                if(pageId === CatalogNavigator.DUMMY_PAGE_ID_FOR_OFFER_SEARCH)
+                {
+                    const nodes = this.currentCatalogNavigator?.getNodesByOfferId(this._offerInFurniPlacing.offerId, true) ?? null;
+
+                    if(nodes != null && nodes.length > 0) pageId = nodes[0].pageId;
+                }
+
+                if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+                {
+                    this.connection?.send(new PlaceObjectFromCatalogComposer(
+                        pageId,
+                        this._offerInFurniPlacing.offerId,
+                        product?.extraParam ?? '',
+                        event.x,
+                        event.y,
+                        event.direction
+                    ));
+                }
+                else if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+                {
+                    this.connection?.send(new PlaceWallItemFromCatalogComposer(
+                        pageId,
+                        this._offerInFurniPlacing.offerId,
+                        product?.extraParam ?? '',
+                        event.wallLocation
+                    ));
+                }
+
+                // Place-many re-arms the mover with the same offer instead of closing: that is what
+                // lets a builder lay out a whole row without reopening the catalog between items.
+                if(this._placeManyInMover)
+                {
+                    this.requestSelectedItemToMover(receiver, this._offerInFurniPlacing, true);
+
+                    break;
+                }
+
+                this.toggleBuilderCatalog();
+
+                break;
+            }
+        }
+    };
+
+    /**
+     * Dropping an offer onto a user is the drag-to-gift gesture: nothing is placed, the receiver is
+     * told whose avatar it landed on, and the mover closes without restoring the catalog window
+     * (`resetObjectMover(false)`) because `cancelFurniInMover()` follows immediately.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onObjectPlaceOnUser()
+    private onObjectPlaceOnUser = (event: RoomEngineObjectPlacedOnUserEvent): void =>
+    {
+        if(!this._placingFurni || event.type !== RoomEngineObjectEvent.REOE_PLACED_ON_USER) return;
+
+        this.resetPlacedOfferData(true);
+
+        if(this._offerInFurniPlacing === null || this._offerInFurniPlacing.disposed)
+        {
+            this.resetObjectMover();
+
+            return;
+        }
+
+        const userData = this.getUserDataForEvent(event);
+
+        this._offerPlacingCallbackReceiver?.onDragAndDropDone(true, userData?.name ?? '');
+
+        this.resetObjectMover(false);
+        this.cancelFurniInMover();
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getUserDataForEvent()
+    private getUserDataForEvent(event: RoomEngineObjectEvent): IUserData | null
+    {
+        const session = this._roomSessionManager?.getSession(event.roomId) ?? null;
+
+        return session?.userDataManager?.getUserDataByIndex(event.objectId) ?? null;
+    }
+
+    /**
+     * The floor/wallpaper/landscape trio is one room update in AS3: changing any one of them has to
+     * resend the other two, so each is read back off the room instance first. `'reset'` (and any
+     * unknown value) re-applies all three unchanged, which is how the ghost decoration is undone.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::updateRoom()
+    private updateRoom(type: string, value: string): void
+    {
+        if(this._roomEngine === null) return;
+
+        const activeRoomId = this._roomEngine.activeRoomId;
+        let wallType = this._roomEngine.getRoomStringValue(activeRoomId, RoomObjectVariableEnum.ROOM_WALL_TYPE);
+        let floorType = this._roomEngine.getRoomStringValue(activeRoomId, RoomObjectVariableEnum.ROOM_FLOOR_TYPE);
+        let landscapeType = this._roomEngine.getRoomStringValue(activeRoomId, RoomObjectVariableEnum.ROOM_LANDSCAPE_TYPE);
+
+        wallType = wallType && wallType.length > 0 ? wallType : '101';
+        floorType = floorType && floorType.length > 0 ? floorType : '101';
+        landscapeType = landscapeType && landscapeType.length > 0 ? landscapeType : '1.1';
+
+        switch(type)
+        {
+            case 'floor':
+                this._roomEngine.updateObjectRoom(activeRoomId, value, wallType, landscapeType, true);
+                break;
+            case 'wallpaper':
+                this._roomEngine.updateObjectRoom(activeRoomId, floorType, value, landscapeType, true);
+                break;
+            case 'landscape':
+                this._roomEngine.updateObjectRoom(activeRoomId, floorType, wallType, value, true);
+                break;
+            default:
+                this._roomEngine.updateObjectRoom(activeRoomId, floorType, wallType, landscapeType, true);
+        }
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::showPurchaseConfirmation()
@@ -986,11 +1491,8 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this.getInteger('seasonalcurrencyindicator.currency', 1);
     }
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::setLeftPaneVisibility()
-    // Toggles the navigator/search pane's visibility on the catalog's main window
-    // (`navigationContainer`/`searchContainer`) - real logic, but a no-op until
-    // createMainWindow() (Phase 5: real openCatalog/loadCatalogPage wiring) exists.
-    public setLeftPaneVisibility(visible: boolean): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::setLeftPaneVisibility()
+    public setLeftPaneVisibility(visible: boolean): void
     {
         if(!this._mainWindow) return;
 
@@ -1092,14 +1594,25 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             catalogType = 'NORMAL';
         }
 
-        // TODO(AS3): cancelFurniInMover() - needs an owned CatalogObjectMover instance to cancel,
-        // see requestSelectedItemToMover()'s note above.
+        this.cancelFurniInMover();
 
         // AS3 gates on the states, not on a window: init() is what builds them.
         if(this._catalogStates == null)
         {
-            if(!this.init(catalogType)) return;
+            if(!this.init(catalogType))
+            {
+                // init() fails while product data is still loading. AS3 stashes the whole call
+                // rather than dropping it, so the click that arrived too early still opens the
+                // catalog once productDataReady() fires.
+                this._pendingToggleCatalogType = catalogType;
+                this._pendingToggleForceOpen = forceOpen;
+                this._pendingToggleShowMainWindow = showMainWindow;
+
+                return;
+            }
         }
+
+        this._pendingToggleCatalogType = null;
 
         // Read the outgoing state before switching, so a type change can be detected
         // by identity and the window being left behind can be hidden.
@@ -1187,14 +1700,16 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // (Recycler isn't ported), refreshBuilderStatus() (Builders Club membership timers aren't
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::openCatalog()
-    public openCatalog(): void 
+    public openCatalog(): void
     {
+        this.cancelFurniInMover();
         this.toggleCatalog('NORMAL', true);
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::openCatalogPage()
-    public openCatalogPage(pageName: string, catalogType: string | null = null): void 
+    public openCatalogPage(pageName: string, catalogType: string | null = null): void
     {
+        this.cancelFurniInMover();
         this.toggleCatalog(catalogType ?? 'NORMAL', true, false);
 
         if(!this._initialized || this._catalogNavigators == null || !this.currentCatalogNavigator!.initialized) 
@@ -1347,18 +1862,33 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return null;
     }
 
-    // Defaulting to false (drag-and-drop disabled) rather than guessing at the gating logic.
-    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::isDraggable()
-    public isDraggable(_offer: IPurchasableOffer): boolean 
+    /**
+     * Five independent gates, all of which AS3 packs into one expression: the config flag, being in
+     * a room at all, the page allowing drags, having the rights to place here (ownership in NORMAL,
+     * Builders Club status in BUILDERS_CLUB), and the offer being a single placeable object —
+     * bundles, multi-offers, effects (`e`) and Habbicons (`h`) are not draggable.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::isDraggable()
+    public isDraggable(offer: IPurchasableOffer): boolean
     {
-        return false;
-    }
+        if(!this.getBoolean('catalog.drag_and_drop') || this._roomSession === null) return false;
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::isDraggable()
-    // Real logic needs room-session state (isRoomOwner/isGuildRoom/roomControllerLevel - now
-    // tracked for real, see _roomSession below), the active navigator page's allowDragging (not
-    // wired), and Builders Club furniture-placement status (getBuilderFurniPlaceableStatusForOffer(),
-    // also now real) - only the navigator-page allowDragging piece is still missing.
+        const currentPage = this._catalogViewer?.currentPage ?? null;
+
+        if(currentPage !== null && !currentPage.allowDragging) return false;
+
+        const allowedHere = this._catalogType === 'NORMAL'
+            ? this._roomSession.isRoomOwner || (this._roomSession.isGuildRoom && this._roomSession.roomControllerLevel >= 2)
+            : this._catalogType === 'BUILDERS_CLUB' && this.getBuilderFurniPlaceableStatusForOffer(offer) === 0;
+
+        if(!allowedHere) return false;
+
+        return offer.pricingModel !== 'pricing_model_bundle'
+            && offer.pricingModel !== 'pricing_model_multi'
+            && offer.product !== null
+            && offer.product.productType !== 'e'
+            && offer.product.productType !== 'h';
+    }
 
     // AS3: HabboCatalog.as::_builderFurniLimit / get builderFurniLimit()
     private _builderFurniLimit: number = 0;
@@ -1457,12 +1987,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this.getBuilderFurniPlaceableStatus();
     }
 
+    /**
+     * The last branch only applies once the membership has run out: a lapsed builder may keep
+     * decorating, but not while anyone else is watching. Moderators and the builder's own avatar
+     * do not count as onlookers.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getBuilderFurniPlaceableStatus()
-    // TODO(AS3): AS3's final branch (builderSecondsLeft <= 0) loops the room's users via
-    // roomEngine.getRoomObjectCount()/getRoomObjectWithIndex() to block placement when a
-    // non-moderator, non-owner user is present - neither method exists on IRoomEngine in this port,
-    // so that check is skipped and defaults to "no blocking user found" (matching the safe-default
-    // philosophy already used by getBuilderFurniPlaceableStatusForOffer() above).
     public getBuilderFurniPlaceableStatus(): number
     {
         if(this._roomSession == null) return 3;
@@ -1474,6 +2004,31 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
 
         if(this._roomSession.roomControllerLevel < 3) return 4;
+
+        if(this.builderSecondsLeft <= 0 && this._roomEngine != null)
+        {
+            const roomId = this._roomSession.roomId;
+            const userCount = this._roomEngine.getRoomObjectCount(roomId, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER);
+
+            for(let i = 0; i < userCount; i++)
+            {
+                const object = this._roomEngine.getRoomObjectWithIndex(roomId, i, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER);
+
+                if(object === null) continue;
+
+                // AS3 looks the user up by the room object's *id*, through getUserDataByIndex() —
+                // the room index and the object id are the same number for avatars.
+                const userData = this._roomSession.userDataManager.getUserDataByIndex(object.getId());
+
+                if(userData != null
+                    && userData.type === 1
+                    && userData.roomObjectId !== this._roomSession.ownUserRoomId
+                    && !userData.isModerator)
+                {
+                    return 6;
+                }
+            }
+        }
 
         return 0;
     }
@@ -1491,6 +2046,11 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 this._roomSession = null;
                 break;
         }
+
+        // AS3 runs this for *both* cases, outside the switch: entering or leaving a room changes
+        // what the open page may offer (placement, Builders Club status), and `isDraggable()` reads
+        // the same session state.
+        this.dispatchRoomChangedToCatalogPages();
     };
 
     // path isn't wired up yet. The synchronous cache-hit path is implemented for real.
@@ -1965,13 +2525,48 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // createMarketPlace(), createRecycler(), and createGroupMembershipsController() are now real -
     // see below. The core main-window/navigator/
 
-    // TODO(AS3): AS3 (HabboCatalog.as:3210+) checks a stored "pending placement" object
-    // (set when the user buys-and-places directly from the catalog) against classId/
-    // activeRoomId, and if it matches, auto-places the purchased item at the remembered
-    // category-specific x/y/direction/wallLocation - not ported (FurniModel.ts now calls
-    // this on every add, so the call site is real; this method's own body is the gap).
-    public itemAddedToInventory(_classId: number, _itemId: number, _category: number): void
+    /**
+     * The purchased item has landed in the inventory. If it is the one already standing in the room
+     * as a ghost, this is what makes the placement real — it sends the placement the user already
+     * performed, at the remembered position, and clears the ghost.
+     *
+     * **AS3 bug, ported as-is:** `category` is overwritten with the *room* category (10/20) and then
+     * switched against `FurnitureCategory`'s WALL_PAPER/FLOOR/LANDSCAPE (2/3/4), so those three
+     * branches can never be reached and every placement takes the default one. They are documented
+     * below rather than silently dropped; the composer they need is unported anyway.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::itemAddedToInventory()
+    public itemAddedToInventory(classId: number, itemId: number, category: number): void
     {
+        if(this._placedOfferData === null || this._placedOfferData.productClassId !== classId) return;
+        if(this._placedOfferData.roomId !== this._roomEngine?.activeRoomId) return;
+
+        category = this._placedOfferData.category;
+
+        switch(category)
+        {
+            case FurnitureCategory.WALL_PAPER:
+            case FurnitureCategory.FLOOR:
+            case FurnitureCategory.LANDSCAPE:
+                // TODO(AS3): each of these three reads the room's matching decoration type back
+                // (`room_wall_type` / `room_floor_type` / `room_landscape_type`) and, when the
+                // placed item's extraParameter differs, sends `_SafePkg_2324._SafeCls_2323`
+                // (a single-int "apply this decoration item" composer, header 2292 in WIN63's
+                // registry). That composer has no port, and the reference server has no handler
+                // for 2292 either. Unreachable regardless — see the note above.
+                break;
+            default:
+                this.connection?.send(new PlaceObjectMessageComposer(
+                    itemId,
+                    category,
+                    this._placedOfferData.wallLocation,
+                    this._placedOfferData.x,
+                    this._placedOfferData.y,
+                    this._placedOfferData.direction
+                ));
+        }
+
+        this.resetPlacedOfferData();
     }
 
     // AS3 loads this via assets.getAssetByName(name).content + buildFromXML(); this port
@@ -2056,6 +2651,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             this._sellablePetPalettes.dispose();
             this._sellablePetPalettes = null;
         }
+
+        // AS3: .../HabboCatalog.as::dispose() — takes the ghost furni out of the room before the
+        // state that describes it goes away, then clears the mover.
+        this.resetPlacedOfferData();
+        this._placingFurni = false;
+        this._offerPlacingCallbackReceiver = null;
 
         this._utils.dispose();
 
@@ -2171,6 +2772,52 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.connection?.send(new BuildersClubQueryFurniCountMessageComposer());
 
         return true;
+    }
+
+    /**
+     * Tears the catalog back down to "never opened": the window states, both navigators and the
+     * viewer all go, so the next `toggleCatalog()` rebuilds them from a fresh index. Used after the
+     * catalog is republished server-side and after a club purchase, both of which invalidate the
+     * pages currently held.
+     *
+     * `disposing` skips the product-data reload — during `dispose()` there is nothing left to
+     * reload into.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::reset()
+    private reset(disposing: boolean = false): void
+    {
+        this._initialized = false;
+        this._catalogViewer = null;
+        this._mainWindow = null;
+
+        if(this._catalogStates != null)
+        {
+            for(const state of this._catalogStates.values())
+            {
+                state.dispose();
+            }
+
+            this._catalogStates = null;
+        }
+
+        this._catalogNavigators = null;
+
+        if(disposing) return;
+
+        if(this._sessionDataManager == null)
+        {
+            // AS3 calls `_SafeCls_48.crash(...)` here — a hard client crash with a code. This port
+            // logs and bails instead: the catalog is already torn down, and taking the whole client
+            // with it is a Flash-era choice, not a requirement of the flow.
+            log.error('Could not reload product data after reset() because the session data manager was null');
+
+            return;
+        }
+
+        if(!this._sessionDataManager.loadProductData(this))
+        {
+            this.events.emit(CatalogEvent.CATALOG_NOT_READY, new CatalogEvent(CatalogEvent.CATALOG_NOT_READY));
+        }
     }
 
     /**
@@ -2468,17 +3115,22 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::onCatalogIndex()
     // TODO(AS3): the new-additions auto-open branch (var_2609/var_4292/newAdditionsPageOpenDisabled)
 
-    private hideMainWindow(): void 
+    private hideMainWindow(): void
     {
-        if(this._windowManager != null && this._mainWindow != null && this._mainWindow.parent != null) 
+        if(this._windowManager != null && this._mainWindow != null && this._mainWindow.parent != null)
         {
             const desktop = this._windowManager.getDesktop(1) as unknown as IWindowContainer | null;
 
-            if(desktop != null) 
+            // The club-purchase veto. Note AS3 clears it outside this inner `if` but inside the
+            // outer one: a hide attempted while the window is already detached does *not* consume
+            // it, so the veto survives until a hide that would really have closed something.
+            if(desktop != null && !this._suppressNextHideMainWindow)
             {
                 desktop.removeChild(this._mainWindow);
                 this._catalogViewer?.catalogWindowClosed();
             }
+
+            this._suppressNextHideMainWindow = false;
         }
     }
 
@@ -2695,16 +3347,24 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         if(!parser) return;
 
         this._purse.credits = parser.balance;
+
+        // Both of these were missing: without updatePurse() the catalog header keeps showing the
+        // old balance until something else refreshes it.
+        this.updatePurse();
+
+        if(!this._firstCreditBalancePending)
+        {
+            this._soundManager?.playSound('HBST_purchase');
+        }
+
+        this._firstCreditBalancePending = false;
+
         this.events.emit(PurseEvent.CREDIT_BALANCE, new PurseEvent(PurseEvent.CREDIT_BALANCE, parser.balance, 0));
         this.events.emit(PurseUpdateEvent.UPDATE, new PurseUpdateEvent());
     }
 
     /**
 	 * Single-currency balance update, as opposed to onActivityPoints()'s whole wallet.
-	 *
-	 * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onActivityPointNotification()
-	 * also plays "HBST_pixels" through the sound manager when type === 0 (duckets). This port's
-	 * HabboCatalog has no sound manager dependency at all, so the sound is not played.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onActivityPointNotification()
     private onActivityPointNotification(event: IMessageEvent): void
@@ -2720,6 +3380,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._purse.activityPoints.set(notification.type, notification.amount);
 
         this.updatePurse();
+
+        // Only duckets (type 0) get a chime; the seasonal currencies are silent.
+        if(notification.type === 0)
+        {
+            this._soundManager?.playSound('HBST_pixels');
+        }
 
         this.events.emit(
             PurseEvent.ACTIVITY_POINT_BALANCE,
@@ -2748,10 +3414,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onSubscriptionInfo()
-    // TODO(AS3): the responseType === RESPONSE_TYPE_PURCHASE branch (reset() + reopen the page
-    // remembered via rememberPageDuringVipPurchase()) isn't ported - reset() tears down and
-    // reloads the whole catalog (navigators/viewer/product data) after a club purchase, and its
-    // prerequisite rememberPageDuringVipPurchase() is still a no-op stub (see its own TODO above).
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onSubscriptionInfo()
     private onSubscriptionInfo(event: IMessageEvent): void
     {
         if(!event) return;
@@ -2775,6 +3438,20 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
 
         this.updatePurse();
+
+        // responseType 2 is the post-purchase push: the club level the pages were built against is
+        // stale, so the whole catalog is rebuilt and the page the purchase started from reopened.
+        // AS3 uses the bare literal here, as it does with 3 for `isExpiring` above.
+        if(parser.responseType === 2)
+        {
+            this.reset();
+
+            if(this._pageToReopenAfterVipPurchase !== null)
+            {
+                this.openCatalogPage(this._pageToReopenAfterVipPurchase);
+                this._pageToReopenAfterVipPurchase = null;
+            }
+        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onPurchaseOK()
@@ -3051,24 +3728,59 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.resetPlacedOfferData();
     };
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::resetPlacedOfferData()
-    // TODO(AS3): CatalogObjectMover (habbo/catalog/viewer/CatalogObjectMover.ts) is now ported,
-    // but resetObjectMover() (its teardown call here) and the placed-offer-preview state it
-    // tracks (PlacedObjectPurchaseData) still need HabboCatalog to actually own a
-    // CatalogObjectMover instance (same gap as requestSelectedItemToMover()/cancelFurniInMover()
-    // above) - nothing sets that state today, so this is currently a faithful no-op rather than
-    // a shortcut.
-    public resetPlacedOfferData(_placingItem: boolean = false): void
+    /**
+     * Takes the ghost furni back out of the room. `placingItem` is true only when called from the
+     * placement callbacks themselves — they are mid-placement, so restoring the catalog window
+     * there would fight the drag that is still running.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::resetPlacedOfferData()
+    public resetPlacedOfferData(placingItem: boolean = false): void
     {
+        if(!placingItem)
+        {
+            this.resetObjectMover();
+        }
+
+        if(this._placedOfferData === null) return;
+
+        if(this._placedOfferData.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+        {
+            this._roomEngine?.disposeObjectFurniture(this._placedOfferData.roomId, this._placedOfferData.objectId);
+        }
+        else if(this._placedOfferData.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+        {
+            switch(this._placedOfferData.furniData?.className ?? '')
+            {
+                case 'floor':
+                case 'wallpaper':
+                case 'landscape':
+                    // Re-applies the room's own three decoration types, undoing the preview.
+                    this.updateRoom('reset', '');
+                    break;
+                default:
+                    this._roomEngine?.disposeObjectWallItem(this._placedOfferData.roomId, this._placedOfferData.objectId);
+            }
+        }
+        else
+        {
+            this._roomEngine?.deleteRoomObject(this._placedOfferData.objectId, this._placedOfferData.category);
+        }
+
+        this._placedOfferData.dispose();
+        this._placedOfferData = null;
     }
 
+    /**
+     * Note the asymmetry, preserved from AS3: a purchase of a *different* offer clears the ghost,
+     * but a purchase of the same one leaves it standing — that is the case where the ghost is about
+     * to become the real item.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::syncPlacedOfferWithPurchase()
-    // TODO(AS3): compares a tracked placed-offer's offerId against the purchased offer and calls
-    // resetPlacedOfferData() if they differ - the tracked state (PlacedObjectPurchaseData) doesn't
-    // exist yet, same gap documented on resetPlacedOfferData() above. Left as a faithful no-op
-    // rather than calling resetPlacedOfferData() unconditionally, which would misrepresent AS3's
-    // guard even though it currently has no observable effect either way.
-    public syncPlacedOfferWithPurchase(_offer: IPurchasableOffer): void
+    public syncPlacedOfferWithPurchase(offer: IPurchasableOffer): void
     {
+        if(this._placedOfferData !== null && this._placedOfferData.offerId !== offer.offerId)
+        {
+            this.resetPlacedOfferData();
+        }
     }
 }
