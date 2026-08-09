@@ -198,8 +198,16 @@ export class SingularNotificationController implements IUpdateReceiver
     // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::addSongPlayingNotification()
     addSongPlayingNotification(songName: string, songAuthor: string): void
     {
-        // TODO: Requires localization manager integration for parameter substitution
-        const content = `Now playing: ${songName} by ${songAuthor}`;
+        // AS3 registers the two parameters and then reads the raw entry back, skipping the
+        // notification entirely when the key is missing. `getLocalizationWithParams()` is this
+        // port's one-call equivalent; the empty default reproduces that skip, since an unknown key
+        // yields nothing to show.
+        const content = this._notifications?.localizationManager?.getLocalizationWithParams(
+            'soundmachine.notification.playing', '', 'songname', songName, 'songauthor', songAuthor
+        ) ?? '';
+
+        if(content.length === 0) return;
+
         this.addItem(content, 'soundmachine');
     }
 
@@ -238,8 +246,13 @@ export class SingularNotificationController implements IUpdateReceiver
         }
         else if(!this._moderationDisclaimerShown)
         {
-            // TODO: Requires localization for "mod.chatdisclaimer"
-            this.addItem('Moderation disclaimer', 'info');
+            // AS3's own default is the literal "NA", which is what shows if the hotel never
+            // defined the text — kept rather than substituting something friendlier.
+            const content = this._notifications?.localizationManager?.getLocalizationWithParams(
+                'mod.chatdisclaimer', 'NA'
+            ) ?? 'NA';
+
+            this.addItem(content, 'info');
             this._moderationDisclaimerShown = true;
             log.debug('Moderation disclaimer shown');
         }
