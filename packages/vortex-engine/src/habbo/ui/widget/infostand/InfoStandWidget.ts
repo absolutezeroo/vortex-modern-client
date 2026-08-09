@@ -158,9 +158,6 @@ export class InfoStandWidget extends RoomWidgetBase
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::favouriteGroupUpdated()
-    // TODO(AS3): no current caller — needs a RoomSessionFavouriteGroupUpdateEvent
-    // handler wired somewhere upstream to actually invoke this. userView is real
-    // now (InfoStandUserView.ts), so this will work correctly once something calls it.
     public favouriteGroupUpdated(userRoomId: number, groupId: number, _webId: number, groupName: string): void
     {
         if(this._userData.userRoomId !== userRoomId) return;
@@ -409,11 +406,6 @@ export class InfoStandWidget extends RoomWidgetBase
     };
 
     // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::updateUserData()
-    // TODO(AS3): no current caller — the AS3 source dispatches this from a live
-    // figure/motto-change server push (RoomSessionUserFigureUpdateEvent-ish)
-    // that isn't wired to call it yet. User/bot views are real now (see
-    // InfoStandUserView.ts/InfoStandBotView.ts), so this will work correctly
-    // once something calls it.
     // TODO(AS3): AS3 also sets userData.badgesRank = badgesRank unconditionally and
     // this._userView.badgesRank = badgesRank in the non-bot branch - InfoStandUserData/
     // InfoStandUserView have no badgesRank field yet (same badge glow/preserve-tracking

@@ -1,6 +1,7 @@
 /**
  * Room Engine Message Events
  */
+export {FavoriteMembershipUpdateMessageEvent} from './FavoriteMembershipUpdateMessageEvent';
 export {FloorHeightMapMessageEvent} from './FloorHeightMapMessageEvent';
 export {FurnitureAliasesMessageEvent} from './FurnitureAliasesMessageEvent';
 export {HeightMapMessageEvent} from './HeightMapMessageEvent';

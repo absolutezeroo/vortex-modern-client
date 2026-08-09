@@ -9,6 +9,9 @@ import {UsersMessageEvent} from '../../communication/messages/incoming/room/engi
 import {UserRemoveMessageEvent} from '../../communication/messages/incoming/room/engine/UserRemoveMessageEvent';
 import {DoorbellMessageEvent} from '../../communication/messages/incoming/navigator/DoorbellMessageEvent';
 import {BlockUserUpdateMessageEvent} from '../../communication/messages/incoming/users/BlockUserUpdateMessageEvent';
+import {FavoriteMembershipUpdateMessageEvent} from '../../communication/messages/incoming/room/engine/FavoriteMembershipUpdateMessageEvent';
+import type {FavoriteMembershipUpdateMessageEventParser} from '../../communication/messages/parser/room/engine/FavoriteMembershipUpdateMessageEventParser';
+import {RoomSessionFavouriteGroupUpdateEvent} from '../events/RoomSessionFavouriteGroupUpdateEvent';
 import {HabboUserBadgesMessageEvent} from '../../communication/messages/incoming/users/HabboUserBadgesMessageEvent';
 import {UserChangeMessageEvent} from '@habbo/communication/messages/incoming/room/action/UserChangeMessageEvent';
 
@@ -123,6 +126,7 @@ export class RoomUsersHandler extends BaseHandler
         this.addMessageEvent(connection, new ConfirmBreedingResultEvent(this.onConfirmPetBreedingResult.bind(this)));
         this.addMessageEvent(connection, new NestBreedingSuccessEvent(this.onNestBreedingSuccess.bind(this)));
         this.addMessageEvent(connection, new BlockUserUpdateMessageEvent(this.onBlockUserUpdate.bind(this)));
+        this.addMessageEvent(connection, new FavoriteMembershipUpdateMessageEvent(this.onFavoriteMembershipUpdate.bind(this)));
         // AS3: RoomUsersHandler.as:96 — `new _SafeCls_2510(onBotError)`, the refusal for every bot
         // placement and rename.
         this.addMessageEvent(connection, new BotErrorEvent(this.onBotError.bind(this)));
@@ -293,6 +297,40 @@ export class RoomUsersHandler extends BaseHandler
     }
 
     // AS3: .../src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onBlockUserUpdate()
+    // AS3: sources/win63_version/habbo/session/handler/RoomUsersHandler.as::onFavoriteMembershipUpdate()
+    private onFavoriteMembershipUpdate(event: IMessageEvent): void
+    {
+        const parser = event.parser as FavoriteMembershipUpdateMessageEventParser | null;
+
+        if(!parser) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        const userData = session.userDataManager.getUserDataByIndex(parser.roomIndex);
+
+        if(userData === null) return;
+
+        // AS3 stores the group id back as a string on the user record before dispatching.
+        userData.groupID = '' + parser.habboGroupId;
+        userData.groupName = parser.habboGroupName;
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionFavouriteGroupUpdateEvent.FAVOURITE_GROUP_UPDATE,
+                new RoomSessionFavouriteGroupUpdateEvent(
+                    session,
+                    parser.roomIndex,
+                    parser.habboGroupId,
+                    parser.status,
+                    parser.habboGroupName
+                )
+            );
+        }
+    }
+
     private onBlockUserUpdate(event: IMessageEvent): void
     {
         const blockEvent = event as BlockUserUpdateMessageEvent;

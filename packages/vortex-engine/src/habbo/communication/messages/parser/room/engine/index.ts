@@ -15,3 +15,4 @@ export {UserUpdateMessageParser, type IUserUpdate} from './UserUpdateMessagePars
 export {RoomEntryInfoMessageParser} from './RoomEntryInfoMessageParser';
 export {RoomVisualizationSettingsEventParser} from './RoomVisualizationSettingsEventParser';
 export {RoomPropertyMessageEventParser} from './RoomPropertyMessageEventParser';
+export {FavoriteMembershipUpdateMessageEventParser} from './FavoriteMembershipUpdateMessageEventParser';

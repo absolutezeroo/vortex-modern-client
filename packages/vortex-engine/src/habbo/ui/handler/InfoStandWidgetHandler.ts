@@ -14,6 +14,8 @@
  */
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {RoomSessionUserFigureUpdateEvent} from '@habbo/session/events/RoomSessionUserFigureUpdateEvent';
+import {RoomSessionFavouriteGroupUpdateEvent} from '@habbo/session/events/RoomSessionFavouriteGroupUpdateEvent';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
 import type {IRoomWidgetHandlerContainer} from '@habbo/ui/IRoomWidgetHandlerContainer';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
@@ -152,12 +154,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::set container()
-    // AS3 registers nine roomSessionManager listeners here. Seven of the pet ones are wired below;
-    // the two still missing are the non-pet RSUBE_FIGURE (onFigureUpdate) and
-    // rsfgue_favourite_group_update (onFavouriteGroupUpdated).
-    // TODO(AS3): InfoStandWidgetHandler.as::onFigureUpdate()/onFavouriteGroupUpdated() — subscribe
-    // to "RSUBE_FIGURE" and "rsfgue_favourite_group_update" and re-dispatch as their RoomWidget*
-    // events, exactly as the pet handlers below do.
+    // AS3 registers nine roomSessionManager listeners here, and all nine are wired below.
     //
     // AS3 dispatches these on `roomSessionManager.events`; this port routes session events
     // through `sessionEvents` instead (see .claude/rules/20-architecture.md #4 — `events` is
@@ -176,6 +173,8 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         if(previousEvents)
         {
+            previousEvents.off(RoomSessionUserFigureUpdateEvent.RSUFE_FIGURE_UPDATE, this.onFigureUpdate);
+            previousEvents.off(RoomSessionFavouriteGroupUpdateEvent.FAVOURITE_GROUP_UPDATE, this.onFavouriteGroupUpdated);
             previousEvents.off(RoomSessionPetInfoUpdateEvent.PET_INFO, this.onPetInfo);
             previousEvents.off(RoomSessionPetCommandsUpdateEvent.PET_COMMANDS, this.onPetCommands);
             previousEvents.off(RoomSessionPetFigureUpdateEvent.PET_FIGURE_UPDATE, this.onPetFigureUpdate);
@@ -196,6 +195,8 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         if(sessionEvents)
         {
+            sessionEvents.on(RoomSessionUserFigureUpdateEvent.RSUFE_FIGURE_UPDATE, this.onFigureUpdate);
+            sessionEvents.on(RoomSessionFavouriteGroupUpdateEvent.FAVOURITE_GROUP_UPDATE, this.onFavouriteGroupUpdated);
             sessionEvents.on(RoomSessionPetInfoUpdateEvent.PET_INFO, this.onPetInfo);
             sessionEvents.on(RoomSessionPetCommandsUpdateEvent.PET_COMMANDS, this.onPetCommands);
             sessionEvents.on(RoomSessionPetFigureUpdateEvent.PET_FIGURE_UPDATE, this.onPetFigureUpdate);
@@ -223,7 +224,35 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         this._widget = widget;
     }
 
-    // TODO(AS3): InfoStandWidgetHandler.as — see updateUserData() in InfoStandWidget.ts
+    /**
+     * A room occupant changed their look, motto or achievement score.
+     *
+     * The event's `roomIndex` is AS3's `userId`: it carries the room index, not the web id, and
+     * AS3 resolves the real web id from the user record before handing it to the widget - which
+     * matches on web id.
+     */
+    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::onFigureUpdate()
+    private onFigureUpdate = (event: RoomSessionUserFigureUpdateEvent): void =>
+    {
+        if(!this._container || !event) return;
+
+        if(event.roomIndex < 0) return;
+
+        const userData = this._container.roomSession?.userDataManager?.getUserDataByIndex(event.roomIndex) ?? null;
+
+        if(!userData) return;
+
+        const webId = userData.webID;
+        const isOwnUser = webId === this._container.sessionDataManager?.userId;
+
+        this._widget?.updateUserData(webId, event.figure, event.achievementScore, event.customInfo, isOwnUser);
+    };
+
+    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::onFavouriteGroupUpdated()
+    private onFavouriteGroupUpdated = (event: RoomSessionFavouriteGroupUpdateEvent): void =>
+    {
+        this._widget?.favouriteGroupUpdated(event.roomIndex, event.habboGroupId, event.status, event.habboGroupName);
+    };
 
     public get type(): string 
     {

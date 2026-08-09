@@ -317,6 +317,7 @@ import {
     FloorHeightMapMessageEvent,
     FurnitureAliasesMessageEvent,
     HeightMapMessageEvent,
+    FavoriteMembershipUpdateMessageEvent,
     HeightMapUpdateMessageEvent,
     ItemAddMessageEvent,
     ItemDataUpdateMessageEvent,
@@ -1811,6 +1812,7 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(191, IgnoredUsersMessageEvent);
         this._events.set(505, BlockListMessageEvent);
         this._events.set(1825, BlockUserUpdateMessageEvent);
+        this._events.set(1259, FavoriteMembershipUpdateMessageEvent);
 
         // === HELP (name change) ===
         this._events.set(2319, UserNameChangedMessageEvent);
