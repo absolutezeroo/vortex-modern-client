@@ -12,6 +12,9 @@ import type {ImageResult} from '@habbo/room/ImageResult';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
 import type {IRoomObjectModelController} from '@room/object/IRoomObjectModelController';
+import type {IRoomObjectController} from '@room/object/IRoomObjectController';
+import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import type {IRoomObject} from '@room/object/IRoomObject';
 
 interface IPoint
@@ -27,18 +30,16 @@ interface IPoint
  * AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as
  *
  * TS notes:
- * - Several IRoomEngine capabilities the AS3 previewer calls do not exist in
- *   the ported engine yet (changeObjectState, updateObjectUserAction,
- *   updateObjectRoomVisibilities, get*Image, runUpdate, isInitialized,
- *   disableUpdate). Those members are still ported with an AS3-compatible
- *   signature and flagged with an explicit TODO(AS3) so the behaviour is
- *   visible rather than silently missing.
  * - AS3 drives updatePreviewRoomView() from the engine's REOE_ADDED /
  *   REOE_CONTENT_UPDATED / REE_INITIALIZED events. The equivalent
  *   content-loaded event isn't fully available here, so the previewer also
  *   registers a per-frame canvas-sync callback (registerCanvasSyncCallback)
  *   to re-run the framing math, in addition to wiring the available engine
  *   events.
+ * - The engine members this class needs — isInitialized, runUpdate,
+ *   disableUpdate, changeObjectState, updateObjectUserAction,
+ *   updateObjectWallItemLocation — were added to IRoomEngine on 2026-08-09;
+ *   before that every call site here was a documented no-op.
  */
 export class RoomPreviewer
 {
@@ -58,6 +59,26 @@ export class RoomPreviewer
     private static readonly PREVIEW_OBJECT_LOCATION_X: number = 2;
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::PREVIEW_OBJECT_LOCATION_Y
     private static readonly PREVIEW_OBJECT_LOCATION_Y: number = 2;
+    // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::PREVIEW_WALL_ITEM_DEFAULT_DIRECTION
+    private static readonly PREVIEW_WALL_ITEM_DEFAULT_DIRECTION: number = 90;
+
+    // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::PREVIEW_WALL_ITEM_MIRRORED_DIRECTION
+    private static readonly PREVIEW_WALL_ITEM_MIRRORED_DIRECTION: number = 180;
+
+    /**
+     * The x/y pair is deliberately asymmetric: mirroring the item swaps them, which is how one
+     * constant serves both walls of the preview room's corner.
+     */
+    // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::PREVIEW_WALL_ITEM_LOCATION
+    private static readonly PREVIEW_WALL_ITEM_LOCATION = {x: 0.5, y: 2.3, z: 1.8};
+
+    /**
+     * AS3 inlines this as a bare `3.6` in getPreviewWallItemZ() — the preview room's wall height,
+     * against which a wall item is vertically centred. Name DERIVED; the literal is unnamed in AS3.
+     */
+    // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::getPreviewWallItemZ()
+    private static readonly PREVIEW_WALL_HEIGHT: number = 3.6;
+
     // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::ALLOWED_IMAGE_CUT
     private static readonly ALLOWED_IMAGE_CUT: number = 0.25;
 
@@ -156,13 +177,10 @@ export class RoomPreviewer
         return this._previewRoomId;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::get isRoomEngineReady()
-    // TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::get isRoomEngineReady()
-    // AS3 also requires _roomEngine.isInitialized; IRoomEngine has no isInitialized
-    // accessor yet, so only the null check is enforced.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::get isRoomEngineReady()
     get isRoomEngineReady(): boolean
     {
-        return this._roomEngine !== null;
+        return this._roomEngine !== null && this._roomEngine.isInitialized;
     }
 
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::createRoomForPreviews()
@@ -329,37 +347,211 @@ export class RoomPreviewer
         model.setNumber('furniture_invisible_layer', 1);
     }
 
+    /**
+     * A single-direction furni cannot be turned, which is what greys the rotate button out. The
+     * direction set comes off the object's own model — `furniture_allowed_directions`, written when
+     * the furni's visualization data is applied — not from the engine.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::canRotatePreviewFurniture()
-    // TODO(AS3): AS3 checks getPreviewFurnitureAllowedDirections().length > 1, based on the
-    // furniture data's own valid-direction set - that data isn't exposed by the ported room
-    // engine yet. Always false until it is, so the rotate buttons show correctly disabled
-    // rather than pretending furniture rotation works.
     canRotatePreviewFurniture(): boolean
     {
-        return false;
+        const directions = this.getPreviewFurnitureAllowedDirections();
+
+        return directions !== null && directions.length > 1;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::rotatePreviewFurniture()
-    // TODO(AS3): see canRotatePreviewFurniture() - needs the furniture object's allowed
-    // direction set, which the ported room engine doesn't expose yet.
-    rotatePreviewFurniture(_clockwise: boolean): boolean
+    rotatePreviewFurniture(clockwise: boolean): boolean
     {
-        return false;
+        const object = this.getPreviewFurnitureObject();
+
+        if(object === null) return false;
+
+        const direction = this.getValidPreviewFurnitureDirection(object, clockwise);
+
+        // Nothing to do when the set has a single entry: the "next" direction is the current one.
+        if(direction === object.getDirection().x) return false;
+
+        object.setDirection(new Vector3d(direction));
+
+        // `true` forces the view update through even when `disableUpdate` is set — the user asked
+        // for this one.
+        this.updatePreviewRoomView(true);
+        this.updateRoomEngine();
+
+        return true;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::canRotatePreviewWallItem()
-    // TODO(AS3): AS3 checks getPreviewWallItemObject() != null - needs the preview wall item's
-    // room object lookup, not wired up here yet.
     canRotatePreviewWallItem(): boolean
     {
-        return false;
+        return this.getPreviewWallItemObject() !== null;
     }
 
+    /**
+     * A wall item has only two orientations — the left wall (90°) and the right one (180°) — so
+     * this flips rather than steps. The location has to move with it, because the preview room's
+     * two walls meet at a corner.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::rotatePreviewWallItem()
-    // TODO(AS3): see canRotatePreviewWallItem().
     rotatePreviewWallItem(): boolean
     {
-        return false;
+        const object = this.getPreviewWallItemObject();
+
+        if(object === null) return false;
+
+        const direction = RoomPreviewer.isPreviewWallItemMirrored(object.getDirection().x)
+            ? RoomPreviewer.PREVIEW_WALL_ITEM_DEFAULT_DIRECTION
+            : RoomPreviewer.PREVIEW_WALL_ITEM_MIRRORED_DIRECTION;
+
+        object.setDirection(new Vector3d(direction));
+
+        this.updatePreviewWallItemLocation(object);
+
+        // The framing rectangle is rebuilt from scratch: the item just moved across the corner, so
+        // the accumulated bounds no longer describe it.
+        this._currentPreviewRectangle = null;
+
+        this.updatePreviewRoomView(true);
+        this.updateRoomEngine();
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::getPreviewFurnitureObject()
+    private getPreviewFurnitureObject(): IRoomObjectController | null
+    {
+        if(!this.isRoomEngineReady || this._currentPreviewObjectCategory !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+        {
+            return null;
+        }
+
+        return this._roomEngine!.getRoomObject(
+            this._previewRoomId,
+            RoomPreviewer.PREVIEW_OBJECT_ID,
+            this._currentPreviewObjectCategory
+        ) as IRoomObjectController | null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::getPreviewFurnitureAllowedDirections()
+    private getPreviewFurnitureAllowedDirections(): readonly number[] | null
+    {
+        const object = this.getPreviewFurnitureObject();
+
+        if(object === null || object.getModel() === null) return null;
+
+        return object.getModel().getNumberArray(RoomObjectVariableEnum.FURNITURE_ALLOWED_DIRECTIONS);
+    }
+
+    /**
+     * Steps one place through the allowed-direction set. When the current direction is not in the
+     * set at all — a furni whose data changed under it — AS3 does not fall back to index 0: it
+     * finds where the current direction *would* sort, so the turn still goes the way the user
+     * expects. That search is preserved verbatim, modulo included.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::getValidPreviewFurnitureDirection()
+    private getValidPreviewFurnitureDirection(object: IRoomObjectController | null, clockwise: boolean): number
+    {
+        if(object === null || object.getModel() === null) return 0;
+
+        const directions = object.getModel().getNumberArray(RoomObjectVariableEnum.FURNITURE_ALLOWED_DIRECTIONS);
+        let direction = object.getDirection().x;
+
+        if(directions === null || directions.length === 0) return direction;
+
+        let index = directions.indexOf(direction);
+
+        if(index < 0)
+        {
+            index = 0;
+
+            for(const allowed of directions)
+            {
+                if(direction <= allowed) break;
+
+                index++;
+            }
+
+            index %= directions.length;
+        }
+
+        index = clockwise
+            ? (index + 1) % directions.length
+            : (index - 1 + directions.length) % directions.length;
+
+        direction = directions[index];
+
+        return direction;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::getPreviewWallItemObject()
+    private getPreviewWallItemObject(): IRoomObjectController | null
+    {
+        if(!this.isRoomEngineReady || this._currentPreviewObjectCategory !== RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+        {
+            return null;
+        }
+
+        return this._roomEngine!.getRoomObject(
+            this._previewRoomId,
+            RoomPreviewer.PREVIEW_OBJECT_ID,
+            this._currentPreviewObjectCategory
+        ) as IRoomObjectController | null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::isPreviewWallItemMirrored()
+    private static isPreviewWallItemMirrored(direction: number): boolean
+    {
+        // The double modulo normalises a negative direction; JS `%` keeps the sign, as AS3's did.
+        return ((direction % 360) + 360) % 360 === RoomPreviewer.PREVIEW_WALL_ITEM_MIRRORED_DIRECTION;
+    }
+
+    /**
+     * Swaps the x/y of the fixed preview location when mirrored — the two walls are symmetric about
+     * the corner, so the same pair of numbers describes both, exchanged.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updatePreviewWallItemLocation()
+    private updatePreviewWallItemLocation(object: IRoomObjectController | null): void
+    {
+        if(object === null || this._roomEngine === null) return;
+
+        const mirrored = RoomPreviewer.isPreviewWallItemMirrored(object.getDirection().x);
+        const x = mirrored ? RoomPreviewer.PREVIEW_WALL_ITEM_LOCATION.y : RoomPreviewer.PREVIEW_WALL_ITEM_LOCATION.x;
+        const y = mirrored ? RoomPreviewer.PREVIEW_WALL_ITEM_LOCATION.x : RoomPreviewer.PREVIEW_WALL_ITEM_LOCATION.y;
+
+        this._roomEngine.updateObjectWallItemLocation(
+            this._previewRoomId,
+            RoomPreviewer.PREVIEW_OBJECT_ID,
+            new Vector3d(x, y, RoomPreviewer.getPreviewWallItemZ(object))
+        );
+    }
+
+    /**
+     * Centres the item vertically on a 3.6-unit wall using its own height and centre offset.
+     *
+     * AS3's fallback branch here is decompilation damage — `!isNaN(null.z)` / `return null.z`,
+     * which would throw. The intent is plainly the object's own location z, so that is what this
+     * does; the final fallback is the fixed preview z, as in AS3.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::getPreviewWallItemZ()
+    private static getPreviewWallItemZ(object: IRoomObjectController | null): number
+    {
+        if(object !== null && object.getModel() !== null)
+        {
+            const sizeZ = object.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_SIZE_Z);
+            const centerZ = object.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_CENTER_Z);
+
+            if(!isNaN(sizeZ) && !isNaN(centerZ))
+            {
+                return (RoomPreviewer.PREVIEW_WALL_HEIGHT - sizeZ) / 2 + centerZ;
+            }
+        }
+
+        const location = object?.getLocation() ?? null;
+
+        if(location !== null && !isNaN(location.z)) return location.z;
+
+        return RoomPreviewer.PREVIEW_WALL_ITEM_LOCATION.z;
     }
 
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::addAvatarIntoRoom()
@@ -443,15 +635,23 @@ export class RoomPreviewer
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateObjectUserAction()
-    // TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateObjectUserAction()
-    // Should call _roomEngine.updateObjectUserAction(previewRoomId, 1, action, value, parameter);
-    // IRoomEngine has no updateObjectUserAction equivalent yet.
-    updateObjectUserAction(_action: string, _value: number, _parameter: string | null = null): void
+    /**
+     * TODO(AS3): AS3 passes a fifth `parameter` argument through to the engine
+     * (`updateObjectUserAction(roomId, id, action, value, parameter)`); this port's engine method
+     * stops at four, so the parameter is accepted for signature parity and dropped. No current
+     * caller supplies it.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updateObjectUserAction()
+    updateObjectUserAction(action: string, value: number, _parameter: string | null = null): void
     {
         if(this.isRoomEngineReady)
         {
-            // Not wired yet.
+            this._roomEngine!.updateObjectUserAction(
+                this._previewRoomId,
+                RoomPreviewer.PREVIEW_OBJECT_ID,
+                action,
+                value
+            );
         }
     }
 
@@ -475,18 +675,25 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::changeRoomObjectState()
-    // TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::changeRoomObjectState()
-    // Should call _roomEngine.changeObjectState(previewRoomId, 1, category) for non-avatar
-    // previews; IRoomEngine has no changeObjectState equivalent yet.
+    /**
+     * A manual state change also stops the automatic cycling: once the user has clicked, the
+     * preview stays on the state they chose.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::changeRoomObjectState()
     changeRoomObjectState(): void
     {
         if(this.isRoomEngineReady)
         {
             this._automaticStateChange = false;
-            if(this._currentPreviewObjectCategory !== 100)
+
+            // An avatar has no state to cycle.
+            if(this._currentPreviewObjectCategory !== RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
             {
-                // Not wired yet.
+                this._roomEngine!.changeObjectState(
+                    this._previewRoomId,
+                    RoomPreviewer.PREVIEW_OBJECT_ID,
+                    this._currentPreviewObjectCategory
+                );
             }
         }
     }
@@ -500,9 +707,16 @@ export class RoomPreviewer
             if(now > this._previousAutomaticStateChangeTime + RoomPreviewer.AUTOMATIC_STATE_CHANGE_INTERVAL)
             {
                 this._previousAutomaticStateChangeTime = now;
+
                 if(this.isRoomEngineReady)
                 {
-                    // TODO(AS3): _roomEngine.changeObjectState(previewRoomId, 1, category) — not wired yet.
+                    // Note AS3 does *not* exempt the avatar category here, unlike
+                    // changeRoomObjectState() above. Preserved.
+                    this._roomEngine!.changeObjectState(
+                        this._previewRoomId,
+                        RoomPreviewer.PREVIEW_OBJECT_ID,
+                        this._currentPreviewObjectCategory
+                    );
                 }
             }
         }
@@ -750,42 +964,38 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateObjectRoom()
-    // TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateObjectRoom()
-    // AS3 calls _roomEngine.updateObjectRoom(previewRoomId, floor, wall, landscape, false),
-    // which only updates the room object's plane types. IRoomEngine has no
-    // updateObjectRoom, so this maps to initializeRoomVisuals with the AS3 default
-    // plane types. initializeRoomVisuals re-emits REE_INITIALIZED, hence the
-    // _updatingObjectRoom re-entrancy guard read by onRoomInitialized().
-    updateObjectRoom(floorType: string | null = null, wallType: string | null = null, landscapeType: string | null = null, _param: boolean = false): boolean
+    /**
+     * Note the last argument is dropped, exactly as AS3 does: the parameter is declared but the
+     * call below hard-codes `false`, so a caller asking to skip the model update does not get it.
+     * Preserved rather than "fixed".
+     *
+     * The `_updatingObjectRoom` re-entrancy guard is a leftover from when this mapped to
+     * `initializeRoomVisuals()`, which re-emitted REE_INITIALIZED; `updateObjectRoom()` does not,
+     * but the guard is harmless and `onRoomInitialized()` still reads it.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updateObjectRoom()
+    updateObjectRoom(floorType: string | null = null, wallType: string | null = null, landscapeType: string | null = null, _skipModelUpdate: boolean = false): boolean
     {
-        if(this.isRoomEngineReady)
+        if(!this.isRoomEngineReady) return false;
+
+        this._updatingObjectRoom = true;
+
+        try
         {
-            this._updatingObjectRoom = true;
-            try
-            {
-                this._roomEngine!.initializeRoomVisuals(this._previewRoomId, floorType ?? '101', wallType ?? '101', landscapeType ?? '1.1', 0);
-            }
-            finally
-            {
-                this._updatingObjectRoom = false;
-            }
-
-            return true;
+            return this._roomEngine!.updateObjectRoom(this._previewRoomId, floorType, wallType, landscapeType, false);
         }
-
-        return false;
+        finally
+        {
+            this._updatingObjectRoom = false;
+        }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateRoomWallsAndFloorVisibility()
-    // TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateRoomWallsAndFloorVisibility()
-    // Should call _roomEngine.updateObjectRoomVisibilities(previewRoomId, hideWalls, hideFloor);
-    // IRoomEngine has no updateObjectRoomVisibilities equivalent yet.
-    updateRoomWallsAndFloorVisibility(_hideWalls: boolean, _hideFloor: boolean = true): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updateRoomWallsAndFloorVisibility()
+    updateRoomWallsAndFloorVisibility(wallsVisible: boolean, floorVisible: boolean = true): void
     {
         if(this.isRoomEngineReady)
         {
-            // Not wired yet.
+            this._roomEngine!.updateObjectRoomVisibilities(this._previewRoomId, wallsVisible, floorVisible);
         }
     }
 
@@ -905,15 +1115,16 @@ export class RoomPreviewer
         this._disableUpdate = value;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::set disableRoomEngineUpdate()
-    // TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::set disableRoomEngineUpdate()
-    // Should assign _roomEngine.disableUpdate = value; IRoomEngine exposes no
-    // disableUpdate accessor yet.
-    set disableRoomEngineUpdate(_value: boolean)
+    /**
+     * Freezes the *engine's* frame tick, not just this previewer's view updates — that is what
+     * `disableUpdate` above does. The catalog uses this while rebuilding a page.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::set disableRoomEngineUpdate()
+    set disableRoomEngineUpdate(value: boolean)
     {
         if(this.isRoomEngineReady)
         {
-            // Not wired yet.
+            this._roomEngine!.disableUpdate = value;
         }
     }
 
@@ -955,14 +1166,17 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateRoomEngine()
-    // TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateRoomEngine()
-    // AS3 calls _roomEngine.runUpdate(); IRoomEngine exposes update(time) instead.
+    /**
+     * Forces one engine pass right now, so a rotation is visible before the next frame. AS3's
+     * `runUpdate()` is `update(1)` — a fixed one-millisecond step, deliberately not the real clock:
+     * passing the wall time here made the engine believe a whole session had elapsed in one tick.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updateRoomEngine()
     updateRoomEngine(): void
     {
         if(this.isRoomEngineReady)
         {
-            this._roomEngine!.update(RoomPreviewer.getTimer());
+            this._roomEngine!.runUpdate();
         }
     }
 
@@ -1030,12 +1244,15 @@ export class RoomPreviewer
         return Math.floor(performance.now());
     }
 
-    // TODO(AS3): AS3 reads (_roomEngine as class_17).getBoolean("zoom.enabled");
-    // IRoomEngine exposes no config accessor yet, so canvas-scale zooming (the
-    // path AS3 uses when the flag is on) is always selected.
+    /**
+     * Picks which of the two zoom mechanisms the previewer uses: the engine's canvas scale when the
+     * flag is on, the room geometry's own zoom otherwise. AS3 reads it off the engine through a
+     * cast to its Component base; the port declares `getBoolean` on IRoomEngine instead.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::validatePreviewSize()
     private isZoomEnabled(): boolean
     {
-        return true;
+        return this._roomEngine?.getBoolean('zoom.enabled') ?? false;
     }
 
     /**
