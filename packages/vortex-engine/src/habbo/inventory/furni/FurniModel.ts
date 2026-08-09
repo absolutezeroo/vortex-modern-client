@@ -1,3 +1,4 @@
+import {OpenFlatConnectionMessageComposer} from '@habbo/communication/messages/outgoing/room/session/OpenFlatConnectionMessageComposer';
 import type {IFurniModel} from './IFurniModel';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {IFurnitureItem} from '../items/IFurnitureItem';
@@ -145,11 +146,25 @@ export class FurniModel implements IFurniModel
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::gotoRoom()
-    // TODO(AS3): needs OpenFlatConnectionMessageComposer wiring.
+    /**
+     * Jumps to the room the selected item is standing in. AS3 also stashes the item in
+     * `_roomItemToSelect` so the infostand opens on it once the room loads.
+     *
+     * TODO(AS3): that stash and its consumer are not ported — the room will open, but the item
+     * will not be pre-selected on arrival.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::gotoRoom()
     gotoRoom(): void
     {
-        // Not wired yet.
+        const groupItem = this.getSelectedItem();
+
+        if(groupItem === null) return;
+
+        const item = groupItem.peek();
+
+        if(item === null) return;
+
+        this._communication.connection?.send(new OpenFlatConnectionMessageComposer(item.flatId));
     }
 
     /**
