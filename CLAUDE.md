@@ -63,6 +63,25 @@ the API has moved. Some identifiers are obfuscated in every available tree (e.g.
 which postdate the 2016 build); when a name has to be derived from its value, say so at the
 declaration rather than passing it off as recovered.
 
+**`win63_version` is a worse *decompile*, not just a differently obfuscated one — never read a
+body from it.** Two of its method bodies were caught in a single day producing code that would
+have shipped: `SpinnerCatalogWidget.refresh()` reads `visible = 0 > 0` with the computed local
+discarded (a permanently hidden container), and `GiftWrappingConfigurationEventParser.parse()`
+reads `while(0 < _loc2_)` in all four list loops, with the counter incremented and never tested (a
+browser hang on any non-empty list). The primary tree has the correct code in both. Together with
+the dropped E4X `@` below, the rule is unconditional: **when a `win63_version` body reads as dead,
+absurd, or impossible code, it is the decompiler, and the primary tree settles it.**
+
+Cite it for a *name* — it is the only tree where messages have readable filenames, where the
+primary has `unknowns/_SafePkg_2102/_SafeCls_3475.as` — and point every `AS3:` trace at the
+primary path, as `.claude/rules/30-as3-traceability.md` already requires. The port had drifted from
+that at scale: 3,684 traces cited `win63_version` for a file that exists under the same name in the
+primary tree, repointed on 2026-08-09. When repointing, check that the *member* exists in the
+primary file too, not just the file — the 2026 build is later and the API has moved, so matching on
+the filename alone turns a stale citation into a confidently wrong one. That check held back 200
+traces naming members the primary tree does not have at all (e.g. `scrollStepH`/`scrollStepV` on
+four window classes); they are still open and must not be guessed at.
+
 **`src/unknowns/` (`_SafePkg_N/`) is part of the client** — 556 files under `src/com/sulake/` import
 from it, e.g. `habbo/inventory/items/FurnitureItem.as` imports `_SafePkg_2405._SafeCls_2649`, the
 interface declaring `get stuffData():IStuffData`. It holds real parser DTOs and composers
