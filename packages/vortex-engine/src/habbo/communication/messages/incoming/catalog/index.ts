@@ -1,4 +1,6 @@
 export * from './BonusRareInfoMessageEvent';
+export * from './BundleDiscountRuleset';
+export * from './BundleDiscountRulesetMessageEvent';
 export * from './BuildersClubSubscriptionStatusMessageEvent';
 export * from './BuildersClubFurniCountMessageEvent';
 export * from './ClubGiftInfoEvent';

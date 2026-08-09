@@ -1324,7 +1324,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
         this.events.emit(CatalogWidgetSpinnerEvent.SHOW, new CatalogWidgetSpinnerEvent(CatalogWidgetSpinnerEvent.SHOW));
 
-        const ruleset = catalog.bundleDiscountRuleset as { maxPurchaseSize: number } | null;
+        const ruleset = catalog.bundleDiscountRuleset;
 
         if(ruleset != null)
         {

@@ -244,13 +244,18 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
             }
         }
 
-        // TODO(AS3): the bundle-discount branch that follows in AS3 shows `freeQuantity` with
-        // `HabboCatalogUtils.getDiscountItemsCount(quantity)`; that helper is not ported (see
-        // SpinnerCatalogWidget's matching note), so the row stays hidden as it does when the
-        // feature is off.
         const freeQuantity = this._window.findChildByName('freeQuantity');
 
         if(freeQuantity) freeQuantity.visible = false;
+
+        if(catalog.bundleDiscountEnabled)
+        {
+            const discountItemsCount = catalog.utils.getDiscountItemsCount(this._quantity);
+
+            if(freeQuantity) freeQuantity.visible = discountItemsCount > 0;
+
+            catalog.localization?.registerParameter('shop.bonus.items.count', 'amount', discountItemsCount.toString());
+        }
 
         // The collectibles previewer is not ported; the layout still carries its widget on top of
         // the bitmap, so it has to be taken out of the way or it covers the product image.

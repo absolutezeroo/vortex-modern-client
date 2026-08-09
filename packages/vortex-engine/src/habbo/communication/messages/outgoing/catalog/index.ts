@@ -1,6 +1,7 @@
 export * from './GetBonusRareInfoMessageComposer';
 export * from './GetClubGiftMessageComposer';
 export * from './GetCatalogIndexComposer';
+export * from './GetBundleDiscountRulesetComposer';
 export * from './GetCatalogPageComposer';
 export * from './GetProductOfferComposer';
 export * from './PurchaseFromCatalogComposer';

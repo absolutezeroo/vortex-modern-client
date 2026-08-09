@@ -39,13 +39,10 @@ export class HabboCatalogUtils implements IGetImageListener
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::_productBitmapWrappers
     private _productBitmapWrappers: Map<number, IBitmapWrapperWindow[]> = new Map();
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalogUtils.as::_bundleDiscountFlatPriceSteps
-    // Populated from a config message this port doesn't parse yet; empty means no flat-price
-    // discount steps apply, matching AS3's own default before that message arrives.
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::_bundleDiscountFlatPriceSteps
     private _bundleDiscountFlatPriceSteps: number[] = [];
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalogUtils.as::_bundleDiscountHighestFlatPriceStep
-    // Same not-yet-parsed config message as _bundleDiscountFlatPriceSteps above.
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::_bundleDiscountHighestFlatPriceStep
     private _bundleDiscountHighestFlatPriceStep: number = 0;
 
     private _vipBenefitsWindow: VipBenefitsWindow | null = null;
@@ -346,13 +343,103 @@ export class HabboCatalogUtils implements IGetImageListener
         return this._bundleDiscountFlatPriceSteps;
     }
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalogUtils.as::get bundleDiscountHighestFlatPriceStep()
-    // Only ever set by resolveBundleDiscountFlatPriceSteps() (same not-yet-parsed config message
-    // as _bundleDiscountFlatPriceSteps above), which isn't called anywhere in this port yet -
-    // defaulting to 0 matches AS3's own pre-resolve default.
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::get bundleDiscountHighestFlatPriceStep()
     get bundleDiscountHighestFlatPriceStep(): number
     {
         return this._bundleDiscountHighestFlatPriceStep;
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::resolveBundleDiscountFlatPriceSteps()
+    resolveBundleDiscountFlatPriceSteps(): void
+    {
+        this._bundleDiscountFlatPriceSteps = [];
+        this._bundleDiscountHighestFlatPriceStep = 0;
+
+        for(let quantity = 0; quantity < 99; quantity++)
+        {
+            const price = this.calculateBundlePrice(true, 1, quantity);
+            const nextPrice = this.calculateBundlePrice(true, 1, quantity + 1);
+
+            if(price === nextPrice)
+            {
+                this._bundleDiscountFlatPriceSteps.push(quantity);
+                this._bundleDiscountHighestFlatPriceStep = quantity;
+            }
+        }
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::getDiscountItemsCount()
+    getDiscountItemsCount(quantity: number): number
+    {
+        let count = this.getBasicBundleDiscountSize(quantity);
+
+        count += this.getBonusBundleDiscountSize(quantity);
+
+        return Math.trunc(count + this.getThresholdBundleDiscountSize(quantity));
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::getBasicBundleDiscountSize()
+    private getBasicBundleDiscountSize(quantity: number): number
+    {
+        const ruleset = this._catalog?.bundleDiscountRuleset ?? null;
+
+        if(!ruleset || ruleset.bundleSize <= 0)
+        {
+            return 0;
+        }
+
+        // AS3 assigns `param1 / bundleSize` to an `int` local, which truncates toward zero.
+        const bundles = Math.trunc(quantity / ruleset.bundleSize);
+
+        return bundles * ruleset.bundleDiscountSize;
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::getBonusBundleDiscountSize()
+    private getBonusBundleDiscountSize(quantity: number): number
+    {
+        const ruleset = this._catalog?.bundleDiscountRuleset ?? null;
+
+        if(!ruleset || ruleset.bundleSize <= 0)
+        {
+            return 0;
+        }
+
+        const bundles = Math.trunc(quantity / ruleset.bundleSize);
+        let bonus = 0;
+
+        if(bundles >= ruleset.bonusThreshold)
+        {
+            const remainder = quantity % ruleset.bundleSize;
+
+            if(remainder === ruleset.bundleSize - 1)
+            {
+                bonus++;
+            }
+
+            bonus += bundles - ruleset.bonusThreshold;
+        }
+
+        return bonus;
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::getThresholdBundleDiscountSize()
+    private getThresholdBundleDiscountSize(quantity: number): number
+    {
+        const ruleset = this._catalog?.bundleDiscountRuleset ?? null;
+        let count = 0;
+
+        if(ruleset)
+        {
+            for(const threshold of ruleset.additionalBonusDiscountThresholdQuantities)
+            {
+                if(quantity >= threshold)
+                {
+                    count++;
+                }
+            }
+        }
+
+        return count;
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::spinnerValueChangedEventTrack()

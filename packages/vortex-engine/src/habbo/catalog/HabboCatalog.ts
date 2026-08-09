@@ -81,6 +81,9 @@ import {CheckGiftableMessageComposer} from '@habbo/communication/messages/outgoi
 import {GetRoomAdsPurchaseInfoMessageComposer} from '@habbo/communication/messages/outgoing/catalog/GetRoomAdsPurchaseInfoMessageComposer';
 import {PurchaseProductAsGiftMessageComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseProductAsGiftMessageComposer';
 import {CatalogIndexMessageEvent} from '@habbo/communication/messages/incoming/catalog/CatalogIndexMessageEvent';
+import {BundleDiscountRulesetMessageEvent} from '@habbo/communication/messages/incoming/catalog/BundleDiscountRulesetMessageEvent';
+import type {BundleDiscountRuleset} from '@habbo/communication/messages/incoming/catalog/BundleDiscountRuleset';
+import type {BundleDiscountRulesetMessageEventParser} from '@habbo/communication/messages/parser/catalog/BundleDiscountRulesetMessageEventParser';
 import type {
     CatalogIndexMessageEventParser
 } from '@habbo/communication/messages/parser/catalog/CatalogIndexMessageEventParser';
@@ -89,6 +92,7 @@ import type {
     CatalogPageMessageEventParser
 } from '@habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser';
 import {GetCatalogIndexComposer} from '@habbo/communication/messages/outgoing/catalog/GetCatalogIndexComposer';
+import {GetBundleDiscountRulesetComposer} from '@habbo/communication/messages/outgoing/catalog/GetBundleDiscountRulesetComposer';
 import {BuildersClubQueryFurniCountMessageComposer} from '@habbo/communication/messages/outgoing/catalog/BuildersClubQueryFurniCountMessageComposer';
 import {BuildersClubFurniCountMessageEvent} from '@habbo/communication/messages/incoming/catalog/BuildersClubFurniCountMessageEvent';
 import type {
@@ -508,17 +512,41 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this.getBoolean('catalog.multiple.purchase.enabled') && this._catalogType !== 'BUILDERS_CLUB';
     }
 
+    private _bundleDiscountRuleset: BundleDiscountRuleset | null = null;
+
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get bundleDiscountEnabled()
     get bundleDiscountEnabled(): boolean 
     {
         return this._catalogType !== 'BUILDERS_CLUB';
     }
 
-    // loaded yet").
-    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get bundleDiscountRuleset()
-    get bundleDiscountRuleset(): unknown | null 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get bundleDiscountRuleset()
+    get bundleDiscountRuleset(): BundleDiscountRuleset | null
     {
-        return null;
+        return this._bundleDiscountRuleset;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::initBundleDiscounts()
+    private initBundleDiscounts(): void
+    {
+        this.sendGetBundleDiscountRuleset();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::sendGetBundleDiscountRuleset()
+    private sendGetBundleDiscountRuleset(): void
+    {
+        this.connection?.send(new GetBundleDiscountRulesetComposer());
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onBundleDiscountRulesetMessageEvent()
+    private onBundleDiscountRulesetMessageEvent(event: IMessageEvent): void
+    {
+        const parser = event.parser as BundleDiscountRulesetMessageEventParser | null;
+
+        if(!parser) return;
+
+        this._bundleDiscountRuleset = parser.bundleDiscountRuleset;
+        this._utils?.resolveBundleDiscountFlatPriceSteps();
     }
 
     // every offer except that flow.
@@ -527,10 +555,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     {
         return null;
     }
-
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::get bundleDiscountRuleset()
-    // The bundle-discount ruleset is set from a config message this port doesn't parse yet;
-    // always null means bundle-quantity discounts don't apply, which is safe (matches "not
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get currentCatalogNavigator()
     get currentCatalogNavigator(): ICatalogNavigator | null 
@@ -2749,6 +2773,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.addMessageEvent(new GuildMembershipsMessageEvent(this.onGuildMemberships.bind(this)));
         this.addMessageEvent(new SellablePetPalettesMessageEvent(this.onSellablePetPalettes.bind(this)));
         this.addMessageEvent(new ApproveNameMessageEvent(this.onApproveNameResult.bind(this)));
+        this.addMessageEvent(new BundleDiscountRulesetMessageEvent(this.onBundleDiscountRulesetMessageEvent.bind(this)));
 
         // AS3 registers the tracker here, right after the message events (HabboCatalog.as:752).
         this.context.addLinkEventTracker(this);
@@ -2797,6 +2822,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.createGroupMembershipsController();
         this.createMarketPlace();
         this.createRecycler();
+        this.initBundleDiscounts();
         this._initialized = true;
         this.events.emit(CatalogEvent.CATALOG_INITIALIZED, new CatalogEvent(CatalogEvent.CATALOG_INITIALIZED));
         this.connection?.send(new BuildersClubQueryFurniCountMessageComposer());

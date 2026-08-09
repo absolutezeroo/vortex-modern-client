@@ -15,11 +15,6 @@ const SPIN_ACCELERATE_AFTER_STEPS = 35;
 /**
  * The purchase-quantity spinner shown for bundle offers (buy N units of a discount bundle).
  *
- * TODO(AS3): sources/win63_version/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::refresh()
- * skips the "promo.info"/discountContainer bonus-items-count display (needs
- * HabboCatalogUtils.getDiscountItemsCount(), which isn't ported) - the count/discount text just
- * doesn't update, matching AS3's own null-guard (`if (_promoInfo)`) staying false-shaped.
- *
  * @see sources/win63_version/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as
  */
 export class SpinnerCatalogWidget extends CatalogWidget
@@ -107,8 +102,15 @@ export class SpinnerCatalogWidget extends CatalogWidget
         this.events.emit(CatalogWidgetSpinnerEvent.VALUE_CHANGED, new CatalogWidgetSpinnerEvent(CatalogWidgetSpinnerEvent.VALUE_CHANGED, this._value));
         this.setValueText(this._value.toString());
 
-        // TODO(AS3): getDiscountItemsCount()/discountContainer bonus-count display - see class
-        // doc comment. _promoInfo is never non-null yet since nothing ported sets it.
+        if(this._promoInfo && this._catalog?.bundleDiscountEnabled)
+        {
+            const discountItemsCount = this._catalog.utils.getDiscountItemsCount(this._value);
+            const discountContainer = this.window.findChildByName('discountContainer');
+
+            if(discountContainer) discountContainer.visible = discountItemsCount > 0;
+
+            this._catalog.localization?.registerParameter('shop.bonus.items.count', 'amount', discountItemsCount.toString());
+        }
     }
 
     private onRequestResetEvent = (event: CatalogWidgetSpinnerEvent): void =>

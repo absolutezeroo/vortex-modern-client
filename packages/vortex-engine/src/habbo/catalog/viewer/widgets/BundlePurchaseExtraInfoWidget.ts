@@ -215,13 +215,11 @@ export class BundlePurchaseExtraInfoWidget extends CatalogWidget
 
         if(event.value === this._quantity) return;
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::onSpinnerEvent()
-        // catalog.bundleDiscountRuleset is a documented always-null stub on this port (the config
-        // message that populates it isn't parsed yet - see HabboCatalog.ts's own note), so the
-        // real AS3 condition (`event.value >= bundleDiscountRuleset.bundleSize`) would throw here;
-        // null-guarded instead of literally ported, matching the same cast/guard convention
-        // ProductViewCatalogWidget.ts::setSpinnerToBundleRuleset() already uses for this same stub.
-        const ruleset = catalog.bundleDiscountRuleset as { bundleSize: number } | null;
+        // AS3 dereferences bundleDiscountRuleset unguarded. It is filled by an async message
+        // (BundleDiscountRulesetMessageEvent, header 1073), so it is null until that arrives and
+        // the guard below covers the window AS3 got away with because Flash's `null.x` on an
+        // untyped local threw into a swallowed handler rather than killing the widget.
+        const ruleset = catalog.bundleDiscountRuleset;
 
         if(ruleset != null)
         {
