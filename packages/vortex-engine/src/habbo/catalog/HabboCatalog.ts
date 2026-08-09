@@ -93,6 +93,12 @@ import type {
 } from '@habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser';
 import {GetCatalogIndexComposer} from '@habbo/communication/messages/outgoing/catalog/GetCatalogIndexComposer';
 import {GetBundleDiscountRulesetComposer} from '@habbo/communication/messages/outgoing/catalog/GetBundleDiscountRulesetComposer';
+import {GetGiftWrappingConfigurationComposer} from '@habbo/communication/messages/outgoing/catalog/GetGiftWrappingConfigurationComposer';
+import {GiftWrappingConfigurationEvent} from '@habbo/communication/messages/incoming/catalog/GiftWrappingConfigurationEvent';
+import {CatalogPublishedMessageEvent} from '@habbo/communication/messages/incoming/catalog/CatalogPublishedMessageEvent';
+import type {CatalogPublishedMessageEventParser} from '@habbo/communication/messages/parser/catalog/CatalogPublishedMessageEventParser';
+import type {GiftWrappingConfigurationEventParser} from '@habbo/communication/messages/parser/catalog/GiftWrappingConfigurationEventParser';
+import {GiftWrappingConfiguration} from './purchase/GiftWrappingConfiguration';
 import {BuildersClubQueryFurniCountMessageComposer} from '@habbo/communication/messages/outgoing/catalog/BuildersClubQueryFurniCountMessageComposer';
 import {BuildersClubFurniCountMessageEvent} from '@habbo/communication/messages/incoming/catalog/BuildersClubFurniCountMessageEvent';
 import type {
@@ -515,6 +521,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get bundleDiscountRuleset()
     private _bundleDiscountRuleset: BundleDiscountRuleset | null = null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get giftWrappingConfiguration()
+    private _giftWrappingConfiguration: GiftWrappingConfiguration | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::refreshFurniData()
+    private _furniDataNeedsRefresh: boolean = false;
+
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get bundleDiscountEnabled()
     get bundleDiscountEnabled(): boolean 
     {
@@ -525,6 +537,71 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     get bundleDiscountRuleset(): BundleDiscountRuleset | null
     {
         return this._bundleDiscountRuleset;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get giftWrappingConfiguration()
+    get giftWrappingConfiguration(): GiftWrappingConfiguration | null
+    {
+        return this._giftWrappingConfiguration;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getGiftWrappingConfiguration()
+    private getGiftWrappingConfiguration(): void
+    {
+        this.connection?.send(new GetGiftWrappingConfigurationComposer());
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onGiftWrappingConfiguration()
+    private onGiftWrappingConfiguration(event: IMessageEvent): void
+    {
+        this._giftWrappingConfiguration = new GiftWrappingConfiguration(
+            event.parser as GiftWrappingConfigurationEventParser | null
+        );
+    }
+
+    /**
+     * The catalog was republished server-side. AS3 flags the furni data as stale rather than
+     * refetching immediately - the refetch happens on the next `init()`, so a user who never
+     * reopens the catalog never pays for it.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onCatalogPublished()
+    private onCatalogPublished(event: IMessageEvent): void
+    {
+        const parser = event.parser as CatalogPublishedMessageEventParser | null;
+
+        if(parser?.newFurniDataHash && this._sessionDataManager)
+        {
+            this._sessionDataManager.newFurniDataHash = parser.newFurniDataHash;
+        }
+
+        this._furniDataNeedsRefresh = true;
+
+        const wasVisible = this.mainWindowVisible();
+
+        this.reset();
+
+        if(wasVisible)
+        {
+            this._windowManager?.alert(
+                '${catalog.alert.published.title}',
+                '${catalog.alert.published.description}',
+                0,
+                this.alertDialogEventProcessor
+            );
+        }
+        else if(this._notifications)
+        {
+            const description = this._localization?.getLocalization('catalog.alert.published.description') ?? '';
+
+            this._notifications.addItem(description, 'info', 'if_icon_temp_png');
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::refreshFurniData()
+    private refreshFurniData(): void
+    {
+        this._sessionDataManager?.refreshFurniData();
+        this._furniDataNeedsRefresh = false;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::initBundleDiscounts()
@@ -2760,6 +2837,8 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.addMessageEvent(new SellablePetPalettesMessageEvent(this.onSellablePetPalettes.bind(this)));
         this.addMessageEvent(new ApproveNameMessageEvent(this.onApproveNameResult.bind(this)));
         this.addMessageEvent(new BundleDiscountRulesetMessageEvent(this.onBundleDiscountRulesetMessageEvent.bind(this)));
+        this.addMessageEvent(new GiftWrappingConfigurationEvent(this.onGiftWrappingConfiguration.bind(this)));
+        this.addMessageEvent(new CatalogPublishedMessageEvent(this.onCatalogPublished.bind(this)));
 
         // AS3 registers the tracker here, right after the message events (HabboCatalog.as:752).
         this.context.addLinkEventTracker(this);
@@ -2791,14 +2870,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::init()
-    // TODO(AS3): several one-time setup steps are still skipped, each because their backing
-    // system isn't ported yet: refreshFurniData(), getGiftWrappingConfiguration(),
-    // initBundleDiscounts().
-    // createClubGiftController()/createClubBuyController()/createClubExtendController() (the
-    // club/ purchase controllers - separate from the already-ported clubcenter/ status display),
-    // createMarketPlace(), createRecycler(), and createGroupMembershipsController() are now real -
-    // see below. The core main-window/navigator/
-    // viewer setup is real.
+    // Every step AS3 runs here is now run here. The three this note used to list as blocked -
+    // refreshFurniData(), getGiftWrappingConfiguration(), initBundleDiscounts() - were each
+    // blocked on something that had since landed or was one message away.
     /**
 	 * @param catalogType - The catalog type to activate once the states exist
 	 */
@@ -2806,6 +2880,11 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     private init(catalogType: string): boolean
     {
         if(this._initialized) return false;
+
+        if(this._furniDataNeedsRefresh)
+        {
+            this.refreshFurniData();
+        }
 
         this.createCatalogWindowStates();
         this.setActiveCatalogState(catalogType);
@@ -2816,6 +2895,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.createGroupMembershipsController();
         this.createMarketPlace();
         this.createRecycler();
+        this.getGiftWrappingConfiguration();
         this.initBundleDiscounts();
         this._initialized = true;
         this.events.emit(CatalogEvent.CATALOG_INITIALIZED, new CatalogEvent(CatalogEvent.CATALOG_INITIALIZED));

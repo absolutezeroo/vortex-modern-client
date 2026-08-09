@@ -1,4 +1,6 @@
 export * from './BonusRareInfoMessageEvent';
+export * from './CatalogPublishedMessageEvent';
+export * from './GiftWrappingConfigurationEvent';
 export * from './BundleDiscountRuleset';
 export * from './BundleDiscountRulesetMessageEvent';
 export * from './BuildersClubSubscriptionStatusMessageEvent';

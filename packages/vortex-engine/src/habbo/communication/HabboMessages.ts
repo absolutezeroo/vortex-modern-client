@@ -212,6 +212,8 @@ import {
 import {
     BonusRareInfoMessageEvent,
     BundleDiscountRulesetMessageEvent,
+    CatalogPublishedMessageEvent,
+    GiftWrappingConfigurationEvent,
     BuildersClubFurniCountMessageEvent,
     BuildersClubSubscriptionStatusMessageEvent,
     CatalogIndexMessageEvent,
@@ -1015,6 +1017,7 @@ import {
     CheckGiftableMessageComposer,
     GetBonusRareInfoMessageComposer,
     GetBundleDiscountRulesetComposer,
+    GetGiftWrappingConfigurationComposer,
     GetCatalogIndexComposer,
     GetCatalogPageComposer,
     GetCatalogPageWithEarliestExpiryComposer,
@@ -2065,6 +2068,8 @@ export class HabboMessages implements IMessageConfiguration
         // === CATALOG (bonus rare) ===
         this._events.set(3573, BonusRareInfoMessageEvent);
         this._events.set(1073, BundleDiscountRulesetMessageEvent);
+        this._events.set(1369, GiftWrappingConfigurationEvent);
+        this._events.set(773, CatalogPublishedMessageEvent);
         this._events.set(1084, LimitedOfferAppearingNextMessageEvent);
         this._events.set(3389, CatalogPageWithEarliestExpiryMessageEvent);
         this._events.set(3422, ClubGiftInfoEvent);
@@ -2690,6 +2695,7 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(287, GetCatalogPageWithEarliestExpiryComposer);
         this._composers.set(472, GetClubGiftMessageComposer);
         this._composers.set(317, GetBundleDiscountRulesetComposer);
+        this._composers.set(940, GetGiftWrappingConfigurationComposer);
         this._composers.set(2232, GetCatalogIndexComposer);
         this._composers.set(2093, GetCatalogPageComposer);
         this._composers.set(1692, GetProductOfferComposer);
