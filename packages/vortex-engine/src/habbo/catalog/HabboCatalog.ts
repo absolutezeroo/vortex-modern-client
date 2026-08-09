@@ -750,7 +750,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::get roomAdPurchaseData()
     // The room-ad purchase flow (extend-rental-from-room-ad) isn't ported; always null means
     // PurchaseCatalogWidget's room-ad-specific checks are always skipped, which is correct for
-
     // AS3's HabboCatalog itself doubles as a config accessor (getBoolean/getProperty/propertyExists
     // are already inherited from Component, delegating to context.configuration - these two
     // mirror that same pattern for the two config methods Component doesn't already expose).
@@ -925,7 +924,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::sendRoomAdPurchaseInitiatedEvent()
     // Needs RoomAdPurchaseInitiatedComposer, which isn't ported. Only reachable from a
     // "ROOM_INITIATE_PURCHASE"-tagged purchase widget layout, which the ported catalog pages
-
     // don't use yet.
     sendRoomAdPurchaseInitiatedEvent(): void
     {

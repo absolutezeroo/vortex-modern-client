@@ -952,8 +952,6 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         }
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetFurniInfoMessage()
-
     /**
      * AS3's category-100 branch of handleGetObjectInfoMessage(): looks up the
      * clicked room object's user data and dispatches to the user/pet/bot/
@@ -1309,7 +1307,6 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::update()
     // TODO(AS3): drives pet-command-tool countdowns and the pet update timer — both
-
     // (the "re-request at scale 1" fallback branch)
     private retryFurniImageAtScaleOne(pending: {
         furniId: number;

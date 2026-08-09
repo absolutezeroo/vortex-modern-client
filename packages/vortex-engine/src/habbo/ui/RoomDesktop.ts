@@ -643,8 +643,6 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._roomBackgroundColor;
     }
 
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get userDefinedRoomEvents()
-
     private _visible: boolean = true;
 
     public get visible(): boolean 
@@ -1892,7 +1890,6 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::onRoomViewResized()
     // TS deviation: one handler bound to all four resize/relocate event types
     // (WE_RESIZED/WE_RELOCATED/WE_PARENT_RESIZED/WE_PARENT_RELOCATED) instead of
-
     // separate AS3 listener methods, since they all just re-sync canvas geometry.
     private readonly roomViewGeometryEventHandler = (_event: unknown): void => 
     {

@@ -589,8 +589,6 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this._windowManager;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::contentLoaded()
-
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomObjectCategory()
     // AS3 delegates to the content loader (getObjectCategory), returning -2 with no
     // loader. The old hardcoded switch defaulted every unrecognised type to FURNITURE —

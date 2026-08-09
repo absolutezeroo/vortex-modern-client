@@ -71,8 +71,6 @@ export class MarketplaceItemStats
         return this._averagePrices;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::get offerCount()
-
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/marketplace/_SafeCls_2226.as::set averagePrices()
     set averagePrices(value: number[]) 
     {

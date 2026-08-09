@@ -65,7 +65,6 @@ export class ChatStyleGridView implements IDisposable
     // `x = selectorRect.x` two lines later in every source tree checked (win63_2026,
     // win63_version, PRODUCTION-201601012205-226667486 - PRODUCTION-201601012205-226667486's own decompiler even collapsed the
     // shift to `x = x + 0`, confirming it never mattered) - so the real result is always
-
     // just this.
     alignToSelector(selector: IWindowContainer | null): void 
     {

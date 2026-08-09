@@ -138,14 +138,10 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::getUserImage()
-
     public update(): void 
     {
         this.updateWidgetPosition();
     }
-
-    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::getPetImage()
 
     // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::processEvent() (RSCE_CHAT_EVENT branch)
     private handleChatEvent(chatEvent: RoomSessionChatEvent): void 

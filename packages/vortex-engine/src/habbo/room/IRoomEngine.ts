@@ -163,7 +163,6 @@ export interface IRoomEngine extends IDisposable {
     // covers full room-object selection (placement AND already-placed objects being moved/
     // inspected) and isn't ported - only initializeRoomObjectInsert()'s pending-placement state
     // is tracked here. This always returns null until that's ported, which callers (e.g.
-
     // `forceImmediate` is TS-only (no AS3 equivalent) - see RoomEngine.ts's implementation comment.
     getGenericRoomObjectImage(
         type: string | null,
