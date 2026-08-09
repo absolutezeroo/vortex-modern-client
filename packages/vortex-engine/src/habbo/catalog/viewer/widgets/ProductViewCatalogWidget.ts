@@ -424,10 +424,13 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this._canvasDisplayObject.visible = visible && reachedDesktop;
     }
 
+    /**
+     * Dragging the preview out of its canvas is what starts a placement: WME_OUT with the button
+     * still down hands the offer to `HabboCatalog.requestSelectedItemToMover()`, which arms the
+     * room engine's inserter. `_mouseIsDown` exists only to tell that gesture apart from the
+     * pointer merely leaving the canvas.
+     */
     // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::roomCanvasContainerProcedure()
-    // TODO(AS3): the WME_OUT drag-to-mover case needs CatalogObjectMover, which isn't ported
-    // (see HabboCatalog.requestSelectedItemToMover()'s own TODO); the mouse-down/drag tracking
-    // is preserved so that gap is visible rather than silently dropped.
     private roomCanvasContainerProcedure = (event: WindowMouseEvent): void =>
     {
         switch(event.type)

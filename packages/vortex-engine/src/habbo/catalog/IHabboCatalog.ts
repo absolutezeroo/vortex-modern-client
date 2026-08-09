@@ -1,3 +1,4 @@
+import type {IDragAndDropDoneReceiver} from './viewer/IDragAndDropDoneReceiver';
 import type {EventEmitter} from 'eventemitter3';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
@@ -119,6 +120,16 @@ export interface IHabboCatalog
     getSubscriptionProductIcon(productId: number): ImageBitmap | null;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::isDraggable()
     isDraggable(offer: IPurchasableOffer): boolean;
+
+    /**
+	 * Hands an offer to the room engine's inserter so the next click in the room places it. The
+	 * receiver is told through `onDragAndDropDone()` once the placement lands or is cancelled.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::requestSelectedItemToMover()
+    requestSelectedItemToMover(receiver: IDragAndDropDoneReceiver | null, offer: IPurchasableOffer, placeMany?: boolean): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::cancelFurniInMover()
+    cancelFurniInMover(): void;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::setImageFromAsset()
     setImageFromAsset(target: unknown, assetName: string | null, onAssetReady?: ((event: unknown) => void) | null): void;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getPurse()

@@ -1,3 +1,4 @@
+import {CatalogWidgetInitPurchaseEvent} from './events/CatalogWidgetInitPurchaseEvent';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
@@ -170,13 +171,22 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         }
     }
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::startDragAndDrop()
-    // Real logic calls (catalog as HabboCatalog).requestSelectedItemToMover(this, offer) to hand
-    // the offer to CatalogObjectMover for drag-into-room placement - neither is ported yet
-    // (see Offer.ts's port notes on the deferred in-room "buy this placed item" flow).
-    startDragAndDrop(_item: IGridItem): boolean 
+    /**
+     * Dragging a grid item into the room. The club-level gate is AS3's own and silent: an offer the
+     * user cannot afford in club terms simply never reaches the mover, with no message — and note
+     * `true` is returned either way, so the drag itself is always considered started.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::startDragAndDrop()
+    startDragAndDrop(item: IGridItem): boolean
     {
-        return false;
+        const offer = (item as unknown as ProductContainer).offer;
+
+        if(offer != null && this._sessionDataManager.clubLevel >= offer.clubLevel)
+        {
+            this.page.viewer.catalog.requestSelectedItemToMover(this, offer);
+        }
+
+        return true;
     }
 
     // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::onDragAndDropDone()
@@ -184,12 +194,16 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
     {
         if(this.disposed) return;
 
-        if(success) 
+        if(success)
         {
-            // TODO(AS3): sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::onDragAndDropDone()
-            // AS3 dispatches a CatalogWidgetInitPurchaseEvent(false, extraParam) here - not
-            // ported yet (pairs with the deferred startDragAndDrop() above).
-            void extraParam;
+            // A drop that landed opens the purchase confirmation, as if Buy had been clicked. The
+            // `false` is AS3's own: a drag-placed item cannot be bought as a gift, since it is
+            // already standing in the room. `extraParam` carries the receiver's name on the
+            // drop-onto-a-user path, which is what makes the gift case reachable at all.
+            this.events.emit(
+                CatalogWidgetInitPurchaseEvent.INIT_PURCHASE,
+                new CatalogWidgetInitPurchaseEvent(false, extraParam)
+            );
         }
     }
 
