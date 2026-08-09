@@ -23,6 +23,21 @@ import {
     ReleaseIssuesMessageComposer,
     RoomUsersClassificationMessageComposer,
 } from './messages/outgoing/moderation';
+import {
+    CallForHelpFromSelfieMessageComposer,
+    DeletePendingCallsForHelpMessageComposer,
+    GetGuideReportingStatusMessageComposer,
+    GetPendingCallsForHelpMessageComposer,
+    GuideSessionCreateMessageComposer,
+    GuideSessionFeedbackMessageComposer,
+    GuideSessionGetRequesterRoomMessageComposer,
+    GuideSessionGuideDecidesMessageComposer,
+    GuideSessionIsTypingMessageComposer,
+    GuideSessionMessageMessageComposer,
+    GuideSessionOnDutyUpdateMessageComposer,
+    GuideSessionRequesterCancelsMessageComposer,
+    GuideSessionResolvedMessageComposer,
+} from './messages/outgoing/help';
 import type {
     ComposerClass,
     EventClass,
@@ -2207,7 +2222,11 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2203, GetUserNftWardrobeMessageComposer);
         this._composers.set(3428, SaveUserNftWardrobeMessageComposer);
         this._composers.set(3521, GetSelectedNftWardrobeOutfitMessageComposer);
-        this._composers.set(879, ChangeUserNameMessageComposer);
+        // 879 is ClaimNewUserName in WIN63's registry (`_composers[879] = _SafeCls_3401`), a
+        // different message that happens to take the same single string — so the wrong id here
+        // would have been accepted and handled as a *claim* rather than a change. ChangeUserName
+        // is 1703; the emulator agrees. Latent until now: nothing constructs this composer yet.
+        this._composers.set(1703, ChangeUserNameMessageComposer);
         this._composers.set(407, RateFlatMessageComposer);
         this._composers.set(2985, ToggleStaffPickMessageComposer);
         this._composers.set(3214, GetPopularRoomTagsMessageComposer);
@@ -2697,6 +2716,34 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3400, PickIssuesMessageComposer);
         this._composers.set(3977, ReleaseIssuesMessageComposer);
         this._composers.set(157, RoomUsersClassificationMessageComposer);
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
+        // The player half of moderation — reporting and the guide/helper system — had the same
+        // defect as the tool itself: 20 composers ported, 2 registered. Only the ones whose
+        // constructor shape still matches the primary tree are registered here; see the TODO
+        // below for the seven that do not.
+        this._composers.set(201, CallForHelpFromSelfieMessageComposer);
+        this._composers.set(3423, DeletePendingCallsForHelpMessageComposer);
+        this._composers.set(2455, GetGuideReportingStatusMessageComposer);
+        this._composers.set(92, GetPendingCallsForHelpMessageComposer);
+        this._composers.set(2181, GuideSessionCreateMessageComposer);
+        this._composers.set(150, GuideSessionFeedbackMessageComposer);
+        this._composers.set(3914, GuideSessionGetRequesterRoomMessageComposer);
+        this._composers.set(300, GuideSessionGuideDecidesMessageComposer);
+        this._composers.set(296, GuideSessionIsTypingMessageComposer);
+        this._composers.set(1561, GuideSessionMessageMessageComposer);
+        this._composers.set(958, GuideSessionOnDutyUpdateMessageComposer);
+        this._composers.set(2847, GuideSessionRequesterCancelsMessageComposer);
+        this._composers.set(3831, GuideSessionResolvedMessageComposer);
+
+        // TODO(AS3): seven more help composers are ported but deliberately left unregistered,
+        // because their bodies were written against an older revision and no longer match the
+        // class the primary registry maps their id to. Registering them would put the wrong
+        // shape on the wire, which is worse than leaving them unreachable. Each needs its body
+        // re-ported first: CallForHelp (732, `_SafeCls_2540` takes two trailing strings this
+        // port omits), CallForHelpFromIM (838), CallForHelpFromPhoto (1964),
+        // CallForHelpFromForumMessage (2991), CallForHelpFromForumThread (380),
+        // ChatReviewSessionCreate (3970) and GetCfhStatus (3458).
         this._composers.set(1246, GetRecyclerStatusMessageComposer);
         this._composers.set(2516, GetRecyclerPrizesMessageComposer);
         this._composers.set(2956, RecycleItemsMessageComposer);
