@@ -175,6 +175,8 @@ import {
     MarketplaceClearOwnHistoryResultEvent,
     MarketplaceConfigurationEvent,
     MarketplaceItemStatsEvent,
+    MarketplaceCanMakeOfferResultEvent,
+    MarketplaceMakeOfferResultEvent,
     MarketPlaceOffersEvent,
     MarketPlaceOwnOffersEvent,
 } from './messages/incoming/marketplace';
@@ -976,6 +978,9 @@ import {
     ClearOwnMarketplaceHistoryMessageComposer,
     GetMarketplaceConfigurationMessageComposer,
     GetMarketplaceItemStatsComposer,
+    GetMarketplaceCanMakeOfferMessageComposer,
+    BuyMarketplaceTokensMessageComposer,
+    MakeOfferMessageComposer,
     GetMarketplaceOffersMessageComposer,
     GetMarketplaceOwnOffersMessageComposer,
     RedeemMarketplaceOfferCreditsMessageComposer,
@@ -2003,6 +2008,8 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1760, MarketplaceClearOwnHistoryResultEvent);
         this._events.set(1397, MarketplaceConfigurationEvent);
         this._events.set(2821, MarketplaceItemStatsEvent);
+        this._events.set(789, MarketplaceCanMakeOfferResultEvent);
+        this._events.set(2954, MarketplaceMakeOfferResultEvent);
         this._events.set(1919, RecyclerStatusMessageEvent);
         this._events.set(281, RecyclerFinishedMessageEvent);
         this._events.set(3783, RecyclerPrizesMessageEvent);
@@ -2629,6 +2636,9 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3546, RedeemMarketplaceOfferCreditsMessageComposer);
         this._composers.set(2096, CancelMarketplaceOfferMessageComposer);
         this._composers.set(1552, GetMarketplaceItemStatsComposer);
+        this._composers.set(1493, GetMarketplaceCanMakeOfferMessageComposer);
+        this._composers.set(3419, BuyMarketplaceTokensMessageComposer);
+        this._composers.set(3695, MakeOfferMessageComposer);
         this._composers.set(1246, GetRecyclerStatusMessageComposer);
         this._composers.set(2516, GetRecyclerPrizesMessageComposer);
         this._composers.set(2956, RecycleItemsMessageComposer);

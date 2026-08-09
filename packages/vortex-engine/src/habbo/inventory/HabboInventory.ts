@@ -59,6 +59,11 @@ import type {
 } from '../communication/messages/parser/inventory/pets';
 import {BotsModel} from './bots/BotsModel';
 import {TradingModel} from './trading/TradingModel';
+import {MarketplaceModel} from './marketplace/MarketplaceModel';
+import {MarketplaceCanMakeOfferResultEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceCanMakeOfferResultEvent';
+import {MarketplaceMakeOfferResultEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceMakeOfferResultEvent';
+import type {MarketplaceCanMakeOfferResultParser} from '@habbo/communication/messages/parser/marketplace/MarketplaceCanMakeOfferResultParser';
+import type {MarketplaceMakeOfferResultParser} from '@habbo/communication/messages/parser/marketplace/MarketplaceMakeOfferResultParser';
 import {
     TradeOpenFailedEvent,
     TradeSilverFeeMessageEvent,
@@ -483,6 +488,20 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
     private _tradingModel!: TradingModel;
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_marketplaceModel
+    private _marketplaceModel: MarketplaceModel | null = null;
+
+    /**
+     * The *selling* half of the marketplace. Not to be confused with the catalog's
+     * `MarketPlaceLogic`, which browses and buys — AS3 keeps them in separate packages and this is
+     * the one `FurniModel.requestSelectedFurniSelling()` reaches for.
+     */
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get marketplaceModel()
+    get marketplaceModel(): MarketplaceModel | null
+    {
+        return this._marketplaceModel;
+    }
+
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get tradingModel()
     get tradingModel(): ITradingModel
     {
@@ -813,6 +832,20 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         if(!this.mergeRentFurni)
         {
             this._inventories.add('rentables', this._furniModel);
+        }
+
+        // AS3: HabboInventory.as — `new MarketplaceModel(this, _windowManager, _communication,
+        // assets, _roomEngine, _localization)`.
+        if(this._windowManager != null && this._communication != null && this._roomEngine != null && this._localization != null)
+        {
+            this._marketplaceModel = new MarketplaceModel(
+                this,
+                this._windowManager,
+                this._communication,
+                this.assets,
+                this._roomEngine,
+                this._localization
+            );
         }
 
         this._inventories.add('trading', this._tradingModel);
@@ -1263,9 +1296,35 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication.addMessageEvent(new FurniListAddOrUpdateMessageEvent(this.onFurniListAddOrUpdate)),
             this._communication.addMessageEvent(new FurniListRemoveMessageEvent(this.onFurniListRemove)),
             this._communication.addMessageEvent(new FurniListRemoveMultipleMessageEvent(this.onFurniListRemoveMultiple)),
-            this._communication.addMessageEvent(new FurniListInvalidateMessageEvent(this.onFurniListInvalidate))
+            this._communication.addMessageEvent(new FurniListInvalidateMessageEvent(this.onFurniListInvalidate)),
+            // AS3 registers these on its own inventory message handler (`_SafeCls_1951`), which
+            // this port folds into HabboInventory. Both replies belong to the *selling* flow: the
+            // first decides whether the offer dialog may open at all, the second reports the
+            // listing's outcome.
+            this._communication.addMessageEvent(new MarketplaceCanMakeOfferResultEvent(this.onMarketplaceCanMakeOfferResult)),
+            this._communication.addMessageEvent(new MarketplaceMakeOfferResultEvent(this.onMarketplaceMakeOfferResult))
         );
     }
+
+    // AS3: .../src/com/sulake/habbo/inventory/_SafeCls_1951.as::onMarketplaceCanMakeOfferResult()
+    private onMarketplaceCanMakeOfferResult = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as MarketplaceCanMakeOfferResultParser | null;
+
+        if(parser == null) return;
+
+        this._marketplaceModel?.proceedOfferMaking(parser.resultCode, parser.tokenCount);
+    };
+
+    // AS3: .../src/com/sulake/habbo/inventory/_SafeCls_1951.as::onMarketplaceMakeOfferResult()
+    private onMarketplaceMakeOfferResult = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as MarketplaceMakeOfferResultParser | null;
+
+        if(parser == null) return;
+
+        this._marketplaceModel?.endOfferMaking(parser.result);
+    };
 
     // AS3: HabboInventory.as::registerMessageEvents() — the pet-inventory branch. Without this the
     // PetInventory response (header 1200) reached the registry but nothing consumed it, so the pets

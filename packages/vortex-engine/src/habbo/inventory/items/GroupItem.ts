@@ -658,6 +658,55 @@ export class GroupItem implements IGetImageListener
     /**
      * Unlock an item by ID
      */
+    /**
+     * Reserves every sellable, not-already-locked item in the group and hands them back. The
+     * marketplace locks the whole stack up front so the user can pick a quantity without the grid
+     * shifting under them; `removeLocks()` gives back whatever was not sold.
+     */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::lockAllSellable()
+    lockAllSellable(): FurnitureItem[]
+    {
+        const locked: FurnitureItem[] = [];
+
+        for(const item of this._items.values())
+        {
+            if(item.sellable && !item.locked)
+            {
+                item.locked = true;
+                locked.push(item);
+            }
+        }
+
+        this.updateItemCountVisual();
+
+        return locked;
+    }
+
+    /**
+     * Note AS3 matches on the item's **id**, not its ref, and only repaints when something actually
+     * changed — a release for an empty set must not redraw the grid.
+     */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::removeLocks()
+    removeLocks(itemIds: Set<number>): void
+    {
+        let changed = false;
+
+        for(const item of this._items.values())
+        {
+            if(itemIds.has(item.id))
+            {
+                item.locked = false;
+                changed = true;
+            }
+        }
+
+        if(changed)
+        {
+            this.updateItemCountVisual();
+            this.updateRecycleStatusVisual();
+        }
+    }
+
     // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::removeLockFrom()
     removeLockFrom(itemId: number): boolean 
     {

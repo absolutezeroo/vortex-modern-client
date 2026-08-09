@@ -7,3 +7,6 @@ export * from './BuyMarketplaceOfferMessageComposer';
 export * from './RedeemMarketplaceOfferCreditsMessageComposer';
 export * from './CancelMarketplaceOfferMessageComposer';
 export * from './GetMarketplaceItemStatsComposer';
+export * from './GetMarketplaceCanMakeOfferMessageComposer';
+export * from './BuyMarketplaceTokensMessageComposer';
+export * from './MakeOfferMessageComposer';

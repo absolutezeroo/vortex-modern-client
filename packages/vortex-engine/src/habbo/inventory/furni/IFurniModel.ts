@@ -123,6 +123,19 @@ export interface IFurniModel
     removeLockFrom(itemId: number): void;
 
     /**
+	 * Reserve every sellable copy in a group and hand them back — the marketplace locks the whole
+	 * stack before opening its offer dialog.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::lockAllSellable()
+    lockAllSellable(groupItem: GroupItem): FurnitureItem[];
+
+    /**
+	 * Give back a set of reserved items, matched by item **id** (not ref).
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::removeLocksFor()
+    removeLocksFor(groupItem: GroupItem, itemIds: Set<number>): void;
+
+    /**
 	 * Remove all locks
 	 */
     // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::removeAllLocks()

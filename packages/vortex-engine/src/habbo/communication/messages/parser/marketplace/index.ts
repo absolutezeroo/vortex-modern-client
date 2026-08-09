@@ -7,3 +7,5 @@ export * from './MarketplaceCancelAllOffersResultEventParser';
 export * from './MarketplaceClearOwnHistoryResultEventParser';
 export * from './MarketplaceConfigurationEventParser';
 export * from './MarketplaceItemStatsEventParser';
+export * from './MarketplaceCanMakeOfferResultParser';
+export * from './MarketplaceMakeOfferResultParser';

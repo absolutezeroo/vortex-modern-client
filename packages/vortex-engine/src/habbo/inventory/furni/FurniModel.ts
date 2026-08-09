@@ -221,11 +221,18 @@ export class FurniModel implements IFurniModel
         this._view.updateActionView();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::requestSelectedFurniSelling()
-    // TODO(AS3): needs MarketplaceModel (not ported — see class doc comment).
+    /**
+     * The inventory's Sell button. Note the `getOneForSelling()` probe before handing over: a group
+     * whose every copy is already locked or unsellable must not open the offer dialog at all.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::requestSelectedFurniSelling()
     requestSelectedFurniSelling(): void
     {
-        // Not wired yet.
+        const groupItem = this.getSelectedItem();
+
+        if(groupItem === null || groupItem.getOneForSelling() === null) return;
+
+        this._habboInventory.marketplaceModel?.startOfferMaking(groupItem);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::showUseProductSelection()
@@ -817,6 +824,29 @@ export class FurniModel implements IFurniModel
         {
             groupItem.updateLocks(lockedRefIds);
         }
+
+        this._view.updateActionView();
+    }
+
+    /**
+     * Both of these are thin: the group does the locking, the model exists only to repaint the
+     * action panel afterwards — which is what greys the Sell/Trade buttons while a stack is
+     * reserved.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::lockAllSellable()
+    lockAllSellable(groupItem: GroupItem): FurnitureItem[]
+    {
+        const locked = groupItem.lockAllSellable();
+
+        this._view.updateActionView();
+
+        return locked;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::removeLocksFor()
+    removeLocksFor(groupItem: GroupItem, itemIds: Set<number>): void
+    {
+        groupItem.removeLocks(itemIds);
 
         this._view.updateActionView();
     }
