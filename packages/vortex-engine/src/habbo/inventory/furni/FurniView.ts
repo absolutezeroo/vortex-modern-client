@@ -538,8 +538,16 @@ export class FurniView
 
         if(!item || !this._actionButtonList) return;
 
-        // TODO(AS3): MarketplaceModel not ported yet — sell is always unavailable.
-        const canSell = false;
+        // AS3 gates Sell on five things at once: a selection, the marketplace being enabled by the
+        // server, the item itself being sellable, the account not being safety-locked, and a trade
+        // not being open — you cannot list an item you are in the middle of offering.
+        const marketplace = this._model.controller.marketplaceModel;
+        const canSell = hasSelection
+            && marketplace !== null
+            && marketplace.isEnabled
+            && item.sellable
+            && !(this._model.controller.sessionData?.isAccountSafetyLocked() ?? false)
+            && !isTradingOpen;
         const isPrivateRoomAction = this._model.isPrivateRoom && hasSelection &&
 			[13, 14, 15, 16, 20].includes(item.category);
 

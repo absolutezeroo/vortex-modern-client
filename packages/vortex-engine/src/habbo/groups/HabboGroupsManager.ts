@@ -681,8 +681,8 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
      * Closes the group panel and records the room id, which `onGuildCreated()` compares
      * to decide whether the player already stands in the new group's base room.
      *
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onRoomEnter()
-     * also closes DetailsWindowCtrl (120 AS3 lines), which is not ported.
+     * AS3 closes both windows here — entering a room means the group panel and the details window
+     * are describing somewhere you are no longer looking at.
      *
      * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onRoomEnter()
      */
@@ -694,6 +694,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         if(!parser) return;
 
         this._groupRoomInfoCtrl.close();
+        this._detailsWindowCtrl.close();
         this._roomId = parser.guestRoomId;
     }
 

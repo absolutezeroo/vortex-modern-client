@@ -175,6 +175,17 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     private _roomSessionManager: IRoomSessionManager | null = null;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
+
+    /**
+     * AS3 exposes this as `sessionData`; the models reach it for the safety-lock check that gates
+     * selling and trading.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get sessionData()
+    get sessionData(): ISessionDataManager | null
+    {
+        return this._sessionDataManager;
+    }
+
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_notifications
