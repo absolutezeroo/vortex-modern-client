@@ -12,7 +12,7 @@ import {AlertView} from './AlertView';
  */
 export class SimpleAlertView extends AlertView
 {
-    // AS3: sources/win63_version/habbo/navigator/SimpleAlertView.as::_text
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/SimpleAlertView.as::_text
     private _text: string;
 
     constructor(navigator: IHabboTransitionalNavigator, caption: string, text: string)

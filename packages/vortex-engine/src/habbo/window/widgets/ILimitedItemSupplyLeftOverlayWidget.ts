@@ -13,6 +13,6 @@ export interface ILimitedItemSupplyLeftOverlayWidget extends ILimitedItemOverlay
     /**
 	 * The number of items remaining in the supply.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/ILimitedItemSupplyLeftOverlayWidget.as::get supplyLeft()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ILimitedItemSupplyLeftOverlayWidget.as::get supplyLeft()
     supplyLeft: number;
 }

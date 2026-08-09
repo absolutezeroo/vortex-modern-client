@@ -13,7 +13,7 @@ export class SetType implements ISetType
 {
     private _isMandatory: Map<string, boolean[]>;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/SetType.as::SetType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/SetType.as::SetType()
     constructor(data: any)
     {
         const element = getXmlRoot(data);
@@ -37,7 +37,7 @@ export class SetType implements ISetType
 
     private _type: string;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/SetType.as::get type()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/SetType.as::get type()
     public get type(): string
     {
         return this._type;
@@ -45,7 +45,7 @@ export class SetType implements ISetType
 
     private _paletteID: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/SetType.as::get paletteID()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/SetType.as::get paletteID()
     public get paletteID(): number
     {
         return this._paletteID;
@@ -53,13 +53,13 @@ export class SetType implements ISetType
 
     private _partSets: Map<string, IFigurePartSet>;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/SetType.as::get partSets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/SetType.as::get partSets()
     public get partSets(): Map<string, IFigurePartSet>
     {
         return this._partSets;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/SetType.as::append()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/SetType.as::append()
     public append(data: any): void
     {
         const element = getXmlRoot(data);
@@ -87,7 +87,7 @@ export class SetType implements ISetType
         }
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/SetType.as::cleanUp()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/SetType.as::cleanUp()
     public cleanUp(data: any): void
     {
         const element = getXmlRoot(data);
@@ -115,7 +115,7 @@ export class SetType implements ISetType
         }
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/SetType.as::getDefaultPartSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/SetType.as::getDefaultPartSet()
     public getDefaultPartSet(gender: string): IFigurePartSet | null
     {
         const keys = Array.from(this._partSets.keys());
@@ -133,13 +133,13 @@ export class SetType implements ISetType
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/SetType.as::getPartSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/SetType.as::getPartSet()
     public getPartSet(id: number): IFigurePartSet | null
     {
         return this._partSets.get(String(id)) ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/SetType.as::isMandatory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/SetType.as::isMandatory()
     public isMandatory(gender: string, clubLevel: number): boolean
     {
         const mandatory = this._isMandatory.get(gender.toUpperCase());
@@ -149,7 +149,7 @@ export class SetType implements ISetType
         return mandatory[Math.min(clubLevel, 1)];
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/SetType.as::optionalFromClubLevel()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/SetType.as::optionalFromClubLevel()
     public optionalFromClubLevel(gender: string): number
     {
         const mandatory = this._isMandatory.get(gender.toUpperCase());
@@ -159,7 +159,7 @@ export class SetType implements ISetType
         return mandatory.indexOf(false);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/SetType.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/SetType.as::dispose()
     public dispose(): void
     {
         this._partSets.clear();

@@ -34,13 +34,13 @@ const log = Logger.getLogger('habbo.window.utils.SimpleAlertDialog');
  */
 export class SimpleAlertDialog implements IDisposable 
 {
-    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::WINDOW_MARGIN
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as::WINDOW_MARGIN
     private static readonly WINDOW_MARGIN: number = 10;
     // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_modalDialog
     private _modalDialog: IModalDialog | null = null;
     // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_linkUrl
     private _linkUrl: string = '';
-    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_window
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as::_window
     private _window: IWindowContainer | null = null;
     // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_listMain
     private _listMain: IWindow | null = null;
@@ -59,7 +59,7 @@ export class SimpleAlertDialog implements IDisposable
     // TS-only: callback refs stored explicitly (AS3 stored them per-instance differently)
     private _linkClickCallback: (() => void) | null = null;
     private _closeCallback: (() => void) | null = null;
-    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
 
     /**
@@ -76,7 +76,7 @@ export class SimpleAlertDialog implements IDisposable
      * @param linkClickCallback - Optional callback invoked when the link is clicked
      * @param closeCallback - Optional callback invoked when the dialog is closed
      */
-    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::SimpleAlertDialog()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as::SimpleAlertDialog()
     constructor(
         windowManager: IHabboWindowManager,
         title: string,
@@ -233,16 +233,16 @@ export class SimpleAlertDialog implements IDisposable
         this.resizeWindow();
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;
@@ -252,7 +252,7 @@ export class SimpleAlertDialog implements IDisposable
         this._disposed = true;
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::close()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as::close()
     private close(): void 
     {
         if(this._closeCallback) 
@@ -286,7 +286,7 @@ export class SimpleAlertDialog implements IDisposable
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::windowProcedure()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as::windowProcedure()
     private windowProcedure(event: WindowEvent, window: IWindow): void 
     {
         if(event.type === WindowMouseEvent.CLICK && window.name === 'close_button') 
@@ -295,7 +295,7 @@ export class SimpleAlertDialog implements IDisposable
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::onSimpleAlertClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as::onSimpleAlertClick()
     private onSimpleAlertClick(): void 
     {
         if(this._linkUrl && this._linkUrl.length > 0) 
@@ -323,7 +323,7 @@ export class SimpleAlertDialog implements IDisposable
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::onIllustrationResized()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as::onIllustrationResized()
     private onIllustrationResized(): void 
     {
         if(!this._illustrationWindow || !this._listTop || !this._listBottom || !this._window) return;
@@ -345,7 +345,7 @@ export class SimpleAlertDialog implements IDisposable
         this.resizeWindow();
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::resizeWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as::resizeWindow()
     private resizeWindow(): void 
     {
         if(!this._window || !this._listMain) return;

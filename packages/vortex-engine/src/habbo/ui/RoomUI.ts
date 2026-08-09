@@ -301,7 +301,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_navigator
     private _navigator: IHabboNavigator | null = null;
 
-    // AS3: sources/win63_version/habbo/ui/RoomUI.as::get navigator()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::get navigator()
     public get navigator(): IHabboNavigator | null 
     {
         return this._navigator;
@@ -868,7 +868,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * Triggers bottom bar resize.
      */
-    // AS3: sources/win63_version/habbo/ui/RoomUI.as::triggerbottomBarResize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::triggerbottomBarResize()
     public triggerbottomBarResize(): void 
     {
         this.bottomBarResizeHandler(new FriendBarResizeEvent());
@@ -960,7 +960,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         log.debug('RoomUI initialized');
     }
 
-    // AS3: sources/win63_version/habbo/ui/RoomUI.as::bottomBarResizeHandler()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::bottomBarResizeHandler()
     private bottomBarResizeHandler(event: FriendBarResizeEvent): void 
     {
         for(const desktop of this._desktops.values()) 

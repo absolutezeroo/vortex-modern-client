@@ -33,21 +33,21 @@ interface IRoomLayout
  *
  * @see sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as
  */
-// AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::RoomCreateViewCtrl
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::RoomCreateViewCtrl
 export class RoomCreateViewCtrl
 {
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::ROOM_LIMIT_HC
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::ROOM_LIMIT_HC
     private static readonly ROOM_LIMIT_HC: number = 75;
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::ROOM_LIMIT_NON_SUBSCRIBER
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::ROOM_LIMIT_NON_SUBSCRIBER
     private static readonly ROOM_LIMIT_NON_SUBSCRIBER: number = 50;
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_content
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_content
     private _content: IWindowContainer | null = null;
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_layouts
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_layouts
     private _layouts: IRoomLayout[] = [];
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_selectedLayout
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_selectedLayout
     private _selectedLayout: IRoomLayout | null = null;
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_roomNameManager
     private _roomNameManager: TextFieldManager | null = null;
@@ -64,14 +64,14 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_tradeModeDropMenu
     private _tradeModeDropMenu: IDropMenuWindow | null = null;
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::RoomCreateViewCtrl()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::RoomCreateViewCtrl()
     constructor(navigator: IHabboTransitionalNavigator)
     {
         this._navigator = navigator;
         this.initLayouts();
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::show()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::show()
     show(): void
     {
         this.prepare();
@@ -83,7 +83,7 @@ export class RoomCreateViewCtrl
         this._content.activate();
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::hide()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::hide()
     hide(): void
     {
         if(this._content)
@@ -92,7 +92,7 @@ export class RoomCreateViewCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refresh()
     refresh(): void
     {
         this._roomNameManager?.goBackToInitialState();
@@ -120,7 +120,7 @@ export class RoomCreateViewCtrl
         this.refreshSelection();
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::prepare()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::prepare()
     private prepare(): void
     {
         if(!this._navigator || this._content) return;
@@ -182,7 +182,7 @@ export class RoomCreateViewCtrl
         RoomCreateViewCtrl.addClickHandler(this._content.findChildByTag('close'), this.onCancelButtonClick);
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::prepareCategorySelection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::prepareCategorySelection()
     private prepareCategorySelection(): void
     {
         if(!this._navigator || !this._content) return;
@@ -213,7 +213,7 @@ export class RoomCreateViewCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::prepareTradeModeSelection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::prepareTradeModeSelection()
     private prepareTradeModeSelection(): void
     {
         if(!this._navigator || !this._content) return;
@@ -230,7 +230,7 @@ export class RoomCreateViewCtrl
         this._tradeModeDropMenu.selection = 0;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refreshMaxVisitors()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refreshMaxVisitors()
     private refreshMaxVisitors(maxVisitors: number): void
     {
         if(!this._content) return;
@@ -250,7 +250,7 @@ export class RoomCreateViewCtrl
         this._maxVisitorsDropMenu.selection = items.length > 0 ? 0 : -1;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refreshRoomThumbnails()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refreshRoomThumbnails()
     private refreshRoomThumbnails(): void
     {
         if(!this._navigator || !this._layoutItemList) return;
@@ -287,7 +287,7 @@ export class RoomCreateViewCtrl
         this._layoutItemList.arrangeListItems();
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refreshRoomThumbnails()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refreshRoomThumbnails()
     private addVipPromo(): void
     {
         if(!this._navigator || !this._layoutItemList) return;
@@ -304,7 +304,7 @@ export class RoomCreateViewCtrl
         this._layoutItemList.addListItem(promo);
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::getRow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::getRow()
     private getRow(): IWindowContainer
     {
         const row = this._navigator?.windowManager?.createWindow(
@@ -324,7 +324,7 @@ export class RoomCreateViewCtrl
         return row;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::addThumbnail()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::addThumbnail()
     private addThumbnail(row: IWindowContainer, layout: IRoomLayout, leftColumn: boolean): void
     {
         if(!this._navigator) return;
@@ -365,7 +365,7 @@ export class RoomCreateViewCtrl
         layout.view = thumbnail;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refreshSelection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refreshSelection()
     private refreshSelection(): void
     {
         for(const layout of this._layouts)
@@ -402,7 +402,7 @@ export class RoomCreateViewCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::onContPicClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::onContPicClick()
     private onContPicClick = (event: WindowEvent): void =>
     {
         const target = event.window as IWindowContainer | null;
@@ -412,7 +412,7 @@ export class RoomCreateViewCtrl
         this.onChooseLayout(target);
     };
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::onChooseLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::onChooseLayout()
     private onChooseLayout(view: IWindowContainer): void
     {
         const layout = this.findLayout(view.tags);
@@ -429,7 +429,7 @@ export class RoomCreateViewCtrl
         this.refreshSelection();
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::findLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::findLayout()
     private findLayout(tags: string[]): IRoomLayout | null
     {
         for(const tag of tags)
@@ -442,7 +442,7 @@ export class RoomCreateViewCtrl
         return this._layouts[0] ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::getLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::getLayout()
     private getLayout(name: string): IRoomLayout | null
     {
         for(const layout of this._layouts)
@@ -453,7 +453,7 @@ export class RoomCreateViewCtrl
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::isAllowed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::isAllowed()
     private isAllowed(layout: IRoomLayout, requireMembership: boolean): boolean
     {
         if(layout.requiredClubLevel === 0) return true;
@@ -467,7 +467,7 @@ export class RoomCreateViewCtrl
         return sessionData?.hasSecurity(4) ?? false;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::isMandatoryFieldsFilled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::isMandatoryFieldsFilled()
     private isMandatoryFieldsFilled(): boolean
     {
         if(!this._roomNameManager) return false;
@@ -477,7 +477,7 @@ export class RoomCreateViewCtrl
         );
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::onCreateButtonClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::onCreateButtonClick()
     private onCreateButtonClick = (_event: WindowEvent): void =>
     {
         if(!this._navigator || !this._selectedLayout) return;
@@ -514,13 +514,13 @@ export class RoomCreateViewCtrl
             : RoomCreateViewCtrl.ROOM_LIMIT_NON_SUBSCRIBER;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::onHcMoreClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::onHcMoreClick()
     private onHcMoreClick = (_event: WindowEvent): void =>
     {
         this._navigator?.openCatalogClubPage('RoomCreateViewCtrl');
     };
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::onCancelButtonClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::onCancelButtonClick()
     private onCancelButtonClick = (_event: WindowEvent): void =>
     {
         this.hide();
@@ -601,7 +601,7 @@ export class RoomCreateViewCtrl
         ];
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::dispose()
     dispose(): void
     {
         this._roomNameManager?.dispose();

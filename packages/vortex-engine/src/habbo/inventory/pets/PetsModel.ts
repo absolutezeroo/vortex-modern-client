@@ -155,7 +155,7 @@ export class PetsModel implements IPetsModel
     }
 
     // AS3: PetsModel.as::categorySwitch()
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::subCategorySwitch()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::subCategorySwitch()
     // Empty in AS3 too — the pets tab has no sub-page of its own. Required by IInventoryModel.
     subCategorySwitch(_category: string): void
     {

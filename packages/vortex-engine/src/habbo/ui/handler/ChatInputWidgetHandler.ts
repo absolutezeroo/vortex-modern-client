@@ -31,7 +31,7 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
     /** Whether the `:showstats` FPS overlay is currently toggled on. */
     private _statsShown: boolean = false;
 
-    // AS3: sources/win63_version/habbo/ui/handler/ChatInputWidgetHandler.as::get container() / set container()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::get container() / set container()
     public get container(): IRoomWidgetHandlerContainer | null
     {
         return this._container;
@@ -43,25 +43,25 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
         this._container = value;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/ChatInputWidgetHandler.as::set widget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::set widget()
     public set widget(value: RoomChatInputWidget | null)
     {
         this._widget = value;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/ChatInputWidgetHandler.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/ChatInputWidgetHandler.as::get type()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::get type()
     public get type(): string
     {
         return 'RWE_CHAT_INPUT_WIDGET';
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/ChatInputWidgetHandler.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::dispose()
     public dispose(): void
     {
         this._disposed = true;
@@ -69,13 +69,13 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
         this._widget = null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/ChatInputWidgetHandler.as::getWidgetMessages()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::getWidgetMessages()
     public getWidgetMessages(): string[]
     {
         return ['RWCTM_TYPING_STATUS', 'RWCM_MESSAGE_CHAT', 'RWCSAM_MESSAGE_SELECT_AVATAR'];
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/ChatInputWidgetHandler.as::processWidgetMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::processWidgetMessage()
     public processWidgetMessage(message: RoomWidgetMessage): RoomWidgetUpdateEvent | null
     {
         switch(message.type)
@@ -164,7 +164,7 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/ChatInputWidgetHandler.as::getProcessedEvents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::getProcessedEvents()
     public getProcessedEvents(): string[]
     {
         return ['RSCE_FLOOD_EVENT'];
@@ -175,7 +175,7 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
     {
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/ChatInputWidgetHandler.as::processEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::processEvent()
     public processEvent(event: unknown): void
     {
         if(!this._container?.desktopEvents) return;

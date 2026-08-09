@@ -97,7 +97,7 @@ export class RoomWidgetUserInfoUpdateEvent extends RoomWidgetUpdateEvent
     // AS3: .../src/com/sulake/habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent.as::get isBlocked()
     public isBlocked: boolean = false;
 
-    // AS3: sources/win63_version/habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent.as::RoomWidgetUserInfoUpdateEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent.as::RoomWidgetUserInfoUpdateEvent()
     constructor(type: string)
     {
         super(type);

@@ -12,7 +12,7 @@ import type {IRoomRendererBase} from './renderer/IRoomRendererBase';
 
 export interface IRoomInstance
 {
-    // AS3: sources/win63_version/room/RoomInstance.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomInstance.as::get id()
     readonly id: string;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomInstance.as::hasValueForName()
@@ -36,10 +36,10 @@ export interface IRoomInstance
     // AS3: .../src/com/sulake/room/IRoomInstance.as::update()
     update(): void;
 
-    // AS3: sources/win63_version/room/RoomInstance.as::addObjectUpdateCategory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomInstance.as::addObjectUpdateCategory()
     addObjectUpdateCategory(category: number): void;
 
-    // AS3: sources/win63_version/room/RoomInstance.as::removeObjectUpdateCategory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomInstance.as::removeObjectUpdateCategory()
     removeObjectUpdateCategory(category: number): void;
 
     // AS3: .../src/com/sulake/room/IRoomInstance.as::setRenderer()

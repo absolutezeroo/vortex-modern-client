@@ -48,12 +48,12 @@ const CONTENT_PROCESSING_TIME_LIMIT = 40;
 
 export class RoomManager extends Component implements IRoomManager, IRoomInstanceContainer
 {
-    // AS3: sources/win63_version/room/RoomManager.as::_rooms
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::_rooms
     private _rooms: Map<string, IRoomInstance> = new Map();
     private _contentLoader: IRoomContentLoader | null = null;
-    // AS3: sources/win63_version/room/RoomManager.as::_objectFactory
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::_objectFactory
     private _objectFactory: IRoomObjectFactory | null = null;
-    // AS3: sources/win63_version/room/RoomManager.as::_visualizationFactory
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::_visualizationFactory
     private _visualizationFactory: IRoomObjectVisualizationFactory | null = null;
     private _listener: IRoomManagerListener | null = null;
     private _updateCategories: Set<number> = new Set();
@@ -87,7 +87,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
         return this._limitContentProcessing;
     }
 
-    // AS3: sources/win63_version/room/RoomManager.as::set limitContentProcessing()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::set limitContentProcessing()
     set limitContentProcessing(value: boolean)
     {
         this._limitContentProcessing = value;
@@ -181,7 +181,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 	 *
 	 * @see AS3 RoomManager.initialize() lines 133-175
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::initialize()
     initialize(data: unknown, listener: IRoomManagerListener): boolean
     {
         // AS3: if state == 0 (LOADING), buffer for later
@@ -244,7 +244,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     /**
 	 * Set the content loader.
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::setContentLoader()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::setContentLoader()
     setContentLoader(loader: IRoomContentLoader): void
     {
         if(this._contentLoader)
@@ -258,7 +258,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     /**
 	 * Add an object update category.
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::addObjectUpdateCategory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::addObjectUpdateCategory()
     addObjectUpdateCategory(category: number): void
     {
         if(this._updateCategories.has(category))
@@ -278,7 +278,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     /**
 	 * Remove an object update category.
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::removeObjectUpdateCategory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::removeObjectUpdateCategory()
     removeObjectUpdateCategory(category: number): void
     {
         if(!this._updateCategories.delete(category))
@@ -296,7 +296,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     /**
 	 * Create a new room instance.
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::createRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::createRoom()
     createRoom(id: string, _data: unknown): IRoomInstance | null
     {
         if(this._state < RoomManagerState.INITIALIZED)
@@ -326,7 +326,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     /**
 	 * Get a room by ID.
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::getRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::getRoom()
     getRoom(id: string): IRoomInstance | null
     {
         return this._rooms.get(id) ?? null;
@@ -335,7 +335,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     /**
 	 * Get a room by index.
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::getRoomWithIndex()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::getRoomWithIndex()
     getRoomWithIndex(index: number): IRoomInstance | null
     {
         if(index < 0 || index >= this._rooms.size)
@@ -357,7 +357,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     /**
 	 * Get the number of rooms.
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::getRoomCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::getRoomCount()
     getRoomCount(): number
     {
         return this._rooms.size;
@@ -366,7 +366,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     /**
 	 * Dispose a room.
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::disposeRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::disposeRoom()
     disposeRoom(id: string): boolean
     {
         const room = this._rooms.get(id);
@@ -385,7 +385,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     /**
 	 * Check if content is available for a type.
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::isContentAvailable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::isContentAvailable()
     // "Available" means the type's graphic asset collection is loaded - NOT
     // hasInternalContent(), which answers a different question ("is this type handled internally",
     // true only for user/bot/... and never for furniture or pets).
@@ -434,7 +434,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 	 *
 	 * @see AS3 RoomManager.update() lines 593-608
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::update()
     update(_time: number): void
     {
         this.processLoadedContentTypes();
@@ -453,7 +453,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 	 *
 	 * @see sources/win63_version/room/RoomManager.as lines 278-363
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::createRoomObject()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::createRoomObject()
     createRoomObject(roomId: string, objectId: number, type: string, category: number): IRoomObject | null
     {
         const room = this.getRoom(roomId);
@@ -579,7 +579,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     /**
 	 * Create a room object manager.
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::createRoomObjectManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::createRoomObjectManager()
     createRoomObjectManager(): IRoomObjectManager
     {
         if(this._objectFactory)
@@ -629,7 +629,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 	 *
 	 * @see AS3 RoomManager.onContentLoaded() lines 425-444
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::onContentLoaded()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::onContentLoaded()
     private onContentLoaded(type: string | null): void
     {
         // AS3 ignores the event entirely once the content loader is gone.
@@ -662,7 +662,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 	 *
 	 * @see AS3 RoomManager.processLoadedContentTypes() lines 446-494
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::processLoadedContentTypes()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::processLoadedContentTypes()
     private processLoadedContentTypes(): void
     {
         if(this._skipContentProcessing)
@@ -741,7 +741,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 	 *
 	 * @see AS3 RoomManager.processInitialContentLoad() lines 386-423
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::processInitialContentLoad()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::processInitialContentLoad()
     private processInitialContentLoad(type: string): void
     {
         // AS3 RoomManager.as:368-404.
@@ -787,7 +787,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 	 *
 	 * @see AS3 RoomManager.updateObjectContents() lines 496-591
 	 */
-    // AS3: sources/win63_version/room/RoomManager.as::updateObjectContents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::updateObjectContents()
     private updateObjectContents(contentType: string): void
     {
         if(!this._contentLoader || !this._visualizationFactory || !this._objectFactory)

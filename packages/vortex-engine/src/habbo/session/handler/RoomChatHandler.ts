@@ -90,7 +90,7 @@ export class RoomChatHandler extends BaseHandler
     /**
 	 * Helper method to dispatch a chat event
 	 */
-    // AS3: sources/win63_version/habbo/session/handler/RoomChatHandler.as (all 3 onRoom* handlers)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as (all 3 onRoom* handlers)
     // `links` passes parser.links straight through, unmodified - AS3 never
     // flattens it, only display text plus the url/isTrusted it needs to open.
     private dispatchChatEvent(

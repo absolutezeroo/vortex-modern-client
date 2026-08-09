@@ -109,7 +109,7 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
 
     private _avatarRenderManager: IAvatarRenderManager | null = null;
 
-    // AS3: sources/win63_version/habbo/room/object/RoomObjectVisualizationFactory.as::assets
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectVisualizationFactory.as::assets
     private _assets: IAssetLibrary | null = null;
 
     /**
@@ -153,7 +153,7 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
     /**
 	 * @see sources/win63_version/habbo/room/object/RoomObjectVisualizationFactory.as::createGraphicAssetCollection()
 	 */
-    // AS3: sources/win63_version/habbo/room/object/RoomObjectVisualizationFactory.as::createGraphicAssetCollection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectVisualizationFactory.as::createGraphicAssetCollection()
     createGraphicAssetCollection(): IGraphicAssetCollection
     {
         return new GraphicAssetCollection();
@@ -274,7 +274,7 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
                 return new AvatarVisualization();
 
                 // Pets
-                // AS3: sources/win63_version/habbo/room/object/RoomObjectVisualizationFactory.as
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectVisualizationFactory.as
                 // `case "pet_animated": _loc3_ = AnimatedPetVisualization; break;` - this case was
                 // simply missing from the port, so every pet resolved to null here, which made
                 // RoomEngine.getGenericRoomObjectImage() bail on its `visualization === null` guard
@@ -304,7 +304,7 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
             return cached;
         }
 
-        // AS3: sources/win63_version/habbo/room/object/RoomObjectVisualizationFactory.as
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectVisualizationFactory.as
         // `case "pet_animated": _loc8_ = AnimatedPetVisualizationData; break;` - a pet gets its own
         // data class, in a branch separate from the user/bot/rentable_bot one. This port had
         // "pet_animated" folded into the avatar branch, handing every pet an AvatarVisualizationData.

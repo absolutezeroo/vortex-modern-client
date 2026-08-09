@@ -130,7 +130,7 @@ export class WindowToolTipAgent extends WindowMouseOperator implements IToolTipA
 	 *
 	 * @param window - The window whose caption may have changed
 	 */
-    // AS3: sources/win63_version/core/window/services/WindowToolTipAgent.as::updateCaption()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowToolTipAgent.as::updateCaption()
     public updateCaption(window: IWindow): void
     {
         if(window === null || window.disposed || this._tooltipWindow === null || this._tooltipWindow.disposed)
@@ -189,7 +189,7 @@ export class WindowToolTipAgent extends WindowMouseOperator implements IToolTipA
     /**
 	 * Create and display the tooltip window.
 	 */
-    // AS3: sources/win63_version/core/window/services/WindowToolTipAgent.as::showToolTip()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowToolTipAgent.as::showToolTip()
     private showToolTip(): void
     {
         if(this._timer !== null)
@@ -250,7 +250,7 @@ export class WindowToolTipAgent extends WindowMouseOperator implements IToolTipA
     /**
 	 * Destroy the tooltip window.
 	 */
-    // AS3: sources/win63_version/core/window/services/WindowToolTipAgent.as::hideToolTip()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowToolTipAgent.as::hideToolTip()
     private hideToolTip(): void
     {
         if(this._tooltipWindow !== null && !this._tooltipWindow.disposed)

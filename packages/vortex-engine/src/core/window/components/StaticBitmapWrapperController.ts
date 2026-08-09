@@ -38,20 +38,20 @@ export class StaticBitmapWrapperController extends BitmapDataController implemen
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
     }
 
-    // AS3: sources/win63_version/core/window/components/StaticBitmapWrapperController.as::_assetUri
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StaticBitmapWrapperController.as::_assetUri
     private _assetUri: string = '';
 
     /**
 	 * The asset URI for this static bitmap.
 	 * Setting this triggers an asset request via the ResourceManager.
 	 */
-    // AS3: sources/win63_version/core/window/components/StaticBitmapWrapperController.as::get assetUri()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StaticBitmapWrapperController.as::get assetUri()
     public get assetUri(): string
     {
         return this._assetUri;
     }
 
-    // AS3: sources/win63_version/core/window/components/StaticBitmapWrapperController.as::set assetUri()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StaticBitmapWrapperController.as::set assetUri()
     public set assetUri(value: string)
     {
         if(this._assetUri === value) return;
@@ -109,7 +109,7 @@ export class StaticBitmapWrapperController extends BitmapDataController implemen
     /**
 	 * Callback from ResourceManager when the asset is loaded.
 	 */
-    // AS3: sources/win63_version/core/window/components/StaticBitmapWrapperController.as::receiveAsset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StaticBitmapWrapperController.as::receiveAsset()
     public receiveAsset(bitmap: ImageBitmap, uri: string): void
     {
         if(this._disposed) return;

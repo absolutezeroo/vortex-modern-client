@@ -297,7 +297,7 @@ export class RoomUsersHandler extends BaseHandler
     }
 
     // AS3: .../src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onBlockUserUpdate()
-    // AS3: sources/win63_version/habbo/session/handler/RoomUsersHandler.as::onFavoriteMembershipUpdate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onFavoriteMembershipUpdate()
     private onFavoriteMembershipUpdate(event: IMessageEvent): void
     {
         const parser = event.parser as FavoriteMembershipUpdateMessageEventParser | null;
@@ -361,7 +361,7 @@ export class RoomUsersHandler extends BaseHandler
     /**
 	 * Handle doorbell ring
 	 */
-    // AS3: sources/win63_version/habbo/session/handler/RoomUsersHandler.as::onPetInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onPetInfo()
     // Note AS3 does not copy the parser's `name` onto PetInfo - PetInfo has no such member, in the
     // original as here. The infostand reads the pet's name off its room object instead.
     private onPetInfo(event: IMessageEvent): void

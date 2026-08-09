@@ -69,7 +69,7 @@ export class FormattedTextController extends TextController
         this.applyHtmlFormatting(this._caption);
     }
 
-    // AS3: sources/win63_version/core/window/components/FormattedTextController.as::set localization()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/FormattedTextController.as::set localization()
     public set localization(value: string)
     {
         if(value == null) return;

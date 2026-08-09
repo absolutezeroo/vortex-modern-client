@@ -28,7 +28,7 @@ export interface IRoomObjectVisualizationFactory
 	 *
 	 * @see sources/win63_version/room/object/IRoomObjectVisualizationFactory.as
 	 */
-    // AS3: sources/win63_version/room/object/IRoomObjectVisualizationFactory.as::createGraphicAssetCollection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/object/IRoomObjectVisualizationFactory.as::createGraphicAssetCollection()
     createGraphicAssetCollection(): IGraphicAssetCollection;
 
     /**

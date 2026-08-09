@@ -11,7 +11,7 @@ import {CatalogWidget} from './CatalogWidget';
  */
 export class SimplePriceCatalogWidget extends CatalogWidget
 {
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/SimplePriceCatalogWidget.as::_catalog
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SimplePriceCatalogWidget.as::_catalog
     private _catalog: HabboCatalog;
 
     private _priceBox: IWindow | null = null;
@@ -31,7 +31,7 @@ export class SimplePriceCatalogWidget extends CatalogWidget
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/SimplePriceCatalogWidget.as::onSelectProduct()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SimplePriceCatalogWidget.as::onSelectProduct()
     private onSelectProduct(event: SelectProductEvent): void
     {
         this._priceBox = this._catalog.utils.showPriceOnProduct(

@@ -25,13 +25,13 @@ import {UserInfoRegionUtil} from '@habbo/utils/UserInfoRegionUtil';
  */
 export class RoomInfoViewCtrl
 {
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomInfoViewCtrl.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomInfoViewCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
     private _guildInfoCtrl: GuildInfoCtrl;
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomInfoViewCtrl.as::_window
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomInfoViewCtrl.as::_window
     private _window: IWindowContainer | null = null;
     private _tagRenderer: TagRenderer;
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomInfoViewCtrl.as::_embedExpanded
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomInfoViewCtrl.as::_embedExpanded
     private _embedExpanded: boolean = false;
     private _visible: boolean = false;
 
@@ -42,7 +42,7 @@ export class RoomInfoViewCtrl
         this._tagRenderer = new TagRenderer(navigator);
     }
 
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomInfoViewCtrl.as::toggle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomInfoViewCtrl.as::toggle()
     toggle(): void
     {
         if(this._visible)
@@ -67,7 +67,7 @@ export class RoomInfoViewCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomInfoViewCtrl.as::close()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomInfoViewCtrl.as::close()
     close(): void
     {
         if(this._window !== null)
@@ -81,7 +81,7 @@ export class RoomInfoViewCtrl
         this._navigator?.events.emit('HABBO_ROOM_SETTINGS_TRACKING_EVENT_CLOSED');
     }
 
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomInfoViewCtrl.as::reload()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomInfoViewCtrl.as::reload()
     reload(): void
     {
         if(this._visible)
@@ -90,7 +90,7 @@ export class RoomInfoViewCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomInfoViewCtrl.as::refreshButtons()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomInfoViewCtrl.as::refreshButtons()
     refreshButtons(roomData: GuestRoomData): void
     {
         if(!this._navigator || this._navigator.data.enteredGuestRoom === null || this._window === null) return;
@@ -138,7 +138,7 @@ export class RoomInfoViewCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomInfoViewCtrl.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomInfoViewCtrl.as::dispose()
     dispose(): void
     {
         this._tagRenderer.dispose();
@@ -153,7 +153,7 @@ export class RoomInfoViewCtrl
         this._navigator = null;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomInfoViewCtrl.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomInfoViewCtrl.as::refresh()
     private refresh(): void
     {
         if(!this._navigator) return;

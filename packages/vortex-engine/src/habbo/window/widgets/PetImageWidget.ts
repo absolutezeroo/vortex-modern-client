@@ -19,17 +19,17 @@ import {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class PetImageWidget implements IWidget
 {
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::TYPE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::TYPE
     public static readonly TYPE: string = 'pet_image';
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::FIGURE_KEY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::FIGURE_KEY
     private static readonly FIGURE_KEY: string = 'pet_image:figure';
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::SCALE_KEY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::SCALE_KEY
     private static readonly SCALE_KEY: string = 'pet_image:scale';
     private static readonly DIRECTION_KEY: string = 'pet_image:direction';
     private static readonly ZOOM_X_KEY: string = 'pet_image:zoomX';
     private static readonly ZOOM_Y_KEY: string = 'pet_image:zoomY';
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::SHRINK_ON_OVERFLOW_KEY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::SHRINK_ON_OVERFLOW_KEY
     private static readonly SHRINK_ON_OVERFLOW_KEY: string = 'pet_image:shrink_on_overflow';
 
     private static readonly DIRECTIONS: string[] = [
@@ -37,17 +37,17 @@ export class PetImageWidget implements IWidget
         'southwest', 'west', 'northwest', 'north'
     ];
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::SCALES
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::SCALES
     private static readonly SCALES: number[] = [32, 64];
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::FIGURE_DEFAULT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::FIGURE_DEFAULT
     private static readonly FIGURE_DEFAULT: string = '1 0 ffffff';
 
     private _widgetWindow: IWidgetWindow | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::_bitmap
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::_bitmap
     private _bitmap: IWindow | null = null;
     private _region: IWindow | null = null;
 
@@ -72,10 +72,10 @@ export class PetImageWidget implements IWidget
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -83,13 +83,13 @@ export class PetImageWidget implements IWidget
 
     private _figure: string = PetImageWidget.FIGURE_DEFAULT;
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::get figure()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get figure()
     public get figure(): string
     {
         return this._figure;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::set figure()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::set figure()
     public set figure(value: string)
     {
         this._figure = PetImageWidget.cleanupAvatarString(value);
@@ -97,13 +97,13 @@ export class PetImageWidget implements IWidget
 
     private _scale: number = 64;
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::get scale()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get scale()
     public get scale(): number
     {
         return this._scale;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::set scale()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::set scale()
     public set scale(value: number)
     {
         this._scale = value;
@@ -111,13 +111,13 @@ export class PetImageWidget implements IWidget
 
     private _direction: number = 2;
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::get direction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get direction()
     public get direction(): number
     {
         return this._direction;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::set direction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::set direction()
     public set direction(value: number)
     {
         this._direction = value;
@@ -125,13 +125,13 @@ export class PetImageWidget implements IWidget
 
     private _zoomX: number = 1;
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::get zoomX()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get zoomX()
     public get zoomX(): number
     {
         return this._zoomX;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::set zoomX()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::set zoomX()
     public set zoomX(value: number)
     {
         this._zoomX = value;
@@ -139,28 +139,28 @@ export class PetImageWidget implements IWidget
 
     private _zoomY: number = 1;
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::get zoomY()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get zoomY()
     public get zoomY(): number
     {
         return this._zoomY;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::set zoomY()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::set zoomY()
     public set zoomY(value: number)
     {
         this._zoomY = value;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::_shrinkOnOverflow
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::_shrinkOnOverflow
     private _shrinkOnOverflow: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::get shrinkOnOverflow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get shrinkOnOverflow()
     public get shrinkOnOverflow(): boolean
     {
         return this._shrinkOnOverflow;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::set shrinkOnOverflow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::set shrinkOnOverflow()
     public set shrinkOnOverflow(value: boolean)
     {
         this._shrinkOnOverflow = value;
@@ -171,7 +171,7 @@ export class PetImageWidget implements IWidget
     /**
 	 * The width of the pet image (before zoom).
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::get petWidth()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get petWidth()
     public get petWidth(): number
     {
         return this._petWidth;
@@ -182,13 +182,13 @@ export class PetImageWidget implements IWidget
     /**
 	 * The height of the pet image (before zoom).
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::get petHeight()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get petHeight()
     public get petHeight(): number
     {
         return this._petHeight;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         if(this._disposed) return [];
@@ -203,7 +203,7 @@ export class PetImageWidget implements IWidget
         ];
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::set properties()
     public set properties(values: PropertyStruct[])
     {
         for(const prop of values)
@@ -235,7 +235,7 @@ export class PetImageWidget implements IWidget
     /**
 	 * Clean up a pet figure string, replacing NaN values.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::cleanupAvatarString()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::cleanupAvatarString()
     private static cleanupAvatarString(figure: string): string
     {
         if(!figure) return PetImageWidget.FIGURE_DEFAULT;
@@ -243,7 +243,7 @@ export class PetImageWidget implements IWidget
         return figure.replace(/NaN/g, '');
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;
@@ -282,7 +282,7 @@ export class PetImageWidget implements IWidget
 	 * Public: ProductIconWidget calls (petImageWidget.widget as PetImageWidget).refresh()
 	 * directly after changing blend, matching AS3's external call into this method.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/PetImageWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::refresh()
     public refresh(): void
     {
         // TODO: pet bitmap rendering (Flash BitmapData logic)

@@ -303,7 +303,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         return this._scrollBarRef;
     }
 
-    // AS3: sources/win63_version/core/window/components/ScrollableItemListWindow.as::get iterator()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemListWindow.as::get iterator()
     public override iterator(): IIterator | null 
     {
         if(this.isConstructionReady()) 
@@ -475,7 +475,7 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         }
     }
 
-    // AS3: sources/win63_version/core/window/components/ScrollableItemListWindow.as::isConstructionReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemListWindow.as::isConstructionReady()
     protected isConstructionReady(): boolean 
     {
         return this.itemList !== null && this.scrollBar !== null;

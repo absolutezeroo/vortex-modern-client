@@ -62,7 +62,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
     // Name DERIVED (`_SafeStr_10169`).
     private _cachedCanZoomOut: boolean = false;
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::RoomToolsToolbarCtrl()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::RoomToolsToolbarCtrl()
     constructor(widget: RoomToolsWidget, windowManager: IHabboWindowManager, assets: IAssetLibrary | null) 
     {
         super(widget, windowManager, assets);
@@ -80,7 +80,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         this.ensureUpdateRegistration();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::get right()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::get right()
     public get right(): number 
     {
         if(!this._window) return 0;
@@ -95,7 +95,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         return this._window.width - 5;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::dispose()
     // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::get disposed()
     public get disposed(): boolean
     {
@@ -124,7 +124,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         this._disposed = true;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::updateRoomHistoryButtons()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::updateRoomHistoryButtons()
     public updateRoomHistoryButtons(): void 
     {
         if(!this._window || !this._widget) return;
@@ -161,14 +161,14 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::disableRoomHistoryButtons()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::disableRoomHistoryButtons()
     public disableRoomHistoryButtons(): void 
     {
         this._window?.findChildByName('button_history_forward')?.disable();
         this._window?.findChildByName('button_history_back')?.disable();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::release()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::release()
     public release(): void 
     {
         if(this._history) 
@@ -177,25 +177,25 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::setChatHistoryButton()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::setChatHistoryButton()
     public setChatHistoryButton(visible: boolean): void 
     {
         this.setElementVisible('button_chat_history', visible);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::setCameraButton()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::setCameraButton()
     public setCameraButton(visible: boolean): void 
     {
         this.setElementVisible('button_camera', visible);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::setLikeButton()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::setLikeButton()
     public setLikeButton(visible: boolean): void 
     {
         this.setElementVisible('button_like', visible);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::setElementVisible()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::setElementVisible()
     public override setElementVisible(name: string, visible: boolean): void 
     {
         if(!this._window) return;
@@ -205,7 +205,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         this.updatePosition();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::updatePosition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::updatePosition()
     public updatePosition(): void 
     {
         if(!this._window) return;
@@ -266,7 +266,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::setCollapsed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::setCollapsed()
     public override setCollapsed(value: boolean): void 
     {
         if(this._collapsed === value || !this._window) return;
@@ -297,7 +297,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::toggleHistory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::toggleHistory()
     private toggleHistory(): void 
     {
         if(this._history) 
@@ -321,7 +321,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         this.updateVisuals();
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::updateVisuals()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::updateVisuals()
     private updateVisuals(): void 
     {
         const windowBg = this._window?.findChildByName('window_bg');
@@ -439,7 +439,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         return (roomEngine as unknown as Component | null) ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::onWindowEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::onWindowEvent()
     private onWindowEvent = (event: WindowEvent, target: IWindow): void => 
     {
         if(event.type === 'WE_PARENT_RESIZED' && this._window && this._window.parent && event.target === this._window.parent) 
@@ -519,7 +519,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::onWindowEvent() (button_share branch)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::onWindowEvent() (button_share branch)
     private onShareClick(): void 
     {
         if(!this._widget) return;
@@ -563,7 +563,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         });
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::getEmbedData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::getEmbedData()
     private getEmbedData(_key: string = 'navigator.embed.src', fallback: string = ''): string 
     {
         const navigatorRef = this.handler?.navigator;
@@ -594,7 +594,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         return localizations?.getLocalization(key, fallback) ?? fallback;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::getThumbnailUrl()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::getThumbnailUrl()
     private getThumbnailUrl(): string | null 
     {
         const guestRoom = this.handler?.navigator?.enteredGuestRoomData ?? null;

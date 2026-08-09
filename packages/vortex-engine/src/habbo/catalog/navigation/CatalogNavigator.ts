@@ -23,13 +23,13 @@ const log = Logger.getLogger('habbo.catalog.navigation.CatalogNavigator');
  */
 export class CatalogNavigator implements ICatalogNavigator
 {
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::DUMMY_PAGE_ID_FOR_OFFER_SEARCH
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::DUMMY_PAGE_ID_FOR_OFFER_SEARCH
     static readonly DUMMY_PAGE_ID_FOR_OFFER_SEARCH: number = -12345678;
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::_catalog
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::_catalog
     private _catalog: HabboCatalog | null;
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::_container
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::_container
     private _container: IWindowContainer | null;
 
     private _catalogType: string;
@@ -38,12 +38,12 @@ export class CatalogNavigator implements ICatalogNavigator
 
     private _list: IItemListWindow;
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::_index
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::_index
     private _index: ICatalogNode | null = null;
 
     private _currentNodes: ICatalogNode[] = [];
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::_offersToNodes
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::_offersToNodes
     private _offersToNodes: Map<number, ICatalogNode[]> | null = null;
 
     private _topItemTemplate: IWindow;
@@ -131,13 +131,13 @@ export class CatalogNavigator implements ICatalogNavigator
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::get initialized()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::get initialized()
     get initialized(): boolean
     {
         return this._index != null;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::dispose()
     dispose(): void
     {
         if(this._index != null)
@@ -152,7 +152,7 @@ export class CatalogNavigator implements ICatalogNavigator
         this._container = null;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::buildCatalogIndex()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::buildCatalogIndex()
     buildCatalogIndex(root: NodeData): void
     {
         this._index = null;
@@ -160,7 +160,7 @@ export class CatalogNavigator implements ICatalogNavigator
         this._index = this.buildIndexNode(root, 0, null);
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::showIndex()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::showIndex()
     showIndex(): void
     {
         if(this._index == null) return;
@@ -193,7 +193,7 @@ export class CatalogNavigator implements ICatalogNavigator
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::showNodeContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::showNodeContent()
     showNodeContent(node: ICatalogNode): void
     {
         if(this._index == null) return;
@@ -238,7 +238,7 @@ export class CatalogNavigator implements ICatalogNavigator
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::getPathToNodeWithLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::getPathToNodeWithLayout()
     // The decompiled source assigns/reads a literal `null` where the recursive result variable
     // belongs (`null.length`/`null.unshift`), which throws immediately if that branch is ever
     // taken. Reconstructed with the obvious intended local (the recursive call's own result).
@@ -270,7 +270,7 @@ export class CatalogNavigator implements ICatalogNavigator
         return [];
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::openCategoryForNode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::openCategoryForNode()
     private openCategoryForNode(node: ICatalogNode): ICatalogNode
     {
         let current = node.parent;
@@ -292,13 +292,13 @@ export class CatalogNavigator implements ICatalogNavigator
         return current!;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::get catalog()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::get catalog()
     get catalog(): IHabboCatalog
     {
         return this._catalog!;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::activateNode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::activateNode()
     activateNode(node: ICatalogNode): void
     {
         const wasCurrent = this._currentNodes.indexOf(node) >= 0;
@@ -371,7 +371,7 @@ export class CatalogNavigator implements ICatalogNavigator
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::openCatalogPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::openCatalogPage()
     private openCatalogPage(node: ICatalogNode): void
     {
         this._catalog!.loadCatalogPage(node.pageId, -1, this._catalogType);
@@ -381,7 +381,7 @@ export class CatalogNavigator implements ICatalogNavigator
         );
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::openPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::openPage()
     openPage(name: string): void
     {
         const node = this.getNodeByName(name);
@@ -402,7 +402,7 @@ export class CatalogNavigator implements ICatalogNavigator
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::openPageById()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::openPageById()
     openPageById(pageId: number, offerId: number): void
     {
         if(!this.initialized)
@@ -420,7 +420,7 @@ export class CatalogNavigator implements ICatalogNavigator
 
             if(nodes != null)
             {
-                // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::openPageById()
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::openPageById()
                 // Decompiled as `undefined[0]` - the obvious intended value is the just-computed node list.
                 node = nodes[0];
             }
@@ -437,7 +437,7 @@ export class CatalogNavigator implements ICatalogNavigator
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::openPageByOfferId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::openPageByOfferId()
     openPageByOfferId(offerId: number): void
     {
         if(!this.initialized)
@@ -458,7 +458,7 @@ export class CatalogNavigator implements ICatalogNavigator
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::deactivateCurrentNode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::deactivateCurrentNode()
     deactivateCurrentNode(): void
     {
         for(const node of this._currentNodes)
@@ -470,7 +470,7 @@ export class CatalogNavigator implements ICatalogNavigator
         this._currentNodes = [];
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::filter()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::filter()
     filter(query: string, extraTerms: string[]): void
     {
         const result: ICatalogNode[] = [];
@@ -489,7 +489,7 @@ export class CatalogNavigator implements ICatalogNavigator
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::openNavigatorAtNode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::openNavigatorAtNode()
     private openNavigatorAtNode(node: ICatalogNode): void
     {
         if(node == null) return;
@@ -518,7 +518,7 @@ export class CatalogNavigator implements ICatalogNavigator
         this.activateNode(node);
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::loadFrontPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::loadFrontPage()
     loadFrontPage(): void
     {
         if(this._index == null) return;
@@ -531,7 +531,7 @@ export class CatalogNavigator implements ICatalogNavigator
         this._catalog!.loadCatalogPage(node.pageId, -1, this._catalogType);
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::getFirstNavigable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::getFirstNavigable()
     private getFirstNavigable(node: ICatalogNode): ICatalogNode | null
     {
         if(node.visible && node !== this._index) return node;
@@ -546,7 +546,7 @@ export class CatalogNavigator implements ICatalogNavigator
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::buildIndexNode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::buildIndexNode()
     private buildIndexNode(data: NodeData, depth: number, parent: ICatalogNode | null): ICatalogNode
     {
         const node: ICatalogNode = !data.visible
@@ -577,7 +577,7 @@ export class CatalogNavigator implements ICatalogNavigator
         return node;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::getNodesByOfferId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::getNodesByOfferId()
     getNodesByOfferId(offerId: number, visibleOnly: boolean = false): ICatalogNode[] | null
     {
         if(this._offersToNodes == null) return null;
@@ -594,19 +594,19 @@ export class CatalogNavigator implements ICatalogNavigator
         return nodes;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::getNodeByName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::getNodeByName()
     getNodeByName(name: string): ICatalogNode | null
     {
         return this._index != null ? this.getFirstNodeByName(name, this._index) : null;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::getOptionalNodeByName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::getOptionalNodeByName()
     getOptionalNodeByName(name: string): ICatalogNode | null
     {
         return this._index ? this.getFirstNodeByName(name, this._index) : null;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::getNodeById()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::getNodeById()
     getNodeById(pageId: number, root: ICatalogNode | null = null): ICatalogNode | null
     {
         const searchRoot = root ?? this._index;
@@ -628,7 +628,7 @@ export class CatalogNavigator implements ICatalogNavigator
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::getFirstNodeByName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::getFirstNodeByName()
     private getFirstNodeByName(name: string, root: ICatalogNode): ICatalogNode | null
     {
         try
@@ -653,19 +653,19 @@ export class CatalogNavigator implements ICatalogNavigator
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::get listTemplate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::get listTemplate()
     get listTemplate(): IWindow
     {
         return this._listTemplate;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::get isDeepHierarchy()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::get isDeepHierarchy()
     get isDeepHierarchy(): boolean
     {
         return this._catalog!.getBoolean('catalog.deep.hierarchy');
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::getItemTemplate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::getItemTemplate()
     getItemTemplate(depth: number): IWindow
     {
         if(this.isDeepHierarchy)

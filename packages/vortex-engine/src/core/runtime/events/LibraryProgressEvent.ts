@@ -15,10 +15,10 @@ export class LibraryProgressEvent
         this._elapsedTime = elapsedTime;
     }
 
-    // AS3: sources/win63_version/core/runtime/events/LibraryProgressEvent.as::_fileName
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/events/LibraryProgressEvent.as::_fileName
     private _fileName: string;
 
-    // AS3: sources/win63_version/core/runtime/events/LibraryProgressEvent.as::get fileName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/events/LibraryProgressEvent.as::get fileName()
     get fileName(): string
     {
         return this._fileName;
@@ -38,10 +38,10 @@ export class LibraryProgressEvent
         return this._bytesTotal;
     }
 
-    // AS3: sources/win63_version/core/runtime/events/LibraryProgressEvent.as::_elapsedTime
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/events/LibraryProgressEvent.as::_elapsedTime
     private _elapsedTime: number;
 
-    // AS3: sources/win63_version/core/runtime/events/LibraryProgressEvent.as::get elapsedTime()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/events/LibraryProgressEvent.as::get elapsedTime()
     get elapsedTime(): number
     {
         return this._elapsedTime;

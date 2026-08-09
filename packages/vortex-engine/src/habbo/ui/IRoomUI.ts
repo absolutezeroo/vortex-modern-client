@@ -51,7 +51,7 @@ export interface IRoomUI
     /**
 	 * Triggers bottom bar resize.
 	 */
-    // AS3: sources/win63_version/habbo/ui/IRoomUI.as::triggerbottomBarResize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomUI.as::triggerbottomBarResize()
     triggerbottomBarResize(): void;
 
     /**

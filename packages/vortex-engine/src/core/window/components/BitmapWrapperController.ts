@@ -38,31 +38,31 @@ export class BitmapWrapperController extends BitmapDataController implements IBi
     /**
 	 * Whether this window owns the bitmap and should dispose it.
 	 */
-    // AS3: sources/win63_version/core/window/components/BitmapWrapperController.as::get disposesBitmap()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapWrapperController.as::get disposesBitmap()
     public get disposesBitmap(): boolean
     {
         return this._disposesBitmap;
     }
 
-    // AS3: sources/win63_version/core/window/components/BitmapWrapperController.as::set disposesBitmap()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapWrapperController.as::set disposesBitmap()
     public set disposesBitmap(value: boolean)
     {
         this._disposesBitmap = value;
     }
 
-    // AS3: sources/win63_version/core/window/components/BitmapWrapperController.as::_bitmapAssetName
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapWrapperController.as::_bitmapAssetName
     private _bitmapAssetName: string = '';
 
     /**
 	 * The asset name used to reference this bitmap.
 	 */
-    // AS3: sources/win63_version/core/window/components/BitmapWrapperController.as::get bitmapAssetName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapWrapperController.as::get bitmapAssetName()
     public get bitmapAssetName(): string
     {
         return this._bitmapAssetName;
     }
 
-    // AS3: sources/win63_version/core/window/components/BitmapWrapperController.as::set bitmapAssetName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapWrapperController.as::set bitmapAssetName()
     public set bitmapAssetName(value: string)
     {
         this._bitmapAssetName = value;
@@ -72,13 +72,13 @@ export class BitmapWrapperController extends BitmapDataController implements IBi
 	 * The programmatic bitmap for this window.
 	 * Disposes the old bitmap if `_disposesBitmap` is true.
 	 */
-    // AS3: sources/win63_version/core/window/components/BitmapWrapperController.as::get bitmap()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapWrapperController.as::get bitmap()
     public get bitmap(): ImageBitmap | null
     {
         return this._bitmapData;
     }
 
-    // AS3: sources/win63_version/core/window/components/BitmapWrapperController.as::set bitmap()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapWrapperController.as::set bitmap()
     public set bitmap(value: ImageBitmap | null)
     {
         if(this._disposesBitmap && this._bitmapData && this._bitmapData !== value)

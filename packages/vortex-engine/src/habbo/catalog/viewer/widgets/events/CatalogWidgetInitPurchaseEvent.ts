@@ -10,7 +10,7 @@ export class CatalogWidgetInitPurchaseEvent
 
     private _enableBuyAsGift: boolean;
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetInitPurchaseEvent.as::_userName
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetInitPurchaseEvent.as::_userName
     private _userName: string | null;
 
     constructor(enableBuyAsGift: boolean = true, userName: string | null = null)
@@ -24,13 +24,13 @@ export class CatalogWidgetInitPurchaseEvent
         return CatalogWidgetInitPurchaseEvent.INIT_PURCHASE;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetInitPurchaseEvent.as::get enableBuyAsGift()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetInitPurchaseEvent.as::get enableBuyAsGift()
     get enableBuyAsGift(): boolean
     {
         return this._enableBuyAsGift;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetInitPurchaseEvent.as::get userName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetInitPurchaseEvent.as::get userName()
     get userName(): string | null
     {
         return this._userName;

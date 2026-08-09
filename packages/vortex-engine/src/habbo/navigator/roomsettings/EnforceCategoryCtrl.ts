@@ -14,9 +14,9 @@ type IPopulatable = { populate(items: string[]): void; selection: number };
  */
 export class EnforceCategoryCtrl
 {
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/EnforceCategoryCtrl.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/EnforceCategoryCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/EnforceCategoryCtrl.as::_window
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/EnforceCategoryCtrl.as::_window
     private _window: IWindowContainer | null = null;
     private _categorySelection: number = 0;
     private _tradeModeSelection: number = 0;
@@ -27,7 +27,7 @@ export class EnforceCategoryCtrl
         this._navigator = navigator;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/EnforceCategoryCtrl.as::show()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/EnforceCategoryCtrl.as::show()
     show(_flatId: number): void
     {
         if(!this._navigator) return;
@@ -87,7 +87,7 @@ export class EnforceCategoryCtrl
         win.visible = true;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/EnforceCategoryCtrl.as::close()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/EnforceCategoryCtrl.as::close()
     close(): void
     {
         if(this._window !== null)

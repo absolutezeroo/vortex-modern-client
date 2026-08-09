@@ -16,15 +16,15 @@ const log = Logger.getLogger('habbo.toolbar.extensions.purse.PurseClubArea');
  */
 export class PurseClubArea extends CurrencyIndicatorBase
 {
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/PurseClubArea.as::BG_COLOR_LIGHT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/PurseClubArea.as::BG_COLOR_LIGHT
     private static readonly BG_COLOR_LIGHT: number = 0xFF70806D;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/PurseClubArea.as::BG_COLOR_DARK
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/PurseClubArea.as::BG_COLOR_DARK
     private static readonly BG_COLOR_DARK: number = 0xFF4D5F4E;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/PurseClubArea.as::ICON_STYLE_CLUB
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/PurseClubArea.as::ICON_STYLE_CLUB
     private static readonly ICON_STYLE_CLUB: number = 13;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/PurseClubArea.as::ICON_STYLE_VIP
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/PurseClubArea.as::ICON_STYLE_VIP
     private static readonly ICON_STYLE_VIP: number = 14;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/PurseClubArea.as::ICON_ANIMATION
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/PurseClubArea.as::ICON_ANIMATION
     private static readonly ICON_ANIMATION: string[] = [
         'toolbar_hc_icon_0',
         'toolbar_hc_icon_1',
@@ -34,7 +34,7 @@ export class PurseClubArea extends CurrencyIndicatorBase
     ];
 
     private _previousDays: number = -1;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/PurseClubArea.as::_toolbar
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/PurseClubArea.as::_toolbar
     private _toolbar: HabboToolbar | null;
     private _previousMinutes: number = 0;
     private _clubLevel: number = 0;
@@ -61,7 +61,7 @@ export class PurseClubArea extends CurrencyIndicatorBase
     get clubLevel(): number { return this._clubLevel; }
     get clubIconStyle(): number { return this._clubIconStyle; }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/PurseClubArea.as::onClubChanged()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/PurseClubArea.as::onClubChanged()
     public onClubChanged(): void
     {
         if(!this._toolbar?.inventory) return;
@@ -127,7 +127,7 @@ export class PurseClubArea extends CurrencyIndicatorBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/PurseClubArea.as::setClubIcon()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/PurseClubArea.as::setClubIcon()
     private setClubIcon(style: number): void
     {
         this._clubIconStyle = style;

@@ -7,7 +7,7 @@ import {getXmlAttribute, getXmlChildElements, getXmlRoot} from '../AvatarXmlUtil
  */
 export class ActivePartSet
 {
-    // AS3: sources/win63_version/habbo/avatar/structure/parts/ActivePartSet.as::ActivePartSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/parts/ActivePartSet.as::ActivePartSet()
     constructor(data: any)
     {
         const element = getXmlRoot(data);
@@ -40,7 +40,7 @@ export class ActivePartSet
 
     private _id: string;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/parts/ActivePartSet.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/parts/ActivePartSet.as::get id()
     public get id(): string
     {
         return this._id;
@@ -48,7 +48,7 @@ export class ActivePartSet
 
     private _parts: string[];
 
-    // AS3: sources/win63_version/habbo/avatar/structure/parts/ActivePartSet.as::get parts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/parts/ActivePartSet.as::get parts()
     public get parts(): string[]
     {
         return this._parts;

@@ -8,7 +8,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
  */
 export class Util
 {
-    // AS3: sources/win63_version/habbo/inventory/Util.as::disableButton()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/Util.as::disableButton()
     static disableButton(window: IWindow, disabled: boolean): void
     {
         if(disabled)
@@ -21,7 +21,7 @@ export class Util
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/Util.as::disableSection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/Util.as::disableSection()
     // AS3 excludes a specific button-like window type (class_1775, unresolved
     // in this port) from the recurse/blend branch entirely; this duck-types on
     // "is a container" instead, which is equivalent for every window kind this
@@ -66,7 +66,7 @@ export class Util
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/Util.as::moveAllChildrenToColumn()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/Util.as::moveAllChildrenToColumn()
     static moveAllChildrenToColumn(
         container: IWindowContainer,
         gap: number,
@@ -96,7 +96,7 @@ export class Util
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/Util.as::getLowestPoint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/Util.as::getLowestPoint()
     static getLowestPoint(container: IWindowContainer): number
     {
         let lowest = 0;

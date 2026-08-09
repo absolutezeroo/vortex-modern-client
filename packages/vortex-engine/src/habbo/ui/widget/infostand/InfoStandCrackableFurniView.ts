@@ -15,13 +15,13 @@ import type {InfoStandWidget} from './InfoStandWidget';
 
 export class InfoStandCrackableFurniView extends InfoStandFurniView
 {
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandCrackableFurniView.as::InfoStandCrackableFurniView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandCrackableFurniView.as::InfoStandCrackableFurniView()
     constructor(widget: InfoStandWidget, name: string, catalog: IHabboCatalog | null)
     {
         super(widget, name, catalog);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandCrackableFurniView.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandCrackableFurniView.as::update()
     public override update(event: RoomWidgetFurniInfoUpdateEvent): void
     {
         super.update(event);
@@ -38,7 +38,7 @@ export class InfoStandCrackableFurniView extends InfoStandFurniView
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandCrackableFurniView.as::setHitsAndTarget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandCrackableFurniView.as::setHitsAndTarget()
     private setHitsAndTarget(hits: number, target: number): void
     {
         const hitsRemaining = this._elementList?.getListItemByName('hits_remaining');
@@ -51,7 +51,7 @@ export class InfoStandCrackableFurniView extends InfoStandFurniView
         this.updateWindow();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandCrackableFurniView.as::createWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandCrackableFurniView.as::createWindow()
     protected override createWindow(name: string): void
     {
         const window = this._widget.windowManager.buildWidgetLayout('crackable_furni_view') as IItemListWindow | null;

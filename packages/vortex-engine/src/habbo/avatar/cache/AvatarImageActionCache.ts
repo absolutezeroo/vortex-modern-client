@@ -8,9 +8,9 @@ import type {AvatarImageDirectionCache} from './AvatarImageDirectionCache';
  */
 export class AvatarImageActionCache
 {
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageActionCache.as::_cache
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageActionCache.as::_cache
     private _cache: Map<string, AvatarImageDirectionCache>;
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageActionCache.as::_lastAccessTime
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageActionCache.as::_lastAccessTime
     private _lastAccessTime: number;
 
     constructor()
@@ -25,7 +25,7 @@ export class AvatarImageActionCache
 	 * @param direction - The avatar direction (0-7)
 	 * @returns The direction cache, or null if not found
 	 */
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageActionCache.as::getDirectionCache()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageActionCache.as::getDirectionCache()
     public getDirectionCache(direction: number): AvatarImageDirectionCache | null
     {
         return this._cache.get(direction.toString()) || null;
@@ -37,7 +37,7 @@ export class AvatarImageActionCache
 	 * @param direction - The avatar direction (0-7)
 	 * @param cache - The direction cache to store
 	 */
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageActionCache.as::updateDirectionCache()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageActionCache.as::updateDirectionCache()
     public updateDirectionCache(direction: number, cache: AvatarImageDirectionCache): void
     {
         this._cache.set(direction.toString(), cache);
@@ -48,7 +48,7 @@ export class AvatarImageActionCache
 	 *
 	 * @param time - The timestamp in milliseconds
 	 */
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageActionCache.as::setLastAccessTime()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageActionCache.as::setLastAccessTime()
     public setLastAccessTime(time: number): void
     {
         this._lastAccessTime = time;
@@ -59,7 +59,7 @@ export class AvatarImageActionCache
 	 *
 	 * @returns The timestamp in milliseconds
 	 */
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageActionCache.as::getLastAccessTime()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageActionCache.as::getLastAccessTime()
     public getLastAccessTime(): number
     {
         return this._lastAccessTime;
@@ -68,7 +68,7 @@ export class AvatarImageActionCache
     /**
 	 * Disposes all direction caches and clears the map.
 	 */
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageActionCache.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageActionCache.as::dispose()
     public dispose(): void
     {
         if(!this._cache) return;

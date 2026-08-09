@@ -80,28 +80,28 @@ export interface IHabboInventory
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get hasRoomSession()
     hasRoomSession: boolean;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get roomSession()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get roomSession()
     readonly roomSession: IRoomSession | null;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::windowManager
     readonly windowManager: IHabboWindowManager | null;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::catalog
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::catalog
     readonly catalog: IHabboCatalog | null;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::view
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::view
     readonly view: InventoryMainView;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get isVisible()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get isVisible()
     readonly isVisible: boolean;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get isMainViewActive()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get isMainViewActive()
     readonly isMainViewActive: boolean;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get mergeRentFurni()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get mergeRentFurni()
     readonly mergeRentFurni: boolean;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get web3tradeEnabled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get web3tradeEnabled()
     readonly web3tradeEnabled: boolean;
 
     // TS-only: exposed so InventoryMainView (a plain class, not a Component) can
@@ -125,25 +125,25 @@ export interface IHabboInventory
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getFurnitureData()
     getFurnitureData(classId: number, type: string): IFurnitureData | null;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::getSubCategoryViewId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getSubCategoryViewId()
     getSubCategoryViewId(): string | null;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::closeView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::closeView()
     closeView(): void;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::showView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::showView()
     showView(): void;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::preparingInventoryView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::preparingInventoryView()
     preparingInventoryView(): void;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::closingInventoryView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::closingInventoryView()
     closingInventoryView(): void;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::inventoryViewOpened()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::inventoryViewOpened()
     inventoryViewOpened(category: string): void;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::toggleInventoryPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::toggleInventoryPage()
     toggleInventoryPage(category: string, itemId?: string | null, forceSwitch?: boolean): void;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::getFloorItemById()
@@ -155,34 +155,34 @@ export interface IHabboInventory
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::requestSelectedFurniToMover()
     requestSelectedFurniToMover(item: FurnitureItem): boolean;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::toggleInventorySubPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::toggleInventorySubPage()
     toggleInventorySubPage(category: string): void;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::updateSubView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::updateSubView()
     updateSubView(): void;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::updateUnseenItemCounts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::updateUnseenItemCounts()
     updateUnseenItemCounts(): void;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::getCategoryWindowContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getCategoryWindowContainer()
     getCategoryWindowContainer(category: string): IWindowContainer | null;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::getCategorySubWindowContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getCategorySubWindowContainer()
     getCategorySubWindowContainer(category: string): IWindowContainer | null;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::updateView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::updateView()
     updateView(category: string): void;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::isInventoryCategoryInit()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::isInventoryCategoryInit()
     isInventoryCategoryInit(category: string): boolean;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::setInventoryCategoryInit()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::setInventoryCategoryInit()
     setInventoryCategoryInit(category: string, init?: boolean): boolean;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::checkCategoryInitilization()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::checkCategoryInitilization()
     checkCategoryInitilization(category: string): boolean;
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::requestInventoryCategoryInit()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::requestInventoryCategoryInit()
     requestInventoryCategoryInit(category: string): void;
 
     /**

@@ -21,22 +21,22 @@ import {ProgressIndicatorStyle} from '../enum/ProgressIndicatorStyle';
  */
 export class ProgressIndicatorWidget implements IProgressIndicatorWidget
 {
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::TYPE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::TYPE
     public static readonly TYPE: string = 'progress_indicator';
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::STYLE_KEY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::STYLE_KEY
     private static readonly STYLE_KEY: string = 'progress_indicator:style';
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::SIZE_KEY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::SIZE_KEY
     private static readonly SIZE_KEY: string = 'progress_indicator:size';
     private static readonly POSITION_KEY: string = 'progress_indicator:position';
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::MODE_KEY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::MODE_KEY
     private static readonly MODE_KEY: string = 'progress_indicator:mode';
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::MAXIMUM_SIZE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::MAXIMUM_SIZE
     private static readonly MAXIMUM_SIZE: number = 1000;
 
     private _widgetWindow: IWidgetWindow | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IItemListWindow | null = null;
 
@@ -57,25 +57,25 @@ export class ProgressIndicatorWidget implements IProgressIndicatorWidget
         this._widgetWindow.rootWindow = this._root;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::_style
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::_style
     private _style: string = ProgressIndicatorStyle.FLAT;
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::get style()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::get style()
     public get style(): string
     {
         return this._style;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::set style()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::set style()
     public set style(value: string)
     {
         this._style = value;
@@ -84,13 +84,13 @@ export class ProgressIndicatorWidget implements IProgressIndicatorWidget
 
     private _size: number = 1;
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::get size()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::get size()
     public get size(): number
     {
         return this._root ? this._root.numListItems : this._size;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::set size()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::set size()
     public set size(value: number)
     {
         const newSize = Math.min(Math.max(Math.floor(value), 1), ProgressIndicatorWidget.MAXIMUM_SIZE);
@@ -124,13 +124,13 @@ export class ProgressIndicatorWidget implements IProgressIndicatorWidget
 
     private _position: number = 0;
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::get position()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::get position()
     public get position(): number
     {
         return this._position;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::set position()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::set position()
     public set position(value: number)
     {
         this._position = value;
@@ -139,20 +139,20 @@ export class ProgressIndicatorWidget implements IProgressIndicatorWidget
 
     private _mode: string = ProgressIndicatorMode.POSITION;
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::get mode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::get mode()
     public get mode(): string
     {
         return this._mode;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::set mode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::set mode()
     public set mode(value: string)
     {
         this._mode = value;
         this.refresh();
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         if(this._disposed) return [];
@@ -165,7 +165,7 @@ export class ProgressIndicatorWidget implements IProgressIndicatorWidget
         ];
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::set properties()
     public set properties(values: PropertyStruct[])
     {
         for(const prop of values)
@@ -215,7 +215,7 @@ export class ProgressIndicatorWidget implements IProgressIndicatorWidget
         return 'progress_disk_' + this._style + (active ? '_on' : '_off');
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::refresh()
     private refresh(): void
     {
         if(!this._root) return;
@@ -252,7 +252,7 @@ export class ProgressIndicatorWidget implements IProgressIndicatorWidget
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/ProgressIndicatorWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProgressIndicatorWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

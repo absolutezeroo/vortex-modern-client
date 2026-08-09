@@ -48,7 +48,7 @@ import {InfoStandPetData} from './InfoStandPetData';
 import {InfoStandRentableBotData} from './InfoStandRentableBotData';
 import type {RoomWidgetRentableBotInfoUpdateEvent} from '../events/RoomWidgetRentableBotInfoUpdateEvent';
 
-// AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::USER_VIEW / const_529 / PET_VIEW / ...
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::USER_VIEW / const_529 / PET_VIEW / ...
 const VIEW_NAME =
     {
         USER: 'infostand_user_view',
@@ -87,7 +87,7 @@ export class InfoStandWidget extends RoomWidgetBase
     // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::_config
     private readonly _config: IHabboConfigurationManager | null;
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::InfoStandWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::InfoStandWidget()
     constructor(
         handler: IRoomWidgetHandler,
         windowManager: IHabboWindowManager,
@@ -117,31 +117,31 @@ export class InfoStandWidget extends RoomWidgetBase
         this.handler.widget = this;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::get handler()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::get handler()
     public get handler(): InfoStandWidgetHandler
     {
         return this._handler as InfoStandWidgetHandler;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::get furniView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::get furniView()
     public get furniView(): InfoStandFurniView
     {
         return this._furniView;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::get mainWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::get mainWindow()
     public override get mainWindow(): IWindow | null
     {
         return this.mainContainer;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::get config()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::get config()
     public get config(): IHabboConfigurationManager | null
     {
         return this._config;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::get mainContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::get mainContainer()
     public get mainContainer(): IWindowContainer
     {
         if(!this._mainContainer)
@@ -157,7 +157,7 @@ export class InfoStandWidget extends RoomWidgetBase
         return this._mainContainer;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::favouriteGroupUpdated()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::favouriteGroupUpdated()
     public favouriteGroupUpdated(userRoomId: number, groupId: number, _webId: number, groupName: string): void
     {
         if(this._userData.userRoomId !== userRoomId) return;
@@ -177,7 +177,7 @@ export class InfoStandWidget extends RoomWidgetBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::getXmlWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::getXmlWindow()
     public getXmlWindow(name: string): IWindow | null
     {
         const window = this.windowManager.buildWidgetLayout(name);
@@ -185,7 +185,7 @@ export class InfoStandWidget extends RoomWidgetBase
         return window;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::setRelationshipStatus()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::setRelationshipStatus()
     public setRelationshipStatus(userId: number, statuses: unknown): void
     {
         if(this._userData.userId === userId)
@@ -194,7 +194,7 @@ export class InfoStandWidget extends RoomWidgetBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::dispose()
     public override dispose(): void
     {
         this._userView.dispose();
@@ -208,7 +208,7 @@ export class InfoStandWidget extends RoomWidgetBase
         super.dispose();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::registerUpdateEvents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::registerUpdateEvents()
     public override registerUpdateEvents(dispatcher: EventEmitter): void
     {
         if(!dispatcher) return;
@@ -234,7 +234,7 @@ export class InfoStandWidget extends RoomWidgetBase
         super.registerUpdateEvents(dispatcher);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::unregisterUpdateEvents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::unregisterUpdateEvents()
     public override unregisterUpdateEvents(dispatcher: EventEmitter): void
     {
         if(!dispatcher) return;
@@ -310,7 +310,7 @@ export class InfoStandWidget extends RoomWidgetBase
         this.selectView(VIEW_NAME.BOT);
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onRentableBotInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onRentableBotInfo()
     private onRentableBotInfo = (event: RoomWidgetRentableBotInfoUpdateEvent): void =>
     {
         this._rentableBotData.setData(event);
@@ -318,7 +318,7 @@ export class InfoStandWidget extends RoomWidgetBase
         this.selectView(VIEW_NAME.RENTABLE_BOT);
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onFurniInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onFurniInfo()
     private onFurniInfo = (event: RoomWidgetFurniInfoUpdateEvent): void =>
     {
         this._furniData.setData(event);
@@ -393,19 +393,19 @@ export class InfoStandWidget extends RoomWidgetBase
         this._petView.updateEnabledTrainingCommands(event.id, new CommandConfiguration(allCommands, enabledCommands));
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onOpenPetTraining()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onOpenPetTraining()
     private onOpenPetTraining = (_event: unknown): void =>
     {
         this._petView.openTrainView();
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onClosePetTraining()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onClosePetTraining()
     private onClosePetTraining = (_event: unknown): void =>
     {
         this._petView.closeTrainView();
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::updateUserData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::updateUserData()
     // TODO(AS3): AS3 also sets userData.badgesRank = badgesRank unconditionally and
     // this._userView.badgesRank = badgesRank in the non-bot branch - InfoStandUserData/
     // InfoStandUserView have no badgesRank field yet (same badge glow/preserve-tracking
@@ -431,7 +431,7 @@ export class InfoStandWidget extends RoomWidgetBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::refreshBadges()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::refreshBadges()
     public refreshBadges(userId: number, badges: string[]): void
     {
         if(userId !== this._userData.userId) return;
@@ -453,7 +453,7 @@ export class InfoStandWidget extends RoomWidgetBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::refreshBadge()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::refreshBadge()
     public refreshBadge(badgeId: string): void
     {
         const index = this._userData.badges.indexOf(badgeId);
@@ -478,14 +478,14 @@ export class InfoStandWidget extends RoomWidgetBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onRoomObjectPlaced()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onRoomObjectPlaced()
     // TODO(AS3): the Builder's Club "place from infostand" flow (BuildersClubPlaceRoomItemMessageComposer
     // / BuildersClubPlaceWallItemMessageComposer) isn't ported yet — out of scope for the furni-only port.
     private onRoomObjectPlaced = (_event: unknown): void =>
     {
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::requestItemToMover()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::requestItemToMover()
     public requestItemToMover(): void
     {
         this.handler.container?.roomEngine?.initializeRoomObjectInsert(
@@ -494,7 +494,7 @@ export class InfoStandWidget extends RoomWidgetBase
         );
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onRoomObjectSelected()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onRoomObjectSelected()
     private onRoomObjectSelected = (event: RoomWidgetRoomObjectUpdateEvent): void =>
     {
         this.messageListener?.processWidgetMessage(
@@ -502,7 +502,7 @@ export class InfoStandWidget extends RoomWidgetBase
         );
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onRoomObjectRemoved()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onRoomObjectRemoved()
     private onRoomObjectRemoved = (event: RoomWidgetRoomObjectUpdateEvent): void =>
     {
         let shouldClose = false;
@@ -545,25 +545,25 @@ export class InfoStandWidget extends RoomWidgetBase
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onSongUpdate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onSongUpdate()
     // TODO(AS3): param is RoomWidgetSongUpdateEvent — jukebox/song-disk views are stubs.
     private onSongUpdate = (_event: unknown): void =>
     {
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::close()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::close()
     public close(): void
     {
         this.hideChildren();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onClose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onClose()
     private onClose = (_event: unknown): void =>
     {
         this.close();
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::hideChildren()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::hideChildren()
     private hideChildren(): void
     {
         if(!this._mainContainer) return;
@@ -576,7 +576,7 @@ export class InfoStandWidget extends RoomWidgetBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::isFurniViewVisible()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::isFurniViewVisible()
     public isFurniViewVisible(): boolean
     {
         const child = this._mainContainer?.getChildByName(VIEW_NAME.FURNI);
@@ -584,7 +584,7 @@ export class InfoStandWidget extends RoomWidgetBase
         return child?.visible ?? false;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::selectView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::selectView()
     private selectView(name: string): void
     {
         this.hideChildren();
@@ -599,7 +599,7 @@ export class InfoStandWidget extends RoomWidgetBase
         this.mainContainer.height = child.height;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::refreshContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::refreshContainer()
     public refreshContainer(): void
     {
         for(let i = 0; i < this.mainContainer.numChildren; i++)
@@ -614,7 +614,7 @@ export class InfoStandWidget extends RoomWidgetBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::release()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::release()
     public override release(): void
     {
         this.close();

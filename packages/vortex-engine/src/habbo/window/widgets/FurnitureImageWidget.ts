@@ -18,11 +18,11 @@ import {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class FurnitureImageWidget implements IWidget
 {
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::TYPE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::TYPE
     public static readonly TYPE: string = 'furniture_image';
 
     private static readonly FURNITURE_TYPE_KEY: string = 'furniture_image:furnitureType';
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::SCALE_KEY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::SCALE_KEY
     private static readonly SCALE_KEY: string = 'furniture_image:scale';
     private static readonly DIRECTION_KEY: string = 'furniture_image:direction';
 
@@ -31,19 +31,19 @@ export class FurnitureImageWidget implements IWidget
         'southwest', 'west', 'northwest', 'north'
     ];
 
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::SCALES
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::SCALES
     private static readonly SCALES: number[] = [32, 64];
 
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::ITEM_TYPE_FLOOR
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::ITEM_TYPE_FLOOR
     private static readonly ITEM_TYPE_FLOOR: number = 0;
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::ITEM_TYPE_WALL
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::ITEM_TYPE_WALL
     private static readonly ITEM_TYPE_WALL: number = 1;
 
     private _widgetWindow: IWidgetWindow | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::_bitmap
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::_bitmap
     private _bitmap: IWindow | null = null;
     private _region: IWindow | null = null;
     private _onClickBound: WindowEventListener;
@@ -75,10 +75,10 @@ export class FurnitureImageWidget implements IWidget
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -86,13 +86,13 @@ export class FurnitureImageWidget implements IWidget
 
     private _furnitureType: string = 'table_plasto_square';
 
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::get furnitureType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::get furnitureType()
     public get furnitureType(): string
     {
         return this._furnitureType;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::set furnitureType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::set furnitureType()
     public set furnitureType(value: string)
     {
         this._furnitureType = value;
@@ -100,13 +100,13 @@ export class FurnitureImageWidget implements IWidget
 
     private _scale: number = 64;
 
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::get scale()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::get scale()
     public get scale(): number
     {
         return this._scale;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::set scale()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::set scale()
     public set scale(value: number)
     {
         this._scale = value;
@@ -114,13 +114,13 @@ export class FurnitureImageWidget implements IWidget
 
     private _direction: number = 2;
 
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::get direction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::get direction()
     public get direction(): number
     {
         return this._direction;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::set direction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::set direction()
     public set direction(value: number)
     {
         this._direction = value;
@@ -141,7 +141,7 @@ export class FurnitureImageWidget implements IWidget
         this._itemType = value;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         if(this._disposed) return [];
@@ -153,7 +153,7 @@ export class FurnitureImageWidget implements IWidget
         ];
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::set properties()
     public set properties(values: PropertyStruct[])
     {
         for(const prop of values)
@@ -173,7 +173,7 @@ export class FurnitureImageWidget implements IWidget
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;
@@ -210,7 +210,7 @@ export class FurnitureImageWidget implements IWidget
 	 * draws to the bitmap wrapper. Stubbed for now — the UI layer handles
 	 * furniture rendering.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::refresh()
     private refresh(): void
     {
         // TODO: furniture bitmap rendering (Flash BitmapData logic)
@@ -221,7 +221,7 @@ export class FurnitureImageWidget implements IWidget
 	 *
 	 * In AS3, this method is empty (no-op).
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/FurnitureImageWidget.as::onClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/FurnitureImageWidget.as::onClick()
     private onClick(_event: WindowMouseEvent): void
     {
         // AS3: empty onClick handler

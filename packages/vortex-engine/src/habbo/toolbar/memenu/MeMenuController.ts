@@ -19,12 +19,12 @@ const log = Logger.getLogger('habbo.toolbar.memenu.MeMenuController');
  */
 export class MeMenuController
 {
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuController.as::USE_GUIDE_TOOL
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::USE_GUIDE_TOOL
     public static readonly USE_GUIDE_TOOL: string = 'USE_GUIDE_TOOL';
     private _toolbarView: ToolbarView | null;
     private _iconLoader: MeMenuIconLoader | null;
     private _settingsView: MeMenuSettingsMenuView | null = null;
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuController.as::_unseenItemCounters
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::_unseenItemCounters
     private _unseenItemCounters: Map<string, number> = new Map();
 
     constructor(toolbar: HabboToolbar, toolbarView: ToolbarView)
@@ -41,13 +41,13 @@ export class MeMenuController
         log.debug('MeMenuController constructed');
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuController.as::_toolbar
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::_toolbar
     private _toolbar: HabboToolbar | null;
 
     /**
 	 * The toolbar reference
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuController.as::get toolbar()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::get toolbar()
     get toolbar(): HabboToolbar | null
     {
         return this._toolbar;
@@ -68,7 +68,7 @@ export class MeMenuController
     /**
 	 * Set whether the new UI is enabled (disables old me menu click handling)
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuController.as::set newUiEnabled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::set newUiEnabled()
     set newUiEnabled(value: boolean)
     {
         this._newUiEnabled = value;
@@ -77,7 +77,7 @@ export class MeMenuController
     /**
 	 * Whether the me menu is disposed
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuController.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::get disposed()
     get disposed(): boolean
     {
         return this._toolbar == null;
@@ -86,7 +86,7 @@ export class MeMenuController
     /**
 	 * Set the achievement unseen count
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuController.as::set achievementCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::set achievementCount()
     set achievementCount(value: number)
     {
         this.setUnseenItemCount('achievements', value);
@@ -95,7 +95,7 @@ export class MeMenuController
     /**
 	 * Set the minimail unseen count
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuController.as::set minimailCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::set minimailCount()
     set minimailCount(value: number)
     {
         this.setUnseenItemCount('minimail', value);
@@ -104,7 +104,7 @@ export class MeMenuController
     /**
 	 * Toggle the visibility of the me menu
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuController.as::toggleVisibility()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::toggleVisibility()
     public toggleVisibility(): void
     {
         if(this._settingsView)
@@ -140,7 +140,7 @@ export class MeMenuController
     /**
 	 * Reposition the me menu relative to the toolbar
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuController.as::reposition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::reposition()
     public reposition(): void
     {
         // In AS3: window.x = toolbarView.window.width + 10
@@ -194,7 +194,7 @@ export class MeMenuController
 	 * @param category The category name
 	 * @param count The count value
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuController.as::setUnseenItemCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::setUnseenItemCount()
     public setUnseenItemCount(category: string, count: number): void
     {
         this._unseenItemCounters.set(category, count);
@@ -214,7 +214,7 @@ export class MeMenuController
     /**
 	 * Dispose of this controller
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuController.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::dispose()
     public dispose(): void
     {
         if(this.disposed) return;
@@ -244,7 +244,7 @@ export class MeMenuController
         this._toolbar = null;
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuController.as::onToolbarClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::onToolbarClick()
     private onToolbarClick(event: HabboToolbarEvent): void
     {
         if(this._newUiEnabled) return;

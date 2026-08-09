@@ -10,7 +10,7 @@ import {getXmlAttribute, getXmlChildElements, getXmlRoot} from '../AvatarXmlUtil
  */
 export class Palette implements IPalette
 {
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::Palette()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/Palette.as::Palette()
     constructor(data: any)
     {
         const element = getXmlRoot(data);
@@ -22,22 +22,22 @@ export class Palette implements IPalette
 
     private _id: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/Palette.as::get id()
     public get id(): number
     {
         return this._id;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::_colors
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/Palette.as::_colors
     private _colors: Map<number, IPartColor>;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::get colors()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/Palette.as::get colors()
     public get colors(): Map<number, IPartColor>
     {
         return this._colors;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::append()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/Palette.as::append()
     public append(data: any): void
     {
         const element = getXmlRoot(data);
@@ -66,7 +66,7 @@ export class Palette implements IPalette
         }
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::getColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/Palette.as::getColor()
     public getColor(colorId: number): IPartColor | null
     {
         return this._colors.get(colorId) ?? null;

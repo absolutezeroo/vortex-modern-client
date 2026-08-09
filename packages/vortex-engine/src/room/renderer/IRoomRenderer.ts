@@ -14,12 +14,12 @@ export interface IRoomRenderer extends IRoomRendererBase
 {
     roomObjectVariableAccurateZ: string | null;
 
-    // AS3: sources/win63_version/room/renderer/IRoomRenderer.as::createCanvas()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/IRoomRenderer.as::createCanvas()
     createCanvas(id: number, width: number, height: number, scale: number): IRoomRenderingCanvas;
 
-    // AS3: sources/win63_version/room/renderer/IRoomRenderer.as::getCanvas()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/IRoomRenderer.as::getCanvas()
     getCanvas(id: number): IRoomRenderingCanvas | null;
 
-    // AS3: sources/win63_version/room/renderer/IRoomRenderer.as::disposeCanvas()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/IRoomRenderer.as::disposeCanvas()
     disposeCanvas(id: number): boolean;
 }

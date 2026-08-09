@@ -39,7 +39,7 @@ export class SpriteDataContainer implements ISpriteDataContainer
 
     private _animation: IAnimation;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/SpriteDataContainer.as::get animation()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/SpriteDataContainer.as::get animation()
     public get animation(): IAnimation
     {
         return this._animation;
@@ -47,7 +47,7 @@ export class SpriteDataContainer implements ISpriteDataContainer
 
     private _id: string;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/SpriteDataContainer.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/SpriteDataContainer.as::get id()
     public get id(): string
     {
         return this._id;
@@ -55,7 +55,7 @@ export class SpriteDataContainer implements ISpriteDataContainer
 
     private _ink: number;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/SpriteDataContainer.as::get ink()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/SpriteDataContainer.as::get ink()
     public get ink(): number
     {
         return this._ink;
@@ -63,7 +63,7 @@ export class SpriteDataContainer implements ISpriteDataContainer
 
     private _member: string;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/SpriteDataContainer.as::get member()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/SpriteDataContainer.as::get member()
     public get member(): string
     {
         return this._member;
@@ -71,7 +71,7 @@ export class SpriteDataContainer implements ISpriteDataContainer
 
     private _hasDirections: boolean;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/SpriteDataContainer.as::get hasDirections()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/SpriteDataContainer.as::get hasDirections()
     public get hasDirections(): boolean
     {
         return this._hasDirections;
@@ -79,13 +79,13 @@ export class SpriteDataContainer implements ISpriteDataContainer
 
     private _hasStaticY: boolean;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/SpriteDataContainer.as::get hasStaticY()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/SpriteDataContainer.as::get hasStaticY()
     public get hasStaticY(): boolean
     {
         return this._hasStaticY;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/SpriteDataContainer.as::getDirectionOffsetX()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/SpriteDataContainer.as::getDirectionOffsetX()
     public getDirectionOffsetX(direction: number): number
     {
         if(direction < this._directionOffsetX.length)
@@ -96,7 +96,7 @@ export class SpriteDataContainer implements ISpriteDataContainer
         return 0;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/SpriteDataContainer.as::getDirectionOffsetY()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/SpriteDataContainer.as::getDirectionOffsetY()
     public getDirectionOffsetY(direction: number): number
     {
         if(direction < this._directionOffsetY.length)
@@ -107,7 +107,7 @@ export class SpriteDataContainer implements ISpriteDataContainer
         return 0;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/SpriteDataContainer.as::getDirectionOffsetZ()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/SpriteDataContainer.as::getDirectionOffsetZ()
     public getDirectionOffsetZ(direction: number): number
     {
         if(direction < this._directionOffsetZ.length)

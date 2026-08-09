@@ -5,10 +5,10 @@
  */
 export class BadgeResolver
 {
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/util/BadgeResolver.as::DEFAULT_BADGE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/util/BadgeResolver.as::DEFAULT_BADGE
     static readonly DEFAULT_BADGE: string = 'HC1';
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/util/BadgeResolver.as::CLUB_BADGES
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/util/BadgeResolver.as::CLUB_BADGES
     static readonly CLUB_BADGES: string[] = [
         'ACH_VipHC1', 'ACH_VipHC2', 'ACH_VipHC3', 'ACH_VipHC4', 'ACH_VipHC5',
         'HC1', 'HC2', 'HC3', 'HC4', 'HC5',
@@ -19,7 +19,7 @@ export class BadgeResolver
 	 * last match found (later entries in CLUB_BADGES take priority) — matches
 	 * AS3's `for each` loop, which does not break early on the first match.
 	 */
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/util/BadgeResolver.as::resolveClubBadgeId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/util/BadgeResolver.as::resolveClubBadgeId()
     static resolveClubBadgeId(ownedBadgeIds: string[]): string | null
     {
         let result: string | null = null;

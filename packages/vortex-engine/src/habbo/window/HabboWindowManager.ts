@@ -1058,7 +1058,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         );
     }
 
-    // AS3: sources/win63_version/habbo/window/HabboWindowManagerComponent.as::openHelpPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::openHelpPage()
     // TODO(AS3): AS3 opens HabboPagesViewer with the given page ID
     // sources/win63_version/habbo/window/HabboWindowManagerComponent.as::openHelpPage()
     public openHelpPage(_pageId: string): void 
@@ -1066,7 +1066,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         // HabboPagesViewer integration - to be connected
     }
 
-    // AS3: sources/win63_version/habbo/window/HabboWindowManagerComponent.as::displayFloorPlanEditor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::displayFloorPlanEditor()
     // TODO(AS3): AS3 opens BCFloorPlanEditor
     // sources/win63_version/habbo/window/HabboWindowManagerComponent.as::displayFloorPlanEditor()
     public displayFloorPlanEditor(): void 
@@ -1081,7 +1081,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
      * - Process input/update from top-most context to bottom
      * - Render from bottom context to top-most
      */
-    // AS3: sources/win63_version/habbo/window/HabboWindowManagerComponent.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::update()
     public update(deltaTime: number): void 
     {
         // AS3: only emits TRACKING_EVENT_INPUT when there are queued input events

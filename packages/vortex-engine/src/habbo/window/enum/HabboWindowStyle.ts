@@ -7,13 +7,13 @@
  */
 export const HabboWindowStyle =
     {
-        // AS3: sources/win63_version/habbo/window/enum/HabboWindowStyle.as::NULL
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/enum/HabboWindowStyle.as::NULL
         NULL: 0,
-        // AS3: sources/win63_version/habbo/window/enum/HabboWindowStyle.as::DEFAULT
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/enum/HabboWindowStyle.as::DEFAULT
         DEFAULT: 0,
-        // AS3: sources/win63_version/habbo/window/enum/HabboWindowStyle.as::BLACK
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/enum/HabboWindowStyle.as::BLACK
         BLACK: 1,
-        // AS3: sources/win63_version/habbo/window/enum/HabboWindowStyle.as::SHINY
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/enum/HabboWindowStyle.as::SHINY
         SHINY: 3,
     } as const;
 

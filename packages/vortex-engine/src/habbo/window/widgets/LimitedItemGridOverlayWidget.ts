@@ -20,14 +20,14 @@ import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class LimitedItemGridOverlayWidget implements ILimitedItemGridOverlayWidget 
 {
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::TYPE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::TYPE
     public static readonly TYPE: string = 'limited_item_overlay_grid';
 
     private readonly _shineIntervalMs: number = 10000;
     private readonly _shineLengthMs: number = 250;
 
     private _widgetWindow: IWidgetWindow | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
     private _plaqueBitmap: IWindow | null = null;
@@ -54,25 +54,25 @@ export class LimitedItemGridOverlayWidget implements ILimitedItemGridOverlayWidg
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::_serialNumber
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::_serialNumber
     private _serialNumber: number = 0;
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::get serialNumber()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::get serialNumber()
     public get serialNumber(): number 
     {
         return this._serialNumber;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::set serialNumber()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::set serialNumber()
     public set serialNumber(value: number) 
     {
         this._serialNumber = value;
@@ -80,13 +80,13 @@ export class LimitedItemGridOverlayWidget implements ILimitedItemGridOverlayWidg
 
     private _seriesSize: number = 0;
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::get seriesSize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::get seriesSize()
     public get seriesSize(): number 
     {
         return this._seriesSize;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::set seriesSize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::set seriesSize()
     public set seriesSize(_value: number) 
     {
         // AS3: seriesSize setter is a no-op for grid overlay
@@ -94,31 +94,31 @@ export class LimitedItemGridOverlayWidget implements ILimitedItemGridOverlayWidg
 
     private _animated: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::get animated()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::get animated()
     public get animated(): boolean 
     {
         return this._animated;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::set animated()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::set animated()
     public set animated(value: boolean) 
     {
         this._animated = value;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::get properties()
     public get properties(): PropertyStruct[] 
     {
         return [];
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::set properties()
     public set properties(_values: PropertyStruct[]) 
     {
         // AS3: properties setter is a no-op for this widget
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemGridOverlayWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;

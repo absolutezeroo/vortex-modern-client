@@ -366,7 +366,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
         return this._scrollBarRef;
     }
 
-    // AS3: sources/win63_version/core/window/components/ScrollableItemGridWindow.as::get iterator()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get iterator()
     public override iterator(): IIterator | null
     {
         if(this.isConstructionReady() && this.itemGrid)
@@ -539,7 +539,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
         super.dispose();
     }
 
-    // AS3: sources/win63_version/core/window/components/ScrollableItemGridWindow.as::isConstructionReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemGridWindow.as::isConstructionReady()
     protected isConstructionReady(): boolean
     {
         return !!(this.itemGrid && this.scrollBar);

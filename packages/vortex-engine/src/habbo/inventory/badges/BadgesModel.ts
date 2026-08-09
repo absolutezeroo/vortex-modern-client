@@ -395,7 +395,7 @@ export class BadgesModel implements IBadgesModel
         badge.isInUse = false;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::updateView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::updateView()
     // TODO(AS3): no-op until BadgesView (habbo/inventory/badges/BadgesView.as) is ported.
     updateView(): void
     {

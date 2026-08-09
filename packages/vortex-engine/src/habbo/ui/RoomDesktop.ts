@@ -128,7 +128,7 @@ import {
 
 const log = Logger.getLogger('habbo.ui.RoomDesktop');
 
-// AS3: sources/win63_version/habbo/ui/RoomUI.as:71 (var_4627)
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as:71 (var_4627)
 const REUSABLE_WIDGET_TYPES = new Set([
     'RWE_INFOSTAND', 'RWE_CHAT_INPUT_WIDGET', 'RWE_ME_MENU', 'RWE_CHAT_WIDGET',
     'RWE_EXTERNAL_IMAGE', 'RWE_CAMERA', 'RWE_ROOM_TOOLS', 'RWE_FURNITURE_CONTEXT_MENU',
@@ -342,7 +342,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_config
     private _config: IHabboConfigurationManager | null = null;
 
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get config()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get config()
     public get config(): IHabboConfigurationManager | null 
     {
         return this._config;
@@ -369,16 +369,16 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._localization = value;
     }
 
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::toolbar
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::toolbar
     private _toolbar: IHabboToolbar | null = null;
 
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::get toolbar()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::get toolbar()
     public get toolbar(): IHabboToolbar | null 
     {
         return this._toolbar;
     }
 
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::set toolbar()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::set toolbar()
     public set toolbar(value: IHabboToolbar | null) 
     {
         if(this._toolbar) 
@@ -412,7 +412,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._avatarRenderManager = value;
     }
 
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get catalog()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get catalog()
     public get catalog(): IHabboCatalog | null 
     {
         return this._catalog;
@@ -533,7 +533,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_habboTracking
     private _habboTracking: IHabboTracking | null = null;
 
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboTracking()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get habboTracking()
     public get habboTracking(): IHabboTracking | null 
     {
         return this._habboTracking;
@@ -548,13 +548,13 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::_habboGroupsManager
     private _habboGroupsManager: IHabboGroupsManager | null = null;
 
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboGroupsManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get habboGroupsManager()
     public get habboGroupsManager(): IHabboGroupsManager | null 
     {
         return this._habboGroupsManager;
     }
 
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::set habboGroupsManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::set habboGroupsManager()
     public set habboGroupsManager(value: IHabboGroupsManager | null) 
     {
         this._habboGroupsManager = value;
@@ -615,7 +615,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._navigator;
     }
 
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::_navigator (private field, not part of IRoomWidgetHandlerContainer)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::_navigator (private field, not part of IRoomWidgetHandlerContainer)
     public set navigator(value: IHabboNavigator | null) 
     {
         this._navigator = value;
@@ -630,7 +630,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._communicationManager;
     }
 
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::_communicationManager (private field, not part of IRoomWidgetHandlerContainer)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::_communicationManager (private field, not part of IRoomWidgetHandlerContainer)
     public set communicationManager(value: IHabboCommunicationManager | null) 
     {
         this._communicationManager = value;
@@ -756,7 +756,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._layoutManager.roomViewRect;
     }
 
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::processEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::processEvent()
     public processEvent(event: unknown): void 
     {
         const eventType = (event as { type?: string } | null)?.type;
@@ -899,7 +899,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         log.debug(`RoomDesktop initialized for room ${this._session.roomId}`);
     }
 
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createRoomView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createRoomView()
     // The room DisplayObject is local to room_canvas_wrapper. Pixi renders it on
     // the root stage, so keep the root-stage container at the wrapper's global
     /**
@@ -985,7 +985,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 this._canvasWrapper.addEventListener(WindowEvent.WE_PARENT_RESIZED, this.roomViewGeometryEventHandler);
                 this._canvasWrapper.addEventListener(WindowEvent.WE_PARENT_RELOCATED, this.roomViewGeometryEventHandler);
 
-                // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createRoomView()
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createRoomView()
                 // var_174.setDisplayObject(_loc17_)
                 const displayObjectWrapper = this._canvasWrapper as unknown as IDisplayObjectWrapper;
 
@@ -1042,7 +1042,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 handler = new InfoStandWidgetHandler(null);
                 break;
             case 'RWE_ROOM_TOOLS': {
-                // AS3: sources/win63_version/habbo/ui/RoomDesktop.as:885-890
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:885-890
                 const roomToolsHandler = new RoomToolsWidgetHandler();
 
                 roomToolsHandler.communicationManager = this._communicationManager;
@@ -1292,7 +1292,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
         widget.messageListener = this;
         widget.registerUpdateEvents(this._desktopEvents);
-        // AS3: sources/win63_version/habbo/ui/RoomUI.as:71 (var_4627) marks these widget
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as:71 (var_4627) marks these widget
         // types reusable across room transitions via a caller-side instance cache in
         // RoomUI.createDesktopWidget() (var_1358) that calls widget.reuse(newDesktop)
         // instead of reconstructing. That cross-room caching isn't ported yet — this
@@ -1925,7 +1925,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return disabled;
     }
 
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::onRoomViewResized()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::onRoomViewResized()
     // TS deviation: one handler bound to all four resize/relocate event types
     // (WE_RESIZED/WE_RELOCATED/WE_PARENT_RESIZED/WE_PARENT_RELOCATED) instead of
     // separate AS3 listener methods, since they all just re-sync canvas geometry.
@@ -1946,7 +1946,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         );
     };
 
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::mouseEventHandler()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::mouseEventHandler()
     private readonly canvasWindowEventHandler = (event: unknown): void => 
     {
         const mouseEvent = event as WindowMouseEvent;
@@ -2002,7 +2002,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._roomCanvasDisplayObject.visible = this._visible && this._canvasWrapper.visible;
     }
 
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::onToolbarEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::onToolbarEvent()
     private onToolbarEvent = (event: HabboToolbarEvent): void => 
     {
         if(event.type === HabboToolbarEvent.ICON_ZOOM) 
@@ -2011,7 +2011,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::toggleZoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::toggleZoom()
     private toggleZoom(): void 
     {
         if(!this._roomEngine || this._canvasIds.length === 0) return;

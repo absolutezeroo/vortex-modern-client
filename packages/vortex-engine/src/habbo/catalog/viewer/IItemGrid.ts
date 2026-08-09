@@ -7,12 +7,12 @@ import type {IGridItem} from './IGridItem';
  */
 export interface IItemGrid
 {
-    // AS3: sources/win63_version/habbo/catalog/viewer/IItemGrid.as::select()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/IItemGrid.as::select()
     select(item: IGridItem, selected: boolean): void;
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/IItemGrid.as::startDragAndDrop()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/IItemGrid.as::startDragAndDrop()
     startDragAndDrop(item: IGridItem): boolean;
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/IItemGrid.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/IItemGrid.as::dispose()
     dispose(): void;
 }

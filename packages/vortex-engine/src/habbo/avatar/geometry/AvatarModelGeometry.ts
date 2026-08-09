@@ -38,7 +38,7 @@ export class AvatarModelGeometry
     // AS3: .../src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::_canvases
     private _canvases: Map<string, Map<string, AvatarCanvas>>;
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::AvatarModelGeometry()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::AvatarModelGeometry()
     constructor(data: any)
     {
         this._camera = new Vector3D(0, 0, 10);
@@ -61,7 +61,7 @@ export class AvatarModelGeometry
         log.info(`Geometry loaded: ${this._canvases.size} scales, ${this._bodyParts.size} types`);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::removeDynamicItems()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::removeDynamicItems()
     public removeDynamicItems(avatar: IAvatarImage): void
     {
         for(const typeMap of this._bodyParts.values())
@@ -73,7 +73,7 @@ export class AvatarModelGeometry
         }
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::getBodyPartIdsInAvatarSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::getBodyPartIdsInAvatarSet()
     public getBodyPartIdsInAvatarSet(setId: string): string[]
     {
         const avatarSet = this._avatarSet.findAvatarSet(setId);
@@ -83,7 +83,7 @@ export class AvatarModelGeometry
         return [];
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::isMainAvatarSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::isMainAvatarSet()
     public isMainAvatarSet(setId: string): boolean
     {
         const avatarSet = this._avatarSet.findAvatarSet(setId);
@@ -93,7 +93,7 @@ export class AvatarModelGeometry
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::getCanvas()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::getCanvas()
     public getCanvas(scale: string, geometryId: string): AvatarCanvas | null
     {
         const canvasMap = this._canvases.get(scale);
@@ -103,7 +103,7 @@ export class AvatarModelGeometry
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::getBodyPart()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::getBodyPart()
     public getBodyPart(type: string, partId: string): GeometryBodyPart | null
     {
         const typeMap = this.getBodyPartsOfType(type);
@@ -111,7 +111,7 @@ export class AvatarModelGeometry
         return typeMap.get(partId) || null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::getBodyPartOfItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::getBodyPartOfItem()
     public getBodyPartOfItem(type: string, itemId: string, avatar: IAvatarImage): GeometryBodyPart | null
     {
         const itemMap = this._itemToBodyPart.get(type);
@@ -133,7 +133,7 @@ export class AvatarModelGeometry
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::getBodyPartsAtAngle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::getBodyPartsAtAngle()
     public getBodyPartsAtAngle(setId: string, angle: number, geometryId: string): string[]
     {
         if(!geometryId) return [];
@@ -219,7 +219,7 @@ export class AvatarModelGeometry
         ids.splice(to + 1, 0, id);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::getParts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::getParts()
     public getParts(geometryType: string, bodyPartId: string, angle: number, param: any[], avatar: IAvatarImage): string[]
     {
         if(this.hasBodyPart(geometryType, bodyPartId))
@@ -234,13 +234,13 @@ export class AvatarModelGeometry
         return [];
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::typeExists()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::typeExists()
     private typeExists(type: string): boolean
     {
         return this._bodyParts.has(type);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::hasBodyPart()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::hasBodyPart()
     private hasBodyPart(type: string, partId: string): boolean
     {
         if(this.typeExists(type))
@@ -253,7 +253,7 @@ export class AvatarModelGeometry
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::getBodyPartsOfType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::getBodyPartsOfType()
     private getBodyPartsOfType(type: string): Map<string, GeometryBodyPart>
     {
         if(this.typeExists(type))
@@ -264,7 +264,7 @@ export class AvatarModelGeometry
         return new Map();
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::getBodyPartsInAvatarSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::getBodyPartsInAvatarSet()
     private getBodyPartsInAvatarSet(typeMap: Map<string, GeometryBodyPart>, setId: string): GeometryBodyPart[]
     {
         const result: GeometryBodyPart[] = [];
@@ -280,7 +280,7 @@ export class AvatarModelGeometry
         return result;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::AvatarModelGeometry()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::AvatarModelGeometry()
     private parseXml(root: Element): void
     {
         const avatarSetElement = getXmlFirstChildElement(root, 'avatarset');

@@ -15,16 +15,16 @@ const log = Logger.getLogger('habbo.toolbar.extensions.VideoOfferExtension');
 export class VideoOfferExtension
 {
     private static readonly EXTENSION_ID: string = 'video_offer';
-    // AS3: sources/win63_version/habbo/toolbar/extensions/VideoOfferExtension.as::LINK_COLOR_NORMAL
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/VideoOfferExtension.as::LINK_COLOR_NORMAL
     private static readonly LINK_COLOR_NORMAL: number = 0xFFFFFF;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/VideoOfferExtension.as::LINK_COLOR_HIGHLIGHT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/VideoOfferExtension.as::LINK_COLOR_HIGHLIGHT
     private static readonly LINK_COLOR_HIGHLIGHT: number = 0xBACB09;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/VideoOfferExtension.as::CLOSE_COLOR_NORMAL
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/VideoOfferExtension.as::CLOSE_COLOR_NORMAL
     private static readonly CLOSE_COLOR_NORMAL: number = 0x666666;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/VideoOfferExtension.as::CLOSE_COLOR_OVER
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/VideoOfferExtension.as::CLOSE_COLOR_OVER
     private static readonly CLOSE_COLOR_OVER: number = 0xCCCCCC;
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/VideoOfferExtension.as::_toolbar
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/VideoOfferExtension.as::_toolbar
     private _toolbar: HabboToolbar | null;
     private _windowCreated: boolean = false;
     private _dismissed: boolean = false;
@@ -58,7 +58,7 @@ export class VideoOfferExtension
 	 *
 	 * Checks if the video offer should be shown or hidden based on club status.
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/extensions/VideoOfferExtension.as::onClubChanged()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/VideoOfferExtension.as::onClubChanged()
     public onClubChanged(): void
     {
         if(!this._toolbar) return;
@@ -75,7 +75,7 @@ export class VideoOfferExtension
 	 *
 	 * @param count Number of offers available
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/extensions/VideoOfferExtension.as::offersAvailable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/VideoOfferExtension.as::offersAvailable()
     public offersAvailable(count: number): void
     {
         if(!this._toolbar) return;
@@ -106,7 +106,7 @@ export class VideoOfferExtension
     /**
 	 * Dispose of this extension
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/extensions/VideoOfferExtension.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/VideoOfferExtension.as::dispose()
     public dispose(): void
     {
         if(this._toolbar == null) return;

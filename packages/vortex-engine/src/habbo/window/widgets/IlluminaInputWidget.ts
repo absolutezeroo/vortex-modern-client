@@ -24,29 +24,29 @@ import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
  */
 export class IlluminaInputWidget implements IIlluminaInputWidget
 {
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::TYPE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::TYPE
     public static readonly TYPE: string = 'illumina_input';
 
     private static readonly BUTTON_CAPTION_KEY: string = 'illumina_input:button_caption';
     private static readonly EMPTY_MESSAGE_KEY: string = 'illumina_input:empty_message';
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::MULTILINE_KEY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::MULTILINE_KEY
     private static readonly MULTILINE_KEY: string = 'illumina_input:multiline';
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::MAX_CHARS_KEY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::MAX_CHARS_KEY
     private static readonly MAX_CHARS_KEY: string = 'illumina_input:max_chars';
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::SINGLE_LINE_HEIGHT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::SINGLE_LINE_HEIGHT
     private static readonly SINGLE_LINE_HEIGHT: number = 28;
     private static readonly ENTER_KEY_CODE: number = 13;
 
     private _widgetWindow: IWidgetWindow | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
 
     private _root: IWindowContainer | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::_submitButton
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::_submitButton
     private _submitButton: IWindow | null = null;
     private _input: IWindow | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::_emptyMessageLabel
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::_emptyMessageLabel
     private _emptyMessageLabel: IWindow | null = null;
 
     private _widgetProcedureBound: ((event: WindowEvent, window: IWindow) => void);
@@ -81,10 +81,10 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -92,13 +92,13 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
 
     private _message: string = '';
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::get message()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::get message()
     public get message(): string
     {
         return this._message;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::set message()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::set message()
     public set message(value: string)
     {
         this._message = value;
@@ -106,13 +106,13 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
 
     private _submitHandler: IIlluminaInputHandler | null = null;
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::get submitHandler()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::get submitHandler()
     public get submitHandler(): IIlluminaInputHandler | null
     {
         return this._submitHandler;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::set submitHandler()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::set submitHandler()
     public set submitHandler(value: IIlluminaInputHandler | null)
     {
         this._submitHandler = value;
@@ -120,13 +120,13 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
 
     private _buttonCaption: string = '${widgets.chatinput.say}';
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::get buttonCaption()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::get buttonCaption()
     public get buttonCaption(): string
     {
         return this._buttonCaption;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::set buttonCaption()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::set buttonCaption()
     public set buttonCaption(value: string)
     {
         this._buttonCaption = value;
@@ -139,13 +139,13 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
 
     private _emptyMessage: string = '';
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::get emptyMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::get emptyMessage()
     public get emptyMessage(): string
     {
         return this._emptyMessage;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::set emptyMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::set emptyMessage()
     public set emptyMessage(value: string)
     {
         this._emptyMessage = value;
@@ -158,13 +158,13 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
 
     private _multiline: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::get multiline()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::get multiline()
     public get multiline(): boolean
     {
         return this._multiline;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::set multiline()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::set multiline()
     public set multiline(value: boolean)
     {
         this._multiline = value;
@@ -172,19 +172,19 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
 
     private _maxChars: number = 0;
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::get maxChars()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::get maxChars()
     public get maxChars(): number
     {
         return this._maxChars;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::set maxChars()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::set maxChars()
     public set maxChars(value: number)
     {
         this._maxChars = value;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         if(this._disposed) return [];
@@ -197,7 +197,7 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
         ];
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::set properties()
     public set properties(values: PropertyStruct[])
     {
         for(const prop of values)
@@ -225,7 +225,7 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
 	 *
 	 * @param widgetId - The widget identifier
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::submitMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::submitMessage()
     public submitMessage(widgetId: string): void
     {
         if(this._submitHandler)
@@ -234,7 +234,7 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;
@@ -271,7 +271,7 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
 	 * @param event - The window event
 	 * @param window - The source window
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::widgetProcedure()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::widgetProcedure()
     private widgetProcedure(event: WindowEvent, window: IWindow): void
     {
         if(this._disposed) return;
@@ -336,7 +336,7 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
 	 * Shows/hides the empty message label based on input content,
 	 * and updates the input field width.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/IlluminaInputWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::refresh()
     private refresh(): void
     {
         if(this._emptyMessageLabel)

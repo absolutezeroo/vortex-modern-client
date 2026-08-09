@@ -22,9 +22,9 @@ export class Animation implements IAnimation
     private static readonly EMPTY_ARRAY: any[] = [];
     private _description: string;
     private _frames: AnimationLayerData[][] = [];
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::_overriddenActions
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::_overriddenActions
     private _overriddenActions: Map<string, string> | null = null;
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::_overrideFrames
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::_overrideFrames
     private _overrideFrames: Map<string, AnimationLayerData[][]> | null = null;
 
     constructor(actionResolver: ActionDefinitionResolver, data: any)
@@ -97,7 +97,7 @@ export class Animation implements IAnimation
 
     private _id: string;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::get id()
     public get id(): string
     {
         return this._id;
@@ -105,7 +105,7 @@ export class Animation implements IAnimation
 
     private _spriteData: ISpriteDataContainer[] | null = null;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::get spriteData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::get spriteData()
     public get spriteData(): ISpriteDataContainer[]
     {
         return this._spriteData || [];
@@ -113,7 +113,7 @@ export class Animation implements IAnimation
 
     private _avatarData: AvatarDataContainer | null = null;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::get avatarData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::get avatarData()
     public get avatarData(): AvatarDataContainer | null
     {
         return this._avatarData;
@@ -121,7 +121,7 @@ export class Animation implements IAnimation
 
     private _directionData: DirectionDataContainer | null = null;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::get directionData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::get directionData()
     public get directionData(): DirectionDataContainer | null
     {
         return this._directionData;
@@ -129,7 +129,7 @@ export class Animation implements IAnimation
 
     private _removeData: string[] | null = null;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::get removeData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::get removeData()
     public get removeData(): string[]
     {
         return this._removeData || Animation.EMPTY_ARRAY;
@@ -137,7 +137,7 @@ export class Animation implements IAnimation
 
     private _addData: AddDataContainer[] | null = null;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::get addData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::get addData()
     public get addData(): AddDataContainer[]
     {
         return this._addData || Animation.EMPTY_ARRAY as AddDataContainer[];
@@ -145,13 +145,13 @@ export class Animation implements IAnimation
 
     private _resetOnToggle: boolean = false;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::get resetOnToggle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::get resetOnToggle()
     public get resetOnToggle(): boolean
     {
         return this._resetOnToggle;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::frameCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::frameCount()
     public frameCount(overrideAction: string | null = null): number
     {
         if(!overrideAction) return this._frames.length;
@@ -166,7 +166,7 @@ export class Animation implements IAnimation
         return 0;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::hasOverriddenActions()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::hasOverriddenActions()
     public hasOverriddenActions(): boolean
     {
         if(!this._overriddenActions) return false;
@@ -174,7 +174,7 @@ export class Animation implements IAnimation
         return this._overriddenActions.size > 0;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::overriddenActionNames()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::overriddenActionNames()
     public overriddenActionNames(): string[] | null
     {
         if(!this._overriddenActions) return null;
@@ -182,7 +182,7 @@ export class Animation implements IAnimation
         return [...this._overriddenActions.keys()];
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::overridingAction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::overridingAction()
     public overridingAction(name: string): string | null
     {
         if(!this._overriddenActions) return null;
@@ -190,7 +190,7 @@ export class Animation implements IAnimation
         return this._overriddenActions.get(name) || null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::getAnimatedBodyPartIds()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::getAnimatedBodyPartIds()
     public getAnimatedBodyPartIds(frameIndex: number, overrideAction: string | null = null): string[]
     {
         const ids: string[] = [];
@@ -216,7 +216,7 @@ export class Animation implements IAnimation
         return ids;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::getLayerData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::getLayerData()
     public getLayerData(frameIndex: number, partId: string, overrideAction: string | null = null): AnimationLayerData | null
     {
         for(const layerData of this.getFrame(frameIndex, overrideAction))
@@ -238,7 +238,7 @@ export class Animation implements IAnimation
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::getAddData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::getAddData()
     public getAddData(id: string): AddDataContainer | null
     {
         if(this._addData)
@@ -252,31 +252,31 @@ export class Animation implements IAnimation
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::hasAvatarData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::hasAvatarData()
     public hasAvatarData(): boolean
     {
         return this._avatarData != null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::hasDirectionData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::hasDirectionData()
     public hasDirectionData(): boolean
     {
         return this._directionData != null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::hasAddData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::hasAddData()
     public hasAddData(): boolean
     {
         return this._addData != null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::toString()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::toString()
     public toString(): string
     {
         return this._description;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::parseFrames()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::parseFrames()
     private parseFrames(target: AnimationLayerData[][], framesData: any[], actionResolver: ActionDefinitionResolver): void
     {
         for(const frameData of framesData)
@@ -317,7 +317,7 @@ export class Animation implements IAnimation
         }
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/Animation.as::getFrame()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::getFrame()
     private getFrame(index: number, overrideAction: string | null = null): AnimationLayerData[]
     {
         if(!overrideAction)

@@ -28,14 +28,14 @@ export class RoomToolsWidget extends RoomWidgetBase
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::_visitedRooms
     private static _visitedRooms: GuestRoomData[] = [];
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::_currentRoomName
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::_currentRoomName
     private _currentRoomName: string = '';
     private _toolbarCtrl: RoomToolsToolbarCtrl | null;
     private _infoCtrl: RoomToolsInfoCtrl | null;
     private _desktop: IRoomDesktop | null;
     private _roomToolsTimer: ReturnType<typeof setTimeout> | null = null;
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::RoomToolsWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::RoomToolsWidget()
     constructor(handler: IRoomWidgetHandler, windowManager: IHabboWindowManager, assets: IAssetLibrary | null, roomUI: RoomUI)
     {
         super(handler, windowManager, assets, roomUI.localization);
@@ -63,7 +63,7 @@ export class RoomToolsWidget extends RoomWidgetBase
         );
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::dispose()
     public override dispose(): void
     {
         if(this._roomToolsTimer !== null)
@@ -83,7 +83,7 @@ export class RoomToolsWidget extends RoomWidgetBase
         super.dispose();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::updateRoomData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::updateRoomData()
     public updateRoomData(data: GuestRoomData): void
     {
         for(const room of RoomToolsWidget._visitedRooms)
@@ -95,7 +95,7 @@ export class RoomToolsWidget extends RoomWidgetBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::storeRoomData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::storeRoomData()
     public storeRoomData(data: GuestRoomData): void
     {
         for(const room of RoomToolsWidget._visitedRooms)
@@ -114,7 +114,7 @@ export class RoomToolsWidget extends RoomWidgetBase
         this._toolbarCtrl?.setLikeButton(this.handler.canRate);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::showRoomInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::showRoomInfo()
     public showRoomInfo(isOwner: boolean, roomName: string, ownerLine: string, tags: string[] | null): void
     {
         if(!this._infoCtrl) return;
@@ -123,7 +123,7 @@ export class RoomToolsWidget extends RoomWidgetBase
         this._infoCtrl.showRoomInfo(isOwner, roomName, ownerLine, tags);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::enterNewRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::enterNewRoom()
     public enterNewRoom(flatId: number): void
     {
         if(!this._toolbarCtrl || !this._infoCtrl) return;
@@ -150,7 +150,7 @@ export class RoomToolsWidget extends RoomWidgetBase
         if(tagsBorder) tagsBorder.visible = true;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::roomButtonTimerEventHandler()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::roomButtonTimerEventHandler()
     private roomButtonTimerEventHandler(): void
     {
         if(this._roomToolsTimer !== null)
@@ -162,32 +162,32 @@ export class RoomToolsWidget extends RoomWidgetBase
         this._toolbarCtrl?.updateRoomHistoryButtons();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::setCollapsed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::setCollapsed()
     public setCollapsed(value: boolean): void
     {
         this._toolbarCtrl?.setCollapsed(value);
         this._infoCtrl?.setToolbarCollapsed(value);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::get handler()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::get handler()
     public get handler(): RoomToolsWidgetHandler
     {
         return this._handler as RoomToolsWidgetHandler;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::getIconLocation()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::getIconLocation()
     public getIconLocation(name: string): IWindow | null
     {
         return this._toolbarCtrl?.window?.findChildByName(name) ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::getWidgetAreaWidth()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::getWidgetAreaWidth()
     public getWidgetAreaWidth(): number
     {
         return this._toolbarCtrl?.right ?? 0;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::getChatInputY()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::getChatInputY()
     public getChatInputY(): number
     {
         if(!this._desktop) return 0;
@@ -225,13 +225,13 @@ export class RoomToolsWidget extends RoomWidgetBase
         this._desktop?.zoomRoomCanvas(direction);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::getRoomToolbarRight()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::getRoomToolbarRight()
     public getRoomToolbarRight(): number
     {
         return this._toolbarCtrl?.right ?? 0;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::goToNextRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::goToNextRoom()
     public goToNextRoom(): void
     {
         const nextIndex = Math.min(RoomToolsWidget._currentRoomIndex + 1, RoomToolsWidget._visitedRooms.length);
@@ -242,7 +242,7 @@ export class RoomToolsWidget extends RoomWidgetBase
         this._toolbarCtrl?.disableRoomHistoryButtons();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::goToPreviousRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::goToPreviousRoom()
     public goToPreviousRoom(): void
     {
         const prevIndex = Math.max(RoomToolsWidget._currentRoomIndex - 1, 0);
@@ -265,13 +265,13 @@ export class RoomToolsWidget extends RoomWidgetBase
         return RoomToolsWidget._currentRoomIndex;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::get currentRoomName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::get currentRoomName()
     public get currentRoomName(): string
     {
         return this._currentRoomName;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as has no
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as has no
     // `mainWindow` override (unlike InfoStandWidget, which explicitly tags its main
     // container "room_widget_infostand" for slot-based attachment). RoomToolsWidget
     // positions itself directly via RoomToolsToolbarCtrl.updatePosition() (absolute
@@ -283,7 +283,7 @@ export class RoomToolsWidget extends RoomWidgetBase
     // "No container found for widget: RWE_ROOM_TOOLS" warning since no
     // "room_widget_toolbar"-tagged slot exists anywhere.
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::release()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::release()
     public override release(): void
     {
         this._toolbarCtrl?.release();
@@ -295,7 +295,7 @@ export class RoomToolsWidget extends RoomWidgetBase
         super.release();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::reuse()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::reuse()
     public override reuse(desktop: IRoomDesktop): void
     {
         super.reuse(desktop);

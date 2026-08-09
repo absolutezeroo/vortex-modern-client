@@ -557,7 +557,7 @@ export class CatalogPage implements ICatalogPage
         this._widgetEvents!.emit(CatalogWidgetEvent.WIDGETS_INITIALIZED, new CatalogWidgetEvent(CatalogWidgetEvent.WIDGETS_INITIALIZED));
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/CatalogPage.as::initializeLocalizations()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::initializeLocalizations()
     private initializeLocalizations(): void
     {
         const widget = new LocalizationCatalogWidget(this._window!, this._catalog!);

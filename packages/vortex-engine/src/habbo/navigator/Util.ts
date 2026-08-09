@@ -23,7 +23,7 @@ export class Util
 	 * @param obj - The object to remove
 	 * @returns The index of the removed element, or -1 if not found
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::remove()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::remove()
     static remove<T>(array: T[], obj: T): number
     {
         const index = array.indexOf(obj);
@@ -44,7 +44,7 @@ export class Util
 	 * @param height - Desired height
 	 * @returns A rectangle centered within the window
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::getLocationRelativeTo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::getLocationRelativeTo()
     static getLocationRelativeTo(window: IWindow | null, width: number, height: number): {
         x: number;
         y: number;
@@ -74,7 +74,7 @@ export class Util
 	 * @param container - The window container
 	 * @returns The lowest point Y coordinate
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::getLowestPoint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::getLowestPoint()
     static getLowestPoint(container: IWindowContainer): number
     {
         let lowest = 0;
@@ -98,7 +98,7 @@ export class Util
 	 * @param container - The window container
 	 * @returns True if at least one child is visible
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::hasVisibleChildren()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::hasVisibleChildren()
     static hasVisibleChildren(container: IWindowContainer): boolean
     {
         for(let i = 0; i < container.numChildren; i++)
@@ -119,7 +119,7 @@ export class Util
 	 *
 	 * @param container - The window container
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::hideChildren()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::hideChildren()
     static hideChildren(container: IWindowContainer): void
     {
         for(let i = 0; i < container.numChildren; i++)
@@ -142,7 +142,7 @@ export class Util
 	 * @param startY - Y position for the row
 	 * @param spacing - Horizontal spacing between children
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::moveChildrenToRow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::moveChildrenToRow()
     static moveChildrenToRow(container: IWindowContainer, names: string[], startX: number, startY: number, spacing: number): void
     {
         let currentX = startX;
@@ -168,7 +168,7 @@ export class Util
 	 * @param startY - Starting Y position
 	 * @param spacing - Vertical spacing between children
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::moveChildrenToColumn()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::moveChildrenToColumn()
     static moveChildrenToColumn(container: IWindowContainer, names: string[], startY: number, spacing: number): void
     {
         let currentY = startY;
@@ -194,7 +194,7 @@ export class Util
 	 * @param colSpacing - Horizontal spacing between items
 	 * @param startX - Initial X offset
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::layoutChildrenInArea()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::layoutChildrenInArea()
     static layoutChildrenInArea(container: IWindowContainer, width: number, rowHeight: number, colSpacing: number = 0, startX: number = 0): void
     {
         let currentX = startX;
@@ -226,7 +226,7 @@ export class Util
 	 * @param childName - Name of the child to set procedure on
 	 * @param procedure - The event handler procedure
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::setProc()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::setProc()
     static setProc(container: IWindowContainer, childName: string, procedure: (event: WindowEvent, window: IWindow) => void): void
     {
         const child = container.findChildByName(childName);
@@ -244,7 +244,7 @@ export class Util
 	 * @param window - The window to set procedure on
 	 * @param procedure - The event handler procedure
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::setProcDirectly()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::setProcDirectly()
     static setProcDirectly(window: IWindow, procedure: (event: WindowEvent, window: IWindow) => void): void
     {
         window.setParamFlag(1, true);
@@ -257,7 +257,7 @@ export class Util
 	 * @param str - The string to trim
 	 * @returns The trimmed string
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::trim()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::trim()
     static trim(str: string): string
     {
         if(!str || str.length < 1)
@@ -275,7 +275,7 @@ export class Util
 	 * @param text - The full text
 	 * @param maxWidth - Maximum allowed width
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::cutTextToWidth()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::cutTextToWidth()
     static cutTextToWidth(textWindow: ITextWindow, text: string, maxWidth: number): void
     {
         textWindow.text = text;
@@ -295,7 +295,7 @@ export class Util
 	 * @param test - The binary search test implementation
 	 * @param maxIndex - Maximum index to search
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::binarySearch()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::binarySearch()
     static binarySearch(test: IBinarySearchTest, maxIndex: number): void
     {
         let low = 0;
@@ -327,7 +327,7 @@ export class Util
 	 * @param window - The window to test
 	 * @returns True if mouse is within the window bounds
 	 */
-    // AS3: sources/win63_version/habbo/navigator/Util.as::containsMouse()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/Util.as::containsMouse()
     static containsMouse(window: IWindow): boolean
     {
         const point = {x: 0, y: 0};

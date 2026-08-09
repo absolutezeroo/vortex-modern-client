@@ -10,14 +10,14 @@ import {getXmlAttribute, getXmlChildElements, getXmlRoot} from '../structure/Ava
  */
 export class AvatarActionManager
 {
-    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::_assets
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/AvatarActionManager.as::_assets
     private _assets: IAssetLibrary | null;
     private _actions: Map<string, ActionDefinition>;
-    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::_defaultAction
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/AvatarActionManager.as::_defaultAction
     private _defaultAction: ActionDefinition | null = null;
     private _defaultLayAction: ActionDefinition | null = null;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::AvatarActionManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/AvatarActionManager.as::AvatarActionManager()
     constructor(assetsOrData: IAssetLibrary | any, data: any = null)
     {
         this._assets = data !== null ? assetsOrData as IAssetLibrary : null;
@@ -25,7 +25,7 @@ export class AvatarActionManager
         this.updateActions(data !== null ? data : assetsOrData);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::updateActions()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/AvatarActionManager.as::updateActions()
     public updateActions(data: any): void
     {
         if(!data) return;
@@ -73,7 +73,7 @@ export class AvatarActionManager
         this.parseActionOffsetsFromAssets();
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::getActionDefinition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/AvatarActionManager.as::getActionDefinition()
     public getActionDefinition(id: string): ActionDefinition | null
     {
         for(const action of this._actions.values())
@@ -84,13 +84,13 @@ export class AvatarActionManager
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::getActionDefinitionWithState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/AvatarActionManager.as::getActionDefinitionWithState()
     public getActionDefinitionWithState(state: string): ActionDefinition | null
     {
         return this._actions.get(state) || null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::getDefaultAction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/AvatarActionManager.as::getDefaultAction()
     public getDefaultAction(): ActionDefinition | null
     {
         if(this._defaultAction) return this._defaultAction;
@@ -108,7 +108,7 @@ export class AvatarActionManager
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::getDefaultLayAction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/AvatarActionManager.as::getDefaultLayAction()
     public getDefaultLayAction(): ActionDefinition | null
     {
         if(this._defaultLayAction) return this._defaultLayAction;
@@ -125,7 +125,7 @@ export class AvatarActionManager
         return this._defaultLayAction;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::getCanvasOffsets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/AvatarActionManager.as::getCanvasOffsets()
     public getCanvasOffsets(actions: IActiveActionData[], scale: string, direction: number): number[] | null
     {
         let offsets: number[] | null = null;
@@ -145,7 +145,7 @@ export class AvatarActionManager
         return offsets;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::sortActions()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/AvatarActionManager.as::sortActions()
     public sortActions(actions: IActiveActionData[]): IActiveActionData[]
     {
         const filtered = this.filterActions(actions);
@@ -176,7 +176,7 @@ export class AvatarActionManager
         return result;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::parseActionOffsets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/AvatarActionManager.as::parseActionOffsets()
     private parseActionOffsetsFromAssets(): void
     {
         if(!this._assets) return;
@@ -208,7 +208,7 @@ export class AvatarActionManager
         }
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::parseActionOffsets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/AvatarActionManager.as::parseActionOffsets()
     private parseActionOffsets(offsets: any[]): void
     {
         if(!offsets || offsets.length === 0) return;
@@ -236,7 +236,7 @@ export class AvatarActionManager
         }
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::filterActions()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/AvatarActionManager.as::filterActions()
     private filterActions(actions: IActiveActionData[]): IActiveActionData[]
     {
         const prevents: Set<string> = new Set();

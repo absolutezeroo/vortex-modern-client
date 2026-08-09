@@ -11,10 +11,10 @@ import {ObjectLogicBase} from '@room/object/logic/ObjectLogicBase';
 import type {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 import {RoomObjectVisibilityUpdateMessage} from '@habbo/room/messages/RoomObjectVisibilityUpdateMessage';
 
-// AS3: sources/win63_version/habbo/room/object/logic/room/SelectionArrowLogic.as::SelectionArrowLogic()
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/room/SelectionArrowLogic.as::SelectionArrowLogic()
 export class SelectionArrowLogic extends ObjectLogicBase
 {
-    // AS3: sources/win63_version/habbo/room/object/logic/room/SelectionArrowLogic.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/room/SelectionArrowLogic.as::initialize()
     override initialize(_data: unknown): void
     {
         if(this.object !== null)
@@ -29,7 +29,7 @@ export class SelectionArrowLogic extends ObjectLogicBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/object/logic/room/SelectionArrowLogic.as::processUpdateMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/room/SelectionArrowLogic.as::processUpdateMessage()
     override processUpdateMessage(message: RoomObjectUpdateMessage): void
     {
         super.processUpdateMessage(message);

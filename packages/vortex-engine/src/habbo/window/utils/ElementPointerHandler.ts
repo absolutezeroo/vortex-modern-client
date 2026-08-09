@@ -14,13 +14,13 @@ import {ElementPointerMessageEvent} from '@habbo/communication/messages/incoming
  */
 export class ElementPointerHandler
 {
-    // AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ElementPointerHandler.as::_windowManager
     private _windowManager: IHabboWindowManager | null;
 
     // AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::var_3740
     private _event: IMessageEvent | null = null;
 
-    // AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::ElementPointerHandler()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ElementPointerHandler.as::ElementPointerHandler()
     constructor(windowManager: IHabboWindowManager)
     {
         this._windowManager = windowManager;
@@ -38,7 +38,7 @@ export class ElementPointerHandler
         return this._windowManager === null;
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::onElementPointerMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ElementPointerHandler.as::onElementPointerMessage()
     private onElementPointerMessage(event: ElementPointerMessageEvent): void
     {
         if(!this._windowManager) return;
@@ -55,7 +55,7 @@ export class ElementPointerHandler
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ElementPointerHandler.as::dispose()
     public dispose(): void
     {
         if(this._windowManager?.communication && this._event !== null)

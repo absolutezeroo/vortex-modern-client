@@ -9,10 +9,10 @@ import type {IHabboWindowManager} from '../IHabboWindowManager';
  */
 export class HabbletLinkHandler
 {
-    // AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/handlers/HabbletLinkHandler.as::_windowManager
     private _windowManager: IHabboWindowManager;
 
-    // AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::HabbletLinkHandler()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/handlers/HabbletLinkHandler.as::HabbletLinkHandler()
     constructor(windowManager: IHabboWindowManager)
     {
         this._windowManager = windowManager;
@@ -21,19 +21,19 @@ export class HabbletLinkHandler
     // TS-only: explicit disposed flag (AS3 uses _windowManager == null check)
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/handlers/HabbletLinkHandler.as::get disposed()
     public get disposed(): boolean
     {
         return this._windowManager == null;
     }
 
-    // AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::get linkPattern()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/handlers/HabbletLinkHandler.as::get linkPattern()
     public get linkPattern(): string
     {
         return 'habblet/';
     }
 
-    // AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::linkReceived()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/handlers/HabbletLinkHandler.as::linkReceived()
     public linkReceived(link: string): void
     {
         const parts = link.split('/');
@@ -61,7 +61,7 @@ export class HabbletLinkHandler
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/handlers/HabbletLinkHandler.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

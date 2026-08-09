@@ -107,7 +107,7 @@ export class TextSkinRenderer extends SkinRenderer
 	 * Flash reserves a 2px gutter at the top of every TextField, which the
 	 * layouts' Y coordinates were authored against.
 	 */
-    // AS3: sources/win63_version/core/window/components/TextController.as::_field
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::_field
     protected static readonly FLASH_TEXT_FIELD_TOP_GUTTER: number = 2;
 
     /**
@@ -128,7 +128,7 @@ export class TextSkinRenderer extends SkinRenderer
 	 * the vertical gutter, and only for background-filled fields) would clip the
 	 * last 2px off captions all over the client.
 	 */
-    // AS3: sources/win63_version/core/window/components/TextController.as::_field
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::_field
     protected static readonly FLASH_TEXT_FIELD_LEFT_GUTTER: number = 2;
 
     /**

@@ -8,7 +8,7 @@ import {getXmlAttribute, getXmlRoot} from '../AvatarXmlUtils';
  */
 export class FigurePart implements IFigurePart
 {
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePart.as::FigurePart()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePart.as::FigurePart()
     constructor(data: any)
     {
         const element = getXmlRoot(data);
@@ -27,7 +27,7 @@ export class FigurePart implements IFigurePart
 
     private _id: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePart.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePart.as::get id()
     public get id(): number
     {
         return this._id;
@@ -35,7 +35,7 @@ export class FigurePart implements IFigurePart
 
     private _type: string;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePart.as::get type()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePart.as::get type()
     public get type(): string
     {
         return this._type;
@@ -43,7 +43,7 @@ export class FigurePart implements IFigurePart
 
     private _breed: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePart.as::get breed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePart.as::get breed()
     public get breed(): number
     {
         return this._breed;
@@ -51,16 +51,16 @@ export class FigurePart implements IFigurePart
 
     private _colorLayerIndex: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePart.as::get colorLayerIndex()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePart.as::get colorLayerIndex()
     public get colorLayerIndex(): number
     {
         return this._colorLayerIndex;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePart.as::_index
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePart.as::_index
     private _index: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePart.as::get index()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePart.as::get index()
     public get index(): number
     {
         return this._index;
@@ -68,13 +68,13 @@ export class FigurePart implements IFigurePart
 
     private _paletteMap: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePart.as::get paletteMap()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePart.as::get paletteMap()
     public get paletteMap(): number
     {
         return this._paletteMap;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePart.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePart.as::dispose()
     public dispose(): void
     {
     }

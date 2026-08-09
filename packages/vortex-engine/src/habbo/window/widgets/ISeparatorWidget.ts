@@ -14,6 +14,6 @@ export interface ISeparatorWidget extends IWidget
     /**
 	 * Whether the separator is vertical (true) or horizontal (false).
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/ISeparatorWidget.as::get vertical()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ISeparatorWidget.as::get vertical()
     vertical: boolean;
 }

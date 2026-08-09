@@ -15,12 +15,12 @@ import { Util } from '../Util';
  */
 export class CategoryListCtrl implements IViewCtrl
 {
-    // AS3: sources/win63_version/habbo/navigator/mainview/CategoryListCtrl.as::CATEGORY_SPACING
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/CategoryListCtrl.as::CATEGORY_SPACING
     private static readonly CATEGORY_SPACING = 5;
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/CategoryListCtrl.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/CategoryListCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator;
-    // AS3: sources/win63_version/habbo/navigator/mainview/CategoryListCtrl.as::_content
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/CategoryListCtrl.as::_content
     private _content: IWindowContainer | null = null;
     private _itemList: IItemListWindow | null = null;
     private _scrollbar: IScrollbarWindow | null = null;
@@ -32,7 +32,7 @@ export class CategoryListCtrl implements IViewCtrl
         this._userCountRenderer = new UserCountRenderer(navigator);
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/CategoryListCtrl.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/CategoryListCtrl.as::dispose()
     dispose(): void
     {
         if(this._userCountRenderer)
@@ -42,13 +42,13 @@ export class CategoryListCtrl implements IViewCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/CategoryListCtrl.as::get content()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/CategoryListCtrl.as::get content()
     get content(): IWindowContainer | null
     {
         return this._content;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/CategoryListCtrl.as::set content()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/CategoryListCtrl.as::set content()
     set content(value: IWindowContainer | null)
     {
         this._content = value;
@@ -56,7 +56,7 @@ export class CategoryListCtrl implements IViewCtrl
         this._scrollbar = value ? value.findChildByName('scroller') as IScrollbarWindow : null;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/CategoryListCtrl.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/CategoryListCtrl.as::refresh()
     refresh(): void
     {
         if(!this._itemList) return;
@@ -104,7 +104,7 @@ export class CategoryListCtrl implements IViewCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/CategoryListCtrl.as::refreshEntry()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/CategoryListCtrl.as::refreshEntry()
     refreshEntry(container: IWindowContainer, cat: { nodeName: string; nodeId: number }, _currentCount: number, _maxCount: number): void
     {
         const nameText = container.findChildByName('category_name_txt');
@@ -130,7 +130,7 @@ export class CategoryListCtrl implements IViewCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/CategoryListCtrl.as::createEntry()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/CategoryListCtrl.as::createEntry()
     createEntry(index: number): IWindowContainer
     {
         const entry = this._navigator.getXmlWindow('grs_category_selector') as IWindowContainer;
@@ -153,13 +153,13 @@ export class CategoryListCtrl implements IViewCtrl
         }
     };
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/CategoryListCtrl.as::getCategoryContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/CategoryListCtrl.as::getCategoryContainer()
     private getCategoryContainer(parent: IWindowContainer, id: number): IWindowContainer | null
     {
         return parent.getChildByID(id) as IWindowContainer | null;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/CategoryListCtrl.as::setProcedureAndId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/CategoryListCtrl.as::setProcedureAndId()
     private setProcedureAndId(
         container: IWindowContainer,
         id: number,

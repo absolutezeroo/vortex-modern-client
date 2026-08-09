@@ -11,37 +11,37 @@ import type {TextSearchInputs} from '../TextSearchInputs';
  */
 export interface ITransitionalMainViewCtrl extends IDisposable
 {
-    // AS3: sources/win63_version/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::get mainWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::get mainWindow()
     readonly mainWindow: IWindow | null;
-    // AS3: sources/win63_version/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::get searchInput()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::get searchInput()
     readonly searchInput: TextSearchInputs | null;
-    // AS3: sources/win63_version/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::get isPhaseOneNavigator()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::get isPhaseOneNavigator()
     readonly isPhaseOneNavigator: boolean;
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::onNavigatorToolBarIconClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::onNavigatorToolBarIconClick()
     onNavigatorToolBarIconClick(): void;
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::open()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::open()
     open(): void;
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::isOpen()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::isOpen()
     isOpen(): boolean;
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::close()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::close()
     close(): void;
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::refresh()
     refresh(): void;
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::reloadRoomList()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::reloadRoomList()
     reloadRoomList(categoryId: number): boolean;
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::startSearch()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::startSearch()
     startSearch(param1: number, searchType: number, query?: string, param4?: number): void;
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::update()
     update(time: number): void;
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::openAtPosition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::openAtPosition()
     openAtPosition(x: number, y: number): void;
 }

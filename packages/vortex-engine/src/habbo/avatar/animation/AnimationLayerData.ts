@@ -46,25 +46,25 @@ export class AnimationLayerData implements IAnimationLayerData
 
     private _id: string;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/AnimationLayerData.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/AnimationLayerData.as::get id()
     public get id(): string
     {
         return this._id;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/AnimationLayerData.as::_action
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/AnimationLayerData.as::_action
     private _action: IActiveActionData | null;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/AnimationLayerData.as::get action()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/AnimationLayerData.as::get action()
     public get action(): IActiveActionData
     {
         return this._action!;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/AnimationLayerData.as::_animationFrame
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/AnimationLayerData.as::_animationFrame
     private _animationFrame: number;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/AnimationLayerData.as::get animationFrame()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/AnimationLayerData.as::get animationFrame()
     public get animationFrame(): number
     {
         return this._animationFrame;
@@ -72,7 +72,7 @@ export class AnimationLayerData implements IAnimationLayerData
 
     private _dx: number;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/AnimationLayerData.as::get dx()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/AnimationLayerData.as::get dx()
     public get dx(): number
     {
         return this._dx;
@@ -80,7 +80,7 @@ export class AnimationLayerData implements IAnimationLayerData
 
     private _dy: number;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/AnimationLayerData.as::get dy()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/AnimationLayerData.as::get dy()
     public get dy(): number
     {
         return this._dy;
@@ -88,7 +88,7 @@ export class AnimationLayerData implements IAnimationLayerData
 
     private _dz: number;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/AnimationLayerData.as::get dz()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/AnimationLayerData.as::get dz()
     public get dz(): number
     {
         return this._dz;
@@ -103,7 +103,7 @@ export class AnimationLayerData implements IAnimationLayerData
 
     private _type: string;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/AnimationLayerData.as::get type()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/AnimationLayerData.as::get type()
     public get type(): string
     {
         return this._type;
@@ -111,16 +111,16 @@ export class AnimationLayerData implements IAnimationLayerData
 
     private _base: string;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/AnimationLayerData.as::get base()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/AnimationLayerData.as::get base()
     public get base(): string
     {
         return this._base;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/animation/AnimationLayerData.as::_items
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/AnimationLayerData.as::_items
     private _items: Map<string, string>;
 
-    // AS3: sources/win63_version/habbo/avatar/animation/AnimationLayerData.as::get items()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/AnimationLayerData.as::get items()
     public get items(): Map<string, string>
     {
         return this._items;

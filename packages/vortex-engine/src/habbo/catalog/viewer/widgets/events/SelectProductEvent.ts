@@ -9,7 +9,7 @@ export class SelectProductEvent
 {
     static readonly SELECT_PRODUCT: string = 'SELECT_PRODUCT';
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/SelectProductEvent.as::_offer
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/SelectProductEvent.as::_offer
     private _offer: IPurchasableOffer;
 
     constructor(offer: IPurchasableOffer)
@@ -22,7 +22,7 @@ export class SelectProductEvent
         return SelectProductEvent.SELECT_PRODUCT;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/SelectProductEvent.as::get offer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/SelectProductEvent.as::get offer()
     get offer(): IPurchasableOffer
     {
         return this._offer;

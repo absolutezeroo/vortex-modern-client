@@ -13,6 +13,6 @@ import type {IRoomGeometry} from '../utils/IRoomGeometry';
 
 export interface IRoomRenderingCanvasMouseListener
 {
-    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvasMouseListener.as::processRoomCanvasMouseEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/IRoomRenderingCanvasMouseListener.as::processRoomCanvasMouseEvent()
     processRoomCanvasMouseEvent(event: RoomSpriteMouseEvent, object: IRoomObject, geometry: IRoomGeometry): void;
 }

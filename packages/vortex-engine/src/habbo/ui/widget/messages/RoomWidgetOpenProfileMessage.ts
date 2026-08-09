@@ -13,7 +13,7 @@ export class RoomWidgetOpenProfileMessage extends RoomWidgetMessage
     private _userId: number;
     private _trackingLocation: string;
 
-    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetOpenProfileMessage.as::RoomWidgetOpenProfileMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/messages/RoomWidgetOpenProfileMessage.as::RoomWidgetOpenProfileMessage()
     constructor(type: string, userId: number, trackingLocation: string)
     {
         super(type);
@@ -21,13 +21,13 @@ export class RoomWidgetOpenProfileMessage extends RoomWidgetMessage
         this._trackingLocation = trackingLocation;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetOpenProfileMessage.as::get userId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/messages/RoomWidgetOpenProfileMessage.as::get userId()
     public get userId(): number
     {
         return this._userId;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetOpenProfileMessage.as::get trackingLocation()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/messages/RoomWidgetOpenProfileMessage.as::get trackingLocation()
     public get trackingLocation(): string
     {
         return this._trackingLocation;

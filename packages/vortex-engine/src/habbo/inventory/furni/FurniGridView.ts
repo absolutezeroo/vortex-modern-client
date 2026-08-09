@@ -33,18 +33,18 @@ export class FurniGridView
     private _pageList: IItemListWindow | null;
     private _pageTemplate: IRegionWindow | null = null;
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_items
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::_items
     private _items: GroupItem[] = [];
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_passedItems
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::_passedItems
     private _passedItems: GroupItem[] = [];
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_currentPageItems
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::_currentPageItems
     private _currentPageItems: GroupItem[] = [];
 
     // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_showFloorItems
     private _showFloorItems: boolean = true;
     // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_showWallItems
     private _showWallItems: boolean = true;
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_showingRentedItems
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::_showingRentedItems
     private _showingRentedItems: boolean = false;
     private _mergeRentFurni: boolean = false;
     private _showingNfts: boolean = true;
@@ -70,38 +70,38 @@ export class FurniGridView
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::get visibleCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::get visibleCount()
     get visibleCount(): number
     {
         return this._grid.numGridItems;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::get currentPageItems()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::get currentPageItems()
     get currentPageItems(): GroupItem[]
     {
         return this._currentPageItems;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::get pageCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::get pageCount()
     private get pageCount(): number
     {
         return Math.floor(this._passedItems.length / this._itemsPerPage) + 1;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::dispose()
     dispose(): void
     {
         this._items = [];
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::clearGrid()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::clearGrid()
     clearGrid(): void
     {
         this._grid.removeGridItems();
         this._grid.destroyGridItems();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::setFilter()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::setFilter()
     setFilter(
         placementOrWallFilter: number,
         _filterLabel: string,
@@ -123,7 +123,7 @@ export class FurniGridView
         this.update();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::itemWasUpdated()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::itemWasUpdated()
     itemWasUpdated(item: GroupItem): void
     {
         if(this.passFilter(item))
@@ -132,7 +132,7 @@ export class FurniGridView
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::getFirstThumb()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::getFirstThumb()
     getFirstThumb(): unknown
     {
         if(this._grid.numGridItems === 0) return null;
@@ -140,14 +140,14 @@ export class FurniGridView
         return this._grid.getGridItemAt(0);
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::setItems()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::setItems()
     setItems(items: GroupItem[]): void
     {
         this._items = items;
         this.update();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::update()
     private update(): void
     {
         let currentItems = this._items.filter((item) => this.passFilter(item));
@@ -187,7 +187,7 @@ export class FurniGridView
         this.updatePaging();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::changeToPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::changeToPage()
     private changeToPage(page: number, force: boolean = false): void
     {
         if(page > -1)
@@ -222,7 +222,7 @@ export class FurniGridView
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::updatePaging()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::updatePaging()
     private updatePaging(): void
     {
         if(!this._pageList) return;
@@ -286,7 +286,7 @@ export class FurniGridView
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::onPageEventProc()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::onPageEventProc()
     private onPageEventProc = (event: WindowMouseEvent): void =>
     {
         const window = event.window as IRegionWindow | null;
@@ -311,7 +311,7 @@ export class FurniGridView
         }
     };
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::passFilter()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::passFilter()
     private passFilter(item: GroupItem): boolean
     {
         if(!this._showFloorItems && !item.isWallItem) return false;

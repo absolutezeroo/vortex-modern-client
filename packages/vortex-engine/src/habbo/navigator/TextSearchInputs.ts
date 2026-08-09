@@ -17,7 +17,7 @@ import {Util} from './Util';
  */
 export class TextSearchInputs
 {
-    // AS3: sources/win63_version/habbo/navigator/TextSearchInputs.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextSearchInputs.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
     private _dropdown: IDropMenuWindow | null = null;
 
@@ -57,7 +57,7 @@ export class TextSearchInputs
 
     private _searchStr: TextFieldManager | null = null;
 
-    // AS3: sources/win63_version/habbo/navigator/TextSearchInputs.as::get searchStr()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextSearchInputs.as::get searchStr()
     get searchStr(): TextFieldManager | null
     {
         return this._searchStr;
@@ -69,7 +69,7 @@ export class TextSearchInputs
 	 * @param text - Search text
 	 * @param searchType - Legacy search type code
 	 */
-    // AS3: sources/win63_version/habbo/navigator/TextSearchInputs.as::setText()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextSearchInputs.as::setText()
     setText(text: string, searchType: number): void
     {
         if(this._searchStr)
@@ -100,7 +100,7 @@ export class TextSearchInputs
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/TextSearchInputs.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextSearchInputs.as::dispose()
     dispose(): void
     {
         if(this._searchStr)
@@ -119,7 +119,7 @@ export class TextSearchInputs
         this.searchRooms();
     };
 
-    // AS3: sources/win63_version/habbo/navigator/TextSearchInputs.as::searchRooms()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextSearchInputs.as::searchRooms()
     private searchRooms(): void
     {
         if(!this._searchStr || !this._navigator) return;

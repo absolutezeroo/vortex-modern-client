@@ -16,7 +16,7 @@ import {SearchContext} from '../context';
  */
 export class QuickLinksView
 {
-    // AS3: sources/win63_version/habbo/navigator/view/QuickLinksView.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/QuickLinksView.as::_navigator
     private _navigator: HabboNewNavigator;
     private _searchContexts: SearchContext[] = [];
     private _searchIds: number[] = [];
@@ -28,16 +28,16 @@ export class QuickLinksView
 
     private _template: IWindowContainer | null = null;
 
-    // AS3: sources/win63_version/habbo/navigator/view/QuickLinksView.as::set template()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/QuickLinksView.as::set template()
     set template(value: IWindowContainer)
     {
         this._template = value;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/view/QuickLinksView.as::_itemList
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/QuickLinksView.as::_itemList
     private _itemList: IItemListWindow | null = null;
 
-    // AS3: sources/win63_version/habbo/navigator/view/QuickLinksView.as::set itemList()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/QuickLinksView.as::set itemList()
     set itemList(value: IItemListWindow)
     {
         this._itemList = value;
@@ -50,7 +50,7 @@ export class QuickLinksView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/QuickLinksView.as setQuickLinks()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/QuickLinksView.as::setQuickLinks()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/QuickLinksView.as::setQuickLinks()
     setQuickLinks(savedSearches: NavigatorSavedSearch[]): void
     {
         if(!this._itemList || !this._template) return;

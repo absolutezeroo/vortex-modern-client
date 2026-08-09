@@ -16,7 +16,7 @@ export class ActionDefinition implements IActionDefinition
     private _types: Map<string, ActionType>;
     private _defaultParam: string = '';
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::ActionDefinition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::ActionDefinition()
     constructor(data: any = null)
     {
         this._prevents = [];
@@ -43,7 +43,7 @@ export class ActionDefinition implements IActionDefinition
 
     private _id: string;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::get id()
     public get id(): string
     {
         return this._id;
@@ -51,7 +51,7 @@ export class ActionDefinition implements IActionDefinition
 
     private _state: string;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get state()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::get state()
     public get state(): string
     {
         return this._state;
@@ -59,7 +59,7 @@ export class ActionDefinition implements IActionDefinition
 
     private _precedence: number;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get precedence()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::get precedence()
     public get precedence(): number
     {
         return this._precedence;
@@ -67,7 +67,7 @@ export class ActionDefinition implements IActionDefinition
 
     private _activePartSet: string;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get activePartSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::get activePartSet()
     public get activePartSet(): string
     {
         return this._activePartSet;
@@ -75,7 +75,7 @@ export class ActionDefinition implements IActionDefinition
 
     private _assetPartDefinition: string;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get assetPartDefinition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::get assetPartDefinition()
     public get assetPartDefinition(): string
     {
         return this._assetPartDefinition;
@@ -83,7 +83,7 @@ export class ActionDefinition implements IActionDefinition
 
     private _lay: string;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get lay()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::get lay()
     public get lay(): string
     {
         return this._lay;
@@ -91,25 +91,25 @@ export class ActionDefinition implements IActionDefinition
 
     private _geometryType: string;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get geometryType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::get geometryType()
     public get geometryType(): string
     {
         return this._geometryType;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::_isMain
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::_isMain
     private _isMain: boolean = false;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get isMain()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::get isMain()
     public get isMain(): boolean
     {
         return this._isMain;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::_isDefault
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::_isDefault
     private _isDefault: boolean = false;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get isDefault()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::get isDefault()
     public get isDefault(): boolean
     {
         return this._isDefault;
@@ -117,7 +117,7 @@ export class ActionDefinition implements IActionDefinition
 
     private _isAnimation: boolean = false;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get isAnimation()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::get isAnimation()
     public get isAnimation(): boolean
     {
         return this._isAnimation;
@@ -125,22 +125,22 @@ export class ActionDefinition implements IActionDefinition
 
     private _startFromFrameZero: boolean = false;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get startFromFrameZero()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::get startFromFrameZero()
     public get startFromFrameZero(): boolean
     {
         return this._startFromFrameZero;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::_params
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::_params
     private _params: Map<string, string>;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::get params()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::get params()
     public get params(): Map<string, string>
     {
         return this._params;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::setOffsets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::setOffsets()
     public setOffsets(setType: string, direction: number, offsets: number[]): void
     {
         if(!this._offsets)
@@ -157,7 +157,7 @@ export class ActionDefinition implements IActionDefinition
         directionMap.set(direction, offsets);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::getOffsets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::getOffsets()
     public getOffsets(setType: string, direction: number): number[] | null
     {
         if(!this._offsets) return null;
@@ -169,7 +169,7 @@ export class ActionDefinition implements IActionDefinition
         return directionMap.get(direction) ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::getParameterValue()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::getParameterValue()
     public getParameterValue(key: string): string
     {
         if(key === '') return '';
@@ -184,7 +184,7 @@ export class ActionDefinition implements IActionDefinition
         return value;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::getPrevents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::getPrevents()
     public getPrevents(id: string = ''): string[]
     {
         const typePrevents = this.getTypePrevents(id);
@@ -198,7 +198,7 @@ export class ActionDefinition implements IActionDefinition
         return result;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::getPreventHeadTurn()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::getPreventHeadTurn()
     public getPreventHeadTurn(id: string = ''): boolean
     {
         if(id === '')
@@ -216,7 +216,7 @@ export class ActionDefinition implements IActionDefinition
         return this._preventHeadTurn;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::isAnimated()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::isAnimated()
     public isAnimated(part: string): boolean
     {
         if(part === '') return true;
@@ -231,25 +231,25 @@ export class ActionDefinition implements IActionDefinition
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::setGeometryType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::setGeometryType()
     public setGeometryType(value: string): void
     {
         this._geometryType = value;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::setState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::setState()
     public setState(value: string): void
     {
         this._state = value;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::setAssetPartDefinition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::setAssetPartDefinition()
     public setAssetPartDefinition(value: string): void
     {
         this._assetPartDefinition = value;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::copy()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::copy()
     public copy(): ActionDefinition
     {
         const copy = new ActionDefinition();
@@ -275,7 +275,7 @@ export class ActionDefinition implements IActionDefinition
         return copy;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::toString()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::toString()
     public toString(): string
     {
         return '[ActionDefinition]\n'
@@ -289,7 +289,7 @@ export class ActionDefinition implements IActionDefinition
 			+ 'activepartdef:' + this._assetPartDefinition;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::createFromXml()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::createFromXml()
     private createFromData(data: any): void
     {
         const element = getXmlRoot(data);
@@ -371,7 +371,7 @@ export class ActionDefinition implements IActionDefinition
         }
     }
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionDefinition.as::getTypePrevents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionDefinition.as::getTypePrevents()
     private getTypePrevents(id: string): string[]
     {
         if(id === '') return [];

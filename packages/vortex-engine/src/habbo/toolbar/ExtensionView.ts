@@ -18,12 +18,12 @@ const log = Logger.getLogger('habbo.toolbar.ExtensionView');
  *
  * @see sources/win63_version/habbo/toolbar/ExtensionView.as
  */
-// AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::ExtensionView
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/ExtensionView.as::ExtensionView
 export class ExtensionView implements IExtensionView 
 {
-    // AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::MARGIN
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/ExtensionView.as::MARGIN
     private static readonly MARGIN: number = 3;
-    // AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::PURSE_EXTENSION_OFFSET
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/ExtensionView.as::PURSE_EXTENSION_OFFSET
     private static readonly PURSE_EXTENSION_OFFSET: number = -8;
 
     // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::_toolbar
@@ -167,7 +167,7 @@ export class ExtensionView implements IExtensionView
         return this._items.has(id);
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::refreshItemWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/ExtensionView.as::refreshItemWindow()
     public refreshItemWindow(): void 
     {
         if(!this._var104) return;

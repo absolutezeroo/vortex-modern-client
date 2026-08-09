@@ -22,7 +22,7 @@ export class SingleProductContainer extends ProductContainer
         this.setIconImage(image, true);
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/SingleProductContainer.as::enableLimitedItemLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/SingleProductContainer.as::enableLimitedItemLayout()
     enableLimitedItemLayout(): void
     {
         this._view!.findChildByName('unique_item_background_bitmap')!.visible = true;
@@ -37,7 +37,7 @@ export class SingleProductContainer extends ProductContainer
         this._view!.findChildByName('unique_item_sold_out_bitmap')!.visible = this.firstProduct!.uniqueLimitedItemsLeft === 0;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/SingleProductContainer.as::onPreviewImageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/SingleProductContainer.as::onPreviewImageReady()
     // TODO(AS3): the asset-loader preview-ready callback path this feeds
     // (Product.initIcon()'s "i" room-preview branch) isn't wired up yet - see Product.ts.
     private onPreviewImageReady(_event: unknown): void

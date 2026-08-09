@@ -17,22 +17,22 @@ import {Util} from './Util';
  */
 export class TextFieldManager
 {
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::_includeInfo
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::_includeInfo
     private _includeInfo: boolean = false;
     private _placeholderText: string = '';
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::_maxTextLen
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::_maxTextLen
     private _maxTextLen: number;
     private _onEnter: (() => void) | null;
     private _emptyValue: string = '';
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::_errorPopup
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::_errorPopup
     private _errorPopup: IWindowContainer | null = null;
     private _orgTextBackground: boolean;
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::_orgTextBackgroundColor
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::_orgTextBackgroundColor
     private _orgTextBackgroundColor: number;
 
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::TextFieldManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::TextFieldManager()
     constructor(navigator: IHabboTransitionalNavigator, textField: ITextFieldWindow, maxLen: number = 1000, onEnter: (() => void) | null = null, initialText: string | null = null)
     {
         this._navigator = navigator;
@@ -59,7 +59,7 @@ export class TextFieldManager
 
     private _input: ITextFieldWindow | null;
 
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::get input()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::get input()
     get input(): ITextFieldWindow | null
     {
         return this._input;
@@ -71,7 +71,7 @@ export class TextFieldManager
 	 * @param errorMsg - Error message to display if validation fails
 	 * @returns True if the field has valid input
 	 */
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::checkMandatory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::checkMandatory()
     checkMandatory(errorMsg: string): boolean
     {
         if(!this.isInputValid())
@@ -86,7 +86,7 @@ export class TextFieldManager
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::restoreBackground()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::restoreBackground()
     restoreBackground(): void
     {
         if(!this._input) return;
@@ -100,7 +100,7 @@ export class TextFieldManager
 	 *
 	 * @param msg - Error message text
 	 */
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::displayError()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::displayError()
     displayError(msg: string): void
     {
         if(!this._input || !this._navigator) return;
@@ -164,7 +164,7 @@ export class TextFieldManager
     /**
 	 * Resets the field to its initial placeholder state.
 	 */
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::goBackToInitialState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::goBackToInitialState()
     goBackToInitialState(): void
     {
         this.clearErrors();
@@ -183,7 +183,7 @@ export class TextFieldManager
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::getText()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::getText()
     getText(): string
     {
         if(this._includeInfo)
@@ -194,7 +194,7 @@ export class TextFieldManager
         return this._input?.text ?? '';
     }
 
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::setText()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::setText()
     setText(text: string): void
     {
         this._includeInfo = false;
@@ -205,7 +205,7 @@ export class TextFieldManager
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::clearErrors()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::clearErrors()
     clearErrors(): void
     {
         this.restoreBackground();
@@ -216,7 +216,7 @@ export class TextFieldManager
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::dispose()
     dispose(): void
     {
         if(this._input)
@@ -238,13 +238,13 @@ export class TextFieldManager
         this._navigator = null;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::isInputValid()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::isInputValid()
     private isInputValid(): boolean
     {
         return !this._includeInfo && Util.trim(this.getText()).length > 2;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::onInputClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/TextFieldManager.as::onInputClick()
     private onInputClick = (event: WindowEvent, _window: IWindow): void =>
     {
         if(event.type !== 'WE_FOCUSED') return;

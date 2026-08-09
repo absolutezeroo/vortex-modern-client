@@ -5,7 +5,7 @@
  */
 export class CatalogFurniPurchaseEvent
 {
-    // AS3: sources/win63_version/habbo/catalog/navigation/events/CatalogFurniPurchaseEvent.as::CATALOG_FURNI_PURCHASE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/events/CatalogFurniPurchaseEvent.as::CATALOG_FURNI_PURCHASE
     static readonly CATALOG_FURNI_PURCHASE: string = 'CATALOG_FURNI_PURCHASE';
 
     private _localizationId: string;
@@ -20,7 +20,7 @@ export class CatalogFurniPurchaseEvent
         return CatalogFurniPurchaseEvent.CATALOG_FURNI_PURCHASE;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/events/CatalogFurniPurchaseEvent.as::get localizationId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/events/CatalogFurniPurchaseEvent.as::get localizationId()
     get localizationId(): string
     {
         return this._localizationId;

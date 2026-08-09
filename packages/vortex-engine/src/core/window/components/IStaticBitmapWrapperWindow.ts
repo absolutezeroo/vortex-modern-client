@@ -15,7 +15,7 @@ export interface IStaticBitmapWrapperWindow extends IWindow
 	 *
 	 * Setting this triggers an asset request via the ResourceManager.
 	 */
-    // AS3: sources/win63_version/core/window/components/StaticBitmapWrapperController.as::get assetUri()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StaticBitmapWrapperController.as::get assetUri()
     assetUri: string;
 
     /**

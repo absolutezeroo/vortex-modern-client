@@ -18,7 +18,7 @@ import {Util} from './Util';
  */
 export class RoomPopupCtrl extends PopupCtrl
 {
-    // AS3: sources/win63_version/habbo/navigator/RoomPopupCtrl.as::_details
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/RoomPopupCtrl.as::_details
     private _details: IWindowContainer | null = null;
     private _roomData: GuestRoomData | null = null;
     private _tagRenderer: TagRenderer;
@@ -33,7 +33,7 @@ export class RoomPopupCtrl extends PopupCtrl
         this._guildInfoCtrl = new GuildInfoCtrl(navigator);
     }
 
-    // AS3: sources/win63_version/habbo/navigator/RoomPopupCtrl.as::set room()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/RoomPopupCtrl.as::set room()
     set room(data: GuestRoomData)
     {
         this._roomData = data;
@@ -89,7 +89,7 @@ export class RoomPopupCtrl extends PopupCtrl
         super.dispose();
     }
 
-    // AS3: sources/win63_version/habbo/navigator/RoomPopupCtrl.as::refreshOwnerName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/RoomPopupCtrl.as::refreshOwnerName()
     private refreshOwnerName(): void
     {
         if(!this._details || !this._roomData) return;
@@ -110,7 +110,7 @@ export class RoomPopupCtrl extends PopupCtrl
         Util.layoutChildrenInArea(ownerCont as IWindowContainer, 1000, 10, 2);
     }
 
-    // AS3: sources/win63_version/habbo/navigator/RoomPopupCtrl.as::refreshRoomSettings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/RoomPopupCtrl.as::refreshRoomSettings()
     private refreshRoomSettings(): void
     {
         if(!this._details || !this._roomData) return;
@@ -124,7 +124,7 @@ export class RoomPopupCtrl extends PopupCtrl
         Util.layoutChildrenInArea(settingsCont as IWindowContainer, 1000, 10, 2);
     }
 
-    // AS3: sources/win63_version/habbo/navigator/RoomPopupCtrl.as::refreshExtraCont()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/RoomPopupCtrl.as::refreshExtraCont()
     private refreshExtraCont(): void
     {
         if(!this._details || !this._roomData) return;
@@ -156,7 +156,7 @@ export class RoomPopupCtrl extends PopupCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/RoomPopupCtrl.as::refreshEventInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/RoomPopupCtrl.as::refreshEventInfo()
     private refreshEventInfo(roomData: GuestRoomData): void
     {
         if(!this._details) return;
@@ -202,7 +202,7 @@ export class RoomPopupCtrl extends PopupCtrl
         if(eventCaption) eventCaption.visible = true;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/RoomPopupCtrl.as::refreshRoomName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/RoomPopupCtrl.as::refreshRoomName()
     private refreshRoomName(container: IWindowContainer, roomData: GuestRoomData): void
     {
         const nameText = container.getChildByName('roomname') as ITextWindow | null;
@@ -215,7 +215,7 @@ export class RoomPopupCtrl extends PopupCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/RoomPopupCtrl.as::refreshRoomDesc()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/RoomPopupCtrl.as::refreshRoomDesc()
     private refreshRoomDesc(container: IWindowContainer, roomData: GuestRoomData): void
     {
         if(roomData.description === '') return;
@@ -231,7 +231,7 @@ export class RoomPopupCtrl extends PopupCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/RoomPopupCtrl.as::refreshTextWithCaption()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/RoomPopupCtrl.as::refreshTextWithCaption()
     private refreshTextWithCaption(name: string, container: IWindowContainer, text: string): void
     {
         const cont = container.findChildByName(name + '_cont') as IWindowContainer | null;
@@ -254,7 +254,7 @@ export class RoomPopupCtrl extends PopupCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/RoomPopupCtrl.as::refreshInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/RoomPopupCtrl.as::refreshInfo()
     private refreshInfo(container: IWindowContainer, name: string, show: boolean): void
     {
         if(!show) return;
@@ -270,7 +270,7 @@ export class RoomPopupCtrl extends PopupCtrl
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/RoomPopupCtrl.as::getRoomCtg()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/RoomPopupCtrl.as::getRoomCtg()
     private getRoomCtg(categoryId: number): string
     {
         for(const category of this._transitionalNavigator.data.allCategories)

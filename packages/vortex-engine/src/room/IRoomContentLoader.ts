@@ -17,49 +17,49 @@ export type RoomContentData = Record<string, unknown>;
 
 export interface IRoomContentLoader extends IDisposable
 {
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::getPlaceHolderType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::getPlaceHolderType()
     getPlaceHolderType(type: string): string;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::getPlaceHolderTypes()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::getPlaceHolderTypes()
     getPlaceHolderTypes(): string[];
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::getContentType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::getContentType()
     getContentType(type: string): string;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::hasInternalContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::hasInternalContent()
     hasInternalContent(type: string): boolean;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::loadObjectContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::loadObjectContent()
     loadObjectContent(type: string, events: EventEmitter): boolean;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::insertObjectContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::insertObjectContent()
     insertObjectContent(typeId: number, category: number, assetLibrary: IAssetLibrary): boolean;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::getVisualizationType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::getVisualizationType()
     getVisualizationType(type: string): string | null;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::getLogicType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::getLogicType()
     getLogicType(type: string): string | null;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::hasVisualizationXML()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::hasVisualizationXML()
     hasVisualizationXML(type: string): boolean;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::getVisualizationXML()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::getVisualizationXML()
     getVisualizationXML(type: string): RoomContentData | null;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::hasAssetXML()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::hasAssetXML()
     hasAssetXML(type: string): boolean;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::getAssetXML()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::getAssetXML()
     getAssetXML(type: string): RoomContentData | null;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::hasLogicXML()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::hasLogicXML()
     hasLogicXML(type: string): boolean;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::getLogicXML()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::getLogicXML()
     getLogicXML(type: string): RoomContentData | null;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::getGraphicAssetCollection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::getGraphicAssetCollection()
     getGraphicAssetCollection(type: string): IGraphicAssetCollection | null;
 
     // Vortex-specific: not in AS3's IRoomContentLoader. AS3's RoomManager.createRoomObject()
@@ -70,6 +70,6 @@ export interface IRoomContentLoader extends IDisposable
     // collection it got back is actually populated yet.
     isLoaded(type: string): boolean;
 
-    // AS3: sources/win63_version/room/IRoomContentLoader.as::roomObjectCreated()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::roomObjectCreated()
     roomObjectCreated(object: IRoomObject, roomId: string): void;
 }

@@ -23,9 +23,9 @@ const log = Logger.getLogger('habbo.configuration.HabboConfigurationManager');
  */
 export class HabboConfigurationManager extends Component implements IHabboConfigurationManager 
 {
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::INTERPOLATION_DEPTH_LIMIT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::INTERPOLATION_DEPTH_LIMIT
     private static readonly INTERPOLATION_DEPTH_LIMIT: number = 3;
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::REPLACE_CHAR
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::REPLACE_CHAR
     private static readonly REPLACE_CHAR: string = '%';
 
     private _configurationData: Map<string, string> = new Map();
@@ -34,12 +34,12 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
     private _isConfigLoaded: boolean = false;
     private _isConfigReadOnly: boolean = false;
     private _embeddedConfigurationAssets: Map<string, string> = new Map();
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::_localization
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
     private _skipExternalVariables: boolean = false;
     private _skipLocalizations: boolean = false;
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::HabboConfigurationManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::HabboConfigurationManager()
     constructor(context: IContext, flags: number = 0) 
     {
         super(context, flags);
@@ -69,7 +69,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         this._useHttps = value;
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::get dependencies()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::get dependencies()
     protected override get dependencies(): Array<ComponentDependency<any>> 
     {
         return [
@@ -95,19 +95,19 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         }
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::isInitialized()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::isInitialized()
     isInitialized(): boolean 
     {
         return this._isConfigLoaded;
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::propertyExists()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::propertyExists()
     propertyExists(key: string): boolean 
     {
         return this._configurationData.has(key);
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::getProperty()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::getProperty()
     getProperty(key: string, params?: Record<string, string>): string 
     {
         if(!params) 
@@ -150,7 +150,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         return value;
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::setProperty()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::setProperty()
     setProperty(key: string, value: string, persistent: boolean = false, logIt: boolean = false): void 
     {
         if(logIt && !this._configurationData.has(key)) 
@@ -176,14 +176,14 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         }
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::getBoolean()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::getBoolean()
     getBoolean(key: string): boolean 
     {
         const value = this._configurationData.get(key);
         return value !== undefined && (value === '1' || value.toLowerCase() === 'true');
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::getInteger()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::getInteger()
     getInteger(key: string, defaultValue: number): number 
     {
         const value = this._configurationData.get(key);
@@ -198,7 +198,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         return isNaN(parsed) ? defaultValue : parsed;
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::interpolate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::interpolate()
     interpolate(value: string): string 
     {
         if(!value) 
@@ -275,7 +275,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         this.setDefaults();
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::resetAll()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::resetAll()
     resetAll(): void 
     {
         this._isConfigLoaded = false;
@@ -314,7 +314,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         }
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::initConfigurationDownload()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::initConfigurationDownload()
     async initConfigurationDownload(): Promise<void> 
     {
         this._isConfigLoaded = false;
@@ -371,7 +371,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         this.resetAll();
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::onLocalizationComplete()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::onLocalizationComplete()
     private onLocalizationComplete(): void 
     {
         if(!this._localization) 
@@ -404,7 +404,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         });
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::updateEnvironmentVariables()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::updateEnvironmentVariables()
     private updateEnvironmentVariables(): void 
     {
         if(!this._environmentId) 
@@ -445,7 +445,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         }
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::initEmbeddedConfigurations()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::initEmbeddedConfigurations()
     private initEmbeddedConfigurations(): void 
     {
         let environment = this._environmentId || localStorage.getItem('vortex_environment') || '';
@@ -528,7 +528,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         return result;
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::parseConfiguration()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::parseConfiguration()
     private parseConfiguration(config: string): void 
     {
         const trimmed = config.trim();
@@ -617,18 +617,18 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         }
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::parseDevelopmentVariables()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::parseDevelopmentVariables()
     private parseDevelopmentVariables(): void 
     {
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::parseCommonVariables()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::parseCommonVariables()
     private parseCommonVariables(): void 
     {
         this.parseConfigurationAsset('common_configuration');
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::parseConfigurationAsset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::parseConfigurationAsset()
     private parseConfigurationAsset(assetName: string): void 
     {
         const content = this._embeddedConfigurationAssets.get(assetName);
@@ -643,13 +643,13 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         }
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::parseLocalizationVariables()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::parseLocalizationVariables()
     private parseLocalizationVariables(): void 
     {
         this.parseConfigurationAsset('localization_configuration');
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::parseArguments()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::parseArguments()
     private parseArguments(): void 
     {
         const core = this.context as ICore;
@@ -664,7 +664,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         core.clearArguments();
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::setDefaults()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::setDefaults()
     private setDefaults(): void 
     {
         this.setProperty('client.fatal.error.url', '${url.prefix}/flash_client_error');

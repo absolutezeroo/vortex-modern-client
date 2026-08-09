@@ -112,7 +112,7 @@ export interface IFurnitureItem
 	 * Nullable, as AS3's `String` is: `FurnitureItem` copies it straight from the item data, and
 	 * the trading item parser has no slot to report and returns null.
 	 */
-    // AS3: sources/win63_version/habbo/inventory/items/FurnitureItem.as::get slotId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/FurnitureItem.as::get slotId()
     readonly slotId: string | null;
 
     /**

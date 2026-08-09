@@ -12,7 +12,7 @@ export class CommandConfiguration
     private _allCommandIds: number[];
     private _enabled: Set<number> = new Set();
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/CommandConfiguration.as::CommandConfiguration()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/CommandConfiguration.as::CommandConfiguration()
     constructor(allCommandIds: number[], enabledCommandIds: number[])
     {
         this._allCommandIds = allCommandIds;
@@ -23,13 +23,13 @@ export class CommandConfiguration
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/CommandConfiguration.as::get allCommandIds()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/CommandConfiguration.as::get allCommandIds()
     public get allCommandIds(): number[]
     {
         return this._allCommandIds;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/CommandConfiguration.as::isEnabled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/CommandConfiguration.as::isEnabled()
     public isEnabled(id: number): boolean
     {
         return this._enabled.has(id);

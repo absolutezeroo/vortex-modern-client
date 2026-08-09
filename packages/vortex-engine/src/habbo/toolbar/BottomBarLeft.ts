@@ -967,7 +967,7 @@ export class BottomBarLeft
         this._window.invalidate();
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/BottomBarLeft.as::onParentResized()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::onParentResized()
     private onParentResized = (): void => 
     {
         this.checkSize();

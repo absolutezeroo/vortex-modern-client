@@ -142,7 +142,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         return this._disposed;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::InfoStandWidgetHandler()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::InfoStandWidgetHandler()
     // TODO(AS3): constructor takes the jukebox/music controller for onNowPlayingChanged /
 
     private _container: IRoomWidgetHandlerContainer | null = null;
@@ -218,7 +218,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
     private _widget: InfoStandWidget | null = null;
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::set widget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::set widget()
     public set widget(widget: InfoStandWidget | null) 
     {
         this._widget = widget;
@@ -231,7 +231,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
      * AS3 resolves the real web id from the user record before handing it to the widget - which
      * matches on web id.
      */
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::onFigureUpdate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::onFigureUpdate()
     private onFigureUpdate = (event: RoomSessionUserFigureUpdateEvent): void =>
     {
         if(!this._container || !event) return;
@@ -248,7 +248,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         this._widget?.updateUserData(webId, event.figure, event.achievementScore, event.customInfo, isOwnUser);
     };
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::onFavouriteGroupUpdated()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::onFavouriteGroupUpdated()
     private onFavouriteGroupUpdated = (event: RoomSessionFavouriteGroupUpdateEvent): void =>
     {
         this._widget?.favouriteGroupUpdated(event.roomIndex, event.habboGroupId, event.status, event.habboGroupName);
@@ -286,7 +286,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         this._disposed = true;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::getWidgetMessages()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::getWidgetMessages()
     public getWidgetMessages(): string[] 
     {
         return [
@@ -317,7 +317,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         ];
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage()
     public processWidgetMessage(message: unknown): unknown 
     {
         if(!(message instanceof RoomWidgetMessage) || !this._container) return null;
@@ -515,13 +515,13 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::getProcessedEvents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::getProcessedEvents()
     public getProcessedEvents(): string[] 
     {
         return ['RSUBE_BADGES'];
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::processEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::processEvent()
     public processEvent(event: { type: string; userId: number; badges: string[] }): void 
     {
         if(event.type === 'RSUBE_BADGES' && this._widget) 
@@ -849,7 +849,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         container.roomSession?.userDataManager.requestPetInfo(petId);
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::onGroupDetails()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::onGroupDetails()
     private onGroupDetails = (event: IMessageEvent): void =>
     {
         const data = (event as HabboGroupDetailsMessageEvent).data;
@@ -860,7 +860,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         this._widget.furniView.groupName = data.groupName;
     };
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage() (RWFAM_* cases)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage() (RWFAM_* cases)
     private processFurniActionMessage(message: RoomWidgetFurniActionMessage): void 
     {
         const container = this._container;
@@ -933,7 +933,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::pickupObjectWithConfirmation()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::pickupObjectWithConfirmation()
     private pickupObjectWithConfirmation(furniId: number, furniCategory: number): void 
     {
         const container = this._container;
@@ -1193,7 +1193,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     // attempt. AS3 reads the result synchronously and re-requests at scale 1 if the image is
     // null or larger than the panel's 140x200 slot; ImageBitmap conversion is always async in
     // the browser (see ImageResult.ts), so that same fallback check happens in imageReady()/
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetFurniInfoMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetFurniInfoMessage()
     private handleGetFurniInfoMessage(message: RoomWidgetRoomObjectMessage, roomId: number): void 
     {
         const container = this._container;
@@ -1330,7 +1330,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         if(result.id === 0) this.imageReady(result.id, result.data);
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::update()
     // TODO(AS3): drives pet-command-tool countdowns and the pet update timer — both
     // (the "re-request at scale 1" fallback branch)
     private retryFurniImageAtScaleOne(pending: {

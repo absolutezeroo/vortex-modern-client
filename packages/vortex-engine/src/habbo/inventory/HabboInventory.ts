@@ -256,7 +256,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return this._friendList;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get roomSession()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get roomSession()
     get roomSession(): IRoomSession | null
     {
         if(!this._roomSessionManager || !this._roomEngine) return null;
@@ -270,25 +270,25 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return this._catalog;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get view()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get view()
     get view(): InventoryMainView
     {
         return this._view;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get isVisible()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get isVisible()
     get isVisible(): boolean
     {
         return this._view.isVisible;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get isMainViewActive()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get isMainViewActive()
     get isMainViewActive(): boolean
     {
         return this._view.isActive;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get mergeRentFurni()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get mergeRentFurni()
     get mergeRentFurni(): boolean
     {
         return true;
@@ -316,7 +316,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return this._purse.clubPastPeriods;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get web3tradeEnabled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get web3tradeEnabled()
     get web3tradeEnabled(): boolean
     {
         return this.getBoolean('web3trade.enabled');
@@ -526,7 +526,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return this._purse;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get clubLevel()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get clubLevel()
     get clubLevel(): number
     {
         if(this._purse.clubDays === 0 && this._purse.clubPeriods === 0)
@@ -701,13 +701,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         ];
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::habboToolbarEventHandler()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::habboToolbarEventHandler()
     private onHabboToolbarEvent = (event: HabboToolbarEvent): void =>
     {
         this._view?.onHabboToolbarEvent(event);
     };
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::roomSessionEventHandler()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::roomSessionEventHandler()
     // TODO(AS3): the RSDUE_ALLOW_PETS case (petsModel.updatePetsAllowed()) and RSE_ENDED's
     // deselectAllEffects() aren't ported - PetsModel.ts has no updatePetsAllowed() and the
     // avatar-effects inventory tab (EffectsModel) isn't ported at all yet. This only restores
@@ -890,13 +890,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::getSubCategoryViewId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getSubCategoryViewId()
     getSubCategoryViewId(): string | null
     {
         return this._view.getSubCategoryViewId();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::closeView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::closeView()
     closeView(): void
     {
         if(this._view?.isVisible)
@@ -905,13 +905,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::showView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::showView()
     showView(): void
     {
         this._view?.showInventory();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::preparingInventoryView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::preparingInventoryView()
     preparingInventoryView(): void
     {
         if(!this._isInitialized)
@@ -920,7 +920,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::inventoryViewOpened()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::inventoryViewOpened()
     inventoryViewOpened(category: string): void
     {
         this._currentCategory = category as InventoryCategoryType;
@@ -931,7 +931,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::closingInventoryView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::closingInventoryView()
     // TODO(AS3): AS3 calls closingInventoryView() on every registered IInventoryModel;
     // only furni implements the shared contract until the other categories do.
     closingInventoryView(): void
@@ -987,7 +987,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._furniModel.subCategorySwitch(category);
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::updateSubView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::updateSubView()
     updateSubView(): void
     {
         this._view.updateSubCategoryView();
@@ -1034,7 +1034,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return result?.data ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::updateUnseenItemCounts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::updateUnseenItemCounts()
     updateUnseenItemCounts(): void
     {
         if(!this._unseenItemTracker) return;
@@ -1073,13 +1073,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._inventories.getValue(category)?.updateView();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::isInventoryCategoryInit()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::isInventoryCategoryInit()
     isInventoryCategoryInit(category: string): boolean
     {
         return this._initializedCategories.has(category);
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::setInventoryCategoryInit()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::setInventoryCategoryInit()
     setInventoryCategoryInit(category: string, init: boolean = true): boolean
     {
         if(init)
@@ -1104,7 +1104,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::checkCategoryInitilization()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::checkCategoryInitilization()
     checkCategoryInitilization(category: string): boolean
     {
         if(this.isInventoryCategoryInit(category))
@@ -1117,7 +1117,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::requestInventoryCategoryInit()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::requestInventoryCategoryInit()
     requestInventoryCategoryInit(category: string): void
     {
         switch(category)
@@ -1202,7 +1202,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._communication?.connection?.send(new GetBotInventoryComposer());
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::initComponent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::initComponent()
     // AS3 creates `view` (var_18 = new InventoryMainView(...)) unconditionally
     // here, separately from the lazily-created models (init()) — the view must
     // exist before any toolbar click can reach it.

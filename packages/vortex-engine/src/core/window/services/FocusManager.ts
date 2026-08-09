@@ -19,10 +19,10 @@ export class FocusManager implements IFocusManagerService
 {
     private _focusedWindow: IWindow | null = null;
     private _focusWindows: IWindow[] = [];
-    // AS3: sources/win63_version/core/window/services/FocusManager.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/FocusManager.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/core/window/services/FocusManager.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/FocusManager.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -55,7 +55,7 @@ export class FocusManager implements IFocusManagerService
 	 *
 	 * @param window - The focusable window to register
 	 */
-    // AS3: sources/win63_version/core/window/services/FocusManager.as::registerFocusWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/FocusManager.as::registerFocusWindow()
     registerFocusWindow(window: IWindow): void
     {
         if(window === null || this._disposed) return;
@@ -76,7 +76,7 @@ export class FocusManager implements IFocusManagerService
 	 *
 	 * @param window - The window to remove
 	 */
-    // AS3: sources/win63_version/core/window/services/FocusManager.as::removeFocusWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/FocusManager.as::removeFocusWindow()
     removeFocusWindow(window: IWindow): void
     {
         if(window === null || this._disposed) return;
@@ -95,7 +95,7 @@ export class FocusManager implements IFocusManagerService
         }
     }
 
-    // AS3: sources/win63_version/core/window/services/FocusManager.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/FocusManager.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -108,7 +108,7 @@ export class FocusManager implements IFocusManagerService
     /**
 	 * Find and focus the next non-disposed window in the stack.
 	 */
-    // AS3: sources/win63_version/core/window/services/FocusManager.as::resolveNextFocusTarget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/FocusManager.as::resolveNextFocusTarget()
     private resolveNextFocusTarget(): void
     {
         let i = this._focusWindows.length;

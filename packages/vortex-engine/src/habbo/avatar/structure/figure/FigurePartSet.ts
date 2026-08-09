@@ -10,7 +10,7 @@ import {getXmlAttribute, getXmlChildElements, getXmlFirstChildElement, getXmlRoo
  */
 export class FigurePartSet implements IFigurePartSet
 {
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::FigurePartSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::FigurePartSet()
     constructor(data: any, type: string)
     {
         const element = getXmlRoot(data);
@@ -90,7 +90,7 @@ export class FigurePartSet implements IFigurePartSet
 
     private _type: string;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::get type()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::get type()
     public get type(): string
     {
         return this._type;
@@ -98,7 +98,7 @@ export class FigurePartSet implements IFigurePartSet
 
     private _id: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::get id()
     public get id(): number
     {
         return this._id;
@@ -106,7 +106,7 @@ export class FigurePartSet implements IFigurePartSet
 
     private _gender: string;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::get gender()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::get gender()
     public get gender(): string
     {
         return this._gender;
@@ -114,7 +114,7 @@ export class FigurePartSet implements IFigurePartSet
 
     private _clubLevel: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::get clubLevel()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::get clubLevel()
     public get clubLevel(): number
     {
         return this._clubLevel;
@@ -122,7 +122,7 @@ export class FigurePartSet implements IFigurePartSet
 
     private _isColorable: boolean;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::get isColorable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::get isColorable()
     public get isColorable(): boolean
     {
         return this._isColorable;
@@ -130,7 +130,7 @@ export class FigurePartSet implements IFigurePartSet
 
     private _isSelectable: boolean;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::get isSelectable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::get isSelectable()
     public get isSelectable(): boolean
     {
         return this._isSelectable;
@@ -138,7 +138,7 @@ export class FigurePartSet implements IFigurePartSet
 
     private _isPreSelectable: boolean;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::get isPreSelectable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::get isPreSelectable()
     public get isPreSelectable(): boolean
     {
         return this._isPreSelectable;
@@ -146,7 +146,7 @@ export class FigurePartSet implements IFigurePartSet
 
     private _isSellable: boolean;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::get isSellable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::get isSellable()
     public get isSellable(): boolean
     {
         return this._isSellable;
@@ -154,22 +154,22 @@ export class FigurePartSet implements IFigurePartSet
 
     private _parts: IFigurePart[];
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::get parts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::get parts()
     public get parts(): IFigurePart[]
     {
         return this._parts;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::_hiddenLayers
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::_hiddenLayers
     private _hiddenLayers: string[];
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::get hiddenLayers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::get hiddenLayers()
     public get hiddenLayers(): string[]
     {
         return this._hiddenLayers;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::getPart()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::getPart()
     public getPart(type: string, id: number): IFigurePart | null
     {
         for(const part of this._parts)
@@ -183,7 +183,7 @@ export class FigurePartSet implements IFigurePartSet
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::dispose()
     public dispose(): void
     {
         this._parts = [];
@@ -204,7 +204,7 @@ export class FigurePartSet implements IFigurePartSet
         }
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/FigurePartSet.as::indexOfPartType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/FigurePartSet.as::indexOfPartType()
     private indexOfPartType(part: FigurePart): number
     {
         for(let i = 0; i < this._parts.length; i++)

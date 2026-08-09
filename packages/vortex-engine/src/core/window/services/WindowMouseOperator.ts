@@ -13,19 +13,19 @@ import type {WindowController} from '../WindowController';
  */
 export class WindowMouseOperator
 {
-    // AS3: sources/win63_version/core/window/services/WindowMouseOperator.as::_window
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::_window
     protected _window: WindowController | null = null;
     protected _active: boolean = false;
-    // AS3: sources/win63_version/core/window/services/WindowMouseOperator.as::_offset
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::_offset
     protected _offset: { x: number; y: number } = {x: 0, y: 0};
-    // AS3: sources/win63_version/core/window/services/WindowMouseOperator.as::_mouse
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::_mouse
     protected _mouse: { x: number; y: number } = {x: 0, y: 0};
     protected _relativePos: { x: number; y: number } = {x: 0, y: 0};
     protected _flags: number = 0;
-    // AS3: sources/win63_version/core/window/services/WindowMouseOperator.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/core/window/services/WindowMouseOperator.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -53,7 +53,7 @@ export class WindowMouseOperator
 	 * @param flags - Operation flags (e.g. scaling direction)
 	 * @returns The previously operated window, or null
 	 */
-    // AS3: sources/win63_version/core/window/services/WindowMouseOperator.as::begin()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::begin()
     public begin(window: IWindow, flags: number = 0): IWindow | null
     {
         this._flags = flags;
@@ -81,7 +81,7 @@ export class WindowMouseOperator
 	 * @param window - The window to stop operating on
 	 * @returns The previously operated window, or null
 	 */
-    // AS3: sources/win63_version/core/window/services/WindowMouseOperator.as::end()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::end()
     public end(window: IWindow): IWindow | null
     {
         const previous: IWindow | null = this._window;
@@ -106,7 +106,7 @@ export class WindowMouseOperator
 	 * @param x - Current mouse X (stage coordinates)
 	 * @param y - Current mouse Y (stage coordinates)
 	 */
-    // AS3: sources/win63_version/core/window/services/WindowMouseOperator.as::operate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::operate()
     public operate(x: number, y: number): void
     {
         this._mouse.x = x;
@@ -147,7 +147,7 @@ export class WindowMouseOperator
     /**
 	 * Dispose the operator.
 	 */
-    // AS3: sources/win63_version/core/window/services/WindowMouseOperator.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::dispose()
     public dispose(): void
     {
         this.end(this._window!);
@@ -162,7 +162,7 @@ export class WindowMouseOperator
 	 * @param mousePos - The absolute mouse position
 	 * @param out - The output relative position
 	 */
-    // AS3: sources/win63_version/core/window/services/WindowMouseOperator.as::getMousePositionRelativeTo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::getMousePositionRelativeTo()
     protected getMousePositionRelativeTo(window: IWindow, mousePos: { x: number; y: number }, out: {
         x: number;
         y: number

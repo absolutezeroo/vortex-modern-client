@@ -9,7 +9,7 @@ import {getXmlAttribute, getXmlChildElements, getXmlRoot} from '../AvatarXmlUtil
  */
 export class AnimationActionPart
 {
-    // AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationActionPart.as::AnimationActionPart()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/animation/AnimationActionPart.as::AnimationActionPart()
     constructor(data: any)
     {
         this._frames = [];
@@ -41,7 +41,7 @@ export class AnimationActionPart
 
     private _frames: AnimationFrame[];
 
-    // AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationActionPart.as::get frames()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/animation/AnimationActionPart.as::get frames()
     public get frames(): AnimationFrame[]
     {
         return this._frames;

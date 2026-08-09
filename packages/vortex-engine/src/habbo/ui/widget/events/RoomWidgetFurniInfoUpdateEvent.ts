@@ -8,7 +8,7 @@ import {RoomWidgetUpdateEvent} from './RoomWidgetUpdateEvent';
 
 export class RoomWidgetFurniInfoUpdateEvent extends RoomWidgetUpdateEvent
 {
-    // AS3: sources/win63_version/habbo/ui/widget/events/RoomWidgetFurniInfoUpdateEvent.as::FURNI
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetFurniInfoUpdateEvent.as::FURNI
     public static readonly FURNI: string = 'RWFIUE_FURNI';
 
     // AS3: .../src/com/sulake/habbo/ui/widget/events/RoomWidgetFurniInfoUpdateEvent.as::get id()
@@ -72,7 +72,7 @@ export class RoomWidgetFurniInfoUpdateEvent extends RoomWidgetUpdateEvent
     // AS3: .../src/com/sulake/habbo/ui/widget/events/RoomWidgetFurniInfoUpdateEvent.as::get isNft()
     public isNft: boolean = false;
 
-    // AS3: sources/win63_version/habbo/ui/widget/events/RoomWidgetFurniInfoUpdateEvent.as::RoomWidgetFurniInfoUpdateEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetFurniInfoUpdateEvent.as::RoomWidgetFurniInfoUpdateEvent()
     constructor(type: string)
     {
         super(type);

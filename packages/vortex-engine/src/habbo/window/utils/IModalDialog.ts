@@ -18,7 +18,7 @@ export interface IModalDialog extends IDisposable
     /**
 	 * The root window of this modal dialog.
 	 */
-    // AS3: sources/win63_version/habbo/window/utils/IModalDialog.as::get rootWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/IModalDialog.as::get rootWindow()
     readonly rootWindow: IWindow | null;
 
     /**
@@ -28,6 +28,6 @@ export interface IModalDialog extends IDisposable
 	 * snapshot of the desktop. In the TS port, this is a generic
 	 * IWindow; the actual darkening is handled by the UI layer.
 	 */
-    // AS3: sources/win63_version/habbo/window/utils/IModalDialog.as::get background()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/IModalDialog.as::get background()
     readonly background: IWindow | null;
 }

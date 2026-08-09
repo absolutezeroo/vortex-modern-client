@@ -40,13 +40,13 @@ export class GroupItem implements IGetImageListener
     private _iconImage: ImageBitmap | null = null;
     private _iconCallbackId: number = -1;
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::get iconImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::get iconImage()
     get iconImage(): ImageBitmap | null
     {
         return this._iconImage;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::set iconImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::set iconImage()
     // Public in AS3 because TradingView assigns it directly when a late icon arrives for an item
     // that is already sitting in a trade grid.
     set iconImage(value: ImageBitmap | null)
@@ -54,7 +54,7 @@ export class GroupItem implements IGetImageListener
         this._iconImage = value;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::get iconCallbackId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::get iconCallbackId()
     get iconCallbackId(): number
     {
         return this._iconCallbackId;
@@ -106,7 +106,7 @@ export class GroupItem implements IGetImageListener
     // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::_window
     protected _window: IWindowContainer | null = null;
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::get window()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::get window()
     get window(): IWindowContainer | null 
     {
         if(!this._windowInitialized) 
@@ -127,7 +127,7 @@ export class GroupItem implements IGetImageListener
 
     private _showRecyclable: boolean;
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::set showRecyclable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::set showRecyclable()
     set showRecyclable(value: boolean) 
     {
         if(this._showRecyclable !== value) 
@@ -137,13 +137,13 @@ export class GroupItem implements IGetImageListener
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::get isImageInited()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::get isImageInited()
     get isImageInited(): boolean 
     {
         return this._windowInitialized && this._isImageInitAttempted;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::get isImageFinished()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::get isImageFinished()
     get isImageFinished(): boolean 
     {
         return this._iconCallbackId === -1;
@@ -315,7 +315,7 @@ export class GroupItem implements IGetImageListener
         return item?.isRented ?? false;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::initImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::initImage()
     initImage(setLoadingImage: boolean = true): boolean 
     {
         if(this._iconImage !== null) return false;
@@ -353,7 +353,7 @@ export class GroupItem implements IGetImageListener
         return result.id > 0;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::imageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::imageReady()
     imageReady(id: number, data: ImageBitmap | null): void 
     {
         if(!this._window) return;
@@ -365,13 +365,13 @@ export class GroupItem implements IGetImageListener
         this.updateItemImageVisual();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::imageFailed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::imageFailed()
     imageFailed(_id: number): void 
     {
         // Intentional no-op, matches AS3.
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::removeIntervalProcedure()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::removeIntervalProcedure()
     removeIntervalProcedure(): void 
     {
         if(this._window) 
@@ -997,7 +997,7 @@ export class GroupItem implements IGetImageListener
         this.updateRentStateVisual();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::updateRentStateVisual()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::updateRentStateVisual()
     private updateRentStateVisual(): void 
     {
         if(!this._window) return;
@@ -1023,7 +1023,7 @@ export class GroupItem implements IGetImageListener
             : (item.secondsToExpiration < warningDuration ? 'inventory_thumb_rent_ending' : 'inventory_thumb_rent_started');
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::updateItemCountVisual()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::updateItemCountVisual()
     private updateItemCountVisual(): void 
     {
         if(!this._window) return;
@@ -1055,7 +1055,7 @@ export class GroupItem implements IGetImageListener
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::updateBackgroundVisual()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::updateBackgroundVisual()
     private updateBackgroundVisual(): void 
     {
         if(!this._window) return;
@@ -1071,7 +1071,7 @@ export class GroupItem implements IGetImageListener
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::updateSelectionVisual()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::updateSelectionVisual()
     private updateSelectionVisual(): void 
     {
         if(!this._window) return;
@@ -1084,7 +1084,7 @@ export class GroupItem implements IGetImageListener
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::updateRecycleStatusVisual()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::updateRecycleStatusVisual()
     private updateRecycleStatusVisual(): void 
     {
         if(!this._window) return;
@@ -1097,7 +1097,7 @@ export class GroupItem implements IGetImageListener
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::updateItemImageVisual()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::updateItemImageVisual()
     private updateItemImageVisual(): void 
     {
         if(!this._window) return;
@@ -1183,7 +1183,7 @@ export class GroupItem implements IGetImageListener
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::itemEventProc()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::itemEventProc()
     private itemEventProc = (event: WindowEvent, _window: IWindow): void =>
     {
         switch(event.type)
@@ -1240,7 +1240,7 @@ export class GroupItem implements IGetImageListener
         return this._model.localization.getLocalization(key);
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::getFurniItemDesc()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::getFurniItemDesc()
     private getFurniItemDesc(): string 
     {
         const item = this.peek();

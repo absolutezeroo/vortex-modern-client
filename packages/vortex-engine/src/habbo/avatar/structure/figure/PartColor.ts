@@ -8,7 +8,7 @@ import {getXmlAttribute, getXmlRoot, getXmlText} from '../AvatarXmlUtils';
  */
 export class PartColor implements IPartColor
 {
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::PartColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::PartColor()
     constructor(data: any)
     {
         const element = getXmlRoot(data);
@@ -37,16 +37,16 @@ export class PartColor implements IPartColor
 
     private _id: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::get id()
     public get id(): number
     {
         return this._id;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::_index
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::_index
     private _index: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get index()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::get index()
     public get index(): number
     {
         return this._index;
@@ -54,7 +54,7 @@ export class PartColor implements IPartColor
 
     private _clubLevel: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get clubLevel()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::get clubLevel()
     public get clubLevel(): number
     {
         return this._clubLevel;
@@ -62,7 +62,7 @@ export class PartColor implements IPartColor
 
     private _isSelectable: boolean;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get isSelectable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::get isSelectable()
     public get isSelectable(): boolean
     {
         return this._isSelectable;
@@ -70,34 +70,34 @@ export class PartColor implements IPartColor
 
     private _rgb: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get rgb()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::get rgb()
     public get rgb(): number
     {
         return this._rgb;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::_r
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::_r
     private _r: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get r()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::get r()
     public get r(): number
     {
         return this._r;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::_g
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::_g
     private _g: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get g()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::get g()
     public get g(): number
     {
         return this._g;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::_b
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::_b
     private _b: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get b()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::get b()
     public get b(): number
     {
         return this._b;
@@ -105,7 +105,7 @@ export class PartColor implements IPartColor
 
     private _redMultiplier: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get redMultiplier()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::get redMultiplier()
     public get redMultiplier(): number
     {
         return this._redMultiplier;
@@ -113,7 +113,7 @@ export class PartColor implements IPartColor
 
     private _greenMultiplier: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get greenMultiplier()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::get greenMultiplier()
     public get greenMultiplier(): number
     {
         return this._greenMultiplier;
@@ -121,7 +121,7 @@ export class PartColor implements IPartColor
 
     private _blueMultiplier: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get blueMultiplier()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::get blueMultiplier()
     public get blueMultiplier(): number
     {
         return this._blueMultiplier;
@@ -129,7 +129,7 @@ export class PartColor implements IPartColor
 
     private _colorTransform: { redMultiplier: number; greenMultiplier: number; blueMultiplier: number };
 
-    // AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get colorTransform()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/figure/PartColor.as::get colorTransform()
     public get colorTransform(): { redMultiplier: number; greenMultiplier: number; blueMultiplier: number }
     {
         return this._colorTransform;

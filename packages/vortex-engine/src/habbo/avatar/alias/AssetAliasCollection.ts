@@ -18,7 +18,7 @@ import {AssetAlias} from './AssetAlias';
  */
 export class AssetAliasCollection
 {
-    // AS3: sources/win63_version/habbo/avatar/alias/AssetAliasCollection.as::_aliases
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/alias/AssetAliasCollection.as::_aliases
     private _aliases: Map<string, AssetAlias>;
     private _collections: Map<string, GraphicAssetCollection>;
     private _assetLibrary: IAssetLibrary | null;
@@ -38,13 +38,13 @@ export class AssetAliasCollection
         this._assetLibrary = assetLibrary;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/alias/AssetAliasCollection.as::init()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/alias/AssetAliasCollection.as::init()
     public init(): void
     {
         // Initialization handled by onAvatarAssetsLibraryReady
     }
 
-    // AS3: sources/win63_version/habbo/avatar/alias/AssetAliasCollection.as::reset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/alias/AssetAliasCollection.as::reset()
     public reset(): void
     {
         this.init();
@@ -60,7 +60,7 @@ export class AssetAliasCollection
 	 *
 	 * @param libraryName - The name of the loaded library (e.g. "hh_human_body")
 	 */
-    // AS3: sources/win63_version/habbo/avatar/alias/AssetAliasCollection.as::onAvatarAssetsLibraryReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/alias/AssetAliasCollection.as::onAvatarAssetsLibraryReady()
     public onAvatarAssetsLibraryReady(libraryName: string): void
     {
         if(!this._assetLibrary) return;
@@ -101,7 +101,7 @@ export class AssetAliasCollection
         }
     }
 
-    // AS3: sources/win63_version/habbo/avatar/alias/AssetAliasCollection.as::addAlias()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/alias/AssetAliasCollection.as::addAlias()
     public addAlias(name: string, link: string, flipH: boolean = false, flipV: boolean = false): void
     {
         const alias = new AssetAlias({name, link, fliph: flipH ? 1 : 0, flipv: flipV ? 1 : 0});
@@ -109,7 +109,7 @@ export class AssetAliasCollection
         this._aliases.set(name, alias);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/alias/AssetAliasCollection.as::hasAlias()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/alias/AssetAliasCollection.as::hasAlias()
     public hasAlias(name: string): boolean
     {
         return this._aliases.has(name);
@@ -120,7 +120,7 @@ export class AssetAliasCollection
 	 *
 	 * @see AS3 AssetAliasCollection.getAssetName() lines 88-99
 	 */
-    // AS3: sources/win63_version/habbo/avatar/alias/AssetAliasCollection.as::getAssetName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/alias/AssetAliasCollection.as::getAssetName()
     public getAssetName(name: string): string
     {
         let result = name;
@@ -184,7 +184,7 @@ export class AssetAliasCollection
         return flipH;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/alias/AssetAliasCollection.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/alias/AssetAliasCollection.as::dispose()
     public dispose(): void
     {
         this._aliases.clear();

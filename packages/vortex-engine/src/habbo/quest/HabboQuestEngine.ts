@@ -482,7 +482,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
         }
     }
 
-    // AS3: sources/win63_version/habbo/quest/HabboQuestEngine.as::reenableRoomCompetitionWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::reenableRoomCompetitionWindow()
     reenableRoomCompetitionWindow(): void
     {
         if(this._competitionController)

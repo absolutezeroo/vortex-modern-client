@@ -15,14 +15,14 @@ const log = Logger.getLogger('habbo.toolbar.extensions.ClubDiscountPromoExtensio
 export class ClubDiscountPromoExtension
 {
     private static readonly EXTENSION_ID: string = 'club_promo';
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::ICON_STYLE_VIP
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::ICON_STYLE_VIP
     private static readonly ICON_STYLE_VIP: number = 14;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::LINK_COLOR_NORMAL
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::LINK_COLOR_NORMAL
     private static readonly LINK_COLOR_NORMAL: number = 0xFFFFFF;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::LINK_COLOR_HIGHLIGHT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::LINK_COLOR_HIGHLIGHT
     private static readonly LINK_COLOR_HIGHLIGHT: number = 0xBACB09;
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::_toolbar
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::_toolbar
     private _toolbar: HabboToolbar | null;
     private _animating: boolean = false;
     private _expirationTimer: ReturnType<typeof setTimeout> | null = null;
@@ -35,7 +35,7 @@ export class ClubDiscountPromoExtension
         log.debug('ClubDiscountPromoExtension constructed');
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::_disposed
     private _disposed: boolean = false;
 
     /**
@@ -85,7 +85,7 @@ export class ClubDiscountPromoExtension
 	 * @param clubMinutesUntilExpiration Minutes until club expiration
 	 * @param clubLevel The current club level (0=none, 1=HC, 2=VIP)
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::onClubChanged()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::onClubChanged()
     public onClubChanged(clubIsExpiring: boolean, clubMinutesUntilExpiration: number, clubLevel: number): void
     {
         if(!this._toolbar) return;
@@ -123,7 +123,7 @@ export class ClubDiscountPromoExtension
     /**
 	 * Dispose of this extension
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::dispose()
     public dispose(): void
     {
         if(this._disposed || !this._toolbar) return;
@@ -139,7 +139,7 @@ export class ClubDiscountPromoExtension
         this._disposed = true;
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::assignState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::assignState()
     private assignState(clubLevel: number): void
     {
         switch(clubLevel)
@@ -155,7 +155,7 @@ export class ClubDiscountPromoExtension
         }
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::isExtensionEnabled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::isExtensionEnabled()
     private isExtensionEnabled(clubLevel: number): boolean
     {
         if(!this._toolbar) return false;
@@ -163,7 +163,7 @@ export class ClubDiscountPromoExtension
         return clubLevel === 2 && this._toolbar.getBoolean('club.membership.extend.vip.promotion.enabled');
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::animate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::animate()
     private animate(start: boolean): void
     {
         if(start)
@@ -180,7 +180,7 @@ export class ClubDiscountPromoExtension
         }
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::clearAnimation()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::clearAnimation()
     private clearAnimation(): void
     {
         if(this._animationTimer !== null)
@@ -190,7 +190,7 @@ export class ClubDiscountPromoExtension
         }
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::onTriggerTimer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::onTriggerTimer()
     private onTriggerTimer(): void
     {
         // In AS3, this triggers a flash animation across the promo bar
@@ -198,7 +198,7 @@ export class ClubDiscountPromoExtension
         log.debug('Club discount promo: animation trigger');
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::destroyWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::destroyWindow()
     private destroyWindow(): void
     {
         this._windowCreated = false;
@@ -206,7 +206,7 @@ export class ClubDiscountPromoExtension
         this.destroyExpirationTimer();
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::destroyExpirationTimer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::destroyExpirationTimer()
     private destroyExpirationTimer(): void
     {
         if(this._expirationTimer !== null)
@@ -216,7 +216,7 @@ export class ClubDiscountPromoExtension
         }
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::onExtendOfferExpire()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/ClubDiscountPromoExtension.as::onExtendOfferExpire()
     private onExtendOfferExpire(): void
     {
         if(this._toolbar?.extensionView)

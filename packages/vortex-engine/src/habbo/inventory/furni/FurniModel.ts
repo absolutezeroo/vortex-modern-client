@@ -49,13 +49,13 @@ export class FurniModel implements IFurniModel
     // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::_localization
     private _localization: IHabboLocalizationManager;
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::controller
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::controller
     get controller(): HabboInventory
     {
         return this._habboInventory;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::localization
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::localization
     get localization(): IHabboLocalizationManager
     {
         return this._localization;
@@ -117,7 +117,7 @@ export class FurniModel implements IFurniModel
         return this._view;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::isListInited()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::isListInited()
     isListInited(): boolean
     {
         return this._isListInitialized;
@@ -125,13 +125,13 @@ export class FurniModel implements IFurniModel
 
     private _showingNfts: boolean = true;
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::get showingNfts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::get showingNfts()
     get showingNfts(): boolean
     {
         return this._showingNfts;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::get isPrivateRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::get isPrivateRoom()
     get isPrivateRoom(): boolean
     {
         if(!this._habboInventory || !this._habboInventory.roomSession) return false;
@@ -139,7 +139,7 @@ export class FurniModel implements IFurniModel
         return this._habboInventory.roomSession.isPrivateRoom;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::canUserOfferToTrade()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::canUserOfferToTrade()
     // TODO(AS3): needs HabboInventory.canUserOfferToTrade() (not wired yet).
     canUserOfferToTrade(): boolean
     {
@@ -297,7 +297,7 @@ export class FurniModel implements IFurniModel
         this._catalog.openRentConfirmationWindow(furnitureData, buyout, -1, item.id);
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::updateActionView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::updateActionView()
     updateActionView(): void
     {
         this._view.updateActionView();
@@ -306,7 +306,7 @@ export class FurniModel implements IFurniModel
     private _pendingPlacementRef: number = -1;
     private _isPlacing: boolean = false;
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::cancelFurniInMover()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::cancelFurniInMover()
     cancelFurniInMover(): void
     {
         if(this._pendingPlacementRef > -1)
@@ -317,7 +317,7 @@ export class FurniModel implements IFurniModel
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::requestSelectedFurniPlacement()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::requestSelectedFurniPlacement()
     // AS3 takes TWO booleans, in this order. The port had only the second one, so
     // attemptPlaceNextFurni()'s `(false)` — AS3's `refuseRoomProperties = false` — was landing on
     // `useLastSelectedIndex` instead. Harmless in that path (the index is set just before the call)
@@ -406,7 +406,7 @@ export class FurniModel implements IFurniModel
         return furniData !== null && furniData.isExternalImageType;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::onObjectPlaced()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::onObjectPlaced()
     onObjectPlaced = (event: RoomEngineObjectPlacedEvent): void =>
     {
         if(!this._isPlacing || event.type !== 'REOE_PLACED') return;
@@ -428,7 +428,7 @@ export class FurniModel implements IFurniModel
         }
     };
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::attemptPlaceNextFurni()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::attemptPlaceNextFurni()
     private attemptPlaceNextFurni(): void
     {
         const groupItem = this.getSelectedItem();
@@ -471,7 +471,7 @@ export class FurniModel implements IFurniModel
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::requestCurrentActionOnSelection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::requestCurrentActionOnSelection()
     // TODO(AS3): recycler/trading branches not wired yet (only placement).
     requestCurrentActionOnSelection(): void
     {
@@ -706,7 +706,7 @@ export class FurniModel implements IFurniModel
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::removeFurnis()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::removeFurnis()
     removeFurnis(itemIds: number[]): boolean
     {
         let removedAny = false;
@@ -832,7 +832,7 @@ export class FurniModel implements IFurniModel
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::updateItemLocks()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::updateItemLocks()
     // AS3 takes no argument: it asks each model that can hold your furniture hostage which items
     // it is holding. The trading half is live now — an item offered in a trade shows as locked in
     // the furni grid, and unlocks when the offer changes.
@@ -930,13 +930,13 @@ export class FurniModel implements IFurniModel
         this.updateItemLocks();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::getWindowContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::getWindowContainer()
     getWindowContainer(): IWindowContainer | null
     {
         return this._view.getWindowContainer();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::requestInitialization()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::requestInitialization()
     requestInitialization(): void
     {
         this._habboInventory.requestFurni();
@@ -962,7 +962,7 @@ export class FurniModel implements IFurniModel
         this._view.updateActionView();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::closingInventoryView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::closingInventoryView()
     closingInventoryView(): void
     {
         if(this._view.isVisible)
@@ -971,7 +971,7 @@ export class FurniModel implements IFurniModel
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::updateView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::updateView()
     updateView(): void
     {
         this._view.updateActionView();
@@ -984,7 +984,7 @@ export class FurniModel implements IFurniModel
         this._view.setViewToState();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::selectItemById()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::selectItemById()
     selectItemById(itemId: string): void
     {
         const groupItem = this.getItemById(-parseInt(itemId, 10));
@@ -1256,7 +1256,7 @@ export class FurniModel implements IFurniModel
         return {groupItem, isNewGroup: true};
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::createGroupItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::createGroupItem()
     // TODO(AS3): skips the fixed wallpaper/floor/landscape icon lookup (needs
     // IHabboWindowManager.assets, not exposed) and the bottom-alignment list
     // (catalog.preview.alignment.bottom) — both fall back to sensible defaults

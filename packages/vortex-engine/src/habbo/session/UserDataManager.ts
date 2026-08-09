@@ -254,7 +254,7 @@ export class UserDataManager implements IUserDataManager
         }
     }
 
-    // AS3: sources/win63_version/habbo/session/UserDataManager.as::requestPetInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/UserDataManager.as::requestPetInfo()
     // First link in the pet-infostand chain: the server answers with PetInfoMessageEvent (3192),
     // which RoomUsersHandler turns into RoomSessionPetInfoUpdateEvent for InfoStandWidgetHandler.
     requestPetInfo(webId: number): void

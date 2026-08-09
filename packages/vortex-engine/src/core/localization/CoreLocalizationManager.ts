@@ -119,7 +119,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
      * Load localization from hashes URL (AS3 flow)
      * First loads hashes.json, then loads external_texts from constructed URL
      */
-    // AS3: sources/win63_version/core/localization/CoreLocalizationManager.as::loadLocalizationFromURL()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/localization/CoreLocalizationManager.as::loadLocalizationFromURL()
     public loadLocalizationFromURL(hashesUrl: string, environmentId: string, acceptEmpty: boolean = false): void 
     {
         if(!hashesUrl || hashesUrl === '') 
@@ -382,7 +382,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         log.debug('CoreLocalizationManager initialized');
     }
 
-    // AS3: sources/win63_version/core/localization/CoreLocalizationManager.as::parseLocalizationData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/localization/CoreLocalizationManager.as::parseLocalizationData()
     protected parseLocalizationData(data: string): Map<string, string> 
     {
         if(!data) 

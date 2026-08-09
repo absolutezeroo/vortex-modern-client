@@ -7,12 +7,12 @@ import {RoomWidgetMessage} from './RoomWidgetMessage';
 
 export class RoomWidgetChatTypingMessage extends RoomWidgetMessage
 {
-    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetChatTypingMessage.as::TYPING_STATUS
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/messages/RoomWidgetChatTypingMessage.as::TYPING_STATUS
     public static readonly TYPING_STATUS: string = 'RWCTM_TYPING_STATUS';
 
     private _isTyping: boolean;
 
-    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetChatTypingMessage.as::RoomWidgetChatTypingMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/messages/RoomWidgetChatTypingMessage.as::RoomWidgetChatTypingMessage()
     constructor(isTyping: boolean)
     {
         super('RWCTM_TYPING_STATUS');
@@ -20,7 +20,7 @@ export class RoomWidgetChatTypingMessage extends RoomWidgetMessage
         this._isTyping = isTyping;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetChatTypingMessage.as::get isTyping()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/messages/RoomWidgetChatTypingMessage.as::get isTyping()
     public get isTyping(): boolean
     {
         return this._isTyping;

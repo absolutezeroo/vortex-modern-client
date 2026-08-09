@@ -16,14 +16,14 @@ import {RoomEntryUtils} from '../../RoomEntryUtils';
  *
  * @see sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as
  */
-// AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::RoomEntryElementFactory
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/results/RoomEntryElementFactory.as::RoomEntryElementFactory
 export class RoomEntryElementFactory
 {
-    // AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::TILES_PER_CONTAINER
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/results/RoomEntryElementFactory.as::TILES_PER_CONTAINER
     static readonly TILES_PER_CONTAINER: number = 3;
     private static readonly ROOM_USERCOUNT_FLASH_LABEL_OFFSET_Y: number = 1;
 
-    // AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/results/RoomEntryElementFactory.as::_navigator
     private _navigator: HabboNewNavigator;
 
     constructor(navigator: HabboNewNavigator)
@@ -33,7 +33,7 @@ export class RoomEntryElementFactory
 
     private _rowEntryTemplate: IWindowContainer | null = null;
 
-    // AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::set rowEntryTemplate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/results/RoomEntryElementFactory.as::set rowEntryTemplate()
     set rowEntryTemplate(value: IWindowContainer)
     {
         this._rowEntryTemplate = value;
@@ -41,7 +41,7 @@ export class RoomEntryElementFactory
 
     private _tileEntryTemplate: IWindowContainer | null = null;
 
-    // AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::set tileEntryTemplate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/results/RoomEntryElementFactory.as::set tileEntryTemplate()
     set tileEntryTemplate(value: IWindowContainer)
     {
         this._tileEntryTemplate = value;
@@ -49,7 +49,7 @@ export class RoomEntryElementFactory
 
     private _tileContainerTemplate: IItemListWindow | null = null;
 
-    // AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::set tileContainerTemplate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/results/RoomEntryElementFactory.as::set tileContainerTemplate()
     set tileContainerTemplate(value: IItemListWindow)
     {
         this._tileContainerTemplate = value;
@@ -57,13 +57,13 @@ export class RoomEntryElementFactory
 
     private _viewMode: ViewModeType = ViewMode.HOTEL_VIEW;
 
-    // AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::set viewMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/results/RoomEntryElementFactory.as::set viewMode()
     set viewMode(value: ViewModeType)
     {
         this._viewMode = value;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::get rowEntryTemplateHeight()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/results/RoomEntryElementFactory.as::get rowEntryTemplateHeight()
     get rowEntryTemplateHeight(): number
     {
         if(!this._rowEntryTemplate) return 0;
@@ -106,7 +106,7 @@ export class RoomEntryElementFactory
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as getNewRowElement()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::getNewRowElement()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/results/RoomEntryElementFactory.as::getNewRowElement()
     getNewRowElement(roomData: GuestRoomData, color: number, width: number = -1): IWindowContainer
     {
         const entry = this._rowEntryTemplate!.clone() as IWindowContainer;
@@ -139,7 +139,7 @@ export class RoomEntryElementFactory
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as getNewTileElement()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::getNewTileElement()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/results/RoomEntryElementFactory.as::getNewTileElement()
     getNewTileElement(roomData: GuestRoomData, _color: number): IWindowContainer
     {
         const entry = this._tileEntryTemplate!.clone() as IWindowContainer;
@@ -189,7 +189,7 @@ export class RoomEntryElementFactory
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as getNewTileContainerElement()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::getNewTileContainerElement()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/results/RoomEntryElementFactory.as::getNewTileContainerElement()
     getNewTileContainerElement(): IItemListWindow
     {
         return this._tileContainerTemplate!.clone() as IItemListWindow;
@@ -205,7 +205,7 @@ export class RoomEntryElementFactory
 	 * @param roomData - The guest room data
 	 * @param isTile - Whether this is a tile element (affects mouse over behavior)
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::updateCommonEntryElements()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/results/RoomEntryElementFactory.as::updateCommonEntryElements()
     private updateCommonEntryElements(container: IWindowContainer, roomData: GuestRoomData, isTile: boolean): void
     {
         const userCountEl = container.findChildByName('room_usercount');

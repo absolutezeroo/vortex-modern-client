@@ -1035,13 +1035,13 @@ export class TextController extends WindowController implements ITextWindow
         super.dispose();
     }
 
-    // AS3: sources/win63_version/core/window/components/TextController.as::get restrict()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get restrict()
     get restrict(): string
     {
         return this._restrict;
     }
 
-    // AS3: sources/win63_version/core/window/components/TextController.as::set restrict()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set restrict()
     set restrict(value: string)
     {
         this._restrict = value;
@@ -1073,7 +1073,7 @@ export class TextController extends WindowController implements ITextWindow
 	 * "no restriction" — treating it as Flash's empty mask would silently make every text field
 	 * in the client read-only.
 	 */
-    // AS3: sources/win63_version/core/window/components/TextController.as::setRestrict()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setRestrict()
     protected applyRestrict(value: string): string
     {
         if(this._restrict === '') return value;

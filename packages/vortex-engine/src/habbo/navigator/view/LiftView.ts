@@ -17,10 +17,10 @@ import type {HabboNewNavigator} from '../HabboNewNavigator';
  */
 export class LiftView implements IUpdateReceiver
 {
-    // AS3: sources/win63_version/habbo/navigator/view/LiftView.as::AUTO_CYCLE_TIMEOUT_MS
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/LiftView.as::AUTO_CYCLE_TIMEOUT_MS
     private static readonly AUTO_CYCLE_TIMEOUT_MS: number = 8000;
 
-    // AS3: sources/win63_version/habbo/navigator/view/LiftView.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/LiftView.as::_navigator
     private _navigator: HabboNewNavigator;
     private _borderWindow: IWindowContainer | null = null;
     private _pagerList: IItemListWindow | null = null;
@@ -38,7 +38,7 @@ export class LiftView implements IUpdateReceiver
     /**
 	 * Whether this receiver has been disposed.
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/LiftView.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/LiftView.as::get disposed()
     get disposed(): boolean
     {
         return this._navigator === null;
@@ -49,7 +49,7 @@ export class LiftView implements IUpdateReceiver
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/LiftView.as set pagerIconTemplate()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/LiftView.as::set pagerIconTemplate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/LiftView.as::set pagerIconTemplate()
     set pagerIconTemplate(value: IWindow)
     {
         this._pagerIconTemplate = value;
@@ -60,7 +60,7 @@ export class LiftView implements IUpdateReceiver
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/LiftView.as set borderWindow()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/LiftView.as::set borderWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/LiftView.as::set borderWindow()
     set borderWindow(value: IWindowContainer)
     {
         this._borderWindow = value;
@@ -81,7 +81,7 @@ export class LiftView implements IUpdateReceiver
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/LiftView.as refresh()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/LiftView.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/LiftView.as::refresh()
     refresh(resetPage: boolean = true): void
     {
         if(!this._pagerList || !this._pagerIconTemplate) return;
@@ -107,7 +107,7 @@ export class LiftView implements IUpdateReceiver
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/LiftView.as update()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/LiftView.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/LiftView.as::update()
     update(_dt: number): void
     {
         const now = Date.now();
@@ -124,7 +124,7 @@ export class LiftView implements IUpdateReceiver
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/LiftView.as dispose()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/LiftView.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/LiftView.as::dispose()
     dispose(): void
     {
         if(this._navigator)
@@ -140,7 +140,7 @@ export class LiftView implements IUpdateReceiver
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/LiftView.as setPagerToSelectedPage()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/LiftView.as::setPagerToSelectedPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/LiftView.as::setPagerToSelectedPage()
     private setPagerToSelectedPage(): void
     {
         if(!this._pagerList) return;
@@ -169,7 +169,7 @@ export class LiftView implements IUpdateReceiver
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/LiftView.as drawSelectedPage()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/LiftView.as::drawSelectedPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/LiftView.as::drawSelectedPage()
     private drawSelectedPage(): void
     {
         if(!this._borderWindow) return;
@@ -201,7 +201,7 @@ export class LiftView implements IUpdateReceiver
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/LiftView.as autoCycleToNextPage()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/LiftView.as::autoCycleToNextPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/LiftView.as::autoCycleToNextPage()
     private autoCycleToNextPage(): void
     {
         this._selectedPage++;

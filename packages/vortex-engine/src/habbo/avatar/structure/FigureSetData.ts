@@ -18,14 +18,14 @@ export class FigureSetData implements IStructureData, IFigureData
     private _palettes: Map<string, Palette>;
     private _setTypes: Map<string, SetType>;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/FigureSetData.as::FigureSetData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/FigureSetData.as::FigureSetData()
     constructor()
     {
         this._palettes = new Map();
         this._setTypes = new Map();
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/FigureSetData.as::parse()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/FigureSetData.as::parse()
     public parse(data: any): boolean
     {
         if(!data) return false;
@@ -42,7 +42,7 @@ export class FigureSetData implements IStructureData, IFigureData
         return this.parseObject(data, false);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/FigureSetData.as::injectXML()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/FigureSetData.as::injectXML()
     public injectXML(data: any): void
     {
         if(!data) return;
@@ -106,7 +106,7 @@ export class FigureSetData implements IStructureData, IFigureData
         this.appendJSON(data);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/FigureSetData.as::appendXML()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/FigureSetData.as::appendXML()
     public appendXML(data: any): boolean
     {
         if(!data) return false;
@@ -130,7 +130,7 @@ export class FigureSetData implements IStructureData, IFigureData
         return this.parseObject(data, true);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/FigureSetData.as::getMandatorySetTypeIds()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/FigureSetData.as::getMandatorySetTypeIds()
     public getMandatorySetTypeIds(gender: string, clubLevel: number): string[]
     {
         const result: string[] = [];
@@ -146,7 +146,7 @@ export class FigureSetData implements IStructureData, IFigureData
         return result;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/FigureSetData.as::getDefaultPartSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/FigureSetData.as::getDefaultPartSet()
     public getDefaultPartSet(type: string, gender: string): IFigurePartSet | null
     {
         const setType = this._setTypes.get(type);
@@ -159,19 +159,19 @@ export class FigureSetData implements IStructureData, IFigureData
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/FigureSetData.as::getSetType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/FigureSetData.as::getSetType()
     public getSetType(type: string): ISetType | null
     {
         return this._setTypes.get(type) ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/FigureSetData.as::getPalette()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/FigureSetData.as::getPalette()
     public getPalette(id: number): IPalette | null
     {
         return this._palettes.get(String(id)) ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/FigureSetData.as::getFigurePartSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/FigureSetData.as::getFigurePartSet()
     public getFigurePartSet(id: number): IFigurePartSet | null
     {
         for(const setType of this._setTypes.values())
@@ -187,7 +187,7 @@ export class FigureSetData implements IStructureData, IFigureData
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/FigureSetData.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/FigureSetData.as::dispose()
     public dispose(): void
     {
         this._palettes.clear();

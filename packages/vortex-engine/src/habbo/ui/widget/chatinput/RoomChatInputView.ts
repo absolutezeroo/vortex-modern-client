@@ -49,7 +49,7 @@ export class RoomChatInputView
     private _typingTimer: ReturnType<typeof setTimeout> | null = null;
     private _idleTimer: ReturnType<typeof setTimeout> | null = null;
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::RoomChatInputView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::RoomChatInputView()
     constructor(widget: RoomChatInputWidget)
     {
         this._widget = widget;
@@ -78,7 +78,7 @@ export class RoomChatInputView
         return this._chatStyleMenuContainer;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::dispose()
     public dispose(): void
     {
         this.clearTimers();
@@ -113,7 +113,7 @@ export class RoomChatInputView
         if(this._idleTimer !== null) { clearTimeout(this._idleTimer); this._idleTimer = null; }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::createWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::createWindow()
     private createWindow(): void
     {
         if(!this._widget) return;
@@ -169,7 +169,7 @@ export class RoomChatInputView
 
     private onParentResized = (): void => this.updatePosition();
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::updatePosition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::updatePosition()
     public updatePosition(): void
     {
         if(!this._window || !this._bubbleCont || !this._widget) return;
@@ -209,21 +209,21 @@ export class RoomChatInputView
         this._chatStyleSelector?.alignMenuToSelector();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::hideFloodBlocking()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideFloodBlocking()
     public hideFloodBlocking(): void
     {
         if(this._input) this._input.visible = true;
         if(this._blockText) this._blockText.visible = false;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::showFloodBlocking()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::showFloodBlocking()
     public showFloodBlocking(): void
     {
         if(this._input) this._input.visible = false;
         if(this._blockText) this._blockText.visible = true;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::updateBlockText()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::updateBlockText()
     public updateBlockText(seconds: number): void
     {
         if(!this._blockText || !this._widget) return;
@@ -231,7 +231,7 @@ export class RoomChatInputView
         this._blockText.caption = this._widget.localizations?.registerParameter('chat.input.alert.flood', 'time', String(seconds)) ?? '';
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::displaySpecialChatMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::displaySpecialChatMessage()
     public displaySpecialChatMessage(prefix: string, name: string = ''): void
     {
         if(!this._input) return;
@@ -256,7 +256,7 @@ export class RoomChatInputView
         this.setInputFieldFocus();
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::windowKeyEventProcessor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::windowKeyEventProcessor()
     private onKeyDown = (event: WindowKeyboardEvent): void =>
     {
         if(!this._input || !this._widget || this._widget.floodBlocked) return;
@@ -285,7 +285,7 @@ export class RoomChatInputView
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::onInputChanged()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::onInputChanged()
     private onInputChanged = (): void =>
     {
         if(!this._input || !this._widget) return;
@@ -384,13 +384,13 @@ export class RoomChatInputView
         this._input.focus();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::setInputFieldColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::setInputFieldColor()
     public setInputFieldColor(color: number): void
     {
         if(this._input) this._input.textColor = color;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::sendChatFromInputField()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::sendChatFromInputField()
     private sendChatFromInputField(shiftKey: boolean = false): void
     {
         if(!this._input || !this._widget || this._input.text === '') return;
@@ -581,7 +581,7 @@ export class RoomChatInputView
         return pos.y;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::getChatWindowElements()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::getChatWindowElements()
     public getChatWindowElements(): IWindow[]
     {
         const elements: Array<IWindow | null> = [this._bubbleCont, this._input];

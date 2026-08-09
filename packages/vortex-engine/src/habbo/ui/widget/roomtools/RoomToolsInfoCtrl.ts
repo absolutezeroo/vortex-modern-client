@@ -31,19 +31,19 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
     private _tags: string[] = [];
     private _motion: Motion | null = null;
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::RoomToolsInfoCtrl()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::RoomToolsInfoCtrl()
     constructor(widget: RoomToolsWidget, windowManager: IHabboWindowManager, assets: IAssetLibrary | null) 
     {
         super(widget, windowManager, assets);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::get right()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::get right()
     public get right(): number 
     {
         return this._window ? this._window.width + this._window.x : 0;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::showRoomInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::showRoomInfo()
     public showRoomInfo(_isOwner: boolean, roomName: string, ownerLine: string, tags: string[] | null): void 
     {
         if(!this._window) 
@@ -95,7 +95,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
         this.setCollapsed(false);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::updatePosition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::updatePosition()
     public updatePosition(): void 
     {
         if(!this._window) return;
@@ -113,7 +113,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
         this._window.position = {x, y};
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::hide()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::hide()
     public hide(): void 
     {
         this.cancelCurrentMotion();
@@ -126,7 +126,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::setCollapsed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::setCollapsed()
     public override setCollapsed(value: boolean): void 
     {
         if(this._collapsed === value) return;
@@ -149,7 +149,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
         Motions.runMotion(this._motion);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::setToolbarCollapsed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::setToolbarCollapsed()
     public setToolbarCollapsed(value: boolean): void 
     {
         if(!this._window) return;
@@ -161,7 +161,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
         Motions.runMotion(this._motion);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::cancelCurrentMotion()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::cancelCurrentMotion()
     private cancelCurrentMotion(): void 
     {
         if(this._motion !== null) 
@@ -171,7 +171,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::motionComplete()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::motionComplete()
     private motionComplete = (): void => 
     {
         this._motion = null;
@@ -182,7 +182,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::trimTag()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::trimTag()
     private trimTag(tag: string): string 
     {
         if(tag.length > 16) 
@@ -193,7 +193,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
         return tag;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::onWindowEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::onWindowEvent()
     private onWindowEvent = (event: WindowEvent, target: IWindow): void => 
     {
         if(event.type === 'WE_PARENT_RESIZED') 

@@ -50,13 +50,13 @@ export class TextLinkController extends TextController implements ITextLinkWindo
 
     private _toolTipDelay: number = 0;
 
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::get toolTipDelay()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::get toolTipDelay()
     public get toolTipDelay(): number
     {
         return this._toolTipDelay;
     }
 
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::set toolTipDelay()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::set toolTipDelay()
     public set toolTipDelay(value: number)
     {
         this._toolTipDelay = value;
@@ -64,13 +64,13 @@ export class TextLinkController extends TextController implements ITextLinkWindo
 
     private _toolTipCaption: string = '';
 
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::get toolTipCaption()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::get toolTipCaption()
     public get toolTipCaption(): string
     {
         return this._toolTipCaption;
     }
 
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::set toolTipCaption()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::set toolTipCaption()
     public set toolTipCaption(value: string)
     {
         this._toolTipCaption = value == null ? '' : value;
@@ -78,13 +78,13 @@ export class TextLinkController extends TextController implements ITextLinkWindo
 
     private _toolTipIsDynamic: boolean = false;
 
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::get toolTipIsDynamic()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::get toolTipIsDynamic()
     public get toolTipIsDynamic(): boolean
     {
         return this._toolTipIsDynamic;
     }
 
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::set toolTipIsDynamic()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::set toolTipIsDynamic()
     public set toolTipIsDynamic(value: boolean)
     {
         this._toolTipIsDynamic = value;
@@ -92,13 +92,13 @@ export class TextLinkController extends TextController implements ITextLinkWindo
 
     private _interactiveCursorDisabled: boolean = false;
 
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::get interactiveCursorDisabled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::get interactiveCursorDisabled()
     public get interactiveCursorDisabled(): boolean
     {
         return this._interactiveCursorDisabled;
     }
 
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::set interactiveCursorDisabled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::set interactiveCursorDisabled()
     public set interactiveCursorDisabled(value: boolean)
     {
         this._interactiveCursorDisabled = value;
@@ -116,13 +116,13 @@ export class TextLinkController extends TextController implements ITextLinkWindo
         this._link = value ?? '';
     }
 
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::get mouseCursorType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::get mouseCursorType()
     public get mouseCursorType(): number
     {
         return 0;
     }
 
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::set mouseCursorType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::set mouseCursorType()
     public set mouseCursorType(_value: number)
     {
         // No-op per AS3
@@ -142,7 +142,7 @@ export class TextLinkController extends TextController implements ITextLinkWindo
     /**
 	 * Sets a mouse cursor for a specific state.
 	 */
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::setMouseCursorForState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::setMouseCursorForState()
     public setMouseCursorForState(state: number, cursor: number): number
     {
         if(!this._mouseCursorMap)
@@ -167,7 +167,7 @@ export class TextLinkController extends TextController implements ITextLinkWindo
     /**
 	 * Gets the mouse cursor for a specific state.
 	 */
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::getMouseCursorByState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::getMouseCursorByState()
     public getMouseCursorByState(state: number): number
     {
         if(!this._mouseCursorMap) return 0;
@@ -175,13 +175,13 @@ export class TextLinkController extends TextController implements ITextLinkWindo
         return this._mouseCursorMap.get(state) ?? 0;
     }
 
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::showToolTip()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::showToolTip()
     public showToolTip(_toolTip: IToolTipWindow): void
     {
         throw new Error('Unimplemented method!');
     }
 
-    // AS3: sources/win63_version/core/window/components/TextLinkController.as::hideToolTip()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLinkController.as::hideToolTip()
     public hideToolTip(): void
     {
         throw new Error('Unimplemented method!');

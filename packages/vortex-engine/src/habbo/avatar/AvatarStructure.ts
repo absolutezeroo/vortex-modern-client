@@ -73,7 +73,7 @@ export class AvatarStructure
         this._geometry = new AvatarModelGeometry(data);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/AvatarStructure.as::initActions()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::initActions()
     public initActions(assetsOrData: IAssetLibrary | any, data: any = null): void
     {
         const actionData = data !== null ? data : assetsOrData;
@@ -87,7 +87,7 @@ export class AvatarStructure
         this._defaultLayAction = this._actionManager.getDefaultLayAction();
     }
 
-    // AS3: sources/win63_version/habbo/avatar/AvatarStructure.as::updateActions()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::updateActions()
     public updateActions(data: any): void
     {
         if(this._actionManager)
@@ -133,7 +133,7 @@ export class AvatarStructure
         return this._figureSetData.parse(data);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/AvatarStructure.as::injectFigureData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::injectFigureData()
     public injectFigureData(data: any): void
     {
         this._figureSetData.injectXML(data);

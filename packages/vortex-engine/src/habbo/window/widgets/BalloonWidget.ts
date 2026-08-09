@@ -22,18 +22,18 @@ import type {WindowEventListener} from '@core/window/events/WindowEventDispatche
  */
 export class BalloonWidget implements IWidget
 {
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::TYPE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::TYPE
     public static readonly TYPE: string = 'balloon';
 
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::ARROW_PIVOT_KEY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::ARROW_PIVOT_KEY
     private static readonly ARROW_PIVOT_KEY: string = 'balloon:arrow_pivot';
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::ARROW_DISPLACEMENT_KEY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::ARROW_DISPLACEMENT_KEY
     private static readonly ARROW_DISPLACEMENT_KEY: string = 'balloon:arrow_displacement';
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::ARROW_FREE_PADDING
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::ARROW_FREE_PADDING
     private static readonly ARROW_FREE_PADDING: number = 6;
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::ARROW_LENGTH
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::ARROW_LENGTH
     private static readonly ARROW_LENGTH: number = 6;
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::ARROW_WIDTH
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::ARROW_WIDTH
     private static readonly ARROW_WIDTH: number = 9;
 
     private static readonly PARAM_FLAG_131072: number = 131072;
@@ -42,7 +42,7 @@ export class BalloonWidget implements IWidget
     private _batchUpdate: boolean = false;
 
     private _widgetWindow: IWidgetWindow | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
 
     private _root: IWindowContainer | null = null;
@@ -83,10 +83,10 @@ export class BalloonWidget implements IWidget
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -94,13 +94,13 @@ export class BalloonWidget implements IWidget
 
     private _arrowPivot: string = 'up, center';
 
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::get arrowPivot()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::get arrowPivot()
     public get arrowPivot(): string
     {
         return this._arrowPivot;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::set arrowPivot()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::set arrowPivot()
     public set arrowPivot(value: string)
     {
         this._arrowPivot = value;
@@ -108,13 +108,13 @@ export class BalloonWidget implements IWidget
 
     private _arrowDisplacement: number = 0;
 
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::get arrowDisplacement()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::get arrowDisplacement()
     public get arrowDisplacement(): number
     {
         return this._arrowDisplacement;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::set arrowDisplacement()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::set arrowDisplacement()
     public set arrowDisplacement(value: number)
     {
         this._arrowDisplacement = value;
@@ -123,7 +123,7 @@ export class BalloonWidget implements IWidget
     /**
 	 * Returns the border's iterator if available.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::get iterator()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::get iterator()
     public get iterator(): unknown
     {
         if(this._border)
@@ -134,7 +134,7 @@ export class BalloonWidget implements IWidget
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         if(this._disposed) return [];
@@ -145,7 +145,7 @@ export class BalloonWidget implements IWidget
         ];
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::set properties()
     public set properties(values: PropertyStruct[])
     {
         this._batchUpdate = true;
@@ -166,7 +166,7 @@ export class BalloonWidget implements IWidget
         this._batchUpdate = false;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;
@@ -206,7 +206,7 @@ export class BalloonWidget implements IWidget
     /**
 	 * Sync param flags from widgetWindow to border.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::syncFlags()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::syncFlags()
     private syncFlags(): void
     {
         if(!this._widgetWindow || !this._border) return;
@@ -228,7 +228,7 @@ export class BalloonWidget implements IWidget
     /**
 	 * Clear param flags from border.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::clearFlags()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::clearFlags()
     private clearFlags(): void
     {
         if(!this._border) return;
@@ -242,7 +242,7 @@ export class BalloonWidget implements IWidget
     /**
 	 * Handle resize events. Calls refresh to reposition the arrow.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::onChange()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::onChange()
     private onChange(): void
     {
         this.refresh();
@@ -254,7 +254,7 @@ export class BalloonWidget implements IWidget
 	 * Complex arrow positioning logic from AS3 - stub for now,
 	 * the UI layer handles visual rendering.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/BalloonWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::refresh()
     private refresh(): void
     {
         // TODO: Implement full arrow positioning logic from AS3

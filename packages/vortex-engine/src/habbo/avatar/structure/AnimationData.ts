@@ -12,13 +12,13 @@ export class AnimationData implements IStructureData
 {
     private _actions: Map<string, AnimationAction>;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::AnimationData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AnimationData.as::AnimationData()
     constructor()
     {
         this._actions = new Map();
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::parse()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AnimationData.as::parse()
     public parse(data: any): boolean
     {
         if(!data) return false;
@@ -28,7 +28,7 @@ export class AnimationData implements IStructureData
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::appendXML()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AnimationData.as::appendXML()
     public appendXML(data: any): boolean
     {
         if(!data) return false;
@@ -65,13 +65,13 @@ export class AnimationData implements IStructureData
         return this.appendXML(data);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::getAction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AnimationData.as::getAction()
     public getAction(action: IActionDefinition): AnimationAction | null
     {
         return this._actions.get(action.id) || null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::getFrameCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AnimationData.as::getFrameCount()
     public getFrameCount(action: IActionDefinition): number
     {
         const animAction = this.getAction(action);

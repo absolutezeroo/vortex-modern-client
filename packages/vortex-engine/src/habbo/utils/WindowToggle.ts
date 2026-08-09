@@ -10,21 +10,21 @@ import type {IDisposable} from '@core/runtime/IDisposable';
  */
 export class WindowToggle implements IDisposable
 {
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::RESULT_SHOW
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::RESULT_SHOW
     public static readonly RESULT_SHOW: number = 0;
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::RESULT_ACTIVATE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::RESULT_ACTIVATE
     public static readonly RESULT_ACTIVATE: number = 1;
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::RESULT_HIDE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::RESULT_HIDE
     public static readonly RESULT_HIDE: number = 2;
 
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::_window
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::_window
     private _window: IWindow | null;
     private _container: IWindowContainer | null;
     private _showFunction: (() => void) | null;
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::_hideFunction
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::_hideFunction
     private _hideFunction: (() => void) | null;
 
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::WindowToggle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::WindowToggle()
     constructor(
         window: IWindow,
         container: IWindowContainer,
@@ -38,7 +38,7 @@ export class WindowToggle implements IDisposable
         this._hideFunction = hideFunction;
     }
 
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::isHiddenByOtherWindows()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::isHiddenByOtherWindows()
     static isHiddenByOtherWindows(window: IWindow): boolean
     {
         const desktop = window.desktop as unknown as IWindowContainer | null;
@@ -85,34 +85,34 @@ export class WindowToggle implements IDisposable
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::get window()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::get window()
     get window(): IWindow | null
     {
         return this._window;
     }
 
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::get visible()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::get visible()
     get visible(): boolean
     {
         return !!this._window && this._window.visible && !!this._window.parent;
     }
 
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::get active()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::get active()
     get active(): boolean
     {
         return this.visible && !!this._window && this._window.getStateFlag(1);
     }
 
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -129,7 +129,7 @@ export class WindowToggle implements IDisposable
         this._hideFunction = null;
     }
 
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::show()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::show()
     show(): void
     {
         if(!this._window || !this._container) return;
@@ -147,7 +147,7 @@ export class WindowToggle implements IDisposable
         this._window.activate();
     }
 
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::hide()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::hide()
     hide(): void
     {
         if(!this._window || !this._container) return;
@@ -165,7 +165,7 @@ export class WindowToggle implements IDisposable
         this._window.deactivate();
     }
 
-    // AS3: sources/win63_version/habbo/utils/WindowToggle.as::toggle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/WindowToggle.as::toggle()
     toggle(): void
     {
         if(this.visible)

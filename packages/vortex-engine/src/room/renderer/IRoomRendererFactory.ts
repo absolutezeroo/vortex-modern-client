@@ -11,6 +11,6 @@ import type {IRoomRenderer} from './IRoomRenderer';
 
 export interface IRoomRendererFactory
 {
-    // AS3: sources/win63_version/room/renderer/IRoomRendererFactory.as::createRenderer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/IRoomRendererFactory.as::createRenderer()
     createRenderer(): IRoomRenderer;
 }

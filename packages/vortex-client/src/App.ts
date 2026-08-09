@@ -581,7 +581,7 @@ export class VortexApp
     private _animFrameId: number = 0;
     private _uiCompositeDirty: boolean = true;
     private _lastUiRenderVersion: number = -1;
-    // AS3: sources/win63_version/habbo/window/ResourceManager.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::_disposed
     private _disposed: boolean = false;
     // AS3: .../src/binaryData/HabboAir.as::_loadingScreen
     private _loadingScreen: VortexLoadingScreen | null;

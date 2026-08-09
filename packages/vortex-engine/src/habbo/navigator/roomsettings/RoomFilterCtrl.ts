@@ -15,12 +15,12 @@ import {GetCustomRoomFilterMessageComposer} from '@habbo/communication/messages/
  */
 export class RoomFilterCtrl implements IDisposable
 {
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomFilterCtrl.as::_flatId
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomFilterCtrl.as::_flatId
     private _flatId: number = 0;
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomFilterCtrl.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomFilterCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
     private _selectedIndex: number = -1;
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomFilterCtrl.as::_window
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomFilterCtrl.as::_window
     private _window: IWindowContainer | null = null;
     private _badWords: string[] = [];
     private _listWindow: IItemListWindow | null = null;
@@ -32,13 +32,13 @@ export class RoomFilterCtrl implements IDisposable
         this._badWords = [];
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomFilterCtrl.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomFilterCtrl.as::get disposed()
     get disposed(): boolean
     {
         return this._navigator === null;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomFilterCtrl.as::startRoomFilterEdit()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomFilterCtrl.as::startRoomFilterEdit()
     startRoomFilterEdit(flatId: number): void
     {
         if(!this._navigator) return;
@@ -48,7 +48,7 @@ export class RoomFilterCtrl implements IDisposable
         this._refreshWindow();
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomFilterCtrl.as::onRoomFilterSettings()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomFilterCtrl.as::onRoomFilterSettings()
     onRoomFilterSettings(words: string[]): void
     {
         for(const word of words)
@@ -66,7 +66,7 @@ export class RoomFilterCtrl implements IDisposable
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomFilterCtrl.as::close()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomFilterCtrl.as::close()
     close(): void
     {
         this._flatId = 0;
@@ -77,7 +77,7 @@ export class RoomFilterCtrl implements IDisposable
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomFilterCtrl.as::disposeWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomFilterCtrl.as::disposeWindow()
     disposeWindow(): void
     {
         if(this._window !== null)
@@ -103,7 +103,7 @@ export class RoomFilterCtrl implements IDisposable
         this._badWords.length = 0;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomFilterCtrl.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomFilterCtrl.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;

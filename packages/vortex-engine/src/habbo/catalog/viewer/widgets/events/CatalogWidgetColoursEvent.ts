@@ -7,19 +7,19 @@ export class CatalogWidgetColoursEvent
 {
     static readonly COLOUR_ARRAY: string = 'COLOUR_ARRAY';
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::_colours
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::_colours
     private _colours: number[];
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::_backgroundAssetName
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::_backgroundAssetName
     private _backgroundAssetName: string;
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::_colourAssetName
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::_colourAssetName
     private _colourAssetName: string;
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::_chosenColourAssetName
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::_chosenColourAssetName
     private _chosenColourAssetName: string;
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::_index
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::_index
     private _index: number;
 
     constructor(
@@ -42,31 +42,31 @@ export class CatalogWidgetColoursEvent
         return CatalogWidgetColoursEvent.COLOUR_ARRAY;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::get colours()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::get colours()
     get colours(): number[]
     {
         return this._colours;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::get backgroundAssetName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::get backgroundAssetName()
     get backgroundAssetName(): string
     {
         return this._backgroundAssetName;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::get colourAssetName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::get colourAssetName()
     get colourAssetName(): string
     {
         return this._colourAssetName;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::get chosenColourAssetName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::get chosenColourAssetName()
     get chosenColourAssetName(): string
     {
         return this._chosenColourAssetName;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::get index()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetColoursEvent.as::get index()
     get index(): number
     {
         return this._index;

@@ -45,7 +45,7 @@ export class InfoStandUserData
         this._badges = value;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandUserData.as::isBot()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::isBot()
     public isBot(): boolean
     {
         return this.type === 'RWUIUE_BOT';

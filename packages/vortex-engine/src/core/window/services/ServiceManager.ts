@@ -45,52 +45,52 @@ export class ServiceManager implements IInternalWindowServices
         };
     }
 
-    // AS3: sources/win63_version/core/window/services/ServiceManager.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/ServiceManager.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/core/window/services/ServiceManager.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/ServiceManager.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
     }
 
-    // AS3: sources/win63_version/core/window/services/ServiceManager.as::getMouseDraggingService()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/ServiceManager.as::getMouseDraggingService()
     public getMouseDraggingService(): IMouseDraggingService
     {
         return this._dragger;
     }
 
-    // AS3: sources/win63_version/core/window/services/ServiceManager.as::getMouseScalingService()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/ServiceManager.as::getMouseScalingService()
     public getMouseScalingService(): IMouseScalingService
     {
         return this._scaler;
     }
 
-    // AS3: sources/win63_version/core/window/services/ServiceManager.as::getMouseListenerService()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/ServiceManager.as::getMouseListenerService()
     public getMouseListenerService(): IMouseListenerService
     {
         return this._mouseListener;
     }
 
-    // AS3: sources/win63_version/core/window/services/ServiceManager.as::getFocusManagerService()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/ServiceManager.as::getFocusManagerService()
     public getFocusManagerService(): IFocusManagerService
     {
         return this._focusManager;
     }
 
-    // AS3: sources/win63_version/core/window/services/ServiceManager.as::getToolTipAgentService()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/ServiceManager.as::getToolTipAgentService()
     public getToolTipAgentService(): IToolTipAgentService
     {
         return this._toolTipAgent;
     }
 
-    // AS3: sources/win63_version/core/window/services/ServiceManager.as::getGestureAgentService()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/ServiceManager.as::getGestureAgentService()
     public getGestureAgentService(): IGestureAgentService
     {
         return this._gestureAgent;
     }
 
-    // AS3: sources/win63_version/core/window/services/ServiceManager.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/ServiceManager.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

@@ -9,7 +9,7 @@ import type { ITabNavigator } from '../../domain/Tab';
  */
 export class CategoriesTabPageDecorator implements ITabPageDecorator
 {
-    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::_navigator
     private _navigator: ITabNavigator;
 
     constructor(navigator: ITabNavigator)
@@ -17,39 +17,39 @@ export class CategoriesTabPageDecorator implements ITabPageDecorator
         this._navigator = navigator;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::refreshCustomContent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::refreshCustomContent()
     refreshCustomContent(_container: IWindowContainer): void
     {
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::tabSelected()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::tabSelected()
     tabSelected(): void
     {
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::navigatorOpenedWhileInTab()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::navigatorOpenedWhileInTab()
     navigatorOpenedWhileInTab(): void
     {
         this._navigator.mainViewCtrl?.startSearch(6, 21);
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::refreshFooter()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::refreshFooter()
     refreshFooter(_container: IWindowContainer): void
     {
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::get filterCategory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::get filterCategory()
     get filterCategory(): string | null
     {
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::setSubSelection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::setSubSelection()
     setSubSelection(_value: number): void
     {
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::processSearchParam()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/tabpagedecorators/CategoriesTabPageDecorator.as::processSearchParam()
     processSearchParam(_param: string): string
     {
         return '';

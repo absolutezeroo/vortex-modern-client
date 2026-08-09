@@ -328,7 +328,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this._tracking;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get mainContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get mainContainer()
     get mainContainer(): IWindowContainer | null
     {
         return this._mainWindow;
@@ -346,7 +346,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get sessionDataManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get sessionDataManager()
     get sessionDataManager(): ISessionDataManager | null 
     {
         return this._sessionDataManager;
@@ -355,7 +355,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_avatarRenderManager
     private _avatarRenderManager: IAvatarRenderManager | null = null;
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get avatarRenderManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get avatarRenderManager()
     get avatarRenderManager(): IAvatarRenderManager | null 
     {
         return this._avatarRenderManager;
@@ -364,7 +364,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get roomEngine()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get roomEngine()
     get roomEngine(): IRoomEngine | null
     {
         return this._roomEngine;
@@ -412,7 +412,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_utils
     private _utils: HabboCatalogUtils = new HabboCatalogUtils(this);
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get utils()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get utils()
     get utils(): HabboCatalogUtils 
     {
         return this._utils;
@@ -512,7 +512,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this._frontPageItems;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get multiplePurchaseEnabled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get multiplePurchaseEnabled()
     get multiplePurchaseEnabled(): boolean 
     {
         return this.getBoolean('catalog.multiple.purchase.enabled') && this._catalogType !== 'BUILDERS_CLUB';
@@ -527,7 +527,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::refreshFurniData()
     private _furniDataNeedsRefresh: boolean = false;
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get bundleDiscountEnabled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get bundleDiscountEnabled()
     get bundleDiscountEnabled(): boolean 
     {
         return this._catalogType !== 'BUILDERS_CLUB';
@@ -634,7 +634,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get currentCatalogNavigator()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get currentCatalogNavigator()
     get currentCatalogNavigator(): ICatalogNavigator | null 
     {
         return this.getCatalogNavigator(this._catalogType);
@@ -812,7 +812,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         ];
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::getFurnitureDataByName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getFurnitureDataByName()
     getFurnitureDataByName(name: string, productType: string): IFurnitureData | null 
     {
         if(this._sessionDataManager == null) return null;
@@ -936,7 +936,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._catalogViewer.dispatchWidgetEvent(new CatalogWidgetApproveNameResultEvent(parser.result, parser.nameValidationInfo));
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::purchaseWillBeGift()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseWillBeGift()
     purchaseWillBeGift(isGift: boolean): void
     {
         this._purchaseWillBeGift = isGift;
@@ -963,13 +963,13 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::purchaseVipMembershipExtension()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseVipMembershipExtension()
     purchaseVipMembershipExtension(offerId: number): void
     {
         this.connection?.send(new PurchaseVipMembershipExtensionComposer(offerId));
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::purchaseBasicMembershipExtension()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseBasicMembershipExtension()
     purchaseBasicMembershipExtension(offerId: number): void
     {
         this.connection?.send(new PurchaseBasicMembershipExtensionComposer(offerId));
@@ -1477,7 +1477,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::showPurchaseConfirmation()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showPurchaseConfirmation()
     // TODO(AS3): the dialog now builds the real `purchase_confirmation` layout; see its own file
     // header for the sub-flows still missing (gifting/gift wrapping, the collectible offer classes,
     // the LTD raffle).
@@ -1597,7 +1597,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::getSeasonalCurrencyActivityPointType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getSeasonalCurrencyActivityPointType()
     getSeasonalCurrencyActivityPointType(): number 
     {
         return this.getInteger('seasonalcurrencyindicator.currency', 1);
@@ -1623,7 +1623,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::redeemVoucher()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::redeemVoucher()
     public redeemVoucher(voucher: string): void
     {
         this.connection?.send(new RedeemVoucherMessageComposer(voucher));
@@ -1809,14 +1809,14 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::openCatalog()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::openCatalog()
     public openCatalog(): void
     {
         this.cancelFurniInMover();
         this.toggleCatalog('NORMAL', true);
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::openCatalogPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::openCatalogPage()
     public openCatalogPage(pageName: string, catalogType: string | null = null): void
     {
         this.cancelFurniInMover();
@@ -1847,7 +1847,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     {
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::openCatalogPageById()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::openCatalogPageById()
     public openCatalogPageById(pageId: number, offerId: number, catalogType: string): void 
     {
         if(this._initialized && this._catalogNavigators != null && this.getCatalogNavigator(catalogType)?.initialized) 
@@ -1864,7 +1864,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::openCatalogPageByOfferId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::openCatalogPageByOfferId()
     public openCatalogPageByOfferId(offerId: number, catalogType: string): void 
     {
         this.openCatalogPageById(-12345678, offerId, catalogType);
@@ -2606,7 +2606,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.toggleCatalog('BUILDERS_CLUB');
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::getCatalogNavigator()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getCatalogNavigator()
     public getCatalogNavigator(catalogType: string): ICatalogNavigator | null 
     {
         return this._catalogNavigators?.get(catalogType) ?? null;
@@ -2850,7 +2850,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._furnitureDataCache = this._sessionDataManager?.getFurniData(this) ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::initializeRoomPreviewer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::initializeRoomPreviewer()
     /**
      * The engine check is not redundant with the null one: a resolved-but-uninitialised engine has
      * no room manager yet, and `createRoomForPreviews()` would build the preview room into nothing.
@@ -2869,7 +2869,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::init()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::init()
     // Every step AS3 runs here is now run here. The three this note used to list as blocked -
     // refreshFurniData(), getGiftWrappingConfiguration(), initBundleDiscounts() - were each
     // blocked on something that had since landed or was one message away.
@@ -3173,7 +3173,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return state;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::updatePurse()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::updatePurse()
     // win63's decompile of this method is corrupted (literal `if(true)`/`if(false)` branches
     // replacing the real hasClubLeft/isVIP checks) - ported from the clean vortex-client
     // reference instead. This replaces the previous setElementImage('creditsIcon'/'pixelsIcon'/
@@ -3305,7 +3305,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._groupMembershipsController?.onGuildVisualSettingsChanged(event.guildId);
     };
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::onHabboToolbarEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onHabboToolbarEvent()
     private onHabboToolbarEvent = (event: HabboToolbarEvent): void => 
     {
         if(event.type !== HabboToolbarEvent.TOOLBAR_CLICK) return;
@@ -3356,7 +3356,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::onCatalogPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onCatalogPage()
     private onCatalogPage(event: IMessageEvent): void 
     {
         const parser = event.parser as CatalogPageMessageEventParser | null;
@@ -3663,7 +3663,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._purchaseConfirmationDialog?.notEnoughCredits();
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::onVoucherRedeemOk()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onVoucherRedeemOk()
     private onVoucherRedeemOk(event: IMessageEvent): void
     {
         if(!event) return;
@@ -3686,7 +3686,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._windowManager?.alert('${catalog.alert.voucherredeem.ok.title}', description, 0, this.alertDialogEventProcessor);
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::onVoucherRedeemError()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onVoucherRedeemError()
     private onVoucherRedeemError(event: IMessageEvent): void
     {
         if(!event) return;
@@ -3848,7 +3848,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._marketPlace.averagePricePeriod = parser.averagePricePeriod;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::alertDialogEventProcessor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::alertDialogEventProcessor()
     private alertDialogEventProcessor = (dialog: IDisposable, _event: WindowEvent): void =>
     {
         dialog.dispose();

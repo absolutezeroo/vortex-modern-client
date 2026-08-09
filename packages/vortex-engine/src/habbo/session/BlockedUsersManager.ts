@@ -38,37 +38,37 @@ export class BlockedUsersManager
         this.registerMessageEvents();
     }
 
-    // AS3: sources/win63_version/habbo/session/BlockedUsersManager.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BlockedUsersManager.as::get disposed()
     get disposed(): boolean
     {
         return this._communication === null;
     }
 
-    // AS3: sources/win63_version/habbo/session/BlockedUsersManager.as::initBlockList()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BlockedUsersManager.as::initBlockList()
     initBlockList(): void
     {
         this._sendCallback?.(new BlockListInitComposer());
     }
 
-    // AS3: sources/win63_version/habbo/session/BlockedUsersManager.as::blockUser()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BlockedUsersManager.as::blockUser()
     blockUser(userId: number): void
     {
         this._sendCallback?.(new BlockUserMessageComposer(userId));
     }
 
-    // AS3: sources/win63_version/habbo/session/BlockedUsersManager.as::unblockUser()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BlockedUsersManager.as::unblockUser()
     unblockUser(userId: number): void
     {
         this._sendCallback?.(new UnblockUserMessageComposer(userId));
     }
 
-    // AS3: sources/win63_version/habbo/session/BlockedUsersManager.as::isBlocked()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BlockedUsersManager.as::isBlocked()
     isBlocked(userId: number): boolean
     {
         return this._blockedUserIds.has(userId);
     }
 
-    // AS3: sources/win63_version/habbo/session/BlockedUsersManager.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BlockedUsersManager.as::dispose()
     dispose(): void
     {
         if(this.disposed) return;
@@ -98,7 +98,7 @@ export class BlockedUsersManager
         this._messageEvents.push(blockListEvent);
     }
 
-    // AS3: sources/win63_version/habbo/session/BlockedUsersManager.as::onBlockList()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BlockedUsersManager.as::onBlockList()
     private onBlockList(event: IMessageEvent): void
     {
         if(!(event instanceof BlockListMessageEvent)) return;
@@ -106,7 +106,7 @@ export class BlockedUsersManager
         this._blockedUserIds = new Set(event.blockedUserIds);
     }
 
-    // AS3: sources/win63_version/habbo/session/BlockedUsersManager.as::onBlockUpdate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BlockedUsersManager.as::onBlockUpdate()
     private onBlockUpdate(event: IMessageEvent): void
     {
         if(!(event instanceof BlockUserUpdateMessageEvent)) return;
@@ -125,13 +125,13 @@ export class BlockedUsersManager
         }
     }
 
-    // AS3: sources/win63_version/habbo/session/BlockedUsersManager.as::addUserToBlockList()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BlockedUsersManager.as::addUserToBlockList()
     private addUserToBlockList(userId: number): void
     {
         this._blockedUserIds.add(userId);
     }
 
-    // AS3: sources/win63_version/habbo/session/BlockedUsersManager.as::removeUserFromBlockList()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BlockedUsersManager.as::removeUserFromBlockList()
     private removeUserFromBlockList(userId: number): void
     {
         this._blockedUserIds.delete(userId);

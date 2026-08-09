@@ -6,7 +6,7 @@ import type {IPurchasableOffer} from '../../../IPurchasableOffer';
  */
 export class RentUtils
 {
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/utils/RentUtils.as::updateBuyCaption()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RentUtils.as::updateBuyCaption()
     static updateBuyCaption(offer: IPurchasableOffer | null, window: IWindow | null): void
     {
         if(offer == null || window == null) return;

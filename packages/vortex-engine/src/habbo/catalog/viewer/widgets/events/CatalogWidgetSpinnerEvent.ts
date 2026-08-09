@@ -5,21 +5,21 @@
  */
 export class CatalogWidgetSpinnerEvent
 {
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::VALUE_CHANGED
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::VALUE_CHANGED
     static readonly VALUE_CHANGED: string = 'CWSE_VALUE_CHANGED';
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::RESET
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::RESET
     static readonly RESET: string = 'CWSE_RESET';
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::SHOW
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::SHOW
     static readonly SHOW: string = 'CWSE_SHOW';
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::HIDE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::HIDE
     static readonly HIDE: string = 'CWSE_HIDE';
 
     static readonly SET_MAX: string = 'CWSE_SET_MAX';
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::SET_MIN
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::SET_MIN
     static readonly SET_MIN: string = 'CWSE_SET_MIN';
 
     private _type: string;
@@ -41,13 +41,13 @@ export class CatalogWidgetSpinnerEvent
         return this._type;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::get value()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::get value()
     get value(): number
     {
         return this._value;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::get skipSteps()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetSpinnerEvent.as::get skipSteps()
     get skipSteps(): number[] | null
     {
         return this._skipSteps;

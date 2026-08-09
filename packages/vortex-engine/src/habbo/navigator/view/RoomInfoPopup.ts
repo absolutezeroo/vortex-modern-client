@@ -647,7 +647,7 @@ export class RoomInfoPopup
     // AS3: .../src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::getNewTagItem()
     private getNewTagItem(tag: string, index: number): IWindow
     {
-        // AS3: sources/win63_version/habbo/navigator/view/RoomInfoPopup.as::getNewTagItem()
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::getNewTagItem()
         // uses assets.getAssetByName("tag_xml") - not "navigator_tag".
         const windowManager = this._navigator.windowManager;
         const tagWindow = windowManager?.buildWidgetLayout('tag_xml') as IWindowContainer | null;

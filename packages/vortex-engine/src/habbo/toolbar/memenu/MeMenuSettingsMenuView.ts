@@ -41,7 +41,7 @@ export class MeMenuSettingsMenuView
     /**
 	 * The parent controller
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuSettingsMenuView.as::get widget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuSettingsMenuView.as::get widget()
     get widget(): MeMenuController | null
     {
         return this._controller;
@@ -53,7 +53,7 @@ export class MeMenuSettingsMenuView
 	 * @param controller The parent me menu controller
 	 * @param toolbarView The toolbar view for positioning
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuSettingsMenuView.as::init()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuSettingsMenuView.as::init()
     public init(controller: MeMenuController, toolbarView: ToolbarView): void
     {
         this._controller = controller;
@@ -91,7 +91,7 @@ export class MeMenuSettingsMenuView
     /**
 	 * Dispose of this view
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/memenu/MeMenuSettingsMenuView.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuSettingsMenuView.as::dispose()
     public dispose(): void
     {
         this._controller = null;

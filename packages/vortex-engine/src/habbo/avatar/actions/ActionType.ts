@@ -7,7 +7,7 @@ import {getXmlAttribute, getXmlRoot} from '../structure/AvatarXmlUtils';
  */
 export class ActionType
 {
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::ActionType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionType.as::ActionType()
     constructor(data: any)
     {
         const element = getXmlRoot(data);
@@ -42,7 +42,7 @@ export class ActionType
 
     private _id: number;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionType.as::get id()
     public get id(): number
     {
         return this._id;
@@ -51,7 +51,7 @@ export class ActionType
     // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::_value
     private _value: number;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get value()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionType.as::get value()
     public get value(): number
     {
         return this._value;
@@ -59,7 +59,7 @@ export class ActionType
 
     private _prevents: string[];
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get prevents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionType.as::get prevents()
     public get prevents(): string[]
     {
         return this._prevents;
@@ -67,7 +67,7 @@ export class ActionType
 
     private _preventHeadTurn: boolean;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get preventHeadTurn()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionType.as::get preventHeadTurn()
     public get preventHeadTurn(): boolean
     {
         return this._preventHeadTurn;
@@ -75,7 +75,7 @@ export class ActionType
 
     private _isAnimated: boolean;
 
-    // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get isAnimated()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/actions/ActionType.as::get isAnimated()
     public get isAnimated(): boolean
     {
         return this._isAnimated;

@@ -15,7 +15,7 @@ export class GeometryBodyPart extends Node3D
     private _items: Map<string, GeometryItem>;
     private _dynamicItems: Map<IAvatarImage, Map<string, GeometryItem>>;
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryBodyPart.as::GeometryBodyPart()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryBodyPart.as::GeometryBodyPart()
     constructor(data: any)
     {
         const element = getXmlRoot(data);
@@ -56,22 +56,22 @@ export class GeometryBodyPart extends Node3D
 
     private _id: string;
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryBodyPart.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryBodyPart.as::get id()
     public get id(): string
     {
         return this._id;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryBodyPart.as::_radius
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryBodyPart.as::_radius
     private _radius: number;
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryBodyPart.as::get radius()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryBodyPart.as::get radius()
     public get radius(): number
     {
         return this._radius;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryBodyPart.as::getDynamicParts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryBodyPart.as::getDynamicParts()
     public getDynamicParts(avatar: IAvatarImage): GeometryItem[]
     {
         const result: GeometryItem[] = [];
@@ -88,7 +88,7 @@ export class GeometryBodyPart extends Node3D
         return result;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryBodyPart.as::getPartIds()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryBodyPart.as::getPartIds()
     public getPartIds(avatar: IAvatarImage | null): string[]
     {
         const ids: string[] = [];
@@ -114,7 +114,7 @@ export class GeometryBodyPart extends Node3D
         return ids;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryBodyPart.as::removeDynamicParts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryBodyPart.as::removeDynamicParts()
     public removeDynamicParts(avatar: IAvatarImage): boolean
     {
         this._dynamicItems.delete(avatar);
@@ -122,7 +122,7 @@ export class GeometryBodyPart extends Node3D
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryBodyPart.as::addPart()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryBodyPart.as::addPart()
     public addPart(data: any, avatar: IAvatarImage): boolean
     {
         const element = getXmlRoot(data);
@@ -140,7 +140,7 @@ export class GeometryBodyPart extends Node3D
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryBodyPart.as::hasPart()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryBodyPart.as::hasPart()
     public hasPart(id: string, avatar: IAvatarImage): boolean
     {
         let item: GeometryItem | null = this._items.get(id) ?? null;
@@ -155,7 +155,7 @@ export class GeometryBodyPart extends Node3D
         return item !== null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryBodyPart.as::getParts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryBodyPart.as::getParts()
     public getParts(matrix: Matrix4x4, camera: Vector3D, _param: any[], avatar: IAvatarImage): string[]
     {
         const distances: [number, GeometryItem][] = [];
@@ -194,7 +194,7 @@ export class GeometryBodyPart extends Node3D
         return distances.map(entry => entry[1].id);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryBodyPart.as::getDistance()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryBodyPart.as::getDistance()
     public getDistance(camera: Vector3D): number
     {
         const near = Math.abs(camera.z - this.transformedLocation.z - this._radius);

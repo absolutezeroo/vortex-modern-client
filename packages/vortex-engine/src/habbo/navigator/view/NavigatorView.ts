@@ -379,7 +379,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as onSearchResults()
      */
-    // AS3: sources/win63_version/habbo/navigator/view/NavigatorView.as::onSearchResults()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/NavigatorView.as::onSearchResults()
     onSearchResults(results: NavigatorSearchResultSet, source: string = ''): void
     {
         if(this._navigator.newResultsRendered)
@@ -676,7 +676,7 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as createMainWindow()
      */
-    // AS3: sources/win63_version/habbo/navigator/view/NavigatorView.as::createMainWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/NavigatorView.as::createMainWindow()
     private createMainWindow(): void
     {
         const windowManager = this._navigator.windowManager;
@@ -730,7 +730,7 @@ export class NavigatorView implements IUpdateReceiver
             this._roomEntryElementFactory.tileContainerTemplate = tileContainerClone;
         }
 
-        // AS3: sources/win63_version/habbo/navigator/view/NavigatorView.as::createMainWindow()
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/NavigatorView.as::createMainWindow()
         // Flash clones the first block_results item, removes index 0, and repeats
         // for the collapsed and no-results templates.
         const blockResults = windowContainer.findChildByName('block_results') as IItemListWindow | null;

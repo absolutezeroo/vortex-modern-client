@@ -18,7 +18,7 @@ export class AvatarStructureDownload extends EventEmitter
 
     private _structureData: IStructureData;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AvatarStructureDownload.as::AvatarStructureDownload()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AvatarStructureDownload.as::AvatarStructureDownload()
     constructor(url: string, structureData: IStructureData) 
     {
         super();
@@ -27,7 +27,7 @@ export class AvatarStructureDownload extends EventEmitter
         this.download(url);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AvatarStructureDownload.as::onDataComplete()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AvatarStructureDownload.as::onDataComplete()
     private async download(url: string): Promise<void> 
     {
         try 

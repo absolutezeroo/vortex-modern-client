@@ -20,17 +20,17 @@ const SPACING = 2;
 
 export class RoomToolsHistory
 {
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::_windowManager
     private _windowManager: IHabboWindowManager | null;
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::_assets
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::_assets
     private _assets: IAssetLibrary | null;
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::_window
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::_window
     private _window: IWindowContainer | null;
     private _handler: RoomToolsWidgetHandler | null;
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::_items
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::_items
     private _items: IWindow[] = [];
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::RoomToolsHistory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::RoomToolsHistory()
     constructor(windowManager: IHabboWindowManager, assets: IAssetLibrary | null, handler: RoomToolsWidgetHandler)
     {
         this._handler = handler;
@@ -39,7 +39,7 @@ export class RoomToolsHistory
         this._window = windowManager.buildWidgetLayout('room_tools_history_xml') as IWindowContainer | null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::populate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::populate()
     public populate(rooms: GuestRoomData[]): void
     {
         if(!this._window || !this._windowManager) return;
@@ -73,7 +73,7 @@ export class RoomToolsHistory
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::dispose()
     public dispose(): void
     {
         for(const item of this._items)
@@ -90,7 +90,7 @@ export class RoomToolsHistory
         this._window = null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::onClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::onClick()
     private onClick = (event: WindowEvent, target: IWindow): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
@@ -98,7 +98,7 @@ export class RoomToolsHistory
         this._handler?.goToPrivateRoom(target.id);
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::get window()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::get window()
     public get window(): IWindowContainer | null
     {
         return this._window;

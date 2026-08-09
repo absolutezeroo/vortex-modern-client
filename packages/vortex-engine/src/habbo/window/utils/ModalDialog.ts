@@ -24,19 +24,19 @@ const log = Logger.getLogger('habbo.window.utils.ModalDialog');
  */
 export class ModalDialog implements IModalDialog
 {
-    // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::MODAL_DIALOG_LAYER
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::MODAL_DIALOG_LAYER
     private static readonly MODAL_DIALOG_LAYER: number = 3;
 
-    // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_windowManager (static)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::_windowManager (static)
     private static _windowManager: IHabboWindowManager | null = null;
-    // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_container (static)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::_container (static)
     private static _container: IWindowContainer | null = null;
     // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_refreshPending (static)
     private static _refreshPending: number = 0;
     // TS-only: replaces AS3 var_360: Stage null-check init guard
     private static _initialized: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::ModalDialog()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::ModalDialog()
     constructor(windowManager: IHabboWindowManager, xml: string)
     {
         ModalDialog.initialiseStaticMembers(windowManager);
@@ -66,10 +66,10 @@ export class ModalDialog implements IModalDialog
         ModalDialog.refresh();
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -78,22 +78,22 @@ export class ModalDialog implements IModalDialog
     // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_rootWindow
     private _rootWindow: IWindow | null = null;
 
-    // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::get rootWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::get rootWindow()
     public get rootWindow(): IWindow | null
     {
         return this._rootWindow;
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_background
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::_background
     private _background: IWindow | null = null;
 
-    // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::get background()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::get background()
     public get background(): IWindow | null
     {
         return this._background;
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::onResize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::onResize()
     public static onResize(): void
     {
         if(!ModalDialog._container || ModalDialog._container.numChildren <= 0) return;
@@ -124,7 +124,7 @@ export class ModalDialog implements IModalDialog
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::initialiseStaticMembers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::initialiseStaticMembers()
     private static initialiseStaticMembers(windowManager: IHabboWindowManager): void
     {
         if(ModalDialog._initialized) return;
@@ -284,7 +284,7 @@ export class ModalDialog implements IModalDialog
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

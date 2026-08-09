@@ -15,12 +15,12 @@ import {
  */
 export class AnimationAction
 {
-    // AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::DEFAULT_OFFSET
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/animation/AnimationAction.as::DEFAULT_OFFSET
     public static readonly DEFAULT_OFFSET: { x: number; y: number } = {x: 0, y: 0};
     private _offsets: Map<number, Map<number, Map<string, { x: number; y: number }>>>;
     private _offsetFrames: number[];
 
-    // AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::AnimationAction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/animation/AnimationAction.as::AnimationAction()
     constructor(data: any)
     {
         const element = getXmlRoot(data);
@@ -43,7 +43,7 @@ export class AnimationAction
 
     private _id: string;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/animation/AnimationAction.as::get id()
     public get id(): string
     {
         return this._id;
@@ -51,7 +51,7 @@ export class AnimationAction
 
     private _parts: Map<string, AnimationActionPart>;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::get parts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/animation/AnimationAction.as::get parts()
     public get parts(): Map<string, AnimationActionPart>
     {
         return this._parts;
@@ -59,19 +59,19 @@ export class AnimationAction
 
     private _frameCount: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::get frameCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/animation/AnimationAction.as::get frameCount()
     public get frameCount(): number
     {
         return this._frameCount;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::getPart()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/animation/AnimationAction.as::getPart()
     public getPart(setType: string): AnimationActionPart | null
     {
         return this._parts.get(setType) ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::getFrameBodyPartOffset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/animation/AnimationAction.as::getFrameBodyPartOffset()
     public getFrameBodyPartOffset(direction: number, frameIndex: number, bodyPartId: string): { x: number; y: number }
     {
         if(this._offsetFrames.length === 0)

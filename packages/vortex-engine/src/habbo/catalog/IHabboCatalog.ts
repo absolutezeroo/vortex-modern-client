@@ -25,11 +25,11 @@ import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications
  */
 export interface IHabboCatalog
 {
-    // AS3: sources/win63_version/habbo/catalog/IHabboCatalog.as::get assets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/IHabboCatalog.as::get assets()
     readonly assets: IAssetLibrary | null;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get windowManager()
     readonly windowManager: IHabboWindowManager | null;
-    // AS3: sources/win63_version/habbo/catalog/IHabboCatalog.as::get events()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/IHabboCatalog.as::get events()
     readonly events: EventEmitter;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get localization()
     readonly localization: IHabboLocalizationManager | null;

@@ -9,10 +9,10 @@ import {getXmlAttribute, getXmlRoot} from '../structure/AvatarXmlUtils';
  */
 export class GeometryItem extends Node3D
 {
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::_radius
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryItem.as::_radius
     private _radius: number;
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::GeometryItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryItem.as::GeometryItem()
     constructor(data: any, isDynamic: boolean = false)
     {
         const element = getXmlRoot(data);
@@ -39,25 +39,25 @@ export class GeometryItem extends Node3D
 
     private _id: string;
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryItem.as::get id()
     public get id(): string
     {
         return this._id;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::_normal
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryItem.as::_normal
     private _normal: Vector3D;
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::get normal()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryItem.as::get normal()
     public get normal(): Vector3D
     {
         return this._normal;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::_isDoubleSided
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryItem.as::_isDoubleSided
     private _isDoubleSided: boolean = false;
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::get isDoubleSided()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryItem.as::get isDoubleSided()
     public get isDoubleSided(): boolean
     {
         return this._isDoubleSided;
@@ -65,13 +65,13 @@ export class GeometryItem extends Node3D
 
     private _isDynamic: boolean = false;
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::get isDynamic()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryItem.as::get isDynamic()
     public get isDynamic(): boolean
     {
         return this._isDynamic;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::getDistance()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryItem.as::getDistance()
     public getDistance(camera: Vector3D): number
     {
         const near = Math.abs(camera.z - this.transformedLocation.z - this._radius);
@@ -80,7 +80,7 @@ export class GeometryItem extends Node3D
         return Math.min(near, far);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/GeometryItem.as::toString()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/GeometryItem.as::toString()
     public toString(): string
     {
         return this._id + ': ' + this.location + ' - ' + this.transformedLocation;

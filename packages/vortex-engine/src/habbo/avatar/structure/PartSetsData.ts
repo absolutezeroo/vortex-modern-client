@@ -12,7 +12,7 @@ import {getXmlAttribute, getXmlChildElements, getXmlFirstChildElement, getXmlRoo
  */
 export class PartSetsData implements IStructureData
 {
-    // AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::PartSetsData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/PartSetsData.as::PartSetsData()
     constructor()
     {
         this._parts = new Map();
@@ -21,7 +21,7 @@ export class PartSetsData implements IStructureData
 
     private _parts: Map<string, PartDefinition>;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::get parts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/PartSetsData.as::get parts()
     public get parts(): Map<string, PartDefinition>
     {
         return this._parts;
@@ -29,13 +29,13 @@ export class PartSetsData implements IStructureData
 
     private _activePartSets: Map<string, ActivePartSet>;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::get activePartSets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/PartSetsData.as::get activePartSets()
     public get activePartSets(): Map<string, ActivePartSet>
     {
         return this._activePartSets;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::parse()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/PartSetsData.as::parse()
     public parse(data: any): boolean
     {
         if(!data) return false;
@@ -52,7 +52,7 @@ export class PartSetsData implements IStructureData
         return this.parseObject(data);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::appendXML()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/PartSetsData.as::appendXML()
     public appendXML(data: any): boolean
     {
         if(!data) return false;
@@ -76,7 +76,7 @@ export class PartSetsData implements IStructureData
         return this.appendXML(data);
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::getActiveParts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/PartSetsData.as::getActiveParts()
     public getActiveParts(action: IActionDefinition): string[]
     {
         const activePartSet = this._activePartSets.get(action.activePartSet);
@@ -86,13 +86,13 @@ export class PartSetsData implements IStructureData
         return [];
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::getPartDefinition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/PartSetsData.as::getPartDefinition()
     public getPartDefinition(setType: string): PartDefinition | null
     {
         return this._parts.get(setType) || null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::addPartDefinition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/PartSetsData.as::addPartDefinition()
     public addPartDefinition(data: any): PartDefinition
     {
         const element = getXmlRoot(data);
@@ -106,7 +106,7 @@ export class PartSetsData implements IStructureData
         return this._parts.get(setType)!;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::getActivePartSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/PartSetsData.as::getActivePartSet()
     public getActivePartSet(action: ActionDefinition): ActivePartSet | null
     {
         return this._activePartSets.get(action.activePartSet) || null;
@@ -142,7 +142,7 @@ export class PartSetsData implements IStructureData
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::parse()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/PartSetsData.as::parse()
     private parseXml(root: Element): void
     {
         const partSet = getXmlFirstChildElement(root, 'partSet');

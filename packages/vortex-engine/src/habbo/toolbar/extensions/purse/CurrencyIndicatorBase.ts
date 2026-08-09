@@ -16,16 +16,16 @@ const log = Logger.getLogger('habbo.toolbar.extensions.purse.CurrencyIndicatorBa
  */
 export interface ICurrencyIndicator
 {
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::get window()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::get window()
     readonly window: IWindowContainer | null;
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::dispose()
     dispose(): void;
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::registerUpdateEvents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::registerUpdateEvents()
     registerUpdateEvents(dispatcher: unknown): void;
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::unregisterUpdateEvents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::unregisterUpdateEvents()
     unregisterUpdateEvents(dispatcher: unknown): void;
 }
 
@@ -47,17 +47,17 @@ export class CurrencyIndicatorBase implements ICurrencyIndicator
     private static readonly OVERLAY_STEP: number = 0.025;
     private static readonly OVERLAY_INTERVAL: number = 40;
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_window
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_window
     protected _window: IWindowContainer | null = null;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_windowManager
     protected _windowManager: IHabboWindowManager | null = null;
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_disposed
     private _disposed: boolean = false;
     private _iconBitmap: IStaticBitmapWrapperWindow | null = null;
     private _bgColorLight: number = 0;
     private _bgColorDark: number = 0;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_textElementName
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_textElementName
     private _textElementName: string = '';
     private _iconAnimationSequence: string[] = [];
     private _iconAnimationDelay: number = 0;
@@ -66,13 +66,13 @@ export class CurrencyIndicatorBase implements ICurrencyIndicator
     private _animationOffset: number = 0;
     private _animationTimer: ReturnType<typeof setInterval> | null = null;
     private _animationTicks: number = 0;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_overlayTimer
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_overlayTimer
     private _overlayTimer: ReturnType<typeof setInterval> | null = null;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_overlayPhase
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_overlayPhase
     private _overlayPhase: number = 0;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_overlayStartValue
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_overlayStartValue
     private _overlayStartValue: number = 0;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_overlayEndValue
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_overlayEndValue
     private _overlayEndValue: number = 0;
     private _currentAmount: number = 0;
     private _currentText: string = '';
@@ -85,43 +85,43 @@ export class CurrencyIndicatorBase implements ICurrencyIndicator
         log.debug('CurrencyIndicatorBase constructed');
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::get window()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::get window()
     get window(): IWindowContainer | null { return this._window; }
     get currentAmount(): number { return this._currentAmount; }
     get currentText(): string { return this._currentText; }
     get textUnderline(): boolean { return this._textUnderline; }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::set bgColorLight()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::set bgColorLight()
     protected set bgColorLight(value: number)
     {
         this._bgColorLight = value;
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::set bgColorDark()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::set bgColorDark()
     protected set bgColorDark(value: number)
     {
         this._bgColorDark = value;
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::set textElementName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::set textElementName()
     protected set textElementName(value: string)
     {
         this._textElementName = value;
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::get amountZeroText()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::get amountZeroText()
     protected get amountZeroText(): string | null
     {
         return this._amountZeroText;
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::set amountZeroText()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::set amountZeroText()
     protected set amountZeroText(value: string | null)
     {
         this._amountZeroText = value;
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::set iconAnimationSequence()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::set iconAnimationSequence()
     protected set iconAnimationSequence(value: string[])
     {
         this._iconAnimationSequence.length = 0;
@@ -132,23 +132,23 @@ export class CurrencyIndicatorBase implements ICurrencyIndicator
         }
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::set iconAnimationDelay()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::set iconAnimationDelay()
     protected set iconAnimationDelay(value: number)
     {
         this._iconAnimationDelay = value;
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::registerUpdateEvents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::registerUpdateEvents()
     public registerUpdateEvents(_dispatcher: unknown): void
     {
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::unregisterUpdateEvents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::unregisterUpdateEvents()
     public unregisterUpdateEvents(_dispatcher: unknown): void
     {
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::createWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::createWindow()
     protected createWindow(layoutName: string, iconUri: string | null): void
     {
         if(!this._windowManager) return;
@@ -171,12 +171,12 @@ export class CurrencyIndicatorBase implements ICurrencyIndicator
         }
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::onContainerClick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::onContainerClick()
     protected onContainerClick(_event: WindowMouseEvent): void
     {
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::animateIcon()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::animateIcon()
     protected animateIcon(direction: number): void
     {
         if(!this._iconBitmap || this._iconAnimationSequence.length === 0) return;
@@ -203,14 +203,14 @@ export class CurrencyIndicatorBase implements ICurrencyIndicator
         this.onAnimationTimer();
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::setAmount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::setAmount()
     protected setAmount(amount: number, _minutes: number = -1): void
     {
         this._currentAmount = amount;
         this.setText(amount.toString());
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::setText()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::setText()
     protected setText(text: string): void
     {
         this._currentText = text;
@@ -225,7 +225,7 @@ export class CurrencyIndicatorBase implements ICurrencyIndicator
         }
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::setTextUnderline()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::setTextUnderline()
     protected setTextUnderline(underline: boolean): void
     {
         this._textUnderline = underline;
@@ -240,7 +240,7 @@ export class CurrencyIndicatorBase implements ICurrencyIndicator
         }
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::animateChange()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::animateChange()
     protected animateChange(startValue: number, endValue: number): void
     {
         this._overlayPhase = 0;
@@ -286,7 +286,7 @@ export class CurrencyIndicatorBase implements ICurrencyIndicator
         }
     };
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::setIconBitmap()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::setIconBitmap()
     private setIconBitmap(uri: string | null): void
     {
         if(!this._iconBitmap || uri === null) return;
@@ -372,7 +372,7 @@ export class CurrencyIndicatorBase implements ICurrencyIndicator
         return start + ((end - start) * phase);
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

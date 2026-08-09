@@ -9,7 +9,7 @@ import {getXmlAttribute, getXmlRoot} from './AvatarXmlUtils';
  */
 export class AvatarCanvas
 {
-    // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::AvatarCanvas()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AvatarCanvas.as::AvatarCanvas()
     constructor(data: any, scale: string)
     {
         const element = getXmlRoot(data);
@@ -34,16 +34,16 @@ export class AvatarCanvas
 
     private _id: string;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AvatarCanvas.as::get id()
     public get id(): string
     {
         return this._id;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::_width
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AvatarCanvas.as::_width
     private _width: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::get width()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AvatarCanvas.as::get width()
     public get width(): number
     {
         return this._width;
@@ -51,25 +51,25 @@ export class AvatarCanvas
 
     private _height: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::get height()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AvatarCanvas.as::get height()
     public get height(): number
     {
         return this._height;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::_offset
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AvatarCanvas.as::_offset
     private _offset: { x: number; y: number };
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::get offset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AvatarCanvas.as::get offset()
     public get offset(): { x: number; y: number }
     {
         return this._offset;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::_regPoint
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AvatarCanvas.as::_regPoint
     private _regPoint: { x: number; y: number };
 
-    // AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::get regPoint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/AvatarCanvas.as::get regPoint()
     public get regPoint(): { x: number; y: number }
     {
         return this._regPoint;

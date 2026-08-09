@@ -14,7 +14,7 @@ import type {IPurchasableOffer} from './IPurchasableOffer';
 import {ActivityPointTypeEnum} from './purse/ActivityPointTypeEnum';
 import {VipBenefitsWindow} from './club/VipBenefitsWindow';
 
-// AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::BADGE_CHATSTYLE_WIDGET_NAME
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::BADGE_CHATSTYLE_WIDGET_NAME
 const BADGE_CHATSTYLE_WIDGET_NAME = 'HCU_dynamic_badge';
 
 interface IPriceEntry
@@ -255,7 +255,7 @@ export class HabboCatalogUtils implements IGetImageListener
         return prices;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::showPriceOnProduct()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::showPriceOnProduct()
     // win63 also positions the price box relative to a room_canvas_container/fallback target and
     // colours it per currency (credits-only/activity-points-only/silver) - preserved here; the
     // seasonal-currency colour variant (getSeasonalCurrencyPriceColor(), needs
@@ -343,13 +343,13 @@ export class HabboCatalogUtils implements IGetImageListener
         return this._bundleDiscountFlatPriceSteps;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::get bundleDiscountHighestFlatPriceStep()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::get bundleDiscountHighestFlatPriceStep()
     get bundleDiscountHighestFlatPriceStep(): number
     {
         return this._bundleDiscountHighestFlatPriceStep;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::resolveBundleDiscountFlatPriceSteps()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::resolveBundleDiscountFlatPriceSteps()
     resolveBundleDiscountFlatPriceSteps(): void
     {
         this._bundleDiscountFlatPriceSteps = [];
@@ -368,7 +368,7 @@ export class HabboCatalogUtils implements IGetImageListener
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::getDiscountItemsCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::getDiscountItemsCount()
     getDiscountItemsCount(quantity: number): number
     {
         let count = this.getBasicBundleDiscountSize(quantity);
@@ -378,7 +378,7 @@ export class HabboCatalogUtils implements IGetImageListener
         return Math.trunc(count + this.getThresholdBundleDiscountSize(quantity));
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::getBasicBundleDiscountSize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::getBasicBundleDiscountSize()
     private getBasicBundleDiscountSize(quantity: number): number
     {
         const ruleset = this._catalog?.bundleDiscountRuleset ?? null;
@@ -394,7 +394,7 @@ export class HabboCatalogUtils implements IGetImageListener
         return bundles * ruleset.bundleDiscountSize;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::getBonusBundleDiscountSize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::getBonusBundleDiscountSize()
     private getBonusBundleDiscountSize(quantity: number): number
     {
         const ruleset = this._catalog?.bundleDiscountRuleset ?? null;
@@ -422,7 +422,7 @@ export class HabboCatalogUtils implements IGetImageListener
         return bonus;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::getThresholdBundleDiscountSize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::getThresholdBundleDiscountSize()
     private getThresholdBundleDiscountSize(quantity: number): number
     {
         const ruleset = this._catalog?.bundleDiscountRuleset ?? null;
@@ -442,7 +442,7 @@ export class HabboCatalogUtils implements IGetImageListener
         return count;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::spinnerValueChangedEventTrack()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::spinnerValueChangedEventTrack()
     // TS simplification: AS3 hand-rolls a "log once" boolean flag per method, identical to what
     // HabboTracking.trackEventLogOncePerSession() already generalizes (keyed by type+value+unit) -
     // since one HabboCatalogUtils instance lives exactly as long as one HabboCatalog/session, the
@@ -452,13 +452,13 @@ export class HabboCatalogUtils implements IGetImageListener
         this._catalog?.tracking?.trackEventLogOncePerSession('Catalog', 'spinnerValueChanged', 'client.bundle.discounts');
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::bundlesInfoShownEventTrack()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::bundlesInfoShownEventTrack()
     bundlesInfoShownEventTrack(): void
     {
         this._catalog?.tracking?.trackEventLogOncePerSession('Catalog', 'bundlesInfoOpened', 'client.bundle.discounts');
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::discountShownEventTrack()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::discountShownEventTrack()
     discountShownEventTrack(): void
     {
         this._catalog?.tracking?.trackEventLogOncePerSession('Catalog', 'discountItemShown', 'client.bundle.discounts');
@@ -490,7 +490,7 @@ export class HabboCatalogUtils implements IGetImageListener
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::showExtraOnProduct()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::showExtraOnProduct()
     // TODO(AS3): the chat-style branch (type 9) needs catalog.freeFlowChat.chatStyleLibrary,
     // which isn't ported - only the badge branch (type 4) is real.
     showExtraOnProduct(type: number, code: string, container: IWindowContainer, xOffset: number, yOffset: number, alignTop: boolean = true, alignLeft: boolean = true): void
@@ -522,7 +522,7 @@ export class HabboCatalogUtils implements IGetImageListener
         widgetWindow.y = alignTop ? yOffset : container.height - widgetWindow.height - yOffset;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::hideExtraFromProduct()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::hideExtraFromProduct()
     hideExtraFromProduct(container: IWindowContainer): void
     {
         const widgetWindow = container.findChildByName(BADGE_CHATSTYLE_WIDGET_NAME);
@@ -533,7 +533,7 @@ export class HabboCatalogUtils implements IGetImageListener
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::showAssetImageAsBadgeOnProduct()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::showAssetImageAsBadgeOnProduct()
     showAssetImageAsBadgeOnProduct(assetName: string, container: IWindowContainer, xOffset: number, yOffset: number, alignTop: boolean = true, alignLeft: boolean = true): void
     {
         let widgetWindow = container.findChildByName(BADGE_CHATSTYLE_WIDGET_NAME) as unknown as IWindowContainer | null;

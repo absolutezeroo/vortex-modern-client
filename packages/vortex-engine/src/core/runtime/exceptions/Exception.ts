@@ -23,13 +23,13 @@ export class Exception extends Error
         return this._id;
     }
 
-    // AS3: sources/win63_version/core/runtime/exceptions/Exception.as::_cause
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/exceptions/Exception.as::_cause
     private _cause: Error | null;
 
     /**
 	 * The underlying cause of this exception
 	 */
-    // AS3: sources/win63_version/core/runtime/exceptions/Exception.as::get cause()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/exceptions/Exception.as::get cause()
     get cause(): Error | null
     {
         return this._cause;
@@ -38,7 +38,7 @@ export class Exception extends Error
     /**
 	 * Build a chained stack trace string from an error chain.
 	 */
-    // AS3: sources/win63_version/core/runtime/exceptions/Exception.as::getChainedStackTrace()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/exceptions/Exception.as::getChainedStackTrace()
     static getChainedStackTrace(error: Error | null): string
     {
         let out: string | null = null;

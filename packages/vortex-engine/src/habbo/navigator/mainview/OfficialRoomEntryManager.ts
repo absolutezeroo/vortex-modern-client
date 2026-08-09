@@ -11,15 +11,15 @@ import {Util} from '../Util';
  */
 export class OfficialRoomEntryManager implements IDisposable
 {
-    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomEntryManager.as::HOTTEST_GROUPS_TAG
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::HOTTEST_GROUPS_TAG
     private static readonly HOTTEST_GROUPS_TAG: string = 'hottest_groups';
-    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomEntryManager.as::IMAGE_WIDTH_WIDE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::IMAGE_WIDTH_WIDE
     private static readonly IMAGE_WIDTH_WIDE: number = 267;
-    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomEntryManager.as::IMAGE_WIDTH_NARROW
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::IMAGE_WIDTH_NARROW
     private static readonly IMAGE_WIDTH_NARROW: number = 65;
-    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomEntryManager.as::NARROW_IMAGE_OFFSET
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::NARROW_IMAGE_OFFSET
     private static readonly NARROW_IMAGE_OFFSET: number = -70;
-    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomEntryManager.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
     private _userCountRenderer: UserCountRenderer;
 
@@ -29,10 +29,10 @@ export class OfficialRoomEntryManager implements IDisposable
         this._userCountRenderer = new UserCountRenderer(navigator);
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomEntryManager.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomEntryManager.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -44,7 +44,7 @@ export class OfficialRoomEntryManager implements IDisposable
 	 * @param isWide - Whether to create a wide entry
 	 * @returns The entry container
 	 */
-    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomEntryManager.as::createEntry()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::createEntry()
     createEntry(isWide: boolean): IWindowContainer | null
     {
         if(!this._navigator) return null;
@@ -62,7 +62,7 @@ export class OfficialRoomEntryManager implements IDisposable
 	 * @param isWide - Whether this is a wide entry
 	 * @param entryData - The entry data to display
 	 */
-    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomEntryManager.as::refreshEntry()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::refreshEntry()
     refreshEntry(container: IWindowContainer, isWide: boolean, entryData: unknown): void
     {
         if(!container || !entryData) return;
@@ -78,7 +78,7 @@ export class OfficialRoomEntryManager implements IDisposable
 	 *
 	 * @param container - The footer container
 	 */
-    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomEntryManager.as::refreshAdFooter()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::refreshAdFooter()
     refreshAdFooter(container: IWindowContainer): void
     {
         if(!container) return;
@@ -86,7 +86,7 @@ export class OfficialRoomEntryManager implements IDisposable
         container.visible = false;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomEntryManager.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -96,7 +96,7 @@ export class OfficialRoomEntryManager implements IDisposable
         this._navigator = null;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/mainview/OfficialRoomEntryManager.as::refreshNormalEntry()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::refreshNormalEntry()
     private refreshNormalEntry(container: IWindowContainer, _isWide: boolean, _entryData: unknown): void
     {
         container.visible = true;

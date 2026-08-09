@@ -34,13 +34,13 @@ export class RoomToolsWidgetHandler implements IRoomWidgetHandler
     // AS3: .../src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::_container
     private _container: IRoomWidgetHandlerContainer | null = null;
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set widget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::set widget()
     public set widget(value: RoomToolsWidget | null)
     {
         this._widget = value;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::onRoomInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::onRoomInfo()
     private onRoomInfo = (event: IMessageEvent): void =>
     {
         const parser = (event as GetGuestRoomResultMessageEvent).getParser<GetGuestRoomResultMessageParser>();
@@ -63,19 +63,19 @@ export class RoomToolsWidgetHandler implements IRoomWidgetHandler
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::toggleRoomInfoWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::toggleRoomInfoWindow()
     public toggleRoomInfoWindow(): void
     {
         this._navigatorRef?.toggleRoomInfoVisibility();
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::goToPrivateRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::goToPrivateRoom()
     public goToPrivateRoom(flatId: number): void
     {
         this._navigatorRef?.goToPrivateRoom(flatId);
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::get type()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::get type()
     public get type(): string
     {
         return 'RWE_ROOM_TOOLS';
@@ -87,7 +87,7 @@ export class RoomToolsWidgetHandler implements IRoomWidgetHandler
     {
     };
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set container() / get container()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::set container() / get container()
     public set container(value: IRoomWidgetHandlerContainer | null)
     {
         this._container?.sessionDataManager?.events.off(SessionDataPreferencesEvent.PREFERENCES_UPDATED, this.onSessionDataPreferences);
@@ -103,35 +103,35 @@ export class RoomToolsWidgetHandler implements IRoomWidgetHandler
         return this._container;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::getWidgetMessages()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::getWidgetMessages()
     public getWidgetMessages(): string[]
     {
         return ['RWZTM_ZOOM_TOGGLE'];
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::processWidgetMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::processWidgetMessage()
     public processWidgetMessage(_message: RoomWidgetMessage): RoomWidgetUpdateEvent | null
     {
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::getProcessedEvents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::getProcessedEvents()
     public getProcessedEvents(): string[]
     {
         return [];
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::processEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::processEvent()
     public processEvent(_event: unknown): void
     {
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::update()
     public update(): void
     {
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::dispose()
     public dispose(): void
     {
         this._disposed = true;
@@ -153,13 +153,13 @@ export class RoomToolsWidgetHandler implements IRoomWidgetHandler
         this._widget = null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set navigator() / get navigator()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::set navigator() / get navigator()
     public set navigator(value: IHabboNavigator | null)
     {
         this._navigatorRef = value;
@@ -171,13 +171,13 @@ export class RoomToolsWidgetHandler implements IRoomWidgetHandler
         return this._navigatorRef;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::get sessionDataManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::get sessionDataManager()
     public get sessionDataManager(): ISessionDataManager | null
     {
         return this._container?.sessionDataManager ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set communicationManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::set communicationManager()
     public set communicationManager(value: IHabboCommunicationManager | null)
     {
         this._communicationManager = value;
@@ -190,13 +190,13 @@ export class RoomToolsWidgetHandler implements IRoomWidgetHandler
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::rateRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::rateRoom()
     public rateRoom(): void
     {
         this._container?.connection?.send(new RateFlatMessageComposer(1));
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::get canRate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::get canRate()
     public get canRate(): boolean
     {
         return this._navigatorRef?.canRateRoom() ?? false;

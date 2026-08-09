@@ -20,7 +20,7 @@ export class InfoStandSongDiskView
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandSongDiskView.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandSongDiskView.as::dispose()
     public dispose(): void
     {
     }

@@ -138,7 +138,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
     // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::_offerExtension
     private _offerExtension: OfferExtension | null = null;
 
-    // AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::roomUI
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::roomUI
     private _roomUI: IRoomUI | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::HabboToolbar()
@@ -261,7 +261,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         return this._windowManager;
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::get roomUI()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::get roomUI()
     get roomUI(): IRoomUI | null
     {
         return this._roomUI;
@@ -562,7 +562,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         {
             try
             {
-                // AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initComponent()
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::initComponent()
                 // constructs BottomBackgroundBorder alongside BottomBarLeft — the TS port
                 // never constructed it at all, so the toolbar's background panel never
                 // rendered (icons floated over whatever was behind them, e.g. the room
@@ -1241,7 +1241,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         );
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initVipExtendExtension()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::initVipExtendExtension()
     private initVipExtendExtension(): void
     {
         if(this._clubDiscountPromoExtension) return;
@@ -1250,7 +1250,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         this._clubDiscountPromoExtension = new ClubDiscountPromoExtension(this);
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initCitizenshipVipExtendExtension()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::initCitizenshipVipExtendExtension()
     private initCitizenshipVipExtendExtension(): void
     {
         if(this._citizenshipVipDiscountPromoExtension) return;
@@ -1259,7 +1259,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         this._citizenshipVipDiscountPromoExtension = new CitizenshipVipDiscountPromoExtension(this);
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initCitizenshipVipQuestsExtension()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::initCitizenshipVipQuestsExtension()
     private initCitizenshipVipQuestsExtension(): void
     {
         if(this._citizenshipVipQuestsPromoExtension) return;
@@ -1268,7 +1268,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         this._citizenshipVipQuestsPromoExtension = new CitizenshipVipQuestsPromoExtension(this);
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initVideoOfferExtension()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::initVideoOfferExtension()
     private initVideoOfferExtension(): void
     {
         if(this._videoOfferExtension || !this._catalog) return;
@@ -1282,7 +1282,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         this._videoOfferExtension = new VideoOfferExtension(this);
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initOfferExtension()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::initOfferExtension()
     private initOfferExtension(): void
     {
         if(this._offerExtension) return;
@@ -1296,7 +1296,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         this._offerExtension = new OfferExtension(this);
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initSettingsExtension()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::initSettingsExtension()
     private initSettingsExtension(): void
     {
         if(this._settingsExtension) return;

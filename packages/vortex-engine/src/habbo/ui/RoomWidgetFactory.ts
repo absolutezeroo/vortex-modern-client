@@ -70,7 +70,7 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
         this._roomUI = roomUI;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetFactory.as::createWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetFactory.as::createWidget()
     public createWidget(type: string, handler: IRoomWidgetHandler): unknown | null
     {
         if(!this._roomUI || !this._roomUI.windowManager) return null;

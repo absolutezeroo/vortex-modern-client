@@ -29,7 +29,7 @@ export interface ITextFieldWindow extends ITextWindow, IInteractiveWindow, IFocu
 	 * Character mask applied to typing. See TextController.applyRestrict() for the supported
 	 * syntax and for the one place this port differs from Flash (the empty string).
 	 */
-    // AS3: sources/win63_version/core/window/components/ITextFieldWindow.as::get restrict()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextFieldWindow.as::get restrict()
     restrict: string;
 
     // AS3: .../src/com/sulake/core/window/components/ITextFieldWindow.as::setSelection()

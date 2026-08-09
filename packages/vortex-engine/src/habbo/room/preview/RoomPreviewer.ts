@@ -90,7 +90,7 @@ export class RoomPreviewer
     // AS3: .../src/com/sulake/habbo/room/preview/RoomPreviewer.as::AUTOMATIC_STATE_CHANGE_INTERVAL
     private static readonly AUTOMATIC_STATE_CHANGE_INTERVAL: number = 2500;
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_roomEngine
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::_roomEngine
     private _roomEngine: IRoomEngine | null;
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::var_68
     private _previewRoomId: number = 1;
@@ -100,9 +100,9 @@ export class RoomPreviewer
     private _currentPreviewObjectCategory: number = 0;
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::var_1908
     private _currentPreviewObjectData: string = '';
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_currentPreviewRectangle
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::_currentPreviewRectangle
     private _currentPreviewRectangle: Rectangle | null = null;
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_currentPreviewCanvasWidth
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::_currentPreviewCanvasWidth
     private _currentPreviewCanvasWidth: number = 0;
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::var_1478
     private _currentPreviewCanvasHeight: number = 0;
@@ -112,11 +112,11 @@ export class RoomPreviewer
     private _zoomChanged: boolean = false;
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::var_1259
     private _automaticStateChange: boolean = false;
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_previousAutomaticStateChangeTime
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::_previousAutomaticStateChangeTime
     private _previousAutomaticStateChangeTime: number = 0;
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_addViewOffset
     private _addViewOffset: IPoint = {x: 0, y: 0};
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_disableUpdate
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::_disableUpdate
     private _disableUpdate: boolean = false;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::_centerWallItems
     private _centerWallItems: boolean = false;
@@ -152,7 +152,7 @@ export class RoomPreviewer
 
     private readonly onRoomInitializedBound = (event: RoomEngineEvent): void => this.onRoomInitialized(event);
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::RoomPreviewer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::RoomPreviewer()
     constructor(roomEngine: IRoomEngine, previewRoomId: number = 1)
     {
         this._roomEngine = roomEngine;
@@ -171,7 +171,7 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::get previewRoomId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::get previewRoomId()
     get previewRoomId(): number
     {
         return this._previewRoomId;
@@ -183,7 +183,7 @@ export class RoomPreviewer
         return this._roomEngine !== null && this._roomEngine.isInitialized;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::createRoomForPreviews()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::createRoomForPreviews()
     createRoomForPreviews(): void
     {
         if(!this._roomEngine) return;
@@ -205,7 +205,7 @@ export class RoomPreviewer
         this._roomEngine.initializeRoom(this._previewRoomId, parser);
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::reset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::reset()
     reset(disposing: boolean): void
     {
         if(this._roomEngine)
@@ -223,7 +223,7 @@ export class RoomPreviewer
         this._currentPreviewObjectCategory = -2;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::addFurnitureIntoRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::addFurnitureIntoRoom()
     addFurnitureIntoRoom(type: number, direction: IVector3d, stuffData: IStuffData | null = null, extra: string | null = null): number
     {
         const data: IStuffData = stuffData ?? new LegacyStuffData();
@@ -281,7 +281,7 @@ export class RoomPreviewer
         return -1;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::addWallItemIntoRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::addWallItemIntoRoom()
     addWallItemIntoRoom(type: number, direction: IVector3d, legacyString: string): number
     {
         if(this.isRoomEngineReady)
@@ -554,7 +554,7 @@ export class RoomPreviewer
         return RoomPreviewer.PREVIEW_WALL_ITEM_LOCATION.z;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::addAvatarIntoRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::addAvatarIntoRoom()
     addAvatarIntoRoom(figure: string, effect: number = 0): number
     {
         if(this.isRoomEngineReady)
@@ -597,7 +597,7 @@ export class RoomPreviewer
         return -1;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateUserPosture()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updateUserPosture()
     updateUserPosture(posture: string, parameter: string = ''): void
     {
         if(this.isRoomEngineReady)
@@ -606,7 +606,7 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateUserGesture()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updateUserGesture()
     updateUserGesture(gesture: number): void
     {
         if(this.isRoomEngineReady)
@@ -615,7 +615,7 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateUserEffect()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updateUserEffect()
     updateUserEffect(effect: number): void
     {
         if(this.isRoomEngineReady)
@@ -624,7 +624,7 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateObjectUserFigure()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updateObjectUserFigure()
     updateObjectUserFigure(figure: string, gender: string | null = null, clubLevel: string | null = null, isRiding: boolean = false): boolean
     {
         if(this.isRoomEngineReady)
@@ -698,7 +698,7 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::checkAutomaticRoomObjectStateChange()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::checkAutomaticRoomObjectStateChange()
     private checkAutomaticRoomObjectStateChange(): void
     {
         if(this._automaticStateChange)
@@ -722,7 +722,7 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::getRoomCanvas()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::getRoomCanvas()
     getRoomCanvas(width: number, height: number): Container | null
     {
         if(this._roomEngine)
@@ -763,7 +763,7 @@ export class RoomPreviewer
             .fill(RoomPreviewer.PREVIEW_BACKGROUND_COLOR);
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::modifyRoomCanvas()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::modifyRoomCanvas()
     modifyRoomCanvas(width: number, height: number): void
     {
         if(this._roomEngine)
@@ -775,19 +775,19 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::set addViewOffset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::set addViewOffset()
     set addViewOffset(value: IPoint)
     {
         this._addViewOffset = value;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::get addViewOffset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::get addViewOffset()
     get addViewOffset(): IPoint
     {
         return this._addViewOffset;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updatePreviewObjectBoundingRectangle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updatePreviewObjectBoundingRectangle()
     private updatePreviewObjectBoundingRectangle(offset: IPoint | null): void
     {
         const source = this._roomEngine!.getRoomObjectBoundingRectangle(this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID, this._currentPreviewObjectCategory, RoomPreviewer.PREVIEW_CANVAS_ID);
@@ -820,7 +820,7 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::validatePreviewSize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::validatePreviewSize()
     private validatePreviewSize(point: IPoint): IPoint
     {
         const rectangle = this._currentPreviewRectangle;
@@ -900,7 +900,7 @@ export class RoomPreviewer
         rectangle.height = bottom - top;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::zoomIn()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::zoomIn()
     zoomIn(): void
     {
         if(this.isRoomEngineReady)
@@ -922,7 +922,7 @@ export class RoomPreviewer
         this._currentPreviewScale = 64;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::zoomOut()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::zoomOut()
     zoomOut(): void
     {
         if(this.isRoomEngineReady)
@@ -999,7 +999,7 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::getCanvasOffset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::getCanvasOffset()
     private getCanvasOffset(point: IPoint): IPoint | null
     {
         const rectangle = this._currentPreviewRectangle;
@@ -1068,7 +1068,7 @@ export class RoomPreviewer
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updatePreviewRoomView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updatePreviewRoomView()
     updatePreviewRoomView(force: boolean = false): void
     {
         if(this._disableUpdate && !force)
@@ -1109,7 +1109,7 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::set disableUpdate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::set disableUpdate()
     set disableUpdate(value: boolean)
     {
         this._disableUpdate = value;
@@ -1128,7 +1128,7 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::onRoomInitialized()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::onRoomInitialized()
     private onRoomInitialized(event: RoomEngineEvent): void
     {
         if(event === null)
@@ -1155,7 +1155,7 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::onRoomObjectAdded()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::onRoomObjectAdded()
     private onRoomObjectAdded(roomId: number, objectId: number, category: number): void
     {
         if(roomId === this._previewRoomId && objectId === RoomPreviewer.PREVIEW_OBJECT_ID && category === this._currentPreviewObjectCategory)
@@ -1180,7 +1180,7 @@ export class RoomPreviewer
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::getGenericRoomObjectImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::getGenericRoomObjectImage()
     getGenericRoomObjectImage(
         classType: string,
         imageType: string,
@@ -1204,7 +1204,7 @@ export class RoomPreviewer
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::getRoomObjectImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::getRoomObjectImage()
     getRoomObjectImage(category: number, direction: IVector3d, scale: number, listener: IGetImageListener | null, backgroundColor: number = 0): ImageResult | null
     {
         if(this.isRoomEngineReady && listener !== null)
@@ -1216,7 +1216,7 @@ export class RoomPreviewer
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::getRoomObjectCurrentImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::getRoomObjectCurrentImage()
     // TS deviation: returns HTMLCanvasElement instead of AS3's BitmapData - both are synchronous,
     // in-memory rasterizations (see IRoomObjectVisualization.getImage()'s own doc comment);
     // converting to ImageBitmap would need this to become async, which would change the
@@ -1274,7 +1274,7 @@ export class RoomPreviewer
         this._roomEngine?.disposeRenderingCanvas(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID);
     }
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::dispose()
     dispose(): void
     {
         this.reset(true);

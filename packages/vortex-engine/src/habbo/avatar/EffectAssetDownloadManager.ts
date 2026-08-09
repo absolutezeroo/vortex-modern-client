@@ -211,7 +211,7 @@ export class EffectAssetDownloadManager extends EventEmitter
      * In AS3, iterates XML `<effect>` elements, creating EffectAssetDownloadLibrary
      * instances keyed by effect ID string.
      */
-    // AS3: sources/win63_version/habbo/avatar/EffectAssetDownloadManager.as::generateMap()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::generateMap()
     private generateMap(data: any): void 
     {
         const root = getXmlRoot(data);

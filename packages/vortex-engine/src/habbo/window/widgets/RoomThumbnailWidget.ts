@@ -15,11 +15,11 @@ import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class RoomThumbnailWidget implements IRoomThumbnailWidget
 {
-    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::TYPE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomThumbnailWidget.as::TYPE
     public static readonly TYPE: string = 'room_thumbnail';
 
     private _widgetWindow: IWidgetWindow | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomThumbnailWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
 
@@ -28,7 +28,7 @@ export class RoomThumbnailWidget implements IRoomThumbnailWidget
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
-        // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::RoomThumbnailWidget()
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomThumbnailWidget.as::RoomThumbnailWidget()
         // uses assets.getAssetByName("room_thumbnail_xml") - the "_xml" suffix is part of
         // the real asset name here, not a generic convention to strip.
         const root = this._windowManager.buildWidgetLayout('room_thumbnail_xml') as IWindowContainer | null;
@@ -45,7 +45,7 @@ export class RoomThumbnailWidget implements IRoomThumbnailWidget
 
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomThumbnailWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -58,31 +58,31 @@ export class RoomThumbnailWidget implements IRoomThumbnailWidget
         return this._flatId;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::set flatId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomThumbnailWidget.as::set flatId()
     public set flatId(value: number)
     {
         this._flatId = value;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomThumbnailWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         return [];
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomThumbnailWidget.as::set properties()
     public set properties(_values: PropertyStruct[])
     {
         // AS3: properties setter is a no-op for this widget
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::reset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomThumbnailWidget.as::reset()
     public reset(): void
     {
         this._flatId = 0;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomThumbnailWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

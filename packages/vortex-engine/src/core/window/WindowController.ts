@@ -937,7 +937,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
             return {width: 0, height: 0};
         }
 
-        // AS3: sources/win63_version/core/window/WindowController.as::WindowController()
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as::WindowController()
         // Flash reads width/height from the layout XML returned by getLayoutByTypeAndStyle(),
         // before WindowParser descends into its child <window>. Converted JSON layouts keep
         // those dimensions on <layout>, so preserve that root for sizing.
@@ -3293,7 +3293,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         return null;
     }
 
-    // AS3: sources/win63_version/core/window/WindowController.as::enableLookupCache()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as::enableLookupCache()
     public enableLookupCache(): void 
     {
         if(!this._lookupCache) this._lookupCache = new Map();

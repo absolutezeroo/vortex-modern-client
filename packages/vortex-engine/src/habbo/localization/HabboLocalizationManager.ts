@@ -42,7 +42,7 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
      */
     private _embeddedLocalizations: Record<string, string> = {};
 
-    // AS3: sources/win63_version/habbo/localization/HabboLocalizationManager.as constructor
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/localization/HabboLocalizationManager.as constructor
     constructor(context: IContext, flags: number = 0)
     {
         super(context, flags);
@@ -165,13 +165,13 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         return this.getLocalization(key, defaultValue);
     }
 
-    // AS3: sources/win63_version/habbo/localization/HabboLocalizationManager.as::getExternalVariablesUrl()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/localization/HabboLocalizationManager.as::getExternalVariablesUrl()
     getExternalVariablesUrl(): string
     {
         return this.getGameDataResources()?.externalVariablesUrl ?? '';
     }
 
-    // AS3: sources/win63_version/habbo/localization/HabboLocalizationManager.as::getExternalVariablesHash()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/localization/HabboLocalizationManager.as::getExternalVariablesHash()
     getExternalVariablesHash(): string
     {
         return this.getGameDataResources()?.externalVariablesHash ?? '';
@@ -288,7 +288,7 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         this._badgePointLimits.set(badgeId, limit);
     }
 
-    // AS3: sources/win63_version/habbo/localization/HabboLocalizationManager.as::requestLocalizationInit()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/localization/HabboLocalizationManager.as::requestLocalizationInit()
     requestLocalizationInit(): void
     {
         if(this._isLocalizationInitialized)

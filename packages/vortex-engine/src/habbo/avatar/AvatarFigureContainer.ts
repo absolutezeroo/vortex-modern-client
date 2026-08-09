@@ -22,7 +22,7 @@ export class AvatarFigureContainer implements IAvatarFigureContainer
 	 *
 	 * @returns An array of part type strings
 	 */
-    // AS3: sources/win63_version/habbo/avatar/AvatarFigureContainer.as::getPartTypeIds()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarFigureContainer.as::getPartTypeIds()
     public getPartTypeIds(): string[]
     {
         return Array.from(this._parts.keys());
@@ -34,7 +34,7 @@ export class AvatarFigureContainer implements IAvatarFigureContainer
 	 * @param type - The part type identifier
 	 * @returns True if the part type exists
 	 */
-    // AS3: sources/win63_version/habbo/avatar/AvatarFigureContainer.as::hasPartType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarFigureContainer.as::hasPartType()
     public hasPartType(type: string): boolean
     {
         return this._parts.has(type);
@@ -46,7 +46,7 @@ export class AvatarFigureContainer implements IAvatarFigureContainer
 	 * @param type - The part type identifier
 	 * @returns The set id, or 0 if the part type is not found
 	 */
-    // AS3: sources/win63_version/habbo/avatar/AvatarFigureContainer.as::getPartSetId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarFigureContainer.as::getPartSetId()
     public getPartSetId(type: string): number
     {
         const part = this._parts.get(type);
@@ -65,7 +65,7 @@ export class AvatarFigureContainer implements IAvatarFigureContainer
 	 * @param type - The part type identifier
 	 * @returns The color id array, or null if not found
 	 */
-    // AS3: sources/win63_version/habbo/avatar/AvatarFigureContainer.as::getPartColorIds()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarFigureContainer.as::getPartColorIds()
     public getPartColorIds(type: string): number[] | null
     {
         const part = this._parts.get(type);
@@ -85,7 +85,7 @@ export class AvatarFigureContainer implements IAvatarFigureContainer
 	 * @param setId - The set id
 	 * @param colorIds - The color id array
 	 */
-    // AS3: sources/win63_version/habbo/avatar/AvatarFigureContainer.as::updatePart()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarFigureContainer.as::updatePart()
     public updatePart(type: string, setId: number, colorIds: number[]): void
     {
         this._parts.set(type, {type, setId, colorIds});
@@ -96,7 +96,7 @@ export class AvatarFigureContainer implements IAvatarFigureContainer
 	 *
 	 * @param type - The part type identifier to remove
 	 */
-    // AS3: sources/win63_version/habbo/avatar/AvatarFigureContainer.as::removePart()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarFigureContainer.as::removePart()
     public removePart(type: string): void
     {
         this._parts.delete(type);
@@ -107,7 +107,7 @@ export class AvatarFigureContainer implements IAvatarFigureContainer
 	 *
 	 * @returns The figure string representation
 	 */
-    // AS3: sources/win63_version/habbo/avatar/AvatarFigureContainer.as::getFigureString()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarFigureContainer.as::getFigureString()
     public getFigureString(): string
     {
         const segments: string[] = [];

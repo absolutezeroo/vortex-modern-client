@@ -836,7 +836,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
             this.cacheFullImage(cacheKey, unscaledTexture);
         }
 
-        // AS3: sources/win63_version/habbo/avatar/AvatarImage.as::getImage() -
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImage.as::getImage() -
         // `if(param3 != 1) var_48 = class_2495.resampleBitmapData(var_48,param3);`
         this._image = scale !== 1
             ? Texture.from({resource: AvatarImage.resampleCanvas(offscreen, scale), alphaMode: 'premultiply-alpha-on-upload'})
@@ -934,7 +934,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
         const offscreen = new OffscreenCanvas(canvasWidth, canvasHeight);
         const ctx = offscreen.getContext('2d')!;
 
-        // AS3: sources/win63_version/habbo/avatar/AvatarImage.as::getCroppedImage()
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImage.as::getCroppedImage()
         // tracks the union of each drawn part's rect as it goes, then crops the
         // final bitmap down to that bounding box — this is what makes the
         // result "cropped" rather than the full (mostly empty) render canvas.
@@ -994,14 +994,14 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
             0, 0, cropWidth, cropHeight
         );
 
-        // AS3: sources/win63_version/habbo/avatar/AvatarImage.as::getCroppedImage() -
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImage.as::getCroppedImage() -
         // `if(param2 != 1) _loc12_ = class_2495.resampleBitmapData(_loc12_,param2);`
         const resource = scale !== 1 ? AvatarImage.resampleCanvas(cropped, scale) : cropped;
 
         return Texture.from({resource, alphaMode: 'premultiply-alpha-on-upload'});
     }
 
-    // AS3: sources/win63_version/habbo/avatar/AvatarImage.as::getCroppedImage() — Rectangle.union()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImage.as::getCroppedImage() — Rectangle.union()
     private static unionRect(
         a: {x: number; y: number; width: number; height: number},
         b: {x: number; y: number; width: number; height: number}

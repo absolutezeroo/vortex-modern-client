@@ -7,13 +7,13 @@ import type {ExtraInfoItemData} from '../bundlepurchaseinfodisplay/ExtraInfoItem
  */
 export class CatalogWidgetBundleDisplayExtraInfoEvent
 {
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetBundleDisplayExtraInfoEvent.as::RESET
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetBundleDisplayExtraInfoEvent.as::RESET
     static readonly RESET: string = 'CWPPEIE_RESET';
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetBundleDisplayExtraInfoEvent.as::HIDE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetBundleDisplayExtraInfoEvent.as::HIDE
     static readonly HIDE: string = 'CWPPEIE_HIDE';
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetBundleDisplayExtraInfoEvent.as::ITEM_CLICKED
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetBundleDisplayExtraInfoEvent.as::ITEM_CLICKED
     static readonly ITEM_CLICKED: string = 'CWPPEIE_ITEM_CLICKED';
 
     private _type: string;
@@ -34,13 +34,13 @@ export class CatalogWidgetBundleDisplayExtraInfoEvent
         return this._type;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetBundleDisplayExtraInfoEvent.as::get data()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetBundleDisplayExtraInfoEvent.as::get data()
     get data(): ExtraInfoItemData | null
     {
         return this._data;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetBundleDisplayExtraInfoEvent.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetBundleDisplayExtraInfoEvent.as::get id()
     get id(): number
     {
         return this._id;

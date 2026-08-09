@@ -71,7 +71,7 @@ export class InfoStandFurniView
     // NOT from AS3: the Vortex furni-editor button, added once and kept.
     private _furniEditorButton: IWindow | null = null;
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::InfoStandFurniView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::InfoStandFurniView()
     constructor(widget: InfoStandWidget, name: string, catalog: IHabboCatalog | null)
     {
         this._widget = widget;
@@ -85,7 +85,7 @@ export class InfoStandFurniView
         return this._widget.handler.container;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::dispose()
     public dispose(): void
     {
         this._catalog = null;
@@ -93,13 +93,13 @@ export class InfoStandFurniView
         this._window = null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::get window()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::get window()
     public get window(): IItemListWindow | null
     {
         return this._window;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::createWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::createWindow()
     protected createWindow(name: string): void
     {
         const window = this._widget.windowManager.buildWidgetLayout('furni_view') as IItemListWindow | null;
@@ -245,7 +245,7 @@ export class InfoStandFurniView
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::customVarsWindowProcedure()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::customVarsWindowProcedure()
     private customVarsWindowProcedure = (event: WindowEvent, window: IWindow): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK || !this._customVariables) return;
@@ -267,7 +267,7 @@ export class InfoStandFurniView
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::onBuyoutButtonClicked()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::onBuyoutButtonClicked()
     protected onBuyoutButtonClicked = (_event: WindowMouseEvent): void =>
     {
         if(this._catalog && this._widget.furniData)
@@ -281,7 +281,7 @@ export class InfoStandFurniView
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::onExtendButtonClicked()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::onExtendButtonClicked()
     protected onExtendButtonClicked = (_event: WindowMouseEvent): void =>
     {
         if(this._catalog && this._widget.furniData)
@@ -295,7 +295,7 @@ export class InfoStandFurniView
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::getRoomObject()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::getRoomObject()
     private getRoomObject(id: number): IRoomObject | null
     {
         const roomId = this.container!.roomSession.roomId;
@@ -309,7 +309,7 @@ export class InfoStandFurniView
         return object;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::getFurnitureData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::getFurnitureData()
     private getFurnitureData(furniData: {id: number; category: number}): IFurnitureData | null
     {
         const object = this.getRoomObject(furniData.id);
@@ -324,7 +324,7 @@ export class InfoStandFurniView
             : this.container!.sessionDataManager?.getFloorItemData(typeId) ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::onRentButtonClicked()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::onRentButtonClicked()
     protected onRentButtonClicked = (_event: WindowMouseEvent): void =>
     {
         if(this._catalog && this._widget.furniData)
@@ -333,13 +333,13 @@ export class InfoStandFurniView
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::onClose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::onClose()
     protected onClose = (_event: WindowMouseEvent): void =>
     {
         this._widget.close();
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::set name()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::set name()
     public set name(value: string)
     {
         const text = this._elementList?.getListItemByName('name_text') as ITextWindow | null;
@@ -352,7 +352,7 @@ export class InfoStandFurniView
         this.updateWindow();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::set isNft()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::set isNft()
     public set isNft(value: boolean)
     {
         const indicator = this._elementList?.getListItemByName('nft_indicator') as IWindowContainer | null;
@@ -376,13 +376,13 @@ export class InfoStandFurniView
         this.updateWindow();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::set furniImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::set furniImage()
     public set furniImage(value: ImageBitmap | null)
     {
         this.setImage(value, 'image');
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::setImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::setImage()
     private setImage(value: ImageBitmap | null, name: string): void
     {
         const bitmap = this._infoBorder?.findChildByName(name) as IBitmapWrapperWindow | null;
@@ -399,7 +399,7 @@ export class InfoStandFurniView
         this.updateWindow();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::set description()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::set description()
     public set description(value: string)
     {
         const text = this._elementList?.getListItemByName('description_text') as ITextWindow | null;
@@ -411,7 +411,7 @@ export class InfoStandFurniView
         this.updateWindow();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::setOwnerInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::setOwnerInfo()
     // AS3 win63_version drops the bcw_icon toggle branch (decompiler artifact);
     // restored from win63_2023_version's fuller decompile of the same method.
     public setOwnerInfo(ownerId: number, ownerName: string): void
@@ -458,7 +458,7 @@ export class InfoStandFurniView
         this.updateWindow();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::set expiration()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::set expiration()
     private set expiration(value: number)
     {
         const text = this._elementList?.getListItemByName('expiration_text') as ITextWindow | null;
@@ -472,7 +472,7 @@ export class InfoStandFurniView
         this.updateWindow();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::onButtonClicked()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::onButtonClicked()
     // AS3 win63_version's button-list registration loop never advances its index
     // (`while(0 < var_34.numListItems)`) — a decompiler artifact; fixed above in
     // createWindow() using the bounded loop from win63_2023_version.
@@ -527,7 +527,7 @@ export class InfoStandFurniView
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::onGroupInfoClicked()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::onGroupInfoClicked()
     private onGroupInfoClicked = (_event: WindowMouseEvent): void =>
     {
         if(!this._widget.furniData) return;
@@ -537,7 +537,7 @@ export class InfoStandFurniView
         );
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::onCatalogButtonClicked()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::onCatalogButtonClicked()
     protected onCatalogButtonClicked = (_event: WindowMouseEvent): void =>
     {
         if(this._catalog && this._widget.furniData)
@@ -547,13 +547,13 @@ export class InfoStandFurniView
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::onBcPlaceMoreButtonClicked()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::onBcPlaceMoreButtonClicked()
     protected onBcPlaceMoreButtonClicked = (_event: WindowMouseEvent): void =>
     {
         this._widget.requestItemToMover();
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::onOwnerRegion()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::onOwnerRegion()
     protected onOwnerRegion = (event: WindowMouseEvent): void =>
     {
         if(event.type === WindowMouseEvent.CLICK)
@@ -585,7 +585,7 @@ export class InfoStandFurniView
         }
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::updateWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::updateWindow()
     protected updateWindow(): void
     {
         if(!this._elementList || !this._infoBorder || !this._buttonList || !this._window) return;
@@ -741,7 +741,7 @@ export class InfoStandFurniView
         this.updateWindow();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::updateCustomVarsWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::updateCustomVarsWindow()
     private updateCustomVarsWindow(): void
     {
         if(!this._customVariables || !this._widget.furniData) return;
@@ -780,7 +780,7 @@ export class InfoStandFurniView
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::updatePickupMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::updatePickupMode()
     private updatePickupMode(event: RoomWidgetFurniInfoUpdateEvent, isPlayTestMode: boolean): void
     {
         this._pickupMode = InfoStandFurniView.PICKUP_MODE_NONE;
@@ -806,7 +806,7 @@ export class InfoStandFurniView
         this.localizePickupButton(this._pickupMode);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::localizePickupButton()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::localizePickupButton()
     private localizePickupButton(mode: number): void
     {
         const button = this._buttonList?.getListItemByName('pickup');
@@ -818,7 +818,7 @@ export class InfoStandFurniView
             : '${infostand.button.pickup}';
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::createAdElement()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::createAdElement()
     private createAdElement(name: string, value: string): void
     {
         if(!this._elementList) return;
@@ -837,7 +837,7 @@ export class InfoStandFurniView
         this._infoBorder?.addChild(element);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::getAdFurnitureExtraParams()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::getAdFurnitureExtraParams()
     private getAdFurnitureExtraParams(): Map<string, string>
     {
         const result = new Map<string, string>();
@@ -859,7 +859,7 @@ export class InfoStandFurniView
         return result;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::getVisibleAdFurnitureExtraParams()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::getVisibleAdFurnitureExtraParams()
     private getVisibleAdFurnitureExtraParams(): string
     {
         let result = '';
@@ -887,13 +887,13 @@ export class InfoStandFurniView
         return result;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::trimAdFurnitureExtramParam()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::trimAdFurnitureExtramParam()
     private trimAdFurnitureExtraParam(value: string): string
     {
         return value?.includes('\t') ? value.replace(/\t/g, '') : value;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::showAdFurnitureDetails()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::showAdFurnitureDetails()
     private showAdFurnitureDetails(visible: boolean): void
     {
         if(!this._infoBorder) return;
@@ -938,7 +938,7 @@ export class InfoStandFurniView
         this.showButton('save_branding_configuration', hasBrandingParams);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::showGroupInfo()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::showGroupInfo()
     private showGroupInfo(visible: boolean): void
     {
         this.showWindow('group_details_spacer', visible);
@@ -947,7 +947,7 @@ export class InfoStandFurniView
         this.showWindow('group_name', false);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::showWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::showWindow()
     private showWindow(name: string, visible: boolean): void
     {
         const window = this._infoBorder?.findChildByName(name);
@@ -955,7 +955,7 @@ export class InfoStandFurniView
         if(window) window.visible = visible;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::showButton()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::showButton()
     protected showButton(name: string, visible: boolean): void
     {
         if(!this._buttonList) return;
@@ -969,7 +969,7 @@ export class InfoStandFurniView
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::updatePurchaseButtonVisibility()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::updatePurchaseButtonVisibility()
     private updatePurchaseButtonVisibility(
         isOwner: boolean, hasExpiration: boolean, hasPurchaseOffer: boolean, hasRentOffer: boolean,
         purchaseCouldBeBuyout: boolean, rentCouldBeBuyout: boolean, canBcPlaceMore: boolean
@@ -1025,7 +1025,7 @@ export class InfoStandFurniView
         this._elementList?.arrangeListItems();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::set groupName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::set groupName()
     public set groupName(value: string)
     {
         const window = this._infoBorder?.findChildByName('group_name');
@@ -1037,7 +1037,7 @@ export class InfoStandFurniView
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::showLimitedItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::showLimitedItem()
     private showLimitedItem(visible: boolean, stuffData: IStuffData | null): void
     {
         const backgroundContainer = this._infoBorder?.findChildByName('unique_item_background_container') as IWindowContainer | null;
@@ -1061,7 +1061,7 @@ export class InfoStandFurniView
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::showRarityItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::showRarityItem()
     private showRarityItem(visible: boolean, stuffData: IStuffData | null): void
     {
         const overlayContainer = this._infoBorder?.findChildByName('rarity_item_overlay_container') as IWindowContainer | null;
@@ -1082,7 +1082,7 @@ export class InfoStandFurniView
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::set groupBadgeId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::set groupBadgeId()
     public set groupBadgeId(badgeId: string)
     {
         const widgetWindow = this._infoBorder?.findChildByName('group_badge_image') as IWidgetWindow | null;

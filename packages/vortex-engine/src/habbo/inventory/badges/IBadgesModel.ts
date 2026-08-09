@@ -27,91 +27,91 @@ export interface IBadgeData
  */
 export interface IBadgesModel
 {
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::get disposed()
     readonly disposed: boolean;
     readonly maxActiveCount: number;
 
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::dispose()
     dispose(): void;
 
     /**
 	 * Initialize badges from server message
 	 */
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::initBadges()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::initBadges()
     initBadges(badges: IBadgeData[], getName: (id: string) => string, getDesc: (id: string) => string): void;
 
     /**
 	 * Update or add a badge
 	 */
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::updateBadge()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::updateBadge()
     updateBadge(badgeId: string, isInUse: boolean, slotId: number, getName: (id: string) => string, getDesc: (id: string) => string): Badge | null;
 
     /**
 	 * Remove a badge
 	 */
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::removeBadge()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::removeBadge()
     removeBadge(badgeId: string): boolean;
 
     /**
 	 * Toggle wearing status
 	 * Returns the updated badge if changed, null otherwise
 	 */
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::toggleBadgeWearing()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::toggleBadgeWearing()
     toggleBadgeWearing(badgeId: string): Badge | null;
 
     /**
 	 * Get badges by filter
 	 */
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::getBadges()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::getBadges()
     getBadges(filter?: BadgeFilterType): Badge[];
 
     /**
 	 * Get badge by ID
 	 */
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::getBadge()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::getBadge()
     getBadge(badgeId: string): Badge | null;
 
     /**
 	 * Get badge from active badges by index
 	 */
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::getBadgeFromActive()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::getBadgeFromActive()
     getBadgeFromActive(index: number): Badge | null;
 
     /**
 	 * Get badge from inactive badges by index
 	 */
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::getBadgeFromInactive()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::getBadgeFromInactive()
     getBadgeFromInactive(index: number): Badge | null;
 
     /**
 	 * Get currently selected badge
 	 */
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::getSelectedBadge()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::getSelectedBadge()
     getSelectedBadge(filter?: BadgeFilterType): Badge | null;
 
     /**
 	 * Select a badge by ID
 	 */
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::setBadgeSelected()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::setBadgeSelected()
     setBadgeSelected(badgeId: string): void;
 
     /**
 	 * Force selection if none selected
 	 */
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::forceSelection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::forceSelection()
     forceSelection(): void;
 
     /**
 	 * Remove all selections
 	 */
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::removeSelections()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::removeSelections()
     removeSelections(): void;
 
     /**
 	 * Reset unseen flags
 	 * Returns badge IDs that were marked as unseen
 	 */
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::resetUnseenItems()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::resetUnseenItems()
     resetUnseenItems(): string[];
 
     /**
@@ -124,6 +124,6 @@ export interface IBadgesModel
 	 */
     getActiveBadgeIds(): string[];
 
-    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::updateView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::updateView()
     updateView(): void;
 }

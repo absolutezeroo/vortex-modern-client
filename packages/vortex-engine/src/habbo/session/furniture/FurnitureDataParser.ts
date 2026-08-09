@@ -32,7 +32,7 @@ export class FurnitureDataParser
     private _events: EventEmitter<IFurnitureDataParserEvents> = new EventEmitter();
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/session/furniture/FurnitureDataParser.as::FurnitureDataParser()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::FurnitureDataParser()
     constructor(
         floorItems: Map<number, IFurnitureData>,
         wallItems: Map<number, IFurnitureData>,
@@ -55,7 +55,7 @@ export class FurnitureDataParser
         return this._events;
     }
 
-    // AS3: sources/win63_version/habbo/session/furniture/FurnitureDataParser.as::loadData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::loadData()
     async loadData(url: string): Promise<void>
     {
         try
@@ -94,7 +94,7 @@ export class FurnitureDataParser
         }
     }
 
-    // AS3: sources/win63_version/habbo/session/furniture/FurnitureDataParser.as::parseFurnitureData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::parseFurnitureData()
     private parseFurnitureData(data: string): void
     {
         if(data.charAt(0) === '<')
@@ -114,7 +114,7 @@ export class FurnitureDataParser
         this.parseLingoFormat(data);
     }
 
-    // AS3: sources/win63_version/habbo/session/furniture/FurnitureDataParser.as::parseXmlFormat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::parseXmlFormat()
     private parseXmlFormat(data: string): void
     {
         // This runs synchronously on the main thread (as AS3's does), so its cost is a frozen
@@ -150,7 +150,7 @@ export class FurnitureDataParser
             + `item build ${Math.round(done - buildStart)} ms`);
     }
 
-    // AS3: sources/win63_version/habbo/session/furniture/FurnitureDataParser.as::parseFloorItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::parseFloorItem()
     private parseXmlFloorItem(item: Element): FurnitureData
     {
         const id = this.getAttributeNumber(item, 'id', 0);
@@ -194,7 +194,7 @@ export class FurnitureDataParser
         );
     }
 
-    // AS3: sources/win63_version/habbo/session/furniture/FurnitureDataParser.as::parseWallItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::parseWallItem()
     private parseXmlWallItem(item: Element): FurnitureData
     {
         const id = this.getAttributeNumber(item, 'id', 0);
@@ -335,7 +335,7 @@ export class FurnitureDataParser
         );
     }
 
-    // AS3: sources/win63_version/habbo/session/furniture/FurnitureDataParser.as::parseLingoFormat()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::parseLingoFormat()
     private parseLingoFormat(data: string): void
     {
         const lineRegex = /\n\r{1,}|\n{1,}|\r{1,}/gm;
@@ -439,7 +439,7 @@ export class FurnitureDataParser
         return values;
     }
 
-    // AS3: sources/win63_version/habbo/session/furniture/FurnitureDataParser.as::storeItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::storeItem()
     private storeItem(item: FurnitureData): void
     {
         let nameMap: Map<string, number[]> | null = null;
@@ -762,7 +762,7 @@ export class FurnitureDataParser
         return record !== null ? [record] : [];
     }
 
-    // AS3: sources/win63_version/habbo/session/furniture/FurnitureDataParser.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;

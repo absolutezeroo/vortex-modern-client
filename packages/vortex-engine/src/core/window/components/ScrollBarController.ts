@@ -24,7 +24,7 @@ import {SmoothScroller} from '../utils/SmoothScroller';
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as
  * @see sources/win63_version/com/sulake/core/window/components/ScrollBarController.as
  */
-// AS3: sources/win63_version/core/window/components/ScrollBarController.as::ScrollBarController()
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::ScrollBarController()
 export class ScrollBarController extends InteractiveController implements IScrollbarWindow
 {
     // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::SCROLL_BUTTON_INCREMENT
@@ -59,7 +59,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     private _boundOnScrollableResized: ((event: WindowEvent) => void);
     private _boundOnScrollableScrolled: ((event: WindowEvent) => void);
 
-    // AS3: sources/win63_version/core/window/components/ScrollBarController.as::ScrollBarController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::ScrollBarController()
     constructor(
         name: string,
         type: number,
@@ -166,7 +166,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Gets whether this scrollbar is horizontal.
 	 */
-    // AS3: sources/win63_version/core/window/components/ScrollBarController.as::get horizontal()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::get horizontal()
     public get horizontal(): boolean
     {
         return this._horizontal ?? (this.type === 130);
@@ -175,7 +175,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Gets whether this scrollbar is vertical.
 	 */
-    // AS3: sources/win63_version/core/window/components/ScrollBarController.as::get vertical()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::get vertical()
     public get vertical(): boolean
     {
         return !this.horizontal;
@@ -342,7 +342,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Handles slider bar relocation, resize, wheel events, and parent add.
 	 */
-    // AS3: sources/win63_version/core/window/components/ScrollBarController.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::update()
     public override update(source: WindowController, event: WindowEvent): boolean
     {
         if(!this._initialized)
@@ -512,7 +512,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
     /**
 	 * Updates the lift (thumb) size and position based on the scrollable region.
 	 */
-    // AS3: sources/win63_version/core/window/components/ScrollBarController.as::updateLiftSizeAndPosition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::updateLiftSizeAndPosition()
     private updateLiftSizeAndPosition(): void
     {
         let scrollable = this._scrollable ?? null;

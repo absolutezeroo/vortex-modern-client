@@ -19,7 +19,7 @@ const SPIN_ACCELERATE_AFTER_STEPS = 35;
  */
 export class SpinnerCatalogWidget extends CatalogWidget
 {
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::_catalog
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
     // AS3: sources/win63_version/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::_value
@@ -41,7 +41,7 @@ export class SpinnerCatalogWidget extends CatalogWidget
 
     private _skipSteps: number[] = [];
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::_promoInfo
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::_promoInfo
     private _promoInfo: IWindow | null = null;
 
     constructor(window: IWindowContainer, catalog: HabboCatalog)
@@ -94,7 +94,7 @@ export class SpinnerCatalogWidget extends CatalogWidget
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::refresh()
     private refresh(): void
     {
         this._value = Math.max(this._value, this._minValue);
@@ -174,7 +174,7 @@ export class SpinnerCatalogWidget extends CatalogWidget
         this.refresh();
     };
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::increaseValue()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::increaseValue()
     private increaseValue(): void
     {
         let value = this._value + 1;
@@ -184,7 +184,7 @@ export class SpinnerCatalogWidget extends CatalogWidget
         this._value = value;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::decreaseValue()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::decreaseValue()
     private decreaseValue(): void
     {
         let value = this._value - 1;
@@ -194,7 +194,7 @@ export class SpinnerCatalogWidget extends CatalogWidget
         this._value = value;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::setValueText()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::setValueText()
     private setValueText(value: string): void
     {
         if(this.window == null) return;
@@ -221,7 +221,7 @@ export class SpinnerCatalogWidget extends CatalogWidget
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::spinnerWindowProcedure()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::spinnerWindowProcedure()
     private spinnerWindowProcedure = (event: WindowEvent): void =>
     {
         if(event == null) return;
@@ -298,7 +298,7 @@ export class SpinnerCatalogWidget extends CatalogWidget
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::onInputEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::onInputEvent()
     private onInputEvent = (event: WindowKeyboardEvent): void =>
     {
         this._value = parseInt(event.target?.caption ?? '1', 10);

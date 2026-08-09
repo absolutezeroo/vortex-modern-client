@@ -45,7 +45,7 @@ export const HabboProperty = {
     FACEBOOK_APPLICATION_ID: 'facebook.application.id',
 
     // External files
-    // AS3: sources/win63_version/habbo/configuration/enum/HabboProperty.as::EXTERNAL_VARIABLES
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/enum/HabboProperty.as::EXTERNAL_VARIABLES
     EXTERNAL_VARIABLES: 'external.variables.txt',
     GAMEDATA_HASHES_URL: 'gamedata.hashes.url',
 

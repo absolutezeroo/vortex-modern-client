@@ -7,7 +7,7 @@ export class CatalogWidgetColourIndexEvent
 {
     static readonly COLOUR_INDEX: string = 'COLOUR_INDEX';
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetColourIndexEvent.as::_index
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetColourIndexEvent.as::_index
     private _index: number;
 
     constructor(index: number)
@@ -20,7 +20,7 @@ export class CatalogWidgetColourIndexEvent
         return CatalogWidgetColourIndexEvent.COLOUR_INDEX;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/CatalogWidgetColourIndexEvent.as::get index()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/CatalogWidgetColourIndexEvent.as::get index()
     get index(): number
     {
         return this._index;

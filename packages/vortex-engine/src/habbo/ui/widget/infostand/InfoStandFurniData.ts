@@ -8,38 +8,38 @@ import type {RoomWidgetFurniInfoUpdateEvent} from '@habbo/ui/widget/events/RoomW
 
 export class InfoStandFurniData
 {
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get id()
     public id: number = 0;
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get category()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get category()
     public category: number = 0;
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get name()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get name()
     public name: string = '';
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get description()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get description()
     public description: string = '';
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get image()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get image()
     public image: unknown = null;
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get classId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get classId()
     public classId: number = 0;
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get purchaseOfferId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get purchaseOfferId()
     public purchaseOfferId: number = -1;
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get bcOfferId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get bcOfferId()
     public bcOfferId: number = -1;
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get extraParam()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get extraParam()
     public extraParam: string = '';
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get stuffData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get stuffData()
     public stuffData: IStuffData | null = null;
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get groupId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get groupId()
     public groupId: number = 0;
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get ownerId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get ownerId()
     public ownerId: number = 0;
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get ownerName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get ownerName()
     public ownerName: string = '';
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get rentOfferId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get rentOfferId()
     public rentOfferId: number = -1;
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::get availableForBuildersClub()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get availableForBuildersClub()
     public availableForBuildersClub: boolean = false;
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniData.as::setData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::setData()
     public setData(event: RoomWidgetFurniInfoUpdateEvent): void
     {
         this.id = event.id;

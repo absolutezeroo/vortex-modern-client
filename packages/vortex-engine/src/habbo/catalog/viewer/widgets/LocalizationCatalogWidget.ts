@@ -64,7 +64,7 @@ export class LocalizationCatalogWidget extends CatalogWidget
     {
     };
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::initLinks()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::initLinks()
     // TODO(AS3): the per-layoutCode click destination switch (onClickLink()) isn't ported - see
     // class doc comment.
     private initLinks(): void
@@ -91,7 +91,7 @@ export class LocalizationCatalogWidget extends CatalogWidget
         log.debug(`Unhandled link clicked ${[this.page.layoutCode, target?.name]}`);
     };
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::initStaticImages()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::initStaticImages()
     private initStaticImages(): void
     {
         const staticImages: IWindow[] = [];
@@ -119,7 +119,7 @@ export class LocalizationCatalogWidget extends CatalogWidget
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::initLocalizables()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::initLocalizables()
     private initLocalizables(): void
     {
         this._imageElementMap.clear();
@@ -211,7 +211,7 @@ export class LocalizationCatalogWidget extends CatalogWidget
         // which isn't ported.
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::setElementImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::setElementImage()
     private setElementImage(elementName: string, assetName: string): void
     {
         if(this.window == null || this.window.disposed) return;

@@ -27,27 +27,27 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
     // Floor colors (AS3: RoomVisualization.as lines 26-28)
     public static readonly FLOOR_COLOR_TOP: number = 0xFFFFFF;    // 16777215 (const_650)
     public static readonly FLOOR_COLOR_LEFT: number = 0xDDDDDD;   // 14540253 (const_802)
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::FLOOR_COLOR_RIGHT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::FLOOR_COLOR_RIGHT
     public static readonly FLOOR_COLOR_RIGHT: number = 0xBBBBBB;  // 12303291 (FLOOR_COLOR_RIGHT)
 
     // Wall colors (AS3: RoomVisualization.as lines 30-33)
     public static readonly WALL_COLOR_TOP: number = 0xFFFFFF;     // 16777215 (const_1167, normal.y > 0)
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::WALL_COLOR_SIDE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::WALL_COLOR_SIDE
     public static readonly WALL_COLOR_SIDE: number = 0xCCCCCC;    // 13421772 (WALL_COLOR_SIDE)
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::WALL_COLOR_BOTTOM
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::WALL_COLOR_BOTTOM
     public static readonly WALL_COLOR_BOTTOM: number = 0x999999;  // 10066329 (WALL_COLOR_BOTTOM)
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::WALL_COLOR_BORDER
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::WALL_COLOR_BORDER
     public static readonly WALL_COLOR_BORDER: number = 0x999999;  // 10066329 (WALL_COLOR_BORDER)
 
     // Landscape colors (AS3: RoomVisualization.as lines 35-37)
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::LANDSCAPE_COLOR_TOP
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::LANDSCAPE_COLOR_TOP
     public static readonly LANDSCAPE_COLOR_TOP: number = 0xFFFFFF;   // 16777215
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::LANDSCAPE_COLOR_SIDE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::LANDSCAPE_COLOR_SIDE
     public static readonly LANDSCAPE_COLOR_SIDE: number = 0xCCCCCC;  // 13421772
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::LANDSCAPE_COLOR_BOTTOM
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::LANDSCAPE_COLOR_BOTTOM
     public static readonly LANDSCAPE_COLOR_BOTTOM: number = 0x999999; // 10066329
 
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::ROOM_DEPTH_OFFSET
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::ROOM_DEPTH_OFFSET
     private static readonly ROOM_DEPTH_OFFSET: number = 1000;
     private static readonly UPDATE_INTERVAL: number = 250;
 
@@ -55,7 +55,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
     private _planeIndexMap: Map<number, number> = new Map();
     private _initialized: boolean = false;
     private _visiblePlanes: RoomPlane[] = [];
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::_visiblePlaneSpriteNumbers
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::_visiblePlaneSpriteNumbers
     private _visiblePlaneSpriteNumbers: number[] = [];
     private _planeTypeVisibility: boolean[] = [];
 
@@ -66,17 +66,17 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
     private _floorThickness: number = NaN;
     private _wallThickness: number = NaN;
 
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::_backgroundColor
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::_backgroundColor
     private _backgroundColor: number = 0xFFFFFF;
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::_backgroundRed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::_backgroundRed
     private _backgroundRed: number = 255;
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::_backgroundGreen
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::_backgroundGreen
     private _backgroundGreen: number = 255;
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::_backgroundBlue
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::_backgroundBlue
     private _backgroundBlue: number = 255;
 
     private _updateCount: number = 0;
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::_lastUpdateTime
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::_lastUpdateTime
     private _lastUpdateTime: number = -1000;
     private _geometryUpdateId: number = -1;
 
@@ -102,19 +102,19 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
         this._maskParser = new RoomPlaneBitmapMaskParser();
     }
 
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::get floorRelativeDepth()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::get floorRelativeDepth()
     get floorRelativeDepth(): number
     {
         return RoomVisualization.ROOM_DEPTH_OFFSET + 0.1;
     }
 
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::get wallRelativeDepth()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::get wallRelativeDepth()
     get wallRelativeDepth(): number
     {
         return RoomVisualization.ROOM_DEPTH_OFFSET + 0.5;
     }
 
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::get planeCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::get planeCount()
     get planeCount(): number
     {
         return this._planes.length;
@@ -232,7 +232,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 	 * AS3 equivalent: reads "room_plane_xml" string from model, parses it with own RoomPlaneParser.
 	 * Vortex: reads the RoomPlaneParser object reference directly from the model.
 	 */
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::initializeRoomPlanes()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::initializeRoomPlanes()
     protected initializeRoomPlanes(): void
     {
         if(this._initialized)
@@ -259,7 +259,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
         log.debug(`Created ${this._planes.length} planes`);
     }
 
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::defineSprites()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::defineSprites()
     protected defineSprites(startIndex: number = 0): void
     {
         const count = this._planes.length;
@@ -299,7 +299,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::updatePlanes()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updatePlanes()
     protected updatePlanes(geometry: IRoomGeometry, geometryUpdated: boolean, time: number): boolean
     {
         const roomObject = this.object;
@@ -405,7 +405,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 	 * Based on AS3: RoomVisualization.createPlanesAndSprites() lines 569-700
 	 * + AS3: RoomEngine.createRoom() door mask application (lines 3044-3076)
 	 */
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::createPlanesAndSprites()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::createPlanesAndSprites()
     private createPlanesAndSprites(planeParser: RoomPlaneParser): void
     {
         const origin = this.object!.getLocation();
@@ -538,7 +538,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 	 * Update plane texture types and visibilities from the room model.
 	 * Based on AS3 RoomVisualization.updatePlaneTexturesAndVisibilities()
 	 */
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::updatePlaneTexturesAndVisibilities()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updatePlaneTexturesAndVisibilities()
     private updatePlaneTexturesAndVisibilities(model: any): boolean
     {
         if(!model) return false;
@@ -578,7 +578,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 	 * Set plane IDs based on floor/wall/landscape type strings.
 	 * Based on AS3 RoomVisualization.updatePlaneTextureTypes()
 	 */
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::updatePlaneTextureTypes()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updatePlaneTextureTypes()
     private updatePlaneTextureTypes(floorType: string, wallType: string, landscapeType: string): boolean
     {
         let changed = false;
@@ -638,7 +638,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 	 * Update plane type visibility flags.
 	 * Based on AS3 RoomVisualization.updatePlaneTypeVisibilities()
 	 */
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::updatePlaneTypeVisibilities()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updatePlaneTypeVisibilities()
     private updatePlaneTypeVisibilities(floor: boolean, wall: boolean, landscape: boolean): void
     {
         if(floor !== this._planeTypeVisibility[RoomPlane.TYPE_FLOOR]
@@ -657,7 +657,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 	 * Check for mask and background color changes in the model.
 	 * Based on AS3 RoomVisualization.updateMasksAndColors()
 	 */
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::updateMasksAndColors()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updateMasksAndColors()
     private updateMasksAndColors(model: any): boolean
     {
         if(!model) return false;
@@ -699,7 +699,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 	 * For each mask, finds matching wall/landscape planes via scalar projection
 	 * and adds bitmap masks to them.
 	 */
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::updatePlaneMasks()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updatePlaneMasks()
     private updatePlaneMasks(xmlString: string): void
     {
         if(!xmlString) return;
@@ -805,7 +805,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 	 *
 	 * @see sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as
 	 */
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::updateSprite()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updateSprite()
     private updateSprite(sprite: IRoomObjectSprite, plane: RoomPlane, name: string, depth: number): void
     {
         const offset = plane.offset;
@@ -826,7 +826,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
         sprite.assetName = `${name}_${this._updateCount}`;
     }
 
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::updateGeometry()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updateGeometry()
     private updateGeometry(geometry: IRoomGeometry): boolean
     {
         if(geometry.updateId !== this._geometryUpdateId)
@@ -853,7 +853,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/room/object/visualization/room/RoomVisualization.as::resetRoomPlanes()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::resetRoomPlanes()
     private resetRoomPlanes(): void
     {
         for(const plane of this._planes)

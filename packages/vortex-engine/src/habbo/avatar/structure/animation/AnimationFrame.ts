@@ -7,7 +7,7 @@ import {getXmlAttribute, getXmlRoot} from '../AvatarXmlUtils';
  */
 export class AnimationFrame
 {
-    // AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationFrame.as::AnimationFrame()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/animation/AnimationFrame.as::AnimationFrame()
     constructor(data: any)
     {
         const element = getXmlRoot(data);
@@ -20,7 +20,7 @@ export class AnimationFrame
 
     private _number: number;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationFrame.as::get number()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/animation/AnimationFrame.as::get number()
     public get number(): number
     {
         return this._number;
@@ -28,7 +28,7 @@ export class AnimationFrame
 
     private _assetPartDefinition: string;
 
-    // AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationFrame.as::get assetPartDefinition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/animation/AnimationFrame.as::get assetPartDefinition()
     public get assetPartDefinition(): string
     {
         return this._assetPartDefinition;

@@ -80,7 +80,7 @@ export class FurniView
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::get isVisible()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::get isVisible()
     get isVisible(): boolean
     {
         return !!this._window?.visible;
@@ -92,7 +92,7 @@ export class FurniView
         return this._isInitialized;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::get currentPageItems()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::get currentPageItems()
     get currentPageItems(): GroupItem[] | null
     {
         return this._grid ? this._grid.currentPageItems : null;
@@ -114,7 +114,7 @@ export class FurniView
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::getWindowContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::getWindowContainer()
     getWindowContainer(): IWindowContainer | null
     {
         if(!this._isInitialized)
@@ -129,7 +129,7 @@ export class FurniView
         return this._window;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::setViewToState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::setViewToState()
     setViewToState(): void
     {
         let state: number;
@@ -153,25 +153,25 @@ export class FurniView
         this.updateContainerVisibility();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::clearViews()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::clearViews()
     clearViews(): void
     {
         this.updateActionView();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::getFirstThumb()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::getFirstThumb()
     getFirstThumb(): unknown
     {
         return this._grid ? this._grid.getFirstThumb() : null;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::addItems()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::addItems()
     addItems(items: GroupItem[]): void
     {
         this._grid?.setItems(items);
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::updateGridFilters()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::updateGridFilters()
     updateGridFilters(): void
     {
         if(!this._window || this._window.disposed) return;
@@ -193,7 +193,7 @@ export class FurniView
         );
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::resetFilters()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::resetFilters()
     resetFilters(category: string): void
     {
         if(!this._window) return;
@@ -232,7 +232,7 @@ export class FurniView
         this.updateGridFilters();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::updateRentedItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::updateRentedItem()
     updateRentedItem(): void
     {
         const groupItem = this._model.getSelectedItem();
@@ -263,7 +263,7 @@ export class FurniView
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::updateActionView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::updateActionView()
     // TODO(AS3): skips the RoomPreviewer panel (unique/rarity preview overlay,
     // 3D object preview) — see the class doc comment. Keeps selection-driven
     // button availability and the name/description captions.
@@ -474,7 +474,7 @@ export class FurniView
         extraText.visible = false;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::init()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::init()
     private init(): void
     {
         this._window = this._model.controller.view.getView('furni');
@@ -527,7 +527,7 @@ export class FurniView
         return this._actionButtonList.removeListItem(item);
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::updateActionButtons()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::updateActionButtons()
     private updateActionButtons(hasSelection: boolean): void
     {
         this.removeButtons();
@@ -675,7 +675,7 @@ export class FurniView
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::windowEventProc()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::windowEventProc()
     private windowEventProc = (event: WindowEvent, window: IWindow): void =>
     {
         if(event.type === WindowMouseEvent.CLICK)
@@ -786,7 +786,7 @@ export class FurniView
         }
     };
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::populateFilterOptions()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::populateFilterOptions()
     private populateFilterOptions(): void
     {
         if(!this._window) return;

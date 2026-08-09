@@ -19,7 +19,7 @@ export class SetExtraPurchaseParameterEvent
         return SetExtraPurchaseParameterEvent.CWE_SET_EXTRA_PARM;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/events/SetExtraPurchaseParameterEvent.as::get parameter()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/events/SetExtraPurchaseParameterEvent.as::get parameter()
     get parameter(): string
     {
         return this._parameter;

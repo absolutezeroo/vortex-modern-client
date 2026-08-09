@@ -130,7 +130,7 @@ export class RoomSession implements IRoomSession
         return this._connection;
     }
 
-    // AS3: sources/win63_version/habbo/session/RoomSession.as::set connection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSession.as::set connection()
     // AS3 forwards the connection on to its UserDataManager, which this port did not: RoomSession
     // builds its own UserDataManager (line ~98) and nothing ever gave it a connection, so every
     // method on it that sends a composer was silently inert — requestPetInfo() bailed on

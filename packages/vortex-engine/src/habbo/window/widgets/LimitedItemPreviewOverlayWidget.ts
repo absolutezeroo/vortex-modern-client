@@ -19,11 +19,11 @@ import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class LimitedItemPreviewOverlayWidget implements ILimitedItemPreviewOverlayWidget 
 {
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::TYPE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::TYPE
     public static readonly TYPE: string = 'limited_item_overlay_preview';
 
     private _widgetWindow: IWidgetWindow | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
 
@@ -44,22 +44,22 @@ export class LimitedItemPreviewOverlayWidget implements ILimitedItemPreviewOverl
 
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::_serialNumber
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::_serialNumber
     private _serialNumber: number = 0;
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::get serialNumber()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::get serialNumber()
     public get serialNumber(): number 
     {
         return this._serialNumber;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::set serialNumber()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::set serialNumber()
     public set serialNumber(value: number) 
     {
         this._serialNumber = value;
@@ -77,13 +77,13 @@ export class LimitedItemPreviewOverlayWidget implements ILimitedItemPreviewOverl
 
     private _seriesSize: number = 0;
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::get seriesSize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::get seriesSize()
     public get seriesSize(): number 
     {
         return this._seriesSize;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::set seriesSize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::set seriesSize()
     public set seriesSize(value: number) 
     {
         this._seriesSize = value;
@@ -99,19 +99,19 @@ export class LimitedItemPreviewOverlayWidget implements ILimitedItemPreviewOverl
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::get properties()
     public get properties(): PropertyStruct[] 
     {
         return [];
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::set properties()
     public set properties(_values: PropertyStruct[]) 
     {
         // AS3: properties setter is a no-op for this widget
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemPreviewOverlayWidget.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;

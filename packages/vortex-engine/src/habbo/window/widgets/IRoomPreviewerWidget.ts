@@ -14,28 +14,28 @@ export interface IRoomPreviewerWidget extends IWidget
     /**
 	 * The rendering scale (32 = small, 64 = normal).
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/IRoomPreviewerWidget.as::get scale()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IRoomPreviewerWidget.as::get scale()
     scale: number;
 
     /**
 	 * The room previewer instance.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/IRoomPreviewerWidget.as::get roomPreviewer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IRoomPreviewerWidget.as::get roomPreviewer()
     readonly roomPreviewer: RoomPreviewer | null;
     /**
 	 * The horizontal offset of the preview camera.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/IRoomPreviewerWidget.as::get offsetX()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IRoomPreviewerWidget.as::get offsetX()
     offsetX: number;
     /**
 	 * The vertical offset of the preview camera.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/IRoomPreviewerWidget.as::get offsetY()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IRoomPreviewerWidget.as::get offsetY()
     offsetY: number;
     /**
 	 * The zoom level of the preview.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/IRoomPreviewerWidget.as::get zoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IRoomPreviewerWidget.as::get zoom()
     zoom: number;
 
     /**
@@ -47,6 +47,6 @@ export interface IRoomPreviewerWidget extends IWidget
 	 *
 	 * @param image - The pre-rendered bitmap to display
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/IRoomPreviewerWidget.as::showPreview()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IRoomPreviewerWidget.as::showPreview()
     showPreview(image: HTMLCanvasElement): void;
 }

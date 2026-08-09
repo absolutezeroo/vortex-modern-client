@@ -5,7 +5,7 @@
  */
 export class CatalogPageOpenedEvent
 {
-    // AS3: sources/win63_version/habbo/catalog/navigation/events/CatalogPageOpenedEvent.as::CATALOG_PAGE_OPENED
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/events/CatalogPageOpenedEvent.as::CATALOG_PAGE_OPENED
     static readonly CATALOG_PAGE_OPENED: string = 'CATALOG_PAGE_OPENED';
 
     private _pageId: number;
@@ -23,13 +23,13 @@ export class CatalogPageOpenedEvent
         return CatalogPageOpenedEvent.CATALOG_PAGE_OPENED;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/events/CatalogPageOpenedEvent.as::get pageId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/events/CatalogPageOpenedEvent.as::get pageId()
     get pageId(): number
     {
         return this._pageId;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/events/CatalogPageOpenedEvent.as::get pageLocalization()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/events/CatalogPageOpenedEvent.as::get pageLocalization()
     get pageLocalization(): string
     {
         return this._pageLocalization;

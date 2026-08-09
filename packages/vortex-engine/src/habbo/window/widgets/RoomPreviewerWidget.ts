@@ -28,13 +28,13 @@ import {PreviewCanvasStack} from '@habbo/room/preview/PreviewCanvasStack';
  */
 export class RoomPreviewerWidget implements IRoomPreviewerWidget 
 {
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::TYPE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::TYPE
     public static readonly TYPE: string = 'room_previewer';
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::SCALE_KEY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::SCALE_KEY
     private static readonly SCALE_KEY: string = 'room_previewer:scale';
 
-    // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::SCALE_NORMAL
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::SCALE_NORMAL
     // The larger of the two geometry scales `RoomPreviewer` offers; the other is 32.
     private static readonly GEOMETRY_SCALE_NORMAL: number = 64;
     private static readonly OFFSET_X_KEY: string = 'room_previewer:offsetx';
@@ -44,7 +44,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
     private static _roomIdCounter: number = 2;
 
     private _widgetWindow: IWidgetWindow | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
 
     private _root: IWindowContainer | null = null;
@@ -93,16 +93,16 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
     // TS-only: see the note above; AS3 needs no mask because its canvas is a window child.
     private _canvasMask: Graphics | null = null;
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::get roomPreviewer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::get roomPreviewer()
     public get roomPreviewer(): RoomPreviewer | null 
     {
         return this._roomPreviewer;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
@@ -110,45 +110,45 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
     private _scale: number = 64;
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::get scale()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::get scale()
     public get scale(): number 
     {
         return this._scale;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::set scale()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::set scale()
     public set scale(value: number) 
     {
         this._scale = value;
         this.refresh();
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::_offsetX
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::_offsetX
     private _offsetX: number = 0;
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::get offsetX()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::get offsetX()
     public get offsetX(): number 
     {
         return this._offsetX;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::set offsetX()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::set offsetX()
     public set offsetX(value: number) 
     {
         this._offsetX = value;
         this.refresh();
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::_offsetY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::_offsetY
     private _offsetY: number = 0;
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::get offsetY()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::get offsetY()
     public get offsetY(): number 
     {
         return this._offsetY;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::set offsetY()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::set offsetY()
     public set offsetY(value: number) 
     {
         this._offsetY = value;
@@ -157,20 +157,20 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
     private _zoom: number = 1;
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::get zoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::get zoom()
     public get zoom(): number 
     {
         return this._zoom;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::set zoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::set zoom()
     public set zoom(value: number) 
     {
         this._zoom = value;
         this.refresh();
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::get properties()
     public get properties(): PropertyStruct[] 
     {
         if(this._disposed) return [];
@@ -183,7 +183,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         ];
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::set properties()
     public set properties(values: PropertyStruct[]) 
     {
         for(const prop of values) 
@@ -206,7 +206,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::showPreview()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::showPreview()
     public showPreview(image: HTMLCanvasElement): void 
     {
         const wrapper = this._root?.findChildByName('room_canvas') as unknown as IDisplayObjectWrapper | null;
@@ -253,7 +253,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         wrapper.setDisplayObject(scaled);
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;
@@ -296,7 +296,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
     private readonly _syncCanvasPositionBound = (): void => this.syncCanvasPosition();
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as constructor
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as constructor
     private createRoomPreviewer(root: IWindowContainer): void 
     {
         const roomEngine = this._windowManager?.roomEngine;
@@ -442,7 +442,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         this._canvasDisplayObject.visible = visible && reachedDesktop;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::refresh()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::refresh()
     private refresh(): void 
     {
         if(!this._roomPreviewer || !this._roomPreviewer.isRoomEngineReady) return;
@@ -506,7 +506,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         this.syncCanvasPosition();
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::onClickRoomView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::onClickRoomView()
     private onClickRoomView(): void 
     {
         this._roomPreviewer?.changeRoomObjectState();
@@ -517,7 +517,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
      *
      * In AS3, updates the RoomPreviewer canvas dimensions.
      */
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::onResizeCanvas()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::onResizeCanvas()
     private onResizeCanvas(): void 
     {
         if(this._root && this._roomPreviewer) 

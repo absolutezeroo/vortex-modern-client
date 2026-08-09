@@ -53,24 +53,24 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
     // AS3: DATA_UPDATE_INTERVAL_MSEC
     private static readonly DATA_UPDATE_INTERVAL_MSEC: number = 10000;
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::_communicationManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::_communicationManager
     private _communicationManager: IHabboCommunicationManager | null = null;
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::_sessionDataManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::_avatarRenderManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::_avatarRenderManager
     private _avatarRenderManager: IAvatarRenderManager | null = null;
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::_localizationManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::_localizationManager
     private _localizationManager: IHabboLocalizationManager | null = null;
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::_catalog
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::_catalog
     private _catalog: IHabboCatalog | null = null;
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::_toolbar
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::_offerCenter
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::_offerCenter
     private _offerCenter: unknown | null = null;
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::_messageEvents
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::_messageEvents
     private _messageEvents: IMessageEvent[] = [];
 
     private _view: ClubCenterView | null = null;
@@ -170,7 +170,7 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
         log.debug('HabboClubCenter initialized');
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -200,13 +200,13 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
 
     // --- ILinkEventTracker ---
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::get linkPattern()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::get linkPattern()
     get linkPattern(): string
     {
         return 'habboUI/';
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::linkReceived()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::linkReceived()
     linkReceived(link: string): void
     {
         const parts = link.split('/');
@@ -221,31 +221,31 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
 
     // --- IHabboClubCenter ---
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::get localization()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::get localization()
     get localization(): IHabboLocalizationManager | null
     {
         return this._catalog?.localization ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::get avatarRenderManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::get avatarRenderManager()
     get avatarRenderManager(): IAvatarRenderManager | null
     {
         return this._avatarRenderManager;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::get offerCenter()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::get offerCenter()
     get offerCenter(): unknown | null
     {
         return this._offerCenter;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::get stage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::get stage()
     get stage(): unknown | null
     {
         return this._windowManager?.getDesktop(1) ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::removeView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::removeView()
     removeView(): void
     {
         if(this._view)
@@ -257,7 +257,7 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
         this.removeBreakdown();
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::removeBreakdown()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::removeBreakdown()
     removeBreakdown(): void
     {
         if(this._breakdownView)
@@ -267,19 +267,19 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::openPurchasePage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::openPurchasePage()
     openPurchasePage(): void
     {
         this._catalog?.openCatalogPage('hc_membership', 'NORMAL');
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::openClubGiftPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::openClubGiftPage()
     openClubGiftPage(): void
     {
         this._catalog?.openCatalogPage('club_gifts', 'NORMAL');
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::showPaydayBreakdownView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::showPaydayBreakdownView()
     showPaydayBreakdownView(): void
     {
         if(this._breakdownView)
@@ -298,25 +298,25 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
         this._breakdownView = new ClubSpecialInfoBubbleView(this, this._windowManager, this._kickbackData, anchor);
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::openPaydayHelpPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::openPaydayHelpPage()
     openPaydayHelpPage(): void
     {
         this.context.createLinkEvent('habbopages/hcpayday');
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::openHelpPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::openHelpPage()
     openHelpPage(): void
     {
         this.context.createLinkEvent('habbopages/habboclub');
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::getOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::getOffers()
     getOffers(): void
     {
         this._catalog?.getHabboClubOffers(3);
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::isKickbackEnabled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::isKickbackEnabled()
     isKickbackEnabled(): boolean
     {
         const value = this.getProperty('hccenter.activity.enabled');
@@ -326,7 +326,7 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
         return value === '1' || value === 'true';
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::indicateVideoAvailable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::indicateVideoAvailable()
     indicateVideoAvailable(available: boolean): void
     {
         if(this._view)
@@ -342,7 +342,7 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
 
     // --- Internal ---
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::showClubCenter()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::showClubCenter()
     private showClubCenter(): void
     {
         if(!this._windowManager || !this._sessionDataManager) return;
@@ -368,7 +368,7 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::resolveClubStatus()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::resolveClubStatus()
     private resolveClubStatus(): string
     {
         const purse = this._catalog?.getPurse() ?? null;
@@ -382,13 +382,13 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
         return ClubStatus.NONE;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::updateNeeded()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::updateNeeded()
     private updateNeeded(): boolean
     {
         return !this._updatePending && performance.now() - this._lastUpdateTime > HabboClubCenter.DATA_UPDATE_INTERVAL_MSEC;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::updateData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::updateData()
     private updateData(): void
     {
         if(!this._communicationManager?.connection) return;
@@ -399,7 +399,7 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
         this._communicationManager.connection.send(new ScrGetKickbackInfoMessageComposer());
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::populate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::populate()
     private populate(): void
     {
         this._view?.dataReceived(
@@ -411,7 +411,7 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
         );
     }
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::addMessageEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::addMessageEvent()
     private addMessageEvent(event: IMessageEvent): void
     {
         if(!this._communicationManager) return;
@@ -446,7 +446,7 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
         const badgeIds = parser.badges.map((badge) => badge.badgeId);
         const allBadgeIds: string[] = [];
 
-        // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::addMessageFragment()
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::addMessageFragment()
         // A single-fragment message is returned before `fragmentNo` is ever read. This port used to
         // index every fragment by its number and then walk 0..totalFragments-1, which never
         // completed against a server that numbers a lone fragment 1 — as this one does

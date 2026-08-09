@@ -12,14 +12,14 @@ import type {AvatarImageBodyPartContainer} from '../AvatarImageBodyPartContainer
  */
 export class AvatarImageDirectionCache
 {
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageDirectionCache.as::KEY_SEPARATOR
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageDirectionCache.as::KEY_SEPARATOR
     public static readonly KEY_SEPARATOR: string = '/';
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageDirectionCache.as::NO_FRAMES_KEY
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageDirectionCache.as::NO_FRAMES_KEY
     public static readonly NO_FRAMES_KEY: string = '-';
 
     private _partList: AvatarImagePartContainer[];
     private _cache: Map<string, AvatarImageBodyPartContainer>;
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageDirectionCache.as::_keyCache
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageDirectionCache.as::_keyCache
     private _keyCache: Map<number, string>;
 
     constructor(partList: AvatarImagePartContainer[])
@@ -32,7 +32,7 @@ export class AvatarImageDirectionCache
     /**
 	 * Returns the part list used to build this direction cache.
 	 */
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageDirectionCache.as::getPartList()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageDirectionCache.as::getPartList()
     public getPartList(): AvatarImagePartContainer[]
     {
         return this._partList;
@@ -44,7 +44,7 @@ export class AvatarImageDirectionCache
 	 * @param frameIndex - The animation frame index
 	 * @returns The cached container, or null if not found
 	 */
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageDirectionCache.as::getImageContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageDirectionCache.as::getImageContainer()
     public getImageContainer(frameIndex: number): AvatarImageBodyPartContainer | null
     {
         const key = this.getCacheKey(frameIndex);
@@ -59,7 +59,7 @@ export class AvatarImageDirectionCache
 	 * @param container - The body part container to cache
 	 * @param frameIndex - The animation frame index
 	 */
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageDirectionCache.as::updateImageContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageDirectionCache.as::updateImageContainer()
     public updateImageContainer(container: AvatarImageBodyPartContainer, frameIndex: number): void
     {
         const key = this.getCacheKey(frameIndex);
@@ -78,7 +78,7 @@ export class AvatarImageDirectionCache
     /**
 	 * Disposes all cached containers and clears references.
 	 */
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageDirectionCache.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageDirectionCache.as::dispose()
     public dispose(): void
     {
         for(const container of this._cache.values())
@@ -98,7 +98,7 @@ export class AvatarImageDirectionCache
 	 * @param frameIndex - The animation frame index
 	 * @returns The composite cache key
 	 */
-    // AS3: sources/win63_version/habbo/avatar/cache/AvatarImageDirectionCache.as::getCacheKey()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageDirectionCache.as::getCacheKey()
     private getCacheKey(frameIndex: number): string
     {
         if(!this._partList || this._partList.length === 0)

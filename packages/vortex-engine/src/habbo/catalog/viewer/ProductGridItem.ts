@@ -15,24 +15,24 @@ import type {IItemGrid} from './IItemGrid';
  */
 export class ProductGridItem implements IGridItem
 {
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::GRID_ITEM_BORDER
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::GRID_ITEM_BORDER
     static readonly GRID_ITEM_BORDER: string = 'bg';
 
     protected _view: IWindowContainer | null = null;
 
     private _grid: IItemGrid | null = null;
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::_icon
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::_icon
     protected _icon: IBitmapWrapperWindow | null = null;
 
     protected _wideIcon: IBitmapWrapperWindow | null = null;
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::_disposed
     private _disposed: boolean = false;
 
     private _mouseDownTarget: IWindow | null = null;
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::_catalog
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::_catalog
     private _catalog: HabboCatalog | null;
 
     constructor(catalog: HabboCatalog)
@@ -40,19 +40,19 @@ export class ProductGridItem implements IGridItem
         this._catalog = catalog;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::get view()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::get view()
     get view(): IWindowContainer
     {
         return this._view!;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::set grid()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::set grid()
     set grid(grid: IItemGrid)
     {
         this._grid = grid;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
@@ -70,19 +70,19 @@ export class ProductGridItem implements IGridItem
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::get catalog()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::get catalog()
     protected get catalog(): HabboCatalog | null
     {
         return this._catalog;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::activate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::activate()
     activate(): void
     {
         if(!this._view) return;
@@ -99,7 +99,7 @@ export class ProductGridItem implements IGridItem
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::deactivate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::deactivate()
     deactivate(): void
     {
         if(!this._view) return;
@@ -116,7 +116,7 @@ export class ProductGridItem implements IGridItem
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::set view()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::set view()
     set view(view: IWindowContainer)
     {
         if(!view) return;
@@ -153,13 +153,13 @@ export class ProductGridItem implements IGridItem
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::get useWideView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::get useWideView()
     protected get useWideView(): boolean
     {
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::setDraggable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::setDraggable()
     setDraggable(draggable: boolean): void
     {
         const interactive = this._view as unknown as IInteractiveWindow | null;
@@ -171,7 +171,7 @@ export class ProductGridItem implements IGridItem
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::eventProc()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::eventProc()
     private eventProc(event: WindowEvent, window: IWindow | null): void
     {
         if(event.type === 'WME_UP')
@@ -200,7 +200,7 @@ export class ProductGridItem implements IGridItem
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::setIconImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::setIconImage()
     setIconImage(image: ImageBitmap | null, disposeSource: boolean): void
     {
         if(image == null) return;
@@ -226,13 +226,13 @@ export class ProductGridItem implements IGridItem
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::get targetIcon()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::get targetIcon()
     protected get targetIcon(): IBitmapWrapperWindow | null
     {
         return this.useWideView ? this._wideIcon : this._icon;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/ProductGridItem.as::renderAvatarImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::renderAvatarImage()
     // AS3's BitmapData render is synchronous end-to-end. The PixiJS port's equivalent
     // (AvatarImage.getCroppedImage()) produces a Texture backed by a canvas resource
     // synchronously, but turning that into the ImageBitmap the icon wrapper needs requires

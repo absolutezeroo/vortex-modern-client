@@ -63,13 +63,13 @@ export interface IAlertDialog extends IDisposable {
  */
 export class AlertDialog implements IAlertDialog 
 {
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::LIST_BUTTONS
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::LIST_BUTTONS
     protected static readonly LIST_BUTTONS: string = '_alert_button_list';
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::BUTTON_OK
     protected static readonly BUTTON_OK: string = '_alert_button_ok';
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::BUTTON_CANCEL
     protected static readonly BUTTON_CANCEL: string = '_alert_button_cancel';
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::BUTTON_CUSTOM
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::BUTTON_CUSTOM
     protected static readonly BUTTON_CUSTOM: string = '_alert_button_custom';
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::HEADER_BUTTON_CLOSE
     protected static readonly HEADER_BUTTON_CLOSE: string = 'header_button_close';
@@ -78,12 +78,12 @@ export class AlertDialog implements IAlertDialog
 
     // TS-only: instance counter for unique window names
     private static _instanceCounter: number = 0;
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::_window
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::_window
     protected _window: IWindowContainer | null = null;
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::_modalDialog
     protected _modalDialog: IModalDialog | null = null;
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::AlertDialog()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::AlertDialog()
     constructor(
         windowManager: IHabboWindowManager,
         xml: string,
@@ -155,13 +155,13 @@ export class AlertDialog implements IAlertDialog
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::var_839
     protected _title: string = '';
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get title()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::get title()
     public get title(): string 
     {
         return this._title;
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::set title()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::set title()
     public set title(value: string) 
     {
         this._title = value;
@@ -175,13 +175,13 @@ export class AlertDialog implements IAlertDialog
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::var_2854
     protected _summary: string = '';
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get summary()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::get summary()
     public get summary(): string 
     {
         return this._summary;
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::set summary()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::set summary()
     public set summary(value: string) 
     {
         this._summary = value;
@@ -198,10 +198,10 @@ export class AlertDialog implements IAlertDialog
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::_disposed
     protected _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
@@ -210,19 +210,19 @@ export class AlertDialog implements IAlertDialog
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::var_393 (callback ref)
     protected _callback: AlertDialogCallback | null = null;
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get callback()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::get callback()
     public get callback(): AlertDialogCallback | null 
     {
         return this._callback;
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::set callback()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::set callback()
     public set callback(value: AlertDialogCallback | null) 
     {
         this._callback = value;
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get titleBarColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::get titleBarColor()
     public get titleBarColor(): number 
     {
         if(!this._window) return 0;
@@ -230,7 +230,7 @@ export class AlertDialog implements IAlertDialog
         return this._window.color;
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::set titleBarColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::set titleBarColor()
     public set titleBarColor(value: number) 
     {
         if(!this._window) return;
@@ -238,7 +238,7 @@ export class AlertDialog implements IAlertDialog
         this._window.color = value;
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::getButtonCaption()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::getButtonCaption()
     public getButtonCaption(buttonFlag: number): ICaption | null 
     {
         if(this._disposed || !this._window) return null;
@@ -272,7 +272,7 @@ export class AlertDialog implements IAlertDialog
         );
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::setButtonCaption()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::setButtonCaption()
     public setButtonCaption(buttonFlag: number, caption: ICaption): void 
     {
         if(this._disposed || !this._window) return;
@@ -302,7 +302,7 @@ export class AlertDialog implements IAlertDialog
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;
@@ -324,7 +324,7 @@ export class AlertDialog implements IAlertDialog
         this._disposed = true;
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::dialogEventProc()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::dialogEventProc()
     protected dialogEventProc(event: WindowEvent, window: IWindow): void 
     {
         if(event.type === WindowMouseEvent.CLICK) 

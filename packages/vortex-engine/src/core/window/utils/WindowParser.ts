@@ -552,7 +552,7 @@ export class WindowParser implements IWindowParser
 
         if(parentIsItemList || parentIsItemGrid) 
         {
-            // AS3: sources/win63_version/core/window/utils/WindowParser.as::parseAndConstruct()
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::parseAndConstruct()
             // Flash creates list/grid children without a parent and appends them through the
             // IIterable iterator. Internal layout children (_ITEMLIST/_SCROLLBAR) are
             // excluded above so ScrollableItemListWindow can build its own structure first.

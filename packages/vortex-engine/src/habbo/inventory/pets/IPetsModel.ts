@@ -10,44 +10,44 @@ import type {Pet} from './Pet';
  */
 export interface IPetsModel extends IDisposable
 {
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::get pets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::get pets()
     readonly pets: Map<number, Pet>;
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::get roomSession()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::get roomSession()
     readonly roomSession: IRoomSession | null;
     readonly localization: IHabboLocalizationManager;
 
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::isListInitialized()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::isListInitialized()
     isListInitialized(): boolean;
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::setListInitialized()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::setListInitialized()
     setListInitialized(): void;
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::requestInitialization()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::requestInitialization()
     requestInitialization(): void;
 
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::addPet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::addPet()
     addPet(pet: Pet): void;
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::updatePets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::updatePets()
     updatePets(pets: Map<number, Pet>): void;
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::removePet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::removePet()
     removePet(id: number): void;
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::getPetById()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::getPetById()
     getPetById(id: number): Pet | null;
 
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::categorySwitch()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::categorySwitch()
     categorySwitch(category: string): void;
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::getWindowContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::getWindowContainer()
     getWindowContainer(): unknown;
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::closingInventoryView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::closingInventoryView()
     closingInventoryView(): void;
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::updateView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::updateView()
     updateView(): void;
 
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::placePetToRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::placePetToRoom()
     placePetToRoom(id: number, skipServer?: boolean): boolean;
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::resetUnseenItems()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::resetUnseenItems()
     resetUnseenItems(): void;
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::isUnseen()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::isUnseen()
     isUnseen(id: number): boolean;
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::selectItemById()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as::selectItemById()
     // A string, as `IInventoryModel` declares it — AS3's PetsModel parses it to an int itself.
     selectItemById(itemId: string): void;
 }

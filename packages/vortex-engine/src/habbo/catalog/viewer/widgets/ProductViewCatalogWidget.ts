@@ -430,7 +430,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
      * room engine's inserter. `_mouseIsDown` exists only to tell that gesture apart from the
      * pointer merely leaving the canvas.
      */
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::roomCanvasContainerProcedure()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::roomCanvasContainerProcedure()
     private roomCanvasContainerProcedure = (event: WindowMouseEvent): void =>
     {
         switch(event.type)
@@ -947,7 +947,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         return normalized === 0 || normalized === 2;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::ninjaEffectBundled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::ninjaEffectBundled()
     private static ninjaEffectBundled(event: SelectProductEvent): boolean
     {
         const products = event.offer.productContainer.products;
@@ -962,7 +962,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct()
     private onPreviewProduct = (event: SelectProductEvent): void =>
     {
         if(event == null) return;
@@ -1295,7 +1295,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setBundleInfoWidgetToOffer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setBundleInfoWidgetToOffer()
     private setBundleInfoWidgetToOffer(offer: IPurchasableOffer): void
     {
         const data = new ExtraInfoItemData(ExtraInfoItemData.TYPE_BONUS_BADGE);
@@ -1308,7 +1308,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.events.emit(CatalogWidgetBundleDisplayExtraInfoEvent.RESET, new CatalogWidgetBundleDisplayExtraInfoEvent(CatalogWidgetBundleDisplayExtraInfoEvent.RESET, data));
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setSpinnerToBundleRuleset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setSpinnerToBundleRuleset()
     private setSpinnerToBundleRuleset(): void
     {
         const catalog = this._catalog!;
@@ -1334,7 +1334,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.events.emit(CatalogWidgetSpinnerEvent.SET_MIN, new CatalogWidgetSpinnerEvent(CatalogWidgetSpinnerEvent.SET_MIN, 1));
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::imageReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::imageReady()
     // Reached from the no-room-canvas fallback in renderFurniturePreview()/renderWallItemPreview()
     // (Phase 5, getFurnitureImage()/getWallItemImage()).
     imageReady(id: number, data: ImageBitmap | null): void
@@ -1358,7 +1358,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
     {
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setPreviewImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setPreviewImage()
     private setPreviewImage(image: ImageBitmap | null): void
     {
         if(this._teaserImage != null && !this.window.disposed)
@@ -1369,7 +1369,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onStuffDataSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onStuffDataSet()
     private onStuffDataSet = (event: SetRoomPreviewerStuffDataEvent): void =>
     {
         this._overrideStuffData = event.stuffData;
@@ -1381,7 +1381,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         }
     };
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onSpinnerEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onSpinnerEvent()
     private onSpinnerEvent = (event: CatalogWidgetSpinnerEvent): void =>
     {
         if(event.type === CatalogWidgetSpinnerEvent.VALUE_CHANGED)
@@ -1395,7 +1395,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         }
     };
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onTotalPriceWidgetInitialized()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onTotalPriceWidgetInitialized()
     private onTotalPriceWidgetInitialized = (_event: CatalogWidgetEvent): void =>
     {
         this._totalPriceWidgetInitialized = true;

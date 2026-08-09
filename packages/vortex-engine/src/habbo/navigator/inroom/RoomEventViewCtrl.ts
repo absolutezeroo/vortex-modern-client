@@ -17,9 +17,9 @@ import type {RoomAdErrorMessageParser} from '@habbo/communication/messages/parse
  */
 export class RoomEventViewCtrl implements IDisposable
 {
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventViewCtrl.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomEventViewCtrl.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventViewCtrl.as::_window
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomEventViewCtrl.as::_window
     private _window: IWindowContainer | null = null;
     private _eventNameManager: TextFieldManager | null = null;
     private _eventDescManager: TextFieldManager | null = null;
@@ -29,13 +29,13 @@ export class RoomEventViewCtrl implements IDisposable
         this._navigator = navigator;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventViewCtrl.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomEventViewCtrl.as::get disposed()
     get disposed(): boolean
     {
         return this._navigator === null;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventViewCtrl.as::show()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomEventViewCtrl.as::show()
     show(): void
     {
         if(!this._navigator) return;
@@ -67,7 +67,7 @@ export class RoomEventViewCtrl implements IDisposable
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventViewCtrl.as::close()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomEventViewCtrl.as::close()
     close(): void
     {
         if(this._window !== null)
@@ -76,7 +76,7 @@ export class RoomEventViewCtrl implements IDisposable
         }
     }
 
-    // AS3: sources/win63_version/habbo/navigator/inroom/RoomEventViewCtrl.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomEventViewCtrl.as::dispose()
     dispose(): void
     {
         if(this._navigator === null) return;

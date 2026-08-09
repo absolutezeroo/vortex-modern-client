@@ -52,7 +52,7 @@ export interface IRoomWidgetHandlerContainer
     readonly roomWidgetFactory: IRoomWidgetFactory | null;
     // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get localization()
     readonly localization: IHabboLocalizationManager | null;
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get toolbar()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get toolbar()
     readonly toolbar: IHabboToolbar | null;
     // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get windowManager()
     readonly windowManager: IHabboWindowManager | null;
@@ -60,7 +60,7 @@ export interface IRoomWidgetHandlerContainer
     readonly connection: IConnection | null;
     // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get layoutManager()
     readonly layoutManager: RoomDesktopLayoutManager;
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get catalog()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get catalog()
     readonly catalog: IHabboCatalog | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get inventory()
     readonly inventory: IHabboInventory | null;
@@ -68,7 +68,7 @@ export interface IRoomWidgetHandlerContainer
     readonly avatarRenderManager: IAvatarRenderManager | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get habboHelp()
     readonly habboHelp: IHabboHelp | null;
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get config()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get config()
     readonly config: IHabboConfigurationManager | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get questEngine()
     // The me-menu's achievements button is its only consumer here.
@@ -82,9 +82,9 @@ export interface IRoomWidgetHandlerContainer
     // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get avatarEditor()
     // Provided since `HabboAvatarEditorManager` landed; the me-menu's "clothes" button opens it.
     readonly avatarEditor: IHabboAvatarEditor | null;
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboTracking()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get habboTracking()
     readonly habboTracking: IHabboTracking | null;
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboGroupsManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get habboGroupsManager()
     readonly habboGroupsManager: IHabboGroupsManager | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get friendList()
     readonly friendList: IHabboFriendList | null;
@@ -95,7 +95,7 @@ export interface IRoomWidgetHandlerContainer
     // Vortex module because that import (widget -> Vortex -> VortexMain -> RoomUI -> widget) is a
     // cycle, and a cycle here takes the whole InfoStand widget down with it.
     readonly furniEditor: IHabboFurniEditor | null;
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get userDefinedRoomEvents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get userDefinedRoomEvents()
     // TODO(AS3): no concrete implementation exists yet — always null, see IHabboUserDefinedRoomEvents.ts.
     readonly userDefinedRoomEvents: IHabboUserDefinedRoomEvents | null;
 
@@ -116,7 +116,7 @@ export interface IRoomWidgetHandlerContainer
     addUpdateListener(handler: IRoomWidgetHandler): void;
     // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::removeUpdateListener()
     removeUpdateListener(handler: IRoomWidgetHandler): void;
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::isOwnerOfFurniture()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::isOwnerOfFurniture()
     isOwnerOfFurniture(object: IRoomObject): boolean;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::getFurnitureOwnerId()
     getFurnitureOwnerId(object: IRoomObject): number;

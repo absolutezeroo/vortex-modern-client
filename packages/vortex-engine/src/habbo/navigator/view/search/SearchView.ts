@@ -17,23 +17,23 @@ import {FilterMode} from './FilterMode';
  *
  * @see sources/win63_version/habbo/navigator/view/search/SearchView.as
  */
-// AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::SearchView
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::SearchView
 export class SearchView
 {
     /** Maps dropdown selection index → FilterMode constant */
-    // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::FILTER_SELECTOR_INDEX_TO_MODE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::FILTER_SELECTOR_INDEX_TO_MODE
     private static readonly FILTER_SELECTOR_INDEX_TO_MODE: number[] = [5, 2, 1, 3, 4];
 
     /** Maps FilterMode constant → dropdown selection index */
-    // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::FILTER_MODE_TO_SELECTOR_INDEX
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::FILTER_MODE_TO_SELECTOR_INDEX
     private static readonly FILTER_MODE_TO_SELECTOR_INDEX: number[] = [0, 2, 1, 3, 4, 0];
 
-    // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::INPUT_PLACEHOLDER_TEXTCOLOR
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::INPUT_PLACEHOLDER_TEXTCOLOR
     private static readonly INPUT_PLACEHOLDER_TEXTCOLOR: number = 0x9FADFF;
-    // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::INPUT_TEXTCOLOR
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::INPUT_TEXTCOLOR
     private static readonly INPUT_TEXTCOLOR: number = 0x000000;
 
-    // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::_navigator
     private _navigator: HabboNewNavigator;
     private _inputField: ITextFieldWindow | null = null;
     private _filterDropMenu: IDropMenuWindow | null = null;
@@ -50,7 +50,7 @@ export class SearchView
         );
     }
 
-    // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::_container
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::_container
     private _container: IWindowContainer | null = null;
 
     /**
@@ -58,7 +58,7 @@ export class SearchView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/SearchView.as set container()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::set container()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::set container()
     set container(value: IWindowContainer)
     {
         this.removeInputListeners();
@@ -100,7 +100,7 @@ export class SearchView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/SearchView.as get currentInput()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::get currentInput()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::get currentInput()
     get currentInput(): string
     {
         if(this._inputField)
@@ -116,7 +116,7 @@ export class SearchView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/SearchView.as clear()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::clear()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::clear()
     clear(): void
     {
         this.setInputToFilterPlaceHolder();
@@ -145,7 +145,7 @@ export class SearchView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/SearchView.as setTextAndSearchModeFromFilter()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::setTextAndSearchModeFromFilter()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::setTextAndSearchModeFromFilter()
     setTextAndSearchModeFromFilter(filteringData: string, source: string = ''): void
     {
         const safeFilteringData = filteringData ?? '';
@@ -238,7 +238,7 @@ export class SearchView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/SearchView.as getFilterParameter()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::getFilterParameter()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::getFilterParameter()
     getFilterParameter(): string
     {
         const selectorIndex = this._filterDropMenu?.selection ?? 0;
@@ -248,7 +248,7 @@ export class SearchView
         return FilterMode.FILTER_PREFIX[filterMode] + inputCaption;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::setInputToFilterPlaceHolder()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::setInputToFilterPlaceHolder()
     private setInputToFilterPlaceHolder(): void
     {
         this.setInputFieldTextFormattingToPlaceholder(true);
@@ -264,7 +264,7 @@ export class SearchView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/SearchView.as setInputFieldTextFormattingToPlaceholder()
 	 */
-    // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::setInputFieldTextFormattingToPlaceholder()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/SearchView.as::setInputFieldTextFormattingToPlaceholder()
     private setInputFieldTextFormattingToPlaceholder(isPlaceholder: boolean): void
     {
         if(this._inputField)

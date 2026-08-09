@@ -21,13 +21,13 @@ implements IUpdateReceiver
     // AS3: sources/win63_version/habbo/window/HintManager.as::MIN_DISTANCE
     private static readonly MIN_DISTANCE: number = 15;
 
-    // AS3: sources/win63_version/habbo/window/HintManager.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::_windowManager
     private _windowManager: IHabboWindowManager;
-    // AS3: sources/win63_version/habbo/window/HintManager.as::_registeredWindows (Dictionary)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::_registeredWindows (Dictionary)
     private _registeredWindows: Map<string, HintTarget> = new Map();
-    // AS3: sources/win63_version/habbo/window/HintManager.as::_activeHint
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::_activeHint
     private _activeHint: HintTarget | null = null;
-    // AS3: sources/win63_version/habbo/window/HintManager.as::_hint
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::_hint
     private _hint: IHintWindow | null = null;
     // AS3: sources/win63_version/habbo/window/HintManager.as::var_5208
     private _targetRect: { x: number; y: number; width: number; height: number } | null = null;
@@ -40,7 +40,7 @@ implements IUpdateReceiver
     private _animationToRect: { x: number; y: number; width: number; height: number } | null = null;
     private _animationActive: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/HintManager.as::HintManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::HintManager()
     constructor(windowManager: IHabboWindowManager)
     {
         this._windowManager = windowManager;
@@ -49,7 +49,7 @@ implements IUpdateReceiver
     // AS3: sources/win63_version/habbo/window/HintManager.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/HintManager.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -61,7 +61,7 @@ implements IUpdateReceiver
         return this._activeHint?.key ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/window/HintManager.as::registerWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::registerWindow()
     public registerWindow(key: string, window: IWindow, style: number = 0): void
     {
         if(this._registeredWindows.has(key))
@@ -72,7 +72,7 @@ implements IUpdateReceiver
         this._registeredWindows.set(key, new HintTarget(window, key, style));
     }
 
-    // AS3: sources/win63_version/habbo/window/HintManager.as::unregisterWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::unregisterWindow()
     public unregisterWindow(key: string): void
     {
         if(this._activeHint && this.activeKey === key)
@@ -83,7 +83,7 @@ implements IUpdateReceiver
         this._registeredWindows.delete(key);
     }
 
-    // AS3: sources/win63_version/habbo/window/HintManager.as::showHint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::showHint()
     public showHint(key: string, rect: { x: number; y: number; width: number; height: number } | null = null): void
     {
         const target = this._registeredWindows.get(key);
@@ -135,7 +135,7 @@ implements IUpdateReceiver
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/HintManager.as::hideHint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::hideHint()
     public hideHint(): void
     {
         this.unregisterFromUpdates();
@@ -155,7 +155,7 @@ implements IUpdateReceiver
         this._animationDuration = 0;
     }
 
-    // AS3: sources/win63_version/habbo/window/HintManager.as::hideMatchingHint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::hideMatchingHint()
     public hideMatchingHint(key: string): void
     {
         if(this.activeKey === key)
@@ -164,7 +164,7 @@ implements IUpdateReceiver
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/HintManager.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::update()
     public update(_time: number): void
     {
         if(!this._activeHint || !this._hint || !this._activeHint.window) return;
@@ -281,7 +281,7 @@ implements IUpdateReceiver
         this._hint.visible = this._activeHint.window.visible;
     }
 
-    // AS3: sources/win63_version/habbo/window/HintManager.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;
@@ -292,7 +292,7 @@ implements IUpdateReceiver
         this._registeredWindows.clear();
     }
 
-    // AS3: sources/win63_version/habbo/window/HintManager.as::getTargetRect()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::getTargetRect()
     private getTargetRect(window: IWindow): { x: number; y: number; width: number; height: number }
     {
         const globalPos = {x: 0, y: 0};
@@ -340,7 +340,7 @@ implements IUpdateReceiver
         return rect;
     }
 
-    // AS3: sources/win63_version/habbo/window/HintManager.as::animateHint()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::animateHint()
     // TS note: in AS3 registerForUpdates() was called in motionComplete() (after animation).
     // In TS the animation is driven by the update loop itself, so registerForUpdates() must
     // be called before the animation starts.

@@ -21,7 +21,7 @@ const log = Logger.getLogger('habbo.window.ResourceManager');
  */
 export class ResourceManager implements IResourceManager 
 {
-    // AS3: sources/win63_version/habbo/window/ResourceManager.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::_windowManager
     private _windowManager: IHabboWindowManager;
     // TS-only: web-side bitmap cache (replaces Flash asset system)
     private _assets: Map<string, ImageBitmap> = new Map();
@@ -32,16 +32,16 @@ export class ResourceManager implements IResourceManager
     // TS-only: tracks in-progress fetches
     private _loading: Set<string> = new Set();
 
-    // AS3: sources/win63_version/habbo/window/ResourceManager.as::ResourceManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::ResourceManager()
     constructor(windowManager: IHabboWindowManager) 
     {
         this._windowManager = windowManager;
     }
 
-    // AS3: sources/win63_version/habbo/window/ResourceManager.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/ResourceManager.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::get disposed()
     public get disposed(): boolean 
     {
         return this._disposed;
@@ -74,7 +74,7 @@ export class ResourceManager implements IResourceManager
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/ResourceManager.as::retrieveAsset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::retrieveAsset()
     public retrieveAsset(uri: string, receiver: IAssetReceiver): void 
     {
         if(!uri || !receiver) return;
@@ -160,13 +160,13 @@ export class ResourceManager implements IResourceManager
         return this._assets.get(name) ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/window/ResourceManager.as::isSameAsset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::isSameAsset()
     public isSameAsset(uri1: string, uri2: string): boolean 
     {
         return this.resolveAssetName(uri1) === this.resolveAssetName(uri2);
     }
 
-    // AS3: sources/win63_version/habbo/window/ResourceManager.as::createAsset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::createAsset()
     public createAsset(name: string, _assetClass: new (...args: unknown[]) => unknown, content: unknown): void 
     {
         if(content instanceof ImageBitmap) 
@@ -175,7 +175,7 @@ export class ResourceManager implements IResourceManager
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/ResourceManager.as::removeAsset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::removeAsset()
     public removeAsset(name: string): void 
     {
         const resolvedName = this.resolveAssetName(name);
@@ -186,7 +186,7 @@ export class ResourceManager implements IResourceManager
         this._loading.delete(resolvedName);
     }
 
-    // AS3: sources/win63_version/habbo/window/ResourceManager.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::dispose()
     public dispose(): void 
     {
         if(this._disposed) return;
@@ -204,7 +204,7 @@ export class ResourceManager implements IResourceManager
         return name.startsWith('http://') || name.startsWith('https://') || (name.length > 1 && name.startsWith('/'));
     }
 
-    // AS3: sources/win63_version/habbo/window/ResourceManager.as::resolveAssetName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::resolveAssetName()
     private resolveAssetName(uri: string): string 
     {
         const interpolatingManager = this._windowManager as unknown as {

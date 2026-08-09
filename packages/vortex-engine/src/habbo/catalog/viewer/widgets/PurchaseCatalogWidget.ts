@@ -76,7 +76,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
         super.dispose();
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::onToggleWidget()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::onToggleWidget()
     private onToggleWidget = (event: CatalogWidgetToggleEvent): void =>
     {
         if(event.widgetId === 'purchaseWidget')
@@ -166,7 +166,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::onSelectProduct()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::onSelectProduct()
     private onSelectProduct = (event: SelectProductEvent): void =>
     {
         this._quantity = 1;
@@ -200,7 +200,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
         this.window.visible = this._enabled;
     };
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::isSoldOut()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::isSoldOut()
     private isSoldOut(offer: IPurchasableOffer): boolean
     {
         if(offer.pricingModel !== 'pricing_model_single') return false;
@@ -260,7 +260,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
         this.enableGiftButton(this._offer != null && this._offer.giftable && this.canPurchaseSelectedOffer && this._quantity === 1);
     };
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::onPurchase()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::onPurchase()
     private onPurchase = (event: WindowMouseEvent, isGift: boolean = false): void =>
     {
         if(this._offer == null) return;
@@ -341,7 +341,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
         }
     };
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::onBuyClub()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::onBuyClub()
     // TODO(AS3): not wired to any button in the ported layouts (matches AS3 - onBuyClub exists
     // but this.window.findChildByName(...).addEventListener(..., onBuyClub) is absent there too).
     private onBuyClub = (_event: WindowMouseEvent): void =>

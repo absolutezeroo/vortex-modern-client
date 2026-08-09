@@ -11,7 +11,7 @@ export class AvatarSet
     private _bodyPartIds: string[];
     private _allBodyPartIds: string[];
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarSet.as::AvatarSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarSet.as::AvatarSet()
     constructor(data: any)
     {
         const element = getXmlRoot(data);
@@ -74,16 +74,16 @@ export class AvatarSet
 
     private _id: string;
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarSet.as::get id()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarSet.as::get id()
     public get id(): string
     {
         return this._id;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarSet.as::_isMain
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarSet.as::_isMain
     private _isMain: boolean;
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarSet.as::get isMain()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarSet.as::get isMain()
     public get isMain(): boolean
     {
         if(this._isMain) return true;
@@ -96,7 +96,7 @@ export class AvatarSet
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarSet.as::findAvatarSet()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarSet.as::findAvatarSet()
     public findAvatarSet(id: string): AvatarSet | null
     {
         if(id === this._id) return this;
@@ -111,7 +111,7 @@ export class AvatarSet
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/avatar/geometry/AvatarSet.as::getBodyParts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarSet.as::getBodyParts()
     public getBodyParts(): string[]
     {
         return [...this._allBodyPartIds];

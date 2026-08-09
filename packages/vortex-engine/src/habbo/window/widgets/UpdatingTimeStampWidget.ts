@@ -18,7 +18,7 @@ import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class UpdatingTimeStampWidget implements IWidget
 {
-    // AS3: sources/win63_version/habbo/window/widgets/UpdatingTimeStampWidget.as::TYPE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::TYPE
     public static readonly TYPE: string = 'updating_timestamp';
 
     private static readonly UPDATE_INTERVAL_MS: number = 60000;
@@ -30,7 +30,7 @@ export class UpdatingTimeStampWidget implements IWidget
     private static _updateTimerId: ReturnType<typeof setInterval> | null = null;
     private static _instances: Set<UpdatingTimeStampWidget> = new Set();
     private _widgetWindow: IWidgetWindow | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/UpdatingTimeStampWidget.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     private _label: IWindow | null = null;
 
@@ -60,10 +60,10 @@ export class UpdatingTimeStampWidget implements IWidget
         this.reset();
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/UpdatingTimeStampWidget.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/UpdatingTimeStampWidget.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -71,13 +71,13 @@ export class UpdatingTimeStampWidget implements IWidget
 
     private _timeStamp: number = 0;
 
-    // AS3: sources/win63_version/habbo/window/widgets/UpdatingTimeStampWidget.as::get timeStamp()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::get timeStamp()
     public get timeStamp(): number
     {
         return this._timeStamp;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/UpdatingTimeStampWidget.as::set timeStamp()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::set timeStamp()
     public set timeStamp(value: number)
     {
         this._timeStamp = value;
@@ -94,7 +94,7 @@ export class UpdatingTimeStampWidget implements IWidget
         return this._align;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/UpdatingTimeStampWidget.as::set align()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::set align()
     public set align(value: string)
     {
         this._align = value;
@@ -108,13 +108,13 @@ export class UpdatingTimeStampWidget implements IWidget
         return (Date.now() - Math.abs(this._timeStamp)) / 1000;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/UpdatingTimeStampWidget.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
         return [];
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/UpdatingTimeStampWidget.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::set properties()
     public set properties(_values: PropertyStruct[])
     {
         // AS3: properties setter is a no-op for this widget
@@ -152,14 +152,14 @@ export class UpdatingTimeStampWidget implements IWidget
     /**
 	 * Reset the timestamp to the current time.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/UpdatingTimeStampWidget.as::reset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::reset()
     public reset(): void
     {
         this._timeStamp = Date.now();
         this.onTimerTick();
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/UpdatingTimeStampWidget.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;
@@ -190,7 +190,7 @@ export class UpdatingTimeStampWidget implements IWidget
 	 * In AS3, this updates the label caption via FriendlyTime.getFriendlyTime().
 	 * In TS, this is a stub — the UI layer reads elapsedSeconds directly.
 	 */
-    // AS3: sources/win63_version/habbo/window/widgets/UpdatingTimeStampWidget.as::onTimerTick()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::onTimerTick()
     private onTimerTick(): void
     {
         if(this._disposed) return;

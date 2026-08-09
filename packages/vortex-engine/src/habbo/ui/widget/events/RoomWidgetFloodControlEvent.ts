@@ -11,7 +11,7 @@ export class RoomWidgetFloodControlEvent extends RoomWidgetUpdateEvent
 
     private _seconds: number;
 
-    // AS3: sources/win63_version/habbo/ui/widget/events/RoomWidgetFloodControlEvent.as::RoomWidgetFloodControlEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetFloodControlEvent.as::RoomWidgetFloodControlEvent()
     constructor(seconds: number)
     {
         super('RWFCE_FLOOD_CONTROL');
@@ -19,7 +19,7 @@ export class RoomWidgetFloodControlEvent extends RoomWidgetUpdateEvent
         this._seconds = seconds;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/events/RoomWidgetFloodControlEvent.as::get seconds()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetFloodControlEvent.as::get seconds()
     public get seconds(): number
     {
         return this._seconds;

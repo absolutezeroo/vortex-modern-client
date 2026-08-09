@@ -10,39 +10,39 @@ import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
  */
 export interface IHabboClubCenter
 {
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::get localization()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::get localization()
     readonly localization: IHabboLocalizationManager | null;
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::get avatarRenderManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::get avatarRenderManager()
     readonly avatarRenderManager: IAvatarRenderManager | null;
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::get offerCenter()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::get offerCenter()
     readonly offerCenter: unknown | null;
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::get stage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::get stage()
     readonly stage: unknown | null;
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::removeView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::removeView()
     removeView(): void;
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::removeBreakdown()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::removeBreakdown()
     removeBreakdown(): void;
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::openPurchasePage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::openPurchasePage()
     openPurchasePage(): void;
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::openClubGiftPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::openClubGiftPage()
     openClubGiftPage(): void;
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::showPaydayBreakdownView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::showPaydayBreakdownView()
     showPaydayBreakdownView(): void;
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::openPaydayHelpPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::openPaydayHelpPage()
     openPaydayHelpPage(): void;
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::openHelpPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::openHelpPage()
     openHelpPage(): void;
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::getOffers()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::getOffers()
     getOffers(): void;
 
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::isKickbackEnabled()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::isKickbackEnabled()
     isKickbackEnabled(): boolean;
 }

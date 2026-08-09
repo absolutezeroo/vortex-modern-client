@@ -11,10 +11,10 @@ import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
  */
 export class UserCountRenderer
 {
-    // AS3: sources/win63_version/habbo/navigator/UserCountRenderer.as::USERCOUNT_ELEMENT_NAME
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/UserCountRenderer.as::USERCOUNT_ELEMENT_NAME
     static readonly USERCOUNT_ELEMENT_NAME: string = 'usercount';
 
-    // AS3: sources/win63_version/habbo/navigator/UserCountRenderer.as::_navigator
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/UserCountRenderer.as::_navigator
     private _navigator: IHabboTransitionalNavigator | null;
 
     constructor(navigator: IHabboTransitionalNavigator)
@@ -32,7 +32,7 @@ export class UserCountRenderer
 	 * @param xPos - X position
 	 * @param yPos - Y position
 	 */
-    // AS3: sources/win63_version/habbo/navigator/UserCountRenderer.as::refreshUserCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/UserCountRenderer.as::refreshUserCount()
     refreshUserCount(capacity: number, container: IWindowContainer, userCount: number, tooltip: string, xPos: number, yPos: number): void
     {
         if(!this._navigator) return;
@@ -65,13 +65,13 @@ export class UserCountRenderer
         userCountWindow.visible = true;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/UserCountRenderer.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/UserCountRenderer.as::dispose()
     dispose(): void
     {
         this._navigator = null;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/UserCountRenderer.as::getBgColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/UserCountRenderer.as::getBgColor()
     private getBgColor(capacity: number, userCount: number): string
     {
         if(userCount === 0)
@@ -97,7 +97,7 @@ export class UserCountRenderer
         return 'g';
     }
 
-    // AS3: sources/win63_version/habbo/navigator/UserCountRenderer.as::isOverBgColorLimit()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/UserCountRenderer.as::isOverBgColorLimit()
     private isOverBgColorLimit(capacity: number, userCount: number, colorName: string, defaultPercent: number): boolean
     {
         if(!this._navigator) return false;
@@ -109,7 +109,7 @@ export class UserCountRenderer
         return userCount >= threshold;
     }
 
-    // AS3: sources/win63_version/habbo/navigator/UserCountRenderer.as::refreshBg()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/UserCountRenderer.as::refreshBg()
     private refreshBg(container: IWindowContainer, bgColor: string): void
     {
         if(!this._navigator) return;

@@ -21,14 +21,14 @@ import {formatPurseAmount} from '../PurseAmountFormatter';
  */
 export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase 
 {
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::BG_COLOR_LIGHT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::BG_COLOR_LIGHT
     private static readonly BG_COLOR_LIGHT: number = 0xFF70806D;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::BG_COLOR_DARK
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::BG_COLOR_DARK
     private static readonly BG_COLOR_DARK: number = 0xFF4D5F4E;
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::_toolbar
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::_toolbar
     private _toolbar: HabboToolbar | null;
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::_catalog
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::_catalog
     private _catalog: IHabboCatalog | null;
     private _localization: IHabboLocalizationManager | null;
     private _previousBalance: number = -1;
@@ -59,7 +59,7 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
         return this._balance;
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::get displayedActivityPointType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::get displayedActivityPointType()
     get displayedActivityPointType(): number 
     {
         if(!this._toolbar) return 1;
@@ -67,7 +67,7 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
         return this._toolbar.getInteger('seasonalcurrencyindicator.currency', 1);
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::get currencyBackgroundColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::get currencyBackgroundColor()
     get currencyBackgroundColor(): number 
     {
         if(!this._toolbar) return 0;
@@ -75,7 +75,7 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
         return this.hexToNumber(this._toolbar.getProperty(`seasonalcurrency.preset.${this.currencyColor}.border`));
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::get currencyTextColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::get currencyTextColor()
     get currencyTextColor(): number 
     {
         if(!this._toolbar) return 0;
@@ -83,7 +83,7 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
         return this.hexToNumber(this._toolbar.getProperty(`seasonalcurrency.preset.${this.currencyColor}.font`));
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::get seasonalCurrencyId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::get seasonalCurrencyId()
     private get seasonalCurrencyId(): string 
     {
         if(!this._toolbar) return '';
@@ -91,7 +91,7 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
         return this._toolbar.getProperty(`seasonalcurrency.id.${this.displayedActivityPointType}`);
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::get catalogPageName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::get catalogPageName()
     private get catalogPageName(): string 
     {
         if(!this._toolbar) return '';
@@ -99,7 +99,7 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
         return this._toolbar.getProperty('seasonalcurrencyindicator.page');
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::get currencyColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::get currencyColor()
     private get currencyColor(): string 
     {
         if(!this._toolbar) return '';
@@ -172,7 +172,7 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
         this.setText(formatPurseAmount(amount, this._localization));
     }
 
-    // AS3: sources/win63_version/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::initializeCurrencyLayouts()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as::initializeCurrencyLayouts()
     private initializeCurrencyLayouts(): void 
     {
         if(!this.window) return;

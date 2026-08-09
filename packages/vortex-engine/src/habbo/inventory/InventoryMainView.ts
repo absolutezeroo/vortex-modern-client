@@ -28,7 +28,7 @@ export class InventoryMainView
 {
     private _habboInventory: HabboInventory;
     private _window: IFrameWindow | null = null;
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::_toolbar
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
 
     private _currentCategory: string | null = null;
@@ -49,7 +49,7 @@ export class InventoryMainView
     private _collectiblesTabIndex: number = 0;
     private _showCollectiblesTab: boolean = false;
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::InventoryMainView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::InventoryMainView()
     // AS3 takes (habboInventory, windowManager, assets) explicitly; this port
     // follows the established View convention (see NavigatorView.ts) of only
     // taking the owning controller and deriving dependencies from it.
@@ -58,19 +58,19 @@ export class InventoryMainView
         this._habboInventory = habboInventory;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::get isVisible()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::get isVisible()
     get isVisible(): boolean 
     {
         return this._window ? this._window.visible : false;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::get isActive()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::get isActive()
     get isActive(): boolean 
     {
         return this._window ? this._window.getStateFlag(1) : false;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::get emptyContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::get emptyContainer()
     get emptyContainer(): IWindowContainer | null 
     {
         if(!this._window) return null;
@@ -78,7 +78,7 @@ export class InventoryMainView
         return this._window.findChildByName('empty_container') as IWindowContainer | null;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::get loadingContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::get loadingContainer()
     get loadingContainer(): IWindowContainer | null 
     {
         if(!this._window) return null;
@@ -86,7 +86,7 @@ export class InventoryMainView
         return this._window.findChildByName('loading_container') as IWindowContainer | null;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::get mainContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::get mainContainer()
     get mainContainer(): IWindowContainer | null 
     {
         if(!this._window) return null;
@@ -94,7 +94,7 @@ export class InventoryMainView
         return this._window.findChildByName('contentArea') as IWindowContainer | null;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::dispose()
     dispose(): void 
     {
         this._furniCounter = null;
@@ -121,7 +121,7 @@ export class InventoryMainView
         this._extractedWindows.clear();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::disableNonTradingTabs()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::disableNonTradingTabs()
     disableNonTradingTabs(disabled: boolean): void 
     {
         if(!this._window) return;
@@ -141,7 +141,7 @@ export class InventoryMainView
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::showCollectiblesTab()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::showCollectiblesTab()
     showCollectiblesTab(show: boolean): void 
     {
         if(!this._window) 
@@ -173,19 +173,19 @@ export class InventoryMainView
         this._showCollectiblesTab = show;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::getCategoryViewId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::getCategoryViewId()
     getCategoryViewId(): string | null 
     {
         return this._currentCategory;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::getSubCategoryViewId()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::getSubCategoryViewId()
     getSubCategoryViewId(): string | null 
     {
         return this._currentSubCategory;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::hideInventory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::hideInventory()
     hideInventory(): void 
     {
         this._habboInventory.closingInventoryView();
@@ -197,7 +197,7 @@ export class InventoryMainView
         window.visible = false;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::showInventory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::showInventory()
     showInventory(): void 
     {
         const window = this.getWindow();
@@ -210,7 +210,7 @@ export class InventoryMainView
         );
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::toggleCategoryView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::toggleCategoryView()
     toggleCategoryView(category: string, allowHide: boolean = true, forceSwitch: boolean = false): boolean 
     {
         const window = this.getWindow();
@@ -259,7 +259,7 @@ export class InventoryMainView
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::toggleSubCategoryView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::toggleSubCategoryView()
     toggleSubCategoryView(category: string, allowHide: boolean = true): void 
     {
         const window = this.getWindow();
@@ -291,7 +291,7 @@ export class InventoryMainView
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::updateSubCategoryView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::updateSubCategoryView()
     updateSubCategoryView(): void 
     {
         if(this._currentSubCategory === null) return;
@@ -299,14 +299,14 @@ export class InventoryMainView
         this.setSubViewToCategory(this._currentSubCategory);
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::setToolbar()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::setToolbar()
     setToolbar(toolbar: IHabboToolbar): void 
     {
         this._toolbar = toolbar;
         this._toolbar.toolbarEvents.on(HabboToolbarEventClass.TOOLBAR_CLICK, this.onHabboToolbarEvent);
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::windowEventProc()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::windowEventProc()
     windowEventProc = (event: WindowEvent, window: IWindow): void => 
     {
         if(event.type === 'WE_SELECTED') 
@@ -341,7 +341,7 @@ export class InventoryMainView
         }
     };
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::updateUnseenFurniCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::updateUnseenFurniCount()
     updateUnseenFurniCount(count: number): void 
     {
         if(!this._window) return;
@@ -354,7 +354,7 @@ export class InventoryMainView
         if(this._furniCounter) this.updateCounter(this._furniCounter, count, 'furni');
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::updateUnseenRentedFurniCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::updateUnseenRentedFurniCount()
     updateUnseenRentedFurniCount(count: number): void 
     {
         if(!this._window) return;
@@ -367,7 +367,7 @@ export class InventoryMainView
         if(this._rentablesCounter) this.updateCounter(this._rentablesCounter, count, 'rentables');
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::updateUnseenPetsCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::updateUnseenPetsCount()
     updateUnseenPetsCount(count: number): void 
     {
         if(!this._window) return;
@@ -381,7 +381,7 @@ export class InventoryMainView
         this._habboInventory.petsModel.updateView();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::updateUnseenBadgeCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::updateUnseenBadgeCount()
     updateUnseenBadgeCount(count: number): void 
     {
         if(!this._window) return;
@@ -395,7 +395,7 @@ export class InventoryMainView
         this._habboInventory.badgesModel.updateView();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::updateUnseenBotCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::updateUnseenBotCount()
     updateUnseenBotCount(count: number): void 
     {
         if(!this._window) return;
@@ -409,7 +409,7 @@ export class InventoryMainView
         this._habboInventory.botsModel.updateView();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::updateUnseenCollectiblesCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::updateUnseenCollectiblesCount()
     updateUnseenCollectiblesCount(count: number): void 
     {
         if(!this._window) return;
@@ -422,13 +422,13 @@ export class InventoryMainView
         if(this._collectiblesCounter) this.updateCounter(this._collectiblesCounter, count, 'collectibles');
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::getView()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::getView()
     getView(name: string): IWindowContainer | null 
     {
         return this._extractedWindows.get(name) ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::resizeToFitContents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::resizeToFitContents()
     resizeToFitContents(): void 
     {
         if(!this._window) return;
@@ -449,7 +449,7 @@ export class InventoryMainView
         this._window.resizeToFitContent();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::onHabboToolbarEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::onHabboToolbarEvent()
     onHabboToolbarEvent = (event: HabboToolbarEvent): void => 
     {
         if(event.iconId !== 'HTIE_ICON_INVENTORY') return;
@@ -482,7 +482,7 @@ export class InventoryMainView
         }
     };
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::getWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::getWindow()
     private getWindow(): IFrameWindow | null 
     {
         if(!this._window) 
@@ -579,7 +579,7 @@ export class InventoryMainView
         return this._window;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::extractWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::extractWindow()
     private extractWindow(name: string): void 
     {
         const container = this.mainContainer;
@@ -592,7 +592,7 @@ export class InventoryMainView
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::resetUnseenCounters()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::resetUnseenCounters()
     private resetUnseenCounters(category: string): void 
     {
         switch(category) 
@@ -613,7 +613,7 @@ export class InventoryMainView
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::setViewToCategory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::setViewToCategory()
     private setViewToCategory(category: string | null): void 
     {
         if(category === null || category === '') return;
@@ -672,13 +672,13 @@ export class InventoryMainView
 
     // TODO(AS3): sources/win63_version/habbo/inventory/InventoryMainView.as::emptyFurnimaticSlots()
     // Requires IRecycler/FurniSlotItem (habbo/catalog/recycler), not yet ported.
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::emptyFurnimaticSlots()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::emptyFurnimaticSlots()
     private emptyFurnimaticSlots(): void 
     {
         // Intentional no-op until the recycler feature is ported.
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::enableScaling()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::enableScaling()
     private enableScaling(): void 
     {
         if(!this._window) return;
@@ -688,7 +688,7 @@ export class InventoryMainView
         this._window.findChildByName('top_content')?.setParamFlag(2048, true);
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::disableScaling()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::disableScaling()
     private disableScaling(): void 
     {
         if(!this._window) return;
@@ -698,7 +698,7 @@ export class InventoryMainView
         this._window.findChildByName('top_content')?.setParamFlag(2048, false);
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::setSubViewToCategory()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::setSubViewToCategory()
     private setSubViewToCategory(category: string | null): void 
     {
         if(category === null || category === '' || !this._window) return;
@@ -762,7 +762,7 @@ export class InventoryMainView
         this._currentSubCategory = category;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::createCounter()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::createCounter()
     private createCounter(name: string): IWindowContainer | null 
     {
         if(!this._window) return null;
@@ -794,7 +794,7 @@ export class InventoryMainView
         return counter;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/InventoryMainView.as::updateCounter()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::updateCounter()
     private updateCounter(counter: IWindowContainer, count: number, tabName: string): void 
     {
         const countLabel = counter.findChildByName('count') as ILabelWindow | null;

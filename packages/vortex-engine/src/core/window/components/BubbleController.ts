@@ -15,16 +15,16 @@ import {FrameController} from './FrameController';
  *
  * @see sources/win63_version/core/window/components/BubbleController.as
  */
-// AS3: sources/win63_version/core/window/components/BubbleController.as::BubbleController
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::BubbleController
 export class BubbleController extends FrameController implements IBubbleWindow
 {
-    // AS3: sources/win63_version/core/window/components/BubbleController.as::TAG_POINTER_UP_ELEMENT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::TAG_POINTER_UP_ELEMENT
     private static readonly TAG_POINTER_UP_ELEMENT: string = '_POINTER_UP';
-    // AS3: sources/win63_version/core/window/components/BubbleController.as::TAG_POINTER_DOWN_ELEMENT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::TAG_POINTER_DOWN_ELEMENT
     private static readonly TAG_POINTER_DOWN_ELEMENT: string = '_POINTER_DOWN';
-    // AS3: sources/win63_version/core/window/components/BubbleController.as::TAG_POINTER_LEFT_ELEMENT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::TAG_POINTER_LEFT_ELEMENT
     private static readonly TAG_POINTER_LEFT_ELEMENT: string = '_POINTER_LEFT';
-    // AS3: sources/win63_version/core/window/components/BubbleController.as::TAG_POINTER_RIGHT_ELEMENT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::TAG_POINTER_RIGHT_ELEMENT
     private static readonly TAG_POINTER_RIGHT_ELEMENT: string = '_POINTER_RIGHT';
 
     // AS3: sources/win63_version/core/window/components/BubbleController.as::var_81
@@ -32,7 +32,7 @@ export class BubbleController extends FrameController implements IBubbleWindow
     // AS3: sources/win63_version/core/window/components/BubbleController.as::_pointerOffset
     private _pointerOffset: number | null = null;
 
-    // AS3: sources/win63_version/core/window/components/BubbleController.as::BubbleController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::BubbleController()
     constructor(
         name: string,
         type: number,
@@ -50,7 +50,7 @@ export class BubbleController extends FrameController implements IBubbleWindow
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
     }
 
-    // AS3: sources/win63_version/core/window/components/BubbleController.as::BubbleController()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::BubbleController()
     protected override finalize(): void
     {
         super.finalize();
@@ -59,13 +59,13 @@ export class BubbleController extends FrameController implements IBubbleWindow
         this._pointerOffset ??= 0;
     }
 
-    // AS3: sources/win63_version/core/window/components/BubbleController.as::get direction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::get direction()
     public get direction(): string
     {
         return this._direction ?? 'down';
     }
 
-    // AS3: sources/win63_version/core/window/components/BubbleController.as::set direction()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::set direction()
     public set direction(value: string)
     {
         const currentDirection = this.direction;
@@ -95,13 +95,13 @@ export class BubbleController extends FrameController implements IBubbleWindow
         }
     }
 
-    // AS3: sources/win63_version/core/window/components/BubbleController.as::get pointerOffset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::get pointerOffset()
     public get pointerOffset(): number
     {
         return this._pointerOffset ?? 0;
     }
 
-    // AS3: sources/win63_version/core/window/components/BubbleController.as::set pointerOffset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::set pointerOffset()
     public set pointerOffset(value: number)
     {
         const direction = this.direction;
@@ -126,7 +126,7 @@ export class BubbleController extends FrameController implements IBubbleWindow
         this._pointerOffset = offset;
     }
 
-    // AS3: sources/win63_version/core/window/components/BubbleController.as::get properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::get properties()
     public override get properties(): unknown[]
     {
         const props = super.properties;
@@ -137,7 +137,7 @@ export class BubbleController extends FrameController implements IBubbleWindow
         return props;
     }
 
-    // AS3: sources/win63_version/core/window/components/BubbleController.as::set properties()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::set properties()
     public override set properties(value: unknown[])
     {
         for(const item of value)
@@ -158,7 +158,7 @@ export class BubbleController extends FrameController implements IBubbleWindow
         super.properties = value;
     }
 
-    // AS3: sources/win63_version/core/window/components/BubbleController.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BubbleController.as::update()
     public override update(source: WindowController, event: WindowEvent): boolean
     {
         const result = super.update(source, event);

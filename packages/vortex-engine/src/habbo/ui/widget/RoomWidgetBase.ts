@@ -18,20 +18,20 @@ import type {IRoomWidget} from './IRoomWidget';
 
 export class RoomWidgetBase implements IRoomWidget
 {
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::_disposed
     private _disposed: boolean = false;
     private _updateEventDispatcher: EventEmitter | null = null;
     private _messageListener: IRoomWidgetMessageListener | null = null;
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::_windowManager
     private _windowManager: IHabboWindowManager;
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::_assets
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::_assets
     protected _assets: IAssetLibrary | null;
     protected _localizations: IHabboLocalizationManager | null;
     protected _handler: IRoomWidgetHandler | null;
     private _reusable: boolean = false;
     private _widgetType: string = '';
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::RoomWidgetBase()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::RoomWidgetBase()
     constructor(
         handler: IRoomWidgetHandler,
         windowManager: IHabboWindowManager,
@@ -45,25 +45,25 @@ export class RoomWidgetBase implements IRoomWidget
         this._localizations = localizations;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::get state()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::get state()
     public get state(): number
     {
         return 0;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::initialize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::initialize()
     public initialize(_state: number = 0): void
     {
         // AS3 no-op — overridden by subclasses that need it.
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::dispose()
     public dispose(): void
     {
         if(this.disposed) return;
@@ -88,61 +88,61 @@ export class RoomWidgetBase implements IRoomWidget
         this._disposed = true;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::set messageListener() / get messageListener()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::set messageListener() / get messageListener()
     public set messageListener(value: IRoomWidgetMessageListener | null)
     {
         this._messageListener = value;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::get messageListener()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::get messageListener()
     public get messageListener(): IRoomWidgetMessageListener | null
     {
         return this._messageListener;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::get windowManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::get windowManager()
     public get windowManager(): IHabboWindowManager
     {
         return this._windowManager;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::get assets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::get assets()
     public get assets(): IAssetLibrary | null
     {
         return this._assets;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::get localizations()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::get localizations()
     public get localizations(): IHabboLocalizationManager | null
     {
         return this._localizations;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::registerUpdateEvents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::registerUpdateEvents()
     public registerUpdateEvents(dispatcher: EventEmitter): void
     {
         this._updateEventDispatcher = dispatcher;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::unregisterUpdateEvents()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::unregisterUpdateEvents()
     public unregisterUpdateEvents(_dispatcher: EventEmitter): void
     {
         // AS3 no-op — overridden by subclasses that registered listeners.
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::get mainWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::get mainWindow()
     public get mainWindow(): IWindow | null
     {
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::get widgetHandler()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::get widgetHandler()
     public get widgetHandler(): IRoomWidgetHandler | null
     {
         return this._handler;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::release()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::release()
     public release(): void
     {
         if(this._handler)
@@ -159,31 +159,31 @@ export class RoomWidgetBase implements IRoomWidget
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::reuse()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::reuse()
     public reuse(_desktop: IRoomDesktop): void
     {
         // AS3 no-op — overridden by subclasses that support reuse.
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::set reusable() / get reusable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::set reusable() / get reusable()
     public set reusable(value: boolean)
     {
         this._reusable = value;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::get reusable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::get reusable()
     public get reusable(): boolean
     {
         return this._reusable;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::set widgetType() / get widgetType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::set widgetType() / get widgetType()
     public set widgetType(value: string)
     {
         this._widgetType = value;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetBase.as::get widgetType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetBase.as::get widgetType()
     public get widgetType(): string
     {
         return this._widgetType;
