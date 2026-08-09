@@ -180,6 +180,7 @@ import {ClubBuyOfferData} from './club/ClubBuyOfferData';
 import {Product} from './viewer/Product';
 import {CatalogWindowState} from './CatalogWindowState';
 import {PlacedObjectPurchaseData} from './purchase/PlacedObjectPurchaseData';
+import {RentConfirmationWindow} from './purchase/RentConfirmationWindow';
 import {PlaceObjectFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceObjectFromCatalogComposer';
 import {PlaceWallItemFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceWallItemFromCatalogComposer';
 import {FurnitureCategory} from '@habbo/inventory/enum/FurnitureCategory';
@@ -217,6 +218,18 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 {
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
+
+    /**
+     * AS3 exposes the manager so collaborators can register their own message events —
+     * `RentConfirmationWindow` subscribes to the rent quote itself rather than being fed by the
+     * catalog.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_communication
+    get communication(): IHabboCommunicationManager | null
+    {
+        return this._communication;
+    }
+
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
 
@@ -272,6 +285,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     private _clubExtendController: ClubExtendController | null = null;
 
     private _clubGiftController: ClubGiftController | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_6362 (name derived: the rent dialog)
+    private _rentConfirmationWindow: RentConfirmationWindow | null = null;
 
     private _marketPlace: MarketPlaceLogic | null = null;
     private _recycler: RecyclerLogic | null = null;
@@ -2463,14 +2479,29 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::openRentConfirmationWindow()
+    /**
+     * Built lazily and kept: the window owns a message-event subscription, so re-creating it per
+     * call would stack listeners.
+     *
+     * Note AS3's parameter names are misleading and preserved as such — the second is the *buyout*
+     * flag, not a wall-item flag (the window derives that from the furni data itself), and the two
+     * ids are the room object and the inventory strip item, which is how it picks its mode.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::openRentConfirmationWindow()
     public openRentConfirmationWindow(
-        _data: unknown,
-        _isWallItem: boolean,
-        _extraParam: number = -1,
-        _price: number = -1,
-        _rent: boolean = false
-    ): void 
+        furniData: IFurnitureData | null,
+        buyout: boolean,
+        objectId: number = -1,
+        stripId: number = -1,
+        fromCatalogue: boolean = false
+    ): void
     {
+        if(this._rentConfirmationWindow == null)
+        {
+            this._rentConfirmationWindow = new RentConfirmationWindow(this);
+        }
+
+        this._rentConfirmationWindow.show(furniData, buyout, objectId, stripId, fromCatalogue);
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::toggleBuilderCatalog()

@@ -264,18 +264,37 @@ export class FurniModel implements IFurniModel
         this._roomEngine?.showUseProductSelection(item.ref, item.type);
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::extendRentPeriod()
-    // TODO(AS3): needs HabboCatalog.openRentConfirmationWindow() (not wired yet).
+    /**
+     * The two rent actions differ by one boolean — the server decides the price either way, and the
+     * dialog only opens once it has answered. Both pass the item's *strip* id, which is what tells
+     * the window it is acting on an inventory item rather than one standing in a room.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::extendRentPeriod()
     extendRentPeriod(): void
     {
-        // Not wired yet.
+        this.openRentConfirmation(false);
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::buyRentedItem()
-    // TODO(AS3): needs HabboCatalog.openRentConfirmationWindow() (not wired yet).
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::buyRentedItem()
     buyRentedItem(): void
     {
-        // Not wired yet.
+        this.openRentConfirmation(true);
+    }
+
+    // TS-only: the two methods above are identical but for the buyout flag; AS3 repeats the body.
+    private openRentConfirmation(buyout: boolean): void
+    {
+        const groupItem = this.getSelectedItem();
+
+        if(groupItem === null) return;
+
+        const item = groupItem.peek();
+
+        if(item === null) return;
+
+        const furnitureData = this._habboInventory.getFurnitureData(item.type, item.isWallItem ? 'i' : 's');
+
+        this._catalog.openRentConfirmationWindow(furnitureData, buyout, -1, item.id);
     }
 
     // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::updateActionView()

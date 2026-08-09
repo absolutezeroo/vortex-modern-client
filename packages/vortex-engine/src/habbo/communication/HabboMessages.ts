@@ -46,6 +46,12 @@ import {
     GetCfhStatusMessageComposer,
 } from './messages/outgoing/help';
 import {
+    GetRentOrBuyoutOfferMessageComposer,
+    ExtendRentOrBuyoutFurniMessageComposer,
+    ExtendRentOrBuyoutStripItemMessageComposer,
+} from './messages/outgoing/rent';
+import {RentOrBuyoutOfferMessageEvent} from './messages/incoming/rent/RentOrBuyoutOfferMessageEvent';
+import {
     ForwardToACompetitionRoomMessageComposer,
     GetSecondsUntilMessageComposer,
     RoomCompetitionInitMessageComposer,
@@ -2076,6 +2082,7 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2821, MarketplaceItemStatsEvent);
         this._events.set(789, MarketplaceCanMakeOfferResultEvent);
         this._events.set(2954, MarketplaceMakeOfferResultEvent);
+        this._events.set(1127, RentOrBuyoutOfferMessageEvent);
         this._events.set(1919, RecyclerStatusMessageEvent);
         this._events.set(281, RecyclerFinishedMessageEvent);
         this._events.set(3783, RecyclerPrizesMessageEvent);
@@ -2709,6 +2716,12 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1493, GetMarketplaceCanMakeOfferMessageComposer);
         this._composers.set(3419, BuyMarketplaceTokensMessageComposer);
         this._composers.set(3695, MakeOfferMessageComposer);
+
+        // AS3: the rent extend/buyout quote round trip — request, then one of two confirmations
+        // depending on whether the item stands in a room or sits in the inventory strip.
+        this._composers.set(1583, GetRentOrBuyoutOfferMessageComposer);
+        this._composers.set(1427, ExtendRentOrBuyoutFurniMessageComposer);
+        this._composers.set(1029, ExtendRentOrBuyoutStripItemMessageComposer);
 
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
         // Every moderation composer was ported and none was registered, so a moderator could
