@@ -696,6 +696,44 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **Four runtime warnings, four causes**, 2026-08-09. All found from a single room session's
+  console output, and only the last one was cosmetic.
+  - **`ExtensionView.detachExtension()` removed nothing.** It dropped the id from `_items` and
+    stopped there — leaving the window in `_orderedItems`, which is what `refreshItemWindow()`
+    rebuilds the strip from, and never asking for a refresh. So **every** toolbar extension that
+    detaches stayed on screen for the session: the group-base panel (the reported symptom — walk
+    into a room with no guild and it never leaves), the quest tracker, the next-quest timer, the
+    phone-number prompts, the promos. `GroupRoomInfoCtrl.close()` was faithful all along; the
+    thing it called was not. AS3 splices the ordered list, calls `_toolbar.removeDimmer()` and
+    refreshes. While there: `attachExtension()` never called `createAndAttachDimmerWindow()`
+    either, though both dimmer helpers were ported — so the new-user room-enter effect dimmed
+    everything except the extension strip.
+  - **Window layouts were never in the asset library.** A whole family of ported views reads its
+    layout the way AS3 does — `assets.getAssetByName("settings_xml").content` — and the library
+    only ever held images, sounds, avatar configurations and chat styles; layouts went solely
+    into the window manager's widget-layout registry. All **17** such lookups returned null and
+    each site turned that into "Missing layout X": the settings menu, the chat/sound/other
+    settings views, and every furniture context bubble — including the guild one added the same
+    day, which could not have opened whatever the server replied. They now register under the
+    **file basename** (the `*Com.as` field name, i.e. the string AS3 asks for), never the internal
+    `<layout name="...">`: that label differs from the real name for **633 of 783** layouts and
+    **86** of those internal names are shared by two or more files.
+  - **`RWE_HIGH_SCORE_DISPLAY`/`RWE_WORD_QUIZZ` had no container** — `getWidgetContainer()` looked
+    `background_widgets` up by tag, where the layout declares it as `name=` with no tags at all
+    and AS3 uses `getChildByName`.
+  - **`SanctionStatusMessageEvent` was subscribed with no header**, so `MessageRegistry` logged
+    "Unknown message event class" every boot. Its own comment said it was deliberately left
+    unregistered while the line under it subscribed anyway.
+  - **Not a bug: "No container found for widget: RWE_ME_MENU."** AS3's `getWidgetContainer()` is
+    identical and no widget layout in any tree carries a `room_widget*` tag, so AS3 refuses that
+    container too — it just returns false without logging. The layout's `room_widget_me_menu`
+    container is genuinely unused.
+  - **A build is not a source tree.** The first of these was reported against `vortex-client/dist`,
+    which predated the fix by ten hours; the dev server aliases to `vortex-engine/src` but the
+    built bundle does not. Check `dist/assets/index-*.js` for a string literal from the change
+    before diagnosing anything — and check a *string* literal, not a class name: the minifier
+    renames classes, so "my new class is absent from the bundle" proves nothing.
+
 - 🆕 **Guild-furni context menu, end to end**, 2026-08-09. Double-clicking a guild-customised
   furni did nothing: the room engine logged "Unmapped room-object widget request", so the request
   never left the client.

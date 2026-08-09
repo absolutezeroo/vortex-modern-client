@@ -149,8 +149,12 @@ export class ExtensionView implements IExtensionView
             this._orderedItems.splice(index, 0, window);
         }
 
-        if(this._var104) 
+        if(this._var104)
         {
+            // AS3 dims every extension it attaches while the new-user room-enter effect is
+            // running; `createAndAttachDimmerWindow()` is a no-op otherwise. It was ported and
+            // never called from here, so the effect dimmed everything except the strip.
+            this._toolbar?.createAndAttachDimmerWindow(window);
             this.refreshItemWindow();
         }
 
@@ -220,10 +224,34 @@ export class ExtensionView implements IExtensionView
         this._var104.invalidate();
     }
 
+    /**
+     * The counterpart of attachExtension, and it has to undo both halves of it.
+     *
+     * Dropping the id from `_items` alone left the window in `_orderedItems`, which is what
+     * `refreshItemWindow()` rebuilds the strip from — and nothing asked for a refresh either, so
+     * a detached extension simply stayed on screen for the rest of the session. That is what kept
+     * the group-base panel up after walking into a room with no guild: `GroupRoomInfoCtrl.close()`
+     * called detach faithfully, and detach did not remove anything.
+     */
     // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::detachExtension()
-    public detachExtension(id: string): void 
+    public detachExtension(id: string): void
     {
         if(this._disposed) return;
+
+        const window = this._items.get(id) ?? null;
+
+        if(window !== null)
+        {
+            const index = this._orderedItems.indexOf(window);
+
+            if(index !== -1) this._orderedItems.splice(index, 1);
+
+            if(this._var104)
+            {
+                this._toolbar?.removeDimmer(window);
+                this.refreshItemWindow();
+            }
+        }
 
         this._items.delete(id);
         this.queueResizeEvent();
