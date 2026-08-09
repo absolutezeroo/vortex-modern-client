@@ -14,11 +14,6 @@ export interface IScrollableWindow extends IWindow
     scrollH: number;
     // AS3: .../src/com/sulake/core/window/components/IScrollableWindow.as::get scrollV()
     scrollV: number;
-    // AS3: sources/win63_version/core/window/components/IScrollableWindow.as::get scrollStepH()
-    scrollStepH: number;
-    // AS3: sources/win63_version/core/window/components/IScrollableWindow.as::get scrollStepV()
-    scrollStepV: number;
-
     // AS3: .../src/com/sulake/core/window/components/IScrollableWindow.as::get maxScrollH()
     readonly maxScrollH: number;
     // AS3: .../src/com/sulake/core/window/components/IScrollableWindow.as::get maxScrollV()

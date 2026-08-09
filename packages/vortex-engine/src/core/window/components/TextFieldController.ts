@@ -186,7 +186,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
         this._displayRaw = value;
     }
 
-    // textBackground, textBackgroundColor, scrollH, scrollV, scrollStepH, scrollStepV
+    // textBackground, textBackgroundColor, scrollH, scrollV
     // inherited from TextController
 
     private _toolTipCaption: string = '';

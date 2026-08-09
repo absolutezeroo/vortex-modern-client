@@ -166,30 +166,6 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         if(this.itemList) this.itemList.scrollV = value;
     }
 
-    // AS3: sources/win63_version/core/window/components/ScrollableItemListWindow.as::get scrollStepH()
-    public get scrollStepH(): number 
-    {
-        return this.itemList?.scrollStepH ?? 25;
-    }
-
-    // AS3: sources/win63_version/core/window/components/ScrollableItemListWindow.as::set scrollStepH()
-    public set scrollStepH(value: number) 
-    {
-        if(this.itemList) this.itemList.scrollStepH = value;
-    }
-
-    // AS3: sources/win63_version/core/window/components/ScrollableItemListWindow.as::get scrollStepV()
-    public get scrollStepV(): number 
-    {
-        return this.itemList?.scrollStepV ?? 25;
-    }
-
-    // AS3: sources/win63_version/core/window/components/ScrollableItemListWindow.as::set scrollStepV()
-    public set scrollStepV(value: number) 
-    {
-        if(this.itemList) this.itemList.scrollStepV = value;
-    }
-
     // AS3: .../src/com/sulake/core/window/components/ScrollableItemListWindow.as::get maxScrollH()
     public get maxScrollH(): number 
     {

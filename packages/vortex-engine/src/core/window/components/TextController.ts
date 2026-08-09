@@ -619,30 +619,6 @@ export class TextController extends WindowController implements ITextWindow
         return Math.max(this._textHeightCache - this.height, 0);
     }
 
-    // AS3: sources/win63_version/core/window/components/TextController.as::get scrollStepH()
-    public get scrollStepH(): number
-    {
-        return 10;
-    }
-
-    // AS3: sources/win63_version/core/window/components/TextController.as::set scrollStepH()
-    public set scrollStepH(_value: number)
-    {
-        // No-op AS3 behavior.
-    }
-
-    // AS3: sources/win63_version/core/window/components/TextController.as::get scrollStepV()
-    public get scrollStepV(): number
-    {
-        return this._numLinesCache > 0 ? this._textHeightCache / this._numLinesCache : 10;
-    }
-
-    // AS3: sources/win63_version/core/window/components/TextController.as::set scrollStepV()
-    public set scrollStepV(_value: number)
-    {
-        // No-op AS3 behavior.
-    }
-
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get visibleRegion()
     public get visibleRegion(): { x: number; y: number; width: number; height: number }
     {

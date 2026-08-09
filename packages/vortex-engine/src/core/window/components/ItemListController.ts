@@ -74,8 +74,6 @@ export class ItemListController extends WindowController implements IItemListWin
 
         this._hasVisualContent = this._background || !this.testParamFlag(16);
         this._arrangeListItems ??= true;
-        this._scrollStepH ??= 25;
-        this._scrollStepV ??= 25;
 
         this._container = this._context.create(
             '_CONTAINER',
@@ -289,50 +287,6 @@ export class ItemListController extends WindowController implements IItemListWin
         this.updateScrollAreaRegion();
     }
 
-    // Declared without a non-default initializer: `set properties()` below
-    // writes `scroll_step_h`/`scroll_step_v` directly to these fields during
-    // applyProperties(), before finalize() runs - see `_arrangeListItems`
-    // above for why a `= 25` initializer would be unsafe here.
-    protected _scrollStepH: number | null = null;
-
-    /**
-     * Gets the horizontal scroll step size.
-     */
-    // AS3: sources/win63_version/core/window/components/ItemListController.as::get scrollStepH()
-    public get scrollStepH(): number
-    {
-        return this._scrollStepH ?? 25;
-    }
-
-    /**
-     * Sets the horizontal scroll step size.
-     */
-    // AS3: sources/win63_version/core/window/components/ItemListController.as::set scrollStepH()
-    public set scrollStepH(value: number)
-    {
-        this._scrollStepH = value;
-    }
-
-    protected _scrollStepV: number | null = null;
-
-    /**
-     * Gets the vertical scroll step size.
-     */
-    // AS3: sources/win63_version/core/window/components/ItemListController.as::get scrollStepV()
-    public get scrollStepV(): number
-    {
-        return this._scrollStepV ?? 25;
-    }
-
-    /**
-     * Sets the vertical scroll step size.
-     */
-    // AS3: sources/win63_version/core/window/components/ItemListController.as::set scrollStepV()
-    public set scrollStepV(value: number) 
-    {
-        this._scrollStepV = value;
-    }
-
     /**
      * Gets the maximum horizontal scroll value in pixels.
      */
@@ -477,12 +431,6 @@ export class ItemListController extends WindowController implements IItemListWin
                     break;
                 case 'auto_arrange_items':
                     this._arrangeListItems = !!prop.value;
-                    break;
-                case 'scroll_step_h':
-                    this._scrollStepH = prop.value as number;
-                    break;
-                case 'scroll_step_v':
-                    this._scrollStepV = prop.value as number;
                     break;
             }
         }

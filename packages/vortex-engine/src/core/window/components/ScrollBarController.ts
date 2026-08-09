@@ -48,6 +48,17 @@ export class ScrollBarController extends InteractiveController implements IScrol
 
     // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::_offset
     protected _offset: number = 0;
+    /**
+     * Pixels an arrow-button click scrolls, and the overlap a track click leaves behind.
+     *
+     * AS3 spells this as a bare `15` at all six call sites; it has no named constant in any tree,
+     * so the name is DERIVED. It used to read `_scrollable.scrollStepH/V` here, which is a member
+     * of the superseded `win63_version` build - the 2026 build has neither the member nor the
+     * `scroll_step_h`/`scroll_step_v` layout property that fed it, and no shipped layout declares
+     * one. That default was 25, so every arrow click moved two thirds further than the real client.
+     */
+    public static readonly SCROLL_BUTTON_STEP: number = 15;
+
     protected _scrollStep: number = 0.1;
     // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::_targetName
     private _targetName: string | null = null;
@@ -588,11 +599,11 @@ export class ScrollBarController extends InteractiveController implements IScrol
 
                     if(this.horizontal)
                     {
-                        this.scrollH += this._scrollable.scrollStepH / Math.max(1, this._scrollable.maxScrollH);
+                        this.scrollH += ScrollBarController.SCROLL_BUTTON_STEP / Math.max(1, this._scrollable.maxScrollH);
                     }
                     else
                     {
-                        this.scrollV += this._scrollable.scrollStepV / Math.max(1, this._scrollable.maxScrollV);
+                        this.scrollV += ScrollBarController.SCROLL_BUTTON_STEP / Math.max(1, this._scrollable.maxScrollV);
                     }
 
                     this._isUpdatingLift = false;
@@ -606,11 +617,11 @@ export class ScrollBarController extends InteractiveController implements IScrol
 
                     if(this.horizontal)
                     {
-                        this.scrollH -= this._scrollable.scrollStepH / Math.max(1, this._scrollable.maxScrollH);
+                        this.scrollH -= ScrollBarController.SCROLL_BUTTON_STEP / Math.max(1, this._scrollable.maxScrollH);
                     }
                     else
                     {
-                        this.scrollV -= this._scrollable.scrollStepV / Math.max(1, this._scrollable.maxScrollV);
+                        this.scrollV -= ScrollBarController.SCROLL_BUTTON_STEP / Math.max(1, this._scrollable.maxScrollV);
                     }
 
                     this._isUpdatingLift = false;
@@ -629,22 +640,22 @@ export class ScrollBarController extends InteractiveController implements IScrol
                     {
                         if(localX < bar.x)
                         {
-                            this.scrollH -= (this._scrollable.visibleRegion.width - this._scrollable.scrollStepH) / Math.max(1, this._scrollable.maxScrollH);
+                            this.scrollH -= (this._scrollable.visibleRegion.width - ScrollBarController.SCROLL_BUTTON_STEP) / Math.max(1, this._scrollable.maxScrollH);
                         }
                         else if(localX > bar.right)
                         {
-                            this.scrollH += (this._scrollable.visibleRegion.width - this._scrollable.scrollStepH) / Math.max(1, this._scrollable.maxScrollH);
+                            this.scrollH += (this._scrollable.visibleRegion.width - ScrollBarController.SCROLL_BUTTON_STEP) / Math.max(1, this._scrollable.maxScrollH);
                         }
                     }
                     else
                     {
                         if(localY < bar.y)
                         {
-                            this.scrollV -= (this._scrollable.visibleRegion.height - this._scrollable.scrollStepV) / Math.max(1, this._scrollable.maxScrollV);
+                            this.scrollV -= (this._scrollable.visibleRegion.height - ScrollBarController.SCROLL_BUTTON_STEP) / Math.max(1, this._scrollable.maxScrollV);
                         }
                         else if(localY > bar.bottom)
                         {
-                            this.scrollV += (this._scrollable.visibleRegion.height - this._scrollable.scrollStepV) / Math.max(1, this._scrollable.maxScrollV);
+                            this.scrollV += (this._scrollable.visibleRegion.height - ScrollBarController.SCROLL_BUTTON_STEP) / Math.max(1, this._scrollable.maxScrollV);
                         }
                     }
 

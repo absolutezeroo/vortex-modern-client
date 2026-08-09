@@ -114,8 +114,6 @@ export class ThemeManager implements IThemeManager
         properties.addString('restrict', '');
         properties.addBoolean('scale_to_fit_items', false);
         properties.addString('scrollable', '');
-        properties.addNumber('scroll_step_h', -1);
-        properties.addNumber('scroll_step_v', -1);
         properties.addBoolean('selectable', true);
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("shape","rectangle",["rectangle","round_rectangle","ellipse","rhombus"])
         properties.addEnumeration('shape', 'rectangle', ['rectangle', 'round_rectangle', 'ellipse', 'rhombus']);
