@@ -1,2 +1,3 @@
 export {BotInventoryMessageParser} from './BotInventoryMessageParser';
-export type {IBotData} from './BotInventoryMessageParser';
+export {BotAddedToInventoryMessageParser} from './BotAddedToInventoryMessageParser';
+export {BotRemovedFromInventoryMessageParser} from './BotRemovedFromInventoryMessageParser';

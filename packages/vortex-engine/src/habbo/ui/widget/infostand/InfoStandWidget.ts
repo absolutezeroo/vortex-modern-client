@@ -46,6 +46,7 @@ import {InfoStandFurniData} from './InfoStandFurniData';
 import {InfoStandUserData} from './InfoStandUserData';
 import {InfoStandPetData} from './InfoStandPetData';
 import {InfoStandRentableBotData} from './InfoStandRentableBotData';
+import type {RoomWidgetRentableBotInfoUpdateEvent} from '../events/RoomWidgetRentableBotInfoUpdateEvent';
 
 // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::USER_VIEW / const_529 / PET_VIEW / ...
 const VIEW_NAME =
@@ -103,7 +104,7 @@ export class InfoStandWidget extends RoomWidgetBase
         this._userView = new InfoStandUserView(this, VIEW_NAME.USER);
         this._petView = new InfoStandPetView(this, VIEW_NAME.PET, catalog);
         this._botView = new InfoStandBotView(this, VIEW_NAME.BOT);
-        this._rentableBotView = new InfoStandRentableBotView(this, VIEW_NAME.RENTABLE_BOT, catalog);
+        this._rentableBotView = new InfoStandRentableBotView(this, VIEW_NAME.RENTABLE_BOT);
         this._jukeboxView = new InfoStandJukeboxView(this, VIEW_NAME.JUKEBOX, catalog);
         this._crackableFurniView = new InfoStandCrackableFurniView(this, VIEW_NAME.CRACKABLE_FURNI, catalog);
         this._songDiskView = new InfoStandSongDiskView(this, VIEW_NAME.SONGDISK, catalog);
@@ -313,9 +314,11 @@ export class InfoStandWidget extends RoomWidgetBase
     };
 
     // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onRentableBotInfo()
-    // TODO(AS3): param is RoomWidgetRentableBotInfoUpdateEvent — rentable bot view is a stub.
-    private onRentableBotInfo = (_event: unknown): void =>
+    private onRentableBotInfo = (event: RoomWidgetRentableBotInfoUpdateEvent): void =>
     {
+        this._rentableBotData.setData(event);
+        this._rentableBotView.update(event);
+        this.selectView(VIEW_NAME.RENTABLE_BOT);
     };
 
     // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onFurniInfo()

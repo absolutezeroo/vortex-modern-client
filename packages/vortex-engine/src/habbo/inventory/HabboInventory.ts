@@ -35,9 +35,16 @@ import {BadgesMessageEvent} from '../communication/messages/incoming/inventory/b
 import type {
     BadgesMessageParser, IBadgeData
 } from '../communication/messages/parser/inventory/badges/BadgesMessageParser';
-import {BotInventoryMessageEvent} from '@habbo/communication/messages/incoming/inventory/bots/BotInventoryMessageEvent';
-import type {BotInventoryMessageParser} from '@habbo/communication/messages/parser/inventory/bots/BotInventoryMessageParser';
-import {Bot} from './bots/Bot';
+import {
+    BotAddedToInventoryMessageEvent,
+    BotInventoryMessageEvent,
+    BotRemovedFromInventoryMessageEvent
+} from '@habbo/communication/messages/incoming/inventory/bots';
+import type {
+    BotAddedToInventoryMessageParser,
+    BotInventoryMessageParser,
+    BotRemovedFromInventoryMessageParser
+} from '@habbo/communication/messages/parser/inventory/bots';
 import {PetInventoryMessageEvent} from '../communication/messages/incoming/inventory/pets/PetInventoryMessageEvent';
 import type {PetInventoryMessageParser} from '../communication/messages/parser/inventory/pets/PetInventoryMessageParser';
 import {
@@ -97,6 +104,8 @@ import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
 import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
 import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
+import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
+import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
@@ -457,6 +466,21 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return this._botsModel;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_avatarRenderer
+    private _avatarRenderer: IAvatarRenderManager | null = null;
+
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get avatarRenderer()
+    get avatarRenderer(): IAvatarRenderManager | null
+    {
+        return this._avatarRenderer;
+    }
+
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get botsMax()
+    get botsMax(): number
+    {
+        return this.getInteger('inventory.bots.max', 150);
+    }
+
     private _tradingModel!: TradingModel;
 
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get tradingModel()
@@ -535,6 +559,18 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
                     this._roomEngine = roomEngine;
                 },
                 true
+            ),
+            // AS3: HabboInventory.as:158 — IIDAvatarRenderManager, declared there with no third
+            // argument (required). Kept OPTIONAL here, the same way HabboCatalog declares it: a hard
+            // dependency locks the whole component if nothing provides the IID, and the only reader
+            // is the bots grid, which renders nothing rather than blocking the inventory.
+            new ComponentDependency(
+                IID_AvatarRenderManager,
+                (manager: IAvatarRenderManager | null) =>
+                {
+                    this._avatarRenderer = manager;
+                },
+                false
             ),
             // Required, as AS3 declares it (no third argument). VortexMain attaches
             // SessionDataManager before HabboInventory, so this neither delays init
@@ -744,7 +780,17 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._roomEngine!,
             this._localization!
         );
-        this._botsModel = new BotsModel();
+        // AS3: HabboInventory.as:505 — `new BotsModel(this, _windowManager, _communication, assets,
+        // _roomEngine, _catalog, _avatarRenderer)`. Assets and the catalog are left out: the port's
+        // view builds its thumbnail through the window manager, and BotsModel never reads `_catalog`
+        // in AS3 either (it stores it and only disposes it).
+        this._botsModel = new BotsModel(
+            this,
+            this._windowManager!,
+            this._communication!,
+            this._roomEngine!,
+            this._avatarRenderer
+        );
         // AS3: HabboInventory.as:497 — `new TradingModel(this, _windowManager, _communication,
         // assets, _roomEngine, _localization, _soundManager, _notifications)`. The four the view
         // needs (window manager, assets, room engine, sound manager) are left out until
@@ -771,6 +817,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
         this._inventories.add('trading', this._tradingModel);
         this._inventories.add('pets', this._petsModel);
+        this._inventories.add('bots', this._botsModel);
 
         this._isInitialized = true;
     }
@@ -792,6 +839,10 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         else if(category === 'pets')
         {
             this._petsModel.categorySwitch(category);
+        }
+        else if(category === 'bots')
+        {
+            this._botsModel.categorySwitch(category);
         }
     }
 
@@ -843,6 +894,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     {
         this._furniModel?.closingInventoryView();
         this._petsModel?.closingInventoryView();
+        this._botsModel?.closingInventoryView();
         this.events.emit('HABBO_INVENTORY_TRACKING_EVENT_CLOSED');
     }
 
@@ -1231,47 +1283,64 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     }
 
     /**
-     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as:168
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as:168/193/205
      * — the bot branch of the same block. `BotsModel` was built and `BotInventory` was registered
      * in the header table, but nothing subscribed, so the reply was parsed and dropped and the bots
      * tab stayed empty however many times it was opened.
-     *
-     * TODO(AS3): the same block registers `BotAddedToInventory` (`_SafeCls_3954`, `onBotAdded`) and
-     * `BotRemovedFromInventory` (`_SafeCls_3331`, `onBotRemoved`). Neither message class exists in
-     * this port, so a bot bought or placed while the tab is open still needs a reopen to show up.
-     * `BotsModel.addBot()`/`removeBot()` are both ready for them.
      */
     private registerBotMessageEvents(): void
     {
         if(!this._communication) return;
 
         this._botMessageEvents.push(
-            this._communication.addMessageEvent(new BotInventoryMessageEvent(this.onBotInventory))
+            this._communication.addMessageEvent(new BotInventoryMessageEvent(this.onBotInventory)),
+            this._communication.addMessageEvent(new BotAddedToInventoryMessageEvent(this.onBotAdded)),
+            this._communication.addMessageEvent(new BotRemovedFromInventoryMessageEvent(this.onBotRemoved))
         );
     }
 
-    /**
-     * AS3: .../_SafeCls_1951.as::onBots()
-     *
-     * AS3 calls `setListInitialized()` after `updateItems()`; this port's `updateBots()` raises that
-     * flag itself, so the separate call would be redundant rather than missing.
-     */
+    // AS3: .../_SafeCls_1951.as::onBots()
     private onBotInventory = (event: IMessageEvent): void =>
     {
         const parser = event.parser as BotInventoryMessageParser | null;
 
         if(!parser || !this._botsModel) return;
 
-        const bots = new Map<number, Bot>();
-
-        for(const data of parser.bots)
-        {
-            bots.set(data.id, new Bot(data.id, data.name, data.motto, data.figure, data.gender));
-        }
-
-        this._botsModel.updateBots(bots);
+        this._botsModel.updateItems(parser.items);
         this.setInventoryCategoryInit('bots');
-        this._botsModel.updateView();
+        this._botsModel.setListInitialized();
+    };
+
+    /**
+     * AS3: .../_SafeCls_1951.as::onBotAdded()
+     *
+     * AS3 drops the bot silently once the hand is full (`items.length >= botsMax`) — the server has
+     * already granted it, so the cap only governs what the grid shows until the next full request.
+     *
+     * The parser's `openInventory` flag is what the emulator sets on a purchase and clears on a bot
+     * coming back out of a room; AS3 ignores it here, so this does too — the catalog's own
+     * post-purchase flow is what opens the inventory.
+     */
+    // AS3: .../src/com/sulake/habbo/inventory/_SafeCls_1951.as::onBotAdded()
+    private onBotAdded = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as BotAddedToInventoryMessageParser | null;
+
+        if(!parser || !this._botsModel || !parser.item) return;
+
+        if(this._botsModel.items.size >= this.botsMax) return;
+
+        this._botsModel.addItem(parser.item);
+    };
+
+    // AS3: .../_SafeCls_1951.as::onBotRemoved()
+    private onBotRemoved = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as BotRemovedFromInventoryMessageParser | null;
+
+        if(!parser || !this._botsModel) return;
+
+        this._botsModel.removeItem(parser.itemId);
     };
 
     /**

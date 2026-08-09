@@ -1,3 +1,4 @@
+import type {BotSkillData} from '@habbo/communication/messages/parser/room/bot/BotSkillData';
 /**
  * Interface for room user data
  * Based on AS3 com.sulake.habbo.session.class_3490 (IUserData)
@@ -62,7 +63,7 @@ export interface IUserData
     // AS3: .../src/com/sulake/habbo/session/_SafeCls_1826.as::get botSkills()
     botSkills: number[];
     // AS3: .../src/com/sulake/habbo/session/_SafeCls_1826.as::get botSkillData()
-    botSkillData: unknown[];
+    botSkillData: BotSkillData[];
 
     // Moderation
     // AS3: .../src/com/sulake/habbo/session/_SafeCls_1826.as::get isModerator()

@@ -47,6 +47,7 @@ import {
 } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 import {RoomWidgetFurniInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetFurniInfoUpdateEvent';
 import {RoomWidgetUserInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent';
+import {RoomWidgetRentableBotInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetRentableBotInfoUpdateEvent';
 import {RoomWidgetPetInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetPetInfoUpdateEvent';
 import {RoomSessionPetInfoUpdateEvent} from '@habbo/session/events/RoomSessionPetInfoUpdateEvent';
 import {RoomSessionPetCommandsUpdateEvent} from '@habbo/session/events/RoomSessionPetCommandsUpdateEvent';
@@ -958,8 +959,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
                 this.handleGetPetInfoMessage(userData.webID);
                 break;
             case 4:
-                // TODO(AS3): handleGetRentableBotInfoMessage() — needs a
-                // RoomWidgetRentableBotInfoUpdateEvent port, not created yet.
+                this.handleGetRentableBotInfoMessage(roomId, message.id, message.category, userData);
                 break;
         }
 
@@ -1085,6 +1085,42 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         event.amIAnyRoomController = container.sessionDataManager.isAnyRoomController;
         event.canBeKicked = container.roomSession.isRoomOwner;
         event.badges = [RoomWidgetUserInfoUpdateEvent.DEFAULT_BOT_BADGE_ID];
+        event.figure = userData.figure;
+
+        container.desktopEvents.emit(event.type, event);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetRentableBotInfoMessage()
+    // The rentable-bot sibling of handleGetBotInfoMessage() above. Two payload differences that
+    // matter: it carries the bot's owner (id and name, which the panel renders as a line of text)
+    // and its skill list, and it has no kick/guild-room fields — a bot is not a peer.
+    private handleGetRentableBotInfoMessage(roomId: number, roomIndex: number, category: number, userData: IUserData): void
+    {
+        const container = this._container;
+
+        if(!container?.sessionDataManager || !container.roomEngine) return;
+
+        const event = new RoomWidgetRentableBotInfoUpdateEvent();
+
+        event.name = userData.name;
+        event.motto = userData.custom;
+        event.webID = userData.webID;
+        event.userRoomId = roomIndex;
+        event.ownerId = userData.ownerId;
+        event.ownerName = userData.ownerName;
+        event.botSkills = userData.botSkills;
+
+        const object = container.roomEngine.getRoomObject(roomId, roomIndex, category);
+
+        if(object)
+        {
+            event.carryItem = object.getModel().getNumber(RoomObjectVariableEnum.AVATAR_CARRY_OBJECT);
+        }
+
+        event.amIOwner = container.roomSession.isRoomOwner;
+        event.myRoomControllerLevel = container.roomSession.roomControllerLevel;
+        event.amIAnyRoomController = container.sessionDataManager.isAnyRoomController;
+        event.badges = [RoomWidgetRentableBotInfoUpdateEvent.DEFAULT_BOT_BADGE_ID];
         event.figure = userData.figure;
 
         container.desktopEvents.emit(event.type, event);

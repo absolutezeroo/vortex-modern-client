@@ -1,4 +1,5 @@
 import type {IUserData} from './IUserData';
+import type {BotSkillData} from '@habbo/communication/messages/parser/room/bot/BotSkillData';
 
 /**
  * User data type constants
@@ -356,16 +357,17 @@ export class UserData implements IUserData
         this._botSkills = value;
     }
 
-    private _botSkillData: unknown[] = [];
+    // AS3: .../src/com/sulake/habbo/session/UserData.as::_botSkillData
+    private _botSkillData: BotSkillData[] = [];
 
     // AS3: .../src/com/sulake/habbo/session/UserData.as::get botSkillData()
-    get botSkillData(): unknown[]
+    get botSkillData(): BotSkillData[]
     {
         return this._botSkillData;
     }
 
     // AS3: .../src/com/sulake/habbo/session/UserData.as::set botSkillData()
-    set botSkillData(value: unknown[])
+    set botSkillData(value: BotSkillData[])
     {
         this._botSkillData = value;
     }

@@ -12,11 +12,12 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * first field: AS3 passes the raw room-object index here, where the pet branch passes the pet's
  * `webID` resolved through `userDataManager`.
  *
- * **The Turbo server does not implement it.** It has no bot entity at all
- * (`docs/CLIENT-SERVER-ARCHITECTURE.md` §"Bots — Do Not Exist"), so this send is answered by
- * nothing. It is ported anyway because `sendMoveUserObjectMessage()` cannot be a faithful port
- * with one of its two branches missing — the same reasoning already applied to
- * {@link RemoveBotFromFlatMessageComposer} on the pickup path.
+ * **The Turbo server has no handler for this id.** vortex-emulator does have bots as of
+ * 2026-08-08 (entity, inventory, placement, pickup, chatter — see
+ * `Vortex.Rooms/Grains/RoomGrain.Bots.cs`), but 1295 appears nowhere in its `Headers.cs`, so a
+ * bot dragged around the room is moved client-side only and snaps back on the next room entry.
+ * It is ported anyway because `sendMoveUserObjectMessage()` cannot be a faithful port with one of
+ * its two branches missing.
  *
  * The name is derived from the message's role: no unobfuscated tree carries this composer
  * (`_SafeCls_2801` in the primary dump, absent from the 2016 PRODUCTION build), and unlike

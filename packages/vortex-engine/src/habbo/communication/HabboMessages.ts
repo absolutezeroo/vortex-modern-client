@@ -102,7 +102,9 @@ import {
     BadgeReceivedEvent,
     BadgeInformationEvent,
     BadgesMessageEvent,
+    BotAddedToInventoryMessageEvent,
     BotInventoryMessageEvent,
+    BotRemovedFromInventoryMessageEvent,
     ConfirmBreedingRequestEvent,
     ConfirmBreedingResultEvent,
     CreditBalanceEvent,
@@ -305,6 +307,14 @@ import {
     PetPlacingErrorEvent,
     PetStatusUpdateEvent
 } from './messages/incoming/room/pet';
+
+// Incoming Events - Room Rentable Bot
+import {
+    BotCommandConfigurationEvent,
+    BotErrorEvent,
+    BotForceOpenContextMenuEvent,
+    BotSkillListUpdateEvent
+} from './messages/incoming/room/bot';
 
 // Incoming Events - User Defined Room Events (Wired)
 import {
@@ -893,6 +903,8 @@ import {
 
 // Outgoing Composers - Room Rentable Bots
 import {
+    CommandBotComposer,
+    GetBotCommandConfigurationDataComposer,
     MoveBotMessageComposer,
     PlaceBotMessageComposer,
     RemoveBotFromFlatMessageComposer
@@ -1318,6 +1330,12 @@ export class HabboMessages implements IMessageConfiguration
         // com/sulake/habbo/inventory/_SafeCls_1951.as:168). Header 2902 there is really
         // onGameStarted (_SafeCls_3582), an unrelated, unported message.
         this._events.set(682, BotInventoryMessageEvent);
+        // The two single-bot deltas, both from WIN63's own registry (`_SafeStr_4546[3570]` =
+        // _SafeCls_3954 / `[2032]` = _SafeCls_3331) and corroborated by the emulator
+        // (BotAddedToInventoryComposer / BotRemovedFromInventoryComposer). Without them a bought bot
+        // only appeared after a full re-request, and a placed one stayed in the grid.
+        this._events.set(3570, BotAddedToInventoryMessageEvent);
+        this._events.set(2032, BotRemovedFromInventoryMessageEvent);
 
         // === INVENTORY - TRADING ===
         this._events.set(953, TradingOpenMessageEvent);
@@ -1533,6 +1551,17 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(946, PetExperienceEvent);
         this._events.set(3195, PetPlacingErrorEvent);
         this._events.set(2940, PetBreedingResultEvent);
+
+        // === ROOM RENTABLE BOT ===
+        // Same route as the pet block above: every id read out of WIN63's own registry
+        // (`_SafeStr_4546[2463]/[1293]/[2336]/[520]`), each class identified by the member that
+        // subscribes to it — BotSkillConfigurationViewBase.open() for the configuration answer,
+        // RoomDesktop for the skill list and the forced context menu, RoomUsersHandler::onBotError
+        // for the refusal. All four corroborated by vortex-emulator's own composer constants.
+        this._events.set(2463, BotCommandConfigurationEvent);
+        this._events.set(1293, BotSkillListUpdateEvent);
+        this._events.set(2336, BotForceOpenContextMenuEvent);
+        this._events.set(520, BotErrorEvent);
 
         // Monster-plant breeding, same registry, same identification route (RoomUsersHandler.as:90-95
         // for the first four, habbo/inventory/_SafeCls_1951.as:195 for the last):
@@ -2330,11 +2359,16 @@ export class HabboMessages implements IMessageConfiguration
         // composer. See PlaceBotMessageComposer's own note.
         this._composers.set(2102, PlaceBotMessageComposer);
         // AS3: _SafeCls_1821.as::sendMoveUserObjectMessage() "rentable_bot" branch — the sibling of
-        // MovePet (432) above. `_composers[1295] = _SafeCls_2801` in the registry; unanswered by the
-        // Turbo server, which has no bots. See MoveBotMessageComposer's own note.
+        // MovePet (432) above. `_composers[1295] = _SafeCls_2801` in the registry; the Turbo server
+        // has bots but no handler at this id. See MoveBotMessageComposer's own note.
         this._composers.set(1295, MoveBotMessageComposer);
         // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_PICKUP_BOT" — takes webID, not objectId.
         this._composers.set(2743, RemoveBotFromFlatMessageComposer);
+        // The bot context menu's two senders. Both ids read straight out of WIN63's registry
+        // (`_composers[3813] = _SafeCls_2928`, `_composers[2311] = _SafeCls_3415`) and corroborated
+        // by vortex-emulator (CommandBotEvent / GetBotCommandConfigurationDataEvent).
+        this._composers.set(3813, CommandBotComposer);
+        this._composers.set(2311, GetBotCommandConfigurationDataComposer);
         this._composers.set(3713, TogglePetRidingPermissionComposer);
         this._composers.set(2884, RemoveSaddleFromPetComposer);
         this._composers.set(2425, GetPetCommandsComposer);

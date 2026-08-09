@@ -104,6 +104,25 @@ import {FurnitureContextMenuWidgetHandler} from './handler/FurnitureContextMenuW
 import {RoomWidgetFurniToWidgetMessage} from './widget/messages/RoomWidgetFurniToWidgetMessage';
 import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
 import type {IRoomWidget} from './widget/IRoomWidget';
+import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import {
+    BotSkillListUpdateEvent
+} from '@habbo/communication/messages/incoming/room/bot/BotSkillListUpdateEvent';
+import {
+    BotForceOpenContextMenuEvent
+} from '@habbo/communication/messages/incoming/room/bot/BotForceOpenContextMenuEvent';
+import type {
+    BotSkillListUpdateParser
+} from '@habbo/communication/messages/parser/room/bot/BotSkillListUpdateParser';
+import type {
+    BotForceOpenContextMenuParser
+} from '@habbo/communication/messages/parser/room/bot/BotForceOpenContextMenuParser';
+import {
+    RoomWidgetRentableBotSkillListUpdateEvent
+} from './widget/events/RoomWidgetRentableBotSkillListUpdateEvent';
+import {
+    RoomWidgetRentableBotForceOpenContextMenuEvent
+} from './widget/events/RoomWidgetRentableBotForceOpenContextMenuEvent';
 
 const log = Logger.getLogger('habbo.ui.RoomDesktop');
 
@@ -163,7 +182,61 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._layoutManager = new RoomDesktopLayoutManager();
         this._colorTransitioner = new ColorTransitioner();
         this._bgColorTransitioner = new ColorTransitioner(0x000000, 0);
+
+        // AS3: RoomDesktop.as:228-231 — the two rentable-bot messages the desktop itself owns (the
+        // rest of the bot traffic belongs to a widget or to RoomUsersHandler). Both are translated
+        // into widget events for AvatarInfoWidget.
+        if(connection !== null)
+        {
+            this._botSkillListEvent = new BotSkillListUpdateEvent(this.onBotSkillListUpdateEvent);
+            this._botForceOpenContextMenuEvent = new BotForceOpenContextMenuEvent(this.onBotForceOpenContextMenuEvent);
+
+            connection.addMessageEvent(this._botSkillListEvent);
+            connection.addMessageEvent(this._botForceOpenContextMenuEvent);
+        }
     }
+
+    // AS3: RoomDesktop.as::_SafeStr_6316
+    private _botSkillListEvent: IMessageEvent | null = null;
+    // AS3: RoomDesktop.as::_SafeStr_6270
+    private _botForceOpenContextMenuEvent: IMessageEvent | null = null;
+
+    /**
+     * AS3: RoomDesktop.as::onBotSkillListUpdateEvent()
+     *
+     * The list is written back onto the bot's own user data *before* the widget event goes out, so
+     * a later info event (which reads `botSkillData`) sees the same skills. AS3 copies the array
+     * rather than sharing it.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::onBotSkillListUpdateEvent()
+    private onBotSkillListUpdateEvent = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as BotSkillListUpdateParser | null;
+
+        if(parser === null) return;
+
+        const userData = this._session?.userDataManager?.getRentableBotUserData(parser.botId) ?? null;
+
+        if(userData !== null) userData.botSkillData = parser.skillList.slice();
+
+        this._desktopEvents.emit(
+            RoomWidgetRentableBotSkillListUpdateEvent.SKILL_LIST,
+            new RoomWidgetRentableBotSkillListUpdateEvent(parser.botId, parser.skillList)
+        );
+    };
+
+    // AS3: RoomDesktop.as::onBotForceOpenContextMenuEvent()
+    private onBotForceOpenContextMenuEvent = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as BotForceOpenContextMenuParser | null;
+
+        if(parser === null) return;
+
+        this._desktopEvents.emit(
+            RoomWidgetRentableBotForceOpenContextMenuEvent.OPEN,
+            new RoomWidgetRentableBotForceOpenContextMenuEvent(parser.botId)
+        );
+    };
 
     private _desktopEvents: EventEmitter;
 
@@ -1715,6 +1788,19 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 (widget as any).dispose();
             }
         }
+
+        if(this._connection !== null)
+        {
+            if(this._botSkillListEvent !== null) this._connection.removeMessageEvent(this._botSkillListEvent);
+
+            if(this._botForceOpenContextMenuEvent !== null)
+            {
+                this._connection.removeMessageEvent(this._botForceOpenContextMenuEvent);
+            }
+        }
+
+        this._botSkillListEvent = null;
+        this._botForceOpenContextMenuEvent = null;
 
         this._widgets.clear();
         this._widgetMessageHandlers.clear();

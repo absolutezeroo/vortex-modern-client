@@ -44,6 +44,22 @@ import {AvatarInfoData} from './AvatarInfoData';
 import {OwnAvatarMenuView} from './OwnAvatarMenuView';
 import {PetInfoData} from './PetInfoData';
 import {PetMenuView} from './PetMenuView';
+import {RentableBotMenuView} from './RentableBotMenuView';
+import {RentableBotInfoData} from './RentableBotInfoData';
+import {BotSkillEnum} from './botskills/BotSkillEnum';
+import {BotChangeNameConfiguration} from './botskills/BotChangeNameConfiguration';
+import {BotChatterMarkovConfiguration} from './botskills/BotChatterMarkovConfiguration';
+import type {IBotSkillConfigurationView} from './botskills/IBotSkillConfigurationView';
+import {
+    RoomWidgetRentableBotInfoUpdateEvent
+} from '../events/RoomWidgetRentableBotInfoUpdateEvent';
+import {
+    RoomWidgetRentableBotSkillListUpdateEvent
+} from '../events/RoomWidgetRentableBotSkillListUpdateEvent';
+import {
+    RoomWidgetRentableBotForceOpenContextMenuEvent
+} from '../events/RoomWidgetRentableBotForceOpenContextMenuEvent';
+import type {BotSkillData} from '@habbo/communication/messages/parser/room/bot/BotSkillData';
 import {OwnPetMenuView} from './OwnPetMenuView';
 import {UseProductView} from './UseProductView';
 import {BreedPetView} from './BreedPetView';
@@ -75,6 +91,9 @@ const RIDE_EFFECT: number = 77;
 
 // IUserData.type for a pet — the literal AS3 passes to PetMenuView.setup()/getUserDataByType().
 const USER_TYPE_PET: number = 2;
+// AS3: AvatarInfoWidget.as::updateRentableBotView() compares `userType != 4` directly — the
+// `rentable_bot` slot of RoomObjectUserTypes, the same literal BotsModel places with.
+const USER_TYPE_RENTABLE_BOT: number = 4;
 
 // PetInfoData.petType for a monsterplant (AvatarInfoWidget.as::isMonsterPlant()).
 const PET_TYPE_MONSTERPLANT: number = 16;
@@ -101,6 +120,18 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     private _cachedOwnPetMenu: OwnPetMenuView | null = null;
     // AS3: AvatarInfoWidget.as::_cachedPetMenu (obfuscated `_SafeStr_5550`)
     private _cachedPetMenu: PetMenuView | null = null;
+
+    // AS3: AvatarInfoWidget.as::_SafeStr_4824 — the rentable-bot state both the menu and the skill
+    // list update write into, kept across events the way `_petData` is for pets.
+    private _rentableBotData: RentableBotInfoData | null = null;
+    // AS3: AvatarInfoWidget.as::_SafeStr_5587
+    private _cachedRentableBotMenu: RentableBotMenuView | null = null;
+    // AS3: AvatarInfoWidget.as::_SafeStr_5434 — one editor per skill id, built on first use and
+    // reused afterwards (each keeps its own message subscription).
+    private _botSkillConfigurationViews: Map<number, IBotSkillConfigurationView> = new Map();
+    // AS3: AvatarInfoWidget.as::_SafeStr_5950 — the last skill list seen per bot id. AS3 keys it by
+    // `webID.toString()`; a numeric key is the same lookup here.
+    private _botSkillsByBotId: Map<number, BotSkillData[]> = new Map();
 
     // AS3: AvatarInfoWidget.as::_handlePetInfo
     private _handlePetInfo: boolean = true;
@@ -164,6 +195,9 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this.container?.desktopEvents.on(RoomWidgetPetBreedingResultEvent.PET_BREEDING_RESULT, this.onPetBreedingResult);
         this.container?.desktopEvents.on(RoomWidgetConfirmPetBreedingEvent.CONFIRM_PET_BREEDING, this.onConfirmPetBreeding);
         this.container?.desktopEvents.on(RoomWidgetConfirmPetBreedingResultEvent.CONFIRM_PET_BREEDING_RESULT, this.onConfirmPetBreedingResult);
+        this.container?.desktopEvents.on(RoomWidgetRentableBotInfoUpdateEvent.RENTABLE_BOT, this.onRentableBotInfoUpdate);
+        this.container?.desktopEvents.on(RoomWidgetRentableBotSkillListUpdateEvent.SKILL_LIST, this.onRentableBotSkillListUpdate);
+        this.container?.desktopEvents.on(RoomWidgetRentableBotForceOpenContextMenuEvent.OPEN, this.onRentableBotForceOpenContextMenu);
         this.container?.desktopEvents.on(RoomWidgetRoomObjectUpdateEvent.FURNI_ADDED, this.onFurniAdded);
         this.container?.inventory?.events.on(HabboInventoryEffectsEvent.HIEE_EFFECTS_CHANGED, this.onEffectsChanged);
     }
@@ -423,6 +457,199 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         {
             this.removeView(this._activeView, false);
         }
+    }
+
+    /**
+     * AS3: AvatarInfoWidget.as::updateEventHandler() (RWRBIUE_RENTABLE_BOT case)
+     *
+     * The click panel's info event also drives the bubble. The skill list is not on it — AS3 reads
+     * the last one seen off the room session's user data (`getRentableBotUserData().botSkillData`),
+     * which is what `BotSkillListUpdate` fills in.
+     */
+    // AS3: AvatarInfoWidget.as::updateEventHandler() (RWRBIUE_RENTABLE_BOT case)
+    private onRentableBotInfoUpdate = (event: RoomWidgetRentableBotInfoUpdateEvent): void =>
+    {
+        if(this._rentableBotData === null) this._rentableBotData = new RentableBotInfoData();
+
+        this._rentableBotData.populate(event);
+
+        const roomId = this.container?.roomEngine?.activeRoomId ?? -1;
+        const session = this.container?.roomSessionManager?.getSession(roomId) ?? null;
+
+        if(session === null) return;
+
+        const userData = session.userDataManager.getRentableBotUserData(event.webID);
+
+        if(userData === null) return;
+
+        const skills = userData.botSkillData;
+
+        this._botSkillsByBotId.set(event.webID, skills);
+
+        if(skills.length > 0) this._rentableBotData.cloneAndSetSkillsWithCommands(skills);
+
+        this.updateRentableBotView(
+            event.webID, event.name, event.userRoomId, this._rentableBotData
+        );
+    };
+
+    // AS3: AvatarInfoWidget.as::updateEventHandler() (RWRBSLUE_SKILL_LIST case)
+    // `keepClosed` is true here: a skill list arriving on its own refreshes an open bubble but must
+    // not pop one open.
+    private onRentableBotSkillListUpdate = (event: RoomWidgetRentableBotSkillListUpdateEvent): void =>
+    {
+        this._botSkillsByBotId.set(event.botId, event.botSkillsWithCommands);
+
+        const data = this._rentableBotData;
+
+        if(data === null) return;
+
+        data.cloneAndSetSkillsWithCommands(event.botSkillsWithCommands);
+        this.updateRentableBotView(data.id, data.name, data.roomIndex, data, true);
+    };
+
+    /**
+     * AS3: AvatarInfoWidget.as::updateEventHandler() (RWRBFOCME_OPEN case)
+     *
+     * With a bot already selected the bubble is simply forced open. Without one, the panel has
+     * never been asked for this bot, so the request goes the long way round: ask for the object
+     * info and select the avatar, which brings the info event back through the case above.
+     */
+    // AS3: AvatarInfoWidget.as::updateEventHandler() (RWRBFOCME_OPEN case)
+    private onRentableBotForceOpenContextMenu = (event: RoomWidgetRentableBotForceOpenContextMenuEvent): void =>
+    {
+        const data = this._rentableBotData;
+
+        if(data !== null)
+        {
+            this.updateRentableBotView(data.id, data.name, data.roomIndex, data, false, true);
+
+            return;
+        }
+
+        const roomId = this.container?.roomEngine?.activeRoomId ?? -1;
+        const session = this.container?.roomSessionManager?.getSession(roomId) ?? null;
+        const userData = session?.userDataManager.getUserDataByType(event.botId, USER_TYPE_RENTABLE_BOT) ?? null;
+
+        if(userData === null) return;
+
+        this.messageListener?.processWidgetMessage(
+            new RoomWidgetRoomObjectMessage(
+                RoomWidgetRoomObjectMessage.GET_OBJECT_INFO,
+                userData.roomObjectId,
+                RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
+            )
+        );
+
+        // TODO(AS3): AS3 follows with `roomEngine.selectAvatar(roomId, roomObjectId)`, which is
+        // `RoomObjectEventHandler.setSelectedAvatar()` — neither is ported (IRoomEngine has no
+        // selectAvatar and the event handler has no setSelectedAvatar). The panel still opens: the
+        // object-info message above is what brings the info event back. Only the room-side
+        // selection highlight is missing.
+    };
+
+    /**
+     * AS3: AvatarInfoWidget.as::updateRentableBotView()
+     *
+     * The pet-view sibling, with three differences that all come from the AS3: the bubble is gated
+     * on the `menu.bot.enabled` config; `keepClosed` suppresses opening a bubble that is not
+     * already up (the skill-list path); and `forceOpen` overrides both.
+     */
+    // AS3: AvatarInfoWidget.as::updateRentableBotView()
+    private updateRentableBotView(
+        botId: number,
+        userName: string,
+        roomIndex: number,
+        data: RentableBotInfoData | null,
+        keepClosed: boolean = false,
+        forceOpen: boolean = false
+    ): void
+    {
+        if(data === null) return;
+
+        const showBotContextMenu = this._config?.getBoolean('menu.bot.enabled') ?? false;
+        const doNotOpen = forceOpen ? false : keepClosed && this._activeView === null;
+        const active = this._activeView;
+
+        if(showBotContextMenu
+            && active
+            && !(active instanceof OwnAvatarMenuView
+                || active instanceof PetMenuView
+                || active instanceof OwnPetMenuView
+                || active instanceof RentableBotMenuView))
+        {
+            this.removeView(active, false);
+        }
+
+        this.removeUseProductViews();
+
+        const current = this._activeView;
+        const isSameBubble = current !== null
+            && current.userId === botId
+            && current.userName === userName
+            && current.roomIndex === roomIndex
+            && current.userType === USER_TYPE_RENTABLE_BOT;
+
+        // AS3's condition verbatim: a click on the bot already showing (and not keepClosed) rebuilds
+        // the bubble, which is what makes a second click on the same bot close it below.
+        if(forceOpen
+            || (current !== null && current.userId === botId && !keepClosed)
+            || current === null
+            || !isSameBubble)
+        {
+            if(current !== null) this.removeView(current, false);
+
+            if(this.isGameMode()) return;
+
+            if(!this._cachedRentableBotMenu) this._cachedRentableBotMenu = new RentableBotMenuView(this);
+
+            if(doNotOpen) return;
+
+            this._pendingMenuRoomIndex = roomIndex;
+
+            this._buttonsSetup = (): void =>
+            {
+                const view = this._cachedRentableBotMenu;
+
+                if(!view) return;
+
+                this._activeView = view;
+                RentableBotMenuView.setup(view, botId, userName, roomIndex, USER_TYPE_RENTABLE_BOT, data);
+            };
+
+            this.maybeSetupMenuView(roomIndex);
+        }
+        else if(current instanceof RentableBotMenuView && current.userName === userName)
+        {
+            this.removeView(current, false);
+        }
+    }
+
+    /**
+     * AS3: AvatarInfoWidget.as::openBotSkillConfigurationView()
+     *
+     * Only two skills have an editor; anything else returns without opening one, which is why the
+     * AS3 switch has a `default: return`.
+     */
+    // AS3: AvatarInfoWidget.as::openBotSkillConfigurationView()
+    public openBotSkillConfigurationView(botId: number, skillType: number, position: {x: number; y: number} | null = null): void
+    {
+        if(!this._botSkillConfigurationViews.has(skillType))
+        {
+            switch(skillType)
+            {
+                case BotSkillEnum.CHATTER_MARKOV:
+                    this._botSkillConfigurationViews.set(skillType, new BotChatterMarkovConfiguration(this));
+                    break;
+                case BotSkillEnum.CHANGE_NAME:
+                    this._botSkillConfigurationViews.set(skillType, new BotChangeNameConfiguration(this));
+                    break;
+                default:
+                    return;
+            }
+        }
+
+        this._botSkillConfigurationViews.get(skillType)?.open(botId, position);
     }
 
     // AS3: AvatarInfoWidget.as::maybeSetupMenuView()
@@ -1170,6 +1397,9 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this.container?.desktopEvents.off(RoomWidgetPetBreedingResultEvent.PET_BREEDING_RESULT, this.onPetBreedingResult);
         this.container?.desktopEvents.off(RoomWidgetConfirmPetBreedingEvent.CONFIRM_PET_BREEDING, this.onConfirmPetBreeding);
         this.container?.desktopEvents.off(RoomWidgetConfirmPetBreedingResultEvent.CONFIRM_PET_BREEDING_RESULT, this.onConfirmPetBreedingResult);
+        this.container?.desktopEvents.off(RoomWidgetRentableBotInfoUpdateEvent.RENTABLE_BOT, this.onRentableBotInfoUpdate);
+        this.container?.desktopEvents.off(RoomWidgetRentableBotSkillListUpdateEvent.SKILL_LIST, this.onRentableBotSkillListUpdate);
+        this.container?.desktopEvents.off(RoomWidgetRentableBotForceOpenContextMenuEvent.OPEN, this.onRentableBotForceOpenContextMenu);
         this.container?.desktopEvents.off(RoomWidgetRoomObjectUpdateEvent.FURNI_ADDED, this.onFurniAdded);
         this.container?.inventory?.events.off(HabboInventoryEffectsEvent.HIEE_EFFECTS_CHANGED, this.onEffectsChanged);
 
@@ -1185,6 +1415,18 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this._cachedOwnPetMenu = null;
         this._cachedPetMenu?.dispose();
         this._cachedPetMenu = null;
+        this._cachedRentableBotMenu?.dispose();
+        this._cachedRentableBotMenu = null;
+
+        // AS3: AvatarInfoWidget.as::dispose() disposes every built skill editor — each holds a
+        // connection subscription that would otherwise outlive the widget.
+        for(const view of this._botSkillConfigurationViews.values())
+        {
+            view.dispose();
+        }
+
+        this._botSkillConfigurationViews.clear();
+        this._botSkillsByBotId.clear();
         this._buttonsSetup = null;
         this._activeView = null;
 

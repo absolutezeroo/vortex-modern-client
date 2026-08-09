@@ -1,84 +1,54 @@
+import type {IRoomSession} from '@habbo/session/IRoomSession';
+import type {IInventoryModel} from '../IInventoryModel';
 import type {Bot} from './Bot';
 
 /**
- * Interface for BotsModel
+ * IBotsModel — the bots-inventory category model.
  *
- * Based on AS3 com.sulake.habbo.inventory.bots.BotsModel (ENGINE only)
+ * AS3 has no `IBotsModel`: `BotsModel` implements `IInventoryModel` and `HabboInventory` hands out
+ * the concrete class (`get botsModel():BotsModel`). This interface is the port's equivalent of that
+ * concrete type for consumers outside the package, and extends the same shared contract.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/bots/BotsModel.as
  */
-export interface IBotsModel
+export interface IBotsModel extends IInventoryModel
 {
-    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::get disposed()
+    // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::get disposed()
     readonly disposed: boolean;
-    readonly isListInitialized: boolean;
-    readonly bots: Map<number, Bot>;
 
-    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::dispose()
-    dispose(): void;
+    // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::get items()
+    readonly items: Map<number, Bot>;
 
-    /**
-	 * Add a single bot
-	 * Returns true if added (new), false if already exists
-	 */
-    addBot(bot: Bot): boolean;
+    // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::get roomSession()
+    readonly roomSession: IRoomSession | null;
 
-    /**
-	 * Update bots from full list
-	 * Returns info about what changed
-	 */
-    updateBots(bots: Map<number, Bot>): {
-        added: number[];
-        removed: number[];
-    };
+    // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::isListInitialized()
+    isListInitialized(): boolean;
 
-    /**
-	 * Remove a bot by ID
-	 * Returns the removed bot or null
-	 */
-    removeBot(id: number): Bot | null;
+    // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::setListInitialized()
+    setListInitialized(): void;
 
-    /**
-	 * Get bot by ID
-	 */
-    getBotById(id: number): Bot | null;
+    // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::requestInventory()
+    requestInventory(): void;
 
-    /**
-	 * Get all bots as array
-	 */
-    getBotsArray(): Bot[];
+    // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::addItem()
+    addItem(data: Bot): void;
 
-    /**
-	 * Get selected bot
-	 */
-    getSelectedBot(): Bot | null;
+    // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::updateItems()
+    updateItems(items: Map<number, Bot>): void;
 
-    /**
-	 * Select bot by ID
-	 */
-    selectBot(id: number): void;
+    // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::removeItem()
+    removeItem(id: number): void;
 
-    /**
-	 * Remove all selections
-	 */
-    removeSelections(): void;
+    // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::getItemById()
+    getItemById(id: number): Bot | null;
 
-    /**
-	 * Reset unseen flags
-	 * Returns IDs that were marked as unseen
-	 */
-    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::resetUnseenItems()
-    resetUnseenItems(): number[];
+    // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::placeItemToRoom()
+    placeItemToRoom(id: number, skipServer?: boolean): boolean;
 
-    /**
-	 * Mark bots as unseen based on IDs
-	 */
-    updateUnseenItems(unseenIds: number[]): void;
+    // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::resetUnseenItems()
+    resetUnseenItems(): void;
 
-    /**
-	 * Check if bot is unseen
-	 */
-    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::isUnseen()
+    // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::isUnseen()
     isUnseen(id: number): boolean;
-
-    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::updateView()
-    updateView(): void;
 }

@@ -40,7 +40,7 @@ import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
 import {RoomObjectCategoryEnum} from './object/RoomObjectCategoryEnum';
-import {RoomObjectUserTypes} from './object/RoomObjectUserTypes';
+import {RoomObjectUserTypes, getUserTypeName} from './object/RoomObjectUserTypes';
 import {RoomObjectVariableEnum} from './object/RoomObjectVariableEnum';
 import {RoomEngineEvent} from './events/RoomEngineEvent';
 import {RoomEngineObjectEvent} from './events/RoomEngineObjectEvent';
@@ -1870,9 +1870,9 @@ export class RoomEngine extends Component implements IRoomEngine,
             // new _SafeCls_3108(webID)) (id 2743).
             case 'OBJECT_PICKUP_BOT': {
                 // Mirrors the pet branch above: AS3 resolves the user data and sends its webID,
-                // not the room-object id. The Turbo server will not act on it — it has no bot
-                // entity at all (docs/CLIENT-SERVER-ARCHITECTURE.md §18 "Bots — Do Not Exist") —
-                // but the client side is now the faithful port rather than a warning.
+                // not the room-object id. The server answers it (RemoveBotFromFlatMessageHandler
+                // → BotRemovedFromInventory/BotAddedToInventory), so the bot really does come back
+                // into the hand.
                 if(this._connection === null) return false;
 
                 const session = this._roomSessionManager?.getSession(this._activeRoomId) ?? null;
@@ -4454,8 +4454,22 @@ export class RoomEngine extends Component implements IRoomEngine,
                 return;
             }
 
-            // TODO(AS3): the non-pet category-100 icons (user, bot, rentable bot) go through
-            // getUserImage()/getBotImage() in AS3; neither is ported, so no icon is shown for them.
+            // AS3: _SafeCls_90.as::setObjectMoverIconSprite():2545-2548 — every other user type
+            // (user, bot, rentable bot) renders through getGenericRoomObjectImage() with the type
+            // NAME and the figure as its param, facing 180. That is the same path the temporary-room
+            // render already supports for 'user'/'bot'/'rentable_bot', so a bot dragged out of the
+            // inventory now has a fallback icon instead of nothing.
+            const typeName = getUserTypeName(id);
+
+            if(typeName !== null)
+            {
+                this.getGenericRoomObjectImage(
+                    typeName, extra ?? '', new Vector3d(180), 1, listener, 0, null, null, -1, -1, posture
+                );
+
+                return;
+            }
+
             log.warn(`setObjectMoverIconSprite: no icon path for user type ${id}`);
 
             return;
@@ -4573,8 +4587,8 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(object.getType() === 'rentable_bot')
         {
-            // The Turbo server has no bot entity, so nothing answers this — see
-            // MoveBotMessageComposer and docs/CLIENT-SERVER-ARCHITECTURE.md §"Bots — Do Not Exist".
+            // The server has bots, but no handler registered at 1295, so the move stays
+            // client-side until one exists — see MoveBotMessageComposer.
             this._connection.send(new MoveBotMessageComposer(objectId, x, y, direction));
 
             return true;

@@ -571,7 +571,7 @@ Real flow, a clean two-grain cross-call matching the "one grain per responsibili
 
 Handler: `Turbo.PacketHandlers/Room/Engine/PlaceObjectMessageHandler.cs` (parses wall vs. floor coordinate strings) → `IRoomService.PlaceFloorItemInRoomAsync`/`PlaceWallItemInRoomAsync` (`Turbo.Rooms/RoomService.Floor.cs`/`.Wall.cs`).
 
-The place/move/pickup/use core furniture loop is complete for the literal verbs (`ROADMAP.md` Epic 1: "100%"); peripheral extras (gift/mystery-trophy consumables, dimmer, mannequin figure display, YouTube display furni, rent/buyout flows, bot placement, pet mounting UX) remain partial — the underlying furniture stuff-data types (`Turbo.Furniture/StuffData/*.cs`) exist, the surrounding UX flows for some of them don't.
+The place/move/pickup/use core furniture loop is complete for the literal verbs (`ROADMAP.md` Epic 1: "100%"); peripheral extras (gift/mystery-trophy consumables, dimmer, mannequin figure display, YouTube display furni, rent/buyout flows, pet mounting UX) remain partial — the underlying furniture stuff-data types (`Turbo.Furniture/StuffData/*.cs`) exist, the surrounding UX flows for some of them don't.
 
 ---
 
@@ -738,9 +738,26 @@ The failures are contained: `SocketConnection.handleReceivedMessage()` wraps `pa
 
 The client ports all of these AS3-faithfully anyway (`habbo/communication/messages/{incoming,parser}/room/pet/`), because the client's job is to speak the real protocol; **the fix belongs in the emulator's serializers**, and the three empty ones are the obvious starting point.
 
-### Bots — Do Not Exist
+### Bots — built server-side on 2026-08-08
 
-`DATA-MODEL.md` §5 explicitly heads this "**Bots — TO CREATE**" — no `BotEntity`, no migration, no bot AI anywhere. What exists is purely the **wire protocol surface**: message classes (`PlaceBotMessage`, `CommandBotMessage`, `RemoveBotFromFlatMessage`, etc.) and their parsers/serializers — inherited from the protocol/revision definitions, not built out. Every handler is a genuine no-op, identical in shape to the Trading stubs in §13. `GetBotInventoryMessageHandler` truthfully returns an empty inventory rather than faking data. Do not describe bots as a working feature anywhere derived from this doc.
+**This section used to read "Bots — Do Not Exist". That is no longer true**, and the row in the
+summary table below said the same thing; both were written before the emulator grew the feature.
+
+vortex-emulator now has: `Vortex.Database/Entities/Room/BotEntity.cs` with its `AddBots` /
+`AddBotSkills` migrations, `Vortex.Inventory/Grains/InventoryGrain.Bots.cs` (list, create, grant on
+purchase), `Vortex.Rooms/Grains/RoomGrain.Bots.cs` plus `RoomBotSystem{,.Chatter,.Motion}.cs` (a
+placed bot stands, wanders and says what its owner configured), and real handlers for
+`GetBotInventoryMessage`, `PlaceBotMessage`, `RemoveBotFromFlatMessage`, `CommandBotMessage` and
+`GetBotCommandConfigurationDataMessage`. A `Robot` catalog product grants a bot: the look comes from
+the product's `figure` / `figure;f` field, the name from the buyer.
+
+Wire shape, from `Serializers/Inventory/Bots/BotSerialization.cs` — note the order, which is the
+client's own (`_SafeCls_3143`): `int id`, `string name`, `string motto`, **`string gender`**,
+`string figure`. `BotAddedToInventory` (3570) appends a boolean telling the client whether to open
+the inventory; `BotRemovedFromInventory` (2032) carries the id alone.
+
+Still missing server-side: **`MoveBotMessage` (1295) has no handler and the id is absent from
+`Headers.cs`** — dragging a placed bot moves it client-side only.
 
 ---
 
@@ -885,7 +902,7 @@ All items below are sourced directly from the emulator's own status docs (`ROADM
 |---|---|
 | Trading (classic room-to-room) | 100% stub handlers (§13) |
 | Achievements | 100% stub, `AchievementScore` hardcoded 0 (§20) |
-| Bots | Protocol scaffolding only, no entity/AI (§18) |
+| Bots | **Built 2026-08-08** — entity, inventory, purchase, placement, pickup, chatter/wander (§18). Only `MoveBot` (1295) is unhandled |
 | Games (SnowStorm/Freeze/BattleBall-style) | 100% stub, no `Turbo.Games` project exists (§19) |
 | Avatar effects | Deferred alongside Achievements — needs a full subsystem from zero |
 
@@ -904,7 +921,7 @@ All items below are sourced directly from the emulator's own status docs (`ROADM
 
 ### Overall Completeness Caveat
 
-`CONSOLIDATION.md` notes that a large fraction of packet handlers by raw count are still empty stubs (its own snapshots range from "~300 of ~501" to an older, now-superseded "393 of 498 (78%)" figure — the two numbers reflect different points in time, not a contradiction to resolve). The correct read is: **coverage is highly uneven by design, not uniformly ~X% done** — core gameplay (room/chat/furniture placement, catalog purchasing, moderation, groups, navigator, messenger) is genuinely solid per `ROADMAP.md`'s 2026-07-05 table, while several whole feature areas (trading, achievements, bots, games) are simply not started. Don't average these into one blended "% complete" number when reasoning about what will actually work.
+`CONSOLIDATION.md` notes that a large fraction of packet handlers by raw count are still empty stubs (its own snapshots range from "~300 of ~501" to an older, now-superseded "393 of 498 (78%)" figure — the two numbers reflect different points in time, not a contradiction to resolve). The correct read is: **coverage is highly uneven by design, not uniformly ~X% done** — core gameplay (room/chat/furniture placement, catalog purchasing, moderation, groups, navigator, messenger) is genuinely solid per `ROADMAP.md`'s 2026-07-05 table, while several whole feature areas (trading, achievements, games) are simply not started (bots were, on 2026-08-08 — see §18). Don't average these into one blended "% complete" number when reasoning about what will actually work.
 
 ### Architectural Notes (not bugs — deliberate current trade-offs)
 

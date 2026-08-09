@@ -11,9 +11,9 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * Takes the bot's `webID`, not its room-object id — `modifyRoomObject()` resolves the user data
  * first and sends `userData.webID`, mirroring the pet pickup path directly above it.
  *
- * The server will not act on this: vortex-emulator has no bot entity or AI at all, only the
- * protocol surface (docs/CLIENT-SERVER-ARCHITECTURE.md §18 "Bots — Do Not Exist"). The client
- * side is still the faithful port.
+ * The server acts on it: `RemoveBotFromFlatMessageHandler` takes the bot out of the room and
+ * `BotAddedToInventoryEventMessageComposer` hands it back to the inventory. (This note used to say
+ * the opposite — vortex-emulator grew bots on 2026-08-08.)
  *
  * The name comes from vortex-emulator; no unobfuscated tree carries this composer.
  */

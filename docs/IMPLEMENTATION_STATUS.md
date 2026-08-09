@@ -685,6 +685,50 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **Bots — catalog, inventory, placement**, 2026-08-09. The bots tab existed as a layout, a tab
+  button and a data-only `BotsModel` that implemented nothing; the category was never registered,
+  so opening it rendered an empty panel whatever the server sent.
+  - **Inventory**: `BotsModel` rewritten as a real `IInventoryModel` (items store + view, place,
+    unseen category 5, `REOE_PLACED` re-open), plus `BotsView` and `BotGridItem`, both ported from
+    `habbo/inventory/bots/`. Registered as `_inventories.add('bots', …)`, wired into
+    `switchCategory()` and `closingInventoryView()`, and given the `IIDAvatarRenderManager`
+    dependency AS3's `HabboInventory` declares (kept optional here — see the comment at the
+    dependency).
+  - **Messages**: `BotAddedToInventory` (3570) and `BotRemovedFromInventory` (2032) — both in
+    WIN63's registry, both subscribed by `_SafeCls_1951.as`, neither ported. Without them a bought
+    bot needed a tab reopen and a placed one stayed in the grid. `Bot` is now the faithful
+    `_SafeCls_3143` DTO (**gender is read before figure**, against the getter order) and
+    `BotInventoryMessageParser` exposes `items` keyed by id, as AS3 does.
+  - **Catalog**: product type `"r"` is a *bot*, not a rentable avatar effect as the widget's own
+    TODO claimed. `ProductViewCatalogWidget` now renders the offer preview (smile, body 4, head 3,
+    cropped "full") and `PurchaseConfirmationDialog` the confirmation image (body 3, wave, smile,
+    highlighted "full") — the latter also gained the `IAvatarImageListener` half AS3 declares.
+  - **Placement**: the room-engine path (ghost, `PlaceBot` 2102, CTRL-click pickup 2743) was already
+    there; the missing piece was the mover fallback icon, which logged "no icon path for user type
+    4". It now takes AS3's `getGenericRoomObjectImage(typeName, figure, …)` branch.
+  - **The server side is done and the docs said otherwise.** vortex-emulator grew bots on
+    2026-08-08 (entity, migrations, inventory grain, room bot system, purchase grant);
+    `docs/CLIENT-SERVER-ARCHITECTURE.md` §18 "Bots — Do Not Exist", its summary-table row and four
+    client comments all asserted the opposite and have been corrected. `MoveBot` (1295) really is
+    still unhandled server-side — the id is absent from `Headers.cs`.
+  - **Room-side bot UI, same day.** `InfoStandRentableBotView` is no longer a stub: the click panel
+    is ported in full (name/motto/hand item/owner line, avatar + badge, move/rotate/pick), with
+    `RoomWidgetRentableBotInfoUpdateEvent`, `InfoStandRentableBotData.setData()` and the handler's
+    `case 4` behind it. `RentableBotMenuView` ports the bubble menu (pick up, configure chat,
+    rename, dress up, wander, dance, donate, NUX rows and cloned in-client links), on
+    `RentableBotInfoData` — both class names DERIVED, the AS3 ones are obfuscated in every tree.
+    The two skill editors (`BotChatterMarkovConfiguration`, `BotChangeNameConfiguration`) sit on
+    the ported `BotSkillConfigurationViewBase` + `BotSkillEnum`.
+    - **Five more messages**, all ids from WIN63's registry and corroborated by the emulator:
+      `CommandBot` (3813) and `GetBotCommandConfigurationData` (2311) out; `BotCommandConfiguration`
+      (2463), `BotSkillListUpdate` (1293), `BotForceOpenContextMenu` (2336) and `BotError` (520) in.
+      `RoomDesktop` owns the two it translates into widget events, `RoomUsersHandler.onBotError()`
+      the refusal alert — `IUserData.botSkillData` is typed `BotSkillData[]` now that one exists.
+    - **Still open here**: `menu.bot.enabled` is `false` in the live external variables, so the
+      bubble menu is gated off until a hotel turns it on (the click panel is not); AS3's
+      `roomEngine.selectAvatar()` after a forced context menu is unported (`setSelectedAvatar` does
+      not exist in this port), so only the selection highlight is missing from that path.
+
 - 🆕 **Room dynamic lighting — not a port, and deliberately outside every count on this page**,
   2026-08-07. `packages/vortex-client/src/lighting/`, disabled by default (Ctrl+Shift+L for the
   debug panel). N point lights from the moodlight and glowing furni, shadows cast from each object's

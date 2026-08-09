@@ -9,6 +9,9 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
+import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
+import {AvatarAction} from '@habbo/avatar/enum/AvatarAction';
+import {textureToBitmap} from '@habbo/avatar/AvatarImageSnapshot';
 import {Vector3d} from '@room/utils/Vector3d';
 import {Logger} from '@core/utils/Logger';
 import type {HabboCatalog} from '../HabboCatalog';
@@ -40,7 +43,9 @@ const log = Logger.getLogger('habbo.catalog.purchase.PurchaseConfirmationDialog'
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as
  */
-export class PurchaseConfirmationDialog implements IDisposable, IGetImageListener
+// AS3: PurchaseConfirmationDialog.as:62 — `implements _SafeCls_67, _SafeCls_1739`, the first of
+// which is IAvatarImageListener (it is what `createAvatarImage(..., this)` in the "r" branch takes).
+export class PurchaseConfirmationDialog implements IDisposable, IGetImageListener, IAvatarImageListener
 {
     // AS3: PurchaseConfirmationDialog.as::_window.color — the light (non-collectible) header tint.
     private static readonly WINDOW_COLOR: number = 4296112;
@@ -320,10 +325,16 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
                 image = catalog.getSubscriptionProductIcon(classId);
 
                 break;
+            case 'r':
+                // A bot offer: `extraParam` is the bot's figure. The render lands through the
+                // promise (and again through avatarImageReady() if the figure had to download), so
+                // nothing is assigned to `image` here.
+                void this.renderBotImage(extraParam);
+
+                break;
             default:
-                // TODO(AS3): AS3 also renders "r" (an avatar figure via createAvatarImage),
-                // "chat_style" (the chat-style selector preview) and "habbicon"
-                // (HabbiconAssetManager.getPreviewBitmap()). None of the three sources is
+                // TODO(AS3): AS3 also renders "chat_style" (the chat-style selector preview) and
+                // "habbicon" (HabbiconAssetManager.getPreviewBitmap()). Neither source is
                 // reachable from here in this port yet.
                 log.warn(`No purchase-confirmation preview for product type "${this.productType}"`);
         }
@@ -331,6 +342,53 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         // AS3 calls setImage() unconditionally at the end of the branch; setImage() is null-guarded,
         // so the pending case falls through to imageReady() without clearing what is there.
         this.setImage(image);
+    }
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::avatarImageReady()
+     *
+     * The figure's assets have arrived; AS3 re-renders the preview from them, whatever figure it
+     * was — the dialog only ever asks for one.
+     *
+     * TODO(AS3): AS3 also calls `updateGiftDialogAvatarImage()` when the ready figure is the
+     * player's own. The gift flow is unported (see the class doc), so that half has nothing to
+     * refresh yet.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::avatarImageReady()
+    avatarImageReady(figureString: string): void
+    {
+        if(this._catalog === null || this._window === null || this._window.disposed || this.disposed) return;
+
+        void this.renderBotImage(figureString);
+    }
+
+    /**
+     * AS3: PurchaseConfirmationDialog.as::updateImage() ("r" branch) and ::avatarImageReady() —
+     * both build the same picture: body facing 3, waving, smiling, and the highlighted "full"
+     * image rather than the cropped one.
+     *
+     * The render is asynchronous here for the reason `AvatarImageSnapshot` documents.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::updateImage() ("r" branch)
+    private async renderBotImage(figureString: string): Promise<void>
+    {
+        const avatarImage = this._catalog?.avatarRenderManager?.createAvatarImage(
+            figureString, 'h', null, this, null
+        ) ?? null;
+
+        if(avatarImage === null) return;
+
+        avatarImage.setDirection('full', 3);
+        avatarImage.appendAction(AvatarAction.EXPRESSION_WAVE);
+        avatarImage.appendAction(AvatarAction.GESTURE, AvatarAction.GESTURE_SMILE);
+
+        const bitmap = await textureToBitmap(avatarImage.getImage('full', true));
+
+        avatarImage.dispose();
+
+        if(this.disposed) return;
+
+        this.setImage(bitmap);
     }
 
     // AS3: PurchaseConfirmationDialog.as::imageReady()

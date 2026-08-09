@@ -9,3 +9,4 @@ export * from './furniture';
 export * from './chat';
 export * from './action';
 export * from './pet';
+export * from './bot';

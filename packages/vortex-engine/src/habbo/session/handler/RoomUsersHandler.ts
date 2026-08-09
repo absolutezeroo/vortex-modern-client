@@ -70,6 +70,8 @@ import {RoomSessionConfirmPetBreedingEvent} from '../events/RoomSessionConfirmPe
 import {RoomSessionConfirmPetBreedingResultEvent} from '../events/RoomSessionConfirmPetBreedingResultEvent';
 import {RoomSessionNestBreedingSuccessEvent} from '../events/RoomSessionNestBreedingSuccessEvent';
 import {RoomSessionErrorMessageEvent} from '../events/RoomSessionErrorMessageEvent';
+import {BotErrorEvent} from '@habbo/communication/messages/incoming/room/bot/BotErrorEvent';
+import type {BotErrorParser} from '@habbo/communication/messages/parser/room/bot/BotErrorParser';
 
 /**
  * Room users handler
@@ -120,6 +122,9 @@ export class RoomUsersHandler extends BaseHandler
         this.addMessageEvent(connection, new ConfirmBreedingResultEvent(this.onConfirmPetBreedingResult.bind(this)));
         this.addMessageEvent(connection, new NestBreedingSuccessEvent(this.onNestBreedingSuccess.bind(this)));
         this.addMessageEvent(connection, new BlockUserUpdateMessageEvent(this.onBlockUserUpdate.bind(this)));
+        // AS3: RoomUsersHandler.as:96 — `new _SafeCls_2510(onBotError)`, the refusal for every bot
+        // placement and rename.
+        this.addMessageEvent(connection, new BotErrorEvent(this.onBotError.bind(this)));
 
         this.addMessageEvent(connection, new UserChangeMessageEvent(this.onUserChange.bind(this)));
 
@@ -417,6 +422,50 @@ export class RoomUsersHandler extends BaseHandler
                 break;
             case 5:
                 type = 'RSEME_MAX_NUMBER_OF_OWN_PETS';
+                break;
+        }
+
+        if(type !== null && this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(type, new RoomSessionErrorMessageEvent(type, session));
+        }
+    }
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onBotError()
+     *
+     * The bot sibling of onPetPlacingError() above: one numeric code in, one localized room-session
+     * error out. RoomUI already lists all five of these types in its alert table.
+     */
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onBotError()
+    private onBotError(event: IMessageEvent): void
+    {
+        const parser = event.parser as BotErrorParser | null;
+
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        let type: string | null = null;
+
+        switch(parser.errorCode)
+        {
+            case 0:
+                type = RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_HOTEL;
+                break;
+            case 1:
+                type = RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_FLAT;
+                break;
+            case 2:
+                type = RoomSessionErrorMessageEvent.BOT_LIMIT_REACHED;
+                break;
+            case 3:
+                type = RoomSessionErrorMessageEvent.SELECTED_TILE_NOT_FREE_FOR_BOT;
+                break;
+            case 4:
+                type = RoomSessionErrorMessageEvent.BOT_NAME_NOT_ACCEPTED;
                 break;
         }
 

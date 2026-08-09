@@ -13,6 +13,8 @@ import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
 import type {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
 import {AvatarAction} from '@habbo/avatar/enum/AvatarAction';
+import {avatarImageToBitmap} from '@habbo/avatar/AvatarImageSnapshot';
+import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
 import type {HabboCatalog} from '../../HabboCatalog';
 import type {IPurchasableOffer} from '../../IPurchasableOffer';
 import type {IProduct} from '../IProduct';
@@ -41,10 +43,11 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.ProductViewCatalogWid
  * TODO(AS3): the following AS3 sub-paths are not ported (each noted again at its call site):
  * - "i" wall-item category 2/3/4 (wallpaper/floor/landscape editing via getRoomStringValue(),
  *   which IRoomEngine doesn't expose yet).
- * - "r" (rentable avatar effect) and "e" (avatar effect) preview rendering - both need
- *   pixel-level sprite compositing (addEffectSprites()) onto a canvas, which requires bridging
- *   PixiJS Texture output to ImageBitmap the way ProductGridItem.renderAvatarImage() does, but
- *   for a multi-layer composite rather than a single crop.
+ * - "e" (avatar effect) preview rendering - it needs pixel-level sprite compositing
+ *   (addEffectSprites()) onto a canvas, which requires bridging PixiJS Texture output to
+ *   ImageBitmap the way ProductGridItem.renderAvatarImage() does, but for a multi-layer composite
+ *   rather than a single crop. ("r" used to be listed here as a rentable avatar effect; it is a
+ *   bot offer, a single cropped avatar render, and is implemented — see renderBotPreview().)
  * - class_3172/ProductImageConfiguration's pre-rendered special-product image table.
  * - ProductDisplayWrapper (the generic default-case product renderer).
  * - furniture/wall-item preview ROTATION specifically: RoomPreviewer.canRotatePreviewFurniture()/
@@ -140,6 +143,10 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
     // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::_previewOffset
     private _previewOffset: {x: number; y: number} = {x: 0, y: 0};
+    // TS-only: the bot figure currently being previewed, so a render that finishes after the player
+    // clicked another offer is dropped instead of painting over it. AS3 needs no such guard — its
+    // avatar render is synchronous.
+    private _botPreviewFigure: string | null = null;
 
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::_bundleGrid
     private _bundleGrid: IItemGridWindow | null = null;
@@ -1077,6 +1084,10 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
     {
         const product = offer.product;
 
+        // Any in-flight bot render belongs to the offer that was on screen a moment ago; drop it
+        // before this one draws (renderBotPreview() re-arms it for a bot offer).
+        this._botPreviewFigure = null;
+
         if(product == null) return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
 
         const roomPreviewer = this._catalog!.roomPreviewer;
@@ -1099,10 +1110,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
             case 'i':
                 return this.renderWallItemPreview(offer, product, roomPreviewer);
             case 'r':
-                // TODO(AS3): rentable/avatar-effect preview needs multi-layer sprite compositing
-                // (addEffectSprites()) - not ported, see class doc comment.
-                log.warn('"r" preview not ported yet');
-                this.setPreviewImage(null);
+                this.renderBotPreview(product);
 
                 break;
             case 'e':
@@ -1130,6 +1138,71 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         }
 
         return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
+    }
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct()
+     * ("r" product-type branch) — a bot offer, whose `extraParam` is the bot's figure string.
+     *
+     * AS3 renders it inline and synchronously, with no listener: smile gesture, body facing 4, head
+     * facing 3, cropped "full". Here the render is kicked off and applied in a continuation, and a
+     * listener is passed so a figure whose assets are still downloading gets a second pass —
+     * `createAvatarImage()` only calls the listener when it had to load something, so this cannot
+     * loop.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct() ("r" branch)
+    private renderBotPreview(product: IProduct): void
+    {
+        const manager = this._catalog?.avatarRenderManager ?? null;
+
+        if(manager == null)
+        {
+            this.setPreviewImage(null);
+
+            return;
+        }
+
+        const figure = product.extraParam;
+
+        this._botPreviewFigure = figure;
+
+        void this.drawBotPreview(figure, {
+            avatarImageReady: (_ready: string): void =>
+            {
+                // The redraw uses the figure of the offer still on screen, NOT the one reported
+                // ready: `createAvatarImage()` validates the container against the gender, so what
+                // comes back is the completed figure string and never equals the one asked for.
+                // Matching on it would mean never repainting. Null means the player clicked away.
+                const current = this._botPreviewFigure;
+
+                if(current !== null) void this.drawBotPreview(current, null);
+            }
+        });
+    }
+
+    // TS-only: the async continuation of renderBotPreview() above; AS3 renders inline.
+    private async drawBotPreview(figure: string, listener: IAvatarImageListener | null): Promise<void>
+    {
+        const avatarImage = this._catalog?.avatarRenderManager?.createAvatarImage(figure, 'h', null, listener, null) ?? null;
+
+        if(avatarImage == null)
+        {
+            this.setPreviewImage(null);
+
+            return;
+        }
+
+        avatarImage.appendAction(AvatarAction.GESTURE, AvatarAction.GESTURE_SMILE);
+        avatarImage.setDirection('full', 4);
+        avatarImage.setDirection('head', 3);
+
+        const bitmap = await avatarImageToBitmap(avatarImage, 'full');
+
+        avatarImage.dispose();
+
+        if(this._botPreviewFigure !== figure) return;
+
+        this.setPreviewImage(bitmap);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct()
