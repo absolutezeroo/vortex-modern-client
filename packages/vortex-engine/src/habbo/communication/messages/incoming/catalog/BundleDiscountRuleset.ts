@@ -13,14 +13,19 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class BundleDiscountRuleset
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1716/_SafeCls_1903.as::get maxPurchaseSize()
     private _maxPurchaseSize: number = 0;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1716/_SafeCls_1903.as::get bundleSize()
     private _bundleSize: number = 0;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1716/_SafeCls_1903.as::get bundleDiscountSize()
     private _bundleDiscountSize: number = 0;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1716/_SafeCls_1903.as::get bonusThreshold()
     private _bonusThreshold: number = 0;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1716/_SafeCls_1903.as::get additionalBonusDiscountThresholdQuantities()
     private _additionalBonusDiscountThresholdQuantities: number[] = [];
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1716/_SafeCls_1903.as::_SafeCls_1903()

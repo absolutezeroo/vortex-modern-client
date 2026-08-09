@@ -7,6 +7,7 @@ import {BundleDiscountRuleset} from '../../incoming/catalog/BundleDiscountRulese
  */
 export class BundleDiscountRulesetMessageEventParser implements IMessageParser
 {
+    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/BundleDiscountRulesetMessageEventParser.as::_bundleDiscountRuleset
     private _bundleDiscountRuleset: BundleDiscountRuleset | null = null;
 
     // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/BundleDiscountRulesetMessageEventParser.as::get bundleDiscountRuleset()

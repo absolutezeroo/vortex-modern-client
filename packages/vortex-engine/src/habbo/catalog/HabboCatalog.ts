@@ -512,6 +512,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this.getBoolean('catalog.multiple.purchase.enabled') && this._catalogType !== 'BUILDERS_CLUB';
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get bundleDiscountRuleset()
     private _bundleDiscountRuleset: BundleDiscountRuleset | null = null;
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get bundleDiscountEnabled()
