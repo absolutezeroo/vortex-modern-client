@@ -42,6 +42,7 @@ import type {IRoomSession} from '@habbo/session/IRoomSession';
 import {RoomObjectCategoryEnum} from './object/RoomObjectCategoryEnum';
 import {RoomObjectUserTypes, getUserTypeName} from './object/RoomObjectUserTypes';
 import {RoomObjectVariableEnum} from './object/RoomObjectVariableEnum';
+import {StuffDataFactory} from './object/data/StuffDataFactory';
 import {RoomEngineEvent} from './events/RoomEngineEvent';
 import {RoomEngineObjectEvent} from './events/RoomEngineObjectEvent';
 import {RoomEngineDragWithMouseEvent} from './events/RoomEngineDragWithMouseEvent';
@@ -552,6 +553,24 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this.getRoomInstance(roomId);
     }
 
+    /**
+     * The room instance's own string bag — `room_wall_type` / `room_floor_type` /
+     * `room_landscape_type` are written here by `updateObjectRoom()`. The catalog reads them back
+     * to rebuild the *other two* decoration slots when it changes one of them.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomStringValue()
+    getRoomStringValue(roomId: number, key: string): string | null
+    {
+        const room = this.getRoom(roomId);
+
+        if(room !== null)
+        {
+            return room.getString(key);
+        }
+
+        return null;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get roomSessionManager()
     get roomSessionManager(): IRoomSessionManager | null
     {
@@ -692,12 +711,81 @@ export class RoomEngine extends Component implements IRoomEngine,
     // separate, already-working flow this pass doesn't touch. Only category 10 (floor
     // furniture) is tracked here — see modifyRoomObject()'s OBJECT_MOVE case for the
 
-    roomManagerInitialized(success: boolean): void 
+    roomManagerInitialized(success: boolean): void
     {
-        if(success) 
+        if(success)
         {
+            this._roomManagerInitialized = true;
+
             this.events.emit(RoomEngineEvent.REE_ENGINE_INITIALIZED);
         }
+    }
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_SafeStr_5461
+     *
+     * Name DERIVED: obfuscated in every tree. Set once by `roomManagerInitialized(true)` and read
+     * by `isInitialized` — engine-wide readiness, distinct from `_initializedRooms`, which tracks
+     * individual rooms.
+     */
+    private _roomManagerInitialized: boolean = false;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get isInitialized()
+    get isInitialized(): boolean
+    {
+        return this._roomManagerInitialized;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::runUpdate()
+    runUpdate(): void
+    {
+        this.update(1);
+    }
+
+    /**
+     * Detaches the engine from the frame tick entirely, rather than setting a flag the update loop
+     * checks — the room previewer uses it to freeze the preview while a dialog rebuilds it.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::set disableUpdate()
+    set disableUpdate(value: boolean)
+    {
+        if(value)
+        {
+            this.removeUpdateReceiver(this);
+        }
+        else
+        {
+            this.registerUpdateReceiver(this, 1);
+        }
+    }
+
+    /**
+     * Advances an object to its next automatic state locally — the animation cycle a furni plays in
+     * the catalog preview, with no server round trip. Distinct from the private `changeObjectState()`
+     * further down, which is the room-object *event* handler that asks the server to toggle a real
+     * furni.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::changeObjectState()
+    changeObjectState(roomId: number, objectId: number, category: number): void
+    {
+        const object = this.getRoomObject(roomId, objectId, category) as IRoomObjectController | null;
+
+        if(object === null || object.getModelController() === null) return;
+
+        let stateIndex = object.getModelController().getNumber(RoomObjectVariableEnum.FURNITURE_AUTOMATIC_STATE_INDEX);
+
+        // AS3 starts at 1 rather than 0 when the index has never been set: state 0 is what the
+        // object is already showing.
+        stateIndex = isNaN(stateIndex) ? 1 : stateIndex + 1;
+
+        object.getModelController().setNumber(RoomObjectVariableEnum.FURNITURE_AUTOMATIC_STATE_INDEX, stateIndex);
+
+        const dataFormat = object.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_DATA_FORMAT);
+        const stuffData = StuffDataFactory.getStuffDataForType(dataFormat);
+
+        stuffData?.initializeFromRoomObjectModel(object.getModel());
+
+        object.getEventHandler()?.processUpdateMessage(new RoomObjectDataUpdateMessage(stateIndex, stuffData));
     }
 
     // AS3: sources/win63_version/habbo/room/class_34.as::contentLoaded()
@@ -5155,7 +5243,10 @@ export class RoomEngine extends Component implements IRoomEngine,
             'REOE_PLACED',
             new RoomEngineObjectPlacedEvent(
                 'REOE_PLACED', roomId, objectId, category,
-                wallLocation, x, y, z, rotation, placedInRoom, placedOnFloor, placedOnWall, instanceData
+                wallLocation, x, y, z, rotation, placedInRoom, placedOnFloor, placedOnWall, instanceData,
+                // AS3's param14. Without it every listener sees every placement as its own — the
+                // catalog's three placement callbacks are all gated on this being 'catalog'.
+                this._objectPlacementSource
             )
         );
     }
@@ -6154,7 +6245,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(object === null) return;
 
-        this.changeObjectState(this._activeRoomId, object.getId(), object.getType(), event.param, false);
+        this.sendObjectStateChange(this._activeRoomId, object.getId(), object.getType(), event.param, false);
     }
 
     // AS3: sources/win63_version/habbo/room/class_1947.as::handleObjectRandomStateChange()
@@ -6164,11 +6255,18 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(object === null) return;
 
-        this.changeObjectState(this._activeRoomId, object.getId(), object.getType(), event.param, true);
+        this.sendObjectStateChange(this._activeRoomId, object.getId(), object.getType(), event.param, true);
     }
 
+    /**
+     * The room-object *event* half: asks the server to toggle a real furni. It belongs to a
+     * different AS3 class (`class_1947`, the room-object event handler) that this port flattened
+     * into RoomEngine, which is why it needed a distinct name — the engine's own
+     * `changeObjectState()` above cycles a preview's state locally, with no server round trip.
+     * Name DERIVED for the collision; the AS3 trace still points at the real member.
+     */
     // AS3: sources/win63_version/habbo/room/class_1947.as::changeObjectState()
-    private changeObjectState(roomId: number, objectId: number, objectType: string, state: number, isRandom: boolean): void
+    private sendObjectStateChange(roomId: number, objectId: number, objectType: string, state: number, isRandom: boolean): void
     {
         const category = this.getRoomObjectCategory(objectType);
 

@@ -22,7 +22,8 @@ export class RoomEngineObjectPlacedEvent extends RoomEngineObjectEvent
         placedInRoom: boolean,
         placedOnFloor: boolean,
         placedOnWall: boolean,
-        instanceData: string | null
+        instanceData: string | null,
+        placementSource: string | null = null
     )
     {
         super(type, roomId, objectId, category);
@@ -35,6 +36,7 @@ export class RoomEngineObjectPlacedEvent extends RoomEngineObjectEvent
         this._placedOnFloor = placedOnFloor;
         this._placedOnWall = placedOnWall;
         this._instanceData = instanceData;
+        this._placementSource = placementSource;
     }
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/events/RoomEngineObjectPlacedEvent.as::_wallLocation
@@ -116,5 +118,20 @@ export class RoomEngineObjectPlacedEvent extends RoomEngineObjectEvent
     get instanceData(): string | null
     {
         return this._instanceData;
+    }
+
+    /**
+     * Which subsystem armed the placement — the string handed to
+     * `initializeRoomObjectInsert()` ('catalog', 'inventory', …). Listeners are shared, so this is
+     * how each one tells its own placements apart from everyone else's; the catalog ignores any
+     * REOE_PLACED that is not its own.
+     */
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineObjectPlacedEvent.as::_SafeStr_9546
+    private _placementSource: string | null = null;
+
+    // AS3: .../src/com/sulake/habbo/room/events/RoomEngineObjectPlacedEvent.as::get placementSource()
+    get placementSource(): string | null
+    {
+        return this._placementSource;
     }
 }

@@ -398,6 +398,75 @@ export interface IRoomEngine extends IDisposable {
     // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::updateObjectRoomVisibilities()
     updateObjectRoomVisibilities(roomId: number, wallsVisible: boolean, floorVisible?: boolean): boolean;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomStringValue()
+    getRoomStringValue(roomId: number, key: string): string | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get isInitialized()
+    readonly isInitialized: boolean;
+
+    /**
+     * The engine's own config reader, inherited from Component. AS3 gets at it by casting the
+     * engine back to its concrete Component type (`(_roomEngine as _SafeCls_50).getBoolean(...)`),
+     * which a TS interface cannot express — declaring it here is the same access, without the cast.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::getBoolean()
+    getBoolean(key: string): boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::runUpdate()
+    runUpdate(): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::set disableUpdate()
+    disableUpdate: boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::changeObjectState()
+    changeObjectState(roomId: number, objectId: number, category: number): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectUserAction()
+    updateObjectUserAction(roomId: number, roomIndex: number, action: string, value: number): boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectWallItemLocation()
+    updateObjectWallItemLocation(
+        roomId: number,
+        id: number,
+        location: IVector3d,
+        target?: IVector3d | null,
+        animationTime?: number
+    ): boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addObjectFurniture()
+    addObjectFurniture(
+        roomId: number,
+        id: number,
+        typeId: number,
+        location: IVector3d,
+        direction: IVector3d,
+        state: number,
+        data: IStuffData | null,
+        extra: number,
+        expiryTime: number,
+        usagePolicy: number,
+        ownerId: number,
+        ownerName: string,
+        synchronized: boolean,
+        refresh: boolean,
+        sizeZ: number
+    ): boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addObjectWallItem()
+    addObjectWallItem(
+        roomId: number,
+        id: number,
+        typeId: number,
+        location: IVector3d,
+        direction: IVector3d,
+        state: number,
+        data: string,
+        usagePolicy: number,
+        ownerId: number,
+        ownerName: string,
+        secondsToExpiration: number
+    ): boolean;
+
     // Canvas management
 
     // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectRoomPlaneThicknesses()
