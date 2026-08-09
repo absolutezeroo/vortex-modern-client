@@ -12,6 +12,7 @@
  * wired) and hrwe_hide_room_widget (no generic hide-widget event bus yet).
  */
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
+import type {RoomWidgetChatSelectAvatarMessage} from '@habbo/ui/widget/messages/RoomWidgetChatSelectAvatarMessage';
 import type {IRoomWidgetHandlerContainer} from '@habbo/ui/IRoomWidgetHandlerContainer';
 import type {RoomWidgetMessage} from '@habbo/ui/widget/messages/RoomWidgetMessage';
 import type {RoomWidgetUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetUpdateEvent';
@@ -141,9 +142,23 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
             }
 
             case 'RWCSAM_MESSAGE_SELECT_AVATAR':
-                // TODO(AS3): IRoomEngine.selectAvatar() (the "@Name" mention-autocomplete
-                // avatar picker) isn't ported yet.
+            {
+                const selectMessage = message as RoomWidgetChatSelectAvatarMessage;
+
+                if(selectMessage)
+                {
+                    this._container?.roomEngine?.selectAvatar(selectMessage.roomId, selectMessage.objectId);
+
+                    const userData = this._container?.roomSession?.userDataManager?.getUserDataByIndex(selectMessage.objectId);
+
+                    if(userData)
+                    {
+                        this._container?.moderation?.userSelected(userData.webID, selectMessage.userName);
+                    }
+                }
+
                 break;
+            }
         }
 
         return null;

@@ -41,6 +41,12 @@ export interface IRoomDesktop
     // AS3: .../src/com/sulake/habbo/ui/IRoomDesktop.as::processEvent()
     processEvent(event: unknown): void;
 
+    /**
+	 * Routes a widget message to the handler registered for its type.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomDesktop.as::processWidgetMessage()
+    processWidgetMessage(message: unknown): unknown;
+
     // AS3: sources/win63_version/habbo/ui/IRoomDesktop.as::getWidget()
     getWidget(type: string): unknown | null;
 

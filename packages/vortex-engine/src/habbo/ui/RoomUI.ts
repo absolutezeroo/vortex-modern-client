@@ -43,6 +43,8 @@ import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
 import {IID_HabboNavigator} from '@iid/IIDHabboNavigator';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents';
+import {IID_HabboModeration} from '@iid/IIDHabboModeration';
+import type {IHabboModeration} from '@habbo/moderation/IHabboModeration';
 
 // Interfaces
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
@@ -239,6 +241,9 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
     // AS3: RoomUI.as::_userDefinedRoomEvents — DI-resolved; injected into every RoomDesktop.
     private _userDefinedRoomEvents: IHabboUserDefinedRoomEvents | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::_moderation
+    private _moderation: IHabboModeration | null = null;
 
     /**
      * The catalog manager, used to construct widgets that need it (e.g. infostand).
@@ -636,6 +641,19 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 false
             ),
             new ComponentDependency(
+                IID_HabboModeration,
+                (moderation: IHabboModeration | null) =>
+                {
+                    this._moderation = moderation;
+
+                    for(const desktop of this._desktops.values())
+                    {
+                        desktop.moderation = moderation;
+                    }
+                },
+                false
+            ),
+            new ComponentDependency(
                 IID_HabboUserDefinedRoomEvents,
                 (roomEvents: IHabboUserDefinedRoomEvents | null) =>
                 {
@@ -754,6 +772,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         desktop.roomEngine = this._roomEngine;
         desktop.sessionDataManager = this._sessionDataManager;
         desktop.roomSessionManager = this._roomSessionManager;
+        desktop.moderation = this._moderation;
         desktop.config = this._config;
         desktop.localization = this._localization;
         desktop.toolbar = this._toolbar;

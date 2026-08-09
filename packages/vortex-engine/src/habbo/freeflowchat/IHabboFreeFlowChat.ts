@@ -212,12 +212,16 @@ export interface IHabboFreeFlowChat
 	 * Selects the avatar that sent a chat item (bubble click handler).
 	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::selectAvatarWithChatItem()
-	 * TODO(AS3): only calls roomEngine.selectAvatar() - the moderation
-	 * (userSelected webID/name reporting) and RWROM_GET_OBJECT_INFO widget
-	 * message AS3 also sends aren't ported (roomUI/moderation not wired in).
 	 */
     // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::selectAvatarWithChatItem()
     selectAvatarWithChatItem(item: ChatItem): void;
+
+    /**
+	 * Selects an avatar by room and user id: tells the desktop to fetch its info, highlights it in
+	 * the room engine, and reports the selection to moderation.
+	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::selectAvatar()
+    selectAvatar(roomId: number, userId: number): void;
 
     /**
 	 * Per-frame tick registration (Component's own, inherited in AS3 via the

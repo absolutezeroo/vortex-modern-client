@@ -4,6 +4,12 @@ import {Component, ComponentDependency, type IContext} from '@core/runtime';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
+import {IID_RoomUI} from '@iid/IIDRoomUI';
+import type {IRoomUI} from '@habbo/ui/IRoomUI';
+import {IID_HabboModeration} from '@iid/IIDHabboModeration';
+import type {IHabboModeration} from '@habbo/moderation/IHabboModeration';
+import {RoomWidgetRoomObjectMessage} from '@habbo/ui/widget/messages/RoomWidgetRoomObjectMessage';
+import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import type {IAssetLibrary} from '@core/assets';
@@ -113,6 +119,12 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 
     // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
+
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_roomUI
+    private _roomUI: IRoomUI | null = null;
+
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_moderation
+    private _moderation: IHabboModeration | null = null;
 
     // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomEngine()
     get roomEngine(): IRoomEngine | null
@@ -423,12 +435,35 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::selectAvatarWithChatItem()
-    // TODO(AS3): no-op — AS3 delegates to roomEngine.selectAvatar(roomId, userId), which
-    // isn't ported (same room-object-selection gap ChatInputWidgetHandler.ts's "@Name"
-    // mention-autocomplete TODO already flags); moderation reporting and the
-    // RWROM_GET_OBJECT_INFO widget message aren't ported either.
-    selectAvatarWithChatItem(_item: ChatItem): void
+    selectAvatarWithChatItem(item: ChatItem): void
     {
+        this.selectAvatar(item.roomId, item.userId);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::selectAvatar()
+    selectAvatar(roomId: number, userId: number): void
+    {
+        if(this._roomUI == null) return;
+
+        this._roomUI.desktop?.processWidgetMessage(
+            new RoomWidgetRoomObjectMessage(RoomWidgetRoomObjectMessage.GET_OBJECT_INFO, userId, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
+        );
+
+        this._roomEngine?.selectAvatar(roomId, userId);
+
+        const session = this._roomSessionManager?.getSession(roomId);
+
+        if(session)
+        {
+            // AS3 reads the same user twice into two locals and then uses one's webID with the
+            // other's name. Both come from the same lookup, so this is one read here.
+            const userData = session.userDataManager?.getUserDataByIndex(userId);
+
+            if(userData && this._moderation)
+            {
+                this._moderation.userSelected(userData.webID, userData.name);
+            }
+        }
     }
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_preferedChatStyle
@@ -526,6 +561,22 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
                 (manager: IRoomEngine | null) =>
                 {
                     this._roomEngine = manager;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_RoomUI,
+                (roomUI: IRoomUI | null) =>
+                {
+                    this._roomUI = roomUI;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboModeration,
+                (moderation: IHabboModeration | null) =>
+                {
+                    this._moderation = moderation;
                 },
                 false
             ),

@@ -855,6 +855,7 @@ import {
     ChangeMottoMessageComposer,
     ChangePostureMessageComposer,
     DanceMessageComposer,
+    LookToMessageComposer,
     DropCarryItemMessageComposer,
     PassCarryItemMessageComposer,
     PassCarryItemToPetMessageComposer,
@@ -2345,6 +2346,7 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2912, AvatarExpressionMessageComposer);
         this._composers.set(211, SignMessageComposer);
         this._composers.set(48, DanceMessageComposer);
+        this._composers.set(2508, LookToMessageComposer);
         this._composers.set(3181, ChangePostureMessageComposer);
 
         // === ROOM ACTION ===

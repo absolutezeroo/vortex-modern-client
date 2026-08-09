@@ -23,6 +23,7 @@ import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfig
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
+import type {IHabboModeration} from '@habbo/moderation/IHabboModeration';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IHabboFurniEditor} from '@habbo/vortex/furnieditor/IHabboFurniEditor';
 import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
@@ -97,6 +98,9 @@ export interface IRoomWidgetHandlerContainer
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get userDefinedRoomEvents()
     // TODO(AS3): no concrete implementation exists yet — always null, see IHabboUserDefinedRoomEvents.ts.
     readonly userDefinedRoomEvents: IHabboUserDefinedRoomEvents | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get moderation()
+    readonly moderation: IHabboModeration | null;
 
     // AS3: .../src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::setRoomViewColor()
     setRoomViewColor(color: number, brightness: number): void;

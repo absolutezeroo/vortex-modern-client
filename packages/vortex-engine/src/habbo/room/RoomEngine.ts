@@ -40,6 +40,11 @@ import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
 import {RoomObjectCategoryEnum} from './object/RoomObjectCategoryEnum';
+import {RoomObjectAvatarSelectedMessage} from './messages/RoomObjectAvatarSelectedMessage';
+import {RoomObjectVisibilityUpdateMessage} from './messages/RoomObjectVisibilityUpdateMessage';
+import {LookToMessageComposer} from '@habbo/communication/messages/outgoing/room/avatar/LookToMessageComposer';
+import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents';
+import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
 import {RoomObjectUserTypes, getUserTypeName} from './object/RoomObjectUserTypes';
 import {RoomObjectVariableEnum} from './object/RoomObjectVariableEnum';
 import {StuffDataFactory} from './object/data/StuffDataFactory';
@@ -315,6 +320,12 @@ export class RoomEngine extends Component implements IRoomEngine,
     // of resetting to the default rotation on every copy.
     private _repeatedPlacementDirection: number = -1;
     private _selectedObject: { roomId: number; id: number; category: number } | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::getSelectedAvatarId()
+    private _selectedAvatarId: number = -1;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get roomEvents()
+    private _roomEvents: IHabboUserDefinedRoomEvents | null = null;
     // AS3: _SafeCls_1821.as::processRoomCanvasMouseEvent() dedups per (category-bucket, event type):
     // getMouseEventId(category, type) keyed on BOTH the bucketed category and the type. The key is
     // `${bucket}_${type}`; the value is the last eventId already delivered for that slot, so a click
@@ -524,6 +535,14 @@ export class RoomEngine extends Component implements IRoomEngine,
                     this._toolbar = toolbar;
                 },
                 false // Optional - needed for the pickup-to-inventory icon animation
+            ),
+            new ComponentDependency(
+                IID_HabboUserDefinedRoomEvents,
+                (roomEvents: IHabboUserDefinedRoomEvents | null) => 
+                {
+                    this._roomEvents = roomEvents;
+                },
+                false // Optional - only read to suppress LookTo when a click-user wired owns the click
             ),
             new ComponentDependency(
                 IID_RoomSessionManager,
@@ -6990,10 +7009,78 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     /**
+     * AS3 splits this in two: `RoomEngine.selectAvatar()` delegates to the room-object event
+     * handler's `setSelectedAvatar(roomId, objectId, true)`. That handler is flattened into
+     * RoomEngine on this port (the same way `selectRoomObject()` above is), so the delegate's
+     * body lives here rather than in a separate class.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::selectAvatar()
+    selectAvatar(roomId: number, objectId: number): void
+    {
+        this.setSelectedAvatar(roomId, objectId, true);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getSelectedAvatarId()
+    getSelectedAvatarId(): number
+    {
+        return this._selectedAvatarId;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::setSelectedAvatar()
+    private setSelectedAvatar(roomId: number, objectId: number, select: boolean): void
+    {
+        const previous = this.getRoomObject(roomId, this._selectedAvatarId, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) as IRoomObjectController | null;
+
+        if(previous && previous.getEventHandler())
+        {
+            previous.getEventHandler()?.processUpdateMessage(new RoomObjectAvatarSelectedMessage(false));
+            this._selectedAvatarId = -1;
+        }
+
+        let selected = false;
+
+        if(select)
+        {
+            const object = this.getRoomObject(roomId, objectId, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) as IRoomObjectController | null;
+
+            if(object && object.getEventHandler())
+            {
+                object.getEventHandler()?.processUpdateMessage(new RoomObjectAvatarSelectedMessage(true));
+                selected = true;
+                this._selectedAvatarId = objectId;
+
+                // A click-user wired trigger owns the click, so the avatar must not turn as well.
+                // `_roomEvents` is an optional dependency here; AS3 reads `_roomEngine.roomEvents`
+                // unconditionally, and a null one means no wired environment has been received,
+                // which is the same answer as `hasClickUserWired() == false`.
+                if(!this._roomEvents?.hasClickUserWired())
+                {
+                    const location = object.getLocation();
+
+                    this.connection?.send(new LookToMessageComposer(location.x, location.y));
+                }
+            }
+        }
+
+        const arrow = this.getSelectionArrow(roomId);
+
+        if(arrow && arrow.getEventHandler())
+        {
+            arrow.getEventHandler()?.processUpdateMessage(
+                new RoomObjectVisibilityUpdateMessage(
+                    (selected && !this.getActiveRoomIsPlayingGame())
+                        ? RoomObjectVisibilityUpdateMessage.ENABLED
+                        : RoomObjectVisibilityUpdateMessage.DISABLED
+                )
+            );
+        }
+    }
+
+    /**
      * Deselects the currently selected room object (if any) and dispatches
      * REOE_DESELECTED.
      */
-    private deselectRoomObject(): void 
+    private deselectRoomObject(): void
     {
         if(!this._selectedObject) return;
 

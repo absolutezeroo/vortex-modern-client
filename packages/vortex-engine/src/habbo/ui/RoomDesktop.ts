@@ -39,6 +39,7 @@ import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
+import type {IHabboModeration} from '@habbo/moderation/IHabboModeration';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IUserData} from '@habbo/session/IUserData';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
@@ -696,6 +697,22 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     public set userDefinedRoomEvents(value: IHabboUserDefinedRoomEvents | null)
     {
         this._userDefinedRoomEvents = value;
+    }
+
+    // AS3 declares `moderation` on IRoomWidgetHandlerContainer; RoomUI DI-resolves the component
+    // and injects it the same way it does userDefinedRoomEvents above.
+    private _moderation: IHabboModeration | null = null;
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::get moderation()
+    public get moderation(): IHabboModeration | null
+    {
+        return this._moderation;
+    }
+
+    // AS3: RoomDesktop.as::set moderation()
+    public set moderation(value: IHabboModeration | null)
+    {
+        this._moderation = value;
     }
 
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::set layout()

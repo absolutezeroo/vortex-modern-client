@@ -65,6 +65,12 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::selectRoomObject()
     selectRoomObject(roomId: number, id: number, category: number): void;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::selectAvatar()
+    selectAvatar(roomId: number, objectId: number): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getSelectedAvatarId()
+    getSelectedAvatarId(): number;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getActiveRoomIsPlayingGame()
     getActiveRoomIsPlayingGame(): boolean;
 
