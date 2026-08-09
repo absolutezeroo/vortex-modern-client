@@ -486,10 +486,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this._frontPageItems;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get roomPreviewer()
-    // TODO(AS3): AS3 also requires _roomEngine.isInitialized; IRoomEngine has no isInitialized
-    // accessor yet (see RoomPreviewer.isRoomEngineReady's own note), so only the null check and
-
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get multiplePurchaseEnabled()
     get multiplePurchaseEnabled(): boolean 
     {
@@ -2736,9 +2732,14 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::initializeRoomPreviewer()
-    private initializeRoomPreviewer(): void 
+    /**
+     * The engine check is not redundant with the null one: a resolved-but-uninitialised engine has
+     * no room manager yet, and `createRoomForPreviews()` would build the preview room into nothing.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::initializeRoomPreviewer()
+    private initializeRoomPreviewer(): void
     {
-        if(this._roomEngine != null && this.getBoolean('catalog.furniture.animation')) 
+        if(this._roomEngine != null && this._roomEngine.isInitialized && this.getBoolean('catalog.furniture.animation')) 
         {
             if(this._roomPreviewer == null)
             {
