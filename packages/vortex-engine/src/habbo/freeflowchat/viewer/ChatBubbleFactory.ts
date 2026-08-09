@@ -16,6 +16,8 @@ import {PooledChatBubble} from './visualization/PooledChatBubble';
 import {ChatBubble} from './visualization/ChatBubble';
 import type {IUserData} from '@habbo/session/IUserData';
 import {HabboFaceFocuser} from '@habbo/utils/HabboFaceFocuser';
+import {PetFigureData} from '@habbo/avatar/pets/PetFigureData';
+import {Vector3d} from '@room/utils/Vector3d';
 
 const log = Logger.getLogger('habbo.freeflowchat.viewer.ChatBubbleFactory');
 
@@ -290,19 +292,59 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         return image;
     }
 
+    /**
+     * AS3 keys the cache on `figureString + posture` with no separator, and reads it back the same
+     * way, so the concatenation is kept rather than made unambiguous.
+     *
+     * `sitting` is declared and never read in AS3 either - the caller varies `size` instead. Kept
+     * so the signature matches, rather than dropped and silently diverging from the call sites.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getPetImage()
-    // TODO(AS3): same gap as ChatWidgetHandler's getPetImage() — genuinely blocked, not
-    // deferred out of laziness: AS3's real implementation needs
-    // roomEngine.getPetImage(typeId, paletteId, color, direction, size, listener,
-    // isSpecialType35, extraParam, customParts, posture), which doesn't exist anywhere in
-    // this port's IRoomEngine (confirmed via search — no pet sprite-composition/rendering
-    // code exists in habbo/room/ at all). `PetFigureData` (the figure-string parser AS3's
-    // version constructs here) does exist (habbo/avatar/pets/PetFigureData.ts), but that
-    // alone isn't enough - porting the actual pet avatar renderer is a separate, comparably
-    // sized feature to the avatar render manager itself, out of scope for chat bubbles.
-    private getPetImage(_figureString: string, _direction: number, _sitting: boolean, _size: number, _posture: string | null): ImageBitmap | null
+    private getPetImage(figureString: string, direction: number, _sitting: boolean, size: number = 64, posture: string | null = null): ImageBitmap | null
     {
-        return null;
+        const cacheKey = figureString + posture;
+        let image = this._petImageCache.get(cacheKey) ?? null;
+
+        if(image == null)
+        {
+            const figureData = new PetFigureData(figureString);
+            const typeId = figureData.typeId;
+
+            // AS3 hard-codes 35 here; the value has no named constant in any tree.
+            const fullImage = typeId === 35;
+
+            const result = this._chatFlow?.roomEngine?.getPetImage(
+                typeId,
+                figureData.paletteId,
+                figureData.color,
+                new Vector3d(direction * 45),
+                size,
+                this,
+                fullImage,
+                0,
+                figureData.customParts,
+                posture
+            ) ?? null;
+
+            if(result != null)
+            {
+                image = result.data;
+
+                if(result.id > 0)
+                {
+                    this._petImageIdToFigureString.set(result.id, figureData.figureString);
+                }
+            }
+
+            this._avatarColorCache.set(figureString, figureData.color);
+        }
+
+        if(image != null)
+        {
+            this._petImageCache.set(cacheKey, image);
+        }
+
+        return image;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::imageReady()

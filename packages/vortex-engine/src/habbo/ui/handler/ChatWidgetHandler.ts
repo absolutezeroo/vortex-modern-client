@@ -9,14 +9,14 @@
  * speaker's screen position via room canvas geometry) and tracks the room
  * camera to notify the widget when it pans/zooms.
  *
- * TODO(AS3): avatar head images and pet images in chat bubbles are not
- * ported — `getUserImage()`/`getPetImage()` always return null. Two real
- * gaps here: (1) `IRoomWidgetHandlerContainer` doesn't expose
- * `avatarRenderManager` yet (AS3's interface does), and (2)
- * `IAvatarImage.getCroppedImage()` returns a PixiJS `Texture`, not the
- * `ImageBitmap` chat bubbles composite with — there's no conversion utility
- * yet. `IRoomEngine.getPetImage()` also doesn't exist. Game chat
- * (`gce_game_chat`, the `habbo/game` module) isn't ported either.
+ * TODO(AS3): this handler's own `getUserImage()`/`getPetImage()` still return null. What is left
+ * is narrower than it used to read: `IRoomEngine.getPetImage()` does exist (the catalog pet
+ * widgets and, since this note was corrected, `ChatBubbleFactory.getPetImage()` all use it), and
+ * the free-flow chat path renders both faces already. The remaining gaps here are that
+ * `IRoomWidgetHandlerContainer` does not expose `avatarRenderManager` (AS3's interface does) and
+ * that `IAvatarImage.getCroppedImage()` returns a PixiJS `Texture` where these bubbles composite
+ * an `ImageBitmap`, with no conversion utility yet. Game chat (`gce_game_chat`, the `habbo/game`
+ * module) is unported independently of both.
  */
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
