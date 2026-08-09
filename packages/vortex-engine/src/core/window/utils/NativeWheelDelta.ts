@@ -16,10 +16,20 @@
  * or fully to the bottom, never anywhere in between" behaviour.
  *
  * A pixel delta is therefore rescaled so that a standard 100px notch is worth
- * the 3 lines Flash would have reported, keeping the original client's feel
- * (75px per notch in a list, 18% of the range on a scrollbar). Trackpads, which
- * emit a stream of small pixel deltas instead of discrete notches, come out
- * proportionally small and scroll smoothly.
+ * a whole number of Flash lines. Trackpads, which emit a stream of small pixel
+ * deltas instead of discrete notches, come out proportionally small and scroll
+ * smoothly.
+ *
+ * `LINES_PER_NOTCH` is the one number here that is a *choice* rather than a
+ * conversion, and it is deliberately 1 rather than the 3 Windows reported to
+ * Flash. Every consumer of this unit scales it by a fixed pixel step and then
+ * divides by the scrollable overflow, so the fraction of the range a notch
+ * covers grows as the content gets shorter: at 3 lines, one notch moves 25% of
+ * a short grid (a chat-bubble chooser, a badge colour palette) and 47% of a
+ * very short one, which is unusable for picking a specific row even though the
+ * animation between the two positions is perfectly smooth. At 1 line the same
+ * grids move ~8% per notch and long ones stay comfortable. Nothing downstream
+ * was changed to get this - the rest of the wheel path is faithful to AS3.
  *
  * Flash's sign convention is the opposite of the DOM's — `delta > 0` means
  * scrolling *up* — so the result is negated.
@@ -30,8 +40,8 @@ export class NativeWheelDelta
     // nothing is left to port, so either marker would be a lie. The traceability hook
     // flags every member of this class - that is expected, not an oversight.
 
-    /** Lines per wheel notch, as Flash reported them on Windows. */
-    public static readonly LINES_PER_NOTCH: number = 3;
+    /** Flash line units one wheel notch is worth. See the class note - Flash's own value was 3. */
+    public static readonly LINES_PER_NOTCH: number = 1;
 
     /** Pixels per wheel notch, as browsers report them in `deltaMode` 0. */
     public static readonly PIXELS_PER_NOTCH: number = 100;
