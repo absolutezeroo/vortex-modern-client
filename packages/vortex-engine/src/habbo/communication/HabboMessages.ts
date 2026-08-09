@@ -1,3 +1,28 @@
+import {
+    CloseIssueDefaultActionMessageComposer,
+    CloseIssuesMessageComposer,
+    DefaultSanctionMessageComposer,
+    GetCfhChatlogMessageComposer,
+    GetModeratorRoomInfoMessageComposer,
+    GetModeratorUserInfoMessageComposer,
+    GetRoomChatlogMessageComposer,
+    GetRoomVisitsMessageComposer,
+    GetUserChatlogMessageComposer,
+    ModAlertMessageComposer,
+    ModBanMessageComposer,
+    ModKickMessageComposer,
+    ModMessageMessageComposer,
+    ModMuteMessageComposer,
+    ModToolPreferencesComposer,
+    ModToolSanctionComposer,
+    ModTradingLockMessageComposer,
+    ModerateRoomMessageComposer,
+    ModeratorActionMessageComposer,
+    PeerUsersClassificationMessageComposer,
+    PickIssuesMessageComposer,
+    ReleaseIssuesMessageComposer,
+    RoomUsersClassificationMessageComposer,
+} from './messages/outgoing/moderation';
 import type {
     ComposerClass,
     EventClass,
@@ -2639,6 +2664,39 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1493, GetMarketplaceCanMakeOfferMessageComposer);
         this._composers.set(3419, BuyMarketplaceTokensMessageComposer);
         this._composers.set(3695, MakeOfferMessageComposer);
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
+        // Every moderation composer was ported and none was registered, so a moderator could
+        // receive the whole tool (all 14 incoming events are wired) and send nothing — each
+        // button reached a composer the connection had no header for. Ids are the primary
+        // registry's, and each constructor arity was checked against the class it maps to.
+        this._composers.set(1631, CloseIssueDefaultActionMessageComposer);
+        this._composers.set(3986, CloseIssuesMessageComposer);
+        this._composers.set(2375, DefaultSanctionMessageComposer);
+        this._composers.set(1580, GetCfhChatlogMessageComposer);
+        this._composers.set(1504, GetModeratorRoomInfoMessageComposer);
+        this._composers.set(3230, GetModeratorUserInfoMessageComposer);
+        this._composers.set(1346, GetRoomChatlogMessageComposer);
+        this._composers.set(903, GetRoomVisitsMessageComposer);
+        this._composers.set(1686, GetUserChatlogMessageComposer);
+        this._composers.set(2183, ModAlertMessageComposer);
+        this._composers.set(2507, ModBanMessageComposer);
+        this._composers.set(1401, ModKickMessageComposer);
+        this._composers.set(2579, ModMessageMessageComposer);
+        this._composers.set(2862, ModMuteMessageComposer);
+        this._composers.set(1415, ModToolPreferencesComposer);
+        this._composers.set(2476, ModToolSanctionComposer);
+        this._composers.set(3495, ModTradingLockMessageComposer);
+        this._composers.set(2939, ModerateRoomMessageComposer);
+        // Moved header: 396 in the 2023 build (win63_version's own registry), 2735 here. The
+        // reference server has no handler for it — its 2735 is a *server→client* gift message,
+        // a separate namespace — so this one sends into the void until the emulator implements
+        // it. Registered anyway: the client registry is the authority on what the client sends.
+        this._composers.set(2735, ModeratorActionMessageComposer);
+        this._composers.set(628, PeerUsersClassificationMessageComposer);
+        this._composers.set(3400, PickIssuesMessageComposer);
+        this._composers.set(3977, ReleaseIssuesMessageComposer);
+        this._composers.set(157, RoomUsersClassificationMessageComposer);
         this._composers.set(1246, GetRecyclerStatusMessageComposer);
         this._composers.set(2516, GetRecyclerPrizesMessageComposer);
         this._composers.set(2956, RecycleItemsMessageComposer);
