@@ -1,5 +1,7 @@
 import type {IFurniModel} from './IFurniModel';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
+import type {IFurnitureItem} from '../items/IFurnitureItem';
+import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {IFurnitureItemData} from '../items/FurnitureItemData';
 import type {HabboInventory} from '../HabboInventory';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
@@ -24,6 +26,13 @@ import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum'
  */
 export class FurniModel implements IFurniModel
 {
+    /**
+     * AS3 inlines this as a bare `1500` in `requestSelectedFurniToTrading()` — the ceiling on how
+     * many of your own items one trade may hold. Name DERIVED; the literal is unnamed in AS3.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::requestSelectedFurniToTrading()
+    private static readonly MAX_ITEMS_IN_TRADE: number = 1500;
+
     private _currentCategory: 'furni' | 'rentables' = 'furni';
     private _categorySelections: Map<string, GroupItem | null> = new Map();
 
@@ -66,11 +75,17 @@ export class FurniModel implements IFurniModel
         return this._catalog;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::isTradingOpen
-    // TODO(AS3): TradingView/subCategory routing not ported yet (see FurniView task).
+    /**
+     * The primary tree admits `wired_trading` alongside `trading` — the 2023 build tests only
+     * `trading`. Both ids are the *view*'s, so this holds even though `inventory/wired_trading/`
+     * itself is unported: that subcategory simply never becomes the active view here.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::get isTradingOpen()
     get isTradingOpen(): boolean
     {
-        return false;
+        const subCategoryViewId = this._habboInventory.getSubCategoryViewId();
+
+        return subCategoryViewId === 'trading' || subCategoryViewId === 'wired_trading';
     }
 
     constructor(
@@ -137,11 +152,73 @@ export class FurniModel implements IFurniModel
         // Not wired yet.
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::requestSelectedFurniToTrading()
-    // TODO(AS3): TradingModel.requestAddItemsToTrading() not wired yet.
-    requestSelectedFurniToTrading(_count: number = 1, _offerInTradingCountButton: unknown = null): void
+    /**
+     * The whole batch rides on the *first* item's description — AS3 sends one composer for the
+     * group, so type/category/groupable/stuffData all come from `coreItem`, not from each item.
+     *
+     * On overflow the count field is reset to "1" rather than left showing the rejected number,
+     * and the same reset happens when there is no active trade at all.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::requestSelectedFurniToTrading()
+    requestSelectedFurniToTrading(count: number = 1, offerInTradingCountButton: ITextFieldWindow | null = null): void
     {
-        // Not wired yet.
+        const groupItem = this.getSelectedItem();
+
+        if(groupItem === null) return;
+
+        const itemsInTrade = groupItem.getItemsForTrade(count);
+
+        if(itemsInTrade.length === 0) return;
+
+        const itemIds: number[] = [];
+        let coreItem: IFurnitureItem | null = null;
+
+        for(const furnitureItem of itemsInTrade)
+        {
+            itemIds.push(furnitureItem.id);
+
+            if(coreItem === null) coreItem = furnitureItem;
+        }
+
+        if(coreItem === null) return;
+
+        const trading = this._habboInventory.activeTradingModel;
+
+        if(trading !== null)
+        {
+            const ownItemCount = trading.getOwnItemIdsInTrade().length;
+
+            if(ownItemCount + itemIds.length <= FurniModel.MAX_ITEMS_IN_TRADE)
+            {
+                if(offerInTradingCountButton !== null) offerInTradingCountButton.text = String(itemIds.length);
+
+                trading.requestAddItemsToTrading(
+                    itemIds,
+                    coreItem.isWallItem,
+                    coreItem.type,
+                    coreItem.category,
+                    coreItem.groupable,
+                    coreItem.stuffData
+                );
+            }
+            else
+            {
+                if(offerInTradingCountButton !== null) offerInTradingCountButton.text = '1';
+
+                this._windowManager.alert(
+                    '${trading.items.too_many_items.title}',
+                    '${trading.items.too_many_items.desc}',
+                    0,
+                    (dialog) => dialog.dispose()
+                );
+            }
+        }
+        else if(offerInTradingCountButton !== null)
+        {
+            offerInTradingCountButton.text = '1';
+        }
+
+        this._view.updateActionView();
     }
 
     // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::requestSelectedFurniSelling()

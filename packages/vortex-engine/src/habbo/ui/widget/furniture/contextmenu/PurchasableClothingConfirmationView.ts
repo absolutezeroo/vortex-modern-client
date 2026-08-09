@@ -2,10 +2,12 @@ import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {XmlAsset} from '@core/assets/XmlAsset';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IFrameWindow} from '@core/window/components/IFrameWindow';
+import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 import type {FurnitureContextMenuWidget} from './FurnitureContextMenuWidget';
 
@@ -211,18 +213,24 @@ export class PurchasableClothingConfirmationView
     }
 
     /**
-     * TODO(AS3): AS3 reaches into the layout's `avatar_preview` window, casts its `widget` to
-     * the window-system's avatar widget and assigns `figure = _newFigureString`. This port has
-     * no avatar widget behind a window (`habbo/window/widgets` is unported), so the preview
-     * pane stays empty and the composed figure is only used by the redeem below.
+     * AS3 casts both the window and its widget unconditionally, so a layout without an
+     * `avatar_preview` throws there. Here it logs and leaves the pane alone, as everywhere else
+     * this port reaches through `IWidgetWindow.widget`.
      */
     // AS3: .../contextmenu/PurchasableClothingConfirmationView.as::refreshAvatar()
     private refreshAvatar(): void
     {
-        if(this._window?.findChildByName('avatar_preview') == null)
+        const previewWindow = this._window?.findChildByName('avatar_preview') as IWidgetWindow | null;
+        const widget = (previewWindow?.widget ?? null) as IAvatarImageWidget | null;
+
+        if(widget === null)
         {
             log.debug('No avatar_preview in the layout - nothing to refresh');
+
+            return;
         }
+
+        widget.figure = this._newFigureString;
     }
 
     // AS3: .../contextmenu/PurchasableClothingConfirmationView.as::close()
