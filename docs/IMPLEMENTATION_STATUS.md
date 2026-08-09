@@ -62,11 +62,11 @@ node scripts/todo-inventory.mjs --json
 `packages/*/dist` is excluded: it is gitignored build output carrying a duplicate of every `.d.ts`
 marker, which inflates a naive `grep -c` by ~90.
 
-**2026-08-09 — 433 TODO in `packages/*/src` (376 `TODO(AS3)`, 57 plain), from 447 earlier the same day:**
+**2026-08-09 — 425 TODO in `packages/*/src` (368 `TODO(AS3)`, 57 plain), from 502 at the start of the day:**
 
 | Blocker                                                     | Count |
 |-------------------------------------------------------------|-------|
-| Local micro-gap, no blocker cited                            | 252   |
+| Local micro-gap, no blocker cited                            | 245   |
 | A whole unported module                                      | 107   |
 | Wire / server (composer, parser, header)                     | 35    |
 | Flash-only (BitmapData, filter, shader, Timer)               | 20    |
@@ -150,6 +150,56 @@ port passes, and `scrollBySteps`, `wheelDeltaToScrollDelta`, the `0.01` epsilon 
 fixed pixel intent divided by the scrollable overflow, so on a short grid one notch covered 25-47%
 of the range. One line per notch puts those at 8-16%. Recorded here because the instinct to look for
 an unfaithful port was wrong twice over: nothing downstream was touched.
+
+### Continued again — 433 → 425, and the `win63_version` decompile stops being trustworthy
+
+**The infostand's two live updates.** AS3's `InfoStandWidgetHandler` registers nine session
+listeners; seven pet ones were wired and the two that matter while you are looking at somebody were
+not — `RSUBE_FIGURE` (they changed look, motto or achievement score) and
+`rsfgue_favourite_group_update`. The panel stayed frozen on whatever it showed when you clicked.
+`InfoStandWidget.updateUserData()` and `favouriteGroupUpdated()` were both already written, each
+under a marker reading "no current caller".
+
+The favourite-group half needed a chain that did not exist at all:
+`FavoriteMembershipUpdateMessageEvent` (1259, registry `_SafeCls_2046.as:1215`, class
+`_SafeCls_3475`, corroborated) and its parser were unported, so `RoomUsersHandler` could not raise
+`RoomSessionFavouriteGroupUpdateEvent` — a class that existed and nothing ever constructed.
+
+**Pet faces in chat bubbles.** `ChatBubbleFactory.getPetImage()` was `return null` under a long
+marker explaining it was "genuinely blocked, not deferred out of laziness":
+`roomEngine.getPetImage()` supposedly existed nowhere, "confirmed via search". It exists on
+`IRoomEngine` with the exact ten-parameter signature AS3 calls, and two catalog widgets had been
+calling it all along. So had the two caches, `imageReady()`, `petImageReady()` and `PetFigureData`.
+Everything but the twenty lines between them.
+
+**`init()`'s three "blocked" steps.** The marker listed `refreshFurniData()`,
+`getGiftWrappingConfiguration()` and `initBundleDiscounts()` as skipped for want of their backing
+systems. None held up: one had landed the same day, `ISessionDataManager.refreshFurniData()` had
+existed all along, and gift wrapping was one message away. `GetGiftWrappingConfigurationComposer`
+(940), `GiftWrappingConfigurationEvent` (1369), `CatalogPublishedMessageEvent` (773) and the
+`GiftWrappingConfiguration` DTO are ported. 1369 comes from the emulator **alone** — the registry
+carries only the request side and this port had no counterpart to read the response id back from;
+that is stated at the declaration rather than dressed up as AS3-verified.
+
+`refreshFurniData()` would have been dead code by itself: AS3 only calls it from `init()` when a
+flag set by `onCatalogPublished` says the data is stale, so that handler is ported too. The
+deferral is deliberate — a user who never reopens the catalog never pays for the refetch.
+
+**Two decompiler artifacts in one day, both in `win63_version`, both would have shipped.**
+`SpinnerCatalogWidget.refresh()` reads `visible = 0 > 0` with the computed local discarded — a
+permanently hidden container. `GiftWrappingConfigurationEventParser` reads `while(0 < _loc2_)` in
+all four list loops, with `_loc3_` incremented and never tested — a browser hang on any non-empty
+list. The primary tree has the correct code in both. Together with the dropped E4X `@` already in
+`CLAUDE.md`, the rule is now unconditional: **when a `win63_version` decompile reads as dead or
+absurd code, check the primary tree before porting it.**
+
+**A comment-shape defect worth naming.** The orphan detector reported 49 blocks detached from their
+declaration. Reading them showed one dominant shape, not 49 mistakes: a block split in two, the head
+stranded above an unrelated member and the tail still in place above the right one, starting
+mid-sentence — the halves rejoin into one grammatical sentence. 22 were rejoined mechanically on
+that pairing (both halves name the same member). The 27 left each need their own judgement: most sit
+inside a method body and are correctly placed, and a few document a member that exists in no tree,
+where a lone marker is legitimate.
 
 ### Three measurement tools, and what they are each for
 
