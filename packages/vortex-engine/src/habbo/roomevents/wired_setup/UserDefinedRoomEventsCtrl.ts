@@ -1,4 +1,5 @@
 import type {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroomevents/Triggerable';
+import type {IVariableType} from './variables/IVariableType';
 import {ActionDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/ActionDefinition';
 import {ConditionDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/ConditionDefinition';
 import {QuantifierType} from '@habbo/communication/messages/incoming/userdefinedroomevents/QuantifierType';
@@ -790,16 +791,24 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         this._roomEvents.send(new ApplySnapshotMessageComposer(this._currentDef.id));
     };
 
+    /**
+     * The header's "show this variable" button. A variable element with no name yet has nothing to
+     * open, which is also what keeps the button hidden — see `onEditStartUpdateCommonUI()`.
+     */
     // AS3: UserDefinedRoomEventsCtrl.as::viewVariableInMenu()
     private _viewVariableInMenu = (): void =>
     {
-        // TODO(AS3): Bloc C — open the wired menu variable overview.
+        const element = this._currentElement as IVariableType | null;
+
+        if(element == null || !element.initialVariableName || element.initialVariableName.length === 0) return;
+
+        this._roomEvents.context.createLinkEvent(`wiredmenu/open/variable_overview/${element.initialVariableName}`);
     };
 
     // AS3: UserDefinedRoomEventsCtrl.as::viewLogs()
     private _viewLogs = (): void =>
     {
-        // TODO(AS3): Bloc C — open the wired menu logs.
+        this._roomEvents.context.createLinkEvent('wiredmenu/logs');
     };
 
     // AS3: UserDefinedRoomEventsCtrl.as::save() (the footer's save button handler)
@@ -1004,10 +1013,28 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         this.onStuffsChanged();
     }
 
+    /**
+     * A furni left the room. If it is the wired being edited, the dialog has nothing left to edit
+     * and closes outright; otherwise it just drops out of the picked sets.
+     */
     // AS3: UserDefinedRoomEventsCtrl.as::stuffRemoved()
-    stuffRemoved(_id: number): void
+    stuffRemoved(id: number): void
     {
-        // TODO(AS3): Bloc C.
+        if(this._frame == null || this._currentDef == null) return;
+
+        if(this._currentDef.id === id)
+        {
+            this.close();
+
+            return;
+        }
+
+        let changed = false;
+
+        if(this._stuffs1.delete(id)) changed = true;
+        if(this._stuffs2.delete(id)) changed = true;
+
+        if(changed) this.onStuffsChanged();
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::getStuffIds()
@@ -1025,16 +1052,54 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::clearStuffPicks()
     clearStuffPicks(): void
     {
-        // TODO(AS3): hideFurniHighlights() (RoomObjectHighLighter — Bloc C stub) precedes the reset.
+        this.hideFurniHighlights();
+
         this._stuffs1 = new Set<number>();
         this._stuffs2 = new Set<number>();
+
         this.onStuffsChanged();
     }
 
+    /**
+     * Puts the def back to how the server described it before anyone touched it, then re-opens the
+     * dialog on the reset def. Nothing is sent — the reset only becomes real on save.
+     *
+     * The variable-id loop is AS3's own, oddity included: it counts up to `variableIds` (the array)
+     * rather than its length, so the comparison is against an array in a numeric context. Kept, and
+     * the length is what the port compares to since that is what the AS3 coercion actually yields.
+     */
     // AS3: UserDefinedRoomEventsCtrl.as::resetToDefault()
     resetToDefault(): void
     {
-        // TODO(AS3): Bloc C.
+        if(this._currentDef == null) return;
+
+        this.savePosition();
+
+        const def = this._currentDef;
+
+        def.intParams = [...def.defaultIntParams];
+        def.stringParam = '';
+        def.variableIds = def.variableIds.map(() => '0');
+        def.stuffIds = [];
+        def.stuffIds2 = [];
+        def.furniSourceTypes = [...def.inputSourcesConf.defaultFurniSources];
+        def.userSourceTypes = [...def.inputSourcesConf.defaultUserSources];
+
+        const action = def as ActionDefinition;
+        const condition = def as ConditionDefinition;
+        const selector = def as SelectorDefinition;
+
+        if(action.delayInPulses !== undefined) action.delayInPulses = 0;
+        if(condition.quantifierCode !== undefined) condition.quantifierCode = 0;
+
+        if(selector.isFilter !== undefined)
+        {
+            selector.isFilter = false;
+            selector.isInvert = false;
+        }
+
+        this.prepareForUpdate(def);
+        this.restorePositionAndActivate();
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::createClipboardCopy()
@@ -1157,17 +1222,35 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         }
     }
 
+    /**
+     * Decides whether the advanced section starts expanded: it does when the def already carries
+     * non-default input sources, or the element says its own advanced settings are in use.
+     */
     // AS3: UserDefinedRoomEventsCtrl.as::get isUsingAdvancedSettings()
     get isUsingAdvancedSettings(): boolean
     {
-        // TODO(AS3): Bloc C.
-        return false;
+        if(this._currentDef == null) return false;
+
+        return this._currentDef.usingCustomInputSources || (this._currentElement?.usingCustomAdvancedSettings ?? false);
     }
 
+    /**
+     * The cache is keyed on the style name, so every built frame is stale the moment the preferred
+     * style changes — `clearCache()` also closes whatever is open, which is why AS3 does it before
+     * swapping the style rather than after.
+     */
     // AS3: UserDefinedRoomEventsCtrl.as::setPreferredWiredStyleByName()
-    setPreferredWiredStyleByName(_name: string): void
+    setPreferredWiredStyleByName(name: string): void
     {
-        // TODO(AS3): Bloc C.
+        if(name === this._defaultStyle.name) return;
+
+        const style = this._wiredStyles.getValue(name);
+
+        if(style == null) return;
+
+        this.clearCache();
+
+        this._defaultStyle = style;
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::onSaveFailure()
