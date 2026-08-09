@@ -13,6 +13,7 @@
  * is silently dropped from the switch.
  */
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
 import type {IRoomWidgetHandlerContainer} from '@habbo/ui/IRoomWidgetHandlerContainer';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
@@ -845,11 +846,29 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
             case RoomWidgetFurniActionMessage.USE:
                 container.roomEngine.useRoomObjectInActiveRoom(message.furniId, message.furniCategory);
                 break;
-            case RoomWidgetFurniActionMessage.WIRED_INSPECT:
-                // TODO(AS3): opens the wired-inspection menu via a room-engine link event;
-                // IRoomEngine doesn't expose a link-event/context accessor yet.
-                log.debug('TODO(AS3): RWFAM_WIRED_INSPECT not wired yet');
+            // AS3: InfoStandWidgetHandler.as::processWidgetMessage() "RWFAM_WIRED_INSPECT" — the
+            // wired menu keys a wall item by the *negated* furni id, which is how one link format
+            // addresses both object spaces. Any other category falls through without a link.
+            case RoomWidgetFurniActionMessage.WIRED_INSPECT: {
+                let link = 'wiredmenu/open/inspection/0/';
+
+                if(message.furniCategory === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+                {
+                    link += String(message.furniId);
+                }
+                else if(message.furniCategory === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+                {
+                    link += String(-message.furniId);
+                }
+                else
+                {
+                    break;
+                }
+
+                container.roomEngine.createLinkEvent(link);
+
                 break;
+            }
             // AS3: InfoStandWidgetHandler.as::processWidgetMessage() "RWFAM_SAVE_STUFF_DATA" —
             // objectData arrives as a flat "key=value" list joined by tabs and is rebuilt into the
             // map the composer serialises. `split('=', 2)` is AS3's own limit: a value containing
@@ -963,9 +982,8 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
                 break;
         }
 
-        // TODO(AS3): container.userDefinedRoomEvents.userSelected(message.id) —
-        // IHabboUserDefinedRoomEvents has no concrete implementation yet (always
-        // null on the container), so this is a no-op either way right now.
+        // AS3: InfoStandWidgetHandler.as::handleGetUserInfoMessage() — tells the wired menu which
+        // user is selected, so its inspection tab follows the infostand.
         container.userDefinedRoomEvents?.userSelected(message.id);
     }
 

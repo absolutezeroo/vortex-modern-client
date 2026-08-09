@@ -743,6 +743,16 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     /**
+     * TS-only: AS3 has no such member on the engine — callers cast it to its Component base and go
+     * through `context.createLinkEvent()` themselves, which a TS interface cannot express. This is
+     * that same access, declared instead of cast.
+     */
+    createLinkEvent(link: string): void
+    {
+        this.context.createLinkEvent(link);
+    }
+
+    /**
      * Detaches the engine from the frame tick entirely, rather than setting a flag the update loop
      * checks — the room previewer uses it to freeze the preview while a dialog rebuilds it.
      */
