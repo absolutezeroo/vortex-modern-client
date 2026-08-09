@@ -1,3 +1,4 @@
+import {NotificationExtraDataKey} from '../NotificationExtraDataKey';
 import type {HabboNotificationItemStyle} from './HabboNotificationItemStyle';
 import type {SingularNotificationController} from './SingularNotificationController';
 
@@ -49,7 +50,7 @@ export class HabboNotificationItem
             return null;
         }
 
-        return (this._style.extraData['id'] as string | null) ?? null;
+        return (this._style.extraData[NotificationExtraDataKey.ID] as string | null) ?? null;
     }
 
     /**

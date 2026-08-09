@@ -289,18 +289,28 @@ export class HabboNotifications extends Component implements IHabboNotifications
     }
 
     /**
-	 * Add a notification item with content, type, and optional icon asset name
-	 *
-	 * @param content The notification message text
-	 * @param type The notification type string
-	 * @param iconAssetName Optional asset name for the icon
-	 *
-	 * @see source_as_win63/habbo/notifications/HabboNotifications.as addItem()
-	 */
+     * Add a notification item with content, type, and optional icon asset name
+     *
+     * @param content The notification message text
+     * @param type The notification type string
+     * @param iconAssetName Optional asset name for the icon
+     *
+     * @param internalLink
+     * @param extraData
+     * @param internalLink
+     * @param extraData
+     * @see source_as_win63/habbo/notifications/HabboNotifications.as addItem()
+     */
     // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::addItem()
-    addItem(content: string, type: string, iconAssetName?: string | null): void
+    addItem(
+        content: string,
+        type: string,
+        iconAssetName?: string | null,
+        internalLink: string | null = null,
+        extraData: Record<string, unknown> | null = null
+    ): void
     {
-        this._singularController?.addItem(content, type, null, iconAssetName ?? null);
+        this._singularController?.addItem(content, type, null, iconAssetName ?? null, null, internalLink, extraData);
     }
 
     /**

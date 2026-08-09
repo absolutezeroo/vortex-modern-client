@@ -13,9 +13,17 @@ export interface IHabboNotifications
 	 * @param content The notification message text
 	 * @param type The notification type string (e.g., "info", "achievement")
 	 * @param iconAssetName Optional asset name for the notification icon
+	 * @param internalLink Optional internal link followed when the bubble is clicked
+	 * @param extraData Optional per-notification data — see `NotificationExtraDataKey`
 	 */
     // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_180.as::addItem()
-    addItem(content: string, type: string, iconAssetName?: string | null): void;
+    addItem(
+        content: string,
+        type: string,
+        iconAssetName?: string | null,
+        internalLink?: string | null,
+        extraData?: Record<string, unknown> | null
+    ): void;
 
     /**
 	 * Add a notification item whose icon is an already-rendered bitmap

@@ -1,5 +1,6 @@
 import type {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroomevents/Triggerable';
 import type {IVariableType} from './variables/IVariableType';
+import {NotificationExtraDataKey} from '@habbo/notifications/NotificationExtraDataKey';
 import {ActionDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/ActionDefinition';
 import {ConditionDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/ConditionDefinition';
 import {QuantifierType} from '@habbo/communication/messages/incoming/userdefinedroomevents/QuantifierType';
@@ -86,6 +87,18 @@ const log = Logger.getLogger('habbo.roomevents.wired_setup.UserDefinedRoomEvents
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/UserDefinedRoomEventsCtrl.as
  */
+/**
+ * AS3 builds this object inline at each of the three wired notification call sites
+ * (`{time_display: 2500}`), which is 2.5s rather than the type's configured default.
+ *
+ * TODO(AS3): the key has no reader in this port yet — `HabboNotificationItemView.displayTime`,
+ * which consumes it, is not ported, so a wired notification still shows for the default duration.
+ * The value now reaches the style's `extraData` where AS3 puts it, so wiring the view is the only
+ * step left.
+ */
+// AS3: UserDefinedRoomEventsCtrl.as::onSaveSuccess() / createClipboardCopy() / prepareForUpdate()
+const WIRED_NOTIFICATION_OPTIONS: Record<string, unknown> = {[NotificationExtraDataKey.TIME_DISPLAY]: 2500};
+
 export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
 {
     // AS3: UserDefinedRoomEventsCtrl.as::STYLE_DEFAULT
@@ -1133,8 +1146,9 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
 
         this._clipboard.set(key, entry);
         this._frame?.updateButtonDisabledStates();
-        // TODO(AS3): AS3 passes a {time_display: 2500} options object the port's addItem lacks.
-        this._roomEvents.notifications.addItem('${notification.wired.copied}', 'wired');
+        this._roomEvents.notifications.addItem(
+            '${notification.wired.copied}', 'wired', null, null, WIRED_NOTIFICATION_OPTIONS
+        );
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::pasteFromClipboard()
@@ -1271,12 +1285,15 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         }
         else if(this._updateMode === 1)
         {
-            // TODO(AS3): AS3 passes a {time_display: 2500} options object the port's addItem lacks.
-            this._roomEvents.notifications.addItem('${notification.wired.saved}', 'wired');
+            this._roomEvents.notifications.addItem(
+                '${notification.wired.saved}', 'wired', null, null, WIRED_NOTIFICATION_OPTIONS
+            );
         }
         else if(this._updateMode === 2)
         {
-            this._roomEvents.notifications.addItem('${notification.wired.pasted_into}', 'wired');
+            this._roomEvents.notifications.addItem(
+                '${notification.wired.pasted_into}', 'wired', null, null, WIRED_NOTIFICATION_OPTIONS
+            );
         }
 
         this._updateMode = 0;
