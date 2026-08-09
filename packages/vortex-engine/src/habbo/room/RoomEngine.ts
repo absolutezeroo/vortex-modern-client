@@ -1134,7 +1134,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         let type: string | null = null;
         let extra: string | null = null;
         let param = '';
-        const stuffData: unknown = null;
+        let stuffData: IStuffData | null = null;
         let state = -1;
         let objectFound = false;
 
@@ -1154,11 +1154,25 @@ export class RoomEngine extends Component implements IRoomEngine,
                 {
                     case 10:
                     case 20:
-                        param = String(object.getModel().getNumber('furniture_color'));
-                        extra = object.getModel().getString('furniture_extras');
+                    {
+                        param = String(object.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_COLOR));
+                        extra = object.getModel().getString(RoomObjectVariableEnum.FURNITURE_EXTRAS);
+
+                        // Format 0 is the plain legacy string, which the visualization already
+                        // reads off the model; only the richer formats need a wrapper rebuilt here,
+                        // and that is what carries e.g. a poster's chosen image into the icon.
+                        const dataFormat = object.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_DATA_FORMAT);
+
+                        if(dataFormat !== 0)
+                        {
+                            stuffData = StuffDataFactory.getStuffDataForType(dataFormat);
+                            stuffData?.initializeFromRoomObjectModel(object.getModel());
+                        }
+
                         break;
+                    }
                     case 100:
-                        param = object.getModel().getString('figure');
+                        param = object.getModel().getString(RoomObjectVariableEnum.AVATAR_FIGURE);
                 }
             }
         }
@@ -1681,11 +1695,6 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         return true;
     }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomObjectImage()
-    // TODO(AS3): the furniture_data_format != 0 branch needs a stuff-data-wrapper factory
-    // equivalent to AS3's _SafeCls_2295.getStuffDataWrapperForType(), which isn't ported - that
-    // branch's stuffData stays null (matches "no format-specific data" rather than the real
 
     addRoomObjectFurniture(
         roomId: number,
@@ -2466,13 +2475,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         this._canvasSyncCallbacks.add(callback);
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::disposeObjectFurniture()/disposeObjectWallItem()
-    // TODO(AS3): skips the `furniture_disable_picking_animation` model flag check
-    // and AS3's stuff-data-wrapper lookup for the icon param — uses the plain
-    // furniture_type_id icon, which is correct for the common case but won't
-    // reflect item-specific customization (e.g. a poster's chosen image) in the
-
-    unregisterCanvasSyncCallback(callback: () => void): void 
+    unregisterCanvasSyncCallback(callback: () => void): void
     {
         this._canvasSyncCallbacks.delete(callback);
     }
@@ -3052,6 +3055,22 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this.getRoomCanvasGeometry(roomId, 1);
     }
 
+    /**
+     * TODO(AS3): AS3 plays the pickup animation here — when `pickerId` is the local user, it takes
+     * the furni's screen position, builds its icon
+     * (`getFurnitureIcon(typeId, null, extras, stuffData)`) and hands it to
+     * `toolbar.createTransitionToIcon(INVENTORY, …)` so the item visibly flies into the inventory.
+     * Skipped entirely when the model's `furniture_disable_picking_animation` is 1.
+     *
+     * Every collaborator now exists — `_toolbar`, `_sessionDataManager`,
+     * `getRoomObjectScreenLocation()`, `getFurnitureIcon()`, `StuffDataFactory`,
+     * `HabboToolbar.createTransitionToIcon()`. The one thing that does not is a *synchronous* icon:
+     * AS3 reads `getFurnitureIcon(...).data` on the spot, while this port's `ImageResult` always
+     * takes the pending path (Texture→ImageBitmap conversion is async — see `ImageResult.ts`), so
+     * `data` is null at this point. Wiring it needs an `IGetImageListener` that fires the transition
+     * from `imageReady()`, which is a port-specific structure, not a transcription.
+     */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::disposeObjectFurniture()
     disposeObjectFurniture(
         roomId: number,
         id: number,
