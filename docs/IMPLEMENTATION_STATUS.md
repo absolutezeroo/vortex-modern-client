@@ -142,12 +142,27 @@ porting `SongDiskProductViewCatalogWidget` (268 lines): `CatalogWidgetName` alre
 `songDiskProductViewWidget` and `CatalogPage` had no case for it, so song-disk catalog pages built
 no widget at all.
 
-**Group forums, measured and deferred.** 11 send + 8 recv gaps, every one with a server handler —
-but the client side is 4,125 lines across 18 AS3 classes in `friendbar/groupforums/`, of which zero
-are ported (the directory holds a `.gitkeep`). The seven layouts, the images and
-`IIDHabboGroupForumController` all ship already; nothing implements the controller. A multi-session
-feature, not a wiring pass. Natural first slice: the 19 message classes, each header resolved
-against the registry the way the five above were.
+**Group forums — message layer done, UI not.** The feature is 4,125 lines across 18 AS3 classes in
+`friendbar/groupforums/`, none of them ported (the directory held a `.gitkeep`); the seven layouts,
+the images and `IIDHabboGroupForumController` all ship already, with nothing implementing the
+controller. The first slice landed: 4 DTOs, 9 parsers, 9 events, 12 composers, 21 headers. Group
+forums are gone from **both** wire-coverage gap lists (send 90 → 78, recv 97 → 89) and the registry
+went 432 → 444 composers, 435 → 444 events. The 18 UI classes remain; nothing constructs these yet.
+
+Two things that slice is worth remembering for:
+
+- **`UpdateThreadMessageComposer` sends its two booleans swapped.** AS3 declares
+  `(groupId, threadId, isLocked, isSticky)` and sends `[groupId, threadId, isSticky, isLocked]`.
+  Both trees agree, so it is not decompiler noise, and `ThreadListItemView` settles which parameter
+  is which — `lockThread(forum, id, !isLocked, isSticky)` against
+  `stickThread(forum, id, isLocked, !isSticky)`. The emulator's parser reads IsLocked then IsSticky,
+  so as things stand **pinning a thread there locks it and locking pins it**. A composer whose
+  payload order differs from its parameter order cannot be caught by arity checking; only reading
+  the body finds it.
+- **The four parser pairs sharing a wire shape** (post/update thread, post/update message) are
+  indistinguishable by shape *or* arity. What separates them is `GroupForumController`'s listener
+  registrations, whose callback names (`onPostThreadMessage` vs `onUpdateThread`) are unobfuscated.
+  Same method as the competition composers: **match the call site, not the shape.**
 
 ### The 2026-08-10 sweep — 422 → 382, and what the markers were hiding
 
