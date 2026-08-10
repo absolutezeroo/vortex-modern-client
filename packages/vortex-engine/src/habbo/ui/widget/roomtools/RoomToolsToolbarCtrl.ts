@@ -183,6 +183,12 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         this.setElementVisible('button_chat_history', visible);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::setAchievementsButton()
+    public setAchievementsButton(visible: boolean): void
+    {
+        this.setElementVisible('button_achievements', visible);
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::setCameraButton()
     public setCameraButton(visible: boolean): void 
     {
@@ -484,9 +490,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
                 this.toggleHistory();
                 break;
             case 'button_chat_history':
-                // TODO(AS3): freeFlowChat isn't wired into RoomUI/RoomDesktop yet — see
-                // sources/win63_version/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as
-                // case "button_chat_history": var_16.freeFlowChat.toggleVisibility();
+                this._widget?.freeFlowChat?.toggleVisibility();
                 break;
             // AS3: `(handler.container.roomEngine as Component).context.createLinkEvent(
             // "questengine/achievements/wired_games")`. `IRoomEngine` declares no `context` in

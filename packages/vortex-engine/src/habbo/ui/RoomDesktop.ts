@@ -1020,10 +1020,11 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     /**
      * Creates a widget by type code.
      *
-     * AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createWidget()
-     * TODO(AS3): only "RWE_INFOSTAND"/"RWE_ROOM_TOOLS"/"RWE_CHAT_INPUT_WIDGET"/
-     * "RWE_CHAT_WIDGET" are wired up so far (4 of the 45 AS3 RWE_* widget
-     * types); the rest still fall through to the stub log.
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidget()
+     *
+     * Builds the handler, then hands it to RoomWidgetFactory. The widget types missing here are
+     * the same six RoomWidgetFactory.ts's header enumerates (camera, crafting, playlist editor,
+     * youtube, vimeo, room-thumbnail camera) — each blocked on an unported subsystem.
      */
     public createWidget(type: string): void 
     {

@@ -96,7 +96,9 @@ export interface IRoomWidgetHandlerContainer
     // cycle, and a cycle here takes the whole InfoStand widget down with it.
     readonly furniEditor: IHabboFurniEditor | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get userDefinedRoomEvents()
-    // TODO(AS3): no concrete implementation exists yet — always null, see IHabboUserDefinedRoomEvents.ts.
+    // Backed by HabboUserDefinedRoomEvents, DI-resolved in RoomUI and injected into every
+    // RoomDesktop it creates. Still `| null` because the dependency resolves asynchronously —
+    // a widget built before it lands sees null, exactly as AS3's own callback wiring does.
     readonly userDefinedRoomEvents: IHabboUserDefinedRoomEvents | null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get moderation()

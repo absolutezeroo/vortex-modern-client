@@ -1,10 +1,18 @@
 /**
  * RoomWidgetFactory
  *
- * @see sources/win63_version/habbo/ui/widget/RoomWidgetFactory.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetFactory.as
  *
- * TODO(AS3): only "RWE_INFOSTAND" is implemented so far; the AS3 factory
- * constructs ~35 other widget types (chat, me-menu, room tools, etc.).
+ * TODO(AS3): 39 of the AS3 factory's 45 `RWE_*` cases are constructed here. The six that are
+ * not each need a whole subsystem this port has no module for, so they fall through to the
+ * default stub log rather than being listed as cases:
+ *   - "RWE_CAMERA" / "RWE_ROOM_THUMBNAIL_CAMERA" — CameraWidget / RoomThumbnailCameraWidget
+ *   - "RWE_CRAFTING" — CraftingWidget
+ *   - "RWE_PLAYLIST_EDITOR_WIDGET" — PlayListEditorWidget (takes `_roomUI.soundManager`)
+ *   - "RWE_YOUTUBE" / "RWE_VIMEO" — YoutubeDisplayWidget / VimeoDisplayWidget
+ * "RWE_CHAT_WIDGET" is handled here without an AS3 counterpart in this tree: the 2026 client
+ * dropped it for freeFlowChat, and ChatWidgetHandler.processEvent() returns early the moment
+ * that dependency resolves (see its own header).
  */
 import {Logger} from '@core/utils/Logger';
 import type {IRoomWidgetFactory} from './IRoomWidgetFactory';

@@ -9,14 +9,14 @@
  * speaker's screen position via room canvas geometry) and tracks the room
  * camera to notify the widget when it pans/zooms.
  *
- * TODO(AS3): this handler's own `getUserImage()`/`getPetImage()` still return null. What is left
- * is narrower than it used to read: `IRoomEngine.getPetImage()` does exist (the catalog pet
- * widgets and, since this note was corrected, `ChatBubbleFactory.getPetImage()` all use it), and
- * the free-flow chat path renders both faces already. The remaining gaps here are that
- * `IRoomWidgetHandlerContainer` does not expose `avatarRenderManager` (AS3's interface does) and
- * that `IAvatarImage.getCroppedImage()` returns a PixiJS `Texture` where these bubbles composite
- * an `ImageBitmap`, with no conversion utility yet. Game chat (`gce_game_chat`, the `habbo/game`
- * module) is unported independently of both.
+ * This handler's own `getUserImage()`/`getPetImage()` return null by decision, not by omission.
+ * `processEvent()` returns early the moment `freeFlowChat` resolves, so every live bubble — face
+ * included — comes from ChatBubbleFactory, which ports both lookups. Filling them in here would
+ * need `IRoomWidgetHandlerContainer` to expose `avatarRenderManager` and a Texture -> ImageBitmap
+ * conversion, both solely to feed a path no build after 2023 reaches.
+ *
+ * TODO(AS3): game chat (`gce_game_chat`) is the one real gap — the `habbo/game` module is
+ * unported, independently of the above.
  */
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
@@ -132,8 +132,10 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
         }
     }
 
-    // TODO(AS3): see file header — avatar head image extraction not wired yet.
-    public getUserImage(_figureString: string): ImageBitmap | null 
+    // See the file header: null here is deliberate, not a missing port. The live face path is
+    // ChatBubbleFactory.getUserImage(); this legacy handler is dead once freeFlowChat resolves,
+    // and reviving it would need a Texture -> ImageBitmap conversion that has no consumer.
+    public getUserImage(_figureString: string): ImageBitmap | null
     {
         return null;
     }
@@ -247,8 +249,9 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
         container.desktopEvents.emit(chatUpdateEvent.type, chatUpdateEvent);
     }
 
-    // TODO(AS3): see file header — IRoomEngine.getPetImage() doesn't exist yet.
-    private getPetImage(_figureString: string): ImageBitmap | null 
+    // As getUserImage() above — `IRoomEngine.getPetImage()` does exist and ChatBubbleFactory
+    // already uses it; only this dead legacy path is left returning null.
+    private getPetImage(_figureString: string): ImageBitmap | null
     {
         return null;
     }

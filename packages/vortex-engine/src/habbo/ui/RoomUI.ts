@@ -298,6 +298,12 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         return this._freeFlowChat?.chatStyleLibrary ?? null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::get freeFlowChat()
+    public get freeFlowChat(): IHabboFreeFlowChat | null
+    {
+        return this._freeFlowChat;
+    }
+
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_navigator
     private _navigator: IHabboNavigator | null = null;
 

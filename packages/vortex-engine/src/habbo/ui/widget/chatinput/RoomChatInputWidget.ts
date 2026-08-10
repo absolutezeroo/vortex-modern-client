@@ -160,8 +160,9 @@ export class RoomChatInputWidget extends RoomWidgetBase
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputWidget.as::getFriendBarWidth()
     public getFriendBarWidth(): number
     {
-        // TODO(AS3): friendBarView isn't wired into RoomUI yet — see HabboFriendBar.ts.
-        return 0;
+        if(!this._roomUi?.friendBarView) return 1000;
+
+        return this._roomUi.friendBarView.friendBarWidth;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputWidget.as::getToolBarWidth()

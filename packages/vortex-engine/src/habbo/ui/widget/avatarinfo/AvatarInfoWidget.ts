@@ -11,8 +11,11 @@ import {AvatarEditorIdEnum} from '@habbo/avatar/enum/AvatarEditorIdEnum';
  * result, nest breeding success). It repositions every visible bubble each frame against its
  * pet's on-screen box and owns the three breeding composers.
  *
- * Still deferred (TODO(AS3)): bots/other-avatar menus, decorate mode, the avatar name bubbles
- * and the avatar-highlight timer.
+ * Rentable bots are ported too (RentableBotMenuView plus the `botskills/` configuration views).
+ *
+ * TODO(AS3): five AS3 sibling views have no counterpart here — AvatarMenuView/AvatarContextInfoView
+ * (the other-avatar menu), DecorateModeView, NewUserHelpView, and UserNameView (the avatar name
+ * bubbles, with the avatar-highlight timer that drives them).
  *
  * AS3 adaptations: positioning uses roomEngine.getRoomObjectBoundingRectangle
  * directly (no RWGOI message round-trip); the per-frame tick uses the window
@@ -37,6 +40,7 @@ import {RoomWidgetPetStatusUpdateEvent} from '@habbo/ui/widget/events/RoomWidget
 import {RoomWidgetPetLevelUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetPetLevelUpdateEvent';
 import {RoomWidgetUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetUpdateEvent';
 import {HabboInventoryEffectsEvent} from '@habbo/inventory/events/HabboInventoryEffectsEvent';
+import {WiredUserClickHandledEvent} from '@habbo/roomevents/events/WiredUserClickHandledEvent';
 import type {IContextMenuParentWidget} from '../contextmenu/IContextMenuParentWidget';
 import type {ContextInfoView} from '../contextmenu/ContextInfoView';
 import type {AvatarContextInfoButtonView} from './AvatarContextInfoButtonView';
@@ -200,6 +204,9 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this.container?.desktopEvents.on(RoomWidgetRentableBotForceOpenContextMenuEvent.OPEN, this.onRentableBotForceOpenContextMenu);
         this.container?.desktopEvents.on(RoomWidgetRoomObjectUpdateEvent.FURNI_ADDED, this.onFurniAdded);
         this.container?.inventory?.events.on(HabboInventoryEffectsEvent.HIEE_EFFECTS_CHANGED, this.onEffectsChanged);
+        this.container?.userDefinedRoomEvents?.events.on(
+            WiredUserClickHandledEvent.WIRED_USER_CLICK_HANDLED, this.onUserClickHandledEvent
+        );
     }
 
     // AS3: AvatarInfoWidget.as::get handler()
@@ -653,17 +660,24 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     }
 
     // AS3: AvatarInfoWidget.as::maybeSetupMenuView()
-    // A room whose wired handles user clicks decides whether the menu opens; the wired
-    // module is not implemented in this port (userDefinedRoomEvents is always null), so the
-    // gate reads as "no wired" and the menu opens immediately.
-    // TODO(AS3): once IHabboUserDefinedRoomEvents has an implementation, also subscribe to
-    // WIRED_USER_CLICK_HANDLED (onUserClickHandledEvent) to build the deferred menu.
+    // A room whose wired handles user clicks decides whether the menu opens: the click goes to
+    // the server first, and only the WIRED_USER_CLICK_HANDLED reply below says whether the menu
+    // may still open. With no wired on the click, the menu opens immediately.
     private maybeSetupMenuView(roomIndex: number): void
     {
         if(this.container?.userDefinedRoomEvents?.hasClickUserWired() ?? false) return;
 
         this.setupMenuView(roomIndex);
     }
+
+    // AS3: AvatarInfoWidget.as::onUserClickHandledEvent()
+    private onUserClickHandledEvent = (event: WiredUserClickHandledEvent): void =>
+    {
+        if(this.disposed || !event.openMenu || this._buttonsSetup === null) return;
+
+        this.setupMenuView(event.index);
+        this.checkUpdateNeed();
+    };
 
     // AS3: AvatarInfoWidget.as::setupMenuView()
     private setupMenuView(roomIndex: number): void
@@ -1402,6 +1416,9 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this.container?.desktopEvents.off(RoomWidgetRentableBotForceOpenContextMenuEvent.OPEN, this.onRentableBotForceOpenContextMenu);
         this.container?.desktopEvents.off(RoomWidgetRoomObjectUpdateEvent.FURNI_ADDED, this.onFurniAdded);
         this.container?.inventory?.events.off(HabboInventoryEffectsEvent.HIEE_EFFECTS_CHANGED, this.onEffectsChanged);
+        this.container?.userDefinedRoomEvents?.events.off(
+            WiredUserClickHandledEvent.WIRED_USER_CLICK_HANDLED, this.onUserClickHandledEvent
+        );
 
         if(this._updateRegistered)
         {

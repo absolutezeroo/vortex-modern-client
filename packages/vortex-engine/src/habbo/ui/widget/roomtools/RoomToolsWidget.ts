@@ -17,6 +17,8 @@ import type {RoomUI} from '@habbo/ui/RoomUI';
 import type {GuestRoomData} from '@habbo/communication/messages/incoming/navigator/GuestRoomData';
 import {StringUtil} from '@habbo/utils/StringUtil';
 import type {RoomToolsWidgetHandler} from '@habbo/ui/handler/RoomToolsWidgetHandler';
+import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
+import {WiredAchievementsUpdatedEvent} from '@habbo/roomevents/events/WiredAchievementsUpdatedEvent';
 import {RoomToolsInfoCtrl} from './RoomToolsInfoCtrl';
 import {RoomToolsToolbarCtrl} from './RoomToolsToolbarCtrl';
 
@@ -33,6 +35,8 @@ export class RoomToolsWidget extends RoomWidgetBase
     private _toolbarCtrl: RoomToolsToolbarCtrl | null;
     private _infoCtrl: RoomToolsInfoCtrl | null;
     private _desktop: IRoomDesktop | null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::_freeFlowChat
+    private _freeFlowChat: IHabboFreeFlowChat | null;
     private _roomToolsTimer: ReturnType<typeof setTimeout> | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::RoomToolsWidget()
@@ -42,13 +46,12 @@ export class RoomToolsWidget extends RoomWidgetBase
 
         this.handler.widget = this;
         this._desktop = roomUI.desktop;
+        this._freeFlowChat = roomUI.freeFlowChat;
 
         this._infoCtrl = new RoomToolsInfoCtrl(this, windowManager, assets);
         this._toolbarCtrl = new RoomToolsToolbarCtrl(this, windowManager, assets);
         this._toolbarCtrl.updateRoomHistoryButtons();
-        // TODO(AS3): freeFlowChat isn't wired into RoomUI yet — default to visible,
-        // matching AS3's `!var_1560 || !var_1560.isDisabledInPreferences` when null.
-        this._toolbarCtrl.setChatHistoryButton(true);
+        this._toolbarCtrl.setChatHistoryButton(this._freeFlowChat !== null);
 
         const cameraLaunchPosition = roomUI.getProperty('camera.launch.ui.position');
 
@@ -57,11 +60,27 @@ export class RoomToolsWidget extends RoomWidgetBase
 			&& (StringUtil.isBlank(cameraLaunchPosition) || cameraLaunchPosition === 'room-menu')
         );
         this._toolbarCtrl.setLikeButton(this.handler.canRate);
+
+        const roomEvents = this.handler.container?.userDefinedRoomEvents ?? null;
+
+        this._toolbarCtrl.setAchievementsButton((roomEvents?.achievementsInRoom?.length ?? 0) > 0);
+        roomEvents?.events.on(
+            WiredAchievementsUpdatedEvent.WIRED_ACHIEVEMENTS_UPDATED,
+            this._onAchievementsUpdated
+        );
+
         this._toolbarCtrl.setCollapsed(
             (this.handler.sessionDataManager?.isNoob ?? true)
 			|| !((this.handler.sessionDataManager?.uiFlags ?? 0) & 2)
         );
     }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::onAchievementsUpdated()
+    // A bound field rather than a method so dispose() can hand the same reference back to `off()`.
+    private readonly _onAchievementsUpdated = (event: WiredAchievementsUpdatedEvent): void =>
+    {
+        this._toolbarCtrl?.setAchievementsButton(event.achievements.length > 0);
+    };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::dispose()
     public override dispose(): void
@@ -72,12 +91,22 @@ export class RoomToolsWidget extends RoomWidgetBase
             this._roomToolsTimer = null;
         }
 
+        // AS3's dispose() only nulls its own fields and leaves the listener attached. Here the
+        // emitter belongs to HabboUserDefinedRoomEvents — a DI singleton outliving every room —
+        // so an un-removed listener would keep firing into a disposed widget for the rest of
+        // the session.
+        this.handler.container?.userDefinedRoomEvents?.events.off(
+            WiredAchievementsUpdatedEvent.WIRED_ACHIEVEMENTS_UPDATED,
+            this._onAchievementsUpdated
+        );
+
         this._toolbarCtrl?.dispose();
         this._toolbarCtrl = null;
 
         this._infoCtrl?.dispose();
         this._infoCtrl = null;
 
+        this._freeFlowChat = null;
         this._desktop = null;
 
         super.dispose();
@@ -263,6 +292,12 @@ export class RoomToolsWidget extends RoomWidgetBase
     public get currentRoomIndex(): number
     {
         return RoomToolsWidget._currentRoomIndex;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::get freeFlowChat()
+    public get freeFlowChat(): IHabboFreeFlowChat | null
+    {
+        return this._freeFlowChat;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::get currentRoomName()
