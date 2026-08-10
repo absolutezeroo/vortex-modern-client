@@ -337,10 +337,16 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
                 void this.renderBotImage(extraParam);
 
                 break;
+            case 'chat_style':
+                // `extraParam` is the style id. The library owns the bitmap — AS3 clones it because
+                // assigning a BitmapData transfers ownership; the port's wrapper does not take it.
+                image = catalog.freeFlowChat?.chatStyleLibrary?.getStyle(parseInt(extraParam))?.selectorPreview ?? null;
+
+                break;
             default:
-                // TODO(AS3): AS3 also renders "chat_style" (the chat-style selector preview) and
-                // "habbicon" (HabbiconAssetManager.getPreviewBitmap()). Neither source is
-                // reachable from here in this port yet.
+                // TODO(AS3): AS3 also renders "habbicon" here, via
+                // HabbiconAssetManager.getPreviewBitmap(). The habbicon subsystem has no port —
+                // the same gap HabboCatalog.isHabbiconOfferOwned() documents.
                 log.warn(`No purchase-confirmation preview for product type "${this.productType}"`);
         }
 

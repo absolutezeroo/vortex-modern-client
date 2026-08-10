@@ -163,11 +163,6 @@ export class ChatStyleSelector implements IDisposable
     // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::_selected
     private _selected: ChatStyleGridEntry | null = null;
 
-    // TODO(AS3): AS3 also tints/masks a "chat_bg_preview" live bubble-background preview
-    // behind the chat input box here - chatinput_window_new's actual layout (verified
-    // against the raw source XML) has no such element, and AS3's own null-check on it
-    // early-returns BEFORE reaching setInputFieldColor() too, so in this layout picking a
-    // style has no visible side effect on the input field either - this is a faithful
     // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::get selected()
     private get selected(): ChatStyleGridEntry | null 
     {
@@ -261,8 +256,18 @@ export class ChatStyleSelector implements IDisposable
         if(this._gridView?.window?.visible) this._gridView.alignToSelector(this._container);
     }
 
-    // no-op for the layout actually shipped, not a simplification.
-    private setSelected(entry: ChatStyleGridEntry | null): void 
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::set selected()
+     *
+     * AS3 continues past these two assignments to tint and mask a live "chat_bg_preview" bubble
+     * background behind the input box, then recolours the input text. Both are skipped here for
+     * the same reason AS3 skips them: its very next statement is
+     * `if(window.findChildByName("chat_bg_preview") == null) return;`, and chatinput_window_new —
+     * checked against the raw layout XML, not the compiled asset — declares no such child. The
+     * early return lands before setInputFieldColor() too, so picking a style has no visible
+     * side effect on the input field in this layout either. Faithful, not reduced.
+     */
+    private setSelected(entry: ChatStyleGridEntry | null): void
     {
         if(!entry) return;
 

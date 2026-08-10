@@ -21,13 +21,12 @@ export class PrizeGridItem extends ProductGridItem implements IGridItem, IGetIma
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/recycler/PrizeGridItem.as::initProductIcon()
-    // TODO(AS3): the "chat_style" branch needs catalog.freeFlowChat.chatStyleLibrary, which isn't
-    // exposed on HabboCatalog yet (same gap already documented in HabboCatalogUtils.showExtraOnProduct()).
-    protected initProductIcon(roomEngine: IRoomEngine | null, productItemType: string, productItemTypeId: number, _extra: string = ''): void
+    protected initProductIcon(roomEngine: IRoomEngine | null, productItemType: string, productItemTypeId: number, extra: string = ''): void
     {
         if(!roomEngine) return;
 
-        let result: {data: ImageBitmap | null} | null;
+        let result: {data: ImageBitmap | null} | null = null;
+        let icon: ImageBitmap | null = null;
 
         switch(productItemType)
         {
@@ -36,19 +35,48 @@ export class PrizeGridItem extends ProductGridItem implements IGridItem, IGetIma
                 break;
 
             case 'i':
-                result = roomEngine.getWallItemIcon(productItemTypeId, this);
+                result = roomEngine.getWallItemIcon(productItemTypeId, this, extra);
                 break;
 
             case 'chat_style':
-                log.warn(`chat_style prize icons are not supported yet (item ${productItemTypeId})`);
-                return;
+                icon = PrizeGridItem.halveChatStylePreview(
+                    this.catalog?.freeFlowChat?.chatStyleLibrary?.getStyle(productItemTypeId)?.selectorPreview ?? null
+                );
+                break;
 
             default:
                 log.warn(`Can not yet handle this type of product: ${productItemType}`);
                 return;
         }
 
-        if(result?.data != null) this.setIconImage(result.data, true);
+        // AS3 assigns the icon from the image result only when there is one, which is what keeps
+        // the chat-style bitmap built above from being cleared by the null result.
+        if(result?.data != null) icon = result.data;
+
+        if(icon != null) this.setIconImage(icon, true);
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/catalog/recycler/PrizeGridItem.as::initProductIcon()
+     * (the `new BitmapData(w/2, h/2)` + `draw(preview, new Matrix(0.5, 0, 0, 0.5))` pair)
+     *
+     * The selector preview is drawn for the chat-style picker, twice the size a prize cell wants.
+     * Extracted only to keep the switch readable; AS3 inlines it.
+     */
+    private static halveChatStylePreview(preview: ImageBitmap | null): ImageBitmap | null
+    {
+        if(preview === null) return null;
+
+        const width = Math.max(1, Math.floor(preview.width / 2));
+        const height = Math.max(1, Math.floor(preview.height / 2));
+        const canvas = new OffscreenCanvas(width, height);
+        const context = canvas.getContext('2d');
+
+        if(context === null) return null;
+
+        context.drawImage(preview, 0, 0, width, height);
+
+        return canvas.transferToImageBitmap();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/recycler/PrizeGridItem.as::imageReady()

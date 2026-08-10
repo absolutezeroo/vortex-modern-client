@@ -31,6 +31,8 @@ import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
+import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
+import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
 import {IID_HabboAvatarEditor} from '@iid/IIDHabboAvatarEditor';
 import type {IHabboAvatarEditor} from '@habbo/avatar/IHabboAvatarEditor';
@@ -253,6 +255,15 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_soundManager
     private _soundManager: IHabboSoundManager | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_freeFlowChat
+    private _freeFlowChat: IHabboFreeFlowChat | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get freeFlowChat()
+    get freeFlowChat(): IHabboFreeFlowChat | null
+    {
+        return this._freeFlowChat;
+    }
 
     /**
      * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_9727
@@ -806,6 +817,16 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
                     manager?.sessionEvents.on(RoomSessionEvent.RSE_STARTED, this.onRoomSessionEvent);
                     manager?.sessionEvents.on(RoomSessionEvent.RSE_ENDED, this.onRoomSessionEvent);
+                },
+                false
+            ),
+            // What a chat-style offer's preview is drawn from — see
+            // HabboCatalogUtils.showExtraOnProduct() and PrizeGridItem.
+            new ComponentDependency(
+                IID_HabboFreeFlowChat,
+                (freeFlowChat: IHabboFreeFlowChat | null) =>
+                {
+                    this._freeFlowChat = freeFlowChat;
                 },
                 false
             ),

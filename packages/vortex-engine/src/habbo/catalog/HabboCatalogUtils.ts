@@ -491,8 +491,8 @@ export class HabboCatalogUtils implements IGetImageListener
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::showExtraOnProduct()
-    // TODO(AS3): the chat-style branch (type 9) needs catalog.freeFlowChat.chatStyleLibrary,
-    // which isn't ported - only the badge branch (type 4) is real.
+    // The two extras a product tile can carry in its corner: a badge (type 4) or a chat-style
+    // preview (type 9). `code` is the badge name in the first case, the style id in the second.
     showExtraOnProduct(type: number, code: string, container: IWindowContainer, xOffset: number, yOffset: number, alignTop: boolean = true, alignLeft: boolean = true): void
     {
         let widgetWindow = container.findChildByName(BADGE_CHATSTYLE_WIDGET_NAME) as unknown as IWindowContainer | null;
@@ -507,7 +507,17 @@ export class HabboCatalogUtils implements IGetImageListener
         const badgeImageHost = widgetWindow.findChildByName('badge_image') as unknown as IWidgetWindow;
         const chatStyle = widgetWindow.findChildByName('chat_style') as unknown as IBitmapWrapperWindow;
 
-        if(type === 4)
+        if(type === 9)
+        {
+            assetImage.assetUri = 'catalogue_chatstyle_background';
+            badgeImageHost.visible = false;
+            chatStyle.visible = true;
+            // AS3 clones the style's preview because assigning a BitmapData hands its lifetime to
+            // the window; the port's wrapper does not own what it is given, so the library's
+            // ImageBitmap is passed straight through and survives the window's disposal.
+            chatStyle.bitmap = this._catalog?.freeFlowChat?.chatStyleLibrary?.getStyle(parseInt(code))?.selectorPreview ?? null;
+        }
+        else if(type === 4)
         {
             assetImage.assetUri = 'catalogue_badge_background';
             badgeImageHost.visible = true;
