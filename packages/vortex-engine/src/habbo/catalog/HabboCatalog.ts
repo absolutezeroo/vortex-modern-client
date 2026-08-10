@@ -256,6 +256,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_soundManager
     private _soundManager: IHabboSoundManager | null = null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get soundManager()
+    get soundManager(): IHabboSoundManager | null
+    {
+        return this._soundManager;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_freeFlowChat
     private _freeFlowChat: IHabboFreeFlowChat | null = null;
 

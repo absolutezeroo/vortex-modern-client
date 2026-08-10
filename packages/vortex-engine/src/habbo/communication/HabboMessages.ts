@@ -548,6 +548,7 @@ import {
 } from './messages/outgoing/preferences/TryPhoneNumberMessageComposer';
 import {VerifyCodeMessageComposer} from './messages/outgoing/preferences/VerifyCodeMessageComposer';
 import {TraxSongInfoMessageEvent} from './messages/incoming/sound/TraxSongInfoMessageEvent';
+import {OfficialSongIdMessageEvent} from './messages/incoming/sound/OfficialSongIdMessageEvent';
 import {NowPlayingMessageEvent} from './messages/incoming/sound/NowPlayingMessageEvent';
 import {
     JukeboxSongDisksMessageEvent
@@ -569,6 +570,11 @@ import {
     UserSongDisksInventoryMessageEvent
 } from './messages/incoming/sound/UserSongDisksInventoryMessageEvent';
 import {GetSongInfoMessageComposer} from './messages/outgoing/sound/GetSongInfoMessageComposer';
+import {AddJukeboxDiskComposer} from './messages/outgoing/sound/AddJukeboxDiskComposer';
+import {RemoveJukeboxDiskComposer} from './messages/outgoing/sound/RemoveJukeboxDiskComposer';
+import {
+    GetOfficialSongIdMessageComposer
+} from './messages/outgoing/sound/GetOfficialSongIdMessageComposer';
 import {
     GetUserSongDisksMessageComposer
 } from './messages/outgoing/sound/GetUserSongDisksMessageComposer';
@@ -1443,6 +1449,10 @@ export class HabboMessages implements IMessageConfiguration
         // names a Trax disc anywhere it is shown.
         this._events.set(2278, TraxSongInfoMessageEvent);
         this._events.set(1930, UserSongDisksInventoryMessageEvent);
+        // `_events[3050]` in WIN63's registry — the official-song-code lookup's answer. Explicitly
+        // NOT 2264: that is win63_version's id for this event, and the 2026 registry reassigned
+        // 2264 to WeeklyCompetitiveFriendsLeaderboardEvent. See the event class's own note.
+        this._events.set(3050, OfficialSongIdMessageEvent);
         // The room play lists, `_events[398]/[2257]/[949]/[1242]/[2785]` in WIN63's registry:
         // what a jukebox is playing, the discs in it, its "no room left" refusal, and a sound
         // machine's list plus its single-song addition.
@@ -2873,6 +2883,14 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3130, GetSongInfoMessageComposer);
         this._composers.set(1685, GetUserSongDisksMessageComposer);
         this._composers.set(1281, GetJukeboxPlayListMessageComposer);
+        // `_composers[1637]`/`[2003]`/`[1723]` in WIN63's registry: put a disc in a jukebox slot,
+        // take one out, and resolve an official song code to its numeric id. The first two are the
+        // playlist editor's, which has no port yet; the third is sent by
+        // SongDiskProductViewCatalogWidget. Arity checked against each obfuscated class before
+        // registering — `_SafeCls_3368(int,int)`, `_SafeCls_3444(int)`, `_SafeCls_2775(String)`.
+        this._composers.set(1637, AddJukeboxDiskComposer);
+        this._composers.set(2003, RemoveJukeboxDiskComposer);
+        this._composers.set(1723, GetOfficialSongIdMessageComposer);
         // `_composers[3707]`/`[3633]`: the jukebox's now-playing request (which is what fetches
         // its list) and the sound machine's list request. Neither carries a payload.
         this._composers.set(3707, GetNowPlayingMessageComposer);

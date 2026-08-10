@@ -12,6 +12,7 @@ import type {ICatalogWidget} from './widgets/ICatalogWidget';
 import {ItemGridCatalogWidget} from './widgets/ItemGridCatalogWidget';
 import {SimplePriceCatalogWidget} from './widgets/SimplePriceCatalogWidget';
 import {ProductViewCatalogWidget} from './widgets/ProductViewCatalogWidget';
+import {SongDiskProductViewCatalogWidget} from './widgets/SongDiskProductViewCatalogWidget';
 import {PurchaseCatalogWidget} from './widgets/PurchaseCatalogWidget';
 import {LocalizationCatalogWidget} from './widgets/LocalizationCatalogWidget';
 import {SpinnerCatalogWidget} from './widgets/SpinnerCatalogWidget';
@@ -392,6 +393,9 @@ export class CatalogPage implements ICatalogPage
                 break;
             case CatalogWidgetName.PRODUCT_VIEW:
                 this._widgets.push(new ProductViewCatalogWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.SONG_DISK_PRODUCT_VIEW:
+                this._widgets.push(new SongDiskProductViewCatalogWidget(window, this._catalog!));
                 break;
             case CatalogWidgetName.SINGLE_VIEW:
                 this._widgets.push(new SingleViewCatalogWidget(window, this._catalog!));
