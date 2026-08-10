@@ -6,8 +6,10 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * "wf15").
  *
  * Name derived: the AS3 class is obfuscated as `_SafePkg_3005._SafeCls_3004` with no readable
- * counterpart; the name follows its role. It carries its command in the payload (not a numeric
- * header), so it is not registered in HabboMessages — a documented gap for this dev-only feature.
+ * counterpart; the name follows its role. It is registered at `_composers[3608]` from WIN63's
+ * registry — an earlier note here claimed it had no header because the command travels in the
+ * payload, which the registry contradicts. The emulator implements no handler for it, so sending
+ * one reaches a server that will not answer.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3005/_SafeCls_3004.as
  */

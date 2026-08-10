@@ -53,6 +53,9 @@ import {
 import {RentOrBuyoutOfferMessageEvent} from './messages/incoming/rent/RentOrBuyoutOfferMessageEvent';
 import {
     ForwardToACompetitionRoomMessageComposer,
+    ForwardToASubmittableRoomMessageComposer,
+    ForwardToRandomCompetitionRoomMessageComposer,
+    GetIsUserPartOfCompetitionMessageComposer,
     GetSecondsUntilMessageComposer,
     RoomCompetitionInitMessageComposer,
     SubmitRoomToCompetitionMessageComposer,
@@ -414,7 +417,8 @@ import {
     UpdateSelectorMessageComposer,
     UpdateTriggerMessageComposer,
     UpdateVariableMessageComposer,
-    WiredClickUserMessageComposer
+    WiredClickUserMessageComposer,
+    WiredDebugCommandMessageComposer
 } from './messages/outgoing/userdefinedroomevents';
 import {
     GetAllVariablesMessageComposer
@@ -1195,6 +1199,7 @@ import {
     IncomeRewardStatusMessageComposer,
     OpenTradingComposer,
     RemoveItemFromTradeComposer,
+    GetIsBadgeRequestFulfilledComposer,
     RequestABadgeComposer,
     RequestFurniInventoryComposer,
     ResetUnseenItemIdsComposer,
@@ -2190,6 +2195,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1953, WiredClickUserMessageComposer);
         // OpenMessageComposer: WIN63 registry _SafeCls_2046.as `_composers[1869] = _SafeCls_3966`.
         this._composers.set(1869, OpenMessageComposer);
+        // `_composers[3608] = _SafeCls_3004`. Its own class doc used to say it had no header
+        // because the command travels in the payload; the registry disagrees. The emulator has no
+        // handler for it, so this only makes the developer action addressable, not answered.
+        this._composers.set(3608, WiredDebugCommandMessageComposer);
         // Wired save composers (ids from WIN63 registry _SafeCls_2046.as):
         //   _composers[3953]=_SafeCls_2484 (trigger), [2197]=_SafeCls_2689 (action),
         //   [767]=_SafeCls_3197 (condition), [1138]=_SafeCls_3344 (addon),
@@ -2687,6 +2696,10 @@ export class HabboMessages implements IMessageConfiguration
         // is an unrelated server->client composer, a different table, so not a conflict.
         this._composers.set(3159, GetBadgeInformationComposer);
         this._composers.set(2764, SetActivatedBadgesComposer);
+        // `_composers[2236]` in WIN63's registry, resolved through `_SafeCls_4537` — the landing
+        // view's badge-request element, identified by the unobfuscated `requestCode` it compares
+        // against. win63_version says 2545, which this build gives to something else.
+        this._composers.set(2236, GetIsBadgeRequestFulfilledComposer);
         this._composers.set(3891, GetPetInventoryComposer);
         this._composers.set(3148, GetBotInventoryComposer);
         this._composers.set(3022, AvatarEffectActivatedComposer);
@@ -2827,12 +2840,6 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1369, GetInterstitialMessageComposer);
         this._composers.set(3074, FriendRequestQuestCompleteMessageComposer);
 
-        // TODO(AS3): five more stay unregistered on purpose — none has an entry in WIN63's
-        // registry, so this client revision has no header for them and inventing one would put
-        // an unaddressable message on the wire. The emulator flags its own ids for the first
-        // three as UNRESOLVED, which agrees: ForwardToASubmittableRoom,
-        // ForwardToRandomCompetitionRoom, GetIsUserPartOfCompetition, GetIsBadgeRequestFulfilled
-        // and WiredDebugCommand.
         this._composers.set(1246, GetRecyclerStatusMessageComposer);
         this._composers.set(2516, GetRecyclerPrizesMessageComposer);
         this._composers.set(2956, RecycleItemsMessageComposer);
@@ -2861,6 +2868,15 @@ export class HabboMessages implements IMessageConfiguration
 
         // === COMPETITION ===
         this._composers.set(1503, GetCurrentTimingCodeMessageComposer);
+        // The three the landing view's competition elements send. Every one of these had drifted
+        // between builds, so none could be taken from win63_version's registry: it puts them at
+        // 2055 / 2517 / 2732 against 1917 / 3109 / 128 here. Each class was identified in the
+        // primary tree by its caller — `_SafeCls_4528` and `_SafeCls_4538`, which match
+        // win63_version's `class_4150`/`class_4146` line for line — and not by arity, which is
+        // ambiguous for a one-String composer.
+        this._composers.set(1917, ForwardToASubmittableRoomMessageComposer);
+        this._composers.set(3109, ForwardToRandomCompetitionRoomMessageComposer);
+        this._composers.set(128, GetIsUserPartOfCompetitionMessageComposer);
 
         // === INVENTORY - TRADING ===
         this._composers.set(1865, OpenTradingComposer);

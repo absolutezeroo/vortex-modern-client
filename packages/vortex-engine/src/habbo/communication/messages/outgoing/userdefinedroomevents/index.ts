@@ -7,3 +7,4 @@ export * from './UpdateAddonMessageComposer';
 export * from './UpdateVariableMessageComposer';
 export * from './UpdateSelectorMessageComposer';
 export * from './ApplySnapshotMessageComposer';
+export * from './WiredDebugCommandMessageComposer';
