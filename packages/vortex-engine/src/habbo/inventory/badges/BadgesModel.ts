@@ -1,3 +1,5 @@
+import type {IConnection} from '@core/communication/connection/IConnection';
+import {SetActivatedBadgesComposer} from '@habbo/communication/messages/outgoing/inventory/SetActivatedBadgesComposer';
 import type {IBadgeData, BadgeFilterType, IBadgesModel} from './IBadgesModel';
 import {BadgeFilter} from './IBadgesModel';
 import {Badge} from './Badge';
@@ -15,6 +17,17 @@ export class BadgesModel implements IBadgesModel
     private _activeBadges: Badge[] = [];
     private _activeBadgeSet: Set<Badge> = new Set();
     private _badgeSlots: Map<string, number> = new Map();
+
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::_communication
+    // AS3 takes the whole communication manager as its third constructor argument and only ever
+    // reads `.connection` off it; the port is handed the connection directly.
+    private _connection: IConnection | null;
+
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::BadgesModel()
+    constructor(connection: IConnection | null = null)
+    {
+        this._connection = connection;
+    }
 
     // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::_disposed
     private _disposed: boolean = false;
@@ -163,10 +176,6 @@ export class BadgesModel implements IBadgesModel
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::toggleBadgeWearing()
-    // TODO(AS3): AS3 also calls saveBadgeSelection() here, sending a SetActivatedBadgesComposer
-    // with every active badge's id - BadgesModel has no connection reference to send through
-    // (this whole model is currently unreachable from any live handler), so it's left uncalled
-    // rather than invented against a composer/connection wiring that doesn't exist yet.
     toggleBadgeWearing(badgeId: string): Badge | null
     {
         const badge = this.getBadge(badgeId);
@@ -184,7 +193,25 @@ export class BadgesModel implements IBadgesModel
             this.startWearingBadge(badge);
         }
 
+        this.saveBadgeSelection();
+
         return badge;
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::saveBadgeSelection()
+     *
+     * The whole worn set goes up on every toggle, not a delta — the composer pads to five
+     * slot/id pairs and the server replaces the selection wholesale. `addActivatedBadge()`
+     * ignores anything past the fifth, which the varargs constructor reproduces by indexing.
+     */
+    saveBadgeSelection(): void
+    {
+        const active = this.getBadges(BadgeFilter.ACTIVE);
+
+        this._connection?.send(
+            new SetActivatedBadgesComposer(...active.map(badge => badge.badgeId))
+        );
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::getBadges()

@@ -814,7 +814,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._localization!,
             this._soundManager
         );
-        this._badgesModel = new BadgesModel();
+        this._badgesModel = new BadgesModel(this._communication?.connection ?? null);
         this._effectsModel = new EffectsModel(this._communication?.connection ?? null);
         this._petsModel = new PetsModel(
             this,

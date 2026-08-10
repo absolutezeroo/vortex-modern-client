@@ -59,6 +59,9 @@ export interface IBadgesModel
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::toggleBadgeWearing()
     toggleBadgeWearing(badgeId: string): Badge | null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::saveBadgeSelection()
+    saveBadgeSelection(): void;
+
     /**
 	 * Get badges by filter
 	 */
