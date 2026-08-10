@@ -30,20 +30,20 @@
 | Shipped window layouts (`src/assets/window-layouts/`)          | 857 `.json`   | **783** `.xml`  |
 | Shipped window skins (`src/assets/window-skins/`)              | 133 `.json`   | 133 `.xml`      |
 | Vortex-authored layouts / skins (`src/vortex-layouts`, `src/vortex-skins`) | — | 4 / 0 |
-| Engine `AS3:` trace comments                                   | 4,666         | **11,150**    |
-| Engine `TODO(AS3)` markers                                     | 265           | **417**       |
+| Engine `AS3:` trace comments                                   | 4,666         | **34,795**    |
+| Engine `TODO(AS3)` markers                                     | 265           | **327**       |
 
 The layout/skin rows changed **format**, not content: there is no JSON compile step any more —
 `tools/build-window-assets.mjs` ships the dump's XML verbatim (see CLAUDE.md → Assets). Both
 directories are gitignored and rebuilt from the dump, which is why hand-authored files live in
 `src/vortex-layouts/` and `src/vortex-skins/` instead.
 
-`TODO(AS3)` rising from 265 to 417 is not regression: the ports landed since 2026-07-19 are large
+`TODO(AS3)` rising from 265 to 327 is not regression: the ports landed since 2026-07-19 are large
 subsystems (wired/roomevents, the quest UI, the wired menu) whose deliberately-deferred branches are
 tagged rather than silently omitted, as `.claude/rules/30-as3-traceability.md` requires. They sit in
-141 files; the five densest are `HabboCatalog.ts` (45), `RoomEngine.ts` (22),
-`ui/handler/InfoStandWidgetHandler.ts` (19), `roomevents/wired_setup/UserDefinedRoomEventsCtrl.ts`
-(16) and `inventory/furni/FurniModel.ts` (16).
+143 files; the five densest are `HabboCatalog.ts` (30), `RoomEngine.ts` (17),
+`inventory/furni/FurniModel.ts` (10), `roomevents/wired_setup/UserDefinedRoomEventsCtrl.ts` (8) and
+`ui/widget/infostand/InfoStandUserView.ts` (7).
 
 ### TODO inventory — re-measure recipe
 
@@ -62,7 +62,17 @@ node scripts/todo-inventory.mjs --json
 `packages/*/dist` is excluded: it is gitignored build output carrying a duplicate of every `.d.ts`
 marker, which inflates a naive `grep -c` by ~90.
 
-**2026-08-09 — 425 TODO in `packages/*/src` (368 `TODO(AS3)`, 57 plain), from 502 at the start of the day:**
+**2026-08-10 — 383 TODO in `packages/*/src` (328 `TODO(AS3)`, 55 plain), from 422 at the start of the day:**
+
+| Blocker                                                     | Count |
+|-------------------------------------------------------------|-------|
+| Local micro-gap, no blocker cited                            | 217   |
+| A whole unported module                                      | 99    |
+| Wire / server (composer, parser, header)                     | 33    |
+| Flash-only (BitmapData, filter, shader, Timer)               | 19    |
+| Settled decision — will not be ported (legacy, dead, moot)    | 15    |
+
+<details><summary>2026-08-09 — 425 TODO (368 <code>TODO(AS3)</code>, 57 plain), from 502</summary>
 
 | Blocker                                                     | Count |
 |-------------------------------------------------------------|-------|
@@ -71,6 +81,8 @@ marker, which inflates a naive `grep -c` by ~90.
 | Wire / server (composer, parser, header)                     | 35    |
 | Flash-only (BitmapData, filter, shader, Timer)               | 20    |
 | Settled decision — will not be ported (legacy, dead, moot)    | 19    |
+
+</details>
 
 **Read this number carefully.** The catalog placement pass the same day closed nine markers and
 opened three new ones, for a net of three — while turning a dead subsystem into a working one. The
@@ -82,6 +94,53 @@ precise one barely moves it. Judge a pass by which markers it closed, not by the
 `changeObjectState` deserves its own note. A name-based grep found four hits on `RoomEngine` and suggested it was already there; the body showed those belong to `class_1947`'s method — the room-object *event* handler that asks the server to toggle a real furni — which this port flattened into `RoomEngine` under the same name. The engine's own `changeObjectState()` (cycle a preview's automatic state locally, no server round trip) was missing entirely. The flattened one is now `sendObjectStateChange()`, with its AS3 trace unchanged.
 
 What this restored: furniture and wall-item rotation in the catalog/inventory preview (both were hard `return false`, so the rotate buttons were permanently greyed), the automatic state cycling that animates a previewed furni every 2.5 s, wall/floor visibility, engine-freeze during rebuilds, and the immediate engine pass after a rotation. **One behaviour change to watch:** `isZoomEnabled()` returned a hard-coded `true`; it now reads `zoom.enabled` off the engine and defaults to false when unset, matching AS3 and the port's other `zoom.enabled` call sites — that selects the room-geometry zoom path instead of the canvas-scale one.
+
+### The 2026-08-10 sweep — 422 → 383, and what the markers were hiding
+
+Ten passes, all opened the same way: take the marker's stated blocker as a claim and check it
+against the port *before* opening the AS3. Roughly half the markers checked did not survive that
+step, and the ones that did split into small, contained ports rather than the subsystems they
+named.
+
+**The dominant pattern was a dependency that had landed since the marker was written.** Five
+separate markers said "freeFlowChat isn't wired into RoomUI"; it is DI-resolved there and injected
+into every `RoomDesktop`. Four said `IHabboNotifications` lacked the API for the wired
+click-settings toggle; two-thirds of it was already there, and `NotificationExtraDataKey` already
+declared the exact three keys AS3 packs into that argument. Four chat-style preview sites said
+`chatStyleLibrary` "isn't ported" — `IChatStyleLibrary.getStyle()` and `IChatStyle.selectorPreview`
+both existed, and the single missing piece was one `IIDHabboFreeFlowChat` dependency on
+`HabboCatalog`. Two badge getters said the conversion was impossible because `createImageBitmap()`
+is async; `OffscreenCanvas.transferToImageBitmap()` is not.
+
+**Three markers were factually wrong about AS3, not about the port.**
+`InfoStandWidgetHandler.update()` was said to drive "pet-command-tool countdowns and the pet update
+timer"; AS3's `update()` is an empty body. `RoomToolsWidget` was told to gate its chat-history
+button on `!isDisabledInPreferences` — that is `win63_version`'s reading; the primary tree says
+`setChatHistoryButton(_freeFlowChat != null)`. `RoomChatInputWidget.getFriendBarWidth()` returned 0
+where AS3 returns 1000 when there is no friend bar.
+
+**Two headers under-declared the port by an order of magnitude.** `RoomWidgetFactory` said "only
+RWE_INFOSTAND is implemented" above 39 of the AS3 factory's 45 cases; `RoomDesktop.createWidget()`
+claimed 4 of 45 against 42. A header that wrong is worse than none: it sends the next reader to
+re-port what is already there. Both now name the real remainder (six widget types, each blocked on
+a subsystem with no module — camera, crafting, playlist editor, youtube, vimeo, thumbnail camera).
+
+**Comment blocks cut in half by a bad edit are still in the tree.** Two more surfaced here — one in
+`InfoStandWidgetHandler` whose halves had drifted onto two unrelated methods, one in
+`ChatStyleSelector` that broke mid-clause. Both described *faithful* behaviour, so the fix was a
+note, not code. This is the same failure `chore: rejoin 22 comment blocks a bad edit had cut in two`
+(51901d8b) catalogued; assume more remain.
+
+Subsystems that went from dead to working: the infostand's jukebox and song-disk views (both were
+no-op shells with `window` hardcoded to null, while the widget already routed to them), the pet
+infostand's 3s refresh poll, wired's deferred user-click menu and its dismissable click-settings
+notification, the room-tools achievements button, music-disc titles in the inventory, group badges
+in the friend bar and friend list, badge selection reaching the server, habblet links, and
+chat-style previews in all four catalog sites.
+
+One shared-helper bug fell out of it: `ColorConverter.hexToUint('')` returned `NaN` where AS3's
+`uint("0x")` returns 0. AS3 deliberately leaves the last hop of the seasonal-currency colour lookup
+unguarded, so an unseeded config property is *meant* to come back black.
 
 ### What the 2026-08-09 sweep actually taught
 
