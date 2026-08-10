@@ -1,21 +1,29 @@
 /**
  * Badge data model
  *
- * Based on AS3 com.sulake.habbo.inventory.badges.Badge (ENGINE only)
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/Badge.as
+ * (engine-only: AS3's `_window`/`_badgeImage` half belongs to `BadgesView`, unported)
  */
 export class Badge
 {
+    // AS3: .../src/com/sulake/habbo/inventory/badges/Badge.as::Badge()
+    // AS3 takes the owning model first and `(ownerCount, badgeRarityId)` last; the model is not
+    // threaded here because this port's `Badge` has no view half to call back into.
     constructor(
         badgeId: string,
         name: string,
         description: string,
-        isUnseen: boolean = false
+        isUnseen: boolean = false,
+        ownerCount: number = 0,
+        badgeRarityId: number = 0
     )
     {
         this._badgeId = badgeId;
         this._name = name;
         this._description = description;
         this._isUnseen = isUnseen;
+        this._ownerCount = ownerCount;
+        this._badgeRarityId = badgeRarityId;
     }
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/inventory/badges/Badge.as::_badgeId
@@ -84,6 +92,43 @@ export class Badge
     set isUnseen(value: boolean)
     {
         this._isUnseen = value;
+    }
+
+    // AS3: .../src/com/sulake/habbo/inventory/badges/Badge.as::_ownerCount
+    private _ownerCount: number = 0;
+
+    /**
+	 * How many players hold this badge
+	 */
+    // AS3: .../src/com/sulake/habbo/inventory/badges/Badge.as::get ownerCount()
+    get ownerCount(): number
+    {
+        return this._ownerCount;
+    }
+
+    // AS3: .../src/com/sulake/habbo/inventory/badges/Badge.as::_badgeRarityId
+    private _badgeRarityId: number = 0;
+
+    /**
+	 * The badge's rarity bracket
+	 */
+    // AS3: .../src/com/sulake/habbo/inventory/badges/Badge.as::get badgeRarityId()
+    get badgeRarityId(): number
+    {
+        return this._badgeRarityId;
+    }
+
+    /**
+	 * Refresh the two server-owned metadata fields
+	 *
+	 * Both arrive on every badge message, and both can move after the badge is first held — the
+	 * owner count as other players earn it, the rarity bracket as that count crosses a threshold.
+	 */
+    // AS3: .../src/com/sulake/habbo/inventory/badges/Badge.as::updateMetadata()
+    updateMetadata(ownerCount: number, badgeRarityId: number): void
+    {
+        this._ownerCount = ownerCount;
+        this._badgeRarityId = badgeRarityId;
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/badges/Badge.as::dispose()

@@ -2,6 +2,7 @@ import type {IConnection} from '@core/communication/connection/IConnection';
 import {SetActivatedBadgesComposer} from '@habbo/communication/messages/outgoing/inventory/SetActivatedBadgesComposer';
 import type {IBadgeData, BadgeFilterType, IBadgesModel} from './IBadgesModel';
 import {BadgeFilter} from './IBadgesModel';
+import {BadgeRarityEnum} from '@habbo/communication/enum/BadgeRarityEnum';
 import {Badge} from './Badge';
 
 /**
@@ -23,10 +24,24 @@ export class BadgesModel implements IBadgesModel
     // reads `.connection` off it; the port is handed the connection directly.
     private _connection: IConnection | null;
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::_availableRareBadgeRarityIds
+    private _availableRareBadgeRarityIds: number[] = [];
+
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::_hasCommonBadgeRarityGroup
+    private _hasCommonBadgeRarityGroup: boolean = false;
+
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::isUncommonBadgeRarityEnabled()
+    // AS3 reads `inventory.getBoolean("badge_rarity.uncommon")` off the owning component. This
+    // model is not handed the inventory (see `_connection` above for the same trade), so the
+    // lookup arrives as a predicate, matching how `updateBadge()` already receives its two
+    // localization lookups.
+    private _isUncommonBadgeRarityEnabled: () => boolean;
+
     // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::BadgesModel()
-    constructor(connection: IConnection | null = null)
+    constructor(connection: IConnection | null = null, isUncommonBadgeRarityEnabled: () => boolean = () => false)
     {
         this._connection = connection;
+        this._isUncommonBadgeRarityEnabled = isUncommonBadgeRarityEnabled;
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::_disposed
@@ -79,6 +94,16 @@ export class BadgesModel implements IBadgesModel
 
             const name = getName(data.badgeId);
             const desc = getDesc(data.badgeId);
+
+            // TODO(AS3): AS3 passes `(data.ownerCount, data.badgeRarityId)` as the last two
+            // arguments here. This server does not send them in the bulk list: AS3's list parser
+            // (sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3206/_SafeCls_3564.as::parse())
+            // reads four fields per badge — slotId, badgeCode, ownerCount, badgeRarityId — while
+            // vortex-emulator's BadgesEventMessageComposerSerializer.cs writes only the first two,
+            // and this port's BadgesMessageParser matches the emulator. So every badge loaded at
+            // login gets rarity 0 until that serializer writes the two missing integers and the
+            // parser reads them. The live-award path (BadgeReceivedEvent) does carry both on both
+            // sides and is wired.
             const badge = new Badge(data.badgeId, name, desc, isUnseen);
 
             if(isUnseen)
@@ -90,17 +115,26 @@ export class BadgesModel implements IBadgesModel
                 this._allBadges.push(badge);
             }
         }
+
+        this.refreshAvailableRareBadgeRarityIds();
     }
 
+    /**
+	 * Add a badge, or refresh one already held
+	 *
+	 * @param ownerCount How many players hold the badge
+	 * @param badgeRarityId The badge's rarity bracket
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::updateBadge()
-    // TODO(AS3): AS3 also takes ownerCount/badgeRarityId and calls badge.updateMetadata(ownerCount,
-    // badgeRarityId) on the existing-badge path, then refreshes a rarity-group flag
-    // (refreshAvailableRareBadgeRarityIds()) - Badge.ts/IBadgeData have no rarity/ownerCount fields
-    // at all yet (a separate, unported badge-rarity feature), so there is nothing to update.
+    // `ownerCount`/`badgeRarityId` sit in AS3's positions (third and fourth after the code); the
+    // two localization lookups trail them because AS3 reads those off `controller.localization`
+    // rather than taking them as arguments.
     updateBadge(
         badgeId: string,
         isInUse: boolean,
         slotId: number,
+        ownerCount: number,
+        badgeRarityId: number,
         getName: (id: string) => string,
         getDesc: (id: string) => string
     ): Badge | null
@@ -115,6 +149,10 @@ export class BadgesModel implements IBadgesModel
 
         if(badge)
         {
+            // Both fields move after the badge is first held — the owner count as other players
+            // earn it, the rarity bracket as that count crosses a threshold.
+            badge.updateMetadata(ownerCount, badgeRarityId);
+
             // Update existing badge
             if(badge.isInUse !== isInUse)
             {
@@ -135,7 +173,7 @@ export class BadgesModel implements IBadgesModel
             const name = getName(badgeId);
             const desc = getDesc(badgeId);
 
-            badge = new Badge(badgeId, name, desc, isUnseen);
+            badge = new Badge(badgeId, name, desc, isUnseen, ownerCount, badgeRarityId);
 
             if(isUnseen)
             {
@@ -152,7 +190,74 @@ export class BadgesModel implements IBadgesModel
             }
         }
 
+        this.refreshAvailableRareBadgeRarityIds();
+
         return badge;
+    }
+
+    /**
+	 * The distinct standalone rarity brackets present in this inventory, ascending
+	 *
+	 * A copy, as in AS3 — callers filter badge grids with it and must not mutate the source.
+	 */
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::getAvailableRareBadgeRarityIds()
+    getAvailableRareBadgeRarityIds(): number[]
+    {
+        return this._availableRareBadgeRarityIds.slice();
+    }
+
+    /**
+	 * Whether any held badge falls outside the standalone rarity brackets
+	 */
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::hasCommonBadgeRarityGroup()
+    hasCommonBadgeRarityGroup(): boolean
+    {
+        return this._hasCommonBadgeRarityGroup;
+    }
+
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::isUncommonBadgeRarityEnabled()
+    isUncommonBadgeRarityEnabled(): boolean
+    {
+        return this._isUncommonBadgeRarityEnabled();
+    }
+
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::isStandaloneBadgeRarity()
+    isStandaloneBadgeRarity(badgeRarityId: number): boolean
+    {
+        return BadgeRarityEnum.isStandaloneTier(badgeRarityId, this.isUncommonBadgeRarityEnabled());
+    }
+
+    /**
+	 * Recompute which rarity brackets the badge grid can offer as filters
+	 *
+	 * Rebuilt from scratch on every badge change, as in AS3: a badge arriving or leaving can add
+	 * or remove a whole bracket.
+	 */
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::refreshAvailableRareBadgeRarityIds()
+    private refreshAvailableRareBadgeRarityIds(): void
+    {
+        this._availableRareBadgeRarityIds = [];
+        this._hasCommonBadgeRarityGroup = false;
+
+        const seen = new Set<number>();
+
+        for(const badge of this._allBadges)
+        {
+            if(!badge) continue;
+
+            if(!this.isStandaloneBadgeRarity(badge.badgeRarityId))
+            {
+                this._hasCommonBadgeRarityGroup = true;
+            }
+            else if(!seen.has(badge.badgeRarityId))
+            {
+                seen.add(badge.badgeRarityId);
+                this._availableRareBadgeRarityIds.push(badge.badgeRarityId);
+            }
+        }
+
+        // AS3 sorts with flag 16 — Array.NUMERIC, ascending.
+        this._availableRareBadgeRarityIds.sort((a, b) => a - b);
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::removeBadge()
@@ -392,6 +497,10 @@ export class BadgesModel implements IBadgesModel
         this._activeBadges.length = 0;
         this._activeBadgeSet.clear();
         this._badgeSlots.clear();
+
+        // AS3 clears both rarity-group fields here as well as in the constructor and dispose().
+        this._availableRareBadgeRarityIds = [];
+        this._hasCommonBadgeRarityGroup = false;
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::startWearingBadge()

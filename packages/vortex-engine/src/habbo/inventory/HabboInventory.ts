@@ -814,7 +814,12 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._localization!,
             this._soundManager
         );
-        this._badgesModel = new BadgesModel(this._communication?.connection ?? null);
+        // AS3's BadgesModel reads `inventory.getBoolean("badge_rarity.uncommon")` off the
+        // component it is given; this port hands it the lookup instead of the component.
+        this._badgesModel = new BadgesModel(
+            this._communication?.connection ?? null,
+            () => this.getBoolean('badge_rarity.uncommon')
+        );
         this._effectsModel = new EffectsModel(this._communication?.connection ?? null);
         this._petsModel = new PetsModel(
             this,
@@ -1732,8 +1737,6 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // The third argument is AS3's `badgeId:int` — this port named the parameter `slotId` because
     // that is what initBadges() feeds it, but both trees write the same code->int map that the
     // unseen tracker joins against (AS3 `isUnseen(4, badgeId)`), so the position is faithful.
-    // AS3 also passes ownerCount/badgeRarityId; BadgesModel.updateBadge() documents at its own
-    // declaration why they have no counterpart here (badge rarity is an unported feature).
     private onBadgeReceived = (event: IMessageEvent): void =>
     {
         const parser = event.parser as BadgeReceivedEventParser | null;
@@ -1744,6 +1747,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             parser.badgeCode,
             false,
             parser.badgeId,
+            parser.ownerCount,
+            parser.badgeRarityId,
             (id: string) => this._localization?.getBadgeName(id) ?? '',
             (id: string) => this._localization?.getBadgeDesc(id) ?? ''
         );

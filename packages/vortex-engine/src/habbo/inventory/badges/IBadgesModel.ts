@@ -44,7 +44,27 @@ export interface IBadgesModel
 	 * Update or add a badge
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::updateBadge()
-    updateBadge(badgeId: string, isInUse: boolean, slotId: number, getName: (id: string) => string, getDesc: (id: string) => string): Badge | null;
+    updateBadge(
+        badgeId: string,
+        isInUse: boolean,
+        slotId: number,
+        ownerCount: number,
+        badgeRarityId: number,
+        getName: (id: string) => string,
+        getDesc: (id: string) => string
+    ): Badge | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::getAvailableRareBadgeRarityIds()
+    getAvailableRareBadgeRarityIds(): number[];
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::hasCommonBadgeRarityGroup()
+    hasCommonBadgeRarityGroup(): boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::isUncommonBadgeRarityEnabled()
+    isUncommonBadgeRarityEnabled(): boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::isStandaloneBadgeRarity()
+    isStandaloneBadgeRarity(badgeRarityId: number): boolean;
 
     /**
 	 * Remove a badge
