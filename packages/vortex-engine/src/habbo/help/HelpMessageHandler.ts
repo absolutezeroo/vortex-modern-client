@@ -22,8 +22,17 @@ import {
     GuideSessionStartedMessageEvent,
     GuideTicketCreationResultMessageEvent,
     GuideTicketResolutionMessageEvent,
+    IssueCloseNotificationMessageEvent,
     UserNameChangedMessageEvent,
 } from '@habbo/communication/messages/incoming/help';
+
+import type {CallForHelpDisabledNotifyMessageParser} from '@habbo/communication/messages/parser/help/CallForHelpDisabledNotifyMessageParser';
+import type {CallForHelpPendingCallsMessageParser} from '@habbo/communication/messages/parser/help/CallForHelpPendingCallsMessageParser';
+import type {CallForHelpReplyMessageParser} from '@habbo/communication/messages/parser/help/CallForHelpReplyMessageParser';
+import type {CallForHelpResultMessageParser} from '@habbo/communication/messages/parser/help/CallForHelpResultMessageParser';
+import type {CfhTopicsInitMessageParser} from '@habbo/communication/messages/parser/help/CfhTopicsInitMessageParser';
+import type {GuideReportingStatusMessageParser} from '@habbo/communication/messages/parser/help/GuideReportingStatusMessageParser';
+import type {IssueCloseNotificationMessageParser} from '@habbo/communication/messages/parser/help/IssueCloseNotificationMessageParser';
 
 import type {HabboHelp} from './HabboHelp';
 
@@ -103,6 +112,11 @@ export class HelpMessageHandler
         this.addMessageEvent(new CallForHelpPendingCallsDeletedMessageEvent(this.onCallForHelpPendingCallsDeleted.bind(this)));
         this.addMessageEvent(new CallForHelpDisabledNotifyMessageEvent(this.onCallForHelpDisabledNotify.bind(this)));
 
+        // AS3 subscribes these three in `CallForHelpManager`'s own constructor rather than in
+        // `HabboHelp.initComponent()`; this port centralises every help subscription here, so the
+        // issue-close notification belongs with the other two CFH replies above.
+        this.addMessageEvent(new IssueCloseNotificationMessageEvent(this.onIssueClose.bind(this)));
+
         // Sanction and topics
         // TODO(AS3): `SanctionStatusMessageEvent` has no header in `HabboMessages` on purpose. It
         // was ported from win63_version, where the message is one flat sanction (name, length,
@@ -141,30 +155,68 @@ export class HelpMessageHandler
         this.addMessageEvent(new UserNameChangedMessageEvent(this.onUserNameChanged.bind(this)));
     }
     
-    private onCallForHelpReply(_event: IMessageEvent): void
+    /**
+	 * The moderator's written reply to a report
+	 */
+    // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::onCallForHelpReply()
+    private onCallForHelpReply(event: IMessageEvent): void
     {
-        log.trace('CallForHelpReply received');
+        const parser = event.parser as CallForHelpReplyMessageParser | null;
+
+        if(!parser) return;
+
+        this._help.windowManager?.alert('${help.cfh.reply.title}', parser.message, 0, null);
     }
 
-    private onCallForHelpResult(_event: IMessageEvent): void
+    /**
+	 * The server's acknowledgement that a report was filed
+	 */
+    // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::onCallForHelpResult()
+    private onCallForHelpResult(event: IMessageEvent): void
     {
-        log.trace('CallForHelpResult received');
+        const parser = event.parser as CallForHelpResultMessageParser | null;
+
+        if(!parser) return;
+
+        // AS3 reads `resultType` into a local and never uses it; only the text is shown.
+        const messageText = parser.messageText === '' ? '${help.cfh.sent.text}' : parser.messageText;
+
+        this._help.windowManager?.alert('${help.cfh.sent.title}', messageText, 0, null);
     }
 
-    private onCallForHelpPendingCalls(_event: IMessageEvent): void
+    /**
+	 * How many reports this user already has open — the gate every report passes through
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onPendingCallsForHelp()
+    private onCallForHelpPendingCalls(event: IMessageEvent): void
     {
-        log.trace('CallForHelpPendingCalls received');
+        const parser = event.parser as CallForHelpPendingCallsMessageParser | null;
+
+        if(!parser) return;
+
+        this._help.handlePendingCallsForHelp(parser);
     }
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::onPendingCallsForHelpDeleted()
+    // calls `TopicsFlowHelpController.submitCallForHelp(false)` — the user discarded their open
+    // reports, so the new one is now free to go out. That controller is unported (933 lines), so
+    // the report the user just discarded their queue for is dropped here.
     private onCallForHelpPendingCallsDeleted(_event: IMessageEvent): void
     {
-        log.trace('CallForHelpPendingCallsDeleted received');
+        log.warn('Pending calls deleted, but the follow-up submit (TopicsFlowHelpController) is not ported');
     }
 
+    /**
+	 * Calling for help has been disabled for this user
+	 */
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onCallForHelpDisabledNotify()
-    private onCallForHelpDisabledNotify(_event: IMessageEvent): void
+    private onCallForHelpDisabledNotify(event: IMessageEvent): void
     {
-        log.trace('CallForHelpDisabledNotify received');
+        const parser = event.parser as CallForHelpDisabledNotifyMessageParser | null;
+
+        if(!parser) return;
+
+        this._help.handleCallForHelpDisabledNotify(parser);
     }
 
     private onSanctionStatus(_event: IMessageEvent): void
@@ -172,15 +224,56 @@ export class HelpMessageHandler
         log.trace('SanctionStatus received');
     }
 
-    private onCfhTopicsInit(_event: IMessageEvent): void
+    /**
+	 * The CFH topic tree, sent once at login
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onCfhTopics()
+    private onCfhTopicsInit(event: IMessageEvent): void
     {
-        log.trace('CfhTopicsInit received');
+        const parser = event.parser as CfhTopicsInitMessageParser | null;
+
+        if(!parser) return;
+
+        this._help.handleCfhTopics(parser);
     }
 
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onGuideReportingStatus()
-    private onGuideReportingStatus(_event: IMessageEvent): void
+    private onGuideReportingStatus(event: IMessageEvent): void
     {
-        log.trace('GuideReportingStatus received');
+        const parser = event.parser as GuideReportingStatusMessageParser | null;
+
+        if(!parser) return;
+
+        this._help.handleGuideReportingStatus(parser);
+    }
+
+    /**
+	 * A moderator closed the user's report
+	 */
+    // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::onIssueClose()
+    private onIssueClose(event: IMessageEvent): void
+    {
+        const parser = event.parser as IssueCloseNotificationMessageParser | null;
+
+        if(!parser) return;
+
+        const messageText = parser.messageText === ''
+            ? `\${help.cfh.closed.${HelpMessageHandler.getCloseReasonKey(parser.closeReason)}}`
+            : parser.messageText;
+
+        this._help.windowManager?.alert('${mod.alert.title}', messageText, 0, null);
+    }
+
+    /**
+	 * Map a close reason to its localization suffix
+	 */
+    // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::getCloseReasonKey()
+    private static getCloseReasonKey(closeReason: number): string
+    {
+        if(closeReason === 1) return 'useless';
+        if(closeReason === 2) return 'abusive';
+
+        return 'resolved';
     }
 
     private onGuideSessionStarted(_event: IMessageEvent): void

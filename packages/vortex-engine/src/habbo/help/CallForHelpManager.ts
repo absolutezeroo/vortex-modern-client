@@ -1,4 +1,8 @@
 import {Logger} from '@core/utils/Logger';
+import {CallForHelpFromPhotoMessageComposer} from '@habbo/communication/messages/outgoing/help/CallForHelpFromPhotoMessageComposer';
+import {CallForHelpFromSelfieMessageComposer} from '@habbo/communication/messages/outgoing/help/CallForHelpFromSelfieMessageComposer';
+
+import type {HabboHelp} from './HabboHelp';
 
 const log = Logger.getLogger('habbo.help.CallForHelpManager');
 
@@ -8,11 +12,23 @@ const log = Logger.getLogger('habbo.help.CallForHelpManager');
  * Manages CFH report submission, tracking reported user/room/thread/message data.
  * Coordinates with HabboHelp for pending calls and message sending.
  *
- * @see source_as_win63/habbo/help/CallForHelpManager.as
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/CallForHelpManager.as
  */
 export class CallForHelpManager
 {
     private static readonly MAX_CHARS: number = 253;
+
+    // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::_habboHelp
+    private _habboHelp: HabboHelp | null;
+
+    // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::CallForHelpManager()
+    // AS3 also builds a ChatReportController and subscribes the three CFH reply events here; both
+    // are the window half of the flow and are still unported — see the TODO(AS3) on
+    // `showEmergencyHelpRequest()`.
+    constructor(habboHelp: HabboHelp)
+    {
+        this._habboHelp = habboHelp;
+    }
 
     // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::_disposed
     private _disposed: boolean = false;
@@ -161,8 +177,20 @@ export class CallForHelpManager
         this._reportedMessageId = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::_reportedRoomDescription
+    private _reportedRoomDescription: string = '';
+
+    // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::_preselectedTopicId
+    // Name derived: the identifier is obfuscated in every tree (`_SafeStr_9629`). `reportUser()`
+    // stores its third argument here and `showEmergencyHelpRequest()` reads it back to preselect
+    // the matching entry of the form's `topic_selector`, which is what the name records.
+    private _preselectedTopicId: number = 0;
+
     /**
 	 * Report a bully
+	 *
+	 * With guardians enabled this opens the guide-reporting flow instead of the CFH one; without
+	 * them it falls through to an ordinary emergency report on topic 123.
 	 *
 	 * @param userId The reported user ID
 	 * @param roomId The room ID where the incident occurred
@@ -170,23 +198,34 @@ export class CallForHelpManager
     // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::reportBully()
     reportBully(userId: number, roomId: number): void
     {
-        this._reportedUserId = userId;
-        this._reportedRoomId = roomId;
-        log.debug('Report bully - userId:', userId, 'roomId:', roomId);
+        if(this._habboHelp?.guardiansEnabled)
+        {
+            this._reportedUserId = userId;
+            this._reportedRoomId = roomId;
+
+            this._habboHelp.queryForGuideReportingStatus(3);
+        }
+        else
+        {
+            this.reportUser(userId, 1, 123);
+        }
     }
 
     /**
 	 * Report a user
 	 *
 	 * @param userId The reported user ID
-	 * @param roomId The room ID
+	 * @param cfhCategory The CFH report type the reply should proceed with (`REPORT_TYPE_*`)
+	 * @param topicId The topic to preselect in the report form
 	 */
     // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::reportUser()
-    reportUser(userId: number, roomId: number): void
+    reportUser(userId: number, cfhCategory: number, topicId: number): void
     {
         this._reportedUserId = userId;
-        this._reportedRoomId = roomId;
-        log.debug('Report user - userId:', userId, 'roomId:', roomId);
+        this._reportedRoomId = -1;
+        this._preselectedTopicId = topicId;
+
+        this._habboHelp?.queryForPendingCallsForHelp(cfhCategory);
     }
 
     /**
@@ -194,15 +233,18 @@ export class CallForHelpManager
 	 *
 	 * @param roomId The room ID
 	 * @param roomName The room name
+	 * @param roomDescription The room description, shown back in the report form's room panel
 	 */
     // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::reportRoom()
-    reportRoom(roomId: number, roomName: string): void
+    reportRoom(roomId: number, roomName: string, roomDescription: string): void
     {
         this._reportedRoomId = roomId;
         this._reportedRoomName = roomName;
+        this._reportedRoomDescription = roomDescription;
         this._reportedUserId = -1;
         this._reportedUserName = '';
-        log.debug('Report room - roomId:', roomId, 'roomName:', roomName);
+
+        this._habboHelp?.queryForPendingCallsForHelp(4);
     }
 
     /**
@@ -216,7 +258,8 @@ export class CallForHelpManager
     {
         this._reportedGroupId = groupId;
         this._reportedThreadId = threadId;
-        log.debug('Report thread - groupId:', groupId, 'threadId:', threadId);
+
+        this._habboHelp?.queryForPendingCallsForHelp(7);
     }
 
     /**
@@ -232,45 +275,105 @@ export class CallForHelpManager
         this._reportedGroupId = groupId;
         this._reportedThreadId = threadId;
         this._reportedMessageId = messageId;
-        log.debug('Report message - groupId:', groupId, 'threadId:', threadId, 'messageId:', messageId);
+
+        this._habboHelp?.queryForPendingCallsForHelp(8);
     }
 
     /**
 	 * Report a selfie
 	 *
-	 * @param extraDataId The extra data ID
-	 * @param description The selfie description
-	 * @param userId The reported user ID
-	 * @param roomObjectId The room object ID
-	 * @param roomId The room ID
+	 * Sent straight out, with no pending-calls round trip: a selfie report carries its own
+	 * message, so there is no form to open.
+	 *
+	 * The argument order is not the wire order — AS3 shuffles it into the composer, and the two
+	 * disagree in three of five positions. `CallForHelpFromSelfieMessageComposer` documents how
+	 * the AS3 call site and the server's parser pin it down.
+	 *
+	 * @param extraDataId The selfie's extra data id (its share URL)
+	 * @param message The free-text report message
+	 * @param roomId The room the selfie was reported from
+	 * @param photoAuthorId The user who took the selfie — the reported user
+	 * @param roomObjectId The selfie furniture's room object id
 	 */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/CallForHelpManager.as::reportSelfie()
-    // sends a message composer built from all 5 args via `_habboHelp.sendMessage(...)`; this port
-    // doesn't send anything yet (no HabboHelp wiring in this class), so roomId has nowhere to go.
-    reportSelfie(extraDataId: string, description: string, userId: number, roomObjectId: number, _roomId: number): void
+    // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::reportSelfie()
+    reportSelfie(extraDataId: string, message: string, roomId: number, photoAuthorId: number, roomObjectId: number): void
     {
-        this._reportedExtraDataId = extraDataId;
-        this._reportedRoomObjectId = roomObjectId;
-        log.debug('Report selfie - extraDataId:', extraDataId, 'userId:', userId);
+        // AS3 stores nothing on the manager here — the two `_reported*` assignments this port used
+        // to make had no counterpart. The fields they wrote are fed by
+        // `HabboHelp.startPhotoReportingInNewCfhFlow()`, which is the flow that reads them back.
+        this._habboHelp?.sendMessage(
+            new CallForHelpFromSelfieMessageComposer(extraDataId, roomId, photoAuthorId, message, roomObjectId)
+        );
     }
 
     /**
 	 * Report a photo
 	 *
-	 * @param extraDataId The extra data ID
-	 * @param topicId The topic ID
-	 * @param userId The reported user ID
-	 * @param roomObjectId The room object ID
-	 * @param roomId The room ID
+	 * Unlike the selfie report this one is *staged* rather than sent: the composer is parked on
+	 * `HabboHelp` and only goes out once the server has answered the pending-calls query, which is
+	 * how the client avoids stacking a tenth open report. See
+	 * `HabboHelp.proceedWithReporting()`.
+	 *
+	 * @param extraDataId The photo's extra data id
+	 * @param topicId The selected CFH topic id
+	 * @param roomId The room the photo was reported from
+	 * @param photoAuthorId The user who took the photo — the reported user
+	 * @param roomObjectId The photo furniture's room object id
 	 */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/CallForHelpManager.as::reportPhoto()
-    // builds a message composer from all 5 args plus sends it via `_habboHelp.setReportMessage(...)`
-    // then `_habboHelp.queryForPendingCallsForHelp(9)`; neither is wired up in this class yet.
-    reportPhoto(extraDataId: string, topicId: number, userId: number, roomObjectId: number, _roomId: number): void
+    // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::reportPhoto()
+    reportPhoto(extraDataId: string, topicId: number, roomId: number, photoAuthorId: number, roomObjectId: number): void
     {
-        this._reportedExtraDataId = extraDataId;
-        this._reportedRoomObjectId = roomObjectId;
-        log.debug('Report photo - extraDataId:', extraDataId, 'topicId:', topicId);
+        // The two trailing strings are the reporter's own name and e-mail, which only the
+        // guest-reporting flow fills in; the in-client one sends them empty, as AS3 does here.
+        this._habboHelp?.setReportMessage(
+            new CallForHelpFromPhotoMessageComposer(extraDataId, roomId, photoAuthorId, topicId, roomObjectId, '', '')
+        );
+
+        this._habboHelp?.queryForPendingCallsForHelp(9);
+    }
+
+    /**
+	 * Open the emergency help request form
+	 *
+	 * Reports "no user" on the emergency category with no topic preselected — the form is where
+	 * the user picks both.
+	 */
+    // AS3: .../src/com/sulake/habbo/help/CallForHelpManager.as::openEmergencyHelpRequest()
+    openEmergencyHelpRequest(): void
+    {
+        this.reportUser(0, 1, -1);
+    }
+
+    /**
+	 * Show the emergency help request form for a report type
+	 *
+	 * @param reportType The `REPORT_TYPE_*` the pending-calls reply proceeded with
+	 */
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/CallForHelpManager.as::showEmergencyHelpRequest()
+    // builds `emergency_help_request` (or `bully_report` for type 6), preselects the topic
+    // selector from `_preselectedTopicId`, hides topic 123 when guardians are on, and shows the
+    // user or room panel per type via `showPanels()`/`populateUserList()`. All four layouts ship
+    // (`emergency_help_request_xml`, `bully_report_xml`, `pending_request_xml`,
+    // `abusive_notice_xml`), so this is a window port, not a missing-asset gap. Submitting it
+    // additionally needs `ChatReportController` (`chat_report_xml`), which selects the chat lines
+    // the report is filed against.
+    showEmergencyHelpRequest(reportType: number): void
+    {
+        log.warn('showEmergencyHelpRequest: the CFH report form is not ported - report type', reportType, 'was dropped');
+    }
+
+    /**
+	 * Show the "you already have reports open" prompt
+	 *
+	 * @param message The concatenated pending call messages
+	 */
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/CallForHelpManager.as::showPendingRequest()
+    // builds `pending_request`, puts `message` in its `request_message` caption and wires
+    // keep/discard; discard sends DeletePendingCallsForHelpMessageComposer. Same window port as
+    // `showEmergencyHelpRequest()` above.
+    showPendingRequest(message: string): void
+    {
+        log.warn('showPendingRequest: the pending-reports prompt is not ported - server said:', message);
     }
 
     /**
@@ -281,6 +384,7 @@ export class CallForHelpManager
     {
         if(this._disposed) return;
 
+        this._habboHelp = null;
         this._disposed = true;
     }
 }

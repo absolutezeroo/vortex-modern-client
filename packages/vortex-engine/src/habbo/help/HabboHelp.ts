@@ -44,6 +44,16 @@ import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IMessageComposer} from '@core';
+import {GetCfhStatusMessageComposer} from '@habbo/communication/messages/outgoing/help/GetCfhStatusMessageComposer';
+import {GetGuideReportingStatusMessageComposer} from '@habbo/communication/messages/outgoing/help/GetGuideReportingStatusMessageComposer';
+import {GetPendingCallsForHelpMessageComposer} from '@habbo/communication/messages/outgoing/help/GetPendingCallsForHelpMessageComposer';
+import {GuideAdvertisementReadMessageComposer} from '@habbo/communication/messages/outgoing/talent/GuideAdvertisementReadMessageComposer';
+import {IgnoreUserMessageComposer} from '@habbo/communication/messages/outgoing/users/IgnoreUserMessageComposer';
+import {RemoveFriendMessageComposer} from '@habbo/communication/messages/outgoing/friendlist/RemoveFriendMessageComposer';
+import type {CallForHelpDisabledNotifyMessageParser} from '@habbo/communication/messages/parser/help/CallForHelpDisabledNotifyMessageParser';
+import type {CallForHelpPendingCallsMessageParser} from '@habbo/communication/messages/parser/help/CallForHelpPendingCallsMessageParser';
+import type {CfhTopicsInitMessageParser, ICfhCategory} from '@habbo/communication/messages/parser/help/CfhTopicsInitMessageParser';
+import type {GuideReportingStatusMessageParser} from '@habbo/communication/messages/parser/help/GuideReportingStatusMessageParser';
 
 const log = Logger.getLogger('habbo.help.HabboHelp');
 
@@ -460,12 +470,16 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 * @param roomDescription The room description
 	 */
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::reportRoom()
-    reportRoom(roomId: number, roomName: string, _roomDescription: string): void
+    // TODO(AS3): AS3 sets the four `reported*` fields directly and then opens the *new* CFH flow
+    // via `TopicsFlowHelpController.openReportingContentReasonCategory(4)`. That controller is
+    // unported, so this routes through the manager's own `reportRoom()` — the older flow, which
+    // asks the server for pending calls first and would open `emergency_help_request`. Same
+    // substitution as `reportUser()`/`reportThread()`/`reportMessage()` below.
+    reportRoom(roomId: number, roomName: string, roomDescription: string): void
     {
         if(this._cfhManager)
         {
-            this._cfhManager.reportRoom(roomId, roomName);
-            log.debug('Report room - roomId:', roomId, 'roomName:', roomName);
+            this._cfhManager.reportRoom(roomId, roomName, roomDescription);
         }
     }
 
@@ -503,25 +517,29 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * Report a selfie
 	 *
-	 * @param extraDataId The extra data ID
-	 * @param description The selfie description
-	 * @param userId The reported user ID
-	 * @param roomObjectId The room object ID
-	 * @param roomId The room ID
+	 * @param extraDataId The selfie's extra data id (its share URL)
+	 * @param message The free-text report message
+	 * @param roomId The room the selfie was reported from
+	 * @param photoAuthorId The user who took the selfie — the reported user
+	 * @param roomObjectId The selfie furniture's room object id
 	 * @returns Whether the report was submitted
 	 */
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::reportSelfie()
-    reportSelfie(extraDataId: string, description: string, userId: number, roomObjectId: number, roomId: number): boolean
+    reportSelfie(extraDataId: string, message: string, roomId: number, photoAuthorId: number, roomObjectId: number): boolean
     {
         if(this._cfhManager)
         {
-            if(description.length < this.getInteger('help.cfh.length.minimum', 15))
+            if(message.length < this.getInteger('help.cfh.length.minimum', 15))
             {
-                log.warn('Selfie report message too short');
+                // AS3 alerts rather than logging: refusing the report silently leaves the user
+                // staring at a form that did nothing.
+                this._windowManager?.alert('${generic.alert.title}', '${help.cfh.error.msgtooshort}', 0, null);
+
                 return false;
             }
 
-            this._cfhManager.reportSelfie(extraDataId, description, userId, roomObjectId, roomId);
+            this._cfhManager.reportSelfie(extraDataId, message, roomId, photoAuthorId, roomObjectId);
+
             return true;
         }
 
@@ -531,29 +549,323 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * Report a photo
 	 *
-	 * @param extraDataId The extra data ID
-	 * @param topicId The topic ID
-	 * @param userId The reported user ID
-	 * @param roomObjectId The room object ID
-	 * @param roomId The room ID
+	 * @param extraDataId The photo's extra data id
+	 * @param topicId The selected CFH topic id
+	 * @param roomId The room the photo was reported from
+	 * @param photoAuthorId The user who took the photo — the reported user
+	 * @param roomObjectId The photo furniture's room object id
 	 * @returns Whether the report was submitted
 	 */
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::reportPhoto()
-    reportPhoto(extraDataId: string, topicId: number, userId: number, roomObjectId: number, roomId: number): boolean
+    reportPhoto(extraDataId: string, topicId: number, roomId: number, photoAuthorId: number, roomObjectId: number): boolean
     {
         if(this._cfhManager)
         {
             if(topicId === 0)
             {
-                log.warn('Photo report has no topic');
+                this._windowManager?.alert('${generic.alert.title}', '${help.cfh.error.notopic}', 0, null);
+
                 return false;
             }
 
-            this._cfhManager.reportPhoto(extraDataId, topicId, userId, roomObjectId, roomId);
+            this._cfhManager.reportPhoto(extraDataId, topicId, roomId, photoAuthorId, roomObjectId);
+
             return true;
         }
 
         return false;
+    }
+
+    // --- CFH request pipeline ---
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_pendingReportType
+    // Name derived: obfuscated as `_SafeStr_4910` in every tree. It holds the `REPORT_TYPE_*` that
+    // the pending-calls reply is to proceed with, which is what the name records.
+    private _pendingReportType: number = 0;
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_reportMessage
+    private _reportMessage: IMessageComposer<any> | null = null;
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_guideReportingType
+    // Name derived (`_SafeStr_6147`). Write-only in AS3 too: `queryForGuideReportingStatus()`
+    // stores its argument and nothing reads it back. Kept so the member is not silently missing.
+    private _guideReportingType: number = -1;
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_callForHelpCategories
+    private _callForHelpCategories: ICfhCategory[] = [];
+
+    /**
+	 * The CFH topic tree, as sent by the server at login
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get callForHelpCategories()
+    get callForHelpCategories(): ICfhCategory[]
+    {
+        return this._callForHelpCategories;
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get guardiansEnabled()
+    get guardiansEnabled(): boolean
+    {
+        return this.getBoolean('guardians.enabled');
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get newUserTourEnabled()
+    get newUserTourEnabled(): boolean
+    {
+        return this.getBoolean('guide.help.new.user.tour.enabled');
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get newIdentity()
+    get newIdentity(): boolean
+    {
+        return this.getInteger('new.identity', 0) > 0;
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get citizenshipEnabled()
+    get citizenshipEnabled(): boolean
+    {
+        return this.getBoolean('talent.track.citizenship.enabled');
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get safetyQuizDisabled()
+    get safetyQuizDisabled(): boolean
+    {
+        return this.getBoolean('safety_quiz.disabled');
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get reportedUserId()
+    get reportedUserId(): number
+    {
+        return this._cfhManager?.reportedUserId ?? -1;
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::set reportedUserId()
+    set reportedUserId(value: number)
+    {
+        if(this._cfhManager) this._cfhManager.reportedUserId = value;
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get reportedUserName()
+    get reportedUserName(): string
+    {
+        return this._cfhManager?.reportedUserName ?? '';
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get reportedRoomId()
+    get reportedRoomId(): number
+    {
+        return this._cfhManager?.reportedRoomId ?? -1;
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::set reportedRoomId()
+    set reportedRoomId(value: number)
+    {
+        if(this._cfhManager) this._cfhManager.reportedRoomId = value;
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get reportedExtraDataId()
+    get reportedExtraDataId(): string
+    {
+        return this._cfhManager?.reportedExtraDataId ?? '';
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::get reportedRoomObjectId()
+    get reportedRoomObjectId(): number
+    {
+        return this._cfhManager?.reportedRoomObjectId ?? -1;
+    }
+
+    /**
+	 * Park a report composer until the pending-calls reply clears it for sending
+	 *
+	 * The photo report is the one that uses this: it must not go out before the server has said
+	 * how many reports the user already has open.
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::setReportMessage()
+    setReportMessage(composer: IMessageComposer<any> | null): void
+    {
+        this._reportMessage = composer;
+    }
+
+    /**
+	 * Ask the server how many reports this user already has open
+	 *
+	 * Every report route funnels through here: the reply decides whether the report form opens
+	 * (`proceedWithReporting()`) or the user is shown their existing reports instead.
+	 *
+	 * @param reportType The `REPORT_TYPE_*` to proceed with once the reply lands
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::queryForPendingCallsForHelp()
+    queryForPendingCallsForHelp(reportType: number): void
+    {
+        this._pendingReportType = reportType;
+
+        this.sendMessage(new GetPendingCallsForHelpMessageComposer());
+    }
+
+    /**
+	 * Ask the server whether the guide-reporting route is open to this user
+	 *
+	 * @param reportType The report type the answer applies to
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::queryForGuideReportingStatus()
+    queryForGuideReportingStatus(reportType: number): void
+    {
+        this._guideReportingType = reportType;
+
+        // Both, in this order — asking about guide reporting also marks the guide advertisement
+        // as read.
+        this.sendMessage(new GuideAdvertisementReadMessageComposer());
+        this.sendMessage(new GetGuideReportingStatusMessageComposer());
+    }
+
+    /**
+	 * Ignore, and unfriend, whoever the pending report is filed against
+	 *
+	 * Called once a report is submitted.
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::ignoreAndUnfriendReportedUser()
+    ignoreAndUnfriendReportedUser(): void
+    {
+        const userId = this._cfhManager?.reportedUserId ?? -1;
+
+        if(userId <= 0) return;
+
+        this.sendMessage(new IgnoreUserMessageComposer(userId));
+
+        // `getFriendById()` is this port's name for AS3's `getFriend()`.
+        if(this._friendList?.getFriendById(userId))
+        {
+            this.sendMessage(new RemoveFriendMessageComposer(userId));
+        }
+    }
+
+    /**
+	 * Request the user's own sanction status
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::requestSanctionInfo()
+    requestSanctionInfo(): void
+    {
+        this.sendMessage(new GetCfhStatusMessageComposer());
+    }
+
+    /**
+	 * Handle the server's pending-calls answer
+	 *
+	 * With nothing open the report proceeds; otherwise the user is shown what they already have
+	 * open and asked to keep or discard it. A photo report (type 9) is allowed to stack up to
+	 * three, which is the one asymmetry in the rule.
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onPendingCallsForHelp()
+    handlePendingCallsForHelp(parser: CallForHelpPendingCallsMessageParser): void
+    {
+        if(parser.callCount === 0 || (this._pendingReportType === HabboHelp.REPORT_TYPE_PHOTO && parser.callCount < 3))
+        {
+            this.proceedWithReporting();
+
+            return;
+        }
+
+        const calls = parser.calls;
+        let message = '';
+
+        for(let i = 0; i < calls.length && i < 10; i++)
+        {
+            message += calls[i].message;
+
+            if(i < calls.length - 1 && i < 9) message += '\n';
+        }
+
+        this._cfhManager?.showPendingRequest(message);
+    }
+
+    /**
+	 * Open whatever the stored report type calls for, now that the server has cleared it
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::proceedWithReporting()
+    private proceedWithReporting(): void
+    {
+        switch(this._pendingReportType)
+        {
+            case HabboHelp.REPORT_TYPE_EMERGENCY:
+            case HabboHelp.REPORT_TYPE_IM:
+            case HabboHelp.REPORT_TYPE_ROOM:
+            case HabboHelp.REPORT_TYPE_THREAD:
+            case HabboHelp.REPORT_TYPE_MESSAGE:
+                this._cfhManager?.showEmergencyHelpRequest(this._pendingReportType);
+                break;
+
+            case HabboHelp.REPORT_TYPE_GUIDE:
+                this._guideManager?.openReportWindow();
+                break;
+
+            case HabboHelp.REPORT_TYPE_PHOTO:
+                // The photo report was parked by `CallForHelpManager.reportPhoto()`; this is the
+                // only place it goes out.
+                if(this._reportMessage)
+                {
+                    this.sendMessage(this._reportMessage);
+                    this._reportMessage = null;
+                }
+                break;
+        }
+
+        this._pendingReportType = 0;
+    }
+
+    /**
+	 * Handle the guide-reporting status answer
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onGuideReportingStatus()
+    handleGuideReportingStatus(parser: GuideReportingStatusMessageParser): void
+    {
+        switch(parser.statusCode)
+        {
+            // TODO(AS3): status 0 calls `toggleNewHelpWindow()`, which opens
+            // `TopicsFlowHelpController` (933 lines,
+            // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/TopicsFlowHelpController.as).
+            // That controller is the whole "new CFH flow" UI and is unported; every
+            // `openReporting*()` entry point on it is unported with it.
+            case 0:
+                log.warn('Guide reporting status 0: the new help window (TopicsFlowHelpController) is not ported');
+                break;
+
+            // TODO(AS3): status 1 calls `guideHelpManager.showPendingTicket(parser.pendingTicket)`.
+            // Neither half exists here: `GuideHelpManager` has no `showPendingTicket()`, and
+            // `GuideReportingStatusMessageParser` does not read a `pendingTicket` field off the
+            // wire — porting this needs the parser widened first.
+            case 1:
+                log.warn('Guide reporting status 1: pending-ticket display is not ported');
+                break;
+
+            default:
+                this._guideManager?.showFeedback(parser.localizationCode);
+                break;
+        }
+    }
+
+    /**
+	 * Store the CFH topic tree the server sends at login
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onCfhTopics()
+    handleCfhTopics(parser: CfhTopicsInitMessageParser): void
+    {
+        this._callForHelpCategories = parser.callForHelpCategories;
+    }
+
+    /**
+	 * Tell the user that calling for help has been disabled for them
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onCallForHelpDisabledNotify()
+    handleCallForHelpDisabledNotify(parser: CallForHelpDisabledNotifyMessageParser): void
+    {
+        this._windowManager?.simpleAlert(
+            '${help.emergency.global_mute.caption}',
+            '${help.emergency.global_mute.subtitle}',
+            '${help.emergency.global_mute.message}',
+            '${help.emergency.global_mute.link}',
+            parser.infoUrl
+        );
     }
 
     /**
@@ -844,7 +1156,9 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         this.addMessageEvent(new RoomEntryInfoMessageEvent(this.onRoomEnter.bind(this)));
 
         // Create sub-managers
-        this._cfhManager = new CallForHelpManager();
+        // AS3 passes itself: the manager sends every report through `HabboHelp.sendMessage()` and
+        // reads `guardiansEnabled` off it.
+        this._cfhManager = new CallForHelpManager(this);
         this._guideManager = new GuideHelpManager();
         this._nameChangeController = new NameChangeController(this._communication);
         this._sanctionInfo = new SanctionInfo();

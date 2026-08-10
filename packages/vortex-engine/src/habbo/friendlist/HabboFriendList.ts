@@ -507,11 +507,8 @@ export class HabboFriendList extends Component implements IHabboFriendList, IAva
     // AS3: .../HabboFriendList.as::simpleAlert()
     simpleAlert(title: string, message: string): void
     {
-        // Positional, as in AS3: slot 2 is the dialog's *subtitle* (AS3 passes null there,
-        // which this port's wrapper types as a non-null string) and slot 3 the message.
-        // `IHabboWindowManager.simpleAlert()` names those two parameters the other way
-        // round, but hands them to `SimpleAlertDialog(title, subtitle, message)` in this
-        // order, so the positions are what matter.
+        // Slot 2 is the dialog's *subtitle*, which AS3 passes as null here; this port's wrapper
+        // types it as a non-null string, so it goes out empty.
         this._windowManager?.simpleAlert(title, '', message);
     }
 

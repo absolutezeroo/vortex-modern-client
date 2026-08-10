@@ -1114,7 +1114,7 @@ import {
 import {GetAchievementsComposer} from './messages/outgoing/inventory/achievements';
 
 // Outgoing Composers - Talent
-import {GetTalentTrackMessageComposer} from './messages/outgoing/talent';
+import {GetTalentTrackMessageComposer, GuideAdvertisementReadMessageComposer} from './messages/outgoing/talent';
 
 // Outgoing Composers - Competition
 import {GetCurrentTimingCodeMessageComposer} from './messages/outgoing/competition';
@@ -2923,6 +2923,7 @@ export class HabboMessages implements IMessageConfiguration
 
         // === TALENT ===
         this._composers.set(3757, GetTalentTrackMessageComposer);
+        this._composers.set(1850, GuideAdvertisementReadMessageComposer);
 
         // === COMPETITION ===
         this._composers.set(1503, GetCurrentTimingCodeMessageComposer);

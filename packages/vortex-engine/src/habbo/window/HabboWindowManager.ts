@@ -1034,8 +1034,8 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::simpleAlert()
     public simpleAlert(
         title: string,
-        message: string,
         subtitle: string,
+        message: string,
         linkCaption: string | null = null,
         linkUrl: string | null = null,
         parameters: Map<string, string> | null = null,
@@ -1047,8 +1047,8 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         new SimpleAlertDialog(
             this,
             title,
-            message,
             subtitle,
+            message,
             linkCaption,
             linkUrl,
             parameters,

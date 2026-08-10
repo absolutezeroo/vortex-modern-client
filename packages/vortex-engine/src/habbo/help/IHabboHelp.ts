@@ -41,11 +41,25 @@ export interface IHabboHelp
     // AS3: .../src/com/sulake/habbo/help/IHabboHelp.as::reportMessage()
     reportMessage(groupId: number, threadId: number, messageId: number): void;
 
+    /**
+     * Report a selfie
+     *
+     * The trailing three arguments used to be named `(userId, roomObjectId, roomId)`. They are
+     * really `(roomId, photoAuthorId, roomObjectId)` — see
+     * `CallForHelpFromSelfieMessageComposer` for how the AS3 call site and the server's parser
+     * both fix that order.
+     */
     // AS3: .../src/com/sulake/habbo/help/IHabboHelp.as::reportSelfie()
-    reportSelfie(extraDataId: string, description: string, userId: number, roomObjectId: number, roomId: number): boolean;
+    reportSelfie(extraDataId: string, message: string, roomId: number, photoAuthorId: number, roomObjectId: number): boolean;
 
+    /**
+     * Report a photo
+     *
+     * Same argument correction as `reportSelfie()` above, with a topic id in place of the
+     * free-text message.
+     */
     // AS3: .../src/com/sulake/habbo/help/IHabboHelp.as::reportPhoto()
-    reportPhoto(extraDataId: string, topicId: number, userId: number, roomObjectId: number, roomId: number): boolean;
+    reportPhoto(extraDataId: string, topicId: number, roomId: number, photoAuthorId: number, roomObjectId: number): boolean;
 
     // AS3: .../src/com/sulake/habbo/help/IHabboHelp.as::requestGuide()
     requestGuide(): void;

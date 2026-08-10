@@ -281,11 +281,22 @@ export interface IHabboWindowManager extends IDisposable {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::createWidget()
     createWidget(type: string, window: IWidgetWindow): IWidget | null;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::simpleAlert()
+    /**
+     * Open the illustrated alert dialog (`simple_alert_xml`)
+     *
+     * The second and third parameters used to be named `message, subtitle` — the wrong way round.
+     * Positions were never wrong: this forwards straight to `SimpleAlertDialog`, whose second
+     * argument fills the `subtitle` window and whose third fills the `message` one, exactly as
+     * `HabboWindowManagerComponent.as::simpleAlert()` does. Every call site in the port already
+     * passed them in AS3 order, so this is a rename with no behaviour change — but the old names
+     * were a standing trap, and `HabboFriendList.simpleAlert()` carried a comment working around
+     * them.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::simpleAlert()
     simpleAlert(
         title: string,
-        message: string,
         subtitle: string,
+        message: string,
         linkCaption?: string | null,
         linkUrl?: string | null,
         parameters?: Map<string, string> | null,
