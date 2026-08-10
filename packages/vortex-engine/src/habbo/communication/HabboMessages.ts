@@ -454,9 +454,6 @@ import {
     ClearWiredErrorLogsComposer
 } from './messages/outgoing/userdefinedroomevents/wiredmenu/ClearWiredErrorLogsComposer';
 import {
-    WiredMonitorReportComposer
-} from './messages/outgoing/userdefinedroomevents/wiredmenu/WiredMonitorReportComposer';
-import {
     AllVariablesHashMessageEvent
 } from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesHashMessageEvent';
 import {
@@ -2261,7 +2258,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(427, RequestWiredRoomStatsComposer);
         this._composers.set(452, RequestWiredErrorLogsComposer);
         this._composers.set(2386, ClearWiredErrorLogsComposer);
-        this._composers.set(3608, WiredMonitorReportComposer);
+        // The monitor tab's "wf15" report is the same AS3 class as the wired dialog's developer
+        // action (`_SafeCls_3004`), already registered at 3608 above as
+        // WiredDebugCommandMessageComposer. Registering it twice under two derived names left the
+        // first one headerless.
         // Overview tab (WIN63 registry _SafeCls_2046.as): 113 -> _SafeCls_3916 (request variable
         // holders), 2221 -> _SafeCls_3265 (open variable management).
         this._composers.set(113, RequestVariableHoldersComposer);

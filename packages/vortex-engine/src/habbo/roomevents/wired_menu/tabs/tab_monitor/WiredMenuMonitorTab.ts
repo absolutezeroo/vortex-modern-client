@@ -18,7 +18,7 @@ import type {WiredErrorLogsParser} from '@habbo/communication/messages/parser/us
 import {RequestWiredRoomStatsComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredRoomStatsComposer';
 import {RequestWiredErrorLogsComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredErrorLogsComposer';
 import {ClearWiredErrorLogsComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/ClearWiredErrorLogsComposer';
-import {WiredMonitorReportComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/WiredMonitorReportComposer';
+import {WiredDebugCommandMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/WiredDebugCommandMessageComposer';
 import {RequestWiredRoomLogsComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredRoomLogsComposer';
 
 import {Util} from '../../../Util';
@@ -353,7 +353,7 @@ export class WiredMenuMonitorTab extends WiredMenuDefaultTab implements IUpdateR
             return;
         }
 
-        this.controller.send(new WiredMonitorReportComposer('wf15', (event.window as unknown as IStaticBitmapWrapperWindow).assetUri));
+        this.controller.send(new WiredDebugCommandMessageComposer('wf15', (event.window as unknown as IStaticBitmapWrapperWindow).assetUri));
     };
 
     // AS3: WiredMenuMonitorTab.as::update()
