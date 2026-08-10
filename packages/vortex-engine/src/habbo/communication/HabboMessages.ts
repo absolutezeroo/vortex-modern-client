@@ -552,6 +552,31 @@ import {
 } from './messages/outgoing/preferences/TryPhoneNumberMessageComposer';
 import {VerifyCodeMessageComposer} from './messages/outgoing/preferences/VerifyCodeMessageComposer';
 import {TraxSongInfoMessageEvent} from './messages/incoming/sound/TraxSongInfoMessageEvent';
+import {
+    ForumDataMessageEvent,
+    ForumThreadsMessageEvent,
+    ForumsListMessageEvent,
+    PostMessageMessageEvent,
+    PostThreadMessageEvent,
+    ThreadMessagesMessageEvent,
+    UnreadForumsCountMessageEvent,
+    UpdateMessageMessageEvent,
+    UpdateThreadMessageEvent,
+} from './messages/incoming/groupforums';
+import {
+    GetForumStatsMessageComposer,
+    GetForumsListMessageComposer,
+    GetMessagesMessageComposer,
+    GetThreadMessageComposer,
+    GetThreadsMessageComposer,
+    GetUnreadForumsCountMessageComposer,
+    ModerateMessageMessageComposer,
+    ModerateThreadMessageComposer,
+    PostMessageMessageComposer,
+    UpdateForumReadMarkerMessageComposer,
+    UpdateForumSettingsMessageComposer,
+    UpdateThreadMessageComposer,
+} from './messages/outgoing/groupforums';
 import {OfficialSongIdMessageEvent} from './messages/incoming/sound/OfficialSongIdMessageEvent';
 import {NowPlayingMessageEvent} from './messages/incoming/sound/NowPlayingMessageEvent';
 import {
@@ -1447,6 +1472,21 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2294, TradingYouAreNotAllowedEvent);
         this._events.set(1490, TradeSilverSetMessageEvent);
         this._events.set(3497, TradeSilverFeeMessageEvent);
+
+        // === GROUP FORUMS ===
+        // `_events[1373]/[1222]/[3603]/[3965]/[866]/[2475]/[2988]/[956]/[1146]` in WIN63's
+        // registry, each resolved through GroupForumController's own listener registrations —
+        // the callback names there (onForumsList, onThreadList, …) are what disambiguate the four
+        // pairs that share a wire shape.
+        this._events.set(1373, ForumsListMessageEvent);
+        this._events.set(1222, ForumThreadsMessageEvent);
+        this._events.set(3603, ThreadMessagesMessageEvent);
+        this._events.set(3965, ForumDataMessageEvent);
+        this._events.set(866, UnreadForumsCountMessageEvent);
+        this._events.set(2475, PostMessageMessageEvent);
+        this._events.set(2988, UpdateMessageMessageEvent);
+        this._events.set(956, PostThreadMessageEvent);
+        this._events.set(1146, UpdateThreadMessageEvent);
 
         // === SOUND (Trax) ===
         // The song-metadata answer and your song-disk inventory, `_events[2278]`/`_events[1930]`
@@ -2566,6 +2606,24 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(321, GetExtendedProfileByNameMessageComposer);
         this._composers.set(847, GetExtendedProfileMessageComposer);
         this._composers.set(1683, GetHabboGroupDetailsMessageComposer);
+
+        // === GROUP FORUMS ===
+        // Every id read from WIN63's own registry (_SafeCls_2046.as), and every one corroborated
+        // by vortex-emulator's MessageEvent constants. The obfuscated classes behind them were
+        // identified through GroupForumController, which is unobfuscated in the primary tree and
+        // names each one at its call site — the same method the competition composers needed.
+        this._composers.set(488, GetForumsListMessageComposer);
+        this._composers.set(3592, GetForumStatsMessageComposer);
+        this._composers.set(3218, GetThreadMessageComposer);
+        this._composers.set(3668, GetThreadsMessageComposer);
+        this._composers.set(225, GetMessagesMessageComposer);
+        this._composers.set(1076, GetUnreadForumsCountMessageComposer);
+        this._composers.set(2811, PostMessageMessageComposer);
+        this._composers.set(3206, UpdateThreadMessageComposer);
+        this._composers.set(3320, ModerateThreadMessageComposer);
+        this._composers.set(3373, ModerateMessageMessageComposer);
+        this._composers.set(2793, UpdateForumSettingsMessageComposer);
+        this._composers.set(429, UpdateForumReadMarkerMessageComposer);
         // HabboGroupInfoManager has been sending this on every room entry since it was
         // ported, into nothing: the composer existed but was never registered, so every
         // send was dropped and BadgeImageWidget never learned any group's badge code.
