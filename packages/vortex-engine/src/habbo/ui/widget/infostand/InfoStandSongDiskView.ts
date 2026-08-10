@@ -96,6 +96,7 @@ export class InfoStandSongDiskView extends InfoStandFurniView
      * `Number.NaN` would compare false against every incoming songId here, where 0 could match a
      * real one, so the unparseable case is folded into the same -1 the null case returns.
      */
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandSongDiskView.as::getSongIdFromExtraParam()
     private static getSongIdFromExtraParam(extraParam: string | null): number
     {
         if(extraParam === null) return -1;

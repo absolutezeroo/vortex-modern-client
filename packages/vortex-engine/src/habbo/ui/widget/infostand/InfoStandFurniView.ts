@@ -106,6 +106,7 @@ export class InfoStandFurniView
      * child lookups verbatim. All three layouts declare the same children, so the override point
      * is the asset name rather than three copies of the body.
      */
+    // TS-only: no AS3 counterpart; the override point the two song views build their layout from.
     protected get layoutName(): string
     {
         return 'furni_view';

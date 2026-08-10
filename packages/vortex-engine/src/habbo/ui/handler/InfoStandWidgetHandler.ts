@@ -597,9 +597,10 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         }
     }
 
-    // deferred with the pet view (stub).
     // AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::update()
-    public update(): void 
+    // Empty in AS3 too — the per-frame hook exists only to satisfy IRoomWidgetHandler. What this
+    // handler has to poll (the pet snapshot) runs off InfoStandWidget's own 3s timer instead.
+    public update(): void
     {
     }
 
@@ -1369,6 +1370,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
      * nothing about which song is involved. The jukebox reads it from the room playlist's current
      * track, a disk from the `RWEIEP_SONGDISK<id>` suffix of its own extraParam.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage()
     private emitSongInfoForFurni(extraParam: string | null): void
     {
         if(!this._musicController || !this._container) return;
@@ -1439,9 +1441,8 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         if(result.id === 0) this.imageReady(result.id, result.data);
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::update()
-    // TODO(AS3): drives pet-command-tool countdowns and the pet update timer — both
-    // (the "re-request at scale 1" fallback branch)
+    // TS-only: the "re-request at scale 1" fallback branch, shared by imageReady() and
+    // imageFailed() above. AS3 spells it out inside each of the two.
     private retryFurniImageAtScaleOne(pending: {
         furniId: number;
         category: number;

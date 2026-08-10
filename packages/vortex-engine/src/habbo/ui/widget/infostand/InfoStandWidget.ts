@@ -33,6 +33,7 @@ import {RoomWidgetPetCommandMessage} from '../messages/RoomWidgetPetCommandMessa
 import {CommandConfiguration} from './CommandConfiguration';
 import {RoomWidgetInfostandExtraParamEnum} from '../enums/RoomWidgetInfostandExtraParamEnum';
 import {RoomWidgetRoomObjectMessage} from '../messages/RoomWidgetRoomObjectMessage';
+import {RoomWidgetUserActionMessage} from '../messages/RoomWidgetUserActionMessage';
 import type {InfoStandWidgetHandler} from '@habbo/ui/handler/InfoStandWidgetHandler';
 import {InfoStandFurniView} from './InfoStandFurniView';
 import {InfoStandCrackableFurniView} from './InfoStandCrackableFurniView';
@@ -61,6 +62,9 @@ const VIEW_NAME =
         CRACKABLE_FURNI: 'infostand_crackable_furni_view',
         SONGDISK: 'infostand_songdisk_view',
     } as const;
+
+// AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::InfoStandWidget() — `new Timer(3000)`
+const UPDATE_TIMER_INTERVAL = 3000;
 
 // The three species AS3 gates the breeding-train command on in onPetCommands(). The values are the
 // pet type ids it compares against directly (0, 1, 5); the names are this port's.
@@ -116,6 +120,46 @@ export class InfoStandWidget extends RoomWidgetBase
 
         this.mainContainer.visible = false;
         this.handler.widget = this;
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::_updateTimer
+     *
+     * AS3 builds a repeating `new Timer(3000)` in the constructor and only ever starts it from
+     * onPetInfo(). A setInterval created on demand is the same thing: the handle is the "running"
+     * flag AS3 reads off the Timer, so stopUpdateTimer() stands in for its `.stop()`.
+     */
+    private _updateTimer: ReturnType<typeof setInterval> | null = null;
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::_updateTimer.start()
+    private startUpdateTimer(): void
+    {
+        if(this._updateTimer !== null) return;
+
+        this._updateTimer = setInterval(() => this.onUpdateTimer(), UPDATE_TIMER_INTERVAL);
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::_updateTimer.stop()
+    private stopUpdateTimer(): void
+    {
+        if(this._updateTimer === null) return;
+
+        clearInterval(this._updateTimer);
+        this._updateTimer = null;
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onUpdateTimer()
+     *
+     * A pet's hunger, thirst and energy drain while its infostand is open, and nothing pushes
+     * them: the panel asks for a fresh snapshot every three seconds for as long as a pet is the
+     * thing being shown.
+     */
+    private onUpdateTimer(): void
+    {
+        this.messageListener?.processWidgetMessage(
+            new RoomWidgetUserActionMessage(RoomWidgetUserActionMessage.REQUEST_PET_UPDATE, this._petView.getCurrentPetId())
+        );
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::get handler()
@@ -206,6 +250,7 @@ export class InfoStandWidget extends RoomWidgetBase
         this._jukeboxView.dispose();
         this._crackableFurniView.dispose();
         this._songDiskView.dispose();
+        this.stopUpdateTimer();
         super.dispose();
     }
 
@@ -282,9 +327,6 @@ export class InfoStandWidget extends RoomWidgetBase
         return this._petData;
     }
 
-    // TODO(AS3): InfoStandWidget.as::onUpdateTimer() — periodic pet-info refresh,
-    // deferred with the rest of the pet view (see InfoStandPetView.ts).
-
     /**
 	 * Phase 1 (identity only) simplification: AS3 also tracks a `selectedBadges`
 	 * preserve/glow pair (shouldPreserveDisplayedBadges()/shouldPlayGlowForUserInfo(),
@@ -301,6 +343,7 @@ export class InfoStandWidget extends RoomWidgetBase
 
         this._userView.update(event);
         this.selectView(VIEW_NAME.USER);
+        this.stopUpdateTimer();
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onBotInfo()
@@ -309,6 +352,7 @@ export class InfoStandWidget extends RoomWidgetBase
         this._userData.setData(event);
         this._botView.update(event);
         this.selectView(VIEW_NAME.BOT);
+        this.stopUpdateTimer();
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onRentableBotInfo()
@@ -317,6 +361,7 @@ export class InfoStandWidget extends RoomWidgetBase
         this._rentableBotData.setData(event);
         this._rentableBotView.update(event);
         this.selectView(VIEW_NAME.RENTABLE_BOT);
+        this.stopUpdateTimer();
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onFurniInfo()
@@ -344,17 +389,18 @@ export class InfoStandWidget extends RoomWidgetBase
             this._furniView.update(event);
             this.selectView(VIEW_NAME.FURNI);
         }
+
+        this.stopUpdateTimer();
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onPetInfo()
-    // TODO(AS3): AS3 ends with `_updateTimer.start()`, restarting the periodic pet-info
-    // refresh (onUpdateTimer() — see the TODO above petData's getter). Deferred with it.
     private onPetInfo = (event: RoomWidgetPetInfoUpdateEvent): void =>
     {
         this._petData.setData(event);
         this._userData.petRespectLeft = event.petRespectLeft;
         this._petView.update(this._petData);
         this.selectView(VIEW_NAME.PET);
+        this.startUpdateTimer();
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onPetFigureUpdate()
@@ -558,12 +604,16 @@ export class InfoStandWidget extends RoomWidgetBase
     public close(): void
     {
         this.hideChildren();
+        this.stopUpdateTimer();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onClose()
+    // AS3 stops the timer a second time after close() has already stopped it; harmless there and
+    // here, and kept so the two methods stay line-for-line comparable.
     private onClose = (_event: unknown): void =>
     {
         this.close();
+        this.stopUpdateTimer();
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::hideChildren()
