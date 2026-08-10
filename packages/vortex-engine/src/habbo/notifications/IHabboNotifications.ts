@@ -44,6 +44,14 @@ export interface IHabboNotifications
     ): void;
 
     /**
+	 * Remove every queued notification carrying this id.
+	 *
+	 * @param notificationId The id a notification was raised with, or null for a no-op
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_180.as::removeNotificationById()
+    removeNotificationById(notificationId: string | null): void;
+
+    /**
 	 * Show a notification with the given type and optional parameters
 	 *
 	 * @param type The notification type key

@@ -336,6 +336,20 @@ export class HabboNotifications extends Component implements IHabboNotifications
     }
 
     /**
+     * Drop every notification carrying this id — how a toggle-style bubble (the wired
+     * click-settings one) takes itself down when the condition that raised it goes away.
+     *
+     * AS3 forwards straight to the singular controller, as here.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::removeNotificationById()
+    removeNotificationById(notificationId: string | null): void
+    {
+        if(notificationId === null) return;
+
+        this._singularController?.removeNotificationById(notificationId);
+    }
+
+    /**
 	 * Show a notification popup with the given type and parameters
 	 *
 	 * @param type The notification type key

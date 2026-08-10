@@ -8,6 +8,11 @@ import {WiredClickSettingsEvent} from '@habbo/communication/messages/incoming/us
 import {WiredClickUserResponseEvent} from '@habbo/communication/messages/incoming/userdefinedroomevents/WiredClickUserResponseEvent';
 import {WiredAchievementsUpdatedEvent} from './events/WiredAchievementsUpdatedEvent';
 import {WiredUserClickHandledEvent} from './events/WiredUserClickHandledEvent';
+import {NotificationExtraDataKey} from '@habbo/notifications/NotificationExtraDataKey';
+
+// AS3: WiredEnvironment.as — the literal "wired_click_settings_toggle", spelled at all three
+// removeNotificationById() call sites. Name DERIVED; AS3 inlines the string.
+const CLICK_SETTINGS_TOGGLE_NOTIFICATION_ID = 'wired_click_settings_toggle';
 
 /**
  * WiredEnvironment — room-wide wired state that is not tied to a single furni: the click-behaviour
@@ -86,8 +91,7 @@ export class WiredEnvironment
         if(!this.hasActiveClickSettings())
         {
             this._clickSettingsIgnored = false;
-            // TODO(AS3): notifications.removeNotificationById('wired_click_settings_toggle') — the
-            // port's IHabboNotifications has no removeNotificationById() yet.
+            this._roomEvents?.notifications.removeNotificationById(CLICK_SETTINGS_TOGGLE_NOTIFICATION_ID);
         }
     }
 
@@ -103,7 +107,7 @@ export class WiredEnvironment
         {
             this._clickSettingsIgnored = false;
             changed = true;
-            // TODO(AS3): notifications.removeNotificationById('wired_click_settings_toggle') — not ported.
+            this._roomEvents.notifications.removeNotificationById(CLICK_SETTINGS_TOGGLE_NOTIFICATION_ID);
         }
 
         if(changed)
@@ -133,12 +137,15 @@ export class WiredEnvironment
 
             if(this._roomEvents.wiredMenu.hasWritePermission && this.hasActiveClickSettings())
             {
-                // TODO(AS3): AS3 passes a 5th options arg { id, stay, toggle_callback:
-                // onToggleClickSettingsNotification } to addItem() to render the dismissable toggle
-                // notification. The port's IHabboNotifications.addItem() has no options/toggle
-                // parameter yet, so this degrades to the plain notification below. Currently dead
-                // code anyway: gated on wiredMenu.hasWritePermission (stubbed false).
-                this._roomEvents.notifications.addItem('${notification.click_settings}', 'wired');
+                // A room owner gets the toggle form: it stays up, and its button flips whether the
+                // click settings are honoured. The plain call below is the read-only visitor's.
+                this._roomEvents.notifications.addItem('${notification.click_settings}', 'wired', null, null, {
+                    [NotificationExtraDataKey.ID]: CLICK_SETTINGS_TOGGLE_NOTIFICATION_ID,
+                    [NotificationExtraDataKey.STAY]: true,
+                    [NotificationExtraDataKey.TOGGLE_BUTTON_CALLBACK]:
+                        (ignored: boolean) => this.onToggleClickSettingsNotification(ignored)
+                });
+
                 return;
             }
 
@@ -155,7 +162,7 @@ export class WiredEnvironment
     // AS3: WiredEnvironment.as::leaveRoom()
     leaveRoom(): void
     {
-        // TODO(AS3): notifications.removeNotificationById('wired_click_settings_toggle') — not ported.
+        this._roomEvents?.notifications.removeNotificationById(CLICK_SETTINGS_TOGGLE_NOTIFICATION_ID);
         this._clickSettingsIgnored = false;
         if(this._hideTimeoutId !== null) clearTimeout(this._hideTimeoutId);
 
