@@ -1,5 +1,6 @@
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
 import type {IAssetLibrary} from '@core/assets';
+import {imageElementToBitmap} from '@core/utils/BitmapSlot';
 import {EventEmitter} from 'eventemitter3';
 import {Logger} from '@core/utils/Logger';
 import type {IMessageComposer} from '@core/communication/messages/IMessageComposer';
@@ -705,18 +706,14 @@ export class HabboFriendList extends Component implements IHabboFriendList, IAva
     }
 
     /**
-     * TODO(AS3): AS3 returns `_sessionData.getGroupBadgeSmallImage(figure)`. That accessor now
-     * works — BadgeImageManager loads and caches the image — but it hands back an
-     * `HTMLImageElement` and a window's `bitmap` takes an `ImageBitmap`. The only bridge is
-     * `createImageBitmap()`, which is async, and this getter is synchronous, so the badge
-     * cannot be returned from here. Closing it means repainting the row when the bitmap
-     * resolves (the shape `Product.initIcon()` already uses) rather than returning it inline.
-     * Group entries in the friend list and search results still show no badge.
+     * A badge still downloading yields null here and paints on a later repaint — the same null
+     * AS3's own `getGroupBadgeSmallImage()` returns before the BitmapData exists. The call is
+     * what starts the download in the first place.
      */
     // AS3: .../HabboFriendList.as::getSmallGroupBadgeBitmap()
-    getSmallGroupBadgeBitmap(_badge: string): ImageBitmap | null
+    getSmallGroupBadgeBitmap(badge: string): ImageBitmap | null
     {
-        return null;
+        return imageElementToBitmap(this._sessionData?.getGroupBadgeSmallImage(badge) ?? null);
     }
 
     /**

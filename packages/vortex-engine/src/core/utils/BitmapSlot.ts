@@ -48,3 +48,37 @@ export function drawIntoBitmapSlot(
 
     return result;
 }
+
+/**
+ * Turns a *loaded* `HTMLImageElement` into an `ImageBitmap`, synchronously.
+ *
+ * BadgeImageManager caches `HTMLImageElement`s — it loads them through the hotel's image library,
+ * which has no ImageBitmap path — while every window's `bitmap` takes an `ImageBitmap`. The
+ * obvious bridge, `createImageBitmap()`, is async, and AS3's badge getters are not: in Flash
+ * `getGroupBadgeImage()` hands back a BitmapData that is either already decoded or null, and
+ * callers just return it inline. Drawing into an OffscreenCanvas and calling
+ * `transferToImageBitmap()` gives that same synchronous shape.
+ *
+ * Returns null for an image that has not finished loading, which is the null AS3 would have
+ * returned at that moment anyway — the caller gets the badge on a later repaint.
+ *
+ * TS-only: no AS3 counterpart; Flash has one bitmap type where this port has two.
+ */
+export function imageElementToBitmap(image: HTMLImageElement | null): ImageBitmap | null
+{
+    if(image === null || !image.complete) return null;
+
+    const width = image.naturalWidth;
+    const height = image.naturalHeight;
+
+    if(width === 0 || height === 0) return null;
+
+    const canvas = new OffscreenCanvas(width, height);
+    const context = canvas.getContext('2d');
+
+    if(context === null) return null;
+
+    context.drawImage(image, 0, 0);
+
+    return canvas.transferToImageBitmap();
+}

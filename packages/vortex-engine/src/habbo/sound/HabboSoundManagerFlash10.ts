@@ -363,12 +363,8 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
         sequencer.ready = !missing;
     }
 
-    /**
-     * TODO(AS3): AS3 forwards to `IHabboNotifications.addSongPlayingNotification()`. Kept
-     * whole — the notification side is ported — but nothing calls it until the music
-     * controller exists.
-     */
     // AS3: .../sound/HabboSoundManagerFlash10.as::notifyPlayedSong()
+    // Called from HabboMusicController when a track starts, exactly as in AS3.
     notifyPlayedSong(songName: string, songAuthor: string): void
     {
         this._notifications?.addSongPlayingNotification(songName, songAuthor);

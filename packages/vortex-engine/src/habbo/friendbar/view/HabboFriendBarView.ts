@@ -1,5 +1,6 @@
 import {ComponentDependency, type IContext} from '@core/runtime';
 import type {IAssetLibrary} from '@core/assets';
+import {imageElementToBitmap} from '@core/utils/BitmapSlot';
 import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
@@ -708,16 +709,13 @@ export class HabboFriendBarView extends AbstractView implements IHabboFriendBarV
     }
 
     /**
-     * TODO(AS3): AS3 returns `_sessionDataManager.getGroupBadgeImage(figure)`. That method is
-     * implemented now (BadgeImageManager), but it returns an `HTMLImageElement` where a
-     * window's `bitmap` takes an `ImageBitmap`, and the conversion is async while this getter
-     * is not. Group slots still show no badge. Same remaining gap, and same fix, as
-     * `HabboFriendList.getSmallGroupBadgeBitmap()`.
+     * As `HabboFriendList.getSmallGroupBadgeBitmap()`: null while the badge is still downloading,
+     * which is what AS3's `getGroupBadgeImage()` returns at that point too.
      */
     // AS3: .../view/HabboFriendBarView.as::getGroupIconBitmap()
-    getGroupIconBitmap(_badge: string): ImageBitmap | null
+    getGroupIconBitmap(badge: string): ImageBitmap | null
     {
-        return null;
+        return imageElementToBitmap(this._sessionDataManager?.getGroupBadgeImage(badge) ?? null);
     }
 
     /**
