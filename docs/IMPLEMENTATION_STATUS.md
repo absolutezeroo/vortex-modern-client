@@ -62,7 +62,7 @@ node scripts/todo-inventory.mjs --json
 `packages/*/dist` is excluded: it is gitignored build output carrying a duplicate of every `.d.ts`
 marker, which inflates a naive `grep -c` by ~90.
 
-**2026-08-10 — 383 TODO in `packages/*/src` (328 `TODO(AS3)`, 55 plain), from 422 at the start of the day:**
+**2026-08-10 — 382 TODO in `packages/*/src` (327 `TODO(AS3)`, 55 plain), from 422 at the start of the day:**
 
 | Blocker                                                     | Count |
 |-------------------------------------------------------------|-------|
@@ -95,7 +95,61 @@ precise one barely moves it. Judge a pass by which markers it closed, not by the
 
 What this restored: furniture and wall-item rotation in the catalog/inventory preview (both were hard `return false`, so the rotate buttons were permanently greyed), the automatic state cycling that animates a previewed furni every 2.5 s, wall/floor visibility, engine-freeze during rebuilds, and the immediate engine pass after a rotation. **One behaviour change to watch:** `isZoomEnabled()` returned a hard-coded `true`; it now reads `zoom.enabled` off the engine and defaults to false when unset, matching AS3 and the port's other `zoom.enabled` call sites — that selects the room-geometry zoom path instead of the canvas-scale one.
 
-### The 2026-08-10 sweep — 422 → 383, and what the markers were hiding
+### The 2026-08-10 wire pass — what the audits found once the TODO list ran dry
+
+Four audits, run after the marker sweep below because the TODO count cannot see any of this.
+`unwired-messages` went 5 → **0**; the client registry went 425 → 432 composers, 434 → 435 events;
+send gaps 93 → 90, recv gaps 98 → 97. Small numbers, and every one of them was a wrong claim
+rather than missing work.
+
+**A marker said five composers stayed unregistered because "none has an entry in WIN63's
+registry".** All five have one. Four had *moved id between builds*, which is what made the claim
+look true: looking them up in `win63_version`'s registry finds a number, checking that number
+against the primary registry finds a different message with a different arity, and that reads as
+"no entry".
+
+| Composer | win63_version | WIN63 primary |
+|---|---|---|
+| ForwardToASubmittableRoom | 2055 | **1917** |
+| ForwardToRandomCompetitionRoom | 2517 | **3109** |
+| GetIsUserPartOfCompetition | 2732 | **128** |
+| GetIsBadgeRequestFulfilled | 2545 | **2236** |
+| WiredDebugCommand | (absent) | **3608** |
+
+Arity cannot resolve a one-String composer, so each was identified by its *caller* instead:
+`_SafeCls_4528`/`_SafeCls_4538` in the primary tree match `class_4150`/`class_4146` line for line,
+and `_SafeCls_4537` is pinned by the unobfuscated `requestCode` it compares against. **This is the
+reusable method** — when a name is obfuscated on both sides, match the call site, not the shape.
+
+**Three of those unblock the emulator, which was waiting on this client.** Its headers for
+ForwardToASubmittableRoom (9001), ForwardToRandomCompetitionRoom (9002) and
+GetIsBadgeRequestFulfilled (9112) are placeholders whose own comments say no ported client
+counterpart existed to verify against; GetIsUserPartOfCompetition (2732) is dismissed there as
+"likely a duplicate constant with no separate real message". It is 128 and it is real.
+
+**One live wire fault found, in the emulator.** `OfficialSongIdMessageComposer = 2264` — that is
+`win63_version`'s id, and the 2026 registry reassigned 2264 to
+`WeeklyCompetitiveFriendsLeaderboardEvent`. The event's real header is **3050**, which is what the
+client registers. A reply at 2264 would hand the song parser a leaderboard payload: `readString`
+then `readInt` over the wrong bytes, throwing nothing. It is also the only one of the four sound
+headers there with no AS3-verified note — *the absence of that note is the tell*. Not corrected in
+the emulator: that repo had another header pass uncommitted in the same file.
+
+**Room music, and what "reachable" costs.** All four sound messages are ported, but two of them
+(add/remove jukebox disk) are sent only by `PlayListEditorWidget`, which needs nine sibling classes
+and has no port — so they are registered and dormant. The third round trip *was* made reachable by
+porting `SongDiskProductViewCatalogWidget` (268 lines): `CatalogWidgetName` already declared
+`songDiskProductViewWidget` and `CatalogPage` had no case for it, so song-disk catalog pages built
+no widget at all.
+
+**Group forums, measured and deferred.** 11 send + 8 recv gaps, every one with a server handler —
+but the client side is 4,125 lines across 18 AS3 classes in `friendbar/groupforums/`, of which zero
+are ported (the directory holds a `.gitkeep`). The seven layouts, the images and
+`IIDHabboGroupForumController` all ship already; nothing implements the controller. A multi-session
+feature, not a wiring pass. Natural first slice: the 19 message classes, each header resolved
+against the registry the way the five above were.
+
+### The 2026-08-10 sweep — 422 → 382, and what the markers were hiding
 
 Ten passes, all opened the same way: take the marker's stated blocker as a claim and check it
 against the port *before* opening the AS3. Roughly half the markers checked did not survive that
