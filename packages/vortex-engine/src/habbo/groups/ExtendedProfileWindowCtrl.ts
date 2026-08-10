@@ -20,11 +20,14 @@
  *   reason).
  * - The badge-count leaderboard link (needs HabboGroups' internal link
  *   builder, low value alone).
- * - The "hidden" online-status tri-state and full_profile_hidden banner —
- *   ExtendedProfileData (the parsed DTO) only exposes a plain `isOnline`
- *   boolean, not AS3's 3-way onlineStatus/isHidden, so this can't be
- *   faithfully reconstructed without a parser change (out of scope here,
- *   see .claude/rules/communication.md).
+ * - The full_profile_hidden banner.
+ *
+ * The online-status tri-state used to be on that list. It is no longer: the
+ * parser was reading AS3's `onlineStatus` byte as a boolean and throwing the
+ * third state away. It now reads the byte, so all three icons switch off it
+ * exactly as AS3 does. `vortex-emulator` still writes that slot as a plain
+ * `bool` and so cannot yet send state 2 — the client side is done, the server
+ * side is the remaining half.
  */
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
@@ -33,7 +36,7 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget';
 import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
-import type {ExtendedProfileData} from '@habbo/communication/messages/incoming/users/ExtendedProfileData';
+import {ExtendedProfileData} from '@habbo/communication/messages/incoming/users/ExtendedProfileData';
 import {GetSelectedBadgesMessageComposer} from '@habbo/communication/messages/outgoing/users/GetSelectedBadgesMessageComposer';
 import {GetExtendedProfileMessageComposer} from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 import {FriendlyTime} from '@habbo/utils/FriendlyTime';
@@ -249,11 +252,13 @@ export class ExtendedProfileWindowCtrl
         const offlineIcon = window.findChildByName('offline_icon');
         const hiddenIcon = window.findChildByName('hidden_icon');
 
-        if(onlineIcon) onlineIcon.visible = profile.isOnline;
-        if(offlineIcon) offlineIcon.visible = !profile.isOnline;
-        // TODO(AS3): "hidden" online status isn't in the parsed ExtendedProfileData
-        // (see class header) — never shown.
-        if(hiddenIcon) hiddenIcon.visible = false;
+        // AS3 switches all three off one tri-state, not off a boolean. `hidden_icon` can still
+        // never light up against `vortex-emulator`, whose `ExtendedProfileMessageComposer` writes
+        // this slot as a plain `bool` and so can only send 0 or 1 — but the client no longer
+        // throws the state away, and the day the server sends 2 this shows it.
+        if(onlineIcon) onlineIcon.visible = profile.onlineStatus === ExtendedProfileData.ONLINE_STATUS_ONLINE;
+        if(offlineIcon) offlineIcon.visible = profile.onlineStatus === ExtendedProfileData.ONLINE_STATUS_OFFLINE;
+        if(hiddenIcon) hiddenIcon.visible = profile.onlineStatus === ExtendedProfileData.ONLINE_STATUS_HIDDEN;
 
         window.findChildByName('status')?.invalidate();
 
@@ -293,9 +298,12 @@ export class ExtendedProfileWindowCtrl
 
         if(levelValue) levelValue.caption = profile.accountLevel.toString();
 
-        // TODO(AS3): badgeCount/badgeRank come from AS3's totalBadges/totalBadgesRank
-        // fields, not present on the parsed ExtendedProfileData (see class header) —
-        // left at whatever the layout defaults to.
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as:314-323
+        // sets `badgeCount.caption = totalBadges` and, when `totalBadgesRank >= 0`, shows
+        // `badgeRank` as "(#<rank>)". Both fields are on the 2026 wire but neither this port's
+        // parser nor `vortex-emulator` carries them — see the gap documented on
+        // `ExtendedProfileData`, which names the four trailing fields and the composer that has
+        // to grow them first. Until then both captions keep their layout defaults.
 
         const blockedContainer = window.findChildByName('blocked_container');
 
