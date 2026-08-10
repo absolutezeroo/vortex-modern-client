@@ -15,10 +15,17 @@ export class UpdateForumReadMarkerMessageComposer extends MessageComposer<Array<
 {
     private _data: Array<number | boolean> = [0];
 
+    /**
+     * Both trees spell these `param1/param2/param3`, so **the argument names are derived**, from
+     * the only caller — `GroupForumController.markForumAsRead()` passes the forum's id, then a
+     * message id (`Math.max(totalMessages, lastReadMessageId)`, never a thread id), then a flag
+     * that is true only when the whole forum is being marked read. The emulator's own
+     * `UpdateForumReadMarkerMessage` reads them under the same three names.
+     */
     // AS3: .../groupforums/UpdateForumReadMarkerMessageComposer.as::add()
-    add(groupId: number, threadId: number, read: boolean): void
+    add(groupId: number, lastReadMessageId: number, markAllRead: boolean): void
     {
-        this._data.push(groupId, threadId, read);
+        this._data.push(groupId, lastReadMessageId, markAllRead);
         this._data[0] = (this._data[0] as number) + 1;
     }
 

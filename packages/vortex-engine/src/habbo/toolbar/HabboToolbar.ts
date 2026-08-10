@@ -42,6 +42,8 @@ import {ExtensionView} from './ExtensionView';
 import {HabboToolbarEvent} from './events/HabboToolbarEvent';
 import {HabboToolbarEnum} from './HabboToolbarEnum';
 import {HabboToolbarIconEnum} from './HabboToolbarIconEnum';
+import {IID_HabboGroupForumController} from '@iid/IIDHabboGroupForumController';
+import {UnseenForumsCountUpdatedEvent} from '@habbo/friendbar/groupforums/UnseenForumsCountUpdatedEvent';
 import {PurseAreaExtension} from './extensions/PurseAreaExtension';
 import {SeasonalCurrencyIndicator} from './extensions/purse/indicators/SeasonalCurrencyIndicator';
 import {SettingsExtension} from './extensions/SettingsExtension';
@@ -541,7 +543,45 @@ export class HabboToolbar extends Component implements IHabboToolbar
                     callback: this.onWiredMenuEvent.bind(this)
                 }]
             ),
+            // The forums contribute to the me-menu badge. AS3 takes no reference at all — the
+            // dependency exists purely to subscribe to the controller's event bus, which is why
+            // the setter is null.
+            new ComponentDependency(
+                IID_HabboGroupForumController,
+                null,
+                false,
+                [{
+                    type: UnseenForumsCountUpdatedEvent.TYPE,
+                    callback: this.onUnseenForumsCountUpdate.bind(this)
+                }]
+            ),
         ];
+    }
+
+    /**
+	 * The me-menu badge is the sum of three counters, so the forum figure is written to
+	 * `BottomBarLeft` *and* to the me-menu itself before the total is recomputed — writing only the
+	 * total would lose the breakdown the menu shows per row.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::onUnseenForumsCountUpdate()
+    private onUnseenForumsCountUpdate(...args: unknown[]): void
+    {
+        const event = (args[0] ?? null) as UnseenForumsCountUpdatedEvent | null;
+
+        if(event === null) return;
+
+        const bottomBarLeft = this.bottomBarLeft;
+
+        if(bottomBarLeft !== null)
+        {
+            bottomBarLeft.unseenForumsCount = event.unseenForumsCount;
+
+            const memenu = bottomBarLeft.memenu;
+
+            if(memenu !== null) memenu.unseenForumsCount = event.unseenForumsCount;
+
+            this.setUnseenItemCount(HabboToolbarIconEnum.MEMENU, bottomBarLeft.unseenMeMenuCount);
+        }
     }
 
     private _bottomBarLeft: BottomBarLeft | null = null;

@@ -36,11 +36,12 @@ export interface ITextFormat
  */
 export interface ITextWindow extends IWindow, IScrollableWindow
 {
+    // TextController has had a setter all along; the interface declared `bold` read-only, so
+    // callers that need it (the mannequin's name field, SearchView's placeholder, and now every
+    // forum row, which bolds an unread thread) had to cast around the type. The same was already
+    // true of `italic` below.
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get bold()
-    readonly bold: boolean;
-    // TextController has had a setter all along; the interface declared it read-only, so
-    // callers that need it (the mannequin's name field, SearchView's placeholder) had to
-    // cast around the type.
+    bold: boolean;
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get italic()
     italic: boolean;
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get underline()

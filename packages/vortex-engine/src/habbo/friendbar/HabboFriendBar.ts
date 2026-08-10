@@ -5,6 +5,8 @@ import type {IHabboFriendBar} from './IHabboFriendBar';
 import {HabboLandingView} from './landingview/HabboLandingView';
 import {HabboFriendBarData} from './data/HabboFriendBarData';
 import {HabboFriendBarView} from './view/HabboFriendBarView';
+import {GroupForumController} from './groupforums/GroupForumController';
+import {IID_HabboGroupForumController} from '@iid/IIDHabboGroupForumController';
 import {IID_HabboLandingView} from '@iid/IIDHabboLandingView';
 import {IID_HabboFriendBarData} from '@iid/IIDHabboFriendBarData';
 import {IID_HabboFriendBarView} from '@iid/IIDHabboFriendBarView';
@@ -18,11 +20,14 @@ import type {IHabboFriendBarView} from './view/IHabboFriendBarView';
  * and lifecycle.
  *
  * `data/` and `view/` are ported in full (30 files, 2026-07-29): the bar, its slots,
- * the request tabs and the notification tokens.
+ * the request tabs and the notification tokens. `groupforums/` followed (17 files, 2026-08-10).
  *
  * TODO(AS3): still unported —
- *   - HabboTalent — sources/win63_version/habbo/friendbar/talent/ (citizenship/talent track).
- *   - HabboEpicPopupView, GroupForumController — sources/win63_version/habbo/friendbar/groupforums/.
+ *   - HabboTalent — sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/talent/
+ *     (citizenship/talent track).
+ *   - HabboEpicPopupView — sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/popup/.
+ *     The old note filed both of these, and GroupForumController, under `groupforums/`; only the
+ *     last one was ever there.
  * See docs/IMPLEMENTATION_STATUS.md.
  *
  * @see sources/win63_version/habbo/friendbar/HabboFriendBar.as
@@ -51,10 +56,14 @@ export class HabboFriendBar extends Component implements IHabboFriendBar
             [IID_HabboLandingView]
         );
 
+        context.attachComponent(
+            new GroupForumController(context, 0, assetLibrary),
+            [IID_HabboGroupForumController]
+        );
+
         // Future sub-components (not yet implemented):
         // context.attachComponent(new HabboTalent(context, 0, assetLibrary), [IID_HabboTalent]);
         // context.attachComponent(new HabboEpicPopupView(context, 0, assetLibrary), [IID_HabboEpicPopupView]);
-        // context.attachComponent(new GroupForumController(context, 0, assetLibrary), [IID_HabboGroupForumController]);
     }
 
     /**
