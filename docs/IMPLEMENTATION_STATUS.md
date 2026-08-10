@@ -33,6 +33,11 @@
 | Engine `AS3:` trace comments                                   | 4,666         | **34,795**    |
 | Engine `TODO(AS3)` markers                                     | 265           | **327**       |
 
+Re-measure `TODO(AS3)` with `node scripts/todo-inventory.mjs`, not `grep -c`: the latest figure is
+**336** (2026-08-10, after the help/CFH pass) and the table above is a 2026-07-28 snapshot. A bare
+`grep -rn --include=*.ts packages` reads `packages/*/dist/**/*.d.ts` too and inflates the count by
+roughly 80.
+
 The layout/skin rows changed **format**, not content: there is no JSON compile step any more —
 `tools/build-window-assets.mjs` ships the dump's XML verbatim (see CLAUDE.md → Assets). Both
 directories are gitignored and rebuilt from the dump, which is why hand-authored files live in
@@ -62,7 +67,24 @@ node scripts/todo-inventory.mjs --json
 `packages/*/dist` is excluded: it is gitignored build output carrying a duplicate of every `.d.ts`
 marker, which inflates a naive `grep -c` by ~90.
 
-**2026-08-10 — 382 TODO in `packages/*/src` (327 `TODO(AS3)`, 55 plain), from 422 at the start of the day:**
+**2026-08-10, after the help/CFH pass — 391 TODO in `packages/*/src` (336 `TODO(AS3)`, 55 plain), up from 382:**
+
+| Blocker                                                     | Count |
+|-------------------------------------------------------------|-------|
+| Local micro-gap, no blocker cited                            | 215   |
+| A whole unported module                                      | 109   |
+| Wire / server (composer, parser, header)                     | 34    |
+| Flash-only (BitmapData, filter, shader, Timer)               | 19    |
+| Settled decision — will not be ported (legacy, dead, moot)    | 14    |
+
+The count went **up nine** across a pass that made the report flow send packets for the first
+time. Six markers closed; roughly a dozen opened, because the pass kept finding behaviour that was
+missing with *no* marker on it — `log.debug('Show guide tool')` is not a documented gap, it is an
+invisible one. Every stub it touched now names the class it waits on and logs at `warn`. This is
+the clearest case yet of the rule two paragraphs down: judge a pass by which markers it closed and
+what started working, never by the delta.
+
+<details><summary>2026-08-10 — 382 TODO (327 <code>TODO(AS3)</code>, 55 plain), from 422 at the start of the day</summary>
 
 | Blocker                                                     | Count |
 |-------------------------------------------------------------|-------|
@@ -71,6 +93,8 @@ marker, which inflates a naive `grep -c` by ~90.
 | Wire / server (composer, parser, header)                     | 33    |
 | Flash-only (BitmapData, filter, shader, Timer)               | 19    |
 | Settled decision — will not be ported (legacy, dead, moot)    | 15    |
+
+</details>
 
 <details><summary>2026-08-09 — 425 TODO (368 <code>TODO(AS3)</code>, 57 plain), from 502</summary>
 
@@ -94,6 +118,85 @@ precise one barely moves it. Judge a pass by which markers it closed, not by the
 `changeObjectState` deserves its own note. A name-based grep found four hits on `RoomEngine` and suggested it was already there; the body showed those belong to `class_1947`'s method — the room-object *event* handler that asks the server to toggle a real furni — which this port flattened into `RoomEngine` under the same name. The engine's own `changeObjectState()` (cycle a preview's automatic state locally, no server round trip) was missing entirely. The flattened one is now `sendObjectStateChange()`, with its AS3 trace unchanged.
 
 What this restored: furniture and wall-item rotation in the catalog/inventory preview (both were hard `return false`, so the rotate buttons were permanently greyed), the automatic state cycling that animates a previewed furni every 2.5 s, wall/floor visibility, engine-freeze during rebuilds, and the immediate engine pass after a rotation. **One behaviour change to watch:** `isZoomEnabled()` returned a hard-coded `true`; it now reads `zoom.enabled` off the engine and defaults to false when unset, matching AS3 and the port's other `zoom.enabled` call sites — that selects the room-geometry zoom path instead of the canvas-scale one.
+
+### The help/CFH pass (2026-08-10) — four field names the wire disagreed with
+
+`habbo/help` was the "ported but never wired" pattern at full size: `HelpMessageHandler`
+subscribed **21** incoming messages and answered every one with a `log.trace`. Reporting a photo,
+a selfie, a room, a thread or a message reached `HabboHelp`, logged a line and stopped — nothing
+was sent, and nothing the server sent back was shown. `CallForHelpManager` was 286 lines of
+field-setters against 697 lines of AS3, with no reference to `HabboHelp` at all, so it *could not*
+send even if asked.
+
+**The wire fault, found before it shipped.** `CallForHelpFromSelfieMessageComposer` named its five
+fields `(message, topicId, reportedUserId, photoId, roomId)`. Four are wrong, and the types
+(`string, int, int, string, int`) lined up well enough that nothing ever failed to compile. Three
+independent sources agree on the real order:
+
+| Source | What it says |
+|---|---|
+| `CallForHelpManager.as::reportSelfie()` | shuffles on the way out: `new _SafeCls_3116(p1,p3,p4,p2,p5)` |
+| `ExternalImageWidget.as:690` (its only caller) | passes `(shareUrl, description, activeRoomId, creatorId, objectId)` |
+| `vortex-emulator` `CallForHelpFromSelfieMessageParser.cs` | pops `url, roomId, photoAuthorId, message, furniId` |
+
+Resolved: `(extraDataId, roomId, photoAuthorId, message, roomObjectId)`. There is no `topicId` on
+this message at all — the selfie report carries free text where the photo report (1964) carries a
+topic id. The same three-position correction applies to `reportSelfie()`/`reportPhoto()` on
+`IHabboHelp`, `HabboHelp` and `CallForHelpManager`: what the port called `userId` is the room id,
+what it called `roomObjectId` is the photo's author. **Positions were already faithful at every
+call site, so no bytes changed** — the fix stops the next caller from reading the names and
+building a wrong packet. Two AS3 call sites for the photo variant genuinely disagree with each
+other (`CallForHelpManager.reportPhoto()` vs `TopicsFlowHelpController.as:500`); the emulator's
+parser settles it in favour of the latter, which is what the port already had.
+
+**Header 1850 had no composer here.** It is `GuideAdvertisementRead`, sent by
+`queryForGuideReportingStatus()` alongside 2455 and separately by `TalentTrackController`. Name
+from `win63_version` (the only tree where it has a readable filename), header from the primary
+registry, both corroborated by the emulator, which routes it to a real handler.
+
+**`simpleAlert()` had two parameter names swapped.** `IHabboWindowManager.simpleAlert()` declared
+`(title, message, subtitle, …)` but forwards positionally to `SimpleAlertDialog(title, subtitle,
+message)`, which is what `HabboWindowManagerComponent.as` does. Every call site in the port
+already passed AS3 order — `HabboFriendList` even carried a comment working around the names — so
+renaming them changed nothing and removed a standing trap.
+
+**`ICoreWindowManager` had drifted in three places** and nothing noticed because nothing
+implements it (`HabboWindowManager` satisfies the parallel `IHabboWindowManager` instead):
+`confirm()` declared the callback third and the flags fourth, the reverse of the source and of
+`IHabboWindowManager`; `buildFromXML()`'s third parameter was typed `Map<string, IWindow>` and
+named `namedWindows` when AS3's is the `<var>` substitution map; `getDesktop()` returned `IWindow`
+where AS3 returns `IDesktopWindow`, already ported. `confirmWithModal()` was missing entirely — 10
+of the source's 11 members.
+
+**Two TODOs blamed the parser and were right, but about the wrong field.**
+`ExtendedProfileWindowCtrl` hard-coded `hidden_icon.visible = false`, saying the hidden state
+"isn't in the parsed `ExtendedProfileData`". It is on the wire: AS3 reads field 10 with
+`readByte()` into a tri-state `onlineStatus` (0 offline / 1 online / 2 hidden) and switches all
+three icons off it, while this port read the same byte with `readBoolean()`. Since `readBoolean()`
+is literally `readByte() !== 0` in this port's `ByteArray`, the two consume the same byte —
+reading it as a byte cannot desync anything. Separately, `_unknownBoolean1` turned out to be
+`isHidden`, a *different* field that both AS3 and the emulator (`[Id(13)] IsHidden`) already
+carried under that name.
+
+**What is genuinely blocked on the server, with the file named in each case:**
+
+| Gap | Client side | `vortex-emulator` side |
+|---|---|---|
+| Profile badge count / rank | parser stops after 19 fields | `ExtendedProfileMessageComposer.cs` declares 19 where AS3 reads 23 — missing `totalBadges`, `achievementLevel`, `badgeRarityCounts`, `totalBadgesRank` |
+| Profile "hidden" icon | **done** — tri-state now read | `IsOnline` is a plain `bool`, so state 2 is unsendable |
+| Badge rarity at login | parser matches the emulator | `BadgesEventMessageComposerSerializer.cs` writes 2 fields per badge where AS3 reads 4 (`ownerCount`, `badgeRarityId` missing) |
+| `requestReportsStatus()` | no composer | header 1834 is in the primary registry and **not** in `Headers.cs` |
+
+The emulator was left untouched all pass: its working tree had unrelated navigator work in
+progress, and staging someone else's changes there is the one thing that must not happen.
+
+**Badge metadata was a false blocker.** `BadgesModel.updateBadge()` said `Badge` had "no
+rarity/ownerCount fields at all yet (a separate, unported badge-rarity feature)". Nothing was
+unported — `BadgeReceivedEventParser` read both integers, the emulator wrote them, and
+`BadgeRarityEnum.isStandaloneTier()` was already in use elsewhere. The two values were parsed,
+handed to `HabboInventory`, and dropped one call short of the model. Threading them through
+unlocked `refreshAvailableRareBadgeRarityIds()` and the three rarity accessors that decide which
+filters the badge grid can offer.
 
 ### The 2026-08-10 wire pass — what the audits found once the TODO list ran dry
 
