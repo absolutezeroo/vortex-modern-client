@@ -887,6 +887,47 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **The monsterplant seed's second way in**, 2026-08-09. An audit of the whole monsterplant
+  surface — seed, products, breeding — looking for the "ported but never wired" pattern. Almost
+  everything was already there; the chain broke in exactly one place, and it was the same
+  missing-translation-step family as the guild furni below.
+  - **Double-clicking a placed seed did nothing.** `FurnitureMonsterplantSeedLogic.useObject()`
+    raised `ROWRE_MONSTERPLANT_SEED_PLANT_CONFIRMATION_DIALOG` correctly, but
+    `RoomEngine.handleObjectWidgetRequestEvent()` had no case for it, so it fell through to the
+    `default:` "Unmapped room-object widget request" warn. Added, mapping to
+    `ROWRE_REQUEST_MONSTERPLANT_SEED_PLANT_CONFIRMATION_DIALOG` per `_SafeCls_1821.as:1485-1487`.
+    That event name keeps the `ROWRE_` prefix its siblings trade for `RETWE_`; AS3 spells it that
+    way on **both** sides, so it is the source's inconsistency and not a typo to "fix".
+  - **And nothing was listening for it either.** `FurnitureContextMenuWidgetHandler.set container()`
+    subscribed to 3 of AS3's 5 engine events (`FurnitureContextMenuWidgetHandler.as:127-131`);
+    the monsterplant one is now wired, with the `isOwnerOfFurniture()` gate AS3 puts on it — the
+    same gate the seed bubble already had in `processEvent()`. Fixing only one of the two halves
+    would have looked identical to fixing neither.
+  - The other AS3 subscription still absent is
+    `ROWRE_REQUEST_PURCHASABLE_CLOTHING_CONFIRMATION_DIALOG` (AS3 l.109/128): the room engine has
+    no case raising it, so subscribing would add a listener nothing calls. Noted at the class doc
+    rather than half-wired.
+  - **Everything else in the feature measured clean.** Seed bubble + confirmation, the three
+    use-product dialogs (fertilize/revive/rebreed), `BreedPetView` →
+    `BreedMonsterPlantsConfirmationView` → `ConfirmPetBreedingView` → `BreedPetsResultView` /
+    `NestBreedingSuccessView`, `OwnPetMenuView`'s monsterplant mode, `InfoStandPetView`'s
+    growth/well-being panel, all 6 layouts, and every composer/parser with its header — all
+    present, and each view is instantiated by a real caller. `plantSeed()` sending
+    `UseFurnitureMessageComposer` was verified against the wire, not the name: AS3's
+    `_SafeCls_3952` is `[itemId, param=0]` and registers at **3353**, the same id this port's
+    `UseFurnitureMessageComposer` uses.
+  - **Two stale claims removed while there.** `AvatarInfoWidgetHandler.getProcessedEvents()`
+    carried a `TODO(AS3)` saying the two `ROSM_USE_PRODUCT_FROM_*` events had no trigger — both
+    have been raised for a while (`RoomEngine.showUseProductSelection()` and the
+    `ROWRE_PET_PRODUCT_MENU` case), so the use-product bubbles were never dead. And
+    `FurnitureContextMenuWidgetHandler`'s header still described the monsterplant path as a stub.
+  - **Server-side, the feature stops after planting** (out of scope for this pass, measured for
+    the record): `vortex-emulator` has headers but neither parser nor handler for
+    `HarvestPetMessageEvent` (1210) and `CompostPlantMessageEvent` (1989), and
+    `RoomPetSystem.ProcessPetsAsync()` `continue`s on `Type == 16` — no growth, no drying out, no
+    death, no revive. `PlantMonsterplantSeedAsync()` also rolls rarity with
+    `Random.Shared.Next(1, 8)` instead of reading it off the seed.
+
 - 🆕 **Four runtime warnings, four causes**, 2026-08-09. All found from a single room session's
   console output, and only the last one was cosmetic.
   - **`ExtensionView.detachExtension()` removed nothing.** It dropped the id from `_items` and

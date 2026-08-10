@@ -144,10 +144,18 @@ export class ChatStyleSelector implements IDisposable
         const cellWidth = this._styleTemplateWindow.width;
         const width = columns > 1 ? (columns - 1) * (cellWidth + 1) + cellWidth : cellWidth + 16;
 
-        // Raise the limit before assigning width - WindowController.setRectangle() clamps
-        // against the *current* limits.maxWidth on every width write, so setting grid.width
-        // first (against the old, smaller default limit) silently truncated the grid to fewer
-        // columns than requested, and updating the limit afterwards was too late to matter.
+        // TS-only addition: pins limits.maxWidth to the same value. The itemgrid_vertical layout
+        // node carries resize_on_item_update="true" (real AS3 layout data, not invented here),
+        // which grows the grid's own width by one cell every time addGridItem() creates a new
+        // column - so the wrap check in ItemGridController.resolveColumnForNextItem()
+        // (`... <= this._width`) was comparing against a width that had just grown to fit one more
+        // column, and every style landed in a single ever-widening row instead of wrapping.
+        // Capping maxWidth freezes the ceiling this property is meant to express without touching
+        // resize_on_item_update.
+        //
+        // Raise the limit BEFORE assigning width: WindowController.setRectangle() clamps against
+        // the current limits.maxWidth on every write, so assigning first (against the old, smaller
+        // default) truncated the grid, and raising the limit afterwards was too late.
         grid.limits.maxWidth = width;
         grid.width = width;
     }
@@ -224,17 +232,6 @@ export class ChatStyleSelector implements IDisposable
         this._entries = [];
         this._gridView?.grid?.removeGridItems();
     }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::set gridColumns()
-    // TS-only addition: also pins limits.maxWidth to the same value. The
-    // itemgrid_vertical layout node carries resize_on_item_update="true" (real
-    // AS3 layout data, not invented here), which grows the grid's own width by
-    // one cell every time addGridItem() creates a new column - so the wrap
-    // check in ItemGridController.resolveColumnForNextItem() (`... <= this._width`)
-    // was always comparing against a width that had *just* grown to fit one
-    // more column, and every style landed in a single ever-widening row
-    // instead of wrapping. Capping maxWidth here freezes the ceiling this
-    // property is meant to express without touching resize_on_item_update
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::initSelection()
     initSelection(): void 

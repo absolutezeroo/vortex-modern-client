@@ -241,9 +241,10 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
     }
 
     // AS3: AvatarInfoWidgetHandler.as::getProcessedEvents()
-    // TODO(AS3): the two ROSM_USE_PRODUCT_FROM_* events are declared here as AS3 does, but the
-    // room engine does not raise them yet (its pet-product use path — _SafeCls_90.as:4963 /
-    // _SafeCls_1821.as:1479 — is unported), so the use-product bubbles have no trigger today.
+    // Both triggers are live: FROM_INVENTORY comes out of RoomEngine.showUseProductSelection()
+    // (_SafeCls_90.as:4963), reached from the inventory strip's use button; FROM_ROOM out of the
+    // ROWRE_PET_PRODUCT_MENU case of handleObjectWidgetRequestEvent() (_SafeCls_1821.as:1479),
+    // raised by FurniturePetProductLogic when the product furni is double-clicked in the room.
     public getProcessedEvents(): string[]
     {
         return [

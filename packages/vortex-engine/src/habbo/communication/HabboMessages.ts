@@ -1865,7 +1865,10 @@ export class HabboMessages implements IMessageConfiguration
         // table (`_SafeStr_4546`, not `_composers`) — grepping the wrong map is what made them
         // look absent at first.
         this._events.set(1746, SanctionStatusMessageEvent);
-        this._events.set(3222, CompetitionEntryMessageEvent);
+        // 2518, not 3222: `_SafeStr_4546[2518] = _SafeCls_2772`, whose parser `_SafeCls_4396`
+        // is the one with `get prizes()`. 3222 belongs to CompetitionEntrySubmitResultMessageEvent
+        // (`_SafeCls_2536` → `_SafeCls_3313`, the goalId/goalCode/result parser).
+        this._events.set(2518, CompetitionEntryMessageEvent);
         this._events.set(3547, EpicPopupMessageEvent);
         this._events.set(1634, CfhSanctionMessageEvent);
 

@@ -8,9 +8,10 @@
  * rather than in the widget because it must survive with the handler for as long as the room does.
  * `set widget()` is what creates it, so the tracker appears the moment the widget is constructed.
  *
- * Ported for the mystery-box / mystery-trophy flow. The guild-furni, purchasable-clothing and
- * monsterplant paths are carried through as TODO(AS3) stubs — their messages and views are not
- * ported, and the room engine does not emit their requests yet either.
+ * Ported for the mystery-box / mystery-trophy, guild-furni, purchasable-clothing and monsterplant
+ * flows. The one AS3 request this does not subscribe to is
+ * ROWRE_REQUEST_PURCHASABLE_CLOTHING_CONFIRMATION_DIALOG (AS3 l.109/128): the room engine has no
+ * case raising it yet, so subscribing would only add a listener nothing calls.
  */
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
@@ -147,6 +148,11 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
 
         if(!events) return;
 
+        events.on(
+            RoomEngineToWidgetEvent.REQUEST_MONSTERPLANT_SEED_PLANT_CONFIRMATION_DIALOG,
+            this.onMonsterPlantSeedPlantConfirmationDialogRequested,
+            this
+        );
         events.on(RoomEngineToWidgetEvent.REQUEST_MYSTERYBOX_OPEN_DIALOG, this.onMysteryBoxOpenDialogRequested, this);
         events.on(RoomEngineToWidgetEvent.REQUEST_EFFECTBOX_OPEN_DIALOG, this.onEffectBoxOpenDialogRequested, this);
         events.on(RoomEngineToWidgetEvent.REQUEST_MYSTERYTROPHY_OPEN_DIALOG, this.onMysteryTrophyOpenDialogRequested, this);
@@ -159,6 +165,11 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
 
         if(events)
         {
+            events.off(
+                RoomEngineToWidgetEvent.REQUEST_MONSTERPLANT_SEED_PLANT_CONFIRMATION_DIALOG,
+                this.onMonsterPlantSeedPlantConfirmationDialogRequested,
+                this
+            );
             events.off(RoomEngineToWidgetEvent.REQUEST_MYSTERYBOX_OPEN_DIALOG, this.onMysteryBoxOpenDialogRequested, this);
             events.off(RoomEngineToWidgetEvent.REQUEST_EFFECTBOX_OPEN_DIALOG, this.onEffectBoxOpenDialogRequested, this);
             events.off(RoomEngineToWidgetEvent.REQUEST_MYSTERYTROPHY_OPEN_DIALOG, this.onMysteryTrophyOpenDialogRequested, this);
@@ -512,6 +523,26 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
         if(object === null) return;
 
         this._widget.showMysteryBoxOpenDialog(object);
+    }
+
+    /**
+     * The seed's other way in. Its context bubble reaches `showPlantSeedConfirmationDialog()`
+     * through the Use button, but a double click skips the bubble entirely: the logic raises
+     * ROWRE_MONSTERPLANT_SEED_PLANT_CONFIRMATION_DIALOG and the room engine forwards it here.
+     * Owner-only, the same gate the bubble itself gets in processEvent().
+     */
+    // AS3: FurnitureContextMenuWidgetHandler.as::onMonsterPlantSeedPlantConfirmationDialogRequested()
+    private onMonsterPlantSeedPlantConfirmationDialogRequested(event: RoomEngineToWidgetEvent): void
+    {
+        if(this._widget === null) return;
+
+        const object = this.getRoomObject(event.objectId);
+
+        if(object === null) return;
+
+        if(!this._container?.isOwnerOfFurniture(object)) return;
+
+        this._widget.showPlantSeedConfirmationDialog(object);
     }
 
     /** Owner-only, unlike the mystery box: an effect box is opened by whoever owns it. */

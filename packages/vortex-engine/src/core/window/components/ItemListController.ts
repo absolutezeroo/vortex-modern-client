@@ -973,8 +973,29 @@ export class ItemListController extends WindowController implements IItemListWin
         this.setAbsoluteScrollH(absoluteScrollH);
         this.setAbsoluteScrollV(absoluteScrollV);
 
+        // `_container` carries the reflect-resize-to-parent bits when resize_on_item_update is on,
+        // which is how a list grows as items are added: the container widens, and the delta is
+        // charged to the list. That is the feature and it must keep working.
+        //
+        // But the container is created at the list's *design* size while its content is empty, so
+        // the first pass over an empty list collapses it from (say) 55 to 0 and charges that -55 to
+        // the list as if content had shrunk. Measured in the running client: the chat-style grid
+        // asked for 279px and got 224 - exactly 279 minus its layout width - which cost it a column
+        // and left it with six overlapping ones.
+        //
+        // An empty list has no content, so a content resize of one is not a content change. Mask
+        // the bits for that case only, using the same save/mask/restore idiom AS3 itself applies
+        // when a window sizes itself initially (WindowController.as:109-115). With children
+        // present nothing is masked and resize_on_item_update behaves exactly as before.
+        const suppressReflect = numChildren === 0;
+        const savedContainerParam = containerWin.param;
+
+        if(suppressReflect) containerWin.param = savedContainerParam & ~0xC00000;
+
         containerWin.height = this._scrollAreaHeight;
         containerWin.width = this._scrollAreaWidth;
+
+        if(suppressReflect) containerWin.param = savedContainerParam;
 
         if(this._inverseResizeOnItemUpdate) 
         {
