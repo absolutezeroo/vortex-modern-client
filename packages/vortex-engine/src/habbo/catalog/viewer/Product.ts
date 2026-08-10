@@ -1,4 +1,5 @@
 import {Logger} from '@core/utils/Logger';
+import {BadgeImageReadyEvent} from '@habbo/session/events/BadgeImageReadyEvent';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
@@ -150,6 +151,10 @@ export class Product extends ProductGridItem implements IProduct
     {
         if(this.disposed) return;
 
+        this.catalog?.sessionDataManager?.events.off(
+            BadgeImageReadyEvent.BADGE_IMAGE_READY, this.onBadgeImageReadyEvent
+        );
+
         this._productType = '';
         this._productClassId = 0;
         this._extraParam = '';
@@ -238,11 +243,13 @@ export class Product extends ProductGridItem implements IProduct
             }
             case 'b':
             {
-                // TODO(AS3): sources/win63_version/habbo/catalog/viewer/Product.as::initIcon()
-                // AS3 also subscribes to a one-shot BIRE_BADGE_IMAGE_READY event on
-                // sessionDataManager so a still-loading badge image gets applied once it
-                // arrives; that event isn't wired up here yet, so a badge requested before
-                // it's cached will stay blank until the next initIcon() call.
+                // AS3 subscribes before asking, because the ask is what starts the download: a
+                // badge not yet cached comes back through BIRE_BADGE_IMAGE_READY instead, and
+                // without this the tile stayed blank until something called initIcon() again.
+                this.catalog.sessionDataManager?.events.on(
+                    BadgeImageReadyEvent.BADGE_IMAGE_READY, this.onBadgeImageReadyEvent
+                );
+
                 this._badgeTarget = listener as unknown as ProductGridItem;
 
                 const badgeImage = this.catalog.sessionDataManager?.getBadgeImage(this._extraParam) ?? null;
@@ -268,11 +275,11 @@ export class Product extends ProductGridItem implements IProduct
                 break;
             }
             case 'chat_style':
-                // TODO(AS3): sources/win63_version/habbo/catalog/viewer/Product.as::initIcon()
-                // Chat-style selector preview cloning (catalog.freeFlowChat.chatStyleLibrary)
-                // has no TS equivalent yet - habbo/catalog has no freeFlowChat reference and
-                // the chat-style library itself isn't ported.
-                image = null;
+                // AS3: `catalog.freeFlowChat.chatStyleLibrary.getStyle(int(extraParam))
+                // .selectorPreview.clone()`. The clone exists because assigning a BitmapData hands
+                // its lifetime to the window; the port's wrapper does not take ownership, so the
+                // library's own ImageBitmap is passed through and outlives the icon.
+                image = this.catalog.freeFlowChat?.chatStyleLibrary?.getStyle(parseInt(this._extraParam))?.selectorPreview ?? null;
                 break;
             default:
                 image = null;
@@ -300,9 +307,27 @@ export class Product extends ProductGridItem implements IProduct
     {
     }
 
+    /**
+     * AS3: .../src/com/sulake/habbo/catalog/viewer/Product.as::onBadgeImageReady()
+     *
+     * The event fires for every badge the session loads, so the id is checked before touching the
+     * tile. AS3's payload is already a BitmapData; here it is an HTMLImageElement, converted the
+     * same way the cache-hit path in initIcon() converts its own.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/Product.as::onBadgeImageReady()
+    private onBadgeImageReadyEvent = (event: BadgeImageReadyEvent): void =>
+    {
+        if(this.disposed || event.badgeId !== this._extraParam) return;
+
+        const image = event.badgeImage as CanvasImageSource | null;
+
+        if(image === null) return;
+
+        void createImageBitmap(image).then((bitmap) => this.onBadgeImageReady(bitmap));
+    };
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/Product.as::onBadgeImageReady()
-    // AS3 fires this from a BIRE_BADGE_IMAGE_READY event (matched by badgeId); here it's
-    // called directly off the createImageBitmap() continuation kicked off in initIcon().
+    // The tail of the AS3 handler, shared with the cache-hit path in initIcon().
     private onBadgeImageReady(image: ImageBitmap): void
     {
         if(!this.disposed && this._productType === 'b' && this._badgeTarget)
