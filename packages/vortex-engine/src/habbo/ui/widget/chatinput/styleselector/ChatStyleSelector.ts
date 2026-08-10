@@ -267,6 +267,7 @@ export class ChatStyleSelector implements IDisposable
      * early return lands before setInputFieldColor() too, so picking a style has no visible
      * side effect on the input field in this layout either. Faithful, not reduced.
      */
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::set selected()
     private setSelected(entry: ChatStyleGridEntry | null): void
     {
         if(!entry) return;

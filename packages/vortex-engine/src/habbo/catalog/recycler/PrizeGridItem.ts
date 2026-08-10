@@ -63,6 +63,7 @@ export class PrizeGridItem extends ProductGridItem implements IGridItem, IGetIma
      * The selector preview is drawn for the chat-style picker, twice the size a prize cell wants.
      * Extracted only to keep the switch readable; AS3 inlines it.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/recycler/PrizeGridItem.as::initProductIcon()
     private static halveChatStylePreview(preview: ImageBitmap | null): ImageBitmap | null
     {
         if(preview === null) return null;

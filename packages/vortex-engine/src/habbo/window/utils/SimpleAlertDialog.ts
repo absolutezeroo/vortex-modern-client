@@ -302,8 +302,9 @@ export class SimpleAlertDialog implements IDisposable
         {
             if(this._linkUrl.substring(0, 6) === 'event:') 
             {
-                // TODO(AS3): context.createLinkEvent(url.substr(6)) — fire link event via engine
-                // sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::onSimpleAlertClick()
+                // AS3: `context.createLinkEvent(url.substr(6))`. `IHabboWindowManager` declares no
+                // `context` in either tree, so the same cast FurnitureRoomLinkHandler.navigateTo()
+                // documents is used to reach the Component base's own.
                 const ctx = (this._windowManager as unknown as {
                     context?: { createLinkEvent?: (s: string) => void }
                 }).context;
