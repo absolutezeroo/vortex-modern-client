@@ -1,3 +1,4 @@
+import {ColorConverter} from '@room/utils/ColorConverter';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
@@ -16,6 +17,10 @@ import {VipBenefitsWindow} from './club/VipBenefitsWindow';
 
 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::BADGE_CHATSTYLE_WIDGET_NAME
 const BADGE_CHATSTYLE_WIDGET_NAME = 'HCU_dynamic_badge';
+
+// AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as — the bare 9032648 both
+// showPriceOnProduct() and getSeasonalCurrencyPriceColor() fall back to. Name DERIVED.
+const DEFAULT_PRICE_BOX_COLOR = 9032648;
 
 interface IPriceEntry
 {
@@ -256,11 +261,8 @@ export class HabboCatalogUtils implements IGetImageListener
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::showPriceOnProduct()
-    // win63 also positions the price box relative to a room_canvas_container/fallback target and
-    // colours it per currency (credits-only/activity-points-only/silver) - preserved here; the
-    // seasonal-currency colour variant (getSeasonalCurrencyPriceColor(), needs
-    // ColorConverter.hexToUint() + seasonal colour config properties) is the one part of that
-    // colouring not ported, see the TODO below.
+    // Positions the price box relative to a room_canvas_container/fallback target and colours it
+    // per currency: credits-only, activity-points-only, seasonal, or silver.
     showPriceOnProduct(
         offer: IPurchasableOffer,
         container: IWindowContainer,
@@ -317,14 +319,11 @@ export class HabboCatalogUtils implements IGetImageListener
                 }
                 else if(ActivityPointTypeEnum.isSeasonal(offer.activityPointType))
                 {
-                    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalogUtils.as::getSeasonalCurrencyPriceColor()
-                    // Needs ColorConverter.hexToUint() + seeded seasonalcurrency.*.color/preset.*.border
-                    // config properties - falling back to the default price-box colour instead.
-                    priceBox.color = 9032648;
+                    priceBox.color = this.getSeasonalCurrencyPriceColor(offer.activityPointType);
                 }
                 else
                 {
-                    priceBox.color = 9032648;
+                    priceBox.color = DEFAULT_PRICE_BOX_COLOR;
                 }
             }
 
@@ -335,6 +334,31 @@ export class HabboCatalogUtils implements IGetImageListener
         }
 
         return priceBox;
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::getSeasonalCurrencyPriceColor()
+     *
+     * A seasonal currency's price box takes its colour from the hotel config, resolved in three
+     * hops: point type -> currency id -> preset name -> border colour. Each hop falls back to the
+     * default box colour when its property is unseeded, which is how a hotel that ships no
+     * seasonal config still renders. `getProperty()` returns '' for a missing key, so the `=== ''`
+     * tests are AS3's own comparisons unchanged.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::getSeasonalCurrencyPriceColor()
+    private getSeasonalCurrencyPriceColor(activityPointType: number): number
+    {
+        if(!ActivityPointTypeEnum.isSeasonal(activityPointType)) return DEFAULT_PRICE_BOX_COLOR;
+
+        const currencyId = this._catalog?.getProperty(`seasonalcurrency.id.${activityPointType}`) ?? '';
+
+        if(currencyId === '') return DEFAULT_PRICE_BOX_COLOR;
+
+        const preset = this._catalog?.getProperty(`seasonalcurrency.${currencyId}.color`) ?? '';
+
+        if(preset === '') return DEFAULT_PRICE_BOX_COLOR;
+
+        return ColorConverter.hexToUint(this._catalog?.getProperty(`seasonalcurrency.preset.${preset}.border`) ?? '');
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::get bundleDiscountFlatPriceSteps()

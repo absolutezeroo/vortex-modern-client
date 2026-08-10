@@ -285,10 +285,17 @@ export class ColorConverter
     }
 
     // AS3: .../src/com/sulake/room/utils/ColorConverter.as::hexToUint()
+    // AS3's body is `uint("0x" + hex)`, and `uint()` coerces an unparseable string to 0 — an empty
+    // or malformed value yields black, not a broken colour. `parseInt` yields NaN instead, which
+    // reaches a `color` setter as a colour that is neither valid nor detectably absent, so the
+    // coercion is reproduced here. Reachable: an unseeded seasonalcurrency.preset.*.border config
+    // property lands in this function empty (HabboCatalogUtils.getSeasonalCurrencyPriceColor()).
     static hexToUint(hex: string): number
     {
         hex = hex.replace(/^#/, '');
 
-        return parseInt(hex, 16);
+        const value = parseInt(hex, 16);
+
+        return Number.isNaN(value) ? 0 : value;
     }
 }
