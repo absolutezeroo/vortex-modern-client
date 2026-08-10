@@ -722,12 +722,6 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true; // Default behavior
     }
 
-    // AS3: sources/win63_client/com/sulake/habbo/room/RoomObjectEventHandler.as::SelectedRoomObjectData
-    // Kept as its own simplified mechanism (not the real SelectedRoomObjectData/
-    // getSelectedObjectData() storage below) — moving an already-placed object is a
-    // separate, already-working flow this pass doesn't touch. Only category 10 (floor
-    // furniture) is tracked here — see modifyRoomObject()'s OBJECT_MOVE case for the
-
     roomManagerInitialized(success: boolean): void
     {
         if(success)
@@ -1012,10 +1006,6 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this.getGenericRoomObjectImage(activeType, colorIndex, direction, scale, listener, backgroundColor, param, stuffData, state, frameCount);
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectPlace()
-    // TS scope: category 10 (floor furniture) only — see initializeRoomObjectInsert()'s
-    // TODO(AS3) for why wall/avatar categories never reach this (their SelectedRoomObjectData
-
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getWallItemImage()
     getWallItemImage(
         type: number,
@@ -1038,12 +1028,6 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         return this.getGenericRoomObjectImage(wallType, colorIndex, direction, scale, listener, backgroundColor, param, null, state, frameCount);
     }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::placeObject()
-    // TS scope: only the "inventory" floor-furniture placement source (FurniModel.ts, the
-    // only caller today) is wired — AS3's stickie/present/rentable_bot-specific composer
-    // branches for other placement sources aren't ported.
-    // Keeps the existing -id sign convention for the emitted REOE_PLACED objectId (relied
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomImage()
     getRoomImage(
@@ -1477,11 +1461,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return room.getObjects(category);
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::_Str_22095() (getGenericRoomObjectThumbnail)
-    // TS simplification: uses a simple incrementing id counter instead of AS3's
-    // reserve/free NumberIdGenerator pool (no functional difference for callers,
-
-    setActiveRoom(roomId: number): void 
+    setActiveRoom(roomId: number): void
     {
         this._activeRoomId = roomId;
     }
@@ -1924,7 +1904,15 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::modifyRoomObject()
-    modifyRoomObject(objectId: number, category: number, action: string): boolean 
+    // TODO(AS3): OBJECT_MOVE only covers floor furniture (category 10), matching the existing
+    // wall-item scope cut in initializeRoomObjectInsert(). It also skips
+    // FurniStackingHeightMap.validateFurnitureLocation() — every hovered tile is treated as valid
+    // client-side, the same simplification the catalog-placement flow makes, and the server is
+    // authoritative and would reject an illegal spot — and there is no cancel/right-click binding
+    // yet (a shared gap with the unbuilt furniture-context-menu widget). Rotation skips AS3's
+    // `furniture_allowed_directions` validation too, so furniture that may only face a subset of
+    // the eight compass directions can be turned to one it should refuse.
+    modifyRoomObject(objectId: number, category: number, action: string): boolean
     {
         const object = this.getRoomObject(this._activeRoomId, objectId, category);
 
@@ -2394,18 +2382,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true;
     }
 
-    // AS3: sources/win63_client/com/sulake/habbo/room/RoomObjectEventHandler.as::modifyRoomObject()
-    // TODO(AS3): OBJECT_MOVE only covers floor furniture (category 10), matching
-    // the existing wall-item scope cut in initializeRoomObjectInsert(). It also
-    // skips FurniStackingHeightMap validateFurnitureLocation() (every hovered
-    // tile is treated as valid client-side, same simplification already made by
-    // the catalog-placement flow above — the server is authoritative and would
-    // reject an illegal spot), and there's no cancel/right-click binding yet
-    // (shared gap with the unbuilt furniture-context-menu widget).
-    // Rotation here also skips AS3's `furniture_allowed_directions` validation
-    // (some furniture only rotates through a subset of the 8 compass directions)
-
-    setRoomObjectUserOwnUser(roomId: number, objectId: number): boolean 
+    setRoomObjectUserOwnUser(roomId: number, objectId: number): boolean
     {
         const room = this.getRoomInstance(roomId);
 
@@ -2429,10 +2406,6 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         return true;
     }
-
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomObjectEventHandler.as::resetSelectedObjectData()
-    // Reverts the semi-transparent preview back to its pre-move location/alpha
-    // without notifying the server — used when a move is abandoned by starting
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::update()
     update(time: number): void 
@@ -4452,9 +4425,19 @@ export class RoomEngine extends Component implements IRoomEngine,
             new SelectedRoomObjectData(id, category, operation, loc, dir, typeId, instanceData, stuffData, state, animFrame, posture);
     }
 
-    // TS scope: only handles the OBJECT_PLACE branch — this storage never sees OBJECT_MOVE/
+    /**
+     * Undoes whatever the pending selection had done to the room, then clears it.
+     *
+     * A move (OBJECT_MOVE / OBJECT_MOVE_TO) puts the object back at the location and direction it
+     * was picked up from and restores its alpha — the server is never told, because the move was
+     * abandoned rather than committed. A placement (OBJECT_PLACE) has no original to return to, so
+     * its ghost is disposed instead.
+     *
+     * A stray line above this trace used to claim the storage "never sees OBJECT_MOVE", which the
+     * branch below contradicts; it was the severed head of some other comment.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::resetSelectedObjectData()
-    private resetSelectedObjectData(roomId: number): void 
+    private resetSelectedObjectData(roomId: number): void
     {
         this.removeObjectMoverIconSprite();
 
@@ -4891,6 +4874,9 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectPlace()
+    // TS scope: category 10 (floor furniture) only — see initializeRoomObjectInsert()'s
+    // TODO(AS3) for why wall/avatar categories never reach this (their SelectedRoomObjectData
     // never gets created in the first place).
     //
     // AS3 takes the RoomObjectMouseEvent itself and casts it twice — `as RoomObjectTileMouseEvent`
@@ -5136,6 +5122,10 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::placeObject()
+    // TS scope: only the "inventory" floor-furniture placement source (FurniModel.ts, the only
+    // caller today) is wired — AS3's stickie/present/rentable_bot-specific composer branches for
+    // other placement sources are not ported.
+    //
     // `placedOnFloor`/`placedOnWall` are AS3's own two parameters: which kind of mouse event
     // confirmed the placement. They ride out on REOE_PLACED, where FurniModel.onObjectPlaced()
     // needs them to tell a floor placement's re-arm from a wall one.
@@ -5283,6 +5273,9 @@ export class RoomEngine extends Component implements IRoomEngine,
         );
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::_Str_22095() (getGenericRoomObjectThumbnail)
+    // TS simplification: uses a simple incrementing id counter instead of AS3's
+    // reserve/free NumberIdGenerator pool (no functional difference for callers,
     // which only compare the returned id against 0/-1 or match it in imageReady()).
     private getGenericRoomObjectThumbnail(
         type: string | null,

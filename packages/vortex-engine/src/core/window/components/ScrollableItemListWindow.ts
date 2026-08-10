@@ -21,6 +21,15 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
     private _scrollBarRef: IScrollbarWindow | null = null;
     private readonly _scrollBarEventProcBound: (event: WindowEvent) => void;
 
+    /**
+     * AS3 resolves its scrollbar and item-list children here, in the constructor. This port
+     * cannot: `scrollBar`/`itemList` read named children that `buildLayoutChildren()` creates,
+     * and that only runs later through `completeConstruction()` (see WindowController's
+     * phase-split), so at constructor time there are no children to find. Both getters resolve
+     * lazily on first use instead, and the scrollbar's enable/disable listeners are attached
+     * there rather than here — the constructor only binds the handler it will need.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemListWindow.as::ScrollableItemListWindow()
     constructor(
         name: string,
         type: number,
@@ -40,16 +49,6 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
 
         this._scrollBarEventProcBound = this.scrollBarEventProc.bind(this);
     }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemListWindow.as::ScrollableItemListWindow()
-    // this.scrollBar/this.itemList read named children built by buildLayoutChildren(),
-    // which only runs later via completeConstruction() (see WindowController.ts's
-    // phase-split) - at constructor time no children exist yet, so binding the scrollbar
-    // to the item list can't happen there anymore. Without this explicit binding the
-    // scrollbar falls back to ScrollBarController.resolveScrollTarget()'s generic
-    // "parent exposes scrollH/scrollV" match, which binds it to this wrapper instead of
-    // the inner item list directly - the wrapper's own size never changes when items are
-    // added, so it never dispatches WE_RESIZED and the scrollbar thumb goes stale until
 
     private _autoHideScrollBar: boolean = true;
 
