@@ -99,14 +99,26 @@ export class InfoStandFurniView
         return this._window;
     }
 
+    /**
+     * TS-only: the layout each subclass builds from. AS3 has no such seam — InfoStandJukeboxView
+     * and InfoStandSongDiskView each override the whole of createWindow() just to swap
+     * `getAssetByName("furni_view")` for their own layout, then repeat the same ~50 lines of
+     * child lookups verbatim. All three layouts declare the same children, so the override point
+     * is the asset name rather than three copies of the body.
+     */
+    protected get layoutName(): string
+    {
+        return 'furni_view';
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::createWindow()
     protected createWindow(name: string): void
     {
-        const window = this._widget.windowManager.buildWidgetLayout('furni_view') as IItemListWindow | null;
+        const window = this._widget.windowManager.buildWidgetLayout(this.layoutName) as IItemListWindow | null;
 
         if(!window)
         {
-            throw new Error('Failed to construct window from layout: furni_view');
+            throw new Error(`Failed to construct window from layout: ${this.layoutName}`);
         }
 
         this._window = window;

@@ -1040,7 +1040,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         switch(type) 
         {
             case 'RWE_INFOSTAND':
-                handler = new InfoStandWidgetHandler(null);
+                // AS3: `new InfoStandWidgetHandler(_soundManager.musicController)` — the handler
+                // turns NPE_SONG_CHANGED / SIR_TRAX_SONG_INFO_RECEIVED into the song updates the
+                // jukebox and song-disk views read.
+                handler = new InfoStandWidgetHandler(this._soundManager?.musicController ?? null);
                 break;
             case 'RWE_ROOM_TOOLS': {
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:885-890

@@ -51,6 +51,10 @@ import {
     GetExtendedProfileMessageComposer
 } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 import {RoomWidgetFurniInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetFurniInfoUpdateEvent';
+import {RoomWidgetSongUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetSongUpdateEvent';
+import type {IHabboMusicController} from '@habbo/sound/IHabboMusicController';
+import {NowPlayingEvent} from '@habbo/sound/events/NowPlayingEvent';
+import {SongInfoReceivedEvent} from '@habbo/sound/events/SongInfoReceivedEvent';
 import {RoomWidgetUserInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent';
 import {RoomWidgetRentableBotInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetRentableBotInfoUpdateEvent';
 import {RoomWidgetPetInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetPetInfoUpdateEvent';
@@ -129,9 +133,19 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::_cachedPetImages
     private _cachedPetImages: Map<string, ImageBitmap | null> | null = new Map();
 
-    // onSongInfoReceivedEvent — deferred with the jukebox/song-disk views (both stubs).
-    constructor(_musicController: unknown = null) 
+    // AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::_musicController
+    private _musicController: IHabboMusicController | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::InfoStandWidgetHandler()
+    constructor(musicController: IHabboMusicController | null = null)
     {
+        this._musicController = musicController;
+
+        if(this._musicController)
+        {
+            this._musicController.events.on(NowPlayingEvent.NOW_PLAYING_SONG_CHANGED, this.onNowPlayingChanged);
+            this._musicController.events.on(SongInfoReceivedEvent.TRAX_SONG_INFO_RECEIVED, this.onSongInfoReceivedEvent);
+        }
     }
 
     private _disposed: boolean = false;
@@ -141,9 +155,6 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     {
         return this._disposed;
     }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::InfoStandWidgetHandler()
-    // TODO(AS3): constructor takes the jukebox/music controller for onNowPlayingChanged /
 
     private _container: IRoomWidgetHandlerContainer | null = null;
 
@@ -281,10 +292,66 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
             this._cachedPetImages = null;
         }
 
+        if(this._musicController)
+        {
+            this._musicController.events.off(NowPlayingEvent.NOW_PLAYING_SONG_CHANGED, this.onNowPlayingChanged);
+            this._musicController.events.off(SongInfoReceivedEvent.TRAX_SONG_INFO_RECEIVED, this.onSongInfoReceivedEvent);
+            this._musicController = null;
+        }
+
         this._pendingImageRequests.clear();
         this.container = null;
         this._disposed = true;
     }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::onNowPlayingChanged()
+     *
+     * The jukebox switched track. Name and creator stay empty when nothing is playing (id -1) or
+     * when the info for that song has not been received yet — InfoStandJukeboxView reads the id
+     * alone to decide between the "now playing" and "not playing" captions.
+     */
+    private onNowPlayingChanged = (event: NowPlayingEvent): void =>
+    {
+        if(!this._musicController) return;
+
+        const songId = event.id;
+        let songName = '';
+        let songAuthor = '';
+
+        if(songId !== -1)
+        {
+            const songInfo = this._musicController.getSongInfo(songId);
+
+            if(songInfo)
+            {
+                songName = songInfo.name;
+                songAuthor = songInfo.creator;
+            }
+        }
+
+        const update = new RoomWidgetSongUpdateEvent(
+            RoomWidgetSongUpdateEvent.SONG_PLAYING_CHANGED, songId, songName, songAuthor
+        );
+
+        this._container?.desktopEvents.emit(update.type, update);
+    };
+
+    // AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::onSongInfoReceivedEvent()
+    private onSongInfoReceivedEvent = (event: SongInfoReceivedEvent): void =>
+    {
+        if(!this._musicController) return;
+
+        const songInfo = this._musicController.getSongInfo(event.id);
+
+        if(!songInfo || !this._container) return;
+
+        const update = new RoomWidgetSongUpdateEvent(
+            RoomWidgetSongUpdateEvent.SONG_DATA_RECEIVED, event.id, songInfo.name, songInfo.creator
+        );
+
+        this._container.desktopEvents.emit(update.type, update);
+    };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::getWidgetMessages()
     public getWidgetMessages(): string[] 
@@ -1289,7 +1356,49 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         // async path too: the widget is populated by then either way.
         container.desktopEvents.emit(event.type, event);
 
+        this.emitSongInfoForFurni(event.extraParam);
+
         this.requestFurniImage(event, roomId);
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage()
+     * (the extraParam tail of the RWFIUE_FURNI branch)
+     *
+     * A jukebox or a song disk needs a second event on top of the furni one: the furni data says
+     * nothing about which song is involved. The jukebox reads it from the room playlist's current
+     * track, a disk from the `RWEIEP_SONGDISK<id>` suffix of its own extraParam.
+     */
+    private emitSongInfoForFurni(extraParam: string | null): void
+    {
+        if(!this._musicController || !this._container) return;
+        if(extraParam === null || extraParam.length === 0) return;
+
+        let songId = -1;
+        let type = '';
+
+        if(extraParam === RoomWidgetInfostandExtraParamEnum.INFOSTAND_EXTRAPARAM_JUKEBOX)
+        {
+            const playlist = this._musicController.getRoomItemPlaylist();
+
+            if(playlist)
+            {
+                songId = playlist.nowPlayingSongId;
+                type = RoomWidgetSongUpdateEvent.SONG_PLAYING_CHANGED;
+            }
+        }
+        else if(extraParam.indexOf(RoomWidgetInfostandExtraParamEnum.INFOSTAND_EXTRAPARAM_SONGDISK) === 0)
+        {
+            songId = parseInt(extraParam.substr(RoomWidgetInfostandExtraParamEnum.INFOSTAND_EXTRAPARAM_SONGDISK.length));
+            type = RoomWidgetSongUpdateEvent.SONG_DATA_RECEIVED;
+        }
+
+        if(songId === -1 || Number.isNaN(songId)) return;
+
+        const songInfo = this._musicController.getSongInfo(songId);
+        const update = new RoomWidgetSongUpdateEvent(type, songId, songInfo?.name ?? '', songInfo?.creator ?? '');
+
+        this._container.desktopEvents.emit(update.type, update);
     }
 
     // imageFailed() below instead, once the scale-64 render actually comes back.

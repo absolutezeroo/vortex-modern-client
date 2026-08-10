@@ -40,6 +40,7 @@ import {InfoStandUserView} from './InfoStandUserView';
 import {InfoStandPetView} from './InfoStandPetView';
 import {InfoStandBotView} from './InfoStandBotView';
 import {InfoStandRentableBotView} from './InfoStandRentableBotView';
+import type {RoomWidgetSongUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetSongUpdateEvent';
 import {InfoStandJukeboxView} from './InfoStandJukeboxView';
 import {InfoStandSongDiskView} from './InfoStandSongDiskView';
 import {InfoStandFurniData} from './InfoStandFurniData';
@@ -546,9 +547,11 @@ export class InfoStandWidget extends RoomWidgetBase
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onSongUpdate()
-    // TODO(AS3): param is RoomWidgetSongUpdateEvent — jukebox/song-disk views are stubs.
-    private onSongUpdate = (_event: unknown): void =>
+    // Both views are told unconditionally; each ignores an id that is not the song it is showing.
+    private onSongUpdate = (event: RoomWidgetSongUpdateEvent): void =>
     {
+        this._jukeboxView.updateSongInfo(event);
+        this._songDiskView.updateSongInfo(event);
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::close()

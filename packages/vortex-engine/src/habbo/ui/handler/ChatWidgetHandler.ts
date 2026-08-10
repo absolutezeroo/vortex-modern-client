@@ -132,6 +132,7 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
         }
     }
 
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::getUserImage()
     // See the file header: null here is deliberate, not a missing port. The live face path is
     // ChatBubbleFactory.getUserImage(); this legacy handler is dead once freeFlowChat resolves,
     // and reviving it would need a Texture -> ImageBitmap conversion that has no consumer.
@@ -249,6 +250,7 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
         container.desktopEvents.emit(chatUpdateEvent.type, chatUpdateEvent);
     }
 
+    // AS3: sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as::getPetImage()
     // As getUserImage() above — `IRoomEngine.getPetImage()` does exist and ChatBubbleFactory
     // already uses it; only this dead legacy path is left returning null.
     private getPetImage(_figureString: string): ImageBitmap | null
