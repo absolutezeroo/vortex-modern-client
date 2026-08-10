@@ -17,6 +17,7 @@ import type {ImageResult} from '@habbo/room/ImageResult';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {FurnitureItem} from './FurnitureItem';
 import {FurnitureCategory} from '../enum';
+import {SongInfoReceivedEvent} from '@habbo/sound/events/SongInfoReceivedEvent';
 
 const THUMB_COLOR_NORMAL = 13421772;
 const THUMB_COLOR_UNSEEN = 10275685;
@@ -64,6 +65,11 @@ export class GroupItem implements IGetImageListener
     private _bgColorWindow: IWindow | null = null;
     private _wasDragCandidate: boolean = false;
 
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::_pendingSongId
+    // Name DERIVED (`_SafeStr_6599`): the one song id an in-flight request is outstanding for, so
+    // another disc's reply does not re-label this group.
+    private _pendingSongId: number = -1;
+
     constructor(
         model: FurniModel,
         type: number,
@@ -101,6 +107,8 @@ export class GroupItem implements IGetImageListener
                 this._description = model.localization.getLocalization('inventory.furni.item.landscape.desc');
                 break;
         }
+
+        model.soundManager?.events.on(SongInfoReceivedEvent.TRAX_SONG_INFO_RECEIVED, this.onSongInfoReceived);
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::_window
@@ -903,8 +911,9 @@ export class GroupItem implements IGetImageListener
      * Dispose the group
      */
     // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::dispose()
-    dispose(): void 
+    dispose(): void
     {
+        this._model.soundManager?.events.off(SongInfoReceivedEvent.TRAX_SONG_INFO_RECEIVED, this.onSongInfoReceived);
         this._items.clear();
         this._stuffData = null;
 
@@ -1221,18 +1230,29 @@ export class GroupItem implements IGetImageListener
         }
     };
 
-    // TODO(AS3): skips the TRAX_SONG (category 8) async song-title lookup —
-    // music discs fall back to the default roomItem/wallItem name for now.
     // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getFurniItemName()
-    private getFurniItemName(): string 
+    private getFurniItemName(): string
     {
         const item = this.peek();
 
         if(item === null) return '';
 
-        if(this._category === FurnitureCategory.POSTER) 
+        if(this._category === FurnitureCategory.POSTER)
         {
             return this._model.localization.getLocalization(`poster_${item.stuffData?.getLegacyString() ?? ''}_name`);
+        }
+
+        if(this._category === FurnitureCategory.TRAX_SONG)
+        {
+            const songInfo = this._model.soundManager?.musicController?.getSongInfo(item.extra) ?? null;
+
+            if(songInfo !== null) return songInfo.name;
+
+            // Empty until the request below comes back; onSongInfoReceived() then re-derives both
+            // strings. A disc whose song is unknown has no localisation key to fall back on.
+            this.requestSongInfo(item);
+
+            return '';
         }
 
         const key = this.isWallItem ? `wallItem.name.${item.type}` : `roomItem.name.${item.type}`;
@@ -1241,19 +1261,61 @@ export class GroupItem implements IGetImageListener
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::getFurniItemDesc()
-    private getFurniItemDesc(): string 
+    private getFurniItemDesc(): string
     {
         const item = this.peek();
 
         if(item === null) return '';
 
-        if(this._category === FurnitureCategory.POSTER) 
+        if(this._category === FurnitureCategory.POSTER)
         {
             return this._model.localization.getLocalization(`poster_${item.stuffData?.getLegacyString() ?? ''}_desc`);
+        }
+
+        if(this._category === FurnitureCategory.TRAX_SONG)
+        {
+            const songInfo = this._model.soundManager?.musicController?.getSongInfo(item.extra) ?? null;
+
+            if(songInfo !== null) return songInfo.creator;
+
+            this.requestSongInfo(item);
+
+            return '';
         }
 
         const key = this.isWallItem ? `wallItem.desc.${item.type}` : `roomItem.desc.${item.type}`;
 
         return this._model.localization.getLocalization(key);
     }
+
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::getSongInfo()
+    // "WithoutSamples" because the inventory only wants the title and creator — downloading the
+    // trax samples would be a large fetch for a label.
+    private requestSongInfo(item: IFurnitureItem | null): void
+    {
+        if(item === null) return;
+
+        this._pendingSongId = -1;
+
+        if(item.category !== FurnitureCategory.TRAX_SONG) return;
+
+        const musicController = this._model.soundManager?.musicController ?? null;
+
+        if(musicController === null || musicController.getSongInfo(item.extra) !== null) return;
+
+        musicController.requestSongInfoWithoutSamples(item.extra);
+        this._pendingSongId = item.extra;
+    }
+
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::onSongInfoReceivedEvent()
+    private onSongInfoReceived = (event: SongInfoReceivedEvent): void =>
+    {
+        if(event.id !== this._pendingSongId) return;
+
+        this._pendingSongId = -1;
+        this._name = this.getFurniItemName();
+        this._description = this.getFurniItemDesc();
+
+        if(this._model.getSelectedItem() === this) this._model.updateActionView();
+    };
 }

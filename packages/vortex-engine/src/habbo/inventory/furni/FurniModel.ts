@@ -6,6 +6,7 @@ import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {IFurnitureItemData} from '../items/FurnitureItemData';
 import type {HabboInventory} from '../HabboInventory';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {IHabboCommunicationManager} from '../../communication/IHabboCommunicationManager';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
@@ -48,6 +49,14 @@ export class FurniModel implements IFurniModel
     private _catalog: IHabboCatalog;
     // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::_localization
     private _localization: IHabboLocalizationManager;
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::_soundManager
+    private _soundManager: IHabboSoundManager | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::get soundManager()
+    get soundManager(): IHabboSoundManager | null
+    {
+        return this._soundManager;
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::controller
     get controller(): HabboInventory
@@ -95,7 +104,8 @@ export class FurniModel implements IFurniModel
         roomEngine: IRoomEngine,
         communication: IHabboCommunicationManager,
         catalog: IHabboCatalog,
-        localization: IHabboLocalizationManager
+        localization: IHabboLocalizationManager,
+        soundManager: IHabboSoundManager | null
     )
     {
         this._habboInventory = habboInventory;
@@ -104,6 +114,7 @@ export class FurniModel implements IFurniModel
         this._communication = communication;
         this._catalog = catalog;
         this._localization = localization;
+        this._soundManager = soundManager;
         this._categorySelections.set('furni', null);
         this._categorySelections.set('rentables', null);
         this._view = new FurniView(this);
