@@ -1,5 +1,6 @@
 import type {IContext} from '@core/runtime';
 import {Component, ComponentDependency} from '@core/runtime';
+import type {IWindow} from '@core/window/IWindow';
 import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
@@ -263,18 +264,66 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         return this._freeFlowChat;
     }
 
+    /**
+	 * Build one of this component's XML window layouts by name
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::getXmlWindow()
+    // AS3 does the asset lookup itself (`assets.getAssetByName(name + "_xml")` then
+    // `buildFromXML`); `buildWidgetLayout()` is this port's name for that pair, as
+    // `HabboGroupsManager.getXmlWindow()` already does.
+    getXmlWindow(name: string): IWindow | null
+    {
+        return this._windowManager?.buildWidgetLayout(name) ?? null;
+    }
+
+    /**
+	 * Open the emergency help request form
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::startEmergencyRequest()
+    startEmergencyRequest(): void
+    {
+        this._cfhManager?.openEmergencyHelpRequest();
+    }
+
+    /**
+	 * Forward a Google tracking event
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::trackGoogle()
+    trackGoogle(category: string, action: string, label: number = -1): void
+    {
+        this._tracking?.trackGoogle(category, action, label);
+    }
+
+    /**
+	 * Open the CFH FAQ in a new tab
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::openCfhFaq()
+    openCfhFaq(): void
+    {
+        const url = this.context.configuration?.getProperty('cfh.faq.url') ?? '';
+
+        // AS3 guards with `StringUtil.isEmpty()`; `getProperty()` returns '' for a missing key
+        // here rather than null, so the emptiness test is the one that matters.
+        if(url === '') return;
+
+        window.open(url, '_blank');
+    }
+
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as
-    // ~15 further public members confirmed absent (the soundManager getter - it has no DI
-    // dependency wired here yet, unlike the getters above; newUserTourEnabled/newIdentity/
-    // citizenshipEnabled/safetyQuizDisabled/guardiansEnabled/callForHelpCategories/reportedUserId/
-    // reportedUserName/reportedUserRoomId/reportedUserExtraDataId/reportedUserRoomObjectId;
-    // startEmergencyRequest()/closeHabboWay()/closeSafetyBooklet()/showHabboWayQuiz()/
-    // showSafetyQuiz()/getXmlWindow()/getModalXmlWindow()/trackGoogle()/setReportMessage()/
-    // queryForPendingCallsForHelp()/queryForGuideReportingStatus()/ignoreAndUnfriendReportedUser()/
-    // toggleNewHelpWindow()/requestSanctionInfo()/requestReportsStatus()/openCfhFaq()). Confirmed
-    // zero current runtime impact: no ported help/** subview requests any of them (0 grep hits) -
-    // a wall for a future view, not a live bug. Left as one documented gap rather than 16
-    // speculative stubs for views that don't exist yet.
+    // Eight public members are still absent, each blocked on something named:
+    //   - `get soundManager()` — no IIDHabboSoundManager dependency is declared above. AS3 takes
+    //     it optionally (`false`), so adding it is safe, but nothing here reads it yet.
+    //   - `getModalXmlWindow()` — `buildModalDialogFromXML()` takes raw XML, and the manager's
+    //     name→XML map (`_widgetLayouts`) is private, so there is no by-name modal twin of
+    //     `buildWidgetLayout()` to call. Needs that pair exposed first.
+    //   - `requestReportsStatus()` — sends `_SafeCls_2121`, header 1834 in the primary registry.
+    //     The port has no composer for 1834 and `vortex-emulator` does not define the header
+    //     either, so there is nothing to send it to. Not guessed at.
+    //   - `toggleNewHelpWindow()` — opens `TopicsFlowHelpController` (933 lines), unported.
+    //   - `closeHabboWay()`/`showHabboWayQuiz()`/`showSafetyQuiz()` — need `HabboWayController`
+    //     and `HabboWayQuizController`, neither ported.
+    //   - `closeSafetyBooklet()` — needs `SafetyBookletController`, unported.
+    // The rest of the list this comment used to carry is now implemented above.
 
     /**
 	 * The own user name (from name change controller)
@@ -1159,7 +1208,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         // AS3 passes itself: the manager sends every report through `HabboHelp.sendMessage()` and
         // reads `guardiansEnabled` off it.
         this._cfhManager = new CallForHelpManager(this);
-        this._guideManager = new GuideHelpManager();
+        this._guideManager = new GuideHelpManager(this);
         this._nameChangeController = new NameChangeController(this._communication);
         this._sanctionInfo = new SanctionInfo();
 

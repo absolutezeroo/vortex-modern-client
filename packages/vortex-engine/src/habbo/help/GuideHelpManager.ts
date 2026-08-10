@@ -1,23 +1,50 @@
 import {GuideSessionData} from './GuideSessionData';
 import {Logger} from '@core/utils/Logger';
 
+import type {HabboHelp} from './HabboHelp';
+
 const log = Logger.getLogger('habbo.help.GuideHelpManager');
 
 /**
  * Guide help coordination manager
  *
- * Manages the guide help system, including help requests, guide tool display,
- * session management, and feedback. Coordinates with the toolbar for
- * help/guide icon clicks.
+ * In AS3 this class holds almost no logic of its own: it is a façade over three sub-controllers
+ * and forwards to them. None of the three is ported, so every forward below is still a stub, and
+ * each one now names the class it is waiting on rather than describing the gap loosely:
  *
- * @see source_as_win63/habbo/help/GuideHelpManager.as
+ * - `guidehelp/GuideSessionController.as` (1,826 lines) — the guide tool, help requests and the
+ *   whole guide-session conversation. Backs `showGuideTool()`, `createHelpRequest()` and
+ *   `openReportWindow()`.
+ * - `guidehelp/HelpController.as` (271 lines) — the tour popup and the pending-ticket view.
+ *   Backs `openTourPopup()` and `showPendingTicket()`.
+ * - `ChatReviewReporterFeedbackCtrl.as` (117 lines) — the post-report feedback panel. Backs
+ *   `showFeedback()`.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/GuideHelpManager.as
  */
 export class GuideHelpManager
 {
-    constructor()
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::_habboHelp
+    private _habboHelp: HabboHelp | null;
+
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::GuideHelpManager()
+    // AS3 also constructs the three sub-controllers listed in the class header and subscribes
+    // `onRoomEnter` (the new-user tour timer) here; both wait on those controllers.
+    constructor(habboHelp: HabboHelp)
     {
+        this._habboHelp = habboHelp;
         this._guideData = new GuideSessionData();
+
         log.debug('GuideHelpManager initialized');
+    }
+
+    /**
+	 * The owning help component
+	 */
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::get habboHelp()
+    get habboHelp(): HabboHelp | null
+    {
+        return this._habboHelp;
     }
 
     // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::_disposed
@@ -45,10 +72,11 @@ export class GuideHelpManager
     /**
 	 * Show the guide tool window
 	 */
-    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::showGuideTool()
+    // TODO(AS3): .../src/com/sulake/habbo/help/GuideHelpManager.as::showGuideTool()
+    // forwards to `GuideSessionController.showGuideTool()`, unported (see the class header).
     showGuideTool(): void
     {
-        log.debug('Show guide tool');
+        log.warn('showGuideTool: GuideSessionController is not ported');
     }
 
     /**
@@ -57,30 +85,52 @@ export class GuideHelpManager
 	 * @param type The request type (0 = help, 1 = tour, 2 = bully)
 	 */
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/GuideHelpManager.as::createHelpRequest()
-    // delegates to a CallForHelpManager-equivalent instance (`_SafeStr_6054.createHelpRequest(param1)`,
-    // single-arg) - this whole class has no such wiring yet (message is this port's own addition, not
-    // present in AS3's single-param signature; kept for a future call site, currently unused).
+    // forwards to `GuideSessionController.createHelpRequest(param1)`, which is unported (see the
+    // class header). AS3 takes one argument; `message` is this port's own addition with no AS3
+    // counterpart and no current caller.
     createHelpRequest(type: number, _message?: string): void
     {
-        log.debug('Create help request - type:', type);
+        log.warn('createHelpRequest: GuideSessionController is not ported - request type', type, 'was dropped');
+    }
+
+    /**
+	 * Show the user their already-open guide ticket
+	 *
+	 * @param pendingTicket The ticket payload from the guide-reporting status message
+	 */
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/GuideHelpManager.as::showPendingTicket()
+    // forwards to `HelpController.showPendingTicket()`, unported. The argument is typed `unknown`
+    // because its AS3 type (`_SafePkg_2970._SafeCls_2969`) is not ported either, and because
+    // `GuideReportingStatusMessageParser` does not read a `pendingTicket` field off the wire yet —
+    // so there is currently nothing to pass in. Declared so the member is visible rather than
+    // silently missing; `HabboHelp.handleGuideReportingStatus()` documents the same gap.
+    showPendingTicket(pendingTicket: unknown): void
+    {
+        log.warn('showPendingTicket: HelpController is not ported', pendingTicket);
     }
 
     /**
 	 * Open the report window for guide reporting
 	 */
-    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::openReportWindow()
+    // TODO(AS3): .../src/com/sulake/habbo/help/GuideHelpManager.as::openReportWindow()
+    // forwards to `GuideSessionController.openReportWindow()`, unported. This is the one
+    // `HabboHelp.proceedWithReporting()` reaches for REPORT_TYPE_GUIDE, so a guide report gets
+    // as far as the server round trip and then stops here.
     openReportWindow(): void
     {
-        log.debug('Open report window');
+        log.warn('openReportWindow: GuideSessionController is not ported - the guide report form did not open');
     }
 
     /**
 	 * Open the tour popup
 	 */
-    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::openTourPopup()
+    // TODO(AS3): .../src/com/sulake/habbo/help/GuideHelpManager.as::openTourPopup()
+    // forwards to `HelpController.openTourPopup()` and latches `_tourPopupShown`, unported. AS3
+    // also opens this on a timer started from `onRoomEnter()` when the new-user tour is enabled
+    // and the session is not a real noob; that timer waits on the same controller.
     openTourPopup(): void
     {
-        log.debug('Open tour popup');
+        log.warn('openTourPopup: HelpController is not ported');
     }
 
     /**
@@ -88,10 +138,12 @@ export class GuideHelpManager
 	 *
 	 * @param localizationCode The localization key for the feedback message
 	 */
-    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::showFeedback()
+    // TODO(AS3): .../src/com/sulake/habbo/help/GuideHelpManager.as::showFeedback()
+    // forwards to `ChatReviewReporterFeedbackCtrl.show()` (117 lines, unported). Reached from
+    // `HabboHelp.handleGuideReportingStatus()` for every status code past 1.
     showFeedback(localizationCode: string): void
     {
-        log.debug('Show feedback:', localizationCode);
+        log.warn('showFeedback: ChatReviewReporterFeedbackCtrl is not ported -', localizationCode);
     }
 
     /**
@@ -102,6 +154,8 @@ export class GuideHelpManager
     {
         if(this._disposed) return;
 
+        // AS3 disposes the three sub-controllers and resets the tour timer here; none is ported.
+        this._habboHelp = null;
         this._disposed = true;
     }
 }
