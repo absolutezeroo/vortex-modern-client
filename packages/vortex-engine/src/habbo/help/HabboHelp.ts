@@ -53,6 +53,7 @@ import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IMessageComposer} from '@core';
+import {GetMyCfhReportStatusMessageComposer} from '@habbo/communication/messages/outgoing/help/GetMyCfhReportStatusMessageComposer';
 import {GetCfhStatusMessageComposer} from '@habbo/communication/messages/outgoing/help/GetCfhStatusMessageComposer';
 import {GetGuideReportingStatusMessageComposer} from '@habbo/communication/messages/outgoing/help/GetGuideReportingStatusMessageComposer';
 import {GetPendingCallsForHelpMessageComposer} from '@habbo/communication/messages/outgoing/help/GetPendingCallsForHelpMessageComposer';
@@ -897,14 +898,12 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * Request the user's own report history
 	 */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::requestReportsStatus()
-    // sends `_SafeCls_2121`, header 1834 in the primary registry. Neither this port nor
-    // `vortex-emulator` defines a composer for 1834, so there is nothing to send. Declared rather
-    // than omitted because the flow's "my reports" link now reaches it — that link is hidden
-    // unless `my.reports.status.enabled` is set, which is why nothing calls this today.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::requestReportsStatus()
+    // Reached from the flow's "my reports" link, which is hidden unless `my.reports.status.enabled`
+    // is set.
     requestReportsStatus(): void
     {
-        log.warn('requestReportsStatus: no composer for header 1834 on either side');
+        this.sendMessage(new GetMyCfhReportStatusMessageComposer());
     }
 
     /**

@@ -16,8 +16,14 @@ export type BadgeFilterType = typeof BadgeFilter[keyof typeof BadgeFilter];
  */
 export interface IBadgeData
 {
+    // AS3: .../src/unknowns/_SafePkg_2931/_SafeCls_3762.as::get badgeCode()
     badgeId: string;
+    // AS3: .../src/unknowns/_SafePkg_3206/_SafeCls_3564.as::parse() (the first int of each badge)
     slotId: number;
+    // AS3: .../src/unknowns/_SafePkg_2931/_SafeCls_3762.as::get ownerCount()
+    ownerCount: number;
+    // AS3: .../src/unknowns/_SafePkg_2931/_SafeCls_3762.as::get badgeRarityId()
+    badgeRarityId: number;
 }
 
 /**

@@ -31,6 +31,7 @@ import {
     PostQuizAnswersComposer,
     GetGuideReportingStatusMessageComposer,
     GetPendingCallsForHelpMessageComposer,
+    GetMyCfhReportStatusMessageComposer,
     GuideSessionCreateMessageComposer,
     GuideSessionInviteRequesterMessageComposer,
     ChatReviewGuideDecidesOnOfferMessageComposer,
@@ -2922,6 +2923,9 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3831, GuideSessionResolvedMessageComposer);
         // The four `GuideSessionController` sends that had no composer until 2026-08-11. Headers
         // from the primary registry, all four corroborated by the emulator's own AS3-traced names.
+        // The player's own report history. `vortex-emulator` had the reply composer and no
+        // header for the request until 2026-08-11.
+        this._composers.set(1834, GetMyCfhReportStatusMessageComposer);
         this._composers.set(3336, GuideSessionInviteRequesterMessageComposer);
         this._composers.set(2545, ChatReviewGuideDecidesOnOfferMessageComposer);
         this._composers.set(349, ChatReviewGuideDetachedMessageComposer);

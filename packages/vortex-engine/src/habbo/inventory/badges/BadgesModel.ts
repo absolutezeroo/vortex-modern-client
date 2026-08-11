@@ -95,16 +95,7 @@ export class BadgesModel implements IBadgesModel
             const name = getName(data.badgeId);
             const desc = getDesc(data.badgeId);
 
-            // TODO(AS3): AS3 passes `(data.ownerCount, data.badgeRarityId)` as the last two
-            // arguments here. This server does not send them in the bulk list: AS3's list parser
-            // (sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3206/_SafeCls_3564.as::parse())
-            // reads four fields per badge — slotId, badgeCode, ownerCount, badgeRarityId — while
-            // vortex-emulator's BadgesEventMessageComposerSerializer.cs writes only the first two,
-            // and this port's BadgesMessageParser matches the emulator. So every badge loaded at
-            // login gets rarity 0 until that serializer writes the two missing integers and the
-            // parser reads them. The live-award path (BadgeReceivedEvent) does carry both on both
-            // sides and is wired.
-            const badge = new Badge(data.badgeId, name, desc, isUnseen);
+            const badge = new Badge(data.badgeId, name, desc, isUnseen, data.ownerCount, data.badgeRarityId);
 
             if(isUnseen)
             {
