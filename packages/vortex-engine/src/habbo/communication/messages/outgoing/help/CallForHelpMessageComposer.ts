@@ -28,7 +28,7 @@ export class CallForHelpMessageComposer extends MessageComposer<unknown[]>
         topicId: number,
         reportedUserId: number,
         roomId: number,
-        chatEntries: string[],
+        chatEntries: Array<number | string>,
         reporterName: string,
         reporterEmail: string
     )

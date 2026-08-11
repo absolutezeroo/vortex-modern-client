@@ -4,6 +4,7 @@ export * from './CallForHelpFromIMMessageComposer';
 export * from './CallForHelpFromPhotoMessageComposer';
 export * from './CallForHelpFromSelfieMessageComposer';
 export * from './CallForHelpMessageComposer';
+export * from './ReportBullyMessageComposer';
 export * from './ChangeUserNameMessageComposer';
 export * from './ChatReviewSessionCreateMessageComposer';
 export * from './CheckUserNameMessageComposer';
