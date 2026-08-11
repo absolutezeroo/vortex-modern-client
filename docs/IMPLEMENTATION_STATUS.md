@@ -332,23 +332,37 @@ dropping a packet the server took the trouble to build — the `ProductOffer` re
 unhandled exactly that way, with `GetProductOfferComposer` going out on 1692 and a fully
 serialised offer coming back on 1911 to nobody.
 
-**The count is not a work list.** Most of the 89 belong to whole subsystems this port has not
-started — Game2/snowstorm (18), NFT and collectibles (16), camera, crafting, treasure hunt,
-YouTube. Judge each by whether its module is ported. The ones sitting in *ported* modules are the
-real finds, and at the time of writing they include:
+**The count is not a work list, and "the module is ported" is not enough either.** Most of the 89
+belong to whole subsystems this port has not started — Game2/snowstorm (18), NFT and collectibles
+(16), camera, crafting, treasure hunt, YouTube. But a header in a *ported* module can still be
+blocked on an unported **consumer**, which is the trap worth naming: registering an event whose
+handler has nowhere to deliver is ceremony, and it manufactures exactly the ported-but-unwired
+shape this document keeps warning about.
 
-| Header | Message | Module |
+The catalog group was checked one by one on 2026-08-11, and only two of the six were real:
+
+| Header | Message | Verdict |
 |---|---|---|
-| 594 | `RoomChatSettings` | `habbo/freeflowchat` — and `HabboFreeFlowChat` has a TODO naming this exact handler |
-| 2474 | `MyCfhReportStatus` | `habbo/help` — the reply half of `requestReportsStatus()`, whose *request* header (1834) the emulator does not define |
+| 533 | `LimitedEditionSoldOut` | **done** — handler is on `HabboCatalog`, ported |
+| 2735 | `GiftReceiverNotFound` | **done** — same |
+| 1911 | `ProductOffer` | **done** — see above |
+| 1750 | `IsOfferGiftable` | not in the AS3 event registry at all: the emulator's own, needs deciding |
+| 2013 / 2155 | `TargetedOfferNotFound` / `TargetedOffer` | blocked: `catalog/targetedoffers/` is 1,004 AS3 lines and the port's directory holds only `.gitkeep` |
+| 3787 | `RoomAdPurchaseInfo` | blocked: its only consumer is `RoomAdsCatalogWidget` (401 lines), unported — which is also what the three `roomAdPurchaseData` markers wait on |
+
+Layouts ship for both blocked groups (`targeted_offer_*`, `layout_roomads`), so those are
+subsystem ports rather than asset gaps.
+
+Elsewhere, still unchecked or known-blocked:
+
+| Header | Message | Note |
+|---|---|---|
+| 594 | `RoomChatSettings` | **correctly deferred** — verified against AS3: the handler only sets `floodSensitivity`, which nothing in this port reads. The existing TODO holds up |
+| 2474 | `MyCfhReportStatus` | the emulator sends the reply but defines no header for the *request* (1834), so the feature is half-built on both sides |
 | 2129 | `RemainingMutePeriod` | chat |
-| 533 / 1750 / 2013 / 2155 / 2735 / 3787 | limited-edition sold out, offer-giftable, targeted offers, gift-receiver-not-found, room-ad purchase info | `habbo/catalog` |
 | 3510 | `BadgePointLimits` | `habbo/inventory` badges |
 | 1235 / 9201 / 2145 | occupied tiles, custom stacking height, post-it placed | `habbo/room` |
 | 583 / 3727 | emerald and silver balances | currency |
-
-Header 2474 is worth a second look: the emulator sends the report-status *reply* but defines no
-header for the *request*, so that feature is half-built on the server as well as here.
 
 ### The 2026-08-10 wire pass — what the audits found once the TODO list ran dry
 
