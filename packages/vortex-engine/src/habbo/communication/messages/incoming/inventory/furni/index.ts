@@ -3,3 +3,4 @@ export {FurniListAddOrUpdateMessageEvent} from './FurniListAddOrUpdateMessageEve
 export {FurniListRemoveMessageEvent} from './FurniListRemoveMessageEvent';
 export {FurniListRemoveMultipleMessageEvent} from './FurniListRemoveMultipleMessageEvent';
 export {FurniListInvalidateMessageEvent} from './FurniListInvalidateMessageEvent';
+export * from './PostItPlacedMessageEvent';

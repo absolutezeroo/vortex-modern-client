@@ -222,6 +222,7 @@ import {
 // Incoming Events - Catalog
 import {RemainingMutePeriodMessageEvent} from './messages/incoming/room/session/RemainingMutePeriodMessageEvent';
 import {BadgePointLimitsMessageEvent} from './messages/incoming/inventory/badges/BadgePointLimitsMessageEvent';
+import {PostItPlacedMessageEvent} from './messages/incoming/inventory/furni/PostItPlacedMessageEvent';
 import {SilverBalanceMessageEvent} from './messages/incoming/collectibles/SilverBalanceMessageEvent';
 import {EmeraldBalanceMessageEvent} from './messages/incoming/collectibles/EmeraldBalanceMessageEvent';
 import {
@@ -2162,6 +2163,8 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2129, RemainingMutePeriodMessageEvent);
         // The badge-point limits table, read by HabboInventory into the localization manager.
         this._events.set(3510, BadgePointLimitsMessageEvent);
+        // The post-it sheet count, read by HabboInventory into the furni model.
+        this._events.set(2145, PostItPlacedMessageEvent);
         this._events.set(3727, SilverBalanceMessageEvent);
         this._events.set(583, EmeraldBalanceMessageEvent);
         this._events.set(2155, TargetedOfferMessageEvent);

@@ -1,6 +1,7 @@
 import {OpenFlatConnectionMessageComposer} from '@habbo/communication/messages/outgoing/room/session/OpenFlatConnectionMessageComposer';
 import type {IFurniModel} from './IFurniModel';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
+import type {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
 import type {IFurnitureItem} from '../items/IFurnitureItem';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {IFurnitureItemData} from '../items/FurnitureItemData';
@@ -1293,6 +1294,34 @@ export class FurniModel implements IFurniModel
     {
         this._furniDataSet.add(groupItem);
         this._furniData.push(groupItem);
+    }
+
+    /**
+     * Rewrites a post-it stack's remaining-sheet count.
+     *
+     * The count lives *inside* the item's stuff data as a string, not as a field of its own, which
+     * is why this has to reach through `stuffData` and put the object back rather than setting a
+     * property. AS3 scans every group because a single item id can only be in one of them and it
+     * does not know which.
+     */
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::updatePostItCount()
+    updatePostItCount(itemId: number, itemsLeft: number): void
+    {
+        for(const groupItem of this._furniData)
+        {
+            const item = groupItem.getItem(itemId);
+
+            if(item == null) continue;
+
+            const stuffData = item.stuffData as LegacyStuffData | null;
+
+            if(stuffData == null) continue;
+
+            stuffData.setString(String(itemsLeft));
+            item.stuffData = stuffData;
+
+            groupItem.replaceItem(itemId, item);
+        }
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::removeItem()

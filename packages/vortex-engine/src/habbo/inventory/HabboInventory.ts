@@ -27,6 +27,8 @@ import {EffectsModel} from './effects/EffectsModel';
 import {PetsModel} from './pets/PetsModel';
 import {Pet} from './pets/Pet';
 import {PetFigureData} from './pets/PetFigureData';
+import {PostItPlacedMessageEvent} from '@habbo/communication/messages/incoming/inventory/furni/PostItPlacedMessageEvent';
+import type {PostItPlacedMessageParser} from '@habbo/communication/messages/parser/inventory/furni/PostItPlacedMessageParser';
 import {BadgePointLimitsMessageEvent} from '@habbo/communication/messages/incoming/inventory/badges/BadgePointLimitsMessageEvent';
 import type {BadgePointLimitsMessageParser} from '@habbo/communication/messages/parser/inventory/badges/BadgePointLimitsMessageParser';
 import {BadgeReceivedEvent} from '../communication/messages/incoming/inventory/badges/BadgeReceivedEvent';
@@ -1328,6 +1330,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication.addMessageEvent(new FurniListRemoveMessageEvent(this.onFurniListRemove)),
             this._communication.addMessageEvent(new FurniListRemoveMultipleMessageEvent(this.onFurniListRemoveMultiple)),
             this._communication.addMessageEvent(new FurniListInvalidateMessageEvent(this.onFurniListInvalidate)),
+            this._communication.addMessageEvent(new PostItPlacedMessageEvent(this.onPostItPlaced)),
             // AS3 registers these on its own inventory message handler (`_SafeCls_1951`), which
             // this port folds into HabboInventory. Both replies belong to the *selling* flow: the
             // first decides whether the offer dialog may open at all, the second reports the
@@ -1746,6 +1749,20 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
      * Goes nowhere near the badges model: AS3 pushes every pair straight into the localization
      * manager, which is what later answers "how many points is this achievement level worth".
      */
+    /**
+     * A post-it sheet was placed. Rewrites the stack's remaining count in the furni model, which
+     * keeps it inside the item's stuff data rather than as a field.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onPostItPlaced()
+    private onPostItPlaced = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as PostItPlacedMessageParser | null;
+
+        if(parser === null || this._furniModel === null) return;
+
+        this._furniModel.updatePostItCount(parser.id, parser.itemsLeft);
+    };
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onBadgePointLimits()
     private onBadgePointLimits = (event: IMessageEvent): void =>
     {
