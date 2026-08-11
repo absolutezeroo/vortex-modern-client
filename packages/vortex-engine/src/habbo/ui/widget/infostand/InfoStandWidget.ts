@@ -34,6 +34,7 @@ import {CommandConfiguration} from './CommandConfiguration';
 import {RoomWidgetInfostandExtraParamEnum} from '../enums/RoomWidgetInfostandExtraParamEnum';
 import {RoomWidgetRoomObjectMessage} from '../messages/RoomWidgetRoomObjectMessage';
 import {RoomWidgetUserActionMessage} from '../messages/RoomWidgetUserActionMessage';
+import type {RelationshipStatusInfo} from '@habbo/communication/messages/incoming/users/RelationshipStatusInfo';
 import type {InfoStandWidgetHandler} from '@habbo/ui/handler/InfoStandWidgetHandler';
 import {InfoStandFurniView} from './InfoStandFurniView';
 import {InfoStandCrackableFurniView} from './InfoStandCrackableFurniView';
@@ -231,7 +232,7 @@ export class InfoStandWidget extends RoomWidgetBase
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::setRelationshipStatus()
-    public setRelationshipStatus(userId: number, statuses: unknown): void
+    public setRelationshipStatus(userId: number, statuses: Map<number, RelationshipStatusInfo>): void
     {
         if(this._userData.userId === userId)
         {

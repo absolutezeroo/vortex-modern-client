@@ -18,6 +18,9 @@ import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {RelationshipStatusEnum} from '@habbo/friendlist/RelationshipStatusEnum';
+import type {RelationshipStatusInfo} from '@habbo/communication/messages/incoming/users/RelationshipStatusInfo';
+import {GetExtendedProfileMessageComposer} from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget';
 import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
 import {RoomWidgetOpenProfileMessage} from '../messages/RoomWidgetOpenProfileMessage';
@@ -36,6 +39,10 @@ export class InfoStandUserView
     protected _widget: InfoStandWidget;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_window
     protected _window: IItemListWindow | null = null;
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_9200
+    // Name DERIVED: obfuscated in every tree, named after the layout element it holds.
+    private _relationshipContainer: IItemListWindow | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_4558
     protected _infoBorder: IWindowContainer | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_4641
@@ -77,11 +84,22 @@ export class InfoStandUserView
         this._infoBorder = window.getListItemByName('info_border') as IWindowContainer | null;
         this._elementList = this._infoBorder?.findChildByName('infostand_element_list') as IItemListWindow | null ?? null;
 
-        // TODO(AS3): relationship_status_container display (config-gated,
-        // populated via setRelationshipStatuses()) — deferred, keep hidden.
-        const relationshipContainer = this._infoBorder?.findChildByName('relationship_status_container');
+        // AS3: .../infostand/InfoStandUserView.as::createWindow()
+        // The container is config-gated as a whole, and each of the three rows is then shown or
+        // hidden per user by setRelationshipStatuses().
+        this._relationshipContainer = this._infoBorder?.findChildByName('relationship_status_container') as IItemListWindow | null ?? null;
 
-        if(relationshipContainer) relationshipContainer.visible = false;
+        if(this._relationshipContainer)
+        {
+            this._relationshipContainer.visible = this._widget.handler.isRelationshipStatusEnabled;
+        }
+
+        for(const status of RelationshipStatusEnum.displayableStatuses)
+        {
+            const link = this._infoBorder?.findChildByName(`${RelationshipStatusEnum.statusAsString(status)}_randomusername`);
+
+            if(link) link.procedure = this.onRelationshipUserNameLinkClicked;
+        }
 
         window.name = name;
         this._widget.mainContainer.addChild(window);
@@ -287,15 +305,58 @@ export class InfoStandUserView
     }
 
     /**
-	 * TODO(AS3): setRelationshipStatuses() — populates the relationship_status_container
-	 * rows (heart/smile/bobba) hidden in createWindow() above; deferred with the
-	 * rest of the relationship-status feature (needs RoomSessionFavouriteGroupUpdateEvent
-	 * wiring, not part of the Phase 1 identity scope).
-	 */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setRelationshipStatuses()
-    public setRelationshipStatuses(_statuses: unknown): void
+     * Fills the heart / smile / bobba rows from the server's per-status summary.
+     *
+     * Each row shows *one* named friend and, if there is more than one, an "and N others" line —
+     * so the count is registered as a localization parameter of `friendCount - 1`, not
+     * `friendCount`. A status the server did not mention hides its row entirely.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setRelationshipStatuses()
+    public setRelationshipStatuses(statuses: Map<number, RelationshipStatusInfo>): void
     {
+        if(!this._infoBorder || !this._widget) return;
+
+        for(const status of RelationshipStatusEnum.displayableStatuses)
+        {
+            const name = RelationshipStatusEnum.statusAsString(status);
+            const row = this._infoBorder.findChildByName(`relationship_${name}`);
+            const info = statuses.get(status) ?? null;
+
+            if(info == null)
+            {
+                if(row) row.visible = false;
+
+                continue;
+            }
+
+            if(row) row.visible = info.friendCount > 0;
+
+            const link = this._infoBorder.findChildByName(`${name}_randomusername`);
+
+            if(link)
+            {
+                link.caption = info.randomFriendName;
+                link.id = info.randomFriendId;
+            }
+
+            const others = this._infoBorder.findChildByName(`${name}_others`);
+
+            if(others) others.visible = info.friendCount > 1;
+
+            this._widget.handler.container?.localization?.registerParameter(
+                `infostand.relstatus.${name}.others`, 'amount', String(info.friendCount - 1)
+            );
+        }
     }
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::onRelationshipUserNameLinkClicked()
+    // The link carries the friend's id in the window's own `id`, which is what setRelationshipStatuses() put there.
+    private onRelationshipUserNameLinkClicked = (event: WindowEvent, target: IWindow): void =>
+    {
+        if(event.type !== 'WME_CLICK' || !target) return;
+
+        this._widget.handler.container?.connection?.send(new GetExtendedProfileMessageComposer(target.id));
+    };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::update()
     // TODO(AS3): badge glow/preserve tracking (selectedBadges, playGlow) not

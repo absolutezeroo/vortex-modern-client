@@ -26,6 +26,8 @@ import {StuffDataFactory} from '@habbo/room/object/data/StuffDataFactory';
 import {
     HabboGroupDetailsMessageEvent
 } from '@habbo/communication/messages/incoming/users/HabboGroupDetailsMessageEvent';
+import {RelationshipStatusInfoEvent} from '@habbo/communication/messages/incoming/users/RelationshipStatusInfoEvent';
+import type {RelationshipStatusInfoMessageParser} from '@habbo/communication/messages/parser/users/RelationshipStatusInfoMessageParser';
 import {
     GetHabboGroupDetailsMessageComposer
 } from '@habbo/communication/messages/outgoing/users/GetHabboGroupDetailsMessageComposer';
@@ -180,6 +182,13 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
             this._groupDetailsEvent = null;
         }
 
+        if(this._container?.connection && this._relationshipStatusEvent)
+        {
+            this._container.connection.removeMessageEvent(this._relationshipStatusEvent);
+            this._relationshipStatusEvent.dispose();
+            this._relationshipStatusEvent = null;
+        }
+
         const previousEvents = this._container?.roomSessionManager?.sessionEvents;
 
         if(previousEvents)
@@ -224,8 +233,15 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         {
             this._groupDetailsEvent = new HabboGroupDetailsMessageEvent(this.onGroupDetails);
             value.connection.addMessageEvent(this._groupDetailsEvent);
+
+            this._relationshipStatusEvent = new RelationshipStatusInfoEvent(this.onRelationshipStatusEvent);
+            value.connection.addMessageEvent(this._relationshipStatusEvent);
         }
     }
+
+    // AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::_SafeStr_6375
+    // Name DERIVED: obfuscated in every tree, named after the event it holds.
+    private _relationshipStatusEvent: RelationshipStatusInfoEvent | null = null;
 
     private _widget: InfoStandWidget | null = null;
 
@@ -268,6 +284,18 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     public get type(): string 
     {
         return 'RWE_INFOSTAND';
+    }
+
+    /**
+     * Whether the infostand shows the heart / smile / bobba rows at all. Gates the container; the
+     * three rows inside it are then shown per user by `setRelationshipStatuses()`.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::createWindow()
+    // (the `relationship.status.enabled` read; AS3 does it inline in the view, which has no config
+    // of its own here — this handler is where every other config read in the widget already lives)
+    public get isRelationshipStatusEnabled(): boolean
+    {
+        return this._container?.config?.getBoolean('relationship.status.enabled') ?? false;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::get isActivityDisplayEnabled()
@@ -918,6 +946,22 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::onGroupDetails()
+    /**
+     * A user's relationship summary. Applied only while the infostand is actually on screen — the
+     * server answers for whoever was last asked about, which may no longer be who is shown.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::onRelationshipStatusEvent()
+    private onRelationshipStatusEvent = (event: IMessageEvent): void =>
+    {
+        if(!this._widget || !this._widget.mainWindow?.visible) return;
+
+        const parser = event.parser as RelationshipStatusInfoMessageParser | null;
+
+        if(parser == null) return;
+
+        this._widget.setRelationshipStatus(parser.userId, parser.relationshipStatusMap);
+    };
+
     private onGroupDetails = (event: IMessageEvent): void =>
     {
         const data = (event as HabboGroupDetailsMessageEvent).data;
