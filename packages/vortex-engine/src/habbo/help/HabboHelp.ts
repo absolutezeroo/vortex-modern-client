@@ -1,6 +1,7 @@
 import type {IContext} from '@core/runtime';
 import {Component, ComponentDependency} from '@core/runtime';
 import type {IWindow} from '@core/window/IWindow';
+import type {IModalDialog} from '@habbo/window/utils/IModalDialog';
 import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
@@ -277,6 +278,30 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     }
 
     /**
+	 * Toggle the new-flow help window
+	 */
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::toggleNewHelpWindow()
+    // forwards to `TopicsFlowHelpController.toggleWindow()`, the 933-line new CFH flow, unported.
+    // Declared rather than omitted because two ported call sites reach it: the help window's
+    // "report bullying" button (`HelpController`) and guide-reporting status 0.
+    toggleNewHelpWindow(): void
+    {
+        log.warn('toggleNewHelpWindow: TopicsFlowHelpController is not ported - the new help window did not open');
+    }
+
+    /**
+	 * Build one of this component's XML layouts as a modal dialog
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::getModalXmlWindow()
+    // AS3 fetches the asset and calls `buildModalDialogFromXML()`; `buildModalWidgetLayout()` is
+    // this port's name for that pair, as `getXmlWindow()`/`buildWidgetLayout()` are for the
+    // non-modal one.
+    getModalXmlWindow(name: string): IModalDialog | null
+    {
+        return this._windowManager?.buildModalWidgetLayout(name) ?? null;
+    }
+
+    /**
 	 * Open the emergency help request form
 	 */
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::startEmergencyRequest()
@@ -310,20 +335,17 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     }
 
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as
-    // Eight public members are still absent, each blocked on something named:
+    // Six public members are still absent, each blocked on something named:
     //   - `get soundManager()` — no IIDHabboSoundManager dependency is declared above. AS3 takes
     //     it optionally (`false`), so adding it is safe, but nothing here reads it yet.
-    //   - `getModalXmlWindow()` — `buildModalDialogFromXML()` takes raw XML, and the manager's
-    //     name→XML map (`_widgetLayouts`) is private, so there is no by-name modal twin of
-    //     `buildWidgetLayout()` to call. Needs that pair exposed first.
     //   - `requestReportsStatus()` — sends `_SafeCls_2121`, header 1834 in the primary registry.
     //     The port has no composer for 1834 and `vortex-emulator` does not define the header
     //     either, so there is nothing to send it to. Not guessed at.
-    //   - `toggleNewHelpWindow()` — opens `TopicsFlowHelpController` (933 lines), unported.
     //   - `closeHabboWay()`/`showHabboWayQuiz()`/`showSafetyQuiz()` — need `HabboWayController`
     //     and `HabboWayQuizController`, neither ported.
     //   - `closeSafetyBooklet()` — needs `SafetyBookletController`, unported.
-    // The rest of the list this comment used to carry is now implemented above.
+    // `getModalXmlWindow()` and `toggleNewHelpWindow()` have since landed above — the first for
+    // real, the second as a documented stub with two live callers.
 
     /**
 	 * The own user name (from name change controller)
@@ -870,21 +892,17 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     {
         switch(parser.statusCode)
         {
-            // TODO(AS3): status 0 calls `toggleNewHelpWindow()`, which opens
-            // `TopicsFlowHelpController` (933 lines,
-            // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/TopicsFlowHelpController.as).
-            // That controller is the whole "new CFH flow" UI and is unported; every
-            // `openReporting*()` entry point on it is unported with it.
             case 0:
-                log.warn('Guide reporting status 0: the new help window (TopicsFlowHelpController) is not ported');
+                this.toggleNewHelpWindow();
                 break;
 
             // TODO(AS3): status 1 calls `guideHelpManager.showPendingTicket(parser.pendingTicket)`.
-            // Neither half exists here: `GuideHelpManager` has no `showPendingTicket()`, and
-            // `GuideReportingStatusMessageParser` does not read a `pendingTicket` field off the
-            // wire — porting this needs the parser widened first.
+            // `HelpController.showPendingTicket()` is ported and picks the right one of four
+            // layouts, but `GuideReportingStatusMessageParser` reads no `pendingTicket` field off
+            // the wire and its AS3 payload type (`_SafePkg_2970._SafeCls_2969`) is unported, so
+            // there is nothing to hand it. Widening the parser and porting that DTO comes first.
             case 1:
-                log.warn('Guide reporting status 1: pending-ticket display is not ported');
+                log.warn('Guide reporting status 1: the pending-ticket payload is not parsed yet');
                 break;
 
             default:

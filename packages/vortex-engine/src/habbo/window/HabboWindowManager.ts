@@ -719,9 +719,34 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
      * In AS3: buildModalDialogFromXML(xml: XML): IModalDialog
      */
     // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::buildModalDialogFromXML()
-    public buildModalDialogFromXML(xml: string): IModalDialog 
+    public buildModalDialogFromXML(xml: string): IModalDialog
     {
         return new ModalDialog(this, xml);
+    }
+
+    /**
+     * Build a modal dialog from a registered layout name.
+     *
+     * The modal twin of `buildWidgetLayout()`: same name→XML lookup, `buildModalDialogFromXML()`
+     * instead of `buildFromXML()`. AS3 has no single method for this — every caller does the
+     * asset lookup itself and then picks one of the two builders, which is exactly what
+     * `getModalXmlWindow()` and `getXmlWindow()` are on each component. Without this the layout
+     * map stays private and a by-name modal cannot be built at all.
+     */
+    // TS-only: composes two existing AS3 steps so callers of `getModalXmlWindow()` have something
+    // to delegate to, mirroring `buildWidgetLayout()`.
+    public buildModalWidgetLayout(name: string): IModalDialog | null
+    {
+        const xml = this._widgetLayouts.get(name);
+
+        if(!xml)
+        {
+            log.warn(`Widget layout not found: ${name}`);
+
+            return null;
+        }
+
+        return this.buildModalDialogFromXML(xml);
     }
 
     /**

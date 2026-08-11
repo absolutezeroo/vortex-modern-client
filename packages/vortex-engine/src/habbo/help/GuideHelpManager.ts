@@ -1,4 +1,5 @@
 import {ChatReviewReporterFeedbackCtrl} from './ChatReviewReporterFeedbackCtrl';
+import {HelpController} from './guidehelp/HelpController';
 import {GuideSessionData} from './GuideSessionData';
 import {Logger} from '@core/utils/Logger';
 
@@ -10,16 +11,17 @@ const log = Logger.getLogger('habbo.help.GuideHelpManager');
  * Guide help coordination manager
  *
  * In AS3 this class holds almost no logic of its own: it is a façade over three sub-controllers
- * and forwards to them. One of the three is ported; the forwards to the other two are still
- * stubs, and each names the class it is waiting on:
+ * and forwards to them. Two of the three are ported:
  *
- * - `guidehelp/GuideSessionController.as` (1,826 lines) — the guide tool, help requests and the
- *   whole guide-session conversation. Backs `showGuideTool()`, `createHelpRequest()` and
- *   `openReportWindow()`. **Unported.**
- * - `guidehelp/HelpController.as` (271 lines) — the tour popup and the pending-ticket view.
- *   Backs `openTourPopup()` and `showPendingTicket()`. **Unported.**
+ * - `guidehelp/HelpController.as` (271 lines) — the main help menu and the new-user tour popup.
+ *   Backs `openTourPopup()` and `showPendingTicket()`. **Ported**, except the pending-ticket view,
+ *   which waits on a payload the wire parser does not read yet.
  * - `ChatReviewReporterFeedbackCtrl.as` (117 lines) — the post-report feedback panel. Backs
  *   `showFeedback()`. **Ported.**
+ * - `guidehelp/GuideSessionController.as` (1,826 lines) — the guide tool, help requests and the
+ *   whole guide-session conversation. Backs `showGuideTool()`, `createHelpRequest()` and
+ *   `openReportWindow()`. **Unported**, and the one thing still standing between a guide report
+ *   and a working guide system.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/GuideHelpManager.as
  */
@@ -36,12 +38,16 @@ export class GuideHelpManager
         this._habboHelp = habboHelp;
         this._guideData = new GuideSessionData();
         this._reporterFeedbackCtrl = new ChatReviewReporterFeedbackCtrl(habboHelp);
+        this._helpController = new HelpController(this);
 
         log.debug('GuideHelpManager initialized');
     }
 
     // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::_reporterFeedbackCtrl
     private _reporterFeedbackCtrl: ChatReviewReporterFeedbackCtrl | null;
+
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::_helpController
+    private _helpController: HelpController | null;
 
     /**
 	 * The post-report feedback panel
@@ -114,15 +120,13 @@ export class GuideHelpManager
 	 *
 	 * @param pendingTicket The ticket payload from the guide-reporting status message
 	 */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/GuideHelpManager.as::showPendingTicket()
-    // forwards to `HelpController.showPendingTicket()`, unported. The argument is typed `unknown`
-    // because its AS3 type (`_SafePkg_2970._SafeCls_2969`) is not ported either, and because
-    // `GuideReportingStatusMessageParser` does not read a `pendingTicket` field off the wire yet —
-    // so there is currently nothing to pass in. Declared so the member is visible rather than
-    // silently missing; `HabboHelp.handleGuideReportingStatus()` documents the same gap.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/GuideHelpManager.as::showPendingTicket()
+    // The argument stays `unknown`: its AS3 type (`_SafePkg_2970._SafeCls_2969`) is unported and
+    // `GuideReportingStatusMessageParser` reads no `pendingTicket` field, so nothing can call this
+    // yet. `HelpController.showPendingTicket()` carries the detail of what remains.
     showPendingTicket(pendingTicket: unknown): void
     {
-        log.warn('showPendingTicket: HelpController is not ported', pendingTicket);
+        this._helpController?.showPendingTicket(pendingTicket);
     }
 
     /**
@@ -140,13 +144,29 @@ export class GuideHelpManager
     /**
 	 * Open the tour popup
 	 */
-    // TODO(AS3): .../src/com/sulake/habbo/help/GuideHelpManager.as::openTourPopup()
-    // forwards to `HelpController.openTourPopup()` and latches `_tourPopupShown`, unported. AS3
-    // also opens this on a timer started from `onRoomEnter()` when the new-user tour is enabled
-    // and the session is not a real noob; that timer waits on the same controller.
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::openTourPopup()
+    // TODO(AS3): AS3 also opens this on a timer started from `onRoomEnter()` when the new-user
+    // tour is enabled, the identity is new and the session is not a real noob. That timer is not
+    // wired here: this manager makes no subscriptions of its own, since every help subscription in
+    // this port lives in `HelpMessageHandler`.
     openTourPopup(): void
     {
-        log.warn('openTourPopup: HelpController is not ported');
+        this._helpController?.openTourPopup();
+        this._tourPopupShown = true;
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::_tourPopupShown
+    // Name derived (`_SafeStr_9610`): latched once the popup has been offered so the room-enter
+    // timer never offers it twice in a session.
+    private _tourPopupShown: boolean = false;
+
+    /**
+	 * Whether the new-user tour has already been offered this session
+	 */
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::_tourPopupShown
+    get tourPopupShown(): boolean
+    {
+        return this._tourPopupShown;
     }
 
     /**
@@ -168,12 +188,18 @@ export class GuideHelpManager
     {
         if(this._disposed) return;
 
-        // AS3 also disposes HelpController and GuideSessionController here, and resets the tour
-        // timer; those two are still unported.
+        // AS3 also disposes GuideSessionController here and resets the tour timer; both are still
+        // unported.
         if(this._reporterFeedbackCtrl)
         {
             this._reporterFeedbackCtrl.dispose();
             this._reporterFeedbackCtrl = null;
+        }
+
+        if(this._helpController)
+        {
+            this._helpController.dispose();
+            this._helpController = null;
         }
 
         this._habboHelp = null;
