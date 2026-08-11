@@ -27,6 +27,8 @@ import {
     CallForHelpFromSelfieMessageComposer,
     DeletePendingCallsForHelpMessageComposer,
     ReportBullyMessageComposer,
+    GetQuizQuestionsComposer,
+    PostQuizAnswersComposer,
     GetGuideReportingStatusMessageComposer,
     GetPendingCallsForHelpMessageComposer,
     GuideSessionCreateMessageComposer,
@@ -2865,6 +2867,9 @@ export class HabboMessages implements IMessageConfiguration
         // Bully report, sent by the guardians-gated bully_report form. Header from the primary
         // registry (`_composers[293] = _SafeCls_3410`); the emulator defines no handler for it.
         this._composers.set(293, ReportBullyMessageComposer);
+        // Quiz pair, both from the primary registry and both defined by the emulator.
+        this._composers.set(1982, GetQuizQuestionsComposer);
+        this._composers.set(1387, PostQuizAnswersComposer);
         this._composers.set(2455, GetGuideReportingStatusMessageComposer);
         this._composers.set(92, GetPendingCallsForHelpMessageComposer);
         this._composers.set(2181, GuideSessionCreateMessageComposer);

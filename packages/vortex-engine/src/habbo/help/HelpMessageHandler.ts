@@ -23,6 +23,8 @@ import {
     GuideTicketCreationResultMessageEvent,
     GuideTicketResolutionMessageEvent,
     IssueCloseNotificationMessageEvent,
+    QuizDataMessageEvent,
+    QuizResultsMessageEvent,
     UserNameChangedMessageEvent,
 } from '@habbo/communication/messages/incoming/help';
 
@@ -35,6 +37,8 @@ import type {GuideReportingStatusMessageParser} from '@habbo/communication/messa
 import type {GuideTicketCreationResultMessageParser} from '@habbo/communication/messages/parser/help/GuideTicketCreationResultMessageParser';
 import type {GuideTicketResolutionMessageParser} from '@habbo/communication/messages/parser/help/GuideTicketResolutionMessageParser';
 import type {IssueCloseNotificationMessageParser} from '@habbo/communication/messages/parser/help/IssueCloseNotificationMessageParser';
+import type {QuizDataMessageParser} from '@habbo/communication/messages/parser/help/QuizDataMessageParser';
+import type {QuizResultsMessageParser} from '@habbo/communication/messages/parser/help/QuizResultsMessageParser';
 
 import type {HabboHelp} from './HabboHelp';
 
@@ -118,6 +122,12 @@ export class HelpMessageHandler
         // `HabboHelp.initComponent()`; this port centralises every help subscription here, so the
         // issue-close notification belongs with the other two CFH replies above.
         this.addMessageEvent(new IssueCloseNotificationMessageEvent(this.onIssueClose.bind(this)));
+
+        // Quiz events. AS3 subscribes these inside HabboWayQuizController's own constructor; they
+        // were not subscribed anywhere here, so a quiz's questions never arrived even once the
+        // request went out.
+        this.addMessageEvent(new QuizDataMessageEvent(this.onQuizData.bind(this)));
+        this.addMessageEvent(new QuizResultsMessageEvent(this.onQuizResults.bind(this)));
 
         // Sanction and topics
         // TODO(AS3): `SanctionStatusMessageEvent` has no header in `HabboMessages` on purpose. It
@@ -267,6 +277,32 @@ export class HelpMessageHandler
             : parser.messageText;
 
         this._help.windowManager?.alert('${mod.alert.title}', messageText, 0, null);
+    }
+
+    /**
+	 * A quiz's question set arrived — open the quiz window
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboWayQuizController.as::onQuizData()
+    private onQuizData(event: IMessageEvent): void
+    {
+        const parser = event.parser as QuizDataMessageParser | null;
+
+        if(!parser) return;
+
+        this._help.quizController?.handleQuizData(parser);
+    }
+
+    /**
+	 * The server marked the answers
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboWayQuizController.as::onQuizResults()
+    private onQuizResults(event: IMessageEvent): void
+    {
+        const parser = event.parser as QuizResultsMessageParser | null;
+
+        if(!parser) return;
+
+        this._help.quizController?.handleQuizResults(parser);
     }
 
     /**

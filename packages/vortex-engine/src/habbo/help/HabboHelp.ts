@@ -18,6 +18,7 @@ import {GuideHelpManager} from './GuideHelpManager';
 import {NameChangeController} from './NameChangeController';
 import {HabboWayController} from './HabboWayController';
 import {SafetyBookletController} from './SafetyBookletController';
+import {HabboWayQuizController} from './HabboWayQuizController';
 import {WelcomeScreenController} from './WelcomeScreenController';
 import {SanctionInfo} from './SanctionInfo';
 import {TopicsFlowHelpController} from './TopicsFlowHelpController';
@@ -130,6 +131,8 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     private _safetyBookletController: SafetyBookletController | null = null;
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_welcomeScreenController
     private _welcomeScreenController: WelcomeScreenController | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_habboWayQuizController
+    private _quizController: HabboWayQuizController | null = null;
     private _messageHandler: HelpMessageHandler | null = null;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/help/HabboHelp.as::_currentRoomId
     private _currentRoomId: number = 0;
@@ -1087,23 +1090,45 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * Show the Habbo Way quiz
 	 */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboWayController.as
-    // and SafetyBookletController.as both offer this from their closing panel; AS3 builds
-    // `HabboWayQuizController` (387 lines, unported) lazily and calls `showHabboWayQuiz()` on it.
-    // `habbo_way_quiz_xml` ships, so this is a window port and not a missing asset.
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::showHabboWayQuiz()
     showHabboWayQuiz(): void
     {
-        log.warn('showHabboWayQuiz: HabboWayQuizController is not ported - the quiz did not open');
+        this.requireQuizController().showHabboWayQuiz();
     }
 
     /**
 	 * Show the safety quiz
 	 */
-    // TODO(AS3): the same `HabboWayQuizController`, entered through `showSafetyQuiz()` instead —
-    // the two share a window and differ in which question set they load.
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::showSafetyQuiz()
     showSafetyQuiz(): void
     {
-        log.warn('showSafetyQuiz: HabboWayQuizController is not ported - the quiz did not open');
+        this.requireQuizController().showSafetyQuiz();
+    }
+
+    /**
+	 * The quiz controller, rebuilt if the previous one was disposed
+	 */
+    // AS3: both `showHabboWayQuiz()` and `showSafetyQuiz()` open with the same
+    // `if(_quizController == null || _quizController.disposed)` guard; extracted so it exists once.
+    private requireQuizController(): HabboWayQuizController
+    {
+        if(this._quizController === null || this._quizController.disposed)
+        {
+            this._quizController = new HabboWayQuizController(this);
+        }
+
+        return this._quizController;
+    }
+
+    /**
+	 * The quiz controller, when one has been built
+	 */
+    // TS-only: AS3 keeps it private and reaches it only through the two methods above. Exposed
+    // because `HelpMessageHandler` owns the two quiz subscriptions AS3 makes inside the controller
+    // itself, and has to route their payloads back.
+    get quizController(): HabboWayQuizController | null
+    {
+        return this._quizController;
     }
 
     /**
@@ -1325,6 +1350,12 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         {
             this._welcomeScreenController.dispose();
             this._welcomeScreenController = null;
+        }
+
+        if(this._quizController)
+        {
+            this._quizController.dispose();
+            this._quizController = null;
         }
 
         // Dispose registry handlers

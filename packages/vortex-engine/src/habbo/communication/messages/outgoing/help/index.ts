@@ -5,6 +5,8 @@ export * from './CallForHelpFromPhotoMessageComposer';
 export * from './CallForHelpFromSelfieMessageComposer';
 export * from './CallForHelpMessageComposer';
 export * from './ReportBullyMessageComposer';
+export * from './GetQuizQuestionsComposer';
+export * from './PostQuizAnswersComposer';
 export * from './ChangeUserNameMessageComposer';
 export * from './ChatReviewSessionCreateMessageComposer';
 export * from './CheckUserNameMessageComposer';

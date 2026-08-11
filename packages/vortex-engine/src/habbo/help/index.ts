@@ -8,6 +8,7 @@ export {TopicsFlowHelpController} from './TopicsFlowHelpController';
 export {GuideHelpManager} from './GuideHelpManager';
 export {GuideSessionData} from './GuideSessionData';
 export {HabboWayController} from './HabboWayController';
+export {HabboWayQuizController} from './HabboWayQuizController';
 export {SafetyBookletController} from './SafetyBookletController';
 export {WelcomeScreenController} from './WelcomeScreenController';
 export {HabboHelp} from './HabboHelp';
