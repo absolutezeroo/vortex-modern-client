@@ -7,6 +7,8 @@ export {ChatReviewReporterFeedbackCtrl} from './ChatReviewReporterFeedbackCtrl';
 export {TopicsFlowHelpController} from './TopicsFlowHelpController';
 export {GuideHelpManager} from './GuideHelpManager';
 export {GuideSessionData} from './GuideSessionData';
+export {HabboWayController} from './HabboWayController';
+export {SafetyBookletController} from './SafetyBookletController';
 export {HabboHelp} from './HabboHelp';
 export {HelpMessageHandler} from './HelpMessageHandler';
 export {NameChangeController} from './NameChangeController';
