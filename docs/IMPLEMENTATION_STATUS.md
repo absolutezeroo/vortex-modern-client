@@ -86,6 +86,7 @@ directions for the same reason:
 | After `TopicsFlowHelpController`               | **329**     |
 | After the room-ad and targeted-offer ports     | **324**     |
 | After `GuideSessionController`                 | **323**     |
+| After the five server-side wire gaps           | **320**     |
 
 It rose first because the pass kept finding behaviour missing with *no* marker on it —
 `log.debug('Show guide tool')` is not a documented gap, it is an invisible one — and every stub it
@@ -194,7 +195,20 @@ reading it as a byte cannot desync anything. Separately, `_unknownBoolean1` turn
 `isHidden`, a *different* field that both AS3 and the emulator (`[Id(13)] IsHidden`) already
 carried under that name.
 
-**What is genuinely blocked on the server, with the file named in each case:**
+**All five were fixed on 2026-08-11** (`vortex-emulator` commit "the four profile fields and two
+badge fields the client already reads", plus this port's "the four profile fields, the two badge
+fields, and header 1834"). Each needed both sides in one change — reading a field the server does
+not write runs off the end of the packet, which is why every one of them had sat open rather than
+being half-done. Two of the five turned out to be worse than recorded here: the missing profile
+fields **truncated the packet**, and the two-field badge list **desynced** as soon as a player had
+more than one badge, because the next slot id came out of the middle of the previous string. Wire
+tests now lock both layouts, including the empty-list cases.
+
+The two header lines (848 and 1834) are in that checkout's working tree but **not committed** —
+`Headers.cs` also carries an in-progress navigator change that was not mine to stage, so they need
+splitting out by hand (`git add -p`).
+
+The table below is kept as the record of what was wrong:
 
 | Gap | Client side | `vortex-emulator` side |
 |---|---|---|
