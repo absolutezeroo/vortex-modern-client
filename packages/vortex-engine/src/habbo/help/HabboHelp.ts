@@ -278,12 +278,33 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 * Build one of this component's XML window layouts by name
 	 */
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::getXmlWindow()
-    // AS3 does the asset lookup itself (`assets.getAssetByName(name + "_xml")` then
-    // `buildFromXML`); `buildWidgetLayout()` is this port's name for that pair, as
-    // `HabboGroupsManager.getXmlWindow()` already does.
-    getXmlWindow(name: string): IWindow | null
+    getXmlWindow(name: string, layer: number = 1): IWindow | null
     {
-        return this._windowManager?.buildWidgetLayout(name) ?? null;
+        return this._windowManager?.buildWidgetLayout(this.resolveLayoutName(name), layer) ?? null;
+    }
+
+    /**
+	 * Turn a caller's short layout name into the key the layout registry actually holds
+	 *
+	 * AS3 appends `"_xml"` before every lookup — `assets.getAssetByName(name + "_xml")` — because
+	 * an asset's real name is its `*Com.as` field name, and those end in `_xml`. This port
+	 * registers layouts under the shipped file's basename, so `chat_report_xml.xml` is keyed
+	 * `chat_report_xml` and a bare `chat_report` finds nothing. Every window this component opens
+	 * was missing for exactly that reason: the lookup returned null, the guard logged, and no
+	 * window appeared.
+	 *
+	 * The bare name is tried as a fallback because a handful of shipped layouts are named without
+	 * the suffix (`club_required.xml`), which is why `HabboGroupsManager.getXmlWindow()` works
+	 * while passing its name straight through.
+	 */
+    // TS-only: AS3 needs no such reconciliation — its asset library has one naming convention.
+    private resolveLayoutName(name: string): string
+    {
+        const suffixed = `${name}_xml`;
+
+        if(this._windowManager?.hasWidgetLayout(suffixed)) return suffixed;
+
+        return name;
     }
 
     /**
@@ -315,7 +336,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     // non-modal one.
     getModalXmlWindow(name: string): IModalDialog | null
     {
-        return this._windowManager?.buildModalWidgetLayout(name) ?? null;
+        return this._windowManager?.buildModalWidgetLayout(this.resolveLayoutName(name)) ?? null;
     }
 
     /**
