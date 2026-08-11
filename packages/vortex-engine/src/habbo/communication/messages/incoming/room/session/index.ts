@@ -13,3 +13,4 @@ export {RoomReadyMessageEvent} from './RoomReadyMessageEvent';
 export {YouAreNotSpectatorMessageEvent} from './YouAreNotSpectatorMessageEvent';
 export {YouArePlayingGameMessageEvent} from './YouArePlayingGameMessageEvent';
 export {YouAreSpectatorMessageEvent} from './YouAreSpectatorMessageEvent';
+export * from './RemainingMutePeriodMessageEvent';

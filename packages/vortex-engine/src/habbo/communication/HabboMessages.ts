@@ -220,6 +220,8 @@ import {
 } from './messages/incoming/mysterybox';
 
 // Incoming Events - Catalog
+import {RemainingMutePeriodMessageEvent} from './messages/incoming/room/session/RemainingMutePeriodMessageEvent';
+import {BadgePointLimitsMessageEvent} from './messages/incoming/inventory/badges/BadgePointLimitsMessageEvent';
 import {SilverBalanceMessageEvent} from './messages/incoming/collectibles/SilverBalanceMessageEvent';
 import {EmeraldBalanceMessageEvent} from './messages/incoming/collectibles/EmeraldBalanceMessageEvent';
 import {
@@ -2156,6 +2158,10 @@ export class HabboMessages implements IMessageConfiguration
         // The targeted-offer pair (`_events[2155]`/`_events[2013]`), read by OfferController.
         // The two collectible currencies. Both were being sent by the emulator's wallet module
         // and its NFT handlers with nothing on this side listening.
+        // The mute countdown, read by RoomChatHandler.
+        this._events.set(2129, RemainingMutePeriodMessageEvent);
+        // The badge-point limits table, read by HabboInventory into the localization manager.
+        this._events.set(3510, BadgePointLimitsMessageEvent);
         this._events.set(3727, SilverBalanceMessageEvent);
         this._events.set(583, EmeraldBalanceMessageEvent);
         this._events.set(2155, TargetedOfferMessageEvent);

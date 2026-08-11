@@ -19,6 +19,8 @@ import type {
 } from '../../communication/messages/parser/notifications/PetRespectNotificationEventParser';
 import type {ChatMessageEventParser, IChatLink} from '../../communication/messages/parser/room/chat/ChatMessageEventParser';
 
+import {RemainingMutePeriodMessageEvent} from '@habbo/communication/messages/incoming/room/session/RemainingMutePeriodMessageEvent';
+import type {RemainingMutePeriodMessageParser} from '@habbo/communication/messages/parser/room/session/RemainingMutePeriodMessageParser';
 import {FloodControlMessageEvent} from '../../communication/messages/incoming/room/chat/FloodControlMessageEvent';
 import type {
     FloodControlMessageParser
@@ -62,6 +64,7 @@ export class RoomChatHandler extends BaseHandler
 
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as::RoomChatHandler()
         this.addMessageEvent(connection, new FloodControlMessageEvent(this.onFloodControl.bind(this)));
+        this.addMessageEvent(connection, new RemainingMutePeriodMessageEvent(this.onRemainingMutePeriod.bind(this)));
 
         // TODO: Register additional message events when implemented
         // this.addMessageEvent(connection, new RespectNotificationMessageEvent(this.onRespectNotification.bind(this)));
@@ -184,6 +187,32 @@ export class RoomChatHandler extends BaseHandler
                 )
             );
         }
+    }
+
+    /**
+     * The player is muted for N more seconds.
+     *
+     * Unlike the flood event above, AS3 sends this one as an ordinary chat event on the player's
+     * *own* avatar (chat type 10, style 1) with the seconds in `extraParam` rather than the text —
+     * so it renders as a bubble over their head instead of an input-bar warning.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as::onRemainingMutePeriod()
+    private onRemainingMutePeriod(event: IMessageEvent): void
+    {
+        const parser = event.parser as RemainingMutePeriodMessageParser | null;
+
+        if(parser === null || !this.listener?.sessionEvents) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        this.listener.sessionEvents.emit(
+            RoomSessionChatEvent.RSCE_CHAT_EVENT,
+            new RoomSessionChatEvent(
+                RoomSessionChatEvent.RSCE_CHAT_EVENT, session, session.ownUserRoomId, '', 10, 1, null, parser.secondsRemaining
+            )
+        );
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as::onPetSupplementedNotification()

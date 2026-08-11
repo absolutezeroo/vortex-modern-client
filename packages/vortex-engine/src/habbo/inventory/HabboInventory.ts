@@ -27,6 +27,8 @@ import {EffectsModel} from './effects/EffectsModel';
 import {PetsModel} from './pets/PetsModel';
 import {Pet} from './pets/Pet';
 import {PetFigureData} from './pets/PetFigureData';
+import {BadgePointLimitsMessageEvent} from '@habbo/communication/messages/incoming/inventory/badges/BadgePointLimitsMessageEvent';
+import type {BadgePointLimitsMessageParser} from '@habbo/communication/messages/parser/inventory/badges/BadgePointLimitsMessageParser';
 import {BadgeReceivedEvent} from '../communication/messages/incoming/inventory/badges/BadgeReceivedEvent';
 import type {
     BadgeReceivedEventParser
@@ -1667,7 +1669,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
         this._badgeMessageEvents.push(
             this._communication.addMessageEvent(new BadgesMessageEvent(this.onBadges)),
-            this._communication.addMessageEvent(new BadgeReceivedEvent(this.onBadgeReceived))
+            this._communication.addMessageEvent(new BadgeReceivedEvent(this.onBadgeReceived)),
+            this._communication.addMessageEvent(new BadgePointLimitsMessageEvent(this.onBadgePointLimits))
         );
     }
 
@@ -1737,6 +1740,25 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // The third argument is AS3's `badgeId:int` — this port named the parameter `slotId` because
     // that is what initBadges() feeds it, but both trees write the same code->int map that the
     // unseen tracker joins against (AS3 `isUnseen(4, badgeId)`), so the position is faithful.
+    /**
+     * The badge-point limits table.
+     *
+     * Goes nowhere near the badges model: AS3 pushes every pair straight into the localization
+     * manager, which is what later answers "how many points is this achievement level worth".
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onBadgePointLimits()
+    private onBadgePointLimits = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as BadgePointLimitsMessageParser | null;
+
+        if(parser === null) return;
+
+        for(const entry of parser.data)
+        {
+            this._localization?.setBadgePointLimit(entry.badgeId, entry.limit);
+        }
+    };
+
     private onBadgeReceived = (event: IMessageEvent): void =>
     {
         const parser = event.parser as BadgeReceivedEventParser | null;
