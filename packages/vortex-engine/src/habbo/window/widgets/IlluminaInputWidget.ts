@@ -223,14 +223,15 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
     /**
 	 * Submit the current message via the handler.
 	 *
-	 * @param widgetId - The widget identifier
+	 * Takes no argument: AS3 passes the widget window it was constructed with, so callers cannot
+	 * submit on behalf of a different widget.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaInputWidget.as::submitMessage()
-    public submitMessage(widgetId: string): void
+    public submitMessage(): void
     {
-        if(this._submitHandler)
+        if(this._submitHandler && this._widgetWindow)
         {
-            this._submitHandler.onInput(widgetId, this._message);
+            this._submitHandler.onInput(this._widgetWindow, this._message);
         }
     }
 
@@ -295,7 +296,7 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
                 {
                     if(this._submitHandler && this._message.length > 0)
                     {
-                        this._submitHandler.onInput(this._widgetWindow?.name ?? '', this._message);
+                        this.submitMessage();
                         this._message = '';
 
                         if(this._input)
@@ -314,7 +315,7 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
                 {
                     if(this._submitHandler && this._message.length > 0)
                     {
-                        this._submitHandler.onInput(this._widgetWindow?.name ?? '', this._message);
+                        this.submitMessage();
                         this._message = '';
 
                         if(this._input)

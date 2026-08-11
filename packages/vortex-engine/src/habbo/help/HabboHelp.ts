@@ -31,6 +31,8 @@ import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import {IID_HabboNavigator} from '@iid/IIDHabboNavigator';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
+import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
+import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
 import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
 import {UsersMessageEvent} from '@habbo/communication/messages/incoming/room/engine/UsersMessageEvent';
@@ -107,6 +109,8 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     private _navigator: IHabboNavigator | null = null;
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_tracking
     private _tracking: IHabboTracking | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_soundManager
+    private _soundManager: IHabboSoundManager | null = null;
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_friendList
     private _friendList: IHabboFriendList | null = null;
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_freeFlowChat
@@ -262,6 +266,12 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         return this._navigator;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::get soundManager()
+    get soundManager(): IHabboSoundManager | null
+    {
+        return this._soundManager;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::get tracking()
     get tracking(): IHabboTracking | null
     {
@@ -379,9 +389,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     }
 
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as
-    // Six public members are still absent, each blocked on something named:
-    //   - `get soundManager()` — no IIDHabboSoundManager dependency is declared above. AS3 takes
-    //     it optionally (`false`), so adding it is safe, but nothing here reads it yet.
+    // Members still absent, each blocked on something named:
     //   - `requestReportsStatus()` — sends `_SafeCls_2121`, header 1834 in the primary registry.
     //     The port has no composer for 1834 and `vortex-emulator` does not define the header
     //     either, so there is nothing to send it to. Not guessed at.
@@ -479,6 +487,14 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
                 (tracking: IHabboTracking | null) =>
                 {
                     this._tracking = tracking;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboSoundManager,
+                (soundManager: IHabboSoundManager | null) =>
+                {
+                    this._soundManager = soundManager;
                 },
                 false
             ),

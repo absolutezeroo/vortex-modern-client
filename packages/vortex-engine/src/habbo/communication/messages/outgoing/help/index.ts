@@ -23,3 +23,7 @@ export * from './GuideSessionMessageMessageComposer';
 export * from './GuideSessionOnDutyUpdateMessageComposer';
 export * from './GuideSessionRequesterCancelsMessageComposer';
 export * from './GuideSessionResolvedMessageComposer';
+export * from './GuideSessionInviteRequesterMessageComposer';
+export * from './ChatReviewGuideDecidesOnOfferMessageComposer';
+export * from './ChatReviewGuideDetachedMessageComposer';
+export * from './ChatReviewGuideVoteMessageComposer';

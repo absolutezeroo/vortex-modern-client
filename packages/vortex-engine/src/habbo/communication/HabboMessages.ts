@@ -32,6 +32,10 @@ import {
     GetGuideReportingStatusMessageComposer,
     GetPendingCallsForHelpMessageComposer,
     GuideSessionCreateMessageComposer,
+    GuideSessionInviteRequesterMessageComposer,
+    ChatReviewGuideDecidesOnOfferMessageComposer,
+    ChatReviewGuideDetachedMessageComposer,
+    ChatReviewGuideVoteMessageComposer,
     GuideSessionFeedbackMessageComposer,
     GuideSessionGetRequesterRoomMessageComposer,
     GuideSessionGuideDecidesMessageComposer,
@@ -2916,6 +2920,12 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(958, GuideSessionOnDutyUpdateMessageComposer);
         this._composers.set(2847, GuideSessionRequesterCancelsMessageComposer);
         this._composers.set(3831, GuideSessionResolvedMessageComposer);
+        // The four `GuideSessionController` sends that had no composer until 2026-08-11. Headers
+        // from the primary registry, all four corroborated by the emulator's own AS3-traced names.
+        this._composers.set(3336, GuideSessionInviteRequesterMessageComposer);
+        this._composers.set(2545, ChatReviewGuideDecidesOnOfferMessageComposer);
+        this._composers.set(349, ChatReviewGuideDetachedMessageComposer);
+        this._composers.set(1801, ChatReviewGuideVoteMessageComposer);
 
         // The remaining seven, whose bodies were re-ported against the primary tree on
         // 2026-08-09 — every one of them was missing fields or had the wrong parameter

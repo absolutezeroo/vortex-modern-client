@@ -698,7 +698,7 @@ export class MainView implements IDisposable, IIlluminaInputHandler
      * client id the confirmation will arrive with.
      */
     // AS3: .../messenger/MainView.as::onInput()
-    onInput(widgetId: string, message: string): void
+    onInput(widget: IWidgetWindow, message: string): void
     {
         if(message === '' || this._messenger === null)
         {
@@ -711,7 +711,7 @@ export class MainView implements IDisposable, IIlluminaInputHandler
 
         this._messenger.send(new SendMsgMessageComposer(this._selectedChatId, message, clientMessageId));
 
-        const input = this.inputWidget?.widget as IIlluminaInputWidget | null ?? null;
+        const input = widget.widget as IIlluminaInputWidget | null ?? null;
 
         if(input !== null)
         {
@@ -719,7 +719,7 @@ export class MainView implements IDisposable, IIlluminaInputHandler
         }
         else
         {
-            log.warn(`onInput: no input widget for "${widgetId}" - the box will not clear`);
+            log.warn(`onInput: submitting widget "${widget.name}" carries no input widget - the box will not clear`);
         }
 
         this.playSendSoundIfConversationIsEmpty();

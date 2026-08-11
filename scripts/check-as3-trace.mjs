@@ -96,9 +96,21 @@ const ACCESSOR_RE = /^(?:public\s+|private\s+|protected\s+)?(?:static\s+)?(?:get
 const METHOD_RE = /^(?:public\s+|private\s+|protected\s+)?(?:static\s+)?(?:async\s+)?[A-Za-z_$][\w$]*\s*(?:<[^>]*>)?\s*\(/;
 const PROPERTY_RE = /^(?:public\s+|private\s+|protected\s+)?(?:static\s+)?(?:readonly\s+)?_?[A-Za-z_$][\w$]*\s*(?::|=|;)/;
 
+// `METHOD_RE` cannot tell `foo(` from `if(` — both are an identifier followed by a paren — and the
+// brace-depth walk below is approximate enough that a statement inside a long method can look like
+// it sits at class-body depth. Any line starting with one of these is a statement, never a member.
+// Deliberately only reserved words that cannot also be a member name: `delete()`, `new()` and
+// `await()` are all legal method names in TypeScript, so listing them here would hide real gaps.
+const STATEMENT_KEYWORD_RE = /^(?:if|for|while|switch|catch|return|throw|do|else|with|super|this)\b/;
+
 function classifyMemberDeclaration(trimmed)
 {
     if(trimmed === '' || trimmed.startsWith('//') || trimmed.startsWith('*') || trimmed.startsWith('/*') || trimmed.startsWith('@') || trimmed.startsWith('}'))
+    {
+        return null;
+    }
+
+    if(STATEMENT_KEYWORD_RE.test(trimmed))
     {
         return null;
     }
