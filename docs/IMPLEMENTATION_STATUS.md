@@ -441,8 +441,32 @@ Elsewhere, still unchecked or known-blocked:
 | 2474 | `MyCfhReportStatus` | the emulator sends the reply but defines no header for the *request* (1834), so the feature is half-built on both sides |
 | 2129 | `RemainingMutePeriod` | **done 2026-08-11** — `RoomChatHandler`, as a chat event on the player's own avatar |
 | 3510 | `BadgePointLimits` | **done 2026-08-11** — `HabboInventory` → `setBadgePointLimit()`, which had nothing feeding it |
-| 1235 / 9201 / 2145 | occupied tiles, custom stacking height, post-it placed | `habbo/room` |
+| 1235 | occupied tiles | blocked: its only consumer is the floor-plan editor, unported |
+| 9201 | custom stacking height | not in the AS3 registry — the emulator's own, needs deciding |
+| 2145 | post-it placed | **done 2026-08-11** — and its serializer was empty, see below |
 | 583 / 3727 | emerald and silver balances | **done 2026-08-11** — `HabboCatalog`; `Purse` and `PurseEvent` already had both |
+
+#### The check this audit was missing — empty serializers
+
+`PostItPlaced` (2145) is the reason the script grew a second pass. Everything about it looked
+wired on the emulator: a composer record, a serializer, and a registration in `InventoryMap`. The
+serializer's `Serialize` body was empty, so the header would have gone out with a zero-length
+payload while the client read two ints off it. **Nothing about either side looked wrong from that
+side alone** — which is the whole point, and the same shape as every other real defect this pass.
+
+`node scripts/unlistened-server-messages.mjs` now cross-checks all three facts: an empty
+`Serialize` body, a header this client listens for, and a client parser that actually reads. As of
+2026-08-11 that finds **27 messages, none of them built by any handler today** — so no live desync,
+but 27 traps that will each look like a mystery the day someone implements the feature behind them.
+
+Two cautions are baked into the check, both learned by getting it wrong first:
+
+- **"Writes nothing" has to mean the packet, not the method.** A body that reads
+  `CatalogOfferSerializer.SerializeAsPurchased(packet, message.Offer)` writes plenty without a
+  single `Write*` call of its own. Looking only for `Write[A-Z]` reported 42, and the first three
+  checked by hand were two false positives. Anything that hands `packet` on now counts as writing.
+- **An empty serializer is legal.** Plenty of messages carry no payload, which is why the check
+  only fires when the *client's* parser reads.
 
 The four closed on 2026-08-11 were the ones this table listed as tractable, and all four were:
 each had a real consumer already sitting in a ported module, and the emulator really sends all
