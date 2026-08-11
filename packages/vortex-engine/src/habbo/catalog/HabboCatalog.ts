@@ -83,6 +83,7 @@ import {CheckGiftableMessageComposer} from '@habbo/communication/messages/outgoi
 import {GetRoomAdsPurchaseInfoMessageComposer} from '@habbo/communication/messages/outgoing/catalog/GetRoomAdsPurchaseInfoMessageComposer';
 import {PurchaseRoomAdMessageComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseRoomAdMessageComposer';
 import {RoomAdPurchaseInitiatedMessageComposer} from '@habbo/communication/messages/outgoing/catalog/RoomAdPurchaseInitiatedMessageComposer';
+import {AssetLoaderEvent} from '@core/assets/loaders/AssetLoaderEvent';
 import {LtdRaffleResultMessageEvent} from '@habbo/communication/messages/incoming/catalog/LtdRaffleResultMessageEvent';
 import type {LtdRaffleResultMessageParser} from '@habbo/communication/messages/parser/catalog/LtdRaffleResultMessageParser';
 import {SilverBalanceMessageEvent} from '@habbo/communication/messages/incoming/collectibles/SilverBalanceMessageEvent';
@@ -1883,11 +1884,11 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             currentPage.dispatchWidgetEvent(new SetExtraPurchaseParameterEvent(offer.product.extraParam));
         }
 
-        // TODO(AS3): AS3 additionally re-points `_offerInFurniPlacing` at this offer while a
-        // furni-placing session is open (`if(_SafeStr_5130 && _offerInFurniPlacing)`). The first
-        // half of that guard is a field this port has not identified, so the assignment is left
-        // out rather than guessed at; the effect is that re-selecting a product mid-placement
-        // keeps the placement pointed at the offer it started with.
+        // Re-point an in-flight placement at the newly selected offer. Both halves of AS3's guard
+        // matter: `_placingFurni` says a placement is running, and the non-null check says one was
+        // actually recorded — without it a selection made after `resetPlacedOfferData()` would
+        // revive a finished placement.
+        if(this._placingFurni && this._offerInFurniPlacing) this._offerInFurniPlacing = offer;
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getRecyclerStatus()
@@ -2399,20 +2400,52 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.dispatchRoomChangedToCatalogPages();
     };
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::setImageFromAsset()
-    // Real logic loads a named asset from the asset library and, on a cache miss, retrieves
-    // it via retrievePreviewAsset() (async network fetch) before applying it - that fetch
-    // path isn't wired up yet. The synchronous cache-hit path is implemented for real.
+    /**
+     * Puts a catalog preview image on `target`, fetching it first if the library does not have it.
+     *
+     * The cache miss is the interesting half: AS3 returns *without touching the target* and lets
+     * the caller's own callback finish the job once the download lands. So a miss leaves the
+     * element as it was rather than blanking it, and a caller that passes no callback simply warms
+     * the cache for next time.
+     */
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::setImageFromAsset()
-    public setImageFromAsset(target: unknown, assetName: string | null, _onAssetReady?: ((event: unknown) => void) | null): void 
+    public setImageFromAsset(target: unknown, assetName: string | null, onAssetReady?: ((...args: unknown[]) => void) | null): void
     {
         if(!assetName || !this.assets) return;
 
         const asset = this.assets.getAssetByName(assetName);
 
-        if(!asset || !target) return;
+        if(asset == null)
+        {
+            this.retrievePreviewAsset(assetName, onAssetReady ?? null);
 
+            return;
+        }
+
+        if(!target) return;
+
+        // TODO(AS3): AS3 hands the bitmap to `setElementImageCentered()`, which also positions it;
+        // this port assigns it directly, so an image smaller than its element sits top-left
+        // instead of centred.
         (target as { bitmap: ImageBitmap | null }).bitmap = asset.content as ImageBitmap;
+    }
+
+    /**
+     * Downloads one preview image into the asset library under its own name.
+     *
+     * The URL is built from `image.library.catalogue.url` plus the asset name and `.png` — the
+     * server sends bare names, never paths.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::retrievePreviewAsset()
+    private retrievePreviewAsset(assetName: string, onAssetReady: ((...args: unknown[]) => void) | null): void
+    {
+        if(!assetName || !this.assets) return;
+
+        const loader = this.assets.loadAssetFromFile(assetName, `${this.imageGalleryHost}${assetName}.png`, 'image/png');
+
+        if(!loader) return;
+
+        if(onAssetReady != null) loader.addEventListener(AssetLoaderEvent.COMPLETE, onAssetReady);
     }
 
     public getPurse(): Purse

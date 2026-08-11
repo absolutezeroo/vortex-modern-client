@@ -176,7 +176,7 @@ export class Product extends ProductGridItem implements IProduct
         offer: IPurchasableOffer | null = null,
         target: unknown = null,
         stuffData: unknown = null,
-        _onPreviewImageReady: ((event: unknown) => void) | null = null
+        onPreviewImageReady: ((...args: unknown[]) => void) | null = null
     ): ImageBitmap | null
     {
         if(this.disposed) return null;
@@ -208,12 +208,41 @@ export class Product extends ProductGridItem implements IProduct
             {
                 if(offer && this._furnitureData)
                 {
-                    // TODO(AS3): sources/win63_version/habbo/catalog/viewer/Product.as::initIcon()
-                    // The floor/wallpaper/landscape room-preview thumbnail naming branch (used
-                    // when a live preview `offer` context is supplied) needs setImageFromAsset()'s
-                    // full async retrievePreviewAsset() fallback, which isn't wired up yet - see
-                    // HabboCatalog.setImageFromAsset(). Only the cache-hit path works currently.
-                    this.catalog.setImageFromAsset(target, null, null);
+                    // Decoration products are named, not rendered: the thumbnail is an asset
+                    // called `th_<kind>_<code>`, so this branch builds the name and hands it to
+                    // the catalog, which downloads it if the library has not got it.
+                    //
+                    // `wallpaper` is the odd one — its asset name says `wall`, not the class name
+                    // the other two use — and `landscape` also dots-to-underscores its code and
+                    // pins a `001` variant on the end.
+                    const className = this._furnitureData.className;
+                    const extraParam = String(offer.product?.extraParam ?? '');
+
+                    let assetName = '';
+
+                    switch(className)
+                    {
+                        case 'floor':
+                            assetName = ['th', className, extraParam].join('_');
+                            break;
+                        case 'wallpaper':
+                            assetName = ['th', 'wall', extraParam].join('_');
+                            break;
+                        case 'landscape':
+                            assetName = ['th', className, extraParam.replace('.', '_'), '001'].join('_');
+                            break;
+                        default:
+                        {
+                            // Not a decoration after all — fall back to the rendered wall item.
+                            // AS3 still calls setImageFromAsset() below with an empty name, which
+                            // returns immediately.
+                            const fallback = roomEngine.getWallItemIcon(this._productClassId, listener, this._extraParam);
+
+                            image = fallback.data;
+                        }
+                    }
+
+                    this.catalog.setImageFromAsset(target, assetName, onPreviewImageReady);
 
                     break;
                 }
