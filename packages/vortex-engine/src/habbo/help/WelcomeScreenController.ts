@@ -36,6 +36,8 @@ export class WelcomeScreenController implements IUpdateReceiver
     // Name derived (`_SafeStr_4871`): where the bubble is sliding to. AS3 seeds it with (72, 10),
     // the left-hand resting x and a placeholder y that `updatePosition()` overwrites at once.
     private _targetX: number = 72;
+    // AS3: .../src/com/sulake/habbo/help/WelcomeScreenController.as::_targetPosition
+    // The `y` half of the same AS3 `Point`, split in two because this port has no Point type.
     private _targetY: number = 10;
 
     // AS3: .../src/com/sulake/habbo/help/WelcomeScreenController.as::_iconId
