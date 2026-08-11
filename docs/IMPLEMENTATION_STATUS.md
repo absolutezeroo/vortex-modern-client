@@ -87,6 +87,7 @@ directions for the same reason:
 | After the room-ad and targeted-offer ports     | **324**     |
 | After `GuideSessionController`                 | **323**     |
 | After the five server-side wire gaps           | **320**     |
+| After the pending guide ticket                 | **317**     |
 
 It rose first because the pass kept finding behaviour missing with *no* marker on it —
 `log.debug('Show guide tool')` is not a documented gap, it is an invisible one — and every stub it
@@ -438,10 +439,15 @@ Elsewhere, still unchecked or known-blocked:
 |---|---|---|
 | 594 | `RoomChatSettings` | **correctly deferred** — verified against AS3: the handler only sets `floodSensitivity`, which nothing in this port reads. The existing TODO holds up |
 | 2474 | `MyCfhReportStatus` | the emulator sends the reply but defines no header for the *request* (1834), so the feature is half-built on both sides |
-| 2129 | `RemainingMutePeriod` | chat |
-| 3510 | `BadgePointLimits` | `habbo/inventory` badges |
+| 2129 | `RemainingMutePeriod` | **done 2026-08-11** — `RoomChatHandler`, as a chat event on the player's own avatar |
+| 3510 | `BadgePointLimits` | **done 2026-08-11** — `HabboInventory` → `setBadgePointLimit()`, which had nothing feeding it |
 | 1235 / 9201 / 2145 | occupied tiles, custom stacking height, post-it placed | `habbo/room` |
-| 583 / 3727 | emerald and silver balances | currency |
+| 583 / 3727 | emerald and silver balances | **done 2026-08-11** — `HabboCatalog`; `Purse` and `PurseEvent` already had both |
+
+The four closed on 2026-08-11 were the ones this table listed as tractable, and all four were:
+each had a real consumer already sitting in a ported module, and the emulator really sends all
+four. What made them cheap is the same thing in every case — everything downstream existed and
+nothing was connected to it. **Unlistened server messages: 89 → 80 across the day.**
 
 ### The 2026-08-10 wire pass — what the audits found once the TODO list ran dry
 
