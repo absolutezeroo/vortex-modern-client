@@ -9,6 +9,7 @@ export {GuideHelpManager} from './GuideHelpManager';
 export {GuideSessionData} from './GuideSessionData';
 export {HabboWayController} from './HabboWayController';
 export {SafetyBookletController} from './SafetyBookletController';
+export {WelcomeScreenController} from './WelcomeScreenController';
 export {HabboHelp} from './HabboHelp';
 export {HelpMessageHandler} from './HelpMessageHandler';
 export {NameChangeController} from './NameChangeController';

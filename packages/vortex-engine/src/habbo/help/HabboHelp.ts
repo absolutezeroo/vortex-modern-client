@@ -18,6 +18,7 @@ import {GuideHelpManager} from './GuideHelpManager';
 import {NameChangeController} from './NameChangeController';
 import {HabboWayController} from './HabboWayController';
 import {SafetyBookletController} from './SafetyBookletController';
+import {WelcomeScreenController} from './WelcomeScreenController';
 import {SanctionInfo} from './SanctionInfo';
 import {TopicsFlowHelpController} from './TopicsFlowHelpController';
 import {HelpMessageHandler} from './HelpMessageHandler';
@@ -127,6 +128,8 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     private _habboWayController: HabboWayController | null = null;
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_safetyBookletController
     private _safetyBookletController: SafetyBookletController | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_welcomeScreenController
+    private _welcomeScreenController: WelcomeScreenController | null = null;
     private _messageHandler: HelpMessageHandler | null = null;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/help/HabboHelp.as::_currentRoomId
     private _currentRoomId: number = 0;
@@ -1032,12 +1035,17 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 * @param position The position (0=left, 1=right)
 	 * @param imageName Optional image name
 	 */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::showWelcomeScreen()
-    // delegates to a WelcomeScreenController with all 4 args; that controller isn't ported yet, so
-    // this only logs the title.
-    showWelcomeScreen(title: string, _body: string, _position: number, _imageName?: string | null): void
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::showWelcomeScreen()
+    // Rebuilt whenever the previous one has been disposed: the bubble disposes itself on close,
+    // so a second one needs a fresh controller.
+    showWelcomeScreen(iconId: string, textKey: string, position: number, windowToOpen?: string | null): void
     {
-        log.debug('Show welcome screen -', title);
+        if(this._welcomeScreenController === null || this._welcomeScreenController.disposed)
+        {
+            this._welcomeScreenController = new WelcomeScreenController(this);
+        }
+
+        this._welcomeScreenController.showWelcomeScreen(iconId, textKey, position, windowToOpen ?? null);
     }
 
     /**
@@ -1311,6 +1319,12 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         {
             this._safetyBookletController.dispose();
             this._safetyBookletController = null;
+        }
+
+        if(this._welcomeScreenController)
+        {
+            this._welcomeScreenController.dispose();
+            this._welcomeScreenController = null;
         }
 
         // Dispose registry handlers
