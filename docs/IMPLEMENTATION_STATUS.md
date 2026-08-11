@@ -249,9 +249,50 @@ height to 0 and straight back, which is how this window system is made to re-mea
 dead code; and a clicked chat row is resolved with `is ITextLinkWindow` / `is _SafeCls_1857`, which
 TypeScript cannot express for an interface, so the port tests for the members instead.
 
-**What is left in `habbo/help`: 11 markers, none of them a micro-gap.** Eight wait on
+**Then the last three windows.** `HabboWayController` (152) and `SafetyBookletController` (163)
+are page-turners, kept as two classes because AS3 keeps them apart and the differences are real:
+the Habbo Way's page count is a hotel config value where the booklet's is a constant, the booklet
+logs every page turn to the talent-track event log under "Quiz" because it is the reading half of
+the safety quiz, and the booklet has two closing panels for hotels that switch the quiz off. Both
+track the page turn *after* moving, so the analytics label carries the page landed on — that reads
+like an off-by-one and is not. `WelcomeScreenController` (225) is the onboarding bubble: an
+update-loop receiver that eases itself to a toolbar icon by halving the remaining gap each tick and
+unregisters the moment it arrives.
+
+### The layout name that made sixteen windows unreachable
+
+Worth its own heading, because nothing in the toolchain caught it and it invalidated every window
+above until it was fixed.
+
+AS3's `getXmlWindow(name)` appends `"_xml"` before the lookup —
+`assets.getAssetByName(name + "_xml")` — because an asset's real name is its `*Com.as` field name
+and those carry the suffix. This port's `getXmlWindow()` passed the caller's short name straight
+through. Layouts are registered under the shipped **file basename** (`App.ts` →
+`parseWindowLayoutXml`, which names each entry after the file), so `chat_report_xml.xml` is keyed
+`chat_report_xml` and a lookup for `chat_report` finds nothing: the null guard logs, no window
+appears.
+
+That was all sixteen: `chat_report`, `chat_report_item`, `emergency_help_request`, `bully_report`,
+`pending_request`, `abusive_notice`, `main_help`, `welcome_tour_popup`, `topics_flow_help`,
+`chat_review_reporter_feedback`, `habbo_way`, `safety_booklet`, `welcome_screen` and the four
+`pending_*` views. All shipped, none reachable. **`tsc`, `pnpm build` and the boot check stayed
+green throughout**, because none of these windows opens at boot — the failure surfaces only when a
+user clicks Help.
+
+It was found by asking a different question than "does it compile": *what key does the registry
+hold, versus what key does the caller pass.* The two had never been compared. `resolveLayoutName()`
+now tries the suffix first and falls back to the bare name — the fallback is load-bearing, because
+a minority of layouts ship without it (`club_required.xml`), which is why
+`HabboGroupsManager.getXmlWindow()` works while passing its name through unchanged.
+
+This is the layout twin of the image-asset trap already recorded above: same cause, opposite
+answer. Images drop `_png`; layouts keep `_xml`. Never assume either — check the shipped directory
+for the exact filename.
+
+**What is left in `habbo/help`: 12 markers, none of them a micro-gap.** Eight wait on
 `GuideSessionController` (1,826 lines) — the guide tool and the guide-session conversation, the
-last real subsystem here. One is a settled decision, one is Flash-only, and one is the wire:
+last real subsystem here, and the two `showHabboWayQuiz()`/`showSafetyQuiz()` stubs wait on
+`HabboWayQuizController` (387). One is a settled decision, one is Flash-only, and one is the wire:
 `requestReportsStatus()` needs header 1834, which is in the primary registry and in neither this
 port nor `vortex-emulator`.
 
