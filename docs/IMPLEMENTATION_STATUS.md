@@ -67,6 +67,11 @@ node scripts/todo-inventory.mjs --json
 `packages/*/dist` is excluded: it is gitignored build output carrying a duplicate of every `.d.ts`
 marker, which inflates a naive `grep -c` by ~90.
 
+**2026-08-11, after the catalog pass — 379 TODO in `packages/*/src` (324 `TODO(AS3)`, 55 plain).**
+The room-ad and targeted-offer ports closed six markers and added one (`setLinkStyle()`, which has
+no StyleSheet equivalent here). Both were *subsystem* ports, so most of what they closed was never
+a marker at all — see the unlistened-message section below.
+
 **2026-08-10, after the help/CFH pass — 387 TODO in `packages/*/src` (332 `TODO(AS3)`, 55 plain), from 382:**
 
 The count is worth watching across the pass rather than at its end, because it moved in both
@@ -78,6 +83,7 @@ directions for the same reason:
 | After the wire fixes and the marker rewrites   | **336**     |
 | After the three window ports                   | **332**     |
 | After `TopicsFlowHelpController`               | **329**     |
+| After the room-ad and targeted-offer ports     | **324**     |
 
 It rose first because the pass kept finding behaviour missing with *no* marker on it —
 `log.debug('Show guide tool')` is not a documented gap, it is an invisible one — and every stub it
@@ -194,9 +200,16 @@ carried under that name.
 | Profile "hidden" icon | **done** — tri-state now read | `IsOnline` is a plain `bool`, so state 2 is unsendable |
 | Badge rarity at login | parser matches the emulator | `BadgesEventMessageComposerSerializer.cs` writes 2 fields per badge where AS3 reads 4 (`ownerCount`, `badgeRarityId` missing) |
 | `requestReportsStatus()` | no composer | header 1834 is in the primary registry and **not** in `Headers.cs` |
+| `GetNextTargetedOffer` | sends on **848**, per WIN63's registry | `GetNextTargetedOfferEvent = 9004`, a placeholder its own comment calls unresolved — so the request reaches nothing and **no targeted offer can ever arrive**, however complete the client is |
 
 The emulator was left untouched all pass: its working tree had unrelated navigator work in
 progress, and staging someone else's changes there is the one thing that must not happen.
+
+The last row is the only one of the five found by *confronting two registries* rather than by
+reading either — the same method that produced every other real defect in this pass. It is also
+the one where the temptation to "fix" the wrong side is strongest: changing the client to 9004
+would make the two agree and the feature would still be wrong, because 848 is what the real client
+sends.
 
 **Badge metadata was a false blocker.** `BadgesModel.updateBadge()` said `Badge` had "no
 rarity/ownerCount fields at all yet (a separate, unported badge-rarity feature)". Nothing was
@@ -316,23 +329,25 @@ primary registry and in neither this port nor `vortex-emulator`.
 **The module now works end to end against a live server** — the report flow was confirmed by hand
 on 2026-08-11, which is also what proved the layout-name fix above.
 
-### 89 messages the server sends and the client does not listen for
+### 84 messages the server sends and the client does not listen for
 
 `node scripts/unlistened-server-messages.mjs` compares `vortex-emulator`'s `*Composer` header
 constants — server→client, so this client's *events* — against the `_events.set(id, …)` calls in
 `HabboMessages.ts`. Read-only, re-runnable, and it takes a `--emulator <path>` if the sibling
 checkout moved.
 
-**2026-08-11: the emulator can send 512, this client listens for 445, and 89 have no event at
-all.** 78 of those 89 are in the AS3 client's own registry, so the real client handles them and
-the gap is this port's; the other 11 are the emulator's own and need deciding rather than porting.
+**2026-08-11, after the room-ad and targeted-offer ports: the emulator can send 512, this client
+listens for 450, and 84 have no event at all.** 73 of those 84 are in the AS3 client's own
+registry, so the real client handles them and the gap is this port's; the other 11 are the
+emulator's own and need deciding rather than porting. (It read 445 / 89 / 78 earlier the same day,
+before the three catalog headers below were closed.)
 
 This is the audit that has no substitute. The client compiles, boots and renders perfectly while
 dropping a packet the server took the trouble to build — the `ProductOffer` reply above sat
 unhandled exactly that way, with `GetProductOfferComposer` going out on 1692 and a fully
 serialised offer coming back on 1911 to nobody.
 
-**The count is not a work list, and "the module is ported" is not enough either.** Most of the 89
+**The count is not a work list, and "the module is ported" is not enough either.** Most of the 84
 belong to whole subsystems this port has not started — Game2/snowstorm (18), NFT and collectibles
 (16), camera, crafting, treasure hunt, YouTube. But a header in a *ported* module can still be
 blocked on an unported **consumer**, which is the trap worth naming: registering an event whose
@@ -347,11 +362,35 @@ The catalog group was checked one by one on 2026-08-11, and only two of the six 
 | 2735 | `GiftReceiverNotFound` | **done** — same |
 | 1911 | `ProductOffer` | **done** — see above |
 | 1750 | `IsOfferGiftable` | not in the AS3 event registry at all: the emulator's own, needs deciding |
-| 2013 / 2155 | `TargetedOfferNotFound` / `TargetedOffer` | blocked: `catalog/targetedoffers/` is 1,004 AS3 lines and the port's directory holds only `.gitkeep` |
-| 3787 | `RoomAdPurchaseInfo` | blocked: its only consumer is `RoomAdsCatalogWidget` (401 lines), unported — which is also what the three `roomAdPurchaseData` markers wait on |
+| 2013 / 2155 | `TargetedOfferNotFound` / `TargetedOffer` | **done 2026-08-11** — was blocked on `catalog/targetedoffers/` (1,004 AS3 lines, directory held only `.gitkeep`); subsystem ported |
+| 3787 | `RoomAdPurchaseInfo` | **done 2026-08-11** — was blocked on `RoomAdsCatalogWidget` (401 lines); widget ported, which also closed the three `roomAdPurchaseData` markers |
 
-Layouts ship for both blocked groups (`targeted_offer_*`, `layout_roomads`), so those are
-subsystem ports rather than asset gaps.
+#### The two blocked groups, unblocked — 2026-08-11
+
+Both were subsystem ports, not asset gaps: every layout already shipped.
+
+**Room ads** (`RoomAdsCatalogWidget`, 401 l.). Porting the widget closed a chain that was cut in
+three separate places, none of which the TODO count could see as one thing: the in-room event
+panel's "extend" button called `HabboNavigator.openCatalogRoomAdsExtendPage()`, which only logged;
+that would have called `HabboCatalog.openRoomAdCatalogPageInExtendedMode()`, which was empty; and
+the page's own widget had no case in `CatalogPage.createWidget()`. Four headers: 3787 in, plus
+2928 `PurchaseRoomAd` and 3607 `RoomAdPurchaseInitiated` out, with 366 already being sent to an
+answer nobody read.
+
+**Targeted offers** (1,432 l. with data and util). `OfferController`, five views, two data classes
+and six messages. Wired into `HabboCatalog.initComponent()` after `loadProductData()`, since the
+controller registers itself as a products-ready listener and that is what fires its first request.
+
+**A header the emulator has wrong, found by confronting the two registries.** WIN63 has
+`_composers[848] = _SafeCls_2561` for `GetNextTargetedOffer`; `vortex-emulator` listens on `9004`,
+a placeholder its own comment calls unresolved. The client is correct at 848 and the emulator needs
+the fix — until then the request lands nowhere and **no targeted offer can ever arrive**, however
+complete this side is. This is the fifth emulator gap awaiting a go-ahead.
+
+Two AS3 quirks were ported rather than corrected, both documented at the declaration:
+`TargetedOffer.getSecondsRemaining()` keeps the `uint` wrap that makes `isExpired()` stop returning
+true exactly when it should start, and `OfferController.dispose()` leaves `_disposed` unassigned as
+AS3 does. In both cases the "fix" would change behaviour the server still drives.
 
 Elsewhere, still unchecked or known-blocked:
 
