@@ -51,10 +51,19 @@ export class InfoStandUserData
         return this.type === 'RWUIUE_BOT';
     }
 
+    /**
+     * The player's rank on the badge leaderboard, or -1 for "no rank" — which is also what hides
+     * the row and what the click handler tests before opening the leaderboard. Set by
+     * `InfoStandWidget.updateUserData()`, not by `setData()`: it arrives on a later message than
+     * the rest of this record.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::badgesRank
+    public badgesRank: number = -1;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::setData()
-    // TODO(AS3): selectedBadges/badgesRank (badge glow/preserve tracking) not
-    // carried here — deferred with the same Phase 1 display-polish scope cut
-    // as InfoStandWidget.onUserInfo()'s shouldPreserveDisplayedBadges().
+    // TODO(AS3): selectedBadges (badge glow/preserve tracking) is not carried here — deferred with
+    // the same Phase 1 display-polish scope cut as InfoStandWidget.onUserInfo()'s
+    // shouldPreserveDisplayedBadges().
     public setData(event: RoomWidgetUserInfoUpdateEvent): void
     {
         this.userId = event.webID;

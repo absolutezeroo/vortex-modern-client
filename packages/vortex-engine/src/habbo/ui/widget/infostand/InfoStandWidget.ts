@@ -454,14 +454,13 @@ export class InfoStandWidget extends RoomWidgetBase
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::updateUserData()
-    // TODO(AS3): AS3 also sets userData.badgesRank = badgesRank unconditionally and
-    // this._userView.badgesRank = badgesRank in the non-bot branch - InfoStandUserData/
-    // InfoStandUserView have no badgesRank field yet (same badge glow/preserve-tracking
-    // display-polish scope cut as InfoStandUserData.ts's own selectedBadges/badgesRank
-    // TODO), so the parameter is accepted for signature parity but not yet applied.
-    public updateUserData(userId: number, figure: string, achievementScore: number, motto: string, mottoEnabled: boolean, _badgesRank: number = -1): void
+    public updateUserData(userId: number, figure: string, achievementScore: number, motto: string, mottoEnabled: boolean, badgesRank: number = -1): void
     {
         if(userId !== this._userData.userId) return;
+
+        // Recorded for every user, bot included — the click handler reads it off the data, not the
+        // view, and a bot simply never shows the row.
+        this._userData.badgesRank = badgesRank;
 
         if(this._userData.isBot())
         {
@@ -476,6 +475,10 @@ export class InfoStandWidget extends RoomWidgetBase
             {
                 this._userView.achievementScore = achievementScore;
             }
+
+            // Not behind isActivityDisplayEnabled: AS3 gates only the achievement score on that
+            // flag, and the rank row hides itself through its own -1 sentinel instead.
+            this._userView.badgesRank = badgesRank;
         }
     }
 

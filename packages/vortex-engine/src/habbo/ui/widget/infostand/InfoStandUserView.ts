@@ -112,6 +112,13 @@ export class InfoStandUserView
 
         if(avatarProfileLink) avatarProfileLink.procedure = this.onProfileLink;
 
+        // AS3: .../infostand/InfoStandUserView.as::createWindow()
+        // The whole rank row is clickable, not just its text — the region is what carries the
+        // procedure.
+        const badgesRankRegion = this._infoBorder?.findChildByName('badges_rank_region');
+
+        if(badgesRankRegion) badgesRankRegion.procedure = this.onBadgesRankClicked;
+
         if(this._widget.handler.isActivityDisplayEnabled)
         {
             const scoreSpacer = this._elementList?.getListItemByName('score_spacer');
@@ -238,6 +245,65 @@ export class InfoStandUserView
         if(!scoreValue) return;
 
         scoreValue.text = String(value);
+    }
+
+    /**
+     * The badge-leaderboard rank line.
+     *
+     * Two windows move together — a spacer and the region holding the text — and the list is only
+     * re-arranged when visibility actually *changed*, since arranging is the expensive part and a
+     * repeated update of the same rank should not pay for it.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::set badgesRank()
+    public set badgesRank(value: number)
+    {
+        const spacer = this._elementList?.getListItemByName('badges_rank_spacer') as IWindowContainer | null;
+        const region = this._elementList?.getListItemByName('badges_rank_region') as IWindowContainer | null;
+        const text = region?.getChildByName('badges_rank_text') as unknown as ITextWindow | null;
+
+        if(!spacer || !text || !region) return;
+
+        const visible = value >= 0;
+        const wasVisible = region.visible;
+
+        spacer.visible = visible;
+        region.visible = visible;
+
+        if(visible)
+        {
+            text.text = this._widget.handler.container?.localization?.getLocalizationWithParams(
+                'infostand.text.badges_rank', '', 'rank', `#${value}`
+            ) ?? '';
+        }
+
+        if(visible !== wasVisible) this._elementList?.arrangeListItems();
+
+        this.updateWindow();
+    }
+
+    /**
+     * Opens the badge leaderboard at the page holding this player's rank.
+     *
+     * `getBadgeLeaderboardPageForCurrentUser()` returns 0 in AS3 too — the paging helper exists
+     * (`getPageForRank()`) and this caller does not use it, so the leaderboard always opens on
+     * page one. Ported as written.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::onBadgesRankClicked()
+    private onBadgesRankClicked = (event: WindowEvent, _target: IWindow): void =>
+    {
+        if(event.type !== 'WME_CLICK' || this._widget.userData == null || this._widget.userData.badgesRank < 0) return;
+
+        const roomEngine = this._widget.handler.container?.roomEngine ?? null;
+
+        if(roomEngine == null) return;
+
+        roomEngine.createLinkEvent(`badge_leaderboard/0/-1/${this.getBadgeLeaderboardPageForCurrentUser()}`);
+    };
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::getBadgeLeaderboardPageForCurrentUser()
+    private getBadgeLeaderboardPageForCurrentUser(): number
+    {
+        return 0;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::set carryItem()
