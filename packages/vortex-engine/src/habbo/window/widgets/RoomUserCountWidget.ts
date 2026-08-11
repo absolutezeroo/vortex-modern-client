@@ -28,7 +28,14 @@ export class RoomUserCountWidget implements IRoomUserCountWidget
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
-        const root = this._windowManager.buildWidgetLayout('room_user_count_xml') as IWindowContainer | null;
+        // `room_usercount_xml`, not `room_user_count_xml`. AS3's own
+        // `RoomUserCountWidget.as:24` asks for the underscored spelling, which is declared nowhere
+        // in its asset library either — `HabboWindowManagerCom.as:2171` declares
+        // `room_usercount_xml`, and CLAUDE.md makes the `*Com.as` field name the asset's real
+        // name. So the original Flash client asks for a layout it does not have; this port copied
+        // the string faithfully and inherited a widget that could never build. Corrected to the
+        // declared name.
+        const root = this._windowManager.buildWidgetLayout('room_usercount_xml') as IWindowContainer | null;
 
         if(root)
         {
