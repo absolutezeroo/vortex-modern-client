@@ -532,20 +532,68 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
     }
 
     /**
+     * Enable or disable the gift dialog's send button
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::enableGiftButton()
+    private enableGiftButton(enabled: boolean): void
+    {
+        if(this._window == null) return;
+
+        if(enabled) this.safeEnable('give_gift_button');
+        else this.safeDisable('give_gift_button');
+    }
+
+    /**
+     * The server could not find the player this gift was addressed to
+     *
+     * Re-enables the send button so the name can be corrected and tried again — a rejected gift
+     * is recoverable, unlike a rejected purchase.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::receiverNotFound()
+    receiverNotFound(): void
+    {
+        if(this._disposed) return;
+
+        this.enableGiftButton(true);
+
+        this._windowManager?.alert(
+            '${catalog.gift_wrapping.receiver_not_found.title}',
+            '${catalog.gift_wrapping.receiver_not_found.info}',
+            0,
+            this.onReceiverNotFoundAlert
+        );
+    }
+
+    /**
+     * Dismissing the not-found alert leaves the dialog usable
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::alertHandler()
+    // AS3 re-enables the button a second time here, after `receiverNotFound()` already did; kept,
+    // because the alert is modal and the dialog behind it can be reached in between.
+    private onReceiverNotFoundAlert = (dialog: IDisposable): void =>
+    {
+        dialog.dispose();
+
+        this.enableGiftButton(true);
+    };
+
+    /**
      * AS3: PurchaseConfirmationDialog.as::notEnoughCredits()
      *
      * Note what AS3 does NOT do here: it never re-enables `buy_button`/`cancel_button`. A rejected
      * purchase leaves them dead on purpose and the close button is the way out - which is why the
      * one call that matters in the non-gift path is the `header_button_close` re-enable.
      *
-     * TODO(AS3): the two gift-dialog halves - `enableGiftButton(true)` and selecting
-     * `use_free_checkbox` - belong to the unported gift flow.
+     * TODO(AS3): AS3 additionally selects `use_free_checkbox` here, which belongs to the unported
+     * gift flow. `enableGiftButton(true)` was on that list too and is no longer: the button is an
+     * ordinary window child and `safeEnable()` already existed.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::notEnoughCredits()
     notEnoughCredits(): void
     {
         if(this._disposed || this._window == null) return;
 
+        this.enableGiftButton(true);
         this.safeEnable('header_button_close');
     }
 

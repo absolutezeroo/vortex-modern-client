@@ -218,6 +218,8 @@ import {
 import {
     BonusRareInfoMessageEvent,
     ProductOfferMessageEvent,
+    LimitedEditionSoldOutMessageEvent,
+    GiftReceiverNotFoundMessageEvent,
     BundleDiscountRulesetMessageEvent,
     CatalogPublishedMessageEvent,
     GiftWrappingConfigurationEvent,
@@ -2129,6 +2131,10 @@ export class HabboMessages implements IMessageConfiguration
         // The reply to GetProductOfferComposer (1692). Header from the primary registry
         // (`_events[1911] = _SafeCls_2066`); the emulator already answers on it.
         this._events.set(1911, ProductOfferMessageEvent);
+        // Two payload-less purchase signals. Headers from the primary registry
+        // (`_events[533]`/`_events[2735]`); the emulator sends both from its gift-purchase handler.
+        this._events.set(533, LimitedEditionSoldOutMessageEvent);
+        this._events.set(2735, GiftReceiverNotFoundMessageEvent);
         this._events.set(1073, BundleDiscountRulesetMessageEvent);
         this._events.set(1369, GiftWrappingConfigurationEvent);
         this._events.set(773, CatalogPublishedMessageEvent);

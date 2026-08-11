@@ -1,5 +1,7 @@
 export * from './BonusRareInfoMessageParser';
 export * from './ProductOfferMessageEventParser';
+export * from './LimitedEditionSoldOutMessageEventParser';
+export * from './GiftReceiverNotFoundMessageEventParser';
 export * from './BuildersClubSubscriptionStatusMessageParser';
 export * from './ClubOfferProductData';
 export * from './ClubOfferData';

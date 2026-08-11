@@ -1,5 +1,7 @@
 export * from './BonusRareInfoMessageEvent';
 export * from './ProductOfferMessageEvent';
+export * from './LimitedEditionSoldOutMessageEvent';
+export * from './GiftReceiverNotFoundMessageEvent';
 export * from './CatalogPublishedMessageEvent';
 export * from './GiftWrappingConfigurationEvent';
 export * from './BundleDiscountRuleset';

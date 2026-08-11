@@ -90,6 +90,8 @@ import type {
     CatalogIndexMessageEventParser
 } from '@habbo/communication/messages/parser/catalog/CatalogIndexMessageEventParser';
 import {ProductOfferMessageEvent} from '@habbo/communication/messages/incoming/catalog/ProductOfferMessageEvent';
+import {LimitedEditionSoldOutMessageEvent} from '@habbo/communication/messages/incoming/catalog/LimitedEditionSoldOutMessageEvent';
+import {GiftReceiverNotFoundMessageEvent} from '@habbo/communication/messages/incoming/catalog/GiftReceiverNotFoundMessageEvent';
 import type {ProductOfferMessageEventParser} from '@habbo/communication/messages/parser/catalog/ProductOfferMessageEventParser';
 import {SelectProductEvent} from './viewer/widgets/events/SelectProductEvent';
 import {SetExtraPurchaseParameterEvent} from './viewer/widgets/events/SetExtraPurchaseParameterEvent';
@@ -1707,6 +1709,40 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     /**
+	 * The limited-edition item was bought out from under this purchase
+	 *
+	 * Tells the player, then drops the confirmation dialog: the offer it was showing no longer
+	 * exists, so there is nothing left to confirm.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onLimitedEditionSoldOut()
+    private onLimitedEditionSoldOut = (_event: IMessageEvent): void =>
+    {
+        this._windowManager?.alert(
+            '${catalog.alert.limited_edition_sold_out.title}',
+            '${catalog.alert.limited_edition_sold_out.message}',
+            0,
+            this.alertDialogEventProcessor
+        );
+
+        if(this._purchaseConfirmationDialog != null)
+        {
+            this._purchaseConfirmationDialog.dispose();
+            this._purchaseConfirmationDialog = null;
+        }
+    };
+
+    /**
+	 * The gift was addressed to a player who does not exist
+	 *
+	 * Unlike the sold-out case the dialog stays open — the name is correctable.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onGiftReceiverNotFound()
+    private onGiftReceiverNotFound = (_event: IMessageEvent): void =>
+    {
+        this._purchaseConfirmationDialog?.receiverNotFound();
+    };
+
+    /**
 	 * One refreshed offer came back — select it on the open page
 	 *
 	 * This is the reply to `sendGetProductOffer()`. Its first job is the limited-edition counter:
@@ -2935,6 +2971,8 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.addMessageEvent(new CatalogIndexMessageEvent(this.onCatalogIndex.bind(this)));
         this.addMessageEvent(new CatalogPageMessageEvent(this.onCatalogPage.bind(this)));
         this.addMessageEvent(new ProductOfferMessageEvent(this.onProductOffer));
+        this.addMessageEvent(new LimitedEditionSoldOutMessageEvent(this.onLimitedEditionSoldOut));
+        this.addMessageEvent(new GiftReceiverNotFoundMessageEvent(this.onGiftReceiverNotFound));
         this.addMessageEvent(new BuildersClubSubscriptionStatusMessageEvent(this.onBuildersClubSubscriptionStatus.bind(this)));
         this.addMessageEvent(new BuildersClubFurniCountMessageEvent(this.onBuildersClubFurniCount.bind(this)));
         this.addMessageEvent(new ScrSendUserInfoEvent(this.onSubscriptionInfo.bind(this)));
