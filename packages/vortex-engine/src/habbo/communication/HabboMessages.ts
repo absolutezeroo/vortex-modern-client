@@ -221,6 +221,8 @@ import {
     LimitedEditionSoldOutMessageEvent,
     GiftReceiverNotFoundMessageEvent,
     RoomAdPurchaseInfoMessageEvent,
+    TargetedOfferMessageEvent,
+    TargetedOfferNotFoundMessageEvent,
     BundleDiscountRulesetMessageEvent,
     CatalogPublishedMessageEvent,
     GiftWrappingConfigurationEvent,
@@ -1067,6 +1069,10 @@ import {
     GetRecyclerPrizesMessageComposer,
     GetRecyclerStatusMessageComposer,
     GetRoomAdsPurchaseInfoMessageComposer,
+    GetNextTargetedOfferComposer,
+    SetTargetedOfferStateComposer,
+    PurchaseTargetedOfferComposer,
+    ShopTargetedOfferViewedComposer,
     PurchaseRoomAdMessageComposer,
     RoomAdPurchaseInitiatedMessageComposer,
     GetSellablePetPalettesComposer,
@@ -2140,6 +2146,9 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2735, GiftReceiverNotFoundMessageEvent);
         // The room list a room ad can point at (`_events[3787]`), read by RoomAdsCatalogWidget.
         this._events.set(3787, RoomAdPurchaseInfoMessageEvent);
+        // The targeted-offer pair (`_events[2155]`/`_events[2013]`), read by OfferController.
+        this._events.set(2155, TargetedOfferMessageEvent);
+        this._events.set(2013, TargetedOfferNotFoundMessageEvent);
         this._events.set(1073, BundleDiscountRulesetMessageEvent);
         this._events.set(1369, GiftWrappingConfigurationEvent);
         this._events.set(773, CatalogPublishedMessageEvent);
@@ -2820,6 +2829,13 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(366, GetRoomAdsPurchaseInfoMessageComposer);
         // The room-ad purchase pair (`_composers[2928]`/`_composers[3607]` in the WIN63 registry).
         // 3607 is analytics only - the emulator's handler for it is a deliberate no-op.
+        // Targeted offers. 848 is from WIN63's registry and the emulator does NOT match it - it
+        // listens on a 9004 placeholder its own comment admits is unresolved, so the request
+        // currently reaches nothing. The registry is the authority; the emulator needs the fix.
+        this._composers.set(848, GetNextTargetedOfferComposer);
+        this._composers.set(2874, SetTargetedOfferStateComposer);
+        this._composers.set(2497, PurchaseTargetedOfferComposer);
+        this._composers.set(3046, ShopTargetedOfferViewedComposer);
         this._composers.set(2928, PurchaseRoomAdMessageComposer);
         this._composers.set(3607, RoomAdPurchaseInitiatedMessageComposer);
         this._composers.set(2909, PurchaseProductAsGiftMessageComposer);

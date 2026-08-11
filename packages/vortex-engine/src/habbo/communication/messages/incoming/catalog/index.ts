@@ -33,3 +33,6 @@ export * from './RecyclerFinishedMessageEvent';
 export * from './RecyclerPrizesMessageEvent';
 export * from './SellablePetPalettesMessageEvent';
 export * from './RoomAdPurchaseInfoMessageEvent';
+export * from './TargetedOfferData';
+export * from './TargetedOfferMessageEvent';
+export * from './TargetedOfferNotFoundMessageEvent';

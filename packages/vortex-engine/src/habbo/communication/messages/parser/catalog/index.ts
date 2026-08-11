@@ -25,3 +25,5 @@ export * from './RecyclerPrizesMessageEventParser';
 export * from './SellablePetPalette';
 export * from './SellablePetPalettesMessageEventParser';
 export * from './RoomAdPurchaseInfoMessageParser';
+export * from './TargetedOfferMessageParser';
+export * from './TargetedOfferNotFoundMessageParser';

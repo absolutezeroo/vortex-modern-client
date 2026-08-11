@@ -27,3 +27,7 @@ export * from './PlaceObjectFromCatalogComposer';
 export * from './PlaceWallItemFromCatalogComposer';
 export * from './PurchaseRoomAdMessageComposer';
 export * from './RoomAdPurchaseInitiatedMessageComposer';
+export * from './GetNextTargetedOfferComposer';
+export * from './SetTargetedOfferStateComposer';
+export * from './PurchaseTargetedOfferComposer';
+export * from './ShopTargetedOfferViewedComposer';
