@@ -4,6 +4,7 @@
 export {CallForHelpManager} from './CallForHelpManager';
 export {ChatReportController} from './ChatReportController';
 export {ChatReviewReporterFeedbackCtrl} from './ChatReviewReporterFeedbackCtrl';
+export {TopicsFlowHelpController} from './TopicsFlowHelpController';
 export {GuideHelpManager} from './GuideHelpManager';
 export {GuideSessionData} from './GuideSessionData';
 export {HabboHelp} from './HabboHelp';

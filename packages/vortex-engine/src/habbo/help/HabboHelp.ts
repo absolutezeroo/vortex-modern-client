@@ -17,6 +17,7 @@ import {CallForHelpManager} from './CallForHelpManager';
 import {GuideHelpManager} from './GuideHelpManager';
 import {NameChangeController} from './NameChangeController';
 import {SanctionInfo} from './SanctionInfo';
+import {TopicsFlowHelpController} from './TopicsFlowHelpController';
 import {HelpMessageHandler} from './HelpMessageHandler';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
@@ -118,6 +119,8 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     private _nameChangeController: NameChangeController | null = null;
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_sanctionInfo
     private _sanctionInfo: SanctionInfo | null = null;
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_topicsFlowHelpController
+    private _topicsFlow: TopicsFlowHelpController | null = null;
     private _messageHandler: HelpMessageHandler | null = null;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/help/HabboHelp.as::_currentRoomId
     private _currentRoomId: number = 0;
@@ -280,13 +283,21 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     /**
 	 * Toggle the new-flow help window
 	 */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::toggleNewHelpWindow()
-    // forwards to `TopicsFlowHelpController.toggleWindow()`, the 933-line new CFH flow, unported.
-    // Declared rather than omitted because two ported call sites reach it: the help window's
-    // "report bullying" button (`HelpController`) and guide-reporting status 0.
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::toggleNewHelpWindow()
     toggleNewHelpWindow(): void
     {
-        log.warn('toggleNewHelpWindow: TopicsFlowHelpController is not ported - the new help window did not open');
+        this._topicsFlow?.toggleWindow();
+    }
+
+    /**
+	 * The new call-for-help flow
+	 */
+    // TS-only: AS3 keeps `_topicsFlowHelpController` private and reaches it only through the
+    // methods below. Exposed because `HelpMessageHandler` owns the pending-calls-deleted
+    // subscription AS3 makes on the component itself, and has to resume the submit through it.
+    get topicsFlowHelpController(): TopicsFlowHelpController | null
+    {
+        return this._topicsFlow;
     }
 
     /**
@@ -485,20 +496,17 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 * @param userName The user name
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::startPhotoReportingInNewCfhFlow()
-    // TODO(AS3): AS3 also calls windowManager.openReportingContentReasonCategory(9) to open the CFH
-    // UI for the new flow - that UI router isn't ported (same simplification as reportUser()/
-    // reportRoom() etc. below, which all substitute a log.debug for it).
     startPhotoReportingInNewCfhFlow(userId: number, userName: string, extraDataId: string, roomObjectId: number): void
     {
-        if(this._cfhManager)
-        {
-            this._cfhManager.reportedRoomId = this._currentRoomId;
-            this._cfhManager.reportedUserId = userId;
-            this._cfhManager.reportedUserName = userName;
-            this._cfhManager.reportedRoomObjectId = roomObjectId;
-            this._cfhManager.reportedExtraDataId = extraDataId;
-            log.debug('Start photo reporting - userId:', userId);
-        }
+        if(!this._cfhManager) return;
+
+        this._cfhManager.reportedRoomId = this._currentRoomId;
+        this._cfhManager.reportedUserId = userId;
+        this._cfhManager.reportedUserName = userName;
+        this._cfhManager.reportedRoomObjectId = roomObjectId;
+        this._cfhManager.reportedExtraDataId = extraDataId;
+
+        this._topicsFlow?.openReportingContentReasonCategory(HabboHelp.REPORT_TYPE_PHOTO);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::reportUserName()
@@ -509,7 +517,8 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
             this._cfhManager.reportedUserId = userId;
             this._cfhManager.reportedUserName = userName;
             this._cfhManager.reportedRoomId = -1;
-            log.debug('Report user name - userId:', userId);
+
+            this._topicsFlow?.openReportingUserName();
         }
     }
 
@@ -519,17 +528,21 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         if(this._cfhManager)
         {
             this._cfhManager.reportedUserId = userId;
-            log.debug('Report user from IM - userId:', userId);
+
+            this._topicsFlow?.openReportingIMSelection();
         }
     }
 
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::reportUser()
-    reportUser(userId: number, roomId: number, _userName: string): void
+    // AS3 ignores its second and third arguments here — the room is resolved from the chat lines
+    // the reporter picks, and the name from the user registry.
+    reportUser(userId: number, _roomId: number, _userName: string): void
     {
         if(this._cfhManager)
         {
             this._cfhManager.reportedUserId = userId;
-            log.debug('Report user - userId:', userId, 'roomId:', roomId);
+
+            this._topicsFlow?.openReportingChatLineSelection();
         }
     }
 
@@ -541,16 +554,20 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 * @param roomDescription The room description
 	 */
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::reportRoom()
-    // TODO(AS3): AS3 sets the four `reported*` fields directly and then opens the *new* CFH flow
-    // via `TopicsFlowHelpController.openReportingContentReasonCategory(4)`. That controller is
-    // unported, so this routes through the manager's own `reportRoom()` — the older flow, which
-    // asks the server for pending calls first and would open `emergency_help_request`. Same
-    // substitution as `reportUser()`/`reportThread()`/`reportMessage()` below.
-    reportRoom(roomId: number, roomName: string, roomDescription: string): void
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::reportRoom()
+    // AS3 sets the fields directly and opens the new flow; it does not call the manager's own
+    // `reportRoom()`, which is the older pending-calls route. `roomDescription` has no field on
+    // the manager in AS3 either — only the older flow's room panel reads one.
+    reportRoom(roomId: number, roomName: string, _roomDescription: string): void
     {
         if(this._cfhManager)
         {
-            this._cfhManager.reportRoom(roomId, roomName, roomDescription);
+            this._cfhManager.reportedRoomId = roomId;
+            this._cfhManager.reportedRoomName = roomName;
+            this._cfhManager.reportedUserId = -1;
+            this._cfhManager.reportedUserName = '';
+
+            this._topicsFlow?.openReportingContentReasonCategory(HabboHelp.REPORT_TYPE_ROOM);
         }
     }
 
@@ -565,7 +582,10 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     {
         if(this._cfhManager)
         {
-            this._cfhManager.reportThread(groupId, threadId);
+            this._cfhManager.reportedGroupId = groupId;
+            this._cfhManager.reportedThreadId = threadId;
+
+            this._topicsFlow?.openReportingContentReasonCategory(HabboHelp.REPORT_TYPE_THREAD);
         }
     }
 
@@ -581,7 +601,11 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     {
         if(this._cfhManager)
         {
-            this._cfhManager.reportMessage(groupId, threadId, messageId);
+            this._cfhManager.reportedGroupId = groupId;
+            this._cfhManager.reportedThreadId = threadId;
+            this._cfhManager.reportedMessageId = messageId;
+
+            this._topicsFlow?.openReportingContentReasonCategory(HabboHelp.REPORT_TYPE_MESSAGE);
         }
     }
 
@@ -815,9 +839,24 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 * Request the user's own sanction status
 	 */
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::requestSanctionInfo()
-    requestSanctionInfo(): void
+    // AS3 takes the flag and ignores it; kept so the two call sites (login sampling and the
+    // flow's sanction link) read the same as the source.
+    requestSanctionInfo(_showOnLogin: boolean = false): void
     {
         this.sendMessage(new GetCfhStatusMessageComposer());
+    }
+
+    /**
+	 * Request the user's own report history
+	 */
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::requestReportsStatus()
+    // sends `_SafeCls_2121`, header 1834 in the primary registry. Neither this port nor
+    // `vortex-emulator` defines a composer for 1834, so there is nothing to send. Declared rather
+    // than omitted because the flow's "my reports" link now reaches it — that link is hidden
+    // unless `my.reports.status.enabled` is set, which is why nothing calls this today.
+    requestReportsStatus(): void
+    {
+        log.warn('requestReportsStatus: no composer for header 1834 on either side');
     }
 
     /**
@@ -1190,6 +1229,12 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
             this._sanctionInfo = null;
         }
 
+        if(this._topicsFlow)
+        {
+            this._topicsFlow.dispose();
+            this._topicsFlow = null;
+        }
+
         // Dispose registry handlers
         if(this._chatEventHandler)
         {
@@ -1229,6 +1274,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         this._guideManager = new GuideHelpManager(this);
         this._nameChangeController = new NameChangeController(this._communication);
         this._sanctionInfo = new SanctionInfo();
+        this._topicsFlow = new TopicsFlowHelpController(this);
 
         // Create registry handlers — both take the component, as AS3 does: they subscribe
         // themselves (room chat / the two IM events) rather than waiting to be called.

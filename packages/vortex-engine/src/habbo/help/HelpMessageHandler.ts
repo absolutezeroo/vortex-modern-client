@@ -199,13 +199,16 @@ export class HelpMessageHandler
         this._help.handlePendingCallsForHelp(parser);
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::onPendingCallsForHelpDeleted()
-    // calls `TopicsFlowHelpController.submitCallForHelp(false)` — the user discarded their open
-    // reports, so the new one is now free to go out. That controller is unported (933 lines), so
-    // the report the user just discarded their queue for is dropped here.
+    /**
+	 * The user discarded their open reports — the new one is now free to go out
+	 *
+	 * `false` because this report has already been past the bullying/guide decision once; it must
+	 * not be re-routed to the guide system on the way back through.
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onPendingCallsForHelpDeleted()
     private onCallForHelpPendingCallsDeleted(_event: IMessageEvent): void
     {
-        log.warn('Pending calls deleted, but the follow-up submit (TopicsFlowHelpController) is not ported');
+        this._help.topicsFlowHelpController?.submitCallForHelp(false);
     }
 
     /**
