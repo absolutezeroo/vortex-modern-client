@@ -456,8 +456,12 @@ side alone** — which is the whole point, and the same shape as every other rea
 
 `node scripts/unlistened-server-messages.mjs` now cross-checks all three facts: an empty
 `Serialize` body, a header this client listens for, and a client parser that actually reads. As of
-2026-08-11 that finds **27 messages, none of them built by any handler today** — so no live desync,
-but 27 traps that will each look like a mystery the day someone implements the feature behind them.
+2026-08-11 that finds **25 messages, none of them built by any handler today** — so no live desync,
+but 25 traps that will each look like a mystery the day someone implements the feature behind them.
+(It read 27 before `RoomAdError` (2396) and `ObjectRemoveConfirm` (3643) were filled in from their
+AS3 parsers, with wire tests. Those two are worth copying as the pattern: the shape comes from
+WIN63's parser, never from guessing, and `ObjectRemoveConfirm`'s leading int is a *flag* the client
+turns into a category — sending the category would look right and be wrong.)
 
 Two cautions are baked into the check, both learned by getting it wrong first:
 
