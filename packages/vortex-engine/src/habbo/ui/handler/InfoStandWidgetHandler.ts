@@ -101,17 +101,15 @@ const log = Logger.getLogger('habbo.ui.handler.InfoStandWidgetHandler');
 // unimplemented AS3 case fired, instead of a silent no-op.
 const UNIMPLEMENTED_WIDGET_MESSAGES = new Set<string>([
     'RWUAM_SEND_FRIEND_REQUEST', 'RWUAM_RESPECT_USER', 'RWUAM_REPLENISH_RESPECT_USER',
+    // The leading space on RESPECT_PET is not a typo here: AS3 carries it in all four places the
+    // string appears — the declaration, the pet-target test, the switch case and both menu views
+    // that send it. Trimming it on this side alone would stop the message matching.
     'RWUAM_OPEN_PROFILE', ' RWUAM_RESPECT_PET', 'RWUAM_WHISPER_USER', 'RWUAM_IGNORE_USER',
     'RWUAM_UNIGNORE_USER', 'RWUAM_KICK_USER', 'RWUAM_BAN_USER_DAY', 'RWUAM_BAN_USER_HOUR',
     'RWUAM_BAN_USER_PERM', 'RWUAM_MUTE_USER_2MIN', 'RWUAM_MUTE_USER_5MIN', 'RWUAM_MUTE_USER_10MIN',
     'RWUAM_GIVE_RIGHTS', 'RWUAM_TAKE_RIGHTS', 'RWUAM_START_TRADING', 'RWUAM_OPEN_HOME_PAGE',
     'RWUAM_PASS_CARRY_ITEM', 'RWUAM_DROP_CARRY_ITEM',
-    // AS3 handles all three wired-inspect variants together via
-    // roomEngine.context.createLinkEvent("wiredmenu/open/inspection/..."), which this
-    // port cannot reach yet (IRoomEngine exposes no link-event/context accessor). The
-    // base RWUAM_WIRED_INSPECT was declared in getWidgetMessages() but missing here, so
-    // it fell through silently while its BOT/PET siblings logged a TODO.
-    'RWUAM_WIRED_INSPECT', 'RWUAM_WIRED_INSPECT_BOT', 'RWUAM_WIRED_INSPECT_PET', 'RWRTSM_ROOM_TAG_SEARCH',
+    'RWRTSM_ROOM_TAG_SEARCH',
     'RWGOI_MESSAGE_GET_BADGE_IMAGE', 'RWUAM_REPORT', 'RWUAM_PICKUP_PET', 'RWUAM_MOUNT_PET',
     'RWUAM_TOGGLE_PET_RIDING_PERMISSION', 'RWUAM_TOGGLE_PET_BREEDING_PERMISSION', 'RWUAM_DISMOUNT_PET',
     'RWUAM_SADDLE_OFF', 'RWUAM_TRAIN_PET', 'RWUAM_REQUEST_PET_UPDATE', 'RWVM_CHANGE_MOTTO_MESSAGE',
@@ -454,6 +452,11 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         if(message instanceof RoomWidgetUserActionMessage)
         {
+            // Handled before processUserActionMessage(), which is pet-only and drops anything
+            // whose id is not a pet in the room — the user and bot variants would never survive
+            // that guard.
+            if(this.processWiredInspect(message)) return null;
+
             this.processUserActionMessage(message);
 
             return null;
@@ -492,6 +495,31 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     // rights/trading/friend-request/respect-user/open-profile) live in the InfoStandUserView path
     // and are not emitted by the pet view; they stay in UNIMPLEMENTED_WIDGET_MESSAGES until that
     // view is wired.
+    /**
+     * "Inspect in the wired menu" for a user, a bot or a pet.
+     *
+     * One branch for all three in AS3, and the link is the same either way — the `1` in it is the
+     * inspection *type*, not the target kind, so a bot and a pet produce identical links to a
+     * user's. Returns whether the message was one of the three.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage()
+    // (the RWUAM_WIRED_INSPECT / _BOT / _PET arm)
+    private processWiredInspect(message: RoomWidgetUserActionMessage): boolean
+    {
+        if(message.type !== RoomWidgetUserActionMessage.WIRED_INSPECT
+            && message.type !== RoomWidgetUserActionMessage.WIRED_INSPECT_BOT
+            && message.type !== RoomWidgetUserActionMessage.WIRED_INSPECT_PET) return false;
+
+        const container = this._container;
+        const userData = container?.roomSession?.userDataManager.getUserData(message.userId) ?? null;
+
+        if(!container?.roomEngine || userData == null) return true;
+
+        container.roomEngine.createLinkEvent(`wiredmenu/open/inspection/1/${userData.roomObjectId}`);
+
+        return true;
+    }
+
     private processUserActionMessage(message: RoomWidgetUserActionMessage): void
     {
         const container = this._container;
