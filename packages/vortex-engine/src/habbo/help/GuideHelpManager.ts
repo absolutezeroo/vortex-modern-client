@@ -2,6 +2,7 @@ import {ChatReviewReporterFeedbackCtrl} from './ChatReviewReporterFeedbackCtrl';
 import {HelpController} from './guidehelp/HelpController';
 import {GuideSessionController} from './guidehelp/GuideSessionController';
 import {GuideSessionData} from './GuideSessionData';
+import type {PendingGuideTicket} from '@habbo/communication/messages/parser/help/PendingGuideTicket';
 import {Logger} from '@core/utils/Logger';
 
 import type {HabboHelp} from './HabboHelp';
@@ -124,10 +125,7 @@ export class GuideHelpManager
 	 * @param pendingTicket The ticket payload from the guide-reporting status message
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/GuideHelpManager.as::showPendingTicket()
-    // The argument stays `unknown`: its AS3 type (`_SafePkg_2970._SafeCls_2969`) is unported and
-    // `GuideReportingStatusMessageParser` reads no `pendingTicket` field, so nothing can call this
-    // yet. `HelpController.showPendingTicket()` carries the detail of what remains.
-    showPendingTicket(pendingTicket: unknown): void
+    showPendingTicket(pendingTicket: PendingGuideTicket | null): void
     {
         this._helpController?.showPendingTicket(pendingTicket);
     }

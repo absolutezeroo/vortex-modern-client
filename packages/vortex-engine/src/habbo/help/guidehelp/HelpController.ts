@@ -6,6 +6,10 @@ import {Logger} from '@core/utils/Logger';
 import {QuitMessageComposer} from '@habbo/communication/messages/outgoing/room/session/QuitMessageComposer';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import type {IModalDialog} from '@habbo/window/utils/IModalDialog';
+import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
+import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget';
+import type {UpdatingTimeStampWidget} from '@habbo/window/widgets/UpdatingTimeStampWidget';
+import {PendingGuideTicket} from '@habbo/communication/messages/parser/help/PendingGuideTicket';
 
 import type {GuideHelpManager} from '../GuideHelpManager';
 import type {HabboHelp} from '../HabboHelp';
@@ -41,6 +45,10 @@ export class HelpController
 
     // AS3: .../src/com/sulake/habbo/help/guidehelp/HelpController.as::_tourPopupShowTime
     private _tourPopupShowTime: number = 0;
+
+    // AS3: .../src/com/sulake/habbo/help/guidehelp/HelpController.as::_SafeStr_5122
+    // Name DERIVED: obfuscated in every tree. The "you already have a ticket open" window.
+    private _pendingRequestWindow: IWindowContainer | null = null;
 
     // AS3: .../src/com/sulake/habbo/help/guidehelp/HelpController.as::_disposed
     private _disposed: boolean = false;
@@ -237,23 +245,121 @@ export class HelpController
     };
 
     /**
-	 * Show the guide ticket the player already has open
+	 * Show the guide ticket the player already has open.
+	 *
+	 * One of four layouts, chosen by `isGuide` first and `type` second — a guide always sees the
+	 * plain "session in progress" window and nothing about the other party, which is why the
+	 * populate step returns early for them rather than reading fields the wire did not send.
+	 *
+	 * Nothing calls this on the current server: `vortex-emulator`'s
+	 * `GuideReportingStatusMessageComposer` is an empty record and its handler a no-op, so status 1
+	 * never arrives. Ported anyway — the read side has to exist before the write side can be
+	 * checked against it, and this is the half that can be got right from the source alone.
 	 *
 	 * @param pendingTicket The ticket payload from the guide-reporting status message
 	 */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/guidehelp/HelpController.as::showPendingTicket()
-    // picks one of four layouts off `isGuide` and `type` — pending_guide_session,
-    // pending_tour_request, pending_instructions_request, pending_bully_request, all four of which
-    // ship — and fills the last two from the ticket's description, other-party name and figure,
-    // room name and age. The blocker is the payload, not the windows: its AS3 type
-    // (`_SafePkg_2970._SafeCls_2969`) is unported, and `GuideReportingStatusMessageParser` does not
-    // read a `pendingTicket` field off the wire, so there is nothing to pass in. Porting the DTO
-    // and widening that parser comes first; `HabboHelp.handleGuideReportingStatus()` documents the
-    // same gap from the other end.
-    showPendingTicket(pendingTicket: unknown): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/guidehelp/HelpController.as::showPendingTicket()
+    showPendingTicket(pendingTicket: PendingGuideTicket | null): void
     {
-        log.warn('showPendingTicket: the ticket payload is not parsed yet', pendingTicket);
+        if(pendingTicket == null) return;
+
+        let layoutName: string;
+
+        if(pendingTicket.isGuide)
+        {
+            layoutName = 'pending_guide_session';
+        }
+        else
+        {
+            switch(pendingTicket.type)
+            {
+                case PendingGuideTicket.TYPE_TOUR:
+                case PendingGuideTicket.TYPE_TOUR_ALT:
+                    layoutName = 'pending_tour_request';
+                    break;
+                case PendingGuideTicket.TYPE_INSTRUCTIONS:
+                    layoutName = 'pending_instructions_request';
+                    break;
+                case PendingGuideTicket.TYPE_BULLY:
+                    layoutName = 'pending_bully_request';
+                    break;
+                default:
+                    return;
+            }
+        }
+
+        this._pendingRequestWindow = this._habboHelp?.getXmlWindow(layoutName) as IWindowContainer | null;
+
+        if(this._pendingRequestWindow == null)
+        {
+            log.warn(`showPendingTicket: no layout "${layoutName}" - the open-ticket window did not appear`);
+
+            return;
+        }
+
+        this._pendingRequestWindow.center();
+        this._pendingRequestWindow.procedure = this.onPendingRequestEvent;
+
+        if(pendingTicket.isGuide) return;
+
+        const ageMs = new Date().getTime() - (pendingTicket.secondsAgo * 1000);
+
+        switch(pendingTicket.type)
+        {
+            case PendingGuideTicket.TYPE_INSTRUCTIONS:
+            {
+                const description = this._pendingRequestWindow.findChildByName('description');
+
+                if(description) description.caption = pendingTicket.description;
+
+                this.setTimeStamp(ageMs);
+
+                break;
+            }
+            case PendingGuideTicket.TYPE_BULLY:
+            {
+                const userName = this._pendingRequestWindow.findChildByName('user_name');
+
+                if(userName) userName.caption = pendingTicket.otherPartyName;
+
+                const avatar = (this._pendingRequestWindow.findChildByName('user_avatar') as unknown as IWidgetWindow | null)?.widget as IAvatarImageWidget | null;
+
+                if(avatar) avatar.figure = pendingTicket.otherPartyFigure;
+
+                this.setTimeStamp(ageMs);
+
+                this._habboHelp?.localization?.registerParameter('guide.pending.bully.room', 'room', pendingTicket.roomName);
+
+                break;
+            }
+        }
     }
+
+    // TS-only: the timestamp lookup AS3 repeats inline in both populated branches.
+    private setTimeStamp(timeStamp: number): void
+    {
+        const widget = (this._pendingRequestWindow?.findChildByName('timestamp') as unknown as IWidgetWindow | null)?.widget as UpdatingTimeStampWidget | null;
+
+        if(widget) widget.timeStamp = timeStamp;
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/guidehelp/HelpController.as::onPendingReuqestEvent()
+    // The AS3 method name is misspelled ("Reuqest"); corrected here, since nothing matches on it.
+    private onPendingRequestEvent = (event: WindowEvent, target: IWindow): void =>
+    {
+        if(event.type !== 'WME_CLICK') return;
+
+        switch(target?.name)
+        {
+            case 'header_button_close':
+            case 'close_button':
+                if(this._pendingRequestWindow != null && !this._pendingRequestWindow.disposed)
+                {
+                    this._pendingRequestWindow.dispose();
+                    this._pendingRequestWindow = null;
+                }
+        }
+    };
 
     // AS3: .../src/com/sulake/habbo/help/guidehelp/HelpController.as::dispose()
     dispose(): void

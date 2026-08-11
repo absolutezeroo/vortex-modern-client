@@ -30,3 +30,4 @@ export * from './QuizDataMessageParser';
 export * from './QuizResultsMessageParser';
 export * from './SanctionStatusMessageParser';
 export * from './UserNameChangedMessageParser';
+export * from './PendingGuideTicket';

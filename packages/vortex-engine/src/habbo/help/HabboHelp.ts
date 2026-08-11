@@ -389,16 +389,6 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         window.open(url, '_blank');
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as
-    // Members still absent, each blocked on something named:
-    //   - `requestReportsStatus()` — sends `_SafeCls_2121`, header 1834 in the primary registry.
-    //     The port has no composer for 1834 and `vortex-emulator` does not define the header
-    //     either, so there is nothing to send it to. Not guessed at.
-    //   - `showHabboWayQuiz()`/`showSafetyQuiz()` — need `HabboWayQuizController` (387 lines),
-    //     unported. Both booklets offer the quiz, so both have a dead button until it lands.
-    // `getModalXmlWindow()`, `toggleNewHelpWindow()`, `showHabboWay()`/`closeHabboWay()` and
-    // `showSafetyBooklet()`/`closeSafetyBooklet()` have all since landed above.
-
     /**
 	 * The own user name (from name change controller)
 	 */
@@ -982,13 +972,8 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
                 this.toggleNewHelpWindow();
                 break;
 
-            // TODO(AS3): status 1 calls `guideHelpManager.showPendingTicket(parser.pendingTicket)`.
-            // `HelpController.showPendingTicket()` is ported and picks the right one of four
-            // layouts, but `GuideReportingStatusMessageParser` reads no `pendingTicket` field off
-            // the wire and its AS3 payload type (`_SafePkg_2970._SafeCls_2969`) is unported, so
-            // there is nothing to hand it. Widening the parser and porting that DTO comes first.
             case 1:
-                log.warn('Guide reporting status 1: the pending-ticket payload is not parsed yet');
+                this._guideManager?.showPendingTicket(parser.pendingTicket);
                 break;
 
             default:
