@@ -1,4 +1,5 @@
 import type {IHabboCatalog} from '../../IHabboCatalog';
+import type {IPurchasableOffer} from '../../IPurchasableOffer';
 import type {IHabboCatalogPurse} from '../../purse/IHabboCatalogPurse';
 import type {ICatalogPage} from '../../viewer/ICatalogPage';
 import type {IProduct} from '../../viewer/IProduct';
@@ -17,7 +18,7 @@ import {TargetedOfferData} from '@habbo/communication/messages/incoming/catalog/
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/targetedoffers/data/TargetedOffer.as
  */
-export class TargetedOffer extends TargetedOfferData
+export class TargetedOffer extends TargetedOfferData implements IPurchasableOffer
 {
     /**
      * Name DERIVED: obfuscated in every tree. The grace period subtracted from the countdown, so
@@ -98,39 +99,43 @@ export class TargetedOffer extends TargetedOfferData
     }
 
     /*
-     * The five catalog-page members below all answer null/0 in AS3 as well. They are here because
-     * the source declares them, not because anything reads them - a targeted offer never belongs
-     * to a page. Their return types are widened with `| null` where `IPurchasableOffer` promises a
-     * value, which is why this class does not claim to implement that interface.
+     * The four catalog-page members below answer null in AS3 too, behind non-nullable declared
+     * types - AS3 lets any object type hold null, so `get page():_SafeCls_2128 { return null; }`
+     * compiles there and does not here. The `null!` keeps both halves of the original: the
+     * signature `IPurchasableOffer` requires, and the value the source actually returns.
+     *
+     * They exist because the source declares them, not because anything reads them: a targeted
+     * offer never belongs to a page. The two things that *are* handed this object -
+     * `getPriceMap()` and `showPriceInContainer()` - only touch the price members.
      */
 
     // AS3: .../src/com/sulake/habbo/catalog/targetedoffers/data/TargetedOffer.as::get page()
-    get page(): ICatalogPage | null
+    get page(): ICatalogPage
     {
-        return null;
+        return null!;
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/targetedoffers/data/TargetedOffer.as::set page()
-    set page(_value: ICatalogPage | null)
+    set page(_value: ICatalogPage)
     {
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/targetedoffers/data/TargetedOffer.as::get product()
-    get product(): IProduct | null
+    get product(): IProduct
     {
-        return null;
+        return null!;
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/targetedoffers/data/TargetedOffer.as::get productContainer()
-    get productContainer(): IProductContainer | null
+    get productContainer(): IProductContainer
     {
-        return null;
+        return null!;
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/targetedoffers/data/TargetedOffer.as::get gridItem()
-    get gridItem(): IGridItem | null
+    get gridItem(): IGridItem
     {
-        return null;
+        return null!;
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/targetedoffers/data/TargetedOffer.as::get previewCallbackId()

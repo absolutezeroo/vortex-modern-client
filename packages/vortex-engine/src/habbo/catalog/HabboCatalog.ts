@@ -202,6 +202,7 @@ import {CatalogWindowState} from './CatalogWindowState';
 import {PlacedObjectPurchaseData} from './purchase/PlacedObjectPurchaseData';
 import {RentConfirmationWindow} from './purchase/RentConfirmationWindow';
 import {RoomAdPurchaseData} from './purchase/RoomAdPurchaseData';
+import {OfferController} from './targetedoffers/OfferController';
 import {PlaceObjectFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceObjectFromCatalogComposer';
 import {PlaceWallItemFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceWallItemFromCatalogComposer';
 import {FurnitureCategory} from '@habbo/inventory/enum/FurnitureCategory';
@@ -393,6 +394,21 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     {
         return this._roomEngine;
     }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get toolbar()
+    get toolbar(): IHabboToolbar | null
+    {
+        return this._toolbar;
+    }
+
+    /**
+     * AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_7106
+     *
+     * Field name DERIVED: obfuscated in every tree. The targeted-offer controller, which has no
+     * accessor — it is built in `initComponent()` and disposed here, and drives itself from there.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_7106
+    private _offerController: OfferController | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get currentPage()
     get currentPage(): ICatalogPage | null
@@ -2989,6 +3005,13 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         this._utils.dispose();
 
+        // AS3: .../HabboCatalog.as::dispose() — right after _utils, before super.dispose().
+        if(this._offerController != null)
+        {
+            this._offerController.dispose();
+            this._offerController = null;
+        }
+
         // Drop the flat references before the states that own the objects behind them,
         // then let each state take down its own window, navigator and viewer.
         this._catalogViewer = null;
@@ -3067,6 +3090,11 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::initComponent()
         this._sessionDataManager?.loadProductData(this);
+
+        // Must come after loadProductData(): the controller registers itself as a products-ready
+        // listener in its own constructor, and that is what triggers its first server request.
+        this._offerController = new OfferController(this);
+
         this._furnitureDataCache = this._sessionDataManager?.getFurniData(this) ?? null;
     }
 
