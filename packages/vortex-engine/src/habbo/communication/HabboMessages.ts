@@ -220,6 +220,8 @@ import {
 } from './messages/incoming/mysterybox';
 
 // Incoming Events - Catalog
+import {SilverBalanceMessageEvent} from './messages/incoming/collectibles/SilverBalanceMessageEvent';
+import {EmeraldBalanceMessageEvent} from './messages/incoming/collectibles/EmeraldBalanceMessageEvent';
 import {
     BonusRareInfoMessageEvent,
     ProductOfferMessageEvent,
@@ -2152,6 +2154,10 @@ export class HabboMessages implements IMessageConfiguration
         // The room list a room ad can point at (`_events[3787]`), read by RoomAdsCatalogWidget.
         this._events.set(3787, RoomAdPurchaseInfoMessageEvent);
         // The targeted-offer pair (`_events[2155]`/`_events[2013]`), read by OfferController.
+        // The two collectible currencies. Both were being sent by the emulator's wallet module
+        // and its NFT handlers with nothing on this side listening.
+        this._events.set(3727, SilverBalanceMessageEvent);
+        this._events.set(583, EmeraldBalanceMessageEvent);
         this._events.set(2155, TargetedOfferMessageEvent);
         this._events.set(2013, TargetedOfferNotFoundMessageEvent);
         this._events.set(1073, BundleDiscountRulesetMessageEvent);

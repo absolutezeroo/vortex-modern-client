@@ -83,6 +83,10 @@ import {CheckGiftableMessageComposer} from '@habbo/communication/messages/outgoi
 import {GetRoomAdsPurchaseInfoMessageComposer} from '@habbo/communication/messages/outgoing/catalog/GetRoomAdsPurchaseInfoMessageComposer';
 import {PurchaseRoomAdMessageComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseRoomAdMessageComposer';
 import {RoomAdPurchaseInitiatedMessageComposer} from '@habbo/communication/messages/outgoing/catalog/RoomAdPurchaseInitiatedMessageComposer';
+import {SilverBalanceMessageEvent} from '@habbo/communication/messages/incoming/collectibles/SilverBalanceMessageEvent';
+import {EmeraldBalanceMessageEvent} from '@habbo/communication/messages/incoming/collectibles/EmeraldBalanceMessageEvent';
+import type {SilverBalanceMessageParser} from '@habbo/communication/messages/parser/collectibles/SilverBalanceMessageParser';
+import type {EmeraldBalanceMessageParser} from '@habbo/communication/messages/parser/collectibles/EmeraldBalanceMessageParser';
 import {PurchaseProductAsGiftMessageComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseProductAsGiftMessageComposer';
 import {CatalogIndexMessageEvent} from '@habbo/communication/messages/incoming/catalog/CatalogIndexMessageEvent';
 import {BundleDiscountRulesetMessageEvent} from '@habbo/communication/messages/incoming/catalog/BundleDiscountRulesetMessageEvent';
@@ -3046,6 +3050,8 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     protected override initComponent(): void 
     {
         this.addMessageEvent(new CreditBalanceEvent(this.onCreditBalance.bind(this)));
+        this.addMessageEvent(new SilverBalanceMessageEvent(this.onSilverBalance.bind(this)));
+        this.addMessageEvent(new EmeraldBalanceMessageEvent(this.onEmeraldBalance.bind(this)));
         this.addMessageEvent(new ActivityPointsMessageEvent(this.onActivityPoints.bind(this)));
         this.addMessageEvent(new HabboActivityPointNotificationMessageEvent(this.onActivityPointNotification.bind(this)));
         this.addMessageEvent(new CatalogIndexMessageEvent(this.onCatalogIndex.bind(this)));
@@ -3736,6 +3742,39 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._firstCreditBalancePending = false;
 
         this.events.emit(PurseEvent.CREDIT_BALANCE, new PurseEvent(PurseEvent.CREDIT_BALANCE, parser.balance, 0));
+        this.events.emit(PurseUpdateEvent.UPDATE, new PurseUpdateEvent());
+    }
+
+    /**
+     * The two collectible currencies, each its own message and each one int.
+     *
+     * Note what they do *not* do, next to `onCreditBalance()` above: no `updatePurse()` and no
+     * purchase sound. AS3 dispatches the two events and stops, which is why the catalog header
+     * only redraws once something else refreshes it.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::onSilverBalance()
+    private onSilverBalance(event: IMessageEvent): void
+    {
+        const parser = event?.parser as SilverBalanceMessageParser | null;
+
+        if(!parser) return;
+
+        this._purse.silverBalance = parser.silverBalance;
+
+        this.events.emit(PurseEvent.SILVER_BALANCE, new PurseEvent(PurseEvent.SILVER_BALANCE, parser.silverBalance, 0));
+        this.events.emit(PurseUpdateEvent.UPDATE, new PurseUpdateEvent());
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::onEmeraldBalance()
+    private onEmeraldBalance(event: IMessageEvent): void
+    {
+        const parser = event?.parser as EmeraldBalanceMessageParser | null;
+
+        if(!parser) return;
+
+        this._purse.emeraldBalance = parser.emeraldBalance;
+
+        this.events.emit(PurseEvent.EMERALD_BALANCE, new PurseEvent(PurseEvent.EMERALD_BALANCE, parser.emeraldBalance, 0));
         this.events.emit(PurseUpdateEvent.UPDATE, new PurseUpdateEvent());
     }
 
