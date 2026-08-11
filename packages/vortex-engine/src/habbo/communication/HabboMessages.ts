@@ -231,6 +231,7 @@ import {
     LimitedEditionSoldOutMessageEvent,
     GiftReceiverNotFoundMessageEvent,
     RoomAdPurchaseInfoMessageEvent,
+    LtdRaffleResultMessageEvent,
     TargetedOfferMessageEvent,
     TargetedOfferNotFoundMessageEvent,
     BundleDiscountRulesetMessageEvent,
@@ -2160,6 +2161,8 @@ export class HabboMessages implements IMessageConfiguration
         // The two collectible currencies. Both were being sent by the emulator's wallet module
         // and its NFT handlers with nothing on this side listening.
         // The mute countdown, read by RoomChatHandler.
+        // The limited-edition raffle result, read by HabboCatalog.
+        this._events.set(3526, LtdRaffleResultMessageEvent);
         this._events.set(2129, RemainingMutePeriodMessageEvent);
         // The badge-point limits table, read by HabboInventory into the localization manager.
         this._events.set(3510, BadgePointLimitsMessageEvent);

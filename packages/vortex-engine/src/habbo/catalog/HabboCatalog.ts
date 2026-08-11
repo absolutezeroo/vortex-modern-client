@@ -83,6 +83,8 @@ import {CheckGiftableMessageComposer} from '@habbo/communication/messages/outgoi
 import {GetRoomAdsPurchaseInfoMessageComposer} from '@habbo/communication/messages/outgoing/catalog/GetRoomAdsPurchaseInfoMessageComposer';
 import {PurchaseRoomAdMessageComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseRoomAdMessageComposer';
 import {RoomAdPurchaseInitiatedMessageComposer} from '@habbo/communication/messages/outgoing/catalog/RoomAdPurchaseInitiatedMessageComposer';
+import {LtdRaffleResultMessageEvent} from '@habbo/communication/messages/incoming/catalog/LtdRaffleResultMessageEvent';
+import type {LtdRaffleResultMessageParser} from '@habbo/communication/messages/parser/catalog/LtdRaffleResultMessageParser';
 import {SilverBalanceMessageEvent} from '@habbo/communication/messages/incoming/collectibles/SilverBalanceMessageEvent';
 import {EmeraldBalanceMessageEvent} from '@habbo/communication/messages/incoming/collectibles/EmeraldBalanceMessageEvent';
 import type {SilverBalanceMessageParser} from '@habbo/communication/messages/parser/collectibles/SilverBalanceMessageParser';
@@ -3050,6 +3052,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     protected override initComponent(): void 
     {
         this.addMessageEvent(new CreditBalanceEvent(this.onCreditBalance.bind(this)));
+        this.addMessageEvent(new LtdRaffleResultMessageEvent(this.onLtdRaffleResult.bind(this)));
         this.addMessageEvent(new SilverBalanceMessageEvent(this.onSilverBalance.bind(this)));
         this.addMessageEvent(new EmeraldBalanceMessageEvent(this.onEmeraldBalance.bind(this)));
         this.addMessageEvent(new ActivityPointsMessageEvent(this.onActivityPoints.bind(this)));
@@ -3746,6 +3749,33 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     /**
+     * The raffle the player entered has been drawn.
+     *
+     * Tears down the purchase dialog whether they won or lost — `ltdRaffleEnded()` first, so the
+     * countdown stops before the window goes — and leaves a notification behind, since the dialog
+     * that would have shown the result is the thing being closed.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::onLtdRaffleResult()
+    private onLtdRaffleResult(event: IMessageEvent): void
+    {
+        if(this._purchaseConfirmationDialog != null)
+        {
+            this._purchaseConfirmationDialog.ltdRaffleEnded();
+            this._purchaseConfirmationDialog.dispose();
+            this._purchaseConfirmationDialog = null;
+        }
+
+        const parser = event?.parser as LtdRaffleResultMessageParser | null;
+
+        if(parser == null) return;
+
+        // `hasWon` is `resultCode === 0`; zero is the win, not the failure.
+        const key = `notification.raffle.${parser.hasWon ? 'won' : 'lost'}`;
+
+        this._notifications?.addItem(this._localization?.getLocalization(key, key) ?? key, 'ltd');
+    }
+
+    /**
      * The two collectible currencies, each its own message and each one int.
      *
      * Note what they do *not* do, next to `onCreditBalance()` above: no `updatePurse()` and no
@@ -3871,8 +3901,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onPurchaseOK()
     // TODO(AS3): AS3 also plays an icon-flyover animation toward the toolbar
     // (`_toolbar.createTransitionToIcon()` with the dialog's own icon bitmap, aimed at
-    // HTIE_ICON_INVENTORY or HTIE_ICON_MEMENU for an effect), and calls the dialog's
-    // ltdRaffleEnded() - the LTD raffle timer is not ported.
+    // HTIE_ICON_INVENTORY or HTIE_ICON_MEMENU for an effect).
     private onPurchaseOK(event: IMessageEvent): void
     {
         if(!event) return;

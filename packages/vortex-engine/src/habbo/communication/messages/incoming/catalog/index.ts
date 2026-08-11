@@ -36,3 +36,4 @@ export * from './RoomAdPurchaseInfoMessageEvent';
 export * from './TargetedOfferData';
 export * from './TargetedOfferMessageEvent';
 export * from './TargetedOfferNotFoundMessageEvent';
+export * from './LtdRaffleResultMessageEvent';
