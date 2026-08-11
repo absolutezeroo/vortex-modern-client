@@ -67,22 +67,25 @@ node scripts/todo-inventory.mjs --json
 `packages/*/dist` is excluded: it is gitignored build output carrying a duplicate of every `.d.ts`
 marker, which inflates a naive `grep -c` by ~90.
 
-**2026-08-10, after the help/CFH pass — 391 TODO in `packages/*/src` (336 `TODO(AS3)`, 55 plain), up from 382:**
+**2026-08-10, after the help/CFH pass — 387 TODO in `packages/*/src` (332 `TODO(AS3)`, 55 plain), from 382:**
 
-| Blocker                                                     | Count |
-|-------------------------------------------------------------|-------|
-| Local micro-gap, no blocker cited                            | 215   |
-| A whole unported module                                      | 109   |
-| Wire / server (composer, parser, header)                     | 34    |
-| Flash-only (BitmapData, filter, shader, Timer)               | 19    |
-| Settled decision — will not be ported (legacy, dead, moot)    | 14    |
+The count is worth watching across the pass rather than at its end, because it moved in both
+directions for the same reason:
 
-The count went **up nine** across a pass that made the report flow send packets for the first
-time. Six markers closed; roughly a dozen opened, because the pass kept finding behaviour that was
-missing with *no* marker on it — `log.debug('Show guide tool')` is not a documented gap, it is an
-invisible one. Every stub it touched now names the class it waits on and logs at `warn`. This is
-the clearest case yet of the rule two paragraphs down: judge a pass by which markers it closed and
-what started working, never by the delta.
+| Point in the pass                             | `TODO(AS3)` |
+|------------------------------------------------|-------------|
+| Start                                          | 328         |
+| After the wire fixes and the marker rewrites   | **336**     |
+| After the three window ports                   | **332**     |
+
+It rose first because the pass kept finding behaviour missing with *no* marker on it —
+`log.debug('Show guide tool')` is not a documented gap, it is an invisible one — and every stub it
+touched was given a marker naming the class it waits on and a `warn` instead. Then it fell as
+those same named classes were ported: `ChatReportController`, `ChatReviewReporterFeedbackCtrl` and
+`HelpController`, ~1,700 lines of new TypeScript, closed the markers the first half had opened.
+
+Net −4 does not describe either half. Judge a pass by which markers it closed and what started
+working, never by the delta.
 
 <details><summary>2026-08-10 — 382 TODO (327 <code>TODO(AS3)</code>, 55 plain), from 422 at the start of the day</summary>
 
@@ -197,6 +200,34 @@ unported — `BadgeReceivedEventParser` read both integers, the emulator wrote t
 handed to `HabboInventory`, and dropped one call short of the model. Threading them through
 unlocked `refreshAvailableRareBadgeRarityIds()` and the three rarity accessors that decide which
 filters the badge grid can offer.
+
+**Then the windows, which is where the line count went.** The pipeline half could ask the server
+whether the user had reports open and then had nowhere to go. Three controllers ported, ~1,700
+lines:
+
+| Class | AS3 lines | What it unblocks |
+|---|---|---|
+| `ChatReportController` | 337 | the chat-line picker a report is filed against |
+| `HelpController` | 271 | `main_help` and the new-user tour popup |
+| `ChatReviewReporterFeedbackCtrl` | 117 | the post-report feedback panel |
+
+plus `showEmergencyHelpRequest()`, `showPendingRequest()`, `showAbusiveNotice()`, the user list,
+the panel swap and the five window procedures on `CallForHelpManager` itself.
+
+`HelpController` needed `getModalXmlWindow()`, which the pass had listed as blocked because
+`buildModalDialogFromXML()` takes raw XML and the manager's name→XML map is private.
+`buildModalWidgetLayout()` is the modal twin of `buildWidgetLayout()` — the two steps every AS3
+component does inline inside its own `getModalXmlWindow()`.
+
+Two AS3 oddities were ported as written rather than tidied, both with a comment saying why:
+`saveEmergencyHelpRequestData()` tests `_reportType != 8 && _reportType == 7` in a branch the line
+above has already returned on, so its left half is dead in AS3 too; and the tour popup's analytics
+carry `showTime - now`, which is negative — the sign is what the backend receives.
+
+**What is left in `habbo/help`:** `GuideSessionController` (1,826 lines) and
+`TopicsFlowHelpController` (933), the guide tool and the new CFH flow. Both are their own
+projects, and `toggleNewHelpWindow()` is now a documented stub with two live callers rather than
+an absent member.
 
 ### The 2026-08-10 wire pass — what the audits found once the TODO list ran dry
 
