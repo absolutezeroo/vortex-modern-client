@@ -220,6 +220,7 @@ import {
     ProductOfferMessageEvent,
     LimitedEditionSoldOutMessageEvent,
     GiftReceiverNotFoundMessageEvent,
+    RoomAdPurchaseInfoMessageEvent,
     BundleDiscountRulesetMessageEvent,
     CatalogPublishedMessageEvent,
     GiftWrappingConfigurationEvent,
@@ -1066,6 +1067,8 @@ import {
     GetRecyclerPrizesMessageComposer,
     GetRecyclerStatusMessageComposer,
     GetRoomAdsPurchaseInfoMessageComposer,
+    PurchaseRoomAdMessageComposer,
+    RoomAdPurchaseInitiatedMessageComposer,
     GetSellablePetPalettesComposer,
     PlaceObjectFromCatalogComposer,
     PlaceWallItemFromCatalogComposer,
@@ -2135,6 +2138,8 @@ export class HabboMessages implements IMessageConfiguration
         // (`_events[533]`/`_events[2735]`); the emulator sends both from its gift-purchase handler.
         this._events.set(533, LimitedEditionSoldOutMessageEvent);
         this._events.set(2735, GiftReceiverNotFoundMessageEvent);
+        // The room list a room ad can point at (`_events[3787]`), read by RoomAdsCatalogWidget.
+        this._events.set(3787, RoomAdPurchaseInfoMessageEvent);
         this._events.set(1073, BundleDiscountRulesetMessageEvent);
         this._events.set(1369, GiftWrappingConfigurationEvent);
         this._events.set(773, CatalogPublishedMessageEvent);
@@ -2813,6 +2818,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(67, PurchaseMintTokensMessageComposer);
         this._composers.set(2564, CheckGiftableMessageComposer);
         this._composers.set(366, GetRoomAdsPurchaseInfoMessageComposer);
+        // The room-ad purchase pair (`_composers[2928]`/`_composers[3607]` in the WIN63 registry).
+        // 3607 is analytics only - the emulator's handler for it is a deliberate no-op.
+        this._composers.set(2928, PurchaseRoomAdMessageComposer);
+        this._composers.set(3607, RoomAdPurchaseInitiatedMessageComposer);
         this._composers.set(2909, PurchaseProductAsGiftMessageComposer);
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
         this._composers.set(780, GetMarketplaceConfigurationMessageComposer);

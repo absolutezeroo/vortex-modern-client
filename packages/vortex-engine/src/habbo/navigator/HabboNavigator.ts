@@ -12,6 +12,7 @@ import {IID_HabboNewNavigator} from '@iid/IIDHabboNewNavigator';
 import type {IWindow} from '@core/window/IWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboNavigator} from './IHabboNavigator';
 import type {IHabboNewNavigator} from './IHabboNewNavigator';
 import type {RoomInfoViewCtrl} from './inroom/RoomInfoViewCtrl';
@@ -77,7 +78,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_tracking
     private _tracking: IHabboTracking | null = null;
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_catalog
-    private _catalog: unknown | null = null;
+    private _catalog: IHabboCatalog | null = null;
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_avatarManager
     private _avatarManager: IAvatarRenderManager | null = null;
 
@@ -222,7 +223,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
             ),
             new ComponentDependency(
                 IID_HabboCatalog,
-                (catalog: unknown | null) => 
+                (catalog: IHabboCatalog | null) =>
                 {
                     this._catalog = catalog;
                 },
@@ -594,19 +595,25 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * Stub — no-op until catalog is wired.
      */
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::openCatalogRoomAdsPage()
-    openCatalogRoomAdsPage(): void 
+    openCatalogRoomAdsPage(): void
     {
-        log.debug('openCatalogRoomAdsPage');
+        this._catalog?.openCatalogPage('room_ad');
     }
 
     /**
-     * Opens the catalog room ads extend page.
-     * Stub — no-op until catalog is wired.
+     * Opens the room-ad catalog page pre-filled with the current room's event, for extending it.
+     *
+     * The room name comes from the navigator's own copy of the entered room rather than from the
+     * caller — the in-room event panel that triggers this knows the event, not the room.
      */
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::openCatalogRoomAdsExtendPage()
-    openCatalogRoomAdsExtendPage(_eventName: string, _eventDesc: string, _eventDate: Date, _eventCatId: number): void 
+    openCatalogRoomAdsExtendPage(eventName: string, eventDesc: string, eventDate: Date, eventCatId: number): void
     {
-        log.debug('openCatalogRoomAdsExtendPage');
+        if(this._catalog == null) return;
+
+        const roomName = this._data.enteredGuestRoom?.roomName ?? '';
+
+        this._catalog.openRoomAdCatalogPageInExtendedMode('room_ad', eventName, eventDesc, roomName, eventDate, eventCatId);
     }
 
     /**

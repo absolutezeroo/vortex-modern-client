@@ -81,6 +81,8 @@ import {PurchaseNftOfferMessageComposer} from '@habbo/communication/messages/out
 import {PurchaseMintTokensMessageComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseMintTokensMessageComposer';
 import {CheckGiftableMessageComposer} from '@habbo/communication/messages/outgoing/catalog/CheckGiftableMessageComposer';
 import {GetRoomAdsPurchaseInfoMessageComposer} from '@habbo/communication/messages/outgoing/catalog/GetRoomAdsPurchaseInfoMessageComposer';
+import {PurchaseRoomAdMessageComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseRoomAdMessageComposer';
+import {RoomAdPurchaseInitiatedMessageComposer} from '@habbo/communication/messages/outgoing/catalog/RoomAdPurchaseInitiatedMessageComposer';
 import {PurchaseProductAsGiftMessageComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseProductAsGiftMessageComposer';
 import {CatalogIndexMessageEvent} from '@habbo/communication/messages/incoming/catalog/CatalogIndexMessageEvent';
 import {BundleDiscountRulesetMessageEvent} from '@habbo/communication/messages/incoming/catalog/BundleDiscountRulesetMessageEvent';
@@ -199,6 +201,7 @@ import {Product} from './viewer/Product';
 import {CatalogWindowState} from './CatalogWindowState';
 import {PlacedObjectPurchaseData} from './purchase/PlacedObjectPurchaseData';
 import {RentConfirmationWindow} from './purchase/RentConfirmationWindow';
+import {RoomAdPurchaseData} from './purchase/RoomAdPurchaseData';
 import {PlaceObjectFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceObjectFromCatalogComposer';
 import {PlaceWallItemFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceWallItemFromCatalogComposer';
 import {FurnitureCategory} from '@habbo/inventory/enum/FurnitureCategory';
@@ -278,8 +281,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     /**
-     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_9727
-     *
      * Name DERIVED: obfuscated in every tree. Starts true and is cleared by the first credit
      * balance, which is how the login-time balance push avoids playing the purchase chime.
      */
@@ -650,11 +651,24 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._utils?.resolveBundleDiscountFlatPriceSteps();
     }
 
-    // every offer except that flow.
+    /**
+     * Field name DERIVED from its accessor `roomAdPurchaseData`, which is not obfuscated. Non-null
+     * only while a room-ad page is open, and that is what switches `purchaseProduct()` over to
+     * `PurchaseRoomAdMessageComposer`.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_4993
+    private _roomAdPurchaseData: RoomAdPurchaseData | null = null;
+
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get roomAdPurchaseData()
-    get roomAdPurchaseData(): { offerId: number; flatId: number; name: string } | null 
+    get roomAdPurchaseData(): RoomAdPurchaseData | null
     {
-        return null;
+        return this._roomAdPurchaseData;
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::set roomAdPurchaseData()
+    set roomAdPurchaseData(value: RoomAdPurchaseData | null)
+    {
+        this._roomAdPurchaseData = value;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get currentCatalogNavigator()
@@ -898,12 +912,10 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::get roomAdPurchaseData()
-    // The room-ad purchase flow (extend-rental-from-room-ad) isn't ported; always null means
-    // PurchaseCatalogWidget's room-ad-specific checks are always skipped, which is correct for
     // AS3's HabboCatalog itself doubles as a config accessor (getBoolean/getProperty/propertyExists
     // are already inherited from Component, delegating to context.configuration - these two
     // mirror that same pattern for the two config methods Component doesn't already expose).
+    // TS-only: no AS3 counterpart; Component's own config surface stops short of these two.
     interpolate(value: string): string
     {
         return this.context.configuration?.interpolate(value) ?? value;
@@ -975,14 +987,34 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._purchaseWillBeGift = isGift;
     }
 
+    /**
+     * Buys `offerId` off page `pageId`.
+     *
+     * Room ads take a different composer entirely: when the pending `RoomAdPurchaseData` is for
+     * this very offer, the purchase carries the room, the ad text and the event category instead
+     * of a quantity. The expiry check before it downgrades a stale extension back to a fresh
+     * purchase — an extension the server would reject anyway.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseProduct()
-    // TODO(AS3): the roomAdPurchaseData-based extend/replace branch is not ported - roomAdPurchaseData
-    // is a pre-existing always-null stub on this port (see its own getter's note), so the real AS3
-    // condition (`roomAdPurchaseData == null || roomAdPurchaseData.offerId != offerId`) is always
-    // true here, matching the simple PurchaseFromCatalogComposer path unconditionally.
     purchaseProduct(pageId: number, offerId: number, extraParam: string = '', quantity: number = 1): void
     {
-        this.connection?.send(new PurchaseFromCatalogComposer(pageId, offerId, extraParam, quantity));
+        const roomAd = this._roomAdPurchaseData;
+
+        if(roomAd == null || roomAd.offerId !== offerId)
+        {
+            this.connection?.send(new PurchaseFromCatalogComposer(pageId, offerId, extraParam, quantity));
+
+            return;
+        }
+
+        if(roomAd.extended && roomAd.expirationTime != null && roomAd.expirationTime.getTime() < new Date().getTime())
+        {
+            roomAd.extended = false;
+        }
+
+        this.connection?.send(new PurchaseRoomAdMessageComposer(
+            pageId, offerId, roomAd.flatId, roomAd.name ?? '', roomAd.extended, roomAd.description, roomAd.categoryId
+        ));
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseOffer()
@@ -1072,18 +1104,15 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._suppressNextHideMainWindow = false;
     }
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::sendRoomAdPurchaseInitiatedEvent()
-    // Needs RoomAdPurchaseInitiatedComposer, which isn't ported. Only reachable from a
-    // "ROOM_INITIATE_PURCHASE"-tagged purchase widget layout, which the ported catalog pages
-    // don't use yet.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::sendRoomAdPurchaseInitiatedEvent()
     sendRoomAdPurchaseInitiatedEvent(): void
     {
+        this.connection?.send(new RoomAdPurchaseInitiatedMessageComposer());
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getRoomAdsPurchaseInfo()
-    // TODO(AS3): the response isn't parsed/stored yet - matches the pre-existing roomAdPurchaseData
-    // always-null stub above. Sending the request is still correct and real, just currently
-    // unconsumed.
+    // The reply (header 3787) is read by RoomAdsCatalogWidget, which subscribes to it directly
+    // rather than through this class - it is the only consumer of the room list.
     getRoomAdsPurchaseInfo(): void
     {
         this.connection?.send(new GetRoomAdsPurchaseInfoMessageComposer());
@@ -1992,19 +2021,47 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.currentCatalogNavigator!.openPage(pageName);
     }
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::openRoomAdCatalogPageInExtendedMode()
-    // Needs RoomAdPurchaseData + getRoomAdsPurchaseInfo() - the room-ad purchase flow isn't
-    // ported (same deferred area as the in-room "buy this placed item" flow noted in Offer.ts).
+    /**
+     * Opens the room-ad page with the current room's ad already filled in, for extending it.
+     *
+     * The purchase data is built *before* the page opens, because `RoomAdsCatalogWidget` reads it
+     * on init to decide whether it is in extend mode. The trailing `getRoomAdsPurchaseInfo()` is
+     * conditional for a reason: if the requested page was already the open one, no page load
+     * follows and therefore no widget init, so nothing else would ask the server for the rooms.
+     *
+     * The parameter names come from the AS3 signature's only caller
+     * (`HabboNavigator.as::openCatalogRoomAdsExtendPage()`); the declaration itself is positional.
+     */
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::openRoomAdCatalogPageInExtendedMode()
     public openRoomAdCatalogPageInExtendedMode(
-        _roomId: string,
-        _roomName: string,
-        _flatId: string,
-        _description: string,
-        _expiration: Date,
-        _categoryId: number
-    ): void 
+        pageName: string,
+        eventName: string,
+        eventDescription: string,
+        roomName: string,
+        expiration: Date,
+        categoryId: number
+    ): void
     {
+        const catalogState = this.getCatalogState('NORMAL');
+        const lastPageRequestId = catalogState == null ? -1 : catalogState.lastPageRequestId;
+        const purchaseData = new RoomAdPurchaseData();
+
+        purchaseData.name = eventName;
+        purchaseData.extended = true;
+        purchaseData.extendedFlatId = this._roomEngine?.activeRoomId ?? 0;
+        purchaseData.description = eventDescription;
+        purchaseData.flatId = this._roomEngine?.activeRoomId ?? 0;
+        purchaseData.roomName = roomName;
+        purchaseData.expirationTime = expiration;
+        purchaseData.categoryId = categoryId;
+
+        this._roomAdPurchaseData = purchaseData;
+
+        this.openCatalogPage(pageName);
+
+        const node = this.currentCatalogNavigator?.getNodeByName(pageName) ?? null;
+
+        if(node != null && node.pageId === lastPageRequestId) this.getRoomAdsPurchaseInfo();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::openCatalogPageById()

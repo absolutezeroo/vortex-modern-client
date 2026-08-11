@@ -25,3 +25,5 @@ export * from './GetRoomAdsPurchaseInfoMessageComposer';
 export * from './PurchaseProductAsGiftMessageComposer';
 export * from './PlaceObjectFromCatalogComposer';
 export * from './PlaceWallItemFromCatalogComposer';
+export * from './PurchaseRoomAdMessageComposer';
+export * from './RoomAdPurchaseInitiatedMessageComposer';

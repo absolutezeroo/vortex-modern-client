@@ -24,3 +24,4 @@ export * from './RecyclerFinishedMessageEventParser';
 export * from './RecyclerPrizesMessageEventParser';
 export * from './SellablePetPalette';
 export * from './SellablePetPalettesMessageEventParser';
+export * from './RoomAdPurchaseInfoMessageParser';
