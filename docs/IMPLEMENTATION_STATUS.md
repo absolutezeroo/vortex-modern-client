@@ -316,6 +316,40 @@ primary registry and in neither this port nor `vortex-emulator`.
 **The module now works end to end against a live server** — the report flow was confirmed by hand
 on 2026-08-11, which is also what proved the layout-name fix above.
 
+### 89 messages the server sends and the client does not listen for
+
+`node scripts/unlistened-server-messages.mjs` compares `vortex-emulator`'s `*Composer` header
+constants — server→client, so this client's *events* — against the `_events.set(id, …)` calls in
+`HabboMessages.ts`. Read-only, re-runnable, and it takes a `--emulator <path>` if the sibling
+checkout moved.
+
+**2026-08-11: the emulator can send 512, this client listens for 445, and 89 have no event at
+all.** 78 of those 89 are in the AS3 client's own registry, so the real client handles them and
+the gap is this port's; the other 11 are the emulator's own and need deciding rather than porting.
+
+This is the audit that has no substitute. The client compiles, boots and renders perfectly while
+dropping a packet the server took the trouble to build — the `ProductOffer` reply above sat
+unhandled exactly that way, with `GetProductOfferComposer` going out on 1692 and a fully
+serialised offer coming back on 1911 to nobody.
+
+**The count is not a work list.** Most of the 89 belong to whole subsystems this port has not
+started — Game2/snowstorm (18), NFT and collectibles (16), camera, crafting, treasure hunt,
+YouTube. Judge each by whether its module is ported. The ones sitting in *ported* modules are the
+real finds, and at the time of writing they include:
+
+| Header | Message | Module |
+|---|---|---|
+| 594 | `RoomChatSettings` | `habbo/freeflowchat` — and `HabboFreeFlowChat` has a TODO naming this exact handler |
+| 2474 | `MyCfhReportStatus` | `habbo/help` — the reply half of `requestReportsStatus()`, whose *request* header (1834) the emulator does not define |
+| 2129 | `RemainingMutePeriod` | chat |
+| 533 / 1750 / 2013 / 2155 / 2735 / 3787 | limited-edition sold out, offer-giftable, targeted offers, gift-receiver-not-found, room-ad purchase info | `habbo/catalog` |
+| 3510 | `BadgePointLimits` | `habbo/inventory` badges |
+| 1235 / 9201 / 2145 | occupied tiles, custom stacking height, post-it placed | `habbo/room` |
+| 583 / 3727 | emerald and silver balances | currency |
+
+Header 2474 is worth a second look: the emulator sends the report-status *reply* but defines no
+header for the *request*, so that feature is half-built on the server as well as here.
+
 ### The 2026-08-10 wire pass — what the audits found once the TODO list ran dry
 
 Four audits, run after the marker sweep below because the TODO count cannot see any of this.
