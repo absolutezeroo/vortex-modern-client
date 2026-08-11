@@ -67,10 +67,11 @@ node scripts/todo-inventory.mjs --json
 `packages/*/dist` is excluded: it is gitignored build output carrying a duplicate of every `.d.ts`
 marker, which inflates a naive `grep -c` by ~90.
 
-**2026-08-11, after the catalog pass — 379 TODO in `packages/*/src` (324 `TODO(AS3)`, 55 plain).**
-The room-ad and targeted-offer ports closed six markers and added one (`setLinkStyle()`, which has
-no StyleSheet equivalent here). Both were *subsystem* ports, so most of what they closed was never
-a marker at all — see the unlistened-message section below.
+**2026-08-11, after the catalog and guide passes — 378 TODO in `packages/*/src` (323 `TODO(AS3)`,
+55 plain).** Three subsystem ports (room ads, targeted offers, `GuideSessionController`) moved the
+count by five, which is exactly the point: a subsystem port closes far more than it has markers
+for, because nobody writes a marker for a state machine that does not exist. `habbo/help` itself
+went 10 → 9 while gaining a working guide tool.
 
 **2026-08-10, after the help/CFH pass — 387 TODO in `packages/*/src` (332 `TODO(AS3)`, 55 plain), from 382:**
 
@@ -84,6 +85,7 @@ directions for the same reason:
 | After the three window ports                   | **332**     |
 | After `TopicsFlowHelpController`               | **329**     |
 | After the room-ad and targeted-offer ports     | **324**     |
+| After `GuideSessionController`                 | **323**     |
 
 It rose first because the pass kept finding behaviour missing with *no* marker on it —
 `log.debug('Show guide tool')` is not a documented gap, it is an invisible one — and every stub it
@@ -320,11 +322,35 @@ Another AS3 fault ported as written: `showPage()`'s question branch builds the s
 "page 1 of N" caption and overwrites it on the next line with the raw key, so the first question
 shows an unsubstituted `${…}` until prev/next runs `setCurrentQuestion()`.
 
-**What is left in `habbo/help`: 10 markers, none of them a micro-gap.** Seven wait on
-`GuideSessionController` (1,826 lines) — the guide tool and the guide-session conversation, and
-the only real subsystem still missing from this module. One is a settled decision, one is
-Flash-only, and one is the wire: `requestReportsStatus()` needs header 1834, which is in the
-primary registry and in neither this port nor `vortex-emulator`.
+#### `GuideSessionController` — ported 2026-08-11
+
+The seven markers that waited on it are gone, and `habbo/help` is down to **9**. The subsystem is
+1,826 AS3 lines: the guide tool plus every window of the guide / helper / guardian flow, a state
+machine with one window slot where each `setStateX()` closes the last window and installs its own
+procedure. Nothing was blocked on assets — all 21 layouts already shipped and every incoming event
+was already ported. What was missing was the machine between them, and four composers (3336, 2545,
+349, 1801), all four corroborated by the emulator's AS3-traced constants. The nine guide composers
+that already existed were re-checked against the registry at the same time; all nine match.
+
+Three `GuideHelpManager` stubs that only logged a warning now forward for real —
+`showGuideTool()`, `createHelpRequest()`, `openReportWindow()` — so a guide report reaches its form
+instead of stopping after the server round trip.
+
+**It also surfaced a wrong interface, which is the part worth remembering.**
+`IIlluminaInputHandler` declared `onInput(widgetId: string, …)` where AS3 passes the widget
+*window*. Every handler has to reach through it to clear the input field, so the port's one
+implementer — `MainView` — worked around the missing argument by looking the widget up on itself.
+That workaround is what made the wrong signature survive: it looked like a design choice rather
+than a defect, and only a *second* implementer made the difference visible. Fixed to AS3's shape.
+
+Two genuine gaps remain, both marked: no PerkAllowances event exists in this port, so the tool is
+not revoked mid-session when the server withdraws `USE_GUIDE_TOOL`; and `IWindow` exposes no
+`margins`, so a lifted-out tour description sits flush against its title.
+
+**What is left in `habbo/help`: 9 markers, none of them a micro-gap.** One is a settled decision,
+one is Flash-only, one is the wire — `requestReportsStatus()` needs header 1834, which is in the
+primary registry and in neither this port nor `vortex-emulator` — and the rest are the two named
+above plus the pending-ticket payload the wire parser does not read.
 
 **The module now works end to end against a live server** — the report flow was confirmed by hand
 on 2026-08-11, which is also what proved the layout-name fix above.
