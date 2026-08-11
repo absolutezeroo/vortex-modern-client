@@ -289,12 +289,32 @@ This is the layout twin of the image-asset trap already recorded above: same cau
 answer. Images drop `_png`; layouts keep `_xml`. Never assume either — check the shipped directory
 for the exact filename.
 
-**What is left in `habbo/help`: 12 markers, none of them a micro-gap.** Eight wait on
-`GuideSessionController` (1,826 lines) — the guide tool and the guide-session conversation, the
-last real subsystem here, and the two `showHabboWayQuiz()`/`showSafetyQuiz()` stubs wait on
-`HabboWayQuizController` (387). One is a settled decision, one is Flash-only, and one is the wire:
-`requestReportsStatus()` needs header 1834, which is in the primary registry and in neither this
-port nor `vortex-emulator`.
+**Then both quizzes.** `HabboWayQuizController` (387 lines) is one window serving the Habbo Way
+quiz and the safety quiz — they differ in a quiz code, a set of illustrations and a localization
+prefix, and share the flow, the scoring and the review screen. Answers are held client-side until
+the last question is passed and submitted in one message, so changing an answer works; each
+question's options are shuffled once and the order remembered, so stepping back and forward does
+not reshuffle them. The option count is not on the wire — AS3 walks the localization table until a
+key comes back empty, ported as a presence test.
+
+It needed two composers the port did not have, `GetQuizQuestionsComposer` (1982) and
+`PostQuizAnswersComposer` (1387), and it exposed a subscription gap: `QuizDataMessageEvent` and
+`QuizResultsMessageEvent` were registered nowhere, so even a quiz request that went out would have
+had its answer dropped. AS3 subscribes both inside the controller's own constructor, which is why
+centralising subscriptions in `HelpMessageHandler` had quietly lost them.
+
+Another AS3 fault ported as written: `showPage()`'s question branch builds the substituted
+"page 1 of N" caption and overwrites it on the next line with the raw key, so the first question
+shows an unsubstituted `${…}` until prev/next runs `setCurrentQuestion()`.
+
+**What is left in `habbo/help`: 10 markers, none of them a micro-gap.** Seven wait on
+`GuideSessionController` (1,826 lines) — the guide tool and the guide-session conversation, and
+the only real subsystem still missing from this module. One is a settled decision, one is
+Flash-only, and one is the wire: `requestReportsStatus()` needs header 1834, which is in the
+primary registry and in neither this port nor `vortex-emulator`.
+
+**The module now works end to end against a live server** — the report flow was confirmed by hand
+on 2026-08-11, which is also what proved the layout-name fix above.
 
 ### The 2026-08-10 wire pass — what the audits found once the TODO list ran dry
 
