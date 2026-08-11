@@ -217,6 +217,7 @@ import {
 // Incoming Events - Catalog
 import {
     BonusRareInfoMessageEvent,
+    ProductOfferMessageEvent,
     BundleDiscountRulesetMessageEvent,
     CatalogPublishedMessageEvent,
     GiftWrappingConfigurationEvent,
@@ -2125,6 +2126,9 @@ export class HabboMessages implements IMessageConfiguration
 
         // === CATALOG (bonus rare) ===
         this._events.set(3573, BonusRareInfoMessageEvent);
+        // The reply to GetProductOfferComposer (1692). Header from the primary registry
+        // (`_events[1911] = _SafeCls_2066`); the emulator already answers on it.
+        this._events.set(1911, ProductOfferMessageEvent);
         this._events.set(1073, BundleDiscountRulesetMessageEvent);
         this._events.set(1369, GiftWrappingConfigurationEvent);
         this._events.set(773, CatalogPublishedMessageEvent);

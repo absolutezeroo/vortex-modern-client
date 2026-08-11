@@ -89,6 +89,10 @@ import type {BundleDiscountRulesetMessageEventParser} from '@habbo/communication
 import type {
     CatalogIndexMessageEventParser
 } from '@habbo/communication/messages/parser/catalog/CatalogIndexMessageEventParser';
+import {ProductOfferMessageEvent} from '@habbo/communication/messages/incoming/catalog/ProductOfferMessageEvent';
+import type {ProductOfferMessageEventParser} from '@habbo/communication/messages/parser/catalog/ProductOfferMessageEventParser';
+import {SelectProductEvent} from './viewer/widgets/events/SelectProductEvent';
+import {SetExtraPurchaseParameterEvent} from './viewer/widgets/events/SetExtraPurchaseParameterEvent';
 import {CatalogPageMessageEvent} from '@habbo/communication/messages/incoming/catalog/CatalogPageMessageEvent';
 import type {
     CatalogPageMessageEventParser
@@ -1697,14 +1701,107 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::sendGetProductOffer()
-    // TODO(AS3): the response (ProductOfferEvent/onProductOffer) isn't ported yet - it needs a
-    // full offer/product reconstruction (same shape as the catalog-page response) plus
-    // CatalogPage.updateLimitedItemsLeft()/ProductOfferUpdatedEvent wiring. The request goes out
-    // correctly, but nothing currently updates the UI when the reply arrives.
     public sendGetProductOffer(offerId: number): void
     {
         this.connection?.send(new GetProductOfferComposer(offerId));
     }
+
+    /**
+	 * One refreshed offer came back — select it on the open page
+	 *
+	 * This is the reply to `sendGetProductOffer()`. Its first job is the limited-edition counter:
+	 * a unique item's remaining count is only current at the moment it is asked for, so the page
+	 * is told before anything else happens. Then the offer is rebuilt and handed to the page as a
+	 * selection, which is what draws it in the product view.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onProductOffer()
+    private onProductOffer = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as ProductOfferMessageEventParser | null;
+        const offerData = parser?.offerData ?? null;
+
+        if(!offerData || offerData.products.length === 0) return;
+
+        const state = this.getCatalogState(this._catalogType);
+        const viewer = state?.catalogViewer ?? null;
+        const currentPage = viewer?.currentPage ?? null;
+
+        const firstProduct = offerData.products[0];
+
+        if(currentPage != null && firstProduct.uniqueLimitedItem)
+        {
+            currentPage.updateLimitedItemsLeft(offerData.offerId, firstProduct.uniqueLimitedItemsLeft);
+        }
+
+        // Same reconstruction the catalog-page reply does, product for product.
+        const products = offerData.products.map((productData) =>
+        {
+            const furnitureData = this.getFurnitureData(productData.furniClassId, productData.productType);
+
+            return new Product(
+                productData.productType,
+                productData.furniClassId,
+                productData.extraParam,
+                this.getProductCountOverride(offerData.localizationId, furnitureData, productData.productCount),
+                this.getProductData(offerData.localizationId),
+                furnitureData,
+                this,
+                productData.uniqueLimitedItem,
+                productData.uniqueLimitedItemSeriesSize,
+                productData.uniqueLimitedItemsLeft
+            );
+        });
+
+        const offer = new Offer(
+            offerData.offerId,
+            offerData.localizationId,
+            offerData.isRent,
+            offerData.priceInCredits,
+            offerData.priceInActivityPoints,
+            offerData.activityPointType,
+            offerData.priceInSilver,
+            offerData.giftable,
+            offerData.clubLevel,
+            products,
+            offerData.bundlePurchaseAllowed,
+            this
+        );
+
+        // An offer that does not belong in the catalog this client is showing is dropped rather
+        // than displayed — the reply can arrive after the user has switched catalog type.
+        if(!this.isOfferCompatibleWithCurrentMode(offer))
+        {
+            offer.dispose();
+
+            return;
+        }
+
+        if(currentPage == null)
+        {
+            // Nothing to select it on. AS3 leaves the offer to the garbage collector here; this
+            // port disposes it, since `Offer` holds a product container.
+            offer.dispose();
+
+            return;
+        }
+
+        offer.page = currentPage;
+
+        currentPage.dispatchWidgetEvent(new SelectProductEvent(offer));
+
+        // A wall item carries its own extra parameter (the wallpaper/floor code), which the
+        // purchase widget needs before it can price the selection.
+        if(offer.product && offer.product.productType === 'i')
+        {
+            currentPage.dispatchWidgetEvent(new SetExtraPurchaseParameterEvent(offer.product.extraParam));
+        }
+
+        // TODO(AS3): AS3 additionally re-points `_offerInFurniPlacing` at this offer while a
+        // furni-placing session is open (`if(_SafeStr_5130 && _offerInFurniPlacing)`). The first
+        // half of that guard is a field this port has not identified, so the assignment is left
+        // out rather than guessed at; the effect is that re-selecting a product mid-placement
+        // keeps the placement pointed at the offer it started with.
+    };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getRecyclerStatus()
     public getRecyclerStatus(): void
@@ -2837,6 +2934,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.addMessageEvent(new HabboActivityPointNotificationMessageEvent(this.onActivityPointNotification.bind(this)));
         this.addMessageEvent(new CatalogIndexMessageEvent(this.onCatalogIndex.bind(this)));
         this.addMessageEvent(new CatalogPageMessageEvent(this.onCatalogPage.bind(this)));
+        this.addMessageEvent(new ProductOfferMessageEvent(this.onProductOffer));
         this.addMessageEvent(new BuildersClubSubscriptionStatusMessageEvent(this.onBuildersClubSubscriptionStatus.bind(this)));
         this.addMessageEvent(new BuildersClubFurniCountMessageEvent(this.onBuildersClubFurniCount.bind(this)));
         this.addMessageEvent(new ScrSendUserInfoEvent(this.onSubscriptionInfo.bind(this)));
