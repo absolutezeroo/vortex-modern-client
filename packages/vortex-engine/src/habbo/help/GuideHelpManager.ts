@@ -1,3 +1,4 @@
+import {ChatReviewReporterFeedbackCtrl} from './ChatReviewReporterFeedbackCtrl';
 import {GuideSessionData} from './GuideSessionData';
 import {Logger} from '@core/utils/Logger';
 
@@ -9,16 +10,16 @@ const log = Logger.getLogger('habbo.help.GuideHelpManager');
  * Guide help coordination manager
  *
  * In AS3 this class holds almost no logic of its own: it is a façade over three sub-controllers
- * and forwards to them. None of the three is ported, so every forward below is still a stub, and
- * each one now names the class it is waiting on rather than describing the gap loosely:
+ * and forwards to them. One of the three is ported; the forwards to the other two are still
+ * stubs, and each names the class it is waiting on:
  *
  * - `guidehelp/GuideSessionController.as` (1,826 lines) — the guide tool, help requests and the
  *   whole guide-session conversation. Backs `showGuideTool()`, `createHelpRequest()` and
- *   `openReportWindow()`.
+ *   `openReportWindow()`. **Unported.**
  * - `guidehelp/HelpController.as` (271 lines) — the tour popup and the pending-ticket view.
- *   Backs `openTourPopup()` and `showPendingTicket()`.
+ *   Backs `openTourPopup()` and `showPendingTicket()`. **Unported.**
  * - `ChatReviewReporterFeedbackCtrl.as` (117 lines) — the post-report feedback panel. Backs
- *   `showFeedback()`.
+ *   `showFeedback()`. **Ported.**
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/GuideHelpManager.as
  */
@@ -34,8 +35,23 @@ export class GuideHelpManager
     {
         this._habboHelp = habboHelp;
         this._guideData = new GuideSessionData();
+        this._reporterFeedbackCtrl = new ChatReviewReporterFeedbackCtrl(habboHelp);
 
         log.debug('GuideHelpManager initialized');
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::_reporterFeedbackCtrl
+    private _reporterFeedbackCtrl: ChatReviewReporterFeedbackCtrl | null;
+
+    /**
+	 * The post-report feedback panel
+	 */
+    // TS-only: AS3 keeps this private and only reaches it through `showFeedback()`. Exposed here
+    // because `HelpMessageHandler` owns the two ticket subscriptions AS3 makes inside the panel
+    // itself, and has to hand their outcome codes back.
+    get reporterFeedbackCtrl(): ChatReviewReporterFeedbackCtrl | null
+    {
+        return this._reporterFeedbackCtrl;
     }
 
     /**
@@ -138,12 +154,10 @@ export class GuideHelpManager
 	 *
 	 * @param localizationCode The localization key for the feedback message
 	 */
-    // TODO(AS3): .../src/com/sulake/habbo/help/GuideHelpManager.as::showFeedback()
-    // forwards to `ChatReviewReporterFeedbackCtrl.show()` (117 lines, unported). Reached from
-    // `HabboHelp.handleGuideReportingStatus()` for every status code past 1.
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::showFeedback()
     showFeedback(localizationCode: string): void
     {
-        log.warn('showFeedback: ChatReviewReporterFeedbackCtrl is not ported -', localizationCode);
+        this._reporterFeedbackCtrl?.show(localizationCode);
     }
 
     /**
@@ -154,7 +168,14 @@ export class GuideHelpManager
     {
         if(this._disposed) return;
 
-        // AS3 disposes the three sub-controllers and resets the tour timer here; none is ported.
+        // AS3 also disposes HelpController and GuideSessionController here, and resets the tour
+        // timer; those two are still unported.
+        if(this._reporterFeedbackCtrl)
+        {
+            this._reporterFeedbackCtrl.dispose();
+            this._reporterFeedbackCtrl = null;
+        }
+
         this._habboHelp = null;
         this._disposed = true;
     }

@@ -32,6 +32,8 @@ import type {CallForHelpReplyMessageParser} from '@habbo/communication/messages/
 import type {CallForHelpResultMessageParser} from '@habbo/communication/messages/parser/help/CallForHelpResultMessageParser';
 import type {CfhTopicsInitMessageParser} from '@habbo/communication/messages/parser/help/CfhTopicsInitMessageParser';
 import type {GuideReportingStatusMessageParser} from '@habbo/communication/messages/parser/help/GuideReportingStatusMessageParser';
+import type {GuideTicketCreationResultMessageParser} from '@habbo/communication/messages/parser/help/GuideTicketCreationResultMessageParser';
+import type {GuideTicketResolutionMessageParser} from '@habbo/communication/messages/parser/help/GuideTicketResolutionMessageParser';
 import type {IssueCloseNotificationMessageParser} from '@habbo/communication/messages/parser/help/IssueCloseNotificationMessageParser';
 
 import type {HabboHelp} from './HabboHelp';
@@ -316,14 +318,30 @@ export class HelpMessageHandler
         log.trace('GuideSessionRequesterRoom received');
     }
 
-    private onGuideTicketCreationResult(_event: IMessageEvent): void
+    /**
+	 * The guide ticket was created — tell the reporter what happens next
+	 */
+    // AS3: .../src/com/sulake/habbo/help/ChatReviewReporterFeedbackCtrl.as::onCreateResult()
+    private onGuideTicketCreationResult(event: IMessageEvent): void
     {
-        log.trace('GuideTicketCreationResult received');
+        const parser = event.parser as GuideTicketCreationResultMessageParser | null;
+
+        if(!parser) return;
+
+        this._help.guideHelpManager?.reporterFeedbackCtrl?.show(parser.localizationCode);
     }
 
-    private onGuideTicketResolution(_event: IMessageEvent): void
+    /**
+	 * The guide ticket was resolved — tell the reporter the outcome
+	 */
+    // AS3: .../src/com/sulake/habbo/help/ChatReviewReporterFeedbackCtrl.as::onTicketResolved()
+    private onGuideTicketResolution(event: IMessageEvent): void
     {
-        log.trace('GuideTicketResolution received');
+        const parser = event.parser as GuideTicketResolutionMessageParser | null;
+
+        if(!parser) return;
+
+        this._help.guideHelpManager?.reporterFeedbackCtrl?.show(parser.localizationCode);
     }
 
     private onCheckUserNameResult(_event: IMessageEvent): void
