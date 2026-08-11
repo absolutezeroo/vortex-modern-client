@@ -77,14 +77,19 @@ directions for the same reason:
 | Start                                          | 328         |
 | After the wire fixes and the marker rewrites   | **336**     |
 | After the three window ports                   | **332**     |
+| After `TopicsFlowHelpController`               | **329**     |
 
 It rose first because the pass kept finding behaviour missing with *no* marker on it —
 `log.debug('Show guide tool')` is not a documented gap, it is an invisible one — and every stub it
 touched was given a marker naming the class it waits on and a `warn` instead. Then it fell as
-those same named classes were ported: `ChatReportController`, `ChatReviewReporterFeedbackCtrl` and
-`HelpController`, ~1,700 lines of new TypeScript, closed the markers the first half had opened.
+those same named classes were ported: `ChatReportController`, `ChatReviewReporterFeedbackCtrl`,
+`HelpController` and `TopicsFlowHelpController`, ~3,000 lines of new TypeScript, closed the markers
+the first half had opened.
 
-Net −4 does not describe either half. Judge a pass by which markers it closed and what started
+**Net +1 across the whole pass**, over a module that went from receiving 21 messages and answering
+every one with a `log.trace` to a working report flow. `habbo/help` itself went 18 → 11 markers
+with **zero micro-gaps left**: everything remaining is a whole unported module, a settled decision,
+a Flash-only feature, or a missing header. Judge a pass by which markers it closed and what started
 working, never by the delta.
 
 <details><summary>2026-08-10 — 382 TODO (327 <code>TODO(AS3)</code>, 55 plain), from 422 at the start of the day</summary>
@@ -224,10 +229,31 @@ Two AS3 oddities were ported as written rather than tidied, both with a comment 
 above has already returned on, so its left half is dead in AS3 too; and the tour popup's analytics
 carry `showTime - now`, which is negative — the sign is what the backend receives.
 
-**What is left in `habbo/help`:** `GuideSessionController` (1,826 lines) and
-`TopicsFlowHelpController` (933), the guide tool and the new CFH flow. Both are their own
-projects, and `toggleNewHelpWindow()` is now a documented stub with two live callers rather than
-an absent member.
+**Then the new CFH flow.** `TopicsFlowHelpController` (933 lines) is one modal holding nine
+containers shown one at a time, and it is not a linear walk: five entry points open it at five
+different steps, and `updateBackButtonVisibility()` recomputes from the entry point rather than
+from history, so a flow never offers to step back behind where it began. That is what the report
+type is kept on the controller for. Its single exit picks a composer from that same type, with one
+branch that is not about type at all — a bullying topic with `guides.enabled` and
+`guardians.enabled` files a guide report instead.
+
+Porting it closed eight members that had been stubs earlier the same day:
+`toggleNewHelpWindow()`, `reportUser()`, `reportUserName()`, `reportUserFromIM()`, `reportRoom()`,
+`reportThread()`, `reportMessage()` and `startPhotoReportingInNewCfhFlow()`. `reportRoom()` is
+worth singling out: it had been routed through `CallForHelpManager.reportRoom()`, the older
+pending-calls path, where AS3 sets the fields directly and opens the new flow. Two different
+journeys under one name.
+
+Two AS3 idioms kept with a comment rather than tidied: the reason list is emptied by setting its
+height to 0 and straight back, which is how this window system is made to re-measure and reads as
+dead code; and a clicked chat row is resolved with `is ITextLinkWindow` / `is _SafeCls_1857`, which
+TypeScript cannot express for an interface, so the port tests for the members instead.
+
+**What is left in `habbo/help`: 11 markers, none of them a micro-gap.** Eight wait on
+`GuideSessionController` (1,826 lines) — the guide tool and the guide-session conversation, the
+last real subsystem here. One is a settled decision, one is Flash-only, and one is the wire:
+`requestReportsStatus()` needs header 1834, which is in the primary registry and in neither this
+port nor `vortex-emulator`.
 
 ### The 2026-08-10 wire pass — what the audits found once the TODO list ran dry
 
