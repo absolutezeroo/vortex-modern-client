@@ -723,9 +723,7 @@ export class FurniModel implements IFurniModel
         }
 
         this._catalog.itemAddedToInventory(item.type, item.id, item.category);
-        // TODO(AS3): catalog.collectorHub is a documented stub (always null - see
-        // HabboCatalog.ts::get collectorHub()), so collectorHub.itemAddedToInventory()
-        // has nothing to call into yet.
+        this._catalog.collectorHub?.itemAddedToInventory(item.type, item.id, item.isWallItem);
 
         return result;
     }
@@ -767,9 +765,8 @@ export class FurniModel implements IFurniModel
 
                 this._view.setViewToState();
 
-                // TODO(AS3): catalog.collectorHub is a documented stub (always null - see
-                // HabboCatalog.ts::get collectorHub()), so collectorHub.itemRemovedFromInventory()
-                // has nothing to call into yet.
+                this._catalog.collectorHub?.itemRemovedFromInventory(
+                    removedItem.type, removedItem.id, removedItem.isWallItem);
 
                 return groupItem;
             }

@@ -34,7 +34,7 @@
 | Engine `TODO(AS3)` markers                                     | 265           | **327**       |
 
 Re-measure `TODO(AS3)` with `node scripts/todo-inventory.mjs`, not `grep -c`: the latest figure is
-**317** (2026-08-12, after the collectibles pass) and the table above is a 2026-07-28 snapshot. A
+**318** (2026-08-12, after the collectibles catalog pass) and the table above is a 2026-07-28 snapshot. A
 bare `grep -rn --include=*.ts packages` reads `packages/*/dist/**/*.d.ts` too and inflates the count
 by roughly 80.
 
@@ -43,6 +43,55 @@ one marker reading *"~50 slash commands … don't exist in this port yet"* with 
 single missing member — so 45 commands landed and the number went 304 → 309. A marker covering fifty
 things is worth less than five covering five, and any reading of this file that treats the total as
 a score will get that backwards.
+
+### Collectibles — the catalog message layer and the hub (2026-08-12)
+
+The second collectibles pass, after the inventory tab above. What landed:
+
+- **The whole message layer**: 18 incoming events + parsers, 8 DTOs, 15 outgoing composers, all
+  registered. Unlistened server messages **78 → 58** — the single largest drop this file records.
+- **`CollectiblesController`**, as a real DI component attached under `IIDCollectiblesController`
+  from `HabboCatalog`'s constructor, exactly where AS3 attaches it. Its *hub* half is complete
+  (`getProductName`/`getProductType`, the two reward-box messages, send/subscribe); its *view* half
+  is TODO at each entry point.
+- **`HabboCatalog.collectorHub` is no longer null**, which closed the two `FurniModel` TODOs and
+  turned the inventory tab's product-code fallback into a real name lookup.
+
+Still open: the collectibles **catalog UI** — `CollectiblesView` (582 l.) and its five tabs
+(`MintInventoryListTab` 769, `CollectionsTab` 627, `ShopTab` 497, `RewardClaimsTab` 329,
+`TransferNftsTab` 320), plus `CollectionView` 596, `CollectiblesRewardBoxView` 204 and the renderer
+tree. ~4,200 of the subsystem's 6,851 lines.
+
+Four things worth not rediscovering:
+
+- **`win63_version` had the names, and I derived them instead.** CLAUDE.md says to cite that tree
+  for names — it is the only one where messages keep readable *filenames* — and this pass derived
+  16 composer names from the emulator's constants first. 13 matched. Three did not:
+  `NftTransferAssets` (not `TransferNfts`), and the two
+  `NftCollectiblesClaim{Bonus,Reward}Item`. Same on the incoming side: 15 of 18 matched, and the
+  three that did not include **`CollectableMintableItemTypes`** — "Collectable", a typo in the
+  original source that the handler name `onCollectableMintableItemTypesMessage` confirms. Check the
+  filenames *before* deriving, not after.
+- **Two parsers share obfuscated constants, with the values swapped.**
+  `NftStorePurchaseMessageParser` and `CollectibleMintableItemResultMessageParser` both declare
+  `_SafeStr_10258` and `_SafeStr_8683` (footers: `"_-HE"`, `"_-t1w"` in both), but 10258 is 1 in one
+  and 0 in the other. `HabboCatalog.as::onNftStorePurchase()` raises its error alert on 10258, so
+  10258 is the failure constant in both — and the mint parser's **0 is a failure**, the opposite of
+  every sibling. Reading either file alone gives the wrong answer.
+- **`CollectableMintableItemTypesMessageParser` accumulates on purpose.** Its `flush()` returns
+  `false` (alone in the package) and its `parse()` does not reset the list, so successive messages
+  concatenate. Both are AS3's; "fixing" either silently changes what the mint tab shows.
+- **The rarity colour table is dead code in Flash too.** `getRarityColor()` upper-cases its input
+  and looks it up in a lower-case table, so every rarity resolves to the grey fallback. Ported as
+  written, with the table kept so the intended colours are recorded.
+
+Three more emulator headers are wrong and are corrected in the working tree of
+`Revision20260701/Headers.cs` (uncommitted — see the note under the inventory section):
+`NftStorePurchaseMessageComposer` 3171 → **448**, `RedeemNftLootBoxResultMessageComposer`
+2262 → **3332**, `RedeemNftLootBoxStateMessageComposer` 2857 → **3164**. None of 3171/2262/2857
+appears in the WIN63 registry. Note 3332 is legitimately used in *both* directions there
+(`_composers[3332]` is RenderRoom, `_SafeStr_4546[3332]` is the loot-box result) — the two tables
+are independent, so that is not a collision.
 
 ### Collectibles — the inventory tab (2026-08-12)
 
@@ -1013,7 +1062,7 @@ Top remaining gaps by category (TS/AS3 per column, ranked by summed gap):
 |------------------|--------------|--------------|--------------|-------|---------------------------------------------------------------------|
 | `game`           | 5/44         | 0/27         | 5/61         | 122   | SnowWar/game protocol almost entirely absent; `habbo/game` is 0/63. |
 | `users`          | 28/55        | 24/47        | 22/39        | 67    | Profile/user flows still incomplete.                                |
-| `collectibles`   | 4/20         | 2/18         | 6/29         | 55    | The inventory tab's chain only (2026-08-12); the catalog half is untouched. |
+| `collectibles`   | 22/20        | 17/18        | 32/29        | 0     | Message layer complete 2026-08-12. TS exceeds AS3 where the port splits DTOs into files of their own and counts the two inventory-side NFT messages here; it is not >100% coverage. |
 | `catalog`        | 28/51        | 26/40        | 25/39        | 51    | Targeted offers, room ads, LTD raffle, vouchers still unported.     |
 | `room`           | 89/106       | 78/97        | 89/102       | 49    | Down from 45/30/43; the 2026-07-24 room audit closed 22 of these.   |
 | `inventory`      | 35/56        | 29/29        | 37/55        | 39    | Outgoing complete; incoming/parser gaps remain.                     |

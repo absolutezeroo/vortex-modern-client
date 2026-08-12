@@ -227,6 +227,39 @@ import {SilverBalanceMessageEvent} from './messages/incoming/collectibles/Silver
 import {EmeraldBalanceMessageEvent} from './messages/incoming/collectibles/EmeraldBalanceMessageEvent';
 import {NftAssetsMessageEvent} from './messages/incoming/collectibles/NftAssetsMessageEvent';
 import {TradeNftAssetsMessageEvent} from './messages/incoming/collectibles/TradeNftAssetsMessageEvent';
+import {NftStorePurchaseMessageEvent} from './messages/incoming/collectibles/NftStorePurchaseMessageEvent';
+import {NftTransferAssetsResultMessageEvent} from './messages/incoming/collectibles/NftTransferAssetsResultMessageEvent';
+import {CollectibleMintingEnabledMessageEvent} from './messages/incoming/collectibles/CollectibleMintingEnabledMessageEvent';
+import {NftCollectionsScoreMessageEvent} from './messages/incoming/collectibles/NftCollectionsScoreMessageEvent';
+import {NftClaimResultMessageEvent} from './messages/incoming/collectibles/NftClaimResultMessageEvent';
+import {CollectibleWalletAddressesMessageEvent} from './messages/incoming/collectibles/CollectibleWalletAddressesMessageEvent';
+import {NftRewardItemClaimResultMessageEvent} from './messages/incoming/collectibles/NftRewardItemClaimResultMessageEvent';
+import {CollectibleMintTokenCountMessageEvent} from './messages/incoming/collectibles/CollectibleMintTokenCountMessageEvent';
+import {CollectibleMintableItemResultMessageEvent} from './messages/incoming/collectibles/CollectibleMintableItemResultMessageEvent';
+import {RedeemNftLootBoxResultMessageEvent} from './messages/incoming/collectibles/RedeemNftLootBoxResultMessageEvent';
+import {NftTransferFeeMessageEvent} from './messages/incoming/collectibles/NftTransferFeeMessageEvent';
+import {NftBonusItemClaimResultMessageEvent} from './messages/incoming/collectibles/NftBonusItemClaimResultMessageEvent';
+import {NftCollectionsMessageEvent} from './messages/incoming/collectibles/NftCollectionsMessageEvent';
+import {NftClaimsMessageEvent} from './messages/incoming/collectibles/NftClaimsMessageEvent';
+import {NftStoreOffersMessageEvent} from './messages/incoming/collectibles/NftStoreOffersMessageEvent';
+import {CollectibleMintTokenOffersMessageEvent} from './messages/incoming/collectibles/CollectibleMintTokenOffersMessageEvent';
+import {CollectableMintableItemTypesMessageEvent} from './messages/incoming/collectibles/CollectableMintableItemTypesMessageEvent';
+import {RedeemNftLootBoxStateMessageEvent} from './messages/incoming/collectibles/RedeemNftLootBoxStateMessageEvent';
+import {NftTransferAssetsComposer} from './messages/outgoing/collectibles/NftTransferAssetsComposer';
+import {GetMintTokenOffersComposer} from './messages/outgoing/collectibles/GetMintTokenOffersComposer';
+import {GetCollectorScoreComposer} from './messages/outgoing/collectibles/GetCollectorScoreComposer';
+import {ClaimNftClaimsComposer} from './messages/outgoing/collectibles/ClaimNftClaimsComposer';
+import {GetNftStoreOffersComposer} from './messages/outgoing/collectibles/GetNftStoreOffersComposer';
+import {GetCollectibleWalletAddressesComposer} from './messages/outgoing/collectibles/GetCollectibleWalletAddressesComposer';
+import {GetNftCollectionsComposer} from './messages/outgoing/collectibles/GetNftCollectionsComposer';
+import {GetCollectibleMintableItemTypesComposer} from './messages/outgoing/collectibles/GetCollectibleMintableItemTypesComposer';
+import {GetCollectibleMintingEnabledComposer} from './messages/outgoing/collectibles/GetCollectibleMintingEnabledComposer';
+import {GetNftClaimsComposer} from './messages/outgoing/collectibles/GetNftClaimsComposer';
+import {MintItemComposer} from './messages/outgoing/collectibles/MintItemComposer';
+import {NftCollectiblesClaimRewardItemComposer} from './messages/outgoing/collectibles/NftCollectiblesClaimRewardItemComposer';
+import {GetNftTransferFeeComposer} from './messages/outgoing/collectibles/GetNftTransferFeeComposer';
+import {NftCollectiblesClaimBonusItemComposer} from './messages/outgoing/collectibles/NftCollectiblesClaimBonusItemComposer';
+import {GetCollectibleMintTokensComposer} from './messages/outgoing/collectibles/GetCollectibleMintTokensComposer';
 import {
     BonusRareInfoMessageEvent,
     ProductOfferMessageEvent,
@@ -2211,6 +2244,26 @@ export class HabboMessages implements IMessageConfiguration
         // correction above named as "unported"; it is ported now.
         this._events.set(2247, NftAssetsMessageEvent);
         this._events.set(850, TradeNftAssetsMessageEvent);
+        // The collectibles CATALOG tab (habbo/catalog/collectibles). Every header below is from
+        // WIN63's own registry; the emulator agrees on 14 of the 18 and has no entry for the rest.
+        this._events.set(448, NftStorePurchaseMessageEvent);
+        this._events.set(2357, NftTransferAssetsResultMessageEvent);
+        this._events.set(1091, CollectibleMintingEnabledMessageEvent);
+        this._events.set(1857, NftCollectionsScoreMessageEvent);
+        this._events.set(3601, NftClaimResultMessageEvent);
+        this._events.set(1741, CollectibleWalletAddressesMessageEvent);
+        this._events.set(233, NftRewardItemClaimResultMessageEvent);
+        this._events.set(1770, CollectibleMintTokenCountMessageEvent);
+        this._events.set(19, CollectibleMintableItemResultMessageEvent);
+        this._events.set(3332, RedeemNftLootBoxResultMessageEvent);
+        this._events.set(3700, NftTransferFeeMessageEvent);
+        this._events.set(3498, NftBonusItemClaimResultMessageEvent);
+        this._events.set(3942, NftCollectionsMessageEvent);
+        this._events.set(108, NftClaimsMessageEvent);
+        this._events.set(3272, NftStoreOffersMessageEvent);
+        this._events.set(2462, CollectibleMintTokenOffersMessageEvent);
+        this._events.set(1902, CollectableMintableItemTypesMessageEvent);
+        this._events.set(3164, RedeemNftLootBoxStateMessageEvent);
         this._events.set(2155, TargetedOfferMessageEvent);
         this._events.set(2013, TargetedOfferNotFoundMessageEvent);
         this._events.set(1073, BundleDiscountRulesetMessageEvent);
@@ -2356,6 +2409,21 @@ export class HabboMessages implements IMessageConfiguration
         // Collectibles. Headers from WIN63's registry; the emulator defines neither.
         this._composers.set(1646, RequestNftAssetsComposer);
         this._composers.set(2481, AddNftToTradeComposer);
+        this._composers.set(1749, NftTransferAssetsComposer);
+        this._composers.set(3638, GetMintTokenOffersComposer);
+        this._composers.set(1614, GetCollectorScoreComposer);
+        this._composers.set(2898, ClaimNftClaimsComposer);
+        this._composers.set(1809, GetNftStoreOffersComposer);
+        this._composers.set(261, GetCollectibleWalletAddressesComposer);
+        this._composers.set(708, GetNftCollectionsComposer);
+        this._composers.set(3856, GetCollectibleMintableItemTypesComposer);
+        this._composers.set(813, GetCollectibleMintingEnabledComposer);
+        this._composers.set(3153, GetNftClaimsComposer);
+        this._composers.set(2815, MintItemComposer);
+        this._composers.set(1166, NftCollectiblesClaimRewardItemComposer);
+        this._composers.set(3484, GetNftTransferFeeComposer);
+        this._composers.set(1977, NftCollectiblesClaimBonusItemComposer);
+        this._composers.set(1554, GetCollectibleMintTokensComposer);
         // The monitor tab's "wf15" report is the same AS3 class as the wired dialog's developer
         // action (`_SafeCls_3004`), already registered at 3608 above as
         // WiredDebugCommandMessageComposer. Registering it twice under two derived names left the

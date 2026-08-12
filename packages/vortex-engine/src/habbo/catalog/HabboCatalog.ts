@@ -1,5 +1,7 @@
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
 import type {ICollectorHub} from './collectibles/ICollectorHub';
+import {CollectiblesController} from './collectibles/CollectiblesController';
+import {IID_CollectiblesController} from '@iid/IIDCollectiblesController';
 import {Logger} from '@core/utils/Logger';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
@@ -340,10 +342,22 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     private _purchaseWillBeGift: boolean = false;
     private _purchaseConfirmationDialog: PurchaseConfirmationDialog | null = null;
 
-    constructor(context: IContext, assetLibrary: IAssetLibrary | null = null) 
+    /**
+     * AS3 builds the collectibles hub here, in the catalog's own constructor, and attaches it to
+     * the context under `IIDCollectiblesController` — it is not a top-level component the bootstrap
+     * creates.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::HabboCatalog()
+    constructor(context: IContext, assetLibrary: IAssetLibrary | null = null)
     {
         super(context, 0, assetLibrary);
+
+        this._collectorHub = new CollectiblesController(context, 0, assetLibrary);
+        context.attachComponent(this._collectorHub, [IID_CollectiblesController]);
     }
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_4729
+    private _collectorHub: CollectiblesController | null = null;
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
@@ -552,19 +566,17 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     /**
-     * TODO(AS3): returns `_collectorHub`, the `CollectiblesController` this catalog builds in
-     * `HabboCatalog.as::init()`. That controller is a 727-line DI component owning the whole
-     * collectibles *catalog* tab (`habbo/catalog/collectibles/`, ~4,900 lines across 29 classes)
-     * and is unported, so the accessor stays null.
+     * The collectibles hub, built in the constructor above.
      *
-     * Every caller already treats null as "no hub": `FurniModel.addFurni`/`removeFurni` skip the
-     * collection-count update, and `CollectibleGroupedItem`/`CollectiblesView` fall back to the
-     * product code and to `product.type.*` themselves rather than going without a name.
+     * Its *hub* half is real — product naming, the reward-box messages, the send/subscribe
+     * plumbing. Its *view* half is not: the collectibles catalog tab is ~4,200 lines that
+     * `CollectiblesController` marks TODO at each entry point. Callers still get honest names,
+     * which is what they were falling back on product codes for.
      */
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get collectorHub()
     get collectorHub(): ICollectorHub | null
     {
-        return null;
+        return this._collectorHub;
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_frontPageItems

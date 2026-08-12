@@ -77,10 +77,10 @@ export class CollectibleGroupedItem
         this._window.procedure = this.itemEventProc;
         this._bgColorWindow = this._window.findChildByTag('BG_COLOR');
 
-        // AS3 reads the display name straight off `catalog.collectorHub`. That hub is
-        // `CollectiblesController`, which is unported (see HabboCatalog.ts::get collectorHub()), so
-        // the product code stands in — it is the only name this class has locally, and showing it
-        // beats an empty cell the filter can never match.
+        // AS3 reads the display name straight off `catalog.collectorHub`, and so does this — the
+        // hub is `CollectiblesController` and it is ported. The product-code fallback stays for the
+        // case where the catalog component has not resolved yet: an empty cell is one the filter
+        // can never match.
         const collectorHub = model.controller.catalog?.collectorHub ?? null;
 
         this._name = collectorHub !== null

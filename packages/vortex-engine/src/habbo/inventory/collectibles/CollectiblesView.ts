@@ -219,11 +219,9 @@ export class CollectiblesView implements IInventoryView, IAvatarImageListener
 
         const collectorHub = this._model.controller.catalog?.collectorHub ?? null;
         const name = collectorHub !== null ? collectorHub.getProductName(selected.renderableItem) : selected.name;
-        // AS3 asks the collector hub for the localized product category. Without the hub (see
-        // HabboCatalog.ts::get collectorHub()) the port resolves the same `product.type.*` key
-        // itself — the mapping is a switch on productTypeId that lives in
-        // CollectiblesController.as::getProductType(), and it is the same one populateFilterOptions()
-        // below already needs.
+        // AS3 asks the collector hub for the localized product category, and the hub is ported. The
+        // local fallback below stays because `populateFilterOptions()` needs the same switch
+        // anyway — the dropdown is built before any hub call — so having it cost nothing.
         const type = collectorHub !== null
             ? collectorHub.getProductType(selected.renderableItem)
             : this.localizedProductType(selected.renderableItem.productTypeId);
