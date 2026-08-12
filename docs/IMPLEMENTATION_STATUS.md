@@ -122,10 +122,13 @@ at a time.
 as the first tab slice, so `collectibles/open` now opens the real hub: eight tabs, the collector
 score header, the currency balances, the wallet list — and one working tab.
 
+`TransferNftsTab` (320) followed as the second tab — no renderer of its own — which closed the
+hub's `onSilverBalanceUpdated()` hand-off and the non-Stardust wallet subset.
+
 Still open: `CollectionsTab` (627) + `CollectionView` (596) + `CollectibleItemRenderer` (101) + the
 two navigation-node renderers; `MintInventoryListTab` (769) + its renderer + `MintTokenPurchaseOffer`
-(166); `ShopTab` (497) + its renderer + `NftStorePurchaseOffer` (178); `TransferNftsTab` (320).
-Roughly 3,500 lines in four more slices of the same shape. All four are TODOs at their construction
+(166); `ShopTab` (497) + its renderer + `NftStorePurchaseOffer` (178). Roughly 3,200 lines in three
+more slices of the same shape. All four are TODOs at their construction
 sites in `CollectiblesView.initWidgets()` and `refresh()`, so their containers come up empty rather
 than the window failing to build.
 

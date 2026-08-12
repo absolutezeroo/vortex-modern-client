@@ -199,6 +199,24 @@ export class CollectiblesController extends Component implements ICollectorHub, 
         return this._localizationManager;
     }
 
+    // AS3: CollectiblesController.as::get catalog()
+    get catalog(): IHabboCatalog | null
+    {
+        return this._catalog;
+    }
+
+    // AS3: CollectiblesController.as::get windowManager()
+    get windowManager(): IHabboWindowManager | null
+    {
+        return this._windowManager;
+    }
+
+    // AS3: CollectiblesController.as::get avatarRenderManager()
+    get avatarRenderManager(): IAvatarRenderManager | null
+    {
+        return this._avatarRenderManager;
+    }
+
     // AS3: CollectiblesController.as::get notifications()
     get notifications(): IHabboNotifications | null
     {

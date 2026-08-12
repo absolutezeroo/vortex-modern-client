@@ -20,6 +20,7 @@ import {GetCollectorScoreComposer} from '@habbo/communication/messages/outgoing/
 
 import type {CollectiblesController} from './CollectiblesController';
 import {RewardClaimsTab} from './tabs/RewardClaimsTab';
+import {TransferNftsTab} from './tabs/TransferNftsTab';
 
 // AS3: CollectiblesView.as::DESKTOP_WINDOW_LAYER
 const DESKTOP_WINDOW_LAYER = 1;
@@ -68,6 +69,8 @@ export class CollectiblesView
     private _currentTab: string = TAB_REWARDS;
     // AS3: CollectiblesView.as::_SafeStr_6174 (the rewards tab)
     private _rewardClaimsTab: RewardClaimsTab | null = null;
+    // AS3: CollectiblesView.as::_SafeStr_5031 (the transfer tab)
+    private _transferTab: TransferNftsTab | null = null;
     // AS3: CollectiblesView.as::_SafeStr_7673 (a wallet request is in flight)
     private _walletRequestInFlight: boolean = false;
     // AS3: CollectiblesView.as::_walletAddresses
@@ -246,8 +249,7 @@ export class CollectiblesView
         if(emerald !== null) emerald.caption = `${purse.emeraldBalance}`;
         if(silver !== null) silver.caption = `${purse.silverBalance}`;
 
-        // TODO(AS3): AS3 then calls `transferWidget.onSilverBalanceUpdated()`. TransferNftsTab
-        // (320 l.) is unported.
+        this._transferTab?.onSilverBalanceUpdated();
     }
 
     /**
@@ -291,10 +293,13 @@ export class CollectiblesView
         this._walletAddresses = parser.walletAddresses;
         this._stardustWallet = parser.stardustWalletAddress;
 
-        // TODO(AS3): AS3 also hands the list to `collectionsWidget` (all wallets) and
-        // `transferWidget` (non-Stardust only). CollectionsTab (627 l.) and TransferNftsTab (320 l.)
-        // are unported.
+        // TODO(AS3): AS3 also hands the full list to `collectionsWidget`. CollectionsTab (627 l.)
+        // is unported.
         this._rewardClaimsTab?.onWalletsAddressesUpdated(this._walletAddresses);
+
+        // The transfer tab gets the non-Stardust subset only — you cannot transfer to your own
+        // wallet. `nonStardustWallets` is non-null here because `_walletAddresses` just was.
+        this._transferTab?.onWalletsAddressesUpdated(this.nonStardustWallets ?? []);
 
         this.setActiveWalletIndex(0);
     };
@@ -390,7 +395,12 @@ export class CollectiblesView
                 break;
             case TAB_TRANSFER:
                 this.setContainerVisible('transferContainer', true);
-                // TODO(AS3): `new TransferNftsTab(this, controller)` — 320 l., unported.
+
+                if(this._transferTab === null && this._controller !== null)
+                {
+                    this._transferTab = new TransferNftsTab(this, this._controller);
+                }
+
                 break;
             case TAB_INFO:
                 this.setContainerVisible('infoContainer', true);
@@ -421,13 +431,24 @@ export class CollectiblesView
     {
         if(this._controller === null) return;
 
-        // TODO(AS3): AS3 constructs CollectionsTab, MintInventoryListTab, TransferNftsTab and
-        // ShopTab here too — 2,213 lines between them, all unported. Their containers stay empty
-        // and the three wallet hand-offs above have nothing to hand to.
+        // TODO(AS3): AS3 constructs CollectionsTab, MintInventoryListTab and ShopTab here too —
+        // 1,893 lines between them, all unported. Their containers stay empty and the two wallet
+        // hand-offs they would receive have nothing to hand to.
         if(this._rewardClaimsTab === null)
         {
             this._rewardClaimsTab = new RewardClaimsTab(this, this._controller);
         }
+
+        if(this._transferTab === null)
+        {
+            this._transferTab = new TransferNftsTab(this, this._controller);
+        }
+    }
+
+    // AS3: CollectiblesView.as::get transferWidget()
+    get transferWidget(): TransferNftsTab | null
+    {
+        return this._transferTab;
     }
 
     // AS3: CollectiblesView.as::get activeWallet()
@@ -569,8 +590,17 @@ export class CollectiblesView
             this._rewardClaimsTab = null;
         }
 
+        if(this._transferTab !== null)
+        {
+            this._transferTab.dispose();
+            this._transferTab = null;
+        }
+
         // AS3 disposes the collections, mint and transfer tabs here and — a real slip — never the
-        // shop tab, which leaks. Nothing to leak here yet; noted for whoever ports it.
+        // shop tab *or the rewards tab*, both of which leak their message subscriptions. Both are
+        // disposed above.
+
+        // TODO(AS3): CollectionsTab and MintInventoryListTab are disposed here in AS3; unported.
 
         this._window?.dispose();
         this._window = null;
