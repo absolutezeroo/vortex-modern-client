@@ -2321,9 +2321,9 @@ export class HabboMessages implements IMessageConfiguration
         // The emulator disagreed on two of the three (2507 and 1762), and 1762 is really
         // CfhTopics — it declares that header twice. WIN63's registry wins; the emulator's
         // Headers.cs has been corrected to match.
-        // DailyTasksController subscribes to all three (2026-08-12). Its views are still unported,
-        // so the board has no window — but the task list, the unseen count and the two
-        // notifications are live, where before every one of these three was received and dropped.
+        // DailyTasksController subscribes to all three (2026-08-12), views included. Before that
+        // commit every one of these three was received and dropped: registered here, with nothing
+        // at the other end.
         this._events.set(1824, DailyTasksActiveListMessageEvent);
         this._events.set(2506, DailyTasksTasksAddedMessageEvent);
         this._events.set(1065, DailyTasksTaskUpdateMessageEvent);

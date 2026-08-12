@@ -27,6 +27,7 @@ import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import type {HabboQuestEngine} from '../HabboQuestEngine';
 import {UnseenDailyTasksCountUpdateEvent} from '../events/UnseenDailyTasksCountUpdateEvent';
 import type {IDailyTasksController} from './IDailyTasksController';
+import {DailyTasksView} from './DailyTasksView';
 
 const log = Logger.getLogger('habbo.quest.dailytasks.DailyTasksController');
 
@@ -41,9 +42,8 @@ const REQUEST_TASKS_TIMEOUT_MS = 10000;
  * subscribed to them — the board arrived every session and was dropped on the floor. This class is
  * the subscriber.
  *
- * The view is not ported. Everything that would touch it is guarded by `viewExists()`, which is
- * AS3's own guard and is simply always false here, so the data half runs correctly on its own: the
- * task list is maintained, the unseen count is raised, and the two notifications fire.
+ * The board window and its four child views are ported too, so `viewExists()` is a real check
+ * again rather than a constant false.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/dailytasks/DailyTasksController.as
  */
@@ -63,12 +63,32 @@ export class DailyTasksController extends Component implements IDailyTasksContro
     private _tasks: DailyTaskData[] = [];
 
     /**
-     * Tasks that arrived already lapsed but still completed — pushed here by `addTask()` and,
-     * in AS3, read by `UnclaimedTasksView`. Nothing reads it yet in this port; kept because the
-     * push is part of `addTask()`'s behaviour and dropping the field would quietly drop that too.
+     * Tasks that arrived already lapsed but still completed.
+     *
+     * **This field is a live crash in the Flash client, and the `= []` here is what removes it.**
+     * AS3 declares it `private var _SafeStr_10392:Vector.<_SafeCls_2991>;` with no initialiser, and
+     * the constructor — which does initialise `_SafeStr_5990` and `_messageEvents` on the two lines
+     * either side — never assigns it. An uninitialised Vector is `null` in AS3, so `addTask()`'s
+     * `_SafeStr_10392.push(param1)` throws TypeError #1009 for the first task that arrives expired
+     * *and* completed, aborting `onActiveDailyTasks()` mid-loop and leaving the rest of the board
+     * unloaded.
+     *
+     * Nothing reads the list — not here, not in the views, nowhere in the tree — so the only effect
+     * it ever had was that crash. Initialising it keeps `addTask()`'s branch faithful while making
+     * it harmless, which is the one reading of "port it" that is not either a crash or a silent
+     * deletion of AS3 behaviour.
      */
-    // AS3: DailyTasksController.as::_SafeStr_10392 (name DERIVED; UnclaimedTasksView is its reader)
+    // AS3: DailyTasksController.as::_SafeStr_10392 (name DERIVED from the branch that pushes to it)
     private _unclaimedExpiredTasks: DailyTaskData[] = [];
+
+    // AS3: DailyTasksController.as::_SafeStr_4550 (from `get view()`)
+    private _view: DailyTasksView | null = null;
+
+    // AS3: DailyTasksController.as::get view()
+    get view(): DailyTasksView | null
+    {
+        return this._view;
+    }
 
     // AS3: DailyTasksController.as::_lastRequestTime
     private _lastRequestTime: number = 0;
@@ -174,33 +194,40 @@ export class DailyTasksController extends Component implements IDailyTasksContro
     {
         if(!this.isEnabled) return;
 
-        // TODO(AS3): AS3 builds a DailyTasksView here (338 l.) and calls initialize()/show(). That
-        // view and its four children — DailyTaskView 285, UnclaimedTasksView 178,
-        // DailyTaskRewardView 101, RewardDisplayWrapper 56 — are unported, so the board has no
-        // window. The data below is maintained regardless.
-        log.warn('DailyTasksView is not ported: the daily-tasks board cannot be opened.');
+        if(!this.viewExists())
+        {
+            if(this._windowManager === null)
+            {
+                log.warn('No window manager: the daily-tasks board cannot be opened.');
+
+                return;
+            }
+
+            this._view = new DailyTasksView(this, this._windowManager);
+            this._view.initialize();
+        }
+
+        this._view?.show();
     }
 
     // AS3: DailyTasksController.as::hideView()
     private hideView(): void
     {
         if(!this.viewExists()) return;
+
+        this._view?.hide();
     }
 
     // AS3: DailyTasksController.as::isShowing()
     private isShowing(): boolean
     {
-        return false;
+        return this.viewExists() && this._view!.isShowing();
     }
 
-    /**
-     * Always false while the view is unported. AS3's own guard, kept at every call site rather
-     * than deleted, so porting `DailyTasksView` is one method's worth of change.
-     */
     // AS3: DailyTasksController.as::viewExists()
     private viewExists(): boolean
     {
-        return false;
+        return this._view !== null && !this._view.disposed;
     }
 
     // AS3: DailyTasksController.as::get isEnabled()
@@ -213,6 +240,8 @@ export class DailyTasksController extends Component implements IDailyTasksContro
     private clearTasks(): void
     {
         this._tasks = [];
+
+        if(this.viewExists()) this._view!.tasksCleared();
     }
 
     /**
@@ -230,6 +259,8 @@ export class DailyTasksController extends Component implements IDailyTasksContro
         }
 
         this._tasks.push(task);
+
+        if(this.viewExists()) this._view!.taskAdded(task);
     }
 
     /**
@@ -256,6 +287,8 @@ export class DailyTasksController extends Component implements IDailyTasksContro
     private updateWindowDimensions(): void
     {
         if(!this.viewExists()) return;
+
+        this._view!.taskAmountChanged();
     }
 
     /**
@@ -340,7 +373,7 @@ export class DailyTasksController extends Component implements IDailyTasksContro
             task.repeats = parser.repeats;
             task.status = parser.status;
 
-            this.updateWindowDimensions();
+            if(this.viewExists()) this._view!.taskUpdated(task.taskId);
 
             if(previousStatus !== task.status)
             {
@@ -408,9 +441,11 @@ export class DailyTasksController extends Component implements IDailyTasksContro
     }
 
     // AS3: DailyTasksController.as::update()
-    update(_deltaTime: number): void
+    update(deltaTime: number): void
     {
         if(!this.viewExists()) return;
+
+        this._view!.update(deltaTime);
     }
 
     // AS3: DailyTasksController.as::send()
@@ -465,6 +500,12 @@ export class DailyTasksController extends Component implements IDailyTasksContro
         if(this._controllerDisposed) return;
 
         this._controllerDisposed = true;
+
+        if(this._view !== null)
+        {
+            this._view.dispose();
+            this._view = null;
+        }
 
         for(const event of this._messageEvents) this.removeMessageEvent(event);
 

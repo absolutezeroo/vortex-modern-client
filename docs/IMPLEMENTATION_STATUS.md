@@ -70,11 +70,23 @@ Worth keeping:
 - **`claimTask()` narrows a long to an int.** The task id is `readLong()` in both parsers, but AS3's
   composer declares `param1:int`. Kept — the wire format is what the server parses.
 
-Not ported: the five views (`DailyTasksView` 338, `DailyTaskView` 285, `UnclaimedTasksView` 178,
-`DailyTaskRewardView` 101, `RewardDisplayWrapper` 56 — 958 lines). The toolbar's
-`dailytasks/open` link now reaches `linkReceived()` and warns instead of doing nothing. Separately,
-**nothing consumes the unseen-count event yet** — not this one and not the achievements one it is
-modelled on — so the badge itself is still unwired. That is a pre-existing gap, not a new one.
+**The five views landed in the same pass**: `DailyTasksView` (338), `DailyTaskView` (285),
+`UnclaimedTasksView` (178), `DailyTaskRewardView` (101), `RewardDisplayWrapper` (56). Both layouts
+ship (`daily_tasks_xml`, `dailytasks_unclaimed_xml`), so `dailytasks/open` from the toolbar now
+opens a real board. `habbo/quest/dailytasks/` is complete at 1,421 AS3 lines.
+
+**One live AS3 crash is fixed rather than reproduced**, and it is worth knowing about because the
+shape recurs. `DailyTasksController` declares `_SafeStr_10392:Vector.<_SafeCls_2991>` with **no
+initialiser**, and its constructor — which initialises the two fields declared either side of it —
+never assigns it. `addTask()` then calls `.push()` on it for any task that arrives expired *and*
+completed, which in AS3 is `null.push()`: TypeError #1009, thrown mid-loop inside
+`onActiveDailyTasks()`, leaving the rest of the board unloaded. Nothing anywhere reads the list, so
+the crash was its only effect. The port initialises it to `[]`: the branch stays faithful and stops
+being a crash. Compare `[[project_as3_foreach_null_noop]]` — same root cause, opposite direction
+(there AS3 tolerated null and TypeScript did not).
+
+Still open: **nothing consumes the unseen-count event** — not this one and not the achievements one
+it is modelled on — so the toolbar badge stays unwired. Pre-existing, not new.
 
 ### Collectibles — the product previewer (2026-08-12)
 
