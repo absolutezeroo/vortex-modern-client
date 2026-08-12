@@ -23,6 +23,7 @@ import {RewardClaimsTab} from './tabs/RewardClaimsTab';
 import {TransferNftsTab} from './tabs/TransferNftsTab';
 import {ShopTab} from './tabs/ShopTab';
 import {MintInventoryListTab} from './tabs/MintInventoryListTab';
+import {CollectionsTab} from './tabs/CollectionsTab';
 
 // AS3: CollectiblesView.as::DESKTOP_WINDOW_LAYER
 const DESKTOP_WINDOW_LAYER = 1;
@@ -50,9 +51,8 @@ const LEVEL_BAND_COLOR_MAX = 15571457;
  * The collectibles hub window: the eight-tab frame, the collector score header, the currency
  * balances and the wallet list every tab reads from.
  *
- * **Only the rewards tab is ported.** AS3's `initWidgets()` builds all five in the constructor;
- * here the four unported ones are TODOs at their construction sites, so the frame, the tab bar, the
- * score header and the wallet plumbing are all real and the four containers simply come up empty.
+ * All five tabs are ported, and `initWidgets()` builds all five up front as AS3 does — which is what
+ * lets the wallet message reach a tab the player has never opened.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/collectibles/CollectiblesView.as
  */
@@ -77,6 +77,8 @@ export class CollectiblesView
     private _shopTab: ShopTab | null = null;
     // AS3: CollectiblesView.as::_SafeStr_5278 (the mint tab)
     private _mintTab: MintInventoryListTab | null = null;
+    // AS3: CollectiblesView.as::_SafeStr_4908 (the collections tab)
+    private _collectionsTab: CollectionsTab | null = null;
     // AS3: CollectiblesView.as::_SafeStr_7673 (a wallet request is in flight)
     private _walletRequestInFlight: boolean = false;
     // AS3: CollectiblesView.as::_walletAddresses
@@ -299,8 +301,9 @@ export class CollectiblesView
         this._walletAddresses = parser.walletAddresses;
         this._stardustWallet = parser.stardustWalletAddress;
 
-        // TODO(AS3): AS3 also hands the full list to `collectionsWidget`. CollectionsTab (627 l.)
-        // is unported.
+        // The collections tab and the rewards tab both take the full list; only transfer gets the
+        // filtered one.
+        this._collectionsTab?.onWalletsAddressesUpdated(this._walletAddresses);
         this._rewardClaimsTab?.onWalletsAddressesUpdated(this._walletAddresses);
 
         // The transfer tab gets the non-Stardust subset only — you cannot transfer to your own
@@ -342,7 +345,7 @@ export class CollectiblesView
 
         this._activeWallet = wallets.length > 0 ? wallets[index] : null;
 
-        // TODO(AS3): AS3 also pushes the active wallet into `collectionsWidget`; unported.
+        if(this._collectionsTab !== null) this._collectionsTab.activeWallet = this._activeWallet;
         if(this._mintTab !== null) this._mintTab.activeWallet = this._activeWallet;
 
         if(this._activeWallet !== null)
@@ -390,7 +393,12 @@ export class CollectiblesView
                 break;
             case TAB_COLLECTIONS:
                 this.setContainerVisible('collectionsContainer', true);
-                // TODO(AS3): `new CollectionsTab(this, controller)` — 627 l., unported.
+
+                if(this._collectionsTab === null && this._controller !== null)
+                {
+                    this._collectionsTab = new CollectionsTab(this, this._controller);
+                }
+
                 break;
             case TAB_LEVELS:
                 this.setContainerVisible('levelsContainer', true);
@@ -447,8 +455,6 @@ export class CollectiblesView
     {
         if(this._controller === null) return;
 
-        // TODO(AS3): AS3 constructs CollectionsTab here too — 627 l., unported. Its container stays
-        // empty and the wallet hand-off it would receive has nothing to hand to.
         if(this._rewardClaimsTab === null)
         {
             this._rewardClaimsTab = new RewardClaimsTab(this, this._controller);
@@ -468,6 +474,17 @@ export class CollectiblesView
         {
             this._mintTab = new MintInventoryListTab(this, this._controller);
         }
+
+        if(this._collectionsTab === null)
+        {
+            this._collectionsTab = new CollectionsTab(this, this._controller);
+        }
+    }
+
+    // AS3: CollectiblesView.as::get collectionsWidget()
+    get collectionsWidget(): CollectionsTab | null
+    {
+        return this._collectionsTab;
     }
 
     // AS3: CollectiblesView.as::get mintInventoryListWidget()
@@ -637,6 +654,12 @@ export class CollectiblesView
         {
             this._mintTab.dispose();
             this._mintTab = null;
+        }
+
+        if(this._collectionsTab !== null)
+        {
+            this._collectionsTab.dispose();
+            this._collectionsTab = null;
         }
 
         // AS3 disposes the collections, mint and transfer tabs here and — a real slip — never the

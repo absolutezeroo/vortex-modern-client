@@ -135,9 +135,17 @@ followed — **four of the five tabs now work**. That slice also added `getNonRe
 `CollectiblesController` its `IID_HabboInventory` dependency, so
 `itemAdded`/`itemRemovedFromInventory` and `onInventoryInitialize` are wired instead of empty.
 
-Still open, the last slice: `CollectionsTab` (627) + `CollectionView` (596) +
-`CollectibleItemRenderer` (101) + `CollectionsNavigationNodeRenderer` (221) + `_SafeCls_4508` (85).
-Roughly 1,630 lines.
+`CollectionsTab` (627), `CollectionView` (596), `CollectibleItemRenderer` (101),
+`CollectionsNavigationNodeRenderer` (221), `CollectionProgressColor` (85) and
+`RenderableShopNftItem` (60) closed it.
+
+**`habbo/catalog/collectibles` is complete** — 29 AS3 files, 29 TS files, all five tabs live. With
+`habbo/inventory/collectibles` and the message layer, the whole collectibles subsystem is ported:
+~6,850 AS3 lines in the catalog half plus ~1,500 in the inventory half.
+
+Four of the five `_SafeCls_*` names were derived and are marked as such: `ICollectorHub`,
+`ICollectibleProductPreviewer`, `CollectibleRarity` and `CollectionProgressColor`. The rest of the
+package was unobfuscated.
 
 **Three AS3 fields in this package are declared, read, and never assigned**, so their branches are
 dead in Flash: `ShopTab._SafeStr_5458` (a `CollectionView`, read only by `update()`),
