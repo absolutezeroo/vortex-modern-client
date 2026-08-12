@@ -142,6 +142,19 @@ export interface IFurniModel
     removeAllLocks(): void;
 
     /**
+	 * Turn the recycle badge on or off across the whole grid. Driven by `RecyclerModel`, which
+	 * calls it on start and stop.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::showRecyclable()
+    showRecyclable(show: boolean): void;
+
+    /**
+	 * Take one unlocked, recyclable copy out of the selected group. It comes back already locked.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::requestSelectedFurniToRecycler()
+    requestSelectedFurniToRecycler(): FurnitureItem | null;
+
+    /**
 	 * Switch category (furni / rentables)
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::categorySwitch()

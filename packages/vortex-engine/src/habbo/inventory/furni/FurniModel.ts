@@ -403,9 +403,13 @@ export class FurniModel implements IFurniModel
         {
             this._pendingPlacementRef = item.ref;
             this._isPlacing = true;
-            // AS3 guards this on !recyclerModel.running; the recycler is not ported, so
-            // the close always runs here (the non-recycling branch).
-            this._habboInventory.closeView();
+
+            // The inventory stays open while the recycler is running: the player is loading the
+            // machine, not furnishing a room, and closing the grid under them would end the run.
+            if(!this._habboInventory.recyclerModel?.running)
+            {
+                this._habboInventory.closeView();
+            }
         }
     }
 
@@ -482,11 +486,68 @@ export class FurniModel implements IFurniModel
         }
     }
 
+    /**
+     * What the grid's main button does, which depends entirely on what is open elsewhere: load the
+     * recycler if the machine is running, add to the offer if a trade is open, otherwise place the
+     * item in the room.
+     *
+     * The recycler test comes first in AS3 and is kept first here — the two can be open at once,
+     * and the machine wins.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::requestCurrentActionOnSelection()
-    // TODO(AS3): recycler/trading branches not wired yet (only placement).
     requestCurrentActionOnSelection(): void
     {
-        this.requestSelectedFurniPlacement();
+        if(this._habboInventory.recyclerModel?.running)
+        {
+            this._habboInventory.recycleSelectedFurni();
+        }
+        else if(this.isTradingOpen)
+        {
+            this.requestSelectedFurniToTrading();
+        }
+        else
+        {
+            this.requestSelectedFurniPlacement(false);
+        }
+    }
+
+    /**
+     * Turns the recycle badge on or off across every group, then repaints the action panel.
+     *
+     * The badge is per-group state rather than a model flag, which is why this walks the whole
+     * grid: `GroupItem` only shows it when the group actually holds something recyclable.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::showRecyclable()
+    showRecyclable(show: boolean): void
+    {
+        for(const groupItem of this._furniData)
+        {
+            groupItem.showRecyclable = show;
+        }
+
+        this._view.updateActionView();
+    }
+
+    /**
+     * Hands one item from the selected stack to the recycler, locked.
+     *
+     * `getOneForRecycle()` does the locking itself, so there is no separate `addLockTo()` here —
+     * the item comes back already reserved.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::requestSelectedFurniToRecycler()
+    requestSelectedFurniToRecycler(): FurnitureItem | null
+    {
+        const groupItem = this.getSelectedItem();
+
+        if(groupItem == null) return null;
+
+        const item = groupItem.getOneForRecycle();
+
+        if(item == null) return null;
+
+        this._view.updateActionView();
+
+        return item;
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::_disposed
@@ -843,20 +904,23 @@ export class FurniModel implements IFurniModel
         return null;
     }
 
+    /**
+     * Takes no argument: it asks each model that can hold your furniture hostage which items it is
+     * holding, and all three sources are live now — an item offered in a trade, loaded into the
+     * recycler, or put up on the marketplace shows as locked in the grid, and unlocks when that
+     * changes.
+     *
+     * Note the early return: with nothing locked AS3 clears the locks and stops — it does *not*
+     * refresh the action view, where the port used to refresh it on both paths.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::updateItemLocks()
-    // AS3 takes no argument: it asks each model that can hold your furniture hostage which items
-    // it is holding. The trading half is live now — an item offered in a trade shows as locked in
-    // the furni grid, and unlocks when the offer changes.
-    //
-    // TODO(AS3): AS3 also concatenates `recyclerModel.getOwnItemsInRecycler()` and the
-    // marketplace's pending offer item. `habbo/inventory/recycler` and the inventory-side
-    // marketplace model are both unported, so those two sources contribute nothing here.
-    //
-    // Note the early return: with nothing locked AS3 clears the locks and stops — it does *not*
-    // refresh the action view, where the port used to refresh it on both paths.
     updateItemLocks(): void
     {
-        const lockedRefIds: number[] = [...(this._habboInventory.tradingModel?.getOwnItemIdsInTrade() ?? [])];
+        const lockedRefIds: number[] = [
+            ...(this._habboInventory.activeTradingModel?.getOwnItemIdsInTrade() ?? []),
+            ...(this._habboInventory.recyclerModel?.getOwnItemsInRecycler() ?? []),
+            ...(this._habboInventory.marketplaceModel?.getOfferItemRefs() ?? []),
+        ];
 
         if(lockedRefIds.length === 0)
         {
@@ -1278,7 +1342,12 @@ export class FurniModel implements IFurniModel
     // items for both sides' offers (`_SafeCls_1951.populateItemGroups()`).
     createGroupItem(type: number, category: number, stuffData: IStuffData | null, extra: number): GroupItem
     {
-        return new GroupItem(this, type, category, stuffData, extra, null, false, 'center', false);
+        // A group built while the machine is running starts with its recycle badge already on;
+        // otherwise items added mid-run would be the only ones in the grid without one.
+        return new GroupItem(
+            this, type, category, stuffData, extra, null, false, 'center',
+            this._habboInventory.recyclerModel?.running ?? false
+        );
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::addItemToTop()

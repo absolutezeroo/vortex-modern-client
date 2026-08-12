@@ -24,6 +24,8 @@ import {FurnitureCategory} from './enum/FurnitureCategory';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 import {BadgesModel} from './badges/BadgesModel';
 import {EffectsModel} from './effects/EffectsModel';
+import {RecyclerModel} from './recycler/RecyclerModel';
+import type {IRecyclerModel} from './recycler/IRecyclerModel';
 import {PetsModel} from './pets/PetsModel';
 import {Pet} from './pets/Pet';
 import {PetFigureData} from './pets/PetFigureData';
@@ -228,9 +230,9 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
      * `getCategoryWindowContainer()`, `getCategorySubWindowContainer()` and `updateView()` through
      * it rather than switching on the name, which is how the trading sub-window finds its host.
      *
-     * TODO(AS3): AS3 registers eleven models here. Four are missing entirely (`marketplace`,
-     * `collectibles`, `wired_trading`, `recycler`), and `badges`/`effects`/`bots` are ported but
-     * do not implement `IInventoryModel` yet — they have no view to hand back.
+     * TODO(AS3): AS3 registers eleven models here. Two are still missing (`collectibles`,
+     * `wired_trading`), and `badges`/`effects` are ported but do not implement `IInventoryModel`
+     * yet — they have no view to hand back.
      */
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_inventories
     private _inventories: OrderedMap<string, IInventoryModel> = new OrderedMap<string, IInventoryModel>();
@@ -537,6 +539,77 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     get tradingModel(): ITradingModel
     {
         return this._tradingModel;
+    }
+
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_inventories (the "recycler" entry)
+    private _recyclerModel: RecyclerModel | null = null;
+
+    /**
+     * AS3 resolves this through `getModel("recycler")` and casts, returning null once disposed.
+     * The port holds the reference directly; the disposed check is kept because callers test
+     * `recyclerModel?.running` during teardown.
+     */
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get recyclerModel()
+    get recyclerModel(): IRecyclerModel | null
+    {
+        return this.disposed ? null : this._recyclerModel;
+    }
+
+    /**
+     * Sends the selected stack's top item to the catalog's recycler.
+     *
+     * `placeObjectAtSlot(-1, ...)` with `findNewSlotId` set is how AS3 says "any free slot"; the
+     * category is the room-object category, 20 for a wall item and 10 for a floor one, the same
+     * pair `requestSelectedFurniToMover()` uses.
+     */
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::recycleSelectedFurni()
+    recycleSelectedFurni(): void
+    {
+        const recycler = this.catalog?.getRecycler() ?? null;
+
+        if(recycler == null) return;
+
+        const groupItem = this._furniModel?.getSelectedItem() ?? null;
+
+        if(groupItem == null) return;
+
+        const item = groupItem.peek();
+
+        if(item == null) return;
+
+        const category = item.isWallItem ? 20 : 10;
+
+        recycler.placeObjectAtSlot(-1, item.id, category, item.type, String(item.extra), true);
+    }
+
+    /**
+     * Opening and closing the furnimatic. The catalog calls this when its recycler page is shown or
+     * left; everything downstream — the recycle badges, the locks, the grid's main button — follows
+     * from the flag this sets.
+     */
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::setupRecycler()
+    setupRecycler(enabled: boolean): void
+    {
+        if(this._recyclerModel == null) return;
+
+        if(enabled) this._recyclerModel.startRecycler();
+        else this._recyclerModel.stopRecycler();
+    }
+
+    /**
+     * The catalog's route into the grid: hand me one recyclable copy of whatever is selected.
+     * Returns 0 when there is nothing to give, which is what `RecyclerLogic` tests.
+     */
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::requestSelectedFurniToRecycler()
+    requestSelectedFurniToRecycler(): number
+    {
+        return this._recyclerModel?.lockSelectedFurni() ?? 0;
+    }
+
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::returnInventoryFurniFromRecycler()
+    returnInventoryFurniFromRecycler(itemId: number): boolean
+    {
+        return this._recyclerModel?.releaseFurni(itemId) ?? false;
     }
 
     private _purse: Purse = new Purse();
@@ -896,9 +969,23 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             );
         }
 
+        // AS3: HabboInventory.as:501 — `new RecyclerModel(this, _windowManager, _communication,
+        // assets, _roomEngine, _localization)`. Five of those six are stored and never read; the
+        // model documents that at its constructor.
+        this._recyclerModel = new RecyclerModel(this);
+
         this._inventories.add('trading', this._tradingModel);
+        this._inventories.add('recycler', this._recyclerModel);
         this._inventories.add('pets', this._petsModel);
         this._inventories.add('bots', this._botsModel);
+
+        // The marketplace model was already being built above but never registered, so
+        // `getCategoryWindowContainer('marketplace')` and `updateView('marketplace')` resolved to
+        // nothing. AS3 adds it first, before furni.
+        if(this._marketplaceModel != null)
+        {
+            this._inventories.add('marketplace', this._marketplaceModel);
+        }
 
         this._isInitialized = true;
     }

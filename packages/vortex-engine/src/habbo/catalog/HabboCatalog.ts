@@ -26,6 +26,8 @@ import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
+import {IID_HabboInventory} from '@iid/IIDHabboInventory';
+import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
@@ -378,6 +380,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_inventory
+    private _inventory: IHabboInventory | null = null;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get sessionDataManager()
     get sessionDataManager(): ISessionDataManager | null 
     {
@@ -527,9 +532,10 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get tradingActive()
-    get tradingActive(): boolean 
+    // Hard-coded false until the inventory dependency landed; it answers for real now.
+    get tradingActive(): boolean
     {
-        return false;
+        return this._inventory?.tradingActive ?? false;
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get imageGalleryHost()
@@ -728,9 +734,20 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 },
                 false
             ),
+            // AS3 declares this optional (`false`), and it must stay optional: the catalog boots
+            // before the inventory in some flows, and a hard dependency on an IID nothing has
+            // provided yet locks the component with no log at all.
+            new ComponentDependency(
+                IID_HabboInventory,
+                (manager: IHabboInventory | null) =>
+                {
+                    this._inventory = manager;
+                },
+                false
+            ),
             new ComponentDependency(
                 IID_SessionDataManager,
-                (manager: ISessionDataManager | null) => 
+                (manager: ISessionDataManager | null) =>
                 {
                     this._sessionDataManager = manager;
                 },
@@ -2122,29 +2139,27 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.context.createLinkEvent('habblet/open/credits');
     }
 
+    /**
+     * The three recycler bridges. Each was a stub returning AS3's own "nothing happened" value,
+     * because the catalog had no inventory reference at all — that was the real blocker, and the
+     * only one of this cluster that was not already solved elsewhere.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::setupInventoryForRecycler()
-    // TODO(AS3): delegates to _inventory.setupRecycler() in AS3 (habbo/inventory/recycler/RecyclerModel.as,
-    // toggles the inventory's "recyclable items" filter view) - HabboInventory isn't wired into
-    // HabboCatalog yet, so this is a no-op until that dependency exists.
-    public setupInventoryForRecycler(_enabled: boolean): void
+    public setupInventoryForRecycler(enabled: boolean): void
     {
+        this._inventory?.setupRecycler(enabled);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::requestInventoryFurniToRecycler()
-    // TODO(AS3): delegates to _inventory.requestSelectedFurniToRecycler() in AS3 (RecyclerModel.as::lockSelectedFurni()) -
-    // same HabboInventory gap as setupInventoryForRecycler(). Returning 0 matches AS3's own
-    // "nothing selected/lockable" result, which RecyclerLogic.placeObjectAtSlot() already handles.
     public requestInventoryFurniToRecycler(): number
     {
-        return 0;
+        return this._inventory?.requestSelectedFurniToRecycler() ?? 0;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::returnInventoryFurniFromRecycler()
-    // TODO(AS3): delegates to _inventory.returnInventoryFurniFromRecycler() in AS3 (RecyclerModel.as::releaseFurni()) -
-    // same HabboInventory gap. Returning false matches AS3's own "nothing to release" result.
-    public returnInventoryFurniFromRecycler(_itemId: number): boolean
+    public returnInventoryFurniFromRecycler(itemId: number): boolean
     {
-        return false;
+        return this._inventory?.returnInventoryFurniFromRecycler(itemId) ?? false;
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getProductData()

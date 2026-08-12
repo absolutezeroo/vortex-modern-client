@@ -149,6 +149,25 @@ export interface IHabboInventory
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::toggleInventoryPage()
     toggleInventoryPage(category: string, itemId?: string | null, forceSwitch?: boolean): void;
 
+    /**
+     * Whether a trade is open. The catalog asks so it can refuse purchases mid-trade.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get tradingActive()
+    readonly tradingActive: boolean;
+
+    /**
+     * The three recycler entry points the catalog drives. AS3 keeps them on the inventory rather
+     * than exposing `RecyclerModel` itself, so the catalog never sees the model.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::setupRecycler()
+    setupRecycler(enabled: boolean): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::requestSelectedFurniToRecycler()
+    requestSelectedFurniToRecycler(): number;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::returnInventoryFurniFromRecycler()
+    returnInventoryFurniFromRecycler(itemId: number): boolean;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::getFloorItemById()
     getFloorItemById(itemId: number): FurnitureItem | null;
 

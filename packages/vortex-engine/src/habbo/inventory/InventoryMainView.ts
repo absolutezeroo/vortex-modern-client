@@ -670,12 +670,25 @@ export class InventoryMainView
         this.emptyFurnimaticSlots();
     }
 
-    // TODO(AS3): sources/win63_version/habbo/inventory/InventoryMainView.as::emptyFurnimaticSlots()
-    // Requires IRecycler/FurniSlotItem (habbo/catalog/recycler), not yet ported.
+    /**
+     * Clears the recycler on every category switch — leaving a tab does not keep your items in the
+     * machine.
+     *
+     * The TODO here claimed `habbo/catalog/recycler` was unported. It was not: `IRecycler`,
+     * `FurniSlotItem` and `RecyclerLogic` were all present, and `HabboCatalog.getRecycler()`
+     * already returned one.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::emptyFurnimaticSlots()
-    private emptyFurnimaticSlots(): void 
+    private emptyFurnimaticSlots(): void
     {
-        // Intentional no-op until the recycler feature is ported.
+        const recycler = this._habboInventory.catalog?.getRecycler() ?? null;
+
+        if(recycler == null) return;
+
+        for(let slotId = 0; slotId < recycler.numberOfSlots; slotId++)
+        {
+            if(recycler.getSlotContent(slotId) != null) recycler.releaseSlot(slotId);
+        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::enableScaling()

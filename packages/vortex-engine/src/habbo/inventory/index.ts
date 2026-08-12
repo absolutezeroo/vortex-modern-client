@@ -12,6 +12,7 @@ export * from './furni';
 export * from './items';
 export * from './pets';
 export * from './purse';
+export * from './recycler';
 export * from './trading';
 
 // Types
