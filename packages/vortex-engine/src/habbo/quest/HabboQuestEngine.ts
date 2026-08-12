@@ -39,6 +39,8 @@ import type {IHabboQuestEngine} from './IHabboQuestEngine';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {QuestMessageData} from '@habbo/communication/messages/parser/quest/QuestMessageData';
 import {QuestController} from './QuestController';
+import {DailyTasksController} from './dailytasks/DailyTasksController';
+import {IID_DailyTasks} from '@iid/IIDDailyTasks';
 import {AchievementController} from './AchievementController';
 import {AchievementsResolutionController} from './AchievementsResolutionController';
 import {RoomCompetitionController} from './RoomCompetitionController';
@@ -77,6 +79,22 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     private _catalog: IHabboCatalog | null = null;
     // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_notifications
     private _notifications: IHabboNotifications | null = null;
+
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::get notifications()
+    get notifications(): IHabboNotifications | null
+    {
+        return this._notifications;
+    }
+
+    // AS3: HabboQuestEngine.as::_SafeStr_8473
+    private _dailyTasksController: DailyTasksController | null = null;
+
+    // AS3: HabboQuestEngine.as::get dailyTasks()
+    get dailyTasksController(): DailyTasksController | null
+    {
+        return this._dailyTasksController;
+    }
+
     // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_habboHelp
     private _habboHelp: IHabboHelp | null = null;
     // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_navigator
@@ -893,6 +911,12 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     {
         // Create controllers
         this._questController = new QuestController(this);
+        // AS3: HabboQuestEngine.as:134 — `new DailyTasksController(this, param1, 0, param3)`
+        // followed by `param1.attachComponent(..., [new IIDDailyTasks()])`. AS3 does both in its
+        // constructor; this port builds every quest controller here in initComponent(), and the
+        // daily-tasks one follows its siblings rather than being the single exception.
+        this._dailyTasksController = new DailyTasksController(this, this.context!, 0, this.assets);
+        this.context?.attachComponent(this._dailyTasksController, [IID_DailyTasks]);
         this._achievementController = new AchievementController(this);
         this._resolutionController = new AchievementsResolutionController(this);
         this._competitionController = new RoomCompetitionController(this);
@@ -915,11 +939,11 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 	 * Per-frame tick. Forwards to the sub-controllers AS3 drives from here.
 	 */
     // AS3: HabboQuestEngine.as::update()
-    // TODO(AS3): AS3 also forwards to a DailyTasksController and a RewardTrackController,
-    // neither of which exist in this port yet.
+    // TODO(AS3): AS3 also forwards to a RewardTrackController, which does not exist in this port.
     update(deltaTime: number): void
     {
         this._questController?.update(deltaTime);
         this._achievementController?.update(deltaTime);
+        this._dailyTasksController?.update(deltaTime);
     }
 }

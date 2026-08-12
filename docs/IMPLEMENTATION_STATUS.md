@@ -44,6 +44,38 @@ single missing member — so 45 commands landed and the number went 304 → 309.
 things is worth less than five covering five, and any reading of this file that treats the total as
 a score will get that backwards.
 
+### Daily tasks — the subscriber that was missing (2026-08-12)
+
+`habbo/quest/dailytasks/DailyTasksController` (424 l. AS3) is ported and attached under
+`IID_DailyTasks` from `HabboQuestEngine`, plus `ClaimDailyTaskComposer` (4101),
+`UnseenDailyTasksCountUpdateEvent` and `IDailyTasksController`.
+
+**The gap was not the messages.** All three server events (1824, 2506, 1065) were already
+registered, both DTOs and all three parsers already existed and were byte-correct, and
+`SessionDataManager.initSessionData()` already sent `GetDailyTasksComposer` (4100) every session.
+What was missing was anything *subscribed*: the board arrived on every login and was dropped. This
+is the `[[project_ported_but_unwired]]` failure mode with every piece present but the last one.
+
+Worth keeping:
+
+- **AS3 subscribes its three events in the constructor**, before dependencies resolve, so its own
+  `addMessageEvent()` short-circuits on a null communication manager. The port subscribes in
+  `initComponent()` instead. That is a deliberate divergence, noted at the constructor: porting the
+  order faithfully would have reproduced exactly the bug this class exists to fix.
+- **"Unseen" means completed, not new.** The count the toolbar badge reads is of tasks with status
+  1 (finished, unclaimed) — a task the player has never opened does not appear.
+- **Status names come from behaviour**, and the port already had them right: 0 active (progress bar,
+  excluded from `isExpired`), 1 completed (`dailytasks.completed.caption`, claim enabled), 2 claimed
+  (`dailytasks.claimed.caption`, claim disabled).
+- **`claimTask()` narrows a long to an int.** The task id is `readLong()` in both parsers, but AS3's
+  composer declares `param1:int`. Kept — the wire format is what the server parses.
+
+Not ported: the five views (`DailyTasksView` 338, `DailyTaskView` 285, `UnclaimedTasksView` 178,
+`DailyTaskRewardView` 101, `RewardDisplayWrapper` 56 — 958 lines). The toolbar's
+`dailytasks/open` link now reaches `linkReceived()` and warns instead of doing nothing. Separately,
+**nothing consumes the unseen-count event yet** — not this one and not the achievements one it is
+modelled on — so the badge itself is still unwired. That is a pre-existing gap, not a new one.
+
 ### Collectibles — the product previewer (2026-08-12)
 
 Third collectibles pass. `CollectibleProductPreviewer` (234 l.), `EffectPreviewer` (100 l.),

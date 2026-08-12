@@ -544,6 +544,7 @@ import {
 import {
     AddNftToTradeComposer
 } from './messages/outgoing/collectibles/AddNftToTradeComposer';
+import {ClaimDailyTaskComposer} from './messages/outgoing/quest/ClaimDailyTaskComposer';
 import {
     RequestVariableHoldersComposer
 } from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableHoldersComposer';
@@ -2320,8 +2321,9 @@ export class HabboMessages implements IMessageConfiguration
         // The emulator disagreed on two of the three (2507 and 1762), and 1762 is really
         // CfhTopics — it declares that header twice. WIN63's registry wins; the emulator's
         // Headers.cs has been corrected to match.
-        // TODO(AS3): habbo/quest/dailytasks/ (DailyTasksController + its three views) is not
-        // ported, so nothing subscribes to these yet — the wire table knows them, the UI does not.
+        // DailyTasksController subscribes to all three (2026-08-12). Its views are still unported,
+        // so the board has no window — but the task list, the unseen count and the two
+        // notifications are live, where before every one of these three was received and dropped.
         this._events.set(1824, DailyTasksActiveListMessageEvent);
         this._events.set(2506, DailyTasksTasksAddedMessageEvent);
         this._events.set(1065, DailyTasksTaskUpdateMessageEvent);
@@ -2803,6 +2805,8 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3642, GetUserNftChatStylesMessageComposer);
         // AS3: SessionDataManager.as::initSessionData() sends this immediately after 3642 above.
         this._composers.set(4100, GetDailyTasksComposer);
+        // AS3: DailyTasksController.as::claimTask()
+        this._composers.set(4101, ClaimDailyTaskComposer);
         // AS3: HabboFreeFlowChat.as::sendChatPreferences()
         this._composers.set(1149, SetChatPreferencesMessageComposer);
         this._composers.set(2070, IgnoreUserMessageComposer);
