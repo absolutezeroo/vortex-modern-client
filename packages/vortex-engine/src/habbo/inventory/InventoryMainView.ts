@@ -430,6 +430,7 @@ export class InventoryMainView
         }
 
         if(this._collectiblesCounter) this.updateCounter(this._collectiblesCounter, count, 'collectibles');
+        this._habboInventory.collectiblesModel?.updateView();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::getView()
@@ -616,6 +617,9 @@ export class InventoryMainView
                 break;
             case 'badges':
                 this._habboInventory.badgesModel.resetUnseenItems();
+                break;
+            case 'collectibles':
+                this._habboInventory.collectiblesModel?.resetUnseenItems();
                 break;
             case 'bots':
                 this._habboInventory.botsModel.resetUnseenItems();

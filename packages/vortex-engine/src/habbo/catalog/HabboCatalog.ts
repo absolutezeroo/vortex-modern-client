@@ -1,4 +1,5 @@
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
+import type {ICollectorHub} from './collectibles/ICollectorHub';
 import {Logger} from '@core/utils/Logger';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
@@ -550,8 +551,18 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this.getBoolean('builders.club.enabled');
     }
 
+    /**
+     * TODO(AS3): returns `_collectorHub`, the `CollectiblesController` this catalog builds in
+     * `HabboCatalog.as::init()`. That controller is a 727-line DI component owning the whole
+     * collectibles *catalog* tab (`habbo/catalog/collectibles/`, ~4,900 lines across 29 classes)
+     * and is unported, so the accessor stays null.
+     *
+     * Every caller already treats null as "no hub": `FurniModel.addFurni`/`removeFurni` skip the
+     * collection-count update, and `CollectibleGroupedItem`/`CollectiblesView` fall back to the
+     * product code and to `product.type.*` themselves rather than going without a name.
+     */
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get collectorHub()
-    get collectorHub(): unknown | null
+    get collectorHub(): ICollectorHub | null
     {
         return null;
     }

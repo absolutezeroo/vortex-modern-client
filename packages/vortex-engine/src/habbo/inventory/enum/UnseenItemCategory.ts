@@ -10,7 +10,14 @@ export const UnseenItemCategory = {
     BADGE: 4,
     BOT: 5,
     GAMES: 6,
+    COLLECTIBLES: 7,
 } as const;
+
+/**
+ * AS3's enum also declares an eighth category whose name is obfuscated in every tree
+ * (`_SafeCls_1779.as::_SafeStr_10431 = 8`). Nothing in the client references it, so it is left out
+ * rather than given an invented name.
+ */
 
 export type UnseenItemCategoryType = typeof UnseenItemCategory[keyof typeof UnseenItemCategory];
 

@@ -27,6 +27,8 @@ export const InventoryCategory = {
     PETS: 'pets',
     BOTS: 'bots',
     TRADING: 'trading',
+    MARKETPLACE: 'marketplace',
+    COLLECTIBLES: 'collectibles',
 } as const;
 
 export type InventoryCategoryType = typeof InventoryCategory[keyof typeof InventoryCategory];

@@ -225,6 +225,8 @@ import {BadgePointLimitsMessageEvent} from './messages/incoming/inventory/badges
 import {PostItPlacedMessageEvent} from './messages/incoming/inventory/furni/PostItPlacedMessageEvent';
 import {SilverBalanceMessageEvent} from './messages/incoming/collectibles/SilverBalanceMessageEvent';
 import {EmeraldBalanceMessageEvent} from './messages/incoming/collectibles/EmeraldBalanceMessageEvent';
+import {NftAssetsMessageEvent} from './messages/incoming/collectibles/NftAssetsMessageEvent';
+import {TradeNftAssetsMessageEvent} from './messages/incoming/collectibles/TradeNftAssetsMessageEvent';
 import {
     BonusRareInfoMessageEvent,
     ProductOfferMessageEvent,
@@ -506,6 +508,9 @@ import {
 import {
     RequestNftAssetsComposer
 } from './messages/outgoing/collectibles/RequestNftAssetsComposer';
+import {
+    AddNftToTradeComposer
+} from './messages/outgoing/collectibles/AddNftToTradeComposer';
 import {
     RequestVariableHoldersComposer
 } from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableHoldersComposer';
@@ -2200,6 +2205,12 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2145, PostItPlacedMessageEvent);
         this._events.set(3727, SilverBalanceMessageEvent);
         this._events.set(583, EmeraldBalanceMessageEvent);
+        // The collectibles (NFT) inventory and its trade-side twin, both handled by
+        // HabboInventory: 2247 -> onCollectibles, 850 -> onTradeNfts
+        // (habbo/inventory/_SafeCls_1951.as:166 and :204). Header 2247 is the one the RoomAdError
+        // correction above named as "unported"; it is ported now.
+        this._events.set(2247, NftAssetsMessageEvent);
+        this._events.set(850, TradeNftAssetsMessageEvent);
         this._events.set(2155, TargetedOfferMessageEvent);
         this._events.set(2013, TargetedOfferNotFoundMessageEvent);
         this._events.set(1073, BundleDiscountRulesetMessageEvent);
@@ -2342,8 +2353,9 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3111, WiredTradeUpdateItemsComposer);
         this._composers.set(2818, WiredTradeAcceptComposer);
         this._composers.set(2646, WiredTradeCancelComposer);
-        // Collectibles. Header from WIN63's registry; the emulator does not define it either.
+        // Collectibles. Headers from WIN63's registry; the emulator defines neither.
         this._composers.set(1646, RequestNftAssetsComposer);
+        this._composers.set(2481, AddNftToTradeComposer);
         // The monitor tab's "wf15" report is the same AS3 class as the wired dialog's developer
         // action (`_SafeCls_3004`), already registered at 3608 above as
         // WiredDebugCommandMessageComposer. Registering it twice under two derived names left the

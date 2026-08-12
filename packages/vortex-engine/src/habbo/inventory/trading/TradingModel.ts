@@ -25,6 +25,8 @@ import {Logger} from '@core/utils/Logger';
 import {FurnitureCategory} from '../enum';
 import {AcceptTradingComposer} from '@habbo/communication/messages/outgoing/inventory/AcceptTradingComposer';
 import {AddItemsToTradeComposer} from '@habbo/communication/messages/outgoing/inventory/AddItemsToTradeComposer';
+import {AddNftToTradeComposer} from '@habbo/communication/messages/outgoing/collectibles/AddNftToTradeComposer';
+import type {CollectibleGroupedItem} from '../collectibles/CollectibleGroupedItem';
 import {AddItemToTradeComposer} from '@habbo/communication/messages/outgoing/inventory/AddItemToTradeComposer';
 import {CloseTradingComposer} from '@habbo/communication/messages/outgoing/inventory/CloseTradingComposer';
 import {
@@ -146,7 +148,7 @@ export class TradingModel implements ITradingModel, IInventoryModel
     private _ownUserNumCredits: number = 0;
 
     // AS3: .../TradingModel.as::_ownUserNftItems
-    private _ownUserNftItems: OrderedMap<string, unknown> | null = null;
+    private _ownUserNftItems: OrderedMap<string, CollectibleGroupedItem> | null = null;
 
     // AS3: .../TradingModel.as::_ownUserNumNftItems
     private _ownUserNumNftItems: number = 0;
@@ -173,7 +175,7 @@ export class TradingModel implements ITradingModel, IInventoryModel
     private _otherUserNumCredits: number = 0;
 
     // AS3: .../TradingModel.as::_otherUserNftItems
-    private _otherUserNftItems: OrderedMap<string, unknown> | null = null;
+    private _otherUserNftItems: OrderedMap<string, CollectibleGroupedItem> | null = null;
 
     // AS3: .../TradingModel.as::_otherUserNumNftItems
     private _otherUserNumNftItems: number = 0;
@@ -311,7 +313,7 @@ export class TradingModel implements ITradingModel, IInventoryModel
     }
 
     // AS3: .../TradingModel.as::get ownUserNftItems()
-    get ownUserNftItems(): OrderedMap<string, unknown> | null
+    get ownUserNftItems(): OrderedMap<string, CollectibleGroupedItem> | null
     {
         return this._ownUserNftItems;
     }
@@ -377,7 +379,7 @@ export class TradingModel implements ITradingModel, IInventoryModel
     }
 
     // AS3: .../TradingModel.as::get otherUserNftItems()
-    get otherUserNftItems(): OrderedMap<string, unknown> | null
+    get otherUserNftItems(): OrderedMap<string, CollectibleGroupedItem> | null
     {
         return this._otherUserNftItems;
     }
@@ -422,13 +424,13 @@ export class TradingModel implements ITradingModel, IInventoryModel
         this._ownUserId = ownUserId;
         this._ownUserName = ownUserName;
         this._ownUserItems = new OrderedMap<string, GroupItem>();
-        this._ownUserNftItems = new OrderedMap<string, unknown>();
+        this._ownUserNftItems = new OrderedMap<string, CollectibleGroupedItem>();
         this._ownUserAccepts = false;
         this._ownUserCanTrade = ownUserCanTrade;
         this._otherUserId = otherUserId;
         this._otherUserName = otherUserName;
         this._otherUserItems = new OrderedMap<string, GroupItem>();
-        this._otherUserNftItems = new OrderedMap<string, unknown>();
+        this._otherUserNftItems = new OrderedMap<string, CollectibleGroupedItem>();
         this._otherUserAccepts = false;
         this._otherUserCanTrade = otherUserCanTrade;
         this._requiredSilverFee = 0;
@@ -804,13 +806,9 @@ export class TradingModel implements ITradingModel, IInventoryModel
     }
 
     // AS3: .../TradingModel.as::updateNftItems()
-    // TODO(AS3): no caller yet — AS3 reaches this from the inventory handler's `onTradeNfts`,
-    // whose message (`incoming/inventory/trading/nft/TradeNftAssetsMessageEvent`, header 2159) and
-    // whose `CollectibleGroupedItem` payload both belong to `habbo/inventory/collectibles`, which
-    // is unported (0 files). The maps are typed `unknown` here for the same reason.
     updateNftItems(
-        ownUserNftItems: OrderedMap<string, unknown>,
-        otherUserNftItems: OrderedMap<string, unknown>,
+        ownUserNftItems: OrderedMap<string, CollectibleGroupedItem>,
+        otherUserNftItems: OrderedMap<string, CollectibleGroupedItem>,
         ownUserNumNftItems: number,
         otherUserNumNftItems: number
     ): void
@@ -831,7 +829,7 @@ export class TradingModel implements ITradingModel, IInventoryModel
         this._view.updateItemList(this._otherUserId);
         this._view.updateUserInterface();
 
-        // TODO(AS3): `_inventory.collectiblesModel.updateItemLocks()` — no collectibles model here.
+        this._inventory.collectiblesModel?.updateItemLocks();
     }
 
     // AS3: .../TradingModel.as::getOwnItemIdsInTrade()
@@ -1147,11 +1145,11 @@ export class TradingModel implements ITradingModel, IInventoryModel
     }
 
     // AS3: .../TradingModel.as::requestAddNftsToTrading()
-    // TODO(AS3): AS3 sends `AddNftToTradeComposer` (header 2481 in WIN63's registry) with the ids
-    // narrowed to ints. The composer is unported along with the rest of the NFT trading path,
-    // whose items come from the unported collectibles model.
-    requestAddNftsToTrading(_assetIds: number[]): void
+    // The Number -> int narrowing AS3 does on the way in lives in the composer, next to the wire
+    // format it belongs to.
+    requestAddNftsToTrading(assetIds: number[]): void
     {
+        this._communication?.connection?.send(new AddNftToTradeComposer(assetIds));
     }
 
     // AS3: .../TradingModel.as::canAddItemToTrade()

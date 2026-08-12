@@ -34,7 +34,7 @@
 | Engine `TODO(AS3)` markers                                     | 265           | **327**       |
 
 Re-measure `TODO(AS3)` with `node scripts/todo-inventory.mjs`, not `grep -c`: the latest figure is
-**320** (2026-08-12, after the wired-trading pass) and the table above is a 2026-07-28 snapshot. A
+**317** (2026-08-12, after the collectibles pass) and the table above is a 2026-07-28 snapshot. A
 bare `grep -rn --include=*.ts packages` reads `packages/*/dist/**/*.d.ts` too and inflates the count
 by roughly 80.
 
@@ -43,6 +43,49 @@ one marker reading *"~50 slash commands … don't exist in this port yet"* with 
 single missing member — so 45 commands landed and the number went 304 → 309. A marker covering fifty
 things is worth less than five covering five, and any reading of this file that treats the total as
 a score will get that backwards.
+
+### Collectibles — the inventory tab (2026-08-12)
+
+`habbo/inventory/collectibles` is ported and wired: `CollectiblesModel`, `CollectiblesView`,
+`CollectiblesGridView`, `CollectibleGroupedItem` (the four AS3 classes, ~1,500 lines), plus the
+messages the tab needs — `NftAssetsMessageEvent`/`Parser` (2247), `TradeNftAssetsMessageEvent`/`Parser`
+(850) and `AddNftToTradeComposer` (2481). `collectibles` is now an `_inventories` entry, and
+`TradingModel`'s two NFT maps are typed `OrderedMap<string, CollectibleGroupedItem>` instead of
+`unknown`.
+
+What this closes and what it does not: the tab is the *inventory* half. The **catalog** half
+(`habbo/catalog/collectibles`, ~4,900 lines across 29 classes — the collections/shop/mint/transfer
+tabs and their renderers) is still untouched, and it owns `CollectiblesController`, which is what
+`HabboCatalog.collectorHub` would return. That accessor stays null, typed now (`ICollectorHub`)
+rather than `unknown`.
+
+Four things worth not rediscovering:
+
+- **The models were never being told.** `inventoryViewOpened()`, `closingInventoryView()` and
+  `toggleInventorySubPage()` hand-dispatched to furni/pets/bots where AS3 loops every registered
+  `IInventoryModel`. Registering the collectibles model would have changed nothing without this:
+  `CollectiblesModel.categorySwitch()` is what sends `RequestNftAssetsComposer`, so the tab would
+  have opened empty forever. The loop also reaches trading, wired_trading, recycler and marketplace,
+  none of which had received these three callbacks either.
+- **`tradingModel` was narrowed to the view's interface.** AS3's getter returns the concrete
+  `TradingModel`; `ITradingModel` is the four-member contract the trade *view* uses. The port
+  returned the interface, which put `running`, `ownUserNftItems` and `requestAddNftsToTrading()` out
+  of reach of every model-side caller. Widening the getter to the AS3 type is source-compatible —
+  the narrow interface is a supertype.
+- **The lock polarity is inverted, on purpose.** `CollectibleGroupedItem._assetIds` maps
+  assetId → *locked*, and `lockAsset(id, unlock)`'s second parameter is the state to move away from,
+  so `lockAsset(id)` locks. `CollectiblesModel.updateItemLocks()` then calls `findGroupedItem(item,
+  **false**)`: by then the copy is already in the trade, and the default "still holds this unlocked
+  copy" test would reject the very group that needs locking.
+- **One live AS3 bug, ported as written.** `CollectiblesModel.resetUnseenItems()` clears unseen
+  category 7 (COLLECTIBLES) while `isUnseen()` queries category 5 (BOT). Nothing calls `isUnseen()`
+  — not here and not in AS3 — so correcting it would invent behaviour the Flash client never had.
+
+Two emulator headers were wrong and are fixed in `Revision20260701/Headers.cs`:
+`TradeNftAssetInventoryMessageComposer` 3854 → **2247** and `TradeNftAssetsMessageComposer` 2159 →
+**850**. Neither 3854 nor 2159 appears anywhere in the WIN63 registry; 2247 and 850 both do. Both
+constants were header-only — no composer, no serializer, no handler references them — so the change
+is to the table alone.
 
 ### Chat slash commands (2026-08-12)
 
@@ -115,7 +158,9 @@ Three things this slice is worth remembering for:
   also caught a wrong key type on `updateItemGroupMaps` — the compiler only objects once a caller
   exists.
 
-Still unregistered in `_inventories`: `collectibles` alone.
+Every AS3 `_inventories` entry is now registered (`collectibles` landed 2026-08-12, below).
+Badges and effects are the remaining exception, and a different one: AS3 registers them too, but
+neither model implements `IInventoryModel` in this port, so neither is in the map.
 
 The layout/skin rows changed **format**, not content: there is no JSON compile step any more —
 `tools/build-window-assets.mjs` ships the dump's XML verbatim (see CLAUDE.md → Assets). Both
@@ -875,9 +920,12 @@ The discipline that made it safe is worth repeating: **resolve every id against 
 
 **Re-run `--stale` after every port.** Porting a member mechanically invalidates the markers that cited it as their blocker, and nothing re-runs the detector on its own: the catalog's drag-into-room markers stayed "not ported yet" for several commits after the thing they named had shipped, in the same branch.
 
-Six modules are absent from the port entirely and each blocks a cluster: `habbo/game` (only
+Six modules were absent from the port entirely and each blocked a cluster: `habbo/game` (only
 `.gitkeep`), `catalog/habbicons`, `inventory/collectibles`, `inventory/recycler`,
-`inventory/wired_trading`, `quest/dailytasks`.
+`inventory/wired_trading`, `quest/dailytasks`. Three of the six have since landed —
+`inventory/recycler` and `inventory/wired_trading` (2026-08-12) and `inventory/collectibles`
+(2026-08-12) — leaving `habbo/game`, `catalog/habbicons` and `quest/dailytasks`, plus
+`catalog/collectibles`, which the inventory pass named but did not touch.
 
 **`--stale` is the cheapest lever, and its findings are candidates, not verdicts.** The port moves
 faster than its comments: a marker saying "X is not ported" while an `X.ts` now exists is usually a
@@ -965,7 +1013,7 @@ Top remaining gaps by category (TS/AS3 per column, ranked by summed gap):
 |------------------|--------------|--------------|--------------|-------|---------------------------------------------------------------------|
 | `game`           | 5/44         | 0/27         | 5/61         | 122   | SnowWar/game protocol almost entirely absent; `habbo/game` is 0/63. |
 | `users`          | 28/55        | 24/47        | 22/39        | 67    | Profile/user flows still incomplete.                                |
-| `collectibles`   | 0/20         | 0/18         | 0/29         | 67    | Untouched at module level.                                          |
+| `collectibles`   | 4/20         | 2/18         | 6/29         | 55    | The inventory tab's chain only (2026-08-12); the catalog half is untouched. |
 | `catalog`        | 28/51        | 26/40        | 25/39        | 51    | Targeted offers, room ads, LTD raffle, vouchers still unported.     |
 | `room`           | 89/106       | 78/97        | 89/102       | 49    | Down from 45/30/43; the 2026-07-24 room audit closed 22 of these.   |
 | `inventory`      | 35/56        | 29/29        | 37/55        | 39    | Outgoing complete; incoming/parser gaps remain.                     |
