@@ -85,8 +85,11 @@ the crash was its only effect. The port initialises it to `[]`: the branch stays
 being a crash. Compare `[[project_as3_foreach_null_noop]]` — same root cause, opposite direction
 (there AS3 tolerated null and TypeScript did not).
 
-Still open: **nothing consumes the unseen-count event** — not this one and not the achievements one
-it is modelled on — so the toolbar badge stays unwired. Pre-existing, not new.
+The toolbar badge was wired on 2026-08-13: `HabboToolbar` now attaches both
+`UnseenAchievementsCountUpdateEvent` and `UnseenDailyTasksCountUpdateEvent` to its quest-engine
+dependency, exactly as AS3 does, and `BottomBarLeft` gained the three counters that were missing
+(`unseenDailyTasksCount`, `unseenRewardTrackRewardsCount`, `unseenProgMenuCount`). The achievements
+badge had been emitting into nothing since it was ported; both now reach the PROGRESSION icon.
 
 ### Collectibles — the product previewer (2026-08-12)
 

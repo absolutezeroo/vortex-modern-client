@@ -9,6 +9,8 @@ import {IID_HabboInventory} from '@iid/IIDHabboInventory';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
+import {UnseenAchievementsCountUpdateEvent} from '@habbo/quest/events/UnseenAchievementsCountUpdateEvent';
+import {UnseenDailyTasksCountUpdateEvent} from '@habbo/quest/events/UnseenDailyTasksCountUpdateEvent';
 import {IID_HabboNavigator} from '@iid/IIDHabboNavigator';
 import {IID_HabboNewNavigator} from '@iid/IIDHabboNewNavigator';
 import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
@@ -451,7 +453,19 @@ export class HabboToolbar extends Component implements IHabboToolbar
                 {
                     this._questEngine = engine;
                 },
-                false
+                false,
+                // AS3 attaches the same three listeners to this dependency. Two of the three have
+                // a source in this port; the reward-track one does not — see the note below.
+                [
+                    {
+                        type: UnseenAchievementsCountUpdateEvent.TYPE,
+                        callback: this.onUnseenAchievementsCountUpdate.bind(this) as unknown as (...args: unknown[]) => void
+                    },
+                    {
+                        type: UnseenDailyTasksCountUpdateEvent.TYPE,
+                        callback: this.onUnseenDailyTasksCountUpdate.bind(this) as unknown as (...args: unknown[]) => void
+                    }
+                ]
             ),
             new ComponentDependency(
                 IID_SessionDataManager,
@@ -841,6 +855,46 @@ export class HabboToolbar extends Component implements IHabboToolbar
     {
         return this.bottomBarLeft?.getToolbarState() ?? '';
     }
+
+    /**
+     * Both handlers write the count twice — once onto the bar, which sums it into the icon badge,
+     * and once onto the progression menu, which shows it on the row inside. AS3 does the same and
+     * the two are not redundant: the badge is a total, the row is per-category.
+     */
+    // AS3: HabboToolbar.as::onUnseenAchievementsCountUpdate()
+    private onUnseenAchievementsCountUpdate(event: UnseenAchievementsCountUpdateEvent): void
+    {
+        const bar = this.bottomBarLeft;
+
+        if(bar === null) return;
+
+        bar.unseenAchievementCount = event.count;
+
+        if(bar.progmenu !== null) bar.progmenu.unseenAchievementsCount = event.count;
+
+        this.setUnseenItemCount(HabboToolbarIconEnum.PROGRESSION, bar.unseenProgMenuCount);
+    }
+
+    // AS3: HabboToolbar.as::onUnseenDailyTasksCountUpdate()
+    private onUnseenDailyTasksCountUpdate(event: UnseenDailyTasksCountUpdateEvent): void
+    {
+        const bar = this.bottomBarLeft;
+
+        if(bar === null) return;
+
+        bar.unseenDailyTasksCount = event.count;
+
+        if(bar.progmenu !== null) bar.progmenu.unseenDailyTaskCount = event.count;
+
+        this.setUnseenItemCount(HabboToolbarIconEnum.PROGRESSION, bar.unseenProgMenuCount);
+    }
+
+    /*
+     * TODO(AS3): HabboToolbar.as::onUnseenRewardTrackRewardsCountUpdate() — the third listener AS3
+     * attaches to the quest-engine dependency, on `qe_urtrcue`. Nothing dispatches it in this port
+     * because RewardTrackController is unported, so it is left off rather than registered against
+     * an event that can never arrive.
+     */
 
     /**
 	 * Set the unseen item count for a toolbar icon

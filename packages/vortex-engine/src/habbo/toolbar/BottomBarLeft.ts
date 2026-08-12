@@ -215,6 +215,29 @@ export class BottomBarLeft
         this._unseenAchievementCount = value;
     }
 
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::_SafeStr_10024
+    private _unseenDailyTasksCount: number = 0;
+
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::set unseenDailyTasksCount()
+    set unseenDailyTasksCount(value: number)
+    {
+        this._unseenDailyTasksCount = value;
+    }
+
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::_SafeStr_9944
+    private _unseenRewardTrackRewardsCount: number = 0;
+
+    /**
+     * TODO(AS3): nothing raises this yet. Its source is `qe_urtrcue`, dispatched by a
+     * RewardTrackController this port does not have — see HabboQuestEngine.update()'s own TODO.
+     * The setter exists so `unseenProgMenuCount` below sums the same three things AS3 does.
+     */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::set unseenRewardTrackRewardsCount()
+    set unseenRewardTrackRewardsCount(value: number)
+    {
+        this._unseenRewardTrackRewardsCount = value;
+    }
+
     private _unseenMiniMailMessageCount: number = 0;
 
     /**
@@ -262,6 +285,18 @@ export class BottomBarLeft
     get unseenMeMenuCount(): number 
     {
         return this._unseenMiniMailMessageCount + this._unseenAchievementCount + this._unseenForumsCount;
+    }
+
+    /**
+     * The progression icon's badge: achievements + daily tasks + reward track.
+     *
+     * The achievement count is summed into **both** this and `unseenMeMenuCount` above, so a new
+     * achievement badges two icons at once. That is AS3's, not a duplication slip.
+     */
+    // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::get unseenProgMenuCount()
+    get unseenProgMenuCount(): number
+    {
+        return this._unseenAchievementCount + this._unseenDailyTasksCount + this._unseenRewardTrackRewardsCount;
     }
 
     /**
