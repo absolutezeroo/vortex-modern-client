@@ -34,9 +34,33 @@
 | Engine `TODO(AS3)` markers                                     | 265           | **327**       |
 
 Re-measure `TODO(AS3)` with `node scripts/todo-inventory.mjs`, not `grep -c`: the latest figure is
-**336** (2026-08-10, after the help/CFH pass) and the table above is a 2026-07-28 snapshot. A bare
+**304** (2026-08-12, after the recycler pass) and the table above is a 2026-07-28 snapshot. A bare
 `grep -rn --include=*.ts packages` reads `packages/*/dist/**/*.d.ts` too and inflates the count by
 roughly 80.
+
+### The recycler (2026-08-12) — one missing file, four TODOs, three of them wrong
+
+`habbo/inventory/recycler/RecyclerModel` was genuinely absent, and it is 200 lines. Everything the
+four surrounding TODOs named as blocking it was already in the tree:
+
+| TODO said | Reality |
+|---|---|
+| `habbo/catalog/recycler` not ported (`InventoryMainView.emptyFurnimaticSlots`) | `IRecycler`, `FurniSlotItem`, `RecyclerLogic` all present; `HabboCatalog.getRecycler()` already returned one |
+| recycler/trading branches unwired (`FurniModel.requestCurrentActionOnSelection`) | both targets existed |
+| recycler *and marketplace* contribute nothing to `updateItemLocks()` | `MarketplaceModel` was being constructed and simply never added to `_inventories`, so `getOfferItemRefs()` had no caller |
+| the catalog cannot reach the inventory | **true** — the only real one |
+
+That last one is worth keeping in mind for the rest of the port: `HabboCatalog` had no
+`IID_HabboInventory` dependency, so `setupInventoryForRecycler`, `requestInventoryFurniToRecycler`,
+`returnInventoryFurniFromRecycler` and `get tradingActive` were all stubs. It has to be declared
+**optional**, as AS3 declares it: `HabboInventory` requires the catalog, so the pair is a cycle and
+the optional side is the only thing breaking it. `Component.injectDependency()` honours that —
+optional deps skip `_requiredDependenciesCount` and resolve later — which is what keeps the catalog
+from locking forever (see the DI note in `docs/CONTEXT.md`).
+
+Registering `marketplace` and `recycler` in `_inventories` is also what makes
+`getCategoryWindowContainer()` and `updateView()` resolve for those tabs at all. Two remain
+unregistered: `collectibles` and `wired_trading`, both genuinely unported.
 
 The layout/skin rows changed **format**, not content: there is no JSON compile step any more —
 `tools/build-window-assets.mjs` ships the dump's XML verbatim (see CLAUDE.md → Assets). Both
