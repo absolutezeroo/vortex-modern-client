@@ -26,10 +26,19 @@ import type {RewardClaimsTab} from '../tabs/RewardClaimsTab';
 export class RewardCollectibleItemRenderer extends AbstractCollectibleItemRenderer
 {
     /**
-     * All three are `declare`d and assigned **before `super()`**, which AS3 does outright and
-     * TypeScript permits only for fields that emit no initialiser. It is not stylistic: the base
-     * constructor calls `updateVisuals()`, this class overrides it, and the override reads all
-     * three. Assigning them after `super()` would run the override against `undefined`.
+     * **AS3 assigns all three before `super()`; TypeScript cannot.**
+     *
+     * AS3 allows statements ahead of the base constructor call and relies on it here, so the
+     * `updateVisuals()` that the base constructor invokes can read them. TypeScript forbids
+     * touching `this` before `super()`, so the assignments follow it and that first
+     * `updateVisuals()` necessarily sees `undefined`.
+     *
+     * Two things make that harmless: the guard in `updateVisuals()`, and the fact that
+     * `RewardClaimsTab.createRewardItem()` calls `updateVisuals()` again explicitly right after
+     * construction — which AS3 also does, and which is the reason it does.
+     *
+     * `declare` keeps TypeScript from emitting field initialisers that would run after `super()`
+     * and overwrite the constructor's assignments.
      */
     // AS3: RewardCollectibleItemRenderer.as::_SafeStr_10299 (the owning tab)
     private declare _tab: RewardClaimsTab;
@@ -65,10 +74,9 @@ export class RewardCollectibleItemRenderer extends AbstractCollectibleItemRender
     }
 
     /**
-     * Runs once from `super()` — before this class's own fields are assigned — and again from the
-     * tab right after construction. The first pass therefore renders nothing; AS3 has exactly the
-     * same shape, and `RewardClaimsTab.createRewardItem()` calls `updateVisuals()` explicitly for
-     * that reason.
+     * Runs from `super()` before this class's fields exist, and again from
+     * `RewardClaimsTab.createRewardItem()` once they do. The guard covers the first pass — see the
+     * field note.
      */
     // AS3: RewardCollectibleItemRenderer.as::updateVisuals()
     override updateVisuals(): void

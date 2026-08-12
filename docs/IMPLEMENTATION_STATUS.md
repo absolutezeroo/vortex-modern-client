@@ -125,10 +125,20 @@ score header, the currency balances, the wallet list — and one working tab.
 `TransferNftsTab` (320) followed as the second tab — no renderer of its own — which closed the
 hub's `onSilverBalanceUpdated()` hand-off and the non-Stardust wallet subset.
 
-Still open: `CollectionsTab` (627) + `CollectionView` (596) + `CollectibleItemRenderer` (101) + the
-two navigation-node renderers; `MintInventoryListTab` (769) + its renderer + `MintTokenPurchaseOffer`
-(166); `ShopTab` (497) + its renderer + `NftStorePurchaseOffer` (178). Roughly 3,200 lines in three
-more slices of the same shape. All four are TODOs at their construction
+`ShopTab` (497) + `ShopCollectibleItemRenderer` (108) + `ShopNavigationNodeRenderer` (173) +
+`NftStorePurchaseOffer` (178) landed as the third tab — the NFT store, with its category list,
+offer grid, large preview and purchase path.
+
+Still open: `CollectionsTab` (627) + `CollectionView` (596) + `CollectibleItemRenderer` (101) +
+`CollectionsNavigationNodeRenderer` (221) + `_SafeCls_4508` (85); `MintInventoryListTab` (769) +
+`MintInventoryItemRenderer` (104) + `MintTokenPurchaseOffer` (166). Roughly 2,670 lines in two more
+slices — three of the five tabs now work.
+
+**Three AS3 fields in this package are declared, read, and never assigned**, so their branches are
+dead in Flash: `ShopTab._SafeStr_5458` (a `CollectionView`, read only by `update()`),
+`DailyTasksController._SafeStr_10392` (which additionally *crashes*, see the daily-tasks entry) and
+`ShopTab`'s trailing `dispose()` block, which disposes a field `clearNavigationList()` has already
+nulled. Each is documented at its port site rather than reproduced. All four are TODOs at their construction
 sites in `CollectiblesView.initWidgets()` and `refresh()`, so their containers come up empty rather
 than the window failing to build.
 
