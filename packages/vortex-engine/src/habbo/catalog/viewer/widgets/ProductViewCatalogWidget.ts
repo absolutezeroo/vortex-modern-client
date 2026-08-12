@@ -8,6 +8,7 @@ import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
 import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
+import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import {Vector3d} from '@room/utils/Vector3d';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
@@ -41,8 +42,6 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.ProductViewCatalogWid
  * toggle_preview_zoom).
  *
  * TODO(AS3): the following AS3 sub-paths are not ported (each noted again at its call site):
- * - "i" wall-item category 2/3/4 (wallpaper/floor/landscape editing via getRoomStringValue(),
- *   which IRoomEngine doesn't expose yet).
  * - "e" (avatar effect) preview rendering - it needs pixel-level sprite compositing
  *   (addEffectSprites()) onto a canvas, which requires bridging PixiJS Texture output to
  *   ImageBitmap the way ProductGridItem.renderAvatarImage() does, but for a multi-layer composite
@@ -1264,11 +1263,46 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
     {
         const furnitureData = product.furnitureData;
 
+        // Wallpaper (2), floor (3) and landscape (4) are not placed *into* the preview room —
+        // they re-skin it. So the branch reads the player's current room decoration, swaps in the
+        // one being previewed, and leaves the other two alone.
         if(furnitureData != null && (furnitureData.category === 2 || furnitureData.category === 3 || furnitureData.category === 4))
         {
-            // TODO(AS3): wallpaper/floor/landscape category-specific editing needs
-            // roomEngine.getRoomStringValue(), which IRoomEngine doesn't expose yet.
-            log.warn('Wall-item category 2/3/4 preview not ported yet');
+            const roomEngine = this._catalog?.roomEngine ?? null;
+
+            if(roomEngine == null || roomPreviewer == null)
+            {
+                return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
+            }
+
+            const activeRoomId = roomEngine.activeRoomId;
+
+            // The fallbacks are AS3's, and they are not neutral values: a player who has never
+            // decorated gets wall 101 / floor 101 / landscape 1.1 so the preview still renders
+            // something rather than an untextured room.
+            const currentWall = roomEngine.getRoomStringValue(activeRoomId, RoomObjectVariableEnum.ROOM_WALL_TYPE) || '101';
+            const currentFloor = roomEngine.getRoomStringValue(activeRoomId, RoomObjectVariableEnum.ROOM_FLOOR_TYPE) || '101';
+            const currentLandscape = roomEngine.getRoomStringValue(activeRoomId, RoomObjectVariableEnum.ROOM_LANDSCAPE_TYPE) || '1.1';
+
+            roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
+
+            roomPreviewer.updateObjectRoom(
+                furnitureData.category === 3 ? product.extraParam : currentFloor,
+                furnitureData.category === 2 ? product.extraParam : currentWall,
+                furnitureData.category === 4 ? product.extraParam : currentLandscape
+            );
+
+            // A landscape needs something to be seen *through*: AS3 drops a specific window into
+            // the preview room, otherwise the new scenery is hidden behind a solid wall.
+            if(furnitureData.category === 4)
+            {
+                const window = this._catalog?.getFurnitureDataByName('ads_twi_windw', 'i') ?? null;
+
+                if(window != null)
+                {
+                    roomPreviewer.addWallItemIntoRoom(window.id, new Vector3d(90, 0, 0), window.customParams ?? '');
+                }
+            }
 
             return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
         }
