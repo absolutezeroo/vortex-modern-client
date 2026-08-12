@@ -32,6 +32,7 @@ import type {CallForHelpDisabledNotifyMessageParser} from '@habbo/communication/
 import type {CallForHelpPendingCallsMessageParser} from '@habbo/communication/messages/parser/help/CallForHelpPendingCallsMessageParser';
 import type {CallForHelpReplyMessageParser} from '@habbo/communication/messages/parser/help/CallForHelpReplyMessageParser';
 import type {CallForHelpResultMessageParser} from '@habbo/communication/messages/parser/help/CallForHelpResultMessageParser';
+import type {SanctionStatusMessageParser} from '@habbo/communication/messages/parser/help/SanctionStatusMessageParser';
 import type {CfhTopicsInitMessageParser} from '@habbo/communication/messages/parser/help/CfhTopicsInitMessageParser';
 import type {GuideReportingStatusMessageParser} from '@habbo/communication/messages/parser/help/GuideReportingStatusMessageParser';
 import type {GuideTicketCreationResultMessageParser} from '@habbo/communication/messages/parser/help/GuideTicketCreationResultMessageParser';
@@ -234,9 +235,14 @@ export class HelpMessageHandler
         this._help.handleCallForHelpDisabledNotify(parser);
     }
 
-    private onSanctionStatus(_event: IMessageEvent): void
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onMySanctionStatusMessageEvent()
+    private onSanctionStatus(event: IMessageEvent): void
     {
-        log.trace('SanctionStatus received');
+        const parser = event.parser as SanctionStatusMessageParser | null;
+
+        if(!parser) return;
+
+        this._help.openSanctionInfo(parser.sanctions);
     }
 
     /**

@@ -31,3 +31,5 @@ export * from './QuizResultsMessageParser';
 export * from './SanctionStatusMessageParser';
 export * from './UserNameChangedMessageParser';
 export * from './PendingGuideTicket';
+export * from './SanctionRecord';
+export * from './SanctionTypeData';

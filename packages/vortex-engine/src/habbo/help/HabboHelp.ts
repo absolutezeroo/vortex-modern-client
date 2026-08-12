@@ -54,6 +54,7 @@ import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IMessageComposer} from '@core';
 import {GetMyCfhReportStatusMessageComposer} from '@habbo/communication/messages/outgoing/help/GetMyCfhReportStatusMessageComposer';
+import type {SanctionRecord} from '@habbo/communication/messages/parser/help/SanctionRecord';
 import {GetCfhStatusMessageComposer} from '@habbo/communication/messages/outgoing/help/GetCfhStatusMessageComposer';
 import {GetGuideReportingStatusMessageComposer} from '@habbo/communication/messages/outgoing/help/GetGuideReportingStatusMessageComposer';
 import {GetPendingCallsForHelpMessageComposer} from '@habbo/communication/messages/outgoing/help/GetPendingCallsForHelpMessageComposer';
@@ -875,6 +876,23 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     }
 
     /**
+     * Opens the sanction-information window on the server's answer.
+     *
+     * The controller is rebuilt when the previous one was disposed, which is what lets the window
+     * be re-opened after the player closes it.
+     */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onMySanctionStatusMessageEvent()
+    openSanctionInfo(sanctions: SanctionRecord[] | null): void
+    {
+        if(this._sanctionInfo === null || this._sanctionInfo.disposed)
+        {
+            this._sanctionInfo = new SanctionInfo(this);
+        }
+
+        this._sanctionInfo.openWindow(sanctions);
+    }
+
+    /**
 	 * Request the user's own sanction status
 	 */
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::requestSanctionInfo()
@@ -1396,7 +1414,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         this._cfhManager = new CallForHelpManager(this);
         this._guideManager = new GuideHelpManager(this);
         this._nameChangeController = new NameChangeController(this._communication);
-        this._sanctionInfo = new SanctionInfo();
+        this._sanctionInfo = new SanctionInfo(this);
         this._topicsFlow = new TopicsFlowHelpController(this);
 
         // Create registry handlers — both take the component, as AS3 does: they subscribe

@@ -1,142 +1,77 @@
 import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
 
+import {SanctionRecord} from './SanctionRecord';
+import {SanctionTypeData} from './SanctionTypeData';
+
 /**
- * Parser for sanction status messages.
- * Contains detailed information about a user's current sanction state.
+ * The player's sanction history (header 1746) — a counted list, not a single sanction.
  *
- * @see source_as_win63/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as
+ * **This parser was against the wrong revision until 2026-08-12.** It read thirteen flat fields,
+ * faithfully following `win63_version`'s `SanctionStatusEventParser` — a class that does not exist
+ * anywhere in the primary tree. The 2026 build reads a count followed by that many records, each
+ * of which is itself two nested sanction types. The two shapes share no prefix, so the old parser
+ * could not have produced anything usable from a real packet.
+ *
+ * `SanctionInfo.openWindow()` is the only consumer; it prints one row per record.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2056/_SafeCls_2564.as
  */
 export class SanctionStatusMessageParser implements IMessageParser
 {
-    private _isSanctionNew: boolean = false;
+    // AS3: .../_SafeCls_2564.as::_SafeStr_6387 (name from `get sanctions()`)
+    private _sanctions: SanctionRecord[] = [];
 
-    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get isSanctionNew()
-    get isSanctionNew(): boolean
+    // AS3: .../_SafeCls_2564.as::get sanctions()
+    get sanctions(): SanctionRecord[]
     {
-        return this._isSanctionNew;
+        return this._sanctions;
     }
 
-    private _isSanctionActive: boolean = false;
-
-    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get isSanctionActive()
-    get isSanctionActive(): boolean
-    {
-        return this._isSanctionActive;
-    }
-
-    private _sanctionName: string = '';
-
-    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get sanctionName()
-    get sanctionName(): string
-    {
-        return this._sanctionName;
-    }
-
-    private _sanctionLengthHours: number = 0;
-
-    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get sanctionLengthHours()
-    get sanctionLengthHours(): number
-    {
-        return this._sanctionLengthHours;
-    }
-
-    private _sanctionReason: string = '';
-
-    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get sanctionReason()
-    get sanctionReason(): string
-    {
-        return this._sanctionReason;
-    }
-
-    private _sanctionCreationTime: string = '';
-
-    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get sanctionCreationTime()
-    get sanctionCreationTime(): string
-    {
-        return this._sanctionCreationTime;
-    }
-
-    private _probationHoursLeft: number = 0;
-
-    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get probationHoursLeft()
-    get probationHoursLeft(): number
-    {
-        return this._probationHoursLeft;
-    }
-
-    private _nextSanctionName: string = '';
-
-    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get nextSanctionName()
-    get nextSanctionName(): string
-    {
-        return this._nextSanctionName;
-    }
-
-    private _nextSanctionLengthHours: number = 0;
-
-    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get nextSanctionLengthHours()
-    get nextSanctionLengthHours(): number
-    {
-        return this._nextSanctionLengthHours;
-    }
-
-    private _hasCustomMute: boolean = false;
-
-    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get hasCustomMute()
-    get hasCustomMute(): boolean
-    {
-        return this._hasCustomMute;
-    }
-
-    private _tradeLockExpiryTime: string = '';
-
-    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::get tradeLockExpiryTime()
-    get tradeLockExpiryTime(): string
-    {
-        return this._tradeLockExpiryTime;
-    }
-
-    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::flush()
+    // AS3: .../_SafeCls_2564.as::flush()
     flush(): boolean
     {
-        this._isSanctionNew = false;
-        this._isSanctionActive = false;
-        this._sanctionName = '';
-        this._sanctionLengthHours = 0;
-        this._sanctionReason = '';
-        this._sanctionCreationTime = '';
-        this._probationHoursLeft = 0;
-        this._nextSanctionName = '';
-        this._nextSanctionLengthHours = 0;
-        this._hasCustomMute = false;
-        this._tradeLockExpiryTime = '';
+        this._sanctions = [];
+
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/communication/messages/parser/callforhelp/SanctionStatusEventParser.as::parse()
+    // AS3: .../_SafeCls_2564.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;
 
-        this._isSanctionNew = wrapper.readBoolean();
-        this._isSanctionActive = wrapper.readBoolean();
-        this._sanctionName = wrapper.readString();
-        this._sanctionLengthHours = wrapper.readInt();
-        wrapper.readInt(); // unused
-        this._sanctionReason = wrapper.readString();
-        this._sanctionCreationTime = wrapper.readString();
-        this._probationHoursLeft = wrapper.readInt();
-        this._nextSanctionName = wrapper.readString();
-        this._nextSanctionLengthHours = wrapper.readInt();
-        wrapper.readInt(); // unused
-        this._hasCustomMute = wrapper.readBoolean();
+        this._sanctions = [];
 
-        if(wrapper.bytesAvailable > 0)
+        const count = wrapper.readInt();
+
+        for(let i = 0; i < count; i++)
         {
-            this._tradeLockExpiryTime = wrapper.readString();
+            const record = new SanctionRecord();
+
+            // Order matters and is not symmetrical: the *current* type comes first, then the
+            // three scalars, then the *next* type last.
+            record.sanctionType = SanctionStatusMessageParser.readSanctionType(wrapper);
+            record.description = wrapper.readString();
+            record.showsProbationDetails = wrapper.readBoolean();
+            record.probationHoursLeft = wrapper.readInt();
+            record.nextSanctionType = SanctionStatusMessageParser.readSanctionType(wrapper);
+
+            this._sanctions.push(record);
         }
 
         return true;
+    }
+
+    // AS3: .../_SafeCls_2564.as::readSanctionType()
+    private static readSanctionType(wrapper: IMessageDataWrapper): SanctionTypeData
+    {
+        const type = new SanctionTypeData();
+
+        type.name = wrapper.readString();
+        type.durationHours = wrapper.readInt();
+        type.probationHours = wrapper.readInt();
+
+        return type;
     }
 }
