@@ -685,7 +685,11 @@ export class TableView implements IDisposable
             i++;
         }
 
-        for(const model of this._rowModels)
+        // `?? []` is not defensive padding — it is the AS3 semantics. The constructor calls this
+        // before `initialize()` has assigned `_rowModels`, and AS3's `for each (… in null)` is a
+        // silent no-op where `for…of null` throws. Without it, `new TableView()` dies here every
+        // single time, taking both room choosers and all six wired-menu tables with it.
+        for(const model of this._rowModels ?? [])
         {
             if(model.view != null)
             {
