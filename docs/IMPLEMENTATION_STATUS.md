@@ -34,9 +34,34 @@
 | Engine `TODO(AS3)` markers                                     | 265           | **327**       |
 
 Re-measure `TODO(AS3)` with `node scripts/todo-inventory.mjs`, not `grep -c`: the latest figure is
-**304** (2026-08-12, after the recycler pass) and the table above is a 2026-07-28 snapshot. A bare
-`grep -rn --include=*.ts packages` reads `packages/*/dist/**/*.d.ts` too and inflates the count by
-roughly 80.
+**309** (2026-08-12, after the chat-command pass) and the table above is a 2026-07-28 snapshot. A
+bare `grep -rn --include=*.ts packages` reads `packages/*/dist/**/*.d.ts` too and inflates the count
+by roughly 80.
+
+**The count is not the goal, and it moved the wrong way on purpose.** The chat-command pass replaced
+one marker reading *"~50 slash commands … don't exist in this port yet"* with six that each name a
+single missing member — so 45 commands landed and the number went 304 → 309. A marker covering fifty
+things is worth less than five covering five, and any reading of this file that treats the total as
+a score will get that backwards.
+
+### Chat slash commands (2026-08-12)
+
+`ChatInputWidgetHandler` now recognises the full set: expressions, moderation, room ops, the wired
+menu, navigation. Three dispatch details are load-bearing and worth not rediscovering:
+
+- **Not every command swallows the message.** AS3 alternates `return null` with `break`, and the
+  fall-through cases are deliberate — `:d` plays the laugh *and* says ":D", and the `:crashme`…`:q`
+  block exists purely so the text reaches the server, which handles them. The port carries this as a
+  boolean return, including per-branch: `:kiss` swallows for a VIP and speaks for everyone else.
+- **`:kick` and `:mute` test `!hasSecurity(4)`.** Reads like an inverted condition; it is not. Staff
+  fall *through* so their line reaches the server's own command parser rather than the client's.
+- **A bare `x` argument means the selected avatar**, substituted into the sent text as well, so
+  `:ejectall x` reaches the server with a real name.
+
+Blocked, one marker each: `:screenshot` and `:hidemouse` (unported `IRoomEngine` members), `:csmm`
+(no game manager on the widget container), `:fps` (a Flash stage property with no engine-side
+equivalent — the PixiJS ticker lives in the client package), and `:ping`'s latency figure
+(`IHabboTracking.latencyPingMs`; it dispatches with AS3's own -1 fallback meanwhile).
 
 ### The recycler (2026-08-12) — one missing file, four TODOs, three of them wrong
 
