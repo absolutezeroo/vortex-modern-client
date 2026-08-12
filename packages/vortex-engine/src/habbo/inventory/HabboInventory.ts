@@ -29,17 +29,26 @@ import type {IRecyclerModel} from './recycler/IRecyclerModel';
 import {PetsModel} from './pets/PetsModel';
 import {Pet} from './pets/Pet';
 import {PetFigureData} from './pets/PetFigureData';
-import {PostItPlacedMessageEvent} from '@habbo/communication/messages/incoming/inventory/furni/PostItPlacedMessageEvent';
-import type {PostItPlacedMessageParser} from '@habbo/communication/messages/parser/inventory/furni/PostItPlacedMessageParser';
-import {BadgePointLimitsMessageEvent} from '@habbo/communication/messages/incoming/inventory/badges/BadgePointLimitsMessageEvent';
-import type {BadgePointLimitsMessageParser} from '@habbo/communication/messages/parser/inventory/badges/BadgePointLimitsMessageParser';
+import {
+    PostItPlacedMessageEvent
+} from '@habbo/communication/messages/incoming/inventory/furni/PostItPlacedMessageEvent';
+import type {
+    PostItPlacedMessageParser
+} from '@habbo/communication/messages/parser/inventory/furni/PostItPlacedMessageParser';
+import {
+    BadgePointLimitsMessageEvent
+} from '@habbo/communication/messages/incoming/inventory/badges/BadgePointLimitsMessageEvent';
+import type {
+    BadgePointLimitsMessageParser
+} from '@habbo/communication/messages/parser/inventory/badges/BadgePointLimitsMessageParser';
 import {BadgeReceivedEvent} from '../communication/messages/incoming/inventory/badges/BadgeReceivedEvent';
 import type {
     BadgeReceivedEventParser
 } from '../communication/messages/parser/inventory/badges/BadgeReceivedEventParser';
 import {BadgesMessageEvent} from '../communication/messages/incoming/inventory/badges/BadgesMessageEvent';
 import type {
-    BadgesMessageParser, IBadgeData
+    BadgesMessageParser,
+    IBadgeData
 } from '../communication/messages/parser/inventory/badges/BadgesMessageParser';
 import {
     BotAddedToInventoryMessageEvent,
@@ -52,7 +61,9 @@ import type {
     BotRemovedFromInventoryMessageParser
 } from '@habbo/communication/messages/parser/inventory/bots';
 import {PetInventoryMessageEvent} from '../communication/messages/incoming/inventory/pets/PetInventoryMessageEvent';
-import type {PetInventoryMessageParser} from '../communication/messages/parser/inventory/pets/PetInventoryMessageParser';
+import type {
+    PetInventoryMessageParser
+} from '../communication/messages/parser/inventory/pets/PetInventoryMessageParser';
 import {
     GoToBreedingNestFailureEvent,
     PetAddedToInventoryEvent,
@@ -66,10 +77,18 @@ import type {
 import {BotsModel} from './bots/BotsModel';
 import {TradingModel} from './trading/TradingModel';
 import {MarketplaceModel} from './marketplace/MarketplaceModel';
-import {MarketplaceCanMakeOfferResultEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceCanMakeOfferResultEvent';
-import {MarketplaceMakeOfferResultEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceMakeOfferResultEvent';
-import type {MarketplaceCanMakeOfferResultParser} from '@habbo/communication/messages/parser/marketplace/MarketplaceCanMakeOfferResultParser';
-import type {MarketplaceMakeOfferResultParser} from '@habbo/communication/messages/parser/marketplace/MarketplaceMakeOfferResultParser';
+import {
+    MarketplaceCanMakeOfferResultEvent
+} from '@habbo/communication/messages/incoming/marketplace/MarketplaceCanMakeOfferResultEvent';
+import {
+    MarketplaceMakeOfferResultEvent
+} from '@habbo/communication/messages/incoming/marketplace/MarketplaceMakeOfferResultEvent';
+import type {
+    MarketplaceCanMakeOfferResultParser
+} from '@habbo/communication/messages/parser/marketplace/MarketplaceCanMakeOfferResultParser';
+import type {
+    MarketplaceMakeOfferResultParser
+} from '@habbo/communication/messages/parser/marketplace/MarketplaceMakeOfferResultParser';
 import {
     TradeOpenFailedEvent,
     TradeSilverFeeMessageEvent,
@@ -90,9 +109,7 @@ import type {
 import type {
     TradingOpenMessageParser
 } from '../communication/messages/parser/inventory/trading/TradingOpenMessageParser';
-import type {
-    TradingFurniItemParser
-} from '../communication/messages/parser/inventory/trading/TradingFurniItemParser';
+import type {TradingFurniItemParser} from '../communication/messages/parser/inventory/trading/TradingFurniItemParser';
 import {OrderedMap} from '@core/utils/OrderedMap';
 import type {IInventoryModel} from './IInventoryModel';
 import type {IAssetLibrary} from '@core/assets';
@@ -132,14 +149,28 @@ import {
 import {ScrGetUserInfoMessageComposer} from '../communication/messages/outgoing/users/ScrGetUserInfoMessageComposer';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {FurniListMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListMessageEvent';
-import {FurniListAddOrUpdateMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListAddOrUpdateMessageEvent';
-import {FurniListRemoveMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListRemoveMessageEvent';
-import {FurniListRemoveMultipleMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListRemoveMultipleMessageEvent';
-import {FurniListInvalidateMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListInvalidateMessageEvent';
+import {
+    FurniListAddOrUpdateMessageEvent
+} from '../communication/messages/incoming/inventory/furni/FurniListAddOrUpdateMessageEvent';
+import {
+    FurniListRemoveMessageEvent
+} from '../communication/messages/incoming/inventory/furni/FurniListRemoveMessageEvent';
+import {
+    FurniListRemoveMultipleMessageEvent
+} from '../communication/messages/incoming/inventory/furni/FurniListRemoveMultipleMessageEvent';
+import {
+    FurniListInvalidateMessageEvent
+} from '../communication/messages/incoming/inventory/furni/FurniListInvalidateMessageEvent';
 import type {FurniListMessageParser} from '../communication/messages/parser/inventory/furni/FurniListMessageParser';
-import type {FurniListAddOrUpdateMessageParser} from '../communication/messages/parser/inventory/furni/FurniListAddOrUpdateMessageParser';
-import type {FurniListRemoveMessageParser} from '../communication/messages/parser/inventory/furni/FurniListRemoveMessageParser';
-import type {FurniListRemoveMultipleMessageParser} from '../communication/messages/parser/inventory/furni/FurniListRemoveMultipleMessageParser';
+import type {
+    FurniListAddOrUpdateMessageParser
+} from '../communication/messages/parser/inventory/furni/FurniListAddOrUpdateMessageParser';
+import type {
+    FurniListRemoveMessageParser
+} from '../communication/messages/parser/inventory/furni/FurniListRemoveMessageParser';
+import type {
+    FurniListRemoveMultipleMessageParser
+} from '../communication/messages/parser/inventory/furni/FurniListRemoveMultipleMessageParser';
 import type {FurniListItemParser} from '../communication/messages/parser/inventory/furni/FurniListItemParser';
 import type {IFurnitureItemData} from './items/FurnitureItemData';
 import {FurnitureItem} from './items/FurnitureItem';
@@ -149,13 +180,25 @@ import {Vector3d} from '@room/utils/Vector3d';
 import {ScrSendUserInfoEvent} from '../communication/messages/incoming/users/ScrSendUserInfoEvent';
 import type {ScrSendUserInfoMessageParser} from '../communication/messages/parser/users/ScrSendUserInfoMessageParser';
 import {AvatarEffectsMessageEvent} from '../communication/messages/incoming/inventory/AvatarEffectsMessageEvent';
-import {AvatarEffectAddedMessageEvent} from '../communication/messages/incoming/inventory/AvatarEffectAddedMessageEvent';
-import {AvatarEffectActivatedMessageEvent} from '../communication/messages/incoming/inventory/AvatarEffectActivatedMessageEvent';
-import {AvatarEffectExpiredMessageEvent} from '../communication/messages/incoming/inventory/AvatarEffectExpiredMessageEvent';
+import {
+    AvatarEffectAddedMessageEvent
+} from '../communication/messages/incoming/inventory/AvatarEffectAddedMessageEvent';
+import {
+    AvatarEffectActivatedMessageEvent
+} from '../communication/messages/incoming/inventory/AvatarEffectActivatedMessageEvent';
+import {
+    AvatarEffectExpiredMessageEvent
+} from '../communication/messages/incoming/inventory/AvatarEffectExpiredMessageEvent';
 import type {AvatarEffectsMessageParser} from '../communication/messages/parser/inventory/AvatarEffectsMessageParser';
-import type {AvatarEffectAddedMessageParser} from '../communication/messages/parser/inventory/AvatarEffectAddedMessageParser';
-import type {AvatarEffectActivatedMessageParser} from '../communication/messages/parser/inventory/AvatarEffectActivatedMessageParser';
-import type {AvatarEffectExpiredMessageParser} from '../communication/messages/parser/inventory/AvatarEffectExpiredMessageParser';
+import type {
+    AvatarEffectAddedMessageParser
+} from '../communication/messages/parser/inventory/AvatarEffectAddedMessageParser';
+import type {
+    AvatarEffectActivatedMessageParser
+} from '../communication/messages/parser/inventory/AvatarEffectActivatedMessageParser';
+import type {
+    AvatarEffectExpiredMessageParser
+} from '../communication/messages/parser/inventory/AvatarEffectExpiredMessageParser';
 import {HabboInventoryEffectsEvent} from './events/HabboInventoryEffectsEvent';
 import {Effect} from './effects/Effect';
 
@@ -176,9 +219,11 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     private _windowManager: IHabboWindowManager | null = null;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_catalog
     private _catalog: IHabboCatalog | null = null;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_roomSessionManager
     private _roomSessionManager: IRoomSessionManager | null = null;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_sessionDataManager
     private _sessionDataManager: ISessionDataManager | null = null;
@@ -230,7 +275,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
      * `getCategoryWindowContainer()`, `getCategorySubWindowContainer()` and `updateView()` through
      * it rather than switching on the name, which is how the trading sub-window finds its host.
      *
-     * TODO(AS3): AS3 registers eleven models here. Two are still missing (`collectibles`,
+      * TODO(AS3): AS3 registers eleven models here. Two are still missing (`collectibles`,
      * `wired_trading`), and `badges`/`effects` are ported but do not implement `IInventoryModel`
      * yet — they have no view to hand back.
      */
