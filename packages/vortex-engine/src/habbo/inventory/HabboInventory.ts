@@ -26,6 +26,13 @@ import {BadgesModel} from './badges/BadgesModel';
 import {EffectsModel} from './effects/EffectsModel';
 import {RecyclerModel} from './recycler/RecyclerModel';
 import {WiredTradingModel} from './wired_trading/WiredTradingModel';
+import {WiredTradeInitiateMessageEvent} from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredtrading/WiredTradeInitiateMessageEvent';
+import {WiredTradeCancelledMessageEvent} from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredtrading/WiredTradeCancelledMessageEvent';
+import {WiredTradeCompletedMessageEvent} from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredtrading/WiredTradeCompletedMessageEvent';
+import {WiredTradeItemsUpdateMessageEvent} from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredtrading/WiredTradeItemsUpdateMessageEvent';
+import type {WiredTradeInitiateMessageParser} from '@habbo/communication/messages/parser/userdefinedroomevents/wiredtrading/trade/WiredTradeInitiateMessageParser';
+import type {WiredTradeCancelledMessageParser} from '@habbo/communication/messages/parser/userdefinedroomevents/wiredtrading/trade/WiredTradeCancelledMessageParser';
+import type {WiredTradeItemsUpdateMessageParser} from '@habbo/communication/messages/parser/userdefinedroomevents/wiredtrading/trade/WiredTradeItemsUpdateMessageParser';
 import type {IRecyclerModel} from './recycler/IRecyclerModel';
 import {PetsModel} from './pets/PetsModel';
 import {Pet} from './pets/Pet';
@@ -1649,9 +1656,78 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication.addMessageEvent(new TradingYouAreNotAllowedEvent(this.onTradingMessage)),
             this._communication.addMessageEvent(new TradeSilverSetMessageEvent(this.onTradingMessage)),
             this._communication.addMessageEvent(new TradeSilverFeeMessageEvent(this.onTradingMessage)),
-            this._communication.addMessageEvent(new TradingItemListMessageEvent(this.onTradingItemList))
+            this._communication.addMessageEvent(new TradingItemListMessageEvent(this.onTradingItemList)),
+            // AS3: .../_SafeCls_1951.as::registerMessageEvents() — the wired-trading four. The
+            // reference emulator defines none of these headers, so they will not fire against it;
+            // registered anyway, because an unregistered event is the one failure this port makes
+            // over and over and it costs nothing to close here.
+            this._communication.addMessageEvent(new WiredTradeInitiateMessageEvent(this.onWiredTradeInitiate)),
+            this._communication.addMessageEvent(new WiredTradeCancelledMessageEvent(this.onWiredTradeCancelled)),
+            this._communication.addMessageEvent(new WiredTradeCompletedMessageEvent(this.onWiredTradeCompleted)),
+            this._communication.addMessageEvent(new WiredTradeItemsUpdateMessageEvent(this.onWiredTradeItemsUpdate))
         );
     }
+
+    // AS3: .../src/com/sulake/habbo/inventory/_SafeCls_1951.as::onWiredTradeInitiate()
+    private onWiredTradeInitiate = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as WiredTradeInitiateMessageParser | null;
+        const requirement = parser?.requirement ?? null;
+
+        if(requirement == null) return;
+
+        this._wiredTradingModel?.onWiredTradeInitiate(
+            requirement,
+            parser!.showRequirementsImmediate,
+            parser!.overridePreviousTrade,
+            parser!.timeoutSeconds
+        );
+    };
+
+    // AS3: .../src/com/sulake/habbo/inventory/_SafeCls_1951.as::onWiredTradeCancelled()
+    private onWiredTradeCancelled = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as WiredTradeCancelledMessageParser | null;
+
+        this._wiredTradingModel?.tradeIsCancelled(parser?.transactionFailureTypeId ?? 0);
+    };
+
+    // AS3: .../src/com/sulake/habbo/inventory/_SafeCls_1951.as::onWiredTradeCompleted()
+    private onWiredTradeCompleted = (): void =>
+    {
+        this._wiredTradingModel?.tradeIsCompleted();
+    };
+
+    /**
+     * AS3: .../_SafeCls_1951.as::onWiredTradeItemsUpdate()
+     *
+     * The mirror of `onTradingItemList()` for a wired trade, with two differences worth keeping in
+     * view: the grouping flags are hard-coded (`true` for our side, `false` for the room's) rather
+     * than compared against our own user id — a wired trade has no second player to be — and the
+     * *whole* parser is handed on, not just the item list, because the accept flag and `extra` ride
+     * on the outer message.
+     *
+     * TODO(AS3): AS3 prepends a credits tile to the room's side when it staked credits
+     * (`furniModel.createCreditGroupItem()` under the key `credit_groupitem_type_id`). Same gap as
+     * `onTradingItemList()` above: neither the factory nor `inventory/items/CreditTradingItem` is
+     * ported.
+     */
+    // AS3: .../src/com/sulake/habbo/inventory/_SafeCls_1951.as::onWiredTradeItemsUpdate()
+    private onWiredTradeItemsUpdate = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as WiredTradeItemsUpdateMessageParser | null;
+
+        if(!parser || !this._furniModel || !this._wiredTradingModel) return;
+
+        const items = parser.tradingItems;
+        const ownUserItems = new OrderedMap<string, GroupItem>();
+        const wiredItems = new OrderedMap<string, GroupItem>();
+
+        this.populateItemGroups(items.firstUserItemArray, ownUserItems, true);
+        this.populateItemGroups(items.secondUserItemArray, wiredItems, false);
+
+        this._wiredTradingModel.updateItemGroupMaps(items, ownUserItems, wiredItems, parser.canAccept, parser.extra);
+    };
 
     // AS3: .../_SafeCls_1951.as::onTradingOpenFailed(), onTradingClose(), onTradingCompleted(),
     // onTradingAccepted(), onTradingConfirmation(), onTradingNotOpen(), onTradingOtherNotAllowed(),

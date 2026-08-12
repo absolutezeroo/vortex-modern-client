@@ -66,7 +66,7 @@ export class WiredTradingModel implements IInventoryModel, ITradingModel
     private _state: number = WiredTradingModel.STATE_READY;
 
     // AS3: WiredTradingModel.as::_ownUserItems
-    private _ownUserItems: OrderedMap<number, GroupItem> = new OrderedMap<number, GroupItem>();
+    private _ownUserItems: OrderedMap<string, GroupItem> = new OrderedMap<string, GroupItem>();
 
     // AS3: WiredTradingModel.as::_ownUserNumItems
     private _ownUserNumItems: number = 0;
@@ -75,7 +75,7 @@ export class WiredTradingModel implements IInventoryModel, ITradingModel
     private _ownUserNumCredits: number = 0;
 
     // AS3: WiredTradingModel.as::_wiredItems
-    private _wiredItems: OrderedMap<number, GroupItem> = new OrderedMap<number, GroupItem>();
+    private _wiredItems: OrderedMap<string, GroupItem> = new OrderedMap<string, GroupItem>();
 
     // AS3: WiredTradingModel.as::_wiredNumItems
     private _wiredNumItems: number = 0;
@@ -367,8 +367,8 @@ export class WiredTradingModel implements IInventoryModel, ITradingModel
     // AS3: WiredTradingModel.as::updateItemGroupMaps()
     updateItemGroupMaps(
         items: TradingItemListMessageParser,
-        ownUserItems: OrderedMap<number, GroupItem>,
-        wiredItems: OrderedMap<number, GroupItem>,
+        ownUserItems: OrderedMap<string, GroupItem>,
+        wiredItems: OrderedMap<string, GroupItem>,
         canAccept: boolean,
         extra: number
     ): void
@@ -492,7 +492,7 @@ export class WiredTradingModel implements IInventoryModel, ITradingModel
     }
 
     // AS3: WiredTradingModel.as::get ownUserItems()
-    get ownUserItems(): OrderedMap<number, GroupItem>
+    get ownUserItems(): OrderedMap<string, GroupItem>
     {
         return this._ownUserItems;
     }
@@ -510,7 +510,7 @@ export class WiredTradingModel implements IInventoryModel, ITradingModel
     }
 
     // AS3: WiredTradingModel.as::get wiredItems()
-    get wiredItems(): OrderedMap<number, GroupItem>
+    get wiredItems(): OrderedMap<string, GroupItem>
     {
         return this._wiredItems;
     }
@@ -567,10 +567,10 @@ export class WiredTradingModel implements IInventoryModel, ITradingModel
     // AS3: WiredTradingModel.as::clear()
     private clear(): void
     {
-        this._ownUserItems = new OrderedMap<number, GroupItem>();
+        this._ownUserItems = new OrderedMap<string, GroupItem>();
         this._ownUserNumCredits = 0;
         this._ownUserNumItems = 0;
-        this._wiredItems = new OrderedMap<number, GroupItem>();
+        this._wiredItems = new OrderedMap<string, GroupItem>();
         this._wiredNumCredits = 0;
         this._wiredNumItems = 0;
         this._canAccept = false;
