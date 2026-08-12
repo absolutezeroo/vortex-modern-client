@@ -39,6 +39,7 @@ import type {ICollectibleProductPreviewer} from './ICollectibleProductPreviewer'
 import {BaseItemWrapper} from './renderer/model/BaseItemWrapper';
 import {CollectibleRarity} from './util/CollectibleRarity';
 import {CollectiblesRewardBoxView} from './CollectiblesRewardBoxView';
+import {CollectiblesView} from './CollectiblesView';
 
 const log = Logger.getLogger('habbo.catalog.collectibles.CollectiblesController');
 
@@ -84,6 +85,8 @@ export class CollectiblesController extends Component implements ICollectorHub, 
     private _windowManager: IHabboWindowManager | null = null;
     // AS3: CollectiblesController.as::_SafeStr_6959 (the reward-box window)
     private _rewardBoxView: CollectiblesRewardBoxView | null = null;
+    // AS3: CollectiblesController.as::_SafeStr_4550 (the hub window)
+    private _hubView: CollectiblesView | null = null;
     // AS3: CollectiblesController.as::_SafeStr_5769 (the disposed flag)
     private _controllerDisposed: boolean = false;
 
@@ -663,14 +666,42 @@ export class CollectiblesController extends Component implements ICollectorHub, 
 
         if(parts.length < 2) return;
 
-        if(parts[1] === 'open')
+        if(parts[1] === 'open') this.showCollectibleHub();
+    }
+
+    // AS3: CollectiblesController.as::showCollectibleHub()
+    private showCollectibleHub(): void
+    {
+        if(this._windowManager === null)
         {
-            // TODO(AS3): `showCollectibleHub()` builds a CollectiblesView (582 l.) and its five
-            // tabs (CollectionsTab 627, MintInventoryListTab 769, ShopTab 497, RewardClaimsTab 329,
-            // TransferNftsTab 320) plus the renderer tree. ~4,200 lines, unported — so
-            // `collectibles/open` opens nothing.
-            log.warn('CollectiblesView is not ported: the collectibles hub cannot be opened.');
+            log.warn('No window manager: the collectibles hub cannot be opened.');
+
+            return;
         }
+
+        if(this._hubView === null || this._hubView.disposed)
+        {
+            this._hubView = new CollectiblesView(this, this._windowManager);
+            this.updateView();
+
+            return;
+        }
+
+        this._hubView.showWindow();
+    }
+
+    /**
+     * AS3: CollectiblesController.as::updateView() — its whole body is
+     * `_view.updateBalances(_catalog.getPurse())`, called on first build and on every purse event.
+     */
+    // AS3: CollectiblesController.as::updateView()
+    private updateView(): void
+    {
+        if(this._hubView === null) return;
+
+        const purse = this._catalog?.getPurse() ?? null;
+
+        if(purse !== null) this._hubView.updateBalances(purse);
     }
 
     // AS3: CollectiblesController.as::dispose()
@@ -689,6 +720,12 @@ export class CollectiblesController extends Component implements ICollectorHub, 
         {
             this._rewardBoxView.dispose();
             this._rewardBoxView = null;
+        }
+
+        if(this._hubView !== null)
+        {
+            this._hubView.dispose();
+            this._hubView = null;
         }
 
         this._communicationManager = null;

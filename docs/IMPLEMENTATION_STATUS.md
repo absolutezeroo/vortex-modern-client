@@ -118,13 +118,22 @@ Four things worth keeping:
 closes `showLootBoxReward()`: opening an NFT reward box now shows what came out, queued one popup
 at a time.
 
-Still open on collectibles: the four concrete item renderers, the two navigation-node renderers,
-`CollectionView` (596), the five tabs and `CollectiblesView` (582) — roughly 3,500 lines. **They
-have to go together.** Each concrete renderer calls `selectItem()` on exactly one tab, and every
-tab is a child of `CollectiblesView`'s window, so the smallest honest slice is
-`CollectiblesView` + one tab + its renderer, about 1,100 lines. Porting a renderer alone would mean
-inventing an interface AS3 does not have — the mistake this branch already made once with
-`TradeRequirementRule`.
+`CollectiblesView` (582), `RewardClaimsTab` (329) and `RewardCollectibleItemRenderer` (148) landed
+as the first tab slice, so `collectibles/open` now opens the real hub: eight tabs, the collector
+score header, the currency balances, the wallet list — and one working tab.
+
+Still open: `CollectionsTab` (627) + `CollectionView` (596) + `CollectibleItemRenderer` (101) + the
+two navigation-node renderers; `MintInventoryListTab` (769) + its renderer + `MintTokenPurchaseOffer`
+(166); `ShopTab` (497) + its renderer + `NftStorePurchaseOffer` (178); `TransferNftsTab` (320).
+Roughly 3,500 lines in four more slices of the same shape. All four are TODOs at their construction
+sites in `CollectiblesView.initWidgets()` and `refresh()`, so their containers come up empty rather
+than the window failing to build.
+
+One thing to know before porting them: **two of the four concrete renderers must assign their
+fields before `super()`.** `ShopCollectibleItemRenderer` and `RewardCollectibleItemRenderer` read
+their own state from `updateVisuals()`, which the base constructor calls — legal in AS3 outright,
+legal in TypeScript only via `declare`. `RewardClaimsTab.createRewardItem()` also calls
+`updateVisuals()` a second time explicitly, for exactly that reason.
 
 ### Collectibles — the catalog message layer and the hub (2026-08-12)
 
