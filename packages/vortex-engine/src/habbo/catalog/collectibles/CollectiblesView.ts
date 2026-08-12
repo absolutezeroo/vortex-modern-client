@@ -662,11 +662,9 @@ export class CollectiblesView
             this._collectionsTab = null;
         }
 
-        // AS3 disposes the collections, mint and transfer tabs here and — a real slip — never the
-        // shop tab *or the rewards tab*, both of which leak their message subscriptions. Both are
-        // disposed above.
-
-        // TODO(AS3): CollectionsTab and MintInventoryListTab are disposed here in AS3; unported.
+        // AS3 disposes only three of its five tabs here — collections, mint and transfer — and
+        // never the shop or rewards tabs, both of which therefore leak their message
+        // subscriptions. All five are disposed above.
 
         this._window?.dispose();
         this._window = null;
