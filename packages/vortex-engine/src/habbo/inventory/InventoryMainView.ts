@@ -197,8 +197,18 @@ export class InventoryMainView
         window.visible = false;
     }
 
+    /**
+     * Brings the inventory window to the front. Distinct from `showInventory()`, which makes it
+     * visible — a wired trade opening while the window is already up needs the focus, not the flag.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::activate()
+    activate(): void
+    {
+        this.getWindow()?.activate();
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::showInventory()
-    showInventory(): void 
+    showInventory(): void
     {
         const window = this.getWindow();
 

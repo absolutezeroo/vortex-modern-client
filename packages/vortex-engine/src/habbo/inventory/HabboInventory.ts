@@ -25,6 +25,7 @@ import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum'
 import {BadgesModel} from './badges/BadgesModel';
 import {EffectsModel} from './effects/EffectsModel';
 import {RecyclerModel} from './recycler/RecyclerModel';
+import {WiredTradingModel} from './wired_trading/WiredTradingModel';
 import type {IRecyclerModel} from './recycler/IRecyclerModel';
 import {PetsModel} from './pets/PetsModel';
 import {Pet} from './pets/Pet';
@@ -380,24 +381,52 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
      * Note this is *not* "is a trade running": a trade can be open while the server has still
      * refused this side the right to offer, which is what `ownUserCanTrade` carries.
      */
+    /**
+     * A wired trade short-circuits to true: the contract decides what may be offered, item by item,
+     * through `WiredTradeRequirementsModel.canOfferFurni()` — there is no per-side permission for
+     * the server to withhold the way there is in a player-to-player trade.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::canUserOfferToTrade()
-    // TODO(AS3): AS3 short-circuits to true while `wiredTradingModel.running` —
-    // `inventory/wired_trading/` is unported, so a wired trade cannot report itself here and the
-    // normal model has the only say.
     canUserOfferToTrade(): boolean
     {
+        if(this._wiredTradingModel?.running) return true;
+
         return this._tradingModel?.ownUserCanTrade ?? false;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::onWiredTradeActiveChanged()
+    onWiredTradeActiveChanged(): void
+    {
+        this._view?.disableNonTradingTabs(this.tradingActive);
+    }
+
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_inventories (the "wired_trading" entry)
+    private _wiredTradingModel: WiredTradingModel | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get wiredTradingModel()
+    get wiredTradingModel(): WiredTradingModel | null
+    {
+        return this._wiredTradingModel;
+    }
+
+    /**
+     * Whichever trade is live, or null. The ordinary one wins if both somehow are.
+     *
+     * Returns `ITradingModel`, as AS3 does, rather than the concrete `TradingModel` the port used
+     * to declare — that narrower type is what kept the wired model out. Both callers only ever use
+     * `getOwnItemIdsInTrade()` and `requestAddItemsToTrading()`, which is the whole interface.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get activeTradingModel()
-    // TODO(AS3): AS3 falls through to `wiredTradingModel` when the normal one is idle —
-    // `inventory/wired_trading/` (WiredTradingModel + its view) is unported, so only the normal
-    // trade can be active here.
-    get activeTradingModel(): TradingModel | null
+    get activeTradingModel(): ITradingModel | null
     {
         if(this._tradingModel && this._tradingModel.running)
         {
             return this._tradingModel;
+        }
+
+        if(this._wiredTradingModel && this._wiredTradingModel.running)
+        {
+            return this._wiredTradingModel;
         }
 
         return null;
@@ -1019,7 +1048,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         // model documents that at its constructor.
         this._recyclerModel = new RecyclerModel(this);
 
+        // AS3: HabboInventory.as:499 — `new WiredTradingModel(this, _windowManager, _communication,
+        // assets, _roomEngine, _localization, _soundManager, _notifications)`. The five the view
+        // needs are left out until WiredTradingView is ported, as TradingModel does for its own.
+        this._wiredTradingModel = new WiredTradingModel(this, this._communication, this._localization);
+
         this._inventories.add('trading', this._tradingModel);
+        this._inventories.add('wired_trading', this._wiredTradingModel);
         this._inventories.add('recycler', this._recyclerModel);
         this._inventories.add('pets', this._petsModel);
         this._inventories.add('bots', this._botsModel);

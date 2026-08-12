@@ -14,21 +14,26 @@ import {TradeRequirementRules} from './rules/TradeRequirementRules';
 export class TradeRequirement
 {
     /**
-     * Names DERIVED. All four are obfuscated in every tree; only their ordinals and the one
-     * behavioural branch below are recoverable, so these read as ordinals with the single
-     * meaningful one named for what it does rather than for what it is.
+     * Names DERIVED **from behaviour**, not recovered: all four identifiers are obfuscated in every
+     * tree. What each one means is settled by the one method that branches on all of them,
+     * `WiredTradeRequirementsModel.canOfferFurni()`, which accepts credit furniture (`CF_`-prefixed
+     * class names) for one, rejects it for another, accepts anything for a third, and defers to the
+     * rules for the fourth. The ordinals are AS3's.
+     *
+     * These read `TYPE_0`/`TYPE_1`/`TYPE_2` until 2026-08-12, when that call site was ported and
+     * made the meanings legible.
      */
-    // AS3: TradeRequirement.as::_SafeStr_10197
-    public static readonly TYPE_0: number = 0;
+    // AS3: TradeRequirement.as::_SafeStr_10197 (canOfferFurni: only `CF_` items qualify)
+    public static readonly TYPE_CREDIT_FURNI_ONLY: number = 0;
 
-    // AS3: TradeRequirement.as::_SafeStr_10181
-    public static readonly TYPE_1: number = 1;
+    // AS3: TradeRequirement.as::_SafeStr_10181 (canOfferFurni: `CF_` items are refused)
+    public static readonly TYPE_NORMAL_FURNI_ONLY: number = 1;
 
-    // AS3: TradeRequirement.as::_SafeStr_10180
-    public static readonly TYPE_2: number = 2;
+    // AS3: TradeRequirement.as::_SafeStr_10180 (canOfferFurni: anything tradeable qualifies)
+    public static readonly TYPE_ANY_FURNI: number = 2;
 
     /** The only type whose payload carries rules. Note the gap: there is no 3. */
-    // AS3: TradeRequirement.as::_SafeStr_7942
+    // AS3: TradeRequirement.as::_SafeStr_7942 (canOfferFurni: defers to the contract's own rules)
     public static readonly TYPE_CUSTOM: number = 4;
 
     // AS3: TradeRequirement.as::_SafeStr_4778 (from `get type()`)
