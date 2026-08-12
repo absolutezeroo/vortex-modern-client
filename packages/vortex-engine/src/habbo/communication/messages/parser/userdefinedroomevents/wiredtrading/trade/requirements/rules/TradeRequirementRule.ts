@@ -1,23 +1,61 @@
+import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
+import {TradeRequirementNode} from '../TradeRequirementNode';
+
 /**
- * TradeRequirementRule — the trade-requirement rule mode constants for wired trading contracts
- * (InitiateTransaction). A pure constants holder: three int modes 0/1/2.
+ * One side of a wired trading contract: an ordered list of what is given, or of what is received.
  *
- * Name derived: fully obfuscated in AS3 (class `_SafeCls_4486`) and the three mode members carry no
- * recoverable names in any tree (they postdate the 2016 PRODUCTION build); the class name follows the
- * AS3 package path `wiredtrading/trade/requirements/rules`. TYPE_0/1/2 preserve the AS3 ordinal values;
- * behaviour observed in InitiateTransaction: TYPE_0 disables the amount section, TYPE_2 switches the
- * amount title to the "multiplier_selection2" variant.
+ * The class name is AS3's own — unobfuscated. Until 2026-08-12 this name was taken by the port's
+ * copy of `_SafeCls_4486`, an unrelated constants holder now called `TradeRequirementRulesType`.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/parser/userdefinedroomevents/wiredtrading/trade/requirements/rules/_SafeCls_4486.as
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/parser/userdefinedroomevents/wiredtrading/trade/requirements/rules/TradeRequirementRule.as
  */
 export class TradeRequirementRule
 {
-    // AS3: _SafeCls_4486.as::_SafeStr_10448 (name derived: rule mode 0)
-    public static readonly TYPE_0: number = 0;
+    // AS3: TradeRequirementRule.as::_nodes
+    private _nodes: TradeRequirementNode[];
 
-    // AS3: _SafeCls_4486.as::_SafeStr_10226 (name derived: rule mode 1)
-    public static readonly TYPE_1: number = 1;
+    // AS3: TradeRequirementRule.as::TradeRequirementRule()
+    constructor(nodes: TradeRequirementNode[])
+    {
+        this._nodes = nodes;
+    }
 
-    // AS3: _SafeCls_4486.as::_SafeStr_8654 (name derived: rule mode 2)
-    public static readonly TYPE_2: number = 2;
+    // AS3: TradeRequirementRule.as::readFromMessage()
+    static readFromMessage(wrapper: IMessageDataWrapper): TradeRequirementRule
+    {
+        const nodes: TradeRequirementNode[] = [];
+        const count = wrapper.readInt();
+
+        for(let i = 0; i < count; i++) nodes.push(TradeRequirementNode.readFromMessage(wrapper));
+
+        return new TradeRequirementRule(nodes);
+    }
+
+    // AS3: TradeRequirementRule.as::get nodes()
+    get nodes(): TradeRequirementNode[]
+    {
+        return this._nodes;
+    }
+
+    /**
+     * Writes the count then each node, in order. Mirrors `readFromMessage()` exactly — the two are
+     * the same wire shape read and written, and they have to stay in step.
+     */
+    // AS3: TradeRequirementRule.as::addToComposer()
+    addToComposer(array: unknown[]): void
+    {
+        array.push(this._nodes.length);
+
+        for(const node of this._nodes) node.addToComposer(array);
+    }
+
+    // AS3: TradeRequirementRule.as::deepCopy()
+    deepCopy(): TradeRequirementRule
+    {
+        const nodes: TradeRequirementNode[] = [];
+
+        for(const node of this._nodes) nodes.push(node.deepCopy());
+
+        return new TradeRequirementRule(nodes);
+    }
 }

@@ -1,6 +1,6 @@
 import type {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroomevents/Triggerable';
 import {WiredVariable} from '@habbo/communication/messages/incoming/userdefinedroomevents/variables/WiredVariable';
-import {TradeRequirementRule} from '@habbo/communication/messages/parser/userdefinedroomevents/wiredtrading/trade/requirements/rules/TradeRequirementRule';
+import {TradeRequirementRulesType} from '@habbo/communication/messages/parser/userdefinedroomevents/wiredtrading/trade/requirements/rules/TradeRequirementRulesType';
 
 import {DefaultElement} from '../../DefaultElement';
 import {VariableExtraSourceTypes} from '../../common/VariableExtraSourceTypes';
@@ -125,8 +125,8 @@ export class InitiateTransaction extends DefaultActionType
     // AS3: _SafeCls_4288.as::onModeChange()
     private onModeChange(mode: number): void
     {
-        const isMultiplier = mode === TradeRequirementRule.TYPE_2;
-        const isDisabled = mode === TradeRequirementRule.TYPE_0;
+        const isMultiplier = mode === TradeRequirementRulesType.TYPE_2;
+        const isDisabled = mode === TradeRequirementRulesType.TYPE_0;
         this._amountSection.sectionTitle = isMultiplier ? '${wiredfurni.params.contract.multiplier_selection2}' : '${wiredfurni.params.contract.multiplier_selection}';
         this._amountSection.disabled = isDisabled;
     }
