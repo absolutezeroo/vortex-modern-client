@@ -44,6 +44,35 @@ single missing member — so 45 commands landed and the number went 304 → 309.
 things is worth less than five covering five, and any reading of this file that treats the total as
 a score will get that backwards.
 
+### Collectibles — the product previewer (2026-08-12)
+
+Third collectibles pass. `CollectibleProductPreviewer` (234 l.), `EffectPreviewer` (100 l.),
+`ICollectibleProductPreviewer`, the two remaining renderer wrappers (`CollectionItemWrapper`,
+`MintableItemWrapper`), and real `previewIcon()`/`previewImage()` on `CollectiblesController`.
+
+Four things worth keeping:
+
+- **The controller now depends on the catalog that builds it.** `HabboCatalog`'s constructor
+  creates `CollectiblesController` and attaches it *before* the catalog itself is attached under
+  `IID_HabboCatalog` on the next line. That resolves because `ComponentContext.attachComponent()`
+  does late binding — `_interfaceQueues` plus the unlock handler — and because AS3 declares the
+  dependency optional, as this port now does. A required one there would have locked the component
+  forever with no log.
+- **The preview switches are rebased by one.** Both methods switch on `productTypeId + 1`, which is
+  AS3's `productTypeId - -1` — a decompiler artefact of a switch the compiler rebased, kept rather
+  than folded so the file still lines up with `getProductName()`.
+- **`tempCategoryMapping()` is AS3's name and AS3's hard-coded table.** Only its `"I"` path is
+  called and only its `=== 1` result tested, so the three ids it special-cases (3001, 3002, 4057)
+  are exactly the wall items that get no preview.
+- **Two branches are deliberately not ported.** The chat-style preview needs a `selectorPreview`
+  the port's `IChatStyleLibrary` does not expose (icon) and a whole `PooledChatBubble` rendered to
+  a BitmapData (image). And `handlePreviewImageEasterEgg()` is left out on purpose: it *sends a
+  message* (`wf15`) on a trigger built from three obfuscated fields, and guessing that is not worth
+  a packet.
+
+Still open on collectibles: the eight renderers, `CollectionView` (596), the five tabs, and
+`CollectiblesView`/`CollectiblesRewardBoxView`. Roughly 3,900 lines.
+
 ### Collectibles — the catalog message layer and the hub (2026-08-12)
 
 The second collectibles pass, after the inventory tab above. What landed:
