@@ -327,6 +327,21 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return this.getBoolean('web3trade.enabled');
     }
 
+    /**
+     * Whether the player may put items into the trade window at all.
+     *
+     * Note this is *not* "is a trade running": a trade can be open while the server has still
+     * refused this side the right to offer, which is what `ownUserCanTrade` carries.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::canUserOfferToTrade()
+    // TODO(AS3): AS3 short-circuits to true while `wiredTradingModel.running` —
+    // `inventory/wired_trading/` is unported, so a wired trade cannot report itself here and the
+    // normal model has the only say.
+    canUserOfferToTrade(): boolean
+    {
+        return this._tradingModel?.ownUserCanTrade ?? false;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get activeTradingModel()
     // TODO(AS3): AS3 falls through to `wiredTradingModel` when the normal one is idle —
     // `inventory/wired_trading/` (WiredTradingModel + its view) is unported, so only the normal

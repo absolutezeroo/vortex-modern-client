@@ -61,6 +61,9 @@ export interface IHabboInventory
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get tradingModel()
     readonly tradingModel: ITradingModel;
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::canUserOfferToTrade()
+    canUserOfferToTrade(): boolean;
+
     // Purse & Tracking
     readonly purse: IPurse;
 

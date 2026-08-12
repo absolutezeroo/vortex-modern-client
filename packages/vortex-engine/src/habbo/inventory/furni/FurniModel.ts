@@ -152,10 +152,9 @@ export class FurniModel implements IFurniModel
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::canUserOfferToTrade()
-    // TODO(AS3): needs HabboInventory.canUserOfferToTrade() (not wired yet).
     canUserOfferToTrade(): boolean
     {
-        return false;
+        return this._habboInventory?.canUserOfferToTrade() ?? false;
     }
 
     /**
