@@ -34,7 +34,7 @@
 | Engine `TODO(AS3)` markers                                     | 265           | **327**       |
 
 Re-measure `TODO(AS3)` with `node scripts/todo-inventory.mjs`, not `grep -c`: the latest figure is
-**309** (2026-08-12, after the chat-command pass) and the table above is a 2026-07-28 snapshot. A
+**320** (2026-08-12, after the wired-trading pass) and the table above is a 2026-07-28 snapshot. A
 bare `grep -rn --include=*.ts packages` reads `packages/*/dist/**/*.d.ts` too and inflates the count
 by roughly 80.
 
@@ -84,8 +84,38 @@ optional deps skip `_requiredDependenciesCount` and resolve later — which is w
 from locking forever (see the DI note in `docs/CONTEXT.md`).
 
 Registering `marketplace` and `recycler` in `_inventories` is also what makes
-`getCategoryWindowContainer()` and `updateView()` resolve for those tabs at all. Two remain
-unregistered: `collectibles` and `wired_trading`, both genuinely unported.
+`getCategoryWindowContainer()` and `updateView()` resolve for those tabs at all.
+
+### Wired trading (2026-08-12) — logic complete, views deliberately not
+
+`inventory/wired_trading/` landed in four slices: the requirement DTOs, the message layer, the two
+models, and the event subscription. What is **not** there is either view — `WiredTradingView` (447
+lines), `WiredTradeRequirementsView` (418) and its three sub-views under `requirements/offerings/`
+(717). Each model talks to an interface with a stub that logs `warn` on every call, and
+`getWindowContainer()` returns null, so the tab has no contents and the state machine runs headless.
+
+That is a decision, and the reason is checkable: **none of the seven wired-trading headers exists on
+the reference emulator** (3650/1481/2137/2488 in, 3111/2818/2646 out). Nothing here can be exercised
+end to end, so 1,684 lines of view would have been written blind against a server that will never
+send to it.
+
+Three things this slice is worth remembering for:
+
+- **A name was occupied.** The port shipped a `TradeRequirementRule` that was really `_SafeCls_4486`,
+  a constants holder — while `TradeRequirementRule.as` is a real, unobfuscated AS3 class in the same
+  package. Renamed the constants to `TradeRequirementRulesType` (DERIVED) and gave the real class
+  its name. Worth checking for elsewhere: a derived name that collides with a readable AS3 one makes
+  the real class unportable and the collision is invisible until you try.
+- **A DERIVED name can be upgraded by a later call site.** The four `TradeRequirement` constants
+  shipped as `TYPE_0/1/2` with a note refusing to guess; porting `canOfferFurni()` settled all four
+  from behaviour (`CF_`-prefixed = credit furni, two types exist to include or exclude it), so they
+  are now named and marked derived-from-behaviour rather than recovered.
+- **Registering an event is not subscribing to it.** The four events sat in `HabboMessages` for one
+  commit with nothing listening, which would have left the whole model unreachable. Connecting them
+  also caught a wrong key type on `updateItemGroupMaps` — the compiler only objects once a caller
+  exists.
+
+Still unregistered in `_inventories`: `collectibles` alone.
 
 The layout/skin rows changed **format**, not content: there is no JSON compile step any more —
 `tools/build-window-assets.mjs` ships the dump's XML verbatim (see CLAUDE.md → Assets). Both
