@@ -1092,11 +1092,14 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::displayFloorPlanEditor()
-    // TODO(AS3): AS3 opens BCFloorPlanEditor
-    // sources/win63_version/habbo/window/HabboWindowManagerComponent.as::displayFloorPlanEditor()
-    public displayFloorPlanEditor(): void 
+    // TODO(AS3): AS3 lazily builds a `BCFloorPlanEditor(this)` and sets it visible. The editor is
+    // unported in full — `window/utils/floorplaneditor/` is 1,879 lines across BCFloorPlanEditor,
+    // FloorPlanCache, FloorPlanPreviewer, HeightMapEditor and ImportExportDialog — and its window
+    // layout does not ship in `src/assets/window-layouts/` either, so the asset side is a
+    // prerequisite. Callers today: the `:floor` / `:bcfloor` chat commands, which reach this and
+    // silently do nothing.
+    public displayFloorPlanEditor(): void
     {
-        // BCFloorPlanEditor integration - to be connected
     }
 
     /**
