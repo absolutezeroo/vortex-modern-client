@@ -1926,11 +1926,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.connection?.send(new RecycleItemsMessageComposer(items));
     }
 
-    // TODO(AS3): several secondary effects are not wired yet, each because their backing system
-    // isn't ported: new-additions badge clearing (markNewAdditionPageOpened() needs
-    // MarkCatalogNewAdditionsPageOpenedComposer), recycler activate/cancel on open/close
-    // (Recycler isn't ported), refreshBuilderStatus() (Builders Club membership timers aren't
-    // tracked). The core open/close/navigate flow is real.
+    // TODO(AS3): two secondary effects are still missing, each because their backing system is not
+    // ported: new-additions badge clearing (markNewAdditionPageOpened() needs
+    // MarkCatalogNewAdditionsPageOpenedComposer) and refreshBuilderStatus() (Builders Club
+    // membership timers are not tracked). The recycler activate/cancel pair used to be listed here
+    // too, on the grounds that "Recycler isn't ported" — it was, catalog-side; only the inventory
+    // model was missing, and it landed on 2026-08-12. That branch is live at the end of the method.
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::toggleCatalog()
     public toggleCatalog(catalogType: string, forceOpen: boolean = false, showMainWindow: boolean = true): void 
     {
@@ -2035,6 +2036,26 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
             this.currentCatalogNavigator.showIndex();
             this._catalogViewer?.setForceRefresh();
+        }
+
+        // Opening the catalog *on* the recycler page starts the machine; leaving it cancels a run
+        // in progress. Note which viewer each branch asks: on open it is the current one, on close
+        // it is the state being *left* — by then the active state may already be the other catalog
+        // type, whose page has nothing to do with recycling.
+        if(this._recycler != null)
+        {
+            if(this.mainWindowVisible())
+            {
+                if(this._catalogViewer?.getCurrentLayoutCode() === 'recycler') this._recycler.activate();
+            }
+            else if(previousState?.catalogViewer?.getCurrentLayoutCode() === 'recycler')
+            {
+                this._recycler.cancel();
+            }
+
+            // Unconditional in AS3, and after the branch above so it sees the new state: this is
+            // what turns the inventory's recycle badges on and off.
+            this.setupInventoryForRecycler(this._recycler.active && this.mainWindowVisible());
         }
     }
 
