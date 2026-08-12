@@ -9,26 +9,29 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  * Name recovered from the emulator's `RoomFilterSettingsMessageComposer = 3208`; the
  * AS3 class is obfuscated in every available tree.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2213/_SafeCls_3620.as
+ * The trace used to name `_SafePkg_2213`, which holds the *event* class (`_SafeCls_2846`); the
+ * parser it builds lives in `_SafePkg_2918`. The old path resolved to no file at all.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2918/_SafeCls_3620.as
  */
 export class RoomFilterSettingsMessageEventParser implements IMessageParser
 {
-    // AS3: .../_SafeCls_3620.as::_SafeStr_5075
+    // AS3: .../_SafePkg_2918/_SafeCls_3620.as::_SafeStr_5075
     private _badWords: string[] = [];
 
-    // AS3: .../_SafeCls_3620.as::get badWords()
+    // AS3: .../_SafePkg_2918/_SafeCls_3620.as::get badWords()
     get badWords(): string[]
     {
         return this._badWords;
     }
 
-    // AS3: .../_SafeCls_3620.as::flush()
+    // AS3: .../_SafePkg_2918/_SafeCls_3620.as::flush()
     flush(): boolean
     {
         return true;
     }
 
-    // AS3: .../_SafeCls_3620.as::parse()
+    // AS3: .../_SafePkg_2918/_SafeCls_3620.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;
