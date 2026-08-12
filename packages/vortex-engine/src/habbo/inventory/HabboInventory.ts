@@ -1288,6 +1288,26 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return result?.data ?? null;
     }
 
+    /**
+     * Every non-rented inventory id of one furni type, for the collectibles mint tab.
+     *
+     * AS3's first line looks up `_inventories.getValue(category)` and types it as a `FurniModel` —
+     * and then never uses it, reading `furniModel` directly instead. So the lookup is purely a
+     * guard on the category name existing, and passing anything but "furni" returns null. Kept,
+     * because the mint tab passes "furni" and tests the null.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getNonRentedInventoryIds()
+    getNonRentedInventoryIds(category: string, itemTypeId: number, isWallItem: boolean): number[] | null
+    {
+        if(this._inventories.getValue(category) === null) return null;
+
+        const groupItem = this._furniModel?.getGroupItemByItemTypeId(itemTypeId, isWallItem) ?? null;
+
+        if(groupItem === null) return null;
+
+        return groupItem.getNonRentedFurnitureIds();
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::updateUnseenItemCounts()
     updateUnseenItemCounts(): void
     {

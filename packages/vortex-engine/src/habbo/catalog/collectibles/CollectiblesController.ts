@@ -17,6 +17,8 @@ import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
+import {HabboInventoryCategoryInitializeEvent} from '@habbo/inventory/events/HabboInventoryCategoryInitializeEvent';
 import {ImageResult} from '@habbo/room/ImageResult';
 import {Vector3d} from '@room/utils/Vector3d';
 import {RedeemNftLootBoxStateMessageEvent} from '@habbo/communication/messages/incoming/collectibles/RedeemNftLootBoxStateMessageEvent';
@@ -33,6 +35,7 @@ import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
+import {IID_HabboInventory} from '@iid/IIDHabboInventory';
 
 import type {ICollectorHub} from './ICollectorHub';
 import type {ICollectibleProductPreviewer} from './ICollectibleProductPreviewer';
@@ -83,6 +86,8 @@ export class CollectiblesController extends Component implements ICollectorHub, 
     private _freeFlowChat: IHabboFreeFlowChat | null = null;
     // AS3: CollectiblesController.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
+    // AS3: CollectiblesController.as::_inventory
+    private _inventory: IHabboInventory | null = null;
     // AS3: CollectiblesController.as::_SafeStr_6959 (the reward-box window)
     private _rewardBoxView: CollectiblesRewardBoxView | null = null;
     // AS3: CollectiblesController.as::_SafeStr_4550 (the hub window)
@@ -168,6 +173,29 @@ export class CollectiblesController extends Component implements ICollectorHub, 
                     this._windowManager = manager;
                 }
             ),
+            /**
+              * AS3 marks this optional too and attaches a `HABBO_INVENTORY_CATEGORY_INITIALIZED`
+              * listener to the dependency itself; the port subscribes in the setter, which is the
+              * first moment the emitter exists.
+              */
+            new ComponentDependency(
+                IID_HabboInventory,
+                (inventory: IHabboInventory | null) =>
+                {
+                    this._inventory?.events.off(
+                        HabboInventoryCategoryInitializeEvent.HABBO_INVENTORY_CATEGORY_INITIALIZED,
+                        this.onInventoryInitialize
+                    );
+
+                    this._inventory = inventory;
+
+                    inventory?.events.on(
+                        HabboInventoryCategoryInitializeEvent.HABBO_INVENTORY_CATEGORY_INITIALIZED,
+                        this.onInventoryInitialize
+                    );
+                },
+                false
+            ),
             new ComponentDependency(
                 IID_HabboFreeFlowChat,
                 (chat: IHabboFreeFlowChat | null) =>
@@ -198,6 +226,18 @@ export class CollectiblesController extends Component implements ICollectorHub, 
     {
         return this._localizationManager;
     }
+
+    // AS3: CollectiblesController.as::get inventory()
+    get inventory(): IHabboInventory | null
+    {
+        return this._inventory;
+    }
+
+    // AS3: CollectiblesController.as::onInventoryInitialize()
+    private onInventoryInitialize = (event: HabboInventoryCategoryInitializeEvent): void =>
+    {
+        this._hubView?.mintInventoryListWidget?.onInventoryInitialize(event.category);
+    };
 
     // AS3: CollectiblesController.as::get catalog()
     get catalog(): IHabboCatalog | null
@@ -656,19 +696,23 @@ export class CollectiblesController extends Component implements ICollectorHub, 
     }
 
     /**
-     * TODO(AS3): forwards to `CollectiblesView.mintInventoryListWidget.amountChangedForItem()` so
-     * the mint tab's counts follow the furni inventory. `MintInventoryListTab` (769 l.) is
-     * unported, and this is a null check in AS3 too — with no view it is genuinely a no-op there
-     * as well, which is why it stays silent rather than warning.
+     * Both hooks do the same thing in AS3 — the mint tab only cares that the count changed, not
+     * which way — and both are null-guarded, so they are no-ops until the hub window has been
+     * opened at least once.
+     *
+     * Note the first parameter is named `productTypeId` after AS3's own signature but is passed
+     * `item.type` by `FurniModel`; the mint tab reads only the second and third.
      */
     // AS3: CollectiblesController.as::itemAddedToInventory()
-    itemAddedToInventory(_productTypeId: number, _itemTypeId: number, _isWallItem: boolean): void
+    itemAddedToInventory(_productTypeId: number, itemTypeId: number, isWallItem: boolean): void
     {
+        this._hubView?.mintInventoryListWidget?.amountChangedForItem('furni', itemTypeId, isWallItem);
     }
 
     // AS3: CollectiblesController.as::itemRemovedFromInventory()
-    itemRemovedFromInventory(_productTypeId: number, _itemTypeId: number, _isWallItem: boolean): void
+    itemRemovedFromInventory(_productTypeId: number, itemTypeId: number, isWallItem: boolean): void
     {
+        this._hubView?.mintInventoryListWidget?.amountChangedForItem('furni', itemTypeId, isWallItem);
     }
 
     // AS3: CollectiblesController.as::get linkPattern()
@@ -746,8 +790,14 @@ export class CollectiblesController extends Component implements ICollectorHub, 
             this._hubView = null;
         }
 
+        this._inventory?.events.off(
+            HabboInventoryCategoryInitializeEvent.HABBO_INVENTORY_CATEGORY_INITIALIZED,
+            this.onInventoryInitialize
+        );
+
         this._communicationManager = null;
         this._windowManager = null;
+        this._inventory = null;
         this._sessionDataManager = null;
         this._localizationManager = null;
         this._notifications = null;

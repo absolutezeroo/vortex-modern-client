@@ -127,6 +127,13 @@ export interface IHabboInventory
 	 */
     switchCategory(category: InventoryCategoryType): void;
 
+    /**
+     * Every non-rented inventory id of one furni type. Declared on AS3's interface too
+     * (`_SafeCls_588.as:80`); the collectibles mint tab is its only caller.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getNonRentedInventoryIds()
+    getNonRentedInventoryIds(category: string, itemTypeId: number, isWallItem: boolean): number[] | null;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getFurnitureData()
     getFurnitureData(classId: number, type: string): IFurnitureData | null;
 

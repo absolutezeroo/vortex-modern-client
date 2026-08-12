@@ -129,10 +129,15 @@ hub's `onSilverBalanceUpdated()` hand-off and the non-Stardust wallet subset.
 `NftStorePurchaseOffer` (178) landed as the third tab — the NFT store, with its category list,
 offer grid, large preview and purchase path.
 
-Still open: `CollectionsTab` (627) + `CollectionView` (596) + `CollectibleItemRenderer` (101) +
-`CollectionsNavigationNodeRenderer` (221) + `_SafeCls_4508` (85); `MintInventoryListTab` (769) +
-`MintInventoryItemRenderer` (104) + `MintTokenPurchaseOffer` (166). Roughly 2,670 lines in two more
-slices — three of the five tabs now work.
+`MintInventoryListTab` (769) + `MintInventoryItemRenderer` (104) + `MintTokenPurchaseOffer` (166)
+followed — **four of the five tabs now work**. That slice also added `getNonRentedInventoryIds()` to
+`HabboInventory` and its interface (a real AS3 member that was simply missing), and gave
+`CollectiblesController` its `IID_HabboInventory` dependency, so
+`itemAdded`/`itemRemovedFromInventory` and `onInventoryInitialize` are wired instead of empty.
+
+Still open, the last slice: `CollectionsTab` (627) + `CollectionView` (596) +
+`CollectibleItemRenderer` (101) + `CollectionsNavigationNodeRenderer` (221) + `_SafeCls_4508` (85).
+Roughly 1,630 lines.
 
 **Three AS3 fields in this package are declared, read, and never assigned**, so their branches are
 dead in Flash: `ShopTab._SafeStr_5458` (a `CollectionView`, read only by `update()`),

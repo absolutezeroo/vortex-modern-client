@@ -22,6 +22,7 @@ import type {CollectiblesController} from './CollectiblesController';
 import {RewardClaimsTab} from './tabs/RewardClaimsTab';
 import {TransferNftsTab} from './tabs/TransferNftsTab';
 import {ShopTab} from './tabs/ShopTab';
+import {MintInventoryListTab} from './tabs/MintInventoryListTab';
 
 // AS3: CollectiblesView.as::DESKTOP_WINDOW_LAYER
 const DESKTOP_WINDOW_LAYER = 1;
@@ -74,6 +75,8 @@ export class CollectiblesView
     private _transferTab: TransferNftsTab | null = null;
     // AS3: CollectiblesView.as::_SafeStr_7373 (the shop tab)
     private _shopTab: ShopTab | null = null;
+    // AS3: CollectiblesView.as::_SafeStr_5278 (the mint tab)
+    private _mintTab: MintInventoryListTab | null = null;
     // AS3: CollectiblesView.as::_SafeStr_7673 (a wallet request is in flight)
     private _walletRequestInFlight: boolean = false;
     // AS3: CollectiblesView.as::_walletAddresses
@@ -339,8 +342,8 @@ export class CollectiblesView
 
         this._activeWallet = wallets.length > 0 ? wallets[index] : null;
 
-        // TODO(AS3): AS3 also pushes the active wallet into `collectionsWidget` and
-        // `mintInventoryListWidget`. Both tabs are unported.
+        // TODO(AS3): AS3 also pushes the active wallet into `collectionsWidget`; unported.
+        if(this._mintTab !== null) this._mintTab.activeWallet = this._activeWallet;
 
         if(this._activeWallet !== null)
         {
@@ -394,7 +397,12 @@ export class CollectiblesView
                 break;
             case TAB_MINT:
                 this.setContainerVisible('mintingContainer', true);
-                // TODO(AS3): `new MintInventoryListTab(this, controller)` — 769 l., unported.
+
+                if(this._mintTab === null && this._controller !== null)
+                {
+                    this._mintTab = new MintInventoryListTab(this, this._controller);
+                }
+
                 break;
             case TAB_TRANSFER:
                 this.setContainerVisible('transferContainer', true);
@@ -439,9 +447,8 @@ export class CollectiblesView
     {
         if(this._controller === null) return;
 
-        // TODO(AS3): AS3 constructs CollectionsTab and MintInventoryListTab here too — 1,396 lines
-        // between them, both unported. Their containers stay empty and the wallet hand-offs they
-        // would receive have nothing to hand to.
+        // TODO(AS3): AS3 constructs CollectionsTab here too — 627 l., unported. Its container stays
+        // empty and the wallet hand-off it would receive has nothing to hand to.
         if(this._rewardClaimsTab === null)
         {
             this._rewardClaimsTab = new RewardClaimsTab(this, this._controller);
@@ -456,6 +463,17 @@ export class CollectiblesView
         {
             this._shopTab = new ShopTab(this, this._controller);
         }
+
+        if(this._mintTab === null)
+        {
+            this._mintTab = new MintInventoryListTab(this, this._controller);
+        }
+    }
+
+    // AS3: CollectiblesView.as::get mintInventoryListWidget()
+    get mintInventoryListWidget(): MintInventoryListTab | null
+    {
+        return this._mintTab;
     }
 
     // AS3: CollectiblesView.as::get transferWidget()
@@ -613,6 +631,12 @@ export class CollectiblesView
         {
             this._shopTab.dispose();
             this._shopTab = null;
+        }
+
+        if(this._mintTab !== null)
+        {
+            this._mintTab.dispose();
+            this._mintTab = null;
         }
 
         // AS3 disposes the collections, mint and transfer tabs here and — a real slip — never the
