@@ -23,6 +23,7 @@
   "devDependencies": {
     "@types/node": "^22.10.0",
     "@xmldom/xmldom": "^0.9.7",
+    "esbuild": "^0.25.12",
     "sass-embedded": "^1.97.3",
     "sharp": "^0.34.5",
     "typescript": "^5.7.2",

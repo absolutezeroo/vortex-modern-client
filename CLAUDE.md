@@ -11,6 +11,26 @@ pnpm build        # Production build (TSC + Vite)
 pnpm lint         # ESLint over both packages
 ```
 
+### `pnpm dev` pre-bundles the engine
+
+Vite serves one HTTP request per source module, and the client statically reaches ~3,970 of the
+engine's ~4,480 files at boot, so dev used to cost ~4,000 requests per page load — 15.2s cold, and
+5.9s on *every* reload, since the port defines no `import.meta.hot` anywhere and therefore always
+does a full page reload. `packages/vortex-client/tools/vite-plugin-engine-bundle.mjs` hands the
+engine to esbuild in watch mode instead (~185 requests: 1.3s cold, ~0.45s reload, ~1.5-4.5s when an
+engine file changes and the bundle is rebuilt). It is serve-only — `pnpm build` is untouched.
+
+Two consequences worth knowing before editing `vite.config.ts`:
+
+- **`@core`/`@habbo`/`@room`/`@iid` are deliberately absent from `resolve.alias` in dev.**
+  `vite:alias` runs before user `enforce: 'pre'` plugins, so declaring them there would rewrite the
+  specifier to the engine source before the plugin ever sees it, and the ~3,970 requests come back.
+  They are restored for `command === 'build'`.
+- **Only `pixi.js` and `eventemitter3` are external to the bundle**, because the client imports them
+  too and there must be exactly one instance. `pako` is engine-only and pnpm does not expose it to
+  resolution from the client package — externalising it yields "Failed to resolve import" and a
+  blank page.
+
 ## Rules
 
 Enforcement rules live in `.claude/rules/` and are auto-loaded into every session (some are path-scoped and only load when you read a matching file). Start with `.claude/rules/00-mandate.md` — nothing may be implemented before it is followed. See also `.claude/rules/10-conventions.md`, `20-architecture.md`, `30-as3-traceability.md`, and the path-scoped `communication.md` / `window-ui.md` / `room.md`.

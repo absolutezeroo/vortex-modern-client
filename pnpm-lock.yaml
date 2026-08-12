@@ -52,6 +52,9 @@ importers:
       '@xmldom/xmldom':
         specifier: ^0.9.7
         version: 0.9.8
+      esbuild:
+        specifier: ^0.25.12
+        version: 0.25.12
       sass-embedded:
         specifier: ^1.97.3
         version: 1.97.3
