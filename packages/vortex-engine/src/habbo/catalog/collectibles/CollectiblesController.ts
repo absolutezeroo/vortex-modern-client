@@ -16,6 +16,7 @@ import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
+import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import {ImageResult} from '@habbo/room/ImageResult';
 import {Vector3d} from '@room/utils/Vector3d';
 import {RedeemNftLootBoxStateMessageEvent} from '@habbo/communication/messages/incoming/collectibles/RedeemNftLootBoxStateMessageEvent';
@@ -31,11 +32,13 @@ import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
+import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 
 import type {ICollectorHub} from './ICollectorHub';
 import type {ICollectibleProductPreviewer} from './ICollectibleProductPreviewer';
 import {BaseItemWrapper} from './renderer/model/BaseItemWrapper';
 import {CollectibleRarity} from './util/CollectibleRarity';
+import {CollectiblesRewardBoxView} from './CollectiblesRewardBoxView';
 
 const log = Logger.getLogger('habbo.catalog.collectibles.CollectiblesController');
 
@@ -44,9 +47,9 @@ const log = Logger.getLogger('habbo.catalog.collectibles.CollectiblesController'
  * collectibles *catalog* tab.
  *
  * What is ported here is the hub half — product naming, product previewing, the two reward-box
- * messages, and the send/subscribe plumbing the tabs will need. The view half is not:
- * `CollectiblesView` (582 l.) and its five tabs are the bulk of `habbo/catalog/collectibles`, and
- * every method below that would reach into them says so at its own TODO rather than pretending.
+ * messages (including the reward popup they raise), and the send/subscribe plumbing the tabs will
+ * need. The *hub window* is not: `CollectiblesView` (582 l.) and its five tabs are the bulk of
+ * `habbo/catalog/collectibles`, and `linkReceived()` below says so rather than pretending.
  *
  * `_freeFlowChat` is held and not yet read: both chat-style preview branches are TODO, because the
  * port's `IChatStyleLibrary` exposes no `selectorPreview` and AS3's large preview renders a whole
@@ -77,6 +80,10 @@ export class CollectiblesController extends Component implements ICollectorHub, 
     private _avatarRenderManager: IAvatarRenderManager | null = null;
     // AS3: CollectiblesController.as::_freeFlowChat
     private _freeFlowChat: IHabboFreeFlowChat | null = null;
+    // AS3: CollectiblesController.as::_windowManager
+    private _windowManager: IHabboWindowManager | null = null;
+    // AS3: CollectiblesController.as::_SafeStr_6959 (the reward-box window)
+    private _rewardBoxView: CollectiblesRewardBoxView | null = null;
     // AS3: CollectiblesController.as::_SafeStr_5769 (the disposed flag)
     private _controllerDisposed: boolean = false;
 
@@ -86,8 +93,8 @@ export class CollectiblesController extends Component implements ICollectorHub, 
     }
 
     /**
-     * AS3 takes ten; the eight below are the ones something here reads. The two left out are the
-     * window manager and the inventory, which only the unported views use.
+     * AS3 takes ten; the nine below are the ones something here reads. The one left out is the
+     * inventory, which only the unported mint tab uses.
      *
      * **Only the communication manager is required**, exactly as in AS3 — everything else is
      * optional. That is not tidiness: a hard dependency on an IID nothing provides locks the
@@ -149,6 +156,13 @@ export class CollectiblesController extends Component implements ICollectorHub, 
                 (manager: IAvatarRenderManager | null) =>
                 {
                     this._avatarRenderManager = manager;
+                }
+            ),
+            new ComponentDependency(
+                IID_HabboWindowManager,
+                (manager: IHabboWindowManager | null) =>
+                {
+                    this._windowManager = manager;
                 }
             ),
             new ComponentDependency(
@@ -231,14 +245,7 @@ export class CollectiblesController extends Component implements ICollectorHub, 
 
         if(isOwnUser)
         {
-            // TODO(AS3): `showLootBoxReward(product)` builds a CollectiblesRewardBoxView (204 l.,
-            // sources/WIN63-.../catalog/collectibles/CollectiblesRewardBoxView.as) and shows the
-            // drop. Unported, so our own box opens silently — the item still arrives, the
-            // celebration does not.
-            log.warn(
-                'CollectiblesRewardBoxView is not ported: your reward box opened without showing '
-                + `what came out (${this.getProductName(product)}).`
-            );
+            this.showLootBoxReward(product);
 
             return;
         }
@@ -289,6 +296,34 @@ export class CollectiblesController extends Component implements ICollectorHub, 
             );
         }
     };
+
+    /**
+     * AS3: CollectiblesController.as::showLootBoxReward()
+     *
+     * The `showImmediate` argument is `true` only when the window is being built for the first
+     * time, and `false` afterwards — which is what makes a second box queue behind the one on
+     * screen instead of replacing it. See `CollectiblesRewardBoxView.showReward()`.
+     */
+    // AS3: CollectiblesController.as::showLootBoxReward()
+    private showLootBoxReward(product: BaseItemWrapper): void
+    {
+        if(this._windowManager === null)
+        {
+            log.warn('No window manager: the reward box opened without showing what came out.');
+
+            return;
+        }
+
+        if(this._rewardBoxView === null || this._rewardBoxView.disposed)
+        {
+            this._rewardBoxView = new CollectiblesRewardBoxView(this, this._windowManager);
+            this._rewardBoxView.showReward(product, true);
+
+            return;
+        }
+
+        this._rewardBoxView.showReward(product, false);
+    }
 
     /**
      * The localized product *category*.
@@ -649,7 +684,15 @@ export class CollectiblesController extends Component implements ICollectorHub, 
         }
 
         this._controllerDisposed = true;
+
+        if(this._rewardBoxView !== null)
+        {
+            this._rewardBoxView.dispose();
+            this._rewardBoxView = null;
+        }
+
         this._communicationManager = null;
+        this._windowManager = null;
         this._sessionDataManager = null;
         this._localizationManager = null;
         this._notifications = null;

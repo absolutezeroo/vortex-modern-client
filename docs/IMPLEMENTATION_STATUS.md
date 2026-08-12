@@ -114,8 +114,17 @@ Four things worth keeping:
   message* (`wf15`) on a trigger built from three obfuscated fields, and guessing that is not worth
   a packet.
 
-Still open on collectibles: the eight renderers, `CollectionView` (596), the five tabs, and
-`CollectiblesView`/`CollectiblesRewardBoxView`. Roughly 3,900 lines.
+`AbstractCollectibleItemRenderer` (204) and `CollectiblesRewardBoxView` (204) landed next, which
+closes `showLootBoxReward()`: opening an NFT reward box now shows what came out, queued one popup
+at a time.
+
+Still open on collectibles: the four concrete item renderers, the two navigation-node renderers,
+`CollectionView` (596), the five tabs and `CollectiblesView` (582) — roughly 3,500 lines. **They
+have to go together.** Each concrete renderer calls `selectItem()` on exactly one tab, and every
+tab is a child of `CollectiblesView`'s window, so the smallest honest slice is
+`CollectiblesView` + one tab + its renderer, about 1,100 lines. Porting a renderer alone would mean
+inventing an interface AS3 does not have — the mistake this branch already made once with
+`TradeRequirementRule`.
 
 ### Collectibles — the catalog message layer and the hub (2026-08-12)
 
