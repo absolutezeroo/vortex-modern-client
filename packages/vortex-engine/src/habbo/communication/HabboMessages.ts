@@ -504,6 +504,9 @@ import {
     WiredTradeCancelComposer
 } from './messages/outgoing/userdefinedroomevents/wiredtrading/WiredTradeCancelComposer';
 import {
+    RequestNftAssetsComposer
+} from './messages/outgoing/collectibles/RequestNftAssetsComposer';
+import {
     RequestVariableHoldersComposer
 } from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableHoldersComposer';
 import {
@@ -2339,6 +2342,8 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3111, WiredTradeUpdateItemsComposer);
         this._composers.set(2818, WiredTradeAcceptComposer);
         this._composers.set(2646, WiredTradeCancelComposer);
+        // Collectibles. Header from WIN63's registry; the emulator does not define it either.
+        this._composers.set(1646, RequestNftAssetsComposer);
         // The monitor tab's "wf15" report is the same AS3 class as the wired dialog's developer
         // action (`_SafeCls_3004`), already registered at 3608 above as
         // WiredDebugCommandMessageComposer. Registering it twice under two derived names left the
