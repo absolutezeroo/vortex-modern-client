@@ -438,7 +438,8 @@ Elsewhere, still unchecked or known-blocked:
 | Header | Message | Note |
 |---|---|---|
 | 594 | `RoomChatSettings` | **correctly deferred** — verified against AS3: the handler only sets `floodSensitivity`, which nothing in this port reads. The existing TODO holds up |
-| 2474 | `MyCfhReportStatus` | the emulator sends the reply but defines no header for the *request* (1834), so the feature is half-built on both sides |
+| 2474 | `MyCfhReportStatus` | the emulator sends the reply but defines no header for the *request* (1834), so the feature is half-built on both sides. The client composer exists and `HabboHelp.requestReportsStatus()` sends it; the emulator's `Headers.cs` line is written but **still uncommitted** there, pending a split from another session's navigator work |
+| 1746 | `SanctionStatus` | **fixed 2026-08-12** — the client was parsing a revision that no longer exists (see below); parser, DTOs, handler and window all rewritten to the 2026 shape, and the emulator serializer filled to match |
 | 2129 | `RemainingMutePeriod` | **done 2026-08-11** — `RoomChatHandler`, as a chat event on the player's own avatar |
 | 3510 | `BadgePointLimits` | **done 2026-08-11** — `HabboInventory` → `setBadgePointLimit()`, which had nothing feeding it |
 | 1235 | occupied tiles | blocked: its only consumer is the floor-plan editor, unported |
@@ -455,13 +456,38 @@ payload while the client read two ints off it. **Nothing about either side looke
 side alone** — which is the whole point, and the same shape as every other real defect this pass.
 
 `node scripts/unlistened-server-messages.mjs` now cross-checks all three facts: an empty
-`Serialize` body, a header this client listens for, and a client parser that actually reads. As of
-2026-08-11 that finds **25 messages, none of them built by any handler today** — so no live desync,
-but 25 traps that will each look like a mystery the day someone implements the feature behind them.
-(It read 27 before `RoomAdError` (2396) and `ObjectRemoveConfirm` (3643) were filled in from their
-AS3 parsers, with wire tests. Those two are worth copying as the pattern: the shape comes from
-WIN63's parser, never from guessing, and `ObjectRemoveConfirm`'s leading int is a *flag* the client
-turns into a category — sending the category would look right and be wrong.)
+`Serialize` body, a header this client listens for, and a client parser that actually reads. It read
+27 on 2026-08-11, 25 after `RoomAdError` (2396) and `ObjectRemoveConfirm` (3643), and **0 as of
+2026-08-12**: the script now prints *"No listened-for header has an empty serializer behind it."*
+
+The remaining 25 went in one pass (`vortex-emulator` `3409065b` + `10f5f0b7`), and the method is the
+part worth keeping. Every shape was taken from the WIN63 parser reached through the incoming
+registry — event class from `_SafeCls_2046.as`, parser class from the event's constructor — and
+**not** from this port's own parser for the same message. That distinction paid for itself twice:
+
+- **1746 `SanctionStatus` was reading a message that no longer exists.** The port had thirteen flat
+  fields, faithfully copied from `win63_version`'s `SanctionStatusEventParser` — a class in no other
+  tree. The 2026 build sends a counted list of records, each nesting *two* sanction types. The two
+  shapes share no prefix. Had the port been trusted, the batch would have pinned the wrong layout in
+  a passing test. Fixed on all three client layers in `80435d4e`; nothing had noticed because the
+  handler was a `log.trace` and `SanctionInfo` opened no window.
+- **Two map entries paired a composer with another message's serializer.**
+  `CampaignCalendarDoorOpened` was registered against the calendar-data serializer,
+  `UnseenItemsEvent` against account-preferences. `AbstractSerializer<T>` casts, so both throw on
+  first send. Both had survived review precisely *because* the bodies were empty — an empty
+  `Serialize` reaches the cast and does nothing with the result, so the fault only appears once
+  someone fills the body in. The correct serializers already existed; only the wrong name had been
+  typed. `Vortex.Revisions.Tests/SerializerPairingTests.cs` now checks the whole revision for it.
+
+The second of those is also why the count went 25 → 1 → 0 rather than straight to 0: repairing
+`UnseenItems`' pairing pointed the audit at the *real* serializer, whose body was empty. The wrong
+one wrote bytes, so the check had been answering a question about the wrong file.
+
+Two shapes are easy to get wrong and are pinned by name in the tests: `WiredMenuError` (1230) writes
+a **short**, alone among its neighbours, and `GuestRoomSearchResult` (160) guards its optional ad
+entry with a **boolean** where the sibling `OfficialRooms` asks the same question with an int.
+`ObjectRemoveConfirm`'s leading int remains the older example of the same trap — a *flag* the client
+turns into a category, where sending the category would look right and be wrong.
 
 Two cautions are baked into the check, both learned by getting it wrong first:
 
@@ -475,7 +501,11 @@ Two cautions are baked into the check, both learned by getting it wrong first:
 The four closed on 2026-08-11 were the ones this table listed as tractable, and all four were:
 each had a real consumer already sitting in a ported module, and the emulator really sends all
 four. What made them cheap is the same thing in every case — everything downstream existed and
-nothing was connected to it. **Unlistened server messages: 89 → 80 across the day.**
+nothing was connected to it. **Unlistened server messages: 89 → 78 across 2026-08-11/12.**
+
+One thing this pass does *not* claim: filling a serializer does not make a feature work. None of the
+26 is built by a handler, so the count that moved is "traps removed", not "messages now sent". What
+each one buys is that the day someone writes the handler, the wire is already right.
 
 ### The 2026-08-10 wire pass — what the audits found once the TODO list ran dry
 
