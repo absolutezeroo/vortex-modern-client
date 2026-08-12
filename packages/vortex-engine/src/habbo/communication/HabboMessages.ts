@@ -483,6 +483,27 @@ import {
     VariableInfoAndHoldersEvent
 } from './messages/incoming/userdefinedroomevents/wiredmenu/VariableInfoAndHoldersEvent';
 import {
+    WiredTradeInitiateMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTradeInitiateMessageEvent';
+import {
+    WiredTradeCancelledMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTradeCancelledMessageEvent';
+import {
+    WiredTradeCompletedMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTradeCompletedMessageEvent';
+import {
+    WiredTradeItemsUpdateMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTradeItemsUpdateMessageEvent';
+import {
+    WiredTradeUpdateItemsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/WiredTradeUpdateItemsComposer';
+import {
+    WiredTradeAcceptComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/WiredTradeAcceptComposer';
+import {
+    WiredTradeCancelComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/WiredTradeCancelComposer';
+import {
     RequestVariableHoldersComposer
 } from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableHoldersComposer';
 import {
@@ -1791,6 +1812,12 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2733, AllVariablesDiffMessageEvent);
         // Overview tab: variable-holders push (WIN63 registry _SafeCls_2046.as: 3506 -> _SafeCls_2537).
         this._events.set(3506, VariableInfoAndHoldersEvent);
+        // Wired trading. Headers read straight out of WIN63's registry (_SafeCls_2046.as); the
+        // reference emulator defines none of the four, so nothing sends them yet.
+        this._events.set(3650, WiredTradeInitiateMessageEvent);
+        this._events.set(1481, WiredTradeCancelledMessageEvent);
+        this._events.set(2137, WiredTradeCompletedMessageEvent);
+        this._events.set(2488, WiredTradeItemsUpdateMessageEvent);
         // Inspection tab (WIN63 registry _SafeCls_2046.as): 2179 -> _SafeCls_3452 (variables for object),
         // 1230 -> _SafeCls_2847 (wired-menu error).
         this._events.set(2179, WiredVariablesForObjectEvent);
@@ -2308,6 +2335,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(427, RequestWiredRoomStatsComposer);
         this._composers.set(452, RequestWiredErrorLogsComposer);
         this._composers.set(2386, ClearWiredErrorLogsComposer);
+        // Wired trading, same source and same caveat as the four events above.
+        this._composers.set(3111, WiredTradeUpdateItemsComposer);
+        this._composers.set(2818, WiredTradeAcceptComposer);
+        this._composers.set(2646, WiredTradeCancelComposer);
         // The monitor tab's "wf15" report is the same AS3 class as the wired dialog's developer
         // action (`_SafeCls_3004`), already registered at 3608 above as
         // WiredDebugCommandMessageComposer. Registering it twice under two derived names left the
