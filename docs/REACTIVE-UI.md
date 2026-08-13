@@ -1,6 +1,18 @@
 # A signals layer for the window system — design
 
-**Status: proposal. Nothing in this document is implemented.**
+**Status: implemented on `feat/reactive-ui`** — core (`core/reactive/`), window
+adapter (`core/window/reactive/`), and glaze adoption: `WindowHierarchy` and
+`WindowProperty` fully reconciled (`each`), `WindowBottomBar`,
+`WindowToolbar` and `WindowHierarchyControls` bound where they vary.
+`WindowGallery`, `WindowPalette` and `WindowColorPicker` deliberately stay
+imperative: one-shot popups with a single writer have nothing to bind.
+Measured on the glaze harness — hierarchy: collapse 2→0 / visibility 10→0
+row builds; property editor: selection change 40→0 (row reuse), two-way
+`WE_CHANGE` verified. Two findings worth keeping: a deferred bind lands after
+construction completes, which *fixed* the zoom dropdown's empty caption (the
+old imperative set fell into the TS super()-before-fields gap); and a setter
+with side effects (button caption auto-size) needs its geometry reasserted in
+the same effect — `WindowHierarchyControls` shows the pattern.
 
 This is the design for a small, dependency-free reactive layer ("our own SolidJS") that drives
 the existing `core/window` controllers declaratively: `signal` → `bind`/`each` → the same

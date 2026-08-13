@@ -2,6 +2,8 @@ import type {IWindow} from '@core/window/IWindow';
 import type {WindowController} from '@core/window/WindowController';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {effect, signal, type Scope, type SignalReader} from '@core/reactive';
+import {createWindowScope} from '@core/window/reactive';
 import {type EditorState} from '../../state/EditorState';
 import {addChildOfType, cloneSelected, convertSelected, deleteSelected, reorderSelected} from '../../ops/StructuralOps';
 import {specFor, type IWidgetSpec} from '../../ops/WidgetCatalog';
@@ -32,9 +34,10 @@ export class WindowHierarchyControls
     private readonly _bar: IWindow;
     private readonly _hierarchy: WindowHierarchy | null;
     private readonly _palette: WindowPalette | null;
+    private readonly _scope: Scope;
     private _themeDrop: IDropWidget | null = null;
-    private _typeButton: WindowController | null = null;
-    private _type: IWidgetSpec;
+    private readonly _type: SignalReader<IWidgetSpec>;
+    private readonly _setType: (spec: IWidgetSpec) => void;
 
     public constructor(
         state: EditorState,
@@ -48,17 +51,37 @@ export class WindowHierarchyControls
         this._bar = bar;
         this._hierarchy = hierarchy;
         this._palette = palette;
-        this._type = specFor(DEFAULT_TYPE) ?? {type: DEFAULT_TYPE, label: DEFAULT_TYPE, width: 60, height: 30};
+        this._scope = createWindowScope(bar);
+        [this._type, this._setType] = signal<IWidgetSpec>(
+            specFor(DEFAULT_TYPE) ?? {type: DEFAULT_TYPE, label: DEFAULT_TYPE, width: 60, height: 30}
+        );
 
-        this.build();
+        this._scope.run(() => this.build());
     }
 
     private build(): void
     {
-        // Row 1: armed type + Create + Convert
-        this._typeButton = this.button(this.typeCaption(), 4, 4, 180, () => this.chooseType());
-        this.button('Create', 188, 4, 54, () => addChildOfType(this._state, this._type.type));
-        this.button('Convert', 246, 4, 56, () => convertSelected(this._state, this._type.type));
+        // Row 1: armed type + Create + Convert. The armed type is a signal, so
+        // the button caption follows whatever the Widgets popup hands back. The
+        // caption setter auto-sizes the button, so the effect reasserts the
+        // strip's fixed box right after writing it.
+        const typeButton = this.button('', 4, 4, 180, () => this.chooseType());
+
+        if(typeButton)
+        {
+            effect(() =>
+            {
+                const caption = `Type: ${this._type().label}`;
+
+                if(typeButton.disposed || typeButton.caption === caption) return;
+
+                typeButton.caption = caption;
+                typeButton.rectangle = {x: 4, y: 4, width: 180, height: 24};
+            });
+        }
+
+        this.button('Create', 188, 4, 54, () => addChildOfType(this._state, this._type().type));
+        this.button('Convert', 246, 4, 56, () => convertSelected(this._state, this._type().type));
 
         // Row 2: delete + move + clone + expand
         this.button('Del', 4, 32, 36, () => deleteSelected(this._state));
@@ -80,20 +103,7 @@ export class WindowHierarchyControls
     /** Opens the widget library as a type picker and arms whatever comes back. */
     private chooseType(): void
     {
-        this._palette?.toggle('pick', (spec) =>
-        {
-            this._type = spec;
-
-            if(this._typeButton && !this._typeButton.disposed)
-            {
-                this._typeButton.caption = this.typeCaption();
-            }
-        });
-    }
-
-    private typeCaption(): string
-    {
-        return `Type: ${this._type.label}`;
+        this._palette?.toggle('pick', (spec) => this._setType(spec));
     }
 
     private button(caption: string, x: number, y: number, width: number, onClick: () => void): WindowController | null

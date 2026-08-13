@@ -3,7 +3,10 @@ import type {WindowController} from '@core/window/WindowController';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
-import {EditorEvents, ZOOM_STEPS, type EditorState} from '../../state/EditorState';
+import {effect, type Scope} from '@core/reactive';
+import {createWindowScope, bind} from '@core/window/reactive';
+import {ZOOM_STEPS, type EditorState} from '../../state/EditorState';
+import {signalsOf, type EditorSignals} from '../../state/EditorSignals';
 import {downloadLayout, importLayoutXml, saveLayout} from '../../ops/LayoutSerializer';
 import {distributeChildren} from '../../ops/StructuralOps';
 import {toggleLocalisation} from '../../ops/LocaliseOps';
@@ -61,9 +64,9 @@ export class WindowToolbar
     private readonly _wm: EditorState['runtime']['windowManager'];
     private readonly _bar: IWindow;
     private readonly _items: IBarItem[] = [];
+    private readonly _scope: Scope;
+    private readonly _signals: EditorSignals;
     private _fileInput: HTMLInputElement | null = null;
-    private _modeButton: WindowController | null = null;
-    private _zoomDrop: IDropWidget | null = null;
     private _breakNext = false;
     private readonly _gallery: WindowGallery | null;
     private readonly _palette: WindowPalette | null;
@@ -75,9 +78,10 @@ export class WindowToolbar
         this._bar = bar;
         this._gallery = gallery;
         this._palette = palette;
+        this._scope = createWindowScope(bar);
+        this._signals = signalsOf(state);
 
-        this.build();
-        state.events.on(EditorEvents.VIEW_CHANGED, this._refreshView);
+        this._scope.run(() => this.build());
     }
 
     /**
@@ -115,25 +119,6 @@ export class WindowToolbar
         return ROW_GAP + (row + 1) * (ROW_HEIGHT + ROW_GAP);
     }
 
-    /** Keeps the zoom dropdown and the mode button honest when a shortcut fires. */
-    private readonly _refreshView = (): void =>
-    {
-        if(this._modeButton && !this._modeButton.disposed)
-        {
-            this._modeButton.caption = this.modeCaption();
-        }
-
-        if(this._zoomDrop)
-        {
-            const index = ZOOM_STEPS.indexOf(this._state.zoom);
-
-            if(index >= 0 && this._zoomDrop.selection !== index)
-            {
-                this._zoomDrop.selection = index;
-            }
-        }
-    };
-
     private build(): void
     {
         this.layoutDropdown();
@@ -165,7 +150,22 @@ export class WindowToolbar
         this.snapInput();
         this.label('Zoom', 36);
         this.zoomDropdown();
-        this._modeButton = this.button(this.modeCaption(), () => this.toggleMode());
+        // Sized from the initial caption — button() derives width from it, and
+        // the old code froze that width at build time too.
+        const modeButton = this.button(this.modeCaption(), () => this.toggleMode());
+
+        // Follows the view revision, so a shortcut toggling the mode keeps the
+        // caption honest without the old VIEW_CHANGED refresh handler.
+        if(modeButton)
+        {
+            bind(modeButton, 'caption', () =>
+            {
+                this._signals.viewRev();
+
+                return this.modeCaption();
+            });
+        }
+
         this.label('Guides', 44);
         this.guidesToggle();
         this.button('Align L', () => this._state.alignSelected('left'));
@@ -203,11 +203,6 @@ export class WindowToolbar
     private toggleMode(): void
     {
         this._state.mode = this._state.mode === 'edit' ? 'preview' : 'edit';
-
-        if(this._modeButton && !this._modeButton.disposed)
-        {
-            this._modeButton.caption = this.modeCaption();
-        }
     }
 
     private toggleBackground(): void
@@ -333,10 +328,37 @@ export class WindowToolbar
         const labels = ZOOM_STEPS.map((step) => `${Math.round(step * 100)}%`);
 
         drop.populate(labels);
-        drop.selection = Math.max(0, ZOOM_STEPS.indexOf(1));
-        this._zoomDrop = drop;
+
+        // The dropdown's `selection` setter dispatches WE_SELECTED, so the
+        // programmatic sync (zoom changed by a shortcut) must not read back as
+        // a user pick.
+        let syncing = false;
+
+        effect(() =>
+        {
+            this._signals.viewRev();
+
+            const index = ZOOM_STEPS.indexOf(this._state.zoom);
+
+            if(index >= 0 && drop.selection !== index && !(drop as unknown as IWindow).disposed)
+            {
+                syncing = true;
+
+                try
+                {
+                    drop.selection = index;
+                }
+                finally
+                {
+                    syncing = false;
+                }
+            }
+        });
+
         drop.addEventListener('WE_SELECTED', () =>
         {
+            if(syncing) return;
+
             const step = ZOOM_STEPS[drop.selection];
 
             if(step) this._state.zoom = step;
@@ -446,7 +468,7 @@ export class WindowToolbar
 
     public dispose(): void
     {
-        this._state.events.off(EditorEvents.VIEW_CHANGED, this._refreshView);
+        this._scope.dispose();
         this._fileInput?.remove();
         this._fileInput = null;
     }

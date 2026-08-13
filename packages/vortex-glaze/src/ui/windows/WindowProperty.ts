@@ -6,7 +6,8 @@ import {TYPE_CODE_TO_NAME} from '@core/window/enum/WindowType';
 import {WindowParam} from '@core/window/enum/WindowParam';
 import {signal, computed, effect, type Scope, type SignalReader} from '@core/reactive';
 import {createWindowScope, bind, on, each, type IReconcilableList} from '@core/window/reactive';
-import {EditorEvents, type EditorState} from '../../state/EditorState';
+import {type EditorState} from '../../state/EditorState';
+import {signalsOf, type EditorSignals} from '../../state/EditorSignals';
 import {themeNames} from '../../ops/ThemeOps';
 import {applyVariablesLive} from '../../ops/VariableOps';
 import type {WindowColorPicker} from './WindowColorPicker';
@@ -78,10 +79,7 @@ export class WindowProperty
     private readonly _colorPicker: WindowColorPicker | null;
     private readonly _scope: Scope;
 
-    private readonly _selectionRev: SignalReader<number>;
-    private readonly _bumpSelection: () => void;
-    private readonly _geometryRev: SignalReader<number>;
-    private readonly _bumpGeometry: () => void;
+    private readonly _signals: EditorSignals;
     private readonly _varsRev: SignalReader<number>;
     private readonly _bumpVars: () => void;
 
@@ -93,23 +91,8 @@ export class WindowProperty
         this._colorPicker = colorPicker;
         this._scope = createWindowScope(list);
 
-        [this._selectionRev, this._bumpSelection] = pulse();
-        [this._geometryRev, this._bumpGeometry] = pulse();
+        this._signals = signalsOf(state);
         [this._varsRev, this._bumpVars] = pulse();
-
-        this._scope.run(() =>
-        {
-            this._state.events.on(EditorEvents.SELECTION_CHANGED, this._bumpSelection);
-            this._state.events.on(EditorEvents.LAYOUT_CHANGED, this._bumpSelection);
-            this._state.events.on(EditorEvents.GEOMETRY_CHANGED, this._bumpGeometry);
-        });
-
-        this._scope.addCleanup(() =>
-        {
-            this._state.events.off(EditorEvents.SELECTION_CHANGED, this._bumpSelection);
-            this._state.events.off(EditorEvents.LAYOUT_CHANGED, this._bumpSelection);
-            this._state.events.off(EditorEvents.GEOMETRY_CHANGED, this._bumpGeometry);
-        });
 
         const rows = this._scope.run(() => computed((): IRowDesc[] => this.describe()));
 
@@ -124,7 +107,8 @@ export class WindowProperty
     /** The full row list for the current selection. */
     private describe(): IRowDesc[]
     {
-        this._selectionRev();
+        this._signals.selectionRev();
+        this._signals.layoutRev();
         this._varsRev();
 
         const win = this._state.selected as unknown as WindowController | null;
@@ -392,7 +376,7 @@ export class WindowProperty
 
                 if(d.kind !== 'input') return '';
 
-                if(d.live) this._geometryRev();
+                if(d.live) this._signals.geometryRev();
 
                 return d.read();
             });

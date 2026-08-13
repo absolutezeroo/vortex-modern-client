@@ -4,14 +4,18 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {WindowParam} from '@core/window/enum/WindowParam';
 import {Logger} from '@core/utils/Logger';
-import {EditorEvents, type EditorState} from '../../state/EditorState';
+import {type Scope} from '@core/reactive';
+import {createWindowScope, bind, on} from '@core/window/reactive';
+import {type EditorState} from '../../state/EditorState';
+import {signalsOf, type EditorSignals} from '../../state/EditorSignals';
 import type {WindowColorPicker} from './WindowColorPicker';
 
 const log = Logger.getLogger('glaze.ui.windows.WindowBottomBar');
 
 interface IContainerLike { addChild(child: IWindow): IWindow; }
-interface ICheckWidget { isSelected: boolean; addEventListener(type: string, cb: () => void): void; }
-interface IDropWidget { populate(items: unknown[]): void; selection: number; addEventListener(type: string, cb: () => void): void; }
+interface ICheckWidget extends IWindow { isSelected: boolean; }
+interface IDropWidget extends IWindow { populate(items: unknown[]): void; selection: number; }
+type ILabelWidget = IWindow & { text: string };
 
 /**
  * WindowBottomBar — Glaze's status bar, as Habbo widgets.
@@ -19,6 +23,11 @@ interface IDropWidget { populate(items: unknown[]): void; selection: number; add
  * Debug-view toggles (Show Tags / Debug Rects / Show scaler), the current
  * selection's colour (swatch + hex), the live mouse coordinates, and a Locales
  * dropdown.
+ *
+ * Construction is one-shot and stays imperative; what varies is bound. The
+ * colour readout follows the tree revision too, so editing the colour from the
+ * Property Editor updates the swatch — under the old SELECTION_CHANGED-only
+ * refresh it went stale.
  */
 export class WindowBottomBar
 {
@@ -26,11 +35,10 @@ export class WindowBottomBar
     private readonly _wm: EditorState['runtime']['windowManager'];
     private readonly _bar: IWindow;
     private readonly _colorPicker: WindowColorPicker | null;
+    private readonly _scope: Scope;
+    private readonly _signals: EditorSignals;
     private _x = 12;
-    private _coords: { text: string } | null = null;
-    private _swatch: WindowController | null = null;
-    private _colorLabel: { text: string } | null = null;
-    private _selectionLabel: { text: string } | null = null;
+    private _coords: ILabelWidget | null = null;
     private _rafId = 0;
 
     public constructor(state: EditorState, bar: IWindow, colorPicker: WindowColorPicker | null = null)
@@ -39,11 +47,19 @@ export class WindowBottomBar
         this._wm = state.runtime.windowManager;
         this._bar = bar;
         this._colorPicker = colorPicker;
+        this._scope = createWindowScope(bar);
+        this._signals = signalsOf(state);
 
-        this.build();
-        state.events.on(EditorEvents.SELECTION_CHANGED, this._refreshColor);
-        this._refreshColor();
+        this._scope.run(() => this.build());
         this.startCoordsLoop();
+    }
+
+    /** The selection's current colour, or white when nothing is selected. */
+    private selectedColor(): number
+    {
+        const sel = this._state.selected as unknown as WindowController | null;
+
+        return sel && !sel.disposed ? (sel.color >>> 0) : 0xffffffff;
     }
 
     private build(): void
@@ -55,10 +71,36 @@ export class WindowBottomBar
         this._x += 14;
         this.label('Colour', this._x, 7, 44);
         this._x += 48;
-        this._swatch = this.swatch();
+
+        const swatch = this.swatch();
+
         this._x += 24;
-        this._colorLabel = this.labelRef('', this._x, 7, 78);
+
+        const colorLabel = this.labelRef('', this._x, 7, 78);
+
         this._x += 84;
+
+        if(swatch)
+        {
+            bind(swatch, 'color', () =>
+            {
+                this._signals.selectionRev();
+                this._signals.treeRev();
+
+                return this.selectedColor();
+            });
+        }
+
+        if(colorLabel)
+        {
+            bind(colorLabel, 'text', () =>
+            {
+                this._signals.selectionRev();
+                this._signals.treeRev();
+
+                return `0x${this.selectedColor().toString(16).padStart(8, '0')}`;
+            });
+        }
 
         this.label('Coords', this._x, 7, 46);
         this._x += 50;
@@ -72,8 +114,20 @@ export class WindowBottomBar
         this._x += 14;
         this.label('Selected', this._x, 7, 56);
         this._x += 60;
-        this._selectionLabel = this.labelRef('1', this._x, 7, 40);
+
+        const selectionLabel = this.labelRef('1', this._x, 7, 40);
+
         this._x += 46;
+
+        if(selectionLabel)
+        {
+            bind(selectionLabel, 'text', () =>
+            {
+                this._signals.selectionRev();
+
+                return String(this._state.selection.length);
+            });
+        }
     }
 
     private toggle(text: string, read: () => boolean, write: (v: boolean) => void): void
@@ -93,9 +147,16 @@ export class WindowBottomBar
 
         const widget = chk as unknown as ICheckWidget;
 
-        widget.isSelected = read();
-        widget.addEventListener('WE_SELECTED', () => write(true));
-        widget.addEventListener('WE_UNSELECTED', () => write(false));
+        // Follows the debug revision so a toggle flipped elsewhere (a shortcut,
+        // another panel) is reflected here too.
+        bind(widget, 'isSelected', () =>
+        {
+            this._signals.debugRev();
+
+            return read();
+        });
+        on(widget, 'WE_SELECTED', () => write(true));
+        on(widget, 'WE_UNSELECTED', () => write(false));
     }
 
     private label(text: string, x: number, y: number, width: number): void
@@ -109,17 +170,17 @@ export class WindowBottomBar
         (lbl as unknown as WindowController).rectangle = {x, y, width, height: 16};
     }
 
-    private labelRef(text: string, x: number, y: number, width: number): { text: string }
+    private labelRef(text: string, x: number, y: number, width: number): ILabelWidget | null
     {
         const lbl = this._wm.buildWidgetLayout('glaze_label_xml');
 
-        if(!lbl) return {text: ''};
+        if(!lbl) return null;
 
         (lbl as unknown as { text: string }).text = text;
         (this._bar as unknown as IContainerLike).addChild(lbl);
         (lbl as unknown as WindowController).rectangle = {x, y, width, height: 16};
 
-        return lbl as unknown as { text: string };
+        return lbl as unknown as ILabelWidget;
     }
 
     /** The selection's colour, and the shortcut into the colour picker. */
@@ -148,7 +209,8 @@ export class WindowBottomBar
             {
                 this._state.pushHistory('color:bottombar');
                 selected.color = color >>> 0;
-                this._refreshColor();
+                // notifyTreeChanged pulses treeRev — the swatch and hex binds
+                // above pick the new colour up from there.
                 this._state.notifyTreeChanged();
             });
         };
@@ -169,19 +231,14 @@ export class WindowBottomBar
         const locales = ['en', 'fr', 'de', 'es', 'it', 'nl', 'pt', 'fi'];
 
         drop.populate(locales);
-        drop.addEventListener('WE_SELECTED', () => log.info(`Locale: ${locales[drop.selection]} — not applied (Glaze editor)`));
+        on(drop, 'WE_SELECTED', () => log.info(`Locale: ${locales[drop.selection]} — not applied (Glaze editor)`));
     }
 
-    private readonly _refreshColor = (): void =>
-    {
-        const sel = this._state.selected as unknown as WindowController | null;
-        const color = sel && !sel.disposed ? (sel.color >>> 0) : 0xffffffff;
-
-        if(this._swatch) this._swatch.color = color;
-        if(this._colorLabel) this._colorLabel.text = `0x${color.toString(16).padStart(8, '0')}`;
-        if(this._selectionLabel) this._selectionLabel.text = String(this._state.selection.length);
-    };
-
+    /**
+     * The coords readout stays a rAF poll: `state.mouse` is mutated per-frame
+     * by the canvas layer without any event, so a signal would change nothing —
+     * it would still be written every frame. Equality-guarded, like before.
+     */
     private startCoordsLoop(): void
     {
         const loop = (): void =>
@@ -205,6 +262,7 @@ export class WindowBottomBar
     public dispose(): void
     {
         if(this._rafId) cancelAnimationFrame(this._rafId);
-        this._state.events.off(EditorEvents.SELECTION_CHANGED, this._refreshColor);
+
+        this._scope.dispose();
     }
 }

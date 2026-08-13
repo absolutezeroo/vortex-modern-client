@@ -6,7 +6,8 @@ import {WindowTreeInspector} from '@core/window/debugger';
 import type {IWindowDebugNode} from '@core/window/debugger';
 import {signal, computed, onCleanup, type Scope, type SignalReader} from '@core/reactive';
 import {createWindowScope, bind, on, each, type IReconcilableList} from '@core/window/reactive';
-import {EditorEvents, type EditorState} from '../../state/EditorState';
+import {type EditorState} from '../../state/EditorState';
+import {signalsOf, type EditorSignals} from '../../state/EditorSignals';
 import {canHaveChildren, dropNode, type DropPosition} from '../../ops/StructuralOps';
 import type {CanvasSurface} from '../../canvas/CanvasSurface';
 import {slotsOf} from '../LayoutSlots';
@@ -83,12 +84,9 @@ export class WindowHierarchy
     private readonly _collapsed: Set<IWindow> = new Set();
 
     private readonly _rows: SignalReader<IHierarchyRow[]>;
-    private readonly _treeRev: SignalReader<number>;
-    private readonly _bumpTree: () => void;
+    private readonly _signals: EditorSignals;
     private readonly _collapsedRev: SignalReader<number>;
     private readonly _bumpCollapsed: () => void;
-    private readonly _selectionRev: SignalReader<number>;
-    private readonly _bumpSelection: () => void;
     private readonly _dropTintTarget: SignalReader<IWindow | null>;
     private readonly _setDropTintTarget: (win: IWindow | null) => void;
 
@@ -111,26 +109,9 @@ export class WindowHierarchy
         this._surface = surface;
         this._scope = createWindowScope(list);
 
-        [this._treeRev, this._bumpTree] = pulse();
+        this._signals = signalsOf(state);
         [this._collapsedRev, this._bumpCollapsed] = pulse();
-        [this._selectionRev, this._bumpSelection] = pulse();
         [this._dropTintTarget, this._setDropTintTarget] = signal<IWindow | null>(null);
-
-        this._scope.run(() =>
-        {
-            this._state.events.on(EditorEvents.LAYOUT_CHANGED, this._bumpTree);
-            this._state.events.on(EditorEvents.TREE_CHANGED, this._bumpTree);
-            this._state.events.on(EditorEvents.DEBUG_CHANGED, this._bumpTree);
-            this._state.events.on(EditorEvents.SELECTION_CHANGED, this._bumpSelection);
-        });
-
-        this._scope.addCleanup(() =>
-        {
-            this._state.events.off(EditorEvents.LAYOUT_CHANGED, this._bumpTree);
-            this._state.events.off(EditorEvents.TREE_CHANGED, this._bumpTree);
-            this._state.events.off(EditorEvents.DEBUG_CHANGED, this._bumpTree);
-            this._state.events.off(EditorEvents.SELECTION_CHANGED, this._bumpSelection);
-        });
 
         this._rows = this._scope.run(() => computed((): IHierarchyRow[] => this.flatten()));
 
@@ -150,7 +131,9 @@ export class WindowHierarchy
     /** Depth-first flattening of the current tree, honouring collapse state. */
     private flatten(): IHierarchyRow[]
     {
-        this._treeRev();
+        this._signals.layoutRev();
+        this._signals.treeRev();
+        this._signals.debugRev();
         this._collapsedRev();
 
         const out: IHierarchyRow[] = [];
@@ -261,13 +244,13 @@ export class WindowHierarchy
         // Selection tint and mid-drag drop tint share the row background.
         bind(rc, 'background', () =>
         {
-            this._selectionRev();
+            this._signals.selectionRev();
 
             return this._dropTintTarget() === win || this._state.isSelected(win);
         });
         bind(rc, 'color', () =>
         {
-            this._selectionRev();
+            this._signals.selectionRev();
 
             if(this._dropTintTarget() === win)
             {
@@ -629,8 +612,9 @@ export class WindowHierarchy
         // Descendants inherit the change, so the greying has to catch up — a
         // data update through the reconciler, not a rebuild: no row is
         // destroyed, so the checkbox that triggered this can never dispose
-        // itself mid-event.
-        this._bumpTree();
+        // itself mid-event. Notified through the state, so any panel showing
+        // visibility stays honest too.
+        this._state.notifyTreeChanged();
     }
 
     private toggleCollapse(win: IWindow): void
