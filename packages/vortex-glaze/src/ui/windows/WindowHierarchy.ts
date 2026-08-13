@@ -4,6 +4,8 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {WindowTreeInspector} from '@core/window/debugger';
 import type {IWindowDebugNode} from '@core/window/debugger';
+import {signal, computed, onCleanup, type Scope, type SignalReader} from '@core/reactive';
+import {createWindowScope, bind, on, each, type IReconcilableList} from '@core/window/reactive';
 import {EditorEvents, type EditorState} from '../../state/EditorState';
 import {canHaveChildren, dropNode, type DropPosition} from '../../ops/StructuralOps';
 import type {CanvasSurface} from '../../canvas/CanvasSurface';
@@ -11,15 +13,16 @@ import {slotsOf} from '../LayoutSlots';
 
 const ROW = slotsOf('glaze_hierarchy_row_xml');
 
-interface IListLike { addListItem(item: IWindow): IWindow; destroyListItems(): void; }
+interface IListLike { destroyListItems(): void; }
 interface IContainerLike { addChild(child: IWindow): IWindow; }
-interface IToggle { isSelected: boolean; addEventListener(type: string, cb: () => void): void; }
+interface IToggle { isSelected: boolean; disposed: boolean; }
 
 const SELECTED_COLOR = 0xffef9a9a; // Glaze's pink selection tint
 const CO_SELECTED_COLOR = 0xfff5cfcf; // secondary members of a multi-selection
 const DROP_INSIDE_COLOR = 0xff9ad2ef;
 const LABEL_COLOR = 0xffffffff;
 const LABEL_HIDDEN_COLOR = 0xff9a9ab0;
+const UNSELECTED_COLOR = 0x00ffffff;
 const ROW_HEIGHT = 20;
 const INDENT = 14;
 
@@ -29,6 +32,28 @@ const DRAG_SLOP = 4;
 /** Hover time over a collapsed container before it springs open mid-drag. */
 const AUTO_EXPAND_MS = 400;
 
+/** One visible row of the flattened tree — the reconciler's item type. */
+interface IHierarchyRow
+{
+    window: IWindow;
+    depth: number;
+    label: string;
+    /** Greyed: the node or an ancestor is hidden. */
+    dimmed: boolean;
+    visible: boolean;
+    hasChildren: boolean;
+    arrow: string;
+}
+
+/** A version signal: read it to depend on it, pulse it to invalidate readers. */
+const pulse = (): [SignalReader<number>, () => void] =>
+{
+    const [read, write] = signal(0);
+    let n = 0;
+
+    return [read, (): void => write(++n)];
+};
+
 /**
  * WindowHierarchy — the "Hierarchy View" tree as Habbo widget rows.
  *
@@ -37,29 +62,41 @@ const AUTO_EXPAND_MS = 400;
  * the node (pink highlight, à la Glaze), Ctrl-click adds or removes it from the
  * selection and Shift-click takes the range; the checkbox toggles `visible`, and
  * a node under a hidden ancestor is greyed to show it inherits that. Dragging a
- * row reparents or reorders it: the drop lands *before*, *inside* or *after* the
- * row under the pointer depending on where in its height the pointer sits, a
- * collapsed container springs open when hovered, and dropping past the last row
- * moves the node to the layout root. All Habbo widgets — no DOM.
+ * row reparents or reorders it. All Habbo widgets — no DOM.
+ *
+ * Reactive pilot (docs/REACTIVE-UI.md §8): the tree is a computed flattening,
+ * rows are reconciled by key (`each`) instead of destroy-all-and-rebuild, and
+ * selection/greying are per-row bindings. The old microtask coalescing is gone
+ * — the scheduler's frame boundary *is* the coalescer, so a checkbox can never
+ * dispose itself mid-event.
  */
 export class WindowHierarchy
 {
     private readonly _state: EditorState;
-    private readonly _list: IListLike;
+    private readonly _list: IWindow;
     private readonly _wm: EditorState['runtime']['windowManager'];
     private readonly _surface: CanvasSurface | null;
+    private readonly _scope: Scope;
+
     private readonly _rowByWindow: Map<IWindow, IWindow> = new Map();
     private readonly _windowByRow: Map<IWindow, IWindow> = new Map();
     private readonly _collapsed: Set<IWindow> = new Set();
-    private _order: IWindow[] = [];
-    private _rebuildScheduled = false;
+
+    private readonly _rows: SignalReader<IHierarchyRow[]>;
+    private readonly _treeRev: SignalReader<number>;
+    private readonly _bumpTree: () => void;
+    private readonly _collapsedRev: SignalReader<number>;
+    private readonly _bumpCollapsed: () => void;
+    private readonly _selectionRev: SignalReader<number>;
+    private readonly _bumpSelection: () => void;
+    private readonly _dropTintTarget: SignalReader<IWindow | null>;
+    private readonly _setDropTintTarget: (win: IWindow | null) => void;
 
     private _dragSource: IWindow | null = null;
     private _dragOrigin: { x: number; y: number } | null = null;
     private _dragging = false;
     private _dropTarget: IWindow | null = null;
     private _dropPosition: DropPosition = 'after';
-    private _tintedRow: IWindow | null = null;
     private _indicator: IWindow | null = null;
     private _expandTimer = 0;
     private _expandCandidate: IWindow | null = null;
@@ -70,142 +107,192 @@ export class WindowHierarchy
     {
         this._state = state;
         this._wm = state.runtime.windowManager;
-        this._list = list as unknown as IListLike;
+        this._list = list;
         this._surface = surface;
+        this._scope = createWindowScope(list);
 
-        state.events.on(EditorEvents.LAYOUT_CHANGED, this._scheduleRebuild);
-        state.events.on(EditorEvents.TREE_CHANGED, this._scheduleRebuild);
-        state.events.on(EditorEvents.DEBUG_CHANGED, this._scheduleRebuild);
-        state.events.on(EditorEvents.SELECTION_CHANGED, this._refreshSelection);
+        [this._treeRev, this._bumpTree] = pulse();
+        [this._collapsedRev, this._bumpCollapsed] = pulse();
+        [this._selectionRev, this._bumpSelection] = pulse();
+        [this._dropTintTarget, this._setDropTintTarget] = signal<IWindow | null>(null);
 
-        this._rebuild();
+        this._scope.run(() =>
+        {
+            this._state.events.on(EditorEvents.LAYOUT_CHANGED, this._bumpTree);
+            this._state.events.on(EditorEvents.TREE_CHANGED, this._bumpTree);
+            this._state.events.on(EditorEvents.DEBUG_CHANGED, this._bumpTree);
+            this._state.events.on(EditorEvents.SELECTION_CHANGED, this._bumpSelection);
+        });
+
+        this._scope.addCleanup(() =>
+        {
+            this._state.events.off(EditorEvents.LAYOUT_CHANGED, this._bumpTree);
+            this._state.events.off(EditorEvents.TREE_CHANGED, this._bumpTree);
+            this._state.events.off(EditorEvents.DEBUG_CHANGED, this._bumpTree);
+            this._state.events.off(EditorEvents.SELECTION_CHANGED, this._bumpSelection);
+        });
+
+        this._rows = this._scope.run(() => computed((): IHierarchyRow[] => this.flatten()));
+
+        each(this._scope, this._list as unknown as IReconcilableList, this._rows, {
+            key: (row) => row.window,
+            create: (row, initial) => this.buildRow(row, initial),
+        });
     }
 
     /** Expands every node (Glaze's "Expand"). */
     public expandAll(): void
     {
         this._collapsed.clear();
-        this._scheduleRebuild();
+        this._bumpCollapsed();
     }
 
-    /**
-     * Coalesces rebuilds into a microtask so a widget is never disposed while it
-     * is still processing its own event (a checkbox/twisty triggering a rebuild
-     * would otherwise crash mid-update on a null context).
-     */
-    private readonly _scheduleRebuild = (): void =>
+    /** Depth-first flattening of the current tree, honouring collapse state. */
+    private flatten(): IHierarchyRow[]
     {
-        if(this._rebuildScheduled)
-        {
-            return;
-        }
+        this._treeRev();
+        this._collapsedRev();
 
-        this._rebuildScheduled = true;
-        queueMicrotask(() =>
-        {
-            this._rebuildScheduled = false;
-            this._rebuild();
-        });
-    };
-
-    private readonly _rebuild = (): void =>
-    {
-        this._list.destroyListItems();
-        this._rowByWindow.clear();
-        this._windowByRow.clear();
-        this._order = [];
-
+        const out: IHierarchyRow[] = [];
         const root = this._state.rootWindow;
 
         if(!root || root.disposed)
         {
-            return;
+            return out;
         }
 
-        this.appendNode(WindowTreeInspector.snapshot(root), 0, false);
-        this._refreshSelection();
-    };
-
-    private appendNode(node: IWindowDebugNode, depth: number, ancestorHidden: boolean): void
-    {
-        const row = this._wm.buildWidgetLayout('glaze_hierarchy_row_xml');
-
-        if(!row)
+        const walk = (node: IWindowDebugNode, depth: number, ancestorHidden: boolean): void =>
         {
-            return;
-        }
-
-        const rc = row as unknown as WindowController;
-        const hasChildren = node.children.length > 0;
-        const collapsed = this._collapsed.has(node.window);
-        const shift = depth * INDENT;
-
-        this.setX(ROW.find(row, 'glaze_row_vis'), 4 + shift);
-        this.setX(ROW.find(row, 'glaze_row_twisty'), 26 + shift);
-
-        const labelEl = ROW.findAs<WindowController & { text: string }>(row, 'glaze_row_label');
-
-        if(labelEl)
-        {
+            const hasChildren = node.children.length > 0;
+            const collapsed = this._collapsed.has(node.window);
             const name = node.name ? `${node.name} ` : '';
             const tags = this._state.showTags && node.tags.length > 0 ? `  {${node.tags.join(',')}}` : '';
 
-            labelEl.text = `${name}[${node.typeName}]${tags}`;
-            labelEl.x = 42 + shift;
-            // A node under a hidden ancestor renders nothing even with its own
-            // `visible` still true — grey it so the tree says why.
-            labelEl.color = (ancestorHidden || !node.visible) ? LABEL_HIDDEN_COLOR : LABEL_COLOR;
+            out.push({
+                window: node.window,
+                depth,
+                label: `${name}[${node.typeName}]${tags}`,
+                dimmed: ancestorHidden || !node.visible,
+                visible: node.visible,
+                hasChildren,
+                arrow: hasChildren ? (collapsed ? '▸' : '▾') : '',
+            });
+
+            if(hasChildren && !collapsed)
+            {
+                for(const child of node.children)
+                {
+                    walk(child, depth + 1, ancestorHidden || !node.visible);
+                }
+            }
+        };
+
+        walk(WindowTreeInspector.snapshot(root), 0, false);
+
+        return out;
+    }
+
+    /**
+     * Builds one row and its bindings. Runs once per node lifetime; everything
+     * that varies reads `row()` and updates in place.
+     */
+    private buildRow(row: SignalReader<IHierarchyRow>, initial: IHierarchyRow): IWindow | null
+    {
+        const rowWin = this._wm.buildWidgetLayout('glaze_hierarchy_row_xml');
+
+        if(!rowWin)
+        {
+            return null;
         }
 
-        ROW.setText(row, 'glaze_row_arrow', hasChildren ? (collapsed ? '▸' : '▾') : '');
+        const win = initial.window;
+        const rc = rowWin as unknown as WindowController;
 
-        // Visibility checkbox.
-        const vis = ROW.findAs<IToggle>(row, 'glaze_row_vis');
+        rc.height = ROW_HEIGHT;
+
+        this._rowByWindow.set(win, rowWin);
+        this._windowByRow.set(rowWin, win);
+        // Registry entries die with the row's scope (collapse, removal, dispose).
+        onCleanup(() =>
+        {
+            this._rowByWindow.delete(win);
+            this._windowByRow.delete(rowWin);
+        });
+
+        const vis = ROW.findAs<IToggle & IWindow>(rowWin, 'glaze_row_vis');
+        const twisty = ROW.findAs<WindowController>(rowWin, 'glaze_row_twisty');
+        const arrow = ROW.findAs<WindowController & { text: string }>(rowWin, 'glaze_row_arrow');
+        const labelEl = ROW.findAs<WindowController & { text: string }>(rowWin, 'glaze_row_label');
 
         if(vis)
         {
-            vis.isSelected = node.visible;
-            vis.addEventListener('WE_SELECTED', () => { this.setVisible(node.window, true); });
-            vis.addEventListener('WE_UNSELECTED', () => { this.setVisible(node.window, false); });
+            bind(vis, 'x', () => 4 + row().depth * INDENT);
+            bind(vis, 'isSelected', () => row().visible);
+            on(vis, 'WE_SELECTED', () => this.setVisible(win, true));
+            on(vis, 'WE_UNSELECTED', () => this.setVisible(win, false));
         }
 
-        // Twisty collapses/expands (its own procedure, so it doesn't select).
-        const twisty = ROW.findAs<WindowController>(row, 'glaze_row_twisty');
-
-        if(twisty && hasChildren)
+        if(twisty)
         {
+            bind(twisty, 'x', () => 26 + row().depth * INDENT);
             twisty.procedure = (event: WindowEvent): void =>
             {
-                if(event.type === WindowMouseEvent.CLICK)
+                if(event.type === WindowMouseEvent.CLICK && row().hasChildren)
                 {
-                    this.toggleCollapse(node.window);
+                    this.toggleCollapse(win);
                 }
             };
         }
 
-        rc.height = ROW_HEIGHT;
+        if(arrow)
+        {
+            bind(arrow, 'text', () => row().arrow);
+        }
+
+        if(labelEl)
+        {
+            bind(labelEl, 'text', () => row().label);
+            bind(labelEl, 'x', () => 42 + row().depth * INDENT);
+            // A node under a hidden ancestor renders nothing even with its own
+            // `visible` still true — grey it so the tree says why.
+            bind(labelEl, 'color', () => (row().dimmed ? LABEL_HIDDEN_COLOR : LABEL_COLOR));
+        }
+
+        // Selection tint and mid-drag drop tint share the row background.
+        bind(rc, 'background', () =>
+        {
+            this._selectionRev();
+
+            return this._dropTintTarget() === win || this._state.isSelected(win);
+        });
+        bind(rc, 'color', () =>
+        {
+            this._selectionRev();
+
+            if(this._dropTintTarget() === win)
+            {
+                return DROP_INSIDE_COLOR;
+            }
+
+            if(!this._state.isSelected(win))
+            {
+                return UNSELECTED_COLOR;
+            }
+
+            return win === this._state.selected ? SELECTED_COLOR : CO_SELECTED_COLOR;
+        });
+
         rc.procedure = (event: WindowEvent): void =>
         {
             // Selection runs on DOWN, not CLICK: only the down event carries the
             // Ctrl/Shift modifiers, and it is also where a row drag begins.
             if(event.type === WindowMouseEvent.DOWN)
             {
-                this.onRowDown(node.window, event as WindowMouseEvent);
+                this.onRowDown(win, event as WindowMouseEvent);
             }
         };
 
-        this._list.addListItem(row);
-        this._rowByWindow.set(node.window, row);
-        this._windowByRow.set(row, node.window);
-        this._order.push(node.window);
-
-        if(hasChildren && !collapsed)
-        {
-            for(const child of node.children)
-            {
-                this.appendNode(child, depth + 1, ancestorHidden || !node.visible);
-            }
-        }
+        return rowWin;
     }
 
     // ---- Selection ---------------------------------------------------------
@@ -237,9 +324,10 @@ export class WindowHierarchy
     /** Shift-click: everything between the primary selection and the clicked row. */
     private selectRangeTo(window: IWindow): void
     {
+        const order = this._rows().map((row) => row.window);
         const anchor = this._state.selected;
-        const from = anchor ? this._order.indexOf(anchor) : -1;
-        const to = this._order.indexOf(window);
+        const from = anchor ? order.indexOf(anchor) : -1;
+        const to = order.indexOf(window);
 
         if(from < 0 || to < 0)
         {
@@ -251,7 +339,7 @@ export class WindowHierarchy
         const start = Math.min(from, to);
         const end = Math.max(from, to);
 
-        this._state.selectMany(this._order.slice(start, end + 1));
+        this._state.selectMany(order.slice(start, end + 1));
     }
 
     // ---- Drag & drop -------------------------------------------------------
@@ -400,7 +488,7 @@ export class WindowHierarchy
     /** True when the point is over the tree list but past its last row. */
     private overList(x: number, y: number): boolean
     {
-        const list = this._list as unknown as IWindow;
+        const list = this._list;
 
         if(!list || list.disposed)
         {
@@ -428,7 +516,7 @@ export class WindowHierarchy
             this._expandTimer = 0;
             this._expandCandidate = null;
             this._collapsed.delete(target);
-            this._scheduleRebuild();
+            this._bumpCollapsed();
         }, AUTO_EXPAND_MS);
     }
 
@@ -445,7 +533,9 @@ export class WindowHierarchy
 
     /**
      * Paints the drop hint: a line above/below the row for before/after, and a
-     * blue tint on the row itself for a drop inside it.
+     * blue tint on the row itself for a drop inside it. The tint is a signal
+     * the row's own colour bindings read; the 2px line stays imperative (it is
+     * positional feedback, not state).
      */
     private showDropFeedback(row: IWindow, rect: { x: number; y: number; width: number; height: number }): void
     {
@@ -453,11 +543,7 @@ export class WindowHierarchy
 
         if(this._dropPosition === 'inside')
         {
-            const controller = row as unknown as WindowController;
-
-            controller.background = true;
-            controller.color = DROP_INSIDE_COLOR;
-            this._tintedRow = row;
+            this._setDropTintTarget(this._windowByRow.get(row) ?? null);
 
             return;
         }
@@ -493,11 +579,7 @@ export class WindowHierarchy
 
     private clearDropFeedback(): void
     {
-        if(this._tintedRow && !this._tintedRow.disposed)
-        {
-            this._tintedRow = null;
-            this._refreshSelection();
-        }
+        this._setDropTintTarget(null);
 
         if(this._indicator && !this._indicator.disposed)
         {
@@ -513,7 +595,7 @@ export class WindowHierarchy
             return this._indicator;
         }
 
-        const list = this._list as unknown as IWindow;
+        const list = this._list;
         const parent = list?.parent;
 
         if(!parent || parent.disposed)
@@ -536,21 +618,19 @@ export class WindowHierarchy
         return bar;
     }
 
-    private setX(win: IWindow | null, x: number): void
-    {
-        if(win) (win as unknown as WindowController).x = x;
-    }
-
     private setVisible(win: IWindow, visible: boolean): void
     {
-        // No tree rebuild here: toggling visibility must not dispose this very
-        // checkbox mid-event. The canvas redraws from the `visible` setter itself.
-        if(!win.disposed)
+        if(win.disposed || win.visible === visible)
         {
-            (win as unknown as WindowController).visible = visible;
-            // Descendants inherit the change, so the greying has to catch up.
-            this._scheduleRebuild();
+            return;
         }
+
+        win.visible = visible;
+        // Descendants inherit the change, so the greying has to catch up — a
+        // data update through the reconciler, not a rebuild: no row is
+        // destroyed, so the checkbox that triggered this can never dispose
+        // itself mid-event.
+        this._bumpTree();
     }
 
     private toggleCollapse(win: IWindow): void
@@ -558,33 +638,16 @@ export class WindowHierarchy
         if(this._collapsed.has(win)) this._collapsed.delete(win);
         else this._collapsed.add(win);
 
-        this._scheduleRebuild();
+        this._bumpCollapsed();
     }
-
-    private readonly _refreshSelection = (): void =>
-    {
-        const primary = this._state.selected;
-
-        for(const [win, row] of this._rowByWindow)
-        {
-            const rc = row as unknown as WindowController;
-            const selected = this._state.isSelected(win);
-
-            rc.background = selected;
-            rc.color = selected ? (win === primary ? SELECTED_COLOR : CO_SELECTED_COLOR) : 0x00ffffff;
-        }
-    };
 
     public dispose(): void
     {
         this.endRowDrag();
-        this._state.events.off(EditorEvents.LAYOUT_CHANGED, this._scheduleRebuild);
-        this._state.events.off(EditorEvents.TREE_CHANGED, this._scheduleRebuild);
-        this._state.events.off(EditorEvents.DEBUG_CHANGED, this._scheduleRebuild);
-        this._state.events.off(EditorEvents.SELECTION_CHANGED, this._refreshSelection);
+        this._scope.dispose();
         this._indicator?.destroy();
         this._indicator = null;
-        this._list.destroyListItems();
+        (this._list as unknown as IListLike).destroyListItems();
         this._rowByWindow.clear();
         this._windowByRow.clear();
     }

@@ -12,6 +12,9 @@ import {WindowGallery} from './ui/windows/WindowGallery';
 import {WindowPalette} from './ui/windows/WindowPalette';
 import {WindowColorPicker} from './ui/windows/WindowColorPicker';
 import {GlazeShortcuts} from './input/GlazeShortcuts';
+import {Scheduler} from '@core/reactive';
+import type {IFlushEmitter} from '@core/reactive';
+import {HabboWindowTrackingEvent} from '@habbo/window/enum/HabboWindowTrackingEvent';
 import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('glaze.main');
@@ -25,6 +28,15 @@ async function main(): Promise<void>
     root.textContent = 'Booting window engine…';
 
     const runtime = await new GlazeBoot().boot();
+
+    // Reactive-layer flush boundary: the window manager emits its RENDER
+    // tracking event between input dispatch and rendering, and queued effects
+    // run exactly there (docs/REACTIVE-UI.md §5). Consumer-side wiring — no
+    // ported file is edited for this.
+    Scheduler.attach(
+        (runtime.windowManager as unknown as {events: IFlushEmitter}).events,
+        HabboWindowTrackingEvent.HABBO_WINDOW_TRACKING_EVENT_RENDER
+    );
 
     root.innerHTML = '';
 
