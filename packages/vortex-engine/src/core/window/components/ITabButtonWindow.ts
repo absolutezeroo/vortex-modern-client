@@ -3,7 +3,7 @@ import type {ISelectableWindow} from './ISelectableWindow';
 /**
  * Interface for tab button windows.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/ITabButtonWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITabButtonWindow.as
  */
 export interface ITabButtonWindow extends ISelectableWindow
 {

@@ -7,7 +7,7 @@ import type {IWindow} from '../IWindow';
  * In TypeScript these are public methods managed by the {@link Motions} scheduler.
  * Subclasses override update() to apply per-frame changes to the target window.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/motion/Motion.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/motion/Motion.as
  */
 export class Motion
 {

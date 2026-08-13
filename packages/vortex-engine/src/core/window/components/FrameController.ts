@@ -20,7 +20,7 @@ import {TextMargins} from '../utils/TextMargins';
  * A frame is a windowed container with a title bar (header),
  * content region, optional scaler for resizing, and margins.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/FrameController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/FrameController.as
  */
 export class FrameController extends ContainerController implements IFrameWindow 
 {
@@ -334,7 +334,7 @@ export class FrameController extends ContainerController implements IFrameWindow
      * in the parent layout (e.g. navigator_frame_2) are added to the
      * content area, not directly to the frame.
      *
-     * @see sources/win63_2021_version/com/sulake/core/window/components/FrameController.as line 127
+     * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/FrameController.as line 127
      */
     public override getLayoutChildTarget(): IWindow 
     {

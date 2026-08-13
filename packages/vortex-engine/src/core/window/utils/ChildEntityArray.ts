@@ -7,7 +7,7 @@ import type {IWindow} from '../IWindow';
  * operations for child window lists. Mirrors the AS3 ChildEntityArray
  * that extended an internal array base class.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/utils/ChildEntityArray.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/ChildEntityArray.as
  */
 export class ChildEntityArray
 {

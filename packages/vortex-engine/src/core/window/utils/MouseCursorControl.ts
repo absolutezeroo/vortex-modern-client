@@ -3,10 +3,10 @@
  *
  * In AS3 this manipulated the Flash Stage's Mouse cursor, supporting
  * custom DisplayObject cursors and standard cursor types. In TypeScript,
- * this provides a simplified interface that maps cursor types to CSS
- * cursor values for the SolidJS client to consume.
+ * this maps cursor types to CSS cursor values, which the client applies to
+ * the canvas element hosting the window system.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/utils/MouseCursorControl.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/MouseCursorControl.as
  */
 export class MouseCursorControl
 {

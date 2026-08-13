@@ -8,7 +8,7 @@ import type {IDisposable} from "../../runtime/IDisposable";
  * Provides lookup methods for skin renderers, default attributes, and
  * state resolution for the window rendering pipeline.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/graphics/ISkinContainer.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/ISkinContainer.as
  */
 export interface ISkinContainer extends IDisposable
 {

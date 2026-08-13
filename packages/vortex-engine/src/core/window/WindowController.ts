@@ -17,6 +17,7 @@ import {PropertyStruct} from './utils/PropertyStruct';
 import {WindowParam} from './enum/WindowParam';
 import {DynamicStyleManager} from './dynamicstyle/DynamicStyleManager';
 import {resolveLocalizationTokens} from './utils/WindowParser';
+import {hitTestAlpha, isDrawBuffer} from './utils/BitmapHitTest';
 import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('core.window.WindowController');
@@ -1346,7 +1347,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * container, matching AS3 `buildFromXML()` behavior where FrameController
      * passes `content` instead of `this` to `parseAndConstruct()`.
      *
-     * @see sources/win63_2021_version/com/sulake/core/window/components/FrameController.as line 127
+     * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/FrameController.as line 127
      */
     public getLayoutChildTarget(): IWindow 
     {
@@ -4410,21 +4411,23 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
 
     private hitTestDrawBuffer(buffer: unknown, threshold: number, point: { x: number; y: number }): boolean | null 
     {
-        if(!buffer) 
+        if(!buffer)
         {
             return null;
         }
 
-        const bitmapLike = buffer as {
-            hitTest?: (origin: { x: number; y: number }, alphaThreshold: number, testPoint: {
-                x: number;
-                y: number
-            }) => boolean;
-        };
-
-        if(typeof bitmapLike.hitTest === 'function') 
+        // AS3 calls `param2.hitTest(_POINT_ZERO, param3, param1)` on a BitmapData.
+        // The draw buffer is an OffscreenCanvas here and carries no such method,
+        // so the per-pixel test lives in BitmapHitTest — with the origin at
+        // POINT_ZERO, the sampled pixel is the local point itself.
+        if(isDrawBuffer(buffer))
         {
-            return bitmapLike.hitTest(WindowController.POINT_ZERO, threshold, point);
+            return hitTestAlpha(
+                buffer,
+                point.x - WindowController.POINT_ZERO.x,
+                point.y - WindowController.POINT_ZERO.y,
+                threshold
+            );
         }
 
         return null;

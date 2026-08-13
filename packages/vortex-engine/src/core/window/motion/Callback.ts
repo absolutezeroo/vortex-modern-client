@@ -7,7 +7,7 @@ import {Motion} from './Motion';
  * invocation, the callback reference is cleared and the motion is no
  * longer considered running.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/motion/Callback.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/motion/Callback.as
  */
 export class Callback extends Motion
 {

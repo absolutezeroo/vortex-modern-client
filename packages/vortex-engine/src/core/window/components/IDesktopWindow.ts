@@ -8,7 +8,7 @@ import type {IWindow} from '../IWindow';
  * The desktop window is the top-level container that holds all other windows.
  * It provides mouse position tracking and active window management.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/IDesktopWindow.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IDesktopWindow.as
  */
 export interface IDesktopWindow extends IWindowContainer, IDisplayObjectWrapper
 {

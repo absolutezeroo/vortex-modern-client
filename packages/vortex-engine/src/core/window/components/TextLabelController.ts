@@ -45,7 +45,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 	 * defaults, which is why gridFitType starts at "pixel"
 	 * (TextFieldCache.as l.52) rather than being style-driven.
 	 */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/TextFieldCache.as::getTextField()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/TextFieldCache.as::getTextFieldByStyle()
     private _antiAliasType: string = 'advanced';
     private _gridFitType: string = 'pixel';
     private _sharpness: number = 0;
@@ -308,7 +308,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
                         if(resolved.letterSpacing != null) this._spacing = resolved.letterSpacing;
                         if(resolved.leading != null) this._leading = resolved.leading;
 
-                        // AS3: TextFieldCache.as::getTextField() l.51-54 —
+                        // AS3: TextFieldCache.as::getTextFieldByStyle() l.51-54 —
                         // anything but "normal" is coerced to "advanced", and
                         // sharpness/thickness fall back to 0 when the style
                         // leaves them unset.

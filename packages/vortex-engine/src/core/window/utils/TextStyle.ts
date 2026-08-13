@@ -4,7 +4,7 @@
  * Port of AS3's TextStyle data class. Each property is nullable so that
  * only explicitly-set values override inherited defaults.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/utils/TextStyle.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyle.as
  */
 export class TextStyle 
 {

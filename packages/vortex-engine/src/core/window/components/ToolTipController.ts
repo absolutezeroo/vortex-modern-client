@@ -9,7 +9,7 @@ import {ButtonController} from './ButtonController';
  *
  * Extends ButtonController with the expand-to-accommodate flag set.
  *
- * @see sources/win63_version/com/sulake/core/window/components/ToolTipController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ToolTipController.as
  */
 export class ToolTipController extends ButtonController implements IToolTipWindow
 {

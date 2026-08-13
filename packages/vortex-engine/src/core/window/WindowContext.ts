@@ -34,7 +34,7 @@ const MIN_DESKTOP_SIZE = 10;
  * factory, parser, and service manager. The HabboWindowManagerComponent
  * creates 4 contexts (one per WindowContextLayer).
  *
- * @see sources/win63_2021_version/com/sulake/core/window/WindowContext.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowContext.as
  */
 export class WindowContext implements IWindowContext 
 {

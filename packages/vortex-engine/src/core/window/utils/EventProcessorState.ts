@@ -9,7 +9,7 @@ import type {IInputEventTracker} from '../IInputEventTracker';
  * current hover target, last click target, renderer, and event trackers.
  * Updated in place as events are processed.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/utils/EventProcessorState.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/EventProcessorState.as
  */
 export class EventProcessorState
 {

@@ -7,7 +7,7 @@ import type {Interval} from './Interval';
  * The rate value controls the strength of the easing curve.
  * Subclasses like EaseOut apply `Math.pow(progress, 1/rate)`.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/motion/EaseRate.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/motion/EaseRate.as
  */
 export class EaseRate extends Ease
 {

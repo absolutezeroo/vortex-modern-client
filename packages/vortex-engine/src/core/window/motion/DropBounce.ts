@@ -8,7 +8,7 @@ import {Interval} from './Interval';
  * applies a standard bounce easing function to animate back down.
  * On stop, restores the original Y position.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/motion/DropBounce.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/motion/DropBounce.as
  */
 export class DropBounce extends Interval
 {

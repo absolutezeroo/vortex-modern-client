@@ -17,11 +17,15 @@ export class GradientController extends WindowController
     public static readonly MODE_LINEAR: string = 'linear';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::MODE_RADIAL
     public static readonly MODE_RADIAL: string = 'radial';
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::DIRECTION_UP_LEFT
+    // Derived name. Obfuscated as `_SafeStr_10782` in the primary tree and
+    // recovered in none; the readable siblings DIRECTION_UP_RIGHT and
+    // DIRECTION_DOWN_RIGHT fix the naming, and the value is the source's own.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::_SafeStr_10782
     public static readonly DIRECTION_UP_LEFT: string = 'up_left';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::DIRECTION_UP_RIGHT
     public static readonly DIRECTION_UP_RIGHT: string = 'up_right';
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::DIRECTION_DOWN_LEFT
+    // Derived name, on the same basis as DIRECTION_UP_LEFT above.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::_SafeStr_10927
     public static readonly DIRECTION_DOWN_LEFT: string = 'down_left';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/GradientController.as::DIRECTION_DOWN_RIGHT
     public static readonly DIRECTION_DOWN_RIGHT: string = 'down_right';

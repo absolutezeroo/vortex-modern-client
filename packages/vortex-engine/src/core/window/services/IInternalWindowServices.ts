@@ -8,7 +8,7 @@ import type {IGestureAgentService} from './IGestureAgentService';
 /**
  * Internal window services aggregator.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/services/IInternalWindowServices.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/IInternalWindowServices.as
  */
 export interface IInternalWindowServices
 {

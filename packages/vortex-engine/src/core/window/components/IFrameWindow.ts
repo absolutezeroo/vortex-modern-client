@@ -11,7 +11,7 @@ import type {IWindow} from '../IWindow';
  * A frame window is a windowed container with a title bar (header),
  * content region, margins, and optional scaler for resizing.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/IFrameWindow.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IFrameWindow.as
  */
 export interface IFrameWindow extends IWindowContainer
 {

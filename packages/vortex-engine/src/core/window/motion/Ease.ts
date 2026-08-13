@@ -6,7 +6,7 @@ import {Interval} from './Interval';
  * Subclasses (EaseOut, EaseRate) override update() to apply easing
  * functions to the inner motion's progress value.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/motion/Ease.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/motion/Ease.as
  */
 export class Ease extends Interval
 {

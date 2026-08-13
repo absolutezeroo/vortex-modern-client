@@ -9,7 +9,7 @@ import type {WindowEvent} from '../events/WindowEvent';
  * A close button is an interactive element typically placed in a
  * frame header to trigger window close events.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/CloseButtonController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/CloseButtonController.as
  */
 export class CloseButtonController extends InteractiveController
 {

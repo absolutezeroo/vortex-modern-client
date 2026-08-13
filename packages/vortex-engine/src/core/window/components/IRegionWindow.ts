@@ -8,7 +8,7 @@ import type {IWindowContainer} from '../IWindowContainer';
  * with tooltip and cursor support. The concrete `RegionController` extends
  * `ContainerController`, so this interface exposes child management too.
  *
- * @see sources/win63_version/com/sulake/core/window/components/IRegionWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/IRegionWindow.as
  */
 export interface IRegionWindow extends IInteractiveWindow, IWindowContainer
 {

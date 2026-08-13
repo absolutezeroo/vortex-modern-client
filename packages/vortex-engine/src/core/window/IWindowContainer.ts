@@ -6,7 +6,7 @@ import type {IIterable} from './utils/IIterable';
  *
  * Extends IWindow with child management: add, remove, find, group, iteration.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/IWindowContainer.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContainer.as
  */
 export interface IWindowContainer extends IWindow, IIterable {
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContainer.as::get numChildren()

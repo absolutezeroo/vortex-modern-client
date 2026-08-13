@@ -6,10 +6,11 @@ import type {IDisposable} from "../../runtime/IDisposable";
  * Interface for the window rendering pipeline.
  *
  * Manages a render queue of dirty windows and their invalidated regions,
- * then renders them into draw buffers. In AS3 this produced BitmapData;
- * in TypeScript the rendering is abstracted for the SolidJS client.
+ * then renders them into draw buffers. In AS3 those buffers are BitmapData;
+ * here they are OffscreenCanvas, and `WindowComposite` blits them onto the
+ * single canvas the client presents.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/graphics/IWindowRenderer.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/IWindowRenderer.as
  */
 export interface IWindowRenderer extends IDisposable
 {

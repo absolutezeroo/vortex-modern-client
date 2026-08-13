@@ -13,7 +13,7 @@ import {WindowEvent} from '../events/WindowEvent';
  * The draggable thumb element within a scrollbar. Calculates its
  * scrollbar offset based on its position relative to the track.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/ScrollBarLiftController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarLiftController.as
  */
 export class ScrollBarLiftController extends InteractiveController implements IDragBarWindow
 {

@@ -11,7 +11,7 @@ import type {Motion} from './Motion';
  * In AS3 this was `class_3596` — a static class with a Timer-based
  * tick loop. Here we use requestAnimationFrame instead.
  *
- * @see sources/win63_version/core/window/motion/class_3596.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/motion/Motions.as
  */
 export class Motions
 {

@@ -12,7 +12,7 @@ import {SelectorController} from './SelectorController';
  * Extends SelectorController with automatic layout of selectable
  * children in either horizontal or vertical orientation.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/SelectorListController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SelectorListController.as
  */
 export class SelectorListController extends SelectorController implements ISelectorListWindow
 {

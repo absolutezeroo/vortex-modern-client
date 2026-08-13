@@ -1,5 +1,6 @@
 import type {ISkinContainer} from './ISkinContainer';
 import type {ISkinRenderer} from './renderer/ISkinRenderer';
+import type {IGraphicContextHost} from './IGraphicContextHost';
 import type {IWindow} from '../IWindow';
 
 /**
@@ -10,7 +11,7 @@ import type {IWindow} from '../IWindow';
  *
  * AS3 equivalent used BitmapData (TrackedBitmapData); we use OffscreenCanvas.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/graphics/WindowRendererItem.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/WindowRendererItem.as
  */
 export class WindowRendererItem
 {
@@ -32,6 +33,37 @@ export class WindowRendererItem
     constructor(skinContainer: ISkinContainer)
     {
         this._skinContainer = skinContainer;
+    }
+
+    /**
+     * Allocates the buffer this item renders its window's skin into.
+     *
+     * In AS3 this buffer belongs to the window's `GraphicContext` — the
+     * `BitmapData` of its `Bitmap` child — and `render()` receives it as a
+     * target. It is asked for the same way here, so `fetchDrawBuffer()` and
+     * this item hand out the same surface and the per-pixel mouse test reads
+     * the pixels the window actually drew.
+     *
+     * A window with no graphic-context host still gets a private buffer, so
+     * rendering never depends on the lookup succeeding.
+     */
+    // TS-only: AS3's render() took the target BitmapData as a parameter, so it
+    // had no allocation step of its own.
+    private static acquireDrawBuffer(window: IWindow, width: number, height: number): OffscreenCanvas | null
+    {
+        const host = window as unknown as Partial<IGraphicContextHost>;
+
+        if(typeof host.getGraphicContext === 'function')
+        {
+            const context = host.getGraphicContext(true);
+
+            if(context)
+            {
+                return context.allocateDrawBuffer(width, height);
+            }
+        }
+
+        return new OffscreenCanvas(width, height);
     }
 
     // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::_disposed
@@ -152,11 +184,16 @@ export class WindowRendererItem
 
         if(renderType !== WindowRendererItem.RENDER_TYPE_NULL)
         {
-            // Create or resize buffer
-            if(!this._buffer || this._buffer.width !== renderWidth || this._buffer.height !== renderHeight)
+            // Asked for on every render, not only on a size change: the window's
+            // graphic context owns this buffer and may have replaced it since
+            // (a resize, or a context rebuilt by setupGraphicsContext). Adopting
+            // a buffer nothing has drawn into is what `_refresh` below is for.
+            const buffer = WindowRendererItem.acquireDrawBuffer(window, renderWidth, renderHeight);
+
+            if(buffer !== this._buffer)
             {
-                this._buffer = new OffscreenCanvas(renderWidth, renderHeight);
-                this._bufferCtx = this._buffer.getContext('2d');
+                this._buffer = buffer;
+                this._bufferCtx = buffer ? buffer.getContext('2d') : null;
 
                 if(this._bufferCtx)
                 {

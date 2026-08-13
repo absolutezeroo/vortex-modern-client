@@ -10,7 +10,7 @@ import type {WindowEvent} from '../events/WindowEvent';
  * Extends ContainerController to hold child elements within the
  * bordered area.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/BorderController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BorderController.as
  */
 export class BorderController extends ContainerController
 {

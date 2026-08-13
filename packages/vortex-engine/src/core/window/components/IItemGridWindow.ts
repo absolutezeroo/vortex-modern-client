@@ -8,7 +8,7 @@ import type {IScrollableWindow} from './IScrollableWindow';
  * An item grid arranges children in a two-dimensional grid layout
  * with configurable columns, rows, spacing, and scroll support.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/IItemGridWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/IItemGridWindow.as
  */
 export interface IItemGridWindow extends IWindow, IScrollableWindow, IIterable
 {

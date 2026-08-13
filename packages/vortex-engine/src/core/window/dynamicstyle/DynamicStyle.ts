@@ -5,7 +5,7 @@
  * properties per window state (default, hover, pressed, disabled). Each
  * style can also hold child styles keyed by tag (e.g. "#icon", "#bg").
  *
- * @see sources/win63_2021_version/com/sulake/core/window/dynamicstyle/DynamicStyle.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/dynamicstyle/DynamicStyle.as
  */
 export class DynamicStyle
 {

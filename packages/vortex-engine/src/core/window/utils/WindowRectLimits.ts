@@ -7,7 +7,7 @@ import type {IRectLimiter} from './IRectLimiter';
  * Enforces min/max constraints on the owner window's dimensions.
  * Setting a limit that violates the current size will resize the window.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/utils/WindowRectLimits.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowRectLimits.as
  */
 export class WindowRectLimits implements IRectLimiter
 {

@@ -7,7 +7,7 @@ import type {ITabButtonWindow} from './ITabButtonWindow';
 /**
  * Interface for tab context windows.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/ITabContextWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITabContextWindow.as
  */
 export interface ITabContextWindow extends IWindow, IIterable
 {

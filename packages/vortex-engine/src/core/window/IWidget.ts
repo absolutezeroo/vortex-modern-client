@@ -9,7 +9,7 @@ import type {IIterable} from './utils/IIterable';
  *
  * In AS3 this was class_3420: IDisposable + IIterable + properties.
  *
- * @see sources/win63_version/core/window/class_3420.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWidget.as
  */
 export interface IWidget extends IDisposable, IIterable
 {

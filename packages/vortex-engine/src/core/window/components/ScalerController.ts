@@ -9,7 +9,7 @@ import type {WindowEvent} from '../events/WindowEvent';
  *
  * A scaler is an interactive element used to resize a parent frame window.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/ScalerController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScalerController.as
  */
 export class ScalerController extends InteractiveController implements IScalerWindow
 {

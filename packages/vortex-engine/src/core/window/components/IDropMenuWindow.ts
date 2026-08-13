@@ -3,7 +3,7 @@ import type {IInteractiveWindow} from './IInteractiveWindow';
 /**
  * Interface for drop menu windows.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/IDropMenuWindow.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IDropMenuWindow.as
  */
 export interface IDropMenuWindow extends IInteractiveWindow
 {

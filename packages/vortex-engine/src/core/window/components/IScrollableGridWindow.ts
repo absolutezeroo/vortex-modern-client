@@ -5,7 +5,7 @@ import type {IItemGridWindow} from './IItemGridWindow';
  *
  * Extends IItemGridWindow with auto-hide scrollbar support.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/IScrollableGridWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/IScrollableGridWindow.as
  */
 export interface IScrollableGridWindow extends IItemGridWindow
 {

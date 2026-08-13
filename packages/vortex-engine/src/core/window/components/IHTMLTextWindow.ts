@@ -7,7 +7,7 @@ import type {ITextFieldWindow} from './ITextFieldWindow';
  * HTMLTextController extends TextFieldController and already implements that surface, so this extends
  * ITextFieldWindow to expose text/selectable/fontSize (needed by wired HtmlPreset), not just IWindow.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/IHTMLTextWindow.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IHTMLTextWindow.as
  */
 export interface IHTMLTextWindow extends ITextFieldWindow
 {

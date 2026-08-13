@@ -7,7 +7,7 @@ import type {IScrollableWindow} from './IScrollableWindow';
  * Provides scroll position, orientation, and a reference to the
  * scrollable target window.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/IScrollbarWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/IScrollbarWindow.as
  */
 export interface IScrollbarWindow extends IInteractiveWindow
 {

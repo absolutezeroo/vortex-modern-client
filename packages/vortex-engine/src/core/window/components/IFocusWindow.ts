@@ -1,7 +1,7 @@
 /**
  * Interface for focusable windows.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/IFocusWindow.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IFocusWindow.as
  */
 export interface IFocusWindow
 {

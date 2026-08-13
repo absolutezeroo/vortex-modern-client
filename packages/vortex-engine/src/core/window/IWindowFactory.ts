@@ -8,7 +8,7 @@ import type {IThemeManager} from './theme/IThemeManager';
  * Creates and destroys windows, provides layout and default attribute lookups,
  * and gives access to the theme manager.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/IWindowFactory.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowFactory.as
  */
 export interface IWindowFactory
 {

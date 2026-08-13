@@ -4,7 +4,7 @@ import type {IDropMenuWindow} from './IDropMenuWindow';
 /**
  * Interface for drop list item windows.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/IDropListItemWindow.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IDropListItemWindow.as
  */
 export interface IDropListItemWindow extends IWindow
 {

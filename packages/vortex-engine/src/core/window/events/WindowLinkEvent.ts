@@ -7,7 +7,7 @@ import {WindowEvent} from './WindowEvent';
  * Dispatched when a link element within a window is activated.
  * Uses its own object pool separate from the base class.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/events/WindowLinkEvent.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/events/WindowLinkEvent.as
  */
 export class WindowLinkEvent extends WindowEvent
 {

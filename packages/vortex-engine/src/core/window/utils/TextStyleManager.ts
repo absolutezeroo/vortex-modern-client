@@ -6,7 +6,7 @@ import {TextStyle} from './TextStyle';
  * Initializes with 3 base defaults (regular, italic, bold) and parses
  * the embedded Habbo CSS to register ~60 additional named styles.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/utils/TextStyleManager.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as
  */
 export class TextStyleManager 
 {

@@ -3,10 +3,15 @@ import {MouseEventQueue} from '../MouseEventQueue';
 /**
  * Queue of pending touch events for batch processing.
  *
- * AS3 derives this from `GenericEventQueue`, the shared base `MouseEventQueue` also
- * extends; this port has no separate `GenericEventQueue` class, so it derives from
- * `MouseEventQueue` directly - the members AS3 inherits from the common base are the
- * ones already on it.
+ * AS3 derives this from `GenericEventQueue`, the shared base `MouseEventQueue`
+ * also extends. That base now exists here too, but this class still extends
+ * `MouseEventQueue` rather than it: `WindowContext.inputEventQueue` holds
+ * whichever queue the current input mode built, and `DesktopController` reads
+ * `mouseX`/`mouseY` off it in either mode. Those two live on `MouseEventQueue`,
+ * so dropping to the common base would mean duplicating them here — churn on
+ * the input hot path for no behavioural difference. AS3 avoids the question
+ * because it types that field `IEventQueue` and reads the pointer position
+ * from the Flash stage instead.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/tablet/TabletEventQueue.as
  */

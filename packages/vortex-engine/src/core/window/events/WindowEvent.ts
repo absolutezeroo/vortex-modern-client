@@ -7,7 +7,7 @@ import type {IWindow} from '../IWindow';
  * performance: use the static {@link allocate} factory instead of `new`,
  * and call {@link recycle} when done.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/events/WindowEvent.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/events/WindowEvent.as
  */
 export class WindowEvent
 {

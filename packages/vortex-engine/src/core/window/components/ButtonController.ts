@@ -1,3 +1,4 @@
+import type {ITouchAwareWindow} from '../utils/tablet/ITouchAwareWindow';
 import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {WindowController} from '../WindowController';
@@ -11,9 +12,9 @@ import type {WindowEvent} from '../events/WindowEvent';
  * to mouse events and state changes (normal, hover, pressed, disabled).
  * Syncs caption and blend to its _BTN_TEXT child.
  *
- * @see sources/win63_version/com/sulake/core/window/components/ButtonController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ButtonController.as
  */
-export class ButtonController extends InteractiveController
+export class ButtonController extends InteractiveController implements ITouchAwareWindow
 {
     // AS3: .../src/com/sulake/core/window/components/ButtonController.as::TEXT_FIELD_NAME
     protected static readonly TEXT_FIELD_NAME: string = '_BTN_TEXT';

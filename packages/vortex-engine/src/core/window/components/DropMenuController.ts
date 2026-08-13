@@ -12,7 +12,7 @@ import {DropBaseController} from './DropBaseController';
  * as strings rather than IWindow instances. Creates DropMenuItemController
  * (type 103) children when expanded.
  *
- * @see sources/win63_version/com/sulake/core/window/components/DropMenuController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/DropMenuController.as
  */
 export class DropMenuController extends DropBaseController implements IDropMenuWindow
 {

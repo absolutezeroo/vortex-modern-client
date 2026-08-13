@@ -22,7 +22,7 @@ import {SmoothScroller} from '../utils/SmoothScroller';
  * `win63_version` build (and this port, until now) used.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as
- * @see sources/win63_version/com/sulake/core/window/components/ScrollBarController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as
  */
 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::ScrollBarController()
 export class ScrollBarController extends InteractiveController implements IScrollbarWindow
@@ -57,7 +57,9 @@ export class ScrollBarController extends InteractiveController implements IScrol
      * `scroll_step_h`/`scroll_step_v` layout property that fed it, and no shipped layout declares
      * one. That default was 25, so every arrow click moved two thirds further than the real client.
      */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::onWindowEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::ScrollBarController()
+    // The 15 is the last argument of the `new SmoothScroller(...)` call there;
+    // AS3 gives it no name of its own, hence the derived constant.
     public static readonly SCROLL_BUTTON_STEP: number = 15;
 
     protected _scrollStep: number = 0.1;
@@ -65,7 +67,9 @@ export class ScrollBarController extends InteractiveController implements IScrol
     private _targetName: string | null = null;
     private _isUpdatingLift: boolean = false;
     private _initialized: boolean = false;
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::smoothScroller
+    // Derived name: the field is obfuscated as `_SafeStr_5488` in the primary
+    // tree and recovered in none; its type, SmoothScroller, is readable.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::_SafeStr_5488
     private _smoothScroller: SmoothScroller | null = null;
     private _boundScrollButtonEventProc: ((event: WindowEvent, window: IWindow) => void);
     private _boundOnScrollableResized: ((event: WindowEvent) => void);

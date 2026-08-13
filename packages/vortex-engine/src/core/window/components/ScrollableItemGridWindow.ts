@@ -14,7 +14,7 @@ import type {WindowEvent} from '../events/WindowEvent';
  * Combines an item grid with a scrollbar. The scrollbar is automatically
  * bound to the item grid and can optionally auto-hide when not needed.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/ScrollableItemGridWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemGridWindow.as
  */
 export class ScrollableItemGridWindow extends ContainerController implements IScrollableGridWindow
 {

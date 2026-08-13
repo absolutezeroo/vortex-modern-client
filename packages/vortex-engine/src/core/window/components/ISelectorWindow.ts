@@ -4,7 +4,7 @@ import type {ISelectableWindow} from './ISelectableWindow';
 /**
  * Interface for selector windows that manage mutual exclusion of selectables.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/ISelectorWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ISelectorWindow.as
  */
 export interface ISelectorWindow extends IWindow
 {

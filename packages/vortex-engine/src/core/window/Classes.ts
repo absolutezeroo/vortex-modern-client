@@ -60,7 +60,7 @@ import {BitmapFillController} from './components/BitmapFillController';
  *
  * Controllers are registered lazily on first call to init().
  *
- * @see sources/win63_2021_version/com/sulake/core/window/Classes.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/Classes.as
  */
 export class Classes 
 {

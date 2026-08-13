@@ -11,7 +11,7 @@ import {ContainerButtonController} from './ContainerButtonController';
  * Each item wraps a child IWindow as its value and can find its
  * parent IDropMenuWindow ancestor.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/DropListItemController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/DropListItemController.as
  */
 export class DropListItemController extends ContainerButtonController implements IDropListItemWindow
 {

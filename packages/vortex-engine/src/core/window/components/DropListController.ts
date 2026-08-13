@@ -12,7 +12,7 @@ import {DropListIterator} from '../iterators/DropListIterator';
  * Extends DropBaseController with IDropListWindow compliance: menu
  * item management (add, remove, get) with IWindow values.
  *
- * @see sources/win63_version/com/sulake/core/window/components/DropListController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/DropListController.as
  */
 export class DropListController extends DropBaseController implements IDropListWindow
 {

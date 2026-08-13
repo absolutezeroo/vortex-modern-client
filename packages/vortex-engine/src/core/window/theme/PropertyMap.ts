@@ -8,7 +8,7 @@ import {PropertyStruct} from '../utils/PropertyStruct';
  * number, string, hex, and array properties. Each entry is stored as
  * a PropertyStruct keyed by name.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/theme/PropertyMap.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/theme/PropertyMap.as
  */
 export class PropertyMap implements IPropertyMap
 {

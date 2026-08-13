@@ -4,7 +4,7 @@
  * Controls the visual theme/skin applied to a window element.
  * The core framework defines only DEFAULT; Habbo layer adds more styles.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/enum/_SafeStr_142.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/enum/WindowStyle.as
  */
 export const WindowStyle =
     {

@@ -13,7 +13,7 @@ import {WindowController} from '../WindowController';
  * A header window contains a title label and an item list of controls
  * (close button, minimize, etc.).
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/HeaderController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/HeaderController.as
  */
 export class HeaderController extends ContainerController implements IHeaderWindow
 {

@@ -4,7 +4,7 @@
  * Each constant maps to a unique numeric type ID used by the window framework
  * to identify the kind of UI element (button, container, frame, etc.).
  *
- * @see sources/win63_2021_version/com/sulake/core/window/enum/_SafeStr_112.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/enum/WindowType.as
  */
 export const WindowType =
     {
@@ -122,7 +122,7 @@ export type WindowTypeValue = typeof WindowType[keyof typeof WindowType];
  * Map element tag name to type ID.
  * Used at build time and runtime to resolve XML/JSON tag names.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/utils/TypeCodeTable.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TypeCodeTable.as
  */
 export const TYPE_NAME_TO_CODE: Record<string, number> =
     {

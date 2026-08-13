@@ -5,3 +5,4 @@ export {WindowLinkEvent} from './WindowLinkEvent';
 export {WindowDisposeEvent} from './WindowDisposeEvent';
 export {WindowTouchEvent} from './WindowTouchEvent';
 export {WindowEventDispatcher} from './WindowEventDispatcher';
+export {WindowMessage} from './WindowMessage';

@@ -604,6 +604,20 @@ export class WindowRenderer implements IWindowRenderer
         }
     }
 
+    /**
+     * `drawBuffer` is the target AS3 composes this branch into: every window
+     * sharing a graphic context draws onto its owner's BitmapData, which is why
+     * the parameter is threaded down the recursion.
+     *
+     * It is **not read** here, and cannot be until the port renders in one
+     * stage. `getWindowRendererItem(window).render(window)` below draws each
+     * window into its own buffer and `WindowComposite` blits them, so there is
+     * no shared target to compose into. The parameter is kept because removing
+     * it would erase the shape of AS3's compositing from the signature, and
+     * because the day the two render stages merge, this is where the target
+     * arrives. `window.fetchDrawBuffer()` feeding it currently yields null for
+     * every window — see `GraphicContext`'s constructor note.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/WindowRenderer.as::renderWindowBranch()
     private renderWindowBranch(window: IWindow, dirtyRegion: Rectangle, visibleRegion: Rectangle, drawBuffer: OffscreenCanvas | null): void
     {

@@ -9,7 +9,7 @@ import type {WindowEvent} from '../events/WindowEvent';
  * Extends TextFieldController with password display mode. The hidden
  * input element is set to type="password" so text is masked in the DOM.
  *
- * @see sources/win63_version/com/sulake/core/window/components/PasswordFieldController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/PasswordFieldController.as
  */
 export class PasswordFieldController extends TextFieldController
 {

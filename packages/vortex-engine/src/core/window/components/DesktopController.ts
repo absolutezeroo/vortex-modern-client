@@ -11,7 +11,7 @@ import {WindowContext} from '../WindowContext';
  * Extends ActivatorController to manage the active window via the inherited
  * activation system. Provides mouse position tracking and child lookup.
  *
- * @see sources/win63_version/com/sulake/core/window/components/DesktopController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/DesktopController.as
  */
 export class DesktopController extends ActivatorController implements IDesktopWindow
 {

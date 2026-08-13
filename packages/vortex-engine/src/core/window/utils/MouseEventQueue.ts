@@ -1,13 +1,13 @@
+import {GenericEventQueue} from './GenericEventQueue';
+
 /**
- * Queue of pending mouse events for batch processing.
+ * One buffered pointer event.
  *
- * In AS3 this extended GenericEventQueue and listened to Flash stage
- * mouse events, buffering them for later processing by the
- * MouseEventProcessor. In TypeScript, DOM events are collected and
- * queued here for engine-side consumption.
- *
- * @see sources/win63_2021_version/com/sulake/core/window/utils/MouseEventQueue.as
+ * AS3 queues `flash.events.MouseEvent` objects straight from the stage. There
+ * is no such class here, so the fields the processor actually reads are
+ * captured into a plain record at enqueue time.
  */
+// TS-only: stands in for flash.events.MouseEvent, which AS3 queued directly.
 export interface IMouseEventEntry
 {
     type: string;
@@ -20,16 +20,27 @@ export interface IMouseEventEntry
     delta: number;
 }
 
-export class MouseEventQueue
+/**
+ * Queue of pending mouse events for batch processing.
+ *
+ * Everything about the traversal — `begin`/`next`/`remove`/`end`/`flush` — is
+ * inherited from {@link GenericEventQueue}, as AS3 inherits it. What this class
+ * adds is AS3's own addition: the last pointer position, which the processor
+ * reads without walking the queue.
+ *
+ * In AS3 the queue subscribes to the Flash stage; here the client pushes DOM
+ * events in through {@link enqueue}.
+ *
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/MouseEventQueue.as
+ */
+export class MouseEventQueue extends GenericEventQueue<IMouseEventEntry>
 {
-    private _events: IMouseEventEntry[] = [];
-    private _readIndex: number = 0;
-
     private _mouseX: number = 0;
 
     /**
 	 * The current mouse position.
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/MouseEventQueue.as::get mousePosition()
     public get mouseX(): number
     {
         return this._mouseX;
@@ -37,79 +48,24 @@ export class MouseEventQueue
 
     private _mouseY: number = 0;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/MouseEventQueue.as::get mousePosition()
     public get mouseY(): number
     {
         return this._mouseY;
     }
 
-    private _disposed: boolean = false;
-
-    public get disposed(): boolean
-    {
-        return this._disposed;
-    }
-
     /**
-	 * Number of events currently in the queue.
-	 */
-    public get length(): number
-    {
-        return this._events.length;
-    }
-
-    /**
-	 * Enqueues a mouse event.
+	 * Enqueues a mouse event and records its position.
 	 *
 	 * @param event - The mouse event entry to enqueue
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/GenericEventQueue.as::eventListener()
     public enqueue(event: IMouseEventEntry): void
     {
         this._mouseX = event.stageX;
         this._mouseY = event.stageY;
-        this._events.push(event);
-    }
 
-    /**
-	 * Begins sequential reading of the queue.
-	 */
-    public begin(): void
-    {
-        this._readIndex = 0;
-    }
-
-    /**
-	 * Returns the next event in the queue, or null if exhausted.
-	 *
-	 * @returns The next event entry, or null
-	 */
-    public next(): IMouseEventEntry | null
-    {
-        if(this._readIndex < this._events.length)
-        {
-            return this._events[this._readIndex++];
-        }
-
-        return null;
-    }
-
-    /**
-	 * Removes the most recently read event from the queue.
-	 */
-    public remove(): void
-    {
-        if(this._readIndex > 0)
-        {
-            this._events.splice(this._readIndex - 1, 1);
-            this._readIndex--;
-        }
-    }
-
-    /**
-	 * Ends sequential reading of the queue.
-	 */
-    public end(): void
-    {
-        this._readIndex = 0;
+        this.eventListener(event);
     }
 
     /**
@@ -117,32 +73,27 @@ export class MouseEventQueue
 	 *
 	 * @returns The oldest event, or null if empty
 	 */
+    // TS-only: AS3 drains the queue only through begin()/next()/remove(); this
+    // head-pop is used by the port's own callers.
     public dequeue(): IMouseEventEntry | null
     {
-        if(this._events.length === 0)
+        if(this._eventArray.length === 0)
         {
             return null;
         }
 
-        return this._events.shift()!;
+        return this._eventArray.shift()!;
     }
 
-    /**
-	 * Removes all events from the queue.
-	 */
-    public flush(): void
-    {
-        this._events.length = 0;
-        this._readIndex = 0;
-    }
-
-    // AS3: .../src/com/sulake/core/window/utils/MouseEventQueue.as::dispose()
-    public dispose(): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/MouseEventQueue.as::dispose()
+    public override dispose(): void
     {
         if(!this._disposed)
         {
-            this._disposed = true;
-            this._events.length = 0;
+            this._mouseX = 0;
+            this._mouseY = 0;
+
+            super.dispose();
         }
     }
 }

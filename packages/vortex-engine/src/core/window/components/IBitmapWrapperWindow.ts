@@ -7,7 +7,7 @@ import type {IWindow} from '../IWindow';
  * The `bitmap` property is the primary way to set the content.
  *
  * @see sources/win63_version/core/window/components/BitmapWrapperController.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/components/IBitmapWrapperWindow.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IBitmapWrapperWindow.as
  */
 export interface IBitmapWrapperWindow extends IWindow {
     /**

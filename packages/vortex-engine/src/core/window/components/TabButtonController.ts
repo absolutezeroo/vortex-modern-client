@@ -11,7 +11,7 @@ import {SelectableController} from './SelectableController';
  * A selectable button used within a TabContextController's selector.
  * Resizes itself to accommodate children when they change size.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/TabButtonController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TabButtonController.as
  */
 export class TabButtonController extends SelectableController implements ITabButtonWindow
 {

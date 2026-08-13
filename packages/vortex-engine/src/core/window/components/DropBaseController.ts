@@ -1,3 +1,4 @@
+import type {ITouchAwareWindow} from '../utils/tablet/ITouchAwareWindow';
 import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {ILabelWindow} from './ILabelWindow';
@@ -19,9 +20,9 @@ import {InteractiveController} from './InteractiveController';
  * level via context.create(). Items are wrapped in DropListItemController instances
  * inside an IItemListWindow.
  *
- * @see sources/win63_version/com/sulake/core/window/components/DropBaseController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/DropBaseController.as
  */
-export class DropBaseController extends InteractiveController
+export class DropBaseController extends InteractiveController implements ITouchAwareWindow
 {
     // AS3: .../src/com/sulake/core/window/components/DropBaseController.as::CAPTION_BLEND_CHANGE
     protected static readonly CAPTION_BLEND_CHANGE: number = 0.5;

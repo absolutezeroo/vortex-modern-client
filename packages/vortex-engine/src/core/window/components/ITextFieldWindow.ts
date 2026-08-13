@@ -8,7 +8,7 @@ import type {IFocusWindow} from './IFocusWindow';
  * Extends ITextWindow with input-specific functionality: editable, selectable,
  * password display, focus management, and selection.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/ITextFieldWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextFieldWindow.as
  */
 export interface ITextFieldWindow extends ITextWindow, IInteractiveWindow, IFocusWindow
 {

@@ -10,6 +10,7 @@ import {WindowMouseScaler} from './WindowMouseScaler';
 import {FocusManager} from './FocusManager';
 import {WindowMouseListener} from './WindowMouseListener';
 import {WindowToolTipAgent} from './WindowToolTipAgent';
+import {GestureAgentService} from './GestureAgentService';
 
 /**
  * Aggregates all internal window services.
@@ -35,14 +36,7 @@ export class ServiceManager implements IInternalWindowServices
         this._mouseListener = new WindowMouseListener();
         this._focusManager = new FocusManager();
         this._toolTipAgent = new WindowToolTipAgent();
-
-        // Gesture agent stub — touch/gesture support deferred
-        this._gestureAgent = {
-            disposed: false,
-            dispose(): void
-            { /* stub */
-            },
-        };
+        this._gestureAgent = new GestureAgentService();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/ServiceManager.as::_disposed

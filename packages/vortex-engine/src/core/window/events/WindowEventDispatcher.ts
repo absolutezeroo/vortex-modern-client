@@ -22,7 +22,7 @@ interface IEventListenerEntry {
  * Manages event listeners per event type and dispatches {@link WindowEvent}
  * instances to registered callbacks in priority order (highest first).
  *
- * @see sources/win63_2021_version/com/sulake/core/window/events/WindowEventDispatcher.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/events/WindowEventDispatcher.as
  */
 export class WindowEventDispatcher 
 {

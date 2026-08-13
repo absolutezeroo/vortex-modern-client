@@ -14,7 +14,7 @@ import type {ICoreLocalizationManager} from '../localization/ICoreLocalizationMa
  * A context represents a layer in which windows are created and managed.
  * Each layer has its own factory, parser, desktop, and event processing.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/IWindowContext.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as
  */
 export interface IWindowContext extends IDisposable
 {

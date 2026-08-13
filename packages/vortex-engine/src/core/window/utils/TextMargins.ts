@@ -6,7 +6,7 @@ import type {IMargins} from './IMargins';
  * When any margin value is modified via setters, the registered
  * callback is invoked with this instance.
  *
- * @see sources/win63_version/com/sulake/core/window/utils/TextMargins.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/TextMargins.as
  */
 export class TextMargins implements IMargins
 {

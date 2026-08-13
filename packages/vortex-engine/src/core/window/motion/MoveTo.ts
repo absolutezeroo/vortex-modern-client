@@ -7,7 +7,7 @@ import {Interval} from './Interval';
  * On start, records the window's current position and computes deltas.
  * On each update, linearly interpolates between start and target positions.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/motion/MoveTo.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/motion/MoveTo.as
  */
 export class MoveTo extends Interval
 {

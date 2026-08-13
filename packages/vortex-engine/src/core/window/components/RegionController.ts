@@ -14,7 +14,7 @@ import type {WindowEvent} from '../events/WindowEvent';
  * Extends ContainerController with interactive tooltip/cursor features
  * by delegating to InteractiveController's static helpers.
  *
- * @see sources/win63_version/com/sulake/core/window/components/RegionController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/RegionController.as
  */
 export class RegionController extends ContainerController implements IRegionWindow
 {

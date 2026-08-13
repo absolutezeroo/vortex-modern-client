@@ -5,7 +5,7 @@ import type {IPropertyMap} from './IPropertyMap';
  *
  * Manages theme property defaults by style.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/theme/IThemeManager.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/theme/IThemeManager.as
  */
 export interface IThemeManager
 {

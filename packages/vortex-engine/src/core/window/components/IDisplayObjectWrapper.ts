@@ -7,7 +7,7 @@ import type {IWindow} from '../IWindow';
  * since Flash DisplayObject does not exist. The client layer provides
  * concrete rendering.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/IDisplayObjectWrapper.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IDisplayObjectWrapper.as
  */
 export interface IDisplayObjectWrapper extends IWindow
 {

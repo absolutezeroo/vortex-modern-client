@@ -3,7 +3,7 @@ import type {IWindow} from '../IWindow';
 /**
  * Focus manager service interface.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/services/IFocusManagerService.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/services/IFocusManagerService.as
  */
 export interface IFocusManagerService
 {

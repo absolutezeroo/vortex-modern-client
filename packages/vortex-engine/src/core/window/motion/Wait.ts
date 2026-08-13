@@ -7,7 +7,7 @@ import {Motion} from './Motion';
  * complete once the duration has passed. Useful for inserting delays
  * in a {@link Queue} of motions.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/motion/Wait.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/motion/Wait.as
  */
 export class Wait extends Motion
 {

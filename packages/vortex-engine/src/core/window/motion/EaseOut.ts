@@ -7,7 +7,7 @@ import type {Interval} from './Interval';
  * Applies `Math.pow(progress, 1/rate)` to produce deceleration easing,
  * where the animation starts fast and slows down toward the end.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/motion/EaseOut.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/motion/EaseOut.as
  */
 export class EaseOut extends EaseRate
 {

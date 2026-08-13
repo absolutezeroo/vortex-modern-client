@@ -1,8 +1,9 @@
 import {BitmapSkinRenderer} from './BitmapSkinRenderer';
 import {SkinLayout} from './SkinLayout';
 import {SkinLayoutEntity} from './SkinLayoutEntity';
-import {SkinTemplate} from './SkinTemplate';
-import {SkinTemplateEntity} from './SkinTemplateEntity';
+import {BitmapSkinTemplate} from './BitmapSkinTemplate';
+import {BitmapSkinTemplateEntity} from './BitmapSkinTemplateEntity';
+import type {SkinTemplateEntity} from './SkinTemplateEntity';
 import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('core.window.graphics.renderer.BitmapSkinParser');
@@ -83,7 +84,7 @@ export interface ISkinData
  * works with XML nodes and an IAssetLibrary; our version works with
  * pre-converted JSON data and an atlas map (asset name → ImageBitmap).
  *
- * @see sources/win63_2021_version/com/sulake/core/window/graphics/BitmapSkinParser.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/BitmapSkinParser.as
  */
 export class BitmapSkinParser
 {
@@ -230,7 +231,7 @@ export class BitmapSkinParser
             const assetName = BitmapSkinParser.resolveVariable(templateData.asset, variables);
             const atlas = atlases.get(assetName) ?? null;
 
-            const template = new SkinTemplate(name, atlas);
+            const template = new BitmapSkinTemplate(name, atlas);
 
             if(templateData.entities)
             {
@@ -259,7 +260,7 @@ export class BitmapSkinParser
         const type = BitmapSkinParser.resolveVariable(data.type, variables);
         const id = BitmapSkinParser.resolveNumberVariable(data.id, variables);
 
-        return new SkinTemplateEntity(id, name, type, {
+        return new BitmapSkinTemplateEntity(id, name, type, {
             x: BitmapSkinParser.resolveNumberVariable(data.region.x, variables),
             y: BitmapSkinParser.resolveNumberVariable(data.region.y, variables),
             width: BitmapSkinParser.resolveNumberVariable(data.region.width, variables),

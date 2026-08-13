@@ -1,7 +1,7 @@
 /**
  * Mouse cursor type constants.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/enum/_SafeStr_162.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/enum/MouseCursorType.as
  */
 export const MouseCursorType =
     {

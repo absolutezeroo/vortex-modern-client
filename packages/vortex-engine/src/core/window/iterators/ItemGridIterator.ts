@@ -20,7 +20,7 @@ interface IItemGridHost
  * In AS3, extends Proxy and delegates to ItemGridController methods
  * (numGridItems, getGridItemAt, getGridItemIndex).
  *
- * @see sources/win63_version/com/sulake/core/window/iterators/ItemGridIterator.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/iterators/ItemGridIterator.as
  */
 export class ItemGridIterator implements IIterator
 {

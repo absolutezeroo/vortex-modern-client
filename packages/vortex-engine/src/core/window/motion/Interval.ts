@@ -7,7 +7,7 @@ import {Motion} from './Motion';
  * Tracks a start timestamp and duration, computing a normalized progress
  * value [0..1] on each tick. When progress reaches 1, the motion completes.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/motion/Interval.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/motion/Interval.as
  */
 export class Interval extends Motion
 {

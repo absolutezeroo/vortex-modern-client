@@ -8,7 +8,7 @@ import {MoveTo} from './MoveTo';
  * by adding the offset to the window's current position, then delegates
  * to MoveTo for the interpolation.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/motion/MoveBy.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/motion/MoveBy.as
  */
 export class MoveBy extends MoveTo
 {

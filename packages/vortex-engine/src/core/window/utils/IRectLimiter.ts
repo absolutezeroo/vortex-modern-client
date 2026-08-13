@@ -1,7 +1,7 @@
 /**
  * Interface for rectangle size limits.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/utils/IRectLimiter.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/IRectLimiter.as
  */
 export interface IRectLimiter
 {

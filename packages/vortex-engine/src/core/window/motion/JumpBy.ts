@@ -8,7 +8,7 @@ import {Interval} from './Interval';
  * The height parameter controls the peak of each bounce arc, and
  * the jumps parameter controls how many bounces occur during the motion.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/motion/JumpBy.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/motion/JumpBy.as
  */
 export class JumpBy extends Interval
 {

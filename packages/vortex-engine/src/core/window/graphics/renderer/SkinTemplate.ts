@@ -6,7 +6,7 @@ import type {SkinTemplateEntity} from './SkinTemplateEntity';
  * Each template represents a set of source regions in a spritesheet.
  * The atlas is the ImageBitmap of the spritesheet PNG.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/graphics/renderer/SkinTemplate.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/renderer/SkinTemplate.as
  */
 export class SkinTemplate 
 {

@@ -9,7 +9,7 @@ import {SelectableController} from './SelectableController';
  *
  * Toggles selected state on mouse up (WME_UP) event.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/CheckBoxController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/CheckBoxController.as
  */
 export class CheckBoxController extends SelectableController
 {

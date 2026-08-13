@@ -12,7 +12,7 @@ import {SelectableController} from './SelectableController';
  * Radio buttons are grouped by their parent ISelectorWindow for
  * mutual exclusion.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/RadioButtonController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/RadioButtonController.as
  */
 export class RadioButtonController extends SelectableController implements IRadioButtonWindow
 {

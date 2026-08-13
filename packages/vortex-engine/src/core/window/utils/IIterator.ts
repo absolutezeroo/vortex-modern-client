@@ -3,7 +3,7 @@ import type {IWindow} from '../IWindow';
 /**
  * Iterator interface for traversing window children.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/utils/IIterator.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/IIterator.as
  */
 export interface IIterator
 {

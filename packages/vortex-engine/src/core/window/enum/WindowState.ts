@@ -4,7 +4,7 @@
  * Represents the visual/interactive state of a window element.
  * Multiple states can be combined via bitwise OR.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/enum/_SafeStr_137.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/enum/WindowState.as
  */
 export const WindowState =
     {
@@ -25,7 +25,7 @@ export type WindowStateValue = typeof WindowState[keyof typeof WindowState];
  * Priority-ordered list of states for skin renderer resolution.
  * Higher priority states are checked first.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/graphics/SkinContainer.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/SkinContainer.as
  */
 export const STATE_PRIORITY: readonly number[] = [
     WindowState.LOCKED,

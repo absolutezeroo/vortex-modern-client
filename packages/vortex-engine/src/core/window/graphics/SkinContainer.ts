@@ -9,7 +9,7 @@ import type {DefaultAttStruct} from '../utils/DefaultAttStruct';
  * In AS3 this used Dictionary objects with array buckets keyed by
  * type, then indexed by style. In TypeScript we use nested Maps.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/graphics/SkinContainer.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/SkinContainer.as
  */
 export class SkinContainer implements ISkinContainer
 {

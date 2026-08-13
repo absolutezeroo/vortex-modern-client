@@ -8,7 +8,7 @@ import {WindowEvent} from './WindowEvent';
  * local/stage coordinates, touch size, pressure, and modifier keys.
  * Uses its own object pool separate from the base class.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/events/WindowTouchEvent.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/events/WindowTouchEvent.as
  */
 export class WindowTouchEvent extends WindowEvent 
 {

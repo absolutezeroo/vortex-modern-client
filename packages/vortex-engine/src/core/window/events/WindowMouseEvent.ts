@@ -8,7 +8,7 @@ import {WindowEvent} from './WindowEvent';
  * local/stage coordinates, modifier keys, button state, and scroll delta.
  * Uses its own object pool separate from the base class.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/events/WindowMouseEvent.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/events/WindowMouseEvent.as
  */
 export class WindowMouseEvent extends WindowEvent
 {

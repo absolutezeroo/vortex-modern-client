@@ -13,7 +13,7 @@ import {SelectableController} from './SelectableController';
  * Combines selectable behavior with container iteration, acting as
  * a tab button that also supports IWindowContainer and IIterable.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/TabContainerButtonController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TabContainerButtonController.as
  */
 export class TabContainerButtonController extends SelectableController implements ITabButtonWindow, IWindowContainer
 {

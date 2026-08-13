@@ -11,7 +11,7 @@ import type {IDisposable} from "../runtime/IDisposable";
  * Defines the complete API for a window element: position, size, style, state,
  * param, events, hit-testing, children lookup, and coordinate conversion.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/IWindow.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindow.as
  */
 export interface IWindow extends IDisposable
 {

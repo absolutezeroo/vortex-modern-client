@@ -14,7 +14,7 @@ import {InteractiveController} from './InteractiveController';
  * Manages mutual exclusion of selectable children: when one child is
  * selected, the previously selected child is deselected.
  *
- * @see sources/win63_version/com/sulake/core/window/components/SelectorController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SelectorController.as
  */
 export class SelectorController extends InteractiveController implements ISelectorWindow
 {

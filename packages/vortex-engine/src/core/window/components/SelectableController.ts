@@ -12,7 +12,7 @@ import {InteractiveController} from './InteractiveController';
  * Extends InteractiveController with select/unselect behavior and
  * optional integration with a parent ISelectorWindow for mutual exclusion.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/SelectableController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SelectableController.as
  */
 export class SelectableController extends InteractiveController implements ISelectableWindow
 {

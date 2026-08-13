@@ -7,7 +7,7 @@ import {Motion} from './Motion';
  * Once ticked, the target window is disposed (if it exists and is not
  * already disposed) and the target reference is cleared.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/motion/Dispose.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/motion/Dispose.as
  */
 export class Dispose extends Motion
 {

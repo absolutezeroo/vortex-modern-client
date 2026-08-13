@@ -11,7 +11,7 @@ import type {WindowEvent} from '../events/WindowEvent';
  * A text-based menu item used inside a DropMenuController.
  * Unlike DropListItemController, the value is the item itself.
  *
- * @see sources/win63_version/com/sulake/core/window/components/DropMenuItemController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/DropMenuItemController.as
  */
 export class DropMenuItemController extends ButtonController implements IDropListItemWindow
 {

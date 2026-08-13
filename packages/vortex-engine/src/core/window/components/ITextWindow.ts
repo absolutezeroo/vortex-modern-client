@@ -32,7 +32,7 @@ export interface ITextFormat
  * Provides access to text content, formatting properties (font, size, bold,
  * italic, color), scrolling, and margins.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/ITextWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as
  */
 export interface ITextWindow extends IWindow, IScrollableWindow
 {

@@ -6,7 +6,7 @@ import type {IWindow} from '../IWindow';
  * Provides horizontal and vertical scroll position, step size,
  * maximum scroll values, and visible/scrollable region rectangles.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/IScrollableWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/IScrollableWindow.as
  */
 export interface IScrollableWindow extends IWindow
 {

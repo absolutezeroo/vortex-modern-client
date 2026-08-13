@@ -11,7 +11,7 @@ import type {WindowEvent} from '../events/WindowEvent';
  * the activator deactivates the previous active child and moves the new one
  * to the top of the z-order.
  *
- * @see sources/win63_version/com/sulake/core/window/components/ActivatorController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ActivatorController.as
  */
 export class ActivatorController extends ContainerController
 {

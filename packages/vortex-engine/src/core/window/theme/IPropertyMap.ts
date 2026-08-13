@@ -3,7 +3,7 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
 /**
  * Property map interface for theme defaults.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/theme/IPropertyMap.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/theme/IPropertyMap.as
  */
 export interface IPropertyMap
 {

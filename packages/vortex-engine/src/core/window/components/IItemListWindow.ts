@@ -8,7 +8,7 @@ import type {IScrollableWindow} from './IScrollableWindow';
  * An item list arranges children in a single-axis layout
  * (horizontal or vertical) with optional spacing and scrolling.
  *
- * @see sources/win63_version/com/sulake/core/window/components/IItemListWindow.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/IItemListWindow.as
  */
 export interface IItemListWindow extends IWindowContainer, IScrollableWindow
 {

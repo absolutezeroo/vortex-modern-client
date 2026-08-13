@@ -1,5 +1,6 @@
 export type {IFocusManagerService} from './IFocusManagerService';
-export type {IGestureAgentService} from './IGestureAgentService';
+export type {IGestureAgentService, GestureAgentCallback} from './IGestureAgentService';
+export {GestureAgentService} from './GestureAgentService';
 export type {IInternalWindowServices} from './IInternalWindowServices';
 export type {IMouseDraggingService} from './IMouseDraggingService';
 export type {IMouseListenerService} from './IMouseListenerService';

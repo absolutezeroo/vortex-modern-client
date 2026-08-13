@@ -4,7 +4,7 @@ import type {IDisposable} from "../../runtime/IDisposable";
 /**
  * Interface for parsing XML window layout definitions and constructing window trees.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/utils/IWindowParser.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/IWindowParser.as
  */
 export interface IWindowParser extends IDisposable
 {

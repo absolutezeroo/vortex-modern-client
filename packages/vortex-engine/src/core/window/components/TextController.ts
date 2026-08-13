@@ -33,7 +33,7 @@ export interface ITextFormatRange
 /**
  * Port of AS3 TextController.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/TextController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as
  */
 export class TextController extends WindowController implements ITextWindow
 {

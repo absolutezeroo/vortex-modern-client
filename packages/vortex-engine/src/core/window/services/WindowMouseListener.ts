@@ -1,5 +1,6 @@
 import type {IMouseListenerService} from './IMouseListenerService';
 import type {IWindow} from '../IWindow';
+import {MouseListenerType} from '../enum/MouseListenerType';
 import {WindowMouseOperator} from './WindowMouseOperator';
 
 /**
@@ -9,12 +10,11 @@ import {WindowMouseOperator} from './WindowMouseOperator';
  * area limit. Windows can subscribe to specific event types and
  * restrict events to inside or outside their bounds.
  *
- * Area limit values:
- * - 0: All events (no filtering)
- * - 1: Inside only (events must hit-test inside the window)
- * - 3: Outside only (events must hit-test outside the window)
+ * Area limit values come from {@link MouseListenerType}: `EVENT_INSIDE_STAGE`
+ * takes everything, `EVENTS_INSIDE_WINDOW` only what hit-tests inside the
+ * window, `EVENTS_OUTSIDE_WINDOW` only what hit-tests outside it.
  *
- * @see sources/win63_version/core/window/services/WindowMouseListener.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseListener.as
  */
 export class WindowMouseListener extends WindowMouseOperator implements IMouseListenerService
 {
@@ -68,15 +68,13 @@ export class WindowMouseListener extends WindowMouseOperator implements IMouseLi
     {
         if(!this._active || !this._window || this._window.disposed) return false;
 
-        if(this._areaLimit === 0) return true;
+        if(this._areaLimit === MouseListenerType.EVENT_INSIDE_STAGE) return true;
 
         const isInside = this._window.hitTestGlobalPoint({x: stageX, y: stageY});
 
-        // Area limit = 1: inside only
-        if(this._areaLimit === 1 && !isInside) return false;
+        if(this._areaLimit === MouseListenerType.EVENTS_INSIDE_WINDOW && !isInside) return false;
 
-        // Area limit = 3: outside only
-        if(this._areaLimit === 3 && isInside) return false;
+        if(this._areaLimit === MouseListenerType.EVENTS_OUTSIDE_WINDOW && isInside) return false;
 
         return true;
     }

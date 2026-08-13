@@ -6,7 +6,7 @@ import {DynamicStyle} from './DynamicStyle';
  * Lazily initializes a table of built-in styles (lifted_hover,
  * brightness_and_shadow_under) and allows lookup by name.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/dynamicstyle/DynamicStyleManager.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/dynamicstyle/DynamicStyleManager.as
  */
 export class DynamicStyleManager
 {

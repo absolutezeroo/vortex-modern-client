@@ -11,7 +11,7 @@ import {InteractiveController} from './InteractiveController';
  * Combines interactive (button) behavior with container iteration,
  * acting as a clickable container that holds child windows.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/ContainerButtonController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ContainerButtonController.as
  */
 export class ContainerButtonController extends InteractiveController
 {

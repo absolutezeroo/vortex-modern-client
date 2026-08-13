@@ -6,7 +6,7 @@ import type {IIterator} from '../utils/IIterator';
  *
  * Used as the default iterator for non-container windows that have no children.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/iterators/EmptyIterator.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/iterators/EmptyIterator.as
  */
 export class EmptyIterator implements IIterator
 {

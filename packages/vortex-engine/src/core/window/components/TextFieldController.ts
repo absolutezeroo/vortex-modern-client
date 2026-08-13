@@ -19,7 +19,7 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  * we use a hidden HTML input element overlaid on the canvas to
  * capture user input, syncing text back to the window.
  *
- * @see sources/win63_version/com/sulake/core/window/components/TextFieldController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextFieldController.as
  */
 export class TextFieldController extends TextController implements ITextFieldWindow
 {

@@ -10,7 +10,7 @@ import {InteractiveController} from './InteractiveController';
  *
  * An interactive button that displays an icon image specified by URL.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/IconButtonController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/IconButtonController.as
  */
 export class IconButtonController extends InteractiveController implements IIconButtonWindow
 {

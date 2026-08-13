@@ -6,7 +6,7 @@ import {WindowEvent} from './WindowEvent';
  *
  * Uses its own object pool separate from the base class.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/events/WindowDisposeEvent.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/events/WindowDisposeEvent.as
  */
 export class WindowDisposeEvent extends WindowEvent 
 {

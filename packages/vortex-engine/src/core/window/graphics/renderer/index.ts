@@ -30,3 +30,8 @@ export type {
 export type {ISkinRenderer} from './ISkinRenderer';
 export type {IColorTransform} from './HsvLayerColor';
 export type {IEtchingOffset} from './SkinRenderer';
+export {BitmapSkinTemplate} from './BitmapSkinTemplate';
+export {BitmapSkinTemplateEntity} from './BitmapSkinTemplateEntity';
+export type {ISkinTemplate} from './ISkinTemplate';
+export type {ISkinTemplateEntity} from './ISkinTemplateEntity';
+export type {ISkinLayout} from './ISkinLayout';

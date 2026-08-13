@@ -12,7 +12,7 @@ import {ButtonController} from './ButtonController';
  * Extends ButtonController with select/unselect behavior and
  * optional integration with a parent ISelectorWindow for mutual exclusion.
  *
- * @see sources/win63_version/com/sulake/core/window/components/SelectableButtonController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SelectableButtonController.as
  */
 export class SelectableButtonController extends ButtonController implements ISelectableWindow
 {

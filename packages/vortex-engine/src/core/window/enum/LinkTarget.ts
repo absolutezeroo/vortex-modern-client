@@ -1,7 +1,7 @@
 /**
  * Link target constants for text link navigation.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/enum/_SafeStr_165.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/enum/LinkTarget.as
  */
 export const LinkTarget =
     {

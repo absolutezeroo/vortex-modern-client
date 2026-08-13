@@ -3,7 +3,7 @@ import type {IWindowContainer} from '../IWindowContainer';
 /**
  * Interface for box sizer windows.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/IBoxSizerWindow.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IBoxSizerWindow.as
  */
 export interface IBoxSizerWindow extends IWindowContainer
 {

@@ -8,7 +8,7 @@ import {Motion} from './Motion';
  * it is stopped and the next motion in the queue is started. The
  * queue itself completes when the last motion finishes.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/motion/Queue.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/motion/Queue.as
  */
 export class Queue extends Motion
 {
