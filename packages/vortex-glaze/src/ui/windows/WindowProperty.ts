@@ -4,6 +4,8 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {TYPE_CODE_TO_NAME} from '@core/window/enum/WindowType';
 import {WindowParam} from '@core/window/enum/WindowParam';
+import {signal, computed, effect, type Scope, type SignalReader} from '@core/reactive';
+import {createWindowScope, bind, on, each, type IReconcilableList} from '@core/window/reactive';
 import {EditorEvents, type EditorState} from '../../state/EditorState';
 import {themeNames} from '../../ops/ThemeOps';
 import {applyVariablesLive} from '../../ops/VariableOps';
@@ -18,141 +20,315 @@ const COLOR_ROW = slotsOf('glaze_prop_color_xml');
 const VAR_ROW = slotsOf('glaze_prop_var_xml');
 const ADDVAR_ROW = slotsOf('glaze_prop_addvar_xml');
 
-interface IListLike { addListItem(item: IWindow): IWindow; destroyListItems(): void; }
-interface IInputWidget { text: string; addEventListener(type: string, cb: () => void): void; }
-interface ICheckWidget { isSelected: boolean; addEventListener(type: string, cb: () => void): void; }
-interface IDropWidget { populate(items: unknown[]): void; selection: number; addEventListener(type: string, cb: () => void): void; }
+interface IListLike { destroyListItems(): void; }
+interface IInputWidget extends IWindow { text: string; }
+interface ICheckWidget extends IWindow { isSelected: boolean; }
+interface IDropWidget extends IWindow { populate(items: unknown[]): void; selection: number; }
 interface IThemeManagerLike
 {
     getStyle(themeName: string, elementType: number, intent: string): number;
     getThemeAndIntent(elementType: number, style: number): { theme: string; intent: string };
 }
 
-interface ISelectOption { label: string; value: number; }
-
 const MIN_LIMIT = -2147483648;
 const MAX_LIMIT = 2147483647;
+
+/** One property row, described as data. `id` is the reconciliation key and its
+ *  `kind` prefix guarantees a row window is never asked to change shape. */
+type IRowDesc =
+    | { id: string; kind: 'group'; label: string }
+    | { id: string; kind: 'input'; label: string; type: string; live: boolean; historyKey: string | null;
+        read: () => string; write: ((v: string) => void) | null }
+    | { id: string; kind: 'check'; label: string; read: () => boolean; write: (b: boolean) => void }
+    | { id: string; kind: 'drop'; label: string; options: string[]; current: () => number;
+        onSelect: (index: number) => void }
+    | { id: string; kind: 'color'; label: string; historyKey: string; read: () => number; write: (c: number) => void }
+    | { id: string; kind: 'var'; label: string; type: string; value: string; key: string; node: string;
+        win: WindowController }
+    | { id: string; kind: 'addvar'; node: string; win: WindowController };
+
+/** A version signal: read it to depend on it, pulse it to invalidate readers. */
+const pulse = (): [SignalReader<number>, () => void] =>
+{
+    const [read, write] = signal(0);
+    let n = 0;
+
+    return [read, (): void => write(++n)];
+};
 
 /**
  * WindowProperty — the "Property Editor", rendered as Habbo widget rows.
  *
- * For the selected node it builds label+widget rows (Illumina `input`, `checkbox`,
- * `dropmenu`, colour swatch) inside the frame's itemlist, each bound to a
- * `WindowController` setter. Because every setter invalidates, edits redraw the
- * edited window live. Rebuilds on selection; geometry inputs refresh in place on
- * `GEOMETRY_CHANGED`. The last group exposes the node's layout `<variables>`,
- * which live windows discard and only the source XML carries.
+ * For the selected node it derives a list of row *descriptors* (label+widget
+ * kind+read/write closures) as a computed, and reconciles them by id: changing
+ * the selection re-uses the standing rows — the `name` input stays the same
+ * window, only its value and closures change — instead of destroying and
+ * rebuilding the whole panel. Variable rows come and go individually.
+ *
+ * Every write goes through a `WindowController` setter, and every setter
+ * invalidates, so edits redraw the edited window live. Geometry inputs refresh
+ * in place on `GEOMETRY_CHANGED`. Event handlers read the *current* descriptor
+ * (`row()`) at event time, never the one they were built with.
  */
 export class WindowProperty
 {
     private readonly _state: EditorState;
-    private readonly _list: IListLike;
+    private readonly _list: IWindow;
     private readonly _wm: EditorState['runtime']['windowManager'];
     private readonly _colorPicker: WindowColorPicker | null;
-    private _liveInputs: Array<{ input: IInputWidget; read: () => string }> = [];
-    private _rebuildScheduled = false;
+    private readonly _scope: Scope;
+
+    private readonly _selectionRev: SignalReader<number>;
+    private readonly _bumpSelection: () => void;
+    private readonly _geometryRev: SignalReader<number>;
+    private readonly _bumpGeometry: () => void;
+    private readonly _varsRev: SignalReader<number>;
+    private readonly _bumpVars: () => void;
 
     public constructor(state: EditorState, list: IWindow, colorPicker: WindowColorPicker | null = null)
     {
         this._state = state;
         this._wm = state.runtime.windowManager;
-        this._list = list as unknown as IListLike;
+        this._list = list;
         this._colorPicker = colorPicker;
+        this._scope = createWindowScope(list);
 
-        state.events.on(EditorEvents.SELECTION_CHANGED, this._scheduleRebuild);
-        state.events.on(EditorEvents.LAYOUT_CHANGED, this._scheduleRebuild);
-        state.events.on(EditorEvents.GEOMETRY_CHANGED, this._onGeometry);
+        [this._selectionRev, this._bumpSelection] = pulse();
+        [this._geometryRev, this._bumpGeometry] = pulse();
+        [this._varsRev, this._bumpVars] = pulse();
 
-        this._rebuild();
+        this._scope.run(() =>
+        {
+            this._state.events.on(EditorEvents.SELECTION_CHANGED, this._bumpSelection);
+            this._state.events.on(EditorEvents.LAYOUT_CHANGED, this._bumpSelection);
+            this._state.events.on(EditorEvents.GEOMETRY_CHANGED, this._bumpGeometry);
+        });
+
+        this._scope.addCleanup(() =>
+        {
+            this._state.events.off(EditorEvents.SELECTION_CHANGED, this._bumpSelection);
+            this._state.events.off(EditorEvents.LAYOUT_CHANGED, this._bumpSelection);
+            this._state.events.off(EditorEvents.GEOMETRY_CHANGED, this._bumpGeometry);
+        });
+
+        const rows = this._scope.run(() => computed((): IRowDesc[] => this.describe()));
+
+        each(this._scope, this._list as unknown as IReconcilableList, rows, {
+            key: (row) => row.id,
+            create: (row, initial) => this.buildRowWidget(row, initial),
+        });
     }
 
-    /** Coalesces rebuilds into a microtask (a widget must not be disposed while
-     *  still processing its own event). */
-    private readonly _scheduleRebuild = (): void =>
-    {
-        if(this._rebuildScheduled)
-        {
-            return;
-        }
+    // ---- Descriptors -------------------------------------------------------
 
-        this._rebuildScheduled = true;
-        queueMicrotask(() =>
-        {
-            this._rebuildScheduled = false;
-            this._rebuild();
-        });
-    };
-
-    private readonly _rebuild = (): void =>
+    /** The full row list for the current selection. */
+    private describe(): IRowDesc[]
     {
-        this._list.destroyListItems();
-        this._liveInputs = [];
+        this._selectionRev();
+        this._varsRev();
 
         const win = this._state.selected as unknown as WindowController | null;
 
         if(!win || win.disposed)
         {
-            return;
+            return [];
         }
 
-        this.buildCommon(win);
-        this.buildFlags(win);
-        this.buildVariables(win);
-    };
+        return [
+            ...this.describeCommon(win),
+            ...this.describeGeometry(win),
+            ...this.describeFlags(win),
+            ...this.describeVariables(win),
+        ];
+    }
 
-    private readonly _onGeometry = (): void =>
+    private describeCommon(win: WindowController): IRowDesc[]
     {
-        for(const {input, read} of this._liveInputs)
-        {
-            input.text = read();
-        }
-    };
+        const out: IRowDesc[] = [];
 
-    private buildCommon(win: WindowController): void
-    {
-        this.group('Common Properties');
-        this.inputRow('type', '', () => `${TYPE_CODE_TO_NAME[win.type] ?? 'null'} (${win.type})`, null);
-        this.inputRow('name', 'string', () => win.name, (v) => { win.name = v; });
-        this.inputRow('caption', 'string', () => win.caption, (v) => { win.caption = v; });
-        this.inputRow('tags', 'string', () => win.tags.join(', '), (v) =>
+        out.push({id: 'group:common', kind: 'group', label: 'Common Properties'});
+        out.push(this.input('type', '', () => `${TYPE_CODE_TO_NAME[win.type] ?? 'null'} (${win.type})`, null));
+        out.push(this.input('name', 'string', () => win.name, (v) => { win.name = v; }));
+        out.push(this.input('caption', 'string', () => win.caption, (v) => { win.caption = v; }));
+        out.push(this.input('tags', 'string', () => win.tags.join(', '), (v) =>
         {
             win.tags = v.split(',').map((t) => t.trim()).filter((t) => t.length > 0);
-        });
-        this.inputRow('id', 'uint', () => String(win.id), (v) => { const n = Number(v); if(!Number.isNaN(n)) win.id = n; });
+        }));
+        out.push(this.input('id', 'uint', () => String(win.id), (v) => { const n = Number(v); if(!Number.isNaN(n)) win.id = n; }));
 
         const tm = this.themeManager();
 
         if(tm)
         {
-            const {theme, intent} = tm.getThemeAndIntent(win.type, win.style);
+            const names = themeNames(this._state);
 
-            this.optionDropRow('theme', themeNames(this._state), theme, (name) =>
-            {
-                const cur = tm.getThemeAndIntent(win.type, win.style);
+            out.push({
+                id: 'drop:theme',
+                kind: 'drop',
+                label: 'theme',
+                options: names,
+                current: () => names.indexOf(tm.getThemeAndIntent(win.type, win.style).theme),
+                onSelect: (index) =>
+                {
+                    const name = names[index];
 
-                win.style = tm.getStyle(name, win.type, cur.intent);
+                    if(name)
+                    {
+                        win.style = tm.getStyle(name, win.type, tm.getThemeAndIntent(win.type, win.style).intent);
+                    }
+                },
             });
-            this.inputRow('intent', 'string', () => intent, null);
+            out.push(this.input('intent', 'string', () => tm.getThemeAndIntent(win.type, win.style).intent, null));
         }
 
-        this.inputRow('style', 'uint', () => String(win.style), (v) => { const n = Number(v); if(!Number.isNaN(n)) win.style = n; });
-        this.inputRow('dynamicStyle', 'string', () => win.dynamicStyle, (v) => { win.dynamicStyle = v; });
-        this.colorRow('color', () => win.color >>> 0, (c) => { win.color = c >>> 0; });
-        this.inputRow('blend', 'number', () => String(win.blend), (v) => { const n = Number(v); if(!Number.isNaN(n)) win.blend = n; });
-        this.checkRow('background', () => win.background, (b) => { win.background = b; });
-        this.checkRow('clipping', () => win.clipping, (b) => { win.clipping = b; });
-        this.checkRow('visible', () => win.visible, (b) => { win.visible = b; });
+        out.push(this.input('style', 'uint', () => String(win.style), (v) => { const n = Number(v); if(!Number.isNaN(n)) win.style = n; }));
+        out.push(this.input('dynamicStyle', 'string', () => win.dynamicStyle, (v) => { win.dynamicStyle = v; }));
+        out.push({
+            id: 'color:color',
+            kind: 'color',
+            label: 'color',
+            historyKey: 'color:color',
+            read: () => win.color >>> 0,
+            write: (c) => { win.color = c >>> 0; },
+        });
+        out.push(this.input('blend', 'number', () => String(win.blend), (v) => { const n = Number(v); if(!Number.isNaN(n)) win.blend = n; }));
+        out.push(this.check('background', () => win.background, (b) => { win.background = b; }));
+        out.push(this.check('clipping', () => win.clipping, (b) => { win.clipping = b; }));
+        out.push(this.check('visible', () => win.visible, (b) => { win.visible = b; }));
 
-        this.group('Geometry');
-        this.inputRow('x', 'int', () => String(win.x), (v) => this.setNum(v, (n) => { win.x = n; }), true);
-        this.inputRow('y', 'int', () => String(win.y), (v) => this.setNum(v, (n) => { win.y = n; }), true);
-        this.inputRow('width', 'int', () => String(win.width), (v) => this.setNum(v, (n) => { win.width = n; }), true);
-        this.inputRow('height', 'int', () => String(win.height), (v) => this.setNum(v, (n) => { win.height = n; }), true);
-        this.inputRow('width min', 'int', () => this.fmtLimit(win.limits.minWidth, MIN_LIMIT), (v) => this.setLimit(v, MIN_LIMIT, (n) => { win.limits.minWidth = n; }));
-        this.inputRow('width max', 'int', () => this.fmtLimit(win.limits.maxWidth, MAX_LIMIT), (v) => this.setLimit(v, MAX_LIMIT, (n) => { win.limits.maxWidth = n; }));
-        this.inputRow('height min', 'int', () => this.fmtLimit(win.limits.minHeight, MIN_LIMIT), (v) => this.setLimit(v, MIN_LIMIT, (n) => { win.limits.minHeight = n; }));
-        this.inputRow('height max', 'int', () => this.fmtLimit(win.limits.maxHeight, MAX_LIMIT), (v) => this.setLimit(v, MAX_LIMIT, (n) => { win.limits.maxHeight = n; }));
-        this.inputRow('threshold', 'uint', () => String(win.mouseThreshold), (v) => this.setNum(v, (n) => { win.mouseThreshold = n; }));
+        return out;
+    }
+
+    private describeGeometry(win: WindowController): IRowDesc[]
+    {
+        return [
+            {id: 'group:geometry', kind: 'group', label: 'Geometry'},
+            this.input('x', 'int', () => String(win.x), (v) => this.setNum(v, (n) => { win.x = n; }), true),
+            this.input('y', 'int', () => String(win.y), (v) => this.setNum(v, (n) => { win.y = n; }), true),
+            this.input('width', 'int', () => String(win.width), (v) => this.setNum(v, (n) => { win.width = n; }), true),
+            this.input('height', 'int', () => String(win.height), (v) => this.setNum(v, (n) => { win.height = n; }), true),
+            this.input('width min', 'int', () => this.fmtLimit(win.limits.minWidth, MIN_LIMIT), (v) => this.setLimit(v, MIN_LIMIT, (n) => { win.limits.minWidth = n; })),
+            this.input('width max', 'int', () => this.fmtLimit(win.limits.maxWidth, MAX_LIMIT), (v) => this.setLimit(v, MAX_LIMIT, (n) => { win.limits.maxWidth = n; })),
+            this.input('height min', 'int', () => this.fmtLimit(win.limits.minHeight, MIN_LIMIT), (v) => this.setLimit(v, MIN_LIMIT, (n) => { win.limits.minHeight = n; })),
+            this.input('height max', 'int', () => this.fmtLimit(win.limits.maxHeight, MAX_LIMIT), (v) => this.setLimit(v, MAX_LIMIT, (n) => { win.limits.maxHeight = n; })),
+            this.input('threshold', 'uint', () => String(win.mouseThreshold), (v) => this.setNum(v, (n) => { win.mouseThreshold = n; })),
+        ];
+    }
+
+    private describeFlags(win: WindowController): IRowDesc[]
+    {
+        const dropOf = (label: string, mask: number, options: { label: string; value: number }[]): IRowDesc => ({
+            id: `drop:${label}`,
+            kind: 'drop',
+            label,
+            options: options.map((o) => o.label),
+            current: () =>
+            {
+                const index = options.findIndex((o) => o.value === (win.param & mask));
+
+                return index >= 0 ? index : 0;
+            },
+            onSelect: (index) =>
+            {
+                const value = options[index]?.value ?? 0;
+
+                win.setParamFlag(mask, false);
+
+                if(value !== 0) win.setParamFlag(value, true);
+            },
+        });
+
+        return [
+            {id: 'group:flags', kind: 'group', label: 'Flags'},
+            dropOf('horizontal scaling', WindowParam.RELATIVE_HORIZONTAL_SCALE_MASK, [
+                {label: 'fixed', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_FIXED},
+                {label: 'move', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_MOVE},
+                {label: 'stretch', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_STRETCH},
+                {label: 'center', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_CENTER}
+            ]),
+            dropOf('vertical scaling', WindowParam.RELATIVE_VERTICAL_SCALE_MASK, [
+                {label: 'fixed', value: WindowParam.RELATIVE_VERTICAL_SCALE_FIXED},
+                {label: 'move', value: WindowParam.RELATIVE_VERTICAL_SCALE_MOVE},
+                {label: 'stretch', value: WindowParam.RELATIVE_VERTICAL_SCALE_STRETCH},
+                {label: 'center', value: WindowParam.RELATIVE_VERTICAL_SCALE_CENTER}
+            ]),
+            dropOf('horizontal align', 0xC0000, [
+                {label: 'left', value: WindowParam.ON_RESIZE_ALIGN_LEFT},
+                {label: 'right', value: WindowParam.ON_RESIZE_ALIGN_RIGHT},
+                {label: 'center', value: WindowParam.ON_RESIZE_ALIGN_CENTER}
+            ]),
+            dropOf('vertical align', 0x300000, [
+                {label: 'top', value: WindowParam.ON_RESIZE_ALIGN_TOP},
+                {label: 'bottom', value: WindowParam.ON_RESIZE_ALIGN_BOTTOM},
+                {label: 'middle', value: WindowParam.ON_RESIZE_ALIGN_MIDDLE}
+            ]),
+            this.flag(win, 'input event processor', WindowParam.INPUT_EVENT_PROCESSOR),
+            this.flag(win, 'use parent graphic context', WindowParam.USE_PARENT_GRAPHIC_CONTEXT),
+            this.flag(win, 'bound to parent rect', WindowParam.BOUND_TO_PARENT_RECT),
+            this.flag(win, 'expand to accommodate children', WindowParam.EXPAND_TO_ACCOMMODATE_CHILDREN),
+            this.flag(win, 'mouse dragging target', WindowParam.MOUSE_DRAGGING_TARGET),
+            this.flag(win, 'mouse scaling target', WindowParam.MOUSE_SCALING_TARGET),
+            this.flag(win, 'force clipping', WindowParam.FORCE_CLIPPING),
+            this.flag(win, 'inherit caption', WindowParam.INHERIT_CAPTION),
+        ];
+    }
+
+    /**
+     * The selected node's `<variables>`, edited off the source XML — the live
+     * window discards them, faithfully, so this is the only place they exist.
+     * Complex vars (`Point`/`Rectangle`/`Array`/`Map` sub-trees) are shown but
+     * not editable; the serializer re-emits them verbatim.
+     */
+    private describeVariables(win: WindowController): IRowDesc[]
+    {
+        const model = this._state.variables;
+        const name = win.name;
+
+        if(!model || !name)
+        {
+            return [];
+        }
+
+        const out: IRowDesc[] = [{id: 'group:variables', kind: 'group', label: 'Variables'}];
+
+        for(const entry of model.getVars(name))
+        {
+            if(entry.complex)
+            {
+                out.push(this.input(entry.key, entry.type, () => `<${entry.type}>`, null));
+                continue;
+            }
+
+            out.push({
+                id: `var:${entry.key}`,
+                kind: 'var',
+                label: entry.key,
+                type: entry.type,
+                value: entry.value,
+                key: entry.key,
+                node: name,
+                win,
+            });
+        }
+
+        out.push({id: 'addvar', kind: 'addvar', node: name, win});
+
+        return out;
+    }
+
+    private input(label: string, type: string, read: () => string, write: ((v: string) => void) | null, live: boolean = false): IRowDesc
+    {
+        return {id: `input:${label}`, kind: 'input', label, type, live, historyKey: write ? `prop:${label}` : null, read, write};
+    }
+
+    private check(label: string, read: () => boolean, write: (b: boolean) => void): IRowDesc
+    {
+        return {id: `check:${label}`, kind: 'check', label, read, write};
+    }
+
+    private flag(win: WindowController, label: string, flagBit: number): IRowDesc
+    {
+        return this.check(label, () => win.testParamFlag(flagBit), (b) => { win.setParamFlag(flagBit, b); });
     }
 
     private themeManager(): IThemeManagerLike | null
@@ -162,131 +338,268 @@ export class WindowProperty
         return wm.getThemeManager ? wm.getThemeManager() : null;
     }
 
-    private optionDropRow(label: string, options: string[], current: string, onSelect: (value: string) => void): void
+    // ---- Row widgets -------------------------------------------------------
+
+    /** Builds the widget for a descriptor; runs once per row lifetime. */
+    private buildRowWidget(row: SignalReader<IRowDesc>, initial: IRowDesc): IWindow | null
     {
-        const row = this._wm.buildWidgetLayout('glaze_prop_drop_xml');
-
-        if(!row) return;
-
-        const drop = DROP_ROW.findAs<IDropWidget>(row, 'glaze_drow_drop');
-
-        DROP_ROW.setText(row, 'glaze_drow_label', label);
-
-        if(drop)
+        switch(initial.kind)
         {
-            drop.populate(options);
-
-            const idx = options.indexOf(current);
-
-            drop.selection = idx >= 0 ? idx : 0;
-            drop.addEventListener('WE_SELECTED', () =>
-            {
-                const value = options[drop.selection];
-
-                if(value)
-                {
-                    this._state.pushHistory();
-                    onSelect(value);
-                    this._state.notifyTreeChanged();
-                }
-            });
+            case 'group': return this.buildGroup(row);
+            case 'input': return this.buildInput(row);
+            case 'check': return this.buildCheck(row);
+            case 'drop': return this.buildDrop(row);
+            case 'color': return this.buildColor(row);
+            case 'var': return this.buildVar(row);
+            case 'addvar': return this.buildAddVar(row);
         }
-
-        this._list.addListItem(row);
     }
 
-    private buildFlags(win: WindowController): void
+    private buildGroup(row: SignalReader<IRowDesc>): IWindow | null
     {
-        this.group('Flags');
-        this.dropRow(win, 'horizontal scaling', WindowParam.RELATIVE_HORIZONTAL_SCALE_MASK, [
-            {label: 'fixed', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_FIXED},
-            {label: 'move', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_MOVE},
-            {label: 'stretch', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_STRETCH},
-            {label: 'center', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_CENTER}
-        ]);
-        this.dropRow(win, 'vertical scaling', WindowParam.RELATIVE_VERTICAL_SCALE_MASK, [
-            {label: 'fixed', value: WindowParam.RELATIVE_VERTICAL_SCALE_FIXED},
-            {label: 'move', value: WindowParam.RELATIVE_VERTICAL_SCALE_MOVE},
-            {label: 'stretch', value: WindowParam.RELATIVE_VERTICAL_SCALE_STRETCH},
-            {label: 'center', value: WindowParam.RELATIVE_VERTICAL_SCALE_CENTER}
-        ]);
-        this.dropRow(win, 'horizontal align', 0xC0000, [
-            {label: 'left', value: WindowParam.ON_RESIZE_ALIGN_LEFT},
-            {label: 'right', value: WindowParam.ON_RESIZE_ALIGN_RIGHT},
-            {label: 'center', value: WindowParam.ON_RESIZE_ALIGN_CENTER}
-        ]);
-        this.dropRow(win, 'vertical align', 0x300000, [
-            {label: 'top', value: WindowParam.ON_RESIZE_ALIGN_TOP},
-            {label: 'bottom', value: WindowParam.ON_RESIZE_ALIGN_BOTTOM},
-            {label: 'middle', value: WindowParam.ON_RESIZE_ALIGN_MIDDLE}
-        ]);
-        this.flagRow(win, 'input event processor', WindowParam.INPUT_EVENT_PROCESSOR);
-        this.flagRow(win, 'use parent graphic context', WindowParam.USE_PARENT_GRAPHIC_CONTEXT);
-        this.flagRow(win, 'bound to parent rect', WindowParam.BOUND_TO_PARENT_RECT);
-        this.flagRow(win, 'expand to accommodate children', WindowParam.EXPAND_TO_ACCOMMODATE_CHILDREN);
-        this.flagRow(win, 'mouse dragging target', WindowParam.MOUSE_DRAGGING_TARGET);
-        this.flagRow(win, 'mouse scaling target', WindowParam.MOUSE_SCALING_TARGET);
-        this.flagRow(win, 'force clipping', WindowParam.FORCE_CLIPPING);
-        this.flagRow(win, 'inherit caption', WindowParam.INHERIT_CAPTION);
+        const widget = this._wm.buildWidgetLayout('glaze_prop_group_xml');
+
+        if(!widget) return null;
+
+        const label = GROUP_ROW.findAs<WindowController & { text: string }>(widget, 'glaze_group_label');
+
+        if(label) bind(label, 'text', () => { const d = row(); return d.kind === 'group' ? d.label : ''; });
+
+        return widget;
     }
 
-    /**
-     * The selected node's `<variables>`, edited off the source XML — the live
-     * window discards them, faithfully, so this is the only place they exist.
-     * Complex vars (`Point`/`Rectangle`/`Array`/`Map` sub-trees) are shown but not
-     * editable; the serializer re-emits them verbatim.
-     */
-    private buildVariables(win: WindowController): void
+    private buildInput(row: SignalReader<IRowDesc>): IWindow | null
     {
-        const model = this._state.variables;
-        const name = win.name;
+        const widget = this._wm.buildWidgetLayout('glaze_prop_input_xml');
 
-        if(!model || !name)
-        {
-            return;
-        }
+        if(!widget) return null;
 
-        const vars = model.getVars(name);
+        const label = INPUT_ROW.findAs<WindowController & { text: string }>(widget, 'glaze_prow_label');
+        const typeEl = INPUT_ROW.findAs<WindowController & { text: string }>(widget, 'glaze_prow_type');
+        const input = INPUT_ROW.findAs<IInputWidget>(widget, 'glaze_prow_input');
 
-        this.group('Variables');
-
-        for(const entry of vars)
-        {
-            if(entry.complex)
-            {
-                this.inputRow(entry.key, entry.type, () => `<${entry.type}>`, null);
-
-                continue;
-            }
-
-            this.varRow(win, name, entry.key, entry.type, entry.value);
-        }
-
-        this.addVarRow(win, name);
-    }
-
-    /** One editable `<var>`: its value, and the button that drops it. */
-    private varRow(win: WindowController, node: string, key: string, type: string, value: string): void
-    {
-        const model = this._state.variables;
-        const row = this._wm.buildWidgetLayout('glaze_prop_var_xml');
-
-        if(!row || !model) return;
-
-        const input = VAR_ROW.findAs<IInputWidget>(row, 'glaze_vrow_input');
-        const remove = VAR_ROW.findAs<WindowController>(row, 'glaze_vrow_remove');
-
-        VAR_ROW.setText(row, 'glaze_vrow_label', key);
-        VAR_ROW.setText(row, 'glaze_vrow_type', type);
+        if(label) bind(label, 'text', () => { const d = row(); return d.kind === 'input' ? d.label : ''; });
+        if(typeEl) bind(typeEl, 'text', () => { const d = row(); return d.kind === 'input' ? d.type : ''; });
 
         if(input)
         {
-            input.text = value;
-            input.addEventListener('WE_CHANGE', () =>
+            // The value follows the descriptor (selection/layout changes) and,
+            // for live rows, the geometry revision. Deliberately NOT the tree
+            // revision: typing must never be overwritten under the caret.
+            bind(input, 'text', () =>
             {
-                this._state.pushHistory(`var:${key}`);
-                model.setVarValue(node, key, input.text);
-                applyVariablesLive(win as unknown as IWindow, model.getVars(node));
+                const d = row();
+
+                if(d.kind !== 'input') return '';
+
+                if(d.live) this._geometryRev();
+
+                return d.read();
+            });
+
+            on(input, 'WE_CHANGE', () =>
+            {
+                const d = row();
+
+                if(d.kind !== 'input' || !d.write) return;
+
+                // Coalesce per-field so typing several chars = one undo step.
+                this._state.pushHistory(d.historyKey);
+                d.write(input.text);
+                this._state.notifyTreeChanged();
+            });
+        }
+
+        return widget;
+    }
+
+    private buildCheck(row: SignalReader<IRowDesc>): IWindow | null
+    {
+        const widget = this._wm.buildWidgetLayout('glaze_prop_check_xml');
+
+        if(!widget) return null;
+
+        const label = CHECK_ROW.findAs<WindowController & { text: string }>(widget, 'glaze_crow_label');
+        const check = CHECK_ROW.findAs<ICheckWidget>(widget, 'glaze_crow_check');
+
+        if(label) bind(label, 'text', () => { const d = row(); return d.kind === 'check' ? d.label : ''; });
+
+        if(check)
+        {
+            bind(check, 'isSelected', () => { const d = row(); return d.kind === 'check' ? d.read() : false; });
+
+            const commit = (value: boolean): void =>
+            {
+                const d = row();
+
+                if(d.kind !== 'check' || d.read() === value) return;
+
+                this._state.pushHistory();
+                d.write(value);
+                this._state.notifyTreeChanged();
+            };
+
+            on(check, 'WE_SELECTED', () => commit(true));
+            on(check, 'WE_UNSELECTED', () => commit(false));
+        }
+
+        return widget;
+    }
+
+    private buildDrop(row: SignalReader<IRowDesc>): IWindow | null
+    {
+        const widget = this._wm.buildWidgetLayout('glaze_prop_drop_xml');
+
+        if(!widget) return null;
+
+        const label = DROP_ROW.findAs<WindowController & { text: string }>(widget, 'glaze_drow_label');
+        const drop = DROP_ROW.findAs<IDropWidget>(widget, 'glaze_drow_drop');
+
+        if(label) bind(label, 'text', () => { const d = row(); return d.kind === 'drop' ? d.label : ''; });
+
+        if(drop)
+        {
+            // The dropdown's `selection` setter dispatches WE_SELECTED, so the
+            // programmatic sync below must not be mistaken for a user pick.
+            let syncing = false;
+
+            effect(() =>
+            {
+                const d = row();
+
+                if(d.kind !== 'drop' || drop.disposed) return;
+
+                syncing = true;
+
+                try
+                {
+                    drop.populate(d.options);
+
+                    const index = d.current();
+
+                    drop.selection = index >= 0 ? index : 0;
+                }
+                finally
+                {
+                    syncing = false;
+                }
+            });
+
+            on(drop, 'WE_SELECTED', () =>
+            {
+                if(syncing) return;
+
+                const d = row();
+
+                if(d.kind !== 'drop') return;
+
+                this._state.pushHistory();
+                d.onSelect(drop.selection);
+                this._state.notifyTreeChanged();
+            });
+        }
+
+        return widget;
+    }
+
+    /**
+     * A colour property: a clickable swatch that opens the picker, plus the hex
+     * field Glaze always had (still authoritative for exact ARGB values).
+     */
+    private buildColor(row: SignalReader<IRowDesc>): IWindow | null
+    {
+        const widget = this._wm.buildWidgetLayout('glaze_prop_color_xml');
+
+        if(!widget) return null;
+
+        const label = COLOR_ROW.findAs<WindowController & { text: string }>(widget, 'glaze_korow_label');
+        const swatch = COLOR_ROW.findAs<WindowController>(widget, 'glaze_korow_swatch');
+        const input = COLOR_ROW.findAs<IInputWidget>(widget, 'glaze_korow_input');
+        const hex = (color: number): string => `0x${(color >>> 0).toString(16).padStart(8, '0')}`;
+
+        if(label) bind(label, 'text', () => { const d = row(); return d.kind === 'color' ? d.label : ''; });
+        if(swatch) bind(swatch, 'color', () => { const d = row(); return d.kind === 'color' ? d.read() >>> 0 : 0; });
+        if(input) bind(input, 'text', () => { const d = row(); return d.kind === 'color' ? hex(d.read()) : ''; });
+
+        const commit = (color: number, syncInput: boolean): void =>
+        {
+            const d = row();
+
+            if(d.kind !== 'color') return;
+
+            d.write(color);
+
+            if(swatch && !swatch.disposed) swatch.color = color >>> 0;
+            if(syncInput && input && !input.disposed) input.text = hex(color);
+
+            this._state.notifyTreeChanged();
+        };
+
+        if(swatch)
+        {
+            swatch.procedure = (event: WindowEvent): void =>
+            {
+                const d = row();
+
+                if(event.type !== WindowMouseEvent.CLICK || !this._colorPicker || d.kind !== 'color') return;
+
+                this._colorPicker.open(d.label, d.read(), (color) =>
+                {
+                    this._state.pushHistory(d.historyKey);
+                    commit(color, true);
+                });
+            };
+        }
+
+        if(input)
+        {
+            on(input, 'WE_CHANGE', () =>
+            {
+                const d = row();
+
+                if(d.kind !== 'color') return;
+
+                const parsed = parseInt(input.text.replace(/^0x/i, '').replace(/^#/, ''), 16);
+
+                if(Number.isNaN(parsed)) return;
+
+                this._state.pushHistory(d.historyKey);
+                commit(parsed >>> 0, false);
+            });
+        }
+
+        return widget;
+    }
+
+    /** One editable `<var>`: its value, and the button that drops it. */
+    private buildVar(row: SignalReader<IRowDesc>): IWindow | null
+    {
+        const widget = this._wm.buildWidgetLayout('glaze_prop_var_xml');
+
+        if(!widget) return null;
+
+        const label = VAR_ROW.findAs<WindowController & { text: string }>(widget, 'glaze_vrow_label');
+        const typeEl = VAR_ROW.findAs<WindowController & { text: string }>(widget, 'glaze_vrow_type');
+        const input = VAR_ROW.findAs<IInputWidget>(widget, 'glaze_vrow_input');
+        const remove = VAR_ROW.findAs<WindowController>(widget, 'glaze_vrow_remove');
+
+        if(label) bind(label, 'text', () => { const d = row(); return d.kind === 'var' ? d.label : ''; });
+        if(typeEl) bind(typeEl, 'text', () => { const d = row(); return d.kind === 'var' ? d.type : ''; });
+
+        if(input)
+        {
+            bind(input, 'text', () => { const d = row(); return d.kind === 'var' ? d.value : ''; });
+
+            on(input, 'WE_CHANGE', () =>
+            {
+                const d = row();
+                const model = this._state.variables;
+
+                if(d.kind !== 'var' || !model) return;
+
+                this._state.pushHistory(`var:${d.key}`);
+                model.setVarValue(d.node, d.key, input.text);
+                applyVariablesLive(d.win as unknown as IWindow, model.getVars(d.node));
                 this._state.notifyTreeChanged();
             });
         }
@@ -295,16 +608,19 @@ export class WindowProperty
         {
             remove.procedure = (event: WindowEvent): void =>
             {
-                if(event.type !== WindowMouseEvent.CLICK) return;
+                const d = row();
+                const model = this._state.variables;
+
+                if(event.type !== WindowMouseEvent.CLICK || d.kind !== 'var' || !model) return;
 
                 this._state.pushHistory();
-                model.removeVar(node, key);
+                model.removeVar(d.node, d.key);
                 this._state.notifyTreeChanged();
-                this._scheduleRebuild();
+                this._bumpVars();
             };
         }
 
-        this._list.addListItem(row);
+        return widget;
     }
 
     /**
@@ -312,22 +628,24 @@ export class WindowProperty
      * block at all, so without this the vars the Flash layouts rely on
      * (`text_style`, `asset_uri`, `auto_size`…) could never be given to it.
      */
-    private addVarRow(win: WindowController, node: string): void
+    private buildAddVar(row: SignalReader<IRowDesc>): IWindow | null
     {
-        const model = this._state.variables;
-        const row = this._wm.buildWidgetLayout('glaze_prop_addvar_xml');
+        const widget = this._wm.buildWidgetLayout('glaze_prop_addvar_xml');
 
-        if(!row || !model) return;
+        if(!widget) return null;
 
-        const keyInput = ADDVAR_ROW.findAs<IInputWidget>(row, 'glaze_arow_key');
-        const valueInput = ADDVAR_ROW.findAs<IInputWidget>(row, 'glaze_arow_value');
-        const add = ADDVAR_ROW.findAs<WindowController>(row, 'glaze_arow_add');
+        const keyInput = ADDVAR_ROW.findAs<IInputWidget>(widget, 'glaze_arow_key');
+        const valueInput = ADDVAR_ROW.findAs<IInputWidget>(widget, 'glaze_arow_value');
+        const add = ADDVAR_ROW.findAs<WindowController>(widget, 'glaze_arow_add');
 
         if(add)
         {
             add.procedure = (event: WindowEvent): void =>
             {
-                if(event.type !== WindowMouseEvent.CLICK) return;
+                const d = row();
+                const model = this._state.variables;
+
+                if(event.type !== WindowMouseEvent.CLICK || d.kind !== 'addvar' || !model) return;
 
                 const key = (keyInput?.text ?? '').trim();
 
@@ -337,16 +655,20 @@ export class WindowProperty
 
                 this._state.pushHistory();
 
-                if(model.addVar(node, key, this.guessVarType(value), value))
+                if(model.addVar(d.node, key, this.guessVarType(value), value))
                 {
-                    applyVariablesLive(win as unknown as IWindow, model.getVars(node));
+                    applyVariablesLive(d.win as unknown as IWindow, model.getVars(d.node));
                     this._state.notifyTreeChanged();
-                    this._scheduleRebuild();
+                    this._bumpVars();
+
+                    // The old full rebuild recreated these empty; keep that UX.
+                    if(keyInput && !keyInput.disposed) keyInput.text = '';
+                    if(valueInput && !valueInput.disposed) valueInput.text = '';
                 }
             };
         }
 
-        this._list.addListItem(row);
+        return widget;
     }
 
     /** Types a new var from what was typed — the three forms `<var>` really uses. */
@@ -358,169 +680,6 @@ export class WindowProperty
         if(raw !== '' && !Number.isNaN(Number(raw))) return Number.isInteger(Number(raw)) ? 'int' : 'Number';
 
         return 'String';
-    }
-
-    // ---- Row builders ------------------------------------------------------
-
-    /**
-     * A colour property: a clickable swatch that opens the picker, plus the hex
-     * field Glaze always had (still authoritative for exact ARGB values).
-     */
-    private colorRow(label: string, read: () => number, write: (color: number) => void): void
-    {
-        const row = this._wm.buildWidgetLayout('glaze_prop_color_xml');
-
-        if(!row) return;
-
-        const swatch = COLOR_ROW.findAs<WindowController>(row, 'glaze_korow_swatch');
-        const input = COLOR_ROW.findAs<IInputWidget>(row, 'glaze_korow_input');
-        const hex = (color: number): string => `0x${(color >>> 0).toString(16).padStart(8, '0')}`;
-
-        COLOR_ROW.setText(row, 'glaze_korow_label', label);
-
-        const commit = (color: number, syncInput: boolean): void =>
-        {
-            write(color);
-
-            if(swatch && !swatch.disposed) swatch.color = color >>> 0;
-            if(syncInput && input) input.text = hex(color);
-
-            this._state.notifyTreeChanged();
-        };
-
-        if(swatch)
-        {
-            swatch.color = read() >>> 0;
-            swatch.procedure = (event: WindowEvent): void =>
-            {
-                if(event.type !== WindowMouseEvent.CLICK || !this._colorPicker) return;
-
-                this._colorPicker.open(label, read(), (color) =>
-                {
-                    this._state.pushHistory(`color:${label}`);
-                    commit(color, true);
-                });
-            };
-        }
-
-        if(input)
-        {
-            input.text = hex(read());
-            input.addEventListener('WE_CHANGE', () =>
-            {
-                const parsed = parseInt(input.text.replace(/^0x/i, '').replace(/^#/, ''), 16);
-
-                if(Number.isNaN(parsed)) return;
-
-                this._state.pushHistory(`color:${label}`);
-                commit(parsed >>> 0, false);
-            });
-        }
-
-        this._list.addListItem(row);
-    }
-
-    private group(title: string): void
-    {
-        const row = this._wm.buildWidgetLayout('glaze_prop_group_xml');
-
-        GROUP_ROW.setText(row, 'glaze_group_label', title);
-
-        if(row) this._list.addListItem(row);
-    }
-
-    private inputRow(label: string, type: string, read: () => string, write: ((v: string) => void) | null, live: boolean = false): void
-    {
-        const row = this._wm.buildWidgetLayout('glaze_prop_input_xml');
-
-        if(!row) return;
-
-        const input = INPUT_ROW.findAs<IInputWidget>(row, 'glaze_prow_input');
-
-        INPUT_ROW.setText(row, 'glaze_prow_label', label);
-        INPUT_ROW.setText(row, 'glaze_prow_type', type);
-
-        if(input)
-        {
-            input.text = read();
-
-            if(write)
-            {
-                input.addEventListener('WE_CHANGE', () =>
-                {
-                    // Coalesce per-field so typing several chars = one undo step.
-                    this._state.pushHistory(`prop:${label}`);
-                    write(input.text);
-                    this._state.notifyTreeChanged();
-                });
-            }
-
-            if(live)
-            {
-                this._liveInputs.push({input, read});
-            }
-        }
-
-        this._list.addListItem(row);
-    }
-
-    private checkRow(label: string, read: () => boolean, write: (b: boolean) => void): void
-    {
-        const row = this._wm.buildWidgetLayout('glaze_prop_check_xml');
-
-        if(!row) return;
-
-        const check = CHECK_ROW.findAs<ICheckWidget>(row, 'glaze_crow_check');
-
-        CHECK_ROW.setText(row, 'glaze_crow_label', label);
-
-        if(check)
-        {
-            check.isSelected = read();
-            check.addEventListener('WE_SELECTED', () => { this._state.pushHistory(); write(true); this._state.notifyTreeChanged(); });
-            check.addEventListener('WE_UNSELECTED', () => { this._state.pushHistory(); write(false); this._state.notifyTreeChanged(); });
-        }
-
-        this._list.addListItem(row);
-    }
-
-    private flagRow(win: WindowController, label: string, flag: number): void
-    {
-        this.checkRow(label, () => win.testParamFlag(flag), (b) => { win.setParamFlag(flag, b); });
-    }
-
-    private dropRow(win: WindowController, label: string, mask: number, options: ISelectOption[]): void
-    {
-        const row = this._wm.buildWidgetLayout('glaze_prop_drop_xml');
-
-        if(!row) return;
-
-        const drop = DROP_ROW.findAs<IDropWidget>(row, 'glaze_drow_drop');
-
-        DROP_ROW.setText(row, 'glaze_drow_label', label);
-
-        if(drop)
-        {
-            drop.populate(options.map((o) => o.label));
-
-            const current = win.param & mask;
-            const idx = options.findIndex((o) => o.value === current);
-
-            drop.selection = idx >= 0 ? idx : 0;
-            drop.addEventListener('WE_SELECTED', () =>
-            {
-                const value = options[drop.selection]?.value ?? 0;
-
-                this._state.pushHistory();
-                win.setParamFlag(mask, false);
-
-                if(value !== 0) win.setParamFlag(value, true);
-
-                this._state.notifyTreeChanged();
-            });
-        }
-
-        this._list.addListItem(row);
     }
 
     private setNum(v: string, apply: (n: number) => void): void
@@ -548,9 +707,7 @@ export class WindowProperty
 
     public dispose(): void
     {
-        this._state.events.off(EditorEvents.SELECTION_CHANGED, this._scheduleRebuild);
-        this._state.events.off(EditorEvents.LAYOUT_CHANGED, this._scheduleRebuild);
-        this._state.events.off(EditorEvents.GEOMETRY_CHANGED, this._onGeometry);
-        this._list.destroyListItems();
+        this._scope.dispose();
+        (this._list as unknown as IListLike).destroyListItems();
     }
 }
