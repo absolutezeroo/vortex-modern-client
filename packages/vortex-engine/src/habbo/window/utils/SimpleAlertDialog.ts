@@ -30,7 +30,7 @@ const log = Logger.getLogger('habbo.window.utils.SimpleAlertDialog');
  * bitmap dimensions) is preserved for the XML layout system.
  *
  * @see sources/win63_version/habbo/window/utils/SimpleAlertDialog.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/window/utils/SimpleAlertDialog.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as
  */
 export class SimpleAlertDialog implements IDisposable 
 {
@@ -38,22 +38,34 @@ export class SimpleAlertDialog implements IDisposable
     private static readonly WINDOW_MARGIN: number = 10;
     // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_modalDialog
     private _modalDialog: IModalDialog | null = null;
+    // Derived name: `_linkUrl` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_linkUrl
     private _linkUrl: string = '';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as::_window
     private _window: IWindowContainer | null = null;
+    // Derived name: obfuscated in every tree that carries this class (`_SafeStr_*`
+    // in the primary, `var_*` in the secondary), so no tree recovers it.
     // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_listMain
     private _listMain: IWindow | null = null;
+    // Derived name: obfuscated in every tree that carries this class (`_SafeStr_*`
+    // in the primary, `var_*` in the secondary), so no tree recovers it.
     // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_listTop
     private _listTop: IWindow | null = null;
+    // Derived name: obfuscated in every tree that carries this class (`_SafeStr_*`
+    // in the primary, `var_*` in the secondary), so no tree recovers it.
     // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_listBottom
     private _listBottom: IWindow | null = null;
+    // Derived name: obfuscated in every tree that carries this class (`_SafeStr_*`
+    // in the primary, `var_*` in the secondary), so no tree recovers it.
     // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_messageWindow
     private _messageWindow: IWindow | null = null;
     // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_subtitleWindow
     private _subtitleWindow: IWindow | null = null;
     // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_linkWindow
     private _linkWindow: IWindow | null = null;
+    // Derived name: `_illustrationWindow` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_illustrationWindow
     private _illustrationWindow: IWindow | null = null;
     // TS-only: callback refs stored explicitly (AS3 stored them per-instance differently)

@@ -147,7 +147,7 @@ export class HabboNotifications extends Component implements IHabboNotifications
         return this._windowManager;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::_petImageUtility
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/notifications/HabboNotifications.as::_petImageUtility
     // (obfuscated `_SafeStr_6444`; named from the getter that builds it)
     private _petImageUtility: PetImageUtility | null = null;
 

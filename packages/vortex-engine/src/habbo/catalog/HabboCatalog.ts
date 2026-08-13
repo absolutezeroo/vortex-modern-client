@@ -308,6 +308,8 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     private _catalogStates: Map<string, CatalogWindowState> | null = null;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_catalogNavigators
     private _catalogNavigators: Map<string, CatalogNavigator> | null = null;
+    // Derived name: `_searchTimer` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_searchTimer
     private _searchTimer: ReturnType<typeof setTimeout> | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_5194 (furniture data cache)

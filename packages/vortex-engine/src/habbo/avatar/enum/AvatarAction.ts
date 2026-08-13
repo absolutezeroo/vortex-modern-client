@@ -1,7 +1,7 @@
 /**
  * Avatar action identifiers and utility methods for expressions/gestures.
  *
- * @see sources/win63_version/habbo/avatar/enum/class_3584.as (AvatarAction)
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as (AvatarAction)
  */
 export class AvatarAction
 {

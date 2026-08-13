@@ -34,7 +34,7 @@ export interface IHabboToolbar
     /**
 	 * Room UI dependency used by the bottom bar resize flow.
 	 */
-    // AS3: sources/win63_version/habbo/toolbar/IHabboToolbar.as::get roomUI()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::get roomUI()
     readonly roomUI: IRoomUI | null;
 
     /**

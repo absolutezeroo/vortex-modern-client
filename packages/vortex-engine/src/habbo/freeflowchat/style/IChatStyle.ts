@@ -23,7 +23,7 @@ export interface IChatTextFormat
  * selector / preference UI).
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/style/_SafeCls_1775.as
- * (readable name recovered from sources/win63_2023_version/com/sulake/habbo/freeflowchat/style/IChatStyle.as)
+ * (readable name recovered from sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/style/IChatStyle.as)
  */
 export interface IChatStyle
 {

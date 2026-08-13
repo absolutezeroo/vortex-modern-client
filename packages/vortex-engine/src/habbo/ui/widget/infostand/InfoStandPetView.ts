@@ -83,6 +83,8 @@ export class InfoStandPetView
     private _currentPetId: number = 0;
     private _petDataCache: Map<number, InfoStandPetData> | null = new Map();
 
+    // Derived name: `_petCommandTool` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::_petCommandTool
     // Built lazily on the first openTrainView(), exactly as AS3 does.
     private _commandTool: PetCommandTool | null = null;

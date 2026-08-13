@@ -6,7 +6,7 @@
  * implementation.
  *
  * @see sources/win63_version/habbo/window/utils/AlertDialogCaption.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/window/utils/ICaption.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialogCaption.as
  */
 export interface ICaption {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialogCaption.as::get text()

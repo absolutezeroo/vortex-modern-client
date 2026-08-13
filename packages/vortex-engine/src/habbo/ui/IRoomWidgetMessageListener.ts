@@ -1,7 +1,7 @@
 /**
  * IRoomWidgetMessageListener
  *
- * @see sources/source_as_win63/habbo/ui/widget/IRoomWidgetMessageListener.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/IRoomWidgetMessageListener.as
  *
  * Listener interface for processing widget messages.
  */

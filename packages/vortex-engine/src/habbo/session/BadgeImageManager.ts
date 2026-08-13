@@ -53,10 +53,10 @@ export class BadgeImageManager
     // TS-only: stands in for AS3's `_assets` AssetLibrary — see the class doc for why.
     private _images: Map<string, HTMLImageElement> = new Map();
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BadgeImageManager.as::_events
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/BadgeImageManager.as::_events
     private _events: EventEmitter | null;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BadgeImageManager.as::_configuration
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/BadgeImageManager.as::_configuration
     private _configuration: IBadgeImageConfiguration | null;
 
     /**

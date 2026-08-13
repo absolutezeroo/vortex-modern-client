@@ -6,7 +6,7 @@
  * Tracks mouse hover state for a room object.
  * Stores the object identifier and the sprite tag currently under the mouse.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/utils/ObjectMouseData.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ObjectMouseData.as
  */
 export class ObjectMouseData 
 {

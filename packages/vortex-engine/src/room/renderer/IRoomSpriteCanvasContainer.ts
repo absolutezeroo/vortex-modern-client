@@ -6,7 +6,7 @@
  * Interface for the container that provides room objects to rendering canvases.
  * The RoomRenderer implements this to allow canvases to query objects during rendering.
  *
- * @see sources/win63_version/room/renderer/class_3446.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/IRoomSpriteCanvasContainer.as
  */
 import type {IRoomObject} from '../object/IRoomObject';
 

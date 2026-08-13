@@ -1,7 +1,7 @@
 /**
  * WebApiRequest
  *
- * @see sources/win63_2021_version/com/sulake/habbo/communication/WebApiRequest.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/WebApiRequest.as
  *
  * Extends ApiRequest with a requiresSession flag.
  * Used by HabboWebApiSession to track which requests need authentication.

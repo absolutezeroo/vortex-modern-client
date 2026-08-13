@@ -42,6 +42,8 @@ export class ExtraInfoItemData
 
     private _priceActivityPoints: number = 0;
 
+    // Derived name: `_priceSilver` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoItemData.as::_priceSilver
     // Silver-currency field present in win63 but not in the older vortex-client reference.
     private _priceSilver: number = 0;

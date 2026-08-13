@@ -2079,7 +2079,7 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(712, TryVerificationCodeResultMessageEvent);
 
         // === HELP (FAQ) ===
-        // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/help/FaqTextMessageEvent.as
+        // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/HabboMessages.as
         // (name recovered via sources/PRODUCTION-201601012205-226667486/OriginalClassNames.txt; obfuscated in primary dump
         // as _SafeStr_4546[2913] = _SafeCls_3480, sources/WIN63-202607011411-782849652/src/unknowns/
         // _SafePkg_1843/_SafeCls_3480.as, whose parser is the real, non-obfuscated

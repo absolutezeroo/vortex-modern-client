@@ -1,7 +1,7 @@
 /**
  * ChatBubbleStyle
  *
- * @see sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/style/ChatBubbleStyle.as
+ * @see sources/win63_version/habbo/ui/widget/roomchat/style/ChatBubbleStyle.as
  * (primary win63_version copy has decompiler corruption; cross-checked here)
  *
  * TODO(AS3): AS3 builds a style from an XML descriptor (bitmaps + speak/

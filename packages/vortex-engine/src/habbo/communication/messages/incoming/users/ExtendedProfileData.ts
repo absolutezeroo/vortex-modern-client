@@ -16,7 +16,7 @@ import {BadgeRarityCount} from './BadgeRarityCount';
  *
  * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1731/_SafeCls_2228.as
  * (obfuscated; the getters keep their real names, which is what identifies it. The per-field
- * traces below point at sources/PRODUCTION-201601012205-226667486/.../ExtendedProfileData.as
+ * traces below point at sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/users/ExtendedProfileData.as
  * because the private backing fields are obfuscated in the primary tree and readable only there.)
  */
 export class ExtendedProfileData

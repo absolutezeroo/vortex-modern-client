@@ -4,7 +4,7 @@
  * Avatar addition that shows a guide or requester status bubble
  * above the avatar, indicating participation in the guide system.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/room/object/visualization/avatar/additions/GuideStatusBubble.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/GuideStatusBubble.as
  */
 import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
 import type {IAvatarAddition} from './IAvatarAddition';

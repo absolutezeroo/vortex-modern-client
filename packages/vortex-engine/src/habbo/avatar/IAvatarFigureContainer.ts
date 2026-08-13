@@ -1,7 +1,7 @@
 /**
  * Interface for avatar figure container that manages figure part sets and colors.
  *
- * @see sources/win63_version/habbo/avatar/class_3405.as (IAvatarFigureContainer)
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/IAvatarFigureContainer.as (IAvatarFigureContainer)
  */
 export interface IAvatarFigureContainer
 {

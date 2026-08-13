@@ -1,7 +1,7 @@
 /**
  * RoomWidgetRoomViewUpdateEvent
  *
- * @see sources/win63_2023_version/com/sulake/habbo/ui/widget/events/RoomWidgetRoomViewUpdateEvent.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetRoomViewUpdateEvent.as
  */
 import {RoomWidgetUpdateEvent} from './RoomWidgetUpdateEvent';
 

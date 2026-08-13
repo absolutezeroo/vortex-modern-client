@@ -9,7 +9,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * fills them, the in-client one sends empty strings. This port was missing both fields entirely,
  * which is why the composer stayed unregistered until now.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2542/_SafeCls_3732.as
+ * AS3: sources/win63_version/habbo/communication/messages/outgoing/help/CallForHelpFromIMMessageComposer.as
  * (obfuscated in the primary dump; `_composers[838] = _SafeCls_3732` in the registry
  * sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as, and the
  * class name is recovered from

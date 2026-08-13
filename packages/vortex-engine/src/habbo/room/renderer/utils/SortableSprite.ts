@@ -7,7 +7,7 @@
  * The canvas builds a flat list of SortableSprites each frame,
  * sorts by z descending, then maps to ExtendedSprite display children.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/utils/SortableSprite.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/SortableSprite.as
  */
 import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
 

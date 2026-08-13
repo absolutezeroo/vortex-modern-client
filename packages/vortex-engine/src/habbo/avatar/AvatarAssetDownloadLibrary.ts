@@ -12,7 +12,7 @@ const log = Logger.getLogger('habbo.avatar.AvatarAssetDownloadLibrary');
  * In our PixiJS v8 port, we use the AssetLibrary system to load .nitro bundles.
  *
  * @see sources/win63_version/habbo/avatar/AvatarAssetDownloadLibrary.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarAssetDownloadLibrary.as
  */
 export class AvatarAssetDownloadLibrary extends EventEmitter 
 {

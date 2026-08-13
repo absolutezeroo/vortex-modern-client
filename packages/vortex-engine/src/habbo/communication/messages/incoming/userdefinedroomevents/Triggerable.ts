@@ -11,7 +11,7 @@ import {WiredContext} from '@habbo/communication/messages/incoming/userdefinedro
  * AddonDefinition, VariableDefinition) override the protected {@link readDefinitionSpecifics} /
  * {@link readTypeSpecifics} hooks to read their extra fields at the exact stream position AS3 does.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/incoming/userdefinedroomevents/Triggerable.as
+ * AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/userdefinedroomevents/Triggerable.as
  */
 export class Triggerable
 {

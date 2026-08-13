@@ -276,36 +276,48 @@ export interface IRoomCreator
     /**
 	 * Flag the room as being in game mode, emitting REE_GAME_MODE / REE_NORMAL_MODE.
 	 */
+    // Derived name: `setIsPlayingGame` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::setIsPlayingGame()
     setIsPlayingGame(roomId: number, isPlaying: boolean): void;
 
     /**
 	 * Leave spectator mode on the active room.
 	 */
+    // Derived name: `leaveSpectate` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::leaveSpectate()
     leaveSpectate(): void;
 
     /**
 	 * Block/unblock handitem control for the room.
 	 */
+    // Derived name: `setHanditemControlBlocked` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::setHanditemControlBlocked()
     setHanditemControlBlocked(roomId: number, blocked: boolean): void;
 
     /**
 	 * Disable the furni chooser for the room.
 	 */
+    // Derived name: `setChooserDisabled` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::setChooserDisabled()
     setChooserDisabled(roomId: number, disabled: boolean): void;
 
     /**
 	 * Toggle free (grid-less) furni movement for the room.
 	 */
+    // Derived name: `setFreeFurniMovementsMode` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::setFreeFurniMovementsMode()
     setFreeFurniMovementsMode(roomId: number, enabled: boolean): void;
 
     /**
 	 * Toggle the invisible-furni room mode.
 	 */
+    // Derived name: `setInvisibleFurni` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::setInvisibleFurni()
     setInvisibleFurni(roomId: number, invisible: boolean): void;
 

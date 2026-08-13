@@ -4,7 +4,7 @@ import type {IBinarySearchTest} from './IBinarySearchTest';
 /**
  * Binary search helper for cutting text to fit within a height constraint.
  *
- * @see sources/win63_version/habbo/navigator/CutToHeight.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/CutToHeight.as
  */
 export class CutToHeight implements IBinarySearchTest
 {

@@ -38,23 +38,23 @@ import type {IConfirmDialog} from './utils/ConfirmDialog';
  * for creating windows programmatically, showing alerts/confirms, managing hints,
  * and accessing window contexts.
  *
- * @see sources/win63_2021_version/com/sulake/habbo/window/IHabboWindowManager.as
- * @see sources/win63_2021_version/com/sulake/habbo/window/HabboWindowManagerComponent.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/IHabboWindowManager.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as
  */
 export interface IHabboWindowManager extends IDisposable {
     // TS-only: element registry
     readonly elementRegistry: ElementRegistry;
-    // AS3: sources/win63_version/habbo/window/class_38.as::avatarRenderer
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::avatarRenderer
     readonly avatarRenderer: IAvatarRenderManager | null;
-    // AS3: sources/win63_version/habbo/window/class_38.as::communication
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::communication
     readonly communication: IHabboCommunicationManager | null;
-    // AS3: sources/win63_version/habbo/window/class_38.as::sessionDataManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::sessionDataManager
     readonly sessionDataManager: ISessionDataManager | null;
-    // AS3: sources/win63_version/habbo/window/class_38.as::roomEngine
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::roomEngine
     readonly roomEngine: IRoomEngine | null;
     // AS3: sources/win63_version/habbo/window/class_38.as::resourceManager
     readonly resourceManager: IResourceManager | null;
-    // AS3: sources/win63_version/habbo/window/class_38.as::localization
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::localization
     readonly localization: IHabboLocalizationManager | null;
     // AS3: sources/win63_version/habbo/window/class_38.as::habboPagesStyleSheet
     readonly habboPagesStyleSheet: unknown | null;
@@ -68,7 +68,7 @@ export interface IHabboWindowManager extends IDisposable {
     // TS-only
     loadElementDescription(data: IElementDescriptionData): void;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::create()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::create()
     create(
         name: string,
         type: number,
@@ -83,16 +83,16 @@ export interface IHabboWindowManager extends IDisposable {
         properties?: unknown[] | null
     ): IWindow;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::buildFromXML()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::buildFromXML()
     buildFromXML(layout: string | Document | Element, layer?: number, vars?: Map<string, string> | null): IWindow;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::windowToXMLString()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::windowToXMLString()
     windowToXMLString(window: IWindow): string;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::destroy()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::destroy()
     destroy(window: IWindow): void;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::notify()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::notify()
     notify(title: string, message: string, callback: AlertDialogCallback | null, flags?: number): IAlertDialog;
 
     // AS3: sources/win63_version/habbo/window/class_38.as::alert()
@@ -111,10 +111,10 @@ export interface IHabboWindowManager extends IDisposable {
         callback: AlertDialogCallback | null
     ): IAlertDialogWithLink;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::confirm()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::confirm()
     confirm(title: string, message: string, flags: number, callback: AlertDialogCallback | null): IConfirmDialog;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::confirmWithModal()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::confirmWithModal()
     confirmWithModal(title: string, message: string, flags: number, callback: AlertDialogCallback | null): IConfirmDialog;
 
     // TS-only
@@ -168,22 +168,24 @@ export interface IHabboWindowManager extends IDisposable {
     // AS3: sources/win63_version/habbo/window/class_38.as::getWindowContext()
     getWindowContext(layer: number): IWindowContext;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::getDesktop()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::getDesktop()
     getDesktop(layer: number): IWindow | null;
 
     // AS3: sources/win63_version/habbo/window/class_38.as::registerUpdateReceiver()
     registerUpdateReceiver(receiver: IUpdateReceiver, priority: number): void;
 
+    // Derived name: `removeUpdateReceiver` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/class_38.as::removeUpdateReceiver()
     removeUpdateReceiver(receiver: IUpdateReceiver): void;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::findWindowByName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::findWindowByName()
     findWindowByName(name: string): IWindow | null;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::findWindowByTag()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::findWindowByTag()
     findWindowByTag(tag: string): IWindow | null;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::groupWindowsWithTag()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::groupWindowsWithTag()
     groupWindowsWithTag(tag: string, windows: IWindow[], depth?: number): number;
 
     // AS3: sources/win63_version/habbo/window/class_38.as::addMouseEventTracker()
@@ -192,7 +194,7 @@ export interface IHabboWindowManager extends IDisposable {
     // AS3: sources/win63_version/habbo/window/class_38.as::removeMouseEventTracker()
     removeMouseEventTracker(tracker: IInputEventTracker): void;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::eventReceived()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::eventReceived()
     eventReceived(event: WindowEvent, window: IWindow): void;
 
     // AS3: sources/win63_version/habbo/window/class_38.as::registerLocalizationParameter()
@@ -251,7 +253,7 @@ export interface IHabboWindowManager extends IDisposable {
     // TS-only
     getWindowRenderer(): IWindowRenderer | null;
 
-    // AS3: sources/win63_version/habbo/window/class_38.as::getRendererByTypeAndStyle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::getRendererByTypeAndStyle()
     getRendererByTypeAndStyle(type: number, style: number): ISkinRenderer | null;
 
     // TS-only

@@ -422,7 +422,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * Main render loop. Called each frame.
      * Based on AS3 RoomSpriteCanvas.render()
      *
-     * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 390
+     * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as line 390
      */
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::
     // render() also polls RoomShakingEffect.isVisualizationOn() / RoomRotatingEffect
@@ -517,7 +517,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * Handle mouse events by hit-testing against all room sprites.
      * Based on AS3 RoomSpriteCanvas.handleMouseEvent()
      *
-     * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 1005
+     * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as line 1005
      */
     // AS3: .../src/com/sulake/room/renderer/_SafeCls_3074.as::handleMouseEvent()
     handleMouseEvent(
@@ -828,7 +828,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * Process a single room object's sprites into the SortableSprite list.
      * Based on AS3 RoomSpriteCanvas._Str_24532()
      *
-     * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 514
+     * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as line 514
      */
     // AS3: sources/win63_version/room/renderer/class_3523.as::renderObject()
     private renderObject(
@@ -1200,7 +1200,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * Update or create an ExtendedSprite at the given display index.
      * Based on AS3 RoomSpriteCanvas.updateSprite()
      *
-     * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 704
+     * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as line 704
      */
     // AS3: sources/win63_version/room/renderer/class_3523.as::updateSprite()
     private updateSprite(index: number, sortable: SortableSprite): void 
@@ -1432,7 +1432,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * Core hit-test method. Iterates sprites in reverse order (front to back).
      * Based on AS3 RoomSpriteCanvas._Str_19207()
      *
-     * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 1069
+     * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as line 1069
      */
     // AS3: sources/win63_version/room/renderer/class_3523.as::checkMouseHits()
     private checkMouseHits(
@@ -1702,7 +1702,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * Process all buffered mouse events by dispatching to room objects.
      * Based on AS3 RoomSpriteCanvas._Str_20604()
      *
-     * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 1175
+     * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as line 1175
      */
     // AS3: sources/win63_version/room/renderer/class_3523.as::processMouseEvents()
     private processMouseEvents(): void 

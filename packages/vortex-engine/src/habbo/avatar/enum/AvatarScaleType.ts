@@ -1,7 +1,7 @@
 /**
  * Avatar rendering scale types.
  *
- * @see sources/win63_version/habbo/avatar/enum/class_3356.as (AvatarScaleType)
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarScaleType.as (AvatarScaleType)
  */
 export class AvatarScaleType
 {

@@ -4,7 +4,7 @@
  * Avatar addition that provides an invisible click target area for game
  * interactions. Renders a transparent bitmap that captures mouse events.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/room/object/visualization/avatar/additions/GameClickTarget.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/GameClickTarget.as
  */
 import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
 import type {IAvatarAddition} from './IAvatarAddition';

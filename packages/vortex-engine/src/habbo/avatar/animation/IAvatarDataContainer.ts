@@ -1,7 +1,7 @@
 /**
  * Interface for avatar data container with color transform information.
  *
- * @see sources/win63_version/habbo/avatar/animation/class_3581.as (IAvatarDataContainer)
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/animation/IAvatarDataContainer.as (IAvatarDataContainer)
  */
 export interface IAvatarDataContainer
 {

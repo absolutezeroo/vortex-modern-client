@@ -1,7 +1,7 @@
 /**
  * HabboWebApiError
  *
- * @see sources/win63_2021_version/com/sulake/habbo/communication/HabboWebApiError.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/HabboWebApiError.as
  *
  * Error string constants for Web API responses.
  */

@@ -1,7 +1,7 @@
 /**
  * Interface for an avatar action definition.
  *
- * @see sources/win63_version/habbo/avatar/actions/class_3576.as (IActionDefinition)
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/actions/IActionDefinition.as (IActionDefinition)
  */
 export interface IActionDefinition
 {

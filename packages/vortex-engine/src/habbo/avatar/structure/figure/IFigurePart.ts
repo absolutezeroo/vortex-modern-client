@@ -1,7 +1,7 @@
 /**
  * Interface for a single figure part in an avatar's figure set.
  *
- * @see sources/win63_version/habbo/avatar/structure/figure/class_3617.as (IFigurePart)
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/structure/figure/IFigurePart.as (IFigurePart)
  */
 export interface IFigurePart
 {

@@ -1,7 +1,7 @@
 /**
  * ChatBubbleFactory
  *
- * @see sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as
+ * @see sources/win63_version/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as
  * (primary win63_version copy has decompiler corruption; cross-checked here)
  *
  * TODO(AS3): see ChatBubbleStyle.ts header — only style id 0 ("normal") is

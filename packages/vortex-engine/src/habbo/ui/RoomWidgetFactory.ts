@@ -70,7 +70,10 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
     // AS3: .../src/com/sulake/habbo/ui/widget/RoomWidgetFactory.as::_roomUI
     private _roomUI: RoomUI;
     private _disposed: boolean = false;
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/RoomWidgetFactory.as::var_3743 (chat widget id counter)
+    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetFactory.as::var_3906
+    // Derived name. The field is obfuscated in the only tree that has it
+    // (`var_3906`), and the primary tree's RoomWidgetFactory declares no such
+    // counter at all — its only field is `_roomUI`. It numbers chat widgets.
     private _chatWidgetIdCounter: number = 0;
 
     constructor(roomUI: RoomUI)

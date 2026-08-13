@@ -14,10 +14,14 @@ import type {IUpdateReceiver} from '@core/runtime/IContext';
 export class HintManager
 implements IUpdateReceiver
 {
+    // Derived name: `VERTICAL_PADDING` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/HintManager.as::VERTICAL_PADDING
     private static readonly VERTICAL_PADDING: number = 10;
     // TS-only: replaces AS3 Motion duration constant
     private static readonly ANIMATION_DURATION: number = 400;
+    // Derived name: `MIN_DISTANCE` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/HintManager.as::MIN_DISTANCE
     private static readonly MIN_DISTANCE: number = 15;
 
@@ -46,7 +50,7 @@ implements IUpdateReceiver
         this._windowManager = windowManager;
     }
 
-    // AS3: sources/win63_version/habbo/window/HintManager.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::get disposed()

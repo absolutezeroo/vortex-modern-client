@@ -21,7 +21,7 @@ import {getXmlAttribute, getXmlChildElements, getXmlRoot} from './structure/Avat
  * download scheduling. The effect map key is the string representation of the effect ID.
  *
  * @see sources/win63_version/habbo/avatar/EffectAssetDownloadManager.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/avatar/EffectAssetDownloadManager.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as
  */
 export class EffectAssetDownloadManager extends EventEmitter 
 {

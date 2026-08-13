@@ -13,8 +13,8 @@ import type {IFileProxy} from './IFileProxy';
  * Provides initialization, hibernation, purge, reboot, profiler mode,
  * library loading, and file proxy storage.
  *
- * @see sources/win63_version/core/runtime/ICore.as
- * @see sources/win63_version/core/runtime/CoreComponentContext.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ICore.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/CoreComponentContext.as
  */
 export interface ICore extends IContext, ICoreConfiguration
 {

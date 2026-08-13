@@ -5,7 +5,7 @@
  * game queue positions and similar numbered indicators.
  * Supports fade-in and fade-out animations with vertical movement.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/NumberBubble.as
  */
 import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
 import type {IAvatarAddition} from './IAvatarAddition';

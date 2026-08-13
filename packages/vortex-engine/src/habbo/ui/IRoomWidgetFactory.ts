@@ -1,7 +1,7 @@
 /**
  * IRoomWidgetFactory
  *
- * @see sources/source_as_win63/habbo/ui/widget/IRoomWidgetFactory.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetFactory.as
  *
  * Factory interface for creating room widgets.
  */

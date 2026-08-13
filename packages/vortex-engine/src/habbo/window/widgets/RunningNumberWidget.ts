@@ -25,20 +25,24 @@ export class RunningNumberWidget implements IRunningNumberWidget
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::NUMBER_KEY
     private static readonly NUMBER_KEY: string = 'running_number:number';
+    // Derived name: `DIGITS_KEY` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::DIGITS_KEY
     private static readonly DIGITS_KEY: string = 'running_number:digits';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::COLOR_STYLE_KEY
     private static readonly COLOR_STYLE_KEY: string = 'running_number:color_style';
+    // Derived name: `UPDATE_FREQUENCY_KEY` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::UPDATE_FREQUENCY_KEY
     private static readonly UPDATE_FREQUENCY_KEY: string = 'running_number:update_frequency';
     // TS-only: accumulates elapsed time between update ticks
     private _millisSinceLastUpdate: number = 0;
 
-    // AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_widgetWindow
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::_widgetWindow
     private _widgetWindow: IWidgetWindow | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_root
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::_root
     private _root: IWindowContainer | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::RunningNumberWidget()
@@ -76,6 +80,8 @@ export class RunningNumberWidget implements IRunningNumberWidget
         return this._disposed;
     }
 
+    // Derived name: `_number` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_number
     private _number: number = 0;
 
@@ -94,13 +100,15 @@ export class RunningNumberWidget implements IRunningNumberWidget
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::_displayedNumber
     private _displayedNumber: number = 0;
 
+    // Derived name: `displayedNumber` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::get displayedNumber()
     public get displayedNumber(): number
     {
         return this._displayedNumber;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_digits
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::_digits
     private _digits: number = 8;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::get digits()
@@ -115,7 +123,7 @@ export class RunningNumberWidget implements IRunningNumberWidget
         this._digits = value;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_colorStyle
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::_colorStyle
     private _colorStyle: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::get colorStyle()
@@ -130,7 +138,7 @@ export class RunningNumberWidget implements IRunningNumberWidget
         this._colorStyle = value;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_updateFrequency (var_1449)
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::_updateFrequency (var_1449)
     private _updateFrequency: number = 50;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::get updateFrequency()
@@ -152,6 +160,8 @@ export class RunningNumberWidget implements IRunningNumberWidget
         this._number = value;
     }
 
+    // Derived name: `formattedValue` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::get formattedValue()
     public get formattedValue(): string
     {

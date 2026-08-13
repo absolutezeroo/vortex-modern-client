@@ -3,7 +3,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 import {ClubBuyOfferData} from '@habbo/catalog/club/ClubBuyOfferData';
 
 /**
- * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/parser/catalog/HabboClubOffersMessageEventParser.as
+ * @see sources/win63_version/habbo/communication/messages/parser/catalog/HabboClubOffersMessageEventParser.as
  */
 export class HabboClubOffersMessageEventParser implements IMessageParser
 {

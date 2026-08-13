@@ -11,6 +11,8 @@ import {BundleDiscountRuleset} from '../../incoming/catalog/BundleDiscountRulese
  */
 export class BundleDiscountRulesetMessageEventParser implements IMessageParser
 {
+    // Derived name: `_bundleDiscountRuleset` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1714/_SafeCls_1713.as::_bundleDiscountRuleset
     private _bundleDiscountRuleset: BundleDiscountRuleset | null = null;
 

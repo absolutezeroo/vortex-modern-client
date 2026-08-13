@@ -1,7 +1,7 @@
 /**
  * RoomUI
  *
- * @see sources/source_as_win63/habbo/ui/RoomUI.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as
  *
  * Main room UI component. Extends Component for DI integration.
  * Creates and manages RoomDesktop instances for each active room session.

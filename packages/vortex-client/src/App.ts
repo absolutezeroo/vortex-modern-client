@@ -39,6 +39,8 @@ const log = Logger.getLogger('client.App');
 /**
  * The element description's asset name.
  *
+ * Derived name: `init` is declared in no AS3 tree — the trace points
+ * at the class it belongs to, but the identifier itself is this port's.
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::init()
  * asks for it by this exact name; build-window-assets.mjs emits it under the same name, so the
  * bundle key and the AS3 asset name are the one string.

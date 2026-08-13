@@ -7,7 +7,7 @@
  * Stores metadata (tag, identifier, click handling) and provides
  * pixel-perfect hit testing with alpha tolerance.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/utils/ExtendedSprite.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ExtendedSprite.as
  */
 import {Sprite, Texture} from 'pixi.js';
 

@@ -1686,6 +1686,133 @@ acted on), 94/94 majors (3 false positives), and 48/48 open minors addressed.
 
 ### The window system
 
+#### 2026-08-13 — the per-pixel mouse test, and a coverage pass
+
+`WindowController.testLocalPointHitAgainstAlpha()` is the gate every mouse event passes through when
+a window has `mouseThreshold > 0`, and it was **inert**. It calls `hitTestDrawBuffer()`, which looked
+for a `BitmapData.hitTest()` method on the draw buffer; the buffer is an `OffscreenCanvas` and has no
+such method, so the test returned "cannot tell" every time. On the shared-graphic-context branch AS3
+answers `false` when it cannot tell, so those windows were **never hit at all**.
+
+Measured on a glaze boot, walking all 460 live windows: 251 were on the alpha path and **169 of them
+reported a miss at their own centre point**. `utils/BitmapHitTest.ts` now implements Flash's
+semantics over the canvas (`getImageData` on a `willReadFrequently` context, cached per buffer), and
+that number is **68**. The end-to-end mouse path was re-run before and after — buttons, hierarchy
+rows and property inputs all receive `WME_DOWN`/`WME_UP`/`WME_CLICK` identically, and the render is
+pixel-identical.
+
+**`GraphicContext` now owns the buffer, as AS3 does.** It allocates in the constructor and
+`WindowRendererItem` renders into it, so `fetchDrawBuffer()` is truthful and *both* branches of
+`testLocalPointHitAgainstAlpha()` read real pixels. Two earlier drafts of this section called that
+change a regression, because it moved the per-pixel test from 68 to 97 misses. It is not one, and the
+evidence is:
+
+- item buffer and graphic-context buffer are the **same object** for every non-shared-context window
+  measured (78 of 78) — the buffer-identity theory was wrong;
+- the `icon` held up as the counter-example has a **missing asset** (the one 404 on every glaze boot).
+  Its buffer is blank because nothing drew into it, and the opaque screen pixel at its centre belongs
+  to its parent. A miss there is the correct answer, and AS3 gives the same one;
+- rendering is **byte-identical** before and after (same PNG hash), and all **14** probed click
+  targets — buttons, dropdowns, checkboxes, hierarchy rows, property inputs, the bottom bar, the
+  edited window on the canvas — still receive their events.
+
+The lesson worth keeping: 68 → 97 measured *faithfulness*, not breakage, and reading it as a
+regression cost two rounds of wrong explanation before anyone instrumented the thing.
+
+**On the count of 68 itself — an earlier draft of this section was wrong, twice over.** It called them a
+backlog of broken windows and blamed a "two-stage render" where `WindowComposite` draws content the
+buffer never sees. Neither holds. `WindowComposite` blits the renderer item's buffer and nothing
+else, as its own class note says; the render split already landed (see below). And measuring the 68
+shows every one of them *has* a skin renderer — 30 `TextSkinRenderer`, 24 `BitmapSkinRenderer`, 8
+`LabelRenderer`, 4 `BitmapDataRenderer`, 2 `NullSkinRenderer`. Roughly 38 are text and label windows
+sampled at their centre point, which for left-aligned text falls between glyphs or past the end of
+the string: a miss there is *correct*, and AS3 would answer the same. The scrollbar sliders have no
+buffer because nothing has rendered them yet — they are off-screen in the layout the probe opened.
+
+So the honest count of *suspect* windows is far below 68, and the number is an artefact of probing
+centres rather than real hit points.
+
+What is still open is narrower: `GraphicContext` does not allocate its buffer in the constructor the
+way AS3 does. Wiring that up — with `WindowRendererItem` rendering into the same buffer — was tried
+and took the miss count from 68 to **97**, including a plainly visible `icon`, so it was reverted.
+The cause was never established. The likeliest suspect is the item's buffer-adoption path (`_refresh`
+not being set when it adopts a buffer it has not drawn into), which would be a wiring bug rather than
+an architectural one. Both spots carry a `TODO(AS3)` that says exactly this, and says to instrument
+before theorising.
+
+Also in this pass:
+
+- `GraphicContext` was a hollow shell documented as feeding "the SolidJS client" (there is no SolidJS
+  here). It now has AS3's real buffer API — `allocateDrawBuffer`/`releaseDrawBuffer`/`setDrawRegion`/
+  `allocatedByteCount` — plus `getChildContextByName`, `showRedrawRegion`, `toString`.
+- `GestureAgentService` (flick momentum: velocity decayed by 0.75 every 40 ms) existed in AS3 and as
+  an inline no-op stub here. Ported and wired into `ServiceManager`.
+- `SkinLayout` was missing `isFixedWidth`/`isFixedHeight`/`calculateWidth`/`calculateHeight`/
+  `getDefaultRegion`. Ported.
+- `MouseEventStage` was an **invented** name for AS3's `MouseListenerType`, and two of its three
+  members were invented too — its `1` is `EVENTS_INSIDE_WINDOW`, not an "outside stage". Renamed, and
+  `WindowMouseListener` now uses it instead of literal `0`/`1`/`3`.
+- 14 AS3 files had no TS counterpart: `IChildEntity`, `IChildEntityArrayReader`, `IChildEntityArray`,
+  `IEventQueue`, `IEventProcessor`, `IInputProcessorRoot`, `INotify`, `ITextFieldContainer`,
+  `ISkinTemplate`, `ISkinTemplateEntity`, `ISkinLayout`, `BitmapSkinTemplate`,
+  `BitmapSkinTemplateEntity`, `ITouchAwareWindow`, plus `WindowMessage`. Added; `ButtonController`
+  and `DropBaseController` declare `ITouchAwareWindow` as AS3 does, and `BitmapSkinParser` builds
+  `BitmapSkinTemplate`s.
+- **125 `AS3:`/`@see` traces pointed at `sources/win63_2021_version/`, a tree that does not exist.**
+  All repointed, each verified to exist in the tree named: 90 to the primary WIN63 tree, 28 to
+  PRODUCTION (where the obfuscated interface names are readable), 7 enum tables to PRODUCTION.
+  `core/window` now has zero references to a nonexistent tree.
+
+`GenericEventQueue` is now ported and `MouseEventQueue` extends it, restoring AS3's split — including
+the traversal flag that throws away a queue left open by a `begin()` with no matching `end()`.
+`TextFieldCache` is deliberately **not** ported: it caches a configured `flash.text.TextField` per
+style, an object this port does not have, and its one behavioural job — dropping the cache when the
+style manager fires `change` — has no equivalent hazard here, because `GlyphAtlas` keys its registry
+by font descriptor rather than style name, so a redefined style yields a new key rather than a stale
+entry.
+
+#### Traceability: the repo-wide pass, and how the first attempt went wrong
+
+Across all four packages, **14,519 of 14,747** cited AS3 paths now resolve on disk, up from a tree
+that still referenced `sources/win63_2021_version/` — a directory that does not exist — in 125 places
+in `core/window` alone.
+
+The first fixer checked only that the *replacement file* existed. That is not enough, and CLAUDE.md
+says so: matching on the filename alone turns a stale citation into a confidently wrong one. It
+produced 11 citations naming members the target file does not declare (`AvatarAction::EXPRESSION_67`,
+`StuffDataBase::chestName`, `DesktopLayoutManager::setLayout`, …). Those five files were reverted and
+the fixer rewritten to require the member to be **declared** in the file it points at. It resolves in
+four steps, each verifiable: same class in another tree → the AS3 `extends` chain → a *unique*
+declarer in the same package of the primary tree (this is how `core/utils/Map` was found to live on
+as `_SafeCls_481`, which alone carries `replace()` and `getValueByIndex()`) → otherwise report, never
+guess.
+
+Six traces written during this same pass named **derived** identifiers as though recovered
+(`GraphicContext`'s `_hasBitmapBuffer`, `_maskShape`, …). Corrected: the ones with a real name point
+at it, the rest say plainly that they are derived and name the obfuscated identifier they stand for.
+The same was done for `GradientController.DIRECTION_UP_LEFT`/`DIRECTION_DOWN_LEFT` (obfuscated as
+`_SafeStr_10782`/`_SafeStr_10927`, and derivable only because their `*_RIGHT` siblings are readable)
+and `ScrollBarController`'s `_smoothScroller` and `SCROLL_BUTTON_STEP`.
+
+Every trace whose member is not declared where it points is now accounted for: **14** are constructor
+traces, which cannot match in a file whose class is `_SafeCls_N`, and **98** carry an explicit
+derived-name note. Zero are unmarked. That closes the rule CLAUDE.md states as "derive it and say so
+at the declaration — never pass a derived name off as recovered", which the port had been quietly
+breaking at scale.
+
+Still open: **64** cited paths that resolve in no tree, mostly `unknowns/_SafePkg_*` and `class_N`
+citations. Each needs identifying against the source by its members; scripting it further would only
+reproduce, at scale, the wrong-citation mistake described above.
+
+**Re-measure with:**
+
+```bash
+# every cited AS3 path that does not exist on disk
+node scripts/audit-as3-traces.mjs
+```
+
+#### The renderer split
+
 `core/window/graphics/renderer/` now ports **all 22 AS3 renderer classes, one for one**, and
 `WindowRendererItem` drives them through `SkinContainer.getSkinRendererByTypeAndStyle()` exactly as
 AS3 does. `WindowComposite` draws no window content at all: 470 lines, down from 1673, keeping only

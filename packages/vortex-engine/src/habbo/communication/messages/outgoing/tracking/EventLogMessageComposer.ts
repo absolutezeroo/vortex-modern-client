@@ -8,7 +8,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * "Message ID: 2297" this comment used to carry matched no registration in either tree.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2176/_SafeCls_2175.as
- * @see sources/win63_version/habbo/communication/messages/outgoing/tracking/class_955.as (EventLogMessageComposer)
+ * @see sources/win63_version/habbo/communication/messages/outgoing/tracking/EventLogMessageComposer.as (EventLogMessageComposer)
  */
 export class EventLogMessageComposer extends MessageComposer<ConstructorParameters<typeof EventLogMessageComposer>>
 {

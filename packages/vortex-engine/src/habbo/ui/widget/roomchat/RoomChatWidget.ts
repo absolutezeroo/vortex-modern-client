@@ -2,7 +2,7 @@
  * RoomChatWidget
  *
  * @see sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as
- * @see sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatWidget.as (cross-checked for corruption)
+ * @see sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as (cross-checked for corruption)
  *
  * Container for chat bubbles: creates/positions RoomChatItems, animates them
  * upward as new messages arrive ("screen levels"), tracks the room camera to

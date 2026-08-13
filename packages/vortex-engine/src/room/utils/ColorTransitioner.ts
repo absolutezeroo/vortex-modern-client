@@ -1,7 +1,7 @@
 /**
  * ColorTransitioner
  *
- * @see sources/source_as_win63/room/utils/ColorTransitioner.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/room/utils/ColorTransitioner.as
  *
  * Smoothly transitions between two colors over time using HSL interpolation.
  * Used by RoomDesktop for room color and background color transitions.

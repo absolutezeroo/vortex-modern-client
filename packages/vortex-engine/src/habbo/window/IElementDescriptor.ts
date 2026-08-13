@@ -5,7 +5,7 @@
  * WindowXmlAssetParser). Each descriptor defines the defaults, states, and rendering info
  * for a particular element type + style combination.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/graphics/SkinContainer.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/SkinContainer.as
  */
 
 /**

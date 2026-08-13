@@ -270,7 +270,7 @@ export interface IRoomEngine extends IDisposable {
      * argument at all. Passing a figure string there creates an object of a type that resolves to
      * nothing, which is how the avatar-editor preview came up empty.
      */
-    // AS3: sources/win63_version/habbo/room/RoomEngine.as::addObjectUser()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::addObjectUser()
     addObjectUser(
         roomId: number,
         roomIndex: number,

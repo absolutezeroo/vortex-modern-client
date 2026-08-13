@@ -5,7 +5,7 @@
  * Additions are overlays rendered on top of the avatar sprite such as
  * typing bubbles, muted icons, idle Z animations, etc.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/room/object/visualization/avatar/additions/IAvatarAddition.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/IAvatarAddition.as
  */
 import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
 

@@ -4,7 +4,7 @@
  * Avatar addition that shows a typing bubble icon above the avatar
  * when the user is typing a chat message.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/room/object/visualization/avatar/additions/TypingBubble.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/TypingBubble.as
  */
 import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
 import type {IAvatarAddition} from './IAvatarAddition';

@@ -6,7 +6,7 @@
  * Loader for room content (furniture, pets, room assets).
  * Loads .nitro bundles, creates GraphicAssetCollections and caches them.
  *
- * @see sources/win63_version/habbo/room/RoomContentLoader.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as
  */
 import type {Texture} from 'pixi.js';
 import type {EventEmitter} from 'eventemitter3';

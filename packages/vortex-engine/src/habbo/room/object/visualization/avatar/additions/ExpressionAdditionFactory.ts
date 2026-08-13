@@ -4,7 +4,7 @@
  * Factory class for creating expression-based avatar additions by type.
  * Maps expression type IDs to their corresponding addition implementations.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/room/object/visualization/avatar/additions/ExpressionAdditionFactory.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/ExpressionAdditionFactory.as
  */
 import type {IExpressionAddition} from './IExpressionAddition';
 import type {AvatarVisualization} from '../AvatarVisualization';

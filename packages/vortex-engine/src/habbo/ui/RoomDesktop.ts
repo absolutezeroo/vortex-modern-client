@@ -1,7 +1,7 @@
 /**
  * RoomDesktop
  *
- * @see sources/source_as_win63/habbo/ui/RoomDesktop.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as
  *
  * Per-room desktop instance. Manages the room view, canvas, layout, widgets,
  * color transitions, and mouse event routing for a single room session.
@@ -1062,6 +1062,8 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 handler = new EffectsWidgetHandler();
                 break;
             case 'RWE_AVATAR_INFO':
+                // Derived name: `createWidgetHandler` is declared in no AS3 tree — the trace points
+                // at the class it belongs to, but the identifier itself is this port's.
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new AvatarInfoWidgetHandler();
                 break;
@@ -1160,6 +1162,8 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 handler = new FurnitureCreditWidgetHandler();
                 break;
             case 'RWE_ROOM_BACKGROUND_COLOR':
+                // Derived name: `createWidgetHandler` is declared in no AS3 tree — the trace points
+                // at the class it belongs to, but the identifier itself is this port's.
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new FurnitureBackgroundColorWidgetHandler();
                 break;
@@ -1183,18 +1187,26 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 break;
             }
             case 'RWE_ROOM_DIMMER':
+                // Derived name: `createWidgetHandler` is declared in no AS3 tree — the trace points
+                // at the class it belongs to, but the identifier itself is this port's.
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new FurnitureDimmerWidgetHandler();
                 break;
             case 'RWE_FURNI_PRESENT_WIDGET':
+                // Derived name: `createWidgetHandler` is declared in no AS3 tree — the trace points
+                // at the class it belongs to, but the identifier itself is this port's.
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new FurniturePresentWidgetHandler();
                 break;
             case 'RWE_MANNEQUIN':
+                // Derived name: `createWidgetHandler` is declared in no AS3 tree — the trace points
+                // at the class it belongs to, but the identifier itself is this port's.
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new MannequinWidgetHandler();
                 break;
             case 'RWE_FRIEND_FURNI_ENGRAVING':
+                // Derived name: `createWidgetHandler` is declared in no AS3 tree — the trace points
+                // at the class it belongs to, but the identifier itself is this port's.
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new FriendFurniEngravingWidgetHandler();
                 break;
@@ -1235,7 +1247,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 break;
             }
             case 'RWE_CHAT_WIDGET': {
-                // AS3: sources/win63_2023_version/com/sulake/habbo/ui/RoomDesktop.as::734-737
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::734-737
                 const chatHandler = new ChatWidgetHandler();
 
                 chatHandler.connection = this._connection;

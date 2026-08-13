@@ -32,6 +32,8 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
     private _geometryDirection: number = NaN;
     // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_selectedColor
     private _selectedColor: number = -1;
+    // Derived name: `_invisibleLayer` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_invisibleLayer
     private _invisibleLayer: boolean = false;
     private _adClickUrl: string | null = null;

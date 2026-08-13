@@ -5,7 +5,7 @@ import {SilverBalanceMessageParser} from '../../parser/collectibles/SilverBalanc
 /**
  * The player's silver balance (header 3727).
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/.../_SafeCls_2294.as
+ * AS3: sources/win63_version/habbo/communication/messages/incoming/collectibles/SilverBalanceMessageEvent.as
  * (obfuscated; `_SafeStr_4546[3727] = _SafeCls_2294` in the registry
  * sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as, and
  * `HabboCatalog.as::onSilverBalance()` is its only handler. `vortex-emulator` sends it from

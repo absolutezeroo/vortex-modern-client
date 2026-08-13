@@ -25,7 +25,7 @@ const NUM_UPDATE_RECEIVER_LEVELS = 3;
 /**
  * Core setup constants — determines which frame update handler is used.
  *
- * @see sources/win63_version/core/class_79.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/CoreComponentContext.as
  */
 export const CoreSetup =
     {
@@ -61,7 +61,7 @@ export const CoreSetup =
  *
  * In AS3 this was the root context created by Core.instantiate().
  *
- * @see sources/win63_version/core/runtime/CoreComponentContext.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/CoreComponentContext.as
  */
 export class CoreComponentContext extends ComponentContext implements ICore
 {

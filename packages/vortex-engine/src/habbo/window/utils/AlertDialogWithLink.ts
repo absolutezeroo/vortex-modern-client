@@ -11,8 +11,8 @@ import {AlertDialog} from './AlertDialog';
  * In AS3 this was the obfuscated `class_3401` which extended `class_3348`
  * (IAlertDialog) with linkTitle and linkUrl properties.
  *
- * @see sources/win63_version/core/window/utils/class_3401.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/window/utils/AlertDialogWithLink.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialogWithLink.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialogWithLink.as
  */
 export interface IAlertDialogWithLink {
     // AS3: .../src/com/sulake/habbo/window/utils/AlertDialogWithLink.as::get linkTitle()
@@ -32,7 +32,7 @@ export interface IAlertDialogWithLink {
  * In the TS port, we use `window.open()` for external URLs.
  *
  * @see sources/win63_version/habbo/window/utils/AlertDialogWithLink.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/window/utils/AlertDialogWithLink.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialogWithLink.as
  */
 export class AlertDialogWithLink extends AlertDialog implements IAlertDialogWithLink 
 {

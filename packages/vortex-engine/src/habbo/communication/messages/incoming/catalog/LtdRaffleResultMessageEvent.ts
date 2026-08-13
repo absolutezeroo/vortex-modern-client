@@ -5,7 +5,7 @@ import {LtdRaffleResultMessageParser} from '../../parser/catalog/LtdRaffleResult
 /**
  * Whether the player won a limited-edition raffle (header 3526).
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/.../_SafeCls_1985.as
+ * AS3: sources/win63_version/habbo/communication/messages/incoming/catalog/LtdRaffleResultMessageEvent.as
  * (obfuscated; `_SafeStr_4546[3526] = _SafeCls_1985` in the registry
  * sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as, and
  * `HabboCatalog.as::onLtdRaffleResult()` is its only handler.)

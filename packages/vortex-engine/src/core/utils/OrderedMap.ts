@@ -97,7 +97,7 @@ export class OrderedMap<K = unknown, V = unknown> implements IDisposable
         }
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/utils/Map.as::replace()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_481.as::replace()
     replace(key: K, value: V): boolean 
     {
         if(!this._dictionary || !this._dictionary.has(key)) return false;
@@ -148,7 +148,7 @@ export class OrderedMap<K = unknown, V = unknown> implements IDisposable
         return this._keys[index];
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/utils/Map.as::getValueByIndex()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_481.as::getValueByIndex()
     getValueByIndex(index: number): V | null 
     {
         return this.getWithIndex(index);

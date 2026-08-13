@@ -49,18 +49,28 @@ export class RoomCreateViewCtrl
     private _layouts: IRoomLayout[] = [];
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_selectedLayout
     private _selectedLayout: IRoomLayout | null = null;
+    // Derived name: obfuscated in every tree that carries this class (`_SafeStr_*`
+    // in the primary, `var_*` in the secondary), so no tree recovers it.
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_roomNameManager
     private _roomNameManager: TextFieldManager | null = null;
+    // Derived name: obfuscated in every tree that carries this class (`_SafeStr_*`
+    // in the primary, `var_*` in the secondary), so no tree recovers it.
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_roomDescManager
     private _roomDescManager: TextFieldManager | null = null;
+    // Derived name: obfuscated in every tree that carries this class (`_SafeStr_*`
+    // in the primary, `var_*` in the secondary), so no tree recovers it.
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_categories
     private _categories: FlatCategory[] = [];
+    // Derived name: obfuscated in every tree that carries this class (`_SafeStr_*`
+    // in the primary, `var_*` in the secondary), so no tree recovers it.
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_layoutItemList
     private _layoutItemList: IItemListWindow | null = null;
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_categoryDropMenu
     private _categoryDropMenu: IDropMenuWindow | null = null;
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_maxVisitorsDropMenu
     private _maxVisitorsDropMenu: IDropMenuWindow | null = null;
+    // Derived name: `_tradeModeDropMenu` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_tradeModeDropMenu
     private _tradeModeDropMenu: IDropMenuWindow | null = null;
 
@@ -141,6 +151,8 @@ export class RoomCreateViewCtrl
         this.centerContent();
     }
 
+    // Derived name: `prepareTextFields` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::prepareTextFields()
     private prepareTextFields(): void
     {
@@ -172,6 +184,8 @@ export class RoomCreateViewCtrl
         }
     }
 
+    // Derived name: `prepareButtons` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::prepareButtons()
     private prepareButtons(): void
     {
@@ -391,6 +405,8 @@ export class RoomCreateViewCtrl
         }
     }
 
+    // Derived name: `setChildVisible` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::setChildVisible()
     private setChildVisible(container: IWindowContainer, childName: string, visible: boolean): void
     {
@@ -500,6 +516,8 @@ export class RoomCreateViewCtrl
         ));
     };
 
+    // Derived name: `resolveSelectedVisitorLimit` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::resolveSelectedVisitorLimit()
     private resolveSelectedVisitorLimit(): number
     {
@@ -526,6 +544,8 @@ export class RoomCreateViewCtrl
         this.hide();
     };
 
+    // Derived name: `centerContent` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::centerContent()
     private centerContent(): void
     {
@@ -538,6 +558,8 @@ export class RoomCreateViewCtrl
         this._content.y = Math.trunc(rect.y);
     }
 
+    // Derived name: `resolveLocalization` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::resolveLocalization()
     private resolveLocalization(value: string): string
     {
@@ -548,6 +570,8 @@ export class RoomCreateViewCtrl
         return match ? this._navigator.getText(match[1]) : this._navigator.getText(value);
     }
 
+    // Derived name: `addClickHandler` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::addClickHandler()
     private static addClickHandler(window: IWindow | null, handler: (event: WindowEvent) => void): void
     {
@@ -557,6 +581,8 @@ export class RoomCreateViewCtrl
         window.addEventListener('WME_CLICK', handler);
     }
 
+    // Derived name: `initLayouts` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::initLayouts()
     private initLayouts(): void
     {

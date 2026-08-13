@@ -12,7 +12,7 @@ const log = Logger.getLogger('habbo.toolbar.extensions.purse.CurrencyIndicatorBa
  *
  * Corresponds to the AS3 class_3491 interface.
  *
- * @see sources/win63_version/habbo/toolbar/extensions/purse/class_3491.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as
  */
 export interface ICurrencyIndicator
 {

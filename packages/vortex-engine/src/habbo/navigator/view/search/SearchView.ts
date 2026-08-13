@@ -355,6 +355,8 @@ export class SearchView
         this._clearButton = null;
     }
 
+    // Derived name: `dispose` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::dispose()
     dispose(): void
     {

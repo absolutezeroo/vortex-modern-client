@@ -3,7 +3,7 @@ import type {ISpriteDataContainer} from './ISpriteDataContainer';
 /**
  * Interface for an avatar animation containing sprite, remove, and add data.
  *
- * @see sources/win63_version/habbo/avatar/animation/class_3557.as (IAnimation)
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/animation/IAnimation.as (IAnimation)
  */
 export interface IAnimation
 {

@@ -3,7 +3,7 @@
  *
  * Receives error and crash messages for external logging (e.g., analytics, server).
  *
- * @see sources/win63_version/core/runtime/ICoreErrorLogger.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ICoreErrorLogger.as
  */
 export interface ICoreErrorLogger
 {

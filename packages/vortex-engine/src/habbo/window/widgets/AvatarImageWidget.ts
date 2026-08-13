@@ -39,6 +39,8 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
     private static readonly FIGURE_KEY: string = 'avatar_image:figure';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::SCALE_KEY
     private static readonly SCALE_KEY: string = 'avatar_image:scale';
+    // Derived name: `ONLY_HEAD_KEY` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::ONLY_HEAD_KEY
     private static readonly ONLY_HEAD_KEY: string = 'avatar_image:only_head';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::CROPPED_KEY
@@ -46,6 +48,8 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
     // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::DIRECTION_KEY
     private static readonly DIRECTION_KEY: string = 'avatar_image:direction';
 
+    // Derived name: `DIRECTIONS` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::DIRECTIONS
     private static readonly DIRECTIONS: string[] = [
         'northeast', 'east', 'southeast', 'south',
@@ -63,15 +67,15 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::DIRECTION_DEFAULT
     private static readonly DIRECTION_DEFAULT: number = 2;
 
-    // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_widgetWindow
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_widgetWindow
     private _widgetWindow: IWidgetWindow | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_root
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_root
     private _root: IWindowContainer | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_bitmap
     private _bitmap: IBitmapWrapperWindow | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_region
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_region
     private _region: IWindow | null = null;
     // TS-only: bound event handler refs for removeEventListener - AS3's
     // addEventListener/removeEventListener take the listener function itself,
@@ -123,7 +127,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
         return this._disposed;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_figure
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_figure
     private _figure: string = AvatarImageWidget.FIGURE_DEFAULT;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::get figure()
@@ -143,7 +147,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_scale
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_scale
     private _scale: string = AvatarImageWidget.SCALE_DEFAULT;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::get scale()
@@ -162,7 +166,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_onlyHead
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_onlyHead
     private _onlyHead: boolean = AvatarImageWidget.ONLY_HEAD_DEFAULT;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::get onlyHead()
@@ -200,7 +204,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_direction
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_direction
     private _direction: number = AvatarImageWidget.DIRECTION_DEFAULT;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::get direction()
@@ -219,7 +223,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
         }
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_userId
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_userId
     private _userId: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::get userId()
@@ -245,6 +249,8 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
     // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_figureEmpty
     private _figureEmpty: boolean = false;
 
+    // Derived name: `figureEmpty` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::get figureEmpty()
     public get figureEmpty(): boolean
     {

@@ -7,7 +7,7 @@
  * Objects are fed to the renderer, which distributes them to canvases.
  * Canvases query objects from this renderer (via IRoomSpriteCanvasContainer).
  *
- * @see sources/win63_version/room/renderer/class_3447.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomRenderer.as
  */
 import type {IRoomObject} from '../object/IRoomObject';
 import type {IRoomRenderer} from './IRoomRenderer';

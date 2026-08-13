@@ -37,8 +37,8 @@ const EMBEDDED_AVATAR_ACTIONS_XML = `<actions><action  id="Default" precedence="
 /**
  * Main avatar render manager component. Initializes and manages the avatar rendering system.
  *
- * @see sources/win63_version/habbo/avatar/class_1808.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/avatar/AvatarRenderManager.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarRenderManager.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarRenderManager.as
  */
 export class AvatarRenderManager extends Component implements IAvatarRenderManager 
 {
@@ -176,6 +176,8 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         );
     }
 
+    // Derived name: `getAssetByName` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::getAssetByName()
     // Inherited from Component in AS3; forwarded here because the port keeps the library private.
     public getAssetByName(name: string): IAsset | null

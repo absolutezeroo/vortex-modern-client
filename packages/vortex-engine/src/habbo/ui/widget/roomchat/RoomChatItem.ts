@@ -1,7 +1,7 @@
 /**
  * RoomChatItem
  *
- * @see sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as
+ * @see sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as
  * (primary win63_version copy has decompiler corruption — `null.` refs and
  * broken goto-based control flow; cross-checked here)
  *

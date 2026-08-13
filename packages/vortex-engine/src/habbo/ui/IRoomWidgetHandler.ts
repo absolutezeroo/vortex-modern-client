@@ -1,7 +1,7 @@
 /**
  * IRoomWidgetHandler
  *
- * @see sources/source_as_win63/habbo/ui/IRoomWidgetHandler.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandler.as
  *
  * Interface for room widget handlers that process messages and events.
  */

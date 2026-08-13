@@ -3,7 +3,7 @@ import type {IActiveActionData} from '../actions/IActiveActionData';
 /**
  * Interface for animation layer data containing frame offsets and action reference.
  *
- * @see sources/win63_version/habbo/avatar/animation/class_3526.as (IAnimationLayerData)
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/animation/IAnimationLayerData.as (IAnimationLayerData)
  */
 export interface IAnimationLayerData
 {

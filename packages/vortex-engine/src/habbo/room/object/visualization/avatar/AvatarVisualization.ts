@@ -13,7 +13,7 @@
  * - Visual additions (typing bubble, muted icon, idle Z, expressions, etc.)
  * - Animation frame updates
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as
  */
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import type {IRoomObjectModel} from '@room/object/IRoomObjectModel';

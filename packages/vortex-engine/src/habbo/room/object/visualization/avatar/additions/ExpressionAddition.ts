@@ -4,7 +4,7 @@
  * Base class for expression-based avatar additions. Provides default
  * no-op implementations of update and animate that subclasses can override.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/room/object/visualization/avatar/additions/ExpressionAddition.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/ExpressionAddition.as
  */
 import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
 import type {IExpressionAddition} from './IExpressionAddition';

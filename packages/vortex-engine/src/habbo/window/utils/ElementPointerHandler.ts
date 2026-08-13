@@ -32,6 +32,8 @@ export class ElementPointerHandler
         }
     }
 
+    // Derived name: `disposed` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::get disposed()
     public get disposed(): boolean
     {

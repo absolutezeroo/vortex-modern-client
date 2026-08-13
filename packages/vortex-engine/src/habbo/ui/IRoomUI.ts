@@ -1,7 +1,7 @@
 /**
  * IRoomUI
  *
- * @see sources/source_as_win63/habbo/ui/IRoomUI.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomUI.as
  *
  * Public interface for the room UI component.
  */
@@ -31,7 +31,7 @@ export interface IRoomUI
     /**
 	 * The active room desktop.
 	 *
-	 * AS3: sources/source_as_win63/habbo/ui/IRoomUI.as::get desktop()
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomUI.as::get desktop()
 	 */
     // AS3: .../src/com/sulake/habbo/ui/IRoomUI.as::get desktop()
     get desktop(): IRoomDesktop | null;

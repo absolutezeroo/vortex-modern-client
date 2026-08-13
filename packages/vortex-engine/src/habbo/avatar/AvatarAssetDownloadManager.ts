@@ -21,7 +21,7 @@ const log = Logger.getLogger('habbo.avatar.AvatarAssetDownloadManager');
  * download scheduling. The mandatory libraries are "hh_human_body" and "hh_human_item".
  *
  * @see sources/win63_version/habbo/avatar/AvatarAssetDownloadManager.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as
  */
 export class AvatarAssetDownloadManager extends EventEmitter 
 {

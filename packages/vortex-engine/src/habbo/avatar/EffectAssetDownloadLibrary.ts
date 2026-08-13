@@ -15,7 +15,7 @@ const log = Logger.getLogger('habbo.avatar.EffectAssetDownloadLibrary');
  * The animation data is extracted from the loaded SWF resource's animation property.
  *
  * @see sources/win63_version/habbo/avatar/EffectAssetDownloadLibrary.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/EffectAssetDownloadLibrary.as
  */
 export class EffectAssetDownloadLibrary extends EventEmitter 
 {

@@ -13,8 +13,8 @@ import {AlertDialog} from './AlertDialog';
  * The behavioral difference is that ConfirmDialog never self-disposes
  * on button click -- it always delegates to the callback.
  *
- * @see sources/win63_version/core/window/utils/class_3441.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/window/utils/IConfirmDialog.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ConfirmDialog.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ConfirmDialog.as
  */
 export type IConfirmDialog = IAlertDialog;
 
@@ -29,7 +29,7 @@ export type IConfirmDialog = IAlertDialog;
  * auto-dispose fallback that AlertDialog has when no callback is set.
  *
  * @see sources/win63_version/habbo/window/utils/ConfirmDialog.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/window/utils/ConfirmDialog.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ConfirmDialog.as
  */
 export class ConfirmDialog extends AlertDialog 
 {

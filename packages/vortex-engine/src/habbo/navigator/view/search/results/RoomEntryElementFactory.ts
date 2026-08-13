@@ -78,7 +78,7 @@ export class RoomEntryElementFactory
 	 * @param maxUserCount - Maximum capacity
 	 * @returns A color value (ARGB)
 	 *
-	 * @see sources/win63_version/habbo/window/utils/class_3822.as getUserCountColor()
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/search/results/RoomEntryElementFactory.as getUserCountColor()
 	 */
     private static getUserCountColor(userCount: number, maxUserCount: number): number
     {

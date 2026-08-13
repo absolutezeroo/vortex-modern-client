@@ -3,7 +3,7 @@ import type {IFigurePart} from './IFigurePart';
 /**
  * Interface for a figure part set containing parts and metadata.
  *
- * @see sources/win63_version/habbo/avatar/structure/figure/class_3418.as (IFigurePartSet)
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/structure/figure/IFigurePartSet.as (IFigurePartSet)
  */
 export interface IFigurePartSet
 {

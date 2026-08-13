@@ -32,7 +32,7 @@ import type {OfficialRoomEntryManager} from './mainview/OfficialRoomEntryManager
  * Extends IHabboNavigator with access to all sub-controllers and utility methods
  * needed by the legacy navigator UI components.
  *
- * @see sources/win63_version/habbo/navigator/IHabboTransitionalNavigator.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as
  */
 export interface IHabboTransitionalNavigator extends IHabboNavigator
 {

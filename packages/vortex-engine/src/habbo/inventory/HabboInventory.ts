@@ -318,6 +318,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return this._localization;
     }
 
+    // Derived name: `soundManager` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get soundManager()
     get soundManager(): IHabboSoundManager | null
     {
@@ -2313,6 +2315,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
      * the registry allows both listeners, and AS3 likewise has the two components subscribe
      * independently rather than share one purse.
      */
+    // Derived name: `registerMessageEvents` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::registerMessageEvents()
     private registerClubMessageEvents(): void
     {
@@ -2509,6 +2513,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._furniModel?.insertFurniture(items);
     };
 
+    // Derived name: `onFurniListAddOrUpdate` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onFurniListAddOrUpdate()
     private onFurniListAddOrUpdate = (event: IMessageEvent): void =>
     {

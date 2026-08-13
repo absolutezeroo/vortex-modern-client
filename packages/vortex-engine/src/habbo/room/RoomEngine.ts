@@ -269,6 +269,8 @@ export class RoomEngine extends Component implements IRoomEngine,
     private _roomRendererFactory: IRoomRendererFactory | null = null;
     private _moverIconSprite: Sprite | null = null;
     private _moverIconCanvas: RoomRenderingCanvas | null = null;
+    // Derived name: `_objectPlacementSource` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::_objectPlacementSource
     private _objectPlacementSource: string = '';
 

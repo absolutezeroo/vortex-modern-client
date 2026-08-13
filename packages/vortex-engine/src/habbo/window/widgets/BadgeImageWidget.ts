@@ -34,20 +34,22 @@ export class BadgeImageWidget implements IBadgeImageWidget
 
     // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::TYPE_KEY
     private static readonly TYPE_KEY: string = 'badge_image:type';
+    // Derived name: `BADGE_ID_KEY` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::BADGE_ID_KEY
     private static readonly BADGE_ID_KEY: string = 'badge_image:badge_id';
     // TS-only: batch-update guard to avoid redundant refresh() calls during set properties
     private _batchUpdate: boolean = false;
 
-    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_widgetWindow
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::_widgetWindow
     private _widgetWindow: IWidgetWindow | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_root
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::_root
     private _root: IWindowContainer | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::_bitmap (IStaticBitmapWrapperWindow in AS3)
     private _bitmap: IWindow | null = null;
-    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_region
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::_region
     private _region: IWindow | null = null;
     // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::var_2554
     private _groupDetailsEvent: IMessageEvent | null = null;
@@ -91,7 +93,7 @@ export class BadgeImageWidget implements IBadgeImageWidget
         return this._disposed;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_type
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::_type
     private _type: string = 'normal';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::get type()
@@ -106,7 +108,7 @@ export class BadgeImageWidget implements IBadgeImageWidget
         this._type = value;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_badgeId
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::_badgeId
     private _badgeId: string = '';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::get badgeId()

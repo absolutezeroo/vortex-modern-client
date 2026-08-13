@@ -371,6 +371,8 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
         }
     }
 
+    // Derived name: `imageReady` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::imageReady()
     imageReady(id: number, data: ImageBitmap | null): void
     {
@@ -393,6 +395,8 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
         this._preview.activate();
     }
 
+    // Derived name: `imageFailed` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::imageFailed()
     imageFailed(_id: number): void
     {

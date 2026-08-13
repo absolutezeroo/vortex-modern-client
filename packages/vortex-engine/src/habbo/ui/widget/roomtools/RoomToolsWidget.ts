@@ -35,7 +35,7 @@ export class RoomToolsWidget extends RoomWidgetBase
     private _toolbarCtrl: RoomToolsToolbarCtrl | null;
     private _infoCtrl: RoomToolsInfoCtrl | null;
     private _desktop: IRoomDesktop | null;
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::_freeFlowChat
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::_freeFlowChat
     private _freeFlowChat: IHabboFreeFlowChat | null;
     private _roomToolsTimer: ReturnType<typeof setTimeout> | null = null;
 

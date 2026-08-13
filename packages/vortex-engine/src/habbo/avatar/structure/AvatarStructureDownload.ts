@@ -9,7 +9,7 @@ const log = Logger.getLogger('habbo.avatar.structure.AvatarStructureDownload');
  * Downloads and applies additional avatar structure data (figure part lists).
  *
  * @see sources/win63_version/habbo/avatar/structure/AvatarStructureDownload.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/avatar/structure/AvatarStructureDownload.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/structure/AvatarStructureDownload.as
  */
 export class AvatarStructureDownload extends EventEmitter 
 {

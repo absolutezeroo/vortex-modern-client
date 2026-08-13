@@ -1,7 +1,7 @@
 /**
  * ChatWidgetHandler
  *
- * @see sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as
+ * @see sources/win63_version/habbo/ui/handler/ChatWidgetHandler.as
  * (primary win63_version copy has decompiler corruption; cross-checked here)
  *
  * Bridges room-session chat events to the RoomChatWidget: builds

@@ -14,7 +14,7 @@ const log = Logger.getLogger('core.Core');
  * Provides static convenience methods for error/warning/debug logging
  * and holds the singleton ICore instance (CoreComponentContext).
  *
- * @see sources/win63_version/core/class_79.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/Core.as
  */
 export class Core
 {

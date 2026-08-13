@@ -9,7 +9,7 @@ import type {IGraphicAsset} from '@room/object/visualization/utils/IGraphicAsset
 /**
  * Interface for avatar images that can be rendered.
  *
- * @see sources/win63_version/habbo/avatar/class_3374.as (IAvatarImage)
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/IAvatarImage.as (IAvatarImage)
  */
 export interface IAvatarImage
 {

@@ -5,7 +5,7 @@
  * a reference to the avatar render manager. Implements
  * IRoomObjectVisualizationData for integration with the room object system.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualizationData.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualizationData.as
  */
 import type {IRoomObjectVisualizationData} from '@room/object/visualization/IRoomObjectVisualizationData';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';

@@ -25,7 +25,7 @@ export interface IChatLinkStyleSheet
  * styling) — a superset of the public IChatStyle contract.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/_SafeCls_1776.as
- * (readable name recovered from sources/win63_2023_version/com/sulake/habbo/freeflowchat/viewer/visualization/style/IChatStyleInternal.as,
+ * (readable name recovered from sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/IChatStyleInternal.as,
  * which only carries a partial member list — the primary source above is the fuller, ground-truth version)
  */
 export interface IChatStyleInternal

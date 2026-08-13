@@ -24,8 +24,8 @@ export type AlertDialogCallback = (dialog: IDisposable, event: WindowEvent) => v
  * Combines the INotify base (title, summary, callback) with button
  * caption management (getButtonCaption, setButtonCaption).
  *
- * @see sources/win63_version/core/window/utils/class_3348.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/window/utils/IAlertDialog.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as
  */
 export interface IAlertDialog extends IDisposable {
     // AS3: .../src/com/sulake/habbo/window/utils/AlertDialog.as::get title()
@@ -59,7 +59,7 @@ export interface IAlertDialog extends IDisposable {
  * The window is built from XML via `buildFromXML`.
  *
  * @see sources/win63_version/habbo/window/utils/AlertDialog.as
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/window/utils/AlertDialog.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as
  */
 export class AlertDialog implements IAlertDialog 
 {
@@ -67,12 +67,16 @@ export class AlertDialog implements IAlertDialog
     protected static readonly LIST_BUTTONS: string = '_alert_button_list';
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::BUTTON_OK
     protected static readonly BUTTON_OK: string = '_alert_button_ok';
+    // Derived name: `BUTTON_CANCEL` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::BUTTON_CANCEL
     protected static readonly BUTTON_CANCEL: string = '_alert_button_cancel';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::BUTTON_CUSTOM
     protected static readonly BUTTON_CUSTOM: string = '_alert_button_custom';
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::HEADER_BUTTON_CLOSE
     protected static readonly HEADER_BUTTON_CLOSE: string = 'header_button_close';
+    // Derived name: `TEXT_SUMMARY` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::TEXT_SUMMARY
     protected static readonly TEXT_SUMMARY: string = '_alert_text_summary';
 
@@ -80,6 +84,8 @@ export class AlertDialog implements IAlertDialog
     private static _instanceCounter: number = 0;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/AlertDialog.as::_window
     protected _window: IWindowContainer | null = null;
+    // Derived name: `_modalDialog` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::_modalDialog
     protected _modalDialog: IModalDialog | null = null;
 

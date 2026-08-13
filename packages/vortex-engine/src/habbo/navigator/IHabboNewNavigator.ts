@@ -61,7 +61,7 @@ export interface IHabboNewNavigator extends IDisposable
 	 * in-room controllers (room info, room settings, room events) all hang off it — so
 	 * anything holding only the old navigator has to come back through here to reach them.
 	 *
-	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNewNavigator.as::_SafeStr_5440
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::_SafeStr_5440
 	 */
     readonly legacyWrapper: IHabboTransitionalNavigator | null;
 

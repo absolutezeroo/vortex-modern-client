@@ -17,13 +17,13 @@ export class RoomWidgetSongUpdateEvent extends RoomWidgetUpdateEvent
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetSongUpdateEvent.as::SONG_DATA_RECEIVED
     public static readonly SONG_DATA_RECEIVED: string = 'RWSUE_DATA_RECEIVED';
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetSongUpdateEvent.as::_songId
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/events/RoomWidgetSongUpdateEvent.as::_songId
     private _songId: number;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetSongUpdateEvent.as::_songName
     private _songName: string;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetSongUpdateEvent.as::_songAuthor
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/events/RoomWidgetSongUpdateEvent.as::_songAuthor
     private _songAuthor: string;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetSongUpdateEvent.as::RoomWidgetSongUpdateEvent()

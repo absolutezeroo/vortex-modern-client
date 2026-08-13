@@ -47,6 +47,8 @@ export class HabboCatalogUtils implements IGetImageListener
     // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::_bundleDiscountFlatPriceSteps
     private _bundleDiscountFlatPriceSteps: number[] = [];
 
+    // Derived name: `_bundleDiscountHighestFlatPriceStep` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::_bundleDiscountHighestFlatPriceStep
     private _bundleDiscountHighestFlatPriceStep: number = 0;
 

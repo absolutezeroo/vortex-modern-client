@@ -1,7 +1,7 @@
 /**
  * Avatar geometry type identifiers for body orientation.
  *
- * @see sources/win63_version/habbo/avatar/enum/class_3720.as (GeometryType)
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/GeometryType.as (GeometryType)
  */
 export class GeometryType
 {

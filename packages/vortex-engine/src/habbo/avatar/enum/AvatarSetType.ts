@@ -1,7 +1,7 @@
 /**
  * Avatar set type identifiers.
  *
- * @see sources/win63_version/habbo/avatar/enum/class_3438.as (AvatarSetType)
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarSetType.as (AvatarSetType)
  */
 export class AvatarSetType
 {

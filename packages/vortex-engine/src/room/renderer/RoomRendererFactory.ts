@@ -5,7 +5,7 @@
  *
  * Factory component that creates RoomRenderer instances.
  *
- * @see sources/win63_version/room/renderer/class_2015.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomRendererFactory.as
  */
 import {Component, type IContext} from '@core/runtime';
 import type {IRoomRendererFactory} from './IRoomRendererFactory';

@@ -319,7 +319,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
     private _groupInfoManager: HabboGroupInfoManager | null = null;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::_badgeImageManager
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/SessionDataManager.as::_badgeImageManager
     private _badgeImageManager: BadgeImageManager | null = null;
 
     get groupInfoManager(): IHabboGroupInfoManager
@@ -431,6 +431,8 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return this._isAmbassador;
     }
 
+    // Derived name: `_noobnessLevel` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::_noobnessLevel
     // AS3 initialises this to -1, not 0, so isNoob() reads true until the server says
     // otherwise (see get isNoob()).

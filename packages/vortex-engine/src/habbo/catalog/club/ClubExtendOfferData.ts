@@ -35,6 +35,8 @@ export class ClubExtendOfferData extends ClubBuyOfferData
         super(offerId, productCode, priceCredits, priceInActivityPoints, activityPointType, vip, months, extraDays, daysLeftAfterPurchase, year, month, day, isGiftable);
     }
 
+    // Derived name: `parse` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1716/_SafeCls_3494.as::parse()
     // Field order matches the wire exactly, right after the 13 base ClubBuyOfferData fields (see
     // ClubBuyOfferData.fromWrapper() for that read order).

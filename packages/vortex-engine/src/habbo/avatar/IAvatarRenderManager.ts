@@ -10,7 +10,7 @@ import type {IGraphicAsset} from '@room/object/visualization/utils/IGraphicAsset
 /**
  * Interface for the avatar render manager component.
  *
- * @see sources/win63_version/habbo/avatar/IAvatarRenderManager.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/IAvatarRenderManager.as
  */
 export interface IAvatarRenderManager
 {
@@ -37,6 +37,8 @@ export interface IAvatarRenderManager
      * clothing thumbnail out of the individual body-part sprites. The port keeps that library
      * private to `AvatarRenderManager`, so it has to be exposed deliberately.
      */
+    // Derived name: `getAssetByName` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::getAssetByName()
     getAssetByName(name: string): IAsset | null;
 

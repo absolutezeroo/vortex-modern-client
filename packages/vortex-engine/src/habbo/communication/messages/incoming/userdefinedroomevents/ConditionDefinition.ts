@@ -11,7 +11,7 @@ import {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroo
  * hooks, so a real (initialised or bare) field declaration would re-run after `super()` under
  * ES2022 define-semantics and clobber the wire-read value back to `undefined`.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/incoming/userdefinedroomevents/ConditionDefinition.as
+ * AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/userdefinedroomevents/ConditionDefinition.as
  */
 export class ConditionDefinition extends Triggerable
 {

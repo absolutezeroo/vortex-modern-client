@@ -31,6 +31,8 @@ export class ModalDialog implements IModalDialog
     private static _windowManager: IHabboWindowManager | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::_container (static)
     private static _container: IWindowContainer | null = null;
+    // Derived name: obfuscated in every tree that carries this class (`_SafeStr_*`
+    // in the primary, `var_*` in the secondary), so no tree recovers it.
     // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_refreshPending (static)
     private static _refreshPending: number = 0;
     // TS-only: replaces AS3 var_360: Stage null-check init guard
@@ -75,6 +77,8 @@ export class ModalDialog implements IModalDialog
         return this._disposed;
     }
 
+    // Derived name: `_rootWindow` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_rootWindow
     private _rootWindow: IWindow | null = null;
 
@@ -108,6 +112,8 @@ export class ModalDialog implements IModalDialog
         }
     }
 
+    // Derived name: `onUpdate` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::onUpdate()
     public static onUpdate(): void
     {

@@ -822,6 +822,8 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         }
     };
 
+    // Derived name: `detailsWindowCtrl` is declared in no AS3 tree — the trace points
+    // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::get detailsWindowCtrl()
     get detailsWindowCtrl(): DetailsWindowCtrl
     {

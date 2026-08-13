@@ -4,7 +4,7 @@
  * Avatar addition that shows a floating "Z" animation when the avatar is
  * idle/sleeping. Alternates between two animation frames with a delay.
  *
- * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as
  */
 import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
 import type {IAvatarAddition} from './IAvatarAddition';

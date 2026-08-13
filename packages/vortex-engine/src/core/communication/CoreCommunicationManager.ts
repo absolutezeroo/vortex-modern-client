@@ -12,7 +12,7 @@ import type {IContext, IUpdateReceiver} from '@core/runtime/IContext';
  * Registers as an IUpdateReceiver so processReceivedData()
  * is called each frame by the CoreComponentContext update loop.
  *
- * @see sources/win63_version/core/communication/CoreCommunicationManager.as
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/communication/CoreCommunicationManager.as
  */
 export class CoreCommunicationManager extends Component implements ICoreCommunicationManager, IUpdateReceiver
 {

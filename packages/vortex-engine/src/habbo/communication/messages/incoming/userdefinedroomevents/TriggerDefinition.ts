@@ -6,7 +6,7 @@ import {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroo
  * It adds no fields of its own; the entire read is delegated to the Triggerable base
  * constructor, so this subclass exists purely to name the trigger variant.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/incoming/userdefinedroomevents/TriggerDefinition.as
+ * AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/userdefinedroomevents/TriggerDefinition.as
  */
 export class TriggerDefinition extends Triggerable
 {

@@ -2,7 +2,7 @@
  * RoomDesktopLayoutManager
  *
  * @see sources/win63_version/habbo/ui/class_3019.as
- * @see sources/win63_2023_version/com/sulake/habbo/ui/DesktopLayoutManager.as (clean
+ * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/DesktopLayoutManager.as (clean
  *      cross-reference — win63_version's setLayout()/getWidgetContainer() are corrupted
  *      by decompiler artifacts: a `null.`-ref infinite loop and a dropped final
  *      return statement respectively)
