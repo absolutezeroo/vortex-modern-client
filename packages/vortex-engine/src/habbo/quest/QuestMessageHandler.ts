@@ -53,6 +53,31 @@ import {
     CompetitionEntrySubmitResultMessageEvent
 } from '@habbo/communication/messages/incoming/competition/CompetitionEntrySubmitResultMessageEvent';
 
+// Room-context events: AS3 subscribes all three object mutations plus the settings save, and
+// routes every one of them to roomCompetitionController.onContextChanged().
+import {ObjectAddMessageEvent} from '@habbo/communication/messages/incoming/room/engine/ObjectAddMessageEvent';
+import {
+    ObjectRemoveMessageEvent
+} from '@habbo/communication/messages/incoming/room/engine/ObjectRemoveMessageEvent';
+import {
+    ObjectRemoveMultipleMessageEvent
+} from '@habbo/communication/messages/incoming/room/engine/ObjectRemoveMultipleMessageEvent';
+import {RoomSettingsSavedEvent} from '@habbo/communication/messages/incoming/roomsettings/RoomSettingsSavedEvent';
+
+// Score / subscription / session events
+import {
+    AchievementsScoreMessageEvent
+} from '@habbo/communication/messages/incoming/inventory/AchievementsScoreMessageEvent';
+import {ScrSendUserInfoEvent} from '@habbo/communication/messages/incoming/users/ScrSendUserInfoEvent';
+import {
+    IsFirstLoginOfDayMessageEvent
+} from '@habbo/communication/messages/incoming/handshake/IsFirstLoginOfDayMessageEvent';
+import {
+    ActivityPointsMessageEvent
+} from '@habbo/communication/messages/incoming/notifications/ActivityPointsMessageEvent';
+
+import {ActivityPointTypeEnum} from '@habbo/catalog/purse/ActivityPointTypeEnum';
+
 // Parsers
 import type {QuestMessageEventParser} from '@habbo/communication/messages/parser/quest/QuestMessageEventParser';
 import type {QuestsMessageEventParser} from '@habbo/communication/messages/parser/quest/QuestsMessageEventParser';
@@ -89,6 +114,18 @@ import type {
 import type {
     CompetitionEntrySubmitResultMessageEventParser
 } from '@habbo/communication/messages/parser/competition/CompetitionEntrySubmitResultMessageEventParser';
+import type {
+    AchievementsScoreMessageParser
+} from '@habbo/communication/messages/parser/inventory/AchievementsScoreMessageParser';
+import type {
+    IsFirstLoginOfDayMessageParser
+} from '@habbo/communication/messages/parser/handshake/IsFirstLoginOfDayMessageParser';
+import type {
+    ScrSendUserInfoMessageParser
+} from '@habbo/communication/messages/parser/users/ScrSendUserInfoMessageParser';
+import type {
+    ActivityPointsMessageParser
+} from '@habbo/communication/messages/parser/notifications/ActivityPointsMessageParser';
 
 const log = Logger.getLogger('habbo.quest.QuestMessageHandler');
 
@@ -182,6 +219,20 @@ export class QuestMessageHandler implements IDisposable
         // Notification events
         this.addMessageEvent(communication, new HabboAchievementNotificationMessageEvent(this.onLevelUp.bind(this)));
         this.addMessageEvent(communication, new HabboActivityPointNotificationMessageEvent(this.onActivityPointsNotification.bind(this)));
+        this.addMessageEvent(communication, new ActivityPointsMessageEvent(this.onActivityPoints.bind(this)));
+
+        // Room-competition context. The competition controller has to re-evaluate whether the
+        // current room still qualifies whenever its furniture or its settings change, so all
+        // three object mutations and the settings save land on the same handler.
+        this.addMessageEvent(communication, new ObjectAddMessageEvent(this.onFurnisChanged.bind(this)));
+        this.addMessageEvent(communication, new ObjectRemoveMessageEvent(this.onFurnisChanged.bind(this)));
+        this.addMessageEvent(communication, new ObjectRemoveMultipleMessageEvent(this.onFurnisChanged.bind(this)));
+        this.addMessageEvent(communication, new RoomSettingsSavedEvent(this.onRoomSettingsSaved.bind(this)));
+
+        // Score, subscription and session events
+        this.addMessageEvent(communication, new AchievementsScoreMessageEvent(this.onAchievementsScore.bind(this)));
+        this.addMessageEvent(communication, new ScrSendUserInfoEvent(this.onSubscriptionUserInfoEvent.bind(this)));
+        this.addMessageEvent(communication, new IsFirstLoginOfDayMessageEvent(this.onIsFirstLoginOfDay.bind(this)));
 
         log.debug('Quest message handler initialized');
     }
@@ -469,11 +520,6 @@ export class QuestMessageHandler implements IDisposable
 
     /**
 	 * Handle a single activity-point balance change (seasonal calendar currency display).
-	 *
-	 * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/_SafeCls_1951.as
-	 * also registers the whole-wallet ActivityPointsMessageEvent (onActivityPoints), which resets
-	 * every ActivityPointTypeEnum value to 0 before applying the wallet. That one is still only
-	 * registered by HabboCatalog here, so the quest side never sees the initial wallet.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/_SafeCls_1951.as::onActivityPointsNotification()
     private onActivityPointsNotification(event: IMessageEvent): void
@@ -485,5 +531,97 @@ export class QuestMessageHandler implements IDisposable
         if(!notification.parser) return;
 
         this._engine.questController?.onActivityPoints(notification.type, notification.amount);
+    }
+
+    /**
+	 * Handle the whole wallet.
+	 *
+	 * AS3 zeroes every `ActivityPointTypeEnum` value first and then applies the wallet, so a
+	 * currency the server stopped sending falls back to 0 instead of keeping its last value.
+	 * The reset pass is the reason the order matters.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/_SafeCls_1951.as::onActivityPoints()
+    private onActivityPoints(event: IMessageEvent): void
+    {
+        if(!this._engine) return;
+
+        const parser = event.parser as ActivityPointsMessageParser;
+
+        if(!parser) return;
+
+        for(const type of ActivityPointTypeEnum.values())
+        {
+            this._engine.questController?.onActivityPoints(type, 0);
+        }
+
+        for(const [type, amount] of parser.points)
+        {
+            this._engine.questController?.onActivityPoints(type, amount);
+        }
+    }
+
+    /**
+	 * The room's furniture changed — added, removed, or removed in bulk.
+	 *
+	 * AS3 registers the same handler for all three and ignores the payload entirely: the
+	 * competition controller re-reads the room itself.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/_SafeCls_1951.as::onFurnisChanged()
+    private onFurnisChanged(_event: IMessageEvent): void
+    {
+        this._engine?.roomCompetitionController?.onContextChanged();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/_SafeCls_1951.as::onRoomSettingsSaved()
+    private onRoomSettingsSaved(_event: IMessageEvent): void
+    {
+        this._engine?.roomCompetitionController?.onContextChanged();
+    }
+
+    /**
+	 * Publishes the achievement score as a localization parameter, which is what makes
+	 * `${achievements.categories.score}` resolve to a number instead of rendering its own key.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/_SafeCls_1951.as::onAchievementsScore()
+    private onAchievementsScore(event: IMessageEvent): void
+    {
+        if(!this._engine) return;
+
+        const parser = event.parser as AchievementsScoreMessageParser;
+
+        if(!parser) return;
+
+        this._engine.localization?.registerParameter('achievements.categories.score', 'score', parser.score.toString());
+    }
+
+    /**
+	 * The subscription reply doubles as the room-competition trigger: AS3 only kicks the
+	 * competition init off for a VIP, and only on response type 2.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/_SafeCls_1951.as::onSubscriptionUserInfoEvent()
+    private onSubscriptionUserInfoEvent(event: IMessageEvent): void
+    {
+        if(!this._engine) return;
+
+        const parser = event.parser as ScrSendUserInfoMessageParser;
+
+        if(!parser) return;
+
+        if(parser.isVIP && parser.responseType === 2)
+        {
+            this._engine.roomCompetitionController?.sendRoomCompetitionInit();
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/_SafeCls_1951.as::onIsFirstLoginOfDay()
+    private onIsFirstLoginOfDay(event: IMessageEvent): void
+    {
+        if(!this._engine) return;
+
+        const parser = event.parser as IsFirstLoginOfDayMessageParser;
+
+        if(!parser) return;
+
+        this._engine.setIsFirstLoginOfDay(parser.isFirstLoginOfDay);
     }
 }

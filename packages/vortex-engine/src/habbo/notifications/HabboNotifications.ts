@@ -9,6 +9,7 @@ import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_HabboHelp} from '@iid/IIDHabboHelp';
+import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
@@ -19,6 +20,7 @@ import {PetImageUtility} from './utils/PetImageUtility';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboHelp} from '@habbo/help/IHabboHelp';
+import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import type {IHabboNotifications} from './IHabboNotifications';
 import {SingularNotificationController} from './singular/SingularNotificationController';
 import {NotificationMessageHandler} from './NotificationMessageHandler';
@@ -74,6 +76,8 @@ export class HabboNotifications extends Component implements IHabboNotifications
     private _windowManager: IHabboWindowManager | null = null;
     // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::_habboHelp
     private _habboHelp: IHabboHelp | null = null;
+    // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::_freeFlowChat
+    private _freeFlowChat: IHabboFreeFlowChat | null = null;
 
     constructor(context: IContext)
     {
@@ -145,6 +149,12 @@ export class HabboNotifications extends Component implements IHabboNotifications
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get freeFlowChat()
+    get freeFlowChat(): IHabboFreeFlowChat | null
+    {
+        return this._freeFlowChat;
     }
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/notifications/HabboNotifications.as::_petImageUtility
@@ -267,6 +277,16 @@ export class HabboNotifications extends Component implements IHabboNotifications
                 (help: IHabboHelp | null) =>
                 {
                     this._habboHelp = help;
+                },
+                false
+            ),
+            // Where the chat-style notification gets its preview bitmap from. Optional in AS3
+            // too — the notification degrades to no icon rather than not firing.
+            new ComponentDependency(
+                IID_HabboFreeFlowChat,
+                (freeFlowChat: IHabboFreeFlowChat | null) =>
+                {
+                    this._freeFlowChat = freeFlowChat;
                 },
                 false
             ),

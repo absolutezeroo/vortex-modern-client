@@ -376,6 +376,12 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         return this._habboTracking;
     }
 
+    /**
+	 * AS3 caches this off its own `UserObjectMessageEvent` subscription (`onUserObject()` writes
+	 * the field this getter returns). The port reads the session data manager instead, which is
+	 * fed by the same message — so the subscription is deliberately not reproduced rather than
+	 * missing. Anything sweeping for unregistered AS3 message events will flag it; this is why.
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::get avatarId()
     get avatarId(): number
     {

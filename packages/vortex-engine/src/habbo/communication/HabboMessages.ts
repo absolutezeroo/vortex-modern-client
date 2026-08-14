@@ -2335,9 +2335,15 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(789, MarketplaceCanMakeOfferResultEvent);
         this._events.set(2954, MarketplaceMakeOfferResultEvent);
         this._events.set(1127, RentOrBuyoutOfferMessageEvent);
-        this._events.set(1919, RecyclerStatusMessageEvent);
-        this._events.set(281, RecyclerFinishedMessageEvent);
-        this._events.set(3783, RecyclerPrizesMessageEvent);
+        // The three recycler pushes were on invented ids (2166→1919, 3617→281, 3367→3783), taken
+        // from the emulator, which had them wrong too — none of 1919/281/3783 has an entry in
+        // WIN63's registry at all, and each of 2166/3617/3367 has exactly one. Parser shapes
+        // confirm the mapping: _SafeCls_2004 (recyclerStatus, recyclerTimeoutSeconds),
+        // _SafeCls_2078 (recyclerFinishedStatus, prizeId), _SafeCls_2027 (prizeLevels).
+        // The emulator's constants were corrected in the same pass.
+        this._events.set(2166, RecyclerStatusMessageEvent);
+        this._events.set(3617, RecyclerFinishedMessageEvent);
+        this._events.set(3367, RecyclerPrizesMessageEvent);
         this._events.set(3350, SellablePetPalettesMessageEvent);
 
         // === QUEST ===

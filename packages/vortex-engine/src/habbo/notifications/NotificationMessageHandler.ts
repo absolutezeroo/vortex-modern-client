@@ -17,6 +17,18 @@ import {
     OpenConnectionMessageEvent
 } from '@habbo/communication/messages/incoming/room/session/OpenConnectionMessageEvent';
 import {RoomEntryInfoMessageEvent} from '@habbo/communication/messages/incoming/room/engine/RoomEntryInfoMessageEvent';
+import {
+    RecyclerFinishedMessageEvent
+} from '@habbo/communication/messages/incoming/catalog/RecyclerFinishedMessageEvent';
+import {
+    UserPurchasableChatStyleChangedMessageEvent
+} from '@habbo/communication/messages/incoming/nft/UserPurchasableChatStyleChangedMessageEvent';
+import type {
+    RecyclerFinishedMessageEventParser
+} from '@habbo/communication/messages/parser/catalog/RecyclerFinishedMessageEventParser';
+import type {
+    UserPurchasableChatStyleChangedMessageParser
+} from '@habbo/communication/messages/parser/nft/UserPurchasableChatStyleChangedMessageParser';
 
 // Existing parsers
 import type {
@@ -266,6 +278,8 @@ export class NotificationMessageHandler
         this.addMessageEvent(new AccountSafetyLockStatusChangeMessageEvent(this.onAccountSafetyLockStatusChanged.bind(this)));
         this.addMessageEvent(new RoomMessageNotificationMessageEvent(this.onRoomMessagesNotification.bind(this)));
         this.addMessageEvent(new BadgeReceivedEvent(this.onBadgeReceived.bind(this)));
+        this.addMessageEvent(new RecyclerFinishedMessageEvent(this.onRecyclerFinished.bind(this)));
+        this.addMessageEvent(new UserPurchasableChatStyleChangedMessageEvent(this.onChatStyleNotification.bind(this)));
 
         log.debug('Notification message handlers registered');
     }
@@ -803,5 +817,53 @@ export class NotificationMessageHandler
     private onRoomEnter(_event: IMessageEvent): void
     {
         this._notifications?.singularController?.showModerationDisclaimer();
+    }
+
+    /**
+	 * The recycler finished. This is the second subscriber to the same push — `HabboCatalog`
+	 * takes it too, to drive the recycler window; this one only raises the bubble.
+	 *
+	 * AS3 drops anything that is not status 1 (success) without a word, and reads the raw
+	 * localization entry rather than the resolved string, so a hotel that has not defined
+	 * `notifications.text.recycle.ok` shows nothing instead of the key.
+	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onRecyclerFinished()
+    private onRecyclerFinished(event: IMessageEvent): void
+    {
+        const parser = event.parser as RecyclerFinishedMessageEventParser;
+
+        if(parser == null || parser.recyclerFinishedStatus !== 1) return;
+
+        const localization = this._notifications?.localizationManager?.getLocalizationRaw('notifications.text.recycle.ok');
+
+        if(localization)
+        {
+            this._notifications?.singularController?.addItem(localization.value, 'recyclerok', null);
+        }
+
+        log.debug('[HabboNotifications] recycle ok');
+    }
+
+    /**
+	 * A purchasable chat style was granted or taken away.
+	 *
+	 * AS3 clones the style's `selectorPreview` BitmapData before handing it over; this port has
+	 * no mutable bitmap type and every other consumer of `selectorPreview` passes the
+	 * `ImageBitmap` straight through, so it is passed by reference here too.
+	 */
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::onChatStyleNotification()
+    private onChatStyleNotification(event: IMessageEvent): void
+    {
+        const parser = event.parser as UserPurchasableChatStyleChangedMessageParser;
+
+        if(parser == null || this._notifications == null) return;
+
+        const message = this._notifications.localizationManager?.getLocalization(
+            parser.added ? 'notification.chatstyles.added' : 'notification.chatstyles.removed'
+        ) ?? '';
+
+        const preview = this._notifications.freeFlowChat?.chatStyleLibrary?.getStyle(parser.styleId)?.selectorPreview ?? null;
+
+        this._notifications.addItemWithBitmap(message, 'info', preview);
     }
 }
