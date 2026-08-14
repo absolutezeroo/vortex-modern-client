@@ -28,6 +28,7 @@ import type {WiredPermissionsEventParser} from '@habbo/communication/messages/pa
 import {AccountPreferencesEvent} from '@habbo/communication/messages/incoming/preferences/AccountPreferencesEvent';
 import type {AccountPreferencesParser} from '@habbo/communication/messages/parser/preferences/AccountPreferencesParser';
 import {YouAreControllerMessageEvent} from '@habbo/communication/messages/incoming/room/permissions/YouAreControllerMessageEvent';
+import {WiredMenuEvent} from '../events/WiredMenuEvent';
 import {SetWiredMenuPreferencesComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/SetWiredMenuPreferencesComposer';
 import {RequestWiredRoomLogsComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredRoomLogsComposer';
 
@@ -535,10 +536,16 @@ export class WiredMenuController extends Component implements ILinkEventTracker,
     set wiredMenuButton(value: boolean)
     {
         this._wiredMenuButton = value;
-        // TODO(AS3): AS3 dispatches WiredMenuEvent('WIRED_MENU_BUTTON_PREFERENCE_CHANGED') on
-        // roomEvents.events so the toolbar refreshes the wired button. The port keeps `events` for the
-        // DI system (rule 20-architecture #4) and has no wired-domain emitter or toolbar listener for
-        // this yet, so the dispatch is deferred.
+
+        // AS3 dispatches on `roomEvents.events` so the toolbar can show or hide its wired button.
+        // The earlier note here deferred this on the grounds that `events` is reserved for the DI
+        // system — rule 20-architecture #4 forbids *overriding* `get events()`, not emitting a
+        // domain event on it, and the port already does exactly this elsewhere (`REE_DISPOSED` off
+        // `RoomEngine.events`, which two wired controllers subscribe to).
+        this.roomEvents.events.emit(
+            WiredMenuEvent.WIRED_MENU_BUTTON_PREFERENCE_CHANGED,
+            new WiredMenuEvent(WiredMenuEvent.WIRED_MENU_BUTTON_PREFERENCE_CHANGED)
+        );
     }
 
     // AS3: WiredMenuController.as::get wiredInspectButton()
