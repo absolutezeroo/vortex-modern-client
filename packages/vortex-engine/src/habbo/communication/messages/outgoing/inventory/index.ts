@@ -1,5 +1,7 @@
 // Furni
 export {RequestFurniInventoryComposer} from './RequestFurniInventoryComposer';
+export {GetSilverMessageComposer} from './GetSilverMessageComposer';
+export {GetNftCreditsMessageComposer} from './GetNftCreditsMessageComposer';
 
 // Badges
 export {GetBadgesComposer} from './GetBadgesComposer';

@@ -178,6 +178,42 @@ subscribes it for the normal path.
 Verified: `tsc --noEmit` clean on both packages, ESLint clean on every touched file, and the sweep
 re-run reports 0 missing in toolbar and navigator, 1 documented in session.
 
+#### The ten "server is waiting" send gaps, triaged — 2026-08-14
+
+`wire-coverage` reported 10 send gaps with a real (non-stub) emulator handler behind them, which
+reads as a ready-made worklist. It is not one, and the difference matters before anyone plans around
+that number: **a send gap is only cheap when the code that would send it is already ported.**
+Resolving all ten through WIN63's registry to their AS3 composer, then to the class that sends it:
+
+| id   | composer sender (AS3)                          | what it actually costs |
+|------|-------------------------------------------------|------------------------|
+| 394  | `HabboInventory.initComponent()`                | **done** — wiring      |
+| 2069 | `HabboInventory.initComponent()`                | **done** — wiring      |
+| 3862 | `FurniModel.requestInitialization()`            | needs `_isInRoom`, i.e. `roomEntered()`/`roomLeft()` and the three handlers that call them |
+| 2931 | `ClubDiscountPromoExtension.onTextRegionClicked()` | that click handler is not ported |
+| 1760 | `AchievementsResolutionController`               | the port's is a 177-line log-only shell |
+| 916  | `AchievementsResolutionController`               | same |
+| 3426 | `BCFloorPlanEditor`                              | whole window unported |
+| 880  | `BCFloorPlanEditor`                              | whole window unported |
+| 625  | `VariableManagementDetailView`                   | the `habbo/roomevents` remainder |
+| 785  | —                                                | **not a client gap** |
+
+**Two of ten were wiring.** `GetSilverMessageComposer` (394) and `GetNftCreditsMessageComposer`
+(2069) — both of which kept their real names through obfuscation — did not exist in this port at
+all, so the two balances were never requested once. They are now sent from `initComponent()` where
+AS3 sends them. Send gaps 47 → 45, real-handler gaps 10 → 8.
+
+**785 is not a gap at all.** It is absent from *both* tables of `_SafeCls_2046.as`: the emulator
+carries a header this client build does not have. Two others nearly went the same way for the
+opposite reason — a first pass reported 394 and 2069 as absent from the registry because the grep
+assumed obfuscated `_SafeCls_N` names, and those two are in clear. **Match both forms.**
+
+`HabboInventory.initComponent()` also revealed a question this pass deliberately did not answer: AS3
+sends five composers there and this port sends none, reaching 540 through `requestFurni()` and
+`habbo_club` through `onPurseTimer()` instead. Adding the boot sends without checking those paths
+would double every request rather than close a gap; the marker at that site says so, and
+`_SafeCls_2019` has no port equivalent under any name.
+
 #### Three recycler headers were invented, on both sides of the wire
 
 Found while checking whether notifications' `onRecyclerFinished` was unwired or unported. It was

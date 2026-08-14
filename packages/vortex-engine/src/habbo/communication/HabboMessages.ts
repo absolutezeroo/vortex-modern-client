@@ -1344,6 +1344,8 @@ import {
     GetIsBadgeRequestFulfilledComposer,
     RequestABadgeComposer,
     RequestFurniInventoryComposer,
+    GetSilverMessageComposer,
+    GetNftCreditsMessageComposer,
     ResetUnseenItemIdsComposer,
     ResetUnseenItemsComposer,
     SetActivatedBadgesComposer,
@@ -2984,6 +2986,12 @@ export class HabboMessages implements IMessageConfiguration
         // === INVENTORY ===
         this._composers.set(41, RequestFurniInventoryComposer);
         this._composers.set(540, GetCreditsInfoComposer);
+        // AS3: WIN63's registry, `_composers[2069]`/`[394]` — two of the few composer classes that
+        // kept their real names through obfuscation. `HabboInventory.initComponent()` sends both at
+        // boot, right after 540; neither existed in this port, so the two balances were never asked
+        // for. Corroborated by vortex-emulator, whose handlers for both are real.
+        this._composers.set(2069, GetNftCreditsMessageComposer);
+        this._composers.set(394, GetSilverMessageComposer);
         this._composers.set(770, GetBadgesComposer);
         // AS3: WIN63's registry, `_composers[3159] = _SafeCls_3448`. The emulator's only 3159
         // is an unrelated server->client composer, a different table, so not a conflict.

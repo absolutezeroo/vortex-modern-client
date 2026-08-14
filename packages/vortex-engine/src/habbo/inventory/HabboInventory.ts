@@ -161,6 +161,8 @@ import {
     GetBotInventoryComposer,
     GetPetInventoryComposer,
     RequestFurniInventoryComposer,
+    GetSilverMessageComposer,
+    GetNftCreditsMessageComposer,
 } from '../communication/messages/outgoing/inventory';
 import {ScrGetUserInfoMessageComposer} from '../communication/messages/outgoing/users/ScrGetUserInfoMessageComposer';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
@@ -1496,6 +1498,21 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
         this._unseenItemTracker = new UnseenItemTracker(this._communication!, this.events, this);
         this._view = new InventoryMainView(this);
+
+        // AS3: HabboInventory.as::initComponent() sends five composers here, in this order:
+        // 540 (GetCreditsInfo), 2069, 394, ScrGetUserInfo("habbo_club") and _SafeCls_2019.
+        // Only these two are added: neither existed in this port at all, so the NFT-credit and
+        // silver balances were never requested once.
+        //
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::initComponent()
+        // The other three are deliberately NOT added here yet. This port reaches 540 through
+        // `requestFurni()` and `habbo_club` through `onPurseTimer()`, on demand rather than at
+        // boot, and adding the boot sends without first checking those paths would double every
+        // request rather than fix a gap. Whether the lazy scheme is a correct deviation or a
+        // second gap is its own check — `_SafeCls_2019` has no port equivalent under any name.
+        this._communication?.connection?.send(new GetNftCreditsMessageComposer());
+        this._communication?.connection?.send(new GetSilverMessageComposer());
+
         this.registerFurniMessageEvents();
         this.registerPetMessageEvents();
         this.registerBotMessageEvents();
