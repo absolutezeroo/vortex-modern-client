@@ -4,6 +4,30 @@
 **Scope:** Tous les fichiers TypeScript du projet Vortex (hors `outgoing/`, `incoming/`, `parsers/`)
 **Référence:** `sources/win63_version/` (AS3 primaire)
 
+> ## ⚠ DOCUMENT HISTORIQUE — NE PAS UTILISER COMME ÉTAT COURANT (note du 2026-08-13)
+>
+> C'est un instantané du **18 février 2026**, conservé pour ses constats de conformité (bugs
+> d'assignation, patterns DI, écarts d'interface) qui restent instructifs. Ses **pourcentages de
+> couverture et sa liste de modules manquants sont périmés**, et plusieurs sont aujourd'hui faux au
+> point d'induire en erreur. L'état courant est `docs/IMPLEMENTATION_STATUS.md` (remesuré
+> 2026-08-13) et `docs/MESSAGES_PORT_BACKLOG.md`.
+>
+> Concrètement, **6 des 7 « modules 100% manquants » ci-dessous sont portés** :
+>
+> | Module ici « 0% »          | Réel au 2026-08-13                                              |
+> |----------------------------|------------------------------------------------------------------|
+> | `habbo/catalog`            | 206 fichiers TS / 265 AS3 — flux achat complet, 7 phases closes  |
+> | `habbo/roomevents`         | 395 / 448 — wired setup + menu, 5 des 6 onglets réels            |
+> | `habbo/sound`              | 32 / 29 — manager, `music/`, `trax/`, `furni/`, `events/`        |
+> | `habbo/nux`                | 5 / 4 — porté et attaché (`IID_HabboNuxDialogs`), 2026-08-06     |
+> | `habbo/phonenumber`        | 8 / 7 — porté et attaché (`IID_HabboPhoneNumber`), 2026-08-06    |
+> | `habbo/userclassification` | 2 / 1 — le DTO du module                                         |
+> | **`habbo/game`**           | **0 / 63 — toujours vrai, le seul de la liste**                  |
+>
+> Même chose pour la vue d'ensemble : `habbo/ui` (~20% ici) est à 300/369, `habbo/friendbar` (~30%)
+> à 129/146, `habbo/avatar` (~65%) à 155/140 avec l'éditeur complet. Le seul point de ce document
+> encore intact est **`habbo/game` à 0%**, qui n'a pas bougé depuis.
+
 ---
 
 ## Vue d'ensemble
