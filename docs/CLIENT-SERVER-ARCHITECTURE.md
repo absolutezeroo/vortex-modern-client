@@ -10,6 +10,33 @@ How **Turbo Cloud** (`vortex-emulator`, the server) and **vortex-client** (the c
 
 ---
 
+
+## Collectibles — the empty wallet list that hangs two tabs (fixed 2026-08-13)
+
+`GetCollectibleWalletAddresses` used to be answered with a bare
+`new CollectibleWalletAddressesMessageComposer()` — empty Stardust address, empty list. The client
+is faithful to AS3 here and both tabs deadlock on that:
+
+- `RewardClaimsTab` only leaves its loading state from `onNftClaimsMessage()` (when its per-wallet
+  request queue drains) or `onNftClaimResultMessage()`. Zero wallets means zero requests, so
+  neither fires.
+- `CollectionsTab` disables its wallet dropdown when the list is empty, so `selectWallet()` and
+  therefore `requestCollections()` are never reached, and its single `setReady(true)` inside
+  `onNftCollectionsMessage()` never runs.
+
+Verified against `sources/WIN63-202607011411-782849652/.../tabs/RewardClaimsTab.as` (lines 95-108
+and 158-172): the Flash client has the same two exit points and would hang identically. **This is a
+server gap, not a client bug** — do not "fix" it by forcing the tabs ready.
+
+The handler now derives a deterministic Stardust address from `ctx.PlayerId` (`0x` + the id as
+40 hex digits) and returns it. The client's parser pushes a non-empty Stardust address into its
+wallet list, which is what unblocks both requests. There is no wallet grain and nowhere in the
+client to link an external wallet, so the derived address is the whole feature.
+
+Wire shape, covered by `Vortex.Revisions.Tests/Collectibles/CollectibleWalletAddressesWireTests.cs`:
+the Stardust address is a string written **before** the count-prefixed list of the others, and an
+empty string there means "none linked".
+
 ## Table of Contents
 
 1. [System Overview](#1-system-overview)

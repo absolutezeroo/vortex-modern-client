@@ -1,3 +1,4 @@
+import {Logger} from '@core/utils/Logger';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
@@ -40,6 +41,8 @@ import {CollectibleProductPreviewer} from './subviews/CollectibleProductPreviewe
 import {MintInventoryItemRenderer} from '../renderer/MintInventoryItemRenderer';
 import type {MintableItemWrapper} from '../renderer/model/MintableItemWrapper';
 import {MintTokenPurchaseOffer} from './MintTokenPurchaseOffer';
+
+const log = Logger.getLogger('habbo.catalog.collectibles.MintInventoryListTab');
 
 // AS3: MintInventoryListTab.as::PROGRESS_BAR_UPDATE_THRESHOLD — ms between countdown repaints.
 const PROGRESS_BAR_UPDATE_THRESHOLD = 1000;
@@ -191,6 +194,27 @@ export class MintInventoryListTab implements IUpdateReceiver
             && !this._waitingForItemTypes
             && !this._waitingForMintingEnabled
             && !this._waitingForTokens;
+
+        // TS-only: no AS3 counterpart. Five independent waits gate this tab and a stuck one is
+        // indistinguishable from the other four on screen — the spinner just never stops. Naming
+        // the outstanding ones turns "Relics loads forever" into a single line that says which
+        // message never came back.
+        //
+        // `info`, not `debug`, on purpose: Logger maps DEBUG onto `console.debug`, which Chrome
+        // files under Verbose and hides unless that box is ticked — a debug probe here reads as
+        // "the code never ran" when it merely never showed.
+        if(!ready)
+        {
+            const outstanding: string[] = [];
+
+            if(this._waitingForWallet) outstanding.push('wallet');
+            if(this._waitingForInventory) outstanding.push('inventory(furni)');
+            if(this._waitingForItemTypes) outstanding.push('mintableItemTypes');
+            if(this._waitingForMintingEnabled) outstanding.push('mintingEnabled');
+            if(this._waitingForTokens) outstanding.push('mintTokens');
+
+            log.info(`MintInventoryListTab still waiting on: ${outstanding.join(', ')}`);
+        }
 
         if(ready)
         {
@@ -402,6 +426,11 @@ export class MintInventoryListTab implements IUpdateReceiver
     // AS3: MintInventoryListTab.as::initializeData()
     private initializeData(): void
     {
+        // TS-only: pairs with the wait dump in updateReadyState(). If this line is absent from the
+        // console when Relics is opened, the tab was never initialized at all and the spinner is
+        // just the layout's default state — a different bug from any of the five waits hanging.
+        log.info(`MintInventoryListTab.initializeData(): walletsLoaded=${this._view?.walletsLoaded() === true}, activeWallet=${this._view?.activeWallet ?? 'null'}`);
+
         this._waitingForItemTypes = true;
         this._controller.send(new GetCollectibleMintableItemTypesComposer());
 
