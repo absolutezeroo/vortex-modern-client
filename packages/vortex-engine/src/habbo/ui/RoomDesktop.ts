@@ -63,6 +63,8 @@ import {AvatarInfoWidgetHandler} from './handler/AvatarInfoWidgetHandler';
 import {CustomUserNotificationWidgetHandler} from './handler/CustomUserNotificationWidgetHandler';
 import {RentableSpaceWidgetHandler} from './handler/RentableSpaceWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
+import {CameraWidgetHandler} from './handler/CameraWidgetHandler';
+import {RoomThumbnailCameraWidgetHandler} from './handler/RoomThumbnailCameraWidgetHandler';
 import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
 import {FurnitureTrophyWidgetHandler} from './handler/FurnitureTrophyWidgetHandler';
 import {FurnitureStickieWidgetHandler} from './handler/FurnitureStickieWidgetHandler';
@@ -1056,6 +1058,14 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             }
             case 'RWE_CHAT_INPUT_WIDGET':
                 handler = new ChatInputWidgetHandler();
+                break;
+            case 'RWE_CAMERA':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidget()
+                handler = new CameraWidgetHandler(this);
+                break;
+            case 'RWE_ROOM_THUMBNAIL_CAMERA':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidget()
+                handler = new RoomThumbnailCameraWidgetHandler(this);
                 break;
             case 'RWE_EFFECTS':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:848

@@ -9,6 +9,46 @@
 export class StringUtil
 {
     /**
+	 * Lookup table behind {@link makeMagicString}. Ported verbatim, including the six empty slots
+	 * and the duplicated characters — callers index it by `value - base`, so any change to the
+	 * contents or the length changes every string built from it.
+	 */
+    // AS3: .../src/com/sulake/habbo/utils/StringUtil.as::characters
+    private static readonly CHARACTERS: string[] = [
+        'p', 'e', ',', 'i', '"', 'r', '', 'm', 'o', '}',
+        'n', 'g', '', '{', 'x', 'l', ':', 'q', 'a', 'c',
+        ':', 's', 'o', ' ', '(', '', 'p', 't', 'i', 'v',
+        'h', 'f', '', ' ', 'c', 'd', '', 'k', ')', 's',
+        'z', '', 'y', 'w', 'b', '-', 't', 'j', '', 'u',
+        ':', '.', ' ', 'a', '"', '"', 'e', 'm', ' ', ','
+    ];
+
+    /**
+	 * Build a string from an offset plus a list of table indices — the obfuscation the Flash client
+	 * uses so the room-render JSON's key names never appear as literals in the SWF.
+	 *
+	 * Kept as the real mechanism rather than folded into the strings it produces: the caller reads
+	 * as it does in AS3, and a wrong index shows up as a wrong string instead of silently matching
+	 * a hand-decoded constant.
+	 *
+	 * @param base The offset subtracted from every value
+	 * @param values Table indices, each offset by `base`
+	 * @returns The assembled string
+	 */
+    // AS3: .../src/com/sulake/habbo/utils/StringUtil.as::makeMagicString()
+    static makeMagicString(base: number, ...values: number[]): string
+    {
+        let result: string = '';
+
+        for(const value of values)
+        {
+            result += StringUtil.CHARACTERS[value - base];
+        }
+
+        return result;
+    }
+
+    /**
 	 * Pad a string with leading zeros to reach a target length.
 	 *
 	 * @param str The string to pad

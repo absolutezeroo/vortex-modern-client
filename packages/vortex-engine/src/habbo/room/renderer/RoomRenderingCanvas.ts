@@ -349,6 +349,18 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         return canvas;
     }
 
+    /**
+	 * The z-sorted sprites of the last render — what the camera serializes into the photo.
+	 *
+	 * Returned live rather than copied, matching AS3, whose caller appends culled objects to the
+	 * same vector before sorting it.
+	 */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::getSortableSpriteList()
+    getSortableSpriteList(): SortableSprite[]
+    {
+        return this._sortableSpriteList;
+    }
+
     // AS3: sources/win63_version/room/renderer/class_3523.as::skipSpriteVisibilityChecking()
     skipSpriteVisibilityChecking(): void 
     {

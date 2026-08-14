@@ -13,6 +13,9 @@ import type {Container, Ticker} from 'pixi.js';
 import {Sprite, Texture} from 'pixi.js';
 import {Component, ComponentDependency, type IContext, type IUpdateReceiver} from '@core/runtime';
 import {Vortex} from '../../Vortex';
+import {SpriteDataCollector} from './utils/SpriteDataCollector';
+import {RenderRoomMessageComposer} from '@habbo/communication/messages/outgoing/camera/RenderRoomMessageComposer';
+import {RenderRoomThumbnailMessageComposer} from '@habbo/communication/messages/outgoing/camera/RenderRoomThumbnailMessageComposer';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IRoomEngine} from './IRoomEngine';
@@ -3910,6 +3913,119 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
 
         canvas.useMask = useMask;
+    }
+
+    /**
+	 * Builds the camera's render request for the given viewport.
+	 *
+	 * `thumbnail` selects {@link RenderRoomThumbnailMessageComposer}, which packs in its constructor
+	 * instead of on demand — the only difference between the two.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRenderRoomMessage()
+    getRenderRoomMessage(
+        viewPort: IRoomEngineRectangle,
+        backgroundColor: number,
+        thumbnail: boolean = false,
+        includeOwnUser: boolean = true,
+        skipVisibilityChecking: boolean = false,
+        canvasId: number = -1
+    ): RenderRoomMessageComposer | null
+    {
+        const canvas = canvasId > -1
+            ? this.getRenderingCanvas(this._activeRoomId, canvasId)
+            : this.getRenderingCanvas(this._activeRoomId);
+
+        if(!canvas) return null;
+
+        if(skipVisibilityChecking) canvas.skipSpriteVisibilityChecking();
+
+        // AS3 excludes the player's own avatar by id when `includeOwnUser` is false — that is how
+        // the room thumbnail is taken without the owner standing in it.
+        let skipObjectId = -1;
+
+        if(!includeOwnUser)
+        {
+            skipObjectId = this._roomSessionManager?.getSession(this._activeRoomId)?.ownUserRoomId ?? -1;
+        }
+
+        const collector = new SpriteDataCollector();
+        const sprites = collector.getFurniData(viewPort, canvas, skipObjectId);
+        const modifiers = collector.getRoomRenderingModifiers();
+        const planes = collector.getRoomPlanes(viewPort, backgroundColor);
+
+        if(skipVisibilityChecking) canvas.resumeSpriteVisibilityChecking();
+
+        const topSecurityLevel = this._sessionDataManager?.topSecurityLevel ?? 0;
+
+        if(thumbnail)
+        {
+            return new RenderRoomThumbnailMessageComposer(planes, sprites, modifiers, this._activeRoomId, topSecurityLevel);
+        }
+
+        return new RenderRoomMessageComposer(planes, sprites, modifiers, this._activeRoomId, topSecurityLevel);
+    }
+
+    /**
+	 * Captures the room canvas for the camera.
+	 *
+	 * AS3 signature is `snapshotRoomCanvasToBitmap(roomId, canvasId, bitmap, matrix, smoothing)`,
+	 * drawing the canvas's display object into a caller-supplied `BitmapData` through a `Matrix`.
+	 * This port has no mutable bitmap type — window components take an immutable `ImageBitmap` —
+	 * so the region is passed in instead of a translation matrix and the result is returned. The
+	 * captured pixels are identical; only who owns the buffer changes.
+	 *
+	 * The capture reuses `RoomRenderingCanvas.takeScreenShot()`, which already forces a 1:1,
+	 * zero-offset, visibility-check-free render and restores the previous state afterwards — the
+	 * same guarantees AS3 gets from drawing the live display object while the camera holds the room
+	 * at scale 1.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::snapshotRoomCanvasToBitmap()
+    async snapshotRoomCanvasToBitmap(
+        roomId: number,
+        canvasId: number,
+        region: IRoomEngineRectangle | null = null,
+        backgroundColor: number = 0
+    ): Promise<ImageBitmap | null>
+    {
+        const canvas = this.getRenderingCanvas(roomId, canvasId);
+
+        if(!canvas) return null;
+
+        const renderer = Vortex.instance?.application?.renderer ?? null;
+
+        if(!renderer) return null;
+
+        try
+        {
+            const source = canvas.takeScreenShot(renderer);
+
+            if(!source || source.width < 1 || source.height < 1) return null;
+
+            const width = Math.max(1, Math.round(region?.width ?? source.width));
+            const height = Math.max(1, Math.round(region?.height ?? source.height));
+            const target = document.createElement('canvas');
+
+            target.width = width;
+            target.height = height;
+
+            const context = target.getContext('2d');
+
+            if(!context) return null;
+
+            // AS3 fills the destination with the room background before drawing, in the caller;
+            // doing it here keeps the two call sites (camera, room thumbnail) from repeating it.
+            context.fillStyle = `#${(backgroundColor >>> 0).toString(16).padStart(6, '0').slice(-6)}`;
+            context.fillRect(0, 0, width, height);
+            context.drawImage(source, -Math.round(region?.left ?? 0), -Math.round(region?.top ?? 0));
+
+            return await createImageBitmap(target);
+        }
+        catch (error)
+        {
+            log.warn('snapshotRoomCanvasToBitmap: capture failed', error);
+
+            return null;
+        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setFpsCounterEnabled()

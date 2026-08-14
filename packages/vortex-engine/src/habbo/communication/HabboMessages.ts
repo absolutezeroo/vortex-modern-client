@@ -665,6 +665,36 @@ import {
 import {
     JukeboxPlayListFullMessageEvent
 } from './messages/incoming/sound/JukeboxPlayListFullMessageEvent';
+import {InitCameraMessageEvent} from './messages/incoming/camera/InitCameraMessageEvent';
+import {
+    CameraStorageUrlMessageEvent
+} from './messages/incoming/camera/CameraStorageUrlMessageEvent';
+import {
+    CameraPublishStatusMessageEvent
+} from './messages/incoming/camera/CameraPublishStatusMessageEvent';
+import {
+    CameraPurchaseOKMessageEvent
+} from './messages/incoming/camera/CameraPurchaseOKMessageEvent';
+import {
+    ThumbnailStatusMessageEvent
+} from './messages/incoming/camera/ThumbnailStatusMessageEvent';
+import {
+    CompetitionStatusMessageEvent
+} from './messages/incoming/camera/CompetitionStatusMessageEvent';
+import {RenderRoomMessageComposer} from './messages/outgoing/camera/RenderRoomMessageComposer';
+import {
+    RenderRoomThumbnailMessageComposer
+} from './messages/outgoing/camera/RenderRoomThumbnailMessageComposer';
+import {PublishPhotoMessageComposer} from './messages/outgoing/camera/PublishPhotoMessageComposer';
+import {
+    PurchasePhotoMessageComposer
+} from './messages/outgoing/camera/PurchasePhotoMessageComposer';
+import {
+    PhotoCompetitionMessageComposer
+} from './messages/outgoing/camera/PhotoCompetitionMessageComposer';
+import {
+    RequestCameraConfigurationMessageComposer
+} from './messages/outgoing/camera/RequestCameraConfigurationMessageComposer';
 import {PlayListMessageEvent} from './messages/incoming/sound/PlayListMessageEvent';
 import {
     PlayListSongAddedMessageEvent
@@ -1592,6 +1622,17 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(949, JukeboxPlayListFullMessageEvent);
         this._events.set(1242, PlayListMessageEvent);
         this._events.set(2785, PlayListSongAddedMessageEvent);
+
+        // === CAMERA ===
+        // The photo pipeline, `_events[2768]/[2176]/[203]/[3907]/[1325]/[2622]` in WIN63's
+        // registry: the camera's prices, where the render can be fetched, and the outcomes of
+        // publishing, buying, rendering a thumbnail and entering the competition.
+        this._events.set(2768, InitCameraMessageEvent);
+        this._events.set(2176, CameraStorageUrlMessageEvent);
+        this._events.set(203, CameraPublishStatusMessageEvent);
+        this._events.set(3907, CameraPurchaseOKMessageEvent);
+        this._events.set(1325, ThumbnailStatusMessageEvent);
+        this._events.set(2622, CompetitionStatusMessageEvent);
 
         // === INVENTORY - UNSEEN ===
         this._events.set(3059, UnseenItemsMessageEvent);
@@ -2823,6 +2864,18 @@ export class HabboMessages implements IMessageConfiguration
         // === CAMPAIGN ===
         this._composers.set(3643, OpenCampaignCalendarDoorComposer);
         this._composers.set(3863, OpenCampaignCalendarDoorAsStaffComposer);
+
+        // === CAMERA ===
+        // Headers read from WIN63's own registry (habbo/communication/_SafeCls_2046.as,
+        // _composers[3332]/[1985]/[375]/[753]/[2707]/[3010]) and corroborated by vortex-emulator
+        // Vortex.Revisions/Revision20260701/Headers.cs. 3332 is also a *server→client* header
+        // there (the loot-box result); the two tables are independent, so that is not a collision.
+        this._composers.set(3332, RenderRoomMessageComposer);
+        this._composers.set(1985, RenderRoomThumbnailMessageComposer);
+        this._composers.set(375, PublishPhotoMessageComposer);
+        this._composers.set(753, PurchasePhotoMessageComposer);
+        this._composers.set(2707, PhotoCompetitionMessageComposer);
+        this._composers.set(3010, RequestCameraConfigurationMessageComposer);
 
         // === ADVERTISEMENT ===
         // NOTE: GetInterstitialMessageComposer had ID 3698 in win63 source, but that conflicts
