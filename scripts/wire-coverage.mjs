@@ -81,10 +81,21 @@ function parseClientRegistry()
 
 // Which handler families the emulator actually implements — a header constant with no handler
 // behind it is not a server feature, so those are excluded from the "waiting for you" count.
+//
+// The file existing is NOT enough, and reading only the filename is how this script once reported
+// camera and crafting as "the server is implemented and waiting" when all ten of their handlers are
+// `await ValueTask.CompletedTask.ConfigureAwait(false);` and nothing else — the message is accepted
+// and dropped. 117 of the emulator's 515 handlers are that shape. So classify the *body*:
+//
+//   'real' — HandleAsync does something
+//   'stub' — HandleAsync only awaits CompletedTask
+//
+// This is the same "read the body, not the name" rule the client side already lives by
+// (.claude/rules/00-mandate.md).
 function emulatorHandlerNames()
 {
     const dir = join(EMULATOR, 'Vortex.PacketHandlers');
-    const names = new Set();
+    const names = new Map();
 
     if(!existsSync(dir)) return names;
 
@@ -94,14 +105,39 @@ function emulatorHandlerNames()
         {
             const full = join(path, entry.name);
 
-            if(entry.isDirectory()) walk(full);
-            else if(entry.name.endsWith('MessageHandler.cs')) names.add(entry.name.replace('MessageHandler.cs', ''));
+            if(entry.isDirectory())
+            {
+                walk(full);
+            }
+            else if(entry.name.endsWith('MessageHandler.cs'))
+            {
+                names.set(entry.name.replace('MessageHandler.cs', ''), classifyHandler(full));
+            }
         }
     };
 
     walk(dir);
 
     return names;
+}
+
+// A body counts as real if it has any statement beyond the single awaited CompletedTask. Matching
+// on indentation keeps the method signature's own parameter lines out of the count.
+function classifyHandler(file)
+{
+    const text = readFileSync(file, 'utf8');
+    const start = text.indexOf('HandleAsync');
+
+    if(start < 0) return 'real';
+
+    const body = text.slice(start);
+    const statements = body
+        .split('\n')
+        .filter((line) => /^\s{8}(var|await [A-Za-z_]|if|foreach|for|return|ctx\.|_[a-z]|throw|switch)/.test(line));
+
+    if(statements.length <= 1 && /await ValueTask\.CompletedTask/.test(body)) return 'stub';
+
+    return 'real';
 }
 
 // Group by the feature word the header name starts with, so the output is readable as "which
@@ -165,7 +201,9 @@ function report(title, gaps, note)
         {
             for(const g of list.sort((a, b) => a.name.localeCompare(b.name)))
             {
-                console.log(`         ${g.id}\t${g.name}${g.handled ? '  [handler]' : ''}`);
+                const mark = g.handled === 'real' ? '  [handler]' : g.handled === 'stub' ? '  [STUB — accepted and dropped]' : '';
+
+                console.log(`         ${g.id}\t${g.name}${mark}`);
             }
         }
     }
@@ -183,26 +221,31 @@ for(const [id, name] of headers.event)
 
     const base = name.replace(/MessageEvent$|Event$/, '');
 
-    sendGaps.push({ id, name, handled: handlers.has(base) });
+    sendGaps.push({ id, name, handled: handlers.get(base) ?? null });
 }
 
 const recvGaps = [];
 
 for(const [id, name] of headers.composer)
 {
-    if(!client.events.has(id)) recvGaps.push({ id, name, handled: false });
+    if(!client.events.has(id)) recvGaps.push({ id, name, handled: null });
 }
+
+const stubCount = [...handlers.values()].filter((v) => v === 'stub').length;
 
 console.log(`Emulator headers   : ${headers.event.size} client→server, ${headers.composer.size} server→client`);
 console.log(`Client registry    : ${client.composers.size} composers, ${client.events.size} events`);
-console.log(`Emulator handlers  : ${handlers.size} *MessageHandler.cs`);
+console.log(`Emulator handlers  : ${handlers.size} *MessageHandler.cs — ${handlers.size - stubCount} real, ${stubCount} empty stubs`);
 
-const withHandler = sendGaps.filter((g) => g.handled);
+const withHandler = sendGaps.filter((g) => g.handled === 'real');
+const withStub = sendGaps.filter((g) => g.handled === 'stub');
 
 report(
     'SEND GAPS (client cannot trigger)',
     sendGaps,
-    `  ${withHandler.length} of these have a real handler behind them — the server is implemented and waiting.`
+    `  ${withHandler.length} have a real handler behind them — the server is implemented and waiting.\n`
+    + `  ${withStub.length} have a handler that is an empty stub: porting the client side alone gets you\n`
+    + `  a screen that opens and never receives anything. Those need emulator work too.`
 );
 
 report(
