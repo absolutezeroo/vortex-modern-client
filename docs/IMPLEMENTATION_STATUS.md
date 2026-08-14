@@ -257,6 +257,49 @@ member of every window (`WindowController.windowIsChild()`) and this port's `IWi
 
 Send gaps 45 → 44, real-handler gaps 8 → 7.
 
+#### The chests tab — 2026-08-14
+
+Second of `habbo/roomevents`' enumerated remainders: lock/unlock the room's wired chests, and a
+ten-row preview of their recent transactions.
+
+It was a 31-line stub against 264 lines, `TransactionPreviewTableObject` was missing, and its
+message layer did not exist — event 2910, composers 2016 and 1630, and the two DTOs. All of it is
+ported, plus `TransactionConfig` (14 lines, one integer) out of the deferred
+`wired_trading/transactions/overview` block, which is the only thing the tab needed from there.
+**That dependency looked like a blocker and was not** — worth checking before deferring a slice on
+the strength of an import list.
+
+Two things the port had to get right:
+
+- **One header answers two windows.** 2910 feeds both this tab's preview and the paged transactions
+  window, and the payload says which: a page is only the preview's if `amount` is 10, `currentPage`
+  is 1 **and** `logListType` is 1. The two `logListType` names are derived — 0 is read by
+  `WiredTransactionLogsView`, 1 by this tab, and that is all the evidence there is.
+- **Nothing pushes a chest transaction**, so the tab polls: `update()` re-requests every 20 seconds
+  while it is being viewed. The lock buttons also go quiet for 500 ms after a click, so a double
+  click cannot send the same command twice.
+
+**The server knows nothing about chests.** Unlike camera and crafting — which at least have handlers
+that accept and drop — vortex-emulator has **no constant at all** for 2910, 2016 or 1630, so they do
+not even register as send gaps in `wire-coverage`. The tab is complete client-side and mute in
+practice. That is a third category worth naming: *not implemented* is visible in the gap count,
+*stubbed* is visible once the script reads bodies, but *absent from the header table* is invisible
+to both.
+
+Names: `WiredTransactionInfo` and every accessor on it are recovered — that class survived
+obfuscation. Everything else here is **derived**, and says so: `win63_version` predates wired chests
+entirely (not one chest message anywhere in it) and the emulator has no constants to corroborate
+against.
+
+Left as a `TODO(AS3)` at `TransactionPreviewTableObject.getTableCell()`: AS3's `ITableObject`
+declares `:TableCell` and its implementations return null from the default branch, so the port's
+non-nullable signature is faithful to a signature AS3 does not honour. `VariableValueTableObject`
+already casts around it; widening the interface is the real fix but `TableRowView` feeds the result
+straight into `TableCellView` at three unguarded call sites, so it needs AS3's null path read first.
+
+Sweep of `habbo/roomevents` after this: 21 of 24 AS3 subscriptions wired, the remaining 3 all in the
+deferred `wired_trading` chest sub-controllers.
+
 #### Three recycler headers were invented, on both sides of the wire
 
 Found while checking whether notifications' `onRecyclerFinished` was unwired or unported. It was

@@ -522,6 +522,15 @@ import {
     WiredTradeInitiateMessageEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTradeInitiateMessageEvent';
 import {
+    WiredTransactionLogsEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTransactionLogsEvent';
+import {
+    RequestWiredTransactionLogsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/RequestWiredTransactionLogsComposer';
+import {
+    SetWiredChestsLockedComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/SetWiredChestsLockedComposer';
+import {
     WiredTradeCancelledMessageEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTradeCancelledMessageEvent';
 import {
@@ -1921,6 +1930,11 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1643, WiredSetUserPermanentVariableResultEvent);
         // Wired trading. Headers read straight out of WIN63's registry (_SafeCls_2046.as); the
         // reference emulator defines none of the four, so nothing sends them yet.
+        // Wired chests: one page of transaction logs (WIN63 registry: 2910 -> _SafeCls_3439). Two
+        // windows subscribe it — the chests tab's ten-row preview and the paged transactions
+        // window — and each drops a page whose `logListType` is not its own. Names derived: no
+        // unobfuscated tree carries the chest messages and the emulator has no constant for 2910.
+        this._events.set(2910, WiredTransactionLogsEvent);
         this._events.set(3650, WiredTradeInitiateMessageEvent);
         this._events.set(1481, WiredTradeCancelledMessageEvent);
         this._events.set(2137, WiredTradeCompletedMessageEvent);
@@ -2477,6 +2491,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2386, ClearWiredErrorLogsComposer);
         // Wired trading, same source and same caveat as the four events above.
         this._composers.set(3111, WiredTradeUpdateItemsComposer);
+        // Wired chests: request a page of transaction logs, and lock/unlock chests (WIN63 registry:
+        // 2016 -> _SafeCls_2406, 1630 -> _SafeCls_3599). Both names derived, same reason as 2910.
+        this._composers.set(2016, RequestWiredTransactionLogsComposer);
+        this._composers.set(1630, SetWiredChestsLockedComposer);
         this._composers.set(2818, WiredTradeAcceptComposer);
         this._composers.set(2646, WiredTradeCancelComposer);
         // Collectibles. Headers from WIN63's registry; the emulator defines neither.
