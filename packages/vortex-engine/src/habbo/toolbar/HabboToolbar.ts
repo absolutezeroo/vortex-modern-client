@@ -37,6 +37,9 @@ import type {IHabboMessenger} from '../messenger/IHabboMessenger';
 import type {IHabboUserDefinedRoomEvents} from '../roomevents/IHabboUserDefinedRoomEvents';
 import type {IHabboConfigurationManager} from '../configuration/IHabboConfigurationManager';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import {
+    UserRightsMessageEvent
+} from '@habbo/communication/messages/incoming/handshake/UserRightsMessageEvent';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import {BottomBarLeft} from './BottomBarLeft';
 import {BottomBackgroundBorder} from './BottomBackgroundBorder';
@@ -392,6 +395,14 @@ export class HabboToolbar extends Component implements IHabboToolbar
                 (manager: IHabboCommunicationManager | null) =>
                 {
                     this._communication = manager;
+
+                    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::initComponent()
+                    // registers this the moment it has the connection — the toolbar's only
+                    // subscription, and the one call site of `addHabboConnectionMessageEvent()`,
+                    // which was ported with its tracking list and its disposal and then never
+                    // called by anything. The DI callback is where this port learns it has a
+                    // communication manager, so it is the honest equivalent of that point.
+                    if(manager) this.addHabboConnectionMessageEvent(new UserRightsMessageEvent(this.onUserRights.bind(this)));
                 },
                 true
             ),
@@ -1403,6 +1414,21 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @param event The message event to register
 	 */
+    /**
+	 * The video-offer extension gets a second chance here.
+	 *
+	 * `initVideoOfferExtension()` runs from `onPerksUpdated()` with the rest of the extensions, but
+	 * its gates include `catalog.videoOffers.enabled`, which can flip true *after* that pass. AS3
+	 * guards on the extension field itself — `if(!_videoOfferExtension)` — and this port's
+	 * `initVideoOfferExtension()` already opens with the same check, so calling it again is a no-op
+	 * once the extension exists.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::onUserRights()
+    private onUserRights(_event: IMessageEvent): void
+    {
+        if(!this._videoOfferExtension) this.initVideoOfferExtension();
+    }
+
     private addHabboConnectionMessageEvent(event: IMessageEvent): void
     {
         if(this._communication)

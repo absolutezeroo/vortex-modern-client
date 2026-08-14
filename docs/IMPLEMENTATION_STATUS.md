@@ -121,6 +121,63 @@ working as intended:
   (event, parser, `RelationshipStatusInfo`, `RelationshipStatusEnum`) is fully ported and ready.
 - `onBadgeLeaderboardResult` is genuine: id **2503** is in no client registry.
 
+#### The last three modules, swept 2026-08-14 — and the recipe mechanised
+
+`habbo/toolbar`, `habbo/navigator` and `habbo/session` were the three the section above named as
+not yet swept. They are done, and the sweep is now a script rather than a procedure, because
+running it by hand is what let two findings hide.
+
+| Module           | AS3 subscriptions | Missing before | Missing after |
+|------------------|-------------------|----------------|---------------|
+| `habbo/toolbar`  | 3                 | **1**          | 0             |
+| `habbo/navigator`| 55                | **1**          | 0             |
+| `habbo/session`  | 75                | **6**          | 1 (documented)|
+
+**Two corrections to the recipe, both of which changed the result:**
+
+1. **"Constructed somewhere" is not the question — "constructed by *this* module" is.** A first pass
+   asking only whether the TS event class is built anywhere in the engine reported toolbar and
+   navigator clean and found 2 in session. Narrowing it to the module found 8. This is the
+   `ActivityPoints` lesson again, one level up: `UserRights` is constructed by four other modules,
+   `HabboGroupDetails` by three, and each was still missing where AS3 also subscribes it.
+2. **Strip comments before matching.** A commented-out registration reads as a construction. Two
+   findings sat behind the identical line `// TODO: Register additional message events when
+   implemented` — `RespectNotificationMessageEvent` in `RoomChatHandler` and `DanceMessageEvent` in
+   `RoomUsersHandler` — with the event, the parser and the registry entry all already in place.
+
+What the seven were:
+
+- **`RoomChatHandler` was 7 of AS3's 10.** `RespectNotification` (chat type 3) and
+  `HandItemReceived` (type 5) were ported and unsubscribed; **`SpecialSystemChat` (id 3102, type
+  12) had no message at all** and is newly ported — event, parser, registry entry. Its name is
+  **derived, not recovered**: `win63_version` is older and does not carry it, and the emulator has
+  no constant for 3102 either, so it is named for the AS3 handler (`onSpecialSystemChat`); this is
+  stated at both declarations. `RoomSessionChatEvent` was also missing `CHAT_TYPE_PING` (11) and
+  `CHAT_TYPE_SPECIAL_SYSTEM` (12).
+- **`RoomUsersHandler`** now dispatches `RoomSessionFriendRequestEvent` — `FriendRequestWidgetHandler`
+  had been listening for it since it was written — and `RoomSessionDanceEvent`.
+- **The dance round trip is closed at both ends.** `AvatarInfoWidgetHandler` now handles `RSDE_DANCE`
+  as AS3 does (own avatar only, matched on room object id), and the optimistic `isDancing` the port
+  set at the *send* site is gone. Checked before removing it: the emulator's `DanceMessageHandler`
+  is real and `SetAvatarDanceAsync` broadcasts `DanceMessageComposer` to the whole room, sender
+  included — so the echo genuinely arrives.
+- **`HabboNewNavigator._groupDetails` was never filled.** `onGroupDetails()` and
+  `getCachedGroupDetails()` were both written; nothing called them. `onGroupDetails` is now on
+  `IHabboNewNavigator`, reached through a new `HabboNavigator.newNavigator` getter — the same shape
+  as the existing `transitionalNavigator` one, and for the same reason.
+- **`HabboToolbar.addHabboConnectionMessageEvent()` was dead code** — helper, tracking list and
+  disposal all ported, never called once. AS3's single toolbar subscription is `onUserRights`, whose
+  whole body is a second attempt at `initVideoOfferExtension()` (the first runs from
+  `onPerksUpdated()`, before `catalog.videoOffers.enabled` may have flipped).
+
+**The one left open is deliberate and now carries a `TODO(AS3)` at `RoomSessionManager`:**
+`onRoomVisualizationSettings` (2986) returns immediately unless `_roomViewerMode`, the standalone
+room-viewer embed this port does not implement. The message is ported and `RoomMessageHandler`
+subscribes it for the normal path.
+
+Verified: `tsc --noEmit` clean on both packages, ESLint clean on every touched file, and the sweep
+re-run reports 0 missing in toolbar and navigator, 1 documented in session.
+
 #### Three recycler headers were invented, on both sides of the wire
 
 Found while checking whether notifications' `onRecyclerFinished` was unwired or unported. It was
@@ -1271,9 +1328,9 @@ that pairing (both halves name the same member). The 27 left each need their own
 inside a method body and are correctly placed, and a few document a member that exists in no tree,
 where a lone marker is legitimate.
 
-### Three measurement tools, and what they are each for
+### Four measurement tools, and what they are each for
 
-The TODO count only measures what someone remembered to mark. Two blind spots it cannot see got their own scripts on 2026-08-09, and a third mode was added to this one:
+The TODO count only measures what someone remembered to mark. Two blind spots it cannot see got their own scripts on 2026-08-09, a third mode was added to this one, and the priority-0 sweep became the fourth script on 2026-08-14:
 
 | Command | Question it answers |
 |---|---|
@@ -1282,6 +1339,9 @@ The TODO count only measures what someone remembered to mark. Two blind spots it
 | `node scripts/todo-inventory.mjs --orphans` | Which trace comments drifted off their declaration |
 | `node scripts/wire-coverage.mjs` | What the server implements that the client cannot reach |
 | `node scripts/unwired-messages.mjs` | What we wrote and never registered |
+| `node scripts/sweep-unwired.mjs <module>…` | What AS3 subscribes to that the port's matching module does not |
+
+**`sweep-unwired` is priority 0 mechanised**, and it exists because running that recipe by hand kept producing false negatives — three different ones now (`onActivityPoints` masked by a same-named method, a registration counted as present because it was commented out, and an event counted as wired because a *different* module constructs it). Its unit is the module, not the engine: it resolves each AS3 `_SafeCls_N` through the registry to an id, finds the TS class the port registers at that id, and asks whether **that module** constructs it. Validate it on a module already swept — `habbo/quest` reports 24/24.
 
 **`wire-coverage` found the largest single defect of the day.** The whole moderation toolset was dead: 23 composers ported, none registered, every button reaching a composer the connection had no header for, and not one error logged. The player half — reporting — was the same, 20 ported and 2 registered, so a working queue would have had nothing to work on. Send gaps went 149 → 98 once both were wired, plus room competitions, which were unreachable for the same reason.
 

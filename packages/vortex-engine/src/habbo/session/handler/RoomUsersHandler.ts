@@ -14,6 +14,18 @@ import type {FavoriteMembershipUpdateMessageEventParser} from '../../communicati
 import {RoomSessionFavouriteGroupUpdateEvent} from '../events/RoomSessionFavouriteGroupUpdateEvent';
 import {HabboUserBadgesMessageEvent} from '../../communication/messages/incoming/users/HabboUserBadgesMessageEvent';
 import {UserChangeMessageEvent} from '@habbo/communication/messages/incoming/room/action/UserChangeMessageEvent';
+import {DanceMessageEvent} from '@habbo/communication/messages/incoming/room/action/DanceMessageEvent';
+import type {
+    DanceMessageEventParser
+} from '@habbo/communication/messages/parser/room/action/DanceMessageEventParser';
+import {
+    NewFriendRequestMessageEvent
+} from '@habbo/communication/messages/incoming/friendlist/NewFriendRequestMessageEvent';
+import type {
+    NewFriendRequestMessageParser
+} from '@habbo/communication/messages/parser/friendlist/NewFriendRequestMessageParser';
+import {RoomSessionDanceEvent} from '../events/RoomSessionDanceEvent';
+import {RoomSessionFriendRequestEvent} from '../events/RoomSessionFriendRequestEvent';
 
 // Parsers
 import type {UsersMessageParser} from '../../communication/messages/parser/room/engine/UsersMessageParser';
@@ -133,8 +145,11 @@ export class RoomUsersHandler extends BaseHandler
 
         this.addMessageEvent(connection, new UserChangeMessageEvent(this.onUserChange.bind(this)));
 
-        // TODO: Register additional message events when implemented
-        // this.addMessageEvent(connection, new DanceMessageEvent(this.onDance.bind(this)));
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::RoomUsersHandler()
+        // Both events were ported, registered and dispatched by nobody. `RoomSessionDanceEvent` and
+        // `RoomSessionFriendRequestEvent` each had a consumer already waiting — see the handlers.
+        this.addMessageEvent(connection, new DanceMessageEvent(this.onDance.bind(this)));
+        this.addMessageEvent(connection, new NewFriendRequestMessageEvent(this.onFriendRequest.bind(this)));
     }
 
     /**
@@ -298,6 +313,74 @@ export class RoomUsersHandler extends BaseHandler
 
     // AS3: .../src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onBlockUserUpdate()
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onFavoriteMembershipUpdate()
+    /**
+	 * The server's word on who is dancing and to what.
+	 *
+	 * This is what `AvatarInfoWidgetHandler` reads to set `isDancing` — AS3 handles `RSDE_DANCE`
+	 * there with `isDancing = danceStyle != 0`. The port had been setting that flag optimistically
+	 * at the send site instead, so a dance the player did not start (a `:dance` command, another
+	 * client, the server stopping it) never reached the bubble.
+	 *
+	 * AS3 dereferences the session and parser unguarded; the nulls checks are this port's.
+	 */
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onDance()
+    private onDance(event: IMessageEvent): void
+    {
+        const parser = event.parser as DanceMessageEventParser | null;
+
+        if(!parser) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionDanceEvent.RSDE_DANCE,
+                new RoomSessionDanceEvent(session, parser.userId, parser.danceStyle)
+            );
+        }
+    }
+
+    /**
+	 * A friend request that arrived while in a room, which is what raises the in-room request
+	 * bubble — `FriendRequestWidgetHandler` was listening for this event and nothing dispatched it.
+	 * The friend *list* subscribes the same message separately, for the list itself.
+	 *
+	 * AS3 passes `requestId` as both the request id and the user id. That is not a slip to correct:
+	 * `FriendRequestData` sets `requesterUserId = requestId` for the same reason — the payload
+	 * carries one id and a name, nothing else.
+	 */
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onFriendRequest()
+    private onFriendRequest(event: IMessageEvent): void
+    {
+        const parser = event.parser as NewFriendRequestMessageParser | null;
+
+        if(!parser) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        const request = parser.req;
+
+        if(!request) return;
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionFriendRequestEvent.FRIEND_REQUEST,
+                new RoomSessionFriendRequestEvent(
+                    session,
+                    request.requestId,
+                    request.requestId,
+                    request.requesterName
+                )
+            );
+        }
+    }
+
     private onFavoriteMembershipUpdate(event: IMessageEvent): void
     {
         const parser = event.parser as FavoriteMembershipUpdateMessageEventParser | null;

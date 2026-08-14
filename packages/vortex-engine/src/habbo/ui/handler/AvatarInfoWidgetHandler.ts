@@ -25,6 +25,7 @@ import {UseProductItem} from '@habbo/ui/widget/events/UseProductItem';
 import {RoomSessionPetStatusUpdateEvent} from '@habbo/session/events/RoomSessionPetStatusUpdateEvent';
 import {RoomSessionPetLevelUpdateEvent} from '@habbo/session/events/RoomSessionPetLevelUpdateEvent';
 import {RoomSessionNestBreedingSuccessEvent} from '@habbo/session/events/RoomSessionNestBreedingSuccessEvent';
+import {RoomSessionDanceEvent} from '@habbo/session/events/RoomSessionDanceEvent';
 import {RoomEngineUseProductEvent} from '@habbo/room/events/RoomEngineUseProductEvent';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 import {FurnitureCategory} from '@habbo/inventory/enum/FurnitureCategory';
@@ -106,6 +107,7 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
             previousSessionEvents.off(RoomSessionPetStatusUpdateEvent.PET_STATUS_UPDATE, this.onPetStatusUpdate);
             previousSessionEvents.off(RoomSessionPetLevelUpdateEvent.PET_LEVEL_UPDATE, this.onPetLevelUpdate);
             previousSessionEvents.off(RoomSessionNestBreedingSuccessEvent.NEST_BREEDING_SUCCESS, this.onNestBreedingSuccessEvent);
+            previousSessionEvents.off(RoomSessionDanceEvent.RSDE_DANCE, this.onDanceEvent);
         }
 
         this._container = value;
@@ -132,6 +134,7 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
             sessionEvents.on(RoomSessionPetStatusUpdateEvent.PET_STATUS_UPDATE, this.onPetStatusUpdate);
             sessionEvents.on(RoomSessionPetLevelUpdateEvent.PET_LEVEL_UPDATE, this.onPetLevelUpdate);
             sessionEvents.on(RoomSessionNestBreedingSuccessEvent.NEST_BREEDING_SUCCESS, this.onNestBreedingSuccessEvent);
+            sessionEvents.on(RoomSessionDanceEvent.RSDE_DANCE, this.onDanceEvent);
         }
     }
 
@@ -170,6 +173,29 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
         {
             this._widget?.selectOwnAvatar();
         }
+    };
+
+    /**
+	 * The server's echo of a dance, which is the only thing that moves the me-menu's dance state.
+	 *
+	 * AS3 narrows it to the player's own avatar before applying: it resolves its own user through
+	 * `userDataManager.getUserData(sessionDataManager.userId)` and compares the event's `userId`
+	 * against that record's **room object id** — the event carries a room object id, the session
+	 * data manager a web id, so the comparison cannot be made on either one alone.
+	 */
+    // AS3: AvatarInfoWidgetHandler.as::processEvent() — case "RSDE_DANCE"
+    private onDanceEvent = (event: RoomSessionDanceEvent): void =>
+    {
+        const container = this._container;
+
+        if(!event || !this._widget || !container?.roomSession?.userDataManager) return;
+
+        const ownUserId = container.sessionDataManager?.userId ?? -1;
+        const ownUserData = container.roomSession.userDataManager.getUserData(ownUserId);
+
+        if(!ownUserData || event.userId !== ownUserData.roomObjectId) return;
+
+        this._widget.isDancing = event.danceStyle !== 0;
     };
 
     // AS3: AvatarInfoWidgetHandler.as::onPetStatusUpdate()
@@ -267,10 +293,11 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
             {
                 const style = (message as RoomWidgetDanceMessage).style;
 
+                // AS3 sends and stops there: `isDancing` is set from the server's own RSDE_DANCE
+                // echo (see `onDanceEvent`), never from what was sent. The optimistic set this port
+                // used instead — while the round trip was unwired — could not see a dance the
+                // player did not start, and disagreed with the avatar whenever the server refused.
                 roomSession.sendDanceMessage(style);
-                // AS3 adaptation: derive isDancing optimistically from the sent style
-                // (the RSDE_DANCE round-trip event isn't wired in this slice).
-                if(this._widget) this._widget.isDancing = style !== RoomWidgetDanceMessage.STOP;
                 break;
             }
             case RoomWidgetAvatarExpressionMessage.AVATAR_EXPRESSION:

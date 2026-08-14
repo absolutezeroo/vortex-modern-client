@@ -55,6 +55,21 @@ const log = Logger.getLogger('habbo.session.RoomSessionManager');
  */
 export class RoomSessionManager extends Component implements IRoomSessionManager, IRoomHandlerListener
 {
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as
+    // ::onRoomVisualizationSettings() — deliberately not subscribed, and this note is here so the
+    // next unwired-code sweep stops re-flagging it as a missing registration.
+    //
+    // AS3 subscribes `_SafeCls_2101` (id 2986) and the handler's first statement is
+    // `if(_SafeStr_9634 || !_roomViewerMode) return;` — it does nothing at all unless the client is
+    // running as the standalone **room viewer** embed, a mode this port does not implement (no
+    // `_roomViewerMode` exists anywhere in it). What the body then does is build that embed's own
+    // 1024x768 canvas, mask it, offset it by (0,-400) and attach the chat display — a second,
+    // parallel room presentation, not anything the normal client uses.
+    //
+    // The message itself is ported and registered; `RoomMessageHandler` subscribes it for the
+    // room engine, which is the path the normal client actually takes. Porting the viewer mode is
+    // its own task.
+
     // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
     // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::_roomEngine

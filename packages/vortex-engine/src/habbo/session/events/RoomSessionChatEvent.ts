@@ -30,6 +30,10 @@ export class RoomSessionChatEvent extends RoomSessionEvent
     public static readonly CHAT_TYPE_PET_SPEED = 9;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_MUTE_REMAINING
     public static readonly CHAT_TYPE_MUTE_REMAINING = 10;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_PING
+    public static readonly CHAT_TYPE_PING = 11;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_SPECIAL_SYSTEM
+    public static readonly CHAT_TYPE_SPECIAL_SYSTEM = 12;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::RoomSessionChatEvent()
     // `links` passes the parser's raw link objects straight through, matching

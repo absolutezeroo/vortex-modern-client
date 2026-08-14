@@ -412,6 +412,7 @@ import {
     ChatMessageEvent,
     FloodControlMessageEvent,
     ShoutMessageEvent,
+    SpecialSystemChatMessageEvent,
     UserTypingMessageEvent,
     WhisperMessageEvent,
 } from './messages/incoming/room/chat';
@@ -1749,6 +1750,11 @@ export class HabboMessages implements IMessageConfiguration
         // chat for N seconds, subscribed by RoomChatHandler. Corroborated by vortex-emulator's
         // FloodControlMessageComposer = 3614.
         this._events.set(3614, FloodControlMessageEvent);
+        // AS3: _SafeCls_2046.as::_events[3102] = _SafeCls_3646 — the special system message shown
+        // above a user, subscribed by RoomChatHandler. No unobfuscated tree names it and the
+        // emulator has no constant for 3102 either, so the class name is derived from the AS3
+        // handler (`onSpecialSystemChat`); see the parser's header.
+        this._events.set(3102, SpecialSystemChatMessageEvent);
 
         // === ROOM ACTION ===
         // AS3: header corrected 1783 -> 1036 (_SafeCls_3215, onExpression,

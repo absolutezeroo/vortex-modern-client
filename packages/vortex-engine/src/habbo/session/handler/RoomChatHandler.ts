@@ -25,6 +25,24 @@ import {FloodControlMessageEvent} from '../../communication/messages/incoming/ro
 import type {
     FloodControlMessageParser
 } from '../../communication/messages/parser/room/chat/FloodControlMessageParser';
+import {
+    RespectNotificationMessageEvent
+} from '../../communication/messages/incoming/notifications/RespectNotificationMessageEvent';
+import type {
+    RespectNotificationMessageEventParser
+} from '../../communication/messages/parser/notifications/RespectNotificationMessageEventParser';
+import {
+    HandItemReceivedMessageEvent
+} from '../../communication/messages/incoming/users/HandItemReceivedMessageEvent';
+import type {
+    HandItemReceivedMessageParser
+} from '../../communication/messages/parser/users/HandItemReceivedMessageParser';
+import {
+    SpecialSystemChatMessageEvent
+} from '../../communication/messages/incoming/room/chat/SpecialSystemChatMessageEvent';
+import type {
+    SpecialSystemChatMessageParser
+} from '../../communication/messages/parser/room/chat/SpecialSystemChatMessageParser';
 
 // Events
 import {RoomSessionChatEvent} from '../events/RoomSessionChatEvent';
@@ -66,8 +84,14 @@ export class RoomChatHandler extends BaseHandler
         this.addMessageEvent(connection, new FloodControlMessageEvent(this.onFloodControl.bind(this)));
         this.addMessageEvent(connection, new RemainingMutePeriodMessageEvent(this.onRemainingMutePeriod.bind(this)));
 
-        // TODO: Register additional message events when implemented
-        // this.addMessageEvent(connection, new RespectNotificationMessageEvent(this.onRespectNotification.bind(this)));
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as::RoomChatHandler()
+        // The last three of AS3's ten. They were the difference between this handler and its
+        // source: `RespectNotification` sat behind "register when implemented" while its event and
+        // parser had both been ported, `HandItemReceived` was in the registry and constructed
+        // nowhere, and `SpecialSystemChat` had no message at all.
+        this.addMessageEvent(connection, new RespectNotificationMessageEvent(this.onRespectNotification.bind(this)));
+        this.addMessageEvent(connection, new HandItemReceivedMessageEvent(this.onHandItemNotification.bind(this)));
+        this.addMessageEvent(connection, new SpecialSystemChatMessageEvent(this.onSpecialSystemChat.bind(this)));
     }
 
     override dispose(): void
@@ -157,6 +181,87 @@ export class RoomChatHandler extends BaseHandler
 
         // AS3 passes no giver here, unlike its supplement sibling one method down.
         this.dispatchChatEvent(petData.roomObjectId, '', chatType, 1);
+    }
+
+    /**
+	 * Somebody was respected. The bubble goes over the *respected* user, so the payload's `userId`
+	 * is resolved to a room object through the session rather than dispatched as-is.
+	 *
+	 * AS3 reads `respectTotal` off the same parser and ignores it here — the running total is the
+	 * notifications module's business, and it subscribes this message separately.
+	 */
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomChatHandler.as::onRespectNotification()
+    private onRespectNotification(event: IMessageEvent): void
+    {
+        const parser = event.parser as RespectNotificationMessageEventParser | null;
+
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        const userData = session.userDataManager.getUserData(parser.userId);
+
+        if(userData === null) return;
+
+        this.dispatchChatEvent(userData.roomObjectId, '', RoomSessionChatEvent.CHAT_TYPE_RESPECT, 1);
+    }
+
+    /**
+	 * Someone handed this player an item — a drink, a camera. The bubble belongs over the *giver*,
+	 * and AS3 dispatches `giverUserId` straight through without a `userDataManager` lookup: it is
+	 * already a room object id here, unlike the respect message's web id one method up.
+	 *
+	 * `handItemType` rides in `extraParam`, which is how the chat layer knows which item to draw.
+	 */
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomChatHandler.as::onHandItemNotification()
+    private onHandItemNotification(event: IMessageEvent): void
+    {
+        const parser = event.parser as HandItemReceivedMessageParser | null;
+
+        if(parser === null) return;
+
+        this.dispatchChatEvent(
+            parser.giverUserId,
+            '',
+            RoomSessionChatEvent.CHAT_TYPE_HAND_ITEM_RECEIVED,
+            1,
+            null,
+            parser.handItemType
+        );
+    }
+
+    /**
+	 * A special system message over a user. The payload carries no text at all — only
+	 * `specialSystemType`, which rides in `extraParam` for the chat layer to resolve.
+	 *
+	 * The user is identified by room *index*, not by id, so this is the one handler here that goes
+	 * through `getUserDataByIndex()`.
+	 */
+    // AS3: .../src/com/sulake/habbo/session/handler/RoomChatHandler.as::onSpecialSystemChat()
+    private onSpecialSystemChat(event: IMessageEvent): void
+    {
+        const parser = event.parser as SpecialSystemChatMessageParser | null;
+
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        const userData = session.userDataManager.getUserDataByIndex(parser.userIndex);
+
+        if(userData === null) return;
+
+        this.dispatchChatEvent(
+            userData.roomObjectId,
+            '',
+            RoomSessionChatEvent.CHAT_TYPE_SPECIAL_SYSTEM,
+            1,
+            null,
+            parser.specialSystemType
+        );
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as::onFloodControl()

@@ -166,6 +166,13 @@ export interface IHabboNewNavigator extends IDisposable
     // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::performCompetitionRoomsSearch()
     performCompetitionRoomsSearch(goalId: number, roomType: number): void;
 
+    /**
+	 * Group details arrived from the server: cache them and tell the view, which is what lets a
+	 * search result draw a guild's badge and name instead of a blank.
+	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::onGroupDetails()
+    onGroupDetails(groupDetails: { readonly groupId: number }): void;
+
     // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::showToolbarHover()
     showToolbarHover(point: { x: number; y: number }): void;
 

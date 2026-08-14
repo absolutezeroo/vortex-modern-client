@@ -28,6 +28,12 @@ import {RoomEntryInfoMessageEvent} from '../communication/messages/incoming/room
 import {CloseConnectionMessageEvent} from '../communication/messages/incoming/room/session/CloseConnectionMessageEvent';
 import {GenericErrorMessageEvent} from '../communication/messages/incoming/handshake/GenericErrorMessageEvent';
 import {UserRightsMessageEvent} from '../communication/messages/incoming/handshake/UserRightsMessageEvent';
+import {
+    HabboGroupDetailsMessageEvent
+} from '../communication/messages/incoming/users/HabboGroupDetailsMessageEvent';
+import type {
+    HabboGroupDetailsMessageParser
+} from '../communication/messages/parser/users/HabboGroupDetailsMessageParser';
 import {ScrSendUserInfoEvent} from '../communication/messages/incoming/users/ScrSendUserInfoEvent';
 import {
     FriendListFragmentMessageEvent,
@@ -182,6 +188,11 @@ export class IncomingMessages
         this.addMessageEvent(new RoomForwardMessageEvent(this.onRoomForward.bind(this)));
         this.addMessageEvent(new GenericErrorMessageEvent(this.onError.bind(this)));
         this.addMessageEvent(new UserRightsMessageEvent(this.onUserRights.bind(this)));
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/_SafeCls_2208.as::_SafeCls_2208()
+        // The navigator is a second subscriber to this push — `HabboGroupsManager` takes it too,
+        // for the group window. Without it `HabboNewNavigator._groupDetails` stayed empty and
+        // `onGroupDetailsArrived()` never fired, though both were written.
+        this.addMessageEvent(new HabboGroupDetailsMessageEvent(this.onGroupDetails.bind(this)));
         this.addMessageEvent(new ScrSendUserInfoEvent(this.onSubscriptionInfo.bind(this)));
         this.addMessageEvent(new RoomSettingsSavedEvent(this.onRoomSettingsSaved.bind(this)));
         this.addMessageEvent(new FriendListFragmentMessageEvent(this.onFriendsListFragment.bind(this)));
@@ -989,6 +1000,21 @@ export class IncomingMessages
     // AS3: .../_SafeCls_1951.as::onNoSuchFlat()
     private onNoSuchFlat(_event: IMessageEvent): void
     {
+    }
+
+    /**
+	 * AS3 forwards the parsed payload straight to the navigator and does nothing else — the cache
+	 * and the view notification both live in `HabboNewNavigator.onGroupDetails()`.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/_SafeCls_2208.as::onGroupDetails()
+    private onGroupDetails(event: IMessageEvent): void
+    {
+        const parser = event.parser as HabboGroupDetailsMessageParser | null;
+        const data = parser?.data ?? null;
+
+        if(data === null) return;
+
+        this._navigator.newNavigator?.onGroupDetails(data);
     }
 
     // AS3: .../_SafeCls_1951.as::onRoomFilterSettings()

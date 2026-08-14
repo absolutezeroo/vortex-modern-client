@@ -449,6 +449,17 @@ export class HabboNavigator extends Component implements IHabboNavigator
         return this._newNavigator?.legacyWrapper ?? null;
     }
 
+    /**
+	 * TS-only, and the same shape as `transitionalNavigator` above: AS3's navigator message handler
+	 * (`_SafeCls_2208`) holds a `HabboNewNavigator` field of its own, where this port's
+	 * `IncomingMessages` holds only this component. Members that live on the new navigator itself
+	 * rather than on the legacy wrapper — `onGroupDetails()` — come back through here.
+	 */
+    get newNavigator(): IHabboNewNavigator | null
+    {
+        return this._newNavigator;
+    }
+
     // TS-only: the controller AS3 holds as its own field, reached through the wrapper here.
     private get roomInfoViewCtrl(): RoomInfoViewCtrl | null
     {
