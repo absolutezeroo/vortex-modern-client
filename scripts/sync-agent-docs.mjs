@@ -75,6 +75,11 @@ function buildGeneratedBlock()
     return `${BEGIN_MARKER}\n${sections.join('\n\n')}\n${END_MARKER}`;
 }
 
+function normaliseEol(text)
+{
+    return text.replace(/\r\n/g, '\n');
+}
+
 function spliceBlock(content, block)
 {
     const beginIndex = content.indexOf(BEGIN_MARKER);
@@ -99,7 +104,12 @@ function main()
         const current = readFileSync(target, 'utf8');
         const next = spliceBlock(current, block);
 
-        if(next === current)
+        // Compare on normalised line endings. `core.autocrlf` is true here and `.gitattributes`
+        // pins only `.husky/*`, so git materialises AGENTS.md with CRLF while the generated block
+        // is assembled with LF — a raw `!==` then reports drift on a file git itself sees as
+        // unchanged, and `pnpm run sync:agents` "fixes" it by producing an empty diff. It blocks
+        // every commit made after a checkout until someone rewrites the file.
+        if(normaliseEol(next) === normaliseEol(current))
         {
             continue;
         }
