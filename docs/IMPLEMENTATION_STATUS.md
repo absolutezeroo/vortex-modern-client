@@ -300,6 +300,51 @@ straight into `TableCellView` at three unguarded call sites, so it needs AS3's n
 Sweep of `habbo/roomevents` after this: 21 of 24 AS3 subscriptions wired, the remaining 3 all in the
 deferred `wired_trading` chest sub-controllers.
 
+#### The sandbox donation tool, and the eight files under it — 2026-08-14
+
+Third of `habbo/roomevents`' enumerated remainders. `misc/SelfDonationTool` gives the player
+furniture in a sandbox environment, reached only by its own `selfdonation/open` link.
+
+**The estimate moved three times before it settled, and that is the lesson worth keeping.** It reads
+as 3 files / 353 lines. Its view extends `AbstractUbuntuWiredUI` and uses `UbuntuPresetManager`, both
+in the deferred `wired_trading` block → 650. Its section needs `ItemTypeSelectionPreset` and
+`ChestItemIconPreviewerPreset` from `presets/contracts` → 1,196. The previewer needs
+`ChestItemTypeRenderableWrapper` from `wired_trading/chests/subcontrollers/views` → **1,250, eleven
+files.** Every layer looked like the last one. Reading a class's import list bounds it; only walking
+the imports transitively sizes it.
+
+Ported, bottom-up: `ItemTypeTableObject`, `ChestItemTypeRenderableWrapper`,
+`ChestItemIconPreviewerPreset`, `ItemTypeSelectionPreset`, `ItemTypeSelectionSection`,
+`UbuntuPresetManager`, `AbstractUbuntuWiredUI`, `ISelfDonationTool`, `SelfDonationToolView`,
+`SelfDonationTool`, three `PresetManager` factory methods, a new `IID_SelfDonationTool`, and the
+message layer (event 3407, its parser, composer 1119).
+
+This closes `presets/sections` at 12/12, opens `presets/contracts` and `contracts/itemtable`, and
+starts `wired_trading` at its two root files — which is what most of the other 41 deferred files in
+that block extend.
+
+**`ItemTypeSelectionPreset.updateFilters()` is a reconstruction, not a transcription**, and carries a
+`TODO(AS3)` saying so. The primary tree's body is mangled: an empty inner `for each`, an
+unconditional `push`, and a `do {…break;} while(item.matchesSubstring(query))` whose condition can
+never execute. As decompiled it returns the entire catalogue for every query — not a filter at all.
+The surviving pieces show the intent (split the query on spaces, match with `matchesSubstring`) but
+not whether the terms combine with AND or OR, because the loop that used them is gone. The port
+applies the one readable predicate — `matchesSubstring` on the whole lowercased query — and leaves
+the term split unused rather than inventing a combinator. This is the *primary* tree being
+unreliable, not `win63_version`: the usual "the primary settles it" rule has nothing to appeal to
+here.
+
+Two smaller reconstructions, both noted at the site: the wall-item loop guards on a `fullCode` that
+is still the previous iteration's value (hoisted-local artefact — applied to the item's own code
+here), and `POSTER_IDS` is transcribed verbatim including its gaps, since 60-82 and 524-999 are
+simply not posters that exist.
+
+The tool is constructed and attached in `HabboUserDefinedRoomEvents.initComponent()` alongside
+`wiredMenu`. Constructing it *is* the wiring — there is no toolbar entry, only the link tracker it
+registers itself, so it is created unconditionally as AS3 does and refuses outside a sandbox at
+`open()` rather than by not existing. It is gated three times over on purpose: `open()` refuses
+outside a sandbox, `validate()` refuses again before sending, and the server refuses a third time.
+
 #### Three recycler headers were invented, on both sides of the wire
 
 Found while checking whether notifications' `onRecyclerFinished` was unwired or unported. It was

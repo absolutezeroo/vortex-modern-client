@@ -37,6 +37,9 @@ import {CollapseExpandSectionButtonPreset} from './presets/CollapseExpandSection
 import {SourceTypeSelectorPreset} from './presets/SourceTypeSelectorPreset';
 import {SectionPreset} from './presets/SectionPreset';
 import {BorderSection} from './presets/sections/BorderSection';
+import {ItemTypeSelectionSection} from './presets/sections/ItemTypeSelectionSection';
+import {ItemTypeSelectionPreset} from './presets/contracts/ItemTypeSelectionPreset';
+import {ChestItemIconPreviewerPreset} from './presets/contracts/ChestItemIconPreviewerPreset';
 import {UsageInfoSection} from './presets/sections/UsageInfoSection';
 import {UsageWarningSection} from './presets/sections/UsageWarningSection';
 import {ChronoMaskFilterPreset} from './presets/applications/ChronoMaskFilterPreset';
@@ -369,6 +372,24 @@ export class PresetManager
     createSection(title: string, content: WiredUIPreset, param: SectionParam | null = null): SectionPreset
     {
         return new SectionPreset(this._roomEvents, this, this.wiredStyle, title, content, param);
+    }
+
+    // AS3: PresetManager.as::createItemTypeSelectionSection()
+    createItemTypeSelectionSection(): ItemTypeSelectionSection
+    {
+        return new ItemTypeSelectionSection(this._roomEvents, this, this.wiredStyle);
+    }
+
+    // AS3: PresetManager.as::createItemTypeSelectionPreset()
+    createItemTypeSelectionPreset(): ItemTypeSelectionPreset
+    {
+        return new ItemTypeSelectionPreset(this._roomEvents, this, this.wiredStyle);
+    }
+
+    // AS3: PresetManager.as::createChestItemIconPreviewerPreset()
+    createChestItemIconPreviewerPreset(): ChestItemIconPreviewerPreset
+    {
+        return new ChestItemIconPreviewerPreset(this._roomEvents, this, this.wiredStyle);
     }
 
     // AS3: PresetManager.as::createBorderSection()

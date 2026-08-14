@@ -525,6 +525,12 @@ import {
     WiredTransactionLogsEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTransactionLogsEvent';
 import {
+    SelfDonationResultMessageEvent
+} from './messages/incoming/userdefinedroomevents/misc/SelfDonationResultMessageEvent';
+import {
+    SelfDonationComposer
+} from './messages/outgoing/userdefinedroomevents/misc/SelfDonationComposer';
+import {
     RequestWiredTransactionLogsComposer
 } from './messages/outgoing/userdefinedroomevents/wiredtrading/RequestWiredTransactionLogsComposer';
 import {
@@ -1935,6 +1941,9 @@ export class HabboMessages implements IMessageConfiguration
         // window — and each drops a page whose `logListType` is not its own. Names derived: no
         // unobfuscated tree carries the chest messages and the emulator has no constant for 2910.
         this._events.set(2910, WiredTransactionLogsEvent);
+        // Sandbox self-donation result (WIN63 registry: 3407 -> SelfDonationResultMessageEvent, one
+        // of the few event classes that kept its real name).
+        this._events.set(3407, SelfDonationResultMessageEvent);
         this._events.set(3650, WiredTradeInitiateMessageEvent);
         this._events.set(1481, WiredTradeCancelledMessageEvent);
         this._events.set(2137, WiredTradeCompletedMessageEvent);
@@ -2493,6 +2502,9 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3111, WiredTradeUpdateItemsComposer);
         // Wired chests: request a page of transaction logs, and lock/unlock chests (WIN63 registry:
         // 2016 -> _SafeCls_2406, 1630 -> _SafeCls_3599). Both names derived, same reason as 2910.
+        // Sandbox self-donation (WIN63 registry: 1119 -> _SafeCls_3986). Name derived; the tool
+        // refuses to send it outside a sandbox environment.
+        this._composers.set(1119, SelfDonationComposer);
         this._composers.set(2016, RequestWiredTransactionLogsComposer);
         this._composers.set(1630, SetWiredChestsLockedComposer);
         this._composers.set(2818, WiredTradeAcceptComposer);

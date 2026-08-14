@@ -14,6 +14,7 @@ import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_RoomUI} from '@iid/IIDRoomUI';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_WiredMenuController} from '@iid/IIDWiredMenuController';
+import {IID_SelfDonationTool} from '@iid/IIDSelfDonationTool';
 
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
@@ -34,6 +35,7 @@ import type {IUserDefinedRoomEventsCtrl} from './wired_setup/IUserDefinedRoomEve
 import {UserDefinedRoomEventsCtrl} from './wired_setup/UserDefinedRoomEventsCtrl';
 import {WiredVariablesSynchronizer} from './WiredVariablesSynchronizer';
 import {WiredMenuController} from './wired_menu/WiredMenuController';
+import {SelfDonationTool} from './misc/SelfDonationTool';
 import {WiredEnvironment} from './WiredEnvironment';
 import {NewVariablePickerHelper} from './wired_setup/uibuilder/presets/newvariablepicker/NewVariablePickerHelper';
 import {IncomingMessages} from './IncomingMessages';
@@ -88,6 +90,9 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     // AS3: HabboUserDefinedRoomEvents.as::_variablesSynchronizer
     private _variablesSynchronizer!: WiredVariablesSynchronizer;
     private _wiredMenu!: WiredMenuController;
+
+    // AS3: HabboUserDefinedRoomEvents.as::_selfDonationTool
+    private _selfDonationTool!: SelfDonationTool;
     private _wiredEnvironment!: WiredEnvironment;
 
     // AS3: HabboUserDefinedRoomEvents.as::_variablePickerHelper (shared state for the variable picker).
@@ -97,11 +102,12 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     private _incomingMessages: IncomingMessages | null = null;
 
     // TODO(AS3): deferred sub-controllers, all created in the AS3 constructor and exposed via getters
-    // (variablesSynchronizer/wiredChest/transactionLogs/transactionDetails/rewardNotificationController/
-    // selfDonationTool/transactionDetails) and the WiredContractController. Not created in this
-    // milestone; their getters/UI helpers (getXmlWindow/refreshButton/prepareButton/getButtonImage) are
-    // omitted for now — no ported code calls them yet. One documented gap rather than a fan-out of stubs
-    // (same approach as HabboHelp's absent-members block). (variablePickerHelper is now created below.)
+    // (wiredChest/transactionLogs/transactionDetails/rewardNotificationController) and the
+    // WiredContractController. Not created in this milestone; their getters/UI helpers
+    // (getXmlWindow/refreshButton/prepareButton/getButtonImage) are omitted for now — no ported code
+    // calls them yet. One documented gap rather than a fan-out of stubs (same approach as HabboHelp's
+    // absent-members block). `variablePickerHelper`, `variablesSynchronizer` and `selfDonationTool`
+    // have since left this list and are created in initComponent() below.
 
     // AS3: HabboUserDefinedRoomEvents.as::HabboUserDefinedRoomEvents()
     constructor(context: IContext)
@@ -197,6 +203,17 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         // wiredMenu must exist before WiredEnvironment (which reads wiredMenu permissions).
         this._wiredMenu = new WiredMenuController(this, this.context, 0, this.assets);
         this.context.attachComponent(this._wiredMenu, [IID_WiredMenuController]);
+
+        // AS3 builds this in the constructor alongside the other sub-controllers and attaches it
+        // under IIDSelfDonationTool. It is created here instead, next to `wiredMenu`, because this
+        // port constructs sub-controllers in initComponent() where `context` and `assets` are ready.
+        //
+        // It has no toolbar entry and no caller: the only way in is its own `selfdonation/open`
+        // link tracker, which it registers from its own initComponent(). Constructing it *is* the
+        // wiring — which is why it is created unconditionally, exactly as AS3 does, and refuses
+        // outside a sandbox environment at `open()` rather than by not existing.
+        this._selfDonationTool = new SelfDonationTool(this, this.context, 0, this.assets);
+        this.context.attachComponent(this._selfDonationTool, [IID_SelfDonationTool]);
 
         this._wiredCtrl = new UserDefinedRoomEventsCtrl(this);
         this._wiredEnvironment = new WiredEnvironment(this);
