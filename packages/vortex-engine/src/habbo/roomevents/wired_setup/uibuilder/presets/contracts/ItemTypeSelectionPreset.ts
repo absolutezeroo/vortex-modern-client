@@ -216,6 +216,7 @@ export class ItemTypeSelectionPreset extends WiredUIPreset
 	 * TS-only: AS3 repeats `if(localizedName == "") localizedName = fullCode;` in both catalogue
 	 * loops. A furniture with no translation falls back to its code rather than rendering blank.
 	 */
+    // TS-only: extracted from the two catalogue loops of createAllFurnis(); AS3 inlines it twice.
     private static resolveName(item: IFurnitureData, fullCode: string): string
     {
         return item.localizedName === '' ? fullCode : item.localizedName;
@@ -317,6 +318,7 @@ export class ItemTypeSelectionPreset extends WiredUIPreset
 	 * written: a query under two characters shows everything, and the latch stops that from
 	 * re-setting the same full list on every keystroke.
 	 */
+    // AS3: ItemTypeSelectionPreset.as::updateFilters() — reconstruction, see the block above.
     private updateFilters(): void
     {
         const query = (this._searchInput?.text ?? '').toLowerCase();

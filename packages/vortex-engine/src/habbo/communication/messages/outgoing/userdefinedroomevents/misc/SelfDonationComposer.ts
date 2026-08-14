@@ -16,6 +16,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class SelfDonationComposer extends MessageComposer<[boolean, number, string, number]>
 {
+    // AS3: _SafeCls_3986.as::_SafeStr_4642 (the composer's own payload array)
     private _data: [boolean, number, string, number];
 
     // AS3: _SafeCls_3986.as::_SafeCls_3986()
