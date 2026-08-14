@@ -214,6 +214,49 @@ sends five composers there and this port sends none, reaching 540 through `reque
 would double every request rather than close a gap; the marker at that site says so, and
 `_SafeCls_2019` has no port equivalent under any name.
 
+#### `variables_management/detail` — the permanent-variable editor, 2026-08-14
+
+The first of `habbo/roomevents`' enumerated remainders, and the slice that closes send gap **625**
+from the triage above: editing the wired variables stored on one user, pet or bot.
+
+What was there: `VariableManagementDetailController` as a 53-line spine against a 267-line original,
+its interface, and nothing else. No view, no previewer, **and no message layer at all** — events
+1557 and 1643 unregistered, composer 625 absent, `WiredUserPermanentVariablesList` non-existent.
+Both ends of the chain were already live, which is why this was worth doing before anything else in
+the module: `WiredMenuController` constructs the controller, and the overview's row click already
+sent 3777 to ask for the data that had nowhere to go.
+
+Ported: the DTO, two parsers, two events, the 625 composer, `PermanentVariableHolderPreviewer`
+(130 l.), `VariableManagementDetailView` (490 l.) and the controller's remaining 214 lines.
+
+**All four names are recovered, not derived.** `win63_version` carries readable filenames for every
+one — `WiredUserPermanentVariablesEvent`, `WiredSetUserPermanentVariableResultEvent`,
+`WiredSetUserPermanentVariableComposer`, `WiredUserPermanentVariablesList` — which is the
+"read `win63_version` filenames first" rule paying off again. It also caught a false claim already
+in the tree: `RequestVariableManagementDetailComposer` (3777) documents itself as "fully obfuscated
+in AS3", where `win63_version` names it `WiredGetUserPermanentVariablesComposer`. Corrected at the
+declaration; the class is left unrenamed to avoid churning its call sites.
+
+Three details worth keeping:
+
+- **The owner block on the wire is conditional.** `WiredUserPermanentVariablesList` reads owner
+  id/name/figure only when `entityType != 1`, because a user is its own owner. Reading them
+  unconditionally would consume the variable count as the owner id and desynchronise everything
+  after it.
+- **One message does all three writes.** Edit, create and delete are all 625, separated by a `mode`
+  of 0/1/2. Delete still carries a value, and AS3 sends 0.
+- **Two sources have to agree before anything draws.** The wire sends variable ids and values, never
+  what those variables *are*, so `onGetData()` asks the synchroniser for the catalogue first and
+  applies the list in the callback. A stored value whose definition is unknown is dropped rather
+  than rendered.
+
+`Util.windowIsChild()` was added while porting the view's click-outside handling: AS3 has it as a
+member of every window (`WindowController.windowIsChild()`) and this port's `IWindow` does not, so
+`WiredMenuInspectionTab` had grown a private copy. Both now share one, and the tab's copy is gone.
+(`TableRowView` keeps its own — AS3 declares one on that class too.)
+
+Send gaps 45 → 44, real-handler gaps 8 → 7.
+
 #### Three recycler headers were invented, on both sides of the wire
 
 Found while checking whether notifications' `onRecyclerFinished` was unwired or unported. It was

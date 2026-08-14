@@ -564,6 +564,15 @@ import {
     RequestVariableManagementDetailComposer
 } from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableManagementDetailComposer';
 import {
+    WiredSetUserPermanentVariableComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/WiredSetUserPermanentVariableComposer';
+import {
+    WiredUserPermanentVariablesEvent
+} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredUserPermanentVariablesEvent';
+import {
+    WiredSetUserPermanentVariableResultEvent
+} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredSetUserPermanentVariableResultEvent';
+import {
     RequestWiredVariablesForObjectComposer
 } from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredVariablesForObjectComposer';
 import {
@@ -1903,6 +1912,13 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2733, AllVariablesDiffMessageEvent);
         // Overview tab: variable-holders push (WIN63 registry _SafeCls_2046.as: 3506 -> _SafeCls_2537).
         this._events.set(3506, VariableInfoAndHoldersEvent);
+        // Variable-management detail: the holder's permanent-variable list, and the verdict on a
+        // write (WIN63 registry: 1557 -> _SafeCls_3146, 1643 -> _SafeCls_2757). Both subscribed by
+        // VariableManagementDetailController. The emulator's constants for these two were
+        // themselves corrections of a collision and a wrong guess, so its names corroborate rather
+        // than merely coincide.
+        this._events.set(1557, WiredUserPermanentVariablesEvent);
+        this._events.set(1643, WiredSetUserPermanentVariableResultEvent);
         // Wired trading. Headers read straight out of WIN63's registry (_SafeCls_2046.as); the
         // reference emulator defines none of the four, so nothing sends them yet.
         this._events.set(3650, WiredTradeInitiateMessageEvent);
@@ -2495,7 +2511,15 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(689, UpdateWiredVariableComposer);
         // Variable-management overview: open the detail view for one holder (WIN63 registry
         // _SafeCls_2046.as: 3777 -> _SafeCls_2724).
+        //
+        // The class name is this port's own. `win63_version` names the file
+        // `WiredGetUserPermanentVariablesComposer.as`, so the real name IS recoverable and the
+        // header comment claiming it is "fully obfuscated in AS3" is wrong; left unrenamed to
+        // avoid churning its call sites, corrected at the declaration.
         this._composers.set(3777, RequestVariableManagementDetailComposer);
+        // Its write-side sibling: set / create / delete one permanent variable, all three through
+        // the same message with a `mode` discriminator.
+        this._composers.set(625, WiredSetUserPermanentVariableComposer);
 
         // === HANDSHAKE ===
         this._composers.set(4000, ClientHelloMessageComposer);

@@ -5,7 +5,11 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * of the managed variable, from the overview's "manage" link (WIN63 header 3777). Payload: entity
  * type and entity id.
  *
- * Name derived: fully obfuscated in AS3 (class `_SafeCls_2724`); named for its role.
+ * Name is this port's own — but not because none survived. `sources/win63_version/habbo/
+ * communication/messages/outgoing/userdefinedroomevents/wiredmenu/variablesmanagement/
+ * WiredGetUserPermanentVariablesComposer.as` carries the real one, so the earlier claim here that
+ * it was "fully obfuscated in AS3" was wrong. Kept unrenamed to avoid churning its call sites; its
+ * write-side sibling `WiredSetUserPermanentVariableComposer` (625) does use the recovered name.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2427/_SafeCls_2724.as
  */

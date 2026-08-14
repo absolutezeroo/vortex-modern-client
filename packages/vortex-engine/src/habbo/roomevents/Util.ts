@@ -241,6 +241,36 @@ export class Util
         window.blend = blend;
     }
 
+    /**
+	 * Is `candidate` the window `ancestor` itself, or anything below it?
+	 *
+	 * TS-only placement: AS3 has this as `WindowController.windowIsChild()`, a member of every
+	 * window, and this port's `IWindow` does not carry it. It lives here rather than being copied
+	 * a third time — `WiredMenuInspectionTab` and now `VariableManagementDetailView` both need it
+	 * for the same thing, deciding whether a click landed outside a bubble. (`TableRowView` keeps
+	 * its own: AS3 declares one on that class too.)
+	 *
+	 * AS3 recurses *down* through `_children`; walking *up* through `parent` answers the same
+	 * question and visits one chain instead of a whole subtree.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as::windowIsChild()
+    public static windowIsChild(ancestor: IWindow, candidate: IWindow | null): boolean
+    {
+        let window: IWindow | null = candidate;
+
+        while(window != null)
+        {
+            if(window === ancestor)
+            {
+                return true;
+            }
+
+            window = window.parent;
+        }
+
+        return false;
+    }
+
     // AS3: Util.as::disableSection()
     public static disableSection(window: IWindow, disabled: boolean = true): void
     {

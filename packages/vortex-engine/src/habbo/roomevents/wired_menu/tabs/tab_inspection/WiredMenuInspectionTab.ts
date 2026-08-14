@@ -256,7 +256,7 @@ export class WiredMenuInspectionTab extends WiredMenuDefaultTab implements IUpda
     {
         if(event.type === 'WME_CLICK' && this.createVariableBubble.visible)
         {
-            if(window.name !== 'add_var_btn' && !WiredMenuInspectionTab.windowIsChild(this.createVariableBubble as unknown as IWindow, window))
+            if(window.name !== 'add_var_btn' && !Util.windowIsChild(this.createVariableBubble as unknown as IWindow, window))
             {
                 this.createVariableBubble.visible = false;
             }
@@ -737,25 +737,6 @@ export class WiredMenuInspectionTab extends WiredMenuDefaultTab implements IUpda
         this._highlighter.dispose();
         this._highlighter = null as unknown as VariableHoldersHighlighter;
         super.dispose();
-    }
-
-    // Descendant check for the click-outside handling (AS3 `_SafeCls_3721.windowIsChild`, not a port
-    // window primitive): true if `candidate` is `ancestor` or sits anywhere below it.
-    private static windowIsChild(ancestor: IWindow, candidate: IWindow | null): boolean
-    {
-        let window: IWindow | null = candidate;
-
-        while(window != null)
-        {
-            if(window === ancestor)
-            {
-                return true;
-            }
-
-            window = window.parent;
-        }
-
-        return false;
     }
 
     // AS3: WiredMenuInspectionTab.as::get variableValuesTableContainer()
