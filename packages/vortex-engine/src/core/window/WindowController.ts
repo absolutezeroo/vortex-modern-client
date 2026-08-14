@@ -1201,24 +1201,36 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         }
 
         let relocated: boolean = (newX !== this._x) || (newY !== this._y);
-        let resized: boolean = (newWidth !== this._width) || (newHeight !== this._height);
+        // AS3 keeps the width-only comparison in its own local (`_loc11_`) because the
+        // horizontal anchor block below is gated on it, not on `resized`.
+        const widthChanged: boolean = newWidth !== this._width;
+        let resized: boolean = widthChanged || (newHeight !== this._height);
 
         // Handle anchor-based repositioning on resize (param bits for resize origin)
-        if(resized && !relocated) 
+        if(resized && !relocated)
         {
             const hAnchor: number = this._param & 0x0C0000;
 
-            if(hAnchor === 0xC0000) 
+            // AS3 guards the whole horizontal branch with `if(_loc11_)` - the width having
+            // changed. Without it a height-only resize still takes the branch: the deltas are
+            // zero so `newX` does not move, but `relocated` is forced true, which turns a pure
+            // resize into a relocation - firing WE_RELOCATE/WE_RELOCATED, overwriting
+            // `_previousRect.x/y`, and switching the clamp-to-parent block below from its
+            // size-clamping branch to its position-clamping one.
+            if(widthChanged)
             {
-                // Center horizontally
-                newX = Math.floor(newX - ((newWidth - this._width) / 2));
-                relocated = true;
-            }
-            else if(hAnchor === 0x40000) 
-            {
-                // Anchor right
-                newX = newX - (newWidth - this._width);
-                relocated = true;
+                if(hAnchor === 0xC0000)
+                {
+                    // Center horizontally
+                    newX = Math.floor(newX - ((newWidth - this._width) / 2));
+                    relocated = true;
+                }
+                else if(hAnchor === 0x40000)
+                {
+                    // Anchor right
+                    newX = newX - (newWidth - this._width);
+                    relocated = true;
+                }
             }
 
             const vAnchor: number = this._param & 0x300000;
@@ -1238,9 +1250,13 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         }
 
         // Clamp to parent if constrained (param flag 32 = constrain to parent)
-        if(this.testParamFlag(32)) 
+        if(this.testParamFlag(32))
         {
-            if(this._parent !== null) 
+            // AS3: `if(_parent != null && _parent.name != "_CONTEXT_SUBSTITUTE_PARENT")`. The
+            // substitute parent is the placeholder a context hands to a not-yet-attached window;
+            // clamping a window's rect against it constrains the window to a stand-in rather than
+            // to the container it will actually live in.
+            if(this._parent !== null && this._parent.name !== '_CONTEXT_SUBSTITUTE_PARENT')
             {
                 newX = newX < 0 ? 0 : newX;
                 newY = newY < 0 ? 0 : newY;
@@ -4265,6 +4281,31 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
             this._param = this._param & 0xFF3FF33F;
             this.setRectangle(newX, newY, newWidth, newHeight);
             this._param = savedParam;
+
+            // Port-specific, no AS3 counterpart: consume the delta by re-baselining against the
+            // parent's *current* rect.
+            //
+            // The MOVE (0x40/0x400) and STRETCH (0x80/0x800) modes above are incremental - they add
+            // `parent.size - _parentRect.size` - while the CENTER modes are absolute and therefore
+            // idempotent. `_parentRect` is only refreshed from WE_PARENT_RESIZED, so any *other*
+            // caller replays the same delta; `update()` is one, since a window whose horizontal or
+            // vertical mode is CENTER calls this on its own WE_RESIZED (AS3 does that too), and
+            // there it applies the incremental mode on the other axis as well.
+            //
+            // Re-baselining leaves the first, legitimate application intact and makes every repeat
+            // a no-op; a genuine parent resize still re-primes `_parentRect` with the parent's
+            // previous rect just before this runs, so real deltas are unaffected.
+            //
+            // This is a guard against replay, not against a bad baseline - a window whose
+            // `_parentRect` is still 0x0 consumes the parent's whole size on its first application
+            // and this cannot tell that apart. `WindowParser` is what keeps the baseline honest, by
+            // appending a container's layout child after construction so `set parent` actually runs
+            // (see its `parentIsContainer` note): that is what put the alert dialog's button list
+            // back inside its frame.
+            this._parentRect.x = this._parent.x;
+            this._parentRect.y = this._parent.y;
+            this._parentRect.width = this._parent.width;
+            this._parentRect.height = this._parent.height;
         }
         else 
         {

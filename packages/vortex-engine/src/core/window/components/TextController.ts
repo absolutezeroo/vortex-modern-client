@@ -1210,10 +1210,18 @@ export class TextController extends WindowController implements ITextWindow
 
         if(fieldWidthWithBorder !== availableWidth)
         {
-            if(this._autoSize === 'left')
+            // Flash: with `wordWrap` on, `autoSize` only affects height - the field keeps its
+            // authored width and the text reflows inside it. Only a non-wrapping field widens.
+            if(this._autoSize === 'left' && !this._wordWrap)
             {
                 this.setRectangle(this.x, this.y, fieldWidthWithBorder + horizontalMargins, Math.floor(this._fieldHeight) + verticalMargins);
                 hasResized = true;
+            }
+            else if(this._wordWrap && this._autoSize !== 'none')
+            {
+                // Hold the authored width; leave `_fieldHeight` as measured so the height branch
+                // below can grow the box to fit the wrapped lines.
+                this._fieldWidth = Math.max(0, availableWidth - borderPadding);
             }
             else if(this._autoSize !== 'right' && this._autoSize !== 'center')
             {
@@ -1411,7 +1419,12 @@ export class TextController extends WindowController implements ITextWindow
 
         for(const baseLine of baseLines)
         {
-            if(this._wordWrap && this._multiline && this._autoSize === 'none')
+            // Flash wraps whenever `wordWrap` and `multiline` are set; `autoSize` does not disable
+            // it, it only decides which side the field grows on. Requiring autoSize === 'none' here
+            // left every `word_wrap="true" auto_size="left"` field measured as one endless line -
+            // the alert dialog's summary reached 265px inside a 266px container starting at x=27
+            // and was clipped, which is the truncated body text.
+            if(this._wordWrap && this._multiline)
             {
                 const wrapped = this.wrapLine(baseLine, maxWidth);
 

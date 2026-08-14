@@ -121,31 +121,46 @@ export class AlertDialog implements IAlertDialog
         }
 
         // Remove buttons that are not in the flags
-        if(this._window) 
+        if(this._window)
         {
             const buttonList = this._window.findChildByName(AlertDialog.LIST_BUTTONS);
 
-            if(buttonList) 
+            if(buttonList)
             {
-                if(!(flags & HabboAlertDialogFlag.BUTTON_OK)) 
-                {
-                    const okButton = (buttonList as IWindowContainer).getChildByName?.(AlertDialog.BUTTON_OK);
+                // AS3 reaches the buttons through `IItemListWindow.getListItemByName()`, not
+                // `getChildByName()`: the buttons live in the list's internal `_container`, not
+                // directly under the list window. Disposing is all AS3 does - a disposed window
+                // detaches from its parent, the container raises WE_CHILD_REMOVED, and
+                // ItemListController re-arranges from its own handler. Calling `removeListItem()`
+                // first, as this port briefly did, is not in the AS3 and duplicates that path.
+                const list = buttonList as IWindowContainer & {
+                    getListItemByName?: (name: string) => IWindow | null;
+                };
 
-                    if(okButton) okButton.dispose();
+                const removeButton = (name: string): void =>
+                {
+                    const button = list.getListItemByName?.(name)
+                        ?? (buttonList as IWindowContainer).getChildByName?.(name)
+                        ?? null;
+
+                    // AS3 dereferences the result unguarded; the null check only keeps a layout
+                    // that omits one of the three buttons from throwing here.
+                    button?.dispose();
+                };
+
+                if(!(flags & HabboAlertDialogFlag.BUTTON_OK))
+                {
+                    removeButton(AlertDialog.BUTTON_OK);
                 }
 
-                if(!(flags & HabboAlertDialogFlag.BUTTON_CANCEL)) 
+                if(!(flags & HabboAlertDialogFlag.BUTTON_CANCEL))
                 {
-                    const cancelButton = (buttonList as IWindowContainer).getChildByName?.(AlertDialog.BUTTON_CANCEL);
-
-                    if(cancelButton) cancelButton.dispose();
+                    removeButton(AlertDialog.BUTTON_CANCEL);
                 }
 
-                if(!(flags & HabboAlertDialogFlag.BUTTON_CUSTOM)) 
+                if(!(flags & HabboAlertDialogFlag.BUTTON_CUSTOM))
                 {
-                    const customButton = (buttonList as IWindowContainer).getChildByName?.(AlertDialog.BUTTON_CUSTOM);
-
-                    if(customButton) customButton.dispose();
+                    removeButton(AlertDialog.BUTTON_CUSTOM);
                 }
             }
 

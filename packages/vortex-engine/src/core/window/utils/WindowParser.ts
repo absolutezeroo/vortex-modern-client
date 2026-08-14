@@ -426,6 +426,26 @@ export class WindowParser implements IWindowParser
         const parentIsItemList = !isInternalLayoutChild
             && !parentIsItemGrid
             && typeof listParent?.addListItemAt === 'function';
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::parseSingleWindowEntity()
+        // `param2 is IIterable` covers plain containers too, not just lists and grids:
+        // ContainerController implements it (`get iterator` -> `new ContainerIterator(this)`),
+        // so every container/frame child is created parentless and appended afterwards,
+        // through `iterator[iterator.length] = child` -> `addChildAt(child, numChildren)`.
+        //
+        // That detour is what makes `set parent` a *real* parent change. Handing the container
+        // to the constructor instead makes it a no-op - `attachToParent()` assigns `_parent`
+        // itself (faithfully: AS3 line 140) and `addChild()`'s `child.parent = this` then finds
+        // the value already there and returns early, so the setter body never runs: `_parentRect`
+        // is never primed off the parent and WE_PARENT_ADDED is never fired. A window whose
+        // `_parentRect` stays 0x0 consumes the parent's *entire* size as the delta the first time
+        // an incremental relative-scale mode runs - which is how the alert dialog's button list,
+        // centred horizontally and MOVE-anchored vertically, landed at y=232 inside a 151-tall
+        // content area (the OK button drawn below the frame, i.e. invisible).
+        const parentIsContainer = !isInternalLayoutChild
+            && !parentIsItemGrid
+            && !parentIsItemList
+            && typeof (parent as unknown as { iterator?: unknown } | null)?.iterator === 'function';
+        const parentIsIterable = parentIsItemList || parentIsItemGrid || parentIsContainer;
 
         // AS3: falls back to this parser's own constructor-injected context when there's no
         // parent to read `.context` off of (see this class's constructor note).
@@ -437,7 +457,7 @@ export class WindowParser implements IWindowParser
             param,
             {x, y, width, height},
             null,
-            (parentIsItemList || parentIsItemGrid) ? null : parent,
+            parentIsIterable ? null : parent,
             id,
             tags,
             dynamicStyle,
@@ -550,13 +570,13 @@ export class WindowParser implements IWindowParser
             }
         }
 
-        if(parentIsItemList || parentIsItemGrid) 
+        if(parentIsIterable)
         {
             // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::parseAndConstruct()
-            // Flash creates list/grid children without a parent and appends them through the
-            // IIterable iterator. Internal layout children (_ITEMLIST/_SCROLLBAR) are
+            // Flash creates the child of any IIterable parent without a parent and appends it
+            // through that parent's iterator. Internal layout children (_ITEMLIST/_SCROLLBAR) are
             // excluded above so ScrollableItemListWindow can build its own structure first.
-            // This center-repositioning block applies to any IIterable (list OR grid).
+            // This center-repositioning block applies to every IIterable (container, list, grid).
             if(window.x !== x || window.y !== y || window.width !== width || window.height !== height) 
             {
                 if((param & WindowParam.RELATIVE_HORIZONTAL_SCALE_MASK) === WindowParam.RELATIVE_HORIZONTAL_SCALE_CENTER) 
@@ -570,7 +590,32 @@ export class WindowParser implements IWindowParser
                 }
             }
 
-            if(parentIsItemGrid) 
+            if(parentIsContainer)
+            {
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/iterators/ContainerIterator.as::setProperty()
+                // `iterator[iterator.length] = child` on a ContainerIterator is
+                // `addChildAt(child, numChildren)`. The iterator comes from the parent, and
+                // FrameController's override hands out `content.iterator` once it is built - the
+                // same redirect `getLayoutChildTarget()` already performs for the children loop,
+                // so the resolved target is the container that receives the child either way.
+                const target = parent!.getLayoutChildTarget() as unknown as {
+                    addChildAt?: (child: IWindow, index: number) => IWindow;
+                    addChild?: (child: IWindow) => IWindow;
+                    numChildren?: number;
+                };
+
+                if(typeof target.addChildAt === 'function')
+                {
+                    target.addChildAt(window, target.numChildren ?? 0);
+                }
+                else
+                {
+                    // AS3 falls back to `param2.addChild(_loc29_)` when the parent hands out no
+                    // iterator at all.
+                    target.addChild?.(window);
+                }
+            }
+            else if(parentIsItemGrid)
             {
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/iterators/ItemGridIterator.as::setProperty()
                 // The grid's iterator appends via `iterator[iterator.length] = child`, i.e.
@@ -578,7 +623,7 @@ export class WindowParser implements IWindowParser
                 // (grid layout) rather than adding it as a raw list column.
                 listParent.addGridItemAt!(window, listParent.numGridItems ?? 0);
             }
-            else 
+            else if(parentIsItemList)
             {
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/iterators/ItemListIterator.as::setProperty()
                 // Flash appends via `iterator[iterator.length] = child`, which the Proxy's
@@ -587,7 +632,7 @@ export class WindowParser implements IWindowParser
                 // and instead lets a single, full updateScrollAreaRegion() pass (with the child
                 // already attached) compute the list's size, matching how the real client avoids
                 // committing an under-built intermediate size mid-construction.
-                listParent.addListItemAt!(window, listParent.numListItems ?? 0);
+                listParent!.addListItemAt!(window, listParent!.numListItems ?? 0);
             }
         }
 
