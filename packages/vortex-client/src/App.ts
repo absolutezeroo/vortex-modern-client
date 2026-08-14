@@ -112,6 +112,7 @@ const ATLAS_FILE_OVERRIDES: Record<string, string> = {
 const EMBEDDED_AVATAR_XML_ASSET_NAMES = [
     'action_offset_lay',
     'action_offset_swim',
+    'dance_sixseven_animation',
     'HabboAvatarAnimation',
     'HabboAvatarFigure',
     'HabboAvatarGeometry',

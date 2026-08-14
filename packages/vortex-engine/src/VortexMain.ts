@@ -142,6 +142,7 @@ export class VortexMain implements IVortexMain
     private static readonly EMBEDDED_AVATAR_XML_ASSET_NAMES: string[] = [
         'action_offset_lay',
         'action_offset_swim',
+        'dance_sixseven_animation',
         'HabboAvatarAnimation',
         'HabboAvatarFigure',
         'HabboAvatarGeometry',

@@ -42,6 +42,9 @@ const EMBEDDED_AVATAR_ACTIONS_XML = `<actions><action  id="Default" precedence="
  */
 export class AvatarRenderManager extends Component implements IAvatarRenderManager 
 {
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::BUILT_IN_ANIMATION_ASSET_NAMES
+    private static readonly BUILT_IN_ANIMATION_ASSET_NAMES: string[] = ['dance_sixseven_animation'];
+
     // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::AVATAR_PLACEHOLDER_FIGURE
     private static readonly AVATAR_PLACEHOLDER_FIGURE: string = 'hd-99999-99999';
 
@@ -452,16 +455,39 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
                 }
             }
 
-            if(data !== null) 
+            if(data !== null)
             {
                 this._structure.updateActions(data);
+                this.registerBuiltInAnimations();
                 this._actionsReady = true;
                 this.checkReady();
             }
         }
-        catch (error) 
+        catch (error)
         {
             log.error('Failed to load actions data', error);
+        }
+    }
+
+    /**
+     * Registers the animations shipped as their own embedded XML rather than inside
+     * `HabboAvatarAnimation`.
+     *
+     * AS3 calls this from `onAvatarActionsLoaded()`, right after `updateActions()` and
+     * before the ready flag — the animation references actions, so the action table has to
+     * exist first.
+     */
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::registerBuiltInAnimations()
+    private registerBuiltInAnimations(): void
+    {
+        for(const assetName of AvatarRenderManager.BUILT_IN_ANIMATION_ASSET_NAMES)
+        {
+            const animation = this.getEmbeddedAvatarAssetContent(assetName, false);
+
+            if(animation !== null)
+            {
+                this._structure.registerAnimation(animation);
+            }
         }
     }
 
