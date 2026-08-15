@@ -229,6 +229,7 @@ export class TradeRuleEditorPreset extends WiredUIPreset
     /**
 	 * TS-only: AS3 repeats the `hasKey` / `add` / `getValue` dance in both pool methods.
 	 */
+    // TS-only: AS3 inlines this hasKey/add/getValue dance in both pool methods.
     private static poolForStyle(style: WiredStyle): TradeRuleNodeView[]
     {
         if(!TradeRuleEditorPreset.NODE_VIEW_POOL.hasKey(style.name))
