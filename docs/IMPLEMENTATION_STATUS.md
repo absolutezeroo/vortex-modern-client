@@ -382,6 +382,55 @@ documented it and no implementation existed. It is now on the interface and impl
 `TODO(AS3)` because **nothing reads that field yet**: the value is recorded, the pixels are
 unchanged. That gap is upstream and predates this slice.
 
+#### Three boot-time faults the wired slices surfaced — 2026-08-15
+
+All three came out of one console log, and none of them was in the code just written — the new
+controllers only made existing faults reachable.
+
+**1. `initComponent()` built its sub-controllers in the wrong order, and it was fatal.**
+`UbuntuPresetManager`'s constructor reads `roomEvents.wiredCtrl.getStyleByName('ubuntu')`, and three
+sub-controllers build one from their own constructor — the contract controller, the reward
+notification and the self-donation tool. The port created all three *before* `_wiredCtrl`, so the
+first of them threw `Cannot read properties of undefined (reading 'getStyleByName')`, inside
+`initComponent()`, leaving the whole component half-built and every wired field undefined.
+
+AS3's constructor order is `UserDefinedRoomEventsCtrl` **first**; the port now follows it exactly,
+constructors then attaches, as AS3 does. The port's own comment claimed "wiredMenu must exist before
+WiredEnvironment" — `WiredEnvironment`'s constructor touches only `communication`, and AS3 builds it
+*before* wiredMenu. Ordering claims in a comment are worth checking against the constructor bodies.
+
+**2. `roomObjectAddedHandler` dereferenced `_wiredCtrl` unguarded.** AS3 can — it assigns the field
+in its constructor, so the REOE_ADDED listener cannot outrun it. This port assigns in
+`initComponent()`, which `Component` runs *after* attaching each dependency's listeners, so a furni
+added in between arrives with nothing to tell. The inventory's room previewer is the path that does
+it. Guarded, with the deviation named.
+
+**3. Incoming header 3407 was registered twice** — `SelfDonationResultMessageEvent` and
+`AcceptFriendResultMessageEvent` — so the later `set()` silently unregistered the earlier and
+self-donation results never fired. WIN63's registry settles it: `_SafeStr_4546[3407] =
+SelfDonationResultMessageEvent` (a name that survived obfuscation, so unambiguous) and
+`_SafeStr_4546[3707] = _SafeCls_2256`, which is exactly the class `HabboFriendList` subscribes as
+`onAcceptFriendResult`. A digit transposition.
+
+**vortex-emulator disagrees and is wrong**: `Headers.cs:855` has `AcceptFriendResultComposer = 3407`
+and `FriendListMap.cs` wires its serializer there. Until that line reads 3707, the emulator's
+accept-friend replies reach the client's self-donation parser. The client is not the side to bend
+here — header source-of-truth order is the WIN63 registry first, the emulator as corroboration only.
+
+The duplicate was found by a one-liner worth keeping, since `HabboMessages` only logs a collision at
+runtime and only for the pair that collides:
+
+```bash
+for t in _events _composers; do
+  grep -o "this\.$t\.set([0-9]*," packages/vortex-engine/src/habbo/communication/HabboMessages.ts |
+    sed "s/.*set(//;s/,//" | sort -n | uniq -d
+done
+```
+
+It reports one remaining hit, `_composers` 1111, which is a false positive: the second registration
+(`GiveStarGemToUserMessageComposer`) is already commented out because the 2026 build removed that
+message — the emulator agrees, `GiveStarGemToUserMessageEvent = -1 // REMOVED in 2026`.
+
 #### The transaction windows — 2026-08-15, and `wired_trading` closes
 
 Last slice of the `habbo/roomevents` remainder: 1,717 lines of AS3 across 11 files, of which one

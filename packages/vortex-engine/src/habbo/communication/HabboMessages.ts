@@ -2331,7 +2331,13 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(3611, FriendListUpdateMessageEvent);
         this._events.set(1120, FriendRequestsMessageEvent);
         this._events.set(1860, NewFriendRequestMessageEvent);
-        this._events.set(3407, AcceptFriendResultMessageEvent);
+        // 3707, not 3407. WIN63's registry has `_SafeStr_4546[3707] = _SafeCls_2256`, and
+        // `HabboFriendList` subscribes exactly that class as `onAcceptFriendResult`; 3407 is
+        // `SelfDonationResultMessageEvent`, whose name survived obfuscation and is unambiguous. The
+        // two were registered on the same id, so the later `set` silently unregistered the earlier —
+        // self-donation results never fired. **vortex-emulator disagrees** (`AcceptFriendResultComposer
+        // = 3407`); the registry wins, and the emulator needs the same correction.
+        this._events.set(3707, AcceptFriendResultMessageEvent);
         this._events.set(2094, FriendNotificationMessageEvent);
         this._events.set(2642, FindFriendsProcessResultMessageEvent);
         this._events.set(2637, HabboSearchResultMessageEvent);

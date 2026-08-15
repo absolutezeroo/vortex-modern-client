@@ -222,64 +222,58 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         ];
     }
 
-    // AS3: HabboUserDefinedRoomEvents.as::initComponent()
+    /**
+	 * **AS3 builds all eleven sub-controllers in its constructor; this port builds them here**, where
+	 * `context` and `assets` are resolved. The *order within the block is AS3's, exactly*, and it is
+	 * load-bearing: `UserDefinedRoomEventsCtrl` comes first because it owns the wired-style table,
+	 * and `UbuntuPresetManager` — which the contract controller, the reward notification and the
+	 * self-donation tool each build in their own constructor — reads `wiredCtrl.getStyleByName()`.
+	 * Building any of those three first throws, and the throw happens inside `initComponent()`, so
+	 * the whole component is left half-constructed with no wired UI at all.
+	 *
+	 * The attach calls come after the constructors, as AS3 does — a component that resolves a
+	 * dependency during `attachComponent` must not find a half-built parent.
+	 *
+	 * AS3's own `initComponent()` holds only the last two statements.
+	 */
+    // AS3: HabboUserDefinedRoomEvents.as::HabboUserDefinedRoomEvents() + initComponent()
     protected override initComponent(): void
     {
-        // wiredMenu must exist before WiredEnvironment (which reads wiredMenu permissions).
-        this._wiredMenu = new WiredMenuController(this, this.context, 0, this.assets);
-        this.context.attachComponent(this._wiredMenu, [IID_WiredMenuController]);
-
-        // AS3 builds this in the constructor alongside the other sub-controllers and attaches it
-        // under IIDSelfDonationTool. It is created here instead, next to `wiredMenu`, because this
-        // port constructs sub-controllers in initComponent() where `context` and `assets` are ready.
-        //
-        // It has no toolbar entry and no caller: the only way in is its own `selfdonation/open`
-        // link tracker, which it registers from its own initComponent(). Constructing it *is* the
-        // wiring — which is why it is created unconditionally, exactly as AS3 does, and refuses
-        // outside a sandbox environment at `open()` rather than by not existing.
-        this._selfDonationTool = new SelfDonationTool(this, this.context, 0, this.assets);
-        this.context.attachComponent(this._selfDonationTool, [IID_SelfDonationTool]);
-
-        // Same shape as the self-donation tool above: AS3 builds it in the constructor and attaches
-        // it under IIDRewardNotificationController. Its only entry points are the 2677 push it
-        // subscribes to and its own `wiredrewards/open/<id>` link tracker, so constructing it is the
-        // wiring.
-        this._rewardNotificationController = new RewardNotificationController(this, this.context, 0, this.assets);
-        this.context.attachComponent(this._rewardNotificationController, [IID_RewardNotificationController]);
-
-        // AS3 builds this one in the constructor too, but it is a plain object rather than a DI
-        // component — it takes only `roomEvents` and reaches communication through it, so there is
-        // no IID and no attachComponent. Its three message events are registered from its own
-        // constructor, which is why constructing it is the whole wiring.
-        this._contractController = new WiredContractController(this);
-
-        // Third of the same shape: AS3 builds it in the constructor and attaches it under
-        // IIDWiredChestController. Its entry points are the server's "open chest N" push, which it
-        // subscribes to here, and `open(id)` from the wired menu's chests tab — so constructing it is
-        // the wiring, and until now nothing built it at all.
-        this._wiredChest = new WiredChestController(this, this.context, 0, this.assets);
-        this.context.attachComponent(this._wiredChest, [IID_WiredChestController]);
-
-        // The two transaction windows, same shape again. Neither opens itself: both subscribe to a
-        // reply (2910 for the paged log, 1306 for one transaction's breakdown) whose request is sent
-        // from the chest window or the chests tab, so constructing them is the wiring.
-        this._transactionLogs = new WiredTransactionLogsController(this, this.context, 0, this.assets);
-        this.context.attachComponent(this._transactionLogs, [IID_TransactionLogsController]);
-
-        this._transactionDetails = new WiredTransactionDetailsController(this, this.context, 0, this.assets);
-        this.context.attachComponent(this._transactionDetails, [IID_TransactionDetailsController]);
-
         this._wiredCtrl = new UserDefinedRoomEventsCtrl(this);
+        this._variablesSynchronizer = new WiredVariablesSynchronizer(this);
         this._wiredEnvironment = new WiredEnvironment(this);
+        this._wiredMenu = new WiredMenuController(this, this.context, 0, this.assets);
+
+        // The chest window and the two transaction windows. None of them opens itself: each
+        // subscribes to a server push from its own constructor — "open chest N", a page of logs, one
+        // transaction's breakdown — so constructing them is the entire wiring.
+        this._wiredChest = new WiredChestController(this, this.context, 0, this.assets);
+        this._transactionLogs = new WiredTransactionLogsController(this, this.context, 0, this.assets);
+        this._transactionDetails = new WiredTransactionDetailsController(this, this.context, 0, this.assets);
+
         this._variablePickerHelper = new NewVariablePickerHelper(this);
 
-        // AS3 creates the incoming-message handler here (initComponent), when communication is ready.
+        // A plain object rather than a DI component — it takes only `roomEvents` and reaches
+        // communication through it, so there is no IID and no attachComponent.
+        this._contractController = new WiredContractController(this);
+
+        this._rewardNotificationController = new RewardNotificationController(this, this.context, 0, this.assets);
+
+        // No toolbar entry and no caller: the only way in is its own `selfdonation/open` link
+        // tracker, registered from its own initComponent(). It is built unconditionally, exactly as
+        // AS3 does, and refuses outside a sandbox environment at `open()` rather than by not existing.
+        this._selfDonationTool = new SelfDonationTool(this, this.context, 0, this.assets);
+
+        this.context.attachComponent(this._wiredMenu, [IID_WiredMenuController]);
+        this.context.attachComponent(this._wiredChest, [IID_WiredChestController]);
+        this.context.attachComponent(this._transactionLogs, [IID_TransactionLogsController]);
+        this.context.attachComponent(this._transactionDetails, [IID_TransactionDetailsController]);
+        this.context.attachComponent(this._rewardNotificationController, [IID_RewardNotificationController]);
+        this.context.attachComponent(this._selfDonationTool, [IID_SelfDonationTool]);
+
+        // AS3's initComponent() proper.
         this._incomingMessages = new IncomingMessages(this);
-
-        // AS3: _roomEngine.events.addEventListener('REE_DISPOSED', onRoomEngineEvent)
         this._roomEngine?.events.on('REE_DISPOSED', this._onRoomEngineEvent);
-
-        this._variablesSynchronizer = new WiredVariablesSynchronizer(this);
 
         log.debug('HabboUserDefinedRoomEvents initialized');
     }
@@ -520,9 +514,18 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
 
     // --- Event handlers ---
 
+    /**
+	 * AS3 dereferences `_SafeStr_5997` unguarded, and can: it is assigned in the constructor, so the
+	 * REOE_ADDED listener cannot outrun it. This port builds it in `initComponent()`, which runs
+	 * *after* each dependency's listeners are attached — so a furni added between RoomEngine
+	 * resolving and initComponent running reaches here with nothing to tell. The room previewer
+	 * behind the inventory is the path that actually does it.
+	 */
     // AS3: HabboUserDefinedRoomEvents.as::roomObjectAddedHandler()
     private roomObjectAddedHandler(event: unknown): void
     {
+        if(this._wiredCtrl == null) return;
+
         // AS3 param is RoomEngineObjectEvent (objectId + category).
         const e = event as { objectId: number; category: number };
         switch(e.category - 10)
