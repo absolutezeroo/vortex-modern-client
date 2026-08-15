@@ -108,6 +108,34 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
     }
 
     /**
+	 * The standard blue link styling — four states, exactly the colours AS3 sets.
+	 *
+	 * AS3 builds a `flash.text.StyleSheet` and assigns it to the field the text engine reads. This
+	 * port has no `StyleSheet` type, and `htmlStyleSheetString` is the field that stands in for it,
+	 * so the same four rules are written there as CSS text.
+	 *
+	 * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/HTMLTextController.as::initializeLinkStyle()
+	 * **Nothing reads `htmlStyleSheetString` yet.** Its getter/setter store the value and no renderer
+	 * consults it, so calling this records the intent without changing a pixel — links render in
+	 * whatever colour the text pipeline already gives them. That gap is upstream of this method and
+	 * predates it; the colours are captured here so applying them later needs no second trip to the
+	 * AS3.
+	 *
+	 * Note `.visited` is a plain class rather than the `a:visited` pseudo-class its three siblings
+	 * use, and carries an underline but no colour. That asymmetry is AS3's, transcribed as found.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/HTMLTextController.as::initializeLinkStyle()
+    public initializeLinkStyle(): void
+    {
+        this._htmlStyleSheetString = [
+            'a:link { text-decoration: underline; color: #006de0; }',
+            'a:hover { color: #0051a4; }',
+            'a:active { color: #0053ad; }',
+            '.visited { text-decoration: underline; }',
+        ].join(' ');
+    }
+
+    /**
 	 * Sets text content as HTML with link conversion.
 	 */
     public override get text(): string

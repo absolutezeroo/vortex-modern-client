@@ -15,6 +15,7 @@ import {IID_RoomUI} from '@iid/IIDRoomUI';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_WiredMenuController} from '@iid/IIDWiredMenuController';
 import {IID_SelfDonationTool} from '@iid/IIDSelfDonationTool';
+import {IID_RewardNotificationController} from '@iid/IIDRewardNotificationController';
 
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
@@ -36,6 +37,7 @@ import {UserDefinedRoomEventsCtrl} from './wired_setup/UserDefinedRoomEventsCtrl
 import {WiredVariablesSynchronizer} from './WiredVariablesSynchronizer';
 import {WiredMenuController} from './wired_menu/WiredMenuController';
 import {SelfDonationTool} from './misc/SelfDonationTool';
+import {RewardNotificationController} from './wired_trading/reward_notification/RewardNotificationController';
 import {WiredEnvironment} from './WiredEnvironment';
 import {NewVariablePickerHelper} from './wired_setup/uibuilder/presets/newvariablepicker/NewVariablePickerHelper';
 import {IncomingMessages} from './IncomingMessages';
@@ -93,6 +95,9 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
 
     // AS3: HabboUserDefinedRoomEvents.as::_selfDonationTool
     private _selfDonationTool!: SelfDonationTool;
+
+    // AS3: HabboUserDefinedRoomEvents.as::_rewardNotificationController
+    private _rewardNotificationController!: RewardNotificationController;
     private _wiredEnvironment!: WiredEnvironment;
 
     // AS3: HabboUserDefinedRoomEvents.as::_variablePickerHelper (shared state for the variable picker).
@@ -102,12 +107,12 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     private _incomingMessages: IncomingMessages | null = null;
 
     // TODO(AS3): deferred sub-controllers, all created in the AS3 constructor and exposed via getters
-    // (wiredChest/transactionLogs/transactionDetails/rewardNotificationController) and the
+    // (wiredChest/transactionLogs/transactionDetails) and the
     // WiredContractController. Not created in this milestone; their getters/UI helpers
     // (getXmlWindow/refreshButton/prepareButton/getButtonImage) are omitted for now — no ported code
     // calls them yet. One documented gap rather than a fan-out of stubs (same approach as HabboHelp's
-    // absent-members block). `variablePickerHelper`, `variablesSynchronizer` and `selfDonationTool`
-    // have since left this list and are created in initComponent() below.
+    // absent-members block). `variablePickerHelper`, `variablesSynchronizer`, `selfDonationTool` and
+    // `rewardNotificationController` have since left this list and are created in initComponent().
 
     // AS3: HabboUserDefinedRoomEvents.as::HabboUserDefinedRoomEvents()
     constructor(context: IContext)
@@ -214,6 +219,13 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         // outside a sandbox environment at `open()` rather than by not existing.
         this._selfDonationTool = new SelfDonationTool(this, this.context, 0, this.assets);
         this.context.attachComponent(this._selfDonationTool, [IID_SelfDonationTool]);
+
+        // Same shape as the self-donation tool above: AS3 builds it in the constructor and attaches
+        // it under IIDRewardNotificationController. Its only entry points are the 2677 push it
+        // subscribes to and its own `wiredrewards/open/<id>` link tracker, so constructing it is the
+        // wiring.
+        this._rewardNotificationController = new RewardNotificationController(this, this.context, 0, this.assets);
+        this.context.attachComponent(this._rewardNotificationController, [IID_RewardNotificationController]);
 
         this._wiredCtrl = new UserDefinedRoomEventsCtrl(this);
         this._wiredEnvironment = new WiredEnvironment(this);

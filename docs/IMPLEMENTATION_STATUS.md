@@ -345,6 +345,43 @@ registers itself, so it is created unconditionally as AS3 does and refuses outsi
 `open()` rather than by not existing. It is gated three times over on purpose: `open()` refuses
 outside a sandbox, `validate()` refuses again before sending, and the server refuses a third time.
 
+#### The reward notification, and the trade-rule presets under it — 2026-08-14
+
+Fourth slice of the `habbo/roomevents` remainder. A completed wired transaction can pay out, and
+`RewardNotificationController` is what raises the "you won this" window.
+
+**The sizing question was asked the right way this time and still moved once.** The first question
+was not "how big" but "who constructs it" — the four remaining `presets/contracts` files are all
+built by `PresetManager` factories whose only callers live in the deferred `wired_trading` block, so
+porting them alone would have been dead code. That pointed at `reward_notification` as the one
+consumer with a live construction site (`HabboUserDefinedRoomEvents`, same as `SelfDonationTool`).
+The estimate then went 503 → 1,240 lines when `NodeOverviewPreset` turned out to **extend**
+`TradeRuleEditorPreset` — checking a class's imports does not reveal its base class.
+
+Ported: `TradeRuleNodeView`, `TradeRuleEditorPreset`, `NodeOverviewPreset`,
+`WiredTransactionSuccessContents`, its parser, the 2677 event, `IRewardNotification`,
+`RewardNotificationView`, `RewardNotificationController`, `createNodeOverviewPreset`, and a new
+`IID_RewardNotificationController`. `presets/contracts` is now 5/6 — only `TradeRuleListEditorPreset`
+is left, and its callers are still in the deferred contracts sub-controllers.
+
+Three things worth keeping:
+
+- **The notification's id is not on the wire.** `WiredTransactionSuccessMessageParser` holds a
+  class-level counter starting at 1 and stamps each payload with it. That id is what the controller
+  keys its map on and what `wiredrewards/open/<id>` refers to, so it must never repeat within a
+  session — hence a static that is deliberately never reset.
+- **Arriving and opening are separate.** Every rewarding payload is stored; only `openByDefault`
+  pops a window. The rest wait for the link, which is why the map outlives the views.
+- **Chip views are pooled across every editor**, keyed by style name and capped at 50 per style.
+  The chip template is not a layout: `TradeRuleEditorPreset` *removes* the first grid item from the
+  rule window and clones that, which is why `addNode()` inserts at `numGridItems - 1`.
+
+`IHTMLTextWindow.initializeLinkStyle()` was declared but missing — the interface's own header
+documented it and no implementation existed. It is now on the interface and implemented on
+`HTMLTextController`, writing AS3's four link rules into `htmlStyleSheetString`. It carries a
+`TODO(AS3)` because **nothing reads that field yet**: the value is recorded, the pixels are
+unchanged. That gap is upstream and predates this slice.
+
 #### Three recycler headers were invented, on both sides of the wire
 
 Found while checking whether notifications' `onRecyclerFinished` was unwired or unported. It was

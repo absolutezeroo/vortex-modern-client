@@ -528,6 +528,9 @@ import {
     SelfDonationResultMessageEvent
 } from './messages/incoming/userdefinedroomevents/misc/SelfDonationResultMessageEvent';
 import {
+    WiredTransactionSuccessMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTransactionSuccessMessageEvent';
+import {
     SelfDonationComposer
 } from './messages/outgoing/userdefinedroomevents/misc/SelfDonationComposer';
 import {
@@ -1941,6 +1944,9 @@ export class HabboMessages implements IMessageConfiguration
         // window — and each drops a page whose `logListType` is not its own. Names derived: no
         // unobfuscated tree carries the chest messages and the emulator has no constant for 2910.
         this._events.set(2910, WiredTransactionLogsEvent);
+        // A wired transaction completed, and what it paid out (WIN63 registry: 2677 -> _SafeCls_3244).
+        // Subscribed by RewardNotificationController. Name derived, same reason as 2910.
+        this._events.set(2677, WiredTransactionSuccessMessageEvent);
         // Sandbox self-donation result (WIN63 registry: 3407 -> SelfDonationResultMessageEvent, one
         // of the few event classes that kept its real name).
         this._events.set(3407, SelfDonationResultMessageEvent);

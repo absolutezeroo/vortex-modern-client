@@ -14,4 +14,11 @@ export interface IHTMLTextWindow extends ITextFieldWindow
     html: string;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IHTMLTextWindow.as::get linkTarget()
     linkTarget: string;
+
+    /**
+	 * Applies the standard blue link styling. See the implementation for why it is currently inert
+	 * in this port.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/_SafeCls_2117.as::initializeLinkStyle()
+    initializeLinkStyle(): void;
 }

@@ -40,6 +40,8 @@ import {BorderSection} from './presets/sections/BorderSection';
 import {ItemTypeSelectionSection} from './presets/sections/ItemTypeSelectionSection';
 import {ItemTypeSelectionPreset} from './presets/contracts/ItemTypeSelectionPreset';
 import {ChestItemIconPreviewerPreset} from './presets/contracts/ChestItemIconPreviewerPreset';
+import {NodeOverviewPreset} from './presets/contracts/NodeOverviewPreset';
+import type {NodeOverviewClickCallback} from './presets/contracts/NodeOverviewPreset';
 import {UsageInfoSection} from './presets/sections/UsageInfoSection';
 import {UsageWarningSection} from './presets/sections/UsageWarningSection';
 import {ChronoMaskFilterPreset} from './presets/applications/ChronoMaskFilterPreset';
@@ -372,6 +374,12 @@ export class PresetManager
     createSection(title: string, content: WiredUIPreset, param: SectionParam | null = null): SectionPreset
     {
         return new SectionPreset(this._roomEvents, this, this.wiredStyle, title, content, param);
+    }
+
+    // AS3: PresetManager.as::createNodeOverviewPreset()
+    createNodeOverviewPreset(title: string, onNodeClicked: NodeOverviewClickCallback | null = null): NodeOverviewPreset
+    {
+        return new NodeOverviewPreset(this._roomEvents, this, this.wiredStyle, title, onNodeClicked);
     }
 
     // AS3: PresetManager.as::createItemTypeSelectionSection()
