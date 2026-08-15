@@ -10,7 +10,12 @@ const log = Logger.getLogger('habbo.toolbar.ToolbarView');
  *
  * In AS3 this builds the toolbar UI from XML layout, manages icon visibility,
  * hover states, unseen item counters, and the me-menu controller.
- * In Vortex, rendering is handled by SolidJS; this class manages state/metadata.
+ *
+ * **Dead in the 2026 build, and deliberately left as a shell.** `HabboToolbar` constructs
+ * `BottomBarLeft`, which constructs `MeMenuNewController`; `ToolbarView` is never constructed in
+ * either tree, and `MeMenuController` only by `ToolbarView`. The whole chain is the 2023 me-menu
+ * design that `MeMenuNewController` replaced. Porting its window code would be porting dead code —
+ * check `BottomBarLeft`/`MeMenuNewController` before adding anything here.
  *
  * @see sources/win63_version/habbo/toolbar/ToolbarView.as
  */

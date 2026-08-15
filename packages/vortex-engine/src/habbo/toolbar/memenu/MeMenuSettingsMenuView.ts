@@ -9,7 +9,12 @@ const log = Logger.getLogger('habbo.toolbar.memenu.MeMenuSettingsMenuView');
  *
  * In AS3 this creates a window with buttons for character settings, sound
  * settings, and chat settings. Opens sub-views for each category.
- * In Vortex, UI rendering is handled by SolidJS.
+ *
+ * **Dead in the 2026 build, and deliberately left as a shell.** `HabboToolbar` constructs
+ * `BottomBarLeft`, which constructs `MeMenuNewController`; `ToolbarView` is never constructed in
+ * either tree, and `MeMenuController` only by `ToolbarView`. The whole chain is the 2023 me-menu
+ * design that `MeMenuNewController` replaced. Porting its window code would be porting dead code —
+ * check `BottomBarLeft`/`MeMenuNewController` before adding anything here.
  *
  * @see sources/win63_version/habbo/toolbar/memenu/MeMenuSettingsMenuView.as
  */

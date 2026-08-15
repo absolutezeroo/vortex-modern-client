@@ -1264,6 +1264,7 @@ import {
     GetBundleDiscountRulesetComposer,
     GetGiftWrappingConfigurationComposer,
     GetCatalogIndexComposer,
+    GetHabboClubExtendOfferMessageComposer,
     GetCatalogPageComposer,
     GetCatalogPageWithEarliestExpiryComposer,
     GetClubGiftMessageComposer,
@@ -3206,6 +3207,9 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(317, GetBundleDiscountRulesetComposer);
         this._composers.set(940, GetGiftWrappingConfigurationComposer);
         this._composers.set(2232, GetCatalogIndexComposer);
+        // The discounted club-extension offer, asked for by the two toolbar promo bars. Neither
+        // could send it before: both were shells with no window and therefore no button to click.
+        this._composers.set(2931, GetHabboClubExtendOfferMessageComposer);
         this._composers.set(2093, GetCatalogPageComposer);
         this._composers.set(1692, GetProductOfferComposer);
         this._composers.set(1706, PurchaseFromCatalogComposer);

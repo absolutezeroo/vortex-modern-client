@@ -382,6 +382,60 @@ documented it and no implementation existed. It is now on the interface and impl
 `TODO(AS3)` because **nothing reads that field yet**: the value is recorded, the pixels are
 unchanged. That gap is upstream and predates this slice.
 
+#### The toolbar promo bars, and five classes that only look like gaps — 2026-08-16
+
+Third of the six real "server is waiting" send gaps: **2931**, the discounted club-extension offer.
+Both its call sites — `ClubDiscountPromoExtension` and `CitizenshipVipDiscountPromoExtension` — were
+shells that built no window, so there was no button to click and the composer did not exist.
+
+Both are now real: they build from `club_discount_promotion_xml` /
+`vip_discount_promotion_v2_xml`, wire their regions, attach to the extension slot, and send the
+event-log line plus 2931 on click. Details worth keeping:
+
+- **`isExtensionEnabled()` had lost half its test.** AS3 requires club level 2 *and* the config flag;
+  the port checked only the flag, which would have shown the bar to a player with no club at all.
+- **The two extensions disagree about which id they detach, and that is AS3's code, not a slip.**
+  `CitizenshipVipDiscountPromoExtension.onClubChanged()` detaches `vip_quests` in its `else` branch
+  and declines to attach while `vip_quests` is up — the two promos share one slot and this is how the
+  quests bar wins it. Its `club_promo` id is only ever detached by `dispose()`. The club version
+  detaches its own id. Transcribed as written, mismatch included.
+- **The sliding highlight is 26 ticks against 20 steps.** The strip reaches the right edge at tick 20;
+  the remaining six *crop* it so it slides off rather than overhanging. AS3 does that with
+  `BitmapData.copyPixels()`; here it is an `OffscreenCanvas` blit, the established synchronous
+  stand-in (`core/utils/BitmapSlot`) — `createImageBitmap()` is async and cannot run a 25ms tick.
+- `extend_hilite`'s `content` is a Pixi `Texture`, not an `ImageBitmap`. `AssetBitmap.resolveSync()`
+  exists for exactly that, and casting straight through throws *inside the render pass*, taking the
+  whole frame with it.
+
+**The "SolidJS" comments are a measurable backlog, and a third of it is false.** 30 files still say
+rendering is "handled by SolidJS" — a framework this port does not use. Cross-checking which of them
+build no window *and* whose AS3 counterpart does gives 13 candidates. Five are not gaps at all:
+
+`ToolbarView`, `MeMenuController`, `MeMenuSettingsMenuView`, `MeMenuSoundSettingsView`,
+`MeMenuSoundSettingsItem` and `MeMenuChatSettingsView` are the **2023 me-menu design**. In the 2026
+tree `HabboToolbar` constructs `BottomBarLeft`, which constructs `MeMenuNewController`; `ToolbarView`
+is never constructed at all, and `MeMenuController` only by `ToolbarView`. Porting their window code
+would be porting dead code. Each now says so at the top of the file instead of blaming SolidJS.
+
+The recipe, worth re-running before quoting the backlog:
+
+```bash
+for f in $(grep -rl "SolidJS" packages/vortex-engine/src); do
+  grep -q "buildFromXML\|buildWidgetLayout\|getXmlWindow\|findChildByName" "$f" && continue
+  base=$(basename "$f" .ts)
+  as3=$(find sources/WIN63-202607011411-782849652/src/com/sulake/habbo -name "$base.as" | head -1)
+  [ -n "$as3" ] && grep -q "buildFromXML\|findChildByName" "$as3" && echo "$base"
+done
+```
+
+It reports 13; six of those are the dead me-menu chain above. The genuine remainder is
+`AchievementsResolutionController`, `RoomCompetitionController`, `CitizenshipVipQuestsPromoExtension`,
+`VideoOfferExtension`, `OfferExtension` and one call in `FurniModel`.
+
+Send gaps with a real handler behind them: **6 -> 5** (and the count was 7 until `785
+ClickCharacterEvent` turned out to have no entry in the WIN63 registry at all, in either table — the
+client never sends it, so it is an emulator-side leftover rather than a client gap).
+
 #### `habbo/inventory` was 42/54 subscribed — 2026-08-15
 
 Found while sizing the "server is implemented and waiting" send gaps. One of them (3862,

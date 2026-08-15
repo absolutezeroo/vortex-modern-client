@@ -11,7 +11,12 @@ const log = Logger.getLogger('habbo.toolbar.memenu.soundsettings.MeMenuSoundSett
  *
  * In AS3 this creates a window with three sound setting items (UI, furni, trax),
  * manages volume state and syncs with the sound manager via the settings menu
- * widget chain. In Vortex, UI rendering is handled by SolidJS.
+ *
+ * **Dead in the 2026 build, and deliberately left as a shell.** `HabboToolbar` constructs
+ * `BottomBarLeft`, which constructs `MeMenuNewController`; `ToolbarView` is never constructed in
+ * either tree, and `MeMenuController` only by `ToolbarView`. The whole chain is the 2023 me-menu
+ * design that `MeMenuNewController` replaced. Porting its window code would be porting dead code —
+ * check `BottomBarLeft`/`MeMenuNewController` before adding anything here.
  *
  * @see sources/win63_version/habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsView.as
  */

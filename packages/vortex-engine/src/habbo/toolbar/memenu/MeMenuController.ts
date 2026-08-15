@@ -13,7 +13,12 @@ const log = Logger.getLogger('habbo.toolbar.memenu.MeMenuController');
  * In AS3 this manages the me menu popup with icons for profile, minimail,
  * rooms, talents, settings, achievements, guide, and clothes. Handles
  * hover state changes and click events. In Vortex, UI rendering is
- * handled by SolidJS.
+ *
+ * **Dead in the 2026 build, and deliberately left as a shell.** `HabboToolbar` constructs
+ * `BottomBarLeft`, which constructs `MeMenuNewController`; `ToolbarView` is never constructed in
+ * either tree, and `MeMenuController` only by `ToolbarView`. The whole chain is the 2023 me-menu
+ * design that `MeMenuNewController` replaced. Porting its window code would be porting dead code —
+ * check `BottomBarLeft`/`MeMenuNewController` before adding anything here.
  *
  * @see sources/win63_version/habbo/toolbar/memenu/MeMenuController.as
  */
