@@ -1,5 +1,6 @@
 import type {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroomevents/Triggerable';
 import type {IVariableType} from './variables/IVariableType';
+import {WriteToLog} from './actiontypes/WriteToLog';
 import {NotificationExtraDataKey} from '@habbo/notifications/NotificationExtraDataKey';
 import {ActionDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/ActionDefinition';
 import {ConditionDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/ConditionDefinition';
@@ -439,8 +440,27 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::createHeader()
     private createHeader(holder: IWiredTypeHolder, builder: WiredUIBuilder): void
     {
-        // TODO(AS3): button modes 2 (wired-menu variable) / 3 (write-to-logs) need wiredMenu + _SafeCls_3593.
-        const buttonMode = this._currentElement!.hasStateSnapshot ? 1 : 0;
+        // The four modes are assigned in AS3's order, each overwriting the last — so a write-to-log
+        // action wins over a variable element, which wins over a snapshot.
+        //
+        // The two obfuscated types the earlier marker said were missing are both ported:
+        // `_SafeCls_3688` is `IVariableType` (its own trace comment names it) and `_SafeCls_3593` is
+        // `WriteToLog`, identified through `ActionTypeCodes` — AS3's code 49, which only that class
+        // returns.
+        let buttonMode = 0;
+
+        if(this._currentElement!.hasStateSnapshot) buttonMode = 1;
+
+        // AS3 casts to the interface and null-checks; TypeScript has no interface at runtime, so the
+        // test is on the two members `IVariableType` declares.
+        const asVariableType = this._currentElement as unknown as Partial<IVariableType>;
+        const isVariableType = typeof asVariableType?.variableType === 'function'
+            && typeof asVariableType?.initialVariableName === 'string';
+
+        if(this._roomEvents.wiredMenu.isEnabled && isVariableType) buttonMode = 2;
+
+        if(this._currentElement instanceof WriteToLog) buttonMode = 3;
+
         this._headerPreset = this._presetManager.createHeaderPreset(this.getElementName(this._currentDef!.stuffTypeId), holder, buttonMode, this._applySnapshot, this._viewVariableInMenu, this._viewLogs);
         builder.addElements(this._headerPreset);
     }
