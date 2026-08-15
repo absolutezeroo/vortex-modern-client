@@ -382,6 +382,49 @@ documented it and no implementation existed. It is now on the interface and impl
 `TODO(AS3)` because **nothing reads that field yet**: the value is recorded, the pixels are
 unchanged. That gap is upstream and predates this slice.
 
+#### The transaction windows — 2026-08-15, and `wired_trading` closes
+
+Last slice of the `habbo/roomevents` remainder: 1,717 lines of AS3 across 11 files, of which one
+(`TransactionConfig`) had already been pulled forward for the chests tab. Two windows — the paged
+log of every chest movement, and one transaction opened out into its item breakdown.
+
+**`chests/` was the dependency, not the reverse.** The July estimate deferred transactions because
+they "drag in the whole `chests/` subsystem"; with chests landed the day before, this slice needed
+nothing new from it beyond three helpers it reuses directly — `FurniChestView.getChestBasedItemName`,
+`FurniChestItemView.initChestBasedIconUI`, and `WiredChestWrapperView.relocateBubbleFocus`.
+
+Its wire layer was half-present. 2910 (a page of logs) and 2016 (ask for the room's log) had shipped
+with the chests tab; **1306 and 475 were missing entirely** — one transaction's breakdown and the
+request for it — along with the `WiredTransactionDetails` DTO. 847, the profile open behind a
+username cell, turned out to be already ported as `GetExtendedProfileMessageComposer`.
+
+Details worth keeping:
+
+- **475 sends the transaction id as a `Long`.** AS3 takes a `Number` and wraps it before pushing, and
+  `WiredTransactionInfo.transactionId` is read with `readLong()` to match. Every chest id around it
+  is a plain int, so this is the one place the width matters.
+- **`WiredTransactionDetails`' two furniture maps are keyed by object.** AS3 stores
+  `ChestItemType -> count` in a `Map`, and a `ChestItemType` carries a type id, a wall/floor flag and
+  a poster id — so the same furniture in two states stays two rows. That rules out a plain object;
+  `OrderedMap` keeps the object keys *and* the server's order, which is the render order.
+- **`isIncompleteData` is why the breakdown can say "+N".** The server truncates long lists; the view
+  sums what actually arrived and shows the difference against the reported count as one extra cell.
+  Without the flag the window would under-report silently.
+- **One header, two windows, filtered by page size.** `WiredTransactionLogsController` drops a page of
+  ten (the chests tab's preview) *and* anything that is not `PAGE_SIZE` — a whitelist, not two guards.
+- **Paging is rate-limited twice**: nothing inside 280 ms, and no repeat of the still-pending page
+  inside 2 s. The pending page is cleared when its answer lands, which is what lets the refresh
+  button work at all.
+- `TransactionChestItemWrapper` dresses a bare `ChestItemType` as an `IChestStorageItem` with a fixed
+  `specialType` of 1 — which is also why LTD and rarity badges never appear on a transaction cell.
+- Both `_SafeCls_1968` and `_SafeCls_2287` are **empty interfaces** with no members and no parameter
+  ever typed as them. Ported as markers, with a note: they read as a convention that was never filled
+  in rather than an abstraction.
+
+With this, `HabboUserDefinedRoomEvents.initComponent()` builds every sub-controller AS3's constructor
+does. What is left in the module is the `WiredMenuEvent` toolbar dispatch, three UI helpers on
+`HabboUserDefinedRoomEvents` nothing calls yet, and Bloc C's `TODO(AS3)`s.
+
 #### The wired chests, end to end — 2026-08-15
 
 Sixth slice of the `habbo/roomevents` remainder, and the largest: **3,938 lines of AS3 across 15
@@ -1964,10 +2007,11 @@ Re-ranked **2026-08-03**, biggest product gap first.
    adds another entry to priority 0's list.
 2. **Finish `habbo/roomevents`**. The enumerated remainder has been worked through — send gaps,
    `VariableManagementDetailController`, the `chests` tab, the sandbox donation tool, the reward
-   notification, the contract editors and `wiredChest` have all landed. What is left is
-   `wired_trading/transactions/` (the paged logs window + detail view, now unblocked by `chests/`),
-   the `WiredMenuEvent` toolbar dispatch, and Bloc C's 16 `TODO(AS3)`s — several of which Bloc E has
-   now unblocked. Re-measure the file count before quoting one; the old 395/448 predates six slices.
+   notification, the contract editors, `wiredChest` and `wired_trading/transactions/` have all
+   landed, and `wired_trading` is complete. What is left is the `WiredMenuEvent` toolbar dispatch,
+   three `HabboUserDefinedRoomEvents` UI helpers nothing calls yet, and Bloc C's 16 `TODO(AS3)`s —
+   several of which Bloc E has now unblocked. Re-measure the file count before quoting one; the old
+   395/448 predates seven slices.
 3. **Whole modules still at zero**: `habbo/game` — 0/63, and the `game` protocol at 122 files is
    the #1 message gap. **But 58 of those 63 files are `snowwar/`**: the manager itself is 5 files
    (`HabboGameManager`, `IncomingMessages`, `events/`, 2 obfuscated), and the rest is one large

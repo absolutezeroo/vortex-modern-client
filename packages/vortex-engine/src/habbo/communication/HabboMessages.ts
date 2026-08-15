@@ -525,6 +525,9 @@ import {
     WiredTransactionLogsEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTransactionLogsEvent';
 import {
+    WiredTransactionDetailsMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTransactionDetailsMessageEvent';
+import {
     SelfDonationResultMessageEvent
 } from './messages/incoming/userdefinedroomevents/misc/SelfDonationResultMessageEvent';
 import {
@@ -602,6 +605,9 @@ import {
 import {
     RequestWiredTransactionLogsComposer
 } from './messages/outgoing/userdefinedroomevents/wiredtrading/RequestWiredTransactionLogsComposer';
+import {
+    RequestWiredTransactionDetailsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/RequestWiredTransactionDetailsComposer';
 import {
     SetWiredChestsLockedComposer
 } from './messages/outgoing/userdefinedroomevents/wiredtrading/SetWiredChestsLockedComposer';
@@ -2010,6 +2016,9 @@ export class HabboMessages implements IMessageConfiguration
         // window — and each drops a page whose `logListType` is not its own. Names derived: no
         // unobfuscated tree carries the chest messages and the emulator has no constant for 2910.
         this._events.set(2910, WiredTransactionLogsEvent);
+        // One transaction's full breakdown (WIN63 registry: 1306 -> _SafeCls_3176), the answer to a
+        // click on a log row's "details" cell. Name derived, same reason as 2910.
+        this._events.set(1306, WiredTransactionDetailsMessageEvent);
         // A wired transaction completed, and what it paid out (WIN63 registry: 2677 -> _SafeCls_3244).
         // Subscribed by RewardNotificationController. Name derived, same reason as 2910.
         this._events.set(2677, WiredTransactionSuccessMessageEvent);
@@ -2613,6 +2622,7 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1908, SaveWiredContractComposer);
         this._composers.set(1594, RequestWiredContractContentsComposer);
         this._composers.set(2016, RequestWiredTransactionLogsComposer);
+        this._composers.set(475, RequestWiredTransactionDetailsComposer);
         this._composers.set(1630, SetWiredChestsLockedComposer);
         this._composers.set(2818, WiredTradeAcceptComposer);
         this._composers.set(2646, WiredTradeCancelComposer);

@@ -17,6 +17,8 @@ import {IID_WiredMenuController} from '@iid/IIDWiredMenuController';
 import {IID_SelfDonationTool} from '@iid/IIDSelfDonationTool';
 import {IID_RewardNotificationController} from '@iid/IIDRewardNotificationController';
 import {IID_WiredChestController} from '@iid/IIDWiredChestController';
+import {IID_TransactionLogsController} from '@iid/IIDTransactionLogsController';
+import {IID_TransactionDetailsController} from '@iid/IIDTransactionDetailsController';
 
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
@@ -41,6 +43,12 @@ import {SelfDonationTool} from './misc/SelfDonationTool';
 import {RewardNotificationController} from './wired_trading/reward_notification/RewardNotificationController';
 import {WiredContractController} from './wired_trading/contracts/WiredContractController';
 import {WiredChestController} from './wired_trading/chests/WiredChestController';
+import {
+    WiredTransactionLogsController
+} from './wired_trading/transactions/overview/WiredTransactionLogsController';
+import {
+    WiredTransactionDetailsController
+} from './wired_trading/transactions/details/WiredTransactionDetailsController';
 import {WiredEnvironment} from './WiredEnvironment';
 import {NewVariablePickerHelper} from './wired_setup/uibuilder/presets/newvariablepicker/NewVariablePickerHelper';
 import {IncomingMessages} from './IncomingMessages';
@@ -55,13 +63,13 @@ const log = Logger.getLogger('habbo.roomevents.HabboUserDefinedRoomEvents');
  * synchronizer and the wired-trading controllers. Acts as the shared context every wired
  * sub-controller is constructed with.
  *
- * Scope note (wired_setup milestone): only wiredCtrl (stub — Bloc C), wiredMenu (stub) and
- * WiredEnvironment are wired here. The incoming handler (IncomingMessages / _SafeCls_1951), the
- * WiredVariablesSynchronizer, and the wired-trading controllers (chest / transaction logs+details /
- * contract / reward-notification / self-donation / new-variable-picker) are deferred — see the
- * TODO(AS3) block in initComponent() and the getters section. The AS3 also creates every
- * sub-controller in the constructor; this port defers creation to initComponent() so DI dependencies
- * (communication, etc.) are resolved first — the same pattern as HabboHelp.
+ * Every sub-controller AS3 builds is built here: wiredCtrl, wiredMenu, WiredEnvironment, the
+ * incoming handler (IncomingMessages / _SafeCls_1951), the WiredVariablesSynchronizer, the
+ * new-variable-picker helper, and the whole wired-trading set — chest, transaction logs, transaction
+ * details, contract, reward-notification and self-donation. **AS3 creates them in the constructor;
+ * this port defers creation to initComponent()** so DI dependencies (communication, the window
+ * manager) are resolved first — the same pattern as HabboHelp. Several of them subscribe to a
+ * server push from their own constructor, which makes constructing them the entire wiring.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as
  */
@@ -107,6 +115,12 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
 
     // AS3: HabboUserDefinedRoomEvents.as::_SafeStr_6781 (name derived: the wired-chest controller)
     private _wiredChest!: WiredChestController;
+
+    // AS3: HabboUserDefinedRoomEvents.as::_SafeStr_6527 (name derived: the paged transaction logs)
+    private _transactionLogs!: WiredTransactionLogsController;
+
+    // AS3: HabboUserDefinedRoomEvents.as::_transactionDetails
+    private _transactionDetails!: WiredTransactionDetailsController;
     private _wiredEnvironment!: WiredEnvironment;
 
     // AS3: HabboUserDefinedRoomEvents.as::_variablePickerHelper (shared state for the variable picker).
@@ -115,12 +129,10 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::_incomingMessages
     private _incomingMessages: IncomingMessages | null = null;
 
-    // TODO(AS3): deferred sub-controllers, created in the AS3 constructor and exposed via getters —
-    // `transactionLogs` and `transactionDetails` are what is left, and their UI helpers
-    // (refreshButton/prepareButton/getButtonImage) go with them. One documented gap rather than a
-    // fan-out of stubs (same approach as HabboHelp's absent-members block). `variablePickerHelper`,
-    // `variablesSynchronizer`, `selfDonationTool`, `rewardNotificationController`, the contract
-    // controller and `wiredChest` have since left this list and are created in initComponent().
+    // TODO(AS3): the UI helpers `refreshButton`/`prepareButton`/`getButtonImage`
+    // (HabboUserDefinedRoomEvents.as) are still absent — no ported code calls them yet, so they are
+    // one documented gap rather than a fan-out of stubs (same approach as HabboHelp's absent-members
+    // block). Every sub-controller AS3's constructor builds is now created in initComponent().
 
     // AS3: HabboUserDefinedRoomEvents.as::HabboUserDefinedRoomEvents()
     constructor(context: IContext)
@@ -248,6 +260,15 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         this._wiredChest = new WiredChestController(this, this.context, 0, this.assets);
         this.context.attachComponent(this._wiredChest, [IID_WiredChestController]);
 
+        // The two transaction windows, same shape again. Neither opens itself: both subscribe to a
+        // reply (2910 for the paged log, 1306 for one transaction's breakdown) whose request is sent
+        // from the chest window or the chests tab, so constructing them is the wiring.
+        this._transactionLogs = new WiredTransactionLogsController(this, this.context, 0, this.assets);
+        this.context.attachComponent(this._transactionLogs, [IID_TransactionLogsController]);
+
+        this._transactionDetails = new WiredTransactionDetailsController(this, this.context, 0, this.assets);
+        this.context.attachComponent(this._transactionDetails, [IID_TransactionDetailsController]);
+
         this._wiredCtrl = new UserDefinedRoomEventsCtrl(this);
         this._wiredEnvironment = new WiredEnvironment(this);
         this._variablePickerHelper = new NewVariablePickerHelper(this);
@@ -321,6 +342,18 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     get wiredChest(): WiredChestController
     {
         return this._wiredChest;
+    }
+
+    // AS3: HabboUserDefinedRoomEvents.as::get transactionLogs()
+    get transactionLogs(): WiredTransactionLogsController
+    {
+        return this._transactionLogs;
+    }
+
+    // AS3: HabboUserDefinedRoomEvents.as::get transactionDetails()
+    get transactionDetails(): WiredTransactionDetailsController
+    {
+        return this._transactionDetails;
     }
 
     // AS3: HabboUserDefinedRoomEvents.as::get variablePickerHelper()
@@ -600,10 +633,8 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         // detach — it is transcribed rather than left to the context, because the wrapper view it
         // owns sends a close message on the way down and the order matters.
         this._wiredChest?.dispose();
-
-        // TODO(AS3): dispose the remaining wired-trading controllers once ported — `transactionLogs`
-        // and `transactionDetails` (deferred, see scope note). _wiredMenu is a DI-attached Component;
-        // it is disposed by the context on detach.
+        this._transactionLogs?.dispose();
+        this._transactionDetails?.dispose();
 
         super.dispose();
 
