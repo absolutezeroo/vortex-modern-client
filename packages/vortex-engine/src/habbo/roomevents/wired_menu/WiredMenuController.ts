@@ -480,8 +480,9 @@ export class WiredMenuController extends Component implements ILinkEventTracker,
             }
         }
 
-        // TODO(AS3): AS3 also calls _roomEvents.wiredChest.onPermissionsChanged(); the wired-chest
-        // controller is not ported yet (see HabboUserDefinedRoomEvents scope note).
+        // Outside the `_view` guard in AS3 too: an open chest window re-reads its permissions even
+        // when the menu itself is closed.
+        this._roomEvents.wiredChest?.onPermissionsChanged();
     }
 
     // AS3: WiredMenuController.as::onAccountPreferences()

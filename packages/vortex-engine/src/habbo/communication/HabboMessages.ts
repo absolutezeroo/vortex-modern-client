@@ -555,8 +555,11 @@ import {
     CloseWiredChestComposer
 } from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/CloseWiredChestComposer';
 import {
-    DepositWiredChestCoinsComposer
-} from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/DepositWiredChestCoinsComposer';
+    StartWiredChestDepositComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/StartWiredChestDepositComposer';
+import {
+    WithdrawAllWiredChestContentsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/WithdrawAllWiredChestContentsComposer';
 import {
     WithdrawWiredChestCoinsComposer
 } from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/WithdrawWiredChestCoinsComposer';
@@ -2593,11 +2596,13 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1119, SelfDonationComposer);
         // Wired contracts: save one, and ask for its contents (WIN63 registry: 1908, 1594).
         // === WIRED CHESTS ===
-        // Ten client->server messages. 3407 is also a server->client header here
-        // (SelfDonationResultMessageEvent); independent tables, so not a collision.
+        // Eleven client->server messages. 3407 is also a server->client header here
+        // (SelfDonationResultMessageEvent), and 3611 is FriendListUpdateComposer in the emulator's
+        // server->client table; independent tables, so neither is a collision.
         this._composers.set(806, OpenWiredChestComposer);
         this._composers.set(2935, CloseWiredChestComposer);
-        this._composers.set(3514, DepositWiredChestCoinsComposer);
+        this._composers.set(3514, StartWiredChestDepositComposer);
+        this._composers.set(3611, WithdrawAllWiredChestContentsComposer);
         this._composers.set(2843, WithdrawWiredChestCoinsComposer);
         this._composers.set(3407, UpgradeWiredChestComposer);
         this._composers.set(1999, RequestWiredChestLogsComposer);

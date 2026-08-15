@@ -4,13 +4,18 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * Save a chest's settings — header 3830 in WIN63's registry
  * (`_SafeCls_2046.as::_composers[3830]`).
  *
- * Nine fields, in the order `ChestSettingsUI::onSaveClicked()` reads its controls. The two booleans
- * are the group's first and second checkbox; the three trailing integers are dropdown *ids*, not
+ * Nine fields, in the order `ChestSettingsUI::onSaveClicked()` reads its controls. The two middle
+ * booleans are the access checkboxes, named from the settings keys the same screen loads them from
+ * (`everyone_can_open`, `everyone_can_donate`); the three trailing integers are dropdown *ids*, not
  * positions.
  *
- * The last field is a control's `disabled` flag pushed straight onto the wire — AS3 sends the UI
- * state rather than a derived value, so its meaning is "this option was greyed out", not "this
- * option is off".
+ * `openState` and `amountPreview` are meaningful only for a furniture chest — a coin chest never
+ * shows those two dropdowns, and sends whatever they were left at.
+ *
+ * **The last field is `is_wired_enabled`**, not a UI flag despite how it is written. AS3 pushes the
+ * upgrade button's `disabled` state, and that button is disabled exactly when the chest already has
+ * wired — so the wire receives "wired is enabled". Reading it as "the control was greyed out" would
+ * be transcribing the expression instead of the meaning.
  *
  * **Name DERIVED** — no unobfuscated tree carries the wired-chest messages and the emulator has no
  * constant for 3830.
@@ -28,12 +33,12 @@ export class SaveWiredChestSettingsComposer extends MessageComposer<
         chestId: number,
         name: string,
         description: string,
-        option0: boolean,
-        option1: boolean,
+        everyoneCanOpen: boolean,
+        everyoneCanDonate: boolean,
         chestState: number,
         openState: number,
         amountPreview: number,
-        stateSectionDisabled: boolean
+        wiredEnabled: boolean
     )
     {
         super();
@@ -42,12 +47,12 @@ export class SaveWiredChestSettingsComposer extends MessageComposer<
             chestId,
             name,
             description,
-            option0,
-            option1,
+            everyoneCanOpen,
+            everyoneCanDonate,
             chestState,
             openState,
             amountPreview,
-            stateSectionDisabled,
+            wiredEnabled,
         ];
     }
 
