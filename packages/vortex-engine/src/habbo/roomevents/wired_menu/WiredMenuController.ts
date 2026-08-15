@@ -504,12 +504,14 @@ export class WiredMenuController extends Component implements ILinkEventTracker,
 
         if(session != null && this._playTestMode)
         {
-            // TODO(AS3): AS3 passes a 4th "wiredmenu/open/settings" click-link arg to addItem; the port's
-            // IHabboNotifications.addItem takes no link param, so the notification is not click-routable.
+            // The 4th arg is the click-link: `linkReceived()` above routes `wiredmenu/open/settings`,
+            // so clicking the bubble opens the settings tab that raised it. (An earlier note here
+            // claimed the port's addItem took no link param — it always has.)
             this._roomEvents.notifications.addItem(
                 this._localizationManager!.getLocalization('wiredmenu.settings.preferences.notification.playtest'),
                 'info',
-                'icon_wired_notification_png'
+                'icon_wired_notification_png',
+                'wiredmenu/open/settings'
             );
         }
     }
@@ -628,8 +630,12 @@ export class WiredMenuController extends Component implements ILinkEventTracker,
         {
             this._playTestMode = value;
             const key = 'wiredmenu.settings.preferences.notification.playtest.' + (value ? 'enabled' : 'disabled');
-            // TODO(AS3): AS3 passes a 4th "wiredmenu/open/settings" click-link arg (see onControllerMessageEvent).
-            this._roomEvents.notifications.addItem(this._localizationManager!.getLocalization(key), 'info', 'icon_wired_notification_png');
+            this._roomEvents.notifications.addItem(
+                this._localizationManager!.getLocalization(key),
+                'info',
+                'icon_wired_notification_png',
+                'wiredmenu/open/settings'
+            );
 
             if(updateUI)
             {

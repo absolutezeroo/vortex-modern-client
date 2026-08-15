@@ -280,12 +280,8 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         this._roomEngine?.events.on('REE_DISPOSED', this._onRoomEngineEvent);
 
         this._variablesSynchronizer = new WiredVariablesSynchronizer(this);
-        // TODO(AS3): the two remaining wired-trading controllers, `transactionLogs` and
-        // `transactionDetails` (HabboUserDefinedRoomEvents.as::get transactionLogs()/get
-        // transactionDetails()) — still unported; `wired_trading/transactions/` has only
-        // TransactionConfig so far.
 
-        log.debug('HabboUserDefinedRoomEvents initialized (wired_setup spine)');
+        log.debug('HabboUserDefinedRoomEvents initialized');
     }
 
     // --- Getters ---
@@ -595,10 +591,13 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         if(e == null) return;
         if(e.type === 'REE_DISPOSED')
         {
-            // TODO(AS3): also _variablesSynchronizer.clear() and _wiredContractController.clear() once
-            // those are ported.
+            // AS3's order, kept: the variable cache, the room-wide click settings, the setup dialog,
+            // then the contract editors. The synchronizer goes first because the other three can
+            // still read variables while tearing down.
+            this._variablesSynchronizer.clear();
             this._wiredEnvironment.clear();
             this._wiredCtrl.close();
+            this._contractController.clear();
         }
     };
 

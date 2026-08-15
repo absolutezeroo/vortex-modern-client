@@ -124,8 +124,8 @@ export class HabboToolbar extends Component implements IHabboToolbar
     // yet (only the interface is ported) - stays null until one is.
     private _messenger: IHabboMessenger | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::_roomEvents
-    // IHabboUserDefinedRoomEvents itself documents that no concrete implementation
-    // exists yet (the wired/competition-scripting module isn't ported) - stays null.
+    // Resolved: `HabboUserDefinedRoomEvents` is attached under IID_HabboUserDefinedRoomEvents in
+    // VortexMain. The dependency stays optional, as AS3 declares it.
     private _roomEvents: IHabboUserDefinedRoomEvents | null = null;
     // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
@@ -554,8 +554,9 @@ export class HabboToolbar extends Component implements IHabboToolbar
                 },
                 false
             ),
-            // AS3: no concrete IHabboUserDefinedRoomEvents implementation exists yet -
-            // optional and dormant (see the `_roomEvents` field comment).
+            // Optional in AS3 too, but no longer dormant: the listener below is what shows or
+            // hides the wired-menu toolbar icon when the player flips that preference, and
+            // `WiredMenuController.set wiredMenuButton()` emits it on the room-events `events` bus.
             new ComponentDependency(
                 IID_HabboUserDefinedRoomEvents,
                 (roomEvents: IHabboUserDefinedRoomEvents | null) =>
