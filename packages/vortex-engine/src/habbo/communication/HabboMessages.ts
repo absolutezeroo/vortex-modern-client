@@ -531,6 +531,54 @@ import {
     WiredTransactionSuccessMessageEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTransactionSuccessMessageEvent';
 import {
+    OpenWiredChestMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/chests/OpenWiredChestMessageEvent';
+import {
+    WiredChestUpdateSuccessMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/chests/WiredChestUpdateSuccessMessageEvent';
+import {
+    WiredChestUpgradeResultMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/chests/WiredChestUpgradeResultMessageEvent';
+import {
+    WiredChestCoinsMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/chests/WiredChestCoinsMessageEvent';
+import {
+    WiredChestItemsChunkMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/chests/WiredChestItemsChunkMessageEvent';
+import {
+    WiredChestItemsUpdatedMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/chests/WiredChestItemsUpdatedMessageEvent';
+import {
+    OpenWiredChestComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/OpenWiredChestComposer';
+import {
+    CloseWiredChestComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/CloseWiredChestComposer';
+import {
+    DepositWiredChestCoinsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/DepositWiredChestCoinsComposer';
+import {
+    WithdrawWiredChestCoinsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/WithdrawWiredChestCoinsComposer';
+import {
+    UpgradeWiredChestComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/UpgradeWiredChestComposer';
+import {
+    RequestWiredChestLogsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/RequestWiredChestLogsComposer';
+import {
+    SetWiredChestOptionsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/SetWiredChestOptionsComposer';
+import {
+    SetWiredChestNotificationSettingsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/SetWiredChestNotificationSettingsComposer';
+import {
+    WithdrawChestItemsByTypeComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/WithdrawChestItemsByTypeComposer';
+import {
+    SaveWiredChestSettingsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/chests/SaveWiredChestSettingsComposer';
+import {
     WiredContractContentsMessageEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/contracts/WiredContractContentsMessageEvent';
 import {
@@ -1967,6 +2015,15 @@ export class HabboMessages implements IMessageConfiguration
         // no unobfuscated tree carries them. The emulator's 1479 is an unrelated *client->server*
         // Game2 leaderboard request, a different table: not a collision, but not corroboration
         // either.
+        // === WIRED CHESTS ===
+        // Six pushes, all read from WIN63's registry. Names derived — no unobfuscated tree carries
+        // the chest messages and the emulator has no constant for any of them.
+        this._events.set(1174, OpenWiredChestMessageEvent);
+        this._events.set(1957, WiredChestUpdateSuccessMessageEvent);
+        this._events.set(2721, WiredChestUpgradeResultMessageEvent);
+        this._events.set(1022, WiredChestCoinsMessageEvent);
+        this._events.set(2323, WiredChestItemsChunkMessageEvent);
+        this._events.set(2738, WiredChestItemsUpdatedMessageEvent);
         this._events.set(2976, WiredContractContentsMessageEvent);
         this._events.set(3720, WiredContractUpdateResultMessageEvent);
         this._events.set(1479, WiredOpenContractMessageEvent);
@@ -2535,6 +2592,19 @@ export class HabboMessages implements IMessageConfiguration
         // refuses to send it outside a sandbox environment.
         this._composers.set(1119, SelfDonationComposer);
         // Wired contracts: save one, and ask for its contents (WIN63 registry: 1908, 1594).
+        // === WIRED CHESTS ===
+        // Ten client->server messages. 3407 is also a server->client header here
+        // (SelfDonationResultMessageEvent); independent tables, so not a collision.
+        this._composers.set(806, OpenWiredChestComposer);
+        this._composers.set(2935, CloseWiredChestComposer);
+        this._composers.set(3514, DepositWiredChestCoinsComposer);
+        this._composers.set(2843, WithdrawWiredChestCoinsComposer);
+        this._composers.set(3407, UpgradeWiredChestComposer);
+        this._composers.set(1999, RequestWiredChestLogsComposer);
+        this._composers.set(2907, SetWiredChestOptionsComposer);
+        this._composers.set(2905, SetWiredChestNotificationSettingsComposer);
+        this._composers.set(873, WithdrawChestItemsByTypeComposer);
+        this._composers.set(3830, SaveWiredChestSettingsComposer);
         this._composers.set(1908, SaveWiredContractComposer);
         this._composers.set(1594, RequestWiredContractContentsComposer);
         this._composers.set(2016, RequestWiredTransactionLogsComposer);
