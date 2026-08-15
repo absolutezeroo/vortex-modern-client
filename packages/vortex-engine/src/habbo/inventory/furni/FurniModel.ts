@@ -1,4 +1,7 @@
 import {OpenFlatConnectionMessageComposer} from '@habbo/communication/messages/outgoing/room/session/OpenFlatConnectionMessageComposer';
+import {
+    RequestFurniInventoryWhenNotInRoomComposer
+} from '@habbo/communication/messages/outgoing/inventory/RequestFurniInventoryWhenNotInRoomComposer';
 import type {IFurniModel} from './IFurniModel';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
@@ -52,6 +55,20 @@ export class FurniModel implements IFurniModel
     private _localization: IHabboLocalizationManager;
     // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::_soundManager
     private _soundManager: IHabboSoundManager | null;
+
+    /**
+	 * Whether the player is standing in a room. It picks which of the two furni-inventory requests
+	 * goes out, and nothing else reads it.
+	 */
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::_isInRoom
+    private _isInRoom: boolean = false;
+
+    /**
+	 * The item `gotoRoom()` was called for, held until the room finishes loading so the infostand
+	 * can open on it. Cleared on use, so a second entry to the same room selects nothing.
+	 */
+    // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::_roomItemToSelect
+    private _roomItemToSelect: IFurnitureItem | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::get soundManager()
     get soundManager(): IHabboSoundManager | null
@@ -158,11 +175,8 @@ export class FurniModel implements IFurniModel
     }
 
     /**
-     * Jumps to the room the selected item is standing in. AS3 also stashes the item in
-     * `_roomItemToSelect` so the infostand opens on it once the room loads.
-     *
-     * TODO(AS3): that stash and its consumer are not ported — the room will open, but the item
-     * will not be pre-selected on arrival.
+     * Jumps to the room the selected item is standing in, stashing the item so
+     * {@link roomEntered} can open the infostand on it once the room has loaded.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::gotoRoom()
     gotoRoom(): void
@@ -176,6 +190,30 @@ export class FurniModel implements IFurniModel
         if(item === null) return;
 
         this._communication.connection?.send(new OpenFlatConnectionMessageComposer(item.flatId));
+        this._roomItemToSelect = item;
+    }
+
+    /**
+     * The category constants are AS3's inline 20 (wall) and 10 (floor), and the id is taken as an
+     * absolute value because a wall item's inventory id is stored negative.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::roomEntered()
+    roomEntered(): void
+    {
+        this._isInRoom = true;
+
+        const item = this._roomItemToSelect;
+
+        if(item === null) return;
+
+        this._roomEngine.selectRoomObject(item.flatId, Math.abs(item.id), item.isWallItem ? 20 : 10);
+        this._roomItemToSelect = null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::roomLeft()
+    roomLeft(): void
+    {
+        this._isInRoom = false;
     }
 
     /**
@@ -1008,10 +1046,21 @@ export class FurniModel implements IFurniModel
         return this._view.getWindowContainer();
     }
 
+    /**
+     * Two requests, one meaning. AS3 branches on {@link _isInRoom}: 41 in a room, 3862 outside one.
+     * The port used to send 41 unconditionally, because nothing tracked the flag.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::requestInitialization()
     requestInitialization(): void
     {
-        this._habboInventory.requestFurni();
+        if(this._isInRoom)
+        {
+            this._habboInventory.requestFurni();
+
+            return;
+        }
+
+        this._communication.connection?.send(new RequestFurniInventoryWhenNotInRoomComposer());
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::subCategorySwitch()

@@ -217,6 +217,58 @@ import type {
 import type {
     AvatarEffectExpiredMessageParser
 } from '../communication/messages/parser/inventory/AvatarEffectExpiredMessageParser';
+import {
+    OpenConnectionMessageEvent
+} from '@habbo/communication/messages/incoming/room/session/OpenConnectionMessageEvent';
+import {
+    CloseConnectionMessageEvent
+} from '@habbo/communication/messages/incoming/room/session/CloseConnectionMessageEvent';
+import {
+    FlatAccessDeniedMessageEvent
+} from '@habbo/communication/messages/incoming/navigator/FlatAccessDeniedMessageEvent';
+import type {
+    FlatAccessDeniedMessageParser
+} from '@habbo/communication/messages/parser/navigator/FlatAccessDeniedMessageParser';
+import {
+    RoomEntryInfoMessageEvent
+} from '@habbo/communication/messages/incoming/room/engine/RoomEntryInfoMessageEvent';
+import {
+    NotEnoughBalanceMessageEvent
+} from '@habbo/communication/messages/incoming/catalog/NotEnoughBalanceMessageEvent';
+import {
+    MarketplaceConfigurationEvent
+} from '@habbo/communication/messages/incoming/marketplace/MarketplaceConfigurationEvent';
+import type {
+    MarketplaceConfigurationEventParser
+} from '@habbo/communication/messages/parser/marketplace/MarketplaceConfigurationEventParser';
+import {
+    MarketplaceItemStatsEvent
+} from '@habbo/communication/messages/incoming/marketplace/MarketplaceItemStatsEvent';
+import type {
+    MarketplaceItemStatsEventParser
+} from '@habbo/communication/messages/parser/marketplace/MarketplaceItemStatsEventParser';
+import {MarketplaceItemStats} from '@habbo/catalog/marketplace/MarketplaceItemStats';
+import {
+    UserRightsMessageEvent
+} from '@habbo/communication/messages/incoming/handshake/UserRightsMessageEvent';
+import {
+    FigureSetIdsMessageEvent
+} from '@habbo/communication/messages/incoming/inventory/FigureSetIdsMessageEvent';
+import type {
+    FigureSetIdsMessageParser
+} from '@habbo/communication/messages/parser/inventory/FigureSetIdsMessageParser';
+import {
+    AchievementsScoreMessageEvent
+} from '@habbo/communication/messages/incoming/inventory/AchievementsScoreMessageEvent';
+import type {
+    AchievementsScoreMessageParser
+} from '@habbo/communication/messages/parser/inventory/AchievementsScoreMessageParser';
+import {
+    HabboAchievementNotificationMessageEvent
+} from '@habbo/communication/messages/incoming/notifications/HabboAchievementNotificationMessageEvent';
+import type {
+    HabboAchievementNotificationMessageEventParser
+} from '@habbo/communication/messages/parser/notifications/HabboAchievementNotificationMessageEventParser';
 import {HabboInventoryEffectsEvent} from './events/HabboInventoryEffectsEvent';
 import {Effect} from './effects/Effect';
 
@@ -284,6 +336,21 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // TS-only: no AS3 counterpart; the dump's inventory message handler keeps one flat
     // `_messageEvents` vector, where this port splits it per feature (furni/pet/effect/badge).
     private _clubMessageEvents: IMessageEvent[] = [];
+    // TS-only: no AS3 counterpart; same per-feature split as the vectors above.
+    private _roomMessageEvents: IMessageEvent[] = [];
+    // TS-only: no AS3 counterpart; same per-feature split as the vectors above.
+    private _marketplaceMessageEvents: IMessageEvent[] = [];
+
+    /**
+	 * Figure-set ids the player has bought, and the furniture names those purchases are bound to.
+	 * Both arrive together on 1231 and are read by the avatar editor to decide whether a sellable
+	 * clothing item is already owned.
+	 */
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_SafeStr_7554 (name derived: purchased figure sets)
+    private _purchasedFigureSetIds: number[] = [];
+
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_boundFurnitureNames
+    private _boundFurnitureNames: string[] = [];
     private _initializedCategories: Set<string> = new Set();
 
     /**
@@ -986,10 +1053,22 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication?.removeMessageEvent(event);
         }
 
+        for(const event of this._roomMessageEvents)
+        {
+            this._communication?.removeMessageEvent(event);
+        }
+
+        for(const event of this._marketplaceMessageEvents)
+        {
+            this._communication?.removeMessageEvent(event);
+        }
+
         this._furniMessageEvents = [];
         this._effectMessageEvents = [];
         this._badgeMessageEvents = [];
         this._clubMessageEvents = [];
+        this._roomMessageEvents = [];
+        this._marketplaceMessageEvents = [];
         this._furniModel?.dispose();
         this._badgesModel?.dispose();
         this._effectsModel?.dispose();
@@ -1520,6 +1599,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this.registerBadgeMessageEvents();
         this.registerTradingMessageEvents();
         this.registerClubMessageEvents();
+        this.registerRoomMessageEvents();
+        this.registerMarketplaceMessageEvents();
         log.debug('Inventory initialized');
     }
 
@@ -2082,8 +2163,96 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._badgeMessageEvents.push(
             this._communication.addMessageEvent(new BadgesMessageEvent(this.onBadges)),
             this._communication.addMessageEvent(new BadgeReceivedEvent(this.onBadgeReceived)),
-            this._communication.addMessageEvent(new BadgePointLimitsMessageEvent(this.onBadgePointLimits))
+            this._communication.addMessageEvent(new BadgePointLimitsMessageEvent(this.onBadgePointLimits)),
+            this._communication.addMessageEvent(
+                new HabboAchievementNotificationMessageEvent(this.onAchievementReceived)
+            ),
+            this._communication.addMessageEvent(new AchievementsScoreMessageEvent(this.onAchievementsScore)),
+            this._communication.addMessageEvent(new FigureSetIdsMessageEvent(this.onFigureSetIds))
         );
+
+        // TODO(AS3): AS3 also registers 1292 (`HabboUserBadgesMessageEvent`) here, whose handler
+        // re-asserts every equipped badge with `updateBadge(code, true, 0, ownerCount,
+        // badgeRarityId)`. It is deliberately left out: the 2026 wire carries four fields per badge
+        // (slot, code, ownerCount, badgeRarityId) and **both this port's parser and
+        // vortex-emulator's `HabboUserBadgesMessageComposerSerializer` carry two**, so the two
+        // rarity fields do not exist to pass. Wiring it as it stands would call
+        // `Badge.updateMetadata(0, 0)` and wipe the rarity `onBadges` (3926) has already set —
+        // worse than not wiring it. Needs the parser widened and the emulator's serializer with it.
+    }
+
+    /**
+	 * An achievement completed. The badge it grants is recorded not-in-use — the player has it but
+	 * is not wearing it — and the badge the new level replaces is dropped in the same breath.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onAchievementReceived()
+    private onAchievementReceived = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as HabboAchievementNotificationMessageEventParser | null;
+        const data = parser?.data ?? null;
+        const model = this._badgesModel;
+
+        if(!data || !model) return;
+
+        model.updateBadge(
+            data.badgeCode,
+            false,
+            data.badgeId,
+            data.ownerCount,
+            data.badgeRarityId,
+            (id: string) => this._localization?.getBadgeName(id) ?? '',
+            (id: string) => this._localization?.getBadgeDesc(id) ?? ''
+        );
+        model.removeBadge(data.removedBadgeCode);
+        model.updateView();
+    };
+
+    /**
+	 * The score is not stored — it is registered as a localization parameter, so
+	 * `${achievements_score_description}` renders with the number already in it wherever it appears.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onAchievementsScore()
+    private onAchievementsScore = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as AchievementsScoreMessageParser | null;
+
+        if(!parser) return;
+
+        this._localization?.registerParameter('achievements_score_description', 'score', String(parser.score));
+    };
+
+    /**
+	 * The clothing the player has bought. Nothing subscribed this, so both lists stayed empty and
+	 * `hasFigureSetIdInInventory()` answered false for everything — which is how the avatar editor
+	 * came to hide every sellable item, owned or not.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onFigureSetIds()
+    private onFigureSetIds = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as FigureSetIdsMessageParser | null;
+
+        if(!parser) return;
+
+        this.updatePurchasedFigureSetIds(parser.figureSetIds, parser.boundFurnitureNames);
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::updatePurchasedFigureSetIds()
+    updatePurchasedFigureSetIds(figureSetIds: number[], boundFurnitureNames: string[]): void
+    {
+        this._purchasedFigureSetIds = figureSetIds;
+        this._boundFurnitureNames = boundFurnitureNames;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::hasFigureSetIdInInventory()
+    hasFigureSetIdInInventory(figureSetId: number): boolean
+    {
+        return this._purchasedFigureSetIds.indexOf(figureSetId) > -1;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::hasBoundFigureSetFurniture()
+    hasBoundFigureSetFurniture(className: string): boolean
+    {
+        return this._boundFurnitureNames.indexOf(className) > -1;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::addMessageFragment()
@@ -2343,6 +2512,158 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication.addMessageEvent(new ScrSendUserInfoEvent(this.onClubStatus))
         );
     }
+
+    /**
+	 * The room-lifecycle branch of AS3's registration block. Four messages, two meanings: the
+	 * inventory closes and the furni model stops considering itself in a room, or it starts.
+	 *
+	 * **Nothing subscribed these before**, so `FurniModel._isInRoom` never moved off `false` and the
+	 * inventory stayed open across a room exit.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as:160,177,190,202
+    private registerRoomMessageEvents(): void
+    {
+        if(!this._communication) return;
+
+        this._roomMessageEvents.push(
+            this._communication.addMessageEvent(new OpenConnectionMessageEvent(this.onRoomLeft)),
+            this._communication.addMessageEvent(new CloseConnectionMessageEvent(this.onRoomLeft)),
+            this._communication.addMessageEvent(new FlatAccessDeniedMessageEvent(this.onFlatAccessDenied)),
+            this._communication.addMessageEvent(new RoomEntryInfoMessageEvent(this.onRoomEnter))
+        );
+    }
+
+    /**
+	 * AS3 hangs `onRoomLeft` on **both** 611 and 3404 — opening a connection to another room and
+	 * closing the current one both mean "you are no longer where you were".
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onRoomLeft()
+    private onRoomLeft = (): void =>
+    {
+        this.closeView();
+        this._furniModel?.roomLeft();
+    };
+
+    /**
+	 * The same as leaving, but only when the refusal is about *this* player — the message also
+	 * reaches everyone already inside, and AS3 filters on the name for exactly that reason.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onFlatAccessDenied()
+    private onFlatAccessDenied = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as FlatAccessDeniedMessageParser | null;
+
+        if(!parser) return;
+
+        if(this._sessionDataManager == null || parser.userName !== this._sessionDataManager.userName) return;
+
+        this.closeView();
+        this._furniModel?.roomLeft();
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onRoomEnter()
+    private onRoomEnter = (): void =>
+    {
+        if(this.getBoolean('effects.reactivate.on.room.entry'))
+        {
+            this._effectsModel?.reactivateLastEffect();
+        }
+
+        this._furniModel?.roomEntered();
+    };
+
+    /**
+	 * The marketplace branch. `MarketplaceModel` was fully ported — every setter, `setItemStats()`,
+	 * `onNotEnoughCredits()` — and fed by nothing, so the marketplace tab opened with a disabled
+	 * model showing zero commission and no price history.
+	 *
+	 * The catalog subscribes 1397 and 2821 too, for its own `MarketPlaceLogic`; the registry allows
+	 * both listeners and AS3 likewise has the two components subscribe independently.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as:161,172,175,183
+    private registerMarketplaceMessageEvents(): void
+    {
+        if(!this._communication) return;
+
+        this._marketplaceMessageEvents.push(
+            this._communication.addMessageEvent(new NotEnoughBalanceMessageEvent(this.onNotEnoughCredits)),
+            this._communication.addMessageEvent(new MarketplaceConfigurationEvent(this.onMarketplaceConfiguration)),
+            this._communication.addMessageEvent(new MarketplaceItemStatsEvent(this.onMarketplaceItemStats)),
+            this._communication.addMessageEvent(new UserRightsMessageEvent(this.onUserRights))
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onNotEnoughCredits()
+    private onNotEnoughCredits = (): void =>
+    {
+        this._marketplaceModel?.onNotEnoughCredits();
+    };
+
+    /**
+	 * Arriving marks the marketplace category initialised, which is what
+	 * {@link onUserRights} later tests before re-requesting — and refreshes the furni grid, whose
+	 * per-item "sell" affordance depends on the model being enabled.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onMarketplaceConfiguration()
+    private onMarketplaceConfiguration = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as MarketplaceConfigurationEventParser | null;
+        const model = this._marketplaceModel;
+
+        if(!parser || !model) return;
+
+        model.isEnabled = parser.isEnabled;
+        model.commission = parser.commission;
+        model.tokenBatchPrice = parser.tokenBatchPrice;
+        model.tokenBatchSize = parser.tokenBatchSize;
+        model.offerMinPrice = parser.offerMinPrice;
+        model.offerMaxPrice = parser.offerMaxPrice;
+        model.expirationHours = parser.expirationHours;
+        model.averagePricePeriod = parser.averagePricePeriod;
+        model.sellingFeePercentage = parser.sellingFeePercentage;
+        model.revenueLimit = parser.revenueLimit;
+        model.halfTaxLimit = parser.halfTaxLimit;
+
+        this.setInventoryCategoryInit('marketplace');
+        this._furniModel?.updateView();
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onMarketplaceItemStats()
+    private onMarketplaceItemStats = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as MarketplaceItemStatsEventParser | null;
+        const model = this._marketplaceModel;
+
+        if(!parser || !model) return;
+
+        const stats = new MarketplaceItemStats();
+
+        stats.averagePrice = parser.averagePrice;
+        stats.offerCount = parser.offerCount;
+        stats.historyLength = parser.historyLength;
+        stats.dayOffsets = parser.dayOffsets;
+        stats.averagePrices = parser.averagePrices;
+        stats.soldAmounts = parser.soldAmounts;
+        stats.furniCategoryId = parser.furniCategoryId;
+        stats.furniTypeId = parser.furniTypeId;
+        stats.lowestCurrentPrice = parser.lowestCurrentPrice;
+        stats.suggestedPrice = parser.suggestedPrice;
+
+        model.setItemStats(stats);
+    };
+
+    /**
+	 * Rights change while the marketplace tab is already up: re-ask, because what the player may
+	 * sell has just moved. The `isInventoryCategoryInit` gate is what keeps this from firing before
+	 * the tab has ever been opened.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onUserRights()
+    private onUserRights = (): void =>
+    {
+        if(!this.isInventoryCategoryInit('marketplace')) return;
+
+        this._marketplaceModel?.requestInitialization();
+    };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onClubStatus()
     private onClubStatus = (event: IMessageEvent): void =>

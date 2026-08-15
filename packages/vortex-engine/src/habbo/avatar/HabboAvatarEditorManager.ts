@@ -151,10 +151,10 @@ export class HabboAvatarEditorManager extends Component
     // AS3: .../avatar/HabboAvatarEditorManager.as::get inventory()
     public get inventory(): IFigureSetOwnership | null
     {
-        // TODO(AS3): `IHabboInventory` has no `hasFigureSetIdInInventory()` yet — see
-        // `IFigureSetOwnership`. Returning null until it does, which reports every sellable item
-        // as unowned and therefore hides it.
-        return null;
+        // Returned null until 2026-08-15, which reported every sellable clothing item as unowned
+        // and therefore hid it. `HabboInventory` answers this off the figure-set ids message (1231),
+        // which nothing had subscribed.
+        return this._inventory;
     }
 
     // AS3: .../avatar/HabboAvatarEditorManager.as::get inventory()

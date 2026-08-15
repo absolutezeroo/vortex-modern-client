@@ -189,4 +189,10 @@ export interface IFurniModel
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::selectItemById()
     selectItemById(itemId: string): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::roomEntered()
+    roomEntered(): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::roomLeft()
+    roomLeft(): void;
 }

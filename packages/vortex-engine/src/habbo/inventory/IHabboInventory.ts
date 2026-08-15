@@ -143,6 +143,12 @@ export interface IHabboInventory
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::closeView()
     closeView(): void;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::hasFigureSetIdInInventory()
+    hasFigureSetIdInInventory(figureSetId: number): boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::hasBoundFigureSetFurniture()
+    hasBoundFigureSetFurniture(className: string): boolean;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::showView()
     showView(): void;
 

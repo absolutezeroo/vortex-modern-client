@@ -1,5 +1,6 @@
 // Furni
 export {RequestFurniInventoryComposer} from './RequestFurniInventoryComposer';
+export {RequestFurniInventoryWhenNotInRoomComposer} from './RequestFurniInventoryWhenNotInRoomComposer';
 export {GetSilverMessageComposer} from './GetSilverMessageComposer';
 export {GetNftCreditsMessageComposer} from './GetNftCreditsMessageComposer';
 

@@ -9,6 +9,9 @@ import {Logger} from '@core/utils/Logger';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {
+    UpdateFigureDataMessageComposer
+} from '@habbo/communication/messages/outgoing/avatar/UpdateFigureDataMessageComposer';
 import type {FurnitureContextMenuWidget} from './FurnitureContextMenuWidget';
 
 const log = Logger.getLogger('habbo.ui.widget.furniture.contextmenu.PurchasableClothingConfirmationView');
@@ -128,12 +131,17 @@ export class PurchasableClothingConfirmationView
             container?.sessionDataManager?.figure ?? '', gender, figureSetIds
         ) ?? '';
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/furniture/contextmenu/PurchasableClothingConfirmationView.as::open()
-        // asks `container.inventory.hasBoundFigureSetFurniture(className)` first and, when the
-        // furni is already bound, sends `UpdateFigureData` immediately instead of opening this
-        // dialog. `IHabboInventory` has no such member in this port, so the dialog always
-        // opens — one extra confirmation for an outfit the player already owns, never a wrong
-        // outfit.
+        // Already bound to this furni: the player has bought the outfit before, so wear it outright
+        // rather than asking again. The bound list is fed by message 1231, which nothing subscribed
+        // until 2026-08-15 — before that this branch could never be taken and the dialog always
+        // opened.
+        if(container?.inventory?.hasBoundFigureSetFurniture(this._furniData.className) ?? false)
+        {
+            container?.connection?.send(new UpdateFigureDataMessageComposer(this._newFigureString, gender));
+
+            return;
+        }
+
         this.setWindowContent(content);
 
         if(this._window !== null)

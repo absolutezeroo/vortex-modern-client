@@ -1443,6 +1443,7 @@ import {
     GetIsBadgeRequestFulfilledComposer,
     RequestABadgeComposer,
     RequestFurniInventoryComposer,
+    RequestFurniInventoryWhenNotInRoomComposer,
     GetSilverMessageComposer,
     GetNftCreditsMessageComposer,
     ResetUnseenItemIdsComposer,
@@ -3162,6 +3163,10 @@ export class HabboMessages implements IMessageConfiguration
 
         // === INVENTORY ===
         this._composers.set(41, RequestFurniInventoryComposer);
+        // The out-of-room variant of 41. `FurniModel.requestInitialization()` picks between the two
+        // on `_isInRoom`; nothing registered this one, so opening the inventory from the hotel view
+        // sent the in-room request.
+        this._composers.set(3862, RequestFurniInventoryWhenNotInRoomComposer);
         this._composers.set(540, GetCreditsInfoComposer);
         // AS3: WIN63's registry, `_composers[2069]`/`[394]` — two of the few composer classes that
         // kept their real names through obfuscation. `HabboInventory.initComponent()` sends both at

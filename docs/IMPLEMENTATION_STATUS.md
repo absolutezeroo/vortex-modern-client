@@ -382,6 +382,50 @@ documented it and no implementation existed. It is now on the interface and impl
 `TODO(AS3)` because **nothing reads that field yet**: the value is recorded, the pixels are
 unchanged. That gap is upstream and predates this slice.
 
+#### `habbo/inventory` was 42/54 subscribed — 2026-08-15
+
+Found while sizing the "server is implemented and waiting" send gaps. One of them (3862,
+`RequestFurniInventoryWhenNotInRoom`) turned out to be blocked on `FurniModel._isInRoom`, which
+nothing set, because the room-lifecycle messages that set it were never subscribed. Sweeping the
+module properly turned up **twelve** missing subscriptions, all against models that were fully
+ported and simply never fed.
+
+Wired, in three groups:
+
+- **Room lifecycle** (611, 3404, 1086, 2914). AS3 hangs `onRoomLeft` on *both* 611 and 3404 —
+  opening a connection to another room and closing the current one both mean "you left". 1086 is
+  filtered on the player's own name, because the refusal also reaches everyone already inside.
+- **Marketplace** (1038, 1397, 2821, 3599). `MarketplaceModel` had every setter, `setItemStats()`
+  and `onNotEnoughCredits()` ported, and nothing called any of them — the tab opened with a
+  disabled model, zero commission and no price history. 3599 re-requests on a rights change, gated
+  on the tab having been opened at least once.
+- **Badges / clothing** (639, 3070, 1231).
+
+**Two consumers elsewhere were waiting on 1231.** `HabboAvatarEditorManager.get inventory()`
+returned `null` with a TODO saying so, which reports every sellable clothing item as *unowned* and
+therefore hides it — purchased clothes were invisible in the editor. And
+`PurchasableClothingConfirmationView.open()` could never take its already-bound branch, so wearing an
+outfit the player already owns always asked for confirmation. Both closed.
+
+**One message stays deliberately unwired, and the reason is the point:** 1292
+(`HabboUserBadgesMessageEvent`). Its handler re-asserts every equipped badge with
+`updateBadge(code, true, 0, ownerCount, badgeRarityId)`. The 2026 wire carries four fields per badge;
+**this port's parser reads two and vortex-emulator's serializer writes two**, so the rarity pair does
+not exist to pass. Wiring it as it stands would call `Badge.updateMetadata(0, 0)` and wipe the rarity
+that 3926 has already set correctly — strictly worse than leaving it out. It needs the parser widened
+*and* the emulator's serializer with it.
+
+The same 2026 rarity pair was found missing from **639**, and there the split is the other way round:
+vortex-emulator already writes `OwnerCount`/`BadgeRarityId`, and the client's
+`AchievementNotificationData` stopped at `showDialogToUser` and dropped them. That one is a
+client-only fix and is done.
+
+`win63_version` is what led the parser astray in the first place: its `HabboUserBadgesMessageEventParser`
+is one of the bodies that decompiled badly — `while(0 < _loc4_)` with the counter never tested, and
+`push(null)` for every badge. Two reads per badge is what that body shows; the primary tree has four.
+
+Sweep after: **53/54**.
+
 #### Bloc C closes — the configuration cache and four smaller gaps, 2026-08-15
 
 `UserDefinedRoomEventsCtrl`'s remaining `TODO(AS3)`s, worked through. Two were real features, two
