@@ -30,6 +30,7 @@ import type {IWiredElement} from './IWiredElement';
 import {DefaultElement} from './DefaultElement';
 import {RoomObjectHighLighter} from './RoomObjectHighLighter';
 import {PresetManager} from './uibuilder/PresetManager';
+import {WiredConfigurationCache} from './WiredConfigurationCache';
 import {WiredUIBuilder} from './uibuilder/WiredUIBuilder';
 import type {WiredStyle} from './uibuilder/styles/WiredStyle';
 import {VolterWiredStyle} from './uibuilder/styles/VolterWiredStyle';
@@ -73,18 +74,12 @@ const log = Logger.getLogger('habbo.roomevents.wired_setup.UserDefinedRoomEvents
  * + furni picks + delay + footer) and shows the FramePreset on desktop layer 1. onEditStart seeds the
  * form from the def.
  *
- * TODO(AS3) — NOT yet ported (stubbed with faithful no-ops so the dialog still shows):
- * - RoomObjectHighLighter (furni-selection highlights) — skipped.
- * - WiredVariablesSynchronizer (synchronizeTriggerable) — now ported: a def whose roomVariablesList
- *   needsSynchronize defers the dialog until the variables are fetched (hash/diff), then reopens.
- * - createAdvancedSections / createAdvancedInputSources — the input-source advanced rows AND the
- *   condition quantifier section are now built and wired (InputSourceSection + WiredInputSourcePicker +
- *   updateSourceContainer/setMergedSourceType + quantifier radio/resolveQuantifier); only
- *   fixQuantifierNames (invert-driven relabel) remains a minor TODO.
- * - WiredConfigurationCache (useCache) — caching disabled (useCache = false).
- * - The copy/paste clipboard is now ported (createClipboardCopy / pasteFromClipboard /
- *   hasCurrentElementInClipboard, keyed by holder+code). Network save is done; the remaining gaps are
- *   the merged-source common-UI refinements and the config cache.
+ * Every behaviour AS3 specifies here is ported: the furni-selection highlighter, the variable
+ * synchronizer's deferred reopen, the advanced input-source rows and the condition quantifier
+ * section, the copy/paste clipboard, paste-into mode, dual furni picking, and the configuration
+ * cache. What is left are the two visual editors this class only *hosts* — `RoomAreaSelectionManager`
+ * (tile highlight) and `FloorDrawingPreset` (bitmap tile canvas), each carrying its own `TODO(AS3)`
+ * — plus the `time_display` notification key, which has no reader in this port yet.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/UserDefinedRoomEventsCtrl.as
  */
@@ -184,6 +179,13 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::_initialWidth
     private _initialWidth: number = -1;
 
+    /**
+	 * Built dialogs, keyed by holder + style + element code. AS3 uses a `Dictionary` and never
+	 * evicts — a session's worth of wired dialogs stays resident, which is the trade the cache makes.
+	 */
+    // AS3: UserDefinedRoomEventsCtrl.as::_configurationCache
+    private _configurationCache: Map<string, WiredConfigurationCache> = new Map<string, WiredConfigurationCache>();
+
     // AS3: UserDefinedRoomEventsCtrl.as::_savedX
     private _savedX: number = -2147483648;
 
@@ -208,9 +210,12 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_5372 (RoomObjectHighLighter)
     private _highlighter: RoomObjectHighLighter;
 
-    // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_6372 (merged-source dual-picking mode; false = single set)
-    // TODO(AS3): driven by the input-source picker (setMergedSourceType) — advanced sources not ported,
-    // so this stays false and the active set is always _stuffs1.
+    /**
+	 * Whether this def picks furniture into **two** sets rather than one. Read off the def's own
+	 * `inputSourcesConf` when it opens, not from the picker — the picker's `setMergedSourceType()`
+	 * changes an input row's *type*, which is a different thing.
+	 */
+    // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_6372 (name derived: merged-source dual-picking mode)
     private _mergedSourceMode: boolean = false;
 
     // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_5819 (active source slot: 1 = set 1, 2 = set 2)
@@ -263,7 +268,28 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::prepareForUpdate()
     prepareForUpdate(def: Triggerable): void
     {
-        // TODO(AS3): copy-into mode (isCopyingIntoMode paste-into) skipped — a separate feature.
+        // Paste-into: the open dialog is in "copy into" mode, so clicking another wired does not
+        // open it — it writes this dialog's settings onto it. **Only onto the same element type**;
+        // anything else is refused with a notification and the dialog stays as it was. `update(2, …)`
+        // is the paste-into save mode, targeting the clicked def's id rather than the open one's.
+        if(this._frame != null && this._currentElement != null && this._frame.isCopyingIntoMode)
+        {
+            const target = this.resolveHolderFor(def)?.getElementByCode(def.code) ?? null;
+
+            if(target === this._currentElement)
+            {
+                this.update(2, def.id);
+            }
+            else
+            {
+                this._roomEvents.notifications.addItem(
+                    '${notification.wired.pasted_into_fail}', 'wired', null, null, WIRED_NOTIFICATION_OPTIONS
+                );
+            }
+
+            return;
+        }
+
         if(this.synchronizeTriggerable(def))
         {
             return;
@@ -275,6 +301,9 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         }
 
         this._currentDef = def;
+        this._mergedSourceMode = def.inputSourcesConf.isDualFurniPickingMode();
+        this._activeSourceSlot = 1;
+
         const holder = this.resolveHolderFor(def);
 
         if(holder == null)
@@ -312,9 +341,11 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         this._stuffs1 = new Set<number>(def.stuffIds);
         this._stuffs2 = new Set<number>(def.stuffIds2);
 
-        // AS3: highlightActiveWired(def.id) + showAll(_stuffs1/_stuffs2). Merged dual-picking (set 2)
-        // is not ported, so single-set slot 0.
+        // AS3: highlightActiveWired(def.id) + showAll(_stuffs1/_stuffs2). The hide runs on the sets
+        // as they still are — the *previous* def's picks — before they are replaced below; opening a
+        // def while none was open reaches here without close() having cleared them.
         this._highlighter.highlightActiveWired(def.id);
+        this.hideFurniHighlights();
 
         if(this._mergedSourceMode)
         {
@@ -420,6 +451,13 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
             return false;
         }
 
+        if(this.useCache && this.loadFromCache(holder, this._currentDef))
+        {
+            this.showFrame();
+
+            return true;
+        }
+
         const builder = new WiredUIBuilder(this._presetManager, this._closeHandler, holder.getKey(), this._currentElement.code, this.isResizeEnabled);
         this.createHeader(holder, builder);
         this.createInputs(builder);
@@ -434,7 +472,80 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         this._currentElement.onInit(this._roomEvents);
         this.showFrame();
 
+        if(this.useCache)
+        {
+            this.storeInCache(holder, this._currentDef);
+        }
+
         return true;
+    }
+
+    /**
+	 * AS3 hard-codes `true`. Left as an accessor rather than folded into its three call sites,
+	 * because it is the switch that decides whether `close()` disposes the frame.
+	 */
+    // AS3: UserDefinedRoomEventsCtrl.as::get useCache()
+    private get useCache(): boolean
+    {
+        return true;
+    }
+
+    /**
+	 * **The style is part of the key.** The same element under two wired skins is two different
+	 * frames, so switching style does not hand back a dialog built for the old one — and
+	 * `clearCache()` runs on a style change anyway.
+	 *
+	 * The code goes through `getElementByCode(def.code).code` rather than `def.code` directly: an
+	 * element may answer to several codes (`getByCode` matches `code` **or** `negativeCode`) and the
+	 * cache must key on the one identity, or an inverted condition would build a second frame.
+	 */
+    // AS3: UserDefinedRoomEventsCtrl.as::getCacheKey()
+    private getCacheKey(holder: IWiredTypeHolder, def: Triggerable): string
+    {
+        return `${holder.getKey()}-${this._wiredStyle.name}-${holder.getElementByCode(def.code).code}`;
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::loadFromCache()
+    private loadFromCache(holder: IWiredTypeHolder, def: Triggerable): boolean
+    {
+        const cached = this._configurationCache.get(this.getCacheKey(holder, def)) ?? null;
+
+        if(cached == null)
+        {
+            return false;
+        }
+
+        this._frame = cached.frame;
+        this._headerPreset = cached.headerPreset;
+        this._selectorOptionsPreset = cached.selectorOptionsPreset;
+        this._furniPicksSection = cached.furniPicksSectionPreset;
+        this._delaySection = cached.delayPreset;
+        this._advancedSettingsWrapper = cached.advancedSettingsWrapperPreset;
+        this._quantifierRadio = cached.conditionQuantifierOptions;
+        this._advancedInputSources = cached.inputSourcePresets;
+        this._footerPreset = cached.footerPreset;
+        this._initialWidth = cached.initialWidth;
+
+        return true;
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::storeInCache()
+    private storeInCache(holder: IWiredTypeHolder, def: Triggerable): void
+    {
+        if(this._frame == null) return;
+
+        this._configurationCache.set(this.getCacheKey(holder, def), new WiredConfigurationCache(
+            this._frame,
+            this._headerPreset,
+            this._selectorOptionsPreset,
+            this._furniPicksSection,
+            this._delaySection,
+            this._advancedSettingsWrapper,
+            this._quantifierRadio,
+            this._advancedInputSources,
+            this._footerPreset,
+            this._initialWidth
+        ));
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::createHeader()
@@ -557,6 +668,28 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         }
     }
 
+    /**
+	 * Re-derive the two quantifier radio labels from the def as it stands now.
+	 *
+	 * The key {@link getQuantifierKey} builds folds in `isInvert`, so a condition that has been
+	 * inverted needs the *negated* wording — "none of" rather than "all of". The labels were written
+	 * once when the section was built, which is why reopening an inverted condition needs this.
+	 */
+    // AS3: UserDefinedRoomEventsCtrl.as::fixQuantifierNames()
+    private fixQuantifierNames(): void
+    {
+        if(this._quantifierRadio == null) return;
+
+        // AS3 casts and bails when the def is not a condition — the caller has already tested that,
+        // but the guard is transcribed rather than dropped.
+        if(!(this._currentDef instanceof ConditionDefinition)) return;
+
+        const key = this.getQuantifierKey(this._currentDef);
+
+        this._quantifierRadio.radioAt(0).text = '${' + key + '0}';
+        this._quantifierRadio.radioAt(1).text = '${' + key + '1}';
+    }
+
     // AS3: UserDefinedRoomEventsCtrl.as::onEditStartUpdateCommonUI()
     private onEditStartUpdateCommonUI(): void
     {
@@ -568,8 +701,19 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
             this._selectorOptionsPreset.optionById(1).selected = this._currentDef.isInvert;
         }
 
-        // TODO(AS3): header buttonVisible for variable types (initialVariableName + wiredMenu.isEnabled)
-        // — belongs here (AS3 order), deferred with the variable-menu common UI.
+        // The header's "show this variable" button, hidden until the element actually names a
+        // variable. Same runtime test as `createHeader()` — TypeScript has no interface to cast to,
+        // so `IVariableType` is detected by the two members it declares.
+        const asVariableType = this._currentElement as unknown as Partial<IVariableType>;
+
+        if(typeof asVariableType?.variableType === 'function'
+            && typeof asVariableType?.initialVariableName === 'string'
+            && this._roomEvents.wiredMenu.isEnabled
+            && this._headerPreset != null)
+        {
+            this._headerPreset.buttonVisible = asVariableType.initialVariableName.length > 0;
+        }
+
         this.onStuffsChanged();
 
         if(this._delaySection != null && this._currentDef instanceof ActionDefinition)
@@ -587,8 +731,7 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         if(this._currentDef instanceof ConditionDefinition && this._currentDef.quantifierType !== QuantifierType.NONE && this._quantifierRadio !== null)
         {
             this._quantifierRadio.selected = this._currentDef.quantifierCode;
-            // TODO(AS3): fixQuantifierNames() (re-derive the radio labels on invert change) needs a
-            // RadioGroupPreset option accessor; labels are already correct for the current def at build.
+            this.fixQuantifierNames();
         }
 
         for(const section of this._advancedInputSources)
@@ -601,7 +744,8 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
             }
         }
 
-        // TODO(AS3): wired-menu button-visible common UI — deferred.
+        // AS3 writes this unguarded; the only remaining wired-menu common UI it names is the header's
+        // variable button, handled at the top of this method.
         if(this._footerPreset != null)
         {
             this._footerPreset.saveButtonDisabled = !this._roomEvents.wiredMenu.hasWritePermission;
@@ -808,7 +952,14 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
             this._advancedInputSources = [];
             this._quantifierRadio = null;
             this._initialWidth = -1;
-            this._frame.dispose();
+
+            // With the cache on, the frame outlives the close — it is still referenced by its
+            // WiredConfigurationCache entry and is disposed only by clearCache().
+            if(!this.useCache)
+            {
+                this._frame.dispose();
+            }
+
             this._frame = null;
         }
     }
@@ -975,10 +1126,21 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         }
     }
 
+    /**
+	 * Closes whatever is open and drops every built dialog. AS3 calls this on a wired-style change,
+	 * which is why the close comes first: the open frame is one of the entries about to be disposed.
+	 */
     // AS3: UserDefinedRoomEventsCtrl.as::clearCache()
     clearCache(): void
     {
         this.close();
+
+        for(const cached of this._configurationCache.values())
+        {
+            cached.frame.dispose();
+        }
+
+        this._configurationCache = new Map<string, WiredConfigurationCache>();
     }
 
     // ---- The methods below remain Bloc C stubs (furni picking, clipboard, network save, guilds). ----

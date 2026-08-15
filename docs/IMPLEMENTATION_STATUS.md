@@ -382,6 +382,50 @@ documented it and no implementation existed. It is now on the interface and impl
 `TODO(AS3)` because **nothing reads that field yet**: the value is recorded, the pixels are
 unchanged. That gap is upstream and predates this slice.
 
+#### Bloc C closes — the configuration cache and four smaller gaps, 2026-08-15
+
+`UserDefinedRoomEventsCtrl`'s remaining `TODO(AS3)`s, worked through. Two were real features, two
+were behaviour the port had suppressed, and one was a note that had gone stale.
+
+**The configuration cache** (`WiredConfigurationCache`, 114 lines of AS3 plus ~50 in the controller)
+is the substantial one: a built wired dialog is kept whole and handed back when the same element is
+reopened, instead of being rebuilt. The key is `holder + style + element code` — **the style is part
+of it**, so the same element under two wired skins is two frames. The code goes through
+`getElementByCode(def.code).code` rather than `def.code`, because an element answers to both its
+`code` and its `negativeCode`, and keying on the raw one would build a second frame for an inverted
+condition.
+
+The cache changes what `close()` means: with `useCache` on (AS3 hard-codes `true`) the frame is no
+longer disposed on close — it is still referenced by its cache entry, and only `clearCache()` ever
+disposes it. `clearCache()` closes first, because the open frame is one of the entries it is about
+to destroy. `HabboUserDefinedRoomEvents.resetCache()` is its only caller, on a wired-style change.
+
+The other four:
+
+- **Dual furni picking was never switched on.** `_mergedSourceMode` is read off
+  `def.inputSourcesConf.isDualFurniPickingMode()` when the dialog opens; the port's note said it came
+  from the input-source picker's `setMergedSourceType()`, which is a different thing — that sets a
+  *row's* type. Nothing assigned the flag, so the second furni set was unreachable. The
+  `hideFurniHighlights()` AS3 runs between `highlightActiveWired()` and rebuilding the sets was
+  missing too: it clears the *previous* def's picks, and opening a def while none was open reaches
+  there without `close()` having done it.
+- **`fixQuantifierNames()`** re-derives the two quantifier radio labels from the def as it stands,
+  because `getQuantifierKey()` folds `isInvert` into the key — an inverted condition needs the
+  negated wording. It was deferred for wanting "a RadioGroupPreset option accessor"; the port has had
+  `radioAt()` all along. Its AS3 name is `get`, **recovered** from the decompiler's identifier footer
+  (`@identifier _SafeStr_4547 = "get"`), which the trace now says instead of claiming it derived.
+- **The header's variable button** (`buttonVisible` for elements naming a variable) was deferred,
+  with the exact `IVariableType` runtime test it needed already written forty lines above in
+  `createHeader()`.
+- **Paste-into mode.** With the open dialog in "copy into", clicking another wired writes this
+  dialog's settings onto it rather than opening it — but only onto the same element type; anything
+  else is refused with `${notification.wired.pasted_into_fail}`. `update(2, id)` is the save mode,
+  targeting the clicked def. `stuffSelected()` already had its half of the feature.
+
+Bloc C's `TODO(AS3)` count goes 7 -> 2, and both survivors are the visual editors this class only
+hosts (`RoomAreaSelectionManager`, `FloorDrawingPreset`) plus the `time_display` notification key,
+which has no reader in the port yet. Module-wide: 38 -> 29.
+
 #### Three boot-time faults the wired slices surfaced — 2026-08-15
 
 All three came out of one console log, and none of them was in the code just written — the new

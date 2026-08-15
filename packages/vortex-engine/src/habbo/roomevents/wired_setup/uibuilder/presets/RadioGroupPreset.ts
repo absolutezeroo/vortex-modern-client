@@ -132,7 +132,12 @@ export class RadioGroupPreset extends WiredUIPreset
         this._radios[index].disabled = disabled;
     }
 
-    // AS3: RadioGroupPreset.as::_SafeStr_4547() (name derived: fetch the radio option by index)
+    /**
+	 * AS3 names this member `get` — recovered from the decompiler's own identifier footer
+	 * (`@identifier _SafeStr_4547 = "get"`), not derived. Renamed here because a bare `get(i)` reads
+	 * as an accessor in TypeScript and collides with the language's `get` keyword at every call site.
+	 */
+    // AS3: RadioGroupPreset.as::get()
     radioAt(index: number): RadioButtonPreset
     {
         return this._radios[index];
