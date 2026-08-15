@@ -531,6 +531,21 @@ import {
     WiredTransactionSuccessMessageEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTransactionSuccessMessageEvent';
 import {
+    WiredContractContentsMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/contracts/WiredContractContentsMessageEvent';
+import {
+    WiredContractUpdateResultMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/contracts/WiredContractUpdateResultMessageEvent';
+import {
+    WiredOpenContractMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/contracts/WiredOpenContractMessageEvent';
+import {
+    SaveWiredContractComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/contracts/SaveWiredContractComposer';
+import {
+    RequestWiredContractContentsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredtrading/contracts/RequestWiredContractContentsComposer';
+import {
     SelfDonationComposer
 } from './messages/outgoing/userdefinedroomevents/misc/SelfDonationComposer';
 import {
@@ -1947,6 +1962,14 @@ export class HabboMessages implements IMessageConfiguration
         // A wired transaction completed, and what it paid out (WIN63 registry: 2677 -> _SafeCls_3244).
         // Subscribed by RewardNotificationController. Name derived, same reason as 2910.
         this._events.set(2677, WiredTransactionSuccessMessageEvent);
+        // Wired contracts (WIN63 registry: 2976 -> _SafeCls_2429, 3720 -> _SafeCls_3091,
+        // 1479 -> _SafeCls_3800). All three subscribed by WiredContractController. Names derived —
+        // no unobfuscated tree carries them. The emulator's 1479 is an unrelated *client->server*
+        // Game2 leaderboard request, a different table: not a collision, but not corroboration
+        // either.
+        this._events.set(2976, WiredContractContentsMessageEvent);
+        this._events.set(3720, WiredContractUpdateResultMessageEvent);
+        this._events.set(1479, WiredOpenContractMessageEvent);
         // Sandbox self-donation result (WIN63 registry: 3407 -> SelfDonationResultMessageEvent, one
         // of the few event classes that kept its real name).
         this._events.set(3407, SelfDonationResultMessageEvent);
@@ -2511,6 +2534,9 @@ export class HabboMessages implements IMessageConfiguration
         // Sandbox self-donation (WIN63 registry: 1119 -> _SafeCls_3986). Name derived; the tool
         // refuses to send it outside a sandbox environment.
         this._composers.set(1119, SelfDonationComposer);
+        // Wired contracts: save one, and ask for its contents (WIN63 registry: 1908, 1594).
+        this._composers.set(1908, SaveWiredContractComposer);
+        this._composers.set(1594, RequestWiredContractContentsComposer);
         this._composers.set(2016, RequestWiredTransactionLogsComposer);
         this._composers.set(1630, SetWiredChestsLockedComposer);
         this._composers.set(2818, WiredTradeAcceptComposer);

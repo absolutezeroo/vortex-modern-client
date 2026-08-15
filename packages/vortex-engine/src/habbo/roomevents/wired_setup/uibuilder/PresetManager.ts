@@ -41,6 +41,9 @@ import {ItemTypeSelectionSection} from './presets/sections/ItemTypeSelectionSect
 import {ItemTypeSelectionPreset} from './presets/contracts/ItemTypeSelectionPreset';
 import {ChestItemIconPreviewerPreset} from './presets/contracts/ChestItemIconPreviewerPreset';
 import {NodeOverviewPreset} from './presets/contracts/NodeOverviewPreset';
+import {TradeRuleEditorPreset} from './presets/contracts/TradeRuleEditorPreset';
+import type {TradeRuleEditNodeCallback, TradeRuleEditorCallback, TradeRuleChangeCallback} from './presets/contracts/TradeRuleEditorPreset';
+import {TradeRuleListEditorPreset} from './presets/contracts/TradeRuleListEditorPreset';
 import type {NodeOverviewClickCallback} from './presets/contracts/NodeOverviewPreset';
 import {UsageInfoSection} from './presets/sections/UsageInfoSection';
 import {UsageWarningSection} from './presets/sections/UsageWarningSection';
@@ -374,6 +377,27 @@ export class PresetManager
     createSection(title: string, content: WiredUIPreset, param: SectionParam | null = null): SectionPreset
     {
         return new SectionPreset(this._roomEvents, this, this.wiredStyle, title, content, param);
+    }
+
+    // AS3: PresetManager.as::createRuleEditorPreset()
+    createRuleEditorPreset(
+        title: string,
+        onEditNode: TradeRuleEditNodeCallback | null,
+        onAddMore: TradeRuleEditorCallback | null,
+        onClose: TradeRuleEditorCallback | null = null,
+        onChange: TradeRuleChangeCallback | null = null
+    ): TradeRuleEditorPreset
+    {
+        return new TradeRuleEditorPreset(this._roomEvents, this, this.wiredStyle, title, onEditNode, onAddMore, onClose, onChange);
+    }
+
+    // AS3: PresetManager.as::createRuleListEditorPreset()
+    createRuleListEditorPreset(
+        onEditNode: TradeRuleEditNodeCallback | null,
+        onAddNode: TradeRuleEditorCallback | null
+    ): TradeRuleListEditorPreset
+    {
+        return new TradeRuleListEditorPreset(this._roomEvents, this, this.wiredStyle, onEditNode, onAddNode);
     }
 
     // AS3: PresetManager.as::createNodeOverviewPreset()

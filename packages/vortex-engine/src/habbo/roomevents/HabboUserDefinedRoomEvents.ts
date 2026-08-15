@@ -38,6 +38,7 @@ import {WiredVariablesSynchronizer} from './WiredVariablesSynchronizer';
 import {WiredMenuController} from './wired_menu/WiredMenuController';
 import {SelfDonationTool} from './misc/SelfDonationTool';
 import {RewardNotificationController} from './wired_trading/reward_notification/RewardNotificationController';
+import {WiredContractController} from './wired_trading/contracts/WiredContractController';
 import {WiredEnvironment} from './WiredEnvironment';
 import {NewVariablePickerHelper} from './wired_setup/uibuilder/presets/newvariablepicker/NewVariablePickerHelper';
 import {IncomingMessages} from './IncomingMessages';
@@ -98,6 +99,9 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
 
     // AS3: HabboUserDefinedRoomEvents.as::_rewardNotificationController
     private _rewardNotificationController!: RewardNotificationController;
+
+    // AS3: HabboUserDefinedRoomEvents.as::_contractController
+    private _contractController!: WiredContractController;
     private _wiredEnvironment!: WiredEnvironment;
 
     // AS3: HabboUserDefinedRoomEvents.as::_variablePickerHelper (shared state for the variable picker).
@@ -107,12 +111,11 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     private _incomingMessages: IncomingMessages | null = null;
 
     // TODO(AS3): deferred sub-controllers, all created in the AS3 constructor and exposed via getters
-    // (wiredChest/transactionLogs/transactionDetails) and the
-    // WiredContractController. Not created in this milestone; their getters/UI helpers
+    // (wiredChest/transactionLogs/transactionDetails). Not created in this milestone; their getters/UI helpers
     // (getXmlWindow/refreshButton/prepareButton/getButtonImage) are omitted for now — no ported code
     // calls them yet. One documented gap rather than a fan-out of stubs (same approach as HabboHelp's
-    // absent-members block). `variablePickerHelper`, `variablesSynchronizer`, `selfDonationTool` and
-    // `rewardNotificationController` have since left this list and are created in initComponent().
+    // absent-members block). `variablePickerHelper`, `variablesSynchronizer`, `selfDonationTool`,
+    // `rewardNotificationController` and the contract controller have since left this list and are created in initComponent().
 
     // AS3: HabboUserDefinedRoomEvents.as::HabboUserDefinedRoomEvents()
     constructor(context: IContext)
@@ -226,6 +229,12 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         // wiring.
         this._rewardNotificationController = new RewardNotificationController(this, this.context, 0, this.assets);
         this.context.attachComponent(this._rewardNotificationController, [IID_RewardNotificationController]);
+
+        // AS3 builds this one in the constructor too, but it is a plain object rather than a DI
+        // component — it takes only `roomEvents` and reaches communication through it, so there is
+        // no IID and no attachComponent. Its three message events are registered from its own
+        // constructor, which is why constructing it is the whole wiring.
+        this._contractController = new WiredContractController(this);
 
         this._wiredCtrl = new UserDefinedRoomEventsCtrl(this);
         this._wiredEnvironment = new WiredEnvironment(this);

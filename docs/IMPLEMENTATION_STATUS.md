@@ -382,6 +382,44 @@ documented it and no implementation existed. It is now on the interface and impl
 `TODO(AS3)` because **nothing reads that field yet**: the value is recorded, the pixels are
 unchanged. That gap is upstream and predates this slice.
 
+#### The contract editors — 2026-08-14, and `presets/contracts` closes at 6/6
+
+Fifth slice of the `habbo/roomevents` remainder, and the one where the sizing method finally held:
+**1,569 lines / 17 files, verified before starting and unchanged at the end.** The check that made
+the difference was adding base classes to the transitive walk — the previous slice moved 503 → 1,240
+purely because `NodeOverviewPreset` *extends* a class its import list does not mention.
+
+Why contracts rather than the transactions window, which looked like the obvious next step since the
+chests tab's "view in detail" button already sends its request: **transactions drag in the whole
+`chests/` subsystem** — 2,391 further lines, `WiredChestWrapperView` alone being 949 — for a total
+near 4,000. Contracts are self-contained.
+
+Ported: the message layer (3 events, 3 parsers, 2 composers), `TradeRuleListEditorPreset`,
+`AbstractContract`, `IContract`, `PaymentContract`, `TradeContract`, `RewardContract`,
+`AddEditContractElement`, `WiredContractController` and `IWiredContractController`, plus
+`createRuleEditorPreset` / `createRuleListEditorPreset`.
+
+Details worth keeping:
+
+- **`WiredContractContentsMessageParser` has a conditional tail.** Only id, type and definition are
+  always present; type 0 then reads the payment block and type 2 the reward block, while type 1
+  reads nothing more. Taking the wrong branch does not throw — it eats the next message's bytes.
+- **The pending contract id is a one-shot latch.** `onOpenContract` stores it, `onContractContents`
+  ignores any payload that does not match and then clears it, so an unrequested push is dropped.
+- **Opening a contract is two round trips**: 1479 says which, 1594 asks for the contents, 2976
+  brings them.
+- **`AddEditContractElement` is one instance for the whole client**, handed to every rule editor as
+  its `onEdit`/`onAdd`. It is the only wired window that remembers its position, because it reopens
+  per chip beside whichever contract window is up.
+- Contract editors are built lazily and reused, which is what makes the cached window location
+  meaningful across opens.
+
+**A trap for anyone naming these from the emulator:** it defines `1479` as
+`Game2GetTotalGroupLeaderboardEvent`, in its *client→server* table, where ours is a server→client
+event in the client registry. Independent tables — not a collision, but not corroboration either.
+All five names are derived from the AS3 handlers (`onContractContents`, `onContractUpdateResult`,
+`onOpenContract`), since `win63_version` predates contracts entirely.
+
 #### Three recycler headers were invented, on both sides of the wire
 
 Found while checking whether notifications' `onRecyclerFinished` was unwired or unported. It was
