@@ -1,5 +1,7 @@
 import type {Texture} from 'pixi.js';
 
+import type {IAvatarPartSprite} from './AvatarPartSprite';
+
 /**
  * Container for a rendered avatar body part image.
  * Holds the composited texture, registration point, offset, and cacheability flag.
@@ -40,6 +42,51 @@ export class AvatarImageBodyPartContainer
         }
 
         this._image = value;
+    }
+
+    // TS-only: see `get parts()`.
+    private _parts: IAvatarPartSprite[] | null = null;
+
+    /**
+     * The parts this container is made of, when it was built without compositing them.
+     *
+     * Null on the composed path, where the parts were blitted into `image` and thrown away. Non-null
+     * only under `AvatarRenderMode.spriteParts`, and then `image` is null instead: a container
+     * carries one or the other, never both, because holding both would mean paying for the
+     * composition this exists to avoid.
+     */
+    // TS-only: no AS3 counterpart — AS3 had nothing to hand parts to.
+    public get parts(): IAvatarPartSprite[] | null
+    {
+        return this._parts;
+    }
+
+    // TS-only: see `get parts()`.
+    public set parts(value: IAvatarPartSprite[] | null)
+    {
+        this._parts = value;
+    }
+
+    // TS-only: see `get size()`.
+    private _size: { width: number; height: number } = {width: 0, height: 0};
+
+    /**
+     * The union bounding box the parts would have composited into.
+     *
+     * The composed path reads these off the finished texture; without a texture there is nothing to
+     * measure, so the size is recorded when the box is computed. `AvatarVisualization` needs it to
+     * place the avatar: its offsets are expressed in terms of the composed image's dimensions.
+     */
+    // TS-only: no AS3 counterpart — AS3 read `image.width`/`image.height`.
+    public get size(): { width: number; height: number }
+    {
+        return this._size;
+    }
+
+    // TS-only: see `get size()`.
+    public set size(value: { width: number; height: number })
+    {
+        this._size = {width: value.width, height: value.height};
     }
 
     // AS3: .../src/com/sulake/habbo/avatar/AvatarImageBodyPartContainer.as::_regPoint

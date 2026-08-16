@@ -44,6 +44,7 @@ import {Logger} from '@core/utils/Logger';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 import {RoomStressTest} from '@habbo/room/utils/RoomStressTest';
 import {PerfMonitorWindow} from '@habbo/perf/PerfMonitorWindow';
+import {AvatarRenderMode} from '@habbo/avatar/AvatarRenderMode';
 
 const log = Logger.getLogger('habbo.ui.handler.ChatInputWidgetHandler');
 
@@ -415,6 +416,24 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
                         session.ownUserRoomId
                     );
                 }
+
+                return true;
+            }
+
+            // TS-only: no AS3 counterpart. Switches the room between compositing each avatar into one
+            // texture and drawing its parts as batched sprites — `:spriteparts [on|off]`, toggling
+            // when told neither. Both paths stay live precisely so a `:stresstest` run can be taken
+            // with each; every conclusion reached here by reading code rather than measuring was
+            // wrong. See habbo/avatar/AvatarRenderMode.
+            case ':spriteparts':
+            {
+                // The setter bumps a generation, and each avatar's cache flushes itself on its next
+                // lookup — nothing owns those caches collectively, so there is no reset to call here.
+                AvatarRenderMode.spriteParts = argument === 'on'
+                    ? true
+                    : (argument === 'off' ? false : !AvatarRenderMode.spriteParts);
+
+                log.info(`:spriteparts — avatars now render as ${AvatarRenderMode.spriteParts ? 'batched sprite parts' : 'one composed image'}.`);
 
                 return true;
             }

@@ -4,6 +4,7 @@ import type {IAnimationLayerData} from './animation/IAnimationLayerData';
 import type {ISpriteDataContainer} from './animation/ISpriteDataContainer';
 import type {IAvatarFigureContainer} from './IAvatarFigureContainer';
 import type {IPartColor} from './structure/figure/IPartColor';
+import type {IAvatarPartSpriteSet} from './AvatarPartSprite';
 import type {IGraphicAsset} from '@room/object/visualization/utils/IGraphicAsset';
 
 /**
@@ -35,6 +36,13 @@ export interface IAvatarImage
     // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getImage()
     // Same `Texture`-not-`BitmapData` caveat as `getCroppedImage()` above.
     getImage(setType: string, hightlight: boolean, scale?: number): Texture | null;
+
+    /**
+     * The same avatar as independent parts rather than one composed texture, or null when it cannot
+     * be expressed that way and the caller should use `getImage()`.
+     */
+    // TS-only: no AS3 counterpart; see `AvatarRenderMode`.
+    getPartSprites(setType: string): IAvatarPartSpriteSet | null;
 
     // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_1793.as::getServerRenderData()
     getServerRenderData(): any[];

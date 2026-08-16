@@ -14,6 +14,8 @@ import type {IAvatarImage} from '../IAvatarImage';
 import type {IActiveActionData} from '../actions/IActiveActionData';
 import type {AvatarImagePartContainer} from '../AvatarImagePartContainer';
 import type {AvatarCanvas} from '../structure/AvatarCanvas';
+import type {IAvatarPartSprite} from '../AvatarPartSprite';
+import {AvatarRenderMode} from '../AvatarRenderMode';
 import {AvatarDirectionAngle} from '../enum/AvatarDirectionAngle';
 import {AvatarScaleType} from '../enum/AvatarScaleType';
 import {AvatarImageBodyPartCache} from './AvatarImageBodyPartCache';
@@ -102,6 +104,9 @@ export class AvatarImageCache
     private _defaultActionAssetPartDefinition: string;
     // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::_unionImages
     private _unionImages: ImageData[];
+    /** The rendering mode this cache's containers were built under. */
+    // TS-only: see `AvatarRenderMode.generation`.
+    private _renderGeneration: number = AvatarRenderMode.generation;
     private _serverRenderData: any[];
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::_largeScaledSmall
     private _largeScaledSmall: boolean;
@@ -238,6 +243,21 @@ export class AvatarImageCache
     // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::getImageContainer()
     public getImageContainer(bodyPartId: string, frameIndex: number, forceUpdate: boolean = false): AvatarImageBodyPartContainer | null
     {
+        // Containers built under the other rendering mode hold the half this one does not read; see
+        // `AvatarRenderMode.generation`. Checking here rather than on a reset call means an avatar
+        // heals itself the first time it is looked at, whether or not anything knew it existed.
+        if(this._renderGeneration !== AvatarRenderMode.generation)
+        {
+            this._renderGeneration = AvatarRenderMode.generation;
+
+            for(const cache of this._cache.values())
+            {
+                if(cache) cache.dispose();
+            }
+
+            this._cache.clear();
+        }
+
         let bodyPartCache = this.getBodyPartCache(bodyPartId);
 
         if(!bodyPartCache)
@@ -744,6 +764,17 @@ export class AvatarImageCache
 
         if(this._unionImages.length === 0) return null;
 
+        if(AvatarRenderMode.spriteParts)
+        {
+            return this.describeBodyPart(
+                isFlippedDirection,
+                assetPartDefinition,
+                isCacheable,
+                faceOffset,
+                this._scale === AvatarScaleType.LARGE ? this._canvas.height - 16 : this._canvas.height - 8
+            );
+        }
+
         // A real composition measured ~5ms, and a body part is only some six thousand pixels — far
         // too few for the pixel loop or the readback to account for it. So the time is in the
         // surrounding machinery, and this splits it: `createUnionImage()` allocates a fresh
@@ -841,6 +872,111 @@ export class AvatarImageCache
 	 * @param isFlipped - Whether the composite should be flipped
 	 * @returns The composited image data, or null if empty
 	 */
+    /**
+     * Describes the body part the way `createUnionImage()` would have drawn it, without drawing it.
+     *
+     * Every number here is the one the composed path computes for the same part — the union box, the
+     * per-part `drawX`/`drawY`, the mirror, the container's registration point. The only thing that
+     * does not happen is the rasterising: no canvas is allocated, no pixels are read or written, and
+     * no texture is uploaded. That is the entire saving, and it is also why there is no cache to warm
+     * on this path, since the expensive artefact it exists to keep is never produced.
+     *
+     * Keeping the arithmetic literally identical rather than simplified is deliberate. It does
+     * collapse — in an unflipped direction the union box cancels out and a part sits at `-regPoint` —
+     * but writing the collapsed form would mean the two paths agree only as long as someone keeps
+     * proving they do.
+     */
+    // TS-only: no AS3 counterpart; the composition it replaces is `createUnionImage()`.
+    private describeBodyPart(
+        isFlipped: boolean,
+        assetPartDefinition: string,
+        isCacheable: boolean,
+        faceOffset: { x: number; y: number } | null,
+        canvasOffset: number
+    ): AvatarImageBodyPartContainer
+    {
+        let minX = Number.MAX_SAFE_INTEGER;
+        let minY = Number.MAX_SAFE_INTEGER;
+        let maxX = Number.MIN_SAFE_INTEGER;
+        let maxY = Number.MIN_SAFE_INTEGER;
+
+        for(const imageData of this._unionImages)
+        {
+            const offsetRect = imageData.offsetRect;
+
+            minX = Math.min(minX, offsetRect.x);
+            minY = Math.min(minY, offsetRect.y);
+            maxX = Math.max(maxX, offsetRect.x + offsetRect.width);
+            maxY = Math.max(maxY, offsetRect.y + offsetRect.height);
+        }
+
+        const width = Math.max(1, maxX - minX);
+        const height = Math.max(1, maxY - minY);
+        const regPoint = {x: -minX, y: -minY};
+        const parts: IAvatarPartSprite[] = [];
+
+        for(const imageData of this._unionImages)
+        {
+            const texture = imageData.texture;
+
+            if(!texture) continue;
+
+            let drawX = regPoint.x - imageData.regPoint.x;
+            const drawY = regPoint.y - imageData.regPoint.y;
+
+            if(isFlipped)
+            {
+                drawX = width - (drawX + imageData.rect.width);
+            }
+
+            const transform = imageData.colorTransform;
+
+            parts.push({
+                texture,
+                x: drawX,
+                y: drawY,
+                flipH: (isFlipped && !imageData.flipH) || (!isFlipped && imageData.flipH),
+                color: transform !== null
+                    ? (AvatarImageCache.toChannel(transform.redMultiplier) << 16)
+                    | (AvatarImageCache.toChannel(transform.greenMultiplier) << 8)
+                    | AvatarImageCache.toChannel(transform.blueMultiplier)
+                    : 0xffffff,
+                alpha: transform !== null ? transform.alphaMultiplier : 1
+            });
+        }
+
+        const containerRegPoint = {
+            x: -regPoint.x,
+            y: canvasOffset - regPoint.y
+        };
+
+        if(isFlipped && assetPartDefinition !== 'lay')
+        {
+            containerRegPoint.x += this._scale === AvatarScaleType.LARGE ? 67 : 31;
+        }
+
+        for(let i = this._unionImages.length - 1; i >= 0; i--)
+        {
+            const img = this._unionImages.pop();
+
+            if(img) img.dispose();
+        }
+
+        const container = new AvatarImageBodyPartContainer(null, containerRegPoint, isCacheable, faceOffset);
+
+        container.parts = parts;
+        container.size = {width, height};
+
+        return container;
+    }
+
+    /** A 0..1 colour multiplier as an 8-bit tint channel. */
+    // TS-only: see `describeBodyPart()`.
+    private static toChannel(multiplier: number): number
+    {
+        return Math.max(0, Math.min(255, Math.round(multiplier * 255)));
+    }
+
     // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::createUnionImage()
     private createUnionImage(imageDataList: ImageData[], isFlipped: boolean): ImageData
     {

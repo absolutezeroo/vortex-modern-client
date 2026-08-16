@@ -22,6 +22,9 @@ import type {IRoomObjectVisualizationData} from '@room/object/visualization/IRoo
 import type {IAvatarImage} from '@habbo/avatar/IAvatarImage';
 import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
 import type {IAvatarEffectListener} from '@habbo/avatar/IAvatarEffectListener';
+import type {IAvatarPartSpriteSet} from '@habbo/avatar/AvatarPartSprite';
+import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
+import {AvatarRenderMode} from '@habbo/avatar/AvatarRenderMode';
 import type {IAvatarAddition} from './additions/IAvatarAddition';
 import {RoomObjectSpriteVisualization} from '@room/object/visualization/RoomObjectSpriteVisualization';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
@@ -50,6 +53,16 @@ const AVATAR_OWN_DEPTH_ADJUST: number = 0.001;
 
 /** Depth offset when the avatar is laying down. */
 const AVATAR_SPRITE_LAYING_DEPTH: number = -0.409;
+
+/**
+ * Depth between two consecutive parts of one avatar.
+ *
+ * Large enough to beat the renderer's own `3.7e-11` index tiebreak by orders of magnitude, small
+ * enough that a whole avatar spans far less than the `0.01` separating it from anything else in the
+ * room — so parts order among themselves and never reorder against furniture.
+ */
+// TS-only: no AS3 counterpart; see `updatePartSprites()`.
+const PART_DEPTH_STEP: number = 1e-6;
 
 /** AS3 base Y scale used for figure_vertical_offset. */
 const BASE_Y_SCALE: number = 1000;
@@ -111,6 +124,14 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     private _currentHeadAngleDeg: number = -1;
     private _currentHeadAngle: number = -1;
     private _extraSpritesStartIndex: number = 2;
+
+    /** First index of the part block, valid while `_partSpriteCount` is above zero. */
+    // TS-only: see `updatePartSprites()`.
+    private _partSpritesStartIndex: number = 0;
+
+    /** How many sprites the part block holds; zero on the composed path. */
+    // TS-only: see `updatePartSprites()`.
+    private _partSpriteCount: number = 0;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_additions
     private _additions: Map<number, IAvatarAddition> | null = null;
     private _geometryUpdateCounter: number = -1;
@@ -1275,12 +1296,21 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
         this._extraSpritesStartIndex = spriteCount;
 
         // Add sprites for additions
-        if(this._additions) 
+        if(this._additions)
         {
-            for(const _addition of this._additions.values()) 
+            for(const _addition of this._additions.values())
             {
                 this.addSprite();
             }
+        }
+
+        // The part block sits past the additions, and the count above was rebuilt without it, so it
+        // has to be re-reserved here or every pass would dispose and recreate it — the churn this
+        // whole path exists to remove.
+        if(this._partSpriteCount > 0)
+        {
+            this._partSpritesStartIndex = this.spriteCount;
+            this.createSprites(this.spriteCount + this._partSpriteCount);
         }
     }
 
@@ -1305,17 +1335,35 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             model.getNumber(RoomObjectVariableEnum.AVATAR_MOUSE_HIGHLIGHT) === 1
         );
 
-        const image = this._activeAvatarImage!.getImage(AvatarSetType.FULL, isHighlighted);
+        // The sprite path asks for parts rather than an image; it declines — returning null — for an
+        // avatar it cannot express, such as one wearing a palette effect, and that avatar composes.
+        const partSet = AvatarRenderMode.spriteParts
+            ? this._activeAvatarImage!.getPartSprites(AvatarSetType.FULL)
+            : null;
 
-        if(image != null) 
+        if(partSet !== null)
         {
-            mainSprite.texture = image;
+            // Nothing composed, so nothing to draw here: this sprite becomes the parts' anchor, and
+            // they inherit its offsets and depth. The dimensions the offsets need are the avatar
+            // canvas's, which is exactly what the composed texture would have measured.
+            mainSprite.texture = null;
+            mainSprite.offsetX = (((-1 * scale) / 2) + offsets[0]) - ((partSet.width - scale) / 2);
+            mainSprite.offsetY = ((-partSet.height + (scale / 4)) + offsets[1]) + this._sitOffset;
         }
-
-        if(mainSprite.texture) 
+        else
         {
-            mainSprite.offsetX = (((-1 * scale) / 2) + offsets[0]) - ((mainSprite.width - scale) / 2);
-            mainSprite.offsetY = ((-mainSprite.height + (scale / 4)) + offsets[1]) + this._sitOffset;
+            const image = this._activeAvatarImage!.getImage(AvatarSetType.FULL, isHighlighted);
+
+            if(image != null)
+            {
+                mainSprite.texture = image;
+            }
+
+            if(mainSprite.texture)
+            {
+                mainSprite.offsetX = (((-1 * scale) / 2) + offsets[0]) - ((mainSprite.width - scale) / 2);
+                mainSprite.offsetY = ((-mainSprite.height + (scale / 4)) + offsets[1]) + this._sitOffset;
+            }
         }
 
         if(this._isSittingManual) 
@@ -1344,6 +1392,19 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             mainSprite.spriteType = RoomObjectSpriteType.AVATAR;
         }
 
+        // Placed after the depth block on purpose: the parts take their depth, sprite type and alpha
+        // from the sprite above, so sitting, laying, the own-avatar adjustment and the placeholder
+        // fade all reach them without any of that logic being restated here.
+        if(partSet !== null)
+        {
+            this.updatePartSprites(partSet, mainSprite);
+        }
+        else if(this._partSpriteCount > 0)
+        {
+            this.createSprites(this._partSpritesStartIndex);
+            this._partSpriteCount = 0;
+        }
+
         // Update typing bubble depth
         const typingAddition = this.getAddition(ADDITION_KEY_TYPING) as TypingBubble | null;
 
@@ -1357,6 +1418,52 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             {
                 typingAddition.relativeDepth = (AVATAR_SPRITE_LAYING_DEPTH - 0.01) + offsets[2];
             }
+        }
+    }
+
+    /**
+     * Lays the avatar's parts out as ordinary room sprites, in a block of their own past the
+     * additions.
+     *
+     * A block rather than a rewrite of the indices: sprite 0 stays the avatar and 1 the shadow, the
+     * additions keep `_extraSpritesStartIndex`, and nothing that reads a fixed index has to learn
+     * that an avatar can now occupy several. Only `updateActions()`, which owns the sprite count,
+     * has to know the block exists so it stops truncating it.
+     *
+     * Depth steps down by a hair per part instead of leaning on the renderer's index tiebreak, which
+     * runs the other way — it sorts descending by z, so a *lower* index draws in front. Being
+     * explicit costs nothing and does not depend on that staying true.
+     */
+    // TS-only: no AS3 counterpart; see `AvatarRenderMode`.
+    private updatePartSprites(set: IAvatarPartSpriteSet, mainSprite: IRoomObjectSprite): void
+    {
+        const count = set.parts.length;
+        const start = this._partSpriteCount > 0 ? this._partSpritesStartIndex : this.spriteCount;
+
+        if(count !== this._partSpriteCount)
+        {
+            this._partSpritesStartIndex = start;
+            this._partSpriteCount = count;
+            this.createSprites(start + count);
+        }
+
+        for(let i = 0; i < count; i++)
+        {
+            const sprite = this.getSprite(start + i);
+
+            if(sprite == null) continue;
+
+            const part = set.parts[i];
+
+            sprite.texture = part.texture;
+            sprite.offsetX = mainSprite.offsetX + part.x;
+            sprite.offsetY = mainSprite.offsetY + part.y;
+            sprite.flipH = part.flipH;
+            sprite.color = part.color;
+            // Alpha is 0..255 here, and the anchor already carries the placeholder fade.
+            sprite.alpha = Math.round(mainSprite.alpha * part.alpha);
+            sprite.spriteType = mainSprite.spriteType;
+            sprite.relativeDepth = mainSprite.relativeDepth - (i * PART_DEPTH_STEP);
         }
     }
 

@@ -6,6 +6,7 @@ import {AvatarFigureContainer} from './AvatarFigureContainer';
 import type {IAvatarImage} from './IAvatarImage';
 import type {IAvatarFigureContainer} from './IAvatarFigureContainer';
 import type {IAvatarEffectListener} from './IAvatarEffectListener';
+import type {IAvatarPartSprite, IAvatarPartSpriteSet} from './AvatarPartSprite';
 import type {IActiveActionData} from './actions/IActiveActionData';
 import type {ISpriteDataContainer} from './animation/ISpriteDataContainer';
 import type {IAvatarDataContainer} from './animation/IAvatarDataContainer';
@@ -845,6 +846,80 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
         this._needsUpdate = false;
 
         return this._image;
+    }
+
+    /**
+     * The avatar as a list of parts, in the same space `getImage()` composes into — the sprite path.
+     *
+     * The loop below is `getImage()`'s, with the `drawImage()` removed: same body parts, same reverse
+     * order, same `regPoint + canvas.offset + canvas.regPoint`. What it produces is what that call
+     * would have drawn, described instead of rasterised.
+     *
+     * Returns null when the avatar cannot be expressed as independent sprites, and the room then uses
+     * the composed path for it:
+     *
+     * - **A palette effect is active.** `getImage()` finishes by luminance-mapping every pixel
+     *   through the effect's gradient, or by copying green into alpha. Neither is a per-sprite tint,
+     *   and approximating one would ship wrong colours for ghosts and similar effects rather than a
+     *   slower frame.
+     * - **A part came back composed.** A container built before the mode was switched still holds a
+     *   texture and no parts; mixing the two would drop it silently.
+     */
+    // TS-only: no AS3 counterpart; the composition it replaces is `getImage()`.
+    public getPartSprites(setType: string): IAvatarPartSpriteSet | null
+    {
+        if(this._mainAction == null) return null;
+
+        // The whole-image pixel pass at the end of `getImage()`; see the note above.
+        if(this._avatarDataContainer !== null) return null;
+
+        if(!this._actionsSorted)
+        {
+            this.endActionAppends();
+        }
+
+        const geometryType = this._mainAction.definition.geometryType;
+        const canvas = this._structure.getCanvas(this._scale, geometryType);
+
+        if(canvas == null) return null;
+
+        if(this._cache == null) return null;
+
+        const bodyParts = this.getBodyParts(setType, geometryType, this._mainDirection);
+        const parts: IAvatarPartSprite[] = [];
+
+        for(let i = bodyParts.length - 1; i >= 0; i--)
+        {
+            const container = this._cache.getImageContainer(bodyParts[i], this._frameCounter);
+
+            if(container == null) continue;
+
+            const containerParts = container.parts;
+
+            // A composed leftover. Skipping it would drop that body part and render a maimed avatar,
+            // so the whole avatar goes back to the composed path instead.
+            if(containerParts === null) return null;
+
+            const regPoint = container.regPoint;
+            const destX = regPoint.x + canvas.offset.x + canvas.regPoint.x;
+            const destY = regPoint.y + canvas.offset.y + canvas.regPoint.y;
+
+            for(const part of containerParts)
+            {
+                parts.push({
+                    texture: part.texture,
+                    x: destX + part.x,
+                    y: destY + part.y,
+                    flipH: part.flipH,
+                    color: part.color,
+                    alpha: part.alpha
+                });
+            }
+        }
+
+        this._needsUpdate = false;
+
+        return {width: canvas.width, height: canvas.height, parts};
     }
 
     // AS3: sources/win63_version/habbo/utils/class_2495.as::resizeBitmapData()
