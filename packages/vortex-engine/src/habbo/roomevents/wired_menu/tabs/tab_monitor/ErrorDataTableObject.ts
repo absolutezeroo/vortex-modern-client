@@ -93,7 +93,7 @@ export class ErrorDataTableObject implements ITableObject
     };
 
     // AS3: ErrorDataTableObject.as::getTableCell()
-    getTableCell(columnId: string): TableCell
+    getTableCell(columnId: string): TableCell | null
     {
         switch(columnId)
         {
@@ -111,7 +111,7 @@ export class ErrorDataTableObject implements ITableObject
 
                 return new TableCell(TableCell.TYPE_TEXT, FriendlyTime.getFriendlyTime(this._localization, this._error.msSinceLastOccurrence / 1000, '.ago', 3), false, false, null, null, false, this.timestampString);
             default:
-                return null as unknown as TableCell;
+                return null;
         }
     }
 

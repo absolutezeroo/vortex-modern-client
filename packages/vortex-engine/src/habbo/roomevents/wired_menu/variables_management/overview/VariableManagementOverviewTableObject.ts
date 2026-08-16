@@ -41,7 +41,7 @@ export class VariableManagementOverviewTableObject implements ITableObject
     }
 
     // AS3: VariableManagementOverviewTableObject.as::getTableCell()
-    getTableCell(columnId: string): TableCell
+    getTableCell(columnId: string): TableCell | null
     {
         switch(columnId)
         {
@@ -63,7 +63,7 @@ export class VariableManagementOverviewTableObject implements ITableObject
             case 'manage':
                 return new TableCell(TableCell.TYPE_LINK, this.localize('wiredmenu.variable_management.manage'), false, false, null, this._onClickManage);
             default:
-                return null as unknown as TableCell;
+                return null;
         }
     }
 

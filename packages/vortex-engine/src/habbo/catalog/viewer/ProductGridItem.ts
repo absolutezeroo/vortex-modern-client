@@ -162,9 +162,18 @@ export class ProductGridItem implements IGridItem
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/ProductGridItem.as::setDraggable()
     setDraggable(draggable: boolean): void
     {
-        const interactive = this._view as unknown as IInteractiveWindow | null;
+        // AS3 writes `if(_view as IInteractiveWindow && param1)`, and its `as` yields **null** when
+        // the object does not implement the interface — a runtime type test, not a cast. TS's
+        // `as unknown as` is a compile-time assertion that never yields null, so every view reached
+        // here was taken for interactive and the call threw on the ones that are not: the club-gift
+        // item hands over its plain `image_container`, and the whole catalog page stopped building
+        // ("interactive.setMouseCursorForState is not a function").
+        //
+        // `IInteractiveWindow` is erased at runtime and is implemented by four unrelated
+        // controllers, so the test is for the member this method actually uses.
+        const interactive = this._view as unknown as Partial<IInteractiveWindow> | null;
 
-        if(interactive && draggable)
+        if(draggable && typeof interactive?.setMouseCursorForState === 'function')
         {
             interactive.setMouseCursorForState(4, 5);
             interactive.setMouseCursorForState(4 | 1, 5);

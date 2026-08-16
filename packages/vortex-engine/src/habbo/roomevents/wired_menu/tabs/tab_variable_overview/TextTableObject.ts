@@ -50,7 +50,7 @@ export class TextTableObject implements ITableObject
     }
 
     // AS3: TextTableObject.as::getTableCell()
-    getTableCell(columnId: string): TableCell
+    getTableCell(columnId: string): TableCell | null
     {
         if(columnId === WiredMenuOverviewTab.TEXT_COLUMN_VALUE)
         {
@@ -62,7 +62,7 @@ export class TextTableObject implements ITableObject
             return new TableCell(TableCell.TYPE_TEXT, this._text, false, true);
         }
 
-        return null as unknown as TableCell;
+        return null;
     }
 
     // AS3: TextTableObject.as::get text()

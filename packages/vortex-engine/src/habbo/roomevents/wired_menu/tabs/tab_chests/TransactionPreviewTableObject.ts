@@ -44,18 +44,8 @@ export class TransactionPreviewTableObject implements ITableObject
 	 * The username cell is the only interactive one — a link that opens that player's profile. AS3
 	 * marks it inspectable but not editable, and hands the click straight to `onClickUsername`.
 	 */
-    /**
-	 * TODO(AS3): the `null` this returns for an unknown column is a lie to the type system.
-	 * AS3's `ITableObject.getTableCell()` is declared `:TableCell` and its implementations return
-	 * null from the default branch — object types are implicitly nullable there — so the port's
-	 * non-nullable signature is a faithful transcription of a signature AS3 itself does not honour.
-	 * `VariableValueTableObject` already casts the same way, and this follows it rather than
-	 * inventing a second convention. Widening `ITableObject` to `TableCell | null` is the real fix,
-	 * but `TableRowView` passes the result straight into `TableCellView` at three call sites without
-	 * a guard, so it needs AS3's null path read first — a separate task, not a rider on this slice.
-	 */
     // AS3: TransactionPreviewTableObject.as::getTableCell()
-    getTableCell(columnId: string): TableCell
+    getTableCell(columnId: string): TableCell | null
     {
         switch(columnId)
         {
@@ -84,7 +74,7 @@ export class TransactionPreviewTableObject implements ITableObject
                     this.summarize(this._transactionInfo.withdrawFurniCount, this._transactionInfo.withdrawCoinsCount)
                 );
             default:
-                return null as unknown as TableCell;
+                return null;
         }
     }
 

@@ -1,3 +1,4 @@
+import {Logger} from '@core/utils/Logger';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
@@ -13,6 +14,8 @@ import {TableCell} from './TableCell';
 import type {TableColumn} from './TableColumn';
 import type {TableRowView} from './TableRowView';
 import type {TableView} from './TableView';
+
+const log = Logger.getLogger('habbo.window.utils.tableview.TableCellView');
 
 /**
  * TableCellView — the window view for one cell of one row. Renders either a plain-text element or a
@@ -52,7 +55,7 @@ export class TableCellView implements IDisposable
     private _transitionRunning: boolean = false;
 
     // AS3: TableCellView.as::TableCellView()
-    constructor(tableView: TableView, rowView: TableRowView, columnId: string, cell: TableCell)
+    constructor(tableView: TableView, rowView: TableRowView, columnId: string, cell: TableCell | null)
     {
         this._tableView = tableView;
         this._rowView = rowView;
@@ -78,14 +81,14 @@ export class TableCellView implements IDisposable
     }
 
     // AS3: TableCellView.as::reuse()
-    reuse(cell: TableCell): void
+    reuse(cell: TableCell | null): void
     {
         this._cell = cell;
         this.initializeView();
     }
 
     // AS3: TableCellView.as::update()
-    update(cell: TableCell): void
+    update(cell: TableCell | null): void
     {
         this._cell = cell;
         const input = this.getInputElement(false);
@@ -98,7 +101,7 @@ export class TableCellView implements IDisposable
         {
             this.initializeView();
 
-            if(cell.highlightOnChange)
+            if(cell?.highlightOnChange)
             {
                 this.highlight();
             }
@@ -141,12 +144,34 @@ export class TableCellView implements IDisposable
         }
     };
 
+    /**
+     * AS3 dereferences `_cell` here with no guard, and gets away with it because every
+     * `ITableObject.getTableCell()` covers every column its table declares — the null its default
+     * branch returns is unreachable in practice. This port hit it anyway, from a text input's
+     * `WE_UNFOCUS`, and an unguarded deref there is not a blank cell: it throws inside the window
+     * manager's update receiver and takes the frame with it.
+     *
+     * So a null cell renders as an empty cell (`setAllInvisible()` has already run) and says which
+     * column produced it, rather than crashing. If this ever fires, the fix belongs in that row
+     * object's `getTableCell()`, not here — the warning exists to name it.
+     */
     // AS3: TableCellView.as::initializeView()
     private initializeView(): void
     {
         this.setAllInvisible();
 
-        if(this._cell!.type === TableCell.TYPE_LINK)
+        if(this._cell == null)
+        {
+            log.warn(
+                `No table cell for column "${this._columnId}"`
+                + ` from ${this._rowView.object?.constructor.name ?? 'an unknown row object'}`
+                + ' — the cell renders empty'
+            );
+
+            return;
+        }
+
+        if(this._cell.type === TableCell.TYPE_LINK)
         {
             this.getLinkRegion(true)!.visible = true;
         }
@@ -161,9 +186,13 @@ export class TableCellView implements IDisposable
     // AS3: TableCellView.as::updateContents()
     private updateContents(): void
     {
+        // Reachable on its own from update(), which does not go through initializeView() when the
+        // cell's input is open — see initializeView() for why a null cell is not fatal here.
+        if(this._cell == null) return;
+
         let textElement: ITextWindow | null = null;
 
-        if(this._cell!.type === TableCell.TYPE_LINK)
+        if(this._cell.type === TableCell.TYPE_LINK)
         {
             this.getLinkElement(true)!.text = this._cell!.contents as string;
         }
@@ -231,7 +260,7 @@ export class TableCellView implements IDisposable
 
         const input = this.getInputElement(false);
 
-        if(event.keyCode === 13 && this._cell!.isEditable)
+        if(event.keyCode === 13 && this._cell?.isEditable)
         {
             this._tableView.onEnterNewCellValue(input!.text, this._rowView.object!, this._columnId);
             this.initializeView();
@@ -251,13 +280,13 @@ export class TableCellView implements IDisposable
     // AS3: TableCellView.as::onDoubleClick()
     private _onDoubleClick = (_event: WindowMouseEvent): void =>
     {
-        if(this._cell!.isInspectable || this._cell!.isEditable)
+        if(this._cell != null && (this._cell.isInspectable || this._cell.isEditable))
         {
             this.setAllInvisible();
             const input = this.getInputElement(true)!;
             input.visible = true;
-            input.text = this._cell!.textFieldValue ?? '';
-            input.editable = this._cell!.isEditable;
+            input.text = this._cell.textFieldValue ?? '';
+            input.editable = this._cell.isEditable;
             // AS3: input.focus(); the port's ITextFieldWindow has no focus(), so call it duck-typed.
             // TODO(AS3): route keyboard focus to the input once the window system exposes focus().
             (input as unknown as {focus?: () => void}).focus?.();

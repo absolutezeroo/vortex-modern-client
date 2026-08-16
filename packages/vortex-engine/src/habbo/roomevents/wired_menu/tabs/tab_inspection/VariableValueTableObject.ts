@@ -108,7 +108,7 @@ export class VariableValueTableObject implements ITableObject
     }
 
     // AS3: VariableValueTableObject.as::getTableCell()
-    getTableCell(columnId: string): TableCell
+    getTableCell(columnId: string): TableCell | null
     {
         if(columnId === WiredMenuInspectionTab.VARIABLES_COLUMN_VARIABLE)
         {
@@ -120,7 +120,7 @@ export class VariableValueTableObject implements ITableObject
             return VariableValueTableObject.createVariableValueCell(this._variable, this._value, this._roomEvents, this._highlightChanges, this._canModify);
         }
 
-        return null as unknown as TableCell;
+        return null;
     }
 
     // AS3: VariableValueTableObject.as::get variable()

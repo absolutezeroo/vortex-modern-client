@@ -47,7 +47,7 @@ export class ItemTypeTableObject implements ITableObject
     }
 
     // AS3: ItemTypeTableObject.as::getTableCell()
-    getTableCell(columnId: string): TableCell
+    getTableCell(columnId: string): TableCell | null
     {
         switch(columnId)
         {
@@ -63,8 +63,7 @@ export class ItemTypeTableObject implements ITableObject
                         : '${inventory.filter.placement.floor}'
                 );
             default:
-                // Same nullability gap as TransactionPreviewTableObject — see its TODO(AS3).
-                return null as unknown as TableCell;
+                return null;
         }
     }
 

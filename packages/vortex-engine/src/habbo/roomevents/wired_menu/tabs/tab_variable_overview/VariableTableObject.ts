@@ -52,14 +52,14 @@ export class VariableTableObject implements ITableObject
     }
 
     // AS3: VariableTableObject.as::getTableCell()
-    getTableCell(columnId: string): TableCell
+    getTableCell(columnId: string): TableCell | null
     {
         if(columnId === WiredMenuOverviewTab.LIST_COLUMN_NAME)
         {
             return new TableCell(TableCell.TYPE_TEXT, this._variable.variableName);
         }
 
-        return null as unknown as TableCell;
+        return null;
     }
 
     // AS3: VariableTableObject.as::get variable()

@@ -57,7 +57,7 @@ export class TransactionTableObject implements ITableObject
 	 * seven ids come from the view's own column list, so the branch is unreachable in practice.
 	 */
     // AS3: TransactionTableObject.as::getTableCell()
-    getTableCell(columnId: string): TableCell
+    getTableCell(columnId: string): TableCell | null
     {
         switch(columnId)
         {

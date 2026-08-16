@@ -53,7 +53,7 @@ export class WiredRoomLogListTableObject implements ITableObject
     }
 
     // AS3: WiredRoomLogListTableObject.as::getTableCell()
-    getTableCell(columnId: string): TableCell
+    getTableCell(columnId: string): TableCell | null
     {
         const color = WiredRoomLogListTableObject.COLORS[this._entry.logLevel];
 
@@ -68,7 +68,7 @@ export class WiredRoomLogListTableObject implements ITableObject
             case 'message':
                 return new TableCell(TableCell.TYPE_TEXT, this._entry.logMessage, false, true, null, null, false, null, color);
             default:
-                return null as unknown as TableCell;
+                return null;
         }
     }
 

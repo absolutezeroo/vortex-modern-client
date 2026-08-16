@@ -77,7 +77,7 @@ export class PropertyTableObject implements ITableObject
     }
 
     // AS3: PropertyTableObject.as::getTableCell()
-    getTableCell(columnId: string): TableCell
+    getTableCell(columnId: string): TableCell | null
     {
         if(columnId === WiredMenuOverviewTab.PROPERTIES_COLUMN_PROPERTY)
         {
@@ -89,7 +89,7 @@ export class PropertyTableObject implements ITableObject
             return new TableCell(TableCell.TYPE_TEXT, this._value, false, this._highlight);
         }
 
-        return null as unknown as TableCell;
+        return null;
     }
 
     // AS3: PropertyTableObject.as::get value()
