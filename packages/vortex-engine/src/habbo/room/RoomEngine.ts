@@ -88,6 +88,7 @@ import {SelectedRoomObjectData} from './utils/SelectedRoomObjectData';
 import {TileObjectMap} from './utils/TileObjectMap';
 import {LegacyWallGeometry} from './utils/LegacyWallGeometry';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
+import {RoomData} from './utils/RoomData';
 import {Logger} from "@core";
 import {RoomVisualizationData} from './object/visualization/room/RoomVisualizationData';
 import type {IAssetRoomVisualizationData} from './object/visualization/room/rasterizer/basic/PlaneRasterizerTypes';
@@ -231,6 +232,20 @@ export class RoomEngine extends Component implements IRoomEngine,
     // has no per-object direction list to read.
     private static readonly USER_ALLOWED_DIRECTIONS: number[] = [0, 45, 90, 135, 180, 225, 270, 315];
 
+    /**
+     * The floor/wall/landscape types `initializeRoom()` opens with, before a parked `RoomData` or a
+     * room-properties message supplies real ones. AS3 spells them as bare locals at the top of the
+     * method; named here because the deferral path re-reads them.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::initializeRoom()
+    private static readonly DEFAULT_FLOOR_TYPE: string = '111';
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::initializeRoom()
+    private static readonly DEFAULT_WALL_TYPE: string = '201';
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::initializeRoom()
+    private static readonly DEFAULT_LANDSCAPE_TYPE: string = '1';
+
     private _roomObjectFactory: RoomObjectFactory;
     private _visualizationFactory: RoomObjectVisualizationFactory;
     private _roomData: Map<string, unknown>;
@@ -258,6 +273,21 @@ export class RoomEngine extends Component implements IRoomEngine,
     }>> = new Map();
 
     private _initializedRooms: Set<number> = new Set();
+
+    /**
+     * Rooms asked for before the engine could build them, keyed by room identifier.
+     *
+     * `initializeRoom()` parks its argument here when `isInitialized` is still false and
+     * `roomManagerInitialized()` replays the lot; `updateObjectRoom()` parks a floor/wall/landscape
+     * push here when the room object does not exist yet. Distinct from `_initializedRooms`, which
+     * is the opposite end of the same story — rooms already built.
+     *
+     * Name recovered from `PRODUCTION-201601012205-226667486`'s `RoomEngine.as` (`_roomDatas`);
+     * the primary tree obfuscates it to `_SafeStr_5320`.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_roomDatas
+    private _roomDatas: Map<string, RoomData> = new Map();
+
     private _roomDragging: boolean = false;
     private _roomDragStarted: boolean = false;
     private _roomDragStartX: number = 0;
@@ -742,13 +772,34 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true; // Default behavior
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::roomManagerInitialized()
     roomManagerInitialized(success: boolean): void
     {
-        if(success)
+        if(!success)
         {
-            this._roomManagerInitialized = true;
+            log.error('Failed to initialize manager');
 
-            this.events.emit(RoomEngineEvent.REE_ENGINE_INITIALIZED);
+            return;
+        }
+
+        this._roomManagerInitialized = true;
+
+        this.events.emit(RoomEngineEvent.REE_ENGINE_INITIALIZED);
+
+        // Every room asked for while the flag above was false. Iterated over a snapshot because
+        // initializeRoom() deletes its own entry as it goes: AS3 walks the live map by index and
+        // silently skips whatever shifts down behind a removal, which is an artifact of its
+        // collection rather than intent — the intent is plainly "replay all of them".
+        for(const roomData of [...this._roomDatas.values()])
+        {
+            this.initializeRoom(
+                roomData.roomId,
+                roomData.data,
+                roomData.doorX ?? undefined,
+                roomData.doorY ?? undefined,
+                roomData.doorZ ?? undefined,
+                roomData.doorDir ?? undefined
+            );
         }
     }
 
@@ -2507,17 +2558,39 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.events.emit(RoomEngineEvent.REE_INITIALIZED, new RoomEngineEvent(RoomEngineEvent.REE_INITIALIZED, roomId));
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::updateObjectRoom()
-    // TODO(AS3): the "room object doesn't exist yet" branch (buffering the update until the room
-    // object is created) is decompiler-corrupted in win63_version (`null.floorType = param2`-style
-    // lines that cannot be the real code) - not ported; this always requires the room object to
-    // already exist, matching every current call site (live property pushes after room entry).
-    updateObjectRoom(roomId: number, floorType?: string | null, wallType?: string | null, landscapeType?: string | null, skipModelUpdate: boolean = false): boolean 
+    /**
+     * The "room object doesn't exist yet" branch used to carry a TODO saying it could not be
+     * ported: `win63_version` decompiles it into `null.floorType = param2`-style lines that cannot
+     * be the real code. The primary tree has it intact — the update is buffered onto the same
+     * `RoomData` that `initializeRoom()` parks, and reaches the room when the floor height map
+     * finally builds it. See CLAUDE.md → "win63_version is a worse decompile".
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectRoom()
+    updateObjectRoom(roomId: number, floorType?: string | null, wallType?: string | null, landscapeType?: string | null, skipModelUpdate: boolean = false): boolean
     {
         const room = this.getRoomInstance(roomId);
         const roomObject = room?.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController | null;
 
-        if(!roomObject) return false;
+        if(!roomObject)
+        {
+            const roomIdentifier = this.getRoomIdentifier(roomId);
+            let roomData = this._roomDatas.get(roomIdentifier) ?? null;
+
+            if(roomData === null)
+            {
+                roomData = new RoomData(roomId, null);
+
+                this._roomDatas.set(roomIdentifier, roomData);
+            }
+
+            if(floorType != null) roomData.floorType = floorType;
+
+            if(wallType != null) roomData.wallType = wallType;
+
+            if(landscapeType != null) roomData.landscapeType = landscapeType;
+
+            return true;
+        }
 
         const eventHandler = roomObject.getEventHandler();
 
@@ -2636,11 +2709,77 @@ export class RoomEngine extends Component implements IRoomEngine,
     ): void 
     {
         // Guard against double initialization (server can send height map twice)
-        if(this._initializedRooms.has(roomId)) 
+        if(this._initializedRooms.has(roomId))
         {
             log.debug(`Room ${roomId} already initialized, skipping`);
 
             return;
+        }
+
+        const roomIdentifier = this.getRoomIdentifier(roomId);
+        let floorType: string | null = RoomEngine.DEFAULT_FLOOR_TYPE;
+        let wallType: string | null = RoomEngine.DEFAULT_WALL_TYPE;
+        let landscapeType: string | null = RoomEngine.DEFAULT_LANDSCAPE_TYPE;
+        let pending = this._roomDatas.get(roomIdentifier) ?? null;
+
+        // AS3 parks the room instead of failing when the engine is not ready, and replays it from
+        // roomManagerInitialized(). Without this the room was dropped forever: the room previewer
+        // inside any window built at DI time — the wired chest's, the catalog's — asks for its
+        // preview room long before RoomManager finishes loading its placeholder object content, and
+        // the only trace was "Cannot create room — manager not initialized (state: 1)".
+        //
+        // The types are carried across the re-park unguarded, exactly as AS3 does: a second park
+        // with a null floorType overwrites the default. The asymmetry with the guarded read below
+        // is AS3's, not a transcription slip.
+        if(!this.isInitialized)
+        {
+            if(pending !== null)
+            {
+                this._roomDatas.delete(roomIdentifier);
+
+                floorType = pending.floorType;
+                wallType = pending.wallType;
+                landscapeType = pending.landscapeType;
+            }
+
+            pending = new RoomData(roomId, planeParser);
+            pending.floorType = floorType;
+            pending.wallType = wallType;
+            pending.landscapeType = landscapeType;
+            pending.setDoor(doorX, doorY, doorZ, doorDir);
+
+            this._roomDatas.set(roomIdentifier, pending);
+
+            log.debug(
+                `Room engine not initialized yet, cannot create room ${roomId}.`
+                + ' Room data stored for later initialization.'
+            );
+
+            return;
+        }
+
+        // AS3: a room parked by updateObjectRoom() alone carries no plane data, so replaying it
+        // here must not build a plane-less room — it waits for the floor height map, which parks
+        // its parser on the same entry and comes back through this method.
+        if(planeParser === null)
+        {
+            log.debug(
+                'Room property messages received before floor height map,'
+                + ' will initialize when floor height map received.'
+            );
+
+            return;
+        }
+
+        if(pending !== null)
+        {
+            this._roomDatas.delete(roomIdentifier);
+
+            if(pending.floorType !== null && pending.floorType.length > 0) floorType = pending.floorType;
+
+            if(pending.wallType !== null && pending.wallType.length > 0) wallType = pending.wallType;
+
+            if(pending.landscapeType !== null && pending.landscapeType.length > 0) landscapeType = pending.landscapeType;
         }
 
         // Create room instance if it doesn't exist
@@ -2681,24 +2820,33 @@ export class RoomEngine extends Component implements IRoomEngine,
                         eventHandler.initialize(planeParser);
                     }
 
-                    // AS3: RoomEngine.initializeRoom() defaults floor/wall/landscape type to
-                    // "111"/"201"/"1" (sources/win63_version/habbo/room/class_34.as lines 1370-1372)
-                    // when no separate room-properties message has supplied real values yet — that
-                    // message isn't ported (protocol gap, see docs/IMPLEMENTATION_STATUS.md "room"),
-                    // so these defaults are what every room currently renders with. Without this,
-                    // room_floor_type/room_wall_type stay unset and RoomVisualization falls back to
-                    // its own invented "default" id, which has no matching texture and renders as a
-                    // blank placeholder instead of the classic floor/wallpaper.
-                    if(eventHandler !== null) 
+                    // AS3 passes these three down to createRoom(), which sends exactly these
+                    // messages. They come from the parked RoomData when a room-properties push
+                    // arrived first, and otherwise from the "111"/"201"/"1" defaults AS3's
+                    // initializeRoom() opens with — which is still what every room renders with
+                    // here, because that message is not ported (protocol gap, see
+                    // docs/IMPLEMENTATION_STATUS.md "room"). Without them room_floor_type /
+                    // room_wall_type stay unset and RoomVisualization falls back to its own
+                    // invented "default" id, which has no matching texture and renders as a blank
+                    // placeholder instead of the classic floor/wallpaper.
+                    if(eventHandler !== null && floorType !== null)
                     {
                         eventHandler.processUpdateMessage(
-                            new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_FLOOR_UPDATE, '111')
+                            new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_FLOOR_UPDATE, floorType)
                         );
+                    }
+
+                    if(eventHandler !== null && wallType !== null)
+                    {
                         eventHandler.processUpdateMessage(
-                            new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_WALL_UPDATE, '201')
+                            new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_WALL_UPDATE, wallType)
                         );
+                    }
+
+                    if(eventHandler !== null && landscapeType !== null)
+                    {
                         eventHandler.processUpdateMessage(
-                            new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_LANDSCAPE_UPDATE, '1')
+                            new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_LANDSCAPE_UPDATE, landscapeType)
                         );
                     }
 
@@ -4334,6 +4482,9 @@ export class RoomEngine extends Component implements IRoomEngine,
         this._contentLoader.dispose();
         this._contentLoaderEvents.removeAllListeners();
         this._pendingFurnitureViz.clear();
+
+        // AS3 disposes the parked-room map here too (_SafeCls_90.as:539-542).
+        this._roomDatas.clear();
 
         // Clear stage reference
         this._pixiStage = null;

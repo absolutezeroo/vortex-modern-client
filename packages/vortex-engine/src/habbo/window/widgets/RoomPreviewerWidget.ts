@@ -13,6 +13,7 @@ import type {WindowEventListener} from '@core/window/events/WindowEventDispatche
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
 import {PreviewCanvasStack} from '@habbo/room/preview/PreviewCanvasStack';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 
 /**
  * Room previewer widget.
@@ -262,6 +263,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
         PreviewCanvasStack.unregister(this._canvasDisplayObject);
         this._roomEngine?.unregisterCanvasSyncCallback(this._syncCanvasPositionBound);
+        this._roomEngine?.events.off(RoomEngineEvent.REE_INITIALIZED, this._onRoomInitializedBound);
 
         // Take the canvas off the stage, exactly as showPreview() does when it
         // swaps the live canvas for a static bitmap. Dropping the reference is not
@@ -296,6 +298,28 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
     private readonly _syncCanvasPositionBound = (): void => this.syncCanvasPosition();
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::onRoomInitialized()
+    private readonly _onRoomInitializedBound = (event: RoomEngineEvent): void => this.onRoomInitialized(event);
+
+    /**
+     * The preview room finally exists — build its canvas.
+     *
+     * AS3 only re-runs `getRoomCanvas()`/`setDisplayObject()` here, because in its case the room is
+     * always already there and this is a re-initialization. It is also the recovery path for the
+     * case this port hits at boot, where the room was deferred and no canvas was ever attached, so
+     * it runs the whole attach.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::onRoomInitialized()
+    private onRoomInitialized(event: RoomEngineEvent): void
+    {
+        if(this._disposed || !this._roomPreviewer || !this._root) return;
+
+        if(event.roomId !== this._roomPreviewer.previewRoomId) return;
+
+        this._roomPreviewer.reset(false);
+        this.attachRoomCanvas(this._root);
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as constructor
     private createRoomPreviewer(root: IWindowContainer): void 
     {
@@ -307,8 +331,33 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
         const previewRoomId = RoomPreviewerWidget._roomIdCounter;
 
+        this._roomEngine = roomEngine;
+
+        // AS3 subscribes before creating the previewer, and it is not decoration: the preview room
+        // is routinely asked for before the room engine can build one — this widget is constructed
+        // while its host window is, which for the wired chest is during component init — and
+        // `RoomEngine.initializeRoom()` parks it until `roomManagerInitialized()` replays it. The
+        // canvas below then comes back null, and without this listener nothing ever tries again.
+        roomEngine.events.on(RoomEngineEvent.REE_INITIALIZED, this._onRoomInitializedBound);
+
         this._roomPreviewer = new RoomPreviewer(roomEngine, previewRoomId);
         this._roomPreviewer.createRoomForPreviews();
+
+        this.attachRoomCanvas(root);
+    }
+
+    /**
+     * AS3 does this inline in the constructor and again, in a shorter form, in
+     * `onRoomInitialized()`. Shared here because this port's version has to do more than AS3's —
+     * see the stage-parenting note below — and the deferred path needs all of it, not just the
+     * `setDisplayObject()` AS3 repeats.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as constructor
+    private attachRoomCanvas(root: IWindowContainer): void
+    {
+        const roomEngine = this._roomEngine;
+
+        if(!roomEngine || !this._roomPreviewer) return;
 
         const canvasWrapper = root.findChildByName('room_canvas') as unknown as IDisplayObjectWrapper | null;
 
@@ -333,7 +382,6 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
             canvasWrapper.setDisplayObject(canvas);
             this._canvasDisplayObject = canvas;
             this._canvasWrapper = canvasWrapper as unknown as IWindow;
-            this._roomEngine = roomEngine;
 
             // TS deviation: RoomEngine.createRoomCanvas() parents the canvas
             // directly onto the root PixiJS stage (see RoomEngine.ts), not into

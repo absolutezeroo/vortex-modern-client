@@ -85,15 +85,39 @@ Two warnings in the same log were **not** bugs and must not be "fixed":
   `DesktopLayoutManager.getWidgetContainer()` line for line, and the `memenu` layout carries no
   `room_widget*` tag, so AS3 returns false here too (silently; only the port logs it).
 
-#### Still open: `RoomEngine.initializeRoom()` drops a room when the engine is not ready
+#### `RoomEngine` dropped a room asked for before the engine was ready — fixed
 
-`Cannot create room — manager not initialized (state: 1)` is the one boot warning left. AS3's
-`initializeRoom()` opens with `if(!_SafeStr_5461)` and **queues** the room into `_SafeStr_5320`
-(with its floor/wall/landscape type and camera position) to be drained once the engine is ready;
-the port calls `createRoomInstance()` immediately, gets null and drops the room forever. It is what
-kills the `RoomPreviewer` inside the chest window, built at DI time long before `RoomManager`
-reaches `INITIALIZED`. Related and also unported: `RoomPreviewerWidget`'s `REE_INITIALIZED`
-listener (`onRoomInitialized`, AS3 l.201) — the port subscribes to nothing.
+`Cannot create room — manager not initialized (state: 1)` was the one boot warning left, and it was
+a whole unported mechanism. AS3's `initializeRoom()` opens with `if(!_SafeStr_5461)` and **parks**
+the room in `_SafeStr_5320` — `RoomData`, name recovered from PRODUCTION, keyed by room identifier
+and carrying floor/wall/landscape type and camera position — then `roomManagerInitialized()` replays
+the lot once the manager reports ready. The port called `createRoomInstance()` immediately, got null
+and dropped the room forever. It is what killed the `RoomPreviewer` inside the chest window, built
+at DI time long before `RoomManager` finishes loading its placeholder object content.
+
+Three pieces, all from the primary tree:
+
+- `RoomData` (`habbo/room/utils/`), the parked entry. Obfuscated to `_SafeCls_1852` in the primary
+  tree, which is where the *member* names are readable; PRODUCTION obfuscates those and predates
+  `cameraInitPosition`, but gives the class name. The four door values are TS-only: AS3 re-reads
+  the door out of the parked room XML, this port takes it as separate `initializeRoom()` arguments,
+  so the queue has to hold them to replay the same call.
+- `updateObjectRoom()`'s buffering branch, which parks a floor/wall/landscape push arriving before
+  the room object exists. It carried a `TODO(AS3)` saying it could not be ported because
+  `win63_version` decompiles it into `null.floorType = param2` — the primary tree has it intact.
+  This is the third time that rule has paid (see "win63_version is a worse decompile").
+- `RoomPreviewerWidget`'s `REE_INITIALIZED` subscription (AS3 l.68-71, `onRoomInitialized` l.201),
+  which the port had not ported at all. Without it the deferred room is built and no canvas is ever
+  attached to it.
+
+Also folded in: `initializeRoom()` now feeds the parked floor/wall/landscape types to the three
+`RoomObjectRoomUpdateMessage`s instead of the hardcoded `"111"/"201"/"1"`, which is what AS3's
+`createRoom(param3, param4, param5)` does with them; and the `data == null` early return, which
+becomes load-bearing once a `updateObjectRoom()`-only entry can be replayed with no plane parser.
+
+Verified headlessly: before the room manager reports ready the preview room sits in `_roomDatas`
+(`parked: ["room_2147418115"]`, `built: []`, no warning); after, `parked: []`, `built:
+[2147418115]`, and `getRoomInstance(2147418115)` returns a real instance.
 
 ### The transverse-debt pass (2026-08-14) — a stale asset, a four-module sweep, three wrong headers
 
