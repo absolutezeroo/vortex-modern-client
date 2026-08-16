@@ -19,7 +19,6 @@ import {RenderRoomThumbnailMessageComposer} from '@habbo/communication/messages/
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IRoomEngine} from './IRoomEngine';
-import type {IRoomAreaSelectionManager} from './IRoomAreaSelectionManager';
 import {RoomAreaSelectionManager} from './utils/RoomAreaSelectionManager';
 import type {IRoomCreator} from './IRoomCreator';
 import type {IRoomEngineServices} from './IRoomEngineServices';
@@ -373,14 +372,15 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: RoomEngine.as::_SafeStr_5591 (the area-selection manager, name derived from the getter)
-    private _areaSelectionManager: IRoomAreaSelectionManager | null = null;
+    private _areaSelectionManager: RoomAreaSelectionManager | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::get areaSelectionManager()
-    get areaSelectionManager(): IRoomAreaSelectionManager
+    get areaSelectionManager(): RoomAreaSelectionManager
     {
-        // AS3 creates the manager in init(); the port lazily creates the (currently inert) stub. See
-        // RoomAreaSelectionManager for the TODO(AS3) on the interactive tile-highlight behaviour.
-        this._areaSelectionManager ??= new RoomAreaSelectionManager();
+        // AS3 creates the manager in init(); the port creates it lazily, which is equivalent because
+        // nothing reaches it before a room exists.
+        this._areaSelectionManager ??= new RoomAreaSelectionManager(this);
+
         return this._areaSelectionManager;
     }
 
@@ -712,15 +712,30 @@ export class RoomEngine extends Component implements IRoomEngine,
         );
     }
 
-    isAreaSelectionMode(): boolean 
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::isAreaSelectionMode()
+    isAreaSelectionMode(): boolean
     {
-        return false; // TODO: implement area selection
+        return this.areaSelectionManager.areaSelectionState !== RoomAreaSelectionManager.NOT_ACTIVE;
     }
 
-    isMoveBlocked(): boolean 
+    /**
+	 * True while a drag must not also walk the avatar. Set by the area selector for the length of a
+	 * selection; both AS3 read sites are avatar-move paths.
+	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::isMoveBlocked()
+    isMoveBlocked(): boolean
     {
-        return false; // TODO: implement move blocking
+        return this._moveBlocked;
     }
+
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::setMoveBlocked()
+    setMoveBlocked(blocked: boolean): void
+    {
+        this._moveBlocked = blocked;
+    }
+
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::_SafeStr_9481 (name derived: move blocked)
+    private _moveBlocked: boolean = false;
 
     isWhereYouClickWhereYouGo(): boolean 
     {
@@ -6486,6 +6501,12 @@ export class RoomEngine extends Component implements IRoomEngine,
     {
         if(this._activeRoomId < 0) return;
 
+        // AS3 feeds every tile event to the area selector before its own switch
+        // (_SafeCls_1821.as::handleRoomObjectMouseEvent()). The selector ignores everything unless a
+        // tool has activated it, so this costs a state comparison the rest of the time — and without
+        // it the wired "select area" drag never sees a tile.
+        this.areaSelectionManager.handleTileMouseEvent(event);
+
         const tileX = event.tileXAsInt;
         const tileY = event.tileYAsInt;
         const tileZ = event.tileZAsInt;
@@ -6536,6 +6557,12 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
         else if(event.type === RoomObjectMouseEvent.ROE_MOUSE_CLICK) 
         {
+            // A click that ends an area drag belongs to the selector, not to the room: AS3 tests it
+            // first and skips placement, move-confirmation and walking when it returns true
+            // (_SafeCls_90.as:2382). Without this the drag would never end and the avatar would walk
+            // to wherever the rectangle finished.
+            if(this.areaSelectionManager.finishSelecting()) return;
+
             const selectedObjectData = this._roomInstanceData.get(this._activeRoomId)?.selectedObjectData ?? null;
 
             if(selectedObjectData !== null && selectedObjectData.operation === 'OBJECT_PLACE')

@@ -312,6 +312,16 @@ export interface IRoomEngine extends IDisposable {
         ownerName: string | null
     ): boolean;
 
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::isMoveBlocked()
+    isMoveBlocked(): boolean;
+
+    /**
+	 * Blocks avatar movement while a drag owns the pointer — set by the area selector for the length
+	 * of a selection, so dragging a rectangle does not also walk the avatar.
+	 */
+    // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::setMoveBlocked()
+    setMoveBlocked(blocked: boolean): void;
+
     // AS3: .../src/com/sulake/habbo/room/IRoomEngine.as::getRoomObject()
     getRoomObject(roomId: number, objectId: number, category: number): IRoomObject | null;
 

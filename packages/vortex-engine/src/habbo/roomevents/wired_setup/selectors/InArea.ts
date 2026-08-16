@@ -16,9 +16,13 @@ import {DefaultSelectorType} from './DefaultSelectorType';
  * pair driving the room-engine's IRoomAreaSelectionManager to pick a rectangular tile area. The chosen
  * (x, y, width, height) serialize into intParams.
  *
- * It is abstract (no `code` override) and never registered. Area selection is inert until the
- * room-engine's RoomAreaSelectionManager is fully ported (see its TODO(AS3)); when activate() reports
- * unavailable, both buttons stay disabled.
+ * It is abstract (no `code` override) and never registered.
+ *
+ * Area selection **works**: the Select button arms the manager, dragging across the floor records the
+ * rectangle and the callback writes it into intParams. What is still missing is only the *live
+ * outline* while dragging — see the TODO(AS3) on `RoomAreaSelectionManager.setHighlight()`. When
+ * `activate()` reports unavailable (another tool already holds the selector), both buttons stay
+ * disabled, as AS3 intends.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/selectors/InArea.as
  */
