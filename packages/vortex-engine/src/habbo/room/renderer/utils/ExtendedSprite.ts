@@ -24,6 +24,22 @@ export class ExtendedSprite extends Sprite
 {
     private static readonly _alphaHitCache: WeakMap<Texture, IAlphaHitData | null> = new WeakMap();
 
+    /**
+     * How many times a texture has been alpha-tested without a cached map yet.
+     *
+     * The full-bitmap read below is only worth paying for a texture that will be tested again.
+     * An avatar's texture is replaced on every composed animation frame, so it is tested once and
+     * discarded — building a map for it was pure waste, and the self-profiler measured exactly
+     * that: `getImageData <- getAlphaHitData` at 9.3% of a 100-avatar run, never once hitting the
+     * cache. A furniture texture is long-lived and is tested again and again, where the map pays
+     * for itself immediately.
+     *
+     * So the first test of any texture reads the single pixel it actually needs, and only a second
+     * test builds the map. Neither case regresses.
+     */
+    // TS-only: no AS3 counterpart; Flash hit-tested a BitmapData directly, with no readback to pay.
+    private static readonly ALPHA_HIT_PROBES: WeakMap<Texture, number> = new WeakMap();
+
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ExtendedSprite.as::_updateID1
     private _updateID1: number = -1;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/ExtendedSprite.as::_updateID2
@@ -152,6 +168,48 @@ export class ExtendedSprite extends Sprite
     {
         this._offsetY = value;
     }
+
+    /**
+     * Alpha of a single pixel, without building or keeping a map.
+     *
+     * Returns -1 when it cannot be read, which the caller treats as "no data" exactly as a null
+     * map does — a sprite whose alpha cannot be inspected stays clickable, matching the existing
+     * behaviour rather than silently becoming transparent to the mouse.
+     */
+    // TS-only: see `ALPHA_HIT_PROBES`.
+    private static probeAlpha(texture: Texture, x: number, y: number): number
+    {
+        const source = (texture as unknown as {source?: {resource?: unknown}}).source;
+        const resource = (source?.resource as CanvasImageSource) ?? null;
+
+        if(resource === null || typeof OffscreenCanvas === 'undefined') return -1;
+
+        try
+        {
+            const scratch = ExtendedSprite._probeCanvas ?? new OffscreenCanvas(1, 1);
+
+            ExtendedSprite._probeCanvas = scratch;
+
+            const context = scratch.getContext('2d', {willReadFrequently: true});
+
+            if(context === null) return -1;
+
+            context.clearRect(0, 0, 1, 1);
+            // One source pixel into a one-pixel surface: the readback that follows moves four
+            // bytes instead of the whole bitmap.
+            context.drawImage(resource, x, y, 1, 1, 0, 0, 1, 1);
+
+            return context.getImageData(0, 0, 1, 1).data[3];
+        }
+        catch
+        {
+            return -1;
+        }
+    }
+
+    /** The one-pixel surface `probeAlpha()` reads through. */
+    // TS-only: see `ALPHA_HIT_PROBES`.
+    private static _probeCanvas: OffscreenCanvas | null = null;
 
     private static getAlphaHitData(texture: Texture): IAlphaHitData | null 
     {
@@ -285,16 +343,32 @@ export class ExtendedSprite extends Sprite
             return false;
         }
 
+        const frame = (this.texture as unknown as { frame?: { x: number; y: number } }).frame;
+        const x = Math.floor((frame?.x ?? 0) + localX);
+        const y = Math.floor((frame?.y ?? 0) + localY);
+
+        // First test of a texture: read the one pixel asked about. Only from the second test does
+        // building the whole map pay off — see `ALPHA_HIT_PROBES`.
+        if(!ExtendedSprite._alphaHitCache.has(this.texture))
+        {
+            const probes = (ExtendedSprite.ALPHA_HIT_PROBES.get(this.texture) ?? 0) + 1;
+
+            ExtendedSprite.ALPHA_HIT_PROBES.set(this.texture, probes);
+
+            if(probes < 2)
+            {
+                const alpha = ExtendedSprite.probeAlpha(this.texture, x, y);
+
+                return alpha < 0 ? true : alpha > this._alphaTolerance;
+            }
+        }
+
         const data = ExtendedSprite.getAlphaHitData(this.texture);
 
         if(data === null) 
         {
             return true;
         }
-
-        const frame = (this.texture as unknown as { frame?: { x: number; y: number } }).frame;
-        const x = Math.floor((frame?.x ?? 0) + localX);
-        const y = Math.floor((frame?.y ?? 0) + localY);
 
         if(x < 0 || y < 0 || x >= data.width || y >= data.height) 
         {

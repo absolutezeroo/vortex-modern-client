@@ -36,8 +36,16 @@ import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import {RoomShakingEffect} from '@room/utils/RoomShakingEffect';
 import {ReloadWiredRoomStateComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/ReloadWiredRoomStateComposer';
 import type {IRoomObjectSpriteVisualization} from '@room/object/visualization/IRoomObjectSpriteVisualization';
+import type {IRoomObject} from '@room/object/IRoomObject';
+import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IDisposable} from '@core/runtime/IDisposable';
+import {Logger} from '@core/utils/Logger';
+import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {RoomStressTest} from '@habbo/room/utils/RoomStressTest';
+import {PerfMonitorWindow} from '@habbo/perf/PerfMonitorWindow';
+
+const log = Logger.getLogger('habbo.ui.handler.ChatInputWidgetHandler');
 
 export class ChatInputWidgetHandler implements IRoomWidgetHandler
 {
@@ -50,6 +58,10 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
     /** Security level 4 is staff; several commands defer to the server for them. */
     // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::processWidgetMessage()
     private static readonly SECURITY_STAFF: number = 4;
+
+    /** Ceiling on one `:stresstest` count argument. See `parseStressCount()` for why it exists. */
+    // TS-only: no AS3 counterpart. See habbo/room/utils/RoomStressTest.
+    private static readonly STRESS_TEST_MAX: number = 500;
 
     private _disposed: boolean = false;
 
@@ -385,6 +397,37 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
 
                 return true;
 
+            // TS-only: no AS3 counterpart. Synthetic render load for reading the `:showstats`
+            // budget at a controlled avatar count — `:stresstest <seconds> <avatars> [furniture]`.
+            // See habbo/room/utils/RoomStressTest.
+            // TS-only: no AS3 counterpart. Opens the live frame-budget monitor as a real window of
+            // the client's own window system. See habbo/perf/PerfMonitorWindow.
+            case ':perfmon':
+            {
+                const manager = container.windowManager ?? null;
+
+                if(manager !== null)
+                {
+                    PerfMonitorWindow.toggle(
+                        manager,
+                        container.roomEngine ?? null,
+                        session.roomId,
+                        session.ownUserRoomId
+                    );
+                }
+
+                return true;
+            }
+
+            case ':stresstest':
+                this.handleStressTest(
+                    argument,
+                    parts.length > 2 ? parts[2] : '',
+                    parts.length > 3 ? parts[3] : ''
+                );
+
+                return true;
+
             // TODO(AS3): AS3 reads `habboTracking.latencyPingMs` for the extraParam; `IHabboTracking`
             // has no such member in this port, so the round trip always reports -1 — which is AS3's
             // own fallback when tracking is absent, so the event shape is right and only the number
@@ -700,6 +743,116 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
      * so 255 becomes 1. Sprites in `add` blend mode are skipped — AS3 leaves them alone because
      * inverting an additive sprite turns it into a black hole rather than a highlight.
      */
+    /**
+     * `:stresstest <seconds> <avatars> [furniture]` — fills the room with synthetic wandering
+     * avatars so the `:showstats` budget can be read at a known load.
+     *
+     * `<seconds>` decides whether the run records itself. Above zero it samples the frame budget
+     * once a second, stops at the deadline and writes the series to `perf/` via the dev server;
+     * zero means run until told otherwise and write nothing, which is the mode for watching the
+     * overlay while poking at the client by hand. `:stresstest 0 0` therefore still clears.
+     *
+     * Centred on the caller's own avatar rather than the room's origin, so the load lands where the
+     * camera already is: objects the viewport never covers still cost sorting and sprite updates,
+     * but not draw submission, and a figure that silently excludes `pixi` is worse than no figure.
+     */
+    // TS-only: no AS3 counterpart. See habbo/room/utils/RoomStressTest.
+    private handleStressTest(secondsArgument: string, avatarArgument: string, furnitureArgument: string): void
+    {
+        const container = this._container;
+        const roomEngine = container?.roomEngine ?? null;
+        const session = container?.roomSession ?? null;
+
+        if(roomEngine == null || session == null) return;
+
+        const durationSeconds = ChatInputWidgetHandler.parseStressCount(secondsArgument);
+        const avatarCount = ChatInputWidgetHandler.parseStressCount(avatarArgument);
+        const furnitureCount = ChatInputWidgetHandler.parseStressCount(furnitureArgument);
+
+        if(avatarCount <= 0 && furnitureCount <= 0)
+        {
+            RoomStressTest.stop();
+
+            return;
+        }
+
+        // `roomSession.roomId`, not `roomEngine.getActiveRoomId()`: every existing caller that pairs
+        // a room id with `ownUserRoomId` reads it off the session (the wired handlers all do), and
+        // the two are not interchangeable — the engine's active room is set by the camera/rendering
+        // path and can lag or differ from the session the chat box belongs to.
+        const roomId = session.roomId;
+        const own = roomEngine.getRoomObject(
+            roomId, session.ownUserRoomId, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
+        );
+
+        // Falling back rather than refusing, because the centre only decides *where* the load goes.
+        // Any occupied tile keeps it inside the viewport, which is the property that matters — a
+        // load placed off-camera would quietly exclude `pixi` from the measurement.
+        const centre = own ?? ChatInputWidgetHandler.anyRoomObject(roomEngine);
+
+        if(centre === null)
+        {
+            log.warn(
+                ':stresstest — nothing found to centre on.'
+                + ` roomId=${roomId} (engine active=${roomEngine.getActiveRoomId()}),`
+                + ` ownUserRoomId=${session.ownUserRoomId}.`
+                + ' An ownUserRoomId of -1 means setOwnUserId() never ran for this session'
+            );
+
+            return;
+        }
+
+        if(own === null)
+        {
+            log.warn(
+                ':stresstest — own avatar not found'
+                + ` (roomId=${roomId}, ownUserRoomId=${session.ownUserRoomId});`
+                + ' centring on another room object instead'
+            );
+        }
+
+        RoomStressTest.start(
+            roomEngine, roomId, centre.getLocation(), avatarCount, furnitureCount, durationSeconds
+        );
+    }
+
+    /**
+     * Any object standing in the active room, users first, or null in a genuinely empty one.
+     *
+     * Only a position is wanted, so the category it comes from does not matter — a user is
+     * preferred purely because a user is necessarily on a walkable tile.
+     */
+    // TS-only: no AS3 counterpart. See habbo/room/utils/RoomStressTest.
+    private static anyRoomObject(roomEngine: IRoomEngine): IRoomObject | null
+    {
+        const users = roomEngine.getObjectsByCategory(RoomObjectCategoryEnum.OBJECT_CATEGORY_USER);
+
+        if(users.length > 0) return users[0];
+
+        const furniture = roomEngine.getObjectsByCategory(RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE);
+
+        if(furniture.length > 0) return furniture[0];
+
+        return null;
+    }
+
+    /**
+     * Reads one `:stresstest` count argument.
+     *
+     * Capped because this is reachable from the chat box: a mistyped `:stresstest 100000` would
+     * compose a hundred thousand avatar textures before the first frame and hang the tab with no
+     * way back to the input that would undo it.
+     */
+    // TS-only: no AS3 counterpart. See habbo/room/utils/RoomStressTest.
+    private static parseStressCount(argument: string): number
+    {
+        const value = parseInt(argument, 10);
+
+        if(Number.isNaN(value) || value <= 0) return 0;
+
+        return Math.min(value, ChatInputWidgetHandler.STRESS_TEST_MAX);
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::processWidgetMessage()
     private toggleDemonicTriggers(): void
     {

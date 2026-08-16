@@ -36,5 +36,7 @@ tmp/
 # by packages/vortex-client/tools/vite-plugin-engine-bundle.mjs.
 packages/vortex-client/.vortex-dev/
 
-# `:stresstest` frame-budget runs, written by tools/vite-plugin-perf-log.mjs
-perf/
+# `:stresstest` frame-budget runs, written by tools/vite-plugin-perf-log.mjs.
+# Anchored to the repo root: a bare `perf/` also swallows source directories named perf,
+# which is what hid packages/vortex-engine/src/habbo/perf from git.
+/perf/

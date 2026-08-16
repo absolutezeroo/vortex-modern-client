@@ -3,6 +3,7 @@ import {ByteArray} from '../util/ByteArray';
 import {WireFormatter} from '../wireformat/WireFormatter';
 import {MessageRegistry} from '../messages/MessageRegistry';
 import {Logger} from '../../utils/Logger';
+import {FRAME_CHANNEL_NET, FrameTimings} from '../../utils/FrameTimings';
 import type {IConnection} from './IConnection';
 import type {IConnectionCallback} from './IConnectionCallback';
 import type {IEncryption} from '../encryption/IEncryption';
@@ -285,6 +286,17 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
 
         this._receivedBuffer.position = 0;
 
+        // The `net` channel of the `:showstats` frame budget, opened past the empty-buffer return
+        // above so idle calls bill nothing. It covers the whole incoming cost — splitMessages()
+        // (decipher + framing) and every parser and handler reached through
+        // handleReceivedMessage() — because that is what scales with the number of moving units in
+        // the room, and it was the one stage of a frame with no instrument at all.
+        //
+        // This method runs both from the ticker update loop and straight off the socket's
+        // onmessage (see the note further down), so a burst arriving mid-frame is billed to the
+        // frame it lands in, which is where it actually costs.
+        FrameTimings.begin(FRAME_CHANNEL_NET);
+
         try
         {
             const messages = this._wireFormatter.splitMessages(this._receivedBuffer, this);
@@ -321,6 +333,10 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
             this._callback?.connectionError?.(error as Error);
             this.emit('error', error as Error);
             this.close();
+        }
+        finally
+        {
+            FrameTimings.end(FRAME_CHANNEL_NET);
         }
     }
 

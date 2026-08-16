@@ -1,6 +1,7 @@
 import {defineConfig} from 'vite';
 import {resolve} from 'path';
 import {engineBundle} from './tools/vite-plugin-engine-bundle.mjs';
+import {perfLog} from './tools/vite-plugin-perf-log.mjs';
 
 const ENGINE_SRC = resolve(__dirname, '../vortex-engine/src');
 
@@ -24,6 +25,8 @@ export default defineConfig(({command}) => ({
             clientRoot: __dirname,
             engineRoot: resolve(__dirname, '../vortex-engine'),
         }),
+        // serve-only; receives `:stresstest` runs and writes them to <repo>/perf
+        perfLog({repoRoot: resolve(__dirname, '../..')}),
     ],
     resolve: {
         alias: {

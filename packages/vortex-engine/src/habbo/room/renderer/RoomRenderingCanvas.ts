@@ -12,6 +12,15 @@
  * @see sources/win63_version/room/renderer/class_3523.as
  */
 import {Container, type Filter, Graphics, Text, type Renderer, Texture} from 'pixi.js';
+import {
+    FRAME_CHANNEL_NET,
+    FRAME_CHANNEL_PIXI,
+    FRAME_CHANNEL_ROOM_OBJECTS,
+    FRAME_CHANNEL_ROOM_SORT,
+    FRAME_CHANNEL_ROOM_SPRITES,
+    FRAME_CHANNEL_UI,
+    FrameTimings
+} from '@core/utils/FrameTimings';
 import type {IRoomObjectSpriteVisualization} from '@room/object/visualization/IRoomObjectSpriteVisualization';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IRoomRenderingCanvas as IRoomRenderingCanvasInterface} from '@room/renderer/IRoomRenderingCanvas';
@@ -484,32 +493,46 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         // AS3: for each room object → _Str_24532()
         const objectCount = this._roomObjectContainer.getRoomObjectCount();
 
-        for(let i = 0; i < objectCount; i++) 
+        // The three phases below are billed separately to the `:showstats` budget. `room` as a whole
+        // was measured at ~80ms with 40 walking avatars — the entire frame — and the three do very
+        // different work: `obj` runs each object's visualization update (where an avatar may
+        // recompose its canvas and upload a texture), `sort` is a comparison sort over the sprite
+        // list, `spr` writes PixiJS display properties. Splitting them is the difference between
+        // knowing the room loop is slow and knowing which part of it to fix.
+        FrameTimings.begin(FRAME_CHANNEL_ROOM_OBJECTS);
+
+        for(let i = 0; i < objectCount; i++)
         {
             const object = this._roomObjectContainer.getRoomObjectWithIndex(i);
             const objectId = this._roomObjectContainer.getRoomObjectIdWithIndex(i);
 
-            if(object !== null && objectId !== null) 
+            if(object !== null && objectId !== null)
             {
                 spriteIndex += this.renderObject(object, objectId, time, force, spriteIndex);
             }
         }
 
+        FrameTimings.end(FRAME_CHANNEL_ROOM_OBJECTS);
+        FrameTimings.begin(FRAME_CHANNEL_ROOM_SORT);
+
         // AS3: _sortableSpriteList.sortOn("z", DESCENDING | NUMERIC)
         this._sortableSpriteList.sort(RoomRenderingCanvas.compareSortableSprites);
 
         // Trim excess sortable sprites
-        if(spriteIndex < this._sortableSpriteList.length) 
+        if(spriteIndex < this._sortableSpriteList.length)
         {
             this._sortableSpriteList.length = spriteIndex;
         }
 
+        FrameTimings.end(FRAME_CHANNEL_ROOM_SORT);
+        FrameTimings.begin(FRAME_CHANNEL_ROOM_SPRITES);
+
         // Update ExtendedSprites from sorted list
-        for(let i = 0; i < spriteIndex; i++) 
+        for(let i = 0; i < spriteIndex; i++)
         {
             const sortable = this._sortableSpriteList[i];
 
-            if(sortable !== null) 
+            if(sortable !== null)
             {
                 this.updateSprite(i, sortable);
             }
@@ -517,6 +540,8 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
         // Hide/pool unused sprites beyond spriteIndex
         this.cleanSprites(spriteIndex);
+
+        FrameTimings.end(FRAME_CHANNEL_ROOM_SPRITES);
 
         this._renderTimeStamp = time;
         this._lastRenderedWidth = this._width;
@@ -781,6 +806,15 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      *
      * AS3: sources/win63_version/room/renderer/class_3523.as::calculateUpdateInterval()
      */
+    // TS-only: AS3 printed its one figure with a plain `int()` cast, and this port floored it at
+    // "<1.0". That floor is wrong for three channels being compared against each other: a frame
+    // budget of 0.9 / 0.4 / 0.2 ms collapses to three identical "<1.0" and answers nothing. Two
+    // decimals, no floor — the whole point of the split is telling small numbers apart.
+    private static formatMillis(value: number): string
+    {
+        return value.toFixed(2);
+    }
+
     private updateFpsOverlay(): void
     {
         if(!this._fpsOverlay)
@@ -802,9 +836,25 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         }
 
         const fps = this._averageUpdateInterval > 0 ? 1000 / this._averageUpdateInterval : 0;
-        const render = this._averageRenderTime < 1 ? '<1.0' : this._averageRenderTime.toFixed(1);
 
-        let text = `${fps.toFixed(1)} fps\nrender ${render}ms`;
+        // AS3's single `render` figure is this port's `room` line: it only ever covered the inside
+        // of render() above. `pixi` (draw submission) and `ui` (the Canvas2D window composite) are
+        // this port's own stages and were invisible until FrameTimings; without them the overlay
+        // cannot account for the frame, which is how a full-viewport per-frame blit went unnoticed.
+        const room = RoomRenderingCanvas.formatMillis(this._averageRenderTime);
+        const pixi = RoomRenderingCanvas.formatMillis(FrameTimings.average(FRAME_CHANNEL_PIXI));
+        const ui = RoomRenderingCanvas.formatMillis(FrameTimings.average(FRAME_CHANNEL_UI));
+        const net = RoomRenderingCanvas.formatMillis(FrameTimings.average(FRAME_CHANNEL_NET));
+
+        // The room split is indented under its total: at 40 walking avatars `room` was the whole
+        // frame, so the three sub-figures are the ones that decide what to fix.
+        const roomObjects = RoomRenderingCanvas.formatMillis(FrameTimings.average(FRAME_CHANNEL_ROOM_OBJECTS));
+        const roomSort = RoomRenderingCanvas.formatMillis(FrameTimings.average(FRAME_CHANNEL_ROOM_SORT));
+        const roomSprites = RoomRenderingCanvas.formatMillis(FrameTimings.average(FRAME_CHANNEL_ROOM_SPRITES));
+
+        let text = `${fps.toFixed(1)} fps\nroom ${room}ms`
+            + `\n  obj ${roomObjects}ms\n  sort ${roomSort}ms\n  spr ${roomSprites}ms`
+            + `\npixi ${pixi}ms\nui ${ui}ms\nnet ${net}ms`;
 
         // System.totalMemory in AS3; browsers only expose it via the non-standard
         // performance.memory (Chromium). Omit the line where it's unavailable.
