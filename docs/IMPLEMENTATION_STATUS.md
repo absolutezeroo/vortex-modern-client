@@ -119,6 +119,37 @@ Verified headlessly: before the room manager reports ready the preview room sits
 (`parked: ["room_2147418115"]`, `built: []`, no warning); after, `parked: []`, `built:
 [2147418115]`, and `getRoomInstance(2147418115)` returns a real instance.
 
+### `|| 1` ate every infinite animation loop (2026-08-16)
+
+Reported as "the dragons' flame isn't animated". `rare_dragonlamp` is
+`furniture_multistate` / `furniture_animated`; its flame is **layer 5 of animation 1** — four
+frames, `frameRepeat: 2`, `loopCount: 0`. In this format `loopCount: 0` means *loop forever*:
+`AnimationLayerData` stops a layer only on `loopCount > 0 && loopIndex >= loopCount`.
+
+`AnimationData.initialize()` read it as `(layerDef['loopCount'] as number) || 1`. JavaScript treats
+`0` as falsy, so every infinite loop became a single pass. AS3 does not have the bug because it
+tests for the attribute's *presence*, not its truthiness:
+
+```as3
+_loc7_ = 1;
+_loc10_ = _loc5_.@loopCount;
+if(_loc10_.length > 0) { _loc7_ = int(_loc10_); }   // "0" is kept as 0
+```
+
+Measured on the real `rare_dragonlamp.nitro`, walking the frame counter the way
+`updateFramesForAnimation()` does:
+
+- before — `[1,1,2,2,3,3,4,4,4,4,4,4,…]`: one pass, then held on the last frame forever
+- after — `[1,1,2,2,3,3,4,4,1,1,2,2,…]`: loops
+
+This was never dragon-specific: it silenced the loop on **every** furni whose animation declares
+`loopCount="0"`, which is the normal way to write a continuously animated layer.
+
+The same absent-vs-zero mistake was swept for in the visualization parsers and found once more:
+`PlaneMaskManager` read `parseFloat(bmpData.normalMinX) || -1`, where AS3 guards with
+`if(String(@normalMinX) != "")`. A normal coordinate of exactly `0` is a legitimate bound, and
+collapsing it to `±1` widened the mask's range so it matched planes it should not have.
+
 ### Two AS3 type tests the port turned into unchecked casts (2026-08-16)
 
 Same transcription habit behind both: AS3 leans on `as` and on implicit nullability, TypeScript's

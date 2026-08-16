@@ -12,6 +12,20 @@ import {PlaneMask} from './PlaneMask';
 
 export class PlaneMaskManager
 {
+    /**
+     * AS3's `if(String(@attr) != "") value = parseFloat(@attr)` — the default stands in only for a
+     * missing attribute, never for a present `0`.
+     */
+    // TS-only: AS3 inlines this test four times; extracted so the four cannot drift apart.
+    private static readNormal(raw: unknown, fallback: number): number
+    {
+        if(raw === null || raw === undefined || raw === '') return fallback;
+
+        const value = parseFloat(raw as string);
+
+        return isNaN(value) ? fallback : value;
+    }
+
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::_assetCollection
     private _assetCollection: IGraphicAssetCollection | null = null;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::_masks
@@ -146,10 +160,16 @@ export class PlaneMaskManager
                                     continue;
                                 }
 
-                                const normalMinX = parseFloat(bmpData.normalMinX) || -1;
-                                const normalMaxX = parseFloat(bmpData.normalMaxX) || 1;
-                                const normalMinY = parseFloat(bmpData.normalMinY) || -1;
-                                const normalMaxY = parseFloat(bmpData.normalMaxY) || 1;
+                                // Same absent-vs-zero distinction as AnimationData's loopCount: AS3
+                                // falls back to MIN/MAX_NORMAL_COORDINATE_VALUE (-1/1) only when
+                                // the attribute is absent (`if(String(@normalMinX) != "")`), and a
+                                // normal coordinate of exactly 0 is a legitimate bound. `|| -1`
+                                // silently widened the range to the whole hemisphere, so the mask
+                                // matched planes it should not have.
+                                const normalMinX = PlaneMaskManager.readNormal(bmpData.normalMinX, -1);
+                                const normalMaxX = PlaneMaskManager.readNormal(bmpData.normalMaxX, 1);
+                                const normalMinY = PlaneMaskManager.readNormal(bmpData.normalMinY, -1);
+                                const normalMaxY = PlaneMaskManager.readNormal(bmpData.normalMaxY, 1);
 
                                 const gAsset = collection.getAsset(name);
 

@@ -122,8 +122,18 @@ export class AnimationData
             }
 
             const layerDef = layers[layerIdStr];
-            const loopCount = (layerDef['loopCount'] as number) || 1;
-            const frameRepeat = (layerDef['frameRepeat'] as number) || 1;
+
+            // `?? 1`, not `|| 1`: AS3 defaults these to 1 only when the attribute is *absent*
+            // (`if(_loc10_.length > 0) _loc7_ = int(_loc10_)`), and `loopCount="0"` is a real,
+            // meaningful value — `AnimationLayerData` reads `<= 0` as "loop forever" (its line 92
+            // in the PRODUCTION source). `||` treats 0 as falsy and turned every infinite loop into
+            // a single pass, which is why an animated furni played its sequence once and then held
+            // the last frame: the dragon lamp's flame is layer 5 of animation 1, four frames with
+            // `loopCount: 0`, and it looked frozen rather than lit.
+            const rawLoopCount = layerDef['loopCount'];
+            const rawFrameRepeat = layerDef['frameRepeat'];
+            const loopCount = typeof rawLoopCount === 'number' ? rawLoopCount : 1;
+            const frameRepeat = typeof rawFrameRepeat === 'number' ? rawFrameRepeat : 1;
             const isRandom = ((layerDef['random'] as number) || 0) !== 0;
 
             if(!this.addLayer(layerId, loopCount, frameRepeat, isRandom, layerDef))
@@ -194,7 +204,11 @@ export class AnimationData
             for(const seqIdStr in frameSequences)
             {
                 const seqDef = frameSequences[seqIdStr];
-                const seqLoopCount = (seqDef['loopCount'] as number) || 1;
+                // Same absent-vs-zero distinction as the layer above. Harmless in practice here —
+                // `AnimationFrameSequenceData` clamps anything below 1 up to 1, as AS3 does — but
+                // written the same way so the two cannot drift apart.
+                const rawSeqLoopCount = seqDef['loopCount'];
+                const seqLoopCount = typeof rawSeqLoopCount === 'number' ? rawSeqLoopCount : 1;
                 const seqRandom = ((seqDef['random'] as number) || 0) !== 0;
 
                 const sequence: AnimationFrameSequenceData = layerData.addFrameSequence(seqLoopCount, seqRandom);
