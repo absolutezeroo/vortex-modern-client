@@ -743,7 +743,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 
             if(this._cache)
             {
-                const container = this._cache.getImageContainer(partId, this._frameCounter);
+                const container = this._cache.getImageContainer(partId, this._frameCounter, false, true);
 
                 if(container)
                 {
@@ -1021,7 +1021,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 
             if(this._cache)
             {
-                const container = this._cache.getImageContainer(partId, this._frameCounter);
+                const container = this._cache.getImageContainer(partId, this._frameCounter, false, true);
 
                 if(container && container.image)
                 {

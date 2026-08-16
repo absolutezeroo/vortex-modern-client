@@ -241,7 +241,12 @@ export class AvatarImageCache
 	 * @returns The body part container, or null if rendering fails
 	 */
     // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::getImageContainer()
-    public getImageContainer(bodyPartId: string, frameIndex: number, forceUpdate: boolean = false): AvatarImageBodyPartContainer | null
+    public getImageContainer(
+        bodyPartId: string,
+        frameIndex: number,
+        forceUpdate: boolean = false,
+        wantImage: boolean = false
+    ): AvatarImageBodyPartContainer | null
     {
         // Containers built under the other rendering mode hold the half this one does not read; see
         // `AvatarRenderMode.generation`. Checking here rather than on a reset call means an avatar
@@ -414,14 +419,21 @@ export class AvatarImageCache
         // getting slower.
         FrameTimings.count(AVATAR_COUNTER_LOOKUP);
 
-        if(!container || forceUpdate)
+        // A container describing parts cannot answer a caller that needs a composed texture, and it
+        // has no way to say so — the caller reads `image`, finds null and silently draws nothing.
+        // That is how every avatar outside the room went blank when the sprite path became the
+        // default: the toolbar, the profile, the hotel view and the club all compose, and the flag is
+        // global. Treat the wrong kind as a miss and build the one that was asked for.
+        const wrongKind = wantImage && container !== null && container.image === null && container.parts !== null;
+
+        if(!container || forceUpdate || wrongKind)
         {
             FrameTimings.count(AVATAR_COUNTER_COMPOSE);
             FrameTimings.begin(FRAME_CHANNEL_AVATAR_COMPOSE);
 
             const partList = directionCache.getPartList();
 
-            container = this.renderBodyPart(direction, partList, adjustedFrameIndex, renderAction, forceUpdate);
+            container = this.renderBodyPart(direction, partList, adjustedFrameIndex, renderAction, forceUpdate, wantImage);
 
             FrameTimings.end(FRAME_CHANNEL_AVATAR_COMPOSE);
 
@@ -436,7 +448,12 @@ export class AvatarImageCache
                 return null;
             }
 
-            if(container.isCacheable)
+            // `!wrongKind` so a one-off image request does not evict the parts the room is using.
+            // Both kinds cannot be cached at once, and the room asks every frame while a profile or a
+            // toolbar icon asks once, so the rare caller pays its own composition rather than pushing
+            // that avatar onto the slow path for good. A consumer that only ever composes never takes
+            // this branch: nothing cached parts for it in the first place.
+            if(container.isCacheable && !wrongKind)
             {
                 FrameTimings.count(AVATAR_COUNTER_CACHED);
                 directionCache.updateImageContainer(container, adjustedFrameIndex);
@@ -561,7 +578,8 @@ export class AvatarImageCache
         partList: AvatarImagePartContainer[],
         frameIndex: number,
         action: IActiveActionData,
-        _forceUpdate: boolean = false
+        _forceUpdate: boolean = false,
+        wantImage: boolean = false
     ): AvatarImageBodyPartContainer | null
     {
         if(!partList || partList.length === 0) return null;
@@ -764,7 +782,9 @@ export class AvatarImageCache
 
         if(this._unionImages.length === 0) return null;
 
-        if(AvatarRenderMode.spriteParts)
+        // `!wantImage`: the mode says how the *room* draws, and the caller says what it can use. A
+        // consumer that needs a texture gets one whatever the mode is.
+        if(AvatarRenderMode.spriteParts && !wantImage)
         {
             return this.describeBodyPart(
                 isFlippedDirection,
