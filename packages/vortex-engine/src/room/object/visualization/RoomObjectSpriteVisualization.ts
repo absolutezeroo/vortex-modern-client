@@ -246,7 +246,8 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
     {
         try
         {
-            const source = Vortex.instance.application.renderer.extract.canvas(texture) as HTMLCanvasElement;
+            const source = this.textureFrameToCanvas(texture)
+                ?? Vortex.instance.application.renderer.extract.canvas(texture) as HTMLCanvasElement;
             const width = source.width;
             const height = source.height;
 
@@ -294,6 +295,62 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
         {
             return null;
         }
+    }
+
+    /**
+     * Copies a texture's frame out of its CPU-side source bitmap, with no GPU involvement.
+     *
+     * `extractDarknessToAlpha()` used to reach for `renderer.extract.canvas(texture)` here. That is
+     * wrong for a canvas-backed texture - the ones `GraphicAssetCollection.colorizePalette()` hands
+     * back as `Texture.from(canvas)` - because PixiJS leaves such a render target's framebuffer at
+     * `null` and reads the screen instead of the texture (see the note in `Vortex.init()`; measured
+     * to return the background colour in both `multiView` modes). It is also a synchronous GPU
+     * readback on a path that runs once per furniture icon.
+     *
+     * AS3 has no equivalent step at all: `extractDarknessToAlpha(param1:BitmapData)` reads its
+     * source with `param1.getVector(param1.rect)`, a plain CPU read. This restores that.
+     *
+     * Returns null when the frame is not provably a straight sub-rectangle of the resource - no CPU
+     * resource, or a rotated or trimmed frame - and the caller falls back to `extract.canvas()`, so
+     * correctness never depends on this path succeeding.
+     */
+    // TS-only: AS3 read the source BitmapData directly, so it had no conversion step of its own.
+    private textureFrameToCanvas(texture: Texture): HTMLCanvasElement | null
+    {
+        const resource = (texture.source as unknown as { resource?: unknown } | null)?.resource;
+
+        if(!resource) return null;
+
+        const drawable = (typeof ImageBitmap !== 'undefined' && resource instanceof ImageBitmap)
+            || (typeof OffscreenCanvas !== 'undefined' && resource instanceof OffscreenCanvas)
+            || resource instanceof HTMLCanvasElement
+            || resource instanceof HTMLImageElement;
+
+        if(!drawable) return null;
+        if((texture.rotate ?? 0) !== 0) return null;
+        if(texture.trim) return null;
+
+        const frame = texture.frame;
+
+        if(frame.width < 1 || frame.height < 1) return null;
+
+        const canvas = document.createElement('canvas');
+
+        canvas.width = Math.ceil(frame.width);
+        canvas.height = Math.ceil(frame.height);
+
+        const context = canvas.getContext('2d');
+
+        if(context === null) return null;
+
+        context.imageSmoothingEnabled = false;
+        context.drawImage(
+            resource as CanvasImageSource,
+            frame.x, frame.y, frame.width, frame.height,
+            0, 0, canvas.width, canvas.height
+        );
+
+        return canvas;
     }
 
     // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::dispose()

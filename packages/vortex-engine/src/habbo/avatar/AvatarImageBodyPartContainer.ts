@@ -36,7 +36,7 @@ export class AvatarImageBodyPartContainer
     {
         if(this._image && this._image !== value)
         {
-            this._image.destroy();
+            this._image.destroy(true);
         }
 
         this._image = value;
@@ -106,12 +106,26 @@ export class AvatarImageBodyPartContainer
     /**
 	 * Disposes the texture and nullifies references.
 	 */
+    /**
+     * `destroy(true)`, not `destroy()`.
+     *
+     * AS3 held a `BitmapData` here and called `dispose()` on it, which frees the pixels. The PixiJS
+     * equivalent of that is `Texture.destroy(destroySource)` — and `destroySource` defaults to
+     * **false**, so the bare call frees the texture wrapper and leaves the `CanvasSource`, its
+     * OffscreenCanvas and the GPU texture behind. Every composed body part leaked one.
+     *
+     * That leak is invisible to the obvious instrument: it lives outside the JS heap, so a stress
+     * run showed `heapMb` flat at ~290MB while each composition kept getting more expensive and the
+     * cost carried over into the next run. Safe to destroy the source here because each of these
+     * textures is built by `createUnionImage()` over its own private canvas, one to one, and is
+     * only ever read synchronously as a `drawImage` source — nothing else holds it.
+     */
     // AS3: .../src/com/sulake/habbo/avatar/AvatarImageBodyPartContainer.as::dispose()
     public dispose(): void
     {
         if(this._image)
         {
-            this._image.destroy();
+            this._image.destroy(true);
         }
 
         this._image = null;

@@ -6201,7 +6201,13 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(!resource) return null;
 
+        // OffscreenCanvas belongs in this list: `Texture.from({resource: offscreenCanvas})` is how
+        // AvatarImageCache and GraphicAssetCollection.colorizePalette() build their textures, and
+        // it is a CanvasImageSource like the other three. Leaving it out sent exactly those
+        // textures down the extract.canvas() fallback, which cannot read a canvas-backed texture at
+        // all - it returns the screen (see the note in Vortex.init()).
         const drawable = (typeof ImageBitmap !== 'undefined' && resource instanceof ImageBitmap)
+            || (typeof OffscreenCanvas !== 'undefined' && resource instanceof OffscreenCanvas)
             || resource instanceof HTMLCanvasElement
             || resource instanceof HTMLImageElement;
 

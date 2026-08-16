@@ -95,6 +95,7 @@ import {ItemRemoveMessageEvent} from '../communication/messages/incoming/room/en
 import {UsersMessageEvent} from '../communication/messages/incoming/room/engine/UsersMessageEvent';
 import {UserUpdateMessageEvent} from '../communication/messages/incoming/room/engine/UserUpdateMessageEvent';
 import {UserRemoveMessageEvent} from '../communication/messages/incoming/room/engine/UserRemoveMessageEvent';
+import {UserObjectMessageEvent} from '../communication/messages/incoming/handshake/UserObjectMessageEvent';
 import {
     SlideObjectBundleMessageEvent
 } from '../communication/messages/incoming/room/engine/SlideObjectBundleMessageEvent';
@@ -140,6 +141,7 @@ import type {ItemRemoveMessageParser} from '../communication/messages/parser/roo
 import type {UsersMessageParser} from '../communication/messages/parser/room/engine/UsersMessageParser';
 import type {UserUpdateMessageParser} from '../communication/messages/parser/room/engine/UserUpdateMessageParser';
 import type {UserRemoveMessageParser} from '../communication/messages/parser/room/engine/UserRemoveMessageParser';
+import type {UserObjectMessageParser} from '../communication/messages/parser/handshake/UserObjectMessageParser';
 import type {
     SlideObjectBundleMessageParser
 } from '../communication/messages/parser/room/engine/SlideObjectBundleMessageParser';
@@ -294,6 +296,13 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new ItemAddMessageEvent(this.onItemAdd.bind(this)));
             connection.addMessageEvent(new ItemUpdateMessageEvent(this.onItemUpdate.bind(this)));
             connection.addMessageEvent(new ItemRemoveMessageEvent(this.onItemRemove.bind(this)));
+            // AS3 registers this alongside the room events (_SafeCls_1984.as:241) and it is the only
+            // thing that ever assigns `_ownUserId`. The port declared the field and read it in
+            // onUsers(), but never ported the listener that fills it — so `data.webID === -1` was
+            // false for every user, `setOwnUserId()` never ran, and `RoomSession.ownUserRoomId`
+            // stayed -1 for the whole session. Anything keyed on "which of these avatars is me"
+            // silently had no answer.
+            connection.addMessageEvent(new UserObjectMessageEvent(this.onOwnUserEvent.bind(this)));
             connection.addMessageEvent(new UsersMessageEvent(this.onUsers.bind(this)));
             connection.addMessageEvent(new UserUpdateMessageEvent(this.onUserUpdate.bind(this)));
             connection.addMessageEvent(new UserRemoveMessageEvent(this.onUserRemove.bind(this)));
@@ -2156,8 +2165,26 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
+    /**
+     * Records which account id is the local player, so `onUsers()` can recognise its own avatar
+     * among the room's occupants and hand its room index to `setOwnUserId()`.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onOwnUserEvent()
+    onOwnUserEvent(event: IMessageEvent): void
+    {
+        const ownUserEvent = event as UserObjectMessageEvent;
+
+        if(ownUserEvent === null) return;
+
+        const parser = ownUserEvent.getParser() as UserObjectMessageParser;
+
+        if(parser === null) return;
+
+        this._ownUserId = parser.id;
+    }
+
     // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onUserRemove()
-    onUserRemove(event: IMessageEvent): void 
+    onUserRemove(event: IMessageEvent): void
     {
         const removeEvent = event as UserRemoveMessageEvent;
 

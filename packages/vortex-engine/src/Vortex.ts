@@ -4,6 +4,7 @@ import {Core} from '@core/Core';
 import {VortexMain} from './VortexMain';
 import {IID_CoreCommunicationManager} from '@iid/IIDCoreCommunicationManager';
 import {Logger} from '@core/utils/Logger';
+import {FRAME_CHANNEL_PIXI, FrameTimings} from '@core/utils/FrameTimings';
 import type {CoreComponentContext} from '@core/runtime/CoreComponentContext';
 import type {IElementDescriptionData} from '@habbo/window/IElementDescriptor';
 import type {ISkinData} from '@core/window/graphics/renderer/BitmapSkinParser';
@@ -609,6 +610,8 @@ export class Vortex implements IVortex
                 // .getVector() is a plain CPU read with no renderer involved.
             });
 
+            this.instrumentRendererTimings(this._application);
+
             // Append canvas to target
             const target = config?.canvas ?? document.body;
             target.appendChild(this._application.canvas);
@@ -641,6 +644,29 @@ export class Vortex implements IVortex
 
             throw error;
         }
+    }
+
+    /**
+     * Brackets every PixiJS draw submission so the `:showstats` overlay can report it.
+     *
+     * `runners.prerender` / `runners.postrender` wrap the whole of `AbstractRenderer.render()`, and
+     * they fire for render-to-texture passes too (the room lighting layer runs three per frame), so
+     * a frame's `pixi` figure is the sum of every pass in it. FrameTimings.begin()/end() nest, which
+     * keeps a pass triggered from inside another from being counted twice.
+     *
+     * Left on unconditionally: it costs two `performance.now()` calls per render, and gating it on
+     * the overlay would mean toggling `:showstats` shows a number that needs ~50 frames to mean
+     * anything.
+     */
+    // TS-only: no AS3 counterpart; Flash had no separate draw-submission stage to measure.
+    private instrumentRendererTimings(application: Application): void
+    {
+        const {renderer} = application;
+
+        if(!renderer?.runners?.prerender || !renderer.runners.postrender) return;
+
+        renderer.runners.prerender.add({prerender: () => FrameTimings.begin(FRAME_CHANNEL_PIXI)});
+        renderer.runners.postrender.add({postrender: () => FrameTimings.end(FRAME_CHANNEL_PIXI)});
     }
 
     /**
