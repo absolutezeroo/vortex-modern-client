@@ -227,9 +227,11 @@ export class RoomUserData
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2102/_SafeCls_2262.as::badgesRank
-    // Defaults to -1 and is never read from the wire by this DTO's own parse() in AS3
-    // either - the initial room-users list simply doesn't carry it (only the
-    // per-user UserChangeMessageEventParser does).
+    // The note that used to sit here — "the initial room-users list simply doesn't carry it" — was
+    // read off the 2016 PRODUCTION build. The 2026 client reads it as the last field of every
+    // type-1 avatar (`_SafePkg_2184/_SafeCls_2309.as::parse()`), and the emulator writes it. Taking
+    // that note at face value is what left four bytes per user unread and desynchronised the rest
+    // of the packet.
     private _badgesRank: number = -1;
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2102/_SafeCls_2262.as::get badgesRank()

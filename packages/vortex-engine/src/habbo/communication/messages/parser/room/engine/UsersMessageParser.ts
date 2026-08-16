@@ -11,7 +11,7 @@ import {RoomUserData} from '@habbo/communication/messages/incoming/room/engine/R
 
 export class UsersMessageParser implements IMessageParser
 {
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/UsersMessageParser.as::_users
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2309.as::_users
     private _users: RoomUserData[] = [];
 
     get userCount(): number
@@ -36,14 +36,14 @@ export class UsersMessageParser implements IMessageParser
         return data;
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/UsersMessageParser.as::flush()
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2309.as::flush()
     flush(): boolean
     {
         this._users = [];
         return true;
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/UsersMessageParser.as::parse()
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2309.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         const count = wrapper.readInt();
@@ -85,6 +85,15 @@ export class UsersMessageParser implements IMessageParser
 
                     userData.achievementScore = wrapper.readInt();
                     userData.isModerator = wrapper.readBoolean();
+
+                    // The last field of a type-1 avatar, and the reason this parser used to die on
+                    // "End of buffer". It does not exist in the 2016 PRODUCTION build this file was
+                    // transcribed from, so it was never read — leaving four bytes per user in the
+                    // buffer, which the next iteration consumed as `webId` and pushed every
+                    // subsequent field one slot out until a readString() ran off the end. The
+                    // primary tree reads it (`_SafeCls_2309.as::parse()`) and the emulator writes it
+                    // (`RoomAvatarSerializer.SerializePlayerAvatar`, `.WriteInteger(BadgesRank)`).
+                    userData.badgesRank = wrapper.readInt();
                     break;
                 }
 
@@ -140,21 +149,64 @@ export class UsersMessageParser implements IMessageParser
         return true;
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/UsersMessageParser.as::resolveSex()
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2309.as::resolveSex()
     private resolveSex(value: string): string
     {
         return value[0]?.toLowerCase() === 'f' ? 'F' : 'M';
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/room/engine/UsersMessageParser.as::convertSwimFigure()
+    /**
+     * The swimsuit colours the server names by hex, indexed into a swimsuit part id.
+     *
+     * Order is load-bearing — the id is the index — so this is the array verbatim, in order.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2309.as::convertSwimFigure()
+    private static readonly SWIM_COLOURS: readonly string[] = [
+        '238,238,238', '250,56,49', '253,146,160', '42,199,210', '53,51,44', '239,255,146',
+        '198,255,152', '255,146,90', '157,89,126', '182,243,255', '109,255,51', '51,120,201',
+        '255,182,49', '223,161,233', '249,251,50', '202,175,143', '197,198,197', '71,98,61',
+        '138,131,97', '255,140,51', '84,198,39', '30,108,153', '152,79,136', '119,200,255',
+        '255,192,142', '60,75,135', '124,44,71', '215,255,227', '143,63,28', '255,99,147',
+        '31,155,121', '253,255,51'
+    ];
+
+    /**
+     * Appends the swimsuit parts to a figure.
+     *
+     * This used to be the 2016 PRODUCTION version, which hardcodes the swimsuit colour to 10001 and
+     * always emits a swim type. The 2026 client derives both from the wire value — which is
+     * `<something>=<name>/<r,g,b>` — and, crucially, **leaves both at 1** when the string carries no
+     * `=`, producing `.ss-1-1`. Same root cause as the missing `badgesRank` above: the file was
+     * transcribed from a build ten years older than the one this port targets.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2309.as::convertSwimFigure()
     private convertSwimFigure(swimFigure: string, baseFigure: string, sex: string): string
     {
-        // Find skin color from 'hd' part (e.g., "hd-180-1" → skinColor = 1)
-        const hdPart = baseFigure.split('.').find(part => part.startsWith('hd-'));
-        const skinColor = hdPart?.split('-')[2] ?? '1';
+        let skinColour = 1;
 
-        const swimType = sex === 'F' ? 10010 : 10011;
+        for(const part of baseFigure.split('.'))
+        {
+            const fields = part.split('-');
 
-        return `${baseFigure}.bds-10001-${skinColor}.ss-${swimType}-10001`;
+            if(fields.length > 2 && fields[0] === 'hd')
+            {
+                skinColour = parseInt(fields[2]);
+            }
+        }
+
+        let swimType = 1;
+        let swimColour = 1;
+        const parts = swimFigure.split('=');
+
+        if(parts.length > 1)
+        {
+            // AS3 also pulls out `_loc14_` (the half before the slash) here and never uses it.
+            const colourName = parts[1].split('/')[1];
+
+            swimType = sex === 'F' ? 10010 : 10011;
+            swimColour = 10000 + UsersMessageParser.SWIM_COLOURS.indexOf(colourName) + 1;
+        }
+
+        return `${baseFigure}.bds-10001-${skinColour}.ss-${swimType}-${swimColour}`;
     }
 }

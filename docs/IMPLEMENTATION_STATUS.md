@@ -119,6 +119,45 @@ Verified headlessly: before the room manager reports ready the preview room sits
 (`parked: ["room_2147418115"]`, `built: []`, no warning); after, `parked: []`, `built:
 [2147418115]`, and `getRoomInstance(2147418115)` returns a real instance.
 
+### The room-users packet was parsed against a 2016 build (2026-08-16)
+
+`Parse error for 996: End of buffer` in `UsersMessageParser`, at a `readString()` inside the
+per-user loop. The parser was transcribed from `PRODUCTION-201601012205-226667486`, and the 2026
+client reads **one more field** at the end of every type-1 (player) avatar:
+
+```as3
+_loc16_.achievementScore = param1.readInteger();
+_loc16_.isModerator      = param1.readBoolean();
+_loc16_.badgesRank       = param1.readInteger();   // absent from the 2016 build
+```
+
+Both sides agree that field exists: the primary tree reads it
+(`src/unknowns/_SafePkg_2184/_SafeCls_2309.as::parse()` — obfuscated, found by its `_users` field
+and `IMessageParser`), and the emulator writes it
+(`RoomAvatarSerializer.SerializePlayerAvatar`, `.WriteInteger(snapshot.BadgesRank)`). Not reading it
+left four bytes per player in the buffer; the next iteration consumed them as `webId` and every
+field after that was one slot out, until a length-prefixed string read a garbage length and ran off
+the end. With one avatar it merely left junk; it corrupts from the second onward, which is why it
+surfaced during 100-avatar testing.
+
+`RoomUserData._badgesRank` already existed, carrying a comment asserting that "the initial
+room-users list simply doesn't carry it" — read off the same 2016 build. Taking that note at face
+value is what kept the field unwired.
+
+Verified by bundling the real parser with esbuild and feeding it packets encoded exactly as
+`RoomAvatarSerializer` writes them:
+
+- without the read — `RangeError: End of buffer`, 0 users, **139 bytes** left unconsumed
+- with it — 3 players parsed, **0 bytes** left, every field on the right value
+- a mixed player + pet + bot packet also lands exactly, so the type-2 and type-4 branches match the
+  emulator too
+
+Fixed in the same pass, same root cause: `convertSwimFigure()` was also the 2016 version. It
+hardcodes the swimsuit colour to `10001` and always emits a swim type, where the 2026 client derives
+both from the wire value (`…=<name>/<r,g,b>`) against a 32-entry colour table — and leaves both at
+`1` when the string carries no `=`. The file's five AS3 traces were repointed from PRODUCTION to the
+primary tree.
+
 ### `|| 1` ate every infinite animation loop (2026-08-16)
 
 Reported as "the dragons' flame isn't animated". `rare_dragonlamp` is
