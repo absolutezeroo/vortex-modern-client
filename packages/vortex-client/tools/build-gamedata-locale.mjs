@@ -51,12 +51,40 @@
 // Anything a rule does not name is KEPT. The point is to never lose a UI string to a
 // heuristic - the dropped keys are written to a report so each rule stays auditable.
 //
+// ## Overrides
+//
+// `--overrides=<file>[,<file>]` layers extra key=value files on top of the texts before pruning.
+// Later files win, and an override always wins over the raw texts file. Two things need it:
+//
+//   - Keys the client only has as an *embedded* asset. The Wired Creator Tools' 198 `wired*`
+//     strings live in `HabboLocalizationCom`'s `default_localizations` embed, not in the texts
+//     file, so they are English-only and unreachable from the server. Routing them through an
+//     override makes them editable without touching the gitignored asset bundle
+//     (`locale-overrides/wired.en.txt`).
+//   - Hotel-specific rewording of keys that DO exist upstream, kept in the repo instead of as an
+//     untracked edit to `sources/external_flash_texts.txt` (which is gitignored).
+//
+// Override keys are force-kept: a prune rule can never drop one, since declaring it is proof
+// enough that it is wanted.
+//
+// ## Merging into an already-deployed gamedata file
+//
+// `--merge-into=<file.json>` applies the `--overrides` to an existing JSON *in place* and writes
+// nothing else. This exists because a deployed gamedata file stops being reproducible from
+// `sources/`: the served copy is pruned and hand-edited (host URLs, `imager.prefix`, reworded
+// strings), so a full regenerate would silently drop those. Measured on the live host, a
+// regenerate would have lost 1 variable outright and reverted 9 hand-edited values. Merge when
+// the target is deployed; regenerate only when rebuilding a gamedata tree from scratch.
+//
 // Usage:
 //   node build-gamedata-locale.mjs                     # convert only, dry run
 //   node build-gamedata-locale.mjs --write             # convert only, write JSON
 //   node build-gamedata-locale.mjs --prune --write     # convert + prune
 //   node build-gamedata-locale.mjs --prune --rules=landing,promos
 //   node build-gamedata-locale.mjs --prune --badges=badges.txt --quests=quests.txt
+//   node build-gamedata-locale.mjs --overrides=locale-overrides/wired.en.txt --write
+//   node build-gamedata-locale.mjs --overrides=locale-overrides/wired.en.txt \
+//        --merge-into=C:/Laragon/www/vortex-assets/gamedata/external_flash_texts.json --write
 //   node build-gamedata-locale.mjs --pretty            # indented output (bigger)
 import fs from 'node:fs';
 import path from 'node:path';
@@ -81,6 +109,8 @@ function parseArgs()
         rules: ALL_RULES,
         badgesFile: null,
         questsFile: null,
+        overrideFiles: [],
+        mergeInto: null,
     };
 
     for(const arg of process.argv.slice(2))
@@ -94,6 +124,11 @@ function parseArgs()
         else if(arg.startsWith('--quests=')) args.questsFile = path.resolve(arg.slice(9));
         else if(arg.startsWith('--texts=')) args.textsIn = path.resolve(arg.slice(8));
         else if(arg.startsWith('--vars=')) args.varsIn = path.resolve(arg.slice(7));
+        else if(arg.startsWith('--overrides='))
+        {
+            args.overrideFiles.push(...arg.slice(12).split(',').filter(Boolean).map((f) => path.resolve(f)));
+        }
+        else if(arg.startsWith('--merge-into=')) args.mergeInto = path.resolve(arg.slice(13));
         else if(arg.startsWith('--out='))
         {
             args.outDir = path.resolve(arg.slice(6));
@@ -112,6 +147,32 @@ function parseArgs()
     {
         console.error(`Unknown rule(s): ${unknown.join(', ')} (known: ${ALL_RULES.join(', ')})`);
         process.exit(1);
+    }
+
+    // A typo'd override path would otherwise be a silent no-op - the run succeeds and the keys
+    // just are not there, which is exactly the failure mode this file's overrides exist to fix.
+    for(const file of args.overrideFiles)
+    {
+        if(!fs.existsSync(file))
+        {
+            console.error(`Override file not found: ${file}`);
+            process.exit(1);
+        }
+    }
+
+    if(args.mergeInto)
+    {
+        if(!args.overrideFiles.length)
+        {
+            console.error('--merge-into needs at least one --overrides=<file>: it applies those and nothing else.');
+            process.exit(1);
+        }
+
+        if(!fs.existsSync(args.mergeInto))
+        {
+            console.error(`Merge target not found: ${args.mergeInto}`);
+            process.exit(1);
+        }
     }
 
     return args;
@@ -421,15 +482,94 @@ function formatKb(bytes)
     return `${(bytes / 1024).toFixed(0)} KB`;
 }
 
+// Applies the override files to an existing gamedata JSON and leaves every other key untouched.
+// A backup is written next to the target the first time, so a bad merge is always undoable.
+function mergeIntoJson(args)
+{
+    const before = JSON.parse(fs.readFileSync(args.mergeInto, 'utf8'));
+    const merged = {...before};
+    const added = [];
+    const replaced = [];
+
+    for(const file of args.overrideFiles)
+    {
+        const override = parseKeyValue(file, {unescapeNewlines: true});
+
+        for(const [key, value] of override.map)
+        {
+            if(!(key in merged)) added.push(key);
+            else if(merged[key] !== value) replaced.push(key);
+
+            merged[key] = value;
+        }
+
+        console.log(`override ${path.relative(repoRoot, file)}: ${override.map.size} keys`);
+    }
+
+    console.log(`\nmerge target: ${args.mergeInto}`);
+    console.log(`  ${Object.keys(before).length} keys before, ${Object.keys(merged).length} after`);
+    console.log(`  ${added.length} added, ${replaced.length} replaced, ${Object.keys(before).length - replaced.length} untouched`);
+
+    if(replaced.length) console.log(`  replaced: ${replaced.slice(0, 10).join(', ')}${replaced.length > 10 ? ', ...' : ''}`);
+
+    if(!args.write)
+    {
+        console.log('\nDry run - re-run with --write.');
+
+        return;
+    }
+
+    const backup = `${args.mergeInto}.bak`;
+
+    if(!fs.existsSync(backup))
+    {
+        fs.copyFileSync(args.mergeInto, backup);
+        console.log(`\nWrote backup ${backup}`);
+    }
+
+    fs.writeFileSync(args.mergeInto, JSON.stringify(merged, null, args.pretty ? 2 : 0), 'utf8');
+
+    console.log(`Wrote ${args.mergeInto}`);
+}
+
 function main()
 {
     const args = parseArgs();
+
+    if(args.mergeInto)
+    {
+        mergeIntoJson(args);
+
+        return;
+    }
 
     const texts = parseKeyValue(args.textsIn, {unescapeNewlines: true});
     const vars = parseKeyValue(args.varsIn, {unescapeNewlines: false});
 
     console.log(`texts: ${texts.map.size} keys (${formatKb(byteSize(texts.map))}), ${texts.dropped} empty values skipped, ${texts.duplicates} duplicate keys`);
     console.log(`vars : ${vars.map.size} keys (${formatKb(byteSize(vars.map))}), ${vars.dropped} empty values skipped, ${vars.duplicates} duplicate keys`);
+
+    // Layered on top of the texts, in the order given: later files win. Applied before pruning so
+    // that an override's `${...}` references get pulled in by the interpolation closure too.
+    const overridden = new Set();
+
+    for(const file of args.overrideFiles)
+    {
+        const override = parseKeyValue(file, {unescapeNewlines: true});
+        let added = 0;
+        let replaced = 0;
+
+        for(const [key, value] of override.map)
+        {
+            if(texts.map.has(key)) replaced++;
+            else added++;
+
+            texts.map.set(key, value);
+            overridden.add(key);
+        }
+
+        console.log(`override ${path.relative(repoRoot, file)}: ${override.map.size} keys (${added} new, ${replaced} replacing an upstream value)`);
+    }
 
     let keptTexts = texts.map;
     let keptVars = vars.map;
@@ -449,7 +589,9 @@ function main()
         {
             for(const key of map.keys())
             {
-                const reason = classify(key);
+                // Declaring a key in an override file is proof it is wanted, so it outranks every
+                // drop rule - otherwise a hotel-specific `landing.view.*` reword would be pruned.
+                const reason = overridden.has(key) ? null : classify(key);
 
                 if(reason === null) keep.add(key);
                 else
