@@ -60,9 +60,25 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
     // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::processWidgetMessage()
     private static readonly SECURITY_STAFF: number = 4;
 
-    /** Ceiling on one `:stresstest` count argument. See `parseStressCount()` for why it exists. */
+    /**
+     * Ceiling on a `:stresstest` object count. See `parseStressCount()` for why one exists.
+     *
+     * Raised from 500 once 500 avatars measured 96 fps and an accidental double run — roughly a
+     * thousand, from a cleanup the engine had refused — still held 49. The old ceiling predated the
+     * sprite-parts path, when a hundred avatars cost twelve.
+     */
     // TS-only: no AS3 counterpart. See habbo/room/utils/RoomStressTest.
-    private static readonly STRESS_TEST_MAX: number = 500;
+    private static readonly STRESS_TEST_MAX_COUNT: number = 2000;
+
+    /**
+     * Ceiling on the `:stresstest` duration argument, in seconds.
+     *
+     * Separate from the object ceiling because they shared one before, which tied how long a run may
+     * last to how big it may be — raising the second would have let a mistyped duration hold the room
+     * for half an hour.
+     */
+    // TS-only: no AS3 counterpart. See habbo/room/utils/RoomStressTest.
+    private static readonly STRESS_TEST_MAX_SECONDS: number = 600;
 
     private _disposed: boolean = false;
 
@@ -784,9 +800,9 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
 
         if(roomEngine == null || session == null) return;
 
-        const durationSeconds = ChatInputWidgetHandler.parseStressCount(secondsArgument);
-        const avatarCount = ChatInputWidgetHandler.parseStressCount(avatarArgument);
-        const furnitureCount = ChatInputWidgetHandler.parseStressCount(furnitureArgument);
+        const durationSeconds = ChatInputWidgetHandler.parseStressCount(secondsArgument, ChatInputWidgetHandler.STRESS_TEST_MAX_SECONDS);
+        const avatarCount = ChatInputWidgetHandler.parseStressCount(avatarArgument, ChatInputWidgetHandler.STRESS_TEST_MAX_COUNT);
+        const furnitureCount = ChatInputWidgetHandler.parseStressCount(furnitureArgument, ChatInputWidgetHandler.STRESS_TEST_MAX_COUNT);
 
         if(avatarCount <= 0 && furnitureCount <= 0)
         {
@@ -856,20 +872,32 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
     }
 
     /**
-     * Reads one `:stresstest` count argument.
+     * Reads one `:stresstest` argument, clamped to `ceiling` and saying so when it clamps.
      *
-     * Capped because this is reachable from the chat box: a mistyped `:stresstest 100000` would
-     * compose a hundred thousand avatar textures before the first frame and hang the tab with no
-     * way back to the input that would undo it.
+     * Capped because this is reachable from the chat box: a mistyped `:stresstest 100000` would fill
+     * the room before the first frame and hang the tab with no way back to the input that would undo
+     * it.
+     *
+     * Announced because it did not used to be. A clamped run is a measurement of a smaller room than
+     * the one that was asked for, and silence about that is how a number ends up trusted for a load
+     * it never carried. The label is built from the clamped value, so the *file* was never wrong —
+     * only the person reading their own command.
      */
     // TS-only: no AS3 counterpart. See habbo/room/utils/RoomStressTest.
-    private static parseStressCount(argument: string): number
+    private static parseStressCount(argument: string, ceiling: number): number
     {
         const value = parseInt(argument, 10);
 
         if(Number.isNaN(value) || value <= 0) return 0;
 
-        return Math.min(value, ChatInputWidgetHandler.STRESS_TEST_MAX);
+        if(value > ceiling)
+        {
+            log.warn(`:stresstest — ${value} exceeds the ceiling of ${ceiling}; running ${ceiling} instead.`);
+
+            return ceiling;
+        }
+
+        return value;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::processWidgetMessage()
