@@ -119,6 +119,34 @@ Verified headlessly: before the room manager reports ready the preview room sits
 (`parked: ["room_2147418115"]`, `built: []`, no warning); after, `parked: []`, `built:
 [2147418115]`, and `getRoomInstance(2147418115)` returns a real instance.
 
+### Two AS3 type tests the port turned into unchecked casts (2026-08-16)
+
+Same transcription habit behind both: AS3 leans on `as` and on implicit nullability, TypeScript's
+equivalents *assert* rather than test, and the null arrives anyway.
+
+- **`ProductGridItem.setDraggable()`** — `interactive.setMouseCursorForState is not a function`,
+  which took down every catalog page carrying a `ClubGiftWidget`. AS3 writes
+  `if(_view as IInteractiveWindow && param1)`, and its `as` yields **null** when the object does not
+  implement the interface: that line is a runtime type test. `as unknown as IInteractiveWindow` is a
+  compile-time assertion that never yields null, so every view reached there was taken for
+  interactive — and the club-gift item hands over its plain `image_container`. `IInteractiveWindow`
+  is erased at runtime and implemented by four unrelated controllers, so the check is for the member
+  the method actually uses.
+- **`ITableObject.getTableCell()`** — `Cannot read properties of null (reading 'type')` at
+  `TableCellView.initializeView()`, thrown inside the window manager's update receiver. AS3 declares
+  `:TableCell`, but object types are implicitly nullable there and every implementation returns null
+  from its default branch. Transcribed non-nullable, each of the eleven had to launder that through
+  `null as unknown as TableCell`, and `TableCellView` was left dereferencing a null it had been told
+  could not exist. The signature is now `TableCell | null`. This is exactly what the `TODO(AS3)` on
+  `TransactionPreviewTableObject` called the real fix, and why it deferred it.
+
+AS3 survives the unguarded deref because every `getTableCell()` covers every column its table
+declares — the default branch is unreachable there, and **statically unreachable in this port too**:
+all eleven were checked against their tables' `TableColumn` ids and every one matches. So the trigger
+is not a column mismatch, and it was not reproducible. A null cell therefore renders empty and logs
+which column and which row object produced it; if that warning ever appears, the fix belongs in that
+row object's `getTableCell()`, not in `TableCellView`.
+
 ### The transverse-debt pass (2026-08-14) — a stale asset, a four-module sweep, three wrong headers
 
 Three items off the "Not yet done" list, and one find that was not on any list.
