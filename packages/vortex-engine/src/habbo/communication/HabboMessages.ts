@@ -522,6 +522,42 @@ import {
     WiredTradeInitiateMessageEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTradeInitiateMessageEvent';
 import {
+    UserHabbiconsMessageEvent
+} from './messages/incoming/habbicons/UserHabbiconsMessageEvent';
+import {
+    UserHabbiconStatusChangedMessageEvent
+} from './messages/incoming/habbicons/UserHabbiconStatusChangedMessageEvent';
+import {
+    HabbiconShopDataMessageEvent
+} from './messages/incoming/habbicons/HabbiconShopDataMessageEvent';
+import {
+    HabbiconInfoMessageEvent
+} from './messages/incoming/habbicons/HabbiconInfoMessageEvent';
+import {
+    RoomUseHabbiconMessageEvent
+} from './messages/incoming/habbicons/RoomUseHabbiconMessageEvent';
+import {
+    GetHabbiconShopDataMessageComposer
+} from './messages/outgoing/habbicons/GetHabbiconShopDataMessageComposer';
+import {
+    GetHabbiconInfoMessageComposer
+} from './messages/outgoing/habbicons/GetHabbiconInfoMessageComposer';
+import {
+    BuyHabbiconMessageComposer
+} from './messages/outgoing/habbicons/BuyHabbiconMessageComposer';
+import {
+    BuyHabbiconCollectionMessageComposer
+} from './messages/outgoing/habbicons/BuyHabbiconCollectionMessageComposer';
+import {
+    ClaimHabbiconMessageComposer
+} from './messages/outgoing/habbicons/ClaimHabbiconMessageComposer';
+import {
+    FavoriteHabbiconMessageComposer
+} from './messages/outgoing/habbicons/FavoriteHabbiconMessageComposer';
+import {
+    UnfavoriteHabbiconMessageComposer
+} from './messages/outgoing/habbicons/UnfavoriteHabbiconMessageComposer';
+import {
     IncomeRewardStatusMessageEvent
 } from './messages/incoming/inventory/IncomeRewardStatusMessageEvent';
 import {
@@ -2036,6 +2072,17 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2984, IncomeRewardClaimResponseMessageEvent);
         this._events.set(1914, IncomeRewardNotificationMessageEvent);
 
+        // === HABBICONS ===
+        // Ids from WIN63's registry alone. vortex-emulator has no habbicon header of any kind, so
+        // for once there is nothing to corroborate against and every name here is derived from the
+        // controller's use of it — flagged as such at each declaration. Nothing on the server side
+        // will ever send these; the client half is complete regardless.
+        this._events.set(3728, UserHabbiconsMessageEvent);
+        this._events.set(2019, UserHabbiconStatusChangedMessageEvent);
+        this._events.set(3765, HabbiconShopDataMessageEvent);
+        this._events.set(3714, HabbiconInfoMessageEvent);
+        this._events.set(1547, RoomUseHabbiconMessageEvent);
+
         this._events.set(2910, WiredTransactionLogsEvent);
         // One transaction's full breakdown (WIN63 registry: 1306 -> _SafeCls_3176), the answer to a
         // click on a log row's "details" cell. Name derived, same reason as 2910.
@@ -3462,6 +3509,16 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1105, WithdrawCreditVaultMessageComposer);
         this._composers.set(3417, IncomeRewardStatusMessageComposer);
         this._composers.set(809, IncomeRewardClaimMessageComposer);
+
+        // === HABBICONS ===
+        // See the incoming block above: registry-only ids, derived names.
+        this._composers.set(272, GetHabbiconShopDataMessageComposer);
+        this._composers.set(1494, GetHabbiconInfoMessageComposer);
+        this._composers.set(3980, BuyHabbiconMessageComposer);
+        this._composers.set(3036, BuyHabbiconCollectionMessageComposer);
+        this._composers.set(662, ClaimHabbiconMessageComposer);
+        this._composers.set(1808, FavoriteHabbiconMessageComposer);
+        this._composers.set(75, UnfavoriteHabbiconMessageComposer);
 
         // === NUX ===
         this._composers.set(2048, NewUserExperienceScriptProceedComposer);

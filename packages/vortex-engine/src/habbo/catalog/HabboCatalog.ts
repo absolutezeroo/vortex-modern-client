@@ -4,6 +4,8 @@ import {CollectiblesController} from './collectibles/CollectiblesController';
 import {IID_CollectiblesController} from '@iid/IIDCollectiblesController';
 import {EarningsController} from './earnings/EarningsController';
 import {IID_VaultController} from '@iid/IIDVaultController';
+import {HabbiconController} from './habbicons/HabbiconController';
+import {IID_HabbiconController} from '@iid/IIDHabbiconController';
 import {Logger} from '@core/utils/Logger';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
@@ -362,7 +364,13 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         this._collectorHub = new CollectiblesController(context, 0, assetLibrary);
         context.attachComponent(this._collectorHub, [IID_CollectiblesController]);
+
+        this._habbiconController = new HabbiconController(context, 0, assetLibrary);
+        context.attachComponent(this._habbiconController, [IID_HabbiconController]);
     }
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_habbiconController
+    private _habbiconController: HabbiconController | null = null;
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_8735 (name derived: the vault)
     private _earningsController: EarningsController | null = null;
@@ -2698,22 +2706,34 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         );
     }
 
+    /**
+	 * A habbicon offer carries the habbicon id in `extraParam` — as a string, hence the parse.
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::isHabbiconOfferOwned()
-    // TODO(AS3): needs _habbiconController (habbo/catalog/habbicons/HabbiconController.as) - a full
-    // unported Component subsystem (own DI, message events, buyHabbicon()/claimHabbicon()/
-    // tryGetOwnedHabbicon(), etc). AS3 itself returns false here whenever habbicons.enabled is off,
-    // which matches this port's current always-off state, so false is not a guess - it's what AS3
-    // would return too.
-    public isHabbiconOfferOwned(_offer: IPurchasableOffer | null): boolean
+    public isHabbiconOfferOwned(offer: IPurchasableOffer | null): boolean
     {
-        return false;
+        if(!this.getBoolean('habbicons.enabled')
+            || offer === null
+            || offer.product === null
+            || offer.product.productType !== 'habbicon'
+            || this._habbiconController === null)
+        {
+            return false;
+        }
+
+        return this.isHabbiconOwned(parseInt(offer.product.extraParam, 10) || 0);
     }
 
+    /**
+	 * "Owned" here means the controller has *an entry* for it, whatever its state — a claimable
+	 * reward counts, which is what stops the catalog offering it for sale a second time.
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::isHabbiconOwned()
-    // TODO(AS3): same _habbiconController gap as isHabbiconOfferOwned() above.
-    public isHabbiconOwned(_id: number): boolean
+    public isHabbiconOwned(id: number): boolean
     {
-        return false;
+        if(!this.getBoolean('habbicons.enabled') || this._habbiconController === null) return false;
+
+        return this._habbiconController.tryGetOwnedHabbicon(id) !== null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showNotEnoughActivityPointsAlert()
