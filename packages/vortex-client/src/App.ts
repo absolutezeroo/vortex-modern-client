@@ -1,5 +1,6 @@
 import type {IVortexConfig, IVortexWindowAssets} from 'vortex-engine';
 import {Vortex} from 'vortex-engine';
+import {FRAME_CHANNEL_UI, FrameTimings} from '@core/utils/FrameTimings';
 import {AssetTypeDeclaration} from '@core/assets/AssetTypeDeclaration';
 import {UnknownAsset} from '@core/assets/UnknownAsset';
 import {SoundAsset} from '@core/assets/SoundAsset';
@@ -1592,25 +1593,41 @@ export class VortexApp
             return;
         }
 
-        // Process any pending render queue
-        renderer.render();
+        // Everything below is the `ui` channel of the `:showstats` frame budget: the skin
+        // re-render of every dirty window, the full-tree composite, and the blit. It opens past
+        // the dirty gate above, so frames that change nothing bill zero and are still folded into
+        // the mean — the reported figure is therefore the UI's **share of an average frame**, not
+        // the cost of one repaint. That is the comparable quantity: `room` and `pixi` are billed
+        // every frame, so the three lines add up to where the frame actually goes. A UI repaint
+        // costing 8ms but running every other frame reads as 4ms here, by design.
+        FrameTimings.begin(FRAME_CHANNEL_UI);
 
-        // Composite all layers into the buffer
-        const w = this._canvas.width;
-        const h = this._canvas.height;
+        try
+        {
+            // Process any pending render queue
+            renderer.render();
 
-        const buffer = windowManager.compositeToBuffer(w, h);
+            // Composite all layers into the buffer
+            const w = this._canvas.width;
+            const h = this._canvas.height;
 
-        if(!buffer) return;
+            const buffer = windowManager.compositeToBuffer(w, h);
 
-        // Blit composite buffer onto the DOM canvas
-        const ctx = this._ctx;
+            if(!buffer) return;
 
-        ctx.imageSmoothingEnabled = false;
-        ctx.clearRect(0, 0, w, h);
-        ctx.drawImage(buffer, 0, 0);
-        this._uiCompositeDirty = false;
-        this._lastUiRenderVersion = renderer.renderVersion;
+            // Blit composite buffer onto the DOM canvas
+            const ctx = this._ctx;
+
+            ctx.imageSmoothingEnabled = false;
+            ctx.clearRect(0, 0, w, h);
+            ctx.drawImage(buffer, 0, 0);
+            this._uiCompositeDirty = false;
+            this._lastUiRenderVersion = renderer.renderVersion;
+        }
+        finally
+        {
+            FrameTimings.end(FRAME_CHANNEL_UI);
+        }
     }
 
     /**

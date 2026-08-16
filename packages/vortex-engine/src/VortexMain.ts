@@ -46,6 +46,7 @@ import {CoreCommunicationManager} from '@core/communication/CoreCommunicationMan
 import type {CoreComponentContext} from '@core/runtime/CoreComponentContext';
 import {CoreSetup} from '@core/runtime/CoreComponentContext';
 import {Logger} from '@core/utils/Logger';
+import {FrameTimings} from '@core/utils/FrameTimings';
 import type {IVortexConfig, IVortexWindowAssets} from './Vortex';
 import {Vortex} from './Vortex';
 
@@ -1094,9 +1095,14 @@ export class VortexMain implements IVortexMain
      * @see sources/win63_2021_version/HabboAirMain.as (ticker integration)
      */
     // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::update()
-    private update(ticker: Ticker): void 
+    private update(ticker: Ticker): void
     {
         if(this._disposed) return;
+
+        // Opens the `:showstats` frame budget. This callback sits at the ticker's default priority
+        // and PixiJS's own render runs at UPDATE_PRIORITY.LOW, so the frame is open before any
+        // channel it needs to bill. See core/utils/FrameTimings.
+        FrameTimings.beginFrame();
 
         const ctx = Core.instance as CoreComponentContext;
 
