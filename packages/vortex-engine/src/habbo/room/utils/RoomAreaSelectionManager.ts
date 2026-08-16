@@ -2,7 +2,9 @@ import type {IRoomAreaSelectionManager} from '../IRoomAreaSelectionManager';
 import type {IRoomEngine} from '../IRoomEngine';
 import type {RoomObjectTileMouseEvent} from '../events/RoomObjectTileMouseEvent';
 import type {RoomEngineObjectEvent} from '../events/RoomEngineObjectEvent';
+import {ColorMatrixFilter} from 'pixi.js';
 import type {FurnitureVisualization} from '../object/visualization/furniture/FurnitureVisualization';
+import type {RoomVisualization} from '../object/visualization/room/RoomVisualization';
 
 /**
  * Drag a rectangle across the room's floor tiles — the picker behind the wired `InArea` selectors.
@@ -19,11 +21,10 @@ import type {FurnitureVisualization} from '../object/visualization/furniture/Fur
  * drawn behind a wall of furni is still visible — and furniture that *arrives* mid-selection gets the
  * same treatment through the REOE_ADDED listener.
  *
- * PORT GAP — the highlight rectangle is not painted. `setHighlight()` records the area and AS3 then
- * hands it to `RoomVisualization.initializeHighlightArea()`, which needs the plane-level highlight
- * and a `ColorMatrixFilter` equivalent, neither of which this port has. The selection itself is fully
- * functional without it: the drag tracks tiles, the callback fires, and the wired def saves the area
- * — there is simply no live outline while dragging. See the TODO(AS3) on {@link setHighlight}.
+ * **The rectangle is painted as extra floor planes, not as an overlay sprite.** `setHighlight()` asks
+ * the room's visualization for a second set of planes covering the area and tints them with a
+ * `ColorMatrixFilter`; they are pulled in front of the real floor and taken out of hit-testing, so
+ * the overlay cannot swallow the click that ends the drag.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/RoomAreaSelectionManager.as
  */
@@ -85,6 +86,64 @@ export class RoomAreaSelectionManager implements IRoomAreaSelectionManager
 
     // AS3: RoomAreaSelectionManager.as::_highlightType
     private _highlightType: string = 'highlight_brighten';
+
+    /**
+	 * The three tints, built once. **AS3's offsets are 0-255 and PixiJS wants 0-1**, so every
+	 * fifth-column term is divided by 255 — the same conversion `VariableHoldersHighlighter` documents.
+	 * Getting that wrong washes the floor out to white rather than tinting it.
+	 */
+    // AS3: RoomAreaSelectionManager.as::HIGHLIGHT_FILTERS
+    private static readonly HIGHLIGHT_FILTERS: Record<string, ColorMatrixFilter[]> =
+        RoomAreaSelectionManager.createHighlightFilters();
+
+    // AS3: RoomAreaSelectionManager.as::createHighlightFilters()
+    private static createHighlightFilters(): Record<string, ColorMatrixFilter[]>
+    {
+        const build = (matrix: number[]): ColorMatrixFilter[] =>
+        {
+            const filter = new ColorMatrixFilter();
+
+            filter.matrix = matrix as never;
+
+            return [filter];
+        };
+
+        return {
+            // AS3 [1.5,0,0,0,0, 0,1.5,0,0,20, 0,0,1.5,0,20, 0,0,0,1,0]
+            highlight_brighten: build([
+                1.5, 0, 0, 0, 0,
+                0, 1.5, 0, 0, 20 / 255,
+                0, 0, 1.5, 0, 20 / 255,
+                0, 0, 0, 1, 0,
+            ]),
+            // AS3 [1.05,0,0,0,0, 0,1.3,0,0,8, 0,0,1.8,0,20, 0,0,0,1,0]
+            highlight_blue: build([
+                1.05, 0, 0, 0, 0,
+                0, 1.3, 0, 0, 8 / 255,
+                0, 0, 1.8, 0, 20 / 255,
+                0, 0, 0, 1, 0,
+            ]),
+            // AS3 [0.55,0,0,0,-10, 0,0.55,0,0,-10, 0,0,0.55,0,-10, 0,0,0,1,0]
+            highlight_darken: build([
+                0.55, 0, 0, 0, -10 / 255,
+                0, 0.55, 0, 0, -10 / 255,
+                0, 0, 0.55, 0, -10 / 255,
+                0, 0, 0, 1, 0,
+            ]),
+        };
+    }
+
+    /**
+	 * TS-only: AS3 inlines `getRoomObject(activeRoomId, -1, 0).getVisualization() as RoomVisualization`
+	 * at both of its highlight call sites. The room object itself is id -1, category 0.
+	 */
+    // TS-only: no AS3 counterpart; AS3 inlines this lookup at each call site.
+    private get roomVisualization(): RoomVisualization | null
+    {
+        const roomObject = this._roomEngine.getRoomObject(this._roomEngine.activeRoomId, -1, 0);
+
+        return (roomObject?.getVisualization() as RoomVisualization | null) ?? null;
+    }
 
     // AS3: RoomAreaSelectionManager.as::RoomAreaSelectionManager()
     constructor(roomEngine: IRoomEngine)
@@ -226,7 +285,7 @@ export class RoomAreaSelectionManager implements IRoomAreaSelectionManager
     // AS3: RoomAreaSelectionManager.as::clearHighlightSilent()
     private clearHighlightSilent(): void
     {
-        // TODO(AS3): RoomVisualization.clearHighlightArea() — see setHighlight().
+        this.roomVisualization?.clearHighlightArea();
     }
 
     /**
@@ -245,17 +304,12 @@ export class RoomAreaSelectionManager implements IRoomAreaSelectionManager
     }
 
     /**
-	 * Records the rectangle. AS3 also paints it.
+	 * Records the rectangle **and paints it**. The stored values are what `finishSelecting()` hands
+	 * back to the tool, so they matter even when the room has no visualization to draw on.
 	 *
-	 * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/RoomAreaSelectionManager.as::setHighlight()
-	 * ends with `RoomVisualization.initializeHighlightArea(x, y, w, h, HIGHLIGHT_FILTERS[type])`.
-	 * Neither `initializeHighlightArea`/`clearHighlightArea` nor the three `ColorMatrixFilter` presets
-	 * (`highlight_brighten`, `highlight_blue`, `highlight_darken`) are ported — they live in the plane
-	 * rasterizer, which paints the floor. Until they are, the drag works but draws nothing; the stored
-	 * rectangle below is what the wired def saves either way.
-	 *
-	 * The visualization is reached through `getRoomObject(activeRoomId, -1, 0)` — the room object
-	 * itself is id -1, category 0.
+	 * An unknown highlight type falls back to `highlight_brighten` rather than passing undefined
+	 * through to the filter stack — AS3 indexes its dictionary and would hand `undefined` to
+	 * `sprite.filters`, which paints nothing.
 	 */
     // AS3: RoomAreaSelectionManager.as::setHighlight()
     setHighlight(x: number, y: number, width: number, height: number): void
@@ -266,6 +320,11 @@ export class RoomAreaSelectionManager implements IRoomAreaSelectionManager
         this._highlightRootY = y;
         this._highlightWidth = width;
         this._highlightHeight = height;
+
+        const filter = RoomAreaSelectionManager.HIGHLIGHT_FILTERS[this._highlightType]
+            ?? RoomAreaSelectionManager.HIGHLIGHT_FILTERS.highlight_brighten;
+
+        this.roomVisualization?.initializeHighlightArea(x, y, width, height, filter);
     }
 
     /**

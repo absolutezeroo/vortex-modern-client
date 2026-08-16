@@ -171,6 +171,55 @@ export class RoomPlaneParser
         return this._planes.length;
     }
 
+    /**
+	 * Append a second set of floor planes covering `(x, y, width, height)`, tracked separately so
+	 * they can be sliced back off. They sit *after* every real plane in `_planes`, which is what lets
+	 * the visualization give only them a filter.
+	 *
+	 * **The tile coordinates are multiplied by four** because the parser works on the expanded tile
+	 * matrix — `expandFloorTiles()` subdivides every room tile into a 4x4 block, and the highlight has
+	 * to be expressed in the same units as the planes it is overlaying.
+	 */
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::initializeHighlightArea()
+    initializeHighlightArea(x: number, y: number, width: number, height: number): void
+    {
+        this.clearHighlightArea();
+        this.extractPlanes(this._expandedTileMatrix, x * 4, y * 4, width * 4, height * 4, true);
+    }
+
+    /**
+	 * Drops the highlight planes and reports how many went, so the caller can release exactly that
+	 * many sprites off the end.
+	 */
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::clearHighlightArea()
+    clearHighlightArea(): number
+    {
+        const removed = this._highlightPlanes.length;
+
+        this._planes = this._planes.slice(0, this._planes.length - removed);
+        this._highlightPlanes = [];
+
+        return removed;
+    }
+
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::isPlaneTemporaryHighlighter()
+    isPlaneTemporaryHighlighter(index: number): boolean
+    {
+        if(index < 0 || index >= this.planeCount)
+        {
+            return false;
+        }
+
+        const plane = this._planes[index] ?? null;
+
+        if(plane === null)
+        {
+            return false;
+        }
+
+        return this._highlightPlanes.indexOf(plane) !== -1;
+    }
+
     // Static helper methods
     // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getFloorHeight()
     private static getFloorHeight(tiles: number[][]): number

@@ -52,6 +52,33 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
     private static readonly UPDATE_INTERVAL: number = 250;
 
     private _planes: RoomPlane[] = [];
+
+    /**
+	 * The plane parser this visualization was built from. AS3 keeps it as `_SafeStr_4639` and reaches
+	 * it again for the highlight area; the port used to read it from the model at each use.
+	 */
+    // AS3: RoomVisualization.as::_SafeStr_4639 (name derived: the plane parser)
+    private _planeParser: RoomPlaneParser | null = null;
+
+    // AS3: RoomVisualization.as::_highlightAreaX
+    private _highlightAreaX: number = 0;
+
+    // AS3: RoomVisualization.as::_highlightAreaY
+    private _highlightAreaY: number = 0;
+
+    // AS3: RoomVisualization.as::_highlightAreaWidth
+    private _highlightAreaWidth: number = 0;
+
+    // AS3: RoomVisualization.as::_highlightAreaHeight
+    private _highlightAreaHeight: number = 0;
+
+    /**
+	 * The filter stack painted onto the highlight planes. AS3 types it `Array` and the area selector
+	 * supplies one `ColorMatrixFilter`; `RoomObjectSprite.filters` takes the same shape.
+	 */
+    // AS3: RoomVisualization.as::_highlightFilter
+    private _highlightFilter: unknown[] = [];
+
     private _planeIndexMap: Map<number, number> = new Map();
     private _initialized: boolean = false;
     private _visiblePlanes: RoomPlane[] = [];
@@ -254,6 +281,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
             return;
         }
 
+        this._planeParser = planeParser;
         this.createPlanesAndSprites(planeParser);
 
         log.debug(`Created ${this._planes.length} planes`);
@@ -295,6 +323,24 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
                 }
 
                 sprite.spriteType = RoomObjectSpriteType.ROOM_PLANE;
+
+                // A highlight plane is tinted, pulled in front of the floor it covers, and taken out
+                // of hit-testing — otherwise the overlay would swallow every click on the tiles it
+                // is drawn over, including the one that ends the drag.
+                if(this._planeParser?.isPlaneTemporaryHighlighter(i) ?? false)
+                {
+                    sprite.filters = this._highlightFilter as never[];
+                    sprite.skipMouseHandling = true;
+                    plane.extraDepth = -100;
+                    plane.isHighlighter = true;
+                }
+                else
+                {
+                    sprite.filters = [];
+                    sprite.skipMouseHandling = false;
+                    plane.extraDepth = 0;
+                    plane.isHighlighter = false;
+                }
             }
         }
     }
@@ -406,12 +452,14 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 	 * + AS3: RoomEngine.createRoom() door mask application (lines 3044-3076)
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::createPlanesAndSprites()
-    private createPlanesAndSprites(planeParser: RoomPlaneParser): void
+    private createPlanesAndSprites(planeParser: RoomPlaneParser, startIndex: number = 0): void
     {
         const origin = this.object!.getLocation();
         const randomSeed = Math.floor(Math.random() * 10000);
 
-        for(let i = 0; i < planeParser.planeCount; i++)
+        // AS3 takes the same index and passes it on to defineSprites(), so a highlight added on top
+        // of an existing room builds planes and sprites only for what the parser just appended.
+        for(let i = startIndex; i < planeParser.planeCount; i++)
         {
             const location = planeParser.getPlaneLocation(i);
             const leftSide = planeParser.getPlaneLeftSide(i);
@@ -531,7 +579,69 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 
         this._initialized = true;
 
-        this.defineSprites();
+        this.defineSprites(startIndex);
+    }
+
+    /**
+	 * Paint a highlight rectangle over the floor, for the wired area selector.
+	 *
+	 * The planes come from the parser, which appends a second set of floor planes covering the area;
+	 * this then builds sprites for exactly those and gives them {@link _highlightFilter}. `reset()` at
+	 * the end is what forces the next frame to re-sort, so the overlay lands in front.
+	 */
+    // AS3: RoomVisualization.as::initializeHighlightArea()
+    initializeHighlightArea(x: number, y: number, width: number, height: number, filter: unknown[]): void
+    {
+        this.clearHighlightArea();
+
+        if(this._planeParser === null) return;
+
+        this._highlightAreaX = x;
+        this._highlightAreaY = y;
+        this._highlightAreaWidth = width;
+        this._highlightAreaHeight = height;
+        this._highlightFilter = filter;
+
+        this._planeParser.initializeHighlightArea(x, y, width, height);
+        this.createPlanesAndSprites(this._planeParser, this._planes.length);
+        this.reset();
+    }
+
+    /**
+	 * Drops the highlight planes and the sprites built for them.
+	 *
+	 * The sprite count is counted rather than assumed: the parser reports how many planes it removed,
+	 * but only those that actually produced a visualization plane have an index in the map, and the
+	 * two can differ when a plane was rejected for a zero-length side.
+	 */
+    // AS3: RoomVisualization.as::clearHighlightArea()
+    clearHighlightArea(): void
+    {
+        this._highlightAreaX = 0;
+        this._highlightAreaY = 0;
+        this._highlightAreaWidth = 0;
+        this._highlightAreaHeight = 0;
+
+        if(this._planeParser === null) return;
+
+        const removed = this._planeParser.clearHighlightArea();
+
+        let removedPlanes = 0;
+
+        for(let i = this._planeParser.planeCount; i < this._planeParser.planeCount + removed; i++)
+        {
+            if(this._planeIndexMap.has(i))
+            {
+                removedPlanes += 1;
+                this._planeIndexMap.delete(i);
+            }
+        }
+
+        if(removedPlanes === 0) return;
+
+        this._planes = this._planes.slice(0, this._planes.length - removedPlanes);
+        this.createSprites(this._planes.length);
+        this.reset();
     }
 
     /**

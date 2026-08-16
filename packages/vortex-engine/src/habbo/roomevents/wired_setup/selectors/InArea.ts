@@ -18,9 +18,8 @@ import {DefaultSelectorType} from './DefaultSelectorType';
  *
  * It is abstract (no `code` override) and never registered.
  *
- * Area selection **works**: the Select button arms the manager, dragging across the floor records the
- * rectangle and the callback writes it into intParams. What is still missing is only the *live
- * outline* while dragging — see the TODO(AS3) on `RoomAreaSelectionManager.setHighlight()`. When
+ * Area selection works end to end: the Select button arms the manager, dragging across the floor
+ * highlights the tiles and records the rectangle, and the callback writes it into intParams. When
  * `activate()` reports unavailable (another tool already holds the selector), both buttons stay
  * disabled, as AS3 intends.
  *
