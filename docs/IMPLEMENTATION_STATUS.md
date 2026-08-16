@@ -432,7 +432,7 @@ thirteen main modules, **419 wired, 46 missing**:
 
 | Module | Wired | Missing |
 |---|---|---|
-| `habbo/catalog` | 44/58 | **13** (+1 unresolved) |
+| `habbo/catalog` | 53/58 | **4** (+1 unresolved) — was 13, closed by the vault and habbicons (2026-08-16) |
 | `habbo/friendbar` | 34/44 | **10** — all in `talent/`, `onBoardingHc`, `popup`, none in the landing view |
 | `habbo/notifications` | 28/37 | **8** |
 | `habbo/room` | 51/57 | **6** |
@@ -1164,6 +1164,50 @@ Two emulator headers were wrong and are fixed in `Revision20260701/Headers.cs`:
 **850**. Neither 3854 nor 2159 appears anywhere in the WIN63 registry; 2247 and 850 both do. Both
 constants were header-only — no composer, no serializer, no handler references them — so the change
 is to the table alone.
+
+### The vault and habbicons (2026-08-16) — `habbo/catalog` 44/58 → 53/58
+
+Two catalog subsystems that were entirely unported. Between them they closed **9 of the module's 13
+missing subscriptions**; `sweep-unwired.mjs habbo/catalog` now reads 53/58.
+
+**The vault** (`habbo/catalog/earnings`, 643 l. AS3). `EarningsController` + `EarningsView`, the
+three `IncomeReward*` messages (3976/2984/1914, names recovered from vortex-emulator whose ids match
+the registry), and one line in `PurseAreaExtension`.
+
+That last line is the point. The port already had `getEarnings()` — returning a one-property
+stand-in whose `showingIndicator` nothing ever set — and `refreshIndicators()` matched it by
+assigning `visible = false` unconditionally. Complete-looking code on both sides of a value that
+could never be true. `ICatalogEarnings` had exactly the one member `IEarningsController` has, so the
+real controller dropped straight into its place.
+
+The shipped `vault_view_xml` predates the 2026 tree: it has no `vaultWithdraw_button` or
+`vaultOpenShop_button`, so those two `windowProcedure` cases are inert against this asset. Every
+other name the view looks up is present.
+
+**Habbicons** (`habbo/catalog/habbicons` + `habbo/habbicons/assets`, 23 files / ~6,000 l. AS3).
+The hub window, its six child views, the tile popup, the purchase confirmation, the controller, and
+the asset manager that fetches `habbicons.json` and two spritesheets from a configured root.
+
+This is **the one subsystem where the source-of-truth chain runs out entirely**. Habbicons postdate
+every unobfuscated tree, `win63_version` has none of them, and vortex-emulator carries no habbicon
+header of any kind — 0 matches for `habbicon` in `Revision20260701/Headers.cs`. So all twelve ids
+come from WIN63's registry alone (checked free of collisions), and every message name is *derived*
+from the controller's use of it, flagged as such at each declaration. Nothing server-side will ever
+send these; the client half is complete regardless.
+
+One recovery did come out of it. `UnseenItemCategory`'s eighth constant was left unnamed with a note
+saying nothing referenced it — `HabbiconController` references it five times
+(`setUnseenItem`/`isUnseen`/`removeUnseen`/`resetCategory`/`getCount`), which fixes what 8 is. It is
+`HABBICON`, recovered from use rather than invented. **The note was written when it was true and
+went stale silently**, which is the same failure mode as the vault's indicator: a claim about the
+codebase with no test behind it.
+
+Two `TODO(AS3)` in `HabboCatalog` named the habbicon gap by file. Both are closed.
+
+Still open in `habbo/catalog`, all four measured: 448 `NftStorePurchase` (class registered, never
+constructed), 2901 `LtdRaffleEntered` (no id in the TS registry — message unported), and 3404/3599,
+which are subscribed elsewhere but not by the catalog itself. 3599 belongs to `VideoOfferManager`,
+which is in the `offers` slice still to come.
 
 ### Chat slash commands (2026-08-12)
 
