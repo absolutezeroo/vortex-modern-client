@@ -3,7 +3,6 @@ import {Vortex} from 'vortex-engine';
 import {AssetTypeDeclaration} from '@core/assets/AssetTypeDeclaration';
 import {UnknownAsset} from '@core/assets/UnknownAsset';
 import {SoundAsset} from '@core/assets/SoundAsset';
-import {XmlAsset} from '@core/assets/XmlAsset';
 import {SoundContext} from '@habbo/sound/SoundContext';
 import {HabboToolbarEnum} from '@habbo/toolbar/HabboToolbarEnum';
 import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
@@ -326,7 +325,7 @@ function readChatStylesManifest(bundle: AssetBundle): Record<string, IChatStyleA
 /**
  * Registers every extracted chat-style bitmap (packages/vortex-client/tools/
  * import-chatstyles.mjs's output) into AssetLibrary as a raw ImageBitmap - NOT through
- * the standard image/png -> BitmapDataAsset pipeline (registerImageAssets() below, blob
+ * the standard image/png -> BitmapDataAsset pipeline (readImageAssets() below, blob
  * URLs consumed by WindowManager), because ChatStyle.ts::getNewBackgroundSprite() draws
  * these directly via OffscreenCanvas.drawImage(), which needs a real ImageBitmap, not the
  * PixiJS Texture BitmapDataAsset.content would return.
@@ -381,7 +380,7 @@ async function registerChatStyleImageAssets(vortex: Vortex, imageBundle: AssetBu
  * already `flash.media.Sound` objects by the time the library is handed over.
  */
 /**
- * Registers every window layout into the *asset library*, under its file basename.
+ * Reads every window layout for the *asset library*, keyed by its file basename.
  *
  * The layouts already go into the window manager's widget-layout registry (see
  * `readWindowAssets()`), which serves `buildWidgetLayout(name)`. But a whole family of ported
@@ -390,25 +389,106 @@ async function registerChatStyleImageAssets(vortex: Vortex, imageBundle: AssetBu
  * library only held images, sounds, the avatar configurations and the chat styles. Every one of
  * those lookups returned null, and each site turned that into "Missing layout X" and gave up.
  *
+ * Handed to `Vortex.bootstrap()` rather than pushed in afterwards, which is what this used to do:
+ * WiredChestController builds its whole window the moment the window-manager IID resolves, inside
+ * prepareCore(), and asked for `chest_generic_xml` before this had run.
+ *
  * The name is the **file basename**, which `tools/build-window-assets.mjs` takes from the
  * `*Com.as` field name — the exact string AS3 passes to `getAssetByName()`. Deliberately *not*
  * the internal `<layout name="...">`: that is a Flash-authoring label AS3 never reads, it differs
  * from the real name for 633 of 783 layouts, and 86 of those internal names are shared by two or
  * more files (see CLAUDE.md → Assets).
  */
-function registerWindowLayoutAssets(vortex: Vortex, xmlBundle: AssetBundle): void
+/**
+ * Reads every bundled image twice over: once as a blob URL for the window manager's
+ * `ResourceManager` (what an `asset_uri` resolves against), and once — for a scoped subset — as a
+ * decoded `ImageBitmap` for the asset library.
+ *
+ * Both halves are handed to `Vortex.bootstrap()` instead of pushed in after it returns, which is
+ * what this used to do from `initClientUi()`, two steps *after* `connect()`. Components built
+ * during prepareCore() read from both: HabboGroupsManager's badge editor wants `badge_part_add`
+ * out of the library in its own constructor, and the chest window's every `asset_uri` wants the
+ * URL registry. Neither existed yet, and both failed silently.
+ *
+ * The library half is scoped rather than covering the whole images/ bundle, because it eagerly
+ * decodes an ImageBitmap per entry and nothing else needs library access today:
+ * - ctlg_*: catalog swatches/slot backgrounds, read by every CatalogWidget.getAssetBitmapData()
+ *   caller — ColourGridCatalogWidget's swatches, RecyclerCatalogWidget's slot background.
+ * - fx_icon_* / memenu_fx_*: the me-menu EffectsWidget rows read these programmatically
+ *   (effect icon + play/pause hilite) via assets.getAssetByName(...).content.
+ * - color_chooser_* / badge_part_* / position_*: the group creation wizard - every
+ *   ColorGridCtrl swatch cell, and the badge editor's empty/add/picker markers and
+ *   3x3 position grid, all via HabboGroupsManager.getButtonImage().
+ * - avatar_editor_*: the whole avatar editor reads bitmaps programmatically -
+ *   AvatarEditorGridColorItem tints the shared `..._clr_13x21_2` chip per swatch,
+ *   HabboAvatarEditor sets the remove-selection and get-more icons on its two synthetic
+ *   tiles, AvatarEditorGridPartItem paints the download icon and the selection hilite,
+ *   and WardrobeSlot asks for the empty-slot artwork. Without these the palettes render
+ *   white and the remove tile renders nothing - exactly the silent failure this comment
+ *   warns about.
+ * - LIBRARY_IMAGE_NAMES: the rest, one-off lookups by exact name.
+ *
+ * That list grows once per feature that reads a bitmap from the library, which is a standing
+ * trap: a missing entry does not fail loudly, it just renders nothing. The current set was found
+ * by grepping every getAssetByName('<literal>') call against the images/ bundle; re-run that when
+ * a bitmap comes out blank.
+ *
+ * @see sources/win63_version/habbo/window/ResourceManager.as
+ */
+async function readImageAssets(imageBundle: AssetBundle): Promise<{
+    imageUrls: Map<string, string>;
+    libraryImages: Map<string, ImageBitmap>;
+}>
+{
+    const imageUrls = new Map<string, string>();
+    const libraryImages = new Map<string, ImageBitmap>();
+    const decodes: Promise<void>[] = [];
+
+    for(const key of imageBundle.listKeys('images/'))
+    {
+        // Extract asset name: 'images/icons_toolbar_reception_normal.png' → 'icons_toolbar_reception_normal'
+        const name = key.split('/').pop()!.replace('.png', '');
+        const url = imageBundle.getUrl(key);
+
+        if(url)
+        {
+            imageUrls.set(name, url);
+        }
+
+        if(name.startsWith('ctlg_') || name.startsWith('fx_icon_') || name.startsWith('memenu_fx_')
+            || name.startsWith('color_chooser_') || name.startsWith('badge_part_') || name.startsWith('position_')
+            || name.startsWith('avatar_editor_')
+            || LIBRARY_IMAGE_NAMES.has(name))
+        {
+            decodes.push(imageBundle.getImageBitmap(key).then((bitmap) =>
+            {
+                if(bitmap) libraryImages.set(name, bitmap);
+            }));
+        }
+    }
+
+    // Awaited, unlike the fire-and-forget `.then()` this replaces: `getAssetByName(...).content` is
+    // read synchronously, so a bitmap that is still decoding is indistinguishable from one that
+    // does not exist. That race is what made `add_friends_icon` miss even though it was registered
+    // — the friend-list packet landed first.
+    await Promise.all(decodes);
+
+    log.debug(`Read ${imageUrls.size} image URLs and decoded ${libraryImages.size} library bitmaps`);
+
+    return {imageUrls, libraryImages};
+}
+
+function readLibraryLayouts(xmlBundle: AssetBundle): Map<string, string>
 {
     const keys = xmlBundle.listKeys('window-layouts/').filter((key) => key.endsWith('.xml'));
+    const layouts = new Map<string, string>();
 
     if(keys.length === 0)
     {
         log.warn('No window layouts in the bundle - every layout lookup will fail.');
 
-        return;
+        return layouts;
     }
-
-    const declaration = vortex.assets.getAssetTypeDeclarationByMimeType('text/xml')
-        ?? new AssetTypeDeclaration('text/xml', XmlAsset, null, 'xml');
 
     for(const key of keys)
     {
@@ -416,16 +496,12 @@ function registerWindowLayoutAssets(vortex: Vortex, xmlBundle: AssetBundle): voi
 
         if(!xml) continue;
 
-        const assetName = key.slice('window-layouts/'.length, -'.xml'.length);
-        const asset = new XmlAsset(declaration, assetName);
-
-        // Left as the raw string: XmlAsset parses it lazily on first `content` access, and most
-        // layouts are never asked for.
-        asset.setUnknownContent(xml);
-        vortex.assets.setAsset(assetName, asset, true);
+        layouts.set(key.slice('window-layouts/'.length, -'.xml'.length), xml);
     }
 
-    log.debug(`Registered ${keys.length} window layout assets`);
+    log.debug(`Read ${layouts.size} window layout assets`);
+
+    return layouts;
 }
 
 async function registerSoundAssets(vortex: Vortex, xmlBundle: AssetBundle): Promise<void>
@@ -523,7 +599,7 @@ declare global
 /**
  * Images that some ported class fetches from the asset library by exact name, rather than
  * through the window manager's URL registry. Prefix families are handled inline in
- * registerImageAssets(); this is for the one-offs.
+ * readImageAssets(); this is for the one-offs.
  *
  * - dimmer_slider_*: BackgroundColorWidgetSlider's track and thumb.
  * - stickie_*: StickieFurniWidget's blank note, close and delete buttons.
@@ -809,10 +885,6 @@ export class VortexApp
         // time anything calls playSound().
         await registerSoundAssets(vortex, xmlBundle);
 
-        // Same reason, for the views that read their layout out of the asset library rather
-        // than through buildWidgetLayout().
-        registerWindowLayoutAssets(vortex, xmlBundle);
-
         return vortex;
     }
 
@@ -946,6 +1018,19 @@ export class VortexApp
 
         windowAssets.layouts = layoutsByName;
 
+        // 3c. The asset library's own copy of each layout, keyed by the file basename and holding
+        // the whole file — see IVortexWindowAssets.libraryLayouts for why this is not `layouts`.
+        // Only the dump's layouts, as before: Vortex's own authored ones (3b) are reached through
+        // buildWidgetLayout() alone, and nothing looks them up by name in the library.
+        windowAssets.libraryLayouts = readLibraryLayouts(xmlBundle);
+
+        // 4. Images. Both halves go in before the engine boots, because components built during
+        // prepareCore() read from both — see registerWindowAssetLibraryContent() in VortexMain.
+        const {imageUrls, libraryImages} = await readImageAssets(imageBundle);
+
+        windowAssets.imageUrls = imageUrls;
+        windowAssets.libraryImages = libraryImages;
+
         return windowAssets;
     }
 
@@ -997,8 +1082,9 @@ export class VortexApp
             this._uninstallWindowDebugger = installWindowDebugger(this._canvas);
         }
 
-        // 7. Register all image blob URLs with the resource manager
-        this.registerImageAssets();
+        // 7. Images and layouts are no longer registered here: they ride in on
+        // IVortexWindowAssets and are in place before the first component is constructed.
+        // See readImageAssets()/readLibraryLayouts().
 
         // 8. Initialize the Friend Bar (landing view) — desktops are now sized
         vortex.initFriendBar();
@@ -1364,82 +1450,6 @@ export class VortexApp
         catch
         {
             // RoomUI not yet initialized
-        }
-    }
-
-    /**
-     * Registers all image asset blob URLs with the engine's ResourceManager.
-     *
-     * Creates blob URLs from the bundle for each PNG image and registers
-     * them with the WindowManager. The ResourceManager will lazily decode
-     * the ImageBitmap on first request.
-     *
-     * @see sources/win63_version/habbo/window/ResourceManager.as
-     */
-    private registerImageAssets(): void 
-    {
-        if(!this._imageBundle) return;
-
-        const vortex = Vortex.instance;
-
-        for(const key of this._imageBundle.listKeys('images/')) 
-        {
-            // Extract asset name: 'images/icons_toolbar_reception_normal.png' → 'icons_toolbar_reception_normal'
-            const name = key.split('/').pop()!.replace('.png', '');
-            const url = this._imageBundle.getUrl(key);
-
-            if(url)
-            {
-                vortex.windowManager.registerAssetUrl(name, url);
-            }
-
-            // registerAssetUrl() only feeds the window manager's *URL* registry, which serves window
-            // skins. Anything that reads a bitmap out of the asset library instead - every
-            // CatalogWidget.getAssetBitmapData() caller, e.g. ColourGridCatalogWidget's swatches and
-            // RecyclerCatalogWidget's slot background - looks the name up in vortex.assets and got
-            // null, so those bitmaps rendered blank/white.
-            //
-            // Decode and register the catalog bitmaps into the asset library too, the same way the
-            // chat-style images already are. Scoped to a few prefixes rather than the whole
-            // images/ bundle: this eagerly decodes an ImageBitmap per entry, and nothing else needs
-            // library access today.
-            // - ctlg_*: catalog swatches/slot backgrounds.
-            // - fx_icon_* / memenu_fx_*: the me-menu EffectsWidget rows read these programmatically
-            //   (effect icon + play/pause hilite) via assets.getAssetByName(...).content.
-            // - color_chooser_* / badge_part_* / position_*: the group creation wizard - every
-            //   ColorGridCtrl swatch cell, and the badge editor's empty/add/picker markers and
-            //   3x3 position grid, all via HabboGroupsManager.getButtonImage().
-            // - avatar_editor_*: the whole avatar editor reads bitmaps programmatically -
-            //   AvatarEditorGridColorItem tints the shared `..._clr_13x21_2` chip per swatch,
-            //   HabboAvatarEditor sets the remove-selection and get-more icons on its two synthetic
-            //   tiles, AvatarEditorGridPartItem paints the download icon and the selection hilite,
-            //   and WardrobeSlot asks for the empty-slot artwork. Without these the palettes render
-            //   white and the remove tile renders nothing - exactly the silent failure this comment
-            //   warns about.
-            // - LIBRARY_IMAGE_NAMES: the rest, one-off lookups by exact name.
-            //
-            // This list grows once per feature that reads a bitmap from the library, which is a
-            // standing trap: a missing entry does not fail loudly, it just renders nothing. The
-            // current set was found by grepping every getAssetByName('<literal>') call against
-            // the images/ bundle; re-run that when a bitmap comes out blank.
-            if(name.startsWith('ctlg_') || name.startsWith('fx_icon_') || name.startsWith('memenu_fx_')
-                || name.startsWith('color_chooser_') || name.startsWith('badge_part_') || name.startsWith('position_')
-                || name.startsWith('avatar_editor_')
-                || LIBRARY_IMAGE_NAMES.has(name))
-            {
-                const declaration = vortex.assets.getAssetTypeDeclarationByMimeType('application/octet-stream')
-                    ?? new AssetTypeDeclaration('application/octet-stream', UnknownAsset);
-
-                void this._imageBundle.getImageBitmap(key).then((bitmap) =>
-                {
-                    if(!bitmap) return;
-
-                    const asset = new UnknownAsset(declaration, name);
-
-                    asset.setUnknownContent(bitmap);
-                    vortex.assets.setAsset(name, asset, true);
-                });
-            }
         }
     }
 

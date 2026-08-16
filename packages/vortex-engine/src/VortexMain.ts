@@ -41,6 +41,7 @@ import {AssetLibrary} from '@core/assets/AssetLibrary';
 import {AssetTypeDeclaration} from '@core/assets/AssetTypeDeclaration';
 import {XmlAsset} from '@core/assets/XmlAsset';
 import {TextAsset} from '@core/assets/TextAsset';
+import {UnknownAsset} from '@core/assets/UnknownAsset';
 import {CoreCommunicationManager} from '@core/communication/CoreCommunicationManager';
 import type {CoreComponentContext} from '@core/runtime/CoreComponentContext';
 import {CoreSetup} from '@core/runtime/CoreComponentContext';
@@ -623,6 +624,14 @@ export class VortexMain implements IVortexMain
         ctx.attachComponent(this._assets, [IID_AssetLibrary]);
         this.registerEmbeddedAvatarAssets(config);
         this.registerChatStyleTextAssets(config);
+        // Before any component exists, not after: HabboGroupsManager (12g below) builds its badge
+        // editor in its own constructor and reads `badge_part_add` out of the library while doing
+        // it, and HabboUserDefinedRoomEvents' WiredChestController builds the whole chest window
+        // the moment the window manager IID resolves, reading `chest_generic_xml` and a dozen
+        // bitmaps on the way. In AS3 those are `[Embed]`s in the component's own SWF library, so
+        // they cannot be late; here they were pushed in from the client only after bootstrap()
+        // returned, and every one of those lookups came back null.
+        this.registerWindowAssetLibraryContent(config?.windowAssets ?? null);
 
         // Core Communication Manager — low-level socket communication
         const coreCommunication = new CoreCommunicationManager(ctx);
@@ -837,7 +846,10 @@ export class VortexMain implements IVortexMain
         // roomSessionManager, sessionDataManager, notifications, toolbar, windowManager, roomUI).
         // Consumer waiting on the IID: RoomDesktop.userDefinedRoomEvents (still hard-null there
         // until the RoomUI->RoomDesktop plumbing is added — Bloc C).
-        this._userDefinedRoomEvents = new HabboUserDefinedRoomEvents(ctx);
+        // The asset library is AS3's third constructor argument, forwarded to every wired
+        // sub-controller; without it WiredChestWrapperView cannot find `chest_generic_xml` and the
+        // chest window is not built. Same omission already fixed for HabboGroupsManager above.
+        this._userDefinedRoomEvents = new HabboUserDefinedRoomEvents(ctx, 0, this._assets);
         ctx.attachComponent(this._userDefinedRoomEvents, [IID_HabboUserDefinedRoomEvents]);
 
         // 12p. Furni editor (Vortex-specific, not from AS3). Attached after the window manager,
@@ -1181,11 +1193,75 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::HabboWindowManagerComponent()
      */
+    /**
+     * Fills the asset library with the window assets that ported code reads by name, at the
+     * moment the library is created and before a single component is attached.
+     *
+     * TS-only: AS3 has no counterpart because it has no equivalent problem — each component is
+     * handed an `AssetLibrary` already filled from its `[Embed]`ed SWF resource, so a component
+     * can never observe its own library empty. This port loads the same bytes out of a downloaded
+     * bundle, so the filling has to be sequenced explicitly; `applyWindowAssets()` below does the
+     * window-manager half once that manager exists.
+     */
+    private registerWindowAssetLibraryContent(windowAssets: IVortexWindowAssets | null): void
+    {
+        if(!windowAssets || !this._assets)
+        {
+            return;
+        }
+
+        if(windowAssets.libraryImages)
+        {
+            const declaration = this._assets.getAssetTypeDeclarationByMimeType('application/octet-stream')
+                ?? new AssetTypeDeclaration('application/octet-stream', UnknownAsset);
+
+            for(const [name, bitmap] of windowAssets.libraryImages)
+            {
+                const asset = new UnknownAsset(declaration, name);
+
+                asset.setUnknownContent(bitmap);
+                this._assets.setAsset(name, asset, true);
+            }
+        }
+
+        if(windowAssets.libraryLayouts)
+        {
+            const declaration = this._assets.getAssetTypeDeclarationByMimeType('text/xml')
+                ?? new AssetTypeDeclaration('text/xml', XmlAsset, null, 'xml');
+
+            for(const [name, xml] of windowAssets.libraryLayouts)
+            {
+                const asset = new XmlAsset(declaration, name);
+
+                // Left as the raw string: XmlAsset parses it lazily on first `content` access,
+                // and most layouts are never asked for.
+                asset.setUnknownContent(xml);
+                this._assets.setAsset(name, asset, true);
+            }
+        }
+
+        log.debug(
+            `Asset library seeded with ${windowAssets.libraryImages?.size ?? 0} bitmaps`
+            + ` and ${windowAssets.libraryLayouts?.size ?? 0} layouts`
+        );
+    }
+
     private applyWindowAssets(windowAssets: IVortexWindowAssets | null): void
     {
         if(!windowAssets || !this._windowManager)
         {
             return;
+        }
+
+        // Same reasoning as registerWindowAssetLibraryContent(): this runs before the window
+        // manager is attached, so the `asset_uri` of every layout built during component init
+        // resolves instead of queueing a receiver that is never served.
+        if(windowAssets.imageUrls)
+        {
+            for(const [name, url] of windowAssets.imageUrls)
+            {
+                this._windowManager.registerAssetUrl(name, url);
+            }
         }
 
         if(windowAssets.elementDescription)

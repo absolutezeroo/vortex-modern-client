@@ -1,5 +1,6 @@
 import {Component, ComponentDependency} from '@core/runtime';
 import type {IContext} from '@core/runtime';
+import type {IAssetLibrary} from '@core/assets';
 import type {IMessageComposer} from '@core';
 import type {IWindow} from '@core/window/IWindow';
 import {Logger} from '@core/utils/Logger';
@@ -134,10 +135,18 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     // one documented gap rather than a fan-out of stubs (same approach as HabboHelp's absent-members
     // block). Every sub-controller AS3's constructor builds is now created in initComponent().
 
+    /**
+     * The asset library is not optional decoration: AS3's third constructor argument is forwarded
+     * verbatim to WiredMenuController, WiredChestController, WiredTransactionLogsController,
+     * WiredTransactionDetailsController and RewardNotificationController, and those read their
+     * layouts straight out of it — `WiredChestWrapperView` opens with
+     * `assets.getAssetByName("chest_generic_xml")`. Dropped, `Component.assets` stays null and the
+     * chest window is never built at all.
+     */
     // AS3: HabboUserDefinedRoomEvents.as::HabboUserDefinedRoomEvents()
-    constructor(context: IContext)
+    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
     {
-        super(context);
+        super(context, flags, assetLibrary);
     }
 
     // AS3: HabboUserDefinedRoomEvents.as::get dependencies()

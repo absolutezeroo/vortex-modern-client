@@ -83,6 +83,32 @@ export interface IVortexWindowAssets
 
     /** Widget layout XML keyed by asset name. */
     layouts?: Map<string, string>;
+
+    /**
+     * Whole-file layout XML keyed by its `*Com.as` field name, for the *asset library*.
+     *
+     * Distinct from `layouts` above, which is the window manager's `buildWidgetLayout()` registry
+     * and splits a multi-window file into one `name#0`, `name#1`, … entry per `<window>`. A whole
+     * family of ported views does what AS3 does and reads the layout out of the library instead —
+     * `assets.getAssetByName("settings_xml").content` — where the name is the file's and the
+     * content is all of it, `<layout>` root included.
+     */
+    libraryLayouts?: Map<string, string>;
+
+    /**
+     * Image blob URLs keyed by asset name, for the window manager's `ResourceManager` — the
+     * registry every `asset_uri` in a layout resolves against.
+     */
+    imageUrls?: Map<string, string>;
+
+    /**
+     * Decoded bitmaps for the images that ported code reads straight out of the *asset library*
+     * by name (`getAssetByName("badge_part_add").content`) rather than through an `asset_uri`.
+     *
+     * Decoded up front, not lazily, because those reads are synchronous — in AS3 they resolve an
+     * `[Embed]` that is already a `BitmapData` by the time the component owning it exists.
+     */
+    libraryImages?: Map<string, ImageBitmap>;
 }
 
 /**
@@ -549,18 +575,38 @@ export class Vortex implements IVortex
                 // AS3 Flash stage renders at logical pixel resolution. Defaulting Pixi to
                 // devicePixelRatio + antialias makes the room canvas much heavier and blurs
                 // pixel-art assets; callers can still override both via config.
-                antialias: config?.antialias ?? false,
+                antialias: config?.antialias ?? true,
                 resolution: config?.resolution ?? 1,
                 autoDensity: true,
-                // Several widgets read pixels back off-screen via renderer.extract.canvas()
-                // (AvatarImageWidget avatar/badge previews, RoomEngine.pixiTextureToCanvas()
-                // room icons, RoomRenderingCanvas.takeScreenShot()) - each of those is, from
-                // WebGL's point of view, "another canvas" sharing this one GL context. Without
-                // multiView, PixiJS's GlContextSystem.ensureCanvasSize() warns every time
-                // ("multiView is disabled, but targetCanvas is not the main canvas") because it
-                // only expects the single view canvas. multiView is PixiJS's documented flag for
-                // exactly this "one context, several canvases" case.
-                multiView: true,
+                // `multiView: true` used to be set here, to silence
+                // GlContextSystem.ensureCanvasSize()'s "multiView is disabled, but targetCanvas is
+                // not the main canvas" warning on the widgets that read pixels back via
+                // renderer.extract.canvas(). It was removed on 2026-08-16: it cost a full-viewport
+                // composite on *every* frame and bought nothing.
+                //
+                // What the flag actually does (PixiJS 8.16): GlContextSystem.init() moves the GL
+                // context onto a private offscreen canvas, and GlRenderTargetAdaptor.postrender()
+                // then runs `canvasSource.context2D.drawImage(contextCanvas, ...)` after every
+                // render targeting a CanvasSource - i.e. the visible canvas becomes a 2D canvas
+                // repainted from the GL one once per frame.
+                //
+                // What it does *not* do is make the readback correct. GlRenderTargetAdaptor
+                // .initGpuRenderTarget() takes its `colorTexture instanceof CanvasSource` branch
+                // and leaves `framebuffer = null` in both modes, so getPixels() reads the default
+                // framebuffer - the screen - rather than the texture. Measured on this exact PixiJS
+                // build, extracting a canvas-backed texture over a blue screen:
+                //
+                //   extract.canvas(Texture.from({resource: canvas}))  multiView on/off -> blue (wrong)
+                //   extract.canvas(Texture.from(imageBitmap))         multiView on/off -> correct
+                //   extract.canvas(Container)                         multiView on/off -> correct
+                //   drawImage() off texture.source.resource           multiView on/off -> correct
+                //
+                // The single behavioural difference between the two modes is that one warning. The
+                // callers that hit the broken case already avoid extract for exactly this reason
+                // (AvatarImageWidget.textureToImageBitmap(), AvatarTextureUtils.toCanvasSource(),
+                // RoomEngine.blitTextureFrame(), RoomObjectSpriteVisualization
+                // .textureFrameToCanvas()) - which is also what AS3 did, since BitmapData
+                // .getVector() is a plain CPU read with no renderer involved.
             });
 
             // Append canvas to target

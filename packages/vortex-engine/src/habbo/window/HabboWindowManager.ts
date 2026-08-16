@@ -166,6 +166,24 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     private _resourceManager: ResourceManager | null = null;
 
     /**
+     * Assets registered before `initContexts()` built the ResourceManager, replayed into it the
+     * moment it exists.
+     *
+     * TS-only. AS3 needs no such buffer: `HabboWindowManagerComponent` is handed its already-filled
+     * `AssetLibrary` as a constructor argument, so there is no window in which the component is
+     * alive and its images are not. Here the images arrive from a downloaded bundle and are pushed
+     * in from `VortexMain.applyWindowAssets()`, which must run *before* the manager is attached so
+     * that the windows built during component init can resolve their `asset_uri` — and at that
+     * point `_resourceManager` is still null, because it is created in `initComponent()`. Without
+     * the buffer those calls are silently dropped.
+     */
+    // TS-only: see above.
+    private _pendingAssetUrls: Map<string, string> = new Map();
+
+    // TS-only: see `_pendingAssetUrls`.
+    private _pendingAssets: Map<string, ImageBitmap> = new Map();
+
+    /**
      * ResourceManager accessor (AS3 parity).
      */
     // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get resourceManager()
@@ -1246,12 +1264,18 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
      * @param name - The asset name
      * @param bitmap - The decoded ImageBitmap
      */
-    public registerAsset(name: string, bitmap: ImageBitmap): void 
+    // TS-only: no AS3 counterpart — there the images are `[Embed]`s in the component's own SWF
+    // library, so nothing ever pushes a decoded bitmap in from outside.
+    public registerAsset(name: string, bitmap: ImageBitmap): void
     {
-        if(this._resourceManager) 
+        if(this._resourceManager)
         {
             this._resourceManager.registerAsset(name, bitmap);
+
+            return;
         }
+
+        this._pendingAssets.set(name, bitmap);
     }
 
     /**
@@ -1265,7 +1289,11 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         if(this._resourceManager)
         {
             this._resourceManager.registerAssetUrl(name, url);
+
+            return;
         }
+
+        this._pendingAssetUrls.set(name, url);
     }
 
     /**
@@ -1280,13 +1308,19 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
      */
     public hasAsset(name: string): boolean
     {
-        return this._resourceManager?.hasAsset(name) ?? false;
+        if(this._resourceManager) return this._resourceManager.hasAsset(name);
+
+        // Not yet built: answer from the buffer, or a caller probing this early is told "unknown"
+        // about an asset that is in fact already registered. See `_pendingAssetUrls`.
+        return this._pendingAssetUrls.has(name) || this._pendingAssets.has(name);
     }
 
     // TS-only: forwards `IResourceManager.getAsset()`.
     public getAsset(name: string): ImageBitmap | null
     {
-        return this._resourceManager?.getAsset(name) ?? null;
+        if(!this._resourceManager) return this._pendingAssets.get(name) ?? null;
+
+        return this._resourceManager.getAsset(name);
     }
 
     /**
@@ -1494,8 +1528,11 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
             WindowContext.setRenderer(null);
         }
 
+        this._pendingAssets.clear();
+        this._pendingAssetUrls.clear();
+
         // Clean up resource manager
-        if(this._resourceManager) 
+        if(this._resourceManager)
         {
             this._resourceManager.dispose();
             this._resourceManager = null;
@@ -1612,6 +1649,22 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         this._widgetFactory = widgetFactory;
         this._resourceManager = resourceManager;
         this._hintManager = hintManager;
+
+        // Replay whatever was registered before this point — in practice the entire images/
+        // bundle, pushed in by VortexMain.applyWindowAssets() ahead of the component's attach.
+        // See `_pendingAssetUrls`.
+        for(const [name, bitmap] of this._pendingAssets)
+        {
+            resourceManager.registerAsset(name, bitmap);
+        }
+
+        for(const [name, url] of this._pendingAssetUrls)
+        {
+            resourceManager.registerAssetUrl(name, url);
+        }
+
+        this._pendingAssets.clear();
+        this._pendingAssetUrls.clear();
 
         for(let i = 0; i < HabboWindowManager.NUMBER_OF_CONTEXT_LAYERS; i++) 
         {

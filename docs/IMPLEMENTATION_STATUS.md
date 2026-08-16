@@ -45,6 +45,56 @@ single missing member — so 45 commands landed and the number went 304 → 309.
 things is worth less than five covering five, and any reading of this file that treats the total as
 a score will get that backwards.
 
+### Boot ordering (2026-08-16) — the asset library was empty for every component in `prepareCore()`
+
+Fifteen `Asset not found` / `no bitmap asset` / `not in the asset library` warnings at boot, and all
+of them one cause: `App.ts` registered the images from `initClientUi()` — *after* `connect()` — and
+the layouts right after `Vortex.bootstrap()` returned. Every component built inside `prepareCore()`
+therefore read an empty library. AS3 cannot have this bug: `HabboWindowManagerComponent(context,
+flags, assets)` is handed an `AssetLibrary` already filled from its `[Embed]`ed SWF resource.
+
+The channel already existed and already documented this exact reasoning —
+`IVortexConfig.windowAssets`, which is how skins/atlases/layouts were handed in. It now also carries
+`imageUrls`, `libraryImages` and `libraryLayouts`, and `VortexMain` seeds the library in
+`registerWindowAssetLibraryContent()`, called immediately after `new AssetLibrary(ctx)` and before
+any `attachComponent`.
+
+Three things the fix turned up that are worth keeping:
+
+- **`registerAssetUrl()` was a silent no-op before `initComponent()`.** `HabboWindowManager`
+  creates its `ResourceManager` in `initContexts()`, so the image URLs — which must go in *before*
+  the manager is attached — landed on a null field and vanished. They now buffer into
+  `_pendingAssetUrls`/`_pendingAssets` and replay when the ResourceManager is built.
+- **`HabboUserDefinedRoomEvents` was constructed without an asset library.** AS3's third
+  constructor argument is forwarded verbatim to `WiredMenuController`, `WiredChestController`,
+  `WiredTransactionLogsController`, `WiredTransactionDetailsController` and
+  `RewardNotificationController`. Dropped, `Component.assets` stayed null and
+  `WiredChestWrapperView` could not find `chest_generic_xml` — the chest window was never built at
+  all. Same omission previously fixed for HabboGroupsManager, HabboCatalog,
+  HabboSoundManagerFlash10 and HabboFriendBar; this was the last one.
+- **Fire-and-forget decoding is a race, not an optimisation.** The library bitmaps were registered
+  from an unawaited `.then()`; `getAssetByName(...).content` is read synchronously, so
+  `add_friends_icon` missed whenever the friend-list packet beat `createImageBitmap`. They are
+  awaited now.
+
+Two warnings in the same log were **not** bugs and must not be "fixed":
+
+- `illumina_light_border_top_center` is declared by no `*Com.as` in any tree — the layouts reference
+  it, the client never shipped it, and AS3's `IlluminaBorderWidget.getPiece()` skips a null piece.
+- `No container found for widget: RWE_ME_MENU` — the port matches
+  `DesktopLayoutManager.getWidgetContainer()` line for line, and the `memenu` layout carries no
+  `room_widget*` tag, so AS3 returns false here too (silently; only the port logs it).
+
+#### Still open: `RoomEngine.initializeRoom()` drops a room when the engine is not ready
+
+`Cannot create room — manager not initialized (state: 1)` is the one boot warning left. AS3's
+`initializeRoom()` opens with `if(!_SafeStr_5461)` and **queues** the room into `_SafeStr_5320`
+(with its floor/wall/landscape type and camera position) to be drained once the engine is ready;
+the port calls `createRoomInstance()` immediately, gets null and drops the room forever. It is what
+kills the `RoomPreviewer` inside the chest window, built at DI time long before `RoomManager`
+reaches `INITIALIZED`. Related and also unported: `RoomPreviewerWidget`'s `REE_INITIALIZED`
+listener (`onRoomInitialized`, AS3 l.201) — the port subscribes to nothing.
+
 ### The transverse-debt pass (2026-08-14) — a stale asset, a four-module sweep, three wrong headers
 
 Three items off the "Not yet done" list, and one find that was not on any list.
