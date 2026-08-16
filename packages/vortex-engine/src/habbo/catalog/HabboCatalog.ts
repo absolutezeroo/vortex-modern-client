@@ -173,6 +173,8 @@ import {MarketplaceBuyOfferResultEvent} from '@habbo/communication/messages/inco
 import {MarketplaceCancelOfferResultEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceCancelOfferResultEvent';
 import {MarketplaceCancelAllOffersResultEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceCancelAllOffersResultEvent';
 import {MarketplaceClearOwnHistoryResultEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceClearOwnHistoryResultEvent';
+import {MarketplaceMakeOfferResultEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceMakeOfferResultEvent';
+import type {MarketplaceMakeOfferResultParser} from '@habbo/communication/messages/parser/marketplace/MarketplaceMakeOfferResultParser';
 import {MarketplaceConfigurationEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceConfigurationEvent';
 import type {MarketplaceConfigurationEventParser} from '@habbo/communication/messages/parser/marketplace/MarketplaceConfigurationEventParser';
 import {MarketplaceItemStatsEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceItemStatsEvent';
@@ -3174,6 +3176,17 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.addMessageEvent(new MarketplaceCancelOfferResultEvent(this.onMarketPlaceCancelResult.bind(this)));
         this.addMessageEvent(new MarketplaceCancelAllOffersResultEvent(this.onMarketPlaceCancelAllResult.bind(this)));
         this.addMessageEvent(new MarketplaceClearOwnHistoryResultEvent(this.onMarketPlaceClearOwnHistoryResult.bind(this)));
+        this.addMessageEvent(new MarketplaceMakeOfferResultEvent(this.onMarketplaceMakeOfferResult.bind(this)));
+
+        // Four headers AS3's HabboCatalog/VideoOfferManager subscribe and this port deliberately does
+        // not, so `sweep-unwired` keeps reporting them — each for its own reason:
+        //   3404 CloseConnection    — AS3's `onRoomExit(param1:IMessageEvent)` body is **empty**.
+        //                             Subscribing it would register a no-op.
+        //   448  NftStorePurchase   — needs `PurchaseConfirmationDialog.getNftImage()`, which returns
+        //                             the `_SafeCls_2029` NFT image widget; that widget is unported.
+        //   2901 LtdRaffleEntered   — needs `PurchaseConfirmationDialog.ltdRaffleStarted()` and the
+        //                             raffle dot animation with it (the dialog is 636 TS / 1771 AS3).
+        //   3599 UserRights         — belongs to `catalog/VideoOfferManager.as` (210 l.), unported.
         this.addMessageEvent(new MarketplaceConfigurationEvent(this.onMarketplaceConfiguration.bind(this)));
         this.addMessageEvent(new MarketplaceItemStatsEvent(this.onMarketplaceItemStats.bind(this)));
         this.addMessageEvent(new RecyclerStatusMessageEvent(this.onRecyclerStatus.bind(this)));
@@ -4184,6 +4197,29 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     private onMarketPlaceClearOwnHistoryResult(event: IMessageEvent): void
     {
         this._marketPlace?.onClearOwnHistoryResult(event);
+    }
+
+    /**
+	 * A successful listing re-reads the player's own offers, so the marketplace tab shows the new one
+	 * without a manual refresh. **Only result 1 refreshes** — every other code is a refusal, and AS3
+	 * leaves the view untouched rather than blanking it.
+	 *
+	 * The inventory subscribes this header too, for its own marketplace model; the registry allows
+	 * both listeners and AS3 likewise has the two components subscribe independently.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketplaceMakeOfferResult()
+    private onMarketplaceMakeOfferResult(event: IMessageEvent): void
+    {
+        if(!event || !this._marketPlace) return;
+
+        const parser = event.parser as MarketplaceMakeOfferResultParser | null;
+
+        if(!parser) return;
+
+        if(parser.result === 1)
+        {
+            this._marketPlace.refreshOffers();
+        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onRecyclerStatus()
