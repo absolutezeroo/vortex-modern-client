@@ -1,5 +1,6 @@
 import type {ILinkEventTracker, IUpdateReceiver} from '@core/runtime';
 import {Component, ComponentDependency, type IContext,} from '@core/runtime';
+import type {IWindow} from '@core/window/IWindow';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
@@ -144,6 +145,35 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     get localization(): IHabboLocalizationManager | null
     {
         return this._localization;
+    }
+
+    /**
+	 * Build one of the quest module's layouts by name.
+	 *
+	 * **The name is used verbatim — no `_xml` suffix.** `HabboUserDefinedRoomEvents.getXmlWindow()`
+	 * appends one because the wired layouts ship as `wired_menu_view_xml.xml`; the quest layouts ship
+	 * as `AchievementsResolutions.xml`, and the asset key is the filename without its extension
+	 * either way (`App.ts` → `key.slice('window-layouts/'.length, -'.xml'.length)`). Appending here
+	 * would look up a name that does not exist, and a missing layout returns null silently.
+	 *
+	 * AS3 wraps the whole thing in try/catch and returns null on any failure; kept, because a layout
+	 * this port has not shipped should not take the quest engine down with it.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::getXmlWindow()
+    getXmlWindow(name: string, layer: number = 1): IWindow | null
+    {
+        try
+        {
+            const asset = this.assets?.getAssetByName(name) ?? null;
+
+            if(asset === null) return null;
+
+            return this._windowManager?.buildFromXML(asset.content as unknown as string, layer) ?? null;
+        }
+        catch (_error)
+        {
+            return null;
+        }
     }
 
     // AS3: HabboQuestEngine.as::configuration

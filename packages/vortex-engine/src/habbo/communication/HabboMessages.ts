@@ -1321,6 +1321,8 @@ import {
     GetConcurrentUsersRewardMessageComposer,
     GetDailyQuestMessageComposer,
     GetQuestsMessageComposer,
+    GetResolutionAchievementsMessageComposer,
+    ResetResolutionAchievementMessageComposer,
     GetSeasonalQuestsOnlyMessageComposer,
     OpenQuestTrackerMessageComposer,
     RejectQuestMessageComposer,
@@ -3367,6 +3369,11 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2451, GetConcurrentUsersRewardMessageComposer);
         // AS3: WIN63-202607011411 registry _SafeCls_2046.as — _composers[id] = composer class.
         this._composers.set(2895, GetQuestsMessageComposer);            // _SafeCls_1837 (requestQuests)
+        // The resolution-furni pair. 1760 asks for the achievement list *and*, with a non-zero
+        // second field, commits the player's choice; 916 clears it. Both are sent by
+        // AchievementsResolutionController, which had no window to send them from.
+        this._composers.set(1760, GetResolutionAchievementsMessageComposer);
+        this._composers.set(916, ResetResolutionAchievementMessageComposer);
         this._composers.set(1236, GetSeasonalQuestsOnlyMessageComposer); // _SafeCls_1847 (requestSeasonalQuests)
         this._composers.set(985, AcceptQuestMessageComposer);           // _SafeCls_2865 (QuestsList.onAcceptQuest)
         this._composers.set(20, RejectQuestMessageComposer);            // _SafeCls_3635 (QuestsList.onCancelQuest)

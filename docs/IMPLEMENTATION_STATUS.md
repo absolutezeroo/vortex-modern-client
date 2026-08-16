@@ -382,6 +382,50 @@ documented it and no implementation existed. It is now on the interface and impl
 `TODO(AS3)` because **nothing reads that field yet**: the value is recorded, the pixels are
 unchanged. That gap is upstream and predates this slice.
 
+#### The resolution furni — 2026-08-16, and two more send gaps close
+
+Fourth and fifth of the six real "server is waiting" gaps: **1760** and **916**. A resolution furni
+is one the player points at a single achievement, which it then tracks for a season.
+
+Three windows, one controller, and the port had none of them — `AchievementsResolutionController`
+was 177 lines of `log.debug` against 387 of AS3, and both views were absent. The routing was already
+complete: `QuestMessageHandler` subscribes 3143/1844/1166 and calls straight into the controller, so
+the module's sweep read **24/24 with nothing working**. That is the failure mode the sweep cannot
+see — a subscription that lands in a stub.
+
+Ported: `AchievementResolutionProgressView`, `AchievementResolutionCompletedView`, the real
+controller, `HabboQuestEngine.getXmlWindow()`, and the two composers.
+
+**One header reads *and* writes.** `GetResolutionAchievements(stuffId, 0)` asks for the candidate
+list; the same composer with a non-zero achievement id **commits** the player's choice. The save
+button and the three refresh paths are identical on the wire and are not the same operation — which
+is why the second parameter's default matters.
+
+**Nothing polls.** The progress panel is refreshed by re-asking with the 0 form whenever an event
+could have moved the number: a level-up notification, or a completed achievement whose id matches the
+one on screen.
+
+Details worth keeping:
+
+- **The asset key has no `_xml` suffix here.** `HabboUserDefinedRoomEvents.getXmlWindow()` appends one
+  because the wired layouts ship as `wired_menu_view_xml.xml`; the quest layouts ship as
+  `AchievementsResolutions.xml`. `App.ts` keys every layout by its filename minus the extension, so
+  appending would look up a name that does not exist — and a missing layout returns null in silence.
+  The quest engine's own `getXmlWindow()` therefore uses the name verbatim.
+- **The progress bar is three windows.** Left cap, stretching middle, right cap; the right one appears
+  only at exactly 100%. The middle's authored width is captured once at build time as the 100% mark,
+  so nothing else may resize it.
+- **`AchievementResolutionCompletedView.get disposed()` returns `!= null`** where every sibling
+  returns `== null` — it answers "disposed" while alive. A bug in the dump, transcribed with a note
+  rather than corrected: nothing reads it, so a silent fix would only hide the discrepancy.
+- `onResolutionCompleted(badgeCode, stuffCode)` hands the two to the view **swapped**; the view's
+  first parameter is the stuff code. Kept.
+- `onLevelUp` compares the notification's *type* against the view's *achievement id*. AS3's
+  comparison, transcribed.
+
+Real-handler send gaps: **5 -> 3**, and the three that remain are two floor-plan-editor composers
+(3426, 880 — `BCFloorPlanEditor` is 1,879 lines and wholly unported) plus nothing else.
+
 #### The toolbar promo bars, and five classes that only look like gaps — 2026-08-16
 
 Third of the six real "server is waiting" send gaps: **2931**, the discounted club-extension offer.

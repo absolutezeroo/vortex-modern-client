@@ -12,3 +12,5 @@ export * from './GetSeasonalQuestsOnlyMessageComposer';
 export * from './OpenQuestTrackerMessageComposer';
 export * from './RejectQuestMessageComposer';
 export * from './StartCampaignMessageComposer';
+export * from './GetResolutionAchievementsMessageComposer';
+export * from './ResetResolutionAchievementMessageComposer';
