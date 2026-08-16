@@ -35,3 +35,6 @@ tmp/
 # Dev-only esbuild pre-bundle of vortex-engine, rebuilt on every `pnpm dev`
 # by packages/vortex-client/tools/vite-plugin-engine-bundle.mjs.
 packages/vortex-client/.vortex-dev/
+
+# `:stresstest` frame-budget runs, written by tools/vite-plugin-perf-log.mjs
+perf/

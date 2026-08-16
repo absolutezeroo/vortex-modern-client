@@ -1,4 +1,13 @@
 import {Texture} from 'pixi.js';
+import {
+    AVATAR_COUNTER_CACHED,
+    AVATAR_COUNTER_COMPOSE,
+    AVATAR_COUNTER_LOOKUP,
+    AVATAR_COUNTER_NULL,
+    AVATAR_COUNTER_UNCACHEABLE,
+    FRAME_CHANNEL_AVATAR_COMPOSE,
+    FrameTimings
+} from '@core/utils/FrameTimings';
 import type {AvatarStructure} from '../AvatarStructure';
 import type {AssetAliasCollection} from '../alias/AssetAliasCollection';
 import type {IAvatarImage} from '../IAvatarImage';
@@ -62,6 +71,33 @@ export class AvatarImageCache
     private _canvas: AvatarCanvas | null;
     // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::_disposed
     private _disposed: boolean;
+
+    /**
+     * Shared scratch surface for colour-transformed part draws. See `acquireScratch()`.
+     *
+     * Static rather than per-instance: every avatar in the room composes through this same code
+     * path, one part at a time on one thread, so a per-instance surface would be sixty idle
+     * canvases where one is enough.
+     */
+    // TS-only: see `acquireScratch()`.
+    private static readonly SCRATCH: Map<string, { canvas: OffscreenCanvas; context: OffscreenCanvasRenderingContext2D }> = new Map();
+
+    /** Colour-transformed frames, per source bitmap. See `getTransformMemo()`. */
+    // TS-only: see `getTransformMemo()`.
+    private static readonly TRANSFORM_MEMO: WeakMap<CanvasImageSource, Map<string, OffscreenCanvas>> = new WeakMap();
+
+    /** The no-op colour transform, so a flipped part with no tint can still use the memo path. */
+    // TS-only: see `getTransformMemo()`.
+    private static readonly IDENTITY_COLOR_TRANSFORM: IColorTransformData = {
+        redMultiplier: 1,
+        greenMultiplier: 1,
+        blueMultiplier: 1,
+        alphaMultiplier: 1
+    };
+
+    /** Entries kept per source bitmap before the memo for that source is dropped wholesale. */
+    // TS-only: see `getTransformMemo()`.
+    private static readonly TRANSFORM_MEMO_LIMIT: number = 512;
     private _geometryType: string;
     private _defaultActionAssetPartDefinition: string;
     // AS3: .../src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::_unionImages
@@ -348,20 +384,49 @@ export class AvatarImageCache
 
         let container = directionCache.getImageContainer(adjustedFrameIndex);
 
+        // Instrumentation for the `:stresstest` frame budget. `room.obj` — the room loop's
+        // visualization pass — was measured climbing from 22ms to 247ms over a 30s run with 60
+        // walking avatars, with the sprite count flat throughout, which puts the growth inside a
+        // visualization update rather than in there being more to draw. This is the composition
+        // that update reaches. The tally and the duration are both needed and answer different
+        // questions: a rising `avatar.compose` count means the cache is being missed more often,
+        // a flat count beside a rising `avatar.compose.ms` means each composition itself is
+        // getting slower.
+        FrameTimings.count(AVATAR_COUNTER_LOOKUP);
+
         if(!container || forceUpdate)
         {
+            FrameTimings.count(AVATAR_COUNTER_COMPOSE);
+            FrameTimings.begin(FRAME_CHANNEL_AVATAR_COMPOSE);
+
             const partList = directionCache.getPartList();
 
             container = this.renderBodyPart(direction, partList, adjustedFrameIndex, renderAction, forceUpdate);
 
+            FrameTimings.end(FRAME_CHANNEL_AVATAR_COMPOSE);
+
             if(!container || forceUpdate)
             {
+                // A composition that produced nothing to cache. Counted separately from the
+                // uncacheable case below because they look identical from the outside — both leave
+                // the cache empty so the next frame recomposes — but one means the parts failed to
+                // resolve and the other means they resolved and were rejected.
+                if(!container) FrameTimings.count(AVATAR_COUNTER_NULL);
+
                 return null;
             }
 
             if(container.isCacheable)
             {
+                FrameTimings.count(AVATAR_COUNTER_CACHED);
                 directionCache.updateImageContainer(container, adjustedFrameIndex);
+            }
+            else
+            {
+                // A part that reports itself uncacheable is recomposed on every single frame, for
+                // every avatar showing it — the one shape that would produce exactly the unbounded
+                // climb observed, if what makes it uncacheable also grows.
+                FrameTimings.count(AVATAR_COUNTER_UNCACHEABLE);
             }
         }
 
@@ -657,13 +722,33 @@ export class AvatarImageCache
                     colorTransform
                 ));
             }
-            else
+            else if(resolvedAsset !== null)
             {
+                // Uncacheable only when the asset resolved but carries no bitmap — AS3's
+                // `if(_loc31_) { if(_loc31_.content == null) _loc13_ = false; }`. That is the
+                // transient case: the asset exists and its pixels have not arrived yet, so the
+                // composition must not be frozen.
+                //
+                // An asset that does not resolve at all is a different thing, and AS3 leaves the
+                // flag alone for it: a part with nothing to draw is a permanent property of the
+                // figure, not a state that will change. The port folded both into one `else`, and
+                // since nearly every avatar has some part with no asset — the same family as the
+                // 68% of lookups that compose to nothing — nearly every composition was marked
+                // uncacheable for life.
+                //
+                // Measured before this: 23971 uncacheable against 3152 cached, so 88% of the real
+                // work was thrown away and redone every frame, and the cache served 4% of lookups.
                 isCacheable = false;
             }
         }
 
         if(this._unionImages.length === 0) return null;
+
+        // A real composition measured ~5ms, and a body part is only some six thousand pixels — far
+        // too few for the pixel loop or the readback to account for it. So the time is in the
+        // surrounding machinery, and this splits it: `createUnionImage()` allocates a fresh
+        // OffscreenCanvas and builds a PixiJS Texture over it, either of which can cost
+        // milliseconds, while the part resolution above it is string building and map lookups.
 
         const unionImage = this.createUnionImage(this._unionImages, isFlippedDirection);
 
@@ -779,7 +864,14 @@ export class AvatarImageCache
         const height = Math.max(1, maxY - minY);
         const regPoint = {x: -minX, y: -minY};
 
-        // Create OffscreenCanvas for compositing (AS3 BitmapData equivalent)
+        // A fresh canvas per composition, handed straight to `Texture.from()`.
+        //
+        // This was briefly pooled instead, with `transferToImageBitmap()` breaking the tie between
+        // the surface and the texture so one canvas could serve every composition — on the theory
+        // that the `getContext` here was worth removing, since a DevTools trace put native
+        // `getContext` at 3.7% of a run. The self-profiler then measured the replacement:
+        // `transferToImageBitmap` came out at **22.2%**. The trade cost about six times what it
+        // saved, so it is reverted. Allocating is the cheap option here.
         const canvas = new OffscreenCanvas(width, height);
         const ctx = canvas.getContext('2d')!;
 
@@ -807,26 +899,31 @@ export class AvatarImageCache
             // Determine if we need draw-time flip (AS3 line 638: XOR of global + per-part)
             const needsFlip = (isFlipped && !imageData.flipH) || (!isFlipped && imageData.flipH);
 
-            ctx.save();
-
+            // `save()`/`restore()` only around the branch that actually changes the transform.
+            //
+            // They used to wrap all three. A DevTools profile of a 100-avatar run — the first one
+            // readable, once `willReadFrequently` stopped the renderer blocking on the GPU — put
+            // native `save` at **36.7% of all sampled time**, the largest single entry by a wide
+            // margin, ahead of `drawImage` at 18%. The two unflipped branches below never touch
+            // context state: they call `drawImage`, and `drawWithColorTransform()` only calls
+            // `drawImage` too. For them the pair was pure overhead, once per part per composition.
             if(needsFlip)
             {
-                // Draw with horizontal flip via matrix (AS3 lines 640-647)
-                ctx.translate(drawX + imageData.rect.width, drawY);
-                ctx.scale(-1, 1);
-
-                if(imageData.colorTransform)
-                {
-                    this.drawWithColorTransform(ctx, source as CanvasImageSource, frame, 0, 0, imageData.rect.width, imageData.rect.height, imageData.colorTransform);
-                }
-                else
-                {
-                    ctx.drawImage(
-                        source as CanvasImageSource,
-                        frame.x, frame.y, frame.width, frame.height,
-                        0, 0, imageData.rect.width, imageData.rect.height
-                    );
-                }
+                // Both cases go through `drawWithColorTransform()`, which mirrors into its memo and
+                // hands back a bitmap already the right way round. A part with no colour transform
+                // borrows the identity one purely to reach that path — the multipliers change
+                // nothing, and the flip is what is being cached.
+                this.drawWithColorTransform(
+                    ctx,
+                    source as CanvasImageSource,
+                    frame,
+                    drawX,
+                    drawY,
+                    imageData.rect.width,
+                    imageData.rect.height,
+                    imageData.colorTransform ?? AvatarImageCache.IDENTITY_COLOR_TRANSFORM,
+                    true
+                );
             }
             else if(imageData.colorTransform)
             {
@@ -842,8 +939,6 @@ export class AvatarImageCache
                     drawX, drawY, imageData.rect.width, imageData.rect.height
                 );
             }
-
-            ctx.restore();
         }
 
         const resultTexture = Texture.from({resource: canvas, alphaMode: 'premultiply-alpha-on-upload'});
@@ -871,19 +966,82 @@ export class AvatarImageCache
         destY: number,
         width: number,
         height: number,
-        colorTransform: IColorTransformData
+        colorTransform: IColorTransformData,
+        flip: boolean = false
     ): void
     {
         if(width <= 0 || height <= 0) return;
 
-        const tempCanvas = new OffscreenCanvas(width, height);
-        const tempCtx = tempCanvas.getContext('2d')!;
+        // An all-ones transform is the identity, and the pixel loop below would spend a full
+        // readback and write-back arriving back at the source bitmap. Measured on a 60-avatar run,
+        // body-part composition was 95% of the frame, so a whole class of calls that can be a plain
+        // blit is worth recognising.
+        if(!flip
+            && colorTransform.redMultiplier === 1
+            && colorTransform.greenMultiplier === 1
+            && colorTransform.blueMultiplier === 1
+            && colorTransform.alphaMultiplier === 1)
+        {
+            ctx.drawImage(source, frame.x, frame.y, frame.width, frame.height, destX, destY, width, height);
+
+            return;
+        }
+
+        const memoKey = `${frame.x},${frame.y},${frame.width},${frame.height},${width},${height},`
+            + `${colorTransform.redMultiplier},${colorTransform.greenMultiplier},`
+            + `${colorTransform.blueMultiplier},${colorTransform.alphaMultiplier},${flip ? 'f' : 'n'}`;
+        const memo = AvatarImageCache.getTransformMemo(source, memoKey);
+
+        if(memo !== null)
+        {
+            ctx.drawImage(memo, 0, 0, width, height, destX, destY, width, height);
+
+            return;
+        }
+
+        // A CPU-backed canvas and a GPU-backed one do not resample identically, so the fast surface
+        // is only safe when this draw does not scale. Measured on a deliberately high-frequency
+        // pattern the scaled difference reached a delta of 49; at 1:1 there is no resampling at all
+        // and the two are byte-identical, which the equivalence test asserts both ways.
+        const scaled = frame.width !== width || frame.height !== height;
+        const scratch = AvatarImageCache.acquireScratch(width, height, !scaled);
+
+        if(scratch === null)
+        {
+            // No scratch surface means no colour transform is possible; an untransformed part is a
+            // better failure than a missing one.
+            ctx.drawImage(source, frame.x, frame.y, frame.width, frame.height, destX, destY, width, height);
+
+            return;
+        }
+
+        const tempCtx = scratch.context;
+
+        // The scratch canvas is shared and larger than this call needs, so whatever the previous
+        // caller left in this rectangle has to go before drawing a bitmap with transparent areas —
+        // otherwise the last part's pixels show through this one's holes.
+        tempCtx.clearRect(0, 0, width, height);
+
+        // Mirrored parts are mirrored *here*, once per distinct part, and the memo keeps the
+        // flipped bitmap. `createUnionImage()` then blits it with no transform at all.
+        //
+        // The transform used to live in that loop, once per part per composition, and it was
+        // measured twice: `save <- createUnionImage` at 22.1% of a run, then — after replacing the
+        // pair with `setTransform` — 21.9% again. Any context state write costs about the same,
+        // and making it lazy barely helped because parts alternate more than assumed. Doing it
+        // once per cached bitmap instead of once per draw removes the whole line.
+        if(flip)
+        {
+            tempCtx.setTransform(-1, 0, 0, 1, width, 0);
+        }
 
         tempCtx.drawImage(
             source,
             frame.x, frame.y, frame.width, frame.height,
             0, 0, width, height
         );
+
+        if(flip) tempCtx.setTransform(1, 0, 0, 1, 0, 0);
 
         const pixelData = tempCtx.getImageData(0, 0, width, height);
         const data = pixelData.data;
@@ -897,6 +1055,131 @@ export class AvatarImageCache
         }
 
         tempCtx.putImageData(pixelData, 0, 0);
-        ctx.drawImage(tempCanvas, destX, destY);
+
+        // Only the sub-rectangle just written — the scratch surface may be bigger than this part.
+        ctx.drawImage(scratch.canvas, 0, 0, width, height, destX, destY, width, height);
+
+        AvatarImageCache.storeTransformMemo(source, memoKey, scratch.canvas, width, height);
+    }
+
+    /**
+     * A previously transformed copy of this exact frame under this exact colour transform.
+     *
+     * Measured: the draw loop this serves is 98% of a body-part composition, which is in turn
+     * essentially the whole frame in a busy room — and the expense is not the arithmetic but the
+     * `getImageData` inside it, a synchronous GPU-to-CPU stall paid once per part per composition.
+     * The inputs repeat relentlessly: sixty avatars share a handful of figures, each figure's parts
+     * are drawn in every direction and animation frame, and the same shirt in the same colour is
+     * re-derived from the same source pixels every time. Nothing about that result depends on the
+     * avatar, so it is computed once.
+     *
+     * Keyed by source bitmap through a `WeakMap`, so an asset library that goes away takes its
+     * memo with it rather than pinning atlases alive.
+     */
+    // TS-only: AS3 had no equivalent because `BitmapData.draw(..., ColorTransform)` was native and
+    // cheap enough to repeat; here the same call is the dominant cost of a frame.
+    private static getTransformMemo(source: CanvasImageSource, key: string): OffscreenCanvas | null
+    {
+        return AvatarImageCache.TRANSFORM_MEMO.get(source)?.get(key) ?? null;
+    }
+
+    // TS-only: see `getTransformMemo()`.
+    private static storeTransformMemo(
+        source: CanvasImageSource,
+        key: string,
+        scratch: OffscreenCanvas,
+        width: number,
+        height: number
+    ): void
+    {
+        if(typeof OffscreenCanvas === 'undefined') return;
+
+        let bySource = AvatarImageCache.TRANSFORM_MEMO.get(source);
+
+        if(bySource === undefined)
+        {
+            bySource = new Map();
+            AvatarImageCache.TRANSFORM_MEMO.set(source, bySource);
+        }
+
+        // A hard ceiling per source. The key space is (frame x transform) and is bounded in
+        // practice by a hotel's clothing set, but "bounded in practice" is how an unbounded cache
+        // is always described — and this one holds bitmaps, so overshooting costs memory rather
+        // than a slow lookup. Clearing wholesale rather than evicting one entry keeps the policy
+        // to something that cannot itself become a cost.
+        if(bySource.size >= AvatarImageCache.TRANSFORM_MEMO_LIMIT)
+        {
+            bySource.clear();
+        }
+
+        // Copied out of the shared scratch surface, which the next call overwrites.
+        const copy = new OffscreenCanvas(width, height);
+        const copyCtx = copy.getContext('2d');
+
+        if(copyCtx === null) return;
+
+        copyCtx.imageSmoothingEnabled = false;
+        copyCtx.drawImage(scratch, 0, 0, width, height, 0, 0, width, height);
+
+        bySource.set(key, copy);
+    }
+
+    /**
+     * A shared scratch surface at least `width` x `height`, for one colour-transformed part draw.
+     *
+     * This used to be a `new OffscreenCanvas` plus a `getContext('2d')` on every call — and the
+     * call happens once per colour-transformed part, inside a loop over every part, inside a
+     * composition that a 60-avatar room performs over a hundred times a second. Allocating a canvas
+     * and acquiring a 2D context are both far from free, and neither result was ever reused.
+     *
+     * Grown monotonically and never shrunk: body parts sit in a narrow size range, so it settles at
+     * the largest one almost immediately, and a surface that shrinks would reallocate whenever a
+     * large part follows a small one — reintroducing exactly what this removes.
+     */
+    // TS-only: AS3 drew through `BitmapData.draw(source, matrix, colorTransform)`, a native player
+    // operation with no intermediate surface to manage.
+    private static acquireScratch(
+        width: number,
+        height: number,
+        readFrequently: boolean
+    ): { canvas: OffscreenCanvas; context: OffscreenCanvasRenderingContext2D } | null
+    {
+        if(typeof OffscreenCanvas === 'undefined') return null;
+
+        const slot = readFrequently ? 'cpu' : 'gpu';
+        const current = AvatarImageCache.SCRATCH.get(slot) ?? null;
+
+        if(current !== null && current.canvas.width >= width && current.canvas.height >= height)
+        {
+            return current;
+        }
+
+        const canvas = new OffscreenCanvas(
+            Math.max(width, current?.canvas.width ?? 0),
+            Math.max(height, current?.canvas.height ?? 0)
+        );
+        // `willReadFrequently` is the whole point of this surface. A DevTools trace of a 100-avatar
+        // run put `CrGpuMain` at 93% busy over 16 seconds against 12% for `CrRendererMain` — the
+        // bottleneck was never JavaScript, it was the GPU process, and the JS timings that said
+        // otherwise were measuring a thread blocked waiting on it. `getImageData()` against a
+        // GPU-backed canvas is a synchronous readback: the renderer stalls until the GPU process
+        // hands the pixels back, once per colour-transformed part per composition. This flag asks
+        // Chrome to keep the canvas in CPU memory instead, which turns that round trip into a
+        // memcpy — the documented remedy for a draw-then-read surface, which is exactly what this is.
+        const context = canvas.getContext('2d', {willReadFrequently: readFrequently});
+
+        if(context === null) return null;
+
+        // `imageSmoothingEnabled` is deliberately left at its default of true. The code this
+        // replaces used a freshly created canvas per call and never touched the flag, so it drew
+        // smoothed; turning it off here changed the output of every part whose destination size
+        // differs from its source frame — invisible at 1:1, which is why only the two scaling cases
+        // in the equivalence test caught it. Making this a performance change and nothing else
+        // means matching that default, whatever one thinks of it for pixel art.
+        const surface = {canvas, context};
+
+        AvatarImageCache.SCRATCH.set(slot, surface);
+
+        return surface;
     }
 }
