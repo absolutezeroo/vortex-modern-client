@@ -522,6 +522,15 @@ import {
     WiredTradeInitiateMessageEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTradeInitiateMessageEvent';
 import {
+    IncomeRewardStatusMessageEvent
+} from './messages/incoming/inventory/IncomeRewardStatusMessageEvent';
+import {
+    IncomeRewardClaimResponseMessageEvent
+} from './messages/incoming/inventory/IncomeRewardClaimResponseMessageEvent';
+import {
+    IncomeRewardNotificationMessageEvent
+} from './messages/incoming/inventory/IncomeRewardNotificationMessageEvent';
+import {
     WiredTransactionLogsEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTransactionLogsEvent';
 import {
@@ -2019,6 +2028,14 @@ export class HabboMessages implements IMessageConfiguration
         // windows subscribe it — the chests tab's ten-row preview and the paged transactions
         // window — and each drops a page whose `logListType` is not its own. Names derived: no
         // unobfuscated tree carries the chest messages and the emulator has no constant for 2910.
+        // === VAULT / EARNINGS ===
+        // The three server->client halves of the vault. Their client->server siblings (809, 3417)
+        // have been registered all along; nothing read the answers, because `EarningsController` was
+        // unported. Names recovered from vortex-emulator, whose ids match WIN63's registry exactly.
+        this._events.set(3976, IncomeRewardStatusMessageEvent);
+        this._events.set(2984, IncomeRewardClaimResponseMessageEvent);
+        this._events.set(1914, IncomeRewardNotificationMessageEvent);
+
         this._events.set(2910, WiredTransactionLogsEvent);
         // One transaction's full breakdown (WIN63 registry: 1306 -> _SafeCls_3176), the answer to a
         // click on a log row's "details" cell. Name derived, same reason as 2910.

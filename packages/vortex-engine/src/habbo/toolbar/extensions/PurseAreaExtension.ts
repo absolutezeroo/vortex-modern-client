@@ -168,9 +168,9 @@ export class PurseAreaExtension
     {
         const indicator = this.earningsUnseenIndicator;
 
-        if(indicator) 
+        if(indicator)
         {
-            indicator.visible = false;
+            indicator.visible = this._catalog?.getEarnings()?.showingIndicator ?? false;
         }
     }
 

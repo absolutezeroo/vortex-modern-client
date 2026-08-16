@@ -6,7 +6,7 @@ import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboCatalogPurse} from './purse/IHabboCatalogPurse';
-import type {ICatalogEarnings} from './ICatalogEarnings';
+import type {IEarningsController} from './earnings/IEarningsController';
 import type {IProductData} from '@habbo/session/product/IProductData';
 import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
 import type {IPurchasableOffer} from './IPurchasableOffer';
@@ -136,7 +136,7 @@ export interface IHabboCatalog
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getPurse()
     getPurse(): IHabboCatalogPurse;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getEarnings()
-    getEarnings(): ICatalogEarnings;
+    getEarnings(): IEarningsController | null;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getRecycler()
     getRecycler(): IRecycler | null;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getMarketPlace()

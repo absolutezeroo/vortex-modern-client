@@ -2,6 +2,8 @@ import {Component, ComponentDependency, type IContext} from '@core/runtime';
 import type {ICollectorHub} from './collectibles/ICollectorHub';
 import {CollectiblesController} from './collectibles/CollectiblesController';
 import {IID_CollectiblesController} from '@iid/IIDCollectiblesController';
+import {EarningsController} from './earnings/EarningsController';
+import {IID_VaultController} from '@iid/IIDVaultController';
 import {Logger} from '@core/utils/Logger';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
@@ -235,7 +237,7 @@ import type {IUserData} from '@habbo/session';
 import {HabboCatalogUtils} from './HabboCatalogUtils';
 import {WindowToggle} from '@habbo/utils/WindowToggle';
 import {CatalogEvent} from './event/CatalogEvent';
-import {CatalogEarnings} from './CatalogEarnings';
+import type {IEarningsController} from './earnings/IEarningsController';
 import {Purse} from './purse/Purse';
 import {PurseEvent} from './purse/PurseEvent';
 import {PurseUpdateEvent} from './purse/PurseUpdateEvent';
@@ -342,7 +344,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
     private _marketPlace: MarketPlaceLogic | null = null;
     private _recycler: RecyclerLogic | null = null;
-    private _earnings: CatalogEarnings = new CatalogEarnings();
     private _purchaseWillBeGift: boolean = false;
     private _purchaseConfirmationDialog: PurchaseConfirmationDialog | null = null;
 
@@ -356,9 +357,15 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     {
         super(context, 0, assetLibrary);
 
+        this._earningsController = new EarningsController(context, 0, assetLibrary);
+        context.attachComponent(this._earningsController, [IID_VaultController]);
+
         this._collectorHub = new CollectiblesController(context, 0, assetLibrary);
         context.attachComponent(this._collectorHub, [IID_CollectiblesController]);
     }
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_8735 (name derived: the vault)
+    private _earningsController: EarningsController | null = null;
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_4729
     private _collectorHub: CollectiblesController | null = null;
@@ -2579,9 +2586,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getEarnings()
-    public getEarnings(): CatalogEarnings
+    public getEarnings(): IEarningsController | null
     {
-        return this._earnings;
+        return this._earningsController;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getRecycler()
