@@ -22,7 +22,7 @@
 export class AvatarRenderMode
 {
     // TS-only: see `get spriteParts()`.
-    private static _spriteParts: boolean = false;
+    private static _spriteParts: boolean = true;
 
     // TS-only: see `get generation()`.
     private static _generation: number = 0;
@@ -30,8 +30,13 @@ export class AvatarRenderMode
     /**
      * Whether the room draws avatars as batched part sprites instead of one composed image.
      *
-     * Off by default: the composed path is the one every consumer outside the room still expects,
-     * and this is here to be measured before it is trusted.
+     * On, having been measured: 100 avatars went from about 10 fps with an eight-second warm-up to a
+     * steady 170, and 200 avatars hold 139, with `AvatarImageCache` no longer appearing anywhere in
+     * the profile's top twelve. `:spriteparts off` returns to the composed path at runtime, which is
+     * the first thing to try if an avatar ever renders wrongly.
+     *
+     * Everything outside the room — previews, the avatar editor, the imager — still calls
+     * `getImage()` and is untouched by this.
      */
     // TS-only: see the class note.
     public static get spriteParts(): boolean

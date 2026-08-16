@@ -3116,6 +3116,39 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **Avatars are drawn as batched sprites, not composed images**, 2026-08-17. A room of 100
+  avatars ran at about 12 fps. Two separate causes, found in that order, and the second only became
+  visible once the first was gone.
+  - **One AS3 infidelity made ~88% of compositions permanently uncacheable.** `renderBodyPart()`
+    folded two different AS3 branches into one `else`: AS3 clears the cacheable flag only when an
+    asset *resolved but carries no bitmap* — a transient state — and leaves it alone when the asset
+    does not resolve at all, which is a permanent property of the figure. Nearly every avatar has
+    some part with no asset, so nearly every composition was thrown away and rebuilt every frame.
+    Measured before: 23,971 uncacheable against 3,152 cached. Restoring the condition took 100
+    avatars to 100–145 fps.
+  - **The cache made the work repeatable; it did not make it cheaper.** The first ~8 seconds still
+    ran at 5–20 fps while every avatar composed each body part once per direction it turned. So the
+    composition was removed instead: `describeBodyPart()` computes exactly what `createUnionImage()`
+    would have drawn and returns the parts rather than rasterising them — no canvas, no readback, no
+    texture upload, and therefore nothing left to warm. `AvatarVisualization` lays them out as
+    ordinary room sprites in a block past the additions, and the renderer batches them.
+  - **Result**: 100 avatars at 170 fps with no warm-up, 200 at 139. `avatar.compose.ms` fell from
+    most of the frame to 0.03 ms, and `AvatarImageCache` no longer appears in the profile's top
+    twelve. The cache now serves 0.75 hits/frame — describing a part costs less than remembering it.
+    The remaining budget is scene-graph transforms (~30%) and the room's z-sort (7%), both
+    proportional to sprite count rather than to figure count.
+  - **The trap worth remembering**: `describeBodyPart()` copied `createUnionImage()`'s arithmetic
+    line for line and was still wrong for mirrored directions, because `renderBodyPart()` reads its
+    registration point off the `ImageData` that call *returns*, and that constructor rewrites
+    `regPoint.x` into `-regPoint.x + rect.width` when its `flipH` is set. Copying formulas does not
+    copy what happens between them; the transform was hidden in a constructor, so nothing at the
+    call site showed it.
+  - Both paths stay live behind `:spriteparts [on|off]`, sprite parts being the default.
+    `AvatarRenderMode.generation` makes each avatar's cache flush itself on its next lookup, so the
+    switch needs no room reload. An active palette effect declines the sprite path and composes, as
+    its final whole-image pixel pass is not expressible as a per-sprite tint. Everything outside the
+    room — previews, the avatar editor, the imager — still calls `getImage()` and is untouched.
+
 - 🆕 **The monsterplant seed's second way in**, 2026-08-09. An audit of the whole monsterplant
   surface — seed, products, breeding — looking for the "ported but never wired" pattern. Almost
   everything was already there; the chain broke in exactly one place, and it was the same
