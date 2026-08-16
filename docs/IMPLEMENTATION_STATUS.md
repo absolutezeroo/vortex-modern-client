@@ -382,6 +382,82 @@ documented it and no implementation existed. It is now on the interface and impl
 `TODO(AS3)` because **nothing reads that field yet**: the value is recorded, the pixels are
 unchanged. That gap is upstream and predates this slice.
 
+#### Two bugs the user hit, and one claim of mine that did not survive — 2026-08-16
+
+**The me-menu's "rooms" opened nothing.** `HabboNavigator.openNavigator()` is faithful to an AS3 body
+that is *empty* (`HabboNavigator.as:730` is `{}`) — nothing is meant to call it. AS3 reaches the
+navigator through `HabboNewNavigator.legacyNavigator`, whose field **is** the `LegacyNavigator`
+wrapper forwarding to `HabboNewNavigator.open()`. This port returned the wrong object twice: the
+accessor handed back the DI-resolved *old* navigator, and `HabboToolbar.get navigator()` returned
+`_navigator` directly where AS3 returns `_newNavigator.legacyNavigator`. Both fixed; the DI-held one
+is AS3's `_SafeStr_4588` and is now named `_oldNavigator`.
+
+Second, in the same call path: `performSearch()` returned early on a cache hit, skipping its trailing
+`open()`. AS3 has no return — it serves the cache and falls through — so a repeat search answered
+instantly and silently.
+
+**The wired "select area" button did nothing**, and the reason it did nothing is worth keeping:
+`RoomAreaSelectionManager` was a 52-line stub whose `activate()` returned false, and `InArea` reads
+that as "unavailable" and greys both buttons. The state machine is ported in full now, plus the three
+things the engine lacked — `isMoveBlocked()`/`isAreaSelectionMode()` were both `return false; // TODO`,
+tile mouse events never reached the selector, and a click that ends a drag has to be claimed before
+placement/move/walk (`_SafeCls_90.as:2382`).
+
+**And the correction worth recording.** I first shipped that without the highlight, claiming it needed
+"the plane-level highlight and a ColorMatrixFilter equivalent, neither of which this port has". Both
+halves were false, and I had not measured before saying it:
+
+- `ColorMatrixFilter` comes from pixi.js and `VariableHoldersHighlighter` already uses it.
+- `RoomPlaneParser.extractPlanes()` was already ported **with** its `isHighlight` flag, already
+  tracking what it built in `_highlightPlanes`. `RoomPlane.isHighlighter`,
+  `RoomObjectSprite.filters`/`skipMouseHandling` and the canvas forwarding both to the Pixi sprite all
+  existed.
+
+What was actually missing was three seams: the parser's public
+`initializeHighlightArea()`/`clearHighlightArea()`/`isPlaneTemporaryHighlighter()`; the same pair on
+`RoomVisualization` plus a start index on `createPlanesAndSprites()` so only the appended planes get
+sprites; and the three filter presets. **AS3's filter offsets are 0-255 and PixiJS wants 0-1** — every
+fifth-column term is divided by 255, the conversion `VariableHoldersHighlighter` documents. Getting it
+wrong washes the floor white instead of tinting it.
+
+The lesson is the one the mandate already states and I did not follow: *verify before you assert a
+blocker*. A "not ported yet" note is a claim with a shelf life, and this one had expired.
+
+#### Where the port stands — measured 2026-08-16
+
+Three tools, three questions. Re-run them rather than quoting these numbers later.
+
+**`sweep-unwired.mjs` — does the port subscribe what AS3 subscribes?** 471 subscriptions across the
+thirteen main modules, **419 wired, 46 missing**:
+
+| Module | Wired | Missing |
+|---|---|---|
+| `habbo/catalog` | 44/58 | **13** (+1 unresolved) |
+| `habbo/friendbar` | 34/44 | **10** — all in `talent/`, `onBoardingHc`, `popup`, none in the landing view |
+| `habbo/notifications` | 28/37 | **8** |
+| `habbo/room` | 51/57 | **6** |
+| `habbo/ui` | 1/5 | **4** — the worst ratio in the port; three are messages with no id in the registry at all (YouTube furni playlists/video) |
+| `habbo/groups` | 23/26 | 3 |
+| `habbo/session` | 74/75 | 1 |
+| `habbo/inventory` | 53/54 | 1 (deliberate — the badge rarity pair, see above) |
+| `navigator`, `messenger`, `quest`, `toolbar`, `roomevents` | full | 0 |
+
+**`wire-coverage.mjs` — can the client trigger what the server implements?** 40 send gaps, of which
+**3 have a real handler**: 3426 and 880 (the floor-plan editor, `BCFloorPlanEditor` at 1,879 lines,
+wholly unported) and 785, which has no entry in the WIN63 registry in either table and is an
+emulator-side leftover rather than a client gap. 29 of the other 37 sit behind emulator stubs.
+
+**`todo-inventory.mjs` — what is knowingly incomplete?** 363 TODOs, 310 of them `TODO(AS3)`. By kind:
+203 micro-gaps with no blocker cited, 86 blocked on a whole unported module, 28 Flash-only
+(BitmapData/filter/shader/Timer), 27 wire-level, 19 decided-against. Hottest modules: `catalog` 63,
+`ui` 62, `room` 35, `inventory` 31, `roomevents` 29. **27 are flagged stale** — their blocker may have
+landed since; `--stale` lists them and this session's correction is exactly why that list is worth
+reading.
+
+**The "SolidJS" backlog is down to five.** The recipe above reports `FurniModel` (one call),
+`RoomCompetitionController` (550 l. AS3 / 169 TS), `CitizenshipVipQuestsPromoExtension`,
+`VideoOfferExtension` (251/117) and `OfferExtension`.
+
 #### The resolution furni — 2026-08-16, and two more send gaps close
 
 Fourth and fifth of the six real "server is waiting" gaps: **1760** and **916**. A resolution furni
