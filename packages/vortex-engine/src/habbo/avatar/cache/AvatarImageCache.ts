@@ -945,9 +945,22 @@ export class AvatarImageCache
             });
         }
 
+        // Not `regPoint` directly, which is the trap this path fell into once.
+        //
+        // The composed path reads its registration point off the `ImageData` that `createUnionImage()`
+        // returns — and that constructor mirrors `regPoint.x` into `-regPoint.x + rect.width` whenever
+        // its `flipH` is set, which for the union image is the direction's own flip. So the value
+        // `renderBodyPart()` negates is already mirrored, and taking the raw one here put every body
+        // part of a flipped direction out by `2·minX + width`, horizontally only. Copying the
+        // arithmetic was not enough: the transform was hidden in a constructor rather than written at
+        // the call site.
+        const unionRegPoint = isFlipped
+            ? {x: -regPoint.x + width, y: regPoint.y}
+            : regPoint;
+
         const containerRegPoint = {
-            x: -regPoint.x,
-            y: canvasOffset - regPoint.y
+            x: -unionRegPoint.x,
+            y: canvasOffset - unionRegPoint.y
         };
 
         if(isFlipped && assetPartDefinition !== 'lay')
