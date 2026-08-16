@@ -7,31 +7,42 @@
 // TS-only: AS3 uses an anonymous object literal here, which TypeScript cannot express as a type.
 export interface IHabbiconFrameRect
 {
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     x: number;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     y: number;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     width: number;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     height: number;
 }
 
 // TS-only: as above — the frame definitions AS3 builds in buildRuntimeFrameDefinitions().
 export interface IHabbiconFrameDefinition extends IHabbiconFrameRect
 {
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     id: number;
 }
 
 // TS-only: as above — one step of the animation timeline.
 export interface IHabbiconAnimationStep
 {
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     sourceFrame: number;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     durationMs: number;
 }
 
 // TS-only: as above — one decoded frame, ready to draw.
 export interface IHabbiconRuntimeFrame
 {
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     bitmap: ImageBitmap;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     smallBitmap: ImageBitmap;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     width: number;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     height: number;
 }
 
@@ -42,13 +53,21 @@ export interface IHabbiconRuntimeFrame
 // TS-only: as above — AS3's runtime-asset object literal.
 export interface IHabbiconRuntimeAsset
 {
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     animated: boolean;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     loop: boolean;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     direction: number;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     baseWidth: number;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     baseHeight: number;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     frames: IHabbiconRuntimeFrame[];
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     steps: IHabbiconAnimationStep[];
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     playbackDurationMs: number;
 }
 

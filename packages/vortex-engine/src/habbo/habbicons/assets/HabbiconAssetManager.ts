@@ -914,40 +914,61 @@ export class HabbiconAssetManager
 // TS-only: the shape of habbicons.json. AS3 reads it as untyped Objects.
 interface IHabbiconMetadataFrame
 {
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     id?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     x?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     y?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     width?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     height?: unknown;
 }
 
 // TS-only: as above.
 interface IHabbiconMetadataStep
 {
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     enabled?: boolean;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     sourceFrame?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     durationMs?: unknown;
 }
 
 // TS-only: as above.
 interface IHabbiconMetadataEntry
 {
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     id?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     name?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     x?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     y?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     width?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     height?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     dir?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     loop?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     frameCount?: unknown;
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     frameData?: IHabbiconMetadataFrame[];
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     animation?: {steps?: IHabbiconMetadataStep[]; playbackSpeed?: unknown} | null;
 }
 
 // TS-only: as above.
 interface IHabbiconMetadataDocument
 {
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     habbicons?: IHabbiconMetadataEntry[];
+    // TS-only: a field of AS3's anonymous object literal (see the interface above).
     collectionIcons?: IHabbiconMetadataFrame[];
 }
