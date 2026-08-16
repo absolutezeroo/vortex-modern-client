@@ -6389,10 +6389,17 @@ export class RoomEngine extends Component implements IRoomEngine,
                     roomId, objectId, category
                 );
                 break;
+            // AS3: _SafeCls_1821.as:1488-1490. Same ROWRE_-on-both-sides spelling as the
+            // monsterplant case above, and for the same reason — AS3 writes it that way.
+            case RoomObjectWidgetRequestEvent.ROWRE_PURCHASABLE_CLOTHING_CONFIRMATION_DIALOG:
+                this.emitToWidget(
+                    RoomEngineToWidgetEvent.REQUEST_PURCHASABLE_CLOTHING_CONFIRMATION_DIALOG,
+                    roomId, objectId, category
+                );
+                break;
             default:
                 // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectWidgetRequestEvent()
                 // continues past ROWRE_CLOTHING_CHANGE with the playlist-editor, mannequin,
-                // purchasable-clothing confirmation,
                 // area-hide, effectbox dialog, achievement-resolution, friend-furni,
                 // badge-display, high-score and link cases (the mysterybox and mysterytrophy
                 // dialogs above are done). Their RETWE_* constants already exist on

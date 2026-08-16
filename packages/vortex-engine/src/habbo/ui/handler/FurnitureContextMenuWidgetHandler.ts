@@ -9,9 +9,15 @@
  * `set widget()` is what creates it, so the tracker appears the moment the widget is constructed.
  *
  * Ported for the mystery-box / mystery-trophy, guild-furni, purchasable-clothing and monsterplant
- * flows. The one AS3 request this does not subscribe to is
- * ROWRE_REQUEST_PURCHASABLE_CLOTHING_CONFIRMATION_DIALOG (AS3 l.109/128): the room engine has no
- * case raising it yet, so subscribing would only add a listener nothing calls.
+ * flows, including every request AS3 subscribes to.
+ *
+ * **Purchasable clothing arrives by two different routes and they are not interchangeable.** A
+ * context menu (`RETWE_OPEN_FURNI_CONTEXT_MENU` carrying `PURCHASABLE_CLOTHING`) opens the generic
+ * *use* menu; the widget request `ROWRE_REQUEST_PURCHASABLE_CLOTHING_CONFIRMATION_DIALOG`, raised by
+ * a double click, opens the *confirmation dialog* and is owner-gated. This port had them collapsed
+ * into one — the context-menu case called the dialog, and the widget request was left unsubscribed
+ * on the grounds that nothing raised it, which was true only because `RoomEngine` had left its own
+ * case unmapped on the grounds that nothing listened.
  */
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
@@ -153,6 +159,11 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
             this.onMonsterPlantSeedPlantConfirmationDialogRequested,
             this
         );
+        events.on(
+            RoomEngineToWidgetEvent.REQUEST_PURCHASABLE_CLOTHING_CONFIRMATION_DIALOG,
+            this.onPurchasableClothingConfirmationDialogRequested,
+            this
+        );
         events.on(RoomEngineToWidgetEvent.REQUEST_MYSTERYBOX_OPEN_DIALOG, this.onMysteryBoxOpenDialogRequested, this);
         events.on(RoomEngineToWidgetEvent.REQUEST_EFFECTBOX_OPEN_DIALOG, this.onEffectBoxOpenDialogRequested, this);
         events.on(RoomEngineToWidgetEvent.REQUEST_MYSTERYTROPHY_OPEN_DIALOG, this.onMysteryTrophyOpenDialogRequested, this);
@@ -168,6 +179,11 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
             events.off(
                 RoomEngineToWidgetEvent.REQUEST_MONSTERPLANT_SEED_PLANT_CONFIRMATION_DIALOG,
                 this.onMonsterPlantSeedPlantConfirmationDialogRequested,
+                this
+            );
+            events.off(
+                RoomEngineToWidgetEvent.REQUEST_PURCHASABLE_CLOTHING_CONFIRMATION_DIALOG,
+                this.onPurchasableClothingConfirmationDialogRequested,
                 this
             );
             events.off(RoomEngineToWidgetEvent.REQUEST_MYSTERYBOX_OPEN_DIALOG, this.onMysteryBoxOpenDialogRequested, this);
@@ -306,8 +322,11 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
                             this._widget.showMonsterPlantSeedContextMenu(object, widgetEvent.category);
                         }
                         break;
+                    // AS3 opens the *generic usable* menu here, not the confirmation dialog — that
+                    // one belongs to the double-click path below. AS3 also leaves this case without
+                    // a `break`; it is last in the switch, so it falls out either way.
                     case CONTEXT_MENU_PURCHASABLE_CLOTHING:
-                        this._widget.showPurchasableClothingConfirmationDialog(object);
+                        this._widget.showUsableFurnitureContextMenu(object, widgetEvent.category);
                         break;
                 }
                 break;
@@ -543,6 +562,25 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
         if(!this._container?.isOwnerOfFurniture(object)) return;
 
         this._widget.showPlantSeedConfirmationDialog(object);
+    }
+
+    /**
+	 * Double-clicking a purchasable-clothing furni. The context menu reaches the same furni through
+	 * `showUsableFurnitureContextMenu()`; this path skips it and asks straight for the confirmation.
+	 * Owner-only, like its monsterplant sibling.
+	 */
+    // AS3: FurnitureContextMenuWidgetHandler.as::onPurchasableClothingConfirmationDialogRequested()
+    private onPurchasableClothingConfirmationDialogRequested(event: RoomEngineToWidgetEvent): void
+    {
+        if(this._widget === null) return;
+
+        const object = this.getRoomObject(event.objectId);
+
+        if(object === null) return;
+
+        if(!this._container?.isOwnerOfFurniture(object)) return;
+
+        this._widget.showPurchasableClothingConfirmationDialog(object);
     }
 
     /** Owner-only, unlike the mystery box: an effect box is opened by whoever owns it. */
