@@ -292,10 +292,21 @@ export class HabboToolbar extends Component implements IHabboToolbar
         return this._questEngine;
     }
 
+    /**
+	 * **The wrapper, not the old navigator** — AS3 returns `_newNavigator.legacyNavigator`, which is
+	 * a `LegacyNavigator` bridging to the new one. This port used to hand back the component resolved
+	 * from `IID_HabboNavigator` directly, whose `openNavigator()` is faithful to an AS3 body that is
+	 * **empty**: the me-menu's "rooms" entry sent its search and then opened nothing.
+	 *
+	 * Falls back to the old navigator while the new one is still resolving, so callers that only read
+	 * data keep working during boot; AS3 returns null there instead.
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::get navigator()
     get navigator(): IHabboNavigator | null
     {
-        return this._navigator;
+        // `legacyWrapper` rather than `legacyNavigator`: the same object, through the nullable
+        // accessor. The throwing one would fire during boot, before initComponent() has built it.
+        return this._newNavigator?.legacyWrapper ?? this._navigator;
     }
 
     // TS-only: see the `_newNavigator` field comment - bridges BottomBarLeft.onNaviHover()

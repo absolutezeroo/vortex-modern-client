@@ -221,14 +221,32 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         return this._communication;
     }
 
-    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_legacyNavigator
-    private _legacyNavigator: IHabboNavigator | null = null;
+    /**
+	 * The **old** navigator component, resolved from DI. AS3 calls it `_SafeStr_4588` and keeps it
+	 * only to hand to the wrapper — nothing else reads it.
+	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::_SafeStr_4588 (name derived)
+    private _oldNavigator: IHabboNavigator | null = null;
 
+    /**
+	 * **This returns the wrapper, not the old navigator.** AS3's `_legacyNavigator` field *is*
+	 * `new LegacyNavigator(this, _SafeStr_4588)` — the bridge that forwards `openNavigator()` to
+	 * `HabboNewNavigator.open()` and `showOwnRooms()` to `performSearch('myworld_view')`.
+	 *
+	 * The port used to return the raw old navigator here, whose `openNavigator()` is faithful to an
+	 * AS3 body that is **empty** — so every caller reaching the navigator through this accessor
+	 * (`HabboToolbar.get navigator()`, and through it the me-menu's "rooms" entry and the landing
+	 * view) sent its search and then opened nothing at all.
+	 */
     // AS3: .../src/com/sulake/habbo/navigator/HabboNewNavigator.as::get legacyNavigator()
     get legacyNavigator(): IHabboNavigator
     {
-        if(this._legacyNavigator === null) throw new Error('[HabboNewNavigator] legacyNavigator not initialized');
-        return this._legacyNavigator;
+        if(this._legacyNavigatorWrapper === null)
+        {
+            throw new Error('[HabboNewNavigator] legacyNavigator not initialized');
+        }
+
+        return this._legacyNavigatorWrapper;
     }
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/HabboNewNavigator.as::_contextContainer
@@ -339,7 +357,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
                 IID_HabboNavigator,
                 (nav: IHabboNavigator | null) =>
                 {
-                    this._legacyNavigator = nav;
+                    this._oldNavigator = nav;
                 },
                 true
             ),
@@ -586,21 +604,23 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 
         this._lastSource = source;
 
-        // Check cache first
+        // Check cache first. **No early return**: AS3 serves the cached result and then falls
+        // through to open(), so a repeat search still raises the window. The port used to return
+        // here, which is why a second "my rooms" from the me-menu answered instantly and silently.
         const cached = this._cache.getEntry(`${searchCode}/${filtering}`);
 
         if(cached)
         {
             this.onSearchResult(cached);
-
-            return;
         }
+        else
+        {
+            this._lastSearchCode = searchCode;
+            this._lastFiltering = filtering;
 
-        this._lastSearchCode = searchCode;
-        this._lastFiltering = filtering;
-
-        this.send(new NewNavigatorSearchComposer(searchCode, filtering));
-        this.trackEventLog('search', 'Search', HabboNewNavigator.getEventLogExtraStringFromSearch(searchCode, filtering));
+            this.send(new NewNavigatorSearchComposer(searchCode, filtering));
+            this.trackEventLog('search', 'Search', HabboNewNavigator.getEventLogExtraStringFromSearch(searchCode, filtering));
+        }
 
         this.open();
 
@@ -780,9 +800,9 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 */
     isPerkAllowed(perkCode: string): boolean
     {
-        if(this._legacyNavigator)
+        if(this._oldNavigator)
         {
-            return (this._legacyNavigator as HabboNavigator).isPerkAllowed(perkCode);
+            return (this._oldNavigator as HabboNavigator).isPerkAllowed(perkCode);
         }
 
         return false;
@@ -796,9 +816,9 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 	 */
     getCurrentUserName(): string
     {
-        if(this._legacyNavigator)
+        if(this._oldNavigator)
         {
-            return (this._legacyNavigator as HabboNavigator).getCurrentUserName();
+            return (this._oldNavigator as HabboNavigator).getCurrentUserName();
         }
 
         return '';
@@ -1079,7 +1099,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         this._navigatorEvents.removeAllListeners();
         this._windowManager = null;
         this._communication = null;
-        this._legacyNavigator = null;
+        this._oldNavigator = null;
         this._roomSessionManager = null;
         this._localization = null;
         this._sessionData = null;
@@ -1107,9 +1127,9 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         this._view = new NavigatorView(this);
 
         // Create the LegacyNavigator wrapper bridging new and old navigators
-        if(this._legacyNavigator)
+        if(this._oldNavigator)
         {
-            this._legacyNavigatorWrapper = new LegacyNavigator(this, this._legacyNavigator as HabboNavigator);
+            this._legacyNavigatorWrapper = new LegacyNavigator(this, this._oldNavigator as HabboNavigator);
         }
 
         this.send(new NewNavigatorInitComposer());
