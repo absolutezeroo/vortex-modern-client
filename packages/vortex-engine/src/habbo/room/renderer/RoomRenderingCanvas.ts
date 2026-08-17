@@ -46,9 +46,21 @@ export type {IRoomRenderingCanvasMouseListener};
  * sprite sits at roughly `-height + scale/4`, and effects and additions go further still. This is
  * around four tiles at the default scale, chosen to be wrong in the safe direction: too large only
  * costs a few avatars' worth of updates, too small pops a limb at the edge of the screen.
+ *
+ * One figure per direction, because a single symmetric one was the first attempt and it culled only
+ * a quarter of a two-thousand-avatar room. Four tiles of slack on every side of a *point* is mostly
+ * spent below the avatar, where there is nothing to clip: everything hangs above the anchor, which
+ * sits at its feet. Splitting keeps the same safety overhead, where clipping would actually show,
+ * and stops paying for it in the three directions that never needed it.
  */
 // TS-only: see `RoomCullingMode`.
-const AVATAR_CULL_MARGIN = 256;
+const AVATAR_CULL_MARGIN_TOP = 192;
+
+// TS-only: see `AVATAR_CULL_MARGIN_TOP`.
+const AVATAR_CULL_MARGIN_BOTTOM = 64;
+
+// TS-only: see `AVATAR_CULL_MARGIN_TOP`.
+const AVATAR_CULL_MARGIN_SIDE = 96;
 
 /** The object types drawn by an avatar visualization, and so the ones `RoomCullingMode` covers. */
 // TS-only: see `RoomCullingMode`.
@@ -1098,16 +1110,25 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     {
         let x = Math.floor(screenPos.x) + Math.floor(this._width / 2) + this._screenOffsetX;
         let y = Math.floor(screenPos.y) + Math.floor(this._height / 2) + this._screenOffsetY;
-        let margin = AVATAR_CULL_MARGIN;
+        let top = AVATAR_CULL_MARGIN_TOP;
+        let bottom = AVATAR_CULL_MARGIN_BOTTOM;
+        let side = AVATAR_CULL_MARGIN_SIDE;
 
         if(this._scale !== 1)
         {
             x = (x - this._screenOffsetX) * this._scale + this._screenOffsetX;
             y = (y - this._screenOffsetY) * this._scale + this._screenOffsetY;
-            margin *= this._scale;
+            top *= this._scale;
+            bottom *= this._scale;
+            side *= this._scale;
         }
 
-        return x > -margin && x < this._width + margin && y > -margin && y < this._height + margin;
+        // The box the sprites would occupy against the viewport — the same intersection test
+        // `rectangleVisible()` performs, on an estimated rectangle rather than a measured one.
+        return (x + side) >= 0
+            && (x - side) <= this._width
+            && (y + bottom) >= 0
+            && (y - top) <= this._height;
     }
 
     // AS3: sources/win63_version/room/renderer/class_3523.as::rectangleVisible()
