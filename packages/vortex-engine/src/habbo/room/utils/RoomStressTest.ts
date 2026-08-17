@@ -91,6 +91,21 @@ export class RoomStressTest
     private static _wanderRadius: number = RoomStressTest.WANDER_RADIUS_MIN;
 
     /**
+     * Largest half-width of the wander square, in tiles.
+     *
+     * A Habbo room is meant to fit the screen, and a player expects to see everyone in it at once —
+     * that is the game, not an implementation detail. So a load spread wider than a screenful is not
+     * a bigger room, it is a different game: it moves most of the crowd off camera and quietly stops
+     * measuring the thing the client actually has to do.
+     *
+     * 12 is a 25×25 floor, at the large end of what a real room occupies. Density above that ceiling
+     * rises with the count, which is the honest consequence of asking for more occupants than a room
+     * that size holds.
+     */
+    // TS-only: see the class note.
+    private static readonly WANDER_RADIUS_MAX: number = 12;
+
+    /**
      * Fallback figures, used only when the caller's own figure cannot be read.
      *
      * These were written from memory and **must not be trusted as a measurement baseline**. A run
@@ -188,10 +203,12 @@ export class RoomStressTest
         RoomStressTest._origin = new Vector3d(origin.x, origin.y, origin.z);
         RoomStressTest._runDurationSeconds = Math.max(0, durationSeconds);
 
-        // Half the side of a square holding `avatarCount` tiles, so density stays near one per tile.
-        RoomStressTest._wanderRadius = Math.max(
-            RoomStressTest.WANDER_RADIUS_MIN,
-            Math.ceil(Math.sqrt(avatarCount) / 2)
+        // Half the side of a square holding `avatarCount` tiles, so density stays near one per tile —
+        // but never wider than a screenful, because a Habbo room fits the screen and everyone in it
+        // is meant to be visible. See `WANDER_RADIUS_MAX`.
+        RoomStressTest._wanderRadius = Math.min(
+            RoomStressTest.WANDER_RADIUS_MAX,
+            Math.max(RoomStressTest.WANDER_RADIUS_MIN, Math.ceil(Math.sqrt(avatarCount) / 2))
         );
 
         RoomStressTest.spawnAvatars(avatarCount);

@@ -27,8 +27,17 @@ export class RoomCullingMode
     /**
      * Whether off-screen avatars skip their visualization update.
      *
-     * Off by default: at a thousand avatars the client already holds 44 fps without it, so this
-     * earns its place only where it is measured to, and the measurement has to be possible both ways.
+     * **Off, and expected to stay off in this game.** A Habbo room is built to fit the screen and a
+     * player expects to see everyone in it at any moment, so in practice there is no off-screen
+     * avatar to skip — the premise this was written on does not hold here. Measured at two thousand
+     * avatars deliberately spread wider than a screenful, it removed a quarter of them and took
+     * `room.obj` from 26.84 ms to 22.71; on a room that fits the screen it would remove none, while
+     * still carrying the risk of clipping something the player should have seen.
+     *
+     * Kept rather than deleted because the measurement it enables is worth being able to repeat, and
+     * because a future viewport that genuinely scrolls would change the answer. It is not a tuning
+     * knob to reach for on a slow room: at realistic occupancy the client runs at 170 fps and this
+     * would change nothing.
      */
     // TS-only: see the class note.
     public static avatars: boolean = false;
