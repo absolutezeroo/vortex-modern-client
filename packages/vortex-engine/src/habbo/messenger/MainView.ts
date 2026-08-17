@@ -13,6 +13,10 @@ import type {IIlluminaInputHandler} from '@habbo/window/widgets/IIlluminaInputHa
 import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget';
 import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
 import {ChatBubbleMessage} from '@habbo/window/widgets/ChatBubbleMessage';
+import {MessengerHabbiconPicker} from './habbicons/MessengerHabbiconPicker';
+import {
+    SendHabbiconMessageComposer
+} from '@habbo/communication/messages/outgoing/habbicons/SendHabbiconMessageComposer';
 
 import {
     FollowFriendMessageComposer
@@ -256,6 +260,9 @@ export class MainView implements IDisposable, IIlluminaInputHandler
     /** Client-side id stamped on an outgoing message until the server echoes it back. */
     // AS3: .../messenger/MainView.as::_SafeStr_6222
     private _nextClientMessageId: number = 1;
+
+    // AS3: .../messenger/MainView.as::_SafeStr_4825 (the habbicon picker; derived name)
+    private _habbiconPicker: MessengerHabbiconPicker | null = null;
 
     // AS3: .../messenger/MainView.as::_awaitConfirmationEntries
     private _awaitConfirmationEntries: Map<number, ChatEntry> = new Map<number, ChatEntry>();
@@ -1779,41 +1786,148 @@ export class MainView implements IDisposable, IIlluminaInputHandler
     }
 
     /**
-     * Opens or closes the habbicon picker.
+     * Opens or closes the habbicon picker. Positioning only happens on the way open, because the
+     * anchor is measured against the current window geometry.
      */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/messenger/MainView.as::toggleHabbiconPicker()
-    // AS3 builds a MessengerHabbiconPicker from the "messenger_habbicon_picker" layout,
-    // positions it above the input row, and sends the chosen id with the habbicon composer.
-    // None of that can be built yet: messenger/habbicons/ (1399 l.), habbo/habbicons/assets/
-    // (938 l.) and habbo/catalog/habbicons/ (5089 l., the IHabbiconController this needs) are
-    // all unported, and the port has no composer for a habbicon message either. Reported
-    // rather than left silent, because the button is on screen and does nothing.
+    // AS3: .../messenger/MainView.as::toggleHabbiconPicker()
     private toggleHabbiconPicker(): void
     {
-        log.warn('toggleHabbiconPicker: the habbicon picker is not ported - the button does nothing. See habbo/catalog/habbicons.');
+        this.ensureHabbiconPicker();
+
+        if(this._habbiconPicker === null) return;
+
+        if(this._habbiconPicker.visible)
+        {
+            this._habbiconPicker.hide();
+
+            return;
+        }
+
+        this._habbiconPicker.show();
+        this.positionHabbiconPicker();
+    }
+
+    /**
+     * Built on first use, not with the console: the picker reads the whole owned/shop set out of
+     * the habbicon controller, and there is no reason to pay for that until the button is pressed.
+     */
+    // AS3: .../messenger/MainView.as::ensureHabbiconPicker()
+    private ensureHabbiconPicker(): void
+    {
+        if(this._habbiconPicker !== null || this._messenger === null || this._window === null) return;
+
+        const window = this._messenger.getXmlWindow('messenger_habbicon_picker') as IWindowContainer | null;
+
+        if(window === null)
+        {
+            log.warn('ensureHabbiconPicker: the "messenger_habbicon_picker" layout is missing - the button does nothing.');
+
+            return;
+        }
+
+        this._window.addChild(window);
+
+        this._habbiconPicker = new MessengerHabbiconPicker(
+            window,
+            this._messenger.habbiconController,
+            this._messenger.localization,
+            this._messenger.windowManager,
+            this.onHabbiconSelected
+        );
+    }
+
+    /**
+     * Left-aligned with the habbicon button, sitting just above the input row — both measured
+     * globally and then rebased onto the console window, which is the picker's parent.
+     */
+    // AS3: .../messenger/MainView.as::positionHabbiconPicker()
+    private positionHabbiconPicker(): void
+    {
+        const picker = this._habbiconPicker;
+        const button = this.habbiconButton;
+        const input = this.inputWidget;
+
+        if(picker === null || picker.window === null || button === null || input === null
+            || this._window === null)
+        {
+            return;
+        }
+
+        // AS3 allocates a `flash.geom.Rectangle`/`Point`; this port's `getGlobalRectangle()` takes
+        // a structural out-param, as `HabbiconPopupController` does.
+        const buttonRect = {x: 0, y: 0, width: 0, height: 0};
+        const inputRect = {x: 0, y: 0, width: 0, height: 0};
+        const origin = {x: 0, y: 0};
+
+        button.getGlobalRectangle(buttonRect);
+        (input as unknown as IWindow).getGlobalRectangle(inputRect);
+        this._window.getGlobalPosition(origin);
+
+        picker.setPosition(
+            buttonRect.x - origin.x,
+            inputRect.y - origin.y - picker.window.height - 4
+        );
     }
 
     /**
      * Hides the picker if it is showing.
      */
-    // TODO(AS3): .../messenger/MainView.as::hideHabbiconPicker()
-    // Inert until the picker exists; see toggleHabbiconPicker().
+    // AS3: .../messenger/MainView.as::hideHabbiconPicker()
     private hideHabbiconPicker(): void
     {
-        // Nothing to hide yet.
+        this._habbiconPicker?.hide();
     }
 
     /**
-     * Hides the picker when a click lands outside both it and its button.
+     * Hides the picker when a click lands outside both it and its button. The button is excluded
+     * so that a click on it reaches `toggleHabbiconPicker()` as a toggle rather than being eaten
+     * as a dismiss and immediately reopened.
      */
-    // TODO(AS3): .../messenger/MainView.as::hideHabbiconPickerIfOutside()
-    // Inert until the picker exists. `isWindowInTree()` and `habbiconButton` are the two
-    // halves AS3 tests with and are already ported, so this is a one-line body once
-    // MessengerHabbiconPicker lands.
+    // AS3: .../messenger/MainView.as::hideHabbiconPickerIfOutside()
     private hideHabbiconPickerIfOutside(window: IWindow | null): void
     {
-        void MainView.isWindowInTree(window, this.habbiconButton);
+        if(this._habbiconPicker !== null && this._habbiconPicker.visible
+            && !MainView.isWindowInTree(window, this.habbiconButton)
+            && !this._habbiconPicker.containsWindow(window))
+        {
+            this._habbiconPicker.hide();
+        }
     }
+
+    /**
+     * A picked habbicon travels the same road as a typed message: composer, optimistic local
+     * record under a client id, send sound if the conversation was empty. The extra step is
+     * `noteHabbiconUsed()`, which is what feeds the picker's "recently used" band.
+     */
+    // AS3: .../messenger/MainView.as::onHabbiconSelected()
+    private onHabbiconSelected = (habbiconId: number, _keepOpen: boolean): void =>
+    {
+        if(this._selectedChatId === -1 || habbiconId <= 0 || this._messenger === null) return;
+
+        const clientMessageId = this._nextClientMessageId;
+
+        this._nextClientMessageId += 1;
+
+        this._messenger.send(new SendHabbiconMessageComposer(this._selectedChatId, habbiconId, clientMessageId));
+
+        this.playSendSoundIfConversationIsEmpty();
+
+        const session = this._messenger.sessionDataManager;
+
+        this.recordChatMessage(
+            this._selectedChatId,
+            ChatBubbleMessage.habbicon(habbiconId),
+            false,
+            0,
+            session?.userId ?? 0,
+            session?.userName ?? '',
+            session?.figure ?? '',
+            '',
+            clientMessageId
+        );
+
+        this._messenger.habbiconController?.noteHabbiconUsed(habbiconId);
+    };
 
     // AS3: .../messenger/MainView.as::dispose()
     dispose(): void
@@ -1822,6 +1936,9 @@ export class MainView implements IDisposable, IIlluminaInputHandler
         {
             return;
         }
+
+        this._habbiconPicker?.dispose();
+        this._habbiconPicker = null;
 
         this._conversation = null;
         this._avatarList = null;

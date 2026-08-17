@@ -24,6 +24,8 @@ import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboHelp} from '@iid/IIDHabboHelp';
 import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
+import {IID_HabbiconController} from '@iid/IIDHabbiconController';
+import type {IHabbiconController} from '@habbo/catalog/habbicons/IHabbiconController';
 
 import {MessengerInitEvent} from '@habbo/communication/messages/incoming/friendlist/MessengerInitEvent';
 import {NewConsoleMessageEvent} from '@habbo/communication/messages/incoming/friendlist/NewConsoleMessageEvent';
@@ -132,15 +134,17 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
     // AS3: .../messenger/HabboMessenger.as::_soundManager
     private _soundManager: IHabboSoundManager | null = null;
 
+    // AS3: .../messenger/HabboMessenger.as::_habbiconController
+    private _habbiconController: IHabbiconController | null = null;
+
     /**
-     * TODO(AS3): `_habbiconController` is an `IIDHabbiconController` dependency —
-     * optional in AS3 too. `habbo/catalog/habbicons` is unported and this port has no
-     * such IID at all, so the field stays null and the habbicon picker is unavailable.
+     * Optional in AS3 too: the controller is attached by `HabboCatalog`, so a client booted
+     * without a catalog simply has no habbicon picker rather than a locked messenger.
      */
     // AS3: .../messenger/HabboMessenger.as::get habbiconController()
-    get habbiconController(): unknown | null
+    get habbiconController(): IHabbiconController | null
     {
-        return null;
+        return this._habbiconController;
     }
 
     /**
@@ -204,6 +208,10 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
             new ComponentDependency(IID_HabboSoundManager, (soundManager: IHabboSoundManager | null) =>
             {
                 this._soundManager = soundManager;
+            }, false),
+            new ComponentDependency(IID_HabbiconController, (habbiconController: IHabbiconController | null) =>
+            {
+                this._habbiconController = habbiconController;
             }, false)
         ] as Array<ComponentDependency<unknown>>;
     }

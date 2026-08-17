@@ -558,6 +558,9 @@ import {
     UnfavoriteHabbiconMessageComposer
 } from './messages/outgoing/habbicons/UnfavoriteHabbiconMessageComposer';
 import {
+    SendHabbiconMessageComposer
+} from './messages/outgoing/habbicons/SendHabbiconMessageComposer';
+import {
     IncomeRewardStatusMessageEvent
 } from './messages/incoming/inventory/IncomeRewardStatusMessageEvent';
 import {
@@ -3519,6 +3522,9 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(662, ClaimHabbiconMessageComposer);
         this._composers.set(1808, FavoriteHabbiconMessageComposer);
         this._composers.set(75, UnfavoriteHabbiconMessageComposer);
+        // Posts a habbicon into a messenger conversation — the habbicon twin of
+        // SendMsgMessageComposer. Name derived, same reason as the six above.
+        this._composers.set(1163, SendHabbiconMessageComposer);
 
         // === NUX ===
         this._composers.set(2048, NewUserExperienceScriptProceedComposer);
