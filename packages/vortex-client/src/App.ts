@@ -652,6 +652,17 @@ const LIBRARY_IMAGE_NAMES: ReadonlySet<string> = new Set([
     'add_friends_icon',
     'plus_friend_icon',
     'find_friends_icon',
+
+    // HabboNotificationsCom.as — the icons `habbo_notifications_config_xml` names per
+    // notification type. SingularNotificationController resolves each one to a bitmap at
+    // startup and hands it to the bubble; a missing entry costs the notification its icon and
+    // nothing else, which is the silent failure this list exists to prevent.
+    'if_icon_temp',
+    'if_icon_hc',
+    'if_icon_vip',
+    'if_icon_recycler',
+    'if_icon_ltd',
+    'if_icon_earning',
 ]);
 
 export class VortexApp 

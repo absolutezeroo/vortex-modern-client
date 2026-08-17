@@ -1,3 +1,5 @@
+import type {OrderedMap} from '@core/utils/OrderedMap';
+
 /**
  * Data model for notification item styling.
  * Holds icon, links, and layout/view/extra-data hints resolved from a style
@@ -38,7 +40,7 @@ export class HabboNotificationItemStyle
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::HabboNotificationItemStyle()
     constructor(
-        styleMap: Record<string, unknown> | null,
+        styleMap: OrderedMap<string, unknown> | null,
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::HabboNotificationItemStyle() param2
         iconBitmap: ImageBitmap | null,
         iconAssetUri: string | null,
@@ -53,12 +55,14 @@ export class HabboNotificationItemStyle
     {
         this._iconAssetUri = iconAssetUri;
 
+        // The keys are lower-case with no separator, as written in
+        // `habbo_notifications_config_xml` — not the camelCase the accessors expose.
         if(styleMap != null && iconAssetUri == null)
         {
-            this._icon = (styleMap['icon'] as ImageBitmap | null) ?? null;
-            this._internalLink = (styleMap['internallink'] as string | null) ?? null;
-            this._customLayout = (styleMap['customlayout'] as string | null) ?? null;
-            this._customView = (styleMap['customview'] as string | null) ?? null;
+            this._icon = (styleMap.getValue('icon') as ImageBitmap | null) ?? null;
+            this._internalLink = (styleMap.getValue('internallink') as string | null) ?? null;
+            this._customLayout = (styleMap.getValue('customlayout') as string | null) ?? null;
+            this._customView = (styleMap.getValue('customview') as string | null) ?? null;
         }
 
         if(iconBitmap != null)

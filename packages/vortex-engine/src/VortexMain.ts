@@ -792,7 +792,11 @@ export class VortexMain implements IVortexMain
         // 12h. Notifications
         // AS3 registers this via the HabboNotificationsCom SWF library. Consumers waiting on the
         // IID: HabboQuestEngine.ts:194, SessionDataManager.ts:715.
-        this._notifications = new HabboNotifications(ctx);
+        // `this._assets` is load-bearing, as it is for the sound manager below: the singular
+        // controller reads `habbo_notifications_config_xml` out of this library in its own
+        // constructor, and a notification whose type is not in that config is refused. Without
+        // the library there is no config, and every notification the client raises is dropped.
+        this._notifications = new HabboNotifications(ctx, 0, this._assets);
         ctx.attachComponent(this._notifications, [IID_HabboNotifications]);
 
         // 12f-bis. Sound manager

@@ -21,6 +21,7 @@ import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboHelp} from '@habbo/help/IHabboHelp';
 import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
+import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IHabboNotifications} from './IHabboNotifications';
 import {SingularNotificationController} from './singular/SingularNotificationController';
 import {NotificationMessageHandler} from './NotificationMessageHandler';
@@ -40,7 +41,6 @@ const log = Logger.getLogger('habbo.notifications.HabboNotifications');
  */
 export interface IHabboNotificationEvents
 {
-    'showItem': (item: unknown) => void;
     'clubGiftNotification': (numGifts: number) => void;
     'safetyLockedNotification': (userId: number) => void;
     'hideSafetyLockedNotification': () => void;
@@ -79,9 +79,10 @@ export class HabboNotifications extends Component implements IHabboNotifications
     // AS3: .../src/com/sulake/habbo/notifications/HabboNotifications.as::_freeFlowChat
     private _freeFlowChat: IHabboFreeFlowChat | null = null;
 
-    constructor(context: IContext)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::HabboNotifications()
+    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
     {
-        super(context);
+        super(context, flags, assetLibrary);
 
         this._disabled = false;
     }
@@ -149,6 +150,23 @@ export class HabboNotifications extends Component implements IHabboNotifications
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
+    }
+
+    /**
+     * This component's own asset library — where the notification config, the bubble layouts and
+     * the per-type icons live. AS3 exposes `assets` under this name so the singular controller and
+     * its view manager can reach it without being handed the component.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get assetLibrary()
+    get assetLibrary(): IAssetLibrary | null
+    {
+        return this.assets;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get toolBar()
+    get toolBar(): IHabboToolbar | null
+    {
+        return this._toolbar;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get freeFlowChat()

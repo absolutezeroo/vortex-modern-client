@@ -314,12 +314,18 @@ function main()
 
         const tag = rootTag(xml);
 
-        if (tag !== 'layout' && tag !== 'skin')
+        if (tag !== 'layout' && tag !== 'skin' && tag !== 'variables')
         {
             continue;
         }
 
-        (tag === 'layout' ? layouts : skins).push({...declaration, raw, file, xml});
+        // A <variables> document is a configuration, not a drawable: the one in the dump is
+        // habbo_notifications_config_xml, the per-type notification style/timing table that
+        // SingularNotificationController reads through XMLVariableParser. It rides along with
+        // the layouts because that is the channel already registering XML into the asset
+        // library under its *Com.as field name, which is the name AS3 asks for. App.ts's
+        // layout pass finds no <window> in it and yields nothing, silently and by design.
+        (tag === 'skin' ? skins : layouts).push({...declaration, raw, file, xml});
     }
 
     const namedLayouts = assignNames(layouts);

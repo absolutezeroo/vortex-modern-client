@@ -1,7 +1,13 @@
 import type {IUpdateReceiver} from '@core/runtime/IContext';
+import type {XmlAsset} from '@core/assets/XmlAsset';
+import {OrderedMap} from '@core/utils/OrderedMap';
+import {XMLVariableParser} from '@core/utils/XMLVariableParser';
+import type {BadgeImageReadyEvent} from '@habbo/session/events/BadgeImageReadyEvent';
+import {BadgeImageReadyEvent as BadgeImageReadyEventClass} from '@habbo/session/events/BadgeImageReadyEvent';
 import type {HabboNotifications} from '../HabboNotifications';
 import {HabboNotificationItem} from './HabboNotificationItem';
 import {HabboNotificationItemStyle} from './HabboNotificationItemStyle';
+import {HabboNotificationViewManager} from './HabboNotificationViewManager';
 import {HabboAlertDialogManager} from './HabboAlertDialogManager';
 import {RoomEnterEffect} from '@room/utils/RoomEnterEffect';
 import {Logger} from '@core/utils/Logger';
@@ -12,12 +18,14 @@ const log = Logger.getLogger('habbo.notifications.singular.SingularNotificationC
  * Manages the notification item queue and display.
  * Implements IUpdateReceiver to process the queue each frame.
  *
- * In AS3, this also manages the HabboNotificationViewManager for rendering
- * notification bubbles. In our implementation, the view is handled by SolidJS,
- * so this class focuses on queue management and emitting events. AS3's own
- * per-type icon/style config (parsed from the "habbo_notifications_config_xml"
- * asset into a styles map) is not ported either - addItem() below documents
- * exactly where that would plug in.
+ * The queue is drained one item per frame, and only while the view manager reports room on
+ * screen — a burst of notifications therefore appears as a stack that fills up and drains, not
+ * as one frame's worth of overlapping bubbles.
+ *
+ * Its second job is the style config: `habbo_notifications_config_xml` maps each notification
+ * *type* to its icon, internal link and — for the four that have their own artwork — its layout
+ * and timings. A type absent from that map is refused outright, which is AS3's own behaviour and
+ * the reason an unknown type shows nothing at all rather than an unstyled bubble.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/SingularNotificationController.as
  */
@@ -26,6 +34,12 @@ export class SingularNotificationController implements IUpdateReceiver
     // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::MODERATION_DISCLAIMER_DELAY_MS
     private static readonly MODERATION_DISCLAIMER_DELAY_MS: number = 5000;
 
+    /**
+     * The asset holding the per-type styles and the per-view timings.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::SingularNotificationController() (literal)
+    private static readonly CONFIG_ASSET: string = 'habbo_notifications_config_xml';
+
     // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::_notifications
     private _notifications: HabboNotifications | null;
     private _queue: HabboNotificationItem[] = [];
@@ -33,10 +47,36 @@ export class SingularNotificationController implements IUpdateReceiver
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::_SafeStr_5464
     private _moderationDisclaimerTimer: ReturnType<typeof setTimeout> | null = null;
 
+    // Name DERIVED (`_SafeStr_6817`): obfuscated in every tree; the parsed
+    // `habbo_notifications_config_xml`, holding `styles` plus one entry per view variant.
+    // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::_SafeStr_6817
+    private _config: OrderedMap<string, unknown> = new OrderedMap<string, unknown>();
+
+    // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::_viewManager
+    private _viewManager: HabboNotificationViewManager | null = null;
+
+    // TS-only: AS3 passes the method itself; a bound reference is needed to remove the listener.
+    private readonly _onBadgeImageBound = (event: BadgeImageReadyEvent): void => this.onBadgeImage(event);
+
     constructor(notifications: HabboNotifications)
     {
         this._notifications = notifications;
         this._alertDialogManager = new HabboAlertDialogManager();
+
+        this.parseConfig();
+
+        this._viewManager = new HabboNotificationViewManager(
+            notifications,
+            notifications.assetLibrary,
+            notifications.windowManager,
+            notifications.toolBar,
+            this.styles,
+            this._config
+        );
+
+        notifications.sessionDataManager?.events.on(
+            BadgeImageReadyEventClass.BADGE_IMAGE_READY, this._onBadgeImageBound
+        );
 
         // Register for frame updates
         this._notifications.registerUpdateReceiver(this, 2);
@@ -59,25 +99,24 @@ export class SingularNotificationController implements IUpdateReceiver
     }
 
     /**
-	 * Frame update callback. Processes the notification queue.
+	 * Frame update callback. Hands the queue's head to the view manager, one per frame and only
+	 * while there is room for it on screen.
 	 *
-	 * TODO(AS3): AS3 also guards this on
-	 * `HabboNotificationViewManager.isSpaceAvailable()` - that view manager isn't
-	 * ported (SolidJS owns rendering here), so there is nothing to gate on yet.
+	 * An item the manager refuses is disposed rather than put back: it lost the race for the last
+	 * slot, and re-queueing it would let a full screen hold the queue indefinitely.
 	 *
 	 * @param _deltaTime Time since last frame in ms
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::update()
     update(_deltaTime: number): void
     {
-        if(this._queue.length > 0)
+        if(this._queue.length > 0 && this._viewManager?.isSpaceAvailable() === true)
         {
             const item = this.getNextItemFromQueue();
 
-            if(item)
+            if(item !== null && !this._viewManager.showItem(item))
             {
-                // Emit the item for the UI layer to display
-                this._notifications?.notificationEvents.emit('showItem', item);
+                item.dispose();
             }
         }
     }
@@ -85,11 +124,10 @@ export class SingularNotificationController implements IUpdateReceiver
     /**
 	 * Add a notification item to the queue.
 	 *
-	 * TODO(AS3): AS3 resolves `type` against a styles map parsed from the
-	 * "habbo_notifications_config_xml" asset and REJECTS the item (returns 0)
-	 * if the type is unknown - that config system isn't ported (no styles map
-	 * exists anywhere in this port), so `styleMap` is always null here and no
-	 * type is ever rejected. The dedup-by-id check below is fully faithful.
+	 * `type` is resolved against the styles map, and an unknown one is refused — the hotel's
+	 * config decides which notification types exist, and a bubble with no style has no icon, no
+	 * link and no layout to build from. Rejections are logged rather than swallowed: they render
+	 * nothing and throw nothing, which is otherwise indistinguishable from a delivery failure.
 	 *
 	 * @param content The notification text
 	 * @param type The notification style type key
@@ -121,6 +159,22 @@ export class SingularNotificationController implements IUpdateReceiver
             return 0;
         }
 
+        const styles = this.styles;
+
+        if(styles === null)
+        {
+            return 0;
+        }
+
+        const styleMap = styles.getValue(type) as OrderedMap<string, unknown> | null;
+
+        if(styleMap === null)
+        {
+            log.warn(`No "${type}" entry in ${SingularNotificationController.CONFIG_ASSET} — notification dropped: "${content}"`);
+
+            return 0;
+        }
+
         const notificationId = (extraData?.['id'] as string | null) ?? null;
 
         if(notificationId != null && this.hasNotificationById(notificationId))
@@ -128,7 +182,7 @@ export class SingularNotificationController implements IUpdateReceiver
             return this._queue.length;
         }
 
-        const style = new HabboNotificationItemStyle(null, iconBitmap, iconAssetUri, true, iconSrc, extraData ?? {}, type);
+        const style = new HabboNotificationItemStyle(styleMap, iconBitmap, iconAssetUri, true, iconSrc, extraData ?? {}, type);
 
         if(internalLink)
         {
@@ -144,10 +198,8 @@ export class SingularNotificationController implements IUpdateReceiver
     }
 
     /**
-	 * Remove all queued notifications matching the given id.
-	 *
-	 * TODO(AS3): AS3 also calls HabboNotificationViewManager.removeNotificationById()
-	 * to remove an already-displayed bubble - not ported (see class doc).
+	 * Remove all notifications matching the given id — both the ones still queued and the bubble
+	 * already on screen, which fades out rather than vanishing.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::removeNotificationById()
     removeNotificationById(notificationId: string | null): void
@@ -165,13 +217,12 @@ export class SingularNotificationController implements IUpdateReceiver
                 i--;
             }
         }
+
+        this._viewManager?.removeNotificationById(notificationId);
     }
 
     /**
-	 * Whether a notification with the given id is currently queued.
-	 *
-	 * TODO(AS3): AS3 also checks HabboNotificationViewManager.hasNotificationId()
-	 * for an already-displayed bubble - not ported (see class doc).
+	 * Whether a notification with the given id is currently queued or on screen.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::hasNotificationById()
     hasNotificationById(notificationId: string | null): boolean
@@ -186,7 +237,7 @@ export class SingularNotificationController implements IUpdateReceiver
             }
         }
 
-        return false;
+        return this._viewManager !== null && this._viewManager.hasNotificationId(notificationId);
     }
 
     /**
@@ -309,16 +360,81 @@ export class SingularNotificationController implements IUpdateReceiver
     }
 
     /**
-	 * Replaces a queued/displayed notification's icon once a requested badge image
-	 * arrives from the server.
+	 * Replaces a displayed notification's icon once the badge image it asked for arrives.
 	 *
-	 * TODO(AS3): AS3 listens for sessionDataManager's BIRE_BADGE_IMAGE_READY and
-	 * forwards to HabboNotificationViewManager.replaceIcon() (not ported, see class
-	 * doc) - neither the listener registration nor the view-manager call exist here.
+	 * The achievement and badge notifications are built before their artwork exists —
+	 * `requestBadgeImage()` returns null on a cold cache — so the bubble goes up iconless and is
+	 * patched here rather than being held back.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::onBadgeImage()
-    private onBadgeImage(_event: unknown): void
+    private onBadgeImage(event: BadgeImageReadyEvent): void
     {
+        if(event != null && this._viewManager !== null)
+        {
+            this._viewManager.replaceIcon(event);
+        }
+    }
+
+    /**
+	 * Reads `habbo_notifications_config_xml` into `_config`, then swaps each style's `icon` from
+	 * the asset *name* the XML carries to the bitmap itself, exactly as AS3 does — the item style
+	 * downstream expects a bitmap there, not a name.
+	 *
+	 * The names in the config carry AS3's `_png` linkage suffix (`if_icon_temp_png`), which this
+	 * port's asset build strips when it writes the file (`if_icon_temp.png` → `if_icon_temp`).
+	 * Looking the name up verbatim returns null and the notification silently loses its icon, so
+	 * the suffix comes off here.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::SingularNotificationController()
+    private parseConfig(): void
+    {
+        const asset = this._notifications?.assetLibrary?.getAssetByName(
+            SingularNotificationController.CONFIG_ASSET
+        ) as XmlAsset | null;
+        const document = asset?.content ?? null;
+
+        if(document?.documentElement == null)
+        {
+            log.warn(
+                `Missing "${SingularNotificationController.CONFIG_ASSET}" — every notification will be dropped`
+            );
+
+            return;
+        }
+
+        XMLVariableParser.parseVariableList(document.documentElement.children, this._config);
+
+        const styles = this.styles;
+
+        if(styles === null) return;
+
+        for(let i = 0; i < styles.length; i++)
+        {
+            const style = styles.getWithIndex(i) as OrderedMap<string, unknown> | null;
+            const iconName = style?.getValue('icon') ?? null;
+
+            if(style === null || typeof iconName !== 'string') continue;
+
+            const icon = this._notifications?.assetLibrary?.getAssetByName(
+                iconName.replace(/_png$/, '')
+            )?.content ?? null;
+
+            if(icon === null)
+            {
+                log.warn(`Notification style icon "${iconName}" is not in the asset library`);
+            }
+
+            style.setValue('icon', icon);
+        }
+    }
+
+    /**
+	 * The `styles` sub-map: one entry per notification type.
+	 */
+    // TS-only: AS3 reads `_SafeStr_6817["styles"]` inline at each of its three use sites.
+    private get styles(): OrderedMap<string, unknown> | null
+    {
+        return (this._config.getValue('styles') as OrderedMap<string, unknown> | null) ?? null;
     }
 
     // AS3: .../src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::dispose()
@@ -330,6 +446,16 @@ export class SingularNotificationController implements IUpdateReceiver
         {
             clearTimeout(this._moderationDisclaimerTimer);
             this._moderationDisclaimerTimer = null;
+        }
+
+        this._notifications?.sessionDataManager?.events.off(
+            BadgeImageReadyEventClass.BADGE_IMAGE_READY, this._onBadgeImageBound
+        );
+
+        if(this._viewManager != null)
+        {
+            this._viewManager.dispose();
+            this._viewManager = null;
         }
 
         if(this._alertDialogManager != null)

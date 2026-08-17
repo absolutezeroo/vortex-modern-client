@@ -3116,6 +3116,46 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **Notifications had a queue and no view**, 2026-08-17. `SingularNotificationController` took
+  every notification the client raises, styled it, de-duplicated it, and emitted it to nobody: its
+  class comment said "the view is handled by SolidJS", which this port does not use (see
+  `.claude/rules/window-ui.md`). Six of its members carried a `TODO(AS3)` pointing at the same two
+  unported classes. Both are ported now — `HabboNotificationItemView` (612 l.) and
+  `HabboNotificationViewManager` (359 l.) — along with `XMLVariableParser`, without which the
+  style config could not be read at all.
+  - **The feed is not the thing that was missing.** `habbo/notifications/feed/` — twelve classes,
+    a five-pane browser — is dead code in this client and was left alone. `external_variables.txt`
+    ships `notification.feed.enabled=false`, which gates all three of `_SafeCls_1951`'s
+    `addFeedItem()` calls, and `_SafeStr_6523` (the `NotificationController`) is **never
+    constructed**: not in WIN63's `initComponent()`, and not in the 2016 build either, where
+    `_feedController` appears only as `= null`. Flipping the flag would fault, not work. The live
+    half is `notification.items.enabled=true`, which is this one.
+  - **Three things had to be true before a bubble could appear**, and none of them were. The
+    config asset `habbo_notifications_config_xml` was not shipped: `build-window-assets.mjs`
+    filtered every declaration whose root element is not `<layout>` or `<skin>`, and this is the
+    dump's only `<variables>` document. Its per-type icons name assets with AS3's `_png` linkage
+    suffix (`if_icon_temp_png`) where the asset build writes `if_icon_temp`, so a verbatim lookup
+    returns null and the notification silently loses its icon; the suffix is stripped at the
+    lookup and the six icons added to `LIBRARY_IMAGE_NAMES`. And `HabboNotifications` was
+    constructed as `new HabboNotifications(ctx)` — no asset library, so `assets` was null and the
+    config could not have been found even once shipped.
+  - **An unknown notification type is refused, and that is AS3's own behaviour.** `addItem()`
+    resolves `type` against the styles map and returns 0 when it is absent. The shipped config has
+    21 types; `respect` is not one of them, so `onRespectNotification()` has never displayed
+    anything in this build. The rejection now logs a `warn` rather than vanishing.
+  - **The port's DI order does not match AS3's.** AS3 declares `IIDHabboWindowManager` and
+    `IIDHabboToolbar` *required* dependencies of `HabboNotifications`, so its view manager can cache
+    both in its constructor. This port declares them optional and attaches the toolbar (VortexMain
+    :821) and window manager (:838) *after* the notifications component (:800) — both are null at
+    `initComponent()`. Caching them would have pinned the bubble stack at y=4, on top of the
+    toolbar, for the whole session; the manager reads them live instead, and its
+    `EVE_EXTENSION_VIEW_RESIZED` subscription follows whichever toolbar is current.
+  - **Verified**: `XMLVariableParser` parsed against the shipped asset in a real DOM — 6 top-level
+    entries, 21 styles, `nft_opening` resolving its custom layout and view. That probe is also what
+    showed the timings come back as *strings* (`time_display` = `"15000"`), which a raw `>` would
+    have compared lexically. Not verified on screen: the client's boot stops at the login screen
+    without the hotel running, so the layout, the fade cycle and the stacking have not been seen.
+
 - 🆕 **Avatars are drawn as batched sprites, not composed images**, 2026-08-17. A room of 100
   avatars ran at about 12 fps. Two separate causes, found in that order, and the second only became
   visible once the first was gone.
