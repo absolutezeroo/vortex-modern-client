@@ -34,8 +34,25 @@ import {RoomObjectSpriteType} from '@room/object/enum/RoomObjectSpriteType';
 import {ExtendedSprite} from './utils/ExtendedSprite';
 import {SortableSprite} from './utils/SortableSprite';
 import {ObjectMouseData} from './utils/ObjectMouseData';
+import {RoomCullingMode} from './RoomCullingMode';
+import {RoomObjectUserTypes} from '@habbo/room/object/RoomObjectUserTypes';
 
 export type {IRoomRenderingCanvasMouseListener};
+
+/**
+ * How far outside the viewport an avatar's anchor may sit and still be updated, in canvas pixels.
+ *
+ * The anchor is a point, and the sprites hanging off it reach furthest upwards — an avatar's own
+ * sprite sits at roughly `-height + scale/4`, and effects and additions go further still. This is
+ * around four tiles at the default scale, chosen to be wrong in the safe direction: too large only
+ * costs a few avatars' worth of updates, too small pops a limb at the edge of the screen.
+ */
+// TS-only: see `RoomCullingMode`.
+const AVATAR_CULL_MARGIN = 256;
+
+/** The object types drawn by an avatar visualization, and so the ones `RoomCullingMode` covers. */
+// TS-only: see `RoomCullingMode`.
+const AVATAR_CULLABLE_TYPES: ReadonlySet<string> = new Set(Object.values(RoomObjectUserTypes));
 
 const SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL = 50;
 const FRAME_COUNT_FOR_UPDATE_INTERVAL = 50;
@@ -918,6 +935,25 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             return 0;
         }
 
+        if(RoomCullingMode.avatars
+            && AVATAR_CULLABLE_TYPES.has(object.getType())
+            && !this.avatarNearViewport(screenPos))
+        {
+            // Only when it still holds something. A persistently off-screen avatar would otherwise
+            // pay a dispose and a re-create every frame for a cache that is already empty, which at
+            // nine hundred of them is its own cost.
+            if(cache.sprites.length > 0)
+            {
+                this.disposeObjectSpriteCache(objectId);
+            }
+
+            // Zero, and the cache emptied with it, because the sortables it owns also live in the
+            // shared `_sortableSpriteList`. Returning a count without releasing them would leave
+            // stale entries to be sorted and drawn. This is the same path an object leaving the room
+            // already takes.
+            return 0;
+        }
+
         // Update the visualization (may change sprite z-values)
         visualization.update(
             this._geometry,
@@ -1047,8 +1083,35 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         return localCount;
     }
 
+    /**
+     * Whether an avatar's anchor is close enough to the viewport to be worth updating.
+     *
+     * Anchor-based, and therefore generous rather than exact: the object's sprites are not built yet
+     * — building them is what this is deciding whether to do — so there is no rectangle to test, only
+     * the point they hang off. `AVATAR_CULL_MARGIN` covers how far they reach from it.
+     *
+     * Mirrors `rectangleVisible()`'s scale handling rather than reimplementing it differently, so the
+     * two tests agree about where the viewport is.
+     */
+    // TS-only: see `RoomCullingMode`.
+    private avatarNearViewport(screenPos: { x: number; y: number }): boolean
+    {
+        let x = Math.floor(screenPos.x) + Math.floor(this._width / 2) + this._screenOffsetX;
+        let y = Math.floor(screenPos.y) + Math.floor(this._height / 2) + this._screenOffsetY;
+        let margin = AVATAR_CULL_MARGIN;
+
+        if(this._scale !== 1)
+        {
+            x = (x - this._screenOffsetX) * this._scale + this._screenOffsetX;
+            y = (y - this._screenOffsetY) * this._scale + this._screenOffsetY;
+            margin *= this._scale;
+        }
+
+        return x > -margin && x < this._width + margin && y > -margin && y < this._height + margin;
+    }
+
     // AS3: sources/win63_version/room/renderer/class_3523.as::rectangleVisible()
-    private rectangleVisible(x: number, y: number, width: number, height: number): boolean 
+    private rectangleVisible(x: number, y: number, width: number, height: number): boolean
     {
         if(this._skipSpriteVisibilityChecking) 
         {

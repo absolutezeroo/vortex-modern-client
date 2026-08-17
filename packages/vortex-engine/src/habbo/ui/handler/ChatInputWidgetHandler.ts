@@ -45,6 +45,7 @@ import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum'
 import {RoomStressTest} from '@habbo/room/utils/RoomStressTest';
 import {PerfMonitorWindow} from '@habbo/perf/PerfMonitorWindow';
 import {AvatarRenderMode} from '@habbo/avatar/AvatarRenderMode';
+import {RoomCullingMode} from '@habbo/room/renderer/RoomCullingMode';
 
 const log = Logger.getLogger('habbo.ui.handler.ChatInputWidgetHandler');
 
@@ -450,6 +451,20 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
                     : (argument === 'off' ? false : !AvatarRenderMode.spriteParts);
 
                 log.info(`:spriteparts — avatars now render as ${AvatarRenderMode.spriteParts ? 'batched sprite parts' : 'one composed image'}.`);
+
+                return true;
+            }
+
+            // TS-only: no AS3 counterpart. Skips the visualization update for avatars far outside the
+            // viewport — `:roomculling [on|off]`, toggling when told neither. See
+            // habbo/room/renderer/RoomCullingMode, which is explicit that AS3 does no such thing.
+            case ':roomculling':
+            {
+                RoomCullingMode.avatars = argument === 'on'
+                    ? true
+                    : (argument === 'off' ? false : !RoomCullingMode.avatars);
+
+                log.info(`:roomculling — off-screen avatar updates are now ${RoomCullingMode.avatars ? 'skipped' : 'running'}.`);
 
                 return true;
             }
