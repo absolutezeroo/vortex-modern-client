@@ -68,9 +68,27 @@ export class RoomStressTest
     // TS-only: see the class note.
     private static readonly STEP_INTERVAL_MS: number = RoomStressTest.STEP_ANIMATION_TIME;
 
-    /** Half-width, in tiles, of the square the avatars wander inside. */
+    /**
+     * Smallest half-width, in tiles, of the square the avatars wander inside.
+     *
+     * A floor rather than the value itself. Fixed at 4 it described a 9×9 square, which is a fair
+     * crowd at sixty avatars and nonsense at two thousand — twenty-five of them per tile, every one
+     * inside the viewport. That is not a busy room, it is a stack, and it made the run unable to
+     * exercise anything that depends on an avatar being off screen.
+     */
     // TS-only: see the class note.
-    private static readonly WANDER_RADIUS: number = 4;
+    private static readonly WANDER_RADIUS_MIN: number = 4;
+
+    /**
+     * Half-width of the wander square for the current run, derived from the avatar count.
+     *
+     * Sized so the crowd averages roughly one avatar per tile, which is what a full room looks like
+     * and what decides how many of them the viewport actually holds. Without this the benchmark
+     * measures the worst case for every avatar at once and nothing else — useful for stressing the
+     * composition path, useless for anything about visibility.
+     */
+    // TS-only: see the class note.
+    private static _wanderRadius: number = RoomStressTest.WANDER_RADIUS_MIN;
 
     /**
      * Fallback figures, used only when the caller's own figure cannot be read.
@@ -170,6 +188,12 @@ export class RoomStressTest
         RoomStressTest._origin = new Vector3d(origin.x, origin.y, origin.z);
         RoomStressTest._runDurationSeconds = Math.max(0, durationSeconds);
 
+        // Half the side of a square holding `avatarCount` tiles, so density stays near one per tile.
+        RoomStressTest._wanderRadius = Math.max(
+            RoomStressTest.WANDER_RADIUS_MIN,
+            Math.ceil(Math.sqrt(avatarCount) / 2)
+        );
+
         RoomStressTest.spawnAvatars(avatarCount);
         RoomStressTest.spawnFurniture(furnitureCount);
 
@@ -180,7 +204,7 @@ export class RoomStressTest
 
         log.info(
             `Stress load started: ${RoomStressTest._avatarIndices.length} avatars,`
-            + ` ${RoomStressTest._furnitureIds.length} furniture, around`
+            + ` ${RoomStressTest._furnitureIds.length} furniture, wander radius ${RoomStressTest._wanderRadius}, around`
             + ` (${origin.x}, ${origin.y}, ${origin.z})`
         );
 
@@ -521,13 +545,13 @@ export class RoomStressTest
         }
     }
 
-    /** A random tile within `WANDER_RADIUS` of `origin`, at the origin's height. */
+    /** A random tile within the run's wander radius of `origin`, at the origin's height. */
     // TS-only: see the class note.
     private static wanderTarget(origin: IVector3d): Vector3d
     {
-        const span = (RoomStressTest.WANDER_RADIUS * 2) + 1;
-        const x = Math.round(origin.x) - RoomStressTest.WANDER_RADIUS + Math.floor(Math.random() * span);
-        const y = Math.round(origin.y) - RoomStressTest.WANDER_RADIUS + Math.floor(Math.random() * span);
+        const span = (RoomStressTest._wanderRadius * 2) + 1;
+        const x = Math.round(origin.x) - RoomStressTest._wanderRadius + Math.floor(Math.random() * span);
+        const y = Math.round(origin.y) - RoomStressTest._wanderRadius + Math.floor(Math.random() * span);
 
         return new Vector3d(Math.max(0, x), Math.max(0, y), origin.z);
     }
