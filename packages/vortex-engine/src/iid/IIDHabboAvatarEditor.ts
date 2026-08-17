@@ -1,8 +1,9 @@
 import {createIID} from '@core/runtime/IID';
+import type {IHabboAvatarEditor} from '@habbo/avatar/IHabboAvatarEditor';
 
 /**
  * IID for Habbo Avatar Editor
  *
  * Based on AS3: com.sulake.iid.IIDHabboAvatarEditor
  */
-export const IID_HabboAvatarEditor = createIID<unknown>('IHabboAvatarEditor');
+export const IID_HabboAvatarEditor = createIID<IHabboAvatarEditor>('IHabboAvatarEditor');

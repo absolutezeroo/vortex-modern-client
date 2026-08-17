@@ -62,7 +62,7 @@ export class BadgeLeaderboardController extends Component
     public static readonly PAGE_SIZE: number = 10;
 
     // AS3: BadgeLeaderboardController.as::DEFAULT_RANK_BORDER_COLOR
-    private static readonly DEFAULT_RANK_BORDER_COLOR: number = 0x638C6A;
+    private static readonly DEFAULT_RANK_BORDER_COLOR: number = 0x6382AA;
 
     // AS3: BadgeLeaderboardController.as::FIRST_PLACE_RANK_BORDER_COLOR
     private static readonly FIRST_PLACE_RANK_BORDER_COLOR: number = 0xD4AF37;

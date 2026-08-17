@@ -6,7 +6,9 @@ import {HabboLandingView} from './landingview/HabboLandingView';
 import {HabboFriendBarData} from './data/HabboFriendBarData';
 import {HabboFriendBarView} from './view/HabboFriendBarView';
 import {GroupForumController} from './groupforums/GroupForumController';
+import {HabboTalent} from './talent/HabboTalent';
 import {IID_HabboGroupForumController} from '@iid/IIDHabboGroupForumController';
+import {IID_HabboTalent} from '@iid/IIDHabboTalent';
 import {IID_HabboLandingView} from '@iid/IIDHabboLandingView';
 import {IID_HabboFriendBarData} from '@iid/IIDHabboFriendBarData';
 import {IID_HabboFriendBarView} from '@iid/IIDHabboFriendBarView';
@@ -61,8 +63,15 @@ export class HabboFriendBar extends Component implements IHabboFriendBar
             [IID_HabboGroupForumController]
         );
 
+        // AS3 attaches this from the same constructor (HabboFriendBar.as:29). The component
+        // switches itself off when `talent.track.enabled` is unset, so attaching it costs nothing
+        // on a hotel that does not run talent tracks.
+        context.attachComponent(
+            new HabboTalent(context, 0, assetLibrary),
+            [IID_HabboTalent]
+        );
+
         // Future sub-components (not yet implemented):
-        // context.attachComponent(new HabboTalent(context, 0, assetLibrary), [IID_HabboTalent]);
         // context.attachComponent(new HabboEpicPopupView(context, 0, assetLibrary), [IID_HabboEpicPopupView]);
     }
 

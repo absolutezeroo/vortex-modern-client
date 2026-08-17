@@ -1385,7 +1385,16 @@ import {
 import {GetAchievementsComposer} from './messages/outgoing/inventory/achievements';
 
 // Outgoing Composers - Talent
-import {GetTalentTrackMessageComposer, GuideAdvertisementReadMessageComposer} from './messages/outgoing/talent';
+import {
+    GetTalentTrackLevelMessageComposer,
+    GetTalentTrackMessageComposer,
+    GuideAdvertisementReadMessageComposer
+} from './messages/outgoing/talent';
+import {
+    TalentLevelUpMessageEvent,
+    TalentTrackLevelMessageEvent,
+    TalentTrackMessageEvent
+} from './messages/incoming/talent';
 
 // Outgoing Composers - Competition
 import {GetCurrentTimingCodeMessageComposer} from './messages/outgoing/competition';
@@ -3458,6 +3467,16 @@ export class HabboMessages implements IMessageConfiguration
         // === TALENT ===
         this._composers.set(3757, GetTalentTrackMessageComposer);
         this._composers.set(1850, GuideAdvertisementReadMessageComposer);
+
+        // The level-only request. Its emulator handler is an empty stub, so nothing answers it —
+        // ported because AS3's TalentPromoCtrl sends it on every user-object update.
+        this._composers.set(2280, GetTalentTrackLevelMessageComposer);
+
+        // === TALENT (incoming) ===
+        // Three ids from WIN63's registry, all corroborated by the emulator's header table.
+        this._events.set(3909, TalentTrackMessageEvent);
+        this._events.set(2210, TalentTrackLevelMessageEvent);
+        this._events.set(1564, TalentLevelUpMessageEvent);
 
         // === COMPETITION ===
         this._composers.set(1503, GetCurrentTimingCodeMessageComposer);
