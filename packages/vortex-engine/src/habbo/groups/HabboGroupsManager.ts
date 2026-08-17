@@ -72,6 +72,7 @@ import {ExtendedProfileWindowCtrl} from './ExtendedProfileWindowCtrl';
 import {GuildManagementWindowCtrl} from './GuildManagementWindowCtrl';
 import {DetailsWindowCtrl} from './DetailsWindowCtrl';
 import {GuildMembersWindowCtrl} from './GuildMembersWindowCtrl';
+import {BadgeLeaderboardController} from './badge_leaderboard/BadgeLeaderboardController';
 import {GuildKickData} from './GuildKickData';
 import {GroupCreatedWindowCtrl} from './GroupCreatedWindowCtrl';
 import {HcRequiredWindowCtrl} from './HcRequiredWindowCtrl';
@@ -164,6 +165,21 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this._groupRoomInfoCtrl = new GroupRoomInfoCtrl(this);
         this._detailsWindowCtrl = new DetailsWindowCtrl(this);
         this._guildMembersWindowCtrl = new GuildMembersWindowCtrl(this);
+
+        // AS3 hands the controller this manager's own context and asset library, which is where
+        // `badge_leaderboard_view` lives — HabboGroupsCom declares it, not HabboWindowManagerCom.
+        this._badgeLeaderboardController = new BadgeLeaderboardController(
+            this, context, 0, assetLibrary
+        );
+    }
+
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_6126
+    private _badgeLeaderboardController: BadgeLeaderboardController | null = null;
+
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_6126
+    get badgeLeaderboardController(): BadgeLeaderboardController | null
+    {
+        return this._badgeLeaderboardController;
     }
 
     /**
@@ -433,6 +449,11 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     {
         this.context.addLinkEventTracker(this);
         this.context.addLinkEventTracker(this._extendedProfileWindowCtrl);
+
+        if(this._badgeLeaderboardController !== null)
+        {
+            this.context.addLinkEventTracker(this._badgeLeaderboardController);
+        }
         this.addMessageEvent(new ExtendedProfileMessageEvent(this.onExtendedProfile.bind(this)));
         this.addMessageEvent(new ExtendedProfileChangedMessageEvent(this.onExtendedProfileChanged.bind(this)));
         this.addMessageEvent(new HabboUserBadgesMessageEvent(this.onUserBadgesMessage.bind(this)));

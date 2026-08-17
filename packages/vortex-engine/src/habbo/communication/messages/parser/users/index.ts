@@ -31,3 +31,5 @@ export * from './GuildMembershipUpdatedMessageParser';
 export * from './GuildMemberMgmtFailedMessageParser';
 export * from './GuildMembershipRejectedMessageParser';
 export * from './GroupMembershipRequestedMessageParser';
+export {BadgeLeaderboardMessageParser} from './BadgeLeaderboardMessageParser';
+export {BadgeLeaderboardEntryData} from './BadgeLeaderboardEntryData';

@@ -48,3 +48,4 @@ export * from './GuildMemberMgmtFailedMessageEvent';
 export * from './GuildMembershipRejectedMessageEvent';
 export * from './GroupMembershipRequestedMessageEvent';
 export * from './BadgeRarityCount';
+export {BadgeLeaderboardMessageEvent} from './BadgeLeaderboardMessageEvent';

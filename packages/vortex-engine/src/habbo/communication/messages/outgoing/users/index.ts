@@ -39,3 +39,4 @@ export {RemoveAdminRightsFromMemberMessageComposer} from './RemoveAdminRightsFro
 export {AddAdminRightsToMemberMessageComposer} from './AddAdminRightsToMemberMessageComposer';
 export {ApproveMembershipRequestMessageComposer} from './ApproveMembershipRequestMessageComposer';
 export {ApproveAllMembershipRequestsMessageComposer} from './ApproveAllMembershipRequestsMessageComposer';
+export {GetBadgeLeaderboardMessageComposer} from './GetBadgeLeaderboardMessageComposer';

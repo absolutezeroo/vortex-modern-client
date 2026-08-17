@@ -561,6 +561,9 @@ import {
     SendHabbiconMessageComposer
 } from './messages/outgoing/habbicons/SendHabbiconMessageComposer';
 import {
+    GetBadgeLeaderboardMessageComposer
+} from './messages/outgoing/users/GetBadgeLeaderboardMessageComposer';
+import {
     IncomeRewardStatusMessageEvent
 } from './messages/incoming/inventory/IncomeRewardStatusMessageEvent';
 import {
@@ -969,6 +972,7 @@ import {
     HabboGroupDetailsMessageEvent,
     HabboGroupJoinFailedMessageEvent,
     HabboUserBadgesMessageEvent,
+    BadgeLeaderboardMessageEvent,
     HandItemReceivedMessageEvent,
     IgnoredUsersMessageEvent,
     IgnoreResultMessageEvent,
@@ -2365,6 +2369,7 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(3971, UserPurchasableChatStyleChangedMessageEvent);
 
         // === CAMPAIGN ===
+        this._events.set(2503, BadgeLeaderboardMessageEvent);
         this._events.set(1028, CampaignCalendarDataMessageEvent);
         this._events.set(2164, CampaignCalendarDoorOpenedMessageEvent);
 
@@ -3525,6 +3530,12 @@ export class HabboMessages implements IMessageConfiguration
         // Posts a habbicon into a messenger conversation — the habbicon twin of
         // SendMsgMessageComposer. Name derived, same reason as the six above.
         this._composers.set(1163, SendHabbiconMessageComposer);
+
+        // === BADGE LEADERBOARD ===
+        // Both ids come from WIN63's own registry (1225 -> _SafeCls_3493, 2503 -> _SafeCls_3446).
+        // The emulator has no header for either, so the names are derived — flagged at each
+        // declaration, same as the habbicon set above.
+        this._composers.set(1225, GetBadgeLeaderboardMessageComposer);
 
         // === NUX ===
         this._composers.set(2048, NewUserExperienceScriptProceedComposer);
