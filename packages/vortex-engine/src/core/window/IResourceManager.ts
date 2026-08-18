@@ -20,7 +20,8 @@ export interface IResourceManager extends IDisposable
 	 * @param receiver - The receiver callback
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::retrieveAsset()
-    retrieveAsset(uri: string, receiver: IAssetReceiver): void;
+    // A null receiver is a prefetch — AS3 starts the load and only guards the notification.
+    retrieveAsset(uri: string, receiver: IAssetReceiver | null): void;
 
     /**
 	 * Checks if two asset URIs resolve to the same asset.

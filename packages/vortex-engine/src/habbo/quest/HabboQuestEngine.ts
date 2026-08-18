@@ -23,6 +23,10 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
+import {Animation} from './Animation';
+import {Twinkle} from './Twinkle';
+import {TwinkleImages} from './TwinkleImages';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import {ActivityPointTypeEnum} from '@habbo/catalog/purse/ActivityPointTypeEnum';
 import type {AchievementCategory} from './AchievementCategory';
@@ -782,18 +786,47 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     }
 
     /**
-	 * The quest-completed celebration sparkle effect.
-	 *
-	 * TODO(AS3): AS3's Animation/AnimationObject/Twinkle/TwinkleImages classes (a generic
-	 * sprite-sheet compositor plus 15 randomly-placed, independently-timed twinkle sprites)
-	 * are not ported - QuestCompleted.ts skips the celebration effect and shows the dialog
-	 * without it, which is the safe default (no missing content, just no sparkle).
+	 * The quest-completed celebration: fifteen twinkles scattered over the dialog, each starting
+	 * 300 ms after the last so the sparkle rolls rather than flashing all at once.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::getTwinkleAnimation()
-    getTwinkleAnimation(_container: IWindowContainer): null
+    getTwinkleAnimation(container: IWindowContainer): Animation
     {
-        return null;
+        if(this._twinkleImages === null)
+        {
+            this._twinkleImages = new TwinkleImages(this);
+        }
+
+        const animation = new Animation(
+            container.findChildByName('twinkle_bitmap') as IBitmapWrapperWindow | null
+        );
+
+        let startDelayMs = HabboQuestEngine.TWINKLE_FIRST_DELAY_MS;
+
+        for(let index = 0; index < HabboQuestEngine.TWINKLE_COUNT; index++)
+        {
+            animation.addObject(new Twinkle(this._twinkleImages, startDelayMs));
+
+            startDelayMs += HabboQuestEngine.TWINKLE_DELAY_STEP_MS;
+        }
+
+        return animation;
     }
+
+    /** AS3's literal `800` — how long after the dialog opens the first twinkle starts. */
+    // AS3: .../habbo/quest/HabboQuestEngine.as::getTwinkleAnimation()
+    private static readonly TWINKLE_FIRST_DELAY_MS: number = 800;
+
+    /** AS3's literal `300` — the gap between one twinkle starting and the next. */
+    // AS3: .../habbo/quest/HabboQuestEngine.as::getTwinkleAnimation()
+    private static readonly TWINKLE_DELAY_STEP_MS: number = 300;
+
+    /** AS3's literal `15`. */
+    // AS3: .../habbo/quest/HabboQuestEngine.as::getTwinkleAnimation()
+    private static readonly TWINKLE_COUNT: number = 15;
+
+    // AS3: .../habbo/quest/HabboQuestEngine.as::_twinkleImages
+    private _twinkleImages: TwinkleImages | null = null;
 
     /**
 	 * Set a category's `category_pic_bitmap` child to its category image

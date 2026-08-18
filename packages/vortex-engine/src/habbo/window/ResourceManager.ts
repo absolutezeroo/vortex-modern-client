@@ -75,9 +75,9 @@ export class ResourceManager implements IResourceManager
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::retrieveAsset()
-    public retrieveAsset(uri: string, receiver: IAssetReceiver): void 
+    public retrieveAsset(uri: string, receiver: IAssetReceiver | null): void 
     {
-        if(!uri || !receiver) return;
+        if(!uri) return;
 
         const resolvedName = this.resolveAssetName(uri);
 
@@ -87,7 +87,7 @@ export class ResourceManager implements IResourceManager
 
         if(cached) 
         {
-            receiver.receiveAsset(cached, resolvedName);
+            receiver?.receiveAsset(cached, resolvedName);
 
             return;
         }
@@ -101,7 +101,14 @@ export class ResourceManager implements IResourceManager
             this._pendingReceivers.set(resolvedName, receivers);
         }
 
-        receivers.push(receiver);
+        // A null receiver is a prefetch: AS3 guards only the *notification* on
+        // `param2 != null` (ResourceManager.as l.71, l.87) and starts the load either way.
+        // This port used to reject the whole call, which made every prefetch a silent
+        // no-op - `TwinkleImages` warms its six frames exactly this way.
+        if(receiver !== null)
+        {
+            receivers.push(receiver);
+        }
 
         const url = this._assetUrls.get(resolvedName);
 

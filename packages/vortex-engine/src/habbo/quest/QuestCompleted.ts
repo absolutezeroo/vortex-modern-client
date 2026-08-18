@@ -8,6 +8,7 @@ import type {HabboQuestEngine} from './HabboQuestEngine';
 import type {QuestMessageData} from '@habbo/communication/messages/parser/quest/QuestMessageData';
 import {OpenQuestTrackerMessageComposer} from '@habbo/communication/messages/outgoing/quest/OpenQuestTrackerMessageComposer';
 import {GetQuestsMessageComposer} from '@habbo/communication/messages/outgoing/quest/GetQuestsMessageComposer';
+import type {Animation} from './Animation';
 
 const PREPARE_TO_SHOW_DELAY_MS = 2000;
 
@@ -26,10 +27,7 @@ export class QuestCompleted implements IDisposable
     // AS3: QuestCompleted.as::_SafeStr_4677
     private _currentQuest: QuestMessageData | null = null;
     // AS3: QuestCompleted.as::_SafeStr_5822 - the twinkle celebration Animation.
-    // TODO(AS3): HabboQuestEngine.getTwinkleAnimation() is a documented stub (returns null) -
-    // Animation/AnimationObject/Twinkle/TwinkleImages aren't ported. Dialog still shows and
-    // functions correctly, just without the sparkle effect.
-    private _twinkleAnimation: {restart(): void; stop(): void; update(deltaTime: number): void} | null = null;
+    private _twinkleAnimation: Animation | null = null;
     // AS3: QuestCompleted.as::_SafeStr_6540
     private _msecsUntilShow: number = 0;
 
@@ -51,7 +49,11 @@ export class QuestCompleted implements IDisposable
             this._window = null;
         }
 
-        this._twinkleAnimation = null;
+        if(this._twinkleAnimation !== null)
+        {
+            this._twinkleAnimation.dispose();
+            this._twinkleAnimation = null;
+        }
     }
 
     // AS3: QuestCompleted.as::get disposed()

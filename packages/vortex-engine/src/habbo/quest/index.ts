@@ -15,3 +15,7 @@ export * from './events';
 // Types
 export type {AchievementData} from './AchievementCategory';
 export type {IHabboQuestEngine} from './IHabboQuestEngine';
+export {Animation} from './Animation';
+export type {IAnimationObject} from './IAnimationObject';
+export {Twinkle} from './Twinkle';
+export {TwinkleImages} from './TwinkleImages';

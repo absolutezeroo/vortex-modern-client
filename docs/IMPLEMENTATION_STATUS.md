@@ -3116,6 +3116,36 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **The quest twinkle kit, and the prefetch the resource manager refused**, 2026-08-17.
+  `Animation`, `IAnimationObject`, `Twinkle` and `TwinkleImages` (297 l.) — the sparkle burst over
+  the quest-completed dialog. Closes the two `TODO(AS3)`s that named them, in
+  `HabboQuestEngine.getTwinkleAnimation()` (a documented `return null` stub) and in
+  `QuestCompleted`, whose `_twinkleAnimation` was typed as a structural placeholder.
+  - **`ResourceManager.retrieveAsset()` rejected every prefetch.** The port opened with
+    `if(!uri || !receiver) return;`, so a null receiver was a silent no-op. AS3 guards only the
+    *notification* on `param2 != null` (`ResourceManager.as` l.71 and l.87) and starts the load
+    either way — and `TwinkleImages` warms its six frames exactly that way, with a null receiver.
+    Fixed on the interface and the implementation; any other null-receiver prefetch in the port was
+    equally dead.
+  - **`QuestCompleted` never disposed the animation.** AS3 calls `dispose()` on it
+    (`QuestCompleted.as` l.46-49); the port only dropped the reference, which leaked the sprites.
+  - **The mutable-buffer deviation.** AS3 owns a `BitmapData` and does `fillRect`/`copyPixels`
+    straight into the window's bitmap. `IBitmapWrapperWindow.bitmap` is an immutable `ImageBitmap`
+    here, so the buffer is an `OffscreenCanvas` and each composed frame is converted with
+    `createImageBitmap()` — async, so a frame lands one microtask late, invisible at AS3's 100 ms
+    per twinkle frame. A generation counter drops a conversion overtaken by a newer one, the guard
+    the campaign calendar's gradients already use.
+  - **`TwinkleImages.get disposed()` is inverted in AS3** (`return _questEngine != null`) and is
+    kept that way: nothing reads it, and `Animation` decides an object's lifetime through
+    `isFinished()`. Correcting it would be an invented change.
+  - **Verified headlessly through `vortex-glaze`**, frame by frame: at 799 ms a twinkle has no
+    bitmap and is not finished; at 800 it is on sequence frame 1, at 900 frame 2, at 1300 the peak
+    frame 6, at 1900 back to frame 1, and at 2000 it is finished with no bitmap. Its position lands
+    inside the 44x44 scatter box. An `Animation` holding two twinkles offset 300 ms apart runs at
+    1000 and 2100 ms and **stops itself at 2300**, exactly when the later one's eleven frames run
+    out; `update()` after that is a no-op and `stop()` hides the window. Frames reach the window's
+    bitmap and invalidate it.
+
 - 🆕 **The talent track**, 2026-08-17. `friendbar/talent` 0/6 → 7/6, and with it the module's last
   zero directory. Four controllers (track, level-up, toolbar promo, citizenship popup), the progress
   meter, `HabboTalent` itself and the `IHabboTalent` marker — plus **eleven message files**, since
