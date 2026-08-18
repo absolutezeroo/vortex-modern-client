@@ -45,7 +45,9 @@ import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {QuestMessageData} from '@habbo/communication/messages/parser/quest/QuestMessageData';
 import {QuestController} from './QuestController';
 import {DailyTasksController} from './dailytasks/DailyTasksController';
+import {RewardTrackController} from './rewardtrack/RewardTrackController';
 import {IID_DailyTasks} from '@iid/IIDDailyTasks';
+import {IID_RewardTrackController} from '@iid/IIDRewardTrackController';
 import {AchievementController} from './AchievementController';
 import {AchievementsResolutionController} from './AchievementsResolutionController';
 import {RoomCompetitionController} from './RoomCompetitionController';
@@ -98,6 +100,15 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     get dailyTasksController(): DailyTasksController | null
     {
         return this._dailyTasksController;
+    }
+
+    // AS3: HabboQuestEngine.as::_rewardTrack
+    private _rewardTrack: RewardTrackController | null = null;
+
+    // AS3: HabboQuestEngine.as::get rewardTrack()
+    get rewardTrack(): RewardTrackController | null
+    {
+        return this._rewardTrack;
     }
 
     // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_habboHelp
@@ -961,6 +972,12 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
             this._competitionController = null;
         }
 
+        if(this._rewardTrack)
+        {
+            this._rewardTrack.dispose();
+            this._rewardTrack = null;
+        }
+
         log.debug('HabboQuestEngine disposed');
 
         super.dispose();
@@ -980,6 +997,10 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
         // daily-tasks one follows its siblings rather than being the single exception.
         this._dailyTasksController = new DailyTasksController(this, this.context!, 0, this.assets);
         this.context?.attachComponent(this._dailyTasksController, [IID_DailyTasks]);
+        // AS3: HabboQuestEngine.as:136-137 — built and attached under IIDRewardTrackController,
+        // alongside the daily-tasks controller above.
+        this._rewardTrack = new RewardTrackController(this, this.context!, 0, this.assets);
+        this.context?.attachComponent(this._rewardTrack, [IID_RewardTrackController]);
         this._achievementController = new AchievementController(this);
         this._resolutionController = new AchievementsResolutionController(this);
         this._competitionController = new RoomCompetitionController(this);
@@ -1002,11 +1023,11 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 	 * Per-frame tick. Forwards to the sub-controllers AS3 drives from here.
 	 */
     // AS3: HabboQuestEngine.as::update()
-    // TODO(AS3): AS3 also forwards to a RewardTrackController, which does not exist in this port.
     update(deltaTime: number): void
     {
         this._questController?.update(deltaTime);
         this._achievementController?.update(deltaTime);
         this._dailyTasksController?.update(deltaTime);
+        this._rewardTrack?.update(deltaTime);
     }
 }
