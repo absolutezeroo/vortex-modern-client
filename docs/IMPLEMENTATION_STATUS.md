@@ -3116,6 +3116,57 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **The reward track — message layer and data model**, 2026-08-17. `habbo/quest` 35 → 46 TS
+  files. The wire side (14 files) and the model side (5 files) are done and probed; the controller
+  and the 17 view files are not yet ported.
+  - **Every message name is DERIVED, and every id is real.** Six ids from WIN63's own registry
+    (events 3794 / 522 / 58 / 2017, composers 1376 / 1789). The reward track is new in the 2026
+    build: `win63_version` has no message file for it, PRODUCTION predates it, and the emulator has
+    no header for any of the six in either direction. The names come from the unobfuscated handlers
+    and call sites — `onRewardTracks`, `onRewardTrackClaimResult`, `onRewardTrackProgress`,
+    `onRewardTrackPremiumPurchaseResult`, `claimPrize`, `purchasePremium`.
+    **Not a collision**: the emulator's `Game2GameRejoinMessageComposer = 1376` is the other
+    direction; the two tables are separate id spaces.
+  - **`RewardTrackData` reads four fields conditionally.** `taskPointsBoost` (a `double`),
+    `instantPoints`, `costDiamonds` and `costCredits` are on the wire only when `hasPremiumConfig`
+    is set. Reading them unconditionally desyncs every track after the first one without a premium
+    tier. `RewardTrackPrizeData.productItemTypeId` is a **short**, not an int.
+  - **Failure codes stay numbered.** AS3 names only `SUCCESS`; the other eight (claim) and nine
+    (premium) are `_SafeStr_N` and the controller never compares them individually — it tests
+    `resultCode != 0` and appends the number to a localization key. Naming them would be guessing
+    at meanings the client does not use.
+  - **Three model behaviours that are easy to get subtly wrong**, now pinned by a probe:
+    `complete` counts only *non-premium* prizes; `premiumComplete` is true whenever the track has
+    no premium config at all, so a free-only track reads as premium-complete; and
+    `RewardTrackPrize.available` is a **cached** flag that `refreshDerivedState()` writes through on
+    every mutation, not a computed one. `activeLevelIndex` returns the first rung not yet reached
+    and clamps to the last index once all are cleared.
+  - **Verified headlessly** in two passes. Wire: a two-track packet — the first without a premium
+    config, the second with one — round-trips with zero type mismatches (the probe's wrapper asserts
+    `readShort`/`readDouble` were actually the reads used) and is consumed to the byte, which is what
+    proves the conditional block. Model: the cached `available` flips when `markPremiumPurchased()`
+    lifts the lock; rung index resolves 0 / 5 / 12 / 20 / 999 against rungs at 5 / 10 / 20 exactly;
+    a zero-required rung short-circuits to a full ratio instead of dividing by zero.
+  - **Still open**: `RewardTrackController` (526 l.) and `view/` (17 files, ~3 200 l.). Unlike the
+    seasonal calendar this slice is low-risk — **zero `BitmapData` operations, zero remote loading,
+    one timer** across the whole directory.
+
+- 🆕 **`habbo/quest/seasonalcalendar` is deliberately deferred**, 2026-08-17, by the user's
+  decision. Its two messages shipped (`GetSeasonalCalendarDailyComposer` 1012,
+  `SeasonalCalendarDailyOfferMessageEvent` 1641); the 6 view files did not. Across them: 22
+  `BitmapData` allocations/mutations, 11 remote-loading touchpoints and 4 timers, needing three
+  documented deviations — and none of it is verifiable without a live seasonal campaign's assets.
+  Every other dependency was checked present (`WindowToggle`, four `HabboQuestEngine` members,
+  `QuestController.getTracker()`, both events, and the `SeasonalCalendar` layout, whose asset key
+  genuinely has no `_xml` suffix).
+  - **The trap if picking it up**: the seasonal offer is the **full** catalog offer shape
+    (`ClubOfferData`), not the shorter one `PurchaseOK` sends. The emulator keeps both deliberately
+    as `CatalogOfferSerializer.Serialize()` and `SerializeAsPurchased()`; only the first carries
+    `priceInSilver` and the trailing `previewImage`. Checked and found correct in passing:
+    `ClubOfferData` matches the 2026 DTO field-for-field, unnamed trailing boolean included — the
+    port's two offer parsers are two deliberate shapes, not drift.
+
+
 - 🆕 **The quest twinkle kit, and the prefetch the resource manager refused**, 2026-08-17.
   `Animation`, `IAnimationObject`, `Twinkle` and `TwinkleImages` (297 l.) — the sparkle burst over
   the quest-completed dialog. Closes the two `TODO(AS3)`s that named them, in
