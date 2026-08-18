@@ -32,3 +32,4 @@ export * from './SetTargetedOfferStateComposer';
 export * from './PurchaseTargetedOfferComposer';
 export * from './ShopTargetedOfferViewedComposer';
 export * from './GetHabboClubExtendOfferMessageComposer';
+export {GetSeasonalCalendarDailyComposer} from './GetSeasonalCalendarDailyComposer';

@@ -564,6 +564,12 @@ import {
     GetBadgeLeaderboardMessageComposer
 } from './messages/outgoing/users/GetBadgeLeaderboardMessageComposer';
 import {
+    GetSeasonalCalendarDailyComposer
+} from './messages/outgoing/catalog/GetSeasonalCalendarDailyComposer';
+import {
+    SeasonalCalendarDailyOfferMessageEvent
+} from './messages/incoming/catalog/SeasonalCalendarDailyOfferMessageEvent';
+import {
     IncomeRewardStatusMessageEvent
 } from './messages/incoming/inventory/IncomeRewardStatusMessageEvent';
 import {
@@ -2379,6 +2385,7 @@ export class HabboMessages implements IMessageConfiguration
 
         // === CAMPAIGN ===
         this._events.set(2503, BadgeLeaderboardMessageEvent);
+        this._events.set(1641, SeasonalCalendarDailyOfferMessageEvent);
         this._events.set(1028, CampaignCalendarDataMessageEvent);
         this._events.set(2164, CampaignCalendarDoorOpenedMessageEvent);
 
@@ -3555,6 +3562,11 @@ export class HabboMessages implements IMessageConfiguration
         // The emulator has no header for either, so the names are derived — flagged at each
         // declaration, same as the habbicon set above.
         this._composers.set(1225, GetBadgeLeaderboardMessageComposer);
+
+        // === SEASONAL CALENDAR ===
+        // Both ids from WIN63's own registry (1012 -> _SafeCls_3869, 1641 -> _SafeCls_2647), names
+        // recovered from win63_version's own filenames and corroborated by the emulator's table.
+        this._composers.set(1012, GetSeasonalCalendarDailyComposer);
 
         // === NUX ===
         this._composers.set(2048, NewUserExperienceScriptProceedComposer);

@@ -37,3 +37,4 @@ export * from './TargetedOfferData';
 export * from './TargetedOfferMessageEvent';
 export * from './TargetedOfferNotFoundMessageEvent';
 export * from './LtdRaffleResultMessageEvent';
+export {SeasonalCalendarDailyOfferMessageEvent} from './SeasonalCalendarDailyOfferMessageEvent';
