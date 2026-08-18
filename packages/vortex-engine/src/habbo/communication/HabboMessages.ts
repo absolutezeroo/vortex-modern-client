@@ -567,6 +567,16 @@ import {
     GetSeasonalCalendarDailyComposer
 } from './messages/outgoing/catalog/GetSeasonalCalendarDailyComposer';
 import {
+    ClaimRewardTrackPrizeMessageComposer,
+    PurchaseRewardTrackPremiumMessageComposer
+} from './messages/outgoing/quest';
+import {
+    RewardTrackClaimResultMessageEvent,
+    RewardTrackPremiumPurchaseResultMessageEvent,
+    RewardTrackProgressMessageEvent,
+    RewardTracksMessageEvent
+} from './messages/incoming/quest';
+import {
     SeasonalCalendarDailyOfferMessageEvent
 } from './messages/incoming/catalog/SeasonalCalendarDailyOfferMessageEvent';
 import {
@@ -2386,6 +2396,10 @@ export class HabboMessages implements IMessageConfiguration
         // === CAMPAIGN ===
         this._events.set(2503, BadgeLeaderboardMessageEvent);
         this._events.set(1641, SeasonalCalendarDailyOfferMessageEvent);
+        this._events.set(3794, RewardTracksMessageEvent);
+        this._events.set(522, RewardTrackClaimResultMessageEvent);
+        this._events.set(58, RewardTrackPremiumPurchaseResultMessageEvent);
+        this._events.set(2017, RewardTrackProgressMessageEvent);
         this._events.set(1028, CampaignCalendarDataMessageEvent);
         this._events.set(2164, CampaignCalendarDoorOpenedMessageEvent);
 
@@ -3567,6 +3581,13 @@ export class HabboMessages implements IMessageConfiguration
         // Both ids from WIN63's own registry (1012 -> _SafeCls_3869, 1641 -> _SafeCls_2647), names
         // recovered from win63_version's own filenames and corroborated by the emulator's table.
         this._composers.set(1012, GetSeasonalCalendarDailyComposer);
+
+        // === REWARD TRACK ===
+        // Six ids, all from WIN63's own registry. The reward track postdates win63_version and the
+        // emulator has no header for any of them, so every name here is derived from the
+        // unobfuscated handler or call site — flagged as such at each declaration.
+        this._composers.set(1376, ClaimRewardTrackPrizeMessageComposer);
+        this._composers.set(1789, PurchaseRewardTrackPremiumMessageComposer);
 
         // === NUX ===
         this._composers.set(2048, NewUserExperienceScriptProceedComposer);

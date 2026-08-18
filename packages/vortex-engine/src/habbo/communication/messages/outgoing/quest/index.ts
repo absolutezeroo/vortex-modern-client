@@ -14,3 +14,5 @@ export * from './RejectQuestMessageComposer';
 export * from './StartCampaignMessageComposer';
 export * from './GetResolutionAchievementsMessageComposer';
 export * from './ResetResolutionAchievementMessageComposer';
+export {ClaimRewardTrackPrizeMessageComposer} from './ClaimRewardTrackPrizeMessageComposer';
+export {PurchaseRewardTrackPremiumMessageComposer} from './PurchaseRewardTrackPremiumMessageComposer';
