@@ -188,7 +188,7 @@ export class ModerationMessageHandler
         }
 
         this._manager.issueManager?.updateIssueBrowser();
-        this._manager.initData = data;
+        this._manager.initMsg = data;
 
         log.debug('Moderator initialized with', issues.length, 'issues');
     }

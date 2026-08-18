@@ -3116,6 +3116,43 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **`habbo/moderation` — foundations, and the manager's spine**, 2026-08-18. 8 → 18 TS
+  files. This is the first slice of a module that is 43 AS3 files / ~7 700 l., of which the 8
+  already-ported ones were the data and message layer.
+  - **`LocalizationHelper` was `IssueCategoryNames` under an invented name**, traced to
+    `win63_version/habbo/moderation/class_3472.as` — a tree CLAUDE.md forbids reading bodies from.
+    The real class is unobfuscated in the primary tree. Renamed, retraced, and its two use sites
+    migrated; the lookup table itself was already correct, hole included (AS3 switches on
+    `source - 1` and has **no case 12**, so source 13 reads "Unknown" while 14 and 15 are named).
+  - **The localization manager was wired to the wrong dependency and passed `null`.** AS3 feeds
+    `IssueCategoryNames.setLocalizationManager()` from `IIDHabboLocalizationManager`; the port
+    called it from the *session* dependency's callback with a literal `null`, so
+    `help.cfh.topic.<n>` was never consulted and every CFH topic fell back to the English table.
+  - **`ModerationManager` had 2 of AS3's 8 dependencies** and stubbed most of its surface. Now
+    complete except the two unported UI members: `getXmlWindow()`, `openHkPage()`, `goToRoom()` via
+    the navigator (it was firing a `navigator/goto/` link event instead), `logEvent()`/`trackGoogle()`
+    through `IHabboTracking`, the `windowManager`/`windowTracker`/`soundManager`/`initMsg`/
+    `isModerator` getters, `cfhTopics`, and the room-viewer-mode early return in `initComponent()`.
+    AS3's field is `initMsg`, not the port's invented `initData`; the message handler's write was
+    repointed.
+  - **All eight dependencies are required**, since AS3's `ComponentDependency` and this port's both
+    default that parameter to `true`. Noted at the declaration because the friend-bar one is stored
+    and never read — in AS3 too — so it is a hard gate paid for nothing, and a required dependency
+    on an IID nothing provides locks the component silently.
+  - **`WindowTracker`'s nine window types are recovered from their call sites.** Only
+    `TYPE_USERINFO`/`TYPE_ISSUEHANDLER`/`TYPE_ROOMINFO` are readable; the other six were derived
+    from each `getType()` and from the three `new ChatlogCtrl(..., 3|4|5, ...)` sites (issue / room
+    / user). **`RoomVisitsCtrl` and `UserClassificationCtrl` both return 6** and so share a slot,
+    each closing the other — that is what both classes say and it is left alone.
+  - **Still open, ~6 400 l. in three slices**: the nine mod-tool window controllers
+    (`StartPanelCtrl`, `UserInfoCtrl`, `UserInfoFrameCtrl`, `ChatlogCtrl`, `RoomToolCtrl`,
+    `RoomVisitsCtrl`, `ModActionCtrl`, `SendMsgsCtrl`, `UserClassificationCtrl`, ~2 760 l.); the
+    issue browser (`IssueHandler`, `IssueBrowser`, `IssueListView` and the three tab views,
+    ~1 310 l.); and the new mod tool (`_SafeCls_1981` + its 6 tabs, ~1 110 l.). Four of the eight
+    action classes (`OpenUserInfo`, `OpenRoomTool`, `HideDiscussionThread`, `HideDiscussionMessage`)
+    are written but held back with the controllers they construct. `IssueManager.setCfhTopics()` is
+    also still a log-only stub.
+
 - 🆕 **The reward track — controller and views: the module is complete**, 2026-08-18.
   `habbo/quest/rewardtrack/` is 19 more TS files (controller + 18 under `view/`, ~1 900 l. of AS3),
   finishing what the message/model entry below started. `RewardTrackController` is a DI `Component`
