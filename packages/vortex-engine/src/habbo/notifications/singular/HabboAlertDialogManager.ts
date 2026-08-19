@@ -1,175 +1,202 @@
-import {EventEmitter} from 'eventemitter3';
-import {Logger} from '@core/utils/Logger';
-
-const log = Logger.getLogger('habbo.notifications.singular.HabboAlertDialogManager');
-
-/**
- * Events emitted by the alert dialog manager
- */
-export interface IHabboAlertDialogManagerEvents
-{
-    'moderatorCaution': (message: string, url: string) => void;
-    'moderatorMessage': (message: string, url: string) => void;
-    'userBanned': (message: string) => void;
-    'hotelClosing': (minutesUntilClosing: number) => void;
-    'hotelMaintenance': (minutesUntilMaintenance: number, duration: number) => void;
-    'hotelClosed': (openHour: number, openMinute: number, userThrownOutAtClose: boolean) => void;
-    'loginFailedHotelClosed': (openHour: number, openMinute: number) => void;
-}
+import type {IDisposable} from '@core/runtime/IDisposable';
+import type {IHabboHelp} from '@habbo/help/IHabboHelp';
+import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
+import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 
 /**
- * Manages alert dialogs for moderation, ban, and maintenance messages.
- * In the AS3 source this directly creates window dialogs; here we emit events
- * for the UI layer to handle.
+ * The alerts the *server* pushes at a player: moderator cautions and messages, ban notices, and the
+ * hotel's closing / maintenance warnings.
  *
- * @see source_as_win63/habbo/notifications/singular/HabboAlertDialogManager.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as
+ *
+ * Nothing here is a notification bubble — every method opens a modal dialog through the window
+ * manager, which is why this class needs one at all.
+ *
+ * **A caution ends in the Habbo Way, a message does not.** Both render identically; the only
+ * difference is the callback fired when the dialog's link is clicked, and `handleModeratorMessage()`
+ * is the one that suppresses it.
+ *
+ * The two hotel-hours dialogs go through `alert()` rather than `simpleAlert()` and dispose
+ * themselves on close, because they have no link and no illustration.
  */
-export class HabboAlertDialogManager extends EventEmitter<IHabboAlertDialogManagerEvents>
+export class HabboAlertDialogManager
 {
-    constructor()
-    {
-        super();
-    }
+    /** The illustration every moderation dialog carries. */
+    // AS3: HabboAlertDialogManager.as::showModerationMessage()
+    private static readonly MODERATION_ILLUSTRATION: string =
+        'illumina_alert_illustrations_frank_neutral_png';
 
+    // AS3: HabboAlertDialogManager.as::_windowManager
+    private _windowManager: IHabboWindowManager | null;
+
+    // AS3: HabboAlertDialogManager.as::_localization
+    private _localization: IHabboLocalizationManager | null;
+
+    // AS3: HabboAlertDialogManager.as::_habboHelp
+    private _habboHelp: IHabboHelp | null;
+
+    // TS-only: guards the idempotent `dispose()` this port's convention requires.
     private _disposed: boolean = false;
 
+    // AS3: HabboAlertDialogManager.as::HabboAlertDialogManager()
+    constructor(
+        windowManager: IHabboWindowManager | null,
+        localization: IHabboLocalizationManager | null,
+        habboHelp: IHabboHelp | null
+    )
+    {
+        this._windowManager = windowManager;
+        this._localization = localization;
+        this._habboHelp = habboHelp;
+    }
+
+    // TS-only: no AS3 counterpart; the port's components all expose it.
     get disposed(): boolean
     {
         return this._disposed;
     }
 
-    /**
-	 * Zero-pad a time value to two digits
-	 */
-    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::getTimeZeroPadded()
+    /** Zero-pads an hour or minute to two digits. */
+    // AS3: HabboAlertDialogManager.as::getTimeZeroPadded()
     private static getTimeZeroPadded(value: number): string
     {
         const padded = '0' + String(value);
+
         return padded.substring(padded.length - 2);
     }
 
-    /**
-	 * Handle a moderator caution message
-	 *
-	 * @param message The caution message text
-	 * @param url Optional URL link
-	 */
-    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleModeratorCaution()
+    // AS3: HabboAlertDialogManager.as::handleModeratorCaution()
     handleModeratorCaution(message: string, url: string = ''): void
     {
         this.showModerationMessage(message, url);
     }
 
-    /**
-	 * Handle a moderator message
-	 *
-	 * @param message The moderator message text
-	 * @param url Optional URL link
-	 */
-    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleModeratorMessage()
+    // AS3: HabboAlertDialogManager.as::handleModeratorMessage()
     handleModeratorMessage(message: string, url: string = ''): void
     {
         this.showModerationMessage(message, url, false);
     }
 
-    /**
-	 * Handle a user banned message
-	 *
-	 * @param message The ban message text
-	 */
-    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleUserBannedMessage()
+    // AS3: HabboAlertDialogManager.as::handleUserBannedMessage()
     handleUserBannedMessage(message: string): void
     {
-        const cleanMessage = message.replace(/\\r/g, '\r');
-        this.emit('userBanned', cleanMessage);
-        log.info('User banned message received');
+        this.showModerationMessage(message, '');
     }
 
     /**
-	 * Handle hotel closing message
-	 *
-	 * @param minutesUntilClosing Minutes until the hotel closes
-	 */
-    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleHotelClosingMessage()
+     * The server sends the message with literal `\r` two-character sequences rather than carriage
+     * returns, so they are unescaped before the dialog sees them.
+     */
+    // AS3: HabboAlertDialogManager.as::showModerationMessage()
+    private showModerationMessage(message: string, url: string, showHabboWay: boolean = true): void
+    {
+        const cleanMessage = message.replace(/\\r/g, '\r');
+
+        this._windowManager?.simpleAlert(
+            '',
+            '${mod.alert.title}',
+            cleanMessage,
+            '${mod.alert.link}',
+            url,
+            null,
+            HabboAlertDialogManager.MODERATION_ILLUSTRATION,
+            null,
+            () =>
+            {
+                if(this._habboHelp !== null && showHabboWay) this._habboHelp.showHabboWay();
+            }
+        );
+    }
+
+    // AS3: HabboAlertDialogManager.as::handleHotelClosingMessage()
     handleHotelClosingMessage(minutesUntilClosing: number): void
     {
-        this.emit('hotelClosing', minutesUntilClosing);
-        log.info(`Hotel closing in ${minutesUntilClosing} minutes`);
+        this._localization?.registerParameter(
+            'opening.hours.shutdown', 'm', String(minutesUntilClosing)
+        );
+
+        this._windowManager?.simpleAlert('', '${opening.hours.title}', '${opening.hours.shutdown}');
     }
 
-    /**
-	 * Handle hotel maintenance message
-	 *
-	 * @param minutesUntilMaintenance Minutes until maintenance begins
-	 * @param duration Expected duration of the maintenance
-	 */
-    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleHotelMaintenanceMessage()
+    // AS3: HabboAlertDialogManager.as::handleHotelMaintenanceMessage()
     handleHotelMaintenanceMessage(minutesUntilMaintenance: number, duration: number): void
     {
-        this.emit('hotelMaintenance', minutesUntilMaintenance, duration);
-        log.info(`Hotel maintenance in ${minutesUntilMaintenance} minutes, duration ${duration}`);
+        this._localization?.registerParameter(
+            'maintenance.shutdown', 'm', String(minutesUntilMaintenance)
+        );
+        this._localization?.registerParameter('maintenance.shutdown', 'd', String(duration));
+
+        this._windowManager?.simpleAlert('', '${opening.hours.title}', '${maintenance.shutdown}');
     }
 
-    /**
-	 * Handle hotel closed message
-	 *
-	 * @param openHour Hour the hotel will reopen
-	 * @param openMinute Minute the hotel will reopen
-	 * @param userThrownOutAtClose Whether the user was thrown out at close
-	 */
-    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleHotelClosedMessage()
+    /** Two near-identical branches in AS3; only the localization key differs. */
+    // AS3: HabboAlertDialogManager.as::handleHotelClosedMessage()
     handleHotelClosedMessage(openHour: number, openMinute: number, userThrownOutAtClose: boolean): void
     {
-        const hourStr = HabboAlertDialogManager.getTimeZeroPadded(openHour);
-        const minuteStr = HabboAlertDialogManager.getTimeZeroPadded(openMinute);
+        const key = userThrownOutAtClose ? 'opening.hours.disconnected' : 'opening.hours.closed';
 
-        this.emit('hotelClosed', openHour, openMinute, userThrownOutAtClose);
-        log.info(`Hotel closed, reopens at ${hourStr}:${minuteStr}, thrownOut=${userThrownOutAtClose}`);
+        this.showOpeningHoursAlert(key, openHour, openMinute);
+    }
+
+    // AS3: HabboAlertDialogManager.as::handleLoginFailedHotelClosedMessage()
+    handleLoginFailedHotelClosedMessage(openHour: number, openMinute: number): void
+    {
+        this.showOpeningHoursAlert('opening.hours.disconnected', openHour, openMinute);
+    }
+
+    // TS-only: the shape AS3 repeats three times across the two hotel-hours handlers.
+    private showOpeningHoursAlert(key: string, openHour: number, openMinute: number): void
+    {
+        this._localization?.registerParameter(key, 'h', HabboAlertDialogManager.getTimeZeroPadded(openHour));
+        this._localization?.registerParameter(key, 'm', HabboAlertDialogManager.getTimeZeroPadded(openMinute));
+
+        this._windowManager?.alert(
+            '${opening.hours.title}', `\${${key}}`, 0, (dialog: IDisposable) => dialog.dispose()
+        );
     }
 
     /**
-	 * Handle login failed because hotel is closed
-	 *
-	 * @param openHour Hour the hotel will reopen
-	 * @param openMinute Minute the hotel will reopen
-	 */
-    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::handleLoginFailedHotelClosedMessage()
-    handleLoginFailedHotelClosedMessage(openHour: number, openMinute: number): void
+     * The ban notice shown at login. A server-supplied `localizedReason` wins and has `{expiryDate}`
+     * substituted into it; otherwise the text is assembled from two localization keys.
+     *
+     * `expiryDateSeconds` is a *duration from now*, not an absolute date — and `-1` or less means
+     * permanent, which leaves the date blank.
+     */
+    // AS3: HabboAlertDialogManager.as::handleBanInfoMessage()
+    handleBanInfoMessage(reason: string, expiryDateSeconds: number, localizedReason: string): void
     {
-        const hourStr = HabboAlertDialogManager.getTimeZeroPadded(openHour);
-        const minuteStr = HabboAlertDialogManager.getTimeZeroPadded(openMinute);
+        const expiry = new Date();
 
-        this.emit('loginFailedHotelClosed', openHour, openMinute);
-        log.info(`Login failed, hotel closed. Reopens at ${hourStr}:${minuteStr}`);
+        expiry.setTime(expiry.getTime() + expiryDateSeconds * 1000);
+
+        const dateText = expiryDateSeconds > -1 ? expiry.toLocaleString() : '';
+
+        let description: string;
+
+        if(localizedReason !== null && localizedReason !== '')
+        {
+            description = localizedReason.replace('{expiryDate}', dateText);
+        }
+        else
+        {
+            const until = this._localization?.getLocalization('login.banned.until') ?? '';
+            const reasonLabel = this._localization?.getLocalization('login.banned.reason') ?? '';
+
+            description = `<b>${until}</b><br>${dateText}<br><b>${reasonLabel}</b><br>${reason}`;
+        }
+
+        this._windowManager?.simpleAlert('', '', description);
     }
 
-    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::dispose()
+    // AS3: HabboAlertDialogManager.as::dispose()
     dispose(): void
     {
         if(this._disposed) return;
 
-        this.removeAllListeners();
         this._disposed = true;
-    }
 
-    /**
-	 * Show a moderation message.
-	 * In AS3 this creates a simpleAlert dialog. Here we emit an event.
-	 */
-    // AS3: .../src/com/sulake/habbo/notifications/singular/HabboAlertDialogManager.as::showModerationMessage()
-    private showModerationMessage(message: string, url: string, _showHabboWay: boolean = true): void
-    {
-        const cleanMessage = message.replace(/\\r/g, '\r');
-
-        if(url)
-        {
-            this.emit('moderatorMessage', cleanMessage, url);
-        }
-        else
-        {
-            this.emit('moderatorCaution', cleanMessage, url);
-        }
-
-        log.info('Moderation message received');
+        this._windowManager = null;
+        this._localization = null;
+        this._habboHelp = null;
     }
 }

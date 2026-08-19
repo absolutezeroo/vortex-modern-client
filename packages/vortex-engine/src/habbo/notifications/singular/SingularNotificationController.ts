@@ -61,7 +61,9 @@ export class SingularNotificationController implements IUpdateReceiver
     constructor(notifications: HabboNotifications)
     {
         this._notifications = notifications;
-        this._alertDialogManager = new HabboAlertDialogManager();
+        this._alertDialogManager = new HabboAlertDialogManager(
+            notifications.windowManager, notifications.localizationManager, notifications.habboHelp
+        );
 
         this.parseConfig();
 
