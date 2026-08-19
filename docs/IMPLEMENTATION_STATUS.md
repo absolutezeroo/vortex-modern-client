@@ -3144,9 +3144,14 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     from each `getType()` and from the three `new ChatlogCtrl(..., 3|4|5, ...)` sites (issue / room
     / user). **`RoomVisitsCtrl` and `UserClassificationCtrl` both return 6** and so share a slot,
     each closing the other — that is what both classes say and it is left alone.
-  - **Still open, ~6 400 l. in three slices**: the nine mod-tool window controllers
-    (`StartPanelCtrl`, `UserInfoCtrl`, `UserInfoFrameCtrl`, `ChatlogCtrl`, `RoomToolCtrl`,
-    `RoomVisitsCtrl`, `ModActionCtrl`, `SendMsgsCtrl`, `UserClassificationCtrl`, ~2 760 l.); the
+  - **`SendMsgsCtrl` (180 l.) shipped separately**, because it is the *only* member of the
+    controller graph with no internal dependencies. The other eight controllers plus `IssueHandler`
+    form one cycle — `UserInfoCtrl` → `ModActionCtrl` → `UserInfoCtrl`, and
+    `ChatlogCtrl` → `UserInfoFrameCtrl` → `UserInfoCtrl` → `ChatlogCtrl` — so nothing in it compiles
+    until all nine (~3 200 l.) exist, along with the four held-back action classes they construct.
+  - **Still open, ~6 200 l. in three slices**: the eight remaining mod-tool window controllers
+    plus `IssueHandler` (`StartPanelCtrl`, `UserInfoCtrl`, `UserInfoFrameCtrl`, `ChatlogCtrl`,
+    `RoomToolCtrl`, `RoomVisitsCtrl`, `ModActionCtrl`, `UserClassificationCtrl`, ~3 200 l.); the
     issue browser (`IssueHandler`, `IssueBrowser`, `IssueListView` and the three tab views,
     ~1 310 l.); and the new mod tool (`_SafeCls_1981` + its 6 tabs, ~1 110 l.). Four of the eight
     action classes (`OpenUserInfo`, `OpenRoomTool`, `HideDiscussionThread`, `HideDiscussionMessage`)

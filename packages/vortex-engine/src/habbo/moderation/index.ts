@@ -7,6 +7,7 @@ export {IssueManager} from './IssueManager';
 export {ModActionDefinition} from './ModActionDefinition';
 export {ModerationManager} from './ModerationManager';
 export {ModerationMessageHandler} from './ModerationMessageHandler';
+export {SendMsgsCtrl} from './SendMsgsCtrl';
 export {WindowTracker} from './WindowTracker';
 
 // Types
