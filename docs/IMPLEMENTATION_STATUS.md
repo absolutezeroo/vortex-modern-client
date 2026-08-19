@@ -2244,8 +2244,9 @@ tool's output alone.
 
 The client row's 21 → 64 is not 43 files of new client work: the login rebuild and the onboarding
 flow landed from 2026-07-31 and account for 47 of the 64 (`onBoardingHcUi/` 27, `onBoardingHc/` 4,
-`onBoardingHcSteps/` 4, `login/` 12), with `lighting/` 8 and the rest support. The client package
-stays deliberately thin — almost everything is engine-side.
+`onBoardingHcSteps/` 4, `login/` 12), and the rest is support. (The count included `lighting/` 8 at
+the time; that directory was deleted on 2026-08-19 — see below.) The client package stays
+deliberately thin — almost everything is engine-side.
 
 The first two rows used to read "Primary WIN63 = 4,783", which is `win63_version`'s count — the
 secondary tree. `src/unknowns/` is counted because 556 files under `src/com/sulake/` import from it
@@ -3710,24 +3711,22 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
       `roomEngine.selectAvatar()` after a forced context menu is unported (`setSelectedAvatar` does
       not exist in this port), so only the selection highlight is missing from that path.
 
-- 🆕 **Room dynamic lighting — not a port, and deliberately outside every count on this page**,
-  2026-08-07. `packages/vortex-client/src/lighting/`, disabled by default (Ctrl+Shift+L for the
-  debug panel). N point lights from the moodlight and glowing furni, shadows cast from each object's
-  real texture, and per-sprite lighting through the engine's own `RoomObjectSprite.color` channel.
-  Contract and limitations in `docs/architectures/room-lighting-architecture.md`.
-  - **It must not enter the module rows above.** These files have no AS3 counterpart on either side
-    of the ratio, which is why they live in `vortex-client/src/lighting/` and not under `habbo/` —
-    the gap-measurement recipe walks the AS3-mirroring trees, and this is not one of them. Counting
-    them would inflate TS coverage against an AS3 denominator that does not exist.
-  - **Two room-geometry conventions found here apply to anything drawn over the room**, not just to
-    lighting, and both are silent when wrong: a tile is *centred* on its index
+- 🗑️ **Room dynamic lighting removed**, 2026-08-19. The experiment added on 2026-08-07
+  (`packages/vortex-client/src/lighting/`, 8 files / ~4,300 lines: N point lights from the moodlight
+  and glowing furni, texture-derived cast shadows, per-sprite tinting, a Ctrl+Shift+L debug panel and
+  a `window.VortexLighting` handle) is **deleted**, along with
+  `docs/architectures/room-lighting-architecture.md`. It had no AS3 counterpart — the Flash client
+  has three frozen face-colour constants and a global moodlight multiply and nothing else — so it
+  made the render diverge from Habbo's. The removal is complete: the module was self-contained
+  behind one `RoomLightingController.install()` call in `App.ts`, now gone, and no ported file was
+  ever edited for it.
+  - **Two room-geometry conventions were found while building it, and they outlive it** — they apply
+    to anything drawn over the room, and both are silent when wrong: a tile is *centred* on its index
     (`RoomPlaneParser`: `planeX = x / 4 - 0.5`, so tile `t` spans `[t-0.5, t+0.5]` — and world→tile
     is `Math.round`, not the `Math.floor` `handleUserPlace()` uses); and the room is centred in the
     canvas by a `+ canvas.width / 2` term present in neither the geometry nor `screenOffset`, spelled
     out in `getRoomObjectScreenLocation()` and `getRoomObjectBoundingRectangle()`. Use the engine's
     own conversion rather than reimplementing from `RoomGeometry`.
-  - One deliberate write into ported code, confined to `SpriteLighting.ts`: it sets
-    `ExtendedSprite.tint`, records the renderer's own colour first, and restores it on disable.
 
 - ✅ **Moderation wired into the boot** (incoming 757 `ModeratorInit` and the other thirteen),
   2026-08-08. Everything under `habbo/moderation/` was already ported — `ModerationManager`,

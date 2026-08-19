@@ -650,9 +650,9 @@ export class Vortex implements IVortex
      * Brackets every PixiJS draw submission so the `:showstats` overlay can report it.
      *
      * `runners.prerender` / `runners.postrender` wrap the whole of `AbstractRenderer.render()`, and
-     * they fire for render-to-texture passes too (the room lighting layer runs three per frame), so
-     * a frame's `pixi` figure is the sum of every pass in it. FrameTimings.begin()/end() nest, which
-     * keeps a pass triggered from inside another from being counted twice.
+     * they fire for render-to-texture passes too, so a frame's `pixi` figure is the sum of every
+     * pass in it. FrameTimings.begin()/end() nest, which keeps a pass triggered from inside another
+     * from being counted twice.
      *
      * Left on unconditionally: it costs two `performance.now()` calls per render, and gating it on
      * the overlay would mean toggling `:showstats` shows a number that needs ~50 frames to mean

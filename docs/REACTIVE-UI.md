@@ -58,7 +58,7 @@ reverted) put that code out of bounds.
 | May adopt the layer | Must not |
 |---|---|
 | `vortex-glaze` — the whole editor is TS-only | Any `habbo/` view whose body traces to AS3 members |
-| `vortex-client` TS-only surfaces (debugger, changelog, lighting UI, login shell) | `core/window` controllers themselves |
+| `vortex-client` TS-only surfaces (debugger, changelog, login shell) | `core/window` controllers themselves |
 | Future TS-only tooling and features | TS-only *glue inside* a ported class (keeps one idiom per file) |
 
 So the honest pitch is not "modernise the ported views" — it is "stop hand-rolling tree
