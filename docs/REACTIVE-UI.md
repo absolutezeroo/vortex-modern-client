@@ -1,13 +1,27 @@
 # A signals layer for the window system — design
 
-**Status: implemented on `feat/reactive-ui`** — core (`core/reactive/`), window
+**Status: unfinished experiment — it stopped at `vortex-glaze` and was never adopted by
+the client.** This was a test to replace and modernize the old imperative, Flash-derived
+view code; it was not carried through (confirmed by the user, 2026-08-19). Read the rest
+of this document as a design that was *tried on the editor*, not as the client's UI
+direction: no part of `vortex-client` or of the rest of `vortex-engine` drives its window
+tree through it. §2 still governs who *may* adopt it — that permission was simply never
+taken up.
+
+**It is not dead code, though.** The layer's only consumers are seven files in
+`packages/vortex-glaze/src/` (`state/EditorSignals.ts`, `main.ts`, and five
+`ui/windows/Window*.ts`) — deleting it breaks the Glaze editor. Its `TS-only` markers are
+valid: genuine port-free infrastructure with a real consumer. Equally, do not "finish the
+migration" into the client unprompted.
+
+**What was built**, on `feat/reactive-ui`: core (`core/reactive/`), window
 adapter (`core/window/reactive/`), and glaze adoption: `WindowHierarchy` and
 `WindowProperty` fully reconciled (`each`), `WindowBottomBar`,
 `WindowToolbar` and `WindowHierarchyControls` bound where they vary.
 `WindowGallery`, `WindowPalette` and `WindowColorPicker` deliberately stay
 imperative: one-shot popups with a single writer have nothing to bind.
-Measured on the glaze harness — hierarchy: collapse 2→0 / visibility 10→0
-row builds; property editor: selection change 40→0 (row reuse), two-way
+Measured on the glaze harness *and nowhere else* — hierarchy: collapse 2→0 / visibility
+10→0 row builds; property editor: selection change 40→0 (row reuse), two-way
 `WE_CHANGE` verified. Two findings worth keeping: a deferred bind lands after
 construction completes, which *fixed* the zoom dropdown's empty caption (the
 old imperative set fell into the TS super()-before-fields gap); and a setter
