@@ -227,6 +227,18 @@ export class InputField extends Sprite
     };
 
     /**
+     * TS-only: no AS3 counterpart — Flash had no password manager and stored the credentials
+     * itself. Overrides what `init()` assumed from `isPassword`, for the boxes that are neither a
+     * login nor a *current* password; the stage puts it on the `<input>` it parks over the field.
+     */
+    public set autoComplete(value: AutoFill)
+    {
+        if(!this._field) return;
+
+        this._field.autoComplete = value;
+    }
+
+    /**
      * TS-only: the field this input types into, so a view can hand it to `stage.focus` — AS3 did
      * that through `_context.stage.focus` from inside the widget.
      */

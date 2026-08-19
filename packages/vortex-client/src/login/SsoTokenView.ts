@@ -136,6 +136,11 @@ export class SsoTokenView extends Sprite
             true
         );
         this.addChild(this._tokenField);
+
+        // TS-only: the ticket box is built as a password one, so `InputField` marked it
+        // "current-password" — which asks the browser's password manager to fill an account
+        // password into a single-use SSO ticket. It is a one-time code and says so.
+        this._tokenField.autoComplete = 'one-time-code';
         this._tokenField.addEventListener('change', this._onInputChange);
         this._tokenField.addEventListener('keyDown', this._onInputKeyboardEvent);
         this._tokenField.x = 0;

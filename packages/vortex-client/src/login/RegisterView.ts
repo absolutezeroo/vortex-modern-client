@@ -148,6 +148,11 @@ export class RegisterView extends Sprite
             true
         );
         this.addChild(this._passwordField);
+
+        // TS-only: registration sets a password rather than replaying one, so the browser is told
+        // "new-password" — the token that makes it offer to generate and to remember, instead of
+        // offering to fill the box with the credential already stored for this host.
+        this._passwordField.autoComplete = 'new-password';
     }
 
     // TS-only: mirrors `LoginView.onAddedToStage()` — the 20ms wait is what lets the anchors measure

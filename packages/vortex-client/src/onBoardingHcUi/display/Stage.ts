@@ -27,10 +27,34 @@ export class Stage extends DisplayObjectContainer
     /** TS-only: id of the one `<style>` the stage installs, so a second stage reuses it. */
     private static readonly STYLE_ELEMENT_ID: string = 'vortex-login-input-style';
 
+    /** TS-only: class every overlay carries — the one `<style>` this stage installs targets it. */
+    private static readonly INPUT_CLASS: string = 'vortex-login-input';
+
     private readonly _canvas: HTMLCanvasElement;
     private readonly _context: CanvasRenderingContext2D;
-    private readonly _input: HTMLInputElement;
     private readonly _form: HTMLFormElement;
+
+    /**
+     * TS-only: one `<input>` per live editable field, not one element shared by whichever field
+     * happens to hold the focus.
+     *
+     * A password manager fills a *pair*. It looks for a login field and a password field present in
+     * the same form at the same time and fills both from one credential, so a single element that
+     * changes `type` on focus is never a pair: at the moment the e-mail box is clicked the page
+     * holds no password field at all, so nothing is offered, and picking a saved account fills the
+     * one element with the login and has nowhere to put the password. It is the same reason the
+     * browser never proposed to remember anything — the two values never coexisted in the DOM.
+     */
+    private readonly _elements: Map<TextField, HTMLInputElement> = new Map();
+
+    /** TS-only: the reverse of `_elements` — an event carries the element, the handlers want the field. */
+    private readonly _fields: Map<HTMLInputElement, TextField> = new Map();
+
+    /** TS-only: geometry last written to each overlay, so a frame that changed nothing writes nothing. */
+    private readonly _geometry: Map<HTMLInputElement, string> = new Map();
+
+    /** TS-only: suffix of the next element id — the ids exist only to be addressable from the console. */
+    private _elementSeq: number = 0;
     private _stageWidth: number = 0;
     private _stageHeight: number = 0;
     private _frameHandle: number = 0;
@@ -63,8 +87,7 @@ export class Stage extends DisplayObjectContainer
 
         this._context = context;
         Stage.installInputStyles();
-        this._input = Stage.createInputElement();
-        this._form = Stage.createInputForm(this._input);
+        this._form = Stage.createInputForm();
         container.appendChild(this._form);
 
         this._stage = this;
@@ -76,14 +99,22 @@ export class Stage extends DisplayObjectContainer
         this._canvas.addEventListener('mouseup', this._onMouseUp);
         this._canvas.addEventListener('mousemove', this._onMouseMove);
 
-        // The overlay covers part of the canvas, so the same three handlers run on it as well —
+        // The overlays cover part of the canvas, so the same three handlers run on them as well —
         // otherwise half a gesture (the press routed, the release lost) reaches the display list and
-        // no `click` is ever dispatched. They no-op on the field the overlay is actually serving.
-        this._input.addEventListener('mousedown', this._onMouseDown);
-        this._input.addEventListener('mouseup', this._onMouseUp);
-        this._input.addEventListener('mousemove', this._onMouseMove);
-        this._input.addEventListener('input', this._onInputChanged);
-        this._input.addEventListener('keydown', this._onInputKeyDown);
+        // no `click` is ever dispatched. They no-op on the field the overlay under the pointer is
+        // actually serving. The listeners go on the form rather than on each element: it is the
+        // parent of every one of them, and all five of these events bubble.
+        this._form.addEventListener('mousedown', this._onMouseDown);
+        this._form.addEventListener('mouseup', this._onMouseUp);
+        this._form.addEventListener('mousemove', this._onMouseMove);
+        this._form.addEventListener('input', this._onInputChanged);
+        this._form.addEventListener('keydown', this._onInputKeyDown);
+
+        // `focus` does not bubble, `focusin` does. The document focus moves without the stage being
+        // told — Tab between the two boxes, and the password manager focusing the box it has just
+        // filled — and the display list has to follow it, or the canvas paints a caret on one field
+        // while the keystrokes reach another.
+        this._form.addEventListener('focusin', this._onInputFocusIn);
 
         this._frameHandle = window.requestAnimationFrame(this._onFrame);
     }
@@ -117,14 +148,23 @@ export class Stage extends DisplayObjectContainer
 
     public set focus(field: TextField | null)
     {
+        // A widget can assign the focus in the very frame its field is built, before the sync walk
+        // has seen it — `InputField.onInputBackgroundClicked()` does exactly that.
+        if(field && !this._elements.has(field))
+        {
+            this.syncInputElements();
+        }
+
+        const element = field ? this._elements.get(field) ?? null : null;
+
         if(this._focus === field)
         {
             // Re-assigning the field already focused still has to put the caret back — the element
             // can have lost it without the stage hearing about it (a click outside the canvas, a
             // tab switch), and the widgets assign `stage.focus` expecting Flash's "focus it now".
-            if(field && document.activeElement !== this._input)
+            if(element && document.activeElement !== element)
             {
-                this._input.focus();
+                element.focus();
             }
 
             return;
@@ -132,22 +172,20 @@ export class Stage extends DisplayObjectContainer
 
         this._focus = field;
 
-        if(!field)
+        if(!element)
         {
-            this._input.blur();
-            this._input.style.display = 'none';
+            const active = document.activeElement;
+
+            // Only ever blur one of our own overlays: by now the document focus can be anywhere.
+            if(active instanceof HTMLInputElement && this._fields.has(active))
+            {
+                active.blur();
+            }
 
             return;
         }
 
-        this._input.type = field.displayAsPassword ? 'password' : 'text';
-        this._input.autocomplete = field.autoComplete;
-        this._input.name = field.displayAsPassword ? 'password' : 'username';
-        this._input.value = field.text;
-        this._input.maxLength = field.maxChars > 0 ? field.maxChars : 524288;
-        this._input.style.display = 'block';
-        this.positionInputElement();
-        this._input.focus();
+        element.focus();
     }
 
     /**
@@ -202,23 +240,13 @@ export class Stage extends DisplayObjectContainer
 
         this.dispatchEnterFrame(this);
 
-        if(this._focus)
-        {
-            // A view is dismissed by hiding it, not by tearing it down (`startRoomPicking()` sets
-            // `_nameArea.visible = false`, `LoginFlow` hides the screen it leaves), and nothing in
-            // that path clears the focus. The `<input>` would then stay parked over a field nobody
-            // can see any more — an invisible band, above the canvas, eating every click that lands
-            // in it. That is the same defect whether the band sits over another input or over the
-            // room picker's thumbnails.
-            if(!this.isFieldLive(this._focus))
-            {
-                this.focus = null;
-            }
-            else
-            {
-                this.positionInputElement();
-            }
-        }
+        // A view is dismissed by hiding it, not by tearing it down (`startRoomPicking()` sets
+        // `_nameArea.visible = false`, `LoginFlow.hideViews()` removes the screen it leaves), and
+        // nothing in that path touches the overlays. One would then stay parked over a field nobody
+        // can see any more — an invisible band, above the canvas, eating every click that lands in
+        // it. That is the same defect whether the band sits over another input or over the room
+        // picker's thumbnails.
+        this.syncInputElements();
 
         const probeAfterEnterFrame = performance.now();
 
@@ -279,23 +307,179 @@ export class Stage extends DisplayObjectContainer
     }
 
     /**
-     * TS-only: whether the focused field is still a visible part of this stage's display list.
+     * TS-only: matches the set of overlays to the editable fields currently on the stage.
      *
-     * Flash drops the focus by itself when a focused field is hidden or removed; nothing does that
-     * here, so the frame loop checks it.
+     * Flash drops the focus by itself when a focused field is hidden or removed, and needs no
+     * element in the first place; here both are this walk's job. It runs every frame — the login
+     * tree is a few dozen nodes — and it is also what lets the browser see the login form appear
+     * and disappear: a password manager offers to remember a credential when a form holding a
+     * filled password leaves the page, which is precisely what `LoginFlow.hideViews()` does once
+     * `initLogin()` has been called.
      */
-    private isFieldLive(field: TextField): boolean
+    private syncInputElements(): void
     {
-        let node: DisplayObject | null = field;
+        const live: TextField[] = [];
 
-        while(node && node !== this)
+        Stage.collectInputFields(this, live);
+
+        for(const [field, element] of this._elements)
         {
-            if(!node.visible) return false;
+            if(live.indexOf(field) >= 0) continue;
 
-            node = node.parent;
+            this.destroyInputElement(field, element);
         }
 
-        return node === this;
+        for(let i = 0; i < live.length; i++)
+        {
+            const field = live[i];
+            const element = this._elements.get(field) ?? this.createInputElementFor(field, live, i);
+
+            Stage.configureInputElement(field, element);
+            this.positionInputElement(field, element);
+        }
+
+        if(this._focus && !this._elements.has(this._focus))
+        {
+            this.focus = null;
+        }
+    }
+
+    /**
+     * TS-only: the editable fields under `node`, in tree order, skipping anything hidden.
+     *
+     * Tree order is what the overlays' DOM order is built from, and a password manager reads it:
+     * the login box has to come before the password box for the pair to be recognised as one.
+     */
+    private static collectInputFields(node: DisplayObject, out: TextField[]): void
+    {
+        if(!node.visible) return;
+
+        if(node instanceof TextField)
+        {
+            if(node.isInput) out.push(node);
+
+            return;
+        }
+
+        if(!(node instanceof DisplayObjectContainer)) return;
+
+        for(let i = 0; i < node.numChildren; i++)
+        {
+            Stage.collectInputFields(node.getChildAt(i), out);
+        }
+    }
+
+    /**
+     * TS-only: builds the overlay for one field and inserts it in tree order.
+     *
+     * The insertion point matters as much as the element: inserting before the next field that
+     * already has one keeps the DOM in the order the walk found them, and reordering afterwards is
+     * not an option — moving an `<input>` in the DOM blurs it.
+     */
+    private createInputElementFor(field: TextField, live: TextField[], index: number): HTMLInputElement
+    {
+        const element = document.createElement('input');
+
+        this._elementSeq++;
+
+        // Addressable from the console: they are invisible by design, so `.vortex-login-input` is
+        // the only way to see where one actually sits when a click goes missing.
+        element.id = `${Stage.INPUT_CLASS}-${this._elementSeq}`;
+        element.className = Stage.INPUT_CLASS;
+        element.spellcheck = false;
+        element.style.position = 'absolute';
+        element.style.zIndex = '10001';
+        element.style.padding = '0';
+        element.style.margin = '0';
+        element.style.border = 'none';
+        element.style.outline = 'none';
+        element.style.background = 'transparent';
+        element.style.color = 'transparent';
+        element.style.boxSizing = 'border-box';
+
+        let before: HTMLInputElement | null = null;
+
+        for(let i = index + 1; i < live.length; i++)
+        {
+            const next = this._elements.get(live[i]) ?? null;
+
+            if(next)
+            {
+                before = next;
+
+                break;
+            }
+        }
+
+        this._form.insertBefore(element, before);
+        this._elements.set(field, element);
+        this._fields.set(element, field);
+
+        return element;
+    }
+
+    /**
+     * TS-only: keeps an overlay's browser-facing identity in step with its field.
+     *
+     * The hints are assigned after the field itself is built — `InputField.init()` for the type,
+     * then the view for the boxes that are neither a login nor a current password — so an element
+     * cannot be configured once at creation and left alone. Every write is guarded: this runs on
+     * each field, every frame.
+     */
+    private static configureInputElement(field: TextField, element: HTMLInputElement): void
+    {
+        const type = field.displayAsPassword ? 'password' : 'text';
+        const name = Stage.inputName(field);
+        const maxLength = field.maxChars > 0 ? field.maxChars : 524288;
+
+        if(element.type !== type) element.type = type;
+
+        if(element.autocomplete !== field.autoComplete) element.autocomplete = field.autoComplete;
+
+        if(element.name !== name) element.name = name;
+
+        if(element.maxLength !== maxLength) element.maxLength = maxLength;
+
+        // A view assigns the field's text directly (the stored-credential pre-fill, a reset), and
+        // the element has to follow — but never while it is the one being typed into, or the caret
+        // would be thrown to the end of the value on every frame.
+        if(element.value !== field.text && document.activeElement !== element)
+        {
+            element.value = field.text;
+        }
+    }
+
+    /**
+     * TS-only: the `name` a password manager reads the element by.
+     *
+     * `autocomplete` alone carries Chrome, but the older managers still lean on the name, and the
+     * field's own hint is the only thing that knows which box is which — the SSO ticket screen is
+     * an input that is neither a login nor a password and must be named as neither.
+     */
+    private static inputName(field: TextField): string
+    {
+        if(field.autoComplete === 'username' || field.autoComplete === 'email') return 'username';
+
+        if(field.autoComplete === 'current-password' || field.autoComplete === 'new-password') return 'password';
+
+        return '';
+    }
+
+    /** TS-only: drops the overlay of a field that has left the stage. */
+    private destroyInputElement(field: TextField, element: HTMLInputElement): void
+    {
+        this._elements.delete(field);
+        this._fields.delete(element);
+        this._geometry.delete(element);
+        element.remove();
+    }
+
+    /** TS-only: the field an overlay event came from. */
+    private fieldFor(target: EventTarget | null): TextField | null
+    {
+        if(!(target instanceof HTMLInputElement)) return null;
+
+        return this._fields.get(target) ?? null;
     }
 
     /** TS-only: pointer position in stage coordinates. */
@@ -316,11 +500,12 @@ export class Stage extends DisplayObjectContainer
         const point = this.toStagePoint(event);
         const target = this.hitTest(point.x, point.y);
 
-        // The overlay is a real element ON TOP of the canvas, so it takes presses the display list
-        // was meant to get. Only a press on the field it is actually serving belongs to the browser
-        // — that is what places the caret. Anything else is routed through the display list here,
-        // so the overlay can never swallow a click even if it is mispositioned or stale.
-        if(event.target === this._input && target === this._focus) return;
+        // An overlay is a real element ON TOP of the canvas, so it takes presses the display list
+        // was meant to get. Only a press on the element serving the field actually under the
+        // pointer belongs to the browser — that is what places the caret, and `focusin` is what
+        // tells the stage about it afterwards. Anything else is routed through the display list
+        // here, so an overlay can never swallow a click even if it is mispositioned or stale.
+        if(target instanceof TextField && event.target === this._elements.get(target)) return;
 
         // The default action of a mousedown moves the document focus to whatever is under the
         // pointer — here the canvas — and it runs AFTER this handler, so it took the caret straight
@@ -418,12 +603,32 @@ export class Stage extends DisplayObjectContainer
         this._canvas.style.cursor = 'default';
     }
 
-    private _onInputChanged = (): void =>
+    /**
+     * TS-only: copies an overlay's value into the field it serves.
+     *
+     * Deliberately NOT keyed on the focused field: a password manager fills both boxes from one
+     * click, and the one it does not focus would otherwise keep the text the canvas is painting —
+     * which is how a filled-in password stayed empty as far as `LoginView.saveOutfit()` was
+     * concerned.
+     */
+    private _onInputChanged = (event: Event): void =>
     {
-        if(!this._focus) return;
+        const field = this.fieldFor(event.target);
 
-        this._focus.text = this._input.value;
-        this._focus.dispatchEvent(new DisplayEvent('change', true));
+        if(!field) return;
+
+        field.text = (event.target as HTMLInputElement).value;
+        field.dispatchEvent(new DisplayEvent('change', true));
+    };
+
+    /** TS-only: the document focus moved onto one of the overlays — the display list follows it. */
+    private _onInputFocusIn = (event: FocusEvent): void =>
+    {
+        const field = this.fieldFor(event.target);
+
+        if(!field) return;
+
+        this._focus = field;
     };
 
     /**
@@ -436,33 +641,47 @@ export class Stage extends DisplayObjectContainer
      */
     private _onInputKeyDown = (event: KeyboardEvent): void =>
     {
-        if(!this._focus) return;
+        const field = this.fieldFor(event.target);
+
+        if(!field) return;
 
         const key = event.key ?? '';
         const charCode = key.length === 1 ? key.charCodeAt(0) : (key === 'Enter' ? 13 : 0);
 
-        this._focus.dispatchEvent(new DisplayKeyboardEvent('keyDown', charCode, event.keyCode ?? 0));
+        field.dispatchEvent(new DisplayKeyboardEvent('keyDown', charCode, event.keyCode ?? 0));
     };
 
-    /** TS-only: keeps the `<input>` over the focused field. */
-    private positionInputElement(): void
+    /**
+     * TS-only: keeps an `<input>` over the field it serves.
+     *
+     * Every live field is repositioned each frame, so the write is guarded by the geometry it last
+     * produced: assigning the same seven styles sixty times a second invalidates layout for nothing.
+     */
+    private positionInputElement(field: TextField, element: HTMLInputElement): void
     {
-        const field = this._focus;
-
-        if(!field) return;
-
         const position = this.getStagePosition(field);
         const red = (field.textColor >> 16) & 0xFF;
         const green = (field.textColor >> 8) & 0xFF;
         const blue = field.textColor & 0xFF;
+        const left = `${position.x}px`;
+        const top = `${position.y}px`;
+        const width = `${Math.max(1, position.width)}px`;
+        const height = `${Math.max(1, field.lineHeight)}px`;
+        const font = field.cssFont;
+        const caretColor = `rgb(${red}, ${green}, ${blue})`;
+        const letterSpacing = Stage.maskLetterSpacing(field);
+        const signature = `${left}|${top}|${width}|${height}|${font}|${caretColor}|${letterSpacing}`;
 
-        this._input.style.left = `${position.x}px`;
-        this._input.style.top = `${position.y}px`;
-        this._input.style.width = `${Math.max(1, position.width)}px`;
-        this._input.style.height = `${Math.max(1, field.lineHeight)}px`;
-        this._input.style.font = field.cssFont;
-        this._input.style.caretColor = `rgb(${red}, ${green}, ${blue})`;
-        this._input.style.letterSpacing = Stage.maskLetterSpacing(field);
+        if(this._geometry.get(element) === signature) return;
+
+        this._geometry.set(element, signature);
+        element.style.left = left;
+        element.style.top = top;
+        element.style.width = width;
+        element.style.height = height;
+        element.style.font = font;
+        element.style.caretColor = caretColor;
+        element.style.letterSpacing = letterSpacing;
     }
 
     /**
@@ -498,6 +717,12 @@ export class Stage extends DisplayObjectContainer
      *
      * Nothing is lost with them gone: the element exists to carry the caret, IME and the password
      * manager's fill, and revealing a field whose glyphs the canvas paints would show nothing.
+     *
+     * The second rule is the other half of that. `:-webkit-autofill` overrides `color` and
+     * `background` from the engine, so an autofilled overlay paints its own value in its own
+     * highlight, on top of the canvas that is already painting the same text: transparency is not
+     * a hiding mechanism a browser respects. `background-clip: text` over a transparent fill
+     * colour is, and the absurd transition delay keeps the highlight from ever animating in.
      */
     private static installInputStyles(): void
     {
@@ -507,11 +732,11 @@ export class Stage extends DisplayObjectContainer
 
         style.id = Stage.STYLE_ELEMENT_ID;
         style.textContent = `
-            #vortex-login-input::-ms-reveal,
-            #vortex-login-input::-ms-clear,
-            #vortex-login-input::-webkit-credentials-auto-fill-button,
-            #vortex-login-input::-webkit-strong-password-auto-fill-button,
-            #vortex-login-input::-webkit-caps-lock-indicator
+            .${Stage.INPUT_CLASS}::-ms-reveal,
+            .${Stage.INPUT_CLASS}::-ms-clear,
+            .${Stage.INPUT_CLASS}::-webkit-credentials-auto-fill-button,
+            .${Stage.INPUT_CLASS}::-webkit-strong-password-auto-fill-button,
+            .${Stage.INPUT_CLASS}::-webkit-caps-lock-indicator
             {
                 display: none !important;
                 visibility: hidden;
@@ -519,60 +744,42 @@ export class Stage extends DisplayObjectContainer
                 width: 0;
                 margin: 0;
             }
+
+            .${Stage.INPUT_CLASS}:-webkit-autofill,
+            .${Stage.INPUT_CLASS}:-webkit-autofill:hover,
+            .${Stage.INPUT_CLASS}:-webkit-autofill:focus,
+            .${Stage.INPUT_CLASS}:-webkit-autofill:active
+            {
+                -webkit-text-fill-color: transparent !important;
+                -webkit-box-shadow: none !important;
+                box-shadow: none !important;
+                background-clip: text !important;
+                transition: background-color 100000s ease-in-out 0s !important;
+            }
         `;
 
         document.head.appendChild(style);
     }
 
     /**
-     * TS-only: the shared editing element — visible (so the browser draws its caret) but with
-     * transparent text, since the canvas paints the glyphs.
-     */
-    private static createInputElement(): HTMLInputElement
-    {
-        const input = document.createElement('input');
-
-        // Addressable from the console: it is invisible by design, so `#vortex-login-input` is the
-        // only way to see where it actually sits when a click goes missing.
-        input.id = 'vortex-login-input';
-        input.type = 'text';
-        // Overwritten from the focused field's own hint (`set focus()`); this is only what the
-        // element carries before anything has been focused.
-        input.autocomplete = 'off';
-        input.spellcheck = false;
-        input.style.position = 'absolute';
-        input.style.display = 'none';
-        input.style.zIndex = '10001';
-        input.style.padding = '0';
-        input.style.margin = '0';
-        input.style.border = 'none';
-        input.style.outline = 'none';
-        input.style.background = 'transparent';
-        input.style.color = 'transparent';
-        input.style.boxSizing = 'border-box';
-
-        return input;
-    }
-
-    /**
-     * TS-only: the `<form>` the editing element lives in.
+     * TS-only: the `<form>` the editing elements live in.
      *
      * Chrome logs "Password field is not contained in a form" for a bare `input[type=password]`, and
-     * the shared element becomes one whenever an `InputField` was built with `isPassword`. The form
-     * is `display: contents`, so it adds no box: the input keeps positioning against the same
+     * a form is also what pairs a login box with a password box, which is the whole point. The form
+     * is `display: contents`, so it adds no box: the inputs keep positioning against the same
      * containing block `positionInputElement()` computes stage coordinates for.
      *
      * Submission is cancelled — a form with a single text field submits implicitly on Enter, which
      * would reload the page out from under the login flow. Enter has a job already: `onInputKeyDown`
      * forwards it to the focused field, which is how `SsoTokenView` accepts a pasted ticket.
      */
-    private static createInputForm(input: HTMLInputElement): HTMLFormElement
+    private static createInputForm(): HTMLFormElement
     {
         const form = document.createElement('form');
 
+        form.id = 'vortex-login-form';
         form.style.display = 'contents';
         form.addEventListener('submit', event => event.preventDefault());
-        form.appendChild(input);
 
         return form;
     }
@@ -594,18 +801,24 @@ export class Stage extends DisplayObjectContainer
         this._canvas.removeEventListener('mousedown', this._onMouseDown);
         this._canvas.removeEventListener('mouseup', this._onMouseUp);
         this._canvas.removeEventListener('mousemove', this._onMouseMove);
-        this._input.removeEventListener('mousedown', this._onMouseDown);
-        this._input.removeEventListener('mouseup', this._onMouseUp);
-        this._input.removeEventListener('mousemove', this._onMouseMove);
-        this._input.removeEventListener('input', this._onInputChanged);
-        this._input.removeEventListener('keydown', this._onInputKeyDown);
+        this._form.removeEventListener('mousedown', this._onMouseDown);
+        this._form.removeEventListener('mouseup', this._onMouseUp);
+        this._form.removeEventListener('mousemove', this._onMouseMove);
+        this._form.removeEventListener('input', this._onInputChanged);
+        this._form.removeEventListener('keydown', this._onInputKeyDown);
+        this._form.removeEventListener('focusin', this._onInputFocusIn);
 
         while(this.numChildren > 0)
         {
             this.removeChildAt(0);
         }
 
-        this._input.remove();
+        for(const [field, element] of this._elements)
+        {
+            this.destroyInputElement(field, element);
+        }
+
+        this._focus = null;
         this._form.remove();
         this._canvas.remove();
 
