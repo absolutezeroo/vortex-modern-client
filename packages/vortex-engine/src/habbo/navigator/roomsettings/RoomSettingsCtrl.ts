@@ -306,6 +306,7 @@ export class RoomSettingsCtrl
         }
 
         this._refreshNavigatorTabs();
+        this._resizeTabs();
         this._refreshFlatControllers();
         this._refreshBannedUsers();
         this._refreshGroupMemberDisclaimer();
@@ -554,8 +555,65 @@ export class RoomSettingsCtrl
     {
         if(this._tabContext === null || this._window === null) return;
 
+        // Tabs 2 (access rights) and 3 (room rights) only apply while you are standing in the room
+        // you are editing; opened from the navigator they are hidden. This loop was missing, so all
+        // five stayed visible.
+        for(let index = 0; index < this._tabContext.numTabItems; index++)
+        {
+            const tab = this._tabContext.getTabItemAt(index);
+
+            if(tab === null) continue;
+
+            const removed = this._removeTabsForNavigatorView && (tab.id === 2 || tab.id === 3);
+
+            tab.visible = !removed;
+        }
+
         const tabEl = this._window.findChildByName('tab_' + this._currentTab);
         this._tabContext.selector.setSelected(tabEl);
+    }
+
+    /**
+     * Divides the window's width across the *visible* tabs, one pixel short so the strip never
+     * exceeds its selector, and collapses the hidden ones to zero.
+     *
+     * **Without this the tabs keep whatever the auto-size cascade left them.** A tab button fits
+     * itself to its label through `resizeToAccommodateChildren()`, and when a caption shrinks the
+     * label re-centres against the *pre-shrink* button width before that fit runs — so the stale
+     * left offset is baked into the width. Measured on the three visible tabs: 116/120/119 instead
+     * of 112 each, which is `floor(oldWidth / 2) + floor(label / 2)` to the pixel. Three of them
+     * came to 358 in a 338-wide selector, and the last one was clipped.
+     *
+     * Nothing in the window engine is wrong there — every piece of that cascade is a faithful port.
+     * AS3 simply never lets it decide: it sets the widths explicitly, here.
+     */
+    // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::resizeTabs()
+    private _resizeTabs(): void
+    {
+        if(this._tabContext === null || this._window === null) return;
+
+        let visibleCount = 0;
+
+        for(let index = 0; index < this._tabContext.numTabItems; index++)
+        {
+            if(this._tabContext.getTabItemAt(index)?.visible) visibleCount++;
+        }
+
+        if(visibleCount === 0) return;
+
+        // AS3 assigns into an `int`, which truncates, then takes one more pixel off.
+        const tabWidth = Math.trunc(this._window.width / visibleCount) - 1;
+
+        for(let index = 0; index < this._tabContext.numTabItems; index++)
+        {
+            const tab = this._tabContext.getTabItemAt(index);
+
+            if(tab === null) continue;
+
+            const removed = this._removeTabsForNavigatorView && (tab.id === 2 || tab.id === 3);
+
+            tab.width = removed ? 0 : tabWidth;
+        }
     }
 
     private _showDeleteButton(): void
