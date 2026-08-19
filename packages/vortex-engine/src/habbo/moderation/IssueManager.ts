@@ -1,4 +1,5 @@
 import {IssueInfoData} from '@habbo/communication/messages/parser/moderation/IssueInfoData';
+import {IssueBrowser} from './IssueBrowser';
 import {IssueBundle} from './IssueBundle';
 import {Logger} from '@core/utils/Logger';
 import type {ModerationManager} from './ModerationManager';
@@ -24,6 +25,19 @@ const log = Logger.getLogger('habbo.moderation.IssueManager');
  */
 export class IssueManager
 {
+    /** AS3's `getInteger('max.call_for_help.results', 200)` fallback. */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::IssueManager()
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::playSound()
+    private static readonly NEW_ISSUE_SOUND: string = 'HBST_call_for_help';
+
+    /** AS3's `getInteger('max.call_for_help.results', 200)` fallback. */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::IssueManager()
+    private static readonly DEFAULT_ISSUE_LIST_LIMIT: number = 200;
+
+    /** AS3 builds `new Timer(15000, 0)` — repeating forever. */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::IssueManager()
+    private static readonly BROWSER_REFRESH_INTERVAL_MS: number = 15000;
+
     public static readonly BUNDLE_OPEN: string = 'issue_bundle_open';
     // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::BUNDLE_MY
     public static readonly BUNDLE_MY: string = 'issue_bundle_my';
@@ -54,9 +68,42 @@ export class IssueManager
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueManager.as::_windowHeight
     private _windowHeight: number = 0;
 
+    /** Derived name — `_SafeStr_6139`. */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::_SafeStr_6139
+    private _issueBrowser: IssueBrowser | null = null;
+
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::_issueListLimit
+    private _issueListLimit: number = IssueManager.DEFAULT_ISSUE_LIST_LIMIT;
+
+    /** Derived name — `_SafeStr_8562`: AS3's repeating 15 s browser-refresh `Timer`. */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::_SafeStr_8562
+    private _browserRefreshTimer: ReturnType<typeof setInterval> | null = null;
+
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::IssueManager()
     constructor(manager: ModerationManager)
     {
         this._manager = manager;
+
+        this._issueBrowser = new IssueBrowser(this, manager.windowManager, manager.assets);
+        this._issueListLimit = manager.getInteger(
+            'max.call_for_help.results', IssueManager.DEFAULT_ISSUE_LIST_LIMIT
+        );
+
+        this._browserRefreshTimer = setInterval(
+            () => this.updateIssueBrowser(), IssueManager.BROWSER_REFRESH_INTERVAL_MS
+        );
+    }
+
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::get issueListLimit()
+    get issueListLimit(): number
+    {
+        return this._issueListLimit;
+    }
+
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::init()
+    init(): void
+    {
+        this._issueBrowser?.show();
     }
 
     private _autoPickEnabled: boolean = false;
@@ -243,13 +290,9 @@ export class IssueManager
     // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::updateIssueBrowser()
     updateIssueBrowser(): void
     {
-        if(this._manager === null)
-        {
-            return;
-        }
+        if(this._manager === null) return;
 
-        // UI update is handled by SolidJS stores - emit event
-        log.debug('Issue browser updated');
+        this._issueBrowser?.update();
     }
 
     /**
@@ -635,12 +678,13 @@ export class IssueManager
     // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::playSound()
     playSound(issue: IssueInfoData): void
     {
-        if(this._issues.has(issue.issueId))
-        {
-            return;
-        }
+        if(this._issues.has(issue.issueId)) return;
 
-        log.debug('Play CFH sound for issue:', issue.issueId);
+        // Only when the browser is closed: a moderator already looking at the queue does not need
+        // to be told a new report arrived.
+        if(this._issueBrowser !== null && this._issueBrowser.isOpen()) return;
+
+        this._manager?.soundManager?.playSound(IssueManager.NEW_ISSUE_SOUND);
     }
 
     /**
@@ -648,6 +692,13 @@ export class IssueManager
 	 */
     dispose(): void
     {
+        if(this._browserRefreshTimer !== null)
+        {
+            clearInterval(this._browserRefreshTimer);
+            this._browserRefreshTimer = null;
+        }
+
+        this._issueBrowser = null;
         this._issues.clear();
         this._bundles.clear();
         this._issueToBundleMap.clear();

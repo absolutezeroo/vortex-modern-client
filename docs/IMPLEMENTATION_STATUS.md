@@ -3116,6 +3116,39 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **`habbo/moderation` — the issue browser**, 2026-08-18. 19 → 24 TS files.
+  `IssueBrowser`, `IssueListView` and the three tab views (`MyIssuesView`, `OpenIssuesView`,
+  `PickedIssuesView`), plus the `IssueManager` wiring they need. The slice is independent of the
+  controller cycle and compiles on its own.
+  - **`IssueManager.updateIssueBrowser()` was a "handled by SolidJS" stub** — the pattern that keeps
+    turning up. AS3 drives the browser from three places plus a **repeating 15-second timer** built
+    in the constructor; none of that existed. The constructor now builds the `IssueBrowser`, reads
+    `max.call_for_help.results` (default 200) into the `issueListLimit` the row table caps itself
+    with, and starts the timer; `dispose()` clears it.
+  - **`playSound()` only logged.** AS3 plays `HBST_call_for_help` through the sound manager *and*
+    suppresses it while the browser is open — a moderator already looking at the queue does not need
+    to be told. Both halves were missing; the browser check needed `IssueBrowser.isOpen()`, which is
+    why it could not be fixed before this slice.
+  - **`init()` did not exist at all**, though `StartPanelCtrl` calls it to open the browser. Added
+    with the AS3 body; its only caller is still in the unported controller cycle.
+  - **The row table is resized, not rebuilt.** `IssueListView.update()` clones or destroys rows until
+    the count matches, then refills in place — so rows outlive a refresh, which is why each row's
+    three buttons `removeEventListener` before adding. Without that a row surviving ten refreshes
+    would fire its pick handler ten times. The bundle id rides in `IWindow.id` on the button.
+  - **The sort is ascending on both keys.** AS3 writes `sortOn([...], [16, 16])`; 16 is
+    `Array.NUMERIC` and `DESCENDING` (2) is absent, so highest-priority-first is *not* what this
+    does. Kept as the source has it.
+  - **Colours converted with a tool, not by hand**: `4289914618` is `0xFFB2E6FA` and `4294967295` is
+    `0xFFFFFFFF`. Rows alternate on a *one-based* index, so the first row is the tinted one.
+  - **One forced deviation**: AS3 reads the row's target icon as a `BitmapData` from the component
+    asset library and hands the wrapper a `.clone()`. In this port images are not in a component
+    asset library at all — they live in the `ResourceManager` behind
+    `IHabboWindowManager.getAsset()` — and the `ImageBitmap` it returns is immutable and shared, so
+    there is nothing to clone. Documented at the call.
+  - `IssueBrowser` builds its window once and only ever hides it, so the three tab views, their row
+    pools and their scroll positions survive a close. A `closed_issues` tab name is declared in AS3
+    and never used.
+
 - 🆕 **`habbo/moderation` — foundations, and the manager's spine**, 2026-08-18. 8 → 18 TS
   files. This is the first slice of a module that is 43 AS3 files / ~7 700 l., of which the 8
   already-ported ones were the data and message layer.
@@ -3149,11 +3182,10 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     form one cycle — `UserInfoCtrl` → `ModActionCtrl` → `UserInfoCtrl`, and
     `ChatlogCtrl` → `UserInfoFrameCtrl` → `UserInfoCtrl` → `ChatlogCtrl` — so nothing in it compiles
     until all nine (~3 200 l.) exist, along with the four held-back action classes they construct.
-  - **Still open, ~6 200 l. in three slices**: the eight remaining mod-tool window controllers
+  - **Still open, ~5 550 l. in two slices**: the eight remaining mod-tool window controllers
     plus `IssueHandler` (`StartPanelCtrl`, `UserInfoCtrl`, `UserInfoFrameCtrl`, `ChatlogCtrl`,
-    `RoomToolCtrl`, `RoomVisitsCtrl`, `ModActionCtrl`, `UserClassificationCtrl`, ~3 200 l.); the
-    issue browser (`IssueHandler`, `IssueBrowser`, `IssueListView` and the three tab views,
-    ~1 310 l.); and the new mod tool (`_SafeCls_1981` + its 6 tabs, ~1 110 l.). Four of the eight
+    `RoomToolCtrl`, `RoomVisitsCtrl`, `ModActionCtrl`, `UserClassificationCtrl`, ~3 200 l.); and the
+    new mod tool (`_SafeCls_1981` + its 6 tabs, ~1 110 l.). Four of the eight
     action classes (`OpenUserInfo`, `OpenRoomTool`, `HideDiscussionThread`, `HideDiscussionMessage`)
     are written but held back with the controllers they construct. `IssueManager.setCfhTopics()` is
     also still a log-only stub.
