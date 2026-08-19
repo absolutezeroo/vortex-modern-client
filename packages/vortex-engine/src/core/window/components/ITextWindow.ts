@@ -46,8 +46,10 @@ export interface ITextWindow extends IWindow, IScrollableWindow
     italic: boolean;
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get underline()
     underline: boolean;
+    // Writable for the same reason as `bold` above: TextController has had the setter all along
+    // (IssueHandler bolds the highest-priority report's category by swapping the face).
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get fontFace()
-    readonly fontFace: string;
+    fontFace: string;
     // AS3 ITextWindow exposes fontSize as read/write; TextController already implements the setter.
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get fontSize()
     fontSize: number;

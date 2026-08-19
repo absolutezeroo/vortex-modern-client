@@ -3117,6 +3117,53 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **`habbo/moderation` — the mod-tool window cycle: the module is complete**, 2026-08-18.
+  24 → 38 TS files. The eight remaining window controllers plus `IssueHandler` and the four
+  held-back action classes, which form one dependency cycle and had to land together, along with the
+  listener plumbing they need. **Only the new mod tool (`_SafeCls_1981` + 6 tabs, ~1 110 l.) is
+  still open**, and it is independent.
+  - **`ModerationMessageHandler` had no listener plumbing at all.** AS3 holds six listener lists and
+    dispatches to them from `onUserInfo`, `onRoomInfo`, `onRoomVisits`, `onRoomUserClassification`,
+    the three chatlog handlers and both room enter/exit handlers. Every one of those was a
+    `log.debug` stub, so the whole tool was deaf: cards, chatlogs and room visits requested data
+    that arrived and was dropped. All six lists and their eight add/remove members are ported.
+  - **A copy-paste bug in AS3's own `removeUserClassificationListener`.** It filters
+    `_SafeStr_8278` (the classification list) and assigns the result to **`_roomVisitsListeners`**.
+    Ported literally, that leaves the classification listener subscribed forever *and* replaces the
+    room-visits list with classification controllers, so the next room-visits answer would call
+    `onRoomVisits()` on an object without it — silent in AS3, a throw here. Corrected to the list the
+    filter reads, documented at the declaration; the same call this port already made for
+    `DailyTasksController`'s uninitialised vector.
+  - **Three composers had wrong parameter names**, all caught by reading the call sites rather than
+    the signatures. `DefaultSanctionMessageComposer` read `(issueId, modActionId, message, cfhTopicId)`
+    where `ModActionCtrl` sends `(targetUserId, cfhTopicId, message, issueId)`;
+    `ModToolSanctionComposer` read `(issueId, sanctionTypeId, userId)` for `(-1, accountId, cfhTopicId)`;
+    and `GetRoomChatlogMessageComposer` read `(roomId, unused)` where **both** call sites send
+    `(roomKind, roomId)` — the room id was in the wrong slot. Same wire shape in all three, so nothing
+    was mis-sent yet; nothing had ever called them.
+  - **`IssueManager` was missing six members the controllers call**: `addModActionView`,
+    `removeModActionView`, `getCfhTopics`, `requestSanctionDataForAccount`, `removeHandler`, and a
+    real `handleBundle`/`unhandleBundle` (both logged and returned). `setCfhTopics` stored nothing.
+    `handleBundle` now builds the `IssueHandler` and shows it through the tracker with the stored
+    geometry, as AS3 does.
+  - **`ModerationManager.userSelected()` now reaches the start panel**, and the moderator init packet
+    shows it — AS3 shows the start panel there and nowhere else, so without that line the tool never
+    appears for a moderator at all.
+  - **An inversion in AS3 kept as-is**: `IssueHandler.sendWindowPreferences()` calls
+    `setToolPreferences(x, y, width, height)` but the setter is declared `(x, y, height, width)`, so
+    after the client sends its own geometry the cached pair is transposed and the next issue window
+    opens the wrong shape. The composer still receives the correct order. Documented at the call.
+  - **A dead block in `ChatlogCtrl` deliberately not reproduced**: AS3 sets `align` and bumps
+    `rightMargin` through three separate `getTextFormat()` calls and never passes the result to
+    `setTextFormat()`. In Flash each call returns a fresh copy, so all three writes land on throwaway
+    objects. Reproducing it would mean adding two fields to `ITextFormat` that nothing reads.
+  - **`ITextWindow.fontFace` is writable now**, for the same reason `bold` and `italic` already were:
+    `TextController` has had the setter all along and the interface declared it read-only.
+    `IssueHandler` bolds the highest-priority report's category by swapping the face.
+  - `VisitUserUtil` (`habbo/util`) shipped with it — `UserClassificationCtrl`'s only caller — and its
+    message is the ordinary follow-a-friend request (composer 886), not the name-based
+    `VisitUserMessageComposer`.
+
 - 🆕 **`habbo/moderation` — the issue browser**, 2026-08-18. 19 → 24 TS files.
   `IssueBrowser`, `IssueListView` and the three tab views (`MyIssuesView`, `OpenIssuesView`,
   `PickedIssuesView`), plus the `IssueManager` wiring they need. The slice is independent of the
@@ -3183,13 +3230,9 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     form one cycle — `UserInfoCtrl` → `ModActionCtrl` → `UserInfoCtrl`, and
     `ChatlogCtrl` → `UserInfoFrameCtrl` → `UserInfoCtrl` → `ChatlogCtrl` — so nothing in it compiles
     until all nine (~3 200 l.) exist, along with the four held-back action classes they construct.
-  - **Still open, ~5 550 l. in two slices**: the eight remaining mod-tool window controllers
-    plus `IssueHandler` (`StartPanelCtrl`, `UserInfoCtrl`, `UserInfoFrameCtrl`, `ChatlogCtrl`,
-    `RoomToolCtrl`, `RoomVisitsCtrl`, `ModActionCtrl`, `UserClassificationCtrl`, ~3 200 l.); and the
-    new mod tool (`_SafeCls_1981` + its 6 tabs, ~1 110 l.). Four of the eight
-    action classes (`OpenUserInfo`, `OpenRoomTool`, `HideDiscussionThread`, `HideDiscussionMessage`)
-    are written but held back with the controllers they construct. `IssueManager.setCfhTopics()` is
-    also still a log-only stub.
+  - **Closed** by the two entries above: the controller cycle and the issue browser both shipped
+    the same day, along with the four held-back action classes. Only the new mod tool
+    (`_SafeCls_1981` + its 6 tabs, ~1 110 l.) is still open.
 
 - 🆕 **The reward track — controller and views: the module is complete**, 2026-08-18.
   `habbo/quest/rewardtrack/` is 19 more TS files (controller + 18 under `view/`, ~1 900 l. of AS3),

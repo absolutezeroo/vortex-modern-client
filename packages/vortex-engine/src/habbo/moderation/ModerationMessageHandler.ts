@@ -72,6 +72,16 @@ import {
 } from '@habbo/communication/messages/outgoing/moderation/GetModeratorUserInfoMessageComposer';
 
 import type {ModerationManager} from './ModerationManager';
+import type {
+    ChatRecordData
+} from '@habbo/communication/messages/parser/moderation/ChatRecordData';
+import type {IChatlogReceiver} from './IChatlogReceiver';
+import type {IUserInfoReceiver} from './IUserInfoReceiver';
+import type {RoomToolCtrl} from './RoomToolCtrl';
+import type {RoomVisitsCtrl} from './RoomVisitsCtrl';
+import {UserClassificationCtrl} from './UserClassificationCtrl';
+import {UserClassificationData} from '@habbo/userclassification/UserClassificationData';
+import {WindowTracker} from './WindowTracker';
 
 const log = Logger.getLogger('habbo.moderation.ModerationMessageHandler');
 
@@ -86,6 +96,29 @@ const log = Logger.getLogger('habbo.moderation.ModerationMessageHandler');
  */
 export class ModerationMessageHandler
 {
+    /**
+     * Six listener lists, exactly as AS3 holds them. Four are typed on a concrete controller
+     * because AS3 types them that way; only the chatlog and user-info lists go through an interface.
+     */
+    // AS3: ModerationMessageHandler.as::_userInfoListeners
+    private _userInfoListeners: IUserInfoReceiver[] = [];
+
+    // AS3: ModerationMessageHandler.as::_roomVisitsListeners
+    private _roomVisitsListeners: RoomVisitsCtrl[] = [];
+
+    /** Derived name — `_SafeStr_8278`: the user-classification listeners. */
+    // AS3: ModerationMessageHandler.as::_SafeStr_8278
+    private _userClassificationListeners: UserClassificationCtrl[] = [];
+
+    // AS3: ModerationMessageHandler.as::_chatlogListeners
+    private _chatlogListeners: IChatlogReceiver[] = [];
+
+    // AS3: ModerationMessageHandler.as::_roomInfoListeners
+    private _roomInfoListeners: RoomToolCtrl[] = [];
+
+    // AS3: ModerationMessageHandler.as::_roomEnterListeners
+    private _roomEnterListeners: RoomToolCtrl[] = [];
+
     private _manager: ModerationManager;
     private _messageEvents: IMessageEvent[] = [];
 
@@ -189,6 +222,10 @@ export class ModerationMessageHandler
 
         this._manager.issueManager?.updateIssueBrowser();
         this._manager.initMsg = data;
+
+        // The init packet is what puts the mod tool on screen — AS3 shows the start panel here and
+        // nowhere else, so without this line the whole tool stays invisible for a moderator.
+        this._manager.startPanel?.show();
 
         log.debug('Moderator initialized with', issues.length, 'issues');
     }
@@ -295,7 +332,10 @@ export class ModerationMessageHandler
             return;
         }
 
-        log.debug('Got user info:', parser.data.userId);
+        for(const listener of this._userInfoListeners.slice())
+        {
+            listener.onUserInfo(parser.data);
+        }
     }
 
     /**
@@ -311,7 +351,10 @@ export class ModerationMessageHandler
             return;
         }
 
-        log.debug('Got room info:', parser.data.flatId);
+        for(const listener of this._roomInfoListeners.slice())
+        {
+            listener.onRoomInfo(parser.data);
+        }
     }
 
     /**
@@ -379,7 +422,20 @@ export class ModerationMessageHandler
             return;
         }
 
-        log.debug('Got CFH chatlog for record:', parser.data.chatRecordId);
+        // The two participants are tagged 0 (caller) and 1 (reported); ChatlogCtrl tints their
+        // rows differently. Only ever these two values, which is why the map is boolean here.
+        const highlighted = new Map<number, boolean>();
+
+        highlighted.set(parser.data.callerUserId, false);
+        highlighted.set(parser.data.reportedUserId, true);
+
+        this.onChatlog(
+            `Call For Help Evidence #${parser.data.chatRecordId}`,
+            WindowTracker.TYPE_CHATLOG_ISSUE,
+            parser.data.callId,
+            [parser.data.chatRecord],
+            highlighted
+        );
     }
 
     /**
@@ -395,7 +451,13 @@ export class ModerationMessageHandler
             return;
         }
 
-        log.debug('Got room chatlog for room:', parser.data.roomName);
+        this.onChatlog(
+            `Room Chatlog: ${parser.data.roomName}`,
+            WindowTracker.TYPE_CHATLOG_ROOM,
+            parser.data.roomId,
+            [parser.data],
+            new Map<number, boolean>()
+        );
     }
 
     /**
@@ -411,7 +473,37 @@ export class ModerationMessageHandler
             return;
         }
 
-        log.debug('Got user chatlog for:', parser.userName);
+        const highlighted = new Map<number, boolean>();
+
+        highlighted.set(parser.userId, false);
+
+        this.onChatlog(
+            `User Chatlog: ${parser.userName}`,
+            WindowTracker.TYPE_CHATLOG_USER,
+            parser.userId,
+            parser.rooms,
+            highlighted
+        );
+    }
+
+    /**
+     * All three chatlog flavours come back through one listener list, so each receiver filters on
+     * the type and id it asked for. The list is copied first: a receiver unsubscribes itself the
+     * moment its answer arrives.
+     */
+    // AS3: ModerationMessageHandler.as::onChatlog()
+    private onChatlog(
+        caption: string,
+        type: number,
+        id: number,
+        records: ChatRecordData[],
+        highlightedUserIds: Map<number, boolean>
+    ): void
+    {
+        for(const listener of this._chatlogListeners.slice())
+        {
+            listener.onChatlog(caption, type, id, records, highlightedUserIds);
+        }
     }
 
     /**
@@ -427,7 +519,10 @@ export class ModerationMessageHandler
             return;
         }
 
-        log.debug('Got room visits for:', parser.userName);
+        for(const listener of this._roomVisitsListeners.slice())
+        {
+            listener.onRoomVisits(parser);
+        }
     }
 
     /**
@@ -469,7 +564,29 @@ export class ModerationMessageHandler
             return;
         }
 
-        log.debug('Got user classification data:', parser.classifiedUsernameMap.size, 'users');
+        const classifications: UserClassificationData[] = [];
+
+        for(const [userId, userName] of parser.classifiedUsernameMap)
+        {
+            classifications.push(
+                new UserClassificationData(userId, userName, parser.classifiedUserTypeMap.get(userId) ?? '')
+            );
+        }
+
+        // AS3 builds and shows a fresh window here *and then* dispatches to the listener list — the
+        // window it just built is the one that receives the data, because `show()` subscribes.
+        const view = new UserClassificationCtrl(
+            this._manager, ModerationMessageHandler.ROOM_USER_CLASSIFICATION_TYPE
+        );
+
+        view.show();
+
+        for(const listener of this._userClassificationListeners.slice())
+        {
+            listener.onUserClassification(
+                ModerationMessageHandler.ROOM_USER_CLASSIFICATION_TYPE, classifications
+            );
+        }
     }
 
     /**
@@ -486,8 +603,12 @@ export class ModerationMessageHandler
         }
 
         this._manager.currentFlatId = parser.guestRoomId;
+        this._manager.startPanel?.guestRoomEntered(parser);
 
-        log.debug('Room entered:', parser.guestRoomId);
+        for(const listener of this._roomEnterListeners.slice())
+        {
+            listener.onRoomChange();
+        }
     }
 
     /**
@@ -497,7 +618,98 @@ export class ModerationMessageHandler
     private onRoomExit(_event: IMessageEvent): void
     {
         this._manager.currentFlatId = 0;
+        this._manager.startPanel?.roomExited();
 
-        log.debug('Room exited');
+        for(const listener of this._roomEnterListeners.slice())
+        {
+            listener.onRoomChange();
+        }
+    }
+
+    /** AS3 passes the literal `1` for a room-wide classification lookup. */
+    // AS3: ModerationMessageHandler.as::onRoomUserClassification()
+    private static readonly ROOM_USER_CLASSIFICATION_TYPE: number = 1;
+
+    // AS3: ModerationMessageHandler.as::addUserInfoListener()
+    public addUserInfoListener(listener: IUserInfoReceiver): void
+    {
+        this._userInfoListeners.push(listener);
+    }
+
+    // AS3: ModerationMessageHandler.as::removeUserInfoListener()
+    public removeUserInfoListener(listener: IUserInfoReceiver): void
+    {
+        this._userInfoListeners = this._userInfoListeners.filter((entry) => entry !== listener);
+    }
+
+    // AS3: ModerationMessageHandler.as::addRoomInfoListener()
+    public addRoomInfoListener(listener: RoomToolCtrl): void
+    {
+        this._roomInfoListeners.push(listener);
+    }
+
+    // AS3: ModerationMessageHandler.as::removeRoomInfoListener()
+    public removeRoomInfoListener(listener: RoomToolCtrl): void
+    {
+        this._roomInfoListeners = this._roomInfoListeners.filter((entry) => entry !== listener);
+    }
+
+    // AS3: ModerationMessageHandler.as::addRoomEnterListener()
+    public addRoomEnterListener(listener: RoomToolCtrl): void
+    {
+        this._roomEnterListeners.push(listener);
+    }
+
+    // AS3: ModerationMessageHandler.as::removeRoomEnterListener()
+    public removeRoomEnterListener(listener: RoomToolCtrl): void
+    {
+        this._roomEnterListeners = this._roomEnterListeners.filter((entry) => entry !== listener);
+    }
+
+    // AS3: ModerationMessageHandler.as::addRoomVisitsListener()
+    public addRoomVisitsListener(listener: RoomVisitsCtrl): void
+    {
+        this._roomVisitsListeners.push(listener);
+    }
+
+    // AS3: ModerationMessageHandler.as::removeRoomVisitsListener()
+    public removeRoomVisitsListener(listener: RoomVisitsCtrl): void
+    {
+        this._roomVisitsListeners = this._roomVisitsListeners.filter((entry) => entry !== listener);
+    }
+
+    // AS3: ModerationMessageHandler.as::addChatlogListener()
+    public addChatlogListener(listener: IChatlogReceiver): void
+    {
+        this._chatlogListeners.push(listener);
+    }
+
+    // AS3: ModerationMessageHandler.as::removeChatlogListener()
+    public removeChatlogListener(listener: IChatlogReceiver): void
+    {
+        this._chatlogListeners = this._chatlogListeners.filter((entry) => entry !== listener);
+    }
+
+    // AS3: ModerationMessageHandler.as::addUserClassificationListener()
+    public addUserClassificationListener(listener: UserClassificationCtrl): void
+    {
+        this._userClassificationListeners.push(listener);
+    }
+
+    /**
+     * **AS3 assigns the filtered list to the wrong field here.** It filters
+     * `_SafeStr_8278` (the classification listeners) and then writes the result to
+     * `_roomVisitsListeners` — a copy-paste slip. Ported faithfully that would leave the classification
+     * listener subscribed forever *and* replace the room-visits list with classification controllers,
+     * so the next room-visits answer would call `onRoomVisits()` on an object that has no such method.
+     * In AS3 that is a silent runtime error; here it would throw. The assignment is corrected to the
+     * list the filter reads, which is the only reading that is neither a crash nor a silent deletion
+     * of AS3 behaviour — the same call this port already made for `DailyTasksController`.
+     */
+    // AS3: ModerationMessageHandler.as::removeUserClassificationListener()
+    public removeUserClassificationListener(listener: UserClassificationCtrl): void
+    {
+        this._userClassificationListeners =
+            this._userClassificationListeners.filter((entry) => entry !== listener);
     }
 }

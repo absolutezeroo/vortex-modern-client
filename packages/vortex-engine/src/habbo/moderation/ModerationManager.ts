@@ -34,6 +34,7 @@ import {IID_SessionDataManager} from '@iid/index';
 import type {IHabboModeration} from './IHabboModeration';
 import {IssueCategoryNames} from './IssueCategoryNames';
 import {IssueManager} from './IssueManager';
+import {StartPanelCtrl} from './StartPanelCtrl';
 import {ModerationMessageHandler} from './ModerationMessageHandler';
 import {WindowTracker} from './WindowTracker';
 
@@ -98,6 +99,10 @@ export class ModerationManager extends Component implements IHabboModeration
     // AS3: ModerationManager.as::_SafeStr_6771
     private _issueManager: IssueManager | null = null;
 
+    /** Derived name — `_SafeStr_6212`. */
+    // AS3: ModerationManager.as::_SafeStr_6212
+    private _startPanel: StartPanelCtrl | null = null;
+
     /** Derived name — `_SafeStr_8877`. */
     // AS3: ModerationManager.as::_SafeStr_8877
     private _windowTracker: WindowTracker | null = null;
@@ -110,15 +115,20 @@ export class ModerationManager extends Component implements IHabboModeration
     private _currentFlatId: number = 0;
 
     /**
-     * AS3 also builds a `StartPanelCtrl` here and attaches the new mod tool under
-     * `IIDNewModerationTool`. Neither class is ported yet — see the two `TODO(AS3)` members below.
+     * AS3 also attaches the *new* mod tool (`_SafeCls_1981`) under `IIDNewModerationTool` here; that
+     * class is not ported yet — see the `TODO(AS3)` below.
      */
     // AS3: ModerationManager.as::ModerationManager()
     constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
     {
         super(context, flags, assetLibrary);
 
+        this._startPanel = new StartPanelCtrl(this);
         this._windowTracker = new WindowTracker();
+
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/moderation/ModerationManager.as::ModerationManager()
+        // also does `context.attachComponent(new _SafeCls_1981(...), [new IIDNewModerationTool()])`.
+        // `_SafeCls_1981` (565 l.) and its six `new_mod_tool_tabs/` files are not ported yet.
     }
 
     /**
@@ -213,10 +223,7 @@ export class ModerationManager extends Component implements IHabboModeration
     {
         log.debug(`User selected: ${userId}, ${userName}`);
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/moderation/ModerationManager.as::userSelected()
-        // forwards to `startPanel.userSelected(userId, userName)`, which opens the mod tool's start
-        // panel on that user. `StartPanelCtrl` (171 l.) is not ported yet, so the call has nowhere
-        // to go and the selection is only logged.
+        this._startPanel?.userSelected(userId, userName);
     }
 
     /**
@@ -317,6 +324,12 @@ export class ModerationManager extends Component implements IHabboModeration
         return this._messageHandler;
     }
 
+    // AS3: ModerationManager.as::get startPanel()
+    get startPanel(): StartPanelCtrl | null
+    {
+        return this._startPanel;
+    }
+
     // AS3: ModerationManager.as::get windowTracker()
     get windowTracker(): WindowTracker | null
     {
@@ -385,6 +398,12 @@ export class ModerationManager extends Component implements IHabboModeration
         {
             this._issueManager.dispose();
             this._issueManager = null;
+        }
+
+        if(this._startPanel !== null)
+        {
+            this._startPanel.dispose();
+            this._startPanel = null;
         }
 
         this._windowTracker = null;

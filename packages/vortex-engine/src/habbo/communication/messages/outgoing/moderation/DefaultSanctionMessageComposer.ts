@@ -9,14 +9,21 @@ export class DefaultSanctionMessageComposer extends MessageComposer<unknown[]>
 {
     private _data: unknown[];
 
-    constructor(issueId: number, modActionId: number, message: string, cfhTopicId: number = -1)
+    /**
+     * Parameter names taken from the only call site — `ModActionCtrl.onDefaultSanctionButton()`
+     * sends `(targetUserId, cfhTopicId, message, issueId)`. They previously read
+     * `(issueId, modActionId, message, cfhTopicId)`, which is the same wire shape with three of the
+     * four meanings wrong; nothing called it yet, so nothing was mis-sent.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2384/_SafeCls_2494.as::_SafeCls_2494()
+    constructor(userId: number, cfhTopicId: number, message: string, issueId: number = -1)
     {
         super();
-        this._data = [issueId, modActionId, message];
+        this._data = [userId, cfhTopicId, message];
 
-        if(cfhTopicId !== -1)
+        if(issueId !== -1)
         {
-            this._data.push(cfhTopicId);
+            this._data.push(issueId);
         }
     }
 

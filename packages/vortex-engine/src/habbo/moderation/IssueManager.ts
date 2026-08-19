@@ -1,4 +1,10 @@
 import {IssueInfoData} from '@habbo/communication/messages/parser/moderation/IssueInfoData';
+import type {
+    ICfhCategory
+} from '@habbo/communication/messages/parser/help/CfhTopicsInitMessageParser';
+import type {IIssueHandler} from './IIssueHandler';
+import {IssueHandler} from './IssueHandler';
+import type {ModActionCtrl} from './ModActionCtrl';
 import {IssueBrowser} from './IssueBrowser';
 import {IssueBundle} from './IssueBundle';
 import {Logger} from '@core/utils/Logger';
@@ -27,6 +33,10 @@ export class IssueManager
 {
     /** AS3's `getInteger('max.call_for_help.results', 200)` fallback. */
     // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::IssueManager()
+    /** AS3 sends this as the issue id when asking about an account rather than a report. */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::requestSanctionDataForAccount()
+    private static readonly NO_ISSUE_ID: number = -1;
+
     // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::playSound()
     private static readonly NEW_ISSUE_SOUND: string = 'HBST_call_for_help';
 
@@ -67,6 +77,18 @@ export class IssueManager
     private _windowWidth: number = 0;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/moderation/IssueManager.as::_windowHeight
     private _windowHeight: number = 0;
+
+    /** Derived name — `_issueHandlers`: one open issue-handler window per bundle id. */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::_issueHandlers
+    private _issueHandlers: Map<number, IIssueHandler> = new Map();
+
+    /** Derived name — `_SafeStr_9094`: the CFH topic tree, straight off the wire. */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::_SafeStr_9094
+    private _cfhTopics: ICfhCategory[] = [];
+
+    /** Derived name — `_SafeStr_8195`: open mod-action windows, keyed by target user id. */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::_SafeStr_8195
+    private _modActionViews: Map<number, ModActionCtrl> = new Map();
 
     /** Derived name — `_SafeStr_6139`. */
     // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::_SafeStr_6139
@@ -463,10 +485,38 @@ export class IssueManager
     {
         const bundle = this._bundles.get(bundleId) ?? null;
 
-        if(bundle === null)
+        if(bundle === null || this._manager === null)
         {
             return;
         }
+
+        const handler = new IssueHandler(
+            this._manager,
+            bundle,
+            this._cfhTopics,
+            this._windowX,
+            this._windowY,
+            this._windowWidth,
+            this._windowHeight
+        );
+
+        // AS3 passes the stored geometry explicitly (`usePos`), so the window opens exactly where
+        // the moderator left the last one rather than being placed relative to a caller frame.
+        this._manager.windowTracker?.show(
+            handler,
+            null,
+            false,
+            false,
+            false,
+            true,
+            this._windowX,
+            this._windowY,
+            this._windowWidth,
+            this._windowHeight
+        );
+
+        this.removeHandler(bundleId);
+        this._issueHandlers.set(bundleId, handler);
 
         // Clean up pending pick IDs
         const newPending: number[] = [];
@@ -480,8 +530,19 @@ export class IssueManager
         }
 
         this._pendingPickIssueIds = newPending;
+    }
 
-        log.debug('Handle bundle:', bundleId);
+    /** Disposes an open handler window without touching the bundle behind it. */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::removeHandler()
+    removeHandler(bundleId: number): void
+    {
+        const handler = this._issueHandlers.get(bundleId) ?? null;
+
+        if(handler === null) return;
+
+        this._issueHandlers.delete(bundleId);
+
+        handler.dispose();
     }
 
     /**
@@ -499,7 +560,7 @@ export class IssueManager
             return;
         }
 
-        log.debug('Unhandle bundle:', bundleId);
+        this.removeHandler(bundleId);
     }
 
     /**
@@ -620,9 +681,37 @@ export class IssueManager
 	 * @param topics - Array of CFH topic data
 	 */
     // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::setCfhTopics()
-    setCfhTopics(topics: unknown[]): void
+    setCfhTopics(topics: ICfhCategory[]): void
     {
-        log.debug('CFH topics set:', topics.length);
+        this._cfhTopics = topics;
+    }
+
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::getCfhTopics()
+    getCfhTopics(): ICfhCategory[]
+    {
+        return this._cfhTopics;
+    }
+
+    /** Keyed by the *target user* id, so one mod-action window exists per user at a time. */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::addModActionView()
+    addModActionView(userId: number, view: ModActionCtrl): void
+    {
+        this._modActionViews.set(userId, view);
+    }
+
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::removeModActionView()
+    removeModActionView(userId: number): void
+    {
+        this._modActionViews.delete(userId);
+    }
+
+    /** AS3 sends `-1` for the issue id: this asks about an account, not about one report. */
+    // AS3: .../src/com/sulake/habbo/moderation/IssueManager.as::requestSanctionDataForAccount()
+    requestSanctionDataForAccount(accountId: number, cfhTopicId: number): void
+    {
+        this._manager?.connection?.send(new ModToolSanctionComposer(
+            IssueManager.NO_ISSUE_ID, accountId, cfhTopicId
+        ));
     }
 
     /**
