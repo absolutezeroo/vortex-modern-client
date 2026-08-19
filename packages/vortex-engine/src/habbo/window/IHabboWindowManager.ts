@@ -42,7 +42,9 @@ import type {IConfirmDialog} from './utils/ConfirmDialog';
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as
  */
 export interface IHabboWindowManager extends IDisposable {
-    // TS-only: element registry
+    // TS-only: no AS3 counterpart. The loading side of the element descriptors; AS3 parses
+    // the same data into a private `SkinContainer` inside `initComponent()` and exposes
+    // nothing. See `ElementRegistry` — it does not replace the port's own `SkinContainer`.
     readonly elementRegistry: ElementRegistry;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::avatarRenderer
     readonly avatarRenderer: IAvatarRenderManager | null;
@@ -65,7 +67,15 @@ export interface IHabboWindowManager extends IDisposable {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as (context.configuration)
     readonly configuration: IHabboConfigurationManager | null;
 
-    // TS-only
+    /**
+     * TS-only: no AS3 counterpart. AS3 does this inline in `initComponent()` — read the
+     * `habbo_element_description_xml` asset, `new SkinContainer()`, then
+     * `habbo/window/utils/_SafeCls_1859.parse(xml, assets, skinContainer)` — because the
+     * asset is embedded and available the moment the component initializes. This port
+     * fetches its window assets over HTTP, so the parse has to be a call the boot sequence
+     * makes once they have landed.
+     */
+    // TS-only: no AS3 counterpart; see the block above.
     loadElementDescription(data: IElementDescriptionData): void;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::create()
@@ -117,16 +127,27 @@ export interface IHabboWindowManager extends IDisposable {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::confirmWithModal()
     confirmWithModal(title: string, message: string, flags: number, callback: AlertDialogCallback | null): IConfirmDialog;
 
-    // TS-only
+    /**
+     * The layout map — the four members below have no AS3 counterpart between them.
+     *
+     * AS3 has no central registry of layouts: each component owns its own `IAssetLibrary`
+     * and every view does the lookup itself, `assets.getAssetByName(name).content` then
+     * `windowManager.buildFromXML(...)`. This port ships the layouts as loose XML assets
+     * with no per-component library to put them in, so the map lives here and the
+     * lookup+build pair is exposed as one call.
+     */
+    // TS-only: no AS3 counterpart; see the block above.
     registerWidgetLayout(name: string, xml: string): void;
 
-    // TS-only
+    // TS-only: no AS3 counterpart; the `getAssetByName()` + `buildFromXML()` pair AS3
+    // views write out themselves.
     buildWidgetLayout(name: string, layer?: number): IWindow | null;
 
-    // TS-only
+    // TS-only: no AS3 counterpart; stands in for AS3's `assets.getAssetByName(name) != null`.
     hasWidgetLayout(name: string): boolean;
 
-    // TS-only
+    // TS-only: no AS3 counterpart; used by the dev tooling (window debugger, glaze) to
+    // browse what is registered. Nothing in the ported client calls it.
     getRegisteredWidgetLayoutNames(): string[];
 
     /**
@@ -229,10 +250,12 @@ export interface IHabboWindowManager extends IDisposable {
     // so the pair is exposed here instead.
     buildModalWidgetLayout(name: string): IModalDialog | null;
 
-    // TS-only
+    // TS-only: no AS3 counterpart; forwards to `ResourceManager`, which holds the images
+    // AS3 keeps in the component's own `IAssetLibrary`. See `ResourceManager.registerAsset()`.
     registerAsset(name: string, bitmap: ImageBitmap): void;
 
-    // TS-only
+    // TS-only: no AS3 counterpart; the deferred-fetch half of the pair above. AS3 never
+    // defers — `ResourceManager.retrieveAsset()` calls `assets.loadAssetFromFile()` on the spot.
     registerAssetUrl(name: string, url: string): void;
 
     // TS-only: stands in for AS3's `assets.getAssetByName(name) != null` pre-check, which
@@ -244,19 +267,32 @@ export interface IHabboWindowManager extends IDisposable {
     // synchronously — see `IResourceManager.getAsset()`.
     getAsset(name: string): ImageBitmap | null;
 
-    // TS-only
+    // TS-only: no AS3 counterpart; same reason as `loadElementDescription()` — AS3's skins
+    // arrive with the embedded asset library, this port's arrive over HTTP.
     loadSkinAssets(skins: Map<string, ISkinData>, atlases: Map<string, ImageBitmap>): void;
 
-    // TS-only
+    // TS-only: no AS3 counterpart; AS3 keeps its `SkinContainer` private
+    // (`HabboWindowManagerComponent.as::_SafeStr_5462`) and hands it to the `ThemeManager`
+    // and the `WindowRenderer` at construction rather than letting anything read it back.
     getSkinContainer(): ISkinContainer;
 
-    // TS-only
+    /**
+     * TS-only: no AS3 counterpart. AS3 builds the renderer in `initComponent()`
+     * (`_windowRenderer = new WindowRenderer(skinContainer)`), keeps the field private and
+     * passes it into each of the four `WindowContext`s — nothing ever reads it back,
+     * because Flash's display list draws itself. Here the render loop is driven from
+     * outside the engine (`vortex-client/src/App.ts`, the window debugger, glaze's canvas
+     * surface), so the renderer has to be reachable.
+     */
+    // TS-only: no AS3 counterpart; see the block above.
     getWindowRenderer(): IWindowRenderer | null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::getRendererByTypeAndStyle()
     getRendererByTypeAndStyle(type: number, style: number): ISkinRenderer | null;
 
-    // TS-only
+    // TS-only: no AS3 counterpart; composites every window-context layer into one buffer.
+    // AS3 had `BitmapData.draw(stage)` for this, which has no equivalent here — rendering
+    // is Canvas2D-composited per context. Same family as `compositeLayers()` below.
     compositeToBuffer(width: number, height: number): OffscreenCanvas | null;
 
     // TS-only: composites only the first `layerCount` window-context layers
@@ -276,13 +312,18 @@ export interface IHabboWindowManager extends IDisposable {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/ModalDialog.as::COLOR_TRANSFORM
     darkenSnapshot(source: OffscreenCanvas | ImageBitmap, width: number, height: number): OffscreenCanvas | null;
 
-    // TS-only
+    // TS-only: no AS3 counterpart; AS3 resolves the window under the pointer inside Flash's
+    // own display-list hit test, which dispatches straight to the target. The port's canvas
+    // gets raw coordinates, so the client resolves the target itself before dispatching —
+    // see the pointer handlers in `vortex-client/src/App.ts`.
     findWindowAtPoint(x: number, y: number): IWindow | null;
 
     // AS3: sources/win63_version/habbo/window/class_38.as::displayFloorPlanEditor()
     displayFloorPlanEditor(): void;
 
-    // TS-only
+    // TS-only: no AS3 counterpart on the component; AS3's window services are reached
+    // through the `WindowContext` each window already holds, where this port's contexts
+    // share one service manager owned by the window manager.
     getServiceManager(): IInternalWindowServices | null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::createWidget()

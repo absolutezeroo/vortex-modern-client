@@ -177,7 +177,7 @@ export class CustomStackHeightWidgetHandler implements IRoomWidgetHandler
         return isOwner || isAnyRoomController || hasControllerLevel || ownsFurniture;
     }
 
-    // TS-only: the field reset AS3 spells out in both `dispose()` and the close case.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/_SafeCls_3852.as::resetTrackedFurni()
     private resetTrackedFurni(): void
     {
         this._roomId = -1;

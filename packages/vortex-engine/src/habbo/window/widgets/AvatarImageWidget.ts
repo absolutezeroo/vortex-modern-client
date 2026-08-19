@@ -452,7 +452,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
         }
     }
 
-    // TS-only: callback for avatar renderer ready event
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::onAvatarRendererReady()
     private onAvatarRendererReady(): void
     {
         const avatarRenderer = this._windowManager?.avatarRenderer;

@@ -460,7 +460,12 @@ export class HabboNavigator extends Component implements IHabboNavigator
         return this._newNavigator;
     }
 
-    // TS-only: the controller AS3 holds as its own field, reached through the wrapper here.
+    /**
+     * AS3 holds the controller as its own field and returns it straight
+     * (`return _SafeStr_5440`). This port keeps it on the new navigator, so the same
+     * accessor reaches it through `legacyWrapper` instead.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get roomInfoViewCtrl()
     private get roomInfoViewCtrl(): RoomInfoViewCtrl | null
     {
         return this._newNavigator?.legacyWrapper?.roomInfoViewCtrl ?? null;

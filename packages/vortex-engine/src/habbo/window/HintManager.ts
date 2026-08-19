@@ -59,7 +59,7 @@ implements IUpdateReceiver
         return this._disposed;
     }
 
-    // TS-only: convenience accessor (AS3 accessed _activeHint.key directly)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HintManager.as::get activeKey()
     private get activeKey(): string | null
     {
         return this._activeHint?.key ?? null;

@@ -35,7 +35,7 @@ export class RunningNumberWidget implements IRunningNumberWidget
     // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::UPDATE_FREQUENCY_KEY
     private static readonly UPDATE_FREQUENCY_KEY: string = 'running_number:update_frequency';
-    // TS-only: accumulates elapsed time between update ticks
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::_millisSinceLastUpdate
     private _millisSinceLastUpdate: number = 0;
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::_widgetWindow

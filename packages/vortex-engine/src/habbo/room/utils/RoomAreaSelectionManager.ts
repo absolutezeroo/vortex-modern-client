@@ -278,9 +278,10 @@ export class RoomAreaSelectionManager implements IRoomAreaSelectionManager
     }
 
     /**
-	 * TS-only wrapper over what AS3 inlines: reach the room object's visualization and wipe the
-	 * highlight. See {@link setHighlight} — the paint side is not ported, so this is a no-op today
-	 * and is kept as the single place that will need it.
+	 * AS3 declares this as its own private method and writes the reach out longhand
+	 * (`getRoomObject(activeRoomId, -1, 0).getVisualization() as RoomVisualization`), which
+	 * `roomVisualization` does here. See {@link setHighlight} — the paint side is not ported,
+	 * so this is a no-op today and is kept as the single place that will need it.
 	 */
     // AS3: RoomAreaSelectionManager.as::clearHighlightSilent()
     private clearHighlightSilent(): void

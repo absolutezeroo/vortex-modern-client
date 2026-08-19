@@ -795,10 +795,13 @@ export class HabboAvatarEditor implements ICategoryModelOwner
     }
 
     /**
-     * driven by a message event the editor registers in `init()`. Called by
-     * `HabboAvatarEditorManager` instead, so the registration lives with the other seven.
+     * AS3 registers the message event on the editor itself, inside `init()`
+     * (`new _SafeCls_3434(onUserNftWardrobeMessage)`), and the handler reads the three
+     * values off the parser. This port keeps the registration in
+     * `HabboAvatarEditorManager` with the other seven, so the parser reads happen there
+     * and arrive here as arguments. The body below is otherwise the AS3 handler verbatim.
      */
-    // TS-only: the body of AS3's HabboAvatarEditor::onUserNftWardrobeMessage().
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/HabboAvatarEditor.as::onUserNftWardrobeMessage()
     public applySelectedNftOutfit(tokenId: string | null, fallbackFigure: string, fallbackGender: string): void
     {
         this._currentNftTokenId = tokenId;

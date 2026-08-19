@@ -21,10 +21,9 @@ export class UniqueMachineIdMessageParser implements IMessageParser
     }
 
     /**
-     * AS3 has no `flush()` on this parser — it initialises the field in its constructor and never
-     * clears it. Kept because `IMessageParser` requires the method.
+     * Clears the machine id, exactly as AS3 does.
      */
-    // TS-only: no AS3 counterpart; `IMessageParser` requires a flush and _SafeCls_4080 declares none.
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1820/_SafeCls_4080.as::flush()
     flush(): boolean
     {
         this._machineId = '';

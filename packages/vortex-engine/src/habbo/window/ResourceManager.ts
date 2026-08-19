@@ -17,19 +17,31 @@ const log = Logger.getLogger('habbo.window.ResourceManager');
  * - If a URL is registered → fetches, decodes, caches, then delivers
  * - Otherwise → queues the receiver for later delivery
  *
- * @see sources/win63_version/habbo/window/ResourceManager.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as
  */
 export class ResourceManager implements IResourceManager 
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::_windowManager
     private _windowManager: IHabboWindowManager;
-    // TS-only: web-side bitmap cache (replaces Flash asset system)
+    /**
+     * The decoded bitmaps, by resolved name.
+     *
+     * TS-only: AS3 keeps no such cache — it asks `_windowManager.assets` (the component's
+     * `IAssetLibrary`) on every `retrieveAsset()`. This port has no per-component asset
+     * library for images, so the cache lives here instead.
+     */
+    // TS-only: no AS3 counterpart; stands in for `_windowManager.assets` on the AS3 side.
     private _assets: Map<string, ImageBitmap> = new Map();
-    // TS-only: lazy-loaded URL registry
+
+    // TS-only: no AS3 counterpart; AS3 hands the URL straight to
+    // `assets.loadAssetFromFile()`, where this port defers the fetch to first request.
     private _assetUrls: Map<string, string> = new Map();
-    // TS-only: replaces AS3 _assetReceivers Dictionary
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::_assetReceivers
     private _pendingReceivers: Map<string, IAssetReceiver[]> = new Map();
-    // TS-only: tracks in-progress fetches
+
+    // TS-only: no AS3 counterpart; AS3's in-flight state is the `AssetLoaderStruct` the
+    // asset library hands back, which this port has no equivalent of.
     private _loading: Set<string> = new Set();
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::ResourceManager()
@@ -47,7 +59,9 @@ export class ResourceManager implements IResourceManager
         return this._disposed;
     }
 
-    // TS-only
+    // TS-only: no AS3 counterpart; the other half of `_assets` standing in for the
+    // component asset library — AS3's equivalent is `assets.setAsset()`, reached through
+    // `createAsset()` rather than exposed on the resource manager.
     public registerAsset(name: string, bitmap: ImageBitmap): void 
     {
         const resolvedName = this.resolveAssetName(name);
@@ -58,7 +72,8 @@ export class ResourceManager implements IResourceManager
         this.deliverToReceivers(resolvedName, bitmap);
     }
 
-    // TS-only
+    // TS-only: no AS3 counterpart; registers a URL to be fetched on first request. AS3
+    // never defers — `retrieveAsset()` calls `assets.loadAssetFromFile()` on the spot.
     public registerAssetUrl(name: string, url: string): void 
     {
         const resolvedName = this.resolveAssetName(name);
@@ -205,7 +220,12 @@ export class ResourceManager implements IResourceManager
         this._loading.clear();
     }
 
-    // TS-only: mirrors AS3 check `substr(0,7) == "http://" || substr(0,8) == "https://"`
+    /**
+     * AS3 writes this test inline in `retrieveAsset()` and accepts only `http://` and
+     * `https://`. The leading-slash arm is this port's own: its assets are served from the
+     * same origin by root-relative path, which Flash never had to express.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::retrieveAsset() inline URL test
     private isFetchableUrl(name: string): boolean 
     {
         return name.startsWith('http://') || name.startsWith('https://') || (name.length > 1 && name.startsWith('/'));
@@ -221,7 +241,13 @@ export class ResourceManager implements IResourceManager
         return interpolatingManager.interpolate?.(uri) ?? uri;
     }
 
-    // TS-only: replaces AS3 passAssetToCallback() event callback
+    /**
+     * AS3 splits this across two members: `retrieveAsset()` starts the load through
+     * `assets.loadAssetFromFile()` and subscribes `passAssetToCallback` to
+     * `AssetLoaderEventComplete`. `fetch()` returns a promise rather than an event target,
+     * so the start and the completion arm live together here.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::passAssetToCallback()
     private loadFromUrl(name: string, url: string): void 
     {
         fetch(url)
@@ -258,7 +284,7 @@ export class ResourceManager implements IResourceManager
             });
     }
 
-    // TS-only: replaces AS3 passAssetToCallback() delivery loop
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::passAssetToCallback() delivery loop
     private deliverToReceivers(name: string, bitmap: ImageBitmap): void 
     {
         const receivers = this._pendingReceivers.get(name);

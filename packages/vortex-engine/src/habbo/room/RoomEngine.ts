@@ -687,9 +687,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return room.getObjectCount(category);
     }
 
-    // TS-only: converts a loaded PixiJS Texture to an ImageBitmap (matching
-    // IBitmapWrapperWindow.bitmap) and delivers it to each waiting listener.
-
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getTileCursor()
     getTileCursor(roomId: number): IRoomObjectController | null 
     {
         const room = this.getRoomInstance(roomId);
@@ -2507,6 +2505,14 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
+    // TS-only: RoomEngine.update(time) is not actually driven by a running
+    // loop in this port (nothing calls it from vortex-client) — the visible
+    // room rendering instead rides the shared PixiJS Application ticker set
+    // here, which does run continuously. Used to keep window-hosted room
+    // canvases (e.g. RoomPreviewerWidget) that createRoomCanvas() parents onto
+    // the root stage — not the window tree — synced to their host window's
+    // screen position/visibility every frame, matching how AS3's RoomPreviewer
+    // relies on a continuous per-frame tick (registerUpdateReceiver) rather
     // than reacting to specific window events.
     setTicker(ticker: Ticker): void 
     {
@@ -3623,15 +3629,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this.updateRoomObjectUserFigure(roomId, roomIndex, figure, sex, subType ?? null, isRiding ?? false);
     }
 
-    // TS-only: RoomEngine.update(time) is not actually driven by a running
-    // loop in this port (nothing calls it from vortex-client) — the visible
-    // room rendering instead rides the shared PixiJS Application ticker set
-    // here, which does run continuously. Used to keep window-hosted room
-    // canvases (e.g. RoomPreviewerWidget) that createRoomCanvas() parents onto
-    // the root stage — not the window tree — synced to their host window's
-    // screen position/visibility every frame, matching how AS3's RoomPreviewer
-    // relies on a continuous per-frame tick (registerUpdateReceiver) rather
-
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectUserPosture()
     updateObjectUserPosture(roomId: number, roomIndex: number, posture: string, parameter: string): boolean 
     {
         return this.updateRoomObjectUserPosture(roomId, roomIndex, posture, parameter);
