@@ -194,7 +194,18 @@ export class IssueBrowser
         if(this._selectedView === null) return;
 
         const root = this._selectedView.view as unknown as IWindow | null;
-        const container = this._tabContext?.container as unknown as IWindow | null;
+
+        // AS3 sizes the tab body to `_tabContext.container`. That works there because the tab body
+        // lives inside the tab context; in this layout it does not — `issue_browser_xml` closes
+        // `</tab_context>` and then declares `tab_content` as its *sibling*, and the three
+        // `*_prototype` bodies are children of that. `_tabContext.container` resolves to the tab
+        // context's own `_CONTENT` region (566x184), so the assignment grew each body from the
+        // 557x177 the layout authors — exactly `tab_content`'s size — to 566x184, pushing the last
+        // 3px of `release_all`, its bottom border included, past `tab_content`'s clip.
+        //
+        // Sizing to the body's actual parent keeps AS3's intent ("fill the area you live in") and
+        // lands on the authored numbers instead of overriding them.
+        const container = root?.parent ?? null;
 
         if(root !== null && container !== null)
         {
