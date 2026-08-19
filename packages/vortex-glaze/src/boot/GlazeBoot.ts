@@ -14,6 +14,7 @@ import {
     parseSkinXml,
     parseWindowLayoutXml
 } from '@client/window/WindowXmlAssetParser';
+import {GlazeConfigurationStub} from './GlazeConfigurationStub';
 import {GlazeLocalizationStub} from './GlazeLocalizationStub';
 
 const log = Logger.getLogger('glaze.boot.GlazeBoot');
@@ -205,6 +206,11 @@ export class GlazeBoot
         this._context = ctx;
         ctx.targetFps = 60;
         ctx.registerInterface(IID_Core, ctx);
+
+        // Not a component: `Component.interpolate()` reads `context.configuration` directly, and
+        // without it every `${image.library.url}…` asset_uri in a layout resolves to the empty
+        // string. Set before the window manager so nothing can resolve a URI ahead of it.
+        ctx.configuration = new GlazeConfigurationStub();
 
         // The window manager's only required dependency.
         const localization = new GlazeLocalizationStub(ctx);
