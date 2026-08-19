@@ -238,9 +238,17 @@ export class TextSkinRenderer extends SkinRenderer
             : 0;
         const textLeft = absX + marginL + flashTextFieldLeftGutter;
         const maxWidth = w - marginL - marginR - flashTextFieldLeftGutter;
-        const flashTextFieldTopGutter = isCompactDropListText
-            ? 0
-            : TextSkinRenderer.FLASH_TEXT_FIELD_TOP_GUTTER;
+        // Editable fields only, exactly like FLASH_TEXT_FIELD_LEFT_GUTTER above — the two describe
+        // the same Flash gutter and had no business being gated differently.
+        //
+        // Applied to every text window it pushed all non-editable captions 2px down. The layouts are
+        // authored so the line box exactly fills the text window (boxH 15, lineHeight 15 at font
+        // size 9), so those 2px came straight off the bottom and took the descenders with them:
+        // "ring" read "rina", "Settings" read "Settinas". Measured over ros_room_settings_xml, 42 of
+        // its 79 text windows were clipped, every one of them by exactly 2px.
+        const flashTextFieldTopGutter = (type === WindowType.TEXTFIELD || type === WindowType.PASSWORD)
+            ? TextSkinRenderer.FLASH_TEXT_FIELD_TOP_GUTTER
+            : 0;
 
         if(maxWidth <= 0) return;
 
