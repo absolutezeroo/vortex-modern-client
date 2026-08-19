@@ -986,7 +986,11 @@ export class VortexMain implements IVortexMain
         //
         // Attached after the help component so its own hard dependencies are already up: the
         // communication manager (line 670) and the session data manager (line 712).
-        this._moderation = new ModerationManager(ctx);
+        // The asset library is not optional here: every mod-tool window is built through
+        // `ModerationManager.getXmlWindow()`, which reads `this.assets`. Constructed without one it
+        // stays null, `getAssetByName()` is never reached, and all eleven windows silently fail to
+        // build — `IssueHandler.show()` even returns early on exactly that check.
+        this._moderation = new ModerationManager(ctx, 0, this._assets);
         ctx.attachComponent(this._moderation, [IID_HabboModeration]);
 
         // The avatar editor. Same shape again: IID_HabboAvatarEditor was declared in `iid/` and
