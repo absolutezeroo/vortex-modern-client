@@ -30,6 +30,7 @@ import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_SessionDataManager} from '@iid/index';
+import {IID_NewModerationTool} from '@iid/IIDNewModerationTool';
 
 import type {IHabboModeration} from './IHabboModeration';
 import {IssueCategoryNames} from './IssueCategoryNames';
@@ -37,6 +38,7 @@ import {IssueManager} from './IssueManager';
 import {StartPanelCtrl} from './StartPanelCtrl';
 import {ModerationMessageHandler} from './ModerationMessageHandler';
 import {WindowTracker} from './WindowTracker';
+import {NewModerationTool} from './NewModerationTool';
 
 const log = Logger.getLogger('habbo.moderation.ModerationManager');
 
@@ -115,8 +117,9 @@ export class ModerationManager extends Component implements IHabboModeration
     private _currentFlatId: number = 0;
 
     /**
-     * AS3 also attaches the *new* mod tool (`_SafeCls_1981`) under `IIDNewModerationTool` here; that
-     * class is not ported yet — see the `TODO(AS3)` below.
+     * The *new* mod tool is attached here, from the constructor, exactly as AS3 does — it is a
+     * sibling component with its own dependencies, not something this class drives. It shares this
+     * component's asset library, which is where `new_moderation_tool_xml` lives.
      */
     // AS3: ModerationManager.as::ModerationManager()
     constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
@@ -126,9 +129,9 @@ export class ModerationManager extends Component implements IHabboModeration
         this._startPanel = new StartPanelCtrl(this);
         this._windowTracker = new WindowTracker();
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/moderation/ModerationManager.as::ModerationManager()
-        // also does `context.attachComponent(new _SafeCls_1981(...), [new IIDNewModerationTool()])`.
-        // `_SafeCls_1981` (565 l.) and its six `new_mod_tool_tabs/` files are not ported yet.
+        context.attachComponent(
+            new NewModerationTool(context, flags, assetLibrary), [IID_NewModerationTool]
+        );
     }
 
     /**

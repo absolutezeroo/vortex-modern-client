@@ -27,6 +27,7 @@ export {IID_HabboLandingView} from './IIDHabboLandingView';
 export {IID_HabboLocalizationManager} from './IIDHabboLocalizationManager';
 export {IID_HabboMessenger} from './IIDHabboMessenger';
 export {IID_HabboModeration} from './IIDHabboModeration';
+export {IID_NewModerationTool} from './IIDNewModerationTool';
 export {IID_HabboNavigator} from './IIDHabboNavigator';
 export {IID_HabboNewNavigator} from './IIDHabboNewNavigator';
 export {IID_HabboNotifications} from './IIDHabboNotifications';

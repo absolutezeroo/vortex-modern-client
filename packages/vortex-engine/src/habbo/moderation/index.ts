@@ -11,6 +11,7 @@ export {IssueManager} from './IssueManager';
 export {ModActionCtrl} from './ModActionCtrl';
 export {ModActionDefinition} from './ModActionDefinition';
 export {ModerationManager} from './ModerationManager';
+export {NewModerationTool} from './NewModerationTool';
 export {ModerationMessageHandler} from './ModerationMessageHandler';
 export {MyIssuesView} from './MyIssuesView';
 export {OpenIssuesView} from './OpenIssuesView';
@@ -31,3 +32,6 @@ export type {IIssueBrowserView} from './IIssueBrowserView';
 export type {IIssueHandler} from './IIssueHandler';
 export type {ITrackedWindow} from './ITrackedWindow';
 export type {IUserInfoReceiver} from './IUserInfoReceiver';
+
+// New mod tool sub-views
+export * from './new_mod_tool_tabs';
