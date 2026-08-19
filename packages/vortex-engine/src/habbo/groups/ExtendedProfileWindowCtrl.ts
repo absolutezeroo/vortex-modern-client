@@ -376,9 +376,11 @@ export class ExtendedProfileWindowCtrl
 
         if(!groupsManager || !profile) return;
 
-        if(!groupsManager.friendlist?.canBeAskedForAFriend(profile.userId)) return;
+        // `askForAFriend()` carries the three guards AS3 relies on here — friendlist
+        // initialized, request not already sent, `canBeAskedForAFriend()` — and sends the
+        // quest ping alongside the request, so the click must go through it.
+        if(!groupsManager.friendlist?.askForAFriend(profile.userId, profile.userName)) return;
 
-        groupsManager.friendlist.requestFriend(profile.userName);
         profile.isFriendRequestSent = true;
         this.refreshHeader();
     };

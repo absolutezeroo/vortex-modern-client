@@ -112,21 +112,11 @@ import {
     RequestFriendMessageComposer
 } from '@habbo/communication/messages/outgoing/friendlist/RequestFriendMessageComposer';
 import {
-    AcceptFriendMessageComposer
-} from '@habbo/communication/messages/outgoing/friendlist/AcceptFriendMessageComposer';
-import {
-    DeclineFriendMessageComposer
-} from '@habbo/communication/messages/outgoing/friendlist/DeclineFriendMessageComposer';
-import {
-    RemoveFriendMessageComposer
-} from '@habbo/communication/messages/outgoing/friendlist/RemoveFriendMessageComposer';
-import {
     SetRelationshipStatusMessageComposer
 } from '@habbo/communication/messages/outgoing/friendlist/SetRelationshipStatusMessageComposer';
 import {
-    FindNewFriendsMessageComposer
-} from '@habbo/communication/messages/outgoing/friendlist/FindNewFriendsMessageComposer';
-import {HabboSearchMessageComposer} from '@habbo/communication/messages/outgoing/friendlist/HabboSearchMessageComposer';
+    FriendRequestQuestCompleteMessageComposer
+} from '@habbo/communication/messages/outgoing/quest/FriendRequestQuestCompleteMessageComposer';
 
 // Own module
 import {FriendListLookAndFeel} from './FriendListLookAndFeel';
@@ -570,11 +560,7 @@ export class HabboFriendList extends Component implements IHabboFriendList, IAva
 
         this.send(new RequestFriendMessageComposer(userName));
         this._avatarSearchResults.setFriendRequestSent(userId);
-
-        // TODO(AS3): AS3 also sends `_SafePkg_.../quest/_SafeCls_2290` here - the quest
-        // module's "friend request sent" progress ping. No composer of that shape exists in
-        // this port's outgoing/quest yet, so the quest side of adding a friend does not
-        // advance. AS3: HabboFriendList.as::askForAFriend().
+        this.send(new FriendRequestQuestCompleteMessageComposer());
 
         return true;
     }
@@ -1095,80 +1081,10 @@ export class HabboFriendList extends Component implements IHabboFriendList, IAva
         }
     }
 
-    // === IHabboFriendList: the port's own flat accessors, backed by the categories ===
-
     // AS3: .../HabboFriendList.as::getFriend()
     getFriendById(id: number): IFriend | null
     {
         return this._categories.findFriend(id);
-    }
-
-    // TS-only: no AS3 counterpart; kept for the ported consumers of `IHabboFriendList`.
-    getFriendByName(name: string): IFriend | null
-    {
-        for(const friend of this._categories.getAllFriends().values())
-        {
-            if(friend.name === name)
-            {
-                return friend;
-            }
-        }
-
-        return null;
-    }
-
-    // TS-only: no AS3 counterpart; AS3 has getFriendNames(), which returns names only.
-    getFriends(): IFriend[]
-    {
-        return Array.from(this._categories.getAllFriends().values());
-    }
-
-    // TS-only: no AS3 counterpart; kept for the ported consumers of `IHabboFriendList`.
-    isFriend(userId: number): boolean
-    {
-        return this._categories.findFriend(userId) !== null;
-    }
-
-    // TS-only: no AS3 counterpart; AS3's views build and send this composer themselves.
-    requestFriend(userName: string): void
-    {
-        this.send(new RequestFriendMessageComposer(userName));
-    }
-
-    // TS-only: no AS3 counterpart; AS3's views build and send this composer themselves.
-    acceptFriend(...requestIds: number[]): void
-    {
-        this.send(new AcceptFriendMessageComposer(...requestIds));
-    }
-
-    // TS-only: no AS3 counterpart; AS3's views build and send this composer themselves.
-    declineFriend(declineAll: boolean, ...requestIds: number[]): void
-    {
-        this.send(new DeclineFriendMessageComposer(declineAll, ...requestIds));
-    }
-
-    // TS-only: no AS3 counterpart; AS3's views build and send this composer themselves.
-    removeFriend(...friendIds: number[]): void
-    {
-        this.send(new RemoveFriendMessageComposer(...friendIds));
-    }
-
-    // TS-only: no AS3 counterpart; AS3's views build and send this composer themselves.
-    findNewFriends(): void
-    {
-        this.send(new FindNewFriendsMessageComposer());
-    }
-
-    // TS-only: no AS3 counterpart; AS3's views build and send this composer themselves.
-    searchUsers(query: string): void
-    {
-        this.send(new HabboSearchMessageComposer(query));
-    }
-
-    // TS-only: no AS3 counterpart; an alias of setRelationshipStatus() for `IHabboFriendList`.
-    setRelationship(friendId: number, status: number): void
-    {
-        this.setRelationshipStatus(friendId, status);
     }
 
     // === Message handlers ===

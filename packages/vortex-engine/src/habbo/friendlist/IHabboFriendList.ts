@@ -34,8 +34,12 @@ export interface IHabboFriendListEvents
  * recovered from `PRODUCTION-201601012205-226667486/.../friendlist/IHabboFriendsList.as`
  * (spelt "Friend" here, matching this port's file and the WIN63 class name).
  *
- * Members marked TS-only have no AS3 counterpart: they are flat accessors this port's
- * consumers were written against, now backed by `FriendCategories`.
+ * The composer-sending members that used to sit here (`requestFriend`, `acceptFriend`,
+ * `declineFriend`, `removeFriend`, `findNewFriends`, `searchUsers`) were removed on
+ * 2026-08-19: AS3 has the views build and send those composers, this port's views already
+ * do, and nothing called the manager-side duplicates. `requestFriend()` was the one
+ * exception with a caller, and it bypassed the three guards and the quest ping that
+ * `askForAFriend()` carries — that caller now goes through `askForAFriend()`.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendlist/_SafeCls_66.as
  */
@@ -56,44 +60,17 @@ export interface IHabboFriendList
     // AS3: .../HabboFriendList.as::getFriend()
     getFriendById(id: number): IFriend | null;
 
-    /** TS-only. */
-    getFriendByName(name: string): IFriend | null;
-
-    /** TS-only. */
-    getFriends(): IFriend[];
-
     // AS3: .../HabboFriendList.as::getFriendNames()
     getFriendNames(): string[];
 
     // AS3: .../HabboFriendList.as::getFriendCount()
     getFriendCount(onlineOnly: boolean, followableOnly?: boolean): number;
 
-    /** TS-only. */
-    isFriend(userId: number): boolean;
-
     // AS3: .../HabboFriendList.as::canBeAskedForAFriend()
     canBeAskedForAFriend(userId: number): boolean;
 
     // AS3: .../HabboFriendList.as::askForAFriend()
     askForAFriend(userId: number, userName: string): boolean;
-
-    /** TS-only wrapper over RequestFriendMessageComposer. */
-    requestFriend(userName: string): void;
-
-    /** TS-only wrapper over AcceptFriendMessageComposer. */
-    acceptFriend(...requestIds: number[]): void;
-
-    /** TS-only wrapper over DeclineFriendMessageComposer. */
-    declineFriend(declineAll: boolean, ...requestIds: number[]): void;
-
-    /** TS-only wrapper over RemoveFriendMessageComposer. */
-    removeFriend(...friendIds: number[]): void;
-
-    /** TS-only wrapper over FindNewFriendsMessageComposer. */
-    findNewFriends(): void;
-
-    /** TS-only wrapper over HabboSearchMessageComposer. */
-    searchUsers(query: string): void;
 
     // AS3: .../HabboFriendList.as::acceptFriendRequest()
     acceptFriendRequest(requestId: number): void;
@@ -109,9 +86,6 @@ export interface IHabboFriendList
 
     // AS3: .../HabboFriendList.as::setRelationshipStatus()
     setRelationshipStatus(friendId: number, status: number): void;
-
-    /** TS-only alias of setRelationshipStatus(). */
-    setRelationship(friendId: number, status: number): void;
 
     // AS3: .../HabboFriendList.as::getRelationshipStatus()
     getRelationshipStatus(friendId: number): number;
