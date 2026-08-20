@@ -9,7 +9,11 @@
 > methodologies were mixed silently in earlier revisions of this file — that is why some AS3 counts
 > moved in the 2026-07-28 pass without any AS3 tree changing (`habbo/ui` 375 → 369,
 > `habbo/roomevents` 347 → 448, `habbo/quest` 41 → 64).
-> **Important**: this is **not** a member-level AS3 parity certification. A TS count greater than an AS3 count only means files exist; completion still requires reading the AS3 source and auditing public API, lifecycle, parser/composer behavior, and dispose paths.
+> **Important**: the file counts in this document are **not** a member-level AS3 parity
+> certification. A TS count greater than an AS3 count only means files exist; completion still
+> requires reading the AS3 source and auditing public API, lifecycle, parser/composer behavior, and
+> dispose paths. Since 2026-08-20 there *is* a mechanical member-level measure — see "Member
+> coverage" below — but it answers "is anything missing", never "is anything right".
 >
 > The 2026-07-17 cross-module parity audit put a number on that caveat: 188 divergences across every
 > system except `communication/`, in code that already existed and typechecked clean. File counts
@@ -2564,6 +2568,59 @@ Re-ranked **2026-08-03**, biggest product gap first.
 7. **Standing rules, unchanged**: update this file and `docs/MESSAGES_PORT_BACKLOG.md` in the same
    batch as the port, not weeks later; never label a module complete from file count alone — mark it
    only after AS3 member-level API/lifecycle/dispose parity is checked.
+
+---
+
+## Member coverage (`scripts/as3-member-coverage.mjs`)
+
+The inverse of `scripts/audit-as3-traces.mjs`. That one asks, of every `AS3:` citation the port
+writes, whether the cited file exists and declares the member named. This one asks the question
+that measures parity: of every AS3 file the port cites, which of its declared members has **no**
+citation pointing at it.
+
+It survives the obfuscation because it never compares names across the boundary. The port
+deobfuscates as it writes — `_SafeCls_90.as` becomes `RoomEngine.ts` — but the ~15k trace comments
+*are* the deobfuscation map, and the obfuscator left member names alone in 39,228 of 43,306
+function declarations in the primary tree. The tool follows the trace to reach the file, then
+compares names *inside* it, where they are readable.
+
+**First measure, 2026-08-20, primary tree only, 1.5s over the repo:**
+
+| | |
+|---|---|
+| AS3 files with ≥1 `::member` trace | 877 |
+| readable members declared in them | 15,884 |
+| carrying a trace | 6,623 (**41.7%**) |
+| **absent from the TS — public/protected** | **819** ← the worklist |
+| absent from the TS — private | 1,526 |
+| present in the TS but untraced — public/protected | 4,445 |
+| present in the TS but untraced — private | 2,471 |
+| files cited at file level only (unmeasurable) | 1,877, holding 19,512 members |
+| members whose AS3 name is obfuscated | 3,517 (cannot be cited by name) |
+
+Read the two gap columns as different work. **Absent** means the port never wrote the member —
+that is the parity backlog. **Present but untraced** means the member exists in TypeScript and
+carries no `AS3:` comment, which is a `.claude/rules/30-as3-traceability.md` violation and a much
+cheaper fix. Conflating them is what made the first draft of this tool useless:
+`IMAGE_QUERY_SCALE` is declared in `RoomObjectVariableEnum.as`, declared in the TS that ports it,
+and untraced — listing it beside a member nobody wrote buries the real ones.
+
+**The 1,877 unmeasurable files are their own finding.** 68% of cited primary-tree files carry no
+member-level trace at all, so the tool cannot say whether the class is ported or merely
+referenced. Counting them as 100% uncovered would be arithmetically true and analytically
+worthless, so they sit outside the denominator.
+
+**What it does not measure.** Whether a covered member behaves like its AS3. A `TODO(AS3)` stub
+with a correct trace counts as covered. A member the port deliberately renamed reads as a false
+port gap. Every line is a worklist entry, not a verdict — read the AS3 body before porting
+anything it reports, per `.claude/rules/00-mandate.md`.
+
+```bash
+node scripts/as3-member-coverage.mjs                      # whole port
+node scripts/as3-member-coverage.mjs habbo/catalog --list # one module, enumerated
+node scripts/as3-member-coverage.mjs --list --private     # include private members
+node scripts/as3-member-coverage.mjs --all-trees          # include win63_version / PRODUCTION
+```
 
 ---
 
