@@ -25,13 +25,15 @@ import {OrderedMap} from './OrderedMap';
  */
 export class XMLVariableParser
 {
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_3252.as::HEX
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_3252.as::_SafeStr_10403
+    // (name derived from its value "hex"; obfuscated in every tree, unlike its INT/NUMBER siblings)
     public static readonly HEX: string = 'hex';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_3252.as::INT
     public static readonly INT: string = 'int';
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_3252.as::UINT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_3252.as::_SafeStr_10303
+    // (name derived from its value "uint"; obfuscated in every tree)
     public static readonly UINT: string = 'uint';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_3252.as::NUMBER
@@ -49,7 +51,8 @@ export class XMLVariableParser
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_3252.as::STRING
     public static readonly STRING: string = 'String';
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_3252.as::POINT
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_3252.as::_SafeStr_10434
+    // (name derived from its value "Point"; obfuscated in every tree, unlike RECTANGLE next to it)
     public static readonly POINT: string = 'Point';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_3252.as::RECTANGLE

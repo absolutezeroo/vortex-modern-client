@@ -393,7 +393,9 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 	 * Returned live rather than copied, matching AS3, whose caller appends culled objects to the
 	 * same vector before sorting it.
 	 */
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::getSortableSpriteList()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3073.as::getSortableSpriteList()
+    // (_SafeCls_3073 implements IRoomRenderingCanvas; the 2016 RoomSpriteCanvas.as this used to
+    //  cite has no such member — only a private _sortableSpriteList and obfuscated accessors.)
     getSortableSpriteList(): SortableSprite[]
     {
         return this._sortableSpriteList;

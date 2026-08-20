@@ -19,26 +19,36 @@ import type {RoomPlaneParser} from '../object/RoomPlaneParser';
  */
 export class RoomData
 {
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1852.as::_roomId
+    // Every field in _SafeCls_1852 is obfuscated; its accessors are not. Each name below is
+    // therefore derived from the accessor that returns the field, read from the accessor's body
+    // rather than inferred from declaration order.
+    //
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1852.as::_SafeStr_6722
+    // (name derived from its accessor `get roomId()`)
     private _roomId: number;
 
     /**
      * AS3 holds the room XML here and re-passes it to `initializeRoom()`. This port passes a
      * parsed `RoomPlaneParser` in that argument's place, so that is what is parked.
      */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1852.as::_data
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1852.as::_SafeStr_4556
+    // (name derived from its accessor `get data()`)
     private _data: RoomPlaneParser | null;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1852.as::_floorType
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1852.as::_SafeStr_7517
+    // (name derived from its accessor `get floorType()`)
     private _floorType: string | null = null;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1852.as::_wallType
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1852.as::_SafeStr_8099
+    // (name derived from its accessor `get wallType()`)
     private _wallType: string | null = null;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1852.as::_landscapeType
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1852.as::_SafeStr_7601
+    // (name derived from its accessor `get landscapeType()`)
     private _landscapeType: string | null = null;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1852.as::_cameraInitPosition
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1852.as::_SafeStr_9922
+    // (name derived from its accessor `get cameraInitPosition()`)
     private _cameraInitPosition: IVector3d | null = null;
 
     /**
