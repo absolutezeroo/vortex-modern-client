@@ -4,6 +4,8 @@ import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
+import type {IIterator} from '@core/window/utils/IIterator';
+import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
 
 /**
  * Rarity item preview overlay widget.
@@ -83,6 +85,12 @@ export class RarityItemPreviewOverlayWidget implements IRarityItemPreviewOverlay
                 this.rarityLevel = Number(prop.value);
             }
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RarityItemPreviewOverlayWidget.as::get iterator()
+    public iterator(): IIterator
+    {
+        return EmptyIterator.INSTANCE;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RarityItemPreviewOverlayWidget.as::dispose()

@@ -6,6 +6,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowEventListener} from '@core/window/events/WindowEventDispatcher';
+import type {IIterator} from '@core/window/utils/IIterator';
 
 /**
  * Balloon / speech bubble widget.
@@ -124,11 +125,11 @@ export class BalloonWidget implements IWidget
 	 * Returns the border's iterator if available.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::get iterator()
-    public get iterator(): unknown
+    public iterator(): IIterator | null
     {
         if(this._border)
         {
-            return this._border.iterator;
+            return this._border.iterator();
         }
 
         return null;

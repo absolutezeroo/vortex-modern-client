@@ -15,6 +15,8 @@ import {Logger} from '@core/utils/Logger';
 import type {BadgeImageWidget} from './BadgeImageWidget';
 import type {PetImageWidget} from './PetImageWidget';
 import type {AvatarImageWidget} from './AvatarImageWidget';
+import type {IIterator} from '@core/window/utils/IIterator';
+import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
 
 const log = Logger.getLogger('habbo.window.widgets.ProductImageWidget');
 
@@ -534,6 +536,12 @@ export class ProductImageWidget implements IWidget, IGetImageListener
     public imageFailed(_id: number): void
     {
         // AS3: no-op
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get iterator()
+    public iterator(): IIterator
+    {
+        return EmptyIterator.INSTANCE;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::dispose()

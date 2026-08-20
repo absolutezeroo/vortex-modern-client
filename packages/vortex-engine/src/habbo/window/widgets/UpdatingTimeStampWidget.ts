@@ -3,6 +3,8 @@ import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IWindow} from '@core/window/IWindow';
 import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
+import type {IIterator} from '@core/window/utils/IIterator';
+import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
 
 /**
  * Updating timestamp display widget.
@@ -157,6 +159,12 @@ export class UpdatingTimeStampWidget implements IWidget
     {
         this._timeStamp = Date.now();
         this.onTimerTick();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::get iterator()
+    public iterator(): IIterator
+    {
+        return EmptyIterator.INSTANCE;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::dispose()

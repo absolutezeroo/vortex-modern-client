@@ -15,6 +15,8 @@ import {ProductCategoryMapping} from '../utils/ProductCategoryMapping';
 import {Logger} from '@core/utils/Logger';
 import type {BadgeImageWidget} from './BadgeImageWidget';
 import type {PetImageWidget} from './PetImageWidget';
+import type {IIterator} from '@core/window/utils/IIterator';
+import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
 
 const log = Logger.getLogger('habbo.window.widgets.ProductIconWidget');
 
@@ -436,6 +438,12 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         {
             this.setBotResult(figure);
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::get iterator()
+    public iterator(): IIterator
+    {
+        return EmptyIterator.INSTANCE;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::dispose()

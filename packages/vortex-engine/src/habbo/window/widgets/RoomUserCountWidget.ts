@@ -4,6 +4,7 @@ import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IWindow} from '@core/window/IWindow';
 import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
+import type {IIterator} from '@core/window/utils/IIterator';
 
 /**
  * Room user count display widget.
@@ -78,6 +79,13 @@ export class RoomUserCountWidget implements IRoomUserCountWidget
     public set properties(_values: PropertyStruct[])
     {
         // AS3: properties setter is a no-op for this widget
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomUserCountWidget.as::get iterator()
+    // AS3 returns null: this widget owns no child windows to walk.
+    public iterator(): IIterator | null
+    {
+        return null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomUserCountWidget.as::dispose()

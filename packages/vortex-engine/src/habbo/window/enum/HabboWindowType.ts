@@ -24,8 +24,16 @@ export const HabboWindowType =
         DISPLAY_OBJECT_WRAPPER: 20,
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/enum/HabboWindowType.as::BITMAP_WRAPPER
         BITMAP_WRAPPER: 21,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/enum/HabboWindowType.as::SHAPE
+        SHAPE: 22,
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/enum/HabboWindowType.as::STATIC_BITMAP_WRAPPER
         STATIC_BITMAP_WRAPPER: 23,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/enum/HabboWindowType.as::GRADIENT
+        GRADIENT: 24,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/enum/HabboWindowType.as::STROKE
+        STROKE: 25,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/enum/HabboWindowType.as::BITMAP_FILL
+        BITMAP_FILL: 26,
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/enum/HabboWindowType.as::BORDER
         BORDER: 30,
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/enum/HabboWindowType.as::FRAME

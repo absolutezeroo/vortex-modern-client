@@ -1,15 +1,19 @@
 import type {IWindow} from '../IWindow';
+import type {IBitmapDataContainer} from '../utils/IBitmapDataContainer';
 
 /**
  * Interface for bitmap wrapper windows.
  *
  * Bitmap wrappers hold a programmatic bitmap set by code (e.g. avatar rendering).
- * The `bitmap` property is the primary way to set the content.
+ * The `bitmap` property is the primary way to set the content; pivot, stretch, zoom,
+ * wrap, flip, greyscale, etching and rotation come from `IBitmapDataContainer`, as in
+ * AS3's `_SafeCls_2133 extends IWindow, _SafeCls_1989`.
  *
- * @see sources/win63_version/core/window/components/BitmapWrapperController.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/_SafeCls_2133.as
  * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IBitmapWrapperWindow.as
  */
-export interface IBitmapWrapperWindow extends IWindow {
+export interface IBitmapWrapperWindow extends IWindow, IBitmapDataContainer
+{
     /**
      * The programmatic bitmap for this window.
      *
@@ -22,6 +26,8 @@ export interface IBitmapWrapperWindow extends IWindow {
     /**
      * The underlying bitmap data (alias for bitmap).
      */
+    // TS-only: AS3 exposes `bitmapData` read-only through `_SafeCls_1989`; this port's
+    // ported callers assign the bitmap through this alias rather than through `bitmap`.
     bitmapData: ImageBitmap | null;
 
     /**
@@ -35,25 +41,4 @@ export interface IBitmapWrapperWindow extends IWindow {
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapWrapperController.as::get bitmapAssetName()
     bitmapAssetName: string;
-
-    /**
-     * Anchor point used when positioning/scaling the bitmap within the window.
-     *
-     * TODO(AS3): the real AS3 interface (obfuscated as `_SafeCls_1989` in
-     * WIN63-202607011411-782849652/src/com/sulake/core/window/utils/) also exposes
-     * zoomX/Y, greyscale, etchingColor, etchingPoint, fitSizeToContents,
-     * wrapX/Y, flipX/Y and rotation - all implemented on the concrete
-     * BitmapDataController already, just not exposed here yet.
-     */
-    pivotPoint: number;
-
-    /**
-     * Whether the bitmap stretches horizontally to fill the window width.
-     */
-    stretchedX: boolean;
-
-    /**
-     * Whether the bitmap stretches vertically to fill the window height.
-     */
-    stretchedY: boolean;
 }

@@ -104,7 +104,7 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get iterator()
-    public get iterator(): IIterator 
+    public iterator(): IIterator 
     {
         return EmptyIterator.INSTANCE;
     }

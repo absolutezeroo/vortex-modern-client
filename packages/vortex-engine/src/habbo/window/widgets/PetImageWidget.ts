@@ -4,6 +4,8 @@ import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IWindow} from '@core/window/IWindow';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
+import type {IIterator} from '@core/window/utils/IIterator';
+import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
 
 /**
  * Pet image rendering widget.
@@ -241,6 +243,12 @@ export class PetImageWidget implements IWidget
         if(!figure) return PetImageWidget.FIGURE_DEFAULT;
 
         return figure.replace(/NaN/g, '');
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get iterator()
+    public iterator(): IIterator
+    {
+        return EmptyIterator.INSTANCE;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::dispose()

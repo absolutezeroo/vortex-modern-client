@@ -34,6 +34,28 @@ export interface IResourceManager extends IDisposable
     isSameAsset(uri1: string, uri2: string): boolean;
 
     /**
+	 * Registers an already-resolved asset under a name, so a later `retrieveAsset()`
+	 * resolves it from the cache instead of loading it.
+	 *
+	 * @param name - The asset name
+	 * @param assetClass - The asset's class, unused by this port's cache
+	 * @param content - The decoded content to store
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/assets/IResourceManager.as::createAsset()
+    createAsset(name: string, assetClass: new (...args: unknown[]) => unknown, content: unknown): void;
+
+    /**
+	 * Drops an asset from the cache, so the next `retrieveAsset()` for it loads again.
+	 *
+	 * `BadgeImageWidget.forceRefresh()` calls it when a group changes its badge: the URI
+	 * is unchanged, the image behind it is not.
+	 *
+	 * @param name - The asset name
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/assets/IResourceManager.as::removeAsset()
+    removeAsset(name: string): void;
+
+    /**
 	 * Registers a bitmap asset by name.
 	 *
 	 * @param name - The asset name

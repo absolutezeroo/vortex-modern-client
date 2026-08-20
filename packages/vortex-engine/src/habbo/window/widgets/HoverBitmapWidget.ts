@@ -6,6 +6,8 @@ import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBi
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {WindowEventListener} from '@core/window/events/WindowEventDispatcher';
+import type {IIterator} from '@core/window/utils/IIterator';
+import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
 
 /**
  * Hover bitmap effect widget.
@@ -184,6 +186,12 @@ export class HoverBitmapWidget implements IWidget
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/HoverBitmapWidget.as::get iterator()
+    public iterator(): IIterator
+    {
+        return EmptyIterator.INSTANCE;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/HoverBitmapWidget.as::dispose()
     public dispose(): void
     {
@@ -234,5 +242,14 @@ export class HoverBitmapWidget implements IWidget
         {
             this._bitmap.assetUri = this._normalAsset;
         }
+    }
+
+    /**
+	 * The bitmap window this widget hovers, so a caller can address it directly.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/HoverBitmapWidget.as::get bitmapWrapper()
+    public get bitmapWrapper(): IStaticBitmapWrapperWindow | null
+    {
+        return this._bitmap;
     }
 }

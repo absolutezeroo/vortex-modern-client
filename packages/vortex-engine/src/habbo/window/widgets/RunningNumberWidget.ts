@@ -5,6 +5,8 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IUpdateReceiver} from '@core/runtime/IContext';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
+import type {IIterator} from '@core/window/utils/IIterator';
+import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
 
 /**
  * Animated running number widget.
@@ -242,6 +244,12 @@ export class RunningNumberWidget implements IRunningNumberWidget
             textWindow.text = this.formattedValue;
             textWindow.invalidate();
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::get iterator()
+    public iterator(): IIterator
+    {
+        return EmptyIterator.INSTANCE;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RunningNumberWidget.as::dispose()

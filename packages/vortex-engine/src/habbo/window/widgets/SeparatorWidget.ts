@@ -6,6 +6,7 @@ import type {IWindow} from '@core/window/IWindow';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowEventListener} from '@core/window/events/WindowEventDispatcher';
+import type {IIterator} from '@core/window/utils/IIterator';
 
 /**
  * Visual separator widget.
@@ -134,6 +135,12 @@ export class SeparatorWidget implements ISeparatorWidget
                 this.vertical = Boolean(prop.value);
             }
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/SeparatorWidget.as::get iterator()
+    public iterator(): IIterator | null
+    {
+        return this._children ? this._children.iterator() : null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/SeparatorWidget.as::dispose()

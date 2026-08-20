@@ -6,6 +6,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowEventListener} from '@core/window/events/WindowEventDispatcher';
+import type {IIterator} from '@core/window/utils/IIterator';
 
 /**
  * Illumina theme border widget.
@@ -292,11 +293,11 @@ export class IlluminaBorderWidget implements IIlluminaBorderWidget
 	 * Returns the children container's iterator if available.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaBorderWidget.as::get iterator()
-    public get iterator(): unknown
+    public iterator(): IIterator | null
     {
         if(this._children)
         {
-            return this._children.iterator;
+            return this._children.iterator();
         }
 
         return null;

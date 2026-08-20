@@ -10,6 +10,7 @@ export type {IEventQueue} from './IEventQueue';
 export type {IInputProcessorRoot} from './IInputProcessorRoot';
 export type {INotify} from './INotify';
 export type {ITextFieldContainer} from './ITextFieldContainer';
+export type {IBitmapDataContainer} from './IBitmapDataContainer';
 export type {IIterable} from './IIterable';
 export type {IIterator} from './IIterator';
 export type {IMargins} from './IMargins';

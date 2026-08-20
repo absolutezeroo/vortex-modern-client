@@ -10,6 +10,8 @@ import {ChatBubbleMessage} from './ChatBubbleMessage';
 import {Logger} from '@core/utils/Logger';
 import {GetExtendedProfileMessageComposer} from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
+import type {IIterator} from '@core/window/utils/IIterator';
+import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
 
 const log = Logger.getLogger('habbo.window.widgets.IlluminaChatBubbleWidget');
 
@@ -669,6 +671,12 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
     public getAwaitingConfirmationId(messageIndex: number): number
     {
         return this._confirmationIds[messageIndex] ?? 0;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::get iterator()
+    public iterator(): IIterator
+    {
+        return EmptyIterator.INSTANCE;
     }
 
     // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::dispose()

@@ -4,6 +4,7 @@ import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IWindow} from '@core/window/IWindow';
 import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
+import type {IIterator} from '@core/window/utils/IIterator';
 
 /**
  * Room thumbnail widget.
@@ -80,6 +81,13 @@ export class RoomThumbnailWidget implements IRoomThumbnailWidget
     public reset(): void
     {
         this._flatId = 0;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomThumbnailWidget.as::get iterator()
+    // AS3 returns null: this widget owns no child windows to walk.
+    public iterator(): IIterator | null
+    {
+        return null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomThumbnailWidget.as::dispose()

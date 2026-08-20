@@ -13,6 +13,7 @@ export {WindowState, STATE_PRIORITY, STATE_NAME_TO_VALUE} from './WindowState';
 export {WindowStyle} from './WindowStyle';
 
 // Habbo Exports
+export {BadgeImageType} from './BadgeImageType';
 export {HabboAlertDialogFlag} from './HabboAlertDialogFlag';
 export {HabboIconType} from './HabboIconType';
 export {HabboWindowParam} from './HabboWindowParam';

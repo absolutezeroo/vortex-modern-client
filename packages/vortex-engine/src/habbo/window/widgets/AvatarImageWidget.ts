@@ -14,6 +14,8 @@ import {Logger} from '@core/utils/Logger';
 import {
     GetExtendedProfileMessageComposer
 } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
+import type {IIterator} from '@core/window/utils/IIterator';
+import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
 
 const log = Logger.getLogger('habbo.window.widgets.AvatarImageWidget');
 
@@ -47,6 +49,10 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
     private static readonly CROPPED_KEY: string = 'avatar_image:cropped';
     // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::DIRECTION_KEY
     private static readonly DIRECTION_KEY: string = 'avatar_image:direction';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::ZOOM_X_KEY
+    private static readonly ZOOM_X_KEY: string = 'avatar_image:zoomX';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::ZOOM_Y_KEY
+    private static readonly ZOOM_Y_KEY: string = 'avatar_image:zoomY';
 
     // Derived name: `DIRECTIONS` is declared in no AS3 tree — the trace points
     // at the class it belongs to, but the identifier itself is this port's.
@@ -66,6 +72,10 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
     private static readonly CROPPED_DEFAULT: boolean = false;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::DIRECTION_DEFAULT
     private static readonly DIRECTION_DEFAULT: number = 2;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::ZOOM_X_DEFAULT (PropertyStruct in AS3, flattened to its value here like the five above)
+    private static readonly ZOOM_X_DEFAULT: number = 1;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::ZOOM_Y_DEFAULT (PropertyStruct in AS3, flattened to its value here like the five above)
+    private static readonly ZOOM_Y_DEFAULT: number = 1;
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_widgetWindow
     private _widgetWindow: IWidgetWindow | null = null;
@@ -257,6 +267,44 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
         return this._figureEmpty;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_zoomX
+    private _zoomX: number = AvatarImageWidget.ZOOM_X_DEFAULT;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::get zoomX()
+    public get zoomX(): number
+    {
+        return this._zoomX;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::set zoomX()
+    public set zoomX(value: number)
+    {
+        if(value !== this._zoomX)
+        {
+            this._zoomX = value;
+            this.refresh();
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_zoomY
+    private _zoomY: number = AvatarImageWidget.ZOOM_Y_DEFAULT;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::get zoomY()
+    public get zoomY(): number
+    {
+        return this._zoomY;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::set zoomY()
+    public set zoomY(value: number)
+    {
+        if(value !== this._zoomY)
+        {
+            this._zoomY = value;
+            this.refresh();
+        }
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::get properties()
     public get properties(): PropertyStruct[]
     {
@@ -268,6 +316,8 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
             new PropertyStruct(AvatarImageWidget.ONLY_HEAD_KEY, this._onlyHead),
             new PropertyStruct(AvatarImageWidget.CROPPED_KEY, this._cropped),
             new PropertyStruct(AvatarImageWidget.DIRECTION_KEY, AvatarImageWidget.DIRECTIONS[this._direction]),
+            new PropertyStruct(AvatarImageWidget.ZOOM_X_KEY, this._zoomX, PropertyStruct.NUMBER),
+            new PropertyStruct(AvatarImageWidget.ZOOM_Y_KEY, this._zoomY, PropertyStruct.NUMBER),
         ];
     }
 
@@ -293,6 +343,12 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
                 case AvatarImageWidget.DIRECTION_KEY:
                     this.direction = AvatarImageWidget.DIRECTIONS.indexOf(String(prop.value));
                     break;
+                case AvatarImageWidget.ZOOM_X_KEY:
+                    this.zoomX = Number(prop.value);
+                    break;
+                case AvatarImageWidget.ZOOM_Y_KEY:
+                    this.zoomY = Number(prop.value);
+                    break;
             }
         }
     }
@@ -315,6 +371,12 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
         {
             this.refresh();
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::get iterator()
+    public iterator(): IIterator
+    {
+        return EmptyIterator.INSTANCE;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::dispose()
@@ -443,6 +505,17 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
             this.requestPlaceholder();
         }
 
+        if(this._zoomX !== 1 || this._zoomY !== 1)
+        {
+            const zoomed = AvatarImageWidget.zoomBitmapData(this._bitmap.bitmap, this._zoomX, this._zoomY);
+
+            if(zoomed)
+            {
+                this._bitmap.bitmap = zoomed;
+                this._bitmap.disposesBitmap = true;
+            }
+        }
+
         this._bitmap.invalidate();
 
         if(this._bitmap.bitmap && this._widgetWindow)
@@ -450,6 +523,28 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
             this._widgetWindow.width = this._bitmap.bitmap.width;
             this._widgetWindow.height = this._bitmap.bitmap.height;
         }
+    }
+
+    /**
+	 * Scales a bitmap by the widget's zoom factors, the way AS3 redraws it through a
+	 * scaled Matrix. `OffscreenCanvas.transferToImageBitmap()` keeps the call synchronous,
+	 * which `refresh()` needs — `createImageBitmap()` would not.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::zoomBitmapData()
+    private static zoomBitmapData(bitmap: ImageBitmap | null, zoomX: number, zoomY: number): ImageBitmap | null
+    {
+        if(bitmap === null) return null;
+
+        const width = Math.max(1, Math.floor(bitmap.width * zoomX));
+        const height = Math.max(1, Math.floor(bitmap.height * zoomY));
+        const canvas = new OffscreenCanvas(width, height);
+        const context = canvas.getContext('2d');
+
+        if(context === null) return null;
+
+        context.drawImage(bitmap, 0, 0, width, height);
+
+        return canvas.transferToImageBitmap();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::onAvatarRendererReady()

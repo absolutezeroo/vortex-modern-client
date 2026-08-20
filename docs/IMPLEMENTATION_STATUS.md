@@ -2589,18 +2589,18 @@ same day's traceability pass (see "Trace hygiene" below); the measurable populat
 repointed citations began resolving into the primary tree, so more of the port became visible — and
 with it, more gaps. That is the expected direction, not a regression.
 
-| | first run | after the trace pass |
-|---|---|---|
-| AS3 files with >=1 `::member` trace | 877 | **879** |
-| readable members declared in them | 15,884 | **15,955** |
-| carrying a trace | 6,623 (41.7%) | **6,653 (41.7%)** |
-| **absent from the TS — public/protected** | 819 | **787** <- the worklist |
-| absent from the TS — private | 1,526 | 1,526 |
-| present in the TS but untraced — public/protected | 4,445 | 4,495 |
-| present in the TS but untraced — private | 2,471 | 2,494 |
-| files cited at file level only (unmeasurable) | 1,877 | 1,907 |
-| members whose AS3 name is obfuscated | 3,517 | 3,555 |
-| citations to a file that does not exist | 80 | **7** |
+| | first run | after the trace pass | after `habbo/window` |
+|---|---|---|---|
+| AS3 files with >=1 `::member` trace | 877 | 879 | **885** |
+| readable members declared in them | 15,884 | 15,955 | **16,006** |
+| carrying a trace | 6,623 (41.7%) | 6,653 (41.7%) | **6,802 (42.5%)** |
+| **absent from the TS — public/protected** | 819 | 787 | **701** <- the worklist |
+| absent from the TS — private | 1,526 | 1,526 | 1,511 |
+| present in the TS but untraced — public/protected | 4,445 | 4,495 | 4,494 |
+| present in the TS but untraced — private | 2,471 | 2,494 | 2,498 |
+| files cited at file level only (unmeasurable) | 1,877 | 1,907 | 1,909 |
+| members whose AS3 name is obfuscated | 3,517 | 3,555 | 3,555 |
+| citations to a file that does not exist | 80 | **7** | 7 |
 
 **A false positive was removed before this number was trusted.** The presence check searched only
 the TS files that *cite* the AS3 file, which assumes the port lives where the traces are.
@@ -2644,6 +2644,66 @@ and untraced — listing it beside a member nobody wrote buries the real ones.
 member-level trace at all, so the tool cannot say whether the class is ported or merely
 referenced. Counting them as 100% uncovered would be arithmetically true and analytically
 worthless, so they sit outside the denominator.
+
+### The first worklist module: `habbo/window`, 92 -> 6 (2026-08-20)
+
+The measure's first consumer. `habbo/window` went from **92 absent public/protected members to
+6**, and from 68.8% to 77.4% of its readable members traced; the global worklist went 787 -> 701.
+Four things it turned up, in ascending order of how much they mattered:
+
+- **Every `badge_image:` property a layout writes was dropped on the floor.** AS3's
+  `set properties()` pushes each struct through `withoutNameSpace()` before handing it to the
+  bitmap, whose own `set properties()` switches on `pivot_point`, `stretched_x`, `zoom_x` and the
+  rest. The port forwarded the array **as it came in**, namespace included, so the bitmap's switch
+  matched nothing. 42 shipped layouts write those keys — 57 `stretched_x`/`stretched_y`, 54
+  `pivot_point`, 7 `zoom_x`/`zoom_y` — and every one of them was inert, which is to say every badge
+  in the client drew at the default pivot and unstretched. The getter had the mirror bug: it
+  returned only the widget's own two keys and never the bitmap's, minus `asset_uri`.
+- **`_SafeCls_1989` had no TypeScript at all.** It is the bitmap-content property surface —
+  `bitmapData`, `pivotPoint`, `stretchedX/Y`, `zoomX/Y`, `greyscale`, `etchingColor`,
+  `etchingPoint`, `fitSizeToContents`, `wrapX/Y`, `flipX/Y`, `rotation` — that
+  `IStaticBitmapWrapperWindow`, `IBitmapWrapperWindow`, `BadgeImageWidget` and `PixelLimitWidget`
+  all extend or implement. The port had inlined five of its members into
+  `IStaticBitmapWrapperWindow` and left a `TODO(AS3)` on `IBitmapWrapperWindow` listing the rest.
+  It is now `core/window/utils/IBitmapDataContainer.ts`, the name recovered from PRODUCTION (the
+  2016 declaration stops at `wrapY`; `flipX`, `flipY` and `rotation` are 2026 additions), and the
+  two window interfaces extend it as AS3 does. That alone accounts for 55 of the 92.
+- **`iterator` was missing from 21 of the 26 widgets, and wrong in 3 of the 5 that had it.**
+  `_SafeCls_2028` — this port's `IWidget`, and declared in `core/window/`, not with the widgets —
+  extends `IIterable`, so every widget declares it: 21 return `EmptyIterator.INSTANCE`,
+  `RoomThumbnailWidget`/`RoomUserCountWidget` return null, `SeparatorWidget`/`IlluminaBorderWidget`
+  return their child container's, `BalloonWidget` its border's. Three of the five that existed were
+  written as *getters* returning the container's `iterator` **without calling it**, i.e. handing
+  back the method object; `WidgetWindowController.iterator()` delegates with
+  `typeof widget.iterator === 'function'` and would then have invoked it with the wrong `this`.
+  All 26 are now the method form, and `IWidget` extends `IIterable`.
+- **The glow is the one thing left unported, and deliberately.** `playGlow()` runs a 16ms timer
+  that writes two `GlowFilter`s and a `ColorMatrixFilter` onto the widget window each tick.
+  `GraphicContext.filters` stores its array and the window renderer never reads it, and the engine
+  has no Flash filter value objects — the only ones in the port are the client-side CSS stand-ins
+  under `onBoardingHcUi/display/Filters.ts`. `playGlow`/`clearGlow`/`glowColor` therefore ship as
+  the real signatures with a `TODO(AS3)` naming the filters, the easing and the missing renderer
+  support. Two callers are waiting on it: `InfoStandUserView` and `ExtendedProfileWindowCtrl`.
+
+Also closed: `IWidget`'s citation, which pointed at `win63_version/core/window/class_3420.as` — a
+class, not this interface, and one of the audit's unresolvable paths; `IResourceManager` gained
+`createAsset()` and `removeAsset()`, both already on `ResourceManager` and both AS3 members of the
+interface, which removes a cast in `BadgeImageWidget.forceRefresh()`; `HabboWindowType` gained
+`SHAPE`/`GRADIENT`/`STROKE`/`BITMAP_FILL`; `AvatarImageWidget` gained `zoomX`/`zoomY` and the
+`zoomBitmapData()` redraw they feed (no shipped layout writes them yet); plus
+`HoverBitmapWidget.bitmapWrapper` and `RoomPreviewerWidget.toString()`.
+
+Two new files carry derived names, both said so at the declaration: `BadgeImageType`
+(`_SafeCls_3232`, obfuscated in all four trees on disk, including the 2016 one) and
+`IPixelLimitWidget` (`_SafeCls_3624`, likewise).
+
+**The 6 that remain are one gap, not six.** `PetImageWidget.imageReady`/`imageFailed`,
+`FurnitureImageWidget.imageReady`/`imageFailed`, `CountdownWidget.update` and
+`LimitedItemGridOverlayWidget.update` are all members of widgets whose `refresh()` is a stub
+reading *"the UI layer handles rendering"* — the SolidJS-era phrasing this port no longer has a UI
+layer for (see `project_no_solidjs`). `pet_image` is used by 5 shipped layouts and draws nothing;
+`countdown` by 14, and it exposes `getDisplayValues()` instead of building the counter windows AS3
+builds. That is the next slice, and it is a feature port, not a member fill.
 
 ### Trace hygiene, 2026-08-20
 

@@ -39,6 +39,7 @@ export type {ILimitedItemGridOverlayWidget} from './ILimitedItemGridOverlayWidge
 export type {ILimitedItemOverlayWidget} from './ILimitedItemOverlayWidget';
 export type {ILimitedItemPreviewOverlayWidget} from './ILimitedItemPreviewOverlayWidget';
 export type {ILimitedItemSupplyLeftOverlayWidget} from './ILimitedItemSupplyLeftOverlayWidget';
+export type {IPixelLimitWidget} from './IPixelLimitWidget';
 export type {IProgressIndicatorWidget} from './IProgressIndicatorWidget';
 export type {IRarityItemGridOverlayWidget} from './IRarityItemGridOverlayWidget';
 export type {IRarityItemOverlayWidget} from './IRarityItemOverlayWidget';

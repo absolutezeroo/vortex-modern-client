@@ -14,6 +14,8 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
 import {PreviewCanvasStack} from '@habbo/room/preview/PreviewCanvasStack';
 import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
+import type {IIterator} from '@core/window/utils/IIterator';
+import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
 
 /**
  * Room previewer widget.
@@ -252,6 +254,12 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         ctx.drawImage(image, 0, 0, scaled.width, scaled.height);
 
         wrapper.setDisplayObject(scaled);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::get iterator()
+    public iterator(): IIterator
+    {
+        return EmptyIterator.INSTANCE;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::dispose()
@@ -573,5 +581,11 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
             this._roomPreviewer.modifyRoomCanvas(this._root.width, this._root.height);
             this.syncCanvasPosition();
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/RoomPreviewerWidget.as::toString()
+    public toString(): string
+    {
+        return 'RoomPreviewerWidget';
     }
 }
