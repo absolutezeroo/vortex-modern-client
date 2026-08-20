@@ -201,7 +201,7 @@ export class VortexMain implements IVortexMain
     private _nuxDialogs: HabboNuxDialogs | null = null;
 
     private _phoneNumber: HabboPhoneNumber | null = null;
-    // AS3: sources/win63_version/habbo/room/class_34.as::_adManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_adManager
     private _adManager: AdManager | null = null;
     private _tracking: HabboTracking | null = null;
     private _groupsManager: HabboGroupsManager | null = null;
@@ -282,14 +282,14 @@ export class VortexMain implements IVortexMain
         return this._roomUI;
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::_toolbar
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_toolbar
     private _toolbar: HabboToolbar | null = null;
     private _questEngine: HabboQuestEngine | null = null;
     private _habboHelp: HabboHelp | null = null;
     private _moderation: ModerationManager | null = null;
     private _avatarEditor: HabboAvatarEditorManager | null = null;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::get toolbar()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get toolbar()
     get toolbar(): IHabboToolbar 
     {
         if(!this._toolbar) 
@@ -312,10 +312,10 @@ export class VortexMain implements IVortexMain
         return this._avatarRenderManager;
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::_windowManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_windowManager
     private _windowManager: HabboWindowManager | null = null;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::get windowManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get windowManager()
     get windowManager(): IHabboWindowManager 
     {
         if(!this._windowManager) 
@@ -406,10 +406,10 @@ export class VortexMain implements IVortexMain
         return this._communicationDemo;
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::_roomManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_roomManager
     private _roomManager: RoomManager | null = null;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::get roomManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get roomManager()
     get roomManager(): RoomManager 
     {
         if(!this._roomManager) 
@@ -432,10 +432,10 @@ export class VortexMain implements IVortexMain
         return this._roomMessageHandler;
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::_roomSessionManager
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_roomSessionManager
     private _roomSessionManager: RoomSessionManager | null = null;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::get roomSessionManager()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get roomSessionManager()
     get roomSessionManager(): RoomSessionManager 
     {
         if(!this._roomSessionManager) 
@@ -871,7 +871,7 @@ export class VortexMain implements IVortexMain
         // 12. Room Message Handler - bridges communication to room engine
         this._roomMessageHandler = new RoomMessageHandler(this._roomEngine);
 
-        // AS3: sources/win63_version/habbo/room/class_34.as::onRoomSessionEvent()
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::onRoomSessionEvent()
         // AS3's RoomEngine owns/constructs the message handler directly (`var_761 = new
         // class_1788(this)`) and subscribes to its own RoomSessionManager dependency's
         // RSE_STARTED/RSE_ENDED to keep the handler's "current room" tracking and the engine's

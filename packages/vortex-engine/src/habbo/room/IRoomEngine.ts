@@ -188,7 +188,7 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::isRoomObjectContentAvailable()
     isRoomObjectContentAvailable(type: string): boolean;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::initializeRoomObjectInsert()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::initializeRoomObjectInsert()
     initializeRoomObjectInsert(
         source: string,
         itemId: number,
@@ -204,7 +204,7 @@ export interface IRoomEngine extends IDisposable {
         repeatedPlacement?: boolean
     ): boolean;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::cancelRoomObjectInsert()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::cancelRoomObjectInsert()
     cancelRoomObjectInsert(): void;
 
     // CatalogObjectMover, RecyclerCatalogWidget) already null-check before use.
@@ -217,7 +217,7 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getObjectMoverIconSpriteVisible()
     getObjectMoverIconSpriteVisible(): boolean;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::initializeRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::initializeRoom()
     initializeRoom(
         roomId: number,
         planeParser: RoomPlaneParser | null,
@@ -227,13 +227,13 @@ export interface IRoomEngine extends IDisposable {
         doorDir?: number
     ): void;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::disposeObjectFurniture()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::disposeObjectFurniture()
     disposeObjectFurniture(roomId: number, id: number, pickerId?: number, refresh?: boolean): boolean;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::disposeObjectWallItem()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::disposeObjectWallItem()
     disposeObjectWallItem(roomId: number, id: number, pickerId?: number): boolean;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::disposeObjectUser()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::disposeObjectUser()
     disposeObjectUser(roomId: number, roomIndex: number): boolean;
 
     // TS-only: see RoomEngine.ts for why this exists.
@@ -327,13 +327,13 @@ export interface IRoomEngine extends IDisposable {
 
     disposeRoomObject(roomId: number, objectId: number, category: number): boolean;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObject()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::modifyRoomObject()
     modifyRoomObject(objectId: number, category: number, action: string): boolean;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::useRoomObjectInActiveRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::useRoomObjectInActiveRoom()
     useRoomObjectInActiveRoom(objectId: number, category: number): boolean;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObjectDataWithMap()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::modifyRoomObjectDataWithMap()
     modifyRoomObjectDataWithMap(objectId: number, category: number, action: string, data: Map<string, string>): boolean;
 
     /**
@@ -585,7 +585,7 @@ export interface IRoomEngine extends IDisposable {
      */
     removeStageChild(displayObject: Container): void;
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::getRoomObjectBoundingRectangle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomObjectBoundingRectangle()
     getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): IRoomEngineRectangle | null;
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getRoomObjectScreenLocation()

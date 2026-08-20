@@ -590,13 +590,13 @@ export class RoomEngine extends Component implements IRoomEngine,
         ];
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::get useOffsetScrolling()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get useOffsetScrolling()
     private get useOffsetScrolling(): boolean 
     {
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::get cameraFollowDuration()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get cameraFollowDuration()
     private get cameraFollowDuration(): number 
     {
         return this._configurationManager?.getBoolean('room.camera.follow_user') ? 1000 : 0;
@@ -878,7 +878,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         object.getEventHandler()?.processUpdateMessage(new RoomObjectDataUpdateMessage(stateIndex, stuffData));
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::contentLoaded()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::contentLoaded()
     contentLoaded(type: string, success: boolean): void 
     {
         // The "room" bundle (floor/wall/landscape rasterizer data) is only ever
@@ -2092,7 +2092,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::useRoomObjectInActiveRoom()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::useRoomObjectInActiveRoom()
     useRoomObjectInActiveRoom(objectId: number, category: number): boolean 
     {
         const object = this.getRoomObject(this._activeRoomId, objectId, category);
@@ -2108,7 +2108,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObjectDataWithMap()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::modifyRoomObjectDataWithMap()
     // TODO(AS3): ad-furni branding save — needs SetObjectDataMessageComposer, which
     // doesn't exist yet. Low value without the branding widget itself.
     /**
@@ -2626,7 +2626,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::updateObjectRoomVisibilities()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectRoomVisibilities()
     updateObjectRoomVisibilities(roomId: number, wallsVisible: boolean, floorVisible: boolean = true): boolean 
     {
         const room = this.getRoomInstance(roomId);
@@ -2641,7 +2641,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::updateObjectRoomPlaneThicknesses()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectRoomPlaneThicknesses()
     updateObjectRoomPlaneThicknesses(roomId: number, wallThicknessMultiplier: number, floorThicknessMultiplier: number): boolean 
     {
         const room = this.getRoomInstance(roomId);
@@ -4062,7 +4062,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::setRoomCanvasMask()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setRoomCanvasMask()
     setRoomCanvasMask(roomId: number, canvasId: number, useMask: boolean): void
     {
         const key = roomId * 1000 + canvasId;
@@ -4504,7 +4504,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         super.dispose();
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::getRoomObjectBoundingRectangle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomObjectBoundingRectangle()
     getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): IRoomEngineRectangle | null 
     {
         const canvas = this._renderingCanvases.get(roomId * 1000 + canvasId);
@@ -4866,7 +4866,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.getFurnitureImage(id, new Vector3d(), 1, listener, 0, extra, -1, -1, null, true);
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::removeObjectMoverIconSprite()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::removeObjectMoverIconSprite()
     private removeObjectMoverIconSprite(): void 
     {
         if(this._moverIconSprite) 
@@ -5658,7 +5658,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::getRoomInstanceData()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomInstanceData()
     private getRoomInstanceData(roomId: number): IRoomEngineRoomInstanceData 
     {
         let data = this._roomInstanceData.get(roomId);
@@ -5949,7 +5949,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     /**
      * Handles free room camera dragging.
      *
-     * AS3: sources/win63_version/habbo/room/class_34.as handleRoomDragging()
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::handleRoomDragging()
      */
     private handleRoomDragging(
         canvas: RoomRenderingCanvas,
@@ -6244,7 +6244,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             return null;
         }
 
-        // TODO(AS3): sources/win63_version/habbo/room/class_34.as
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as
         // RoomEngine.fixedUserLocation must adjust avatar z using FurniStackingHeightMap
         // and LegacyWallGeometry when those per-room maps are stored on RoomEngine.
         return location;
@@ -6808,7 +6808,7 @@ export class RoomEngine extends Component implements IRoomEngine,
      * so widgets (e.g. infostand) can react. A modifier-held click on furniture is
      * routed to the manipulation shortcuts (SHIFT=rotate, CTRL=pickup) instead.
      *
-     * AS3: sources/win63_version/habbo/room/class_34.as — object click handling
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as — object click handling
      * that leads to RoomEngineObjectEvent.REOE_SELECTED being dispatched.
      */
     private handleObjectMouseEvent(event: RoomObjectMouseEvent): void
@@ -7444,7 +7444,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return spriteVisualization;
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::updateRoomCameras()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateRoomCameras()
     private updateRoomCameras(time: number): void 
     {
         for(const [roomId, data] of this._roomInstanceData) 
@@ -7462,7 +7462,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::updateRoomCamera()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateRoomCamera()
     private updateRoomCamera(roomId: number, canvasId: number, targetLocation: IVector3d, time: number): void 
     {
         const canvas = this._renderingCanvases.get(roomId * 1000 + canvasId);
@@ -7796,7 +7796,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::getActiveRoomBoundingRectangle()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getActiveRoomBoundingRectangle()
     private getActiveRoomBoundingRectangle(canvasId: number): IRoomEngineRectangle | null 
     {
         return this.getRoomObjectBoundingRectangle(
@@ -7868,7 +7868,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
-    // AS3: sources/win63_version/habbo/room/class_34.as::onContentLoaderReady()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::onContentLoaderReady()
     private onContentLoaderReady(): void 
     {
         if(this._roomManager === null) 
