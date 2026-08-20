@@ -2584,19 +2584,47 @@ deobfuscates as it writes — `_SafeCls_90.as` becomes `RoomEngine.ts` — but t
 function declarations in the primary tree. The tool follows the trace to reach the file, then
 compares names *inside* it, where they are readable.
 
-**First measure, 2026-08-20, primary tree only, 1.5s over the repo:**
+**Measured 2026-08-20, primary tree only, 1.5s over the repo.** The second column is after the
+same day's traceability pass (see "Trace hygiene" below); the measurable population *grew* because
+repointed citations began resolving into the primary tree, so more of the port became visible — and
+with it, more gaps. That is the expected direction, not a regression.
 
-| | |
-|---|---|
-| AS3 files with ≥1 `::member` trace | 877 |
-| readable members declared in them | 15,884 |
-| carrying a trace | 6,623 (**41.7%**) |
-| **absent from the TS — public/protected** | **819** ← the worklist |
-| absent from the TS — private | 1,526 |
-| present in the TS but untraced — public/protected | 4,445 |
-| present in the TS but untraced — private | 2,471 |
-| files cited at file level only (unmeasurable) | 1,877, holding 19,512 members |
-| members whose AS3 name is obfuscated | 3,517 (cannot be cited by name) |
+| | first run | after the trace pass |
+|---|---|---|
+| AS3 files with >=1 `::member` trace | 877 | **879** |
+| readable members declared in them | 15,884 | **15,955** |
+| carrying a trace | 6,623 (41.7%) | **6,653 (41.7%)** |
+| **absent from the TS — public/protected** | 819 | **824** <- the worklist |
+| absent from the TS — private | 1,526 | 1,537 |
+| present in the TS but untraced — public/protected | 4,445 | 4,458 |
+| present in the TS but untraced — private | 2,471 | 2,483 |
+| files cited at file level only (unmeasurable) | 1,877 | 1,907 |
+| members whose AS3 name is obfuscated | 3,517 | 3,555 |
+| citations to a file that does not exist | 80 | **7** |
+
+The 824 sit in **225 files**, and they are concentrated: the top 10 files hold 273 of them (33%),
+the top 30 hold 466 (57%), while 104 files have exactly one. Worst first:
+
+| absent | file | |
+|---:|---|---|
+| 48 | `habbo/room/_SafeCls_90.as` | RoomEngine |
+| 34 | `core/window/components/ITextWindow.as` | |
+| 33 | `habbo/room/_SafeCls_87.as` | IRoomEngineServices |
+| 30 | `room/object/visualization/IRoomObjectSprite.as` | |
+| 29 | `habbo/window/widgets/PixelLimitWidget.as` | |
+| 26 | `habbo/window/widgets/BadgeImageWidget.as` | |
+| 21 | `habbo/room/IRoomEngine.as` | |
+| 18 | `core/window/components/TextController.as` | |
+| 18 | `core/runtime/_SafeCls_56.as` | |
+| 16 | `habbo/communication/demo/_SafeCls_98.as` | |
+
+Spot-checked against the source before being treated as a backlog: RoomEngine's
+`furniIconListenerKey` and `mouseEventsDisabledAboveY`, and ITextWindow's `antiAliasType`,
+`borderColor`, `bottomScrollV`, `defaultTextFormat`, `embedFonts` and `gridFitType`, all have zero
+occurrences in the TypeScript that carries their file's traces. The list is not inflated.
+
+Note what closing an interface gap costs: adding a member to `ITextWindow` obliges every
+implementor to declare it too, so these are not independent one-line edits.
 
 Read the two gap columns as different work. **Absent** means the port never wrote the member —
 that is the parity backlog. **Present but untraced** means the member exists in TypeScript and
@@ -2609,6 +2637,27 @@ and untraced — listing it beside a member nobody wrote buries the real ones.
 member-level trace at all, so the tool cannot say whether the class is ported or merely
 referenced. Counting them as 100% uncovered would be arithmetically true and analytically
 worthless, so they sit outside the denominator.
+
+### Trace hygiene, 2026-08-20
+
+`audit-as3-traces.mjs` is the forward direction and now exits 0. Three passes that day:
+
+- **38 RoomEngine citations repointed** from `win63_version/habbo/room/class_34.as` to the primary
+  `_SafeCls_90.as`, identified by `implements IRoomEngine`. All 32 distinct members were confirmed
+  present in the primary file first. A first count of "21 present, 6 absent" was wrong: it tested
+  `function <name>(`, which misses fields and every accessor (`function get <name>(`).
+- **10 derived names annotated**, taking unannotated derived names to 0. Nine were genuine
+  derivations (XMLVariableParser's HEX/UINT/POINT from their string values; RoomData's six fields
+  from their readable accessors). The tenth, `getSortableSpriteList`, was not derived at all — it
+  cited the 2016 `RoomSpriteCanvas.as`, which has no such member, and was repointed to
+  `_SafeCls_3073.as:270`.
+- **45 of 80 unresolvable paths repointed**, leaving 35. Package-number errors under
+  `src/unknowns/`, directory moves within one tree, and citations to `win63_2021_version` /
+  `win63_2023_version`, two trees absent from disk. The remaining 33 distinct paths were left
+  deliberately: `class_N.as` basenames are not an identity across directories in `win63_version`
+  (the cited `core/window/class_3420.as` "resolves" to a class where the port documents an
+  interface), and the rest have no file of that basename in any tree. Both need identifying by
+  members, which is not mechanical.
 
 **What it does not measure.** Whether a covered member behaves like its AS3. A `TODO(AS3)` stub
 with a correct trace counts as covered. A member the port deliberately renamed reads as a false
