@@ -3,7 +3,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
 /**
  * Claim a daily income reward.
  *
- * @see sources/win63_version/habbo/communication/messages/outgoing/inventory/IncomeRewardClaimMessageComposer.as
+ * @see sources/win63_version/habbo/communication/messages/outgoing/vault/IncomeRewardClaimMessageComposer.as
  */
 export class IncomeRewardClaimMessageComposer extends MessageComposer<[number]>
 {

@@ -11,7 +11,7 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  * `allMuted` field: the AS3 class is obfuscated in every tree and the emulator has no
  * constant for header 1172 at all.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1710/_SafeCls_2723.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2452/_SafeCls_2723.as
  */
 export class RoomMuteAllMessageEventParser implements IMessageParser
 {

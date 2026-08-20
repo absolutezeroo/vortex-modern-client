@@ -7,7 +7,7 @@ import type {IDisposable} from '@core';
  * The engine uses this interface to update the loading bar progress.
  * The concrete implementation lives in the client layer (DOM-based).
  *
- * @see sources/win63_2021_version/IHabboLoadingScreen.as
+ * @see sources/WIN63-202607011411-782849652/src/binaryData/IHabboLoadingScreen.as
  */
 export interface IVortexLoadingScreen extends IDisposable
 {
@@ -16,7 +16,7 @@ export interface IVortexLoadingScreen extends IDisposable
 	 *
 	 * @param progress - Progress ratio from 0.0 to 1.0
 	 *
-	 * @see sources/win63_2021_version/IHabboLoadingScreen.as updateLoadingBar()
+	 * @see sources/WIN63-202607011411-782849652/src/binaryData/IHabboLoadingScreen.as updateLoadingBar()
 	 */
     // AS3: .../src/binaryData/IHabboLoadingScreen.as::updateLoadingBar()
     updateLoadingBar(progress: number): void;

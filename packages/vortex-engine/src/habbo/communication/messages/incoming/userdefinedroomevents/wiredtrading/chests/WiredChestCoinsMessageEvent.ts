@@ -10,7 +10,7 @@ import {
  * **Name DERIVED** — no unobfuscated tree carries the wired-chest messages and the emulator has no
  * constant for 1022. Named for the AS3 handler it feeds, `CoinChestSubController::onCoinsMessage()`.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3883/_SafeCls_3882.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2478/_SafeCls_3882.as
  */
 export class WiredChestCoinsMessageEvent extends MessageEvent implements IMessageEvent
 {

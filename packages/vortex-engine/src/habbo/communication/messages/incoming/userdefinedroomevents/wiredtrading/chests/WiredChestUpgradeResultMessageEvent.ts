@@ -10,7 +10,7 @@ import {
  * **Name DERIVED** — no unobfuscated tree carries the wired-chest messages and the emulator has no
  * constant for 2721. Named for the AS3 handler it feeds, `WiredChestController::onUpgradeChestResult()`.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3246/_SafeCls_3245.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2478/_SafeCls_3245.as
  */
 export class WiredChestUpgradeResultMessageEvent extends MessageEvent implements IMessageEvent
 {

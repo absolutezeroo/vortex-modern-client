@@ -20,7 +20,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * **Name DERIVED** — no unobfuscated tree carries the wired-chest messages and the emulator has no
  * constant for 3830.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3187/_SafeCls_3186.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2417/_SafeCls_3186.as
  */
 export class SaveWiredChestSettingsComposer extends MessageComposer<
     [number, string, string, boolean, boolean, number, number, number, boolean]

@@ -3,7 +3,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
 /**
  * Request credit vault status from the server.
  *
- * @see sources/win63_version/habbo/communication/messages/outgoing/inventory/CreditVaultStatusMessageComposer.as
+ * @see sources/win63_version/habbo/communication/messages/outgoing/vault/CreditVaultStatusMessageComposer.as
  */
 export class CreditVaultStatusMessageComposer extends MessageComposer<[]>
 {

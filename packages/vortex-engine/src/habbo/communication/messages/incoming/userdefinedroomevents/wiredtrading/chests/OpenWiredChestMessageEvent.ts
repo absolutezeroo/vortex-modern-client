@@ -10,7 +10,7 @@ import {
  * **Name DERIVED** — no unobfuscated tree carries the wired-chest messages and the emulator has no
  * constant for 1174. Named for the AS3 handler it feeds, `WiredChestController::onOpenChest()`.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3157/_SafeCls_3156.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2478/_SafeCls_3156.as
  */
 export class OpenWiredChestMessageEvent extends MessageEvent implements IMessageEvent
 {

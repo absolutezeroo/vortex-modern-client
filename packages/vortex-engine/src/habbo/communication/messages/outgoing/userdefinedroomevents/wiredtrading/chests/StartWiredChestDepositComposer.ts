@@ -9,7 +9,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * the `start_deposit_btn` button — which serves a coin chest and a furniture chest alike, and reads
  * `${wiredchests.donate}` for a visitor who may only give.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3758/_SafeCls_3757.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2417/_SafeCls_3757.as
  */
 export class StartWiredChestDepositComposer extends MessageComposer<[number]>
 {

@@ -6,7 +6,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  *
  * The class name is **derived**, not recovered: the parser is `_SafeCls_4263` in every tree.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2701/_SafeCls_4263.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_4264/_SafeCls_4263.as
  */
 export class FriendFurniCancelLockParser implements IMessageParser
 {

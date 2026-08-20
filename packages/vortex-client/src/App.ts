@@ -734,7 +734,7 @@ export class VortexApp
      * Bootstraps the engine, loads the asset bundle, configures skins/layouts,
      * creates the canvas, and starts the render loop.
      *
-     * @see sources/win63_2021_version/HabboAir.as
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as
      */
     // AS3: .../src/login/LoginFlow.as::init()
     public async init(): Promise<void>
@@ -1340,7 +1340,7 @@ export class VortexApp
      * engine is still unbooted here — connecting is the caller's job, once init() has booted
      * it. The one screen that needs an engine boots it through the ensureEngine callback.
      *
-     * @see sources/win63_2021_version/login/LoginFlow.as
+     * @see sources/WIN63-202607011411-782849652/src/login/LoginFlow.as
      * @returns Promise that resolves when the login flow finishes
      */
     private async showLoginFlow(vortexConfig: IVortexConfig): Promise<void>

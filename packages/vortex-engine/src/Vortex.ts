@@ -167,7 +167,7 @@ export interface ICrashReport
  * Owns the PixiJS Application (= Flash stage) and VortexMain (= HabboAirMain).
  * Handles singleton lifecycle, crash reporting, and connection management.
  *
- * @see sources/win63_2021_version/HabboAir.as
+ * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as
  */
 export class Vortex implements IVortex
 {
@@ -177,7 +177,7 @@ export class Vortex implements IVortex
     /**
 	 * Loading screen reference.
 	 *
-	 * @see sources/win63_2021_version/HabboAir.as _loadingScreen
+	 * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as _loadingScreen
 	 */
     // AS3: .../src/binaryData/HabboAir.as::_loadingScreen
     private _loadingScreen: IVortexLoadingScreen | null = null;
@@ -186,7 +186,7 @@ export class Vortex implements IVortex
 	 * PixiJS Application — equivalent to the Flash stage.
 	 * Owned directly by Vortex (not by a separate core layer).
 	 *
-	 * @see sources/win63_2021_version/HabboAir.as (stage setup in tryInit)
+	 * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as (stage setup in tryInit)
 	 */
     private _application: Application | null = null;
 
@@ -378,7 +378,7 @@ export class Vortex implements IVortex
 	 * @param config - Optional configuration
 	 * @param loadingScreen - Optional loading screen (passed to VortexMain like AS3)
 	 *
-	 * @see sources/win63_2021_version/HabboAir.as finalizePreloading()
+	 * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as finalizePreloading()
 	 */
     public static async bootstrap(config?: IVortexConfig, loadingScreen?: IVortexLoadingScreen): Promise<Vortex>
     {
@@ -392,7 +392,7 @@ export class Vortex implements IVortex
     /**
 	 * Track a login step for analytics and debugging.
 	 *
-	 * @see sources/win63_2021_version/HabboAir.as trackLoginStep()
+	 * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as trackLoginStep()
 	 */
     // AS3: .../src/binaryData/HabboAir.as::trackLoginStep()
     public static trackLoginStep(step: string, extra?: string): void
@@ -410,7 +410,7 @@ export class Vortex implements IVortex
     /**
 	 * Report a crash or error.
 	 *
-	 * @see sources/win63_2021_version/HabboAir.as reportCrash()
+	 * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as reportCrash()
 	 */
     // AS3: .../src/binaryData/HabboAir.as::reportCrash()
     public static reportCrash(message: string, category: string, isFatal: boolean, error?: Error): void
@@ -495,7 +495,7 @@ export class Vortex implements IVortex
     /**
 	 * Dispose the application.
 	 *
-	 * @see sources/win63_2021_version/HabboAir.as dispose()
+	 * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as dispose()
 	 */
     // AS3: sources/win63_version/habbo/communication/demo/class_467.as::dispose()
     public dispose(): void
@@ -538,7 +538,7 @@ export class Vortex implements IVortex
 	 * 3. HabboAirMain.prepareCore() — create Core, register all components
 	 * 4. HabboAirMain.addInitializationProgressListeners() — track progress
 	 *
-	 * @see sources/win63_2021_version/HabboAir.as tryInit(), finalizePreloading()
+	 * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as tryInit(), finalizePreloading()
 	 * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
 	 */
     async init(config?: IVortexConfig, loadingScreen?: IVortexLoadingScreen): Promise<void>

@@ -3,7 +3,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
 /**
  * Persist the room-chat display preferences.
  *
- * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2609/_SafeCls_2255.as
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2091/_SafeCls_2255.as
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::sendChatPreferences()
  *
  * Header 1149, from WIN63's registry (`_SafeCls_2046.as::_composers[1149]`). Corroborated by

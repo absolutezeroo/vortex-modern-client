@@ -10,7 +10,7 @@ import {
  * **Name DERIVED** — no unobfuscated tree carries the wired-chest messages and the emulator has no
  * constant for 2738. Named for the AS3 handler it feeds, `FurniChestSubController::onItemsUpdated()`.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3380/_SafeCls_3379.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2478/_SafeCls_3379.as
  */
 export class WiredChestItemsUpdatedMessageEvent extends MessageEvent implements IMessageEvent
 {

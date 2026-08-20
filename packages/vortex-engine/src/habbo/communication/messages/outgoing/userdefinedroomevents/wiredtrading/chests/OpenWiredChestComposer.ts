@@ -6,7 +6,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * **Name DERIVED** — no unobfuscated tree carries the wired-chest messages and the emulator has no
  * constant for 806. Named for its one call site, `WiredChestController::open()`.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2598/_SafeCls_2597.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2417/_SafeCls_2597.as
  */
 export class OpenWiredChestComposer extends MessageComposer<[number]>
 {

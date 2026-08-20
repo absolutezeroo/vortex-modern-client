@@ -6,7 +6,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * **Name DERIVED** — no unobfuscated tree carries the wired-chest messages and the emulator has no
  * constant for 2843. Named for its one call site, `CoinChestSubController::onWithdrawClick()`.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3396/_SafeCls_3395.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2417/_SafeCls_3395.as
  */
 export class WithdrawWiredChestCoinsComposer extends MessageComposer<[number, number]>
 {

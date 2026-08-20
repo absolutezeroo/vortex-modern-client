@@ -5,7 +5,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  *
  * Used when RoomSession.isGameSession is true instead of ChatMessageComposer.
  *
- * @see sources/win63_version/habbo/communication/messages/outgoing/room/chat/Game2GameChatMessageComposer.as
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3158/Game2GameChatMessageComposer.as
  */
 export class Game2GameChatMessageComposer extends MessageComposer<[string]>
 {

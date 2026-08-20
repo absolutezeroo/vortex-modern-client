@@ -8,7 +8,7 @@ import {AvatarEffectAddedMessageParser} from '../../parser/inventory/AvatarEffec
  * com/sulake/habbo/communication/_SafeCls_2046.as; consumed by
  * inventory/_SafeCls_1951.as::onAvatarEffectAdded().
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2975/_SafeCls_3453.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2475/_SafeCls_3453.as
  */
 export class AvatarEffectAddedMessageEvent extends MessageEvent implements IMessageEvent
 {

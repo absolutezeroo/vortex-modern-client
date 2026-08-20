@@ -12,7 +12,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * constant for 1999. Named for its two call sites, `WiredChestWrapperView::onViewLogsClick()` and
  * `WiredTransactionLogsView::requestPage()`.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3171/_SafeCls_3170.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2407/_SafeCls_3170.as
  */
 export class RequestWiredChestLogsComposer extends MessageComposer<[number, number, number]>
 {

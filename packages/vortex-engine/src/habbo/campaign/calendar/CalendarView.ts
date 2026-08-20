@@ -17,7 +17,7 @@
  * - AS3 listens for `Stage`'s `"resize"`. There is no `context.displayObjectContainer` here; the
  *   browser window is the stage, as `ChatViewController` already treats it.
  *
- * Field names come from `sources/PRODUCTION-201601012205-226667486/.../CalendarView.as`, which is
+ * Field names come from `sources/WIN63-202607011411-782849652/src/com/sulake/habbo/campaign/calendar/CalendarView.as`, which is
  * unobfuscated; every method name is readable in the primary tree.
  */
 import {Logger} from '@core/utils/Logger';

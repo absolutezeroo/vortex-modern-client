@@ -11,7 +11,7 @@ import {
  * **Name DERIVED** — no unobfuscated tree carries the wired-chest messages and the emulator has no
  * constant for 2323. Named for the AS3 handler it feeds, `FurniChestSubController::onItemsChunk()`.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2673/_SafeCls_2672.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2478/_SafeCls_2672.as
  */
 export class WiredChestItemsChunkMessageEvent extends MessageEvent implements IMessageEvent
 {

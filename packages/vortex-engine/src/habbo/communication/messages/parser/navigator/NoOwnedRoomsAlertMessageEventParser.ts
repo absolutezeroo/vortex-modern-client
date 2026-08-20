@@ -10,7 +10,7 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  * Name recovered from the emulator's `NoOwnedRoomsAlertMessageComposer = 735`; the AS3
  * class is obfuscated in every available tree.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2435/_SafeCls_4425.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3314/_SafeCls_4425.as
  */
 export class NoOwnedRoomsAlertMessageEventParser implements IMessageParser
 {

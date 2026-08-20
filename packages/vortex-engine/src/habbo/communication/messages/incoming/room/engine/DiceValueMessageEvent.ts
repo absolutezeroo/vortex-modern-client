@@ -8,7 +8,7 @@ import {DiceValueMessageParser} from '@habbo/communication/messages/parser/room/
  *
  * Name derived: fully obfuscated in AS3 (class `_SafeCls_2946`); named for its role.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2942/_SafeCls_2946.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2437/_SafeCls_2946.as
  */
 export class DiceValueMessageEvent extends MessageEvent implements IMessageEvent
 {

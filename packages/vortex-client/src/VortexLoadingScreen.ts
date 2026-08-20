@@ -8,9 +8,9 @@
  * Implements IVortexLoadingScreen (engine interface) so the engine can
  * call updateLoadingBar() without knowing about the DOM implementation.
  *
- * @see sources/win63_2021_version/HabboLoadingScreen.as
- * @see sources/win63_2021_version/IHabboLoadingScreen.as
- * @see sources/win63_2021_version/splash/PhotoSplashScreen.as
+ * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboLoadingScreen.as
+ * @see sources/WIN63-202607011411-782849652/src/binaryData/IHabboLoadingScreen.as
+ * @see sources/WIN63-202607011411-782849652/src/splash/PhotoSplashScreen.as
  */
 
 import type {IVortexLoadingScreen} from 'vortex-engine';
@@ -25,7 +25,7 @@ const splashModules = import.meta.glob('./assets/images/splash_img*.png') as Rec
 /**
  * AS3 constants from HabboLoadingScreen.
  *
- * @see sources/win63_2021_version/HabboLoadingScreen.as lines 27-30
+ * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboLoadingScreen.as lines 27-30
  */
 const LOADING_BAR_WIDTH = 400;
 const LOADING_BAR_HEIGHT = 25;
@@ -81,8 +81,8 @@ const LOADING_TEXTS: string[] = [
  * Implements IVortexLoadingScreen so the engine (VortexMain) can
  * call updateLoadingBar(progress) during initialization.
  *
- * @see sources/win63_2021_version/HabboLoadingScreen.as
- * @see sources/win63_2021_version/IHabboLoadingScreen.as
+ * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboLoadingScreen.as
+ * @see sources/WIN63-202607011411-782849652/src/binaryData/IHabboLoadingScreen.as
  */
 export class VortexLoadingScreen implements IVortexLoadingScreen 
 {
@@ -169,7 +169,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
     /**
      * Whether this loading screen has been disposed.
      *
-     * @see sources/win63_2021_version/HabboLoadingScreen.as disposed getter
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboLoadingScreen.as disposed getter
      */
     // AS3: .../src/binaryData/HabboLoadingScreen.as::get disposed()
     get disposed(): boolean 
@@ -184,8 +184,8 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
      *
      * @param ratio - Progress ratio from 0.0 to 1.0
      *
-     * @see sources/win63_2021_version/HabboLoadingScreen.as updateLoadingBar() line 391
-     * @see sources/win63_2021_version/IHabboLoadingScreen.as updateLoadingBar()
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboLoadingScreen.as updateLoadingBar() line 391
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/IHabboLoadingScreen.as updateLoadingBar()
      */
     // AS3: .../src/binaryData/HabboLoadingScreen.as::updateLoadingBar()
     public updateLoadingBar(ratio: number): void 
@@ -198,7 +198,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
     /**
      * Removes the loading screen overlay from the DOM.
      *
-     * @see sources/win63_2021_version/HabboLoadingScreen.as line 219
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboLoadingScreen.as line 219
      */
     // AS3: .../src/binaryData/HabboLoadingScreen.as::dispose()
     public dispose(): void 
@@ -226,7 +226,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
      * - splashImg[random 1-30] bitmap at (96, 51)
      * - splashTopClass bitmap (overlay)
      *
-     * @see sources/win63_2021_version/splash/PhotoSplashScreen.as
+     * @see sources/WIN63-202607011411-782849652/src/splash/PhotoSplashScreen.as
      */
     private createSplashScreen(): HTMLDivElement 
     {
@@ -325,7 +325,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
      *   - Top fill at (0,0), size (fillW, 8), color 0xBACAD3
      *   - Bottom fill at (0,8), size (fillW, 9), color 0x8CA1AD
      *
-     * @see sources/win63_2021_version/HabboLoadingScreen.as lines 68-76, 359-388
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboLoadingScreen.as lines 68-76, 359-388
      */
     private createLoadingBar(): {
         outer: HTMLDivElement;
@@ -444,7 +444,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
      * 2. Center: startY = int((stageH - _local_1) / 2) - spacing*2
      * 3. Position sequentially: splash → text(+50) → bar(+spacing) → percent(+spacing/2)
      *
-     * @see sources/win63_2021_version/HabboLoadingScreen.as line 262
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboLoadingScreen.as line 262
      */
     private positionElements(): void 
     {
@@ -501,7 +501,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
      * - When barProgression < 100: increment by min(random(35, min(random(45,55))), 100-bar)
      * - When barProgression hits 100: set shouldChangeText, advance text index
      *
-     * @see sources/win63_2021_version/HabboLoadingScreen.as line 164
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboLoadingScreen.as line 164
      */
     // AS3: .../src/binaryData/HabboLoadingScreen.as::onBarProgressEvent()
     private onBarProgressEvent(): void 
@@ -568,7 +568,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
     /**
      * Returns a random integer between min and max (inclusive).
      *
-     * @see sources/win63_2021_version/HabboLoadingScreen.as line 200
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboLoadingScreen.as line 200
      */
     // AS3: .../src/binaryData/HabboLoadingScreen.as::randomNumber()
     private randomNumber(min: number, max: number): number 

@@ -1428,7 +1428,7 @@ export class VortexMain implements IVortexMain
      * Emits a 'heartbeat' event on the Vortex instance.
      * The client can listen to POST this to a server endpoint.
      *
-     * @see sources/win63_version/Habbo.as sendHeartBeat()
+     * @see sources/PRODUCTION-201601012205-226667486/src/Habbo.as sendHeartBeat()
      */
     // AS3: .../src/binaryData/HabboAir.as::sendHeartBeat()
     private sendHeartBeat(): void 
@@ -1439,7 +1439,7 @@ export class VortexMain implements IVortexMain
     /**
      * Handle a core component error.
      *
-     * @see sources/win63_version/HabboMain.as onCoreError()
+     * @see sources/PRODUCTION-201601012205-226667486/src/HabboMain.as onCoreError()
      */
     // AS3: .../src/binaryData/HabboAir.as::onCoreError()
     private onCoreError(message: string): void 
@@ -1452,7 +1452,7 @@ export class VortexMain implements IVortexMain
     /**
      * Handle a core component reboot request.
      *
-     * @see sources/win63_version/HabboMain.as onCoreReboot()
+     * @see sources/PRODUCTION-201601012205-226667486/src/HabboMain.as onCoreReboot()
      */
     // AS3: .../src/binaryData/HabboAir.as::onCoreReboot()
     private onCoreReboot(): void 

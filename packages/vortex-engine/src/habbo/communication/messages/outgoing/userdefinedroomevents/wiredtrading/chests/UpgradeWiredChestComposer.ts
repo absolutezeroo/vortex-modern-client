@@ -9,7 +9,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * **Name DERIVED** — no unobfuscated tree carries the wired-chest messages and the emulator has no
  * constant for 3407. Named for its one call site, `WiredChestUpgradeConfirmationView::onBuyClicked()`.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3808/_SafeCls_3807.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2417/_SafeCls_3807.as
  */
 export class UpgradeWiredChestComposer extends MessageComposer<[number, number]>
 {

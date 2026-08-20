@@ -14,7 +14,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * **Name DERIVED** — no unobfuscated tree carries the wired-chest messages and the emulator has no
  * constant for 2905. Named for its one call site, `ChestNotificationSettingsUI::onSaveClicked()`.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2820/_SafeCls_2819.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2417/_SafeCls_2819.as
  */
 export class SetWiredChestNotificationSettingsComposer extends MessageComposer<
     [number, number, boolean, boolean, boolean, boolean, boolean]

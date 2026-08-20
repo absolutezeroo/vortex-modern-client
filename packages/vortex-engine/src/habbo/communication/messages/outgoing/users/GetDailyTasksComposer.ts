@@ -3,7 +3,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
 /**
  * Request the daily-task list. Sent once at login.
  *
- * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2136/_SafeCls_1780.as
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1781/_SafeCls_1780.as
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::initSessionData()
  *
  * Header 4100, from WIN63's registry (`_SafeCls_2046.as::_composers[4100]`). Corroborated by

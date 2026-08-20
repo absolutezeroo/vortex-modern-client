@@ -3,7 +3,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
 /**
  * Open a room connection via network (for room forwarding).
  *
- * @see sources/win63_version/habbo/communication/messages/outgoing/room/session/RoomNetworkOpenConnectionMessageComposer.as
+ * @see sources/win63_version/habbo/communication/messages/outgoing/roomdirectory/RoomNetworkOpenConnectionMessageComposer.as
  */
 export class RoomNetworkOpenConnectionMessageComposer extends MessageComposer<[number, number]>
 {

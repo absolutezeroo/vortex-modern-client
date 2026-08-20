@@ -10,7 +10,7 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  * Name recovered from the emulator's `NoSuchFlatComposer = 1122`; the AS3 class is
  * obfuscated in every available tree.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1710/_SafeCls_4335.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2452/_SafeCls_4335.as
  */
 export class NoSuchFlatMessageEventParser implements IMessageParser
 {

@@ -9,7 +9,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  * and `vortex-emulator` has no counterpart to borrow a name from — only the composer side
  * (3318, `FriendFurniConfirmLockMessageEvent`) exists there.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2701/_SafeCls_4277.as
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_4264/_SafeCls_4277.as
  */
 export class FriendFurniStartConfirmationParser implements IMessageParser
 {
