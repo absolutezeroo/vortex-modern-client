@@ -2594,23 +2594,30 @@ with it, more gaps. That is the expected direction, not a regression.
 | AS3 files with >=1 `::member` trace | 877 | **879** |
 | readable members declared in them | 15,884 | **15,955** |
 | carrying a trace | 6,623 (41.7%) | **6,653 (41.7%)** |
-| **absent from the TS — public/protected** | 819 | **824** <- the worklist |
-| absent from the TS — private | 1,526 | 1,537 |
-| present in the TS but untraced — public/protected | 4,445 | 4,458 |
-| present in the TS but untraced — private | 2,471 | 2,483 |
+| **absent from the TS — public/protected** | 819 | **787** <- the worklist |
+| absent from the TS — private | 1,526 | 1,526 |
+| present in the TS but untraced — public/protected | 4,445 | 4,495 |
+| present in the TS but untraced — private | 2,471 | 2,494 |
 | files cited at file level only (unmeasurable) | 1,877 | 1,907 |
 | members whose AS3 name is obfuscated | 3,517 | 3,555 |
 | citations to a file that does not exist | 80 | **7** |
 
-The 824 sit in **225 files**, and they are concentrated: the top 10 files hold 273 of them (33%),
-the top 30 hold 466 (57%), while 104 files have exactly one. Worst first:
+**A false positive was removed before this number was trusted.** The presence check searched only
+the TS files that *cite* the AS3 file, which assumes the port lives where the traces are.
+`IRoomObjectSprite.ts` ports its interface faithfully and carries no `AS3:` citation at all, so all
+30 of its members read as absent. The check now also looks at a TS file whose basename equals the
+AS3 type name — deliberately narrow, since for `_SafeCls_90.as` nothing but the trace links it to
+`RoomEngine.ts`. That took the worklist from 824 to **787**, and moved 37 members into the
+traceability column where they belong.
+
+The 787 sit in **225 files**, and they are concentrated: the top 10 files hold ~270 of them, while
+104 files have exactly one. Worst first:
 
 | absent | file | |
 |---:|---|---|
 | 48 | `habbo/room/_SafeCls_90.as` | RoomEngine |
 | 34 | `core/window/components/ITextWindow.as` | |
 | 33 | `habbo/room/_SafeCls_87.as` | IRoomEngineServices |
-| 30 | `room/object/visualization/IRoomObjectSprite.as` | |
 | 29 | `habbo/window/widgets/PixelLimitWidget.as` | |
 | 26 | `habbo/window/widgets/BadgeImageWidget.as` | |
 | 21 | `habbo/room/IRoomEngine.as` | |

@@ -182,6 +182,8 @@ function buildCitationIndex()
         if(existsSync(abs)) collectFiles(abs, '.ts', tsFiles);
     }
 
+    indexTsByBasename(tsFiles);
+
     // path -> { cited: Set<name>, citedBy: Set<ts file> }
     const index = new Map();
 
@@ -226,6 +228,27 @@ function buildCitationIndex()
 // A member the port deliberately renamed reads as a port gap and is a false positive — one more
 // reason a line of output is a worklist entry, not a verdict.
 // ---------------------------------------------------------------------------------------------
+
+// A second place to look, and the reason it is needed: `IRoomObjectSprite.ts` ports
+// `IRoomObjectSprite.as` faithfully and carries no `AS3:` citation at all, so it was invisible to
+// the citing-files check and all 30 of its members read as "absent from the TS". Searching only
+// the citers assumes the port lives where the traces are; an untraced sibling breaks that.
+//
+// The widening is deliberately narrow — a TS file whose basename equals the AS3 *type* name. That
+// only fires for readable names, which is right: for `_SafeCls_90.as` nothing but the trace links
+// the file to `RoomEngine.ts`, so there is no sibling to find and the citers stay the only source.
+const tsByBase = new Map();
+
+function indexTsByBasename(tsFiles)
+{
+    for(const file of tsFiles)
+    {
+        const key = basename(file, '.ts');
+
+        if(!tsByBase.has(key)) tsByBase.set(key, []);
+        tsByBase.get(key).push(relative(ROOT, file));
+    }
+}
 
 const tsBodies = new Map();
 
@@ -305,7 +328,8 @@ function main()
             if(entry.cited.has(member.name)) { totals.covered++; continue; }
 
             const isPrivate = member.visibility === 'private';
-            const inTypeScript = [...entry.citedBy].some((tsFile) => tsDeclares(tsFile, member.name));
+            const searchIn = [...entry.citedBy, ...(typeName ? tsByBase.get(typeName) ?? [] : [])];
+            const inTypeScript = searchIn.some((tsFile) => tsDeclares(tsFile, member.name));
 
             member.inTypeScript = inTypeScript;
 
