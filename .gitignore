@@ -1,6 +1,11 @@
 .claude/*
 !.claude/rules/
 !.claude/rules/**
+!.claude/agents/
+!.claude/agents/**
+!.claude/skills/
+!.claude/skills/**
+!.claude/settings.json
 .idea/
 .idea/**
 _bmad/
