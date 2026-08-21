@@ -2752,6 +2752,43 @@ zero page errors. What that does **not** cover: glaze has no room engine, so eve
 takes the placeholder branch and the `getPetImage()`/`getFurnitureImage()` half is still unexercised
 — that needs the emulator and a login.
 
+### `habbo/room` starts: the room could not be shielded from a UI panel (2026-08-21)
+
+First slice off the room cluster, which is now the top of the worklist (RoomEngine 47,
+IRoomEngineServices 33, IRoomEngine 20, `_SafeCls_2223` 13). `habbo/room` 145 -> 133 absent
+public/protected members; global 693 -> 680.
+
+`RoomEngine` had no way to suppress room mouse events under a UI panel. Absent: the
+`mouseEventsDisabledAboveY` / `mouseEventsDisabledLeftToX` thresholds,
+`setMouseEventsDisabledRect()` / `removeMouseEventsDisabledRect()` and the map behind them, the
+private `isMouseEventDisabledByRect()`, and the guard at the top of
+`handleRoomCanvasMouseEvent()` that reads all three. Three AS3 callers depend on it and one is
+ported: `RoomToolsToolbarCtrl` registers the toolbar's `window_bg` rectangle on every
+reposition and drops it when hidden or disposed — so until now **every click on the room-tools
+toolbar also walked the avatar or selected the furniture underneath**.
+
+Two things the slice turned up:
+
+- **`RoomToolsToolbarCtrl.set visible()` was missing**, and it is one of the two hook points.
+  AS3 overrides the base setter purely to call `updatePosition()` on show and
+  `removeRoomMouseBlockRect()` on hide; the port had only `RoomToolsCtrlBase.set visible()`,
+  which flips the window and nothing else. Note that `RoomToolsWidget` writes
+  `_toolbarCtrl.window.visible` directly in two places, bypassing the setter either way —
+  worth checking against AS3 when that widget is next touched.
+- **The coordinate spaces do not match, and that is upstream's.** The rectangles come from
+  `IWindow.getGlobalRectangle()` (desktop space) while `handleRoomCanvasMouseEvent()`'s x/y are
+  canvas-local — `RoomDesktop.canvasMouseHandler()` subtracts the canvas' global position. AS3's
+  own `canvasMouseHandler()` does the identical subtraction, so this is not a port slip: it
+  works because the room canvas sits at the desktop origin. There is a comment on
+  `isMouseEventDisabledByRect()` saying so, because the obvious "fix" would break it.
+
+`HabboFreeFlowChat.disableRoomMouseEventsLeftOfX()` is ported with it, and is dormant: its only
+AS3 callers are in `freeflowchat/history/visualization/ChatHistoryTray.as`, and the tray, its
+scroll bar and its scroll view are all unported. That is a separate slice.
+
+**Not exercised at runtime.** This path needs the emulator and a room; `vortex-glaze`, the bench
+the widget slices used, has no room engine.
+
 ### Trace hygiene, 2026-08-20
 
 `audit-as3-traces.mjs` is the forward direction and now exits 0. Three passes that day:
