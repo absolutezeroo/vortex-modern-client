@@ -47,8 +47,12 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
     private static readonly ONLY_HEAD_KEY: string = 'avatar_image:only_head';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::CROPPED_KEY
     private static readonly CROPPED_KEY: string = 'avatar_image:cropped';
+    // Derived name: obfuscated in every tree, so the identifier is this port's; the
+    // trace points at the class that declares it.
     // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::DIRECTION_KEY
     private static readonly DIRECTION_KEY: string = 'avatar_image:direction';
+    // Derived name: obfuscated in every tree, so the identifier is this port's; the
+    // trace points at the class that declares it.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::ZOOM_X_KEY
     private static readonly ZOOM_X_KEY: string = 'avatar_image:zoomX';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::ZOOM_Y_KEY
@@ -267,6 +271,8 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
         return this._figureEmpty;
     }
 
+    // Derived name: obfuscated in every tree, so the identifier is this port's; the
+    // trace points at the class that declares it.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_zoomX
     private _zoomX: number = AvatarImageWidget.ZOOM_X_DEFAULT;
 
@@ -286,6 +292,8 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
         }
     }
 
+    // Derived name: obfuscated in every tree, so the identifier is this port's; the
+    // trace points at the class that declares it.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/AvatarImageWidget.as::_zoomY
     private _zoomY: number = AvatarImageWidget.ZOOM_Y_DEFAULT;
 

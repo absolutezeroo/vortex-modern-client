@@ -928,13 +928,19 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.deliverIconTexture(typeId, texture, listeners);
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getFurnitureType()
     getFurnitureType(type: number): string | null 
     {
         return this._contentLoader?.getActiveObjectType(type) ?? null;
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getWallItemType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getFurnitureTypeId()
+    getFurnitureTypeId(type: string): number
+    {
+        return this._contentLoader?.getActiveObjectTypeId(type) ?? 0;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getWallItemType()
     getWallItemType(type: number, param: string | null = null): string | null 
     {
         return this._contentLoader?.getWallItemType(type, param) ?? null;

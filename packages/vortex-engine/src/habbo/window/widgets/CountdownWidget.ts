@@ -1,7 +1,11 @@
-import type {IWidget} from './IWidget';
+import type {ICountdownWidget} from './ICountdownWidget';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IWindow} from '@core/window/IWindow';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IItemListWindow} from '@core/window/components/IItemListWindow';
+import type {ITextWindow} from '@core/window/components/ITextWindow';
+import type {IUpdateReceiver} from '@core/runtime/IContext';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 import type {IIterator} from '@core/window/utils/IIterator';
 import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
@@ -9,78 +13,111 @@ import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
 /**
  * Countdown timer widget.
  *
- * Displays a countdown timer with configurable number of digit groups
- * (weeks, days, hours, minutes, seconds). Supports start/stop, color
- * styles, and live updates.
+ * Builds its display out of the `clock_base_xml` item list: the layout ships one `counter`
+ * item and one `separator` item, and the widget clones them into `digits` groups. Each
+ * counter holds a `value` and a `unit` caption, rewritten on every tick.
  *
- * In the AS3 version, implements IUpdateReceiver for per-frame updates.
- * In the TypeScript port, state is stored for the UI layer to render.
+ * `digits` is not a field — it is read back off the list as `(numListItems + 1) / 2`,
+ * exactly as AS3 does, which is what keeps the two in step.
  *
- * @see sources/win63_version/habbo/window/widgets/CountdownWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as
  */
-export class CountdownWidget implements IWidget
+export class CountdownWidget implements ICountdownWidget, IUpdateReceiver
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::TYPE
     public static readonly TYPE: string = 'countdown';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::RUNNING_KEY
     private static readonly RUNNING_KEY: string = 'countdown:running';
+    // Derived name: obfuscated in every tree, like the seconds key below.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::DIGITS_KEY
     private static readonly DIGITS_KEY: string = 'countdown:digits';
+    // Derived name: obfuscated in every tree.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::SECONDS_KEY
     private static readonly SECONDS_KEY: string = 'countdown:seconds';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::COLOR_STYLE_KEY
     private static readonly COLOR_STYLE_KEY: string = 'countdown:color_style';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::UNIT_KEY_PREFIX
+    private static readonly UNIT_KEY_PREFIX: string = 'countdown_clock_unit_';
 
+    // Derived name: obfuscated in every tree — the five unit names the captions are keyed by.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::UNIT_NAMES
     private static readonly UNIT_NAMES: string[] = ['weeks', 'days', 'hours', 'minutes', 'seconds'];
+    // Derived name: obfuscated in every tree — how many seconds each unit above is worth.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::UNIT_SECONDS
     private static readonly UNIT_SECONDS: number[] = [604800, 86400, 3600, 60, 1];
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::UNIT_MAX_VALUES
     private static readonly UNIT_MAX_VALUES: number[] = [100, 7, 24, 60, 60];
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::COLOR_STYLES_VALUES
+    private static readonly COLOR_STYLES_VALUES: number[] = [0, 16777215];
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::COLOR_STYLES_ETCHING_VALUES
+    private static readonly COLOR_STYLES_ETCHING_VALUES: number[] = [3003121663, 0];
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::_disposed
+    private _disposed: boolean = false;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/CountdownWidget.as::_widgetWindow
+    private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::_windowManager
+    private _windowManager: IHabboWindowManager | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/CountdownWidget.as::_root
+    private _root: IItemListWindow | null = null;
+    // Derived name: obfuscated in every tree — the `counter` list item cloned per unit group.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::_counterTemplate
+    private _counterTemplate: IWindow | null = null;
+    // Derived name: obfuscated in every tree — the `separator` list item cloned between groups.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::_separatorTemplate
+    private _separatorTemplate: ITextWindow | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::_running
+    private _running: boolean = false;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::_startSeconds
     private _startSeconds: number = 0;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::_startTime
     private _startTime: number = Date.now();
+    // Derived name: obfuscated in every tree, so the identifier is this port's; the
+    // trace points at the class that declares it.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::_colorStyle
+    private _colorStyle: number = 0;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::_displayedTime
     private _displayedTime: number = -1;
 
-    private _widgetWindow: IWidgetWindow | null = null;
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::_windowManager
-    private _windowManager: IHabboWindowManager | null = null;
-    private _root: IWindow | null = null;
-    private _counterTemplate: IWindow | null = null;
-    private _separatorTemplate: IWindow | null = null;
-
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::CountdownWidget()
     constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
     {
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
-        const root = this._windowManager.buildWidgetLayout('clock_base_xml');
+        this._root = this._windowManager.buildWidgetLayout('clock_base_xml') as IItemListWindow | null;
 
-        if(root)
+        if(this._root)
         {
-            this._root = root;
-
-            // AS3: counter = root.getListItemByName("counter") as IWindowContainer
-            // AS3: separator = root.getListItemByName("separator") as ITextWindow
-            // These are templates used for cloning digit groups.
-            // For now, store as generic IWindow references via findChildByName on the container.
-            const rootContainer = root as unknown as { findChildByName(name: string): IWindow | null };
-
-            if(typeof rootContainer.findChildByName === 'function')
-            {
-                this._counterTemplate = rootContainer.findChildByName('counter');
-                this._separatorTemplate = rootContainer.findChildByName('separator');
-            }
+            this._counterTemplate = this._root.getListItemByName('counter');
+            this._separatorTemplate = this._root.getListItemByName('separator') as ITextWindow | null;
         }
 
-        this._digits = 3;
+        this.digits = 3;
 
-        // AS3: _windowManager.registerUpdateReceiver(this, 10) — skipped for now
+        this._windowManager.registerUpdateReceiver(this, 10);
         this._widgetWindow.setParamFlag(147456);
         this._widgetWindow.rootWindow = this._root;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::_disposed
-    private _disposed: boolean = false;
+    /**
+	 * The first unit index that still has a non-zero value, given how many groups are shown.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::getMaxUnitIndex()
+    private static getMaxUnitIndex(digits: number, totalSeconds: number): number
+    {
+        let index = 0;
+
+        while(index < CountdownWidget.UNIT_SECONDS.length - digits)
+        {
+            if(totalSeconds >= CountdownWidget.UNIT_SECONDS[index]) return index;
+
+            index++;
+        }
+
+        return index;
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::get disposed()
     public get disposed(): boolean
@@ -88,74 +125,16 @@ export class CountdownWidget implements IWidget
         return this._disposed;
     }
 
-    private _running: boolean = false;
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::get running()
-    public get running(): boolean
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::get iterator()
+    public iterator(): IIterator
     {
-        return this._running;
+        return EmptyIterator.INSTANCE;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::set running()
-    public set running(value: boolean)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::update()
+    public update(_intervalMs: number): void
     {
-        if(this._running && !value)
-        {
-            this._startSeconds = this.seconds;
-        }
-
-        if(!this._running && value)
-        {
-            this._startTime = Date.now();
-        }
-
-        this._running = value;
-    }
-
-    private _digits: number = 3;
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::get digits()
-    public get digits(): number
-    {
-        return this._digits;
-    }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::set digits()
-    public set digits(value: number)
-    {
-        this._digits = Math.max(2, Math.min(4, value));
-    }
-
-    private _colorStyle: number = 0;
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::get colorStyle()
-    public get colorStyle(): number
-    {
-        return this._colorStyle;
-    }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::set colorStyle()
-    public set colorStyle(value: number)
-    {
-        this._colorStyle = value;
-    }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::get seconds()
-    public get seconds(): number
-    {
-        if(this._running)
-        {
-            return Math.max(0, this._startSeconds - (Date.now() - this._startTime) / 1000);
-        }
-
-        return this._startSeconds;
-    }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::set seconds()
-    public set seconds(value: number)
-    {
-        this._startSeconds = value;
-        this._startTime = Date.now();
+        this.updateTime();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::get properties()
@@ -164,16 +143,18 @@ export class CountdownWidget implements IWidget
         if(this._disposed) return [];
 
         return [
-            new PropertyStruct(CountdownWidget.RUNNING_KEY, this._running),
-            new PropertyStruct(CountdownWidget.DIGITS_KEY, this._digits),
-            new PropertyStruct(CountdownWidget.SECONDS_KEY, this.seconds),
-            new PropertyStruct(CountdownWidget.COLOR_STYLE_KEY, this._colorStyle),
+            new PropertyStruct(CountdownWidget.RUNNING_KEY, this._running, PropertyStruct.BOOLEAN),
+            new PropertyStruct(CountdownWidget.DIGITS_KEY, this.digits, PropertyStruct.UINT),
+            new PropertyStruct(CountdownWidget.SECONDS_KEY, this.seconds, PropertyStruct.INT),
+            new PropertyStruct(CountdownWidget.COLOR_STYLE_KEY, this.colorStyle, PropertyStruct.INT),
         ];
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::set properties()
     public set properties(values: PropertyStruct[])
     {
+        if(this._disposed) return;
+
         for(const prop of values)
         {
             switch(prop.key)
@@ -194,52 +175,143 @@ export class CountdownWidget implements IWidget
         }
     }
 
-    /**
-	 * Determine the maximum unit index for the given digit count and total seconds.
-	 */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::getMaxUnitIndex()
-    private static getMaxUnitIndex(digits: number, totalSeconds: number): number
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::get colorStyle()
+    public get colorStyle(): number
     {
-        for(let i = 0; i < CountdownWidget.UNIT_SECONDS.length - digits; i++)
+        return this._colorStyle;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::set colorStyle()
+    public set colorStyle(value: number)
+    {
+        this._colorStyle = value;
+
+        if(!this._root) return;
+
+        const count = this._root.numListItems;
+
+        for(let i = 0; i < count; i++)
         {
-            if(totalSeconds >= CountdownWidget.UNIT_SECONDS[i])
+            const item = this._root.getListItemAt(i) as IWindowContainer | null;
+
+            if(!item) continue;
+
+            const unit = item.getChildByName('unit') as ITextWindow | null;
+
+            if(!unit) continue;
+
+            let textColor = unit.textColor;
+            let etchingColor = unit.etchingColor;
+
+            if(this._colorStyle >= 0 && this._colorStyle < CountdownWidget.COLOR_STYLES_VALUES.length)
             {
-                return i;
+                textColor = CountdownWidget.COLOR_STYLES_VALUES[this._colorStyle];
+                etchingColor = CountdownWidget.COLOR_STYLES_ETCHING_VALUES[this._colorStyle];
             }
+
+            unit.textColor = textColor;
+            unit.etchingColor = etchingColor;
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::get running()
+    public get running(): boolean
+    {
+        return this._running;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::set running()
+    public set running(value: boolean)
+    {
+        if(this._running && !value) this._startSeconds = this.seconds;
+
+        if(!this._running && value) this._startTime = Date.now();
+
+        this._running = value;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::get digits()
+    public get digits(): number
+    {
+        // Read back off the list rather than stored: AS3 keeps no `_digits` field, which is
+        // what makes `set digits()`'s "did it actually change" test work.
+        // AS3's getter is typed `uint`, so the division truncates.
+        return Math.floor(((this._root?.numListItems ?? 0) + 1) / 2);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::set digits()
+    public set digits(value: number)
+    {
+        const clamped = Math.max(2, Math.min(4, value));
+
+        if(!this._root || clamped === this.digits) return;
+
+        this._root.removeListItems();
+
+        for(let i = 0; i < clamped; i++)
+        {
+            if(i !== 0 && this._separatorTemplate) this._root.addListItem(this._separatorTemplate.clone());
+
+            if(this._counterTemplate) this._root.addListItem(this._counterTemplate.clone());
         }
 
-        return CountdownWidget.UNIT_SECONDS.length - digits;
+        this.updateTime(true);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::get seconds()
+    public get seconds(): number
+    {
+        // AS3's getter is typed `int`, so the division truncates before anyone sees it — the
+        // captions and `_displayedTime` both depend on that.
+        if(this._running) return Math.floor(Math.max(0, this._startSeconds - (Date.now() - this._startTime) / 1000));
+
+        return this._startSeconds;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::set seconds()
+    public set seconds(value: number)
+    {
+        this._startSeconds = value;
+        this._startTime = Date.now();
+        this.updateTime();
     }
 
     /**
-	 * Get the breakdown of the countdown for display.
+	 * Rewrite the value and unit caption of every counter group.
 	 *
-	 * @returns Array of { value, unit } pairs for each digit group
+	 * @param force - Rewrite even when the remaining time has not changed, which is what
+	 *                `set digits()` needs after it has rebuilt the list.
 	 */
-    public getDisplayValues(): { value: number; unit: string }[]
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::updateTime()
+    private updateTime(force: boolean = false): void
     {
-        const totalSeconds = Math.floor(this.seconds);
-        const maxUnitIndex = CountdownWidget.getMaxUnitIndex(this._digits, totalSeconds);
-        const result: { value: number; unit: string }[] = [];
+        if(!this._root) return;
 
-        for(let i = 0; i < this._digits; i++)
+        const totalSeconds = this.seconds;
+
+        if(totalSeconds === this._displayedTime && !force) return;
+
+        const digits = this.digits;
+        const maxUnitIndex = CountdownWidget.getMaxUnitIndex(digits, totalSeconds);
+
+        for(let i = 0; i < digits; i++)
         {
             const unitIndex = maxUnitIndex + i;
-            const unitValue = Math.floor(totalSeconds / CountdownWidget.UNIT_SECONDS[unitIndex]) % CountdownWidget.UNIT_MAX_VALUES[unitIndex];
+            const item = this._root.getListItemAt(i * 2) as IWindowContainer | null;
 
-            result.push({
-                value: unitValue,
-                unit: CountdownWidget.UNIT_NAMES[unitIndex],
-            });
+            if(!item) continue;
+
+            const unitValue = Math.floor(totalSeconds / CountdownWidget.UNIT_SECONDS[unitIndex])
+                % CountdownWidget.UNIT_MAX_VALUES[unitIndex];
+            const value = item.getChildByName('value');
+            const unit = item.getChildByName('unit');
+
+            if(value) value.caption = (unitValue < 10 ? '0' : '') + unitValue.toString();
+
+            if(unit) unit.caption = '${' + CountdownWidget.UNIT_KEY_PREFIX + CountdownWidget.UNIT_NAMES[unitIndex] + '}';
         }
 
-        return result;
-    }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::get iterator()
-    public iterator(): IIterator
-    {
-        return EmptyIterator.INSTANCE;
+        this._displayedTime = totalSeconds;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/CountdownWidget.as::dispose()
@@ -271,7 +343,7 @@ export class CountdownWidget implements IWidget
             this._widgetWindow = null;
         }
 
-        // AS3: _windowManager.removeUpdateReceiver(this) — skipped for now
+        this._windowManager?.removeUpdateReceiver(this);
         this._windowManager = null;
         this._disposed = true;
     }

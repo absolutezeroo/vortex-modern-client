@@ -1,4 +1,4 @@
-import type {IWidget} from './IWidget';
+import type {IPetImageWidget} from './IPetImageWidget';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
@@ -6,20 +6,26 @@ import type {IWindow} from '@core/window/IWindow';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 import type {IIterator} from '@core/window/utils/IIterator';
 import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
+import type {IGetImageListener} from '@habbo/room/IGetImageListener';
+import type {IAssetReceiver} from '@core/window/IAssetReceiver';
+import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
+import {OrderedMap} from '@core/utils/OrderedMap';
+import {PetFigureData} from '@habbo/avatar/pets/PetFigureData';
+import {Vector3d} from '@room/utils/Vector3d';
 
 /**
  * Pet image rendering widget.
  *
  * Renders a pet figure with configurable direction, scale, zoom, and
- * shrink-on-overflow behavior. Supports asynchronous image loading.
+ * shrink-on-overflow behavior.
  *
- * In the AS3 version, implements IGetImageListener and uses PetFigureData
- * to parse the figure string. In the TypeScript port, pet metadata is
- * stored for the UI layer.
+ * The figure string is parsed by `PetFigureData` and the image comes from the room
+ * engine, which answers either with the bitmap in hand (`ImageResult.data`) or with a
+ * pending id it will call `imageReady()` back on. Both halves are live here.
  *
- * @see sources/win63_version/habbo/window/widgets/PetImageWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as
  */
-export class PetImageWidget implements IWidget
+export class PetImageWidget implements IPetImageWidget, IGetImageListener
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::TYPE
     public static readonly TYPE: string = 'pet_image';
@@ -28,12 +34,24 @@ export class PetImageWidget implements IWidget
     private static readonly FIGURE_KEY: string = 'pet_image:figure';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::SCALE_KEY
     private static readonly SCALE_KEY: string = 'pet_image:scale';
+    // Derived name: obfuscated in every tree, so the identifier is this port's; the
+    // trace points at the class that declares it.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::DIRECTION_KEY
     private static readonly DIRECTION_KEY: string = 'pet_image:direction';
+    // Derived name: obfuscated in every tree, so the identifier is this port's; the
+    // trace points at the class that declares it.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::ZOOM_X_KEY
     private static readonly ZOOM_X_KEY: string = 'pet_image:zoomX';
+    // Derived name: obfuscated in every tree, so the identifier is this port's; the
+    // trace points at the class that declares it.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::ZOOM_Y_KEY
     private static readonly ZOOM_Y_KEY: string = 'pet_image:zoomY';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::SHRINK_ON_OVERFLOW_KEY
     private static readonly SHRINK_ON_OVERFLOW_KEY: string = 'pet_image:shrink_on_overflow';
 
+    // Derived name: obfuscated in every tree, so the identifier is this port's; the
+    // trace points at the class that declares it.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::DIRECTIONS
     private static readonly DIRECTIONS: string[] = [
         'northeast', 'east', 'southeast', 'south',
         'southwest', 'west', 'northwest', 'north'
@@ -50,8 +68,21 @@ export class PetImageWidget implements IWidget
     private _windowManager: IHabboWindowManager | null = null;
     private _root: IWindowContainer | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::_bitmap
-    private _bitmap: IWindow | null = null;
+    private _bitmap: IBitmapWrapperWindow | null = null;
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/PetImageWidget.as::_region
     private _region: IWindow | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::_imageIds
+    // Derived name: obfuscated in every tree. Maps a pending room-engine request id to the
+    // figure it was made for, so a late `imageReady()` for a figure the widget has since
+    // moved off is ignored.
+    private _imageIds: OrderedMap<number, string> = new OrderedMap<number, string>();
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::_petBitmap
+    // Derived name: obfuscated in every tree. The image *before* zoom — `petWidth` and
+    // `petHeight` read off it, which is why it is kept rather than the two numbers.
+    private _petBitmap: ImageBitmap | null = null;
+    // TS-only: request generation, so a placeholder that arrives after the figure changed
+    // does not overwrite the pet image that replaced it.
+    private _placeholderRequestId: number = 0;
 
     constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
     {
@@ -63,7 +94,7 @@ export class PetImageWidget implements IWidget
         if(root)
         {
             this._root = root;
-            this._bitmap = root.findChildByName('bitmap');
+            this._bitmap = root.findChildByName('bitmap') as IBitmapWrapperWindow | null;
             this._region = root.findChildByName('region');
 
             this.refresh();
@@ -95,6 +126,7 @@ export class PetImageWidget implements IWidget
     public set figure(value: string)
     {
         this._figure = PetImageWidget.cleanupAvatarString(value);
+        this.refresh();
     }
 
     private _scale: number = 64;
@@ -109,6 +141,7 @@ export class PetImageWidget implements IWidget
     public set scale(value: number)
     {
         this._scale = value;
+        this.refresh();
     }
 
     private _direction: number = 2;
@@ -123,6 +156,7 @@ export class PetImageWidget implements IWidget
     public set direction(value: number)
     {
         this._direction = value;
+        this.refresh();
     }
 
     private _zoomX: number = 1;
@@ -137,6 +171,7 @@ export class PetImageWidget implements IWidget
     public set zoomX(value: number)
     {
         this._zoomX = value;
+        this.refresh();
     }
 
     private _zoomY: number = 1;
@@ -151,6 +186,7 @@ export class PetImageWidget implements IWidget
     public set zoomY(value: number)
     {
         this._zoomY = value;
+        this.refresh();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::_shrinkOnOverflow
@@ -166,9 +202,8 @@ export class PetImageWidget implements IWidget
     public set shrinkOnOverflow(value: boolean)
     {
         this._shrinkOnOverflow = value;
+        this.refresh();
     }
-
-    private _petWidth: number = 0;
 
     /**
 	 * The width of the pet image (before zoom).
@@ -176,10 +211,8 @@ export class PetImageWidget implements IWidget
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get petWidth()
     public get petWidth(): number
     {
-        return this._petWidth;
+        return this._petBitmap?.width ?? 0;
     }
-
-    private _petHeight: number = 0;
 
     /**
 	 * The height of the pet image (before zoom).
@@ -187,7 +220,7 @@ export class PetImageWidget implements IWidget
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get petHeight()
     public get petHeight(): number
     {
-        return this._petHeight;
+        return this._petBitmap?.height ?? 0;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::get properties()
@@ -281,11 +314,26 @@ export class PetImageWidget implements IWidget
     }
 
     /**
-	 * Refresh the pet bitmap rendering.
-	 *
-	 * In AS3, this fetches the pet image from the room engine and draws
-	 * to the bitmap wrapper. Stubbed for now — the UI layer handles
-	 * pet rendering.
+	 * Called back by the room engine when a request made by `refresh()` finishes loading.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::imageReady()
+    public imageReady(id: number, _data: ImageBitmap | null): void
+    {
+        const figure = this._imageIds.getValue(id);
+
+        // AS3 re-runs refresh() rather than drawing `data`: by the time the image lands the
+        // engine has it cached, so the second pass takes the synchronous half of ImageResult.
+        if(figure !== null && PetImageWidget.cleanupAvatarString(figure) === this._figure) this.refresh();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::imageFailed()
+    // Empty in AS3: the placeholder `refresh()` already drew stays.
+    public imageFailed(_id: number): void
+    {
+    }
+
+    /**
+	 * Ask the room engine for the current figure and draw the answer.
 	 *
 	 * Public: ProductIconWidget calls (petImageWidget.widget as PetImageWidget).refresh()
 	 * directly after changing blend, matching AS3's external call into this method.
@@ -293,6 +341,145 @@ export class PetImageWidget implements IWidget
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::refresh()
     public refresh(): void
     {
-        // TODO: pet bitmap rendering (Flash BitmapData logic)
+        const bitmap = this._bitmap;
+
+        if(!bitmap) return;
+
+        bitmap.bitmap = null;
+        bitmap.blend = this._widgetWindow?.blend ?? 0;
+
+        const figureData = new PetFigureData(this._figure);
+        const roomEngine = this._windowManager?.roomEngine ?? null;
+
+        if(roomEngine)
+        {
+            const result = roomEngine.getPetImage(
+                figureData.typeId,
+                figureData.paletteId,
+                figureData.color,
+                new Vector3d(this._direction * 45),
+                this._scale,
+                this,
+                true,
+                0,
+                figureData.customParts,
+                // AS3 assigns "std" to a local and passes it — the posture is never anything else.
+                'std'
+            );
+
+            if(result)
+            {
+                const id = result.id;
+
+                this._imageIds.remove(id);
+
+                if(id > 0) this._imageIds.add(id, this._figure);
+
+                bitmap.bitmap = result.data;
+                bitmap.disposesBitmap = true;
+            }
+        }
+
+        if(!bitmap.bitmap || bitmap.bitmap.width < 2)
+        {
+            // AS3 reads the placeholder straight off its component asset library, which is
+            // always resolved; this port loads window images through the ResourceManager, so
+            // the zoom tail below runs in the receiver instead of here.
+            this.requestPlaceholder();
+
+            return;
+        }
+
+        this.applyZoom();
+    }
+
+    // TS-only: AS3's `assets.getAssetByName(...).content` is synchronous, the ResourceManager
+    // is not. Same placeholder, same fallback rule, one callback later.
+    private requestPlaceholder(): void
+    {
+        const resourceManager = this._windowManager?.resourceManager ?? null;
+
+        if(!this._bitmap || !resourceManager) return;
+
+        // No `_png` suffix: images register under the bare file basename, so the AS3 name
+        // `placeholder_pet[_small]_png` would miss (see AvatarImageWidget.requestPlaceholder()).
+        const assetUri = 'placeholder_pet' + (this._scale === 32 ? '_small' : '');
+        const requestId = ++this._placeholderRequestId;
+        const receiver: IAssetReceiver = {
+            get disposed(): boolean
+            {
+                return false;
+            },
+            dispose(): void
+            {
+                // Receiver is request-scoped and owns no resources.
+            },
+            receiveAsset: (asset: ImageBitmap): void =>
+            {
+                if(this._disposed || requestId !== this._placeholderRequestId || !this._bitmap) return;
+
+                this._bitmap.bitmap = asset;
+                this._bitmap.disposesBitmap = false;
+                this.applyZoom();
+            }
+        };
+
+        resourceManager.retrieveAsset(assetUri, receiver);
+    }
+
+    /**
+	 * The tail of AS3's `refresh()`: remember the pre-zoom image, halve the zoom when the pet
+	 * would overflow its window, and redraw scaled when either factor is not 1.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::refresh()
+    private applyZoom(): void
+    {
+        const bitmap = this._bitmap;
+
+        if(!bitmap) return;
+
+        let zoomX = this._zoomX;
+        let zoomY = this._zoomY;
+
+        this._petBitmap = bitmap.bitmap;
+
+        if(this._shrinkOnOverflow && this._petBitmap && this._widgetWindow
+            && (this._petBitmap.width * zoomX > this._widgetWindow.width
+                || this._petBitmap.height * zoomY > this._widgetWindow.height))
+        {
+            zoomX *= 0.5;
+            zoomY *= 0.5;
+        }
+
+        if(zoomX !== 1 || zoomY !== 1)
+        {
+            const zoomed = PetImageWidget.zoomBitmapData(bitmap.bitmap, zoomX, zoomY);
+
+            if(zoomed) bitmap.bitmap = zoomed;
+        }
+
+        bitmap.invalidate();
+    }
+
+    /**
+	 * Scales a bitmap by the widget's zoom factors, the way AS3 redraws it through a scaled
+	 * Matrix. `OffscreenCanvas.transferToImageBitmap()` keeps the call synchronous, which
+	 * `refresh()` needs — `createImageBitmap()` would not.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/PetImageWidget.as::zoomBitmapData()
+    private static zoomBitmapData(bitmap: ImageBitmap | null, zoomX: number, zoomY: number): ImageBitmap | null
+    {
+        if(bitmap === null) return null;
+
+        const width = Math.max(1, Math.floor(bitmap.width * zoomX));
+        const height = Math.max(1, Math.floor(bitmap.height * zoomY));
+        const canvas = new OffscreenCanvas(width, height);
+        const context = canvas.getContext('2d');
+
+        if(context === null) return null;
+
+        context.drawImage(bitmap, 0, 0, width, height);
+
+        return canvas.transferToImageBitmap();
     }
 }

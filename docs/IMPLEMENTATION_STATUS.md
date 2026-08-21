@@ -2591,12 +2591,12 @@ with it, more gaps. That is the expected direction, not a regression.
 
 | | first run | after the trace pass | after `habbo/window` |
 |---|---|---|---|
-| AS3 files with >=1 `::member` trace | 877 | 879 | **885** |
-| readable members declared in them | 15,884 | 15,955 | **16,006** |
-| carrying a trace | 6,623 (41.7%) | 6,653 (41.7%) | **6,802 (42.5%)** |
-| **absent from the TS — public/protected** | 819 | 787 | **701** <- the worklist |
-| absent from the TS — private | 1,526 | 1,526 | 1,511 |
-| present in the TS but untraced — public/protected | 4,445 | 4,495 | 4,494 |
+| AS3 files with >=1 `::member` trace | 877 | 879 | **888** |
+| readable members declared in them | 15,884 | 15,955 | **16,035** |
+| carrying a trace | 6,623 (41.7%) | 6,653 (41.7%) | **6,847 (42.7%)** |
+| **absent from the TS — public/protected** | 819 | 787 | **693** <- the worklist |
+| absent from the TS — private | 1,526 | 1,526 | 1,504 |
+| present in the TS but untraced — public/protected | 4,445 | 4,495 | 4,493 |
 | present in the TS but untraced — private | 2,471 | 2,494 | 2,498 |
 | files cited at file level only (unmeasurable) | 1,877 | 1,907 | 1,909 |
 | members whose AS3 name is obfuscated | 3,517 | 3,555 | 3,555 |
@@ -2645,7 +2645,7 @@ member-level trace at all, so the tool cannot say whether the class is ported or
 referenced. Counting them as 100% uncovered would be arithmetically true and analytically
 worthless, so they sit outside the denominator.
 
-### The first worklist module: `habbo/window`, 92 -> 6 (2026-08-20)
+### The first worklist module: `habbo/window`, 92 -> 0 (2026-08-20)
 
 The measure's first consumer. `habbo/window` went from **92 absent public/protected members to
 6**, and from 68.8% to 77.4% of its readable members traced; the global worklist went 787 -> 701.
@@ -2697,13 +2697,60 @@ Two new files carry derived names, both said so at the declaration: `BadgeImageT
 (`_SafeCls_3232`, obfuscated in all four trees on disk, including the 2016 one) and
 `IPixelLimitWidget` (`_SafeCls_3624`, likewise).
 
-**The 6 that remain are one gap, not six.** `PetImageWidget.imageReady`/`imageFailed`,
+#### The four widgets that rendered nothing
+
+The last 6 members were one gap, not six: `PetImageWidget.imageReady`/`imageFailed`,
 `FurnitureImageWidget.imageReady`/`imageFailed`, `CountdownWidget.update` and
-`LimitedItemGridOverlayWidget.update` are all members of widgets whose `refresh()` is a stub
-reading *"the UI layer handles rendering"* — the SolidJS-era phrasing this port no longer has a UI
-layer for (see `project_no_solidjs`). `pet_image` is used by 5 shipped layouts and draws nothing;
-`countdown` by 14, and it exposes `getDisplayValues()` instead of building the counter windows AS3
-builds. That is the next slice, and it is a feature port, not a member fill.
+`LimitedItemGridOverlayWidget.update` all belong to widgets whose `refresh()` was a stub reading
+*"the UI layer handles rendering"* — the SolidJS-era phrasing this port no longer has a UI layer
+for (see `project_no_solidjs`). Between them they are used by 32 shipped layouts and drew nothing.
+All four now render, and `habbo/window` is at **0** absent public/protected members, 79% traced.
+
+- **`FurnitureImageWidget`** asks the room engine for the image, keeps the pending request id
+  against the type it was made for so a late `imageReady()` for a type the widget has moved off is
+  ignored, and falls back to `placeholder_furni[_small]`. Its three setters — `furnitureType`,
+  `scale`, `direction` — did not call `refresh()` at all, so even a working renderer would have
+  drawn the constructor's value forever.
+- **`PetImageWidget`** parses the figure with `PetFigureData`, calls `getPetImage()` with the
+  custom parts, applies `zoomX`/`zoomY`, and halves them when `shrinkOnOverflow` is set and the pet
+  would overflow its window. `petWidth`/`petHeight` now read off the pre-zoom bitmap AS3 keeps for
+  exactly that purpose; they were two fields nothing ever assigned, so both answered 0. Its six
+  setters were likewise refresh-less.
+- **`CountdownWidget`** builds its display out of the `clock_base_xml` item list, cloning the
+  layout's `counter` and `separator` items into `digits` groups and rewriting the `value`/`unit`
+  captions per tick. The port had `digits` as a stored field; AS3 reads it back off the list as
+  `(numListItems + 1) / 2`, which is what makes the setter's "did it actually change" test work,
+  and the port's `getDisplayValues()` — a TS-only shim with no callers — is gone. It also
+  registers itself as an update receiver at priority 10, which nothing did before, so the clock
+  never ticked.
+- **`LimitedItemGridOverlayWidget`**'s shine is a scroll, not a fade: the plaque asset is taller
+  than the window, and every 10s a 250ms sweep walks the visible rectangle down it. `animated`
+  now registers/removes the update receiver instead of only setting a boolean.
+
+Two AS3 members had to be added under them: `RoomEngine.getFurnitureTypeId()` (delegating to
+`RoomContentLoader.getActiveObjectTypeId()`, which already existed), and the derived-name
+interfaces `IFurnitureImageWidget`, `IPetImageWidget` and `ICountdownWidget` — `_SafeCls_3791`,
+`_SafeCls_3710` and `_SafeCls_2433`, all obfuscated in every tree, all implemented by exactly one
+class each.
+
+**One member stayed a TODO, and it is an asset-pipeline gap, not a widget one.**
+`LimitedItemGridOverlayWidget.set serialNumber()` also draws the number, via
+`habbo/window/utils/_SafeCls_4213.as::createBitmap()`, out of ten `unique_item_number_glyph_<n>`
+assets. Those are not files: the WIN63 manifest (`src/layouts/2614_manifest_xml$fb2a1694….xml`)
+declares them as named sub-rectangles of the single shipped `unique_item_label_number_glyphs.png`,
+and this port's asset pipeline never reads that manifest. `BitmapDataAsset` already carries a
+`rectangle`, so the missing half is registration. Whatever else that manifest names is invisible
+for the same reason — worth measuring before the next asset bug is diagnosed as something else.
+
+**Verified headlessly, and only as far as that goes.** `vortex-glaze` exposes
+`window.glaze.state.openLayout()`, which makes it a widget-construction bench with no emulator:
+eight layouts that between them instantiate `badge_image`, `countdown`, `pet_image`, `product_icon`
+and `limited_item_overlay_grid` (`Achievement`, `AchievementResolutionCompleted`,
+`AchievementResolutionProgress`, `AchievementsResolutions`, `collectible_view_xml`,
+`product_icon_xml`, `furni_chest_contents_xml`, `gridItem`) all build with zero console errors and
+zero page errors. What that does **not** cover: glaze has no room engine, so every `refresh()`
+takes the placeholder branch and the `getPetImage()`/`getFurnitureImage()` half is still unexercised
+— that needs the emulator and a login.
 
 ### Trace hygiene, 2026-08-20
 
