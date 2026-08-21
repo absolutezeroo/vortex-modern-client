@@ -490,12 +490,11 @@ export class GlazeBoot
         for(const key of imageBundle.listKeys('images/'))
         {
             const name = key.split('/').pop()!.replace('.png', '');
-            const url = imageBundle.getUrl(key);
 
-            if(url)
-            {
-                windowManager.registerAssetUrl(name, url);
-            }
+            // Thunk, not a URL — same reason as the client's readImageAssets(): building
+            // 2,891 blob URLs up front costs ~580 ms of editor boot for assets the edited
+            // layout mostly never references.
+            windowManager.registerAssetUrl(name, () => imageBundle.getUrl(key));
         }
     }
 

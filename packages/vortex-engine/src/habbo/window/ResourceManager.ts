@@ -1,5 +1,5 @@
 import {Logger} from '@core/utils/Logger';
-import type {IResourceManager} from '@core/window/IResourceManager';
+import type {AssetUrlSource, IResourceManager} from '@core/window/IResourceManager';
 import type {IAssetReceiver} from '@core/window/IAssetReceiver';
 import type {IHabboWindowManager} from './IHabboWindowManager';
 
@@ -35,7 +35,7 @@ export class ResourceManager implements IResourceManager
 
     // TS-only: no AS3 counterpart; AS3 hands the URL straight to
     // `assets.loadAssetFromFile()`, where this port defers the fetch to first request.
-    private _assetUrls: Map<string, string> = new Map();
+    private _assetUrls: Map<string, AssetUrlSource> = new Map();
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::_assetReceivers
     private _pendingReceivers: Map<string, IAssetReceiver[]> = new Map();
@@ -74,7 +74,7 @@ export class ResourceManager implements IResourceManager
 
     // TS-only: no AS3 counterpart; registers a URL to be fetched on first request. AS3
     // never defers — `retrieveAsset()` calls `assets.loadAssetFromFile()` on the spot.
-    public registerAssetUrl(name: string, url: string): void 
+    public registerAssetUrl(name: string, url: AssetUrlSource): void
     {
         const resolvedName = this.resolveAssetName(name);
 
@@ -248,9 +248,14 @@ export class ResourceManager implements IResourceManager
      * so the start and the completion arm live together here.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::passAssetToCallback()
-    private loadFromUrl(name: string, url: string): void 
+    private loadFromUrl(name: string, url: AssetUrlSource): void
     {
-        fetch(url)
+        // A thunk that yields nothing means the name was registered but its source cannot
+        // produce a URL after all; take the same arm as a failed fetch below, which clears
+        // `_loading` and hands receivers the missing-image placeholder.
+        const resolved = typeof url === 'function' ? url() : url;
+
+        (resolved ? fetch(resolved) : Promise.reject(new Error(`No URL for asset "${name}"`)))
             .then(response => response.blob())
             .then(blob => createImageBitmap(blob))
             .then(bitmap => 

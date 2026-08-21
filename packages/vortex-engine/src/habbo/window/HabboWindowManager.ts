@@ -4,6 +4,7 @@ import {ElementRegistry} from './ElementRegistry';
 import {HabboWindowTrackingEvent} from './enum/HabboWindowTrackingEvent';
 import type {IHabboWindowManager} from './IHabboWindowManager';
 import type {IElementDescriptionData} from './IElementDescriptor';
+import type {AssetUrlSource} from '@core/window/IResourceManager';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContext} from '@core/window/IWindowContext';
 import type {IInputEventTracker} from '@core/window/IInputEventTracker';
@@ -178,7 +179,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
      * the buffer those calls are silently dropped.
      */
     // TS-only: see above.
-    private _pendingAssetUrls: Map<string, string> = new Map();
+    private _pendingAssetUrls: Map<string, AssetUrlSource> = new Map();
 
     // TS-only: see `_pendingAssetUrls`.
     private _pendingAssets: Map<string, ImageBitmap> = new Map();
@@ -1284,7 +1285,8 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
      * @param name - The asset name
      * @param url - The URL to fetch the image from
      */
-    public registerAssetUrl(name: string, url: string): void
+    // TS-only: no AS3 counterpart; the deferred-fetch half of `registerAsset()`, forwarded to `ResourceManager`.
+    public registerAssetUrl(name: string, url: AssetUrlSource): void
     {
         if(this._resourceManager)
         {

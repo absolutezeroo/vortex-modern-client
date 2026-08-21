@@ -2,6 +2,19 @@ import type {IAssetReceiver} from './IAssetReceiver';
 import type {IDisposable} from "../runtime/IDisposable";
 
 /**
+ * Where a lazily-loaded asset's URL comes from: either the URL itself, or a thunk called
+ * the first time the asset is actually requested.
+ *
+ * TS-only: no AS3 counterpart — the whole deferred-URL mechanism is port-invented (AS3 hands
+ * an `[Embed]` to `assets.loadAssetFromFile()` on the spot). The thunk form exists because the
+ * caller registering the images/ bundle knows all 2,891 names up front but building a blob URL
+ * for each costs ~580 ms of main thread and a 9.1 MB copy of the bundle in blob storage, for
+ * assets most sessions never ask for. Registering the *name* eagerly keeps `hasAsset()` honest;
+ * only the URL is deferred.
+ */
+export type AssetUrlSource = string | (() => string | null);
+
+/**
  * Interface for the window resource manager.
  *
  * Manages asset retrieval, caching, and delivery to IAssetReceiver instances.
@@ -70,9 +83,10 @@ export interface IResourceManager extends IDisposable
 	 * for this name, the URL is fetched and decoded on demand.
 	 *
 	 * @param name - The asset name
-	 * @param url - The URL to fetch the image from
+	 * @param url - The URL to fetch the image from, or a thunk producing it on first request
 	 */
-    registerAssetUrl(name: string, url: string): void;
+    // TS-only: no AS3 counterpart; AS3 never defers — `retrieveAsset()` hands the embed to `assets.loadAssetFromFile()` on the spot.
+    registerAssetUrl(name: string, url: AssetUrlSource): void;
 
     /**
 	 * Checks whether an asset name is known - registered as a decoded bitmap or as a

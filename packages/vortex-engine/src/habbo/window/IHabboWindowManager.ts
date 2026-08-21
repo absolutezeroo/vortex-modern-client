@@ -2,6 +2,7 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IUpdateReceiver} from '@core/runtime/IContext';
 import type {IElementDescriptionData} from './IElementDescriptor';
 import type {ElementRegistry} from './ElementRegistry';
+import type {AssetUrlSource} from '@core/window/IResourceManager';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContext} from '@core/window/IWindowContext';
 import type {IInputEventTracker} from '@core/window/IInputEventTracker';
@@ -256,7 +257,7 @@ export interface IHabboWindowManager extends IDisposable {
 
     // TS-only: no AS3 counterpart; the deferred-fetch half of the pair above. AS3 never
     // defers — `ResourceManager.retrieveAsset()` calls `assets.loadAssetFromFile()` on the spot.
-    registerAssetUrl(name: string, url: string): void;
+    registerAssetUrl(name: string, url: AssetUrlSource): void;
 
     // TS-only: stands in for AS3's `assets.getAssetByName(name) != null` pre-check, which
     // the port cannot make for images - they live in the ResourceManager, not in a

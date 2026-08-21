@@ -6,6 +6,7 @@ import {IID_CoreCommunicationManager} from '@iid/IIDCoreCommunicationManager';
 import {Logger} from '@core/utils/Logger';
 import {FRAME_CHANNEL_PIXI, FrameTimings} from '@core/utils/FrameTimings';
 import type {CoreComponentContext} from '@core/runtime/CoreComponentContext';
+import type {AssetUrlSource} from '@core/window/IResourceManager';
 import type {IElementDescriptionData} from '@habbo/window/IElementDescriptor';
 import type {ISkinData} from '@core/window/graphics/renderer/BitmapSkinParser';
 import type {ICoreCommunicationManager} from '@core/communication/ICoreCommunicationManager';
@@ -99,8 +100,11 @@ export interface IVortexWindowAssets
     /**
      * Image blob URLs keyed by asset name, for the window manager's `ResourceManager` — the
      * registry every `asset_uri` in a layout resolves against.
+     *
+     * A value may be a thunk instead of a URL, and for the images/ bundle it is: see
+     * `AssetUrlSource`. The names still all go in before the engine boots.
      */
-    imageUrls?: Map<string, string>;
+    imageUrls?: Map<string, AssetUrlSource>;
 
     /**
      * Decoded bitmaps for the images that ported code reads straight out of the *asset library*
