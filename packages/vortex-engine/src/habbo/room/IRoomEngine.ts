@@ -418,6 +418,30 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomStringValue()
     getRoomStringValue(roomId: number, key: string): string | null;
 
+    /**
+	 * Room mouse events below this screen Y are swallowed. 0 disables the threshold.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::get mouseEventsDisabledAboveY()
+    mouseEventsDisabledAboveY: number;
+
+    /**
+	 * Room mouse events left of this screen X are swallowed. 0 disables the threshold.
+	 *
+	 * `HabboFreeFlowChat` sets it to the width of the chat history column.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::get mouseEventsDisabledLeftToX()
+    mouseEventsDisabledLeftToX: number;
+
+    /**
+	 * Registers a named screen rectangle that swallows room mouse events. An empty
+	 * rectangle removes it, so a caller can keep calling this as its window moves.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::setMouseEventsDisabledRect()
+    setMouseEventsDisabledRect(name: string, rect: {x: number; y: number; width: number; height: number} | null): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::removeMouseEventsDisabledRect()
+    removeMouseEventsDisabledRect(name: string): void;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get isInitialized()
     readonly isInitialized: boolean;
 

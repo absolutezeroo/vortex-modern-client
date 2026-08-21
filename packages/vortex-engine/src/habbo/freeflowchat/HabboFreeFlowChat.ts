@@ -431,6 +431,19 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._roomUI ? this._roomUI.mouseEventPositionHasContextMenu(event) : false;
     }
 
+    /**
+	 * Tells the room engine to swallow mouse events left of `x`, so the chat-history column
+	 * does not click through to the room behind it. 0 clears the threshold.
+	 *
+	 * Its only AS3 callers are in `history/visualization/ChatHistoryTray.as`, which this port
+	 * has not got yet — the tray, its scroll bar and its scroll view are all unported.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::disableRoomMouseEventsLeftOfX()
+    public disableRoomMouseEventsLeftOfX(x: number): void
+    {
+        if(this._roomEngine) this._roomEngine.mouseEventsDisabledLeftToX = x;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::selectAvatarWithChatItem()
     selectAvatarWithChatItem(item: ChatItem): void
     {

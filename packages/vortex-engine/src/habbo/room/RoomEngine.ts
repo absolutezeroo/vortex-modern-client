@@ -175,6 +175,7 @@ import {
     ThrowDiceMessageComposer
 } from '@habbo/communication/messages/outgoing/room/furniture';
 import {RoomObjectMouseEvent} from '@room/events/RoomObjectMouseEvent';
+import {OrderedMap} from '@core/utils/OrderedMap';
 
 const log = Logger.getLogger('habbo.room.RoomEngine');
 
@@ -287,6 +288,18 @@ export class RoomEngine extends Component implements IRoomEngine,
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_roomDatas
     private _roomDatas: Map<string, RoomData> = new Map();
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_mouseEventsDisabledAboveY
+    // Derived name: obfuscated in every tree; the accessor it backs is readable.
+    private _mouseEventsDisabledAboveY: number = 0;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_mouseEventsDisabledLeftToX
+    // Derived name: obfuscated in every tree; the accessor it backs is readable.
+    private _mouseEventsDisabledLeftToX: number = 0;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_mouseEventsDisabledRects
+    // Derived name: obfuscated in every tree. Named rectangles that swallow room mouse
+    // events — the room-tools toolbar and the chat-history handle each register one.
+    private _mouseEventsDisabledRects: OrderedMap<string, {x: number; y: number; width: number; height: number}> | null =
+        new OrderedMap<string, {x: number; y: number; width: number; height: number}>();
 
     private _roomDragging: boolean = false;
     private _roomDragStarted: boolean = false;
@@ -809,6 +822,89 @@ export class RoomEngine extends Component implements IRoomEngine,
      * individual rooms.
      */
     private _roomManagerInitialized: boolean = false;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get mouseEventsDisabledAboveY()
+    get mouseEventsDisabledAboveY(): number
+    {
+        return this._mouseEventsDisabledAboveY;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::set mouseEventsDisabledAboveY()
+    set mouseEventsDisabledAboveY(value: number)
+    {
+        this._mouseEventsDisabledAboveY = value;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get mouseEventsDisabledLeftToX()
+    get mouseEventsDisabledLeftToX(): number
+    {
+        return this._mouseEventsDisabledLeftToX;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::set mouseEventsDisabledLeftToX()
+    set mouseEventsDisabledLeftToX(value: number)
+    {
+        this._mouseEventsDisabledLeftToX = value;
+    }
+
+    /**
+	 * Registers a screen rectangle that swallows room mouse events, under a caller-chosen
+	 * name so the same caller can move or drop it later. An empty rectangle removes it.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setMouseEventsDisabledRect()
+    setMouseEventsDisabledRect(name: string, rect: {x: number; y: number; width: number; height: number} | null): void
+    {
+        if(this._mouseEventsDisabledRects === null || !name || name.length === 0) return;
+
+        if(rect === null || rect.width <= 0 || rect.height <= 0)
+        {
+            this._mouseEventsDisabledRects.remove(name);
+
+            return;
+        }
+
+        // AS3 clones the rectangle: the callers hand in a scratch one they keep reusing.
+        const clone = {x: rect.x, y: rect.y, width: rect.width, height: rect.height};
+
+        if(this._mouseEventsDisabledRects.hasKey(name)) this._mouseEventsDisabledRects.replace(name, clone);
+        else this._mouseEventsDisabledRects.add(name, clone);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::removeMouseEventsDisabledRect()
+    removeMouseEventsDisabledRect(name: string): void
+    {
+        if(this._mouseEventsDisabledRects === null || !name || name.length === 0) return;
+
+        this._mouseEventsDisabledRects.remove(name);
+    }
+
+    /**
+	 * Note the coordinate spaces, because they do not obviously match: the rectangles come
+	 * from `IWindow.getGlobalRectangle()` (desktop space) while `x`/`y` here are canvas-local
+	 * (`RoomDesktop.canvasMouseHandler()` subtracts the canvas' global position). AS3 does the
+	 * identical subtraction in its own `canvasMouseHandler()`, so this is not a port slip —
+	 * it works because the room canvas sits at the desktop origin. Do not "fix" it by adding
+	 * an offset without checking that first.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::isMouseEventDisabledByRect()
+    private isMouseEventDisabledByRect(x: number, y: number): boolean
+    {
+        if(this._mouseEventsDisabledRects === null) return false;
+
+        for(let i = 0; i < this._mouseEventsDisabledRects.length; i++)
+        {
+            const rect = this._mouseEventsDisabledRects.getWithIndex(i);
+
+            if(rect !== null
+                && x >= rect.x && x < rect.x + rect.width
+                && y >= rect.y && y < rect.y + rect.height)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get isInitialized()
     get isInitialized(): boolean
@@ -4224,6 +4320,19 @@ export class RoomEngine extends Component implements IRoomEngine,
         buttonDown: boolean
     ): void 
     {
+        // AS3 (sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as:2350-2362): a drag already under way keeps the room, whatever it is
+        // dragged over; otherwise the two thresholds and the named rectangles swallow the
+        // event. Without this, a click on the room-tools toolbar or the chat-history handle
+        // also reached the room underneath.
+        if(!this._roomDragging)
+        {
+            if(this._mouseEventsDisabledAboveY > 0 && y < this._mouseEventsDisabledAboveY) return;
+
+            if(this._mouseEventsDisabledLeftToX > 0 && x < this._mouseEventsDisabledLeftToX) return;
+
+            if(this.isMouseEventDisabledByRect(x, y)) return;
+        }
+
         if(this._activeRoomId < 0) return;
 
         const key = this._activeRoomId * 1000 + canvasId;
@@ -4449,6 +4558,10 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         // Unregister from update loop
         this.removeUpdateReceiver(this);
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as:544-548 disposes the disabled-rect map here.
+        this._mouseEventsDisabledRects?.dispose();
+        this._mouseEventsDisabledRects = null;
 
         // AS3's removeUpdateReceiver stops its per-frame tick; here the canvas-sync tick
         // rides the PixiJS Ticker that setTicker() attached, so it must be detached too —

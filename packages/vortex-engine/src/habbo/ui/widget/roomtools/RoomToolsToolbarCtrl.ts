@@ -108,6 +108,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
 
         // AS3 unregisters first — the ctrl keeps ticking against a disposed window otherwise.
         this.removeUpdateRegistration();
+        this.removeRoomMouseBlockRect();
 
         if(this._history) 
         {
@@ -270,6 +271,66 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
                 y: this._window.position.y - historyWindow.height,
             };
         }
+
+        this.updateRoomMouseBlockRect();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::set visible()
+    // The override exists for the two calls below it: the base setter only flips the window.
+    public override set visible(value: boolean)
+    {
+        if(!this._window) return;
+
+        this._window.visible = value;
+
+        if(value) this.updatePosition();
+        else this.removeRoomMouseBlockRect();
+    }
+
+    /**
+	 * Tells the room engine to swallow mouse events over the toolbar, so a click on it does
+	 * not also reach the room underneath. Re-read on every reposition, and dropped whenever
+	 * the toolbar is hidden or its background has no size.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::updateRoomMouseBlockRect()
+    private updateRoomMouseBlockRect(): void
+    {
+        const roomEngine = this.handler?.container?.roomEngine ?? null;
+
+        if(!this._window || !this._window.visible || !roomEngine)
+        {
+            this.removeRoomMouseBlockRect();
+
+            return;
+        }
+
+        const background = this._window.findChildByName('window_bg');
+
+        if(!background || !background.visible || background.width <= 0 || background.height <= 0)
+        {
+            this.removeRoomMouseBlockRect();
+
+            return;
+        }
+
+        const rect = {x: 0, y: 0, width: 0, height: 0};
+
+        background.getGlobalRectangle(rect);
+
+        if(rect.width <= 0 || rect.height <= 0)
+        {
+            this.removeRoomMouseBlockRect();
+
+            return;
+        }
+
+        roomEngine.setMouseEventsDisabledRect('room_tools_toolbar', rect);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::removeRoomMouseBlockRect()
+    private removeRoomMouseBlockRect(): void
+    {
+        this.handler?.container?.roomEngine?.removeMouseEventsDisabledRect('room_tools_toolbar');
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::setCollapsed()
