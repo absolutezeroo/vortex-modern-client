@@ -70,6 +70,10 @@ import {RoomObjectAvatarUpdateMessage} from './messages/RoomObjectAvatarUpdateMe
 import {RoomObjectAvatarFigureUpdateMessage} from './messages/RoomObjectAvatarFigureUpdateMessage';
 import {RoomObjectAvatarPostureUpdateMessage} from './messages/RoomObjectAvatarPostureUpdateMessage';
 import {RoomObjectAvatarGestureUpdateMessage} from './messages/RoomObjectAvatarGestureUpdateMessage';
+import {RoomObjectAvatarBlockedUpdateMessage} from './messages/RoomObjectAvatarBlockedUpdateMessage';
+import {RoomObjectHeightUpdateMessage} from './messages/RoomObjectHeightUpdateMessage';
+import {RoomObjectAvatarFlatControlUpdateMessage} from './messages/RoomObjectAvatarFlatControlUpdateMessage';
+import {RoomObjectAvatarPetGestureUpdateMessage} from './messages/RoomObjectAvatarPetGestureUpdateMessage';
 import {RoomObjectAvatarEffectUpdateMessage} from './messages/RoomObjectAvatarEffectUpdateMessage';
 import {RoomObjectAvatarChatUpdateMessage} from './messages/RoomObjectAvatarChatUpdateMessage';
 import {RoomObjectAvatarTypingUpdateMessage} from './messages/RoomObjectAvatarTypingUpdateMessage';
@@ -2392,6 +2396,50 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true;
     }
 
+    /**
+	 * The room-rights level the server reports for an avatar. `AvatarLogic` turns it into the
+	 * `figure_flat_control` model value the visualization draws the marker from.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectUserFlatControl()
+    updateObjectUserFlatControl(roomId: number, objectId: number, flatControl: string | null): boolean
+    {
+        const object = this.getRoomObject(roomId, objectId, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) as IRoomObjectController | null;
+
+        if(!object || !object.getEventHandler()) return false;
+
+        object.getEventHandler()!.processUpdateMessage(new RoomObjectAvatarFlatControlUpdateMessage(flatControl));
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectUserBlocked()
+    updateObjectUserBlocked(roomId: number, objectId: number, isBlocked: boolean): boolean
+    {
+        const object = this.getRoomObject(roomId, objectId, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) as IRoomObjectController | null;
+
+        if(!object || !object.getEventHandler()) return false;
+
+        object.getEventHandler()!.processUpdateMessage(new RoomObjectAvatarBlockedUpdateMessage(isBlocked));
+
+        return true;
+    }
+
+    /**
+	 * Pets live in the user category, so this looks the object up exactly as the avatar
+	 * updates do — AS3 calls the same `getObjectUser()` here.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectPetGesture()
+    updateObjectPetGesture(roomId: number, objectId: number, gesture: string): boolean
+    {
+        const object = this.getRoomObject(roomId, objectId, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) as IRoomObjectController | null;
+
+        if(!object || !object.getEventHandler()) return false;
+
+        object.getEventHandler()!.processUpdateMessage(new RoomObjectAvatarPetGestureUpdateMessage(gesture));
+
+        return true;
+    }
+
     updateRoomObjectUserEffect(roomId: number, objectId: number, effect: number, delay = 0): boolean 
     {
         const room = this.getRoomInstance(roomId);
@@ -3200,6 +3248,42 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectFurnitureHeight()
+    updateObjectFurnitureHeight(roomId: number, id: number, height: number): boolean
+    {
+        const object = this.getRoomObject(roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) as IRoomObjectController | null;
+
+        if(!object) return false;
+
+        // AS3 re-checks the handler inside the null check it already made; kept as the
+        // same two-step, because a furniture object with no handler must still answer true.
+        if(object.getEventHandler())
+        {
+            object.getEventHandler()!.processUpdateMessage(new RoomObjectHeightUpdateMessage(null, null, height));
+        }
+
+        return true;
+    }
+
+    /**
+	 * Stamps a fresh rental/expiry countdown on an existing furniture object. The pair is
+	 * read back by `InfoStandWidgetHandler`, which subtracts the elapsed time from the stamp.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectFurnitureExpiryTime()
+    updateObjectFurnitureExpiryTime(roomId: number, id: number, expiryTime: number): boolean
+    {
+        const object = this.getRoomObject(roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) as IRoomObjectController | null;
+
+        if(!object) return false;
+
+        object.getModelController().setNumber(RoomObjectVariableEnum.FURNITURE_EXPIRY_TIME, expiryTime);
+        // AS3 stamps `getTimer()`; this port stamps `Date.now()` here and at object creation
+        // alike, and the one reader subtracts the two, so the epoch does not matter.
+        object.getModelController().setNumber(RoomObjectVariableEnum.FURNITURE_EXPIRY_TIMESTAMP, Date.now());
+
+        return true;
+    }
+
     updateObjectFurnitureLocation(
         roomId: number,
         id: number,
@@ -3237,6 +3321,19 @@ export class RoomEngine extends Component implements IRoomEngine,
         );
 
         object.getEventHandler()!.processUpdateMessage(message);
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectWallItemExpiryTime()
+    updateObjectWallItemExpiryTime(roomId: number, id: number, expiryTime: number): boolean
+    {
+        const object = this.getObjectWallItem(roomId, id);
+
+        if(!object) return false;
+
+        object.getModelController().setNumber(RoomObjectVariableEnum.FURNITURE_EXPIRY_TIME, expiryTime);
+        object.getModelController().setNumber(RoomObjectVariableEnum.FURNITURE_EXPIRY_TIMESTAMP, Date.now());
 
         return true;
     }

@@ -16,6 +16,11 @@ export const RoomObjectVariableEnum = {
     AVATAR_RACE: 'race',
     AVATAR_GENDER: 'gender',
     AVATAR_OWN_USER: 'own_user',
+    // Derived name: the constant is obfuscated in the primary tree (`_SafeStr_11656`) and
+    // absent from the 2016 one; `AVATAR_BLOCKED` is derived from its value and from its
+    // position, right after AVATAR_OWN_USER, in the AS3 declaration order.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectVariableEnum.as::AVATAR_BLOCKED
+    AVATAR_BLOCKED: 'blocked',
     AVATAR_TALK: 'figure_talk',
     AVATAR_DANCE: 'figure_dance',
     AVATAR_SLEEP: 'figure_sleep',

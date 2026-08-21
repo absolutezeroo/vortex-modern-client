@@ -100,6 +100,18 @@ export interface IRoomCreator
     /**
 	 * Update floor furniture location for sliding.
 	 */
+    /**
+	 * A new stack height for a furniture object already in the room.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectFurnitureHeight()
+    updateObjectFurnitureHeight(roomId: number, id: number, height: number): boolean;
+
+    /**
+	 * A new rental/expiry countdown for a furniture object already in the room.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectFurnitureExpiryTime()
+    updateObjectFurnitureExpiryTime(roomId: number, id: number, expiryTime: number): boolean;
+
     // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectFurnitureLocation()
     updateObjectFurnitureLocation(
         roomId: number,
@@ -252,6 +264,12 @@ export interface IRoomCreator
     /**
 	 * Update wall item location for sliding.
 	 */
+    /**
+	 * A new rental/expiry countdown for a wall item already in the room.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectWallItemExpiryTime()
+    updateObjectWallItemExpiryTime(roomId: number, id: number, expiryTime: number): boolean;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectWallItemLocation()
     updateObjectWallItemLocation(
         roomId: number,
@@ -379,6 +397,24 @@ export interface IRoomCreator
 	 * Update user action (expression, dance, sleep, typing, carry, use object).
 	 * Based on AS3: updateObjectUserAction
 	 */
+    /**
+	 * The room-rights level the server reports for an avatar.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectUserFlatControl()
+    updateObjectUserFlatControl(roomId: number, objectId: number, flatControl: string | null): boolean;
+
+    /**
+	 * Whether an avatar is blocked for the local user.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectUserBlocked()
+    updateObjectUserBlocked(roomId: number, objectId: number, isBlocked: boolean): boolean;
+
+    /**
+	 * A pet gesture. Pets live in the user object category.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectPetGesture()
+    updateObjectPetGesture(roomId: number, objectId: number, gesture: string): boolean;
+
     // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectUserAction()
     updateObjectUserAction(
         roomId: number,

@@ -33,6 +33,7 @@ import {RoomObjectAvatarDirectionUpdateMessage} from '../../messages/RoomObjectA
 import {RoomObjectAvatarMutedUpdateMessage} from '../../messages/RoomObjectAvatarMutedUpdateMessage';
 import {RoomObjectAvatarPlayingGameMessage} from '../../messages/RoomObjectAvatarPlayingGameMessage';
 import {RoomObjectAvatarPlayerValueUpdateMessage} from '../../messages/RoomObjectAvatarPlayerValueUpdateMessage';
+import {RoomObjectAvatarBlockedUpdateMessage} from '../../messages/RoomObjectAvatarBlockedUpdateMessage';
 import {RoomObjectAvatarFlatControlUpdateMessage} from '../../messages/RoomObjectAvatarFlatControlUpdateMessage';
 import {RoomObjectAvatarGuideStatusUpdateMessage} from '../../messages/RoomObjectAvatarGuideStatusUpdateMessage';
 import {RoomObjectAvatarOwnMessage} from '../../messages/RoomObjectAvatarOwnMessage';
@@ -288,10 +289,24 @@ export class AvatarLogic extends MovingObjectLogic
             return;
         }
 
+        // AS3: .../src/com/sulake/habbo/room/object/logic/AvatarLogic.as::processUpdateMessage()
+        // Blocked state — the visualization reads `blocked` off the model.
+        if(message instanceof RoomObjectAvatarBlockedUpdateMessage)
+        {
+            // AS3 writes the literal here, not the RoomObjectVariableEnum constant of the
+            // same value — same as the neighbouring branches in this file.
+            model.setNumber('blocked', message.isBlocked ? 1 : 0);
+
+            return;
+        }
+
         // Flat control (room rights)
         if(message instanceof RoomObjectAvatarFlatControlUpdateMessage)
         {
-            const value = parseInt(message.rawData);
+            // `rawData` is null when `onUserUpdate()` resets flat control before walking the
+            // actions; AS3's `parseInt(null)` is NaN and lands in the else below, clearing
+            // the marker. `?? ''` reproduces that.
+            const value = parseInt(message.rawData ?? '');
             if(!isNaN(value) && value >= 0 && value <= 5)
             {
                 model.setNumber('figure_flat_control', value);

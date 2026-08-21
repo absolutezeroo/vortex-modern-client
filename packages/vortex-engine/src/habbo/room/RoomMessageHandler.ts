@@ -95,6 +95,8 @@ import {ItemRemoveMessageEvent} from '../communication/messages/incoming/room/en
 import {UsersMessageEvent} from '../communication/messages/incoming/room/engine/UsersMessageEvent';
 import {UserUpdateMessageEvent} from '../communication/messages/incoming/room/engine/UserUpdateMessageEvent';
 import {UserRemoveMessageEvent} from '../communication/messages/incoming/room/engine/UserRemoveMessageEvent';
+import {BlockUserUpdateMessageEvent} from '../communication/messages/incoming/users/BlockUserUpdateMessageEvent';
+import type {BlockUserUpdateMessageParser} from '../communication/messages/parser/users/BlockUserUpdateMessageParser';
 import {UserObjectMessageEvent} from '../communication/messages/incoming/handshake/UserObjectMessageEvent';
 import {
     SlideObjectBundleMessageEvent
@@ -306,6 +308,9 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new UsersMessageEvent(this.onUsers.bind(this)));
             connection.addMessageEvent(new UserUpdateMessageEvent(this.onUserUpdate.bind(this)));
             connection.addMessageEvent(new UserRemoveMessageEvent(this.onUserRemove.bind(this)));
+            // AS3 registers this here too, alongside BlockedUsersManager's own listener: the
+            // manager keeps the list, the room engine paints the avatar.
+            connection.addMessageEvent(new BlockUserUpdateMessageEvent(this.onBlockUserUpdate.bind(this)));
             connection.addMessageEvent(new SlideObjectBundleMessageEvent(this.onSlideUpdate.bind(this)));
             connection.addMessageEvent(new RoomPropertyMessageEvent(this.onRoomProperty.bind(this)));
             connection.addMessageEvent(new RoomVisualizationSettingsEvent(this.onRoomVisualizationSettings.bind(this)));
@@ -830,6 +835,11 @@ export class RoomMessageHandler implements IRoomMessageHandler
                 data.data,
                 data.extra
             );
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onObjectUpdate() sends all three; the port parsed `sizeZ` and
+            // `expiryTime` and dropped them, so a stack-height or rental change never
+            // reached the object.
+            this._roomCreator.updateObjectFurnitureHeight(this._currentRoomId, data.id, data.sizeZ);
+            this._roomCreator.updateObjectFurnitureExpiryTime(this._currentRoomId, data.id, data.expiryTime);
         }
     }
 
@@ -1947,6 +1957,8 @@ export class RoomMessageHandler implements IRoomMessageHandler
                 data.state,
                 data.data
             );
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onItemUpdate() — same drop as onObjectUpdate(): parsed and thrown away.
+            this._roomCreator.updateObjectWallItemExpiryTime(this._currentRoomId, data.id, data.secondsToExpiration);
         }
     }
 
@@ -1977,6 +1989,32 @@ export class RoomMessageHandler implements IRoomMessageHandler
             parser.itemId,
             parser.pickerId
         );
+    }
+
+    /**
+	 * The server's answer to a block/unblock. Resolves the account id to the avatar's room
+	 * object through the session's user data, then marks the object blocked.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onBlockUserUpdate()
+    onBlockUserUpdate(event: IMessageEvent): void
+    {
+        const blockEvent = event as BlockUserUpdateMessageEvent;
+
+        if(blockEvent === null || this._roomCreator === null) return;
+
+        const parser = blockEvent.getParser() as BlockUserUpdateMessageParser;
+
+        if(parser === null) return;
+
+        const session = this._roomCreator.roomSessionManager?.getSession(this._currentRoomId) ?? null;
+
+        if(!session || !session.userDataManager) return;
+
+        const userData = session.userDataManager.getUserData(parser.userId);
+
+        if(userData === null) return;
+
+        this._roomCreator.updateObjectUserBlocked(this._currentRoomId, userData.roomObjectId, parser.result === 1);
     }
 
     // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onUsers()
@@ -2060,6 +2098,11 @@ export class RoomMessageHandler implements IRoomMessageHandler
             let hasSwimAction = false;
             const actions = data.actions;
 
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onUserUpdate() clears flat control before walking the actions, so a
+            // user who has just lost their rights loses the marker. The port never reset it,
+            // which left the marker on until the avatar was recreated.
+            this._roomCreator.updateObjectUserFlatControl(this._currentRoomId, data.roomIndex, null);
+
             for(const action of actions) 
             {
                 const actionType = action.actionType;
@@ -2068,11 +2111,14 @@ export class RoomMessageHandler implements IRoomMessageHandler
                 switch(actionType) 
                 {
                     case 'flatctrl':
-                        this._roomCreator.updateObjectUserAction(
+                        // Was a direct `updateObjectUserAction(AVATAR_FLAT_CONTROL, parseInt)`.
+                        // AS3 passes the raw string through `updateObjectUserFlatControl()`, and
+                        // `AvatarLogic` is what parses it — with a 0..5 range check the numeric
+                        // short-circuit did not have.
+                        this._roomCreator.updateObjectUserFlatControl(
                             this._currentRoomId,
                             data.roomIndex,
-                            RoomObjectVariableEnum.AVATAR_FLAT_CONTROL,
-                            parseInt(actionParameter, 10) || 0
+                            actionParameter
                         );
                         break;
 
@@ -2095,6 +2141,14 @@ export class RoomMessageHandler implements IRoomMessageHandler
                         {
                             updateStandPosture = false;
                         }
+
+                        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onUserUpdate() — the pet gesture. The port read the action
+                        // and dropped it, so pets never gestured.
+                        this._roomCreator.updateObjectPetGesture(
+                            this._currentRoomId,
+                            data.roomIndex,
+                            actionParameter
+                        );
                         break;
 
                     case 'wav':

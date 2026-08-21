@@ -9,6 +9,7 @@ export {RoomObjectAvatarEffectUpdateMessage} from './RoomObjectAvatarEffectUpdat
 export {RoomObjectAvatarExperienceUpdateMessage} from './RoomObjectAvatarExperienceUpdateMessage';
 export {RoomObjectAvatarExpressionUpdateMessage} from './RoomObjectAvatarExpressionUpdateMessage';
 export {RoomObjectAvatarFigureUpdateMessage} from './RoomObjectAvatarFigureUpdateMessage';
+export {RoomObjectAvatarBlockedUpdateMessage} from './RoomObjectAvatarBlockedUpdateMessage';
 export {RoomObjectAvatarFlatControlUpdateMessage} from './RoomObjectAvatarFlatControlUpdateMessage';
 export {RoomObjectAvatarGestureUpdateMessage} from './RoomObjectAvatarGestureUpdateMessage';
 export {RoomObjectAvatarGuideStatusUpdateMessage} from './RoomObjectAvatarGuideStatusUpdateMessage';
