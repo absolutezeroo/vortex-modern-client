@@ -185,8 +185,10 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
                 this.showButton('dance', !this.widget.hasClub && !this.widget.isDancing && !riding, !this.widget.hasEffectOn);
                 this.showButton('dance_stop', !this.widget.hasClub && this.widget.isDancing && !riding);
                 this.showButton('effects', !riding);
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/OwnAvatarMenuView.as:177 also gates on the room's handitem-control-blocked flag.
                 this.showButton('handitem', this._data.carryItemType > 0 && this._data.carryItemType < 999999
-                    && (this.widget.configuration?.getBoolean('handitem.drop.enabled') ?? false));
+                    && (this.widget.configuration?.getBoolean('handitem.drop.enabled') ?? false)
+                    && !(this.widget.handler?.roomEngine?.activeRoomHasHanditemControlBlocked ?? false));
                 this.showButton((this.widget.configuration?.getBoolean('avatar.expressions_menu.enabled') ?? false) ? 'expressions' : 'wave');
                 this.showButton('signs', this.widget.configuration?.getBoolean('avatar.signs.enabled') ?? false);
                 break;
