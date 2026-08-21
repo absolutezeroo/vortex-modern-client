@@ -972,19 +972,7 @@ export class WindowParser implements IWindowParser
 
 function getDirectChildElements(node: Element): Element[] 
 {
-    const elements: Element[] = [];
-
-    for(let i = 0; i < node.children.length; i++) 
-    {
-        const child = node.children.item(i);
-
-        if(child) 
-        {
-            elements.push(child);
-        }
-    }
-
-    return elements;
+    return Array.from(node.children);
 }
 
 function getDirectChildrenByName(node: Element, name: string): Element[] 

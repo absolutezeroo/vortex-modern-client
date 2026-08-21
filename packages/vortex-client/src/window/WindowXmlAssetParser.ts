@@ -127,72 +127,6 @@ const TYPE_MAP: Record<string, number> =
         'scrollable_itemgrid_vertical': 140
     };
 
-const PARAM_MAP: Record<string, number> =
-    {
-        'null': 0x0,
-        'input_event_processor': 0x1,
-        'route_input_events_to_parent': 0x3,
-        'observe_parent_input_events': 0x5,
-        'internal_event_handling': 0x9,
-        'use_parent_graphic_context': 0x10,
-        'bound_to_parent_rect': 0x20,
-        'relative_horizontal_scale_fixed': 0x0,
-        'relative_horizontal_scale_move': 0x40,
-        'relative_horizontal_scale_strech': 0x80,
-        'relative_horizontal_scale_center': 0xC0,
-        'relative_vertical_scale_fixed': 0x0,
-        'relative_vertical_scale_move': 0x400,
-        'relative_vertical_scale_strech': 0x800,
-        'relative_vertical_scale_center': 0xC00,
-        'relative_scale_fixed': 0x0,
-        'relative_scale_move': 0x440,
-        'relative_scale_strech': 0x880,
-        'relative_scale_center': 0xCC0,
-        'expand_to_accommodate_children': 0x20000,
-        'resize_to_accommodate_children': 0x24000,
-        'mouse_dragging_target': 0x8000,
-        'mouse_dragging_trigger': 0x101,
-        'draggable_with_mouse': 0x8101,
-        'mouse_scaling_target': 0x10000,
-        'horizontal_mouse_scaling_trigger': 0x1000,
-        'vertical_mouse_scaling_trigger': 0x2000,
-        'mouse_scaling_trigger': 0x3000,
-        'scalable_with_mouse': 0x13000,
-        'on_accommodate_align_left': 0x0,
-        'on_accommodate_align_right': 0x40000,
-        'on_accommodate_align_center': 0xC0000,
-        'on_accommodate_align_top': 0x0,
-        'on_accommodate_align_bottom': 0x100000,
-        'on_accommodate_align_middle': 0x300000,
-        'on_resize_align_left': 0x0,
-        'on_resize_align_right': 0x40000,
-        'on_resize_align_center': 0xC0000,
-        'on_resize_align_top': 0x0,
-        'on_resize_align_bottom': 0x100000,
-        'on_resize_align_middle': 0x300000,
-        'reflect_horizontal_resize_to_parent': 0x400000,
-        'reflect_vertical_resize_to_parent': 0x800000,
-        'reflect_resize_to_parent': 0xC00000,
-        'parent_window': 0x1,
-        'child_window': 0x21,
-        'embedded_controller': 0x33,
-        'force_clipping': 0x40000000,
-        'inherit_caption': 0x80000000
-    };
-
-const STATE_MAP: Record<string, number> =
-    {
-        'default': 0,
-        'active': 1,
-        'focused': 2,
-        'hovering': 4,
-        'selected': 8,
-        'pressed': 16,
-        'disabled': 32,
-        'locked': 64,
-        'disposed': 1073741824
-    };
-
 export function parseElementDescriptionXml(
     xml: string,
     assetId: string,
@@ -255,9 +189,6 @@ export function parseElementDescriptionXml(
     return {
         id: assetId,
         source,
-        typeMap: {...TYPE_MAP},
-        paramMap: {...PARAM_MAP},
-        stateMap: {...STATE_MAP},
         elements
     };
 }
@@ -296,74 +227,27 @@ export function parseWindowLayoutXml(
     source: string
 ): IWindowLayoutXmlData[] 
 {
-    const doc = parseXmlDocument(xml, source);
+    const layoutRoot = parseXmlDocument(xml, source).documentElement;
 
-    if(!doc.documentElement) 
+    if(!layoutRoot)
     {
         return [];
     }
 
-    const layoutRoot = doc.documentElement;
-    const isLayoutRoot = layoutRoot.nodeName === 'layout';
-    const windows = isLayoutRoot
-        ? getChildElements(layoutRoot, 'window')
-        : (layoutRoot.nodeName === 'window' ? [layoutRoot] : getChildElements(layoutRoot, 'window'));
-
-    if(windows.length === 0) 
+    // One <window> per layout asset — all 784 shipped ones. AS3 does accept a file with
+    // several, but parses them all into the same parent and returns the last
+    // (WindowParser.as::parseAndConstruct), which WindowParser.ts already mirrors; the
+    // `name#i` split this replaces invented asset names nothing could look up.
+    if(layoutRoot.nodeName !== 'window' && getChildElements(layoutRoot, 'window').length === 0)
     {
         return [];
     }
 
-    const serializer = new XMLSerializer();
-    const result: IWindowLayoutXmlData[] = [];
-
-    for(let i = 0; i < windows.length; i++) 
-    {
-        const currentWindow = windows[i];
-        const name = windows.length > 1 ? `${layoutName}#${i}` : layoutName;
-        let xmlSource: string;
-
-        if(isLayoutRoot)
-        {
-            const tempDoc = document.implementation.createDocument('', 'layout', null);
-            const tempRoot = tempDoc.documentElement;
-
-            for(let a = 0; a < layoutRoot.attributes.length; a++) 
-            {
-                const attr = layoutRoot.attributes.item(a);
-
-                if(attr) 
-                {
-                    tempRoot.setAttribute(attr.name, attr.value);
-                }
-            }
-
-            for(const child of getChildElements(layoutRoot)) 
-            {
-                if(child.nodeName === 'window') 
-                {
-                    continue;
-                }
-
-                tempRoot.appendChild(tempDoc.importNode(child, true));
-            }
-
-            tempRoot.appendChild(tempDoc.importNode(currentWindow, true));
-            xmlSource = serializer.serializeToString(tempRoot);
-        }
-        else 
-        {
-            xmlSource = serializer.serializeToString(currentWindow);
-        }
-
-        result.push({
-            name,
-            source,
-            xml: xmlSource
-        });
-    }
-
-    return result;
+    return [{
+        name: layoutName,
+        source,
+        xml: new XMLSerializer().serializeToString(layoutRoot)
+    }];
 }
 
 function parseXmlDocument(xml: string, source: string = 'unknown'): XMLDocument 
@@ -431,53 +315,24 @@ function repairMalformedAttributeSpacing(xml: string): string
 
 function readAttributes(element: Element | null): Record<string, string> 
 {
-    const attrs: Record<string, string> = {};
-
-    if(!element) 
+    if(!element)
     {
-        return attrs;
+        return {};
     }
 
-    for(let i = 0; i < element.attributes.length; i++) 
-    {
-        const attr = element.attributes.item(i);
-
-        if(attr) 
-        {
-            attrs[attr.name] = attr.value;
-        }
-    }
-
-    return attrs;
+    return Object.fromEntries(Array.from(element.attributes, (attr) => [attr.name, attr.value]));
 }
 
 function getChildElements(node: Element | null, name?: string): Element[] 
 {
-    if(!node) 
+    if(!node)
     {
         return [];
     }
 
-    const elements: Element[] = [];
+    const children = Array.from(node.children);
 
-    for(let i = 0; i < node.childNodes.length; i++) 
-    {
-        const child = node.childNodes.item(i);
-
-        if(!child || child.nodeType !== Node.ELEMENT_NODE) 
-        {
-            continue;
-        }
-
-        const element = child as Element;
-
-        if(!name || element.nodeName === name) 
-        {
-            elements.push(element);
-        }
-    }
-
-    return elements;
+    return name ? children.filter((child) => child.nodeName === name) : children;
 }
 
 function parseNumber(value: string | number | null, fallback: number): number

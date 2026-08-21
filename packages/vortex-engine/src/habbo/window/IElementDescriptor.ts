@@ -72,8 +72,5 @@ export interface IElementDescriptor {
 export interface IElementDescriptionData {
     id: string;
     source: string;
-    typeMap: Record<string, number>;
-    paramMap: Record<string, number>;
-    stateMap: Record<string, number>;
     elements: IElementDescriptor[];
 }

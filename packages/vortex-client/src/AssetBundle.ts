@@ -69,14 +69,6 @@ export class AssetBundle
     }
 
     /**
-	 * Returns the number of entries in the bundle.
-	 */
-    public get entryCount(): number
-    {
-        return Object.keys(this._manifest.entries).length;
-    }
-
-    /**
 	 * Loads a bundle from a URL with optional download progress tracking.
 	 *
 	 * Uses ReadableStream to track download progress byte-by-byte,
@@ -238,16 +230,15 @@ export class AssetBundle
 	 * Gets a Blob for a bundle entry.
 	 *
 	 * @param key - Entry key (e.g., "images/icon_name.png")
-	 * @param mimeType - MIME type for the blob (default: auto-detect from extension)
 	 * @returns The Blob, or null if not found
 	 */
-    public getBlob(key: string, mimeType?: string): Blob | null
+    public getBlob(key: string): Blob | null
     {
         const entry = this._manifest.entries[key];
 
         if(!entry) return null;
 
-        const type = mimeType || this.getMimeType(key);
+        const type = this.getMimeType(key);
 
         // Pass a Uint8Array view (no copy) rather than ArrayBuffer.slice() (a copy):
         // the Blob constructor copies the bytes into its own storage anyway, so the
@@ -346,7 +337,8 @@ export class AssetBundle
     }
 
     /**
-	 * Revokes all created blob URLs and releases the internal buffer.
+	 * Revokes all created blob URLs. The bundle buffer itself is left to the GC — every
+	 * caller drops its `AssetBundle` reference right after disposing it.
 	 */
     public dispose(): void
     {
