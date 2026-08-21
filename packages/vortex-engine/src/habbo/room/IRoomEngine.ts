@@ -451,6 +451,9 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::toggleTileCursorVisibility()
     toggleTileCursorVisibility(roomId: number, visible: boolean): void;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::createScreenShot()
+    createScreenShot(roomId: number, canvasId: number, name: string): void;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::setClickSettings()
     setClickSettings(owner: string, throughUsers: boolean, throughFurni: boolean): void;
 

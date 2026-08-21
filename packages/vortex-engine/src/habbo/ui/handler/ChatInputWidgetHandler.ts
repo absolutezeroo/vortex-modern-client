@@ -734,10 +734,21 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
 
                 return true;
 
-            // TODO(AS3): `IRoomEngine.createScreenShot()` is not ported, so the capture cannot be
-            // taken. AS3 also names the file after the entered room, falling back to a timestamp.
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as:460-472
             case ':screenshot':
+            {
+                const container = this.container;
+                const engine = container?.roomEngine ?? null;
+                const roomName = container?.navigator?.enteredGuestRoomData?.roomName ?? '';
+
+                if(engine && container)
+                {
+                    engine.createScreenShot(container.roomSession?.roomId ?? engine.activeRoomId,
+                        container.getFirstCanvasId(), roomName);
+                }
+
                 return true;
+            }
 
             // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as:477-490 — Flash's Mouse.hide()/show() is MouseCursorControl.visible here,
             // which is the same one-line CSS toggle the window system already uses.

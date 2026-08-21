@@ -4394,6 +4394,36 @@ export class RoomEngine extends Component implements IRoomEngine,
 	 * same guarantees AS3 gets from drawing the live display object while the camera holds the room
 	 * at scale 1.
 	 */
+    /**
+	 * Captures the room canvas and hands the PNG to the browser's download flow — AS3's
+	 * `FileReference.save()`. The name is sanitised the same way, and falls back to a
+	 * timestamp if what is left is empty.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::createScreenShot()
+    createScreenShot(roomId: number, canvasId: number, name: string): void
+    {
+        const canvas = this.getRenderingCanvas(roomId, canvasId);
+        const renderer = Vortex.instance?.application?.renderer ?? null;
+
+        if(!canvas || !renderer) return;
+
+        const safeName = (name ?? '').replace(/[:/\\"<>|%*?]/g, '');
+        const fileName = (safeName.length > 0 ? safeName : `Habbo ${new Date().toISOString()}`) + '.png';
+
+        canvas.takeScreenShot(renderer).toBlob((blob) =>
+        {
+            if(!blob) return;
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+
+            link.href = url;
+            link.download = fileName;
+            link.click();
+            URL.revokeObjectURL(url);
+        }, 'image/png');
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::snapshotRoomCanvasToBitmap()
     async snapshotRoomCanvasToBitmap(
         roomId: number,
