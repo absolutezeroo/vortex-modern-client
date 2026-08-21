@@ -195,12 +195,13 @@ export class WiredEnvironment
     }
 
     // AS3: WiredEnvironment.as::applyClickSettings()
-    private applyClickSettings(_userOption: number, _furniOption: number): void
+    private applyClickSettings(userOption: number, furniOption: number): void
     {
-        // TODO(AS3): (roomEngine as IRoomEngine-ext).setClickSettings(WiredEnvironment.WIRED_ENV_KEY,
-        // _userOption === CLICK_USER_PASS_THROUGH, _furniOption === CLICK_FURNI_PASS_THROUGH). The
-        // port's RoomEngine does not expose setClickSettings() yet, so the computed pass-through flags
-        // cannot be applied to the engine. Params kept for when that method lands.
+        this._roomEvents?.roomEngine?.setClickSettings(
+            WiredEnvironment.WIRED_ENV_KEY,
+            userOption === WiredEnvironment.CLICK_USER_PASS_THROUGH,
+            furniOption === WiredEnvironment.CLICK_FURNI_PASS_THROUGH
+        );
     }
 
     // AS3: WiredEnvironment.as::onWiredEnvironmentEvent()

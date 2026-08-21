@@ -18,6 +18,7 @@
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as
  */
 import {ColorMatrixFilter} from 'pixi.js';
+import {MouseCursorControl} from '@core/window/utils/MouseCursorControl';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
 import type {RoomWidgetChatSelectAvatarMessage} from '@habbo/ui/widget/messages/RoomWidgetChatSelectAvatarMessage';
 import type {IRoomWidgetHandlerContainer} from '@habbo/ui/IRoomWidgetHandlerContainer';
@@ -100,6 +101,9 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
 
     // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::_demonicTriggers
     private _demonicTriggers: boolean = false;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::_mouseHidden
+    // Derived name: obfuscated in the primary tree; toggled by `:hidemouse`.
+    private _mouseHidden: boolean = false;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::get container()
     public get container(): IRoomWidgetHandlerContainer | null
@@ -735,11 +739,23 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
             case ':screenshot':
                 return true;
 
-            // TODO(AS3): needs `IRoomEngine.setTileCursorState()` / `toggleTileCursorVisibility()`,
-            // neither of which is ported, plus a cursor-hiding call with no browser equivalent to
-            // Flash's `Mouse.hide()`.
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as:477-490 — Flash's Mouse.hide()/show() is MouseCursorControl.visible here,
+            // which is the same one-line CSS toggle the window system already uses.
             case ':hidemouse':
+            {
+                const engine = this.container?.roomEngine ?? null;
+
+                this._mouseHidden = !this._mouseHidden;
+                MouseCursorControl.visible = !this._mouseHidden;
+
+                if(engine)
+                {
+                    engine.setTileCursorState(engine.activeRoomId, this._mouseHidden ? 0 : 1);
+                    engine.toggleTileCursorVisibility(engine.activeRoomId, !this._mouseHidden);
+                }
+
                 return true;
+            }
 
             // TODO(AS3): `gameManager.generateChecksumMismatch()` — the container exposes no game
             // manager. Staff-only debug command; consumed rather than spoken, as AS3 does for staff.

@@ -11,7 +11,8 @@ import type {Vector3d} from '@room/utils/Vector3d';
 export class RoomObjectTileCursorUpdateMessage extends RoomObjectUpdateMessage
 {
     constructor(
-        location: Vector3d,
+        // AS3 passes null from toggleTileCursorVisibility(); the base already takes a null location.
+        location: Vector3d | null,
         height: number,
         visible: boolean,
         sourceEventId: string,

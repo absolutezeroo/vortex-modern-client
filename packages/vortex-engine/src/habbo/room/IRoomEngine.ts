@@ -442,6 +442,24 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::removeMouseEventsDisabledRect()
     removeMouseEventsDisabledRect(name: string): void;
 
+    /**
+	 * Registers or drops one owner's request to click through users / furniture.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::setTileCursorState()
+    setTileCursorState(roomId: number, state: number): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::toggleTileCursorVisibility()
+    toggleTileCursorVisibility(roomId: number, visible: boolean): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::setClickSettings()
+    setClickSettings(owner: string, throughUsers: boolean, throughFurni: boolean): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get clickThroughUsers()
+    readonly clickThroughUsers: boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get clickThroughFurni()
+    readonly clickThroughFurni: boolean;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get isInitialized()
     readonly isInitialized: boolean;
 

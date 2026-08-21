@@ -305,6 +305,13 @@ export class RoomEngine extends Component implements IRoomEngine,
     private _mouseEventsDisabledRects: OrderedMap<string, {x: number; y: number; width: number; height: number}> | null =
         new OrderedMap<string, {x: number; y: number; width: number; height: number}>();
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_clickThroughUsers
+    // AS3 uses its own string-set class; a Set is the same thing.
+    private _clickThroughUsers: Set<string> = new Set();
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_clickThroughFurni
+    // Derived name: obfuscated in the primary tree; the getter it backs is readable.
+    private _clickThroughFurni: Set<string> = new Set();
+
     private _roomDragging: boolean = false;
     private _roomDragStarted: boolean = false;
     private _roomDragStartX: number = 0;
@@ -704,6 +711,24 @@ export class RoomEngine extends Component implements IRoomEngine,
         return room.getObjectCount(category);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setTileCursorState()
+    setTileCursorState(roomId: number, state: number): void
+    {
+        const cursor = this.getTileCursor(roomId);
+
+        cursor?.getEventHandler()?.processUpdateMessage(new RoomObjectDataUpdateMessage(state, null));
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::toggleTileCursorVisibility()
+    toggleTileCursorVisibility(roomId: number, visible: boolean): void
+    {
+        const cursor = this.getTileCursor(roomId);
+
+        cursor?.getEventHandler()?.processUpdateMessage(
+            new RoomObjectTileCursorUpdateMessage(null, 0, visible, '', true)
+        );
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getTileCursor()
     getTileCursor(roomId: number): IRoomObjectController | null 
     {
@@ -908,6 +933,36 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
 
         return false;
+    }
+
+    /**
+	 * Registers or drops one owner's request to click through users / furniture. Wired's room
+	 * environment is the only caller: while it holds the flag, clicks on avatars or furni are
+	 * ignored by the room and fall through to the floor.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setClickSettings()
+    setClickSettings(owner: string, throughUsers: boolean, throughFurni: boolean): void
+    {
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setClickSettings() also calls removeButtonMouseCursorOwners() when a
+        // flag flips on, to drop the hand cursor the now-unclickable objects had registered. That
+        // needs `mouseButtonCursorOwners` on RoomInstanceData (`_SafeCls_2223`), which is unported.
+        if(throughUsers) this._clickThroughUsers.add(owner);
+        else this._clickThroughUsers.delete(owner);
+
+        if(throughFurni) this._clickThroughFurni.add(owner);
+        else this._clickThroughFurni.delete(owner);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get clickThroughUsers()
+    get clickThroughUsers(): boolean
+    {
+        return this._clickThroughUsers.size > 0;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get clickThroughFurni()
+    get clickThroughFurni(): boolean
+    {
+        return this._clickThroughFurni.size > 0;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get isInitialized()
@@ -4513,9 +4568,16 @@ export class RoomEngine extends Component implements IRoomEngine,
         //  - 'click' and 'doubleClick' are SEPARATE slots, so a click never suppresses a same-frame
         //    double-click, keeping double-click-to-use (FurnitureLogic.useObject) working.
         // Category bucketing mirrors AS3: floor=0 keeps its own slot; everything else collapses to
-        // -2 except game users (100) while a game is active. AS3's clickThroughFurni/Users early
-        // return has no port equivalent (no such flags on the Turbo client) — a documented omission.
+        // -2 except game users (100) while a game is active.
         const category = this.getRoomObjectCategory(object.getType());
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as:365
+        // — the flags do exist, Wired's room environment sets them through setClickSettings().
+        if((category === 100 && this.clickThroughUsers)
+            || ((category === 20 || category === 10) && this.clickThroughFurni))
+        {
+            return;
+        }
         let bucket = category;
 
         if(category !== 0)
