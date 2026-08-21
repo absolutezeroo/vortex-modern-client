@@ -2789,6 +2789,45 @@ scroll bar and its scroll view are all unported. That is a separate slice.
 **Not exercised at runtime.** This path needs the emulator and a room; `vortex-glaze`, the bench
 the widget slices used, has no room engine.
 
+### Six room-object updates the message handler parsed and threw away (2026-08-21)
+
+Second `habbo/room` slice: 133 -> 121 absent public/protected members, global 680 -> 668. All six
+are the same failure — the handler reads the field off the wire and the RoomEngine member that
+would deliver it does not exist, so the packet silently loses part of its payload.
+
+- **Room rights never cleared.** AS3's `onUserUpdate()` calls
+  `updateObjectUserFlatControl(roomId, id, null)` *before* walking the actions; only a `flatctrl`
+  action puts the marker back. The port had no reset, so once an avatar showed the marker it kept
+  it until recreated. Its `flatctrl` case also short-circuited the message, writing
+  `figure_flat_control` directly with `parseInt(...) || 0`, where AS3 hands the raw string to
+  `AvatarLogic` — which range-checks 0..5.
+- **Pets never gestured.** The `gst` action was read, used to suppress the stand posture, then
+  dropped. `RoomObjectAvatarPetGestureUpdateMessage` existed and `PetLogic` consumed it; there was
+  simply no producer.
+- **Blocking a user did not show on their avatar.** `onBlockUserUpdate` was not ported. The
+  message is registered (1825) and `BlockedUsersManager` already listens — AS3 registers a *second*
+  listener in the room handler, resolves the account id to the room object through the session's
+  user data, and marks the object. Needed a new `RoomObjectAvatarBlockedUpdateMessage`, its
+  `AvatarLogic` branch, and the `blocked` model variable (derived name `AVATAR_BLOCKED`).
+- **Furniture stack height and rental expiry.** `onObjectUpdate()` parsed `sizeZ` and `expiryTime`
+  and passed neither on; `onItemUpdate()` did the same with `secondsToExpiration`. The port already
+  writes both expiry variables at object *creation* and `InfoStandWidgetHandler` reads them back,
+  so only the update path was missing.
+
+**Two of the eight members the tool listed were false positives, and that is the reusable
+lesson.** The port renamed `updateObjectUserGesture` to `updateRoomObjectUserGesture` and
+`updateObjectUserOwnUserAvatar` to `setRoomObjectUserOwnUser`; both read as absent because the
+measure joins on names inside the AS3 file. The "Member coverage" section already warns that a
+renamed member reads as a false gap — this is the first slice where it actually bit, at 25% of the
+cluster. **Check each entry against the port before porting it**, exactly as
+`.claude/rules/00-mandate.md` says about findings; the cheap check is to grep the AS3 member's
+distinctive body (here, the update-message class it constructs) rather than its name.
+
+`RoomObjectAvatarFlatControlUpdateMessage.rawData` widened to `string | null`, because AS3 passes
+null from the reset and `parseInt(null)` being NaN is how the marker clears.
+
+**Not exercised at runtime.** All six need the emulator and a live room.
+
 ### Trace hygiene, 2026-08-20
 
 `audit-as3-traces.mjs` is the forward direction and now exits 0. Three passes that day:
