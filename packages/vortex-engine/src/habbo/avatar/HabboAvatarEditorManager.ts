@@ -27,6 +27,10 @@ import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboInventory} from '@iid/IIDHabboInventory';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
+import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
+import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
+import {IID_RoomEngine} from '@iid/IIDRoomEngine';
+import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import {AvatarEditorIdEnum} from './enum/AvatarEditorIdEnum';
 import {AvatarEditorMessageHandler} from './AvatarEditorMessageHandler';
 import {AvatarEditorView} from './AvatarEditorView';
@@ -62,6 +66,11 @@ export class HabboAvatarEditorManager extends Component
 
     // AS3: .../avatar/HabboAvatarEditorManager.as::_inventory
     private _inventory: IHabboInventory | null = null;
+
+    // AS3: .../avatar/HabboAvatarEditorManager.as::get roomDesktop()
+    // The two together stand in for AS3's `_roomUI.desktop` — see the dependency's own note.
+    private _roomSessionManager: IRoomSessionManager | null = null;
+    private _roomEngine: IRoomEngine | null = null;
 
     // AS3: .../avatar/HabboAvatarEditorManager.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
@@ -271,12 +280,14 @@ export class HabboAvatarEditorManager extends Component
 
         if(editor === null) return;
 
+        // Closing the editor drops whatever effect was being *previewed* and puts back the one
+        // the player actually has on. The development editors are exempt because they preview
+        // effects on purpose.
         if(!AvatarEditorIdEnum.isDevelopmentEditor(editorId))
         {
-            // TODO(AS3): `figureData.avatarEffectType = inventory.getLastActivatedEffect()` —
-            // `IHabboInventory` has no `getLastActivatedEffect()` in this port, so the effect is
-            // left as it is rather than reset to the last activated one.
-            log.debug('Last activated effect not restored on close — getLastActivatedEffect() is not ported');
+            const figureData = editor.figureData;
+
+            if(figureData !== null) figureData.avatarEffectType = this._inventory?.getLastActivatedEffect() ?? -1;
         }
 
         switch(editorId)
@@ -461,6 +472,21 @@ export class HabboAvatarEditorManager extends Component
                 (session: ISessionDataManager | null) => { this._sessionData = session; },
                 false
             ),
+            // AS3 reaches the active session through `roomDesktop.roomSession`, and its
+            // `roomDesktop` is `_roomUI.desktop`. There is no RoomUI dependency to take in the
+            // engine layer, so the same session is reached through its own manager plus the
+            // engine's active room id. Both optional, like every other dependency in this list:
+            // the editor has to open in the hotel view too, where there is no room at all.
+            new ComponentDependency(
+                IID_RoomSessionManager,
+                (manager: IRoomSessionManager | null) => { this._roomSessionManager = manager; },
+                false
+            ),
+            new ComponentDependency(
+                IID_RoomEngine,
+                (engine: IRoomEngine | null) => { this._roomEngine = engine; },
+                false
+            ),
             // Without this the editor has no way to build `AvatarEditorContent` and comes up as a
             // working model with no window at all — the failure mode this port keeps producing.
             new ComponentDependency(
@@ -469,6 +495,23 @@ export class HabboAvatarEditorManager extends Component
                 false
             )
         ];
+    }
+
+    /**
+     * The room object id the local user has in the room currently on screen, or -1.
+     *
+     * AS3 gets there as `roomDesktop.roomSession.ownUserRoomId`; the session manager answers the
+     * same question without a RoomUI dependency in the engine layer.
+     */
+    // AS3: .../avatar/HabboAvatarEditorManager.as::get roomDesktop()
+    public get ownUserRoomId(): number
+    {
+        const manager = this._roomSessionManager;
+        const engine = this._roomEngine;
+
+        if(manager === null || engine === null) return -1;
+
+        return manager.getSession(engine.activeRoomId)?.ownUserRoomId ?? -1;
     }
 
     // AS3: .../avatar/HabboAvatarEditorManager.as::initComponent()

@@ -119,8 +119,13 @@ export interface IHabboNavigator
     /**
 	 * Open the navigator window
 	 */
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboNavigator.as::openNavigator()
-    openNavigator(): void;
+    /**
+	 * @param position where the caller would like the window centred. **Ignored**, and not by
+	 *   omission: `HabboNavigator.openNavigator()` has an empty body in the 2026 client, so the
+	 *   argument every caller passes goes nowhere there either. Declared for signature parity.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/_SafeCls_93.as::openNavigator()
+    openNavigator(position?: {x: number; y: number} | null): void;
 
     /**
 	 * Close the navigator window

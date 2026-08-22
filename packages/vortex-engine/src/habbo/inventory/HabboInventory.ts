@@ -1278,6 +1278,12 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         for(const model of this._inventories.getValues()) model.categorySwitch(category);
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::getLastActivatedEffect()
+    getLastActivatedEffect(): number
+    {
+        return this._effectsModel?.lastActivatedEffect ?? -1;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::closingInventoryView()
     closingInventoryView(): void
     {

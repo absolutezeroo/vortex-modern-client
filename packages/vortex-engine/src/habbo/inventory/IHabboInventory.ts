@@ -56,6 +56,15 @@ export interface IHabboInventory
     readonly badgesModel: IBadgesModel;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get effectsModel()
     readonly effectsModel: IEffectsModel | null;
+
+    /**
+	 * The effect the player last switched on, or -1.
+	 *
+	 * A one-line delegate to `effectsModel.lastActivatedEffect` in AS3 too — it exists so the
+	 * avatar editor can restore the effect on close without reaching through the model.
+	 */
+    // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::getLastActivatedEffect()
+    getLastActivatedEffect(): number;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get petsModel()
     readonly petsModel: IPetsModel;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get botsModel()

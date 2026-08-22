@@ -408,8 +408,14 @@ export class HabboNavigator extends Component implements IHabboNavigator
         this.send(new CreateFlatMessageComposer(name, description, model, categoryId, maxUsers, tradeMode));
     }
 
+    /**
+     * AS3's body is *empty* — the navigator window is opened from elsewhere and this entry point
+     * has been hollowed out, `position` included. The port keeps its own open-state bookkeeping,
+     * which is a deviation predating this note; `position` is accepted and dropped, exactly as in
+     * the source.
+     */
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::openNavigator()
-    openNavigator(): void 
+    openNavigator(_position: {x: number; y: number} | null = null): void
     {
         if(this._isOpen) return;
 

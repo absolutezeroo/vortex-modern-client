@@ -235,14 +235,11 @@ export class WidgetContainerLayout implements IUpdateReceiver
 
         this._window?.invalidate();
 
+        // The position is passed because AS3 passes it, not because anything reads it — the
+        // navigator's `openNavigator()` ignores its argument in the 2026 client.
         if(this.navigatorPosition !== null)
         {
-            // TODO(AS3): IHabboNavigator.openNavigator() doesn't accept a position
-            // argument yet (pre-existing gap in the navigator module - see
-            // packages/vortex-engine/src/habbo/navigator/HabboNavigator.ts::openNavigator()).
-            // AS3 opens the navigator centered at `navigatorPosition`; ported call
-            // omits the position until that lands.
-            this._landingView?.navigator?.openNavigator();
+            this._landingView?.navigator?.openNavigator(this.navigatorPosition);
         }
 
         this._landingView?.send(new GetCurrentTimingCodeMessageComposer(this._schedulingStr));

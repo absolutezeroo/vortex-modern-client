@@ -3,7 +3,6 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {HabboAvatarEditor} from './HabboAvatarEditor';
 import type {IAvatarEditorMessageHandler} from './IAvatarEditorMessageHandler';
 import type {IOutfit} from './IOutfit';
-import {Logger} from '@core/utils/Logger';
 import {AvatarEditorIdEnum} from './enum/AvatarEditorIdEnum';
 import {AvatarEffectActivatedMessageEvent} from '@habbo/communication/messages/incoming/inventory/AvatarEffectActivatedMessageEvent';
 import {AvatarEffectAddedMessageEvent} from '@habbo/communication/messages/incoming/inventory/AvatarEffectAddedMessageEvent';
@@ -18,8 +17,6 @@ import {SelectedNftWardrobeOutfitMessageEvent} from '@habbo/communication/messag
 import {CheckUserNameMessageComposer} from '@habbo/communication/messages/outgoing/help/CheckUserNameMessageComposer';
 import {GetWardrobeMessageComposer} from '@habbo/communication/messages/outgoing/wardrobe/GetWardrobeMessageComposer';
 import {SaveWardrobeOutfitMessageComposer} from '@habbo/communication/messages/outgoing/wardrobe/SaveWardrobeOutfitMessageComposer';
-
-const log = Logger.getLogger('habbo.avatar.AvatarEditorMessageHandler');
 
 /**
  * The editor's network side: eight incoming messages and three requests.
@@ -43,13 +40,13 @@ export class AvatarEditorMessageHandler implements IAvatarEditorMessageHandler
 
     // AS3: .../avatar/AvatarEditorMessageHandler.as::_manager
     // Name DERIVED (`_SafeStr_4593`).
-    private _manager: {getEditor(editorId: number): HabboAvatarEditor | null} | null;
+    private _manager: {getEditor(editorId: number): HabboAvatarEditor | null; readonly ownUserRoomId: number} | null;
 
     // TS-only: kept so `dispose()` can unregister. AS3 never unregisters — see `dispose()`.
     private _events: IMessageEvent[] = [];
 
     // AS3: .../avatar/AvatarEditorMessageHandler.as::AvatarEditorMessageHandler()
-    constructor(manager: {getEditor(editorId: number): HabboAvatarEditor | null}, connection: IConnection | null)
+    constructor(manager: {getEditor(editorId: number): HabboAvatarEditor | null; readonly ownUserRoomId: number}, connection: IConnection | null)
     {
         this._manager = manager;
         this._connection = connection;
@@ -208,20 +205,29 @@ export class AvatarEditorMessageHandler implements IAvatarEditorMessageHandler
     };
 
     /**
-     * TODO(AS3): AS3 gates this on `parser.userId == manager.roomDesktop.roomSession.ownUserRoomId`
-     * — an effect on *someone else* in the room must not change the editor's preview. This port's
-     * manager has no `roomDesktop` (it would be a `RoomUI` dependency, and the editor is in the
-     * engine layer), so the guard cannot be evaluated and the whole handler is skipped rather than
-     * applied unguarded. Wire it when the room-desktop route exists.
+     * Somebody in the room switched an effect on.
+     *
+     * The guard is the whole method: this message is broadcast for *every* avatar in the room, and
+     * only the local user's own effect belongs in the editor's preview. `userId` here is a room
+     * index, not a web id, which is why it is compared against `ownUserRoomId`.
      */
     // AS3: .../avatar/AvatarEditorMessageHandler.as::onRoomAvatarEffects()
     private onRoomAvatarEffects = (event: IMessageEvent): void =>
     {
-        if(this.editor === null) return;
+        const editor = this.editor;
 
-        void event;
+        if(editor === null || editor.figureData === null) return;
 
-        log.debug('Room avatar effect ignored — the own-user guard needs a room desktop the manager does not have');
+        const parser = (event as {parser?: unknown}).parser as {userId?: number; effectId?: number} | null;
+
+        if(parser == null) return;
+
+        const ownUserRoomId = this._manager?.ownUserRoomId ?? -1;
+
+        if(ownUserRoomId < 0 || parser.userId !== ownUserRoomId) return;
+
+        editor.figureData.avatarEffectType = parser.effectId ?? -1;
+        editor.figureData.updateView();
     };
 
     // AS3: .../avatar/AvatarEditorMessageHandler.as::onAvatarEffectSelected()
