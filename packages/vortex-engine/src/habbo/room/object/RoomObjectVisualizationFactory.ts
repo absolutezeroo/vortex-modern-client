@@ -82,6 +82,16 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
     */
     private static readonly ANIMATED_VIZ_DATA_TYPES = new Set([
         'furniture_animated',
+        // AS3 lists both chests in this branch (RoomObjectVisualizationFactory.as
+        // l.270-272). Missing here, they were handed a plain
+        // FurnitureVisualizationData, which cannot parse an animated
+        // visualization: initialize() failed, the factory disposed it and
+        // returned null, and the visualization then ran with `_data` null —
+        // `this._data!.getLayerCount()` threw on every frame that touched a
+        // chest, in the room render loop, the purchase preview and the wired
+        // inspector alike.
+        'furniture_furnichest',
+        'furniture_coinschest',
         'furniture_resetting_animated',
         'furniture_poster',
         'furniture_habbowheel',
