@@ -2888,6 +2888,53 @@ Also not ported, deliberately: `_SafeCls_1802`'s `_SafeStr_11449` (1200) and
 `_SafeCls_1802` ignores the parameter, so threading it would touch `AnimatedPetVisualization` and
 `FurnitureBuilderPlaceholderVisualization` for no behaviour change — it is a separate parity item.
 
+### The port has a GlowFilter now, and the chest icons use it (2026-08-22)
+
+Closing the two items the furni-chest slice above left open.
+
+**`core/utils/GlowFilter.ts`.** Ten AS3 classes construct a `flash.filters.GlowFilter` — the chest's
+floating icons, the wired selection and variable-holder highlights, `AvatarVisualization`'s
+variable-holder tint, the toolbar and bottom-bar labels, the onboarding dialogs — and the port had
+no equivalent, so each of them shipped without its halo behind a comment saying so. It is a PixiJS
+`Filter` subclass with Flash's own argument list and defaults, a 5x5 box blur of the source alpha,
+and both the outer and inner branches. `quality` and `knockout` are accepted for signature parity
+and ignored, with a `TODO(AS3)`: every call site in the port passes 1 and false, and `knockout`
+would change what is drawn, so it must not go through silently. `FurnitureFurniChestVisualization
+.getSpriteFilters()` is no longer a stub — it returns the white `GlowFilter(0xFFFFFF, 1, 2, 2, 10)`
+AS3 specifies, built lazily the way `RoomObjectHighLighter` already builds its shared filters.
+
+**It was exercised at runtime, and that is the whole point.** A hand-written shader fails silently:
+PixiJS logs a link error and draws the sprite unfiltered. A throwaway page under the dev server —
+a red 20x20 box with the filter, rendered once, `renderer.extract.pixels()` over an explicit
+`Rectangle(0, 0, 120, 120)` frame — was driven with playwright-core against system Edge, and it
+caught two defects that `tsc`, `eslint` and `pnpm build` all passed:
+
+- **A comment inside the shader template literal closed it.** The line read ``// `step` would
+  shadow the GLSL built-in`` — inside a backtick-delimited string. esbuild rejected it, `tsc` did
+  not.
+- **`uInputSize` failed to link.** `GlProgram` gives the vertex stage `highp` and the fragment
+  stage `mediump`, and WebGL refuses a program whose shared uniform has two precisions —
+  `Precisions of uniform 'uInputSize' differ between VERTEX and FRAGMENT shaders`. PixiJS' own
+  displacement filter declares it `uniform highp vec4 uInputSize;`; this one now does too.
+
+Final measurement, both branches (RGBA at the sampled pixel):
+
+| sample | outer glow | inner glow |
+|---|---|---|
+| inside the box | `255,0,0,255` (untouched) | `255,0,0,255` at the centre |
+| 1px past the edge | `255,255,255,255` | — |
+| 1px inside the edge | — | `255,255,255,255` |
+| 10px away | `0,0,0,0` | `0,0,0,0` (no leak outside) |
+
+The shader is GLSL only. The port never sets `preference` on `Application.init()`, so PixiJS picks
+its WebGL default; a WGSL twin has to be added before that changes.
+
+**`getAdditionalSpriteCount(scale)` / `updateLayerCount(count, scale)`.** Both take a scale in AS3
+that the port had dropped before the chest slice. Threaded through the base, the two existing
+overriders (`FurnitureBuilderPlaceholderVisualization`, `AnimatedPetVisualization`) and the new
+chest one. No behaviour change — no overrider reads it — but the next one that does will not have
+to discover the gap first.
+
 ### Trace hygiene, 2026-08-20
 
 `audit-as3-traces.mjs` is the forward direction and now exits 0. Three passes that day:

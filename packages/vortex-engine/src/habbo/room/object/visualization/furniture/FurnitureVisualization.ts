@@ -570,14 +570,14 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
     }
 
     // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::updateLayerCount()
-    protected updateLayerCount(count: number): void 
+    protected updateLayerCount(count: number, scale: number): void 
     {
         this._layerCount = count;
-        this._shadowLayerIndex = this._layerCount - this.getAdditionalSpriteCount();
+        this._shadowLayerIndex = this._layerCount - this.getAdditionalSpriteCount(scale);
     }
 
     // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getAdditionalSpriteCount()
-    protected getAdditionalSpriteCount(): number 
+    protected getAdditionalSpriteCount(_scale: number): number 
     {
         return 1;
     }
@@ -876,7 +876,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
             this._cachedDirectionId = direction;
             this._cachedScale = scale;
             this._resolvedSize = this.getSize(scale);
-            this.updateLayerCount(this._data!.getLayerCount(scale) + this.getAdditionalSpriteCount());
+            this.updateLayerCount(this._data!.getLayerCount(scale) + this.getAdditionalSpriteCount(scale), scale);
         }
     }
 }

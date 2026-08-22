@@ -35,7 +35,7 @@ export class FurnitureBuilderPlaceholderVisualization extends FurnitureVisualiza
         return result;
     }
 
-    protected override updateLayerCount(count: number): void
+    protected override updateLayerCount(count: number, _scale: number): void
     {
         this._layerCount = count;
 
@@ -45,7 +45,7 @@ export class FurnitureBuilderPlaceholderVisualization extends FurnitureVisualiza
         }
     }
 
-    protected override getAdditionalSpriteCount(): number
+    protected override getAdditionalSpriteCount(_scale: number): number
     {
         return 0;
     }
@@ -116,7 +116,7 @@ export class FurnitureBuilderPlaceholderVisualization extends FurnitureVisualiza
         }
 
         const baseLayerCount = this.data.getLayerCount(scale);
-        this.updateLayerCount(baseLayerCount);
+        this.updateLayerCount(baseLayerCount, scale);
         this.createSprites(baseLayerCount * this._sizeX * this._sizeY);
         this.updateSprites(scale, true, 0);
     }

@@ -528,15 +528,15 @@ export class AnimatedPetVisualization extends AnimatedFurnitureVisualization
         return offset;
     }
 
-    protected override updateLayerCount(count: number): void
+    protected override updateLayerCount(count: number, scale: number): void
     {
-        super.updateLayerCount(count);
+        super.updateLayerCount(count, scale);
         this._headSprites = [];
     }
 
-    protected override getAdditionalSpriteCount(): number
+    protected override getAdditionalSpriteCount(scale: number): number
     {
-        return super.getAdditionalSpriteCount() + 1;
+        return super.getAdditionalSpriteCount(scale) + 1;
     }
 
     /**

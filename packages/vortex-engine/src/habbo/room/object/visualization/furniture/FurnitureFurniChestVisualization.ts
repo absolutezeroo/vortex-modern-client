@@ -18,6 +18,7 @@
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1802.as
  */
 import type {IGraphicAsset} from '@room/object/visualization/utils/IGraphicAsset';
+import {GlowFilter} from '@core/utils/GlowFilter';
 import {FurnitureChestVisualization} from './FurnitureChestVisualization';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 
@@ -32,6 +33,13 @@ export class FurnitureFurniChestVisualization extends FurnitureChestVisualizatio
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1802.as::FLOATING_PIXELS
     private static readonly FLOATING_PIXELS: number = 2;
+
+    /**
+	 * AS3 builds the array at class-load time; this port defers it to first use, the way
+	 * `RoomObjectHighLighter` already defers its own shared filters.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1802.as::FLOATING_ICON_GLOW_FILTER
+    private static _floatingIconGlowFilter: unknown[] | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1802.as::ICON_POSITIONING
     // Indexed by icon count, then by icon: [x, y, xJitter, yJitter].
@@ -114,9 +122,9 @@ export class FurnitureFurniChestVisualization extends FurnitureChestVisualizatio
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1802.as::getAdditionalSpriteCount()
-    protected override getAdditionalSpriteCount(): number
+    protected override getAdditionalSpriteCount(scale: number): number
     {
-        return super.getAdditionalSpriteCount() + FurnitureFurniChestVisualization.MAX_FLOATING_ICONS;
+        return super.getAdditionalSpriteCount(scale) + FurnitureFurniChestVisualization.MAX_FLOATING_ICONS;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1802.as::getSpriteAssetName()
@@ -303,14 +311,21 @@ export class FurnitureFurniChestVisualization extends FurnitureChestVisualizatio
         return super.getSpriteInk(scale, direction, layerIndex);
     }
 
-    /**
-	 * TODO(AS3): AS3 returns FLOATING_ICON_GLOW_FILTER — a single white `GlowFilter(0xFFFFFF, 1,
-	 * 2, 2, 10, 1)` around each icon. This port has no GlowFilter equivalent (same gap as
-	 * `VariableHoldersHighlighter`), so the icons draw unhaloed.
-	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1802.as::getSpriteFilters()
     protected override getSpriteFilters(scale: number, direction: number, layerIndex: number): unknown[] | null
     {
+        if(this.isFloatingIcon(layerIndex))
+        {
+            if(FurnitureFurniChestVisualization._floatingIconGlowFilter === null)
+            {
+                FurnitureFurniChestVisualization._floatingIconGlowFilter = [
+                    new GlowFilter(0xFFFFFF, 1, 2, 2, 10, 1, false, false)
+                ];
+            }
+
+            return FurnitureFurniChestVisualization._floatingIconGlowFilter;
+        }
+
         return super.getSpriteFilters(scale, direction, layerIndex);
     }
 
