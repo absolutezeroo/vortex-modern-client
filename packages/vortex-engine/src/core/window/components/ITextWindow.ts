@@ -36,11 +36,17 @@ export interface ITextFormat
  */
 export interface ITextLineMetrics
 {
+    // TS-only: `flash.text.TextLineMetrics.x` — the line's left edge, this port's left margin.
     x: number;
+    // TS-only: `flash.text.TextLineMetrics.width`.
     width: number;
+    // TS-only: `flash.text.TextLineMetrics.height` — the full line box, leading included.
     height: number;
+    // TS-only: `flash.text.TextLineMetrics.ascent` — baseline to the top of the tallest glyph.
     ascent: number;
+    // TS-only: `flash.text.TextLineMetrics.descent` — baseline to the bottom of the lowest glyph.
     descent: number;
+    // TS-only: `flash.text.TextLineMetrics.leading` — whatever the line box has left over.
     leading: number;
 }
 

@@ -508,13 +508,26 @@ export class AchievementController implements IDisposable
         this._totalProgressBar.refresh(this._categories.getProgress(), this._categories.getMaxProgress(), 0, 0);
     }
 
+    /**
+     * Every achievement is visible except in one category.
+     *
+     * "wired_games" lists the achievements a *wired* creator can hand out, so it is filtered down
+     * to the ones this room actually has a wired trigger for. The `WF_` prefix is what makes the
+     * two namespaces line up: the wired subsystem reports bare codes, the achievement list carries
+     * them prefixed, and an entry without the prefix belongs to no wired effect at all.
+     */
     // AS3: AchievementController.as::achievementIsVisible()
-    // TODO(AS3): the "wired_games" branch filters to achievements physically present in
-    // the current room via _questEngine.wired.achievementsInRoom, a subsystem this port
-    // doesn't have. Falls back to always-visible (never hides one it shouldn't).
-    private achievementIsVisible(_achievement: AchievementData): boolean
+    private achievementIsVisible(achievement: AchievementData): boolean
     {
-        return true;
+        if(this._selectedCategory === null || this._selectedCategory.code !== 'wired_games') return true;
+
+        const code = achievement.code;
+
+        if(code.indexOf('WF_') !== 0) return false;
+
+        const inRoom = this._engine?.wired?.achievementsInRoom ?? null;
+
+        return inRoom !== null && inRoom.indexOf(code.substr(3)) >= 0;
     }
 
     // AS3: AchievementController.as::refreshAchievementList()

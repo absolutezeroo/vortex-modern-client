@@ -158,7 +158,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
         return this._avatarEditor;
     }
 
-    // TODO(AS3): HabboGameManager has no ported manager/interface yet (IID_HabboGameManager
+    // HabboGameManager has no ported manager/interface yet (IID_HabboGameManager
     // is typed `unknown`). AS3 stores this dependency but never reads it anywhere in
     // HabboLandingView.as either (no getter, no internal usage) - kept for DI parity only.
     private _gameManager: unknown = null;

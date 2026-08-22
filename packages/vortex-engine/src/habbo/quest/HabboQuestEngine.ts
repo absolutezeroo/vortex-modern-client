@@ -54,6 +54,8 @@ import {RoomCompetitionController} from './RoomCompetitionController';
 import {QuestMessageHandler} from './QuestMessageHandler';
 import {Logger} from '@core/utils/Logger';
 import type {IAssetLibrary} from '@core/assets';
+import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents';
+import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
 
 const log = Logger.getLogger('habbo.quest.HabboQuestEngine');
 
@@ -307,6 +309,15 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     get roomCompetitionController(): RoomCompetitionController | null
     {
         return this._competitionController;
+    }
+
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::_wired
+    private _wired: IHabboUserDefinedRoomEvents | null = null;
+
+    // AS3: .../src/com/sulake/habbo/quest/HabboQuestEngine.as::get wired()
+    get wired(): IHabboUserDefinedRoomEvents | null
+    {
+        return this._wired;
     }
 
     /**
@@ -1017,6 +1028,17 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 
         // Create message handler (registers all message events)
         this._messageHandler = new QuestMessageHandler(this);
+
+        // AS3: HabboQuestEngine.as:132 — `queueInterface(new IIDHabboUserDefinedRoomEvents(),
+        // onWiredReady)`. Queued, not depended on: the wired subsystem attaches later than this
+        // component, and the only reader (AchievementController's "wired_games" filter) runs long
+        // after the player has opened a room.
+        this.queueInterface(IID_HabboUserDefinedRoomEvents, (_iid, wired: IHabboUserDefinedRoomEvents) =>
+        {
+            if(this.disposed) return;
+
+            this._wired = wired;
+        });
 
         // Register link event tracker
         this.context.addLinkEventTracker(this);

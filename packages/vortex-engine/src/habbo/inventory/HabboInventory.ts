@@ -1842,10 +1842,10 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
      * the open and the item list are unpacked here first, because they need the session's own
      * user id, the room's user data and the furni model to build their group items.
      *
-     * TODO(AS3): the same block also registers `onTradeNfts`
-     * (`incoming/inventory/trading/nft/TradeNftAssetsMessageEvent`, header 2159) and the four wired
-     * trading answers. Both sets are unported — NFT trading needs `habbo/inventory/collectibles`
-     * and wired trading needs `habbo/inventory/wired_trading`, neither of which exists here.
+     * The same block also registers `onTradeNfts` and the four wired-trading answers, both of
+     * which used to be filed here as blocked on modules that did not exist. They do now, and all
+     * five are subscribed below. The header for the NFT half is 850, not the 2159 the old note
+     * carried.
      */
     private registerTradingMessageEvents(): void
     {

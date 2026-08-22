@@ -2748,9 +2748,6 @@ export class RoomEngine extends Component implements IRoomEngine,
         return false;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::modifyRoomObjectDataWithMap()
-    // TODO(AS3): ad-furni branding save — needs SetObjectDataMessageComposer, which
-    // doesn't exist yet. Low value without the branding widget itself.
     /**
 	 * Save a floor furniture's stuff data — the ad-furni branding path.
 	 *

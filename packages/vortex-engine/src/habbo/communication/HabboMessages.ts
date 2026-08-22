@@ -705,6 +705,9 @@ import {
 import {
     AddNftToTradeComposer
 } from './messages/outgoing/collectibles/AddNftToTradeComposer';
+import {
+    RemoveNftFromTradeComposer
+} from './messages/outgoing/collectibles/RemoveNftFromTradeComposer';
 import {ClaimDailyTaskComposer} from './messages/outgoing/quest/ClaimDailyTaskComposer';
 import {
     RequestVariableHoldersComposer
@@ -2751,6 +2754,7 @@ export class HabboMessages implements IMessageConfiguration
         // Collectibles. Headers from WIN63's registry; the emulator defines neither.
         this._composers.set(1646, RequestNftAssetsComposer);
         this._composers.set(2481, AddNftToTradeComposer);
+        this._composers.set(521, RemoveNftFromTradeComposer);
         this._composers.set(1749, NftTransferAssetsComposer);
         this._composers.set(3638, GetMintTokenOffersComposer);
         this._composers.set(1614, GetCollectorScoreComposer);

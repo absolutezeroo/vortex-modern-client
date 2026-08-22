@@ -1150,7 +1150,7 @@ export class GroupForumController extends Component implements IGroupForumContro
 
         if(count > this._unreadForumsCount)
         {
-            // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/
+            // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/
             // groupforums/GroupForumController.as::updateUnreadForumsCount() — the sound that
             // plays when the count goes up. The branch survives in the bytecode but its body does
             // not, and this is not one decompiler's mistake: win63_version, decompiled by a

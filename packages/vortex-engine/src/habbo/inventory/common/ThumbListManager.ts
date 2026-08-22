@@ -194,7 +194,7 @@ export class ThumbListManager
         return new OffscreenCanvas(Math.max(1, Math.floor(width)), Math.max(1, Math.floor(height)));
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/common/ThumbListManager.as
+    // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/common/ThumbListManager.as
     // also carries an incremental half — `addItemAsFirst()`, `replaceItemImage()`,
     // `removeItemInIndex()`, `removeItemInLocation()`, `updateListItem()` and the
     // `removeItemInImage()` pixel-shuffle they share, ~150 lines that slide the strip's cells

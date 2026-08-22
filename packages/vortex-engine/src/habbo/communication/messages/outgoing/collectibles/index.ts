@@ -1,4 +1,5 @@
 export * from './AddNftToTradeComposer';
+export * from './RemoveNftFromTradeComposer';
 export * from './ClaimNftClaimsComposer';
 export * from './GetCollectibleMintTokensComposer';
 export * from './GetCollectibleMintableItemTypesComposer';

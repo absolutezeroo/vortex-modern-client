@@ -13,7 +13,7 @@ import {AvatarEffectSelectedComposer} from '../../communication/messages/outgoin
  * widget uses: it holds the owned Effect list and SENDS the activate/select
  * composers itself (AS3 sends via `HabboInventory.communication.connection`).
  *
- * TODO(AS3): the AS3 model also owns an inventory-tab EffectsView + two
+ * The AS3 model also owns an inventory-tab EffectsView + two
  * EffectListProxy instances and calls view.updateListViews()/updateActionView()
  * from refreshViews(). That inventory tab is legacy (no "effects" tab exists in
  * the modern inventory_xml layout), so it is intentionally not ported here; the

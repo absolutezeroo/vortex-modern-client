@@ -1017,11 +1017,24 @@ export class TradingView implements IInventoryView
         const items = isOwnUser ? this._model.ownUserItems : this._model.otherUserItems;
         const furnitureCount = items?.length ?? 0;
 
-        // Past the furniture count the id addresses the NFT list.
-        // TODO(AS3): AS3 reads the `CollectibleGroupedItem` there and shows the collector-hub
-        // product name through the popup's product previewer. `habbo/inventory/collectibles` is
-        // unported, so an NFT tile has no tooltip.
-        if(window.id >= furnitureCount) return;
+        // Past the furniture count the id addresses the NFT list, whose tooltip is a different
+        // shape: the collector hub names the product, and the popup renders it through its product
+        // previewer rather than a bitmap.
+        if(window.id >= furnitureCount)
+        {
+            const nftItems = isOwnUser ? this._model.ownUserNftItems : this._model.otherUserNftItems;
+            const nftItem = nftItems?.getWithIndex(window.id - furnitureCount) ?? null;
+
+            if(nftItem === null) return;
+
+            const product = nftItem.renderableItem;
+            const collectorHub = this._model.getInventory()?.catalog?.collectorHub ?? null;
+
+            this._itemPopup.updateContent(window as unknown as IWindowContainer, collectorHub?.getProductName(product) ?? '', null, product);
+            this._itemPopup.show();
+
+            return;
+        }
 
         const groupItem = items?.getWithIndex(window.id) ?? null;
 

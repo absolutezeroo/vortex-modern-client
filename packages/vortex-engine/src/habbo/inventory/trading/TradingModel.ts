@@ -39,6 +39,9 @@ import {OpenTradingComposer} from '@habbo/communication/messages/outgoing/invent
 import {
     RemoveItemFromTradeComposer
 } from '@habbo/communication/messages/outgoing/inventory/RemoveItemFromTradeComposer';
+import {
+    RemoveNftFromTradeComposer
+} from '@habbo/communication/messages/outgoing/collectibles/RemoveNftFromTradeComposer';
 import {SilverFeeMessageComposer} from '@habbo/communication/messages/outgoing/inventory/SilverFeeMessageComposer';
 import {UnacceptTradingComposer} from '@habbo/communication/messages/outgoing/inventory/UnacceptTradingComposer';
 import {TradeOpenFailedEvent} from '@habbo/communication/messages/incoming/inventory/trading/TradeOpenFailedEvent';
@@ -92,8 +95,9 @@ const log = Logger.getLogger('habbo.inventory.trading.TradingModel');
  * The state of one trade, and the only place that talks to the server about it. It owns the
  * `TradingView` it drives, as AS3 does.
  *
- * Still unported around the edges, each marked `TODO(AS3)` where it belongs: the NFT/collectibles
- * half of both item lists, and the Trax song title in the view's hover tooltip.
+ * One edge is still unported, marked where it belongs: the Trax song title in the view's hover
+ * tooltip. The NFT/collectibles half of both item lists used to be on that list too, and is now
+ * live on both sides — the tooltip through the collector hub, removal through header 521.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/trading/TradingModel.as
  */
@@ -197,7 +201,7 @@ export class TradingModel implements ITradingModel, IInventoryModel
 
     // AS3: .../TradingModel.as::TradingModel()
     // AS3 builds both the view and the name-scam warning controller here.
-    // TODO(AS3): AS3 also hands the room engine to the view, for the item icons it renders
+    // AS3 also hands the room engine to the view, for the item icons it renders
     // itself; this port asks the inventory for those (`getItemImage()`).
     constructor(
         inventory: HabboInventory | null,
@@ -1199,11 +1203,17 @@ export class TradingModel implements ITradingModel, IInventoryModel
 
         if(index >= itemCount)
         {
-            // TODO(AS3): the NFT branch pops one asset id off the CollectibleGroupedItem at
-            // `index - itemCount` and sends `RemoveNftFromTradeComposer` (header 521 in WIN63's
-            // registry — note vortex-emulator carries a placeholder 9014 for this one and a note
-            // saying no such composer exists; the registry says otherwise). Unported with the rest
-            // of the collectibles path.
+            // `pop(1)` hands back the asset it just marked as offered. The length test is AS3's:
+            // a group whose assets are all already in the trade pops nothing, and sending the
+            // composer then would remove an asset the player never picked.
+            const nftItem = this._ownUserNftItems?.getWithIndex(index - itemCount) ?? null;
+            const popped = nftItem?.pop(1) ?? null;
+
+            if(popped !== null && popped.length === 1)
+            {
+                this._communication?.connection?.send(new RemoveNftFromTradeComposer(popped[0]));
+            }
+
             return;
         }
 

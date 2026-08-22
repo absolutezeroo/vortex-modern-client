@@ -28,6 +28,29 @@ export class AchievementData
         this._levelCount = wrapper.readInt();
         this._displayMethod = wrapper.readInt();
         this._state = wrapper.readShort();
+
+        // The achievement's *family*, derived from the badge id in AS3's own constructor: drop the
+        // "ACH_" prefix, then the trailing level number. "ACH_WF_Kissing3" becomes "WF_Kissing",
+        // which is what the wired filter and the localization keys are written against.
+        let code = this._badgeId;
+
+        if(code.indexOf('ACH_') === 0) code = code.substr(4);
+
+        while(code.length > 0 && '0123456789'.indexOf(code.charAt(code.length - 1)) !== -1)
+        {
+            code = code.substr(0, code.length - 1);
+        }
+
+        this._code = code;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2411/_SafeCls_3764.as::_code
+    private _code: string = '';
+
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2411/_SafeCls_3764.as::get code()
+    get code(): string
+    {
+        return this._code;
     }
 
     private _achievementId: number = 0;
