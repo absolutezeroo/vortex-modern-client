@@ -27,6 +27,8 @@ import {FurnitureExternalImageLogic} from './object/logic/furniture/FurnitureExt
 import {FurniturePresentLogic} from './object/logic/furniture/FurniturePresentLogic';
 import {FurnitureTrophyLogic} from './object/logic/furniture/FurnitureTrophyLogic';
 import {FurnitureEcotronBoxLogic} from './object/logic/furniture/FurnitureEcotronBoxLogic';
+import {FurnitureFurniChestLogic} from './object/logic/furniture/FurnitureFurniChestLogic';
+import {FurnitureCoinsChestLogic} from './object/logic/furniture/FurnitureCoinsChestLogic';
 import {FurnitureDiceLogic} from './object/logic/furniture/FurnitureDiceLogic';
 import {FurnitureHockeyScoreLogic} from './object/logic/furniture/FurnitureHockeyScoreLogic';
 import {FurnitureHabboWheelLogic} from './object/logic/furniture/FurnitureHabboWheelLogic';
@@ -216,12 +218,12 @@ export class RoomObjectFactory implements IRoomObjectFactory
                 break;
 
             case RoomObjectLogicEnum.FURNITURE_FURNI_CHEST:
-                LogicClass = FurnitureLogic;
+                LogicClass = FurnitureFurniChestLogic;
 
                 break;
 
             case RoomObjectLogicEnum.FURNITURE_COINS_CHEST:
-                LogicClass = FurnitureLogic;
+                LogicClass = FurnitureCoinsChestLogic;
 
                 break;
 

@@ -208,6 +208,12 @@ export interface ISessionDataManager extends IDisposable
     isAccountSafetyLocked(): boolean;
 
     // Badge images — every one of these delegates straight to BadgeImageManager in AS3.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getFurniIconImage()
+    getFurniIconImage(wallItem: boolean, typeId: number, extra: string): HTMLImageElement | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getFurniIconImageAssetName()
+    getFurniIconImageAssetName(wallItem: boolean, typeId: number, extra: string): string | null;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getBadgeImage()
     getBadgeImage(badge: string): HTMLImageElement | null;
 

@@ -30,6 +30,8 @@ import {
 import {FurniturePosterVisualization} from './visualization/furniture/FurniturePosterVisualization';
 import {FurnitureStickieVisualization} from './visualization/furniture/FurnitureStickieVisualization';
 import {FurnitureBottleVisualization} from './visualization/furniture/FurnitureBottleVisualization';
+import {FurnitureFurniChestVisualization} from './visualization/furniture/FurnitureFurniChestVisualization';
+import {FurnitureCoinsChestVisualization} from './visualization/furniture/FurnitureCoinsChestVisualization';
 import {FurnitureHabboWheelVisualization} from './visualization/furniture/FurnitureHabboWheelVisualization';
 import {FurnitureValRandomizerVisualization} from './visualization/furniture/FurnitureValRandomizerVisualization';
 import {FurnitureQueueTileVisualization} from './visualization/furniture/FurnitureQueueTileVisualization';
@@ -197,6 +199,12 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
 
             case RoomObjectVisualizationEnum.FURNITURE_BOTTLE:
                 return new FurnitureBottleVisualization();
+
+            case RoomObjectVisualizationEnum.FURNITURE_FURNI_CHEST:
+                return new FurnitureFurniChestVisualization();
+
+            case RoomObjectVisualizationEnum.FURNITURE_COINS_CHEST:
+                return new FurnitureCoinsChestVisualization();
 
             case RoomObjectVisualizationEnum.FURNITURE_HABBOWHEEL:
                 return new FurnitureHabboWheelVisualization();

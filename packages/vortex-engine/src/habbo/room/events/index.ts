@@ -18,6 +18,7 @@ export {RoomEngineToWidgetEvent} from './RoomEngineToWidgetEvent';
 export {RoomEngineUseProductEvent} from './RoomEngineUseProductEvent';
 export {RoomEngineZoomEvent} from './RoomEngineZoomEvent';
 export {RoomObjectBadgeAssetEvent} from './RoomObjectBadgeAssetEvent';
+export {RoomObjectFurniIconAssetEvent} from './RoomObjectFurniIconAssetEvent';
 export {RoomObjectDataRequestEvent} from './RoomObjectDataRequestEvent';
 export {RoomObjectDimmerStateUpdateEvent} from './RoomObjectDimmerStateUpdateEvent';
 export {RoomObjectFloorHoleEvent} from './RoomObjectFloorHoleEvent';

@@ -16,6 +16,7 @@ import {FurnitureDataParser} from './furniture/FurnitureDataParser';
 import {ProductDataParser} from './product/ProductDataParser';
 import {BadgeInfo} from './BadgeInfo';
 import {BadgeImageManager} from './BadgeImageManager';
+import {FurniIconImageManager} from './FurniIconImageManager';
 
 import type {IHabboLocalizationManager} from '../localization/IHabboLocalizationManager';
 import type {IHabboNotifications} from '../notifications/IHabboNotifications';
@@ -321,6 +322,9 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/SessionDataManager.as::_badgeImageManager
     private _badgeImageManager: BadgeImageManager | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::_SafeStr_7936
+    private _furniIconImageManager: FurniIconImageManager | null = null;
 
     get groupInfoManager(): IHabboGroupInfoManager
     {
@@ -976,6 +980,18 @@ export class SessionDataManager extends Component implements ISessionDataManager
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getFurniIconImage()
+    getFurniIconImage(wallItem: boolean, typeId: number, extra: string): HTMLImageElement | null
+    {
+        return this._furniIconImageManager?.getFurniIconImage(wallItem, typeId, extra) ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getFurniIconImageAssetName()
+    getFurniIconImageAssetName(wallItem: boolean, typeId: number, extra: string): string | null
+    {
+        return this._furniIconImageManager?.getFurniIconImageAssetName(wallItem, typeId, extra) ?? null;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getBadgeImage()
     getBadgeImage(badge: string): HTMLImageElement | null
     {
@@ -1455,8 +1471,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         this.initFurnitureData();
         this.initProductData();
         this.initBadgeImageManager();
-        // TODO(AS3): AS3 also calls initFurniIconImageManager() here — FurniIconImageManager
-        // (habbo/session/FurniIconImageManager.as) has no port equivalent yet.
+        this.initFurniIconImageManager();
     }
 
     /**
@@ -1469,6 +1484,18 @@ export class SessionDataManager extends Component implements ISessionDataManager
         if(this._badgeImageManager !== null) return;
 
         this._badgeImageManager = new BadgeImageManager(this.events, this);
+    }
+
+    /**
+	 * Idempotent for the same reason as the badge one — onConfigurationComplete() can fire
+	 * more than once and the icon cache must survive it.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::initFurniIconImageManager()
+    private initFurniIconImageManager(): void
+    {
+        if(this._furniIconImageManager !== null) return;
+
+        this._furniIconImageManager = new FurniIconImageManager(this.events, this, this);
     }
 
     protected override initComponent(): void

@@ -2828,6 +2828,66 @@ null from the reset and `parseInt(null)` being NaN is how the marker clears.
 
 **Not exercised at runtime.** All six need the emulator and a live room.
 
+### The furni chest showed nothing of what it held (2026-08-22)
+
+Third `habbo/room` slice, and the first whole *feature* the member measure turned up rather than
+a dropped field: `habbo/room` 121 -> 112 absent public/protected members, global 550 -> 541,
+coverage 44.7% -> 45.0%.
+
+`RoomObjectFactory` mapped both `furniture_furnichest` and `furniture_coinschest` to the plain
+`FurnitureLogic`, and `RoomObjectVisualizationFactory` had no case for either — the visualization
+enum did not even carry the two type strings. Six AS3 classes had no TypeScript at all, and the
+whole icon pipeline behind them was missing, `SessionDataManager.onConfigurationComplete()`
+carrying a `TODO(AS3)` for it since the badge manager was ported.
+
+What the chest is supposed to do: the server sends its contents as a `visuals` entry in the stuff
+data (`isWallItem,typeId[,extra]` triples, semicolon-separated), the logic turns each into an
+`ROFIAE_LOAD_FURNI_ICON` request and a placeholder slot, the engine loads the icon off the hotel's
+icon URL and answers with a `RoomObjectFurniIconUpdateMessage`, and the visualization floats up to
+four of them above the chest, bobbing, at randomised offsets. None of that existed.
+
+Ported, all from the primary tree: `FurnitureChestLogic` (`_SafeCls_1811`, the `is_wired_enabled`
+-> model mirror), `FurnitureFurniChestLogic` (`_SafeCls_1812`), `FurnitureCoinsChestLogic`
+(`_SafeCls_2227`), `FurnitureChestVisualization` (`_SafeCls_1801`, hides the `wired_emblem` sprite
+when the chest is not wired), `FurnitureFurniChestVisualization` (`_SafeCls_1802`),
+`FurnitureCoinsChestVisualization` (`_SafeCls_1942`), `RoomObjectFurniIconUpdateMessage`,
+`RoomObjectFurniIconAssetEvent`, `FurniIconImageReadyEvent`, `FurniIconImageManager`, the two
+`ISessionDataManager` accessors, and on RoomEngine `furniIconListenerKey()`,
+`requestFurniIconAsset()`, `addFurniIconGraphicAssets()`, `onFurniIconLoaded()`,
+`getFurnitureIconUrl()` and `getWallItemIconUrl()`. All six class names are DERIVED and say so at
+the declaration — every one of them postdates the 2016 build, so no tree has them unobfuscated.
+
+Four things worth keeping:
+
+- **The badge pipeline was the template, member for member.** `requestBadgeImageAsset()` /
+  `addBadgeGraphicAssets()` / `onBadgeLoaded()` and `BadgeImageManager` are the same three-step
+  shape — placeholder out now, object parked against a key, real asset name on the ready event —
+  so the furni-icon half is deliberately written to mirror them, including the `Map`-instead-of-
+  `AssetLibrary` cache and the reason for it.
+- **`_lastUpdateTime` was private in `FurnitureVisualization`, where AS3 declares it protected.**
+  The icon bob times itself off it. A faithful one-word fix, but the kind that only surfaces when
+  a subclass that needs it finally gets ported.
+- **`_assetNames` had to be renamed.** AS3 privates do not collide across a hierarchy; TypeScript's
+  do, and `FurnitureVisualization` already declares an unrelated `_assetNames`. It is
+  `_iconAssetNames` with a note at the declaration.
+- **Two members are deliberately incomplete.** `getSpriteFilters()` is a stub with a `TODO(AS3)`:
+  AS3 wraps each floating icon in a white `GlowFilter` and this port has no GlowFilter equivalent
+  (same gap `VariableHoldersHighlighter` already documents). `FurniIconImageManager.getPlaceholder()`
+  returns null for the same reason `BadgeImageManager`'s does.
+
+Also not ported, deliberately: `_SafeCls_1802`'s `_SafeStr_11449` (1200) and
+`INDIVIDUAL_FLOATING_ENABLED` — both declared and never read in the AS3 body either — and the
+`initialize()` / `createSprites()` / `getSpriteColor()` overrides that only call super.
+
+**Not exercised at runtime.** A chest furni needs the emulator, a room and contents. `tsc`,
+`eslint` and `pnpm build` are clean, and the event type reaches the engine through
+`RoomObjectFactory.addTrackedEventType()`, which reads the logic's own `getEventTypes()`.
+
+**A pre-existing signature gap left alone.** AS3's `getAdditionalSpriteCount(scale)` and
+`updateLayerCount(count, scale)` both take a scale this port dropped before this slice.
+`_SafeCls_1802` ignores the parameter, so threading it would touch `AnimatedPetVisualization` and
+`FurnitureBuilderPlaceholderVisualization` for no behaviour change — it is a separate parity item.
+
 ### Trace hygiene, 2026-08-20
 
 `audit-as3-traces.mjs` is the forward direction and now exits 0. Three passes that day:

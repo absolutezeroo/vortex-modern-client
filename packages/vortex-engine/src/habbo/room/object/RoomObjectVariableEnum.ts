@@ -144,6 +144,12 @@ export const RoomObjectVariableEnum = {
     FURNITURE_BADGE_ASSET_NAME: 'furniture_badge_asset_name',
     FURNITURE_BADGE_VISIBLE_IN_STATE: 'furniture_badge_visible_in_state',
     FURNITURE_BADGE_IMAGE_STATUS: 'furniture_badge_image_status',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectVariableEnum.as::FURNITURE_FURNI_CHEST_SHOWN_ASSET_NAMES
+    FURNITURE_FURNI_CHEST_SHOWN_ASSET_NAMES: 'furniture_furni_chest_shown_asset_names',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectVariableEnum.as::_SafeStr_11725
+    // (name DERIVED from the value — the identifier is obfuscated in every available tree, and
+    // the 2016 build predates the constant.)
+    FURNITURE_CHEST_IS_WIRED_ENABLED: 'furniture_chest_is_wired_enabled',
     FURNITURE_FRIENDFURNI_ENGRAVING_TYPE: 'furniture_friendfurni_engraving_type',
     FURNITURE_HIGHSCORE_SCORE_TYPE: 'furniture_highscore_score_type',
     FURNITURE_HIGHSCORE_CLEAR_TYPE: 'furniture_highscore_clear_type',

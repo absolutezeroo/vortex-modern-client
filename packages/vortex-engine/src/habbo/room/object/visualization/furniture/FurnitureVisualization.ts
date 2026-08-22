@@ -27,7 +27,8 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
     protected _shadowLayerIndex: number = -1;
 
     // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_lastUpdateTime
-    private _lastUpdateTime: number = -1000;
+    // AS3 declares it protected, and FurnitureFurniChestVisualization times its icon bob off it.
+    protected _lastUpdateTime: number = -1000;
     private _objectUpdateCounter: number = -1;
     private _geometryDirection: number = NaN;
     // AS3: .../src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_selectedColor

@@ -27,6 +27,7 @@ export {RoomObjectAvatarUpdateMessage} from './RoomObjectAvatarUpdateMessage';
 export {RoomObjectAvatarUseObjectUpdateMessage} from './RoomObjectAvatarUseObjectUpdateMessage';
 export {RoomObjectDataUpdateMessage} from './RoomObjectDataUpdateMessage';
 export {RoomObjectGroupBadgeUpdateMessage} from './RoomObjectGroupBadgeUpdateMessage';
+export {RoomObjectFurniIconUpdateMessage} from './RoomObjectFurniIconUpdateMessage';
 export {RoomObjectHeightUpdateMessage} from './RoomObjectHeightUpdateMessage';
 export {RoomObjectItemDataUpdateMessage} from './RoomObjectItemDataUpdateMessage';
 export {RoomObjectModelDataUpdateMessage} from './RoomObjectModelDataUpdateMessage';

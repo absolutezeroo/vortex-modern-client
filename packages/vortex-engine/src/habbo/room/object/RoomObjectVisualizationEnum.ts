@@ -31,6 +31,8 @@ export const RoomObjectVisualizationEnum = {
     FURNITURE_HABBOWHEEL: 'furniture_habbowheel',
     FURNITURE_VAL_RANDOMIZER: 'furniture_val_randomizer',
     FURNITURE_BOTTLE: 'furniture_bottle',
+    FURNITURE_FURNI_CHEST: 'furniture_furnichest',
+    FURNITURE_COINS_CHEST: 'furniture_coinschest',
     FURNITURE_PLANET_SYSTEM: 'furniture_planet_system',
     FURNITURE_QUEUE_TILE: 'furniture_queue_tile',
     FURNITURE_PARTY_BEAMER: 'furniture_party_beamer',

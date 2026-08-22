@@ -112,6 +112,9 @@ import {RoomObjectGroupBadgeUpdateMessage} from './messages/RoomObjectGroupBadge
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import {RoomObjectRoomAdEvent} from './events/RoomObjectRoomAdEvent';
 import {RoomObjectBadgeAssetEvent} from './events/RoomObjectBadgeAssetEvent';
+import {RoomObjectFurniIconAssetEvent} from './events/RoomObjectFurniIconAssetEvent';
+import {RoomObjectFurniIconUpdateMessage} from './messages/RoomObjectFurniIconUpdateMessage';
+import {FurniIconImageReadyEvent} from '@habbo/session/events/FurniIconImageReadyEvent';
 import {RoomEngineRoomAdEvent} from './events/RoomEngineRoomAdEvent';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import {EventEmitter} from 'eventemitter3';
@@ -300,6 +303,12 @@ export class RoomEngine extends Component implements IRoomEngine,
     // keyed by badge id; the BADGE_IMAGE_READY listener is attached only while it is
     // non-empty, exactly as AS3 does.
     private _pendingBadgeObjects: Map<string, {object: IRoomObjectController; groupBadge: boolean}[]> = new Map();
+
+    /**
+	 * Keyed by `furniIconListenerKey()`, holding the chests waiting on one item's icon.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_SafeStr_5238
+    private _pendingFurniIconObjects: Map<string, IRoomObjectController[]> = new Map();
     private _contentLoader: RoomContentLoader;
     private _contentLoaderEvents: EventEmitter = new EventEmitter();
     private _roomInstanceData: Map<number, IRoomEngineRoomInstanceData>;
@@ -1118,6 +1127,102 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     };
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::furniIconListenerKey()
+    static furniIconListenerKey(wallItem: boolean, typeId: number, extra: string): string
+    {
+        return `${wallItem ? '1' : '0'}-${typeId}-${extra}`;
+    }
+
+    /**
+	 * A furni chest asking for the icon of one item it holds. Same shape as
+	 * `requestBadgeImageAsset()`: the placeholder name goes out immediately and the object is
+	 * parked against the item key, then `onFurniIconLoaded()` sends the real one.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::requestFurniIconAsset()
+    requestFurniIconAsset(
+        roomId: number,
+        objectId: number,
+        category: number,
+        wallItem: boolean,
+        typeId: number,
+        extra: string
+    ): void
+    {
+        const object = roomId === 0
+            ? (this._roomManager?.getRoom('temporary_room')?.getObject(objectId, category) as IRoomObjectController | null ?? null)
+            : (this.getRoomObject(roomId, objectId, category) as IRoomObjectController | null);
+
+        if(!object || !object.getEventHandler() || !this._sessionDataManager) return;
+
+        let assetName = this._sessionDataManager.getFurniIconImageAssetName(wallItem, typeId, extra);
+
+        if(!assetName)
+        {
+            assetName = 'loading_icon';
+
+            if(this._pendingFurniIconObjects.size === 0)
+            {
+                this._sessionDataManager.events.on(FurniIconImageReadyEvent.FURNI_ICON_READY, this.onFurniIconLoaded);
+            }
+
+            const key = RoomEngine.furniIconListenerKey(wallItem, typeId, extra);
+            const waiting = this._pendingFurniIconObjects.get(key) ?? [];
+
+            waiting.push(object);
+            this._pendingFurniIconObjects.set(key, waiting);
+        }
+        else
+        {
+            this.addFurniIconGraphicAssets(object, wallItem, typeId, extra);
+        }
+
+        object.getEventHandler()!.processUpdateMessage(
+            new RoomObjectFurniIconUpdateMessage(assetName, wallItem, typeId, extra));
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addFurniIconGraphicAssets()
+    private addFurniIconGraphicAssets(object: IRoomObjectController, wallItem: boolean, typeId: number, extra: string): void
+    {
+        const session = this._sessionDataManager;
+
+        if(!session) return;
+
+        const name = session.getFurniIconImageAssetName(wallItem, typeId, extra);
+        const image = session.getFurniIconImage(wallItem, typeId, extra);
+
+        if(name && image) this._contentLoader.addGraphicAsset(object.getType(), name, Texture.from(image), false);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::onFurniIconLoaded()
+    private onFurniIconLoaded = (event: FurniIconImageReadyEvent): void =>
+    {
+        const key = RoomEngine.furniIconListenerKey(event.wallItem, event.typeId, event.extra);
+        const waiting = this._pendingFurniIconObjects.get(key);
+        const session = this._sessionDataManager;
+
+        if(!waiting || !session)
+        {
+            log.warn(`Could not find matching objects for furni icon asset request ${key}`);
+
+            return;
+        }
+
+        for(const object of waiting)
+        {
+            this.addFurniIconGraphicAssets(object, event.wallItem, event.typeId, event.extra);
+
+            object.getEventHandler()?.processUpdateMessage(
+                new RoomObjectFurniIconUpdateMessage(event.assetName, event.wallItem, event.typeId, event.extra));
+        }
+
+        this._pendingFurniIconObjects.delete(key);
+
+        if(this._pendingFurniIconObjects.size === 0)
+        {
+            session.events.off(FurniIconImageReadyEvent.FURNI_ICON_READY, this.onFurniIconLoaded);
+        }
+    };
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setClickSettings()
     setClickSettings(owner: string, throughUsers: boolean, throughFurni: boolean): void
     {
@@ -1366,6 +1471,24 @@ export class RoomEngine extends Component implements IRoomEngine,
     getObjectMoverIconSpriteVisible(): boolean 
     {
         return this._moverIconSprite?.visible ?? false;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getFurnitureIconUrl()
+    getFurnitureIconUrl(type: number): string | null
+    {
+        const activeType = this._contentLoader?.getActiveObjectType(type) ?? null;
+        const colorIndex = this._contentLoader ? String(this._contentLoader.getActiveObjectColorIndex(type)) : '';
+
+        return this._contentLoader?.getObjectUrl(activeType ?? '', colorIndex) ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getWallItemIconUrl()
+    getWallItemIconUrl(type: number, param: string | null = null): string | null
+    {
+        const wallType = this._contentLoader?.getWallItemType(type, param) ?? null;
+        const colorIndex = this._contentLoader ? String(this._contentLoader.getWallItemColorIndex(type)) : '';
+
+        return this._contentLoader?.getObjectUrl(wallType ?? '', colorIndex) ?? null;
     }
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureIcon()
@@ -6799,6 +6922,15 @@ export class RoomEngine extends Component implements IRoomEngine,
             {
                 this.requestBadgeImageAsset(this._activeRoomId, event.objectId,
                     this.getRoomObjectCategory(event.objectType ?? ''), event.badgeId, event.groupBadge);
+            }
+        }
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectFurniIconAssetEvent()
+        else if(event instanceof RoomObjectFurniIconAssetEvent)
+        {
+            if(event.type === RoomObjectFurniIconAssetEvent.LOAD_FURNI_ICON)
+            {
+                this.requestFurniIconAsset(this._activeRoomId, event.objectId,
+                    this.getRoomObjectCategory(event.objectType ?? ''), event.wallItem, event.typeId, event.extra);
             }
         }
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectRoomAdEvent()
