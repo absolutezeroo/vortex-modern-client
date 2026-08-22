@@ -24,4 +24,12 @@ export class TabletEventQueue extends MouseEventQueue
     {
         return this._touchPosition;
     }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/tablet/TabletEventQueue.as::dispose()
+    public override dispose(): void
+    {
+        if(this._disposed) return;
+
+        super.dispose();
+    }
 }

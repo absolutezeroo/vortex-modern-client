@@ -24,6 +24,15 @@ interface IParsedVar {
  */
 export class WindowParser implements IWindowParser 
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::ELEMENT_TAG_EXCLUDE
+    // A window carrying this tag is skipped when the tree is serialized back to
+    // XML — it is authoring scaffolding, not part of the layout.
+    public static readonly ELEMENT_TAG_EXCLUDE: string = '_EXCLUDE';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::ELEMENT_TAG_INCLUDE
+    // Declared by AS3 and read nowhere in the tree; kept so the pair is not half
+    // present.
+    public static readonly ELEMENT_TAG_INCLUDE: string = '_INCLUDE';
+
     /**
      * Localization resolver callback.
      *
@@ -915,7 +924,7 @@ export class WindowParser implements IWindowParser
                 continue;
             }
 
-            if(child.tags.indexOf('_EXCLUDE') !== -1) 
+            if(child.tags.indexOf(WindowParser.ELEMENT_TAG_EXCLUDE) !== -1) 
             {
                 continue;
             }

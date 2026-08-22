@@ -44,12 +44,12 @@ export class SkinRenderer implements ISkinRenderer
         };
 
     /** Templates by name. */
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::_templatesByName
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::_templatesByName
     protected _templatesByName: Map<string, SkinTemplate> = new Map();
     /** Templates by window state flag. */
     protected _templatesByState: Map<number, SkinTemplate> = new Map();
     /** Layouts by name. */
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::_layoutsByName
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::_layoutsByName
     protected _layoutsByName: Map<string, SkinLayout> = new Map();
     /** Layouts by window state flag. */
     protected _layoutsByState: Map<number, SkinLayout> = new Map();
@@ -59,19 +59,19 @@ export class SkinRenderer implements ISkinRenderer
         this._name = name;
     }
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::_name
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::_name
     protected _name: string;
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::get name()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::get name()
     public get name(): string
     {
         return this._name;
     }
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::_disposed
     protected _disposed: boolean = false;
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::get disposed()
     public get disposed(): boolean
     {
         return this._disposed;
@@ -85,7 +85,7 @@ export class SkinRenderer implements ISkinRenderer
      * base implementation is a no-op, matching AS3's own empty base method.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::parse()
-    public parse(): void
+    public parse(_source?: string): void
     {
         // Override in subclasses; base AS3 implementation is also empty.
     }
@@ -322,7 +322,7 @@ export class SkinRenderer implements ISkinRenderer
     /**
      * Draws the skin. Override in subclasses.
      */
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::draw()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::draw()
     public draw(
         _window: IWindow,
         _ctx: OffscreenCanvasRenderingContext2D,
@@ -334,7 +334,7 @@ export class SkinRenderer implements ISkinRenderer
         // Override in subclasses
     }
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::dispose()
     public dispose(): void
     {
         if(this._disposed) return;

@@ -28,10 +28,107 @@ export class ShapeSkinRenderer extends SkinRenderer
         return alphaByte === 0 ? 1 : alphaByte / 255;
     }
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as::snappedThickness()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as::snappedThickness()
     private static snappedThickness(value: number): number
     {
         return Number.isNaN(value) || value <= 0 ? 0 : Math.max(1, Math.round(value));
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as::snap()
+    private static snap(value: number): number
+    {
+        return Number.isNaN(value) ? 0 : Math.round(value);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as::cornerRadius()
+    private static cornerRadius(radius: number, width: number, height: number): number
+    {
+        if(Number.isNaN(radius) || Number.isNaN(width) || Number.isNaN(height) || radius <= 0 || width <= 0 || height <= 0)
+        {
+            return 0;
+        }
+
+        return Math.min(Math.round(radius), Math.floor(width / 2), Math.floor(height / 2));
+    }
+
+    /**
+	 * Fills the enabled sides of a rectangular stroke as four separate strips.
+	 *
+	 * The strips are AS3's, snapping included: every edge is rounded to a whole
+	 * pixel and the thickness to at least 1, so a 0.5px window rect cannot smear a
+	 * border across two rows. Where AS3 writes them with fillPixelRect() into a
+	 * BitmapData, this fills with the canvas — same rectangles.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as::drawRectStrokeSides()
+    public static drawRectStrokeSides(
+        ctx: OffscreenCanvasRenderingContext2D,
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+        strokeThickness: number,
+        color: number,
+        top: boolean,
+        right: boolean,
+        bottom: boolean,
+        left: boolean
+    ): void
+    {
+        const x0 = ShapeSkinRenderer.snap(x);
+        const y0 = ShapeSkinRenderer.snap(y);
+        const x1 = ShapeSkinRenderer.snap(x + width);
+        const y1 = ShapeSkinRenderer.snap(y + height);
+        const thickness = ShapeSkinRenderer.snappedThickness(strokeThickness);
+
+        if(thickness <= 0 || x1 <= x0 || y1 <= y0) return;
+
+        ctx.fillStyle = ShapeSkinRenderer.toCss(color, ShapeSkinRenderer.alphaFromColor(color));
+
+        if(top) ctx.fillRect(x0, y0, x1 - x0, thickness);
+        if(right) ctx.fillRect(x1 - thickness, y0, thickness, y1 - y0);
+        if(bottom) ctx.fillRect(x0, y1 - thickness, x1 - x0, thickness);
+        if(left) ctx.fillRect(x0, y0, thickness, y1 - y0);
+    }
+
+    /**
+	 * Strokes a rounded rectangle inset by half the thickness.
+	 *
+	 * AS3 rasterizes the ring pixel by pixel (roundRectContainsPixel() on the outer
+	 * rect minus the inner one); this port strokes a Path2D instead, the same
+	 * Canvas2D-over-BitmapData trade this class makes everywhere. The corner radius
+	 * is clamped exactly as AS3's cornerRadius() does — rounded, then held to half
+	 * the shorter side — so the two agree on the geometry even where the edges differ
+	 * by anti-aliasing.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/ShapeSkinRenderer.as::drawRoundRectStroke()
+    public static drawRoundRectStroke(
+        ctx: OffscreenCanvasRenderingContext2D,
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+        radius: number,
+        strokeThickness: number,
+        color: number
+    ): void
+    {
+        const x0 = ShapeSkinRenderer.snap(x);
+        const y0 = ShapeSkinRenderer.snap(y);
+        const x1 = ShapeSkinRenderer.snap(x + width);
+        const y1 = ShapeSkinRenderer.snap(y + height);
+        const thickness = ShapeSkinRenderer.snappedThickness(strokeThickness);
+
+        if(thickness <= 0 || x1 <= x0 || y1 <= y0) return;
+
+        const inset = thickness / 2;
+        const clampedRadius = ShapeSkinRenderer.cornerRadius(radius, x1 - x0, y1 - y0);
+        const path = new Path2D();
+
+        path.roundRect(x0 + inset, y0 + inset, x1 - x0 - thickness, y1 - y0 - thickness, clampedRadius);
+
+        ctx.strokeStyle = ShapeSkinRenderer.toCss(color, ShapeSkinRenderer.alphaFromColor(color));
+        ctx.lineWidth = thickness;
+        ctx.stroke(path);
     }
 
     private static toCss(color: number, alpha: number): string

@@ -1,6 +1,7 @@
 import type {IWindow} from '../../IWindow';
 import {SkinRenderer} from './SkinRenderer';
 import {SkinLayoutEntity} from './SkinLayoutEntity';
+import type {SkinLayout} from './SkinLayout';
 import type {SkinTemplate} from './SkinTemplate';
 import type {SkinTemplateEntity} from './SkinTemplateEntity';
 import {HsvLayerColor} from './HsvLayerColor';
@@ -23,7 +24,7 @@ import {HsvLayerColor} from './HsvLayerColor';
 export class BitmapSkinRenderer extends SkinRenderer 
 {
     /** Bitmap cache: "entityName@templateName" → OffscreenCanvas crop. */
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::_bitmapCache
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::_bitmapCache
     private _bitmapCache: Map<string, OffscreenCanvas> = new Map();
 
     constructor(name: string) 
@@ -101,6 +102,12 @@ export class BitmapSkinRenderer extends SkinRenderer
         const deltaH = targetHeight - layout.height;
 
         // Determine colorization
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::configureWindowColorTransform()
+        // Folded into draw(): AS3 stamps the multipliers onto one shared
+        // flash.geom.ColorTransform reused across entities (and has to reset it
+        // after an hsv_layer entity overwrites it). Canvas has no such object —
+        // colorizeEntity() takes the multipliers per call, so they are plain
+        // locals here and the reset dance has nothing to reset.
         const color = window.color;
         const doColorize = !window.background && ((color & 0xFFFFFF) < 0xFFFFFF);
         const colorR = doColorize ? ((color >> 16) & 0xFF) / 255 : 1;
@@ -134,18 +141,18 @@ export class BitmapSkinRenderer extends SkinRenderer
             // Apply horizontal scale mode
             switch(layoutEntity.scaleH) 
             {
-                case SkinLayoutEntity.SCALE_FIXED:
+                case SkinLayoutEntity.SCALE_TYPE_FIXED:
                     break;
-                case SkinLayoutEntity.SCALE_MOVE:
+                case SkinLayoutEntity.SCALE_TYPE_MOVE:
                     destX += deltaW;
                     break;
-                case SkinLayoutEntity.SCALE_STRETCH:
+                case SkinLayoutEntity.SCALE_TYPE_STRECH:
                     destW += deltaW;
                     break;
-                case SkinLayoutEntity.SCALE_TILED:
+                case SkinLayoutEntity.SCALE_TYPE_TILED:
                     destW += deltaW;
                     break;
-                case SkinLayoutEntity.SCALE_CENTER:
+                case SkinLayoutEntity.SCALE_TYPE_CENTER:
                     destX = rect.width / 2 - destW / 2;
                     break;
             }
@@ -153,18 +160,18 @@ export class BitmapSkinRenderer extends SkinRenderer
             // Apply vertical scale mode
             switch(layoutEntity.scaleV) 
             {
-                case SkinLayoutEntity.SCALE_FIXED:
+                case SkinLayoutEntity.SCALE_TYPE_FIXED:
                     break;
-                case SkinLayoutEntity.SCALE_MOVE:
+                case SkinLayoutEntity.SCALE_TYPE_MOVE:
                     destY += deltaH;
                     break;
-                case SkinLayoutEntity.SCALE_STRETCH:
+                case SkinLayoutEntity.SCALE_TYPE_STRECH:
                     destH += deltaH;
                     break;
-                case SkinLayoutEntity.SCALE_TILED:
+                case SkinLayoutEntity.SCALE_TYPE_TILED:
                     destH += deltaH;
                     break;
-                case SkinLayoutEntity.SCALE_CENTER:
+                case SkinLayoutEntity.SCALE_TYPE_CENTER:
                     destY = rect.height / 2 - destH / 2;
                     break;
             }
@@ -198,8 +205,8 @@ export class BitmapSkinRenderer extends SkinRenderer
             // in a bigger padded box). Sizing the draw off `destW === srcW` instead
             // of the scale mode stretched every FIXED-mode entity whose region size
             // didn't happen to match its source crop.
-            const tiled = layoutEntity.scaleH === SkinLayoutEntity.SCALE_TILED || layoutEntity.scaleV === SkinLayoutEntity.SCALE_TILED;
-            const stretched = layoutEntity.scaleH === SkinLayoutEntity.SCALE_STRETCH || layoutEntity.scaleV === SkinLayoutEntity.SCALE_STRETCH;
+            const tiled = layoutEntity.scaleH === SkinLayoutEntity.SCALE_TYPE_TILED || layoutEntity.scaleV === SkinLayoutEntity.SCALE_TYPE_TILED;
+            const stretched = layoutEntity.scaleH === SkinLayoutEntity.SCALE_TYPE_STRECH || layoutEntity.scaleV === SkinLayoutEntity.SCALE_TYPE_STRECH;
 
             if(tiled) 
             {
@@ -239,7 +246,68 @@ export class BitmapSkinRenderer extends SkinRenderer
      * @param entity - The template entity
      * @returns The cropped OffscreenCanvas piece, or null
      */
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::getBitmapFromCache()
+    /**
+	 * AS3 parses its own skin XML into itself; this port parses ahead of the
+	 * renderer and constructs it filled.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::parse()
+    // Restructured, not missing: BitmapSkinParser.parse() is a static factory that
+    // returns a filled BitmapSkinRenderer (HabboWindowManager.loadSkinAssets() calls
+    // it), where AS3 constructs the renderer empty and has it parse into itself.
+    public override parse(_source?: string): void
+    {
+        // Nothing to do — see BitmapSkinParser.parse().
+    }
+
+    /**
+	 * Blits one unscaled layout entity: a bitmap piece, or a solid fill.
+	 *
+	 * Dead in AS3 too — BitmapSkinRenderer.as is the only file in the tree that
+	 * mentions it, and draw() has its own inline entity loop. Ported so the member
+	 * is not silently missing, not because anything reaches it.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::drawStaticLayoutEntity()
+    protected drawStaticLayoutEntity(
+        ctx: OffscreenCanvasRenderingContext2D,
+        rect: { x: number; y: number; width: number; height: number },
+        layout: SkinLayout,
+        layoutEntity: SkinLayoutEntity,
+        template: SkinTemplate,
+        templateEntity: SkinTemplateEntity
+    ): void
+    {
+        let x = layoutEntity.region.x + rect.x;
+        let y = layoutEntity.region.y + rect.y;
+
+        switch(templateEntity.type)
+        {
+            case 'bitmap':
+            {
+                const piece = this.getBitmapFromCache(template, templateEntity);
+
+                if(!piece) return;
+
+                if(layoutEntity.scaleH === SkinLayoutEntity.SCALE_TYPE_MOVE) x += rect.width - layout.width;
+                if(layoutEntity.scaleV === SkinLayoutEntity.SCALE_TYPE_MOVE) y += rect.height - layout.height;
+
+                ctx.drawImage(piece, x, y);
+
+                break;
+            }
+            case 'fill':
+            {
+                const previous = ctx.fillStyle;
+
+                ctx.fillStyle = `#${(layoutEntity.color & 0xFFFFFF).toString(16).padStart(6, '0')}`;
+                ctx.fillRect(x, y, layoutEntity.region.width, layoutEntity.region.height);
+                ctx.fillStyle = previous;
+
+                break;
+            }
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::getBitmapFromCache()
     private getBitmapFromCache(template: SkinTemplate, entity: SkinTemplateEntity): OffscreenCanvas | null 
     {
         const key = `${entity.name}@${template.name}`;

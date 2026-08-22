@@ -1107,7 +1107,17 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param createIfMissing - Whether to create one if it does not exist
      * @returns The graphic context, or null
      */
-    // AS3: .../src/com/sulake/core/window/WindowController.as::getGraphicContext()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as::getGraphicContext()
+    // TODO(AS3): two subclasses override this and neither override is ported, on purpose.
+    // `ContainerController.as::getGraphicContext()` builds a GC_TYPE_CONTAINER (a Sprite, no draw
+    // buffer) when param flag 16 (USE_PARENT_GRAPHIC_CONTEXT) is set, and
+    // `DesktopController.as::getGraphicContext()` builds type 256 — no display object at all —
+    // with mouseEnabled/doubleClickEnabled true. Both would remove the buffer here, because
+    // `GraphicContext.allocateDrawBuffer()` returns null unless the type was GC_TYPE_BITMAP: a
+    // flagged container with a background, or the desktop itself, would stop painting. AS3 can
+    // afford it — a flagged window draws into its parent's context there — and this port does not
+    // implement that: every window owns its buffer. Porting the two overrides means porting
+    // draw-into-parent first, in WindowRendererItem.
     public getGraphicContext(createIfMissing: boolean): IGraphicContext | null 
     {
         if(createIfMissing && !this._graphicContext) 

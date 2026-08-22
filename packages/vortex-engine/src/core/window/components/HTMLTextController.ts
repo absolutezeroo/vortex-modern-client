@@ -244,4 +244,28 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
             .replace(/<br\s*\/?>/gi, '\n')
             .replace(/<[^>]+>/g, '');
     }
+
+    /**
+	 * Empty, exactly as AS3 wrote it — an HTMLTextController never releases.
+	 *
+	 * Both trees agree the override has no body (WIN63 l.314, win63_version
+	 * l.312), so it deliberately swallows TextController.dispose(): no
+	 * localization listener removed, no margins disposed, no
+	 * WindowController.dispose() and therefore no detach from the parent and no
+	 * graphic-context release. Kept faithful rather than "fixed" — if HTML text
+	 * windows ever show up as ghosts or as leaked buffers, this is the line, and
+	 * the client shipped it this way.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/HTMLTextController.as::dispose()
+    public override dispose(): void
+    {
+    }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/HTMLTextController.as::immediateClickHandler() takes the Flash
+    // TextField "link" event, allocates a WindowLinkEvent for the href, dispatches it and walks
+    // `context.linkEventTrackers` calling linkReceived() on every tracker whose linkPattern
+    // prefixes the link. WindowLinkEvent and the tracker list are both ported already
+    // (core/runtime/ComponentContext.ts); what is missing is upstream — this port renders HTML
+    // text through the glyph atlas and never hit-tests `<a href>` runs, so nothing could call the
+    // handler. Porting it alone would add a method no code can reach.
 }

@@ -1,6 +1,7 @@
 import type {IWindow} from '../../IWindow';
 import type {StrokeController} from '../../components/StrokeController';
 import {SkinRenderer} from './SkinRenderer';
+import {ShapeSkinRenderer} from './ShapeSkinRenderer';
 
 /**
  * Draws a stroke-only outline, either as a single rounded-rect stroke
@@ -11,23 +12,12 @@ import {SkinRenderer} from './SkinRenderer';
  */
 export class StrokeSkinRenderer extends SkinRenderer
 {
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/StrokeSkinRenderer.as::SIDE_MASK_ALL
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/StrokeSkinRenderer.as::SIDE_MASK_ALL
     private static readonly SIDE_MASK_ALL: number = 15;
 
     constructor(name: string)
     {
         super(name);
-    }
-
-    private static toCss(color: number): string
-    {
-        const alphaByte = (color >>> 24) & 0xFF;
-        const alpha = alphaByte === 0 ? 1 : alphaByte / 255;
-        const r = (color >> 16) & 0xFF;
-        const g = (color >> 8) & 0xFF;
-        const b = color & 0xFF;
-
-        return `rgba(${r},${g},${b},${alpha})`;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/StrokeSkinRenderer.as::draw()
@@ -53,50 +43,41 @@ export class StrokeSkinRenderer extends SkinRenderer
             return;
         }
 
-        const thickness = Math.max(1, Math.round(strokeWindow.strokeThickness));
         const sideMask = strokeWindow.sideMask;
 
-        ctx.fillStyle = StrokeSkinRenderer.toCss(window.color);
-
+        // AS3 does not draw the stroke itself: both branches call into
+        // ShapeSkinRenderer, which owns the snapping and the corner clamp. The two
+        // helpers were inlined here, so the same code lived twice and only one copy
+        // snapped its edges.
         if(sideMask === StrokeSkinRenderer.SIDE_MASK_ALL && strokeWindow.radius > 0)
         {
-            const inset = thickness / 2;
-            const radius = Math.max(0, Math.min(rect.width / 2, rect.height / 2, strokeWindow.radius));
-            const path = new Path2D();
-
-            path.roundRect(rect.x + inset, rect.y + inset, rect.width - thickness, rect.height - thickness, radius);
-
-            ctx.strokeStyle = ctx.fillStyle;
-            ctx.lineWidth = thickness;
-            ctx.stroke(path);
+            ShapeSkinRenderer.drawRoundRectStroke(
+                ctx,
+                rect.x,
+                rect.y,
+                rect.width,
+                rect.height,
+                strokeWindow.radius,
+                strokeWindow.strokeThickness,
+                window.color
+            );
 
             return;
         }
 
-        const top = (sideMask & 1) !== 0;
-        const right = (sideMask & 2) !== 0;
-        const bottom = (sideMask & 4) !== 0;
-        const left = (sideMask & 8) !== 0;
-
-        if(top)
-        {
-            ctx.fillRect(rect.x, rect.y, rect.width, thickness);
-        }
-
-        if(right)
-        {
-            ctx.fillRect(rect.x + rect.width - thickness, rect.y, thickness, rect.height);
-        }
-
-        if(bottom)
-        {
-            ctx.fillRect(rect.x, rect.y + rect.height - thickness, rect.width, thickness);
-        }
-
-        if(left)
-        {
-            ctx.fillRect(rect.x, rect.y, thickness, rect.height);
-        }
+        ShapeSkinRenderer.drawRectStrokeSides(
+            ctx,
+            rect.x,
+            rect.y,
+            rect.width,
+            rect.height,
+            strokeWindow.strokeThickness,
+            window.color,
+            (sideMask & 1) !== 0,
+            (sideMask & 2) !== 0,
+            (sideMask & 4) !== 0,
+            (sideMask & 8) !== 0
+        );
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/StrokeSkinRenderer.as::isStateDrawable()

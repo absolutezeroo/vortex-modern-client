@@ -64,7 +64,7 @@ export class DropBaseController extends InteractiveController implements ITouchA
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
 
         this._menuItemEventHandlerBound = this._menuItemEventHandler.bind(this);
-        this._subMenuEventProcBound = this._subMenuEventProc.bind(this) as (event: unknown, window: IWindow) => void;
+        this._subMenuEventProcBound = this.subMenuEventProc.bind(this) as (event: unknown, window: IWindow) => void;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/DropBaseController.as::DropBaseController()
@@ -814,7 +814,7 @@ export class DropBaseController extends InteractiveController implements ITouchA
     /**
 	 * Handles events from the expanded submenu items.
 	 */
-    private _subMenuEventProc(event: WindowEvent, window: IWindow): void
+    protected subMenuEventProc(event: WindowEvent, window: IWindow): void
     {
         switch(event.type)
         {

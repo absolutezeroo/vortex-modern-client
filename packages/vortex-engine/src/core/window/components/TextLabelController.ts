@@ -8,6 +8,9 @@ import {TextStyleManager} from '../utils/TextStyleManager';
 import {resolveLocalizationTokens} from '../utils/WindowParser';
 import {quoteFontFamilyList, measureFontLineHeight} from '../utils/CanvasFontString';
 import {GlyphAtlas} from '../utils/GlyphAtlas';
+import type {TextStyle} from '../utils/TextStyle';
+import type {IMargins} from '../utils/IMargins';
+import {TextMargins} from '../utils/TextMargins';
 
 /**
  * Controller for label windows.
@@ -24,7 +27,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 	 * Shared canvas for text measurement.
 	 */
     private static _measureCtx: OffscreenCanvasRenderingContext2D | null = null;
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::_textStyleName
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::_textStyleName
     private _textStyleName: string = '';
     private _refreshing: boolean = false;
     private _marginLeft: number = 0;
@@ -33,6 +36,10 @@ export class TextLabelController extends WindowController implements ILabelWindo
     private _marginBottom: number = 0;
     private _spacing: number = 0;
     private _leading: number = 0;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::_localized
+    private _localized: boolean = false;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::_textMargins
+    private _margins: TextMargins | null = null;
 
     /**
 	 * Flash text-quality settings for this label's shared TextField.
@@ -77,35 +84,103 @@ export class TextLabelController extends WindowController implements ILabelWindo
         this._hasVisualContent = true;
     }
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::_text
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::_text
     private _text: string = '';
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get text()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get text()
     public get text(): string
     {
         return this._text;
     }
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::set text()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::set text()
     public set text(value: string)
     {
         if(value == null) return;
 
+        if(this._localized)
+        {
+            this.removeCaptionLocalizationListener();
+            this._localized = false;
+        }
+
+        this._caption = value;
+
+        if(this._caption.charAt(0) === '$' && this._caption.charAt(1) === '{')
+        {
+            // AS3 registers and returns without touching `_text`, because registering
+            // is what delivers it: Localization.registerListener() pushes the current
+            // value straight back through `set localization`, and pushes it again every
+            // time that key's text arrives or changes. Resolving eagerly here — what
+            // this port did — reads the table once and never hears the update, so any
+            // label built before its texts loaded stayed on the raw key forever.
+            this._localized = true;
+            this.registerCaptionLocalizationListener();
+
+            return;
+        }
+
+        // Not in AS3: it leaves this branch a plain assignment, so a token *inside* a
+        // caption ("Hello ${x}") is never localized there. This port's layouts rely on
+        // the eager resolver for that case, so it stays — on the branch AS3 leaves bare.
         this._text = resolveLocalizationTokens(value);
-        this._caption = this._text;
         this.refresh();
     }
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::_textColor
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::set localization()
+    public set localization(value: string)
+    {
+        if(value == null) return;
+
+        this._text = value;
+        this.refresh();
+    }
+
+    /**
+	 * Key of a `${key}` caption, or null when the caption is not one.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::set text()
+    private getCaptionLocalizationKey(): string | null
+    {
+        if(this._caption.charAt(0) !== '$' || this._caption.charAt(1) !== '{') return null;
+
+        const end = this._caption.indexOf('}');
+
+        if(end <= 2) return null;
+
+        return this._caption.slice(2, end);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::set text()
+    private registerCaptionLocalizationListener(): void
+    {
+        const key = this.getCaptionLocalizationKey();
+
+        if(!key) return;
+
+        this.context.registerLocalizationListener(key, this);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::dispose()
+    private removeCaptionLocalizationListener(): void
+    {
+        const key = this.getCaptionLocalizationKey();
+
+        if(!key) return;
+
+        this.context.removeLocalizationListener(key, this);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::_textColor
     private _textColor: number | null = null;
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get textColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get textColor()
     public get textColor(): number
     {
         return this._textColor ?? 0;
     }
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::set textColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::set textColor()
     public set textColor(value: number)
     {
         if(value !== this._textColor)
@@ -115,10 +190,10 @@ export class TextLabelController extends WindowController implements ILabelWindo
         }
     }
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::_textWidth
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::_textWidth
     private _textWidth: number = 0;
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get textWidth()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get textWidth()
     public get textWidth(): number
     {
         return this._textWidth;
@@ -126,7 +201,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _textHeight: number = 0;
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get textHeight()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get textHeight()
     public get textHeight(): number
     {
         return this._textHeight;
@@ -134,13 +209,13 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _vertical: boolean = false;
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get vertical()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get vertical()
     public get vertical(): boolean
     {
         return this._vertical;
     }
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::set vertical()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::set vertical()
     public set vertical(value: boolean)
     {
         this._vertical = value;
@@ -149,7 +224,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _fontFace: string = '';
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get fontFace()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get fontFace()
     public get fontFace(): string
     {
         return this._fontFace;
@@ -157,7 +232,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _fontSize: number = 12;
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get fontSize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get fontSize()
     public get fontSize(): number
     {
         return this._fontSize;
@@ -165,7 +240,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _bold: boolean = false;
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get bold()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get bold()
     public get bold(): boolean
     {
         return this._bold;
@@ -173,7 +248,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _italic: boolean = false;
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get italic()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get italic()
     public get italic(): boolean
     {
         return this._italic;
@@ -181,7 +256,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
     private _underline: boolean = false;
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get underline()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get underline()
     public get underline(): boolean
     {
         return this._underline;
@@ -214,13 +289,13 @@ export class TextLabelController extends WindowController implements ILabelWindo
     /**
 	 * Whether a text color has been explicitly set.
 	 */
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get hasTextColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get hasTextColor()
     public get hasTextColor(): boolean
     {
         return this._textColor !== null;
     }
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get textBackground()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get textBackground()
     public get textBackground(): boolean
     {
         return this.background;
@@ -231,7 +306,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
         this.background = value;
     }
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get textBackgroundColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get textBackgroundColor()
     public get textBackgroundColor(): number
     {
         return this.color;
@@ -242,7 +317,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
         this.color = value;
     }
 
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get length()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get length()
     public get length(): number
     {
         return this._text.length;
@@ -251,7 +326,118 @@ export class TextLabelController extends WindowController implements ILabelWindo
     /**
 	 * Draw offset X (margin left).
 	 */
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get drawOffsetX()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get autoSize()
+    // TextFieldCache stamps `autoSize = "left"` on every pooled field and nothing
+    // writes it again (TextFieldCache.as l.79), so the AS3 getter can only ever
+    // return "left" — this port has no pooled TextField to read it back off.
+    public get autoSize(): string
+    {
+        return 'left';
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get border()
+    // Flash TextField default: TextFieldCache.getTextFieldByStyle() never touches
+    // border/borderColor, so every label reads back false/black.
+    public get border(): boolean
+    {
+        return false;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get borderColor()
+    public get borderColor(): number
+    {
+        return 0x000000;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get defaultTextFormat()
+    // AS3 returns the pooled TextField's flash.text.TextFormat, which TextFieldCache
+    // built out of the resolved style. This port has neither, so the resolved style
+    // itself is the closest faithful answer.
+    public get defaultTextFormat(): TextStyle | null
+    {
+        return TextStyleManager.getStyle(this._textStyleName);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get embedFonts()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/TextFieldCache.as::getTextFieldByStyle()
+    // sets `TextField.embedFonts` from isEmbeddedFont(font), picking between an
+    // [Embed]ed font and a device one. This port renders through the glyph atlas with
+    // web fonts only, so there is no embedded-font registry to answer from — same
+    // inert flag as TextController.embedFonts.
+    public get embedFonts(): boolean
+    {
+        return false;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get kerning()
+    public get kerning(): boolean
+    {
+        return TextStyleManager.getStyle(this._textStyleName)?.kerning ?? false;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get maxChars()
+    // TextFieldCache never assigns maxChars, so the pooled field keeps Flash's
+    // default of 0 (unlimited).
+    public get maxChars(): number
+    {
+        return 0;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get spacing()
+    public get spacing(): number
+    {
+        return this._spacing;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get textStyle()
+    public get textStyle(): TextStyle | null
+    {
+        return TextStyleManager.getStyle(this._textStyleName);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::set textStyle()
+    public set textStyle(value: TextStyle | null)
+    {
+        if(value == null) return;
+
+        if(this._textStyleName !== value.name)
+        {
+            this.applyTextStyle(value.name);
+            this.refresh();
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get margins()
+    public get margins(): IMargins
+    {
+        // The four flat fields stay the store — `set properties` writes them directly —
+        // so the wrapper is re-seeded on every read, or a `margins.left` after a
+        // property change would hand back a stale value. assign() does not fire the
+        // callback (TextMargins.as::assign()), so this cannot loop back into refresh().
+        if(!this._margins)
+        {
+            this._margins = new TextMargins(this._marginLeft, this._marginTop, this._marginRight, this._marginBottom, (margins) => this.setTextMargins(margins));
+        }
+        else
+        {
+            this._margins.assign(this._marginLeft, this._marginTop, this._marginRight, this._marginBottom, (margins) => this.setTextMargins(margins));
+        }
+
+        return this._margins;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::setTextMargins()
+    private setTextMargins(margins: IMargins): void
+    {
+        this._marginLeft = margins.left;
+        this._marginTop = margins.top;
+        this._marginRight = margins.right;
+        this._marginBottom = margins.bottom;
+
+        this.refresh();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get drawOffsetX()
     public get drawOffsetX(): number
     {
         return this._marginLeft;
@@ -260,7 +446,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
     /**
 	 * Draw offset Y (margin top).
 	 */
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::get drawOffsetY()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get drawOffsetY()
     public get drawOffsetY(): number
     {
         return this._marginTop;
@@ -290,35 +476,8 @@ export class TextLabelController extends WindowController implements ILabelWindo
             switch(prop.key)
             {
                 case 'text_style':
-                {
-                    this._textStyleName = prop.value as string;
-
-                    const resolved = TextStyleManager.getStyle(this._textStyleName);
-
-                    if(resolved)
-                    {
-                        if(resolved.fontFamily != null) this._fontFace = resolved.fontFamily;
-                        if(resolved.fontSize != null) this._fontSize = resolved.fontSize;
-                        if(resolved.fontWeight === 'bold') this._bold = true;
-                        if(resolved.fontStyle === 'italic') this._italic = true;
-                        if(resolved.textDecoration === 'underline') this._underline = true;
-                        if(resolved.color != null && this._textColor === null) this._textColor = resolved.color;
-                        if(resolved.etchingColor != null) this._etchingColor = resolved.etchingColor;
-                        if(resolved.etchingPosition != null) this._etchingPosition = resolved.etchingPosition;
-                        if(resolved.letterSpacing != null) this._spacing = resolved.letterSpacing;
-                        if(resolved.leading != null) this._leading = resolved.leading;
-
-                        // AS3: TextFieldCache.as::getTextFieldByStyle() l.51-54 —
-                        // anything but "normal" is coerced to "advanced", and
-                        // sharpness/thickness fall back to 0 when the style
-                        // leaves them unset.
-                        this._antiAliasType = resolved.antiAliasType === 'normal' ? 'normal' : 'advanced';
-                        this._sharpness = resolved.sharpness ?? 0;
-                        this._thickness = resolved.thickness ?? 0;
-                    }
-
+                    this.applyTextStyle(prop.value as string);
                     break;
-                }
                 case 'text_color':
                     this._textColor = prop.value as number;
                     break;
@@ -400,6 +559,18 @@ export class TextLabelController extends WindowController implements ILabelWindo
     {
         if(this._disposed) return;
 
+        if(this._localized)
+        {
+            this._localized = false;
+            this.removeCaptionLocalizationListener();
+        }
+
+        if(this._margins)
+        {
+            this._margins.dispose();
+            this._margins = null;
+        }
+
         super.dispose();
     }
 
@@ -412,7 +583,45 @@ export class TextLabelController extends WindowController implements ILabelWindo
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as refresh()
 	 */
-    // AS3: .../src/com/sulake/core/window/components/TextLabelController.as::refresh()
+    /**
+	 * Resolves a text style by name and flattens it onto this controller.
+	 *
+	 * AS3 keeps only the style *name* and re-reads the style through the pooled
+	 * TextField on every access (TextLabelController.as::get textField()); this port
+	 * has no pooled field, so the resolved values are stored here instead — which is
+	 * why both `set properties` and `set textStyle` have to come through this.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/TextFieldCache.as::getTextFieldByStyle()
+    private applyTextStyle(name: string): void
+    {
+        this._textStyleName = name;
+
+        const resolved = TextStyleManager.getStyle(this._textStyleName);
+
+        if(resolved)
+        {
+            if(resolved.fontFamily != null) this._fontFace = resolved.fontFamily;
+            if(resolved.fontSize != null) this._fontSize = resolved.fontSize;
+            if(resolved.fontWeight === 'bold') this._bold = true;
+            if(resolved.fontStyle === 'italic') this._italic = true;
+            if(resolved.textDecoration === 'underline') this._underline = true;
+            if(resolved.color != null && this._textColor === null) this._textColor = resolved.color;
+            if(resolved.etchingColor != null) this._etchingColor = resolved.etchingColor;
+            if(resolved.etchingPosition != null) this._etchingPosition = resolved.etchingPosition;
+            if(resolved.letterSpacing != null) this._spacing = resolved.letterSpacing;
+            if(resolved.leading != null) this._leading = resolved.leading;
+
+            // AS3: TextFieldCache.as::getTextFieldByStyle() l.51-54 —
+            // anything but "normal" is coerced to "advanced", and
+            // sharpness/thickness fall back to 0 when the style
+            // leaves them unset.
+            this._antiAliasType = resolved.antiAliasType === 'normal' ? 'normal' : 'advanced';
+            this._sharpness = resolved.sharpness ?? 0;
+            this._thickness = resolved.thickness ?? 0;
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::refresh()
     private refresh(fromResize: boolean = false): void
     {
         if(this._refreshing) return;

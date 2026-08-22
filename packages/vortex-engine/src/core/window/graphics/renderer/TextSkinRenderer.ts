@@ -1,3 +1,4 @@
+import {TextStyleManager} from '../../utils/TextStyleManager';
 import type {IWindow} from '../../IWindow';
 import {WindowType} from '../../enum/WindowType';
 import {buildCanvasFontString, measureFontLineHeight} from '../../utils/CanvasFontString';
@@ -16,49 +17,49 @@ export interface ITextWindowShape
     // AS3: TextController.as::get border() / get borderColor() — Flash's TextField
     // paints these itself; see drawBorder().
     border?: boolean;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get borderColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get borderColor()
     borderColor?: number;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get textColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get textColor()
     textColor?: number;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get fontSize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get fontSize()
     fontSize?: number;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get fontFace()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get fontFace()
     fontFace?: string;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get bold()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get bold()
     bold?: boolean;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get italic()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get italic()
     italic?: boolean;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get underline()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get underline()
     underline?: boolean;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get multiline()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get multiline()
     multiline?: boolean;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get wordWrap()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get wordWrap()
     wordWrap?: boolean;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get etchingColor()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get etchingColor()
     etchingColor?: number;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get etchingPosition()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get etchingPosition()
     etchingPosition?: string;
     // AS3: TextController.as::get antiAliasType() / get sharpness() /
     // get thickness() / get gridFitType() — Flash's four text-quality knobs.
     // Inert against ctx.fillText(); consumed by GlyphAtlas at bake time.
     antiAliasType?: string;
     _antiAliasType?: string;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get sharpness()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get sharpness()
     sharpness?: number;
     _sharpness?: number;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get thickness()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get thickness()
     thickness?: number;
     _thickness?: number;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get gridFitType()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get gridFitType()
     gridFitType?: string;
     _gridFitType?: string;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get autoSize()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get autoSize()
     autoSize?: string;
     _autoSize?: string;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get spacing()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get spacing()
     spacing?: number;
     _spacing?: number;
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::get leading()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get leading()
     leading?: number;
     _leading?: number;
     marginLeft?: number;
@@ -150,6 +151,22 @@ export class TextSkinRenderer extends SkinRenderer
     protected _textQuality: { aa: string; sharpness: number; thickness: number; gridFit: string } | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/TextSkinRenderer.as::isStateDrawable()
+    /**
+	 * Registers the stylesheet this renderer skins text with.
+	 *
+	 * AS3 reads the CSS out of the skin asset it is handed. This port has no such
+	 * asset shipped — TextStyleManager.init() parses a built-in copy instead — so
+	 * the source text is taken directly, and the member stays the one entry point
+	 * that feeds the style registry from a skin.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/TextSkinRenderer.as::parse()
+    public override parse(source?: string): void
+    {
+        if(!source) return;
+
+        TextStyleManager.setStyles(TextStyleManager.parseCSS(source));
+    }
+
     public override isStateDrawable(state: number): boolean
     {
         return state === 0;

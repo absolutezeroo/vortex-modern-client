@@ -91,6 +91,10 @@ export class WindowMouseEvent extends WindowEvent
 	 * @param delta - Scroll wheel delta
 	 * @returns A pooled or new WindowMouseEvent instance
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/events/WindowMouseEvent.as::allocate()
+    // Renamed: AS3 calls it `allocate` like WindowEvent's, which TypeScript cannot
+    // do — a static in a subclass must stay assignable to the one it hides, and
+    // this signature takes nine more parameters.
     public static allocateMouse(
         type: string,
         window: IWindow | null,

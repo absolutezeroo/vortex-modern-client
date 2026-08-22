@@ -1,4 +1,5 @@
 import type {IWindow} from '../IWindow';
+import type {IGraphicContext} from '../graphics/IGraphicContext';
 import type {IWindowContext} from '../IWindowContext';
 import {WindowController} from '../WindowController';
 
@@ -13,12 +14,15 @@ import {WindowController} from '../WindowController';
  */
 export class SubstituteParentController extends WindowController
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::NAME
+    public static readonly NAME: string = '_CONTEXT_SUBSTITUTE_PARENT';
+
     constructor(
         context: IWindowContext
     )
     {
         super(
-            '_CONTEXT_SUBSTITUTE_PARENT',
+            SubstituteParentController.NAME,
             0,
             0,
             16,
@@ -41,12 +45,36 @@ export class SubstituteParentController extends WindowController
         this._hasVisualContent = false;
     }
 
+    /**
+	 * Never owns a graphic context — and never lets one be built for it.
+	 *
+	 * This is where WindowContext parks every window created with
+	 * USE_PARENT_GRAPHIC_CONTEXT (param & 0x10), i.e. windows that draw into a
+	 * parent's context rather than their own. Without the override the base
+	 * implementation happily builds one, and `setupGraphicsContext()` walking up
+	 * from a child then attaches the child contexts to it — a live parent context
+	 * for windows that are, by definition, parked.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::getGraphicContext()
+    public override getGraphicContext(_createIfMissing: boolean): IGraphicContext | null
+    {
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::setupGraphicsContext()
+    public override setupGraphicsContext(): IGraphicContext | null
+    {
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::addChild()
     public override addChild(child: IWindow): IWindow
     {
         this._children!.push(child);
         return child;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::addChildAt()
     public override addChildAt(child: IWindow, index: number): IWindow
     {
         const controller = child as unknown as WindowController;
@@ -62,6 +90,7 @@ export class SubstituteParentController extends WindowController
         return child;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::getChildAt()
     public override getChildAt(index: number): IWindow | null
     {
         if(!this._children) return null;
@@ -69,6 +98,7 @@ export class SubstituteParentController extends WindowController
         return index < this._children.length ? this._children[index] : null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::getChildByID()
     public override getChildByID(id: number): IWindow | null
     {
         if(this._children)
@@ -85,6 +115,7 @@ export class SubstituteParentController extends WindowController
         return null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::getChildByName()
     public override getChildByName(name: string): IWindow | null
     {
         if(this._children)
@@ -101,6 +132,7 @@ export class SubstituteParentController extends WindowController
         return null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::findChildByName()
     public override findChildByName(name: string): IWindow | null
     {
         if(this._children)
@@ -127,6 +159,7 @@ export class SubstituteParentController extends WindowController
         return null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::removeChild()
     public override removeChild(child: IWindow): IWindow | null
     {
         if(!this._children) return null;
@@ -143,6 +176,7 @@ export class SubstituteParentController extends WindowController
         return null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::setChildIndex()
     public override setChildIndex(child: IWindow, index: number): void
     {
         if(!this._children) return;
@@ -156,6 +190,7 @@ export class SubstituteParentController extends WindowController
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::swapChildren()
     public override swapChildren(a: IWindow, b: IWindow): void
     {
         if(!this._children || !a || !b || a === b) return;
@@ -181,6 +216,7 @@ export class SubstituteParentController extends WindowController
         this._children.splice(indexB, 0, windowA);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/SubstituteParentController.as::swapChildrenAt()
     public override swapChildrenAt(indexA: number, indexB: number): void
     {
         if(!this._children) return;

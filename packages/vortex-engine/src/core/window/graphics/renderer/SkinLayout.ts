@@ -6,7 +6,7 @@ import type {SkinLayoutEntity} from './SkinLayoutEntity';
  * Calculates the base width and height from its entities, which are used
  * by the renderer to compute the delta between target size and layout size.
  *
- * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/renderer/SkinLayout.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as
  */
 export class SkinLayout 
 {
@@ -17,10 +17,10 @@ export class SkinLayout
         this._blendMode = blendMode;
     }
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::_name
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::_name
     private _name: string;
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get name()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get name()
     public get name(): string 
     {
         return this._name;
@@ -29,16 +29,16 @@ export class SkinLayout
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::_transparent
     private _transparent: boolean;
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get transparent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get transparent()
     public get transparent(): boolean 
     {
         return this._transparent;
     }
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::_blendMode
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::_blendMode
     private _blendMode: string;
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get blendMode()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get blendMode()
     public get blendMode(): string 
     {
         return this._blendMode;
@@ -51,10 +51,10 @@ export class SkinLayout
         return this._entities;
     }
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::_width
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::_width
     private _width: number = 0;
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get width()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get width()
     public get width(): number 
     {
         return this._width;
@@ -63,12 +63,13 @@ export class SkinLayout
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::_height
     private _height: number = 0;
 
-    // AS3: .../src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get height()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::get height()
     public get height(): number 
     {
         return this._height;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/ChildEntityArray.as::get numChildren()
     public get numEntities(): number 
     {
         return this._entities.length;
@@ -79,6 +80,9 @@ export class SkinLayout
      *
      * @param entity - The entity to add
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::addChild()
+    // AS3 SkinLayout extends ChildEntityArray and overrides addChild/addChildAt;
+    // this port owns a plain array, so the child API is named after what it holds.
     public addEntity(entity: SkinLayoutEntity): void 
     {
         this._entities.push(entity);
@@ -96,6 +100,7 @@ export class SkinLayout
      * @param index - The entity index
      * @returns The layout entity
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/ChildEntityArray.as::getChildAt()
     public getEntityAt(index: number): SkinLayoutEntity 
     {
         return this._entities[index];
@@ -107,6 +112,7 @@ export class SkinLayout
      * @param name - The entity name
      * @returns The layout entity, or null
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/ChildEntityArray.as::getChildByName()
     public getEntityByName(name: string): SkinLayoutEntity | null
     {
         for(const entity of this._entities)
@@ -232,5 +238,103 @@ export class SkinLayout
         out.y = entity.region.y;
         out.width = entity.region.width;
         out.height = entity.region.height;
+    }
+
+    /**
+     * Removes an entity, then recomputes width/height from what is left.
+     *
+     * @param entity - The entity to remove
+     * @returns The removed entity, or null when it was not in this layout
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::removeChild()
+    public removeEntity(entity: SkinLayoutEntity): SkinLayoutEntity | null
+    {
+        const index = this._entities.indexOf(entity);
+
+        if(index < 0) return null;
+
+        return this.removeEntityAt(index);
+    }
+
+    /**
+     * Removes the entity at `index`, then recomputes width/height.
+     *
+     * @param index - The entity index
+     * @returns The removed entity, or null when the index is out of range
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::removeChildAt()
+    public removeEntityAt(index: number): SkinLayoutEntity | null
+    {
+        if(index < 0 || index >= this._entities.length) return null;
+
+        const [removed] = this._entities.splice(index, 1);
+
+        // AS3 recomputes both from scratch rather than shrinking them: an entity
+        // that was not the widest leaves the dimensions untouched.
+        this._width = this.calculateWidth();
+        this._height = this.calculateHeight();
+
+        return removed;
+    }
+
+    /**
+     * Fills `out` with the union of every entity region.
+     *
+     * Ported as AS3 wrote it, degenerate result included: it seeds the rectangle
+     * at x/y = 0xFFFFFFFF with width/height 0, and `Rectangle.left`/`top` in Flash
+     * move x/y while holding right/bottom — so right/bottom stay at 0xFFFFFFFF and
+     * only the top-left corner is ever real. Nothing calls it, in AS3 either
+     * (SkinLayout.as is its only occurrence in the whole tree), which is why the
+     * bug survived; it is here so the member is not silently missing.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::calculateActualRect()
+    public calculateActualRect(out: { x: number; y: number; width: number; height: number }): void
+    {
+        out.x = 4294967295;
+        out.y = 4294967295;
+        out.width = 0;
+        out.height = 0;
+
+        for(const entity of this._entities)
+        {
+            const region = entity.region;
+            const right = out.x + out.width;
+            const bottom = out.y + out.height;
+
+            if(region.x < out.x)
+            {
+                // Flash: `left` setter is `width += x - value; x = value`.
+                out.width = right - region.x;
+                out.x = region.x;
+            }
+
+            if(region.y < out.y)
+            {
+                out.height = bottom - region.y;
+                out.y = region.y;
+            }
+
+            if(region.x + region.width > out.x + out.width)
+            {
+                out.width = region.x + region.width - out.x;
+            }
+
+            if(region.y + region.height > out.y + out.height)
+            {
+                out.height = region.y + region.height - out.y;
+            }
+        }
+    }
+
+    /**
+     * Drains and disposes every entity.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinLayout.as::dispose()
+    public dispose(): void
+    {
+        while(this._entities.length > 0)
+        {
+            this.removeEntityAt(0)?.dispose();
+        }
     }
 }
