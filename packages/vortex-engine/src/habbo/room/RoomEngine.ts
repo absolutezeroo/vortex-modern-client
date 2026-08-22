@@ -216,6 +216,15 @@ interface IRoomEngineRoomInstanceData {
     // message and the wall-item paths read it back.
     legacyGeometry: LegacyWallGeometry;
     selectedObjectData: SelectedRoomObjectData | null;
+    /**
+	 * AS3 keeps this on RoomInstanceData behind `addButtonMouseCursorOwner()`,
+	 * `removeButtonMouseCursorOwner()` and `hasButtonMouseCursorOwners()` — three one-line array
+	 * operations. This port models RoomInstanceData as a plain record (see the fields above), so
+	 * those three fold into RoomEngine's own helpers of the same name, which is where AS3 calls
+	 * them from anyway.
+	 */
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get mouseButtonCursorOwners()
+    mouseButtonCursorOwners: string[];
 }
 
 export interface IRoomEngineRectangle {
@@ -1226,14 +1235,149 @@ export class RoomEngine extends Component implements IRoomEngine,
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setClickSettings()
     setClickSettings(owner: string, throughUsers: boolean, throughFurni: boolean): void
     {
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setClickSettings() also calls removeButtonMouseCursorOwners() when a
-        // flag flips on, to drop the hand cursor the now-unclickable objects had registered. That
-        // needs `mouseButtonCursorOwners` on RoomInstanceData (`_SafeCls_2223`), which is unported.
+        const wasClickThroughUsers = this.clickThroughUsers;
+        const wasClickThroughFurni = this.clickThroughFurni;
+
         if(throughUsers) this._clickThroughUsers.add(owner);
         else this._clickThroughUsers.delete(owner);
 
         if(throughFurni) this._clickThroughFurni.add(owner);
         else this._clickThroughFurni.delete(owner);
+
+        // Turning click-through on drops the hand cursor the now-unclickable objects had
+        // registered — nothing sends a mouse-out once the clicks stop reaching them.
+        if(!wasClickThroughUsers && throughUsers)
+        {
+            this.removeButtonMouseCursorOwners(this._activeRoomId, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER);
+        }
+
+        if(!wasClickThroughFurni && throughFurni)
+        {
+            this.removeButtonMouseCursorOwners(this._activeRoomId, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE);
+            this.removeButtonMouseCursorOwners(this._activeRoomId, RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL);
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_mouseCursorUpdate
+    private _mouseCursorUpdate: boolean = false;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_SafeStr_7833
+    // (name DERIVED from its readable getter below, the way RoomData's fields were.)
+    private _playerUnderCursor: number = -1;
+
+    /**
+	 * The user the pointer is over, in game mode only — the snowwar HUD reads it. Outside game
+	 * mode it stays -1, because `requestMouseCursor()` only ever writes it under `isGameMode`.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get playerUnderCursor()
+    get playerUnderCursor(): number
+    {
+        return this._playerUnderCursor;
+    }
+
+    /**
+	 * A room object reporting that the pointer entered or left it — `ROFCAE_MOUSE_BUTTON` on the
+	 * way in, `ROFCAE_MOUSE_ARROW` on the way out. Objects register as *owners* of the hand
+	 * cursor rather than setting it, so several can claim it and it only drops when the last one
+	 * lets go.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::requestMouseCursor()
+    requestMouseCursor(type: string, objectId: number, objectType: string): void
+    {
+        const category = this.getRoomObjectCategory(objectType);
+        const isPlayer = this.isGameMode && category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER;
+
+        if(type !== RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_BUTTON)
+        {
+            if(isPlayer) this._playerUnderCursor = -1;
+
+            this.removeButtonMouseCursorOwner(this._activeRoomId, category, objectId);
+        }
+        else
+        {
+            if(isPlayer) this._playerUnderCursor = objectId;
+
+            this.addButtonMouseCursorOwner(this._activeRoomId, category, objectId);
+        }
+    }
+
+    /**
+	 * Note the rights gate, which is AS3's: over a floor or wall item the hand only appears for
+	 * someone who can actually use it. Avatars are unconditional.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addButtonMouseCursorOwner()
+    private addButtonMouseCursorOwner(roomId: number, category: number, objectId: number): void
+    {
+        const session = this._roomSessionManager?.getSession(roomId) ?? null;
+        const isItem = category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE
+            || category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL;
+
+        if(isItem && (session === null || session.roomControllerLevel < 1)) return;
+
+        const owners = this.getRoomInstanceData(roomId).mouseButtonCursorOwners;
+        const key = category + '_' + objectId;
+
+        if(owners.indexOf(key) === -1)
+        {
+            owners.push(key);
+
+            this._mouseCursorUpdate = true;
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::removeButtonMouseCursorOwner()
+    private removeButtonMouseCursorOwner(roomId: number, category: number, objectId: number): void
+    {
+        const owners = this.getRoomInstanceData(roomId).mouseButtonCursorOwners;
+        const index = owners.indexOf(category + '_' + objectId);
+
+        if(index > -1)
+        {
+            owners.splice(index, 1);
+
+            this._mouseCursorUpdate = true;
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::removeButtonMouseCursorOwners()
+    private removeButtonMouseCursorOwners(roomId: number, category: number): void
+    {
+        const owners = this.getRoomInstanceData(roomId).mouseButtonCursorOwners;
+        const prefix = category + '_';
+
+        for(let i = owners.length - 1; i >= 0; i--)
+        {
+            if(owners[i].indexOf(prefix) === 0)
+            {
+                owners.splice(i, 1);
+
+                this._mouseCursorUpdate = true;
+            }
+        }
+    }
+
+    /**
+	 * AS3 writes Flash's global `Mouse.cursor`; the port's equivalent is the document cursor,
+	 * which is where `MouseCursorControl` writes too. The client's own canvas rule wins over it
+	 * while the pointer is on a window, so `App.onMouseMove()` clears that rule when nothing is
+	 * hit — without which none of this would ever be visible.
+	 *
+	 * Reads the map directly rather than through `getRoomInstanceData()`: AS3's returns null for
+	 * an unknown room, this port's *creates* the record, and the cursor must not be what brings a
+	 * room's state into existence.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateMouseCursor()
+    private updateMouseCursor(): void
+    {
+        if(!this._mouseCursorUpdate) return;
+
+        this._mouseCursorUpdate = false;
+
+        const data = this._roomInstanceData.get(this._activeRoomId) ?? null;
+
+        document.body.style.cursor = data !== null && data.mouseButtonCursorOwners.length > 0
+            ? 'pointer'
+            : 'auto';
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get clickThroughUsers()
@@ -6279,7 +6423,8 @@ export class RoomEngine extends Component implements IRoomEngine,
                 furniStackingHeightMap: null,
                 tileObjectMap: null,
                 legacyGeometry: new LegacyWallGeometry(),
-                selectedObjectData: null
+                selectedObjectData: null,
+                mouseButtonCursorOwners: []
             };
 
             data.roomCamera.activateFollowing(this.cameraFollowDuration);
@@ -6504,6 +6649,11 @@ export class RoomEngine extends Component implements IRoomEngine,
         {
             callback();
         }
+
+        // AS3 drives this from update(), which in this port nothing calls (see setTicker()). It
+        // is a dirty-flag check, so having both call sites costs nothing and is what makes the
+        // cursor actually change.
+        this.updateMouseCursor();
     };
 
     /**
@@ -6905,7 +7055,20 @@ export class RoomEngine extends Component implements IRoomEngine,
         // the logics, and nothing consumed it.
         else if(event instanceof RoomObjectFurnitureActionEvent)
         {
-            this.handleObjectActionEvent(event, this._activeRoomId);
+            // AS3: _SafeCls_1821.as::processObjectEvent() sends ROFCAE_MOUSE_ARROW and
+            // ROFCAE_MOUSE_BUTTON to handleRoomActionMouseRequestEvent(), *not* to
+            // handleObjectActionEvent(). Both were reaching useObject() here, which has no case
+            // for either and dropped them — every hover-in and hover-out an avatar or a
+            // multi-state furni raised died at that switch.
+            if(event.type === RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_BUTTON
+                || event.type === RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_ARROW)
+            {
+                this.requestMouseCursor(event.type, event.objectId, event.objectType ?? '');
+            }
+            else
+            {
+                this.handleObjectActionEvent(event, this._activeRoomId);
+            }
         }
         // AS3: RoomObjectEventHandler.as::processObjectEvent() -> handleObjectWidgetRequestEvent().
         // Until this branch existed, every ROWRE_* a furniture logic raised died here: both

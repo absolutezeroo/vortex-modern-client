@@ -2935,6 +2935,63 @@ overriders (`FurnitureBuilderPlaceholderVisualization`, `AnimatedPetVisualizatio
 chest one. No behaviour change — no overrider reads it — but the next one that does will not have
 to discover the gap first.
 
+### The hand cursor nothing listened for (2026-08-22)
+
+Fourth `habbo/room` slice, and the textbook shape of this port's dominant failure mode: the
+producers were already there and nothing consumed them. `AvatarLogic` and
+`FurnitureMultiStateLogic` both emit `ROFCAE_MOUSE_BUTTON` on hover-in and `ROFCAE_MOUSE_ARROW` on
+hover-out — ported, live, correct — and `RoomEngine.requestMouseCursor()`, the only thing that
+reads them, did not exist. The pointer never became a hand over a usable furni or an avatar.
+
+Worse than missing: **mis-routed**. `_SafeCls_1821.as::processObjectEvent()` sends those two types
+to `handleRoomActionMouseRequestEvent()`, while every other `ROFCAE_*` goes to
+`handleObjectActionEvent()`. The port sent *all* `RoomObjectFurnitureActionEvent`s to the latter,
+i.e. into `useObject()`'s switch, which has no case for either and dropped them. No wire traffic
+resulted — the switch is exhaustive over the types it sends — but the events died two calls deeper
+than anyone would look.
+
+Ported: `requestMouseCursor()`, `updateMouseCursor()`, the `_mouseCursorUpdate` dirty flag, the
+private `addButtonMouseCursorOwner()` / `removeButtonMouseCursorOwner()` /
+`removeButtonMouseCursorOwners()`, `playerUnderCursor` (AS3 `_SafeStr_7833`, name derived from its
+readable getter), and `mouseButtonCursorOwners` on the room-instance record.
+
+**Measured, not extrapolated:** `node scripts/as3-member-coverage.mjs habbo/room` read **96** at the
+start of the day and reads **84** after this slice; the global worklist went **550 -> 532** over the
+day's three commits. The two entries above quote a `121 -> 112` lineage carried forward from the
+2026-08-21 entries rather than a fresh run of the tool — the filtered population has moved since,
+so trust the command over the lineage.
+
+Four things worth keeping:
+
+- **It is an ownership set, not a boolean.** Objects register as owners of the hand under a
+  `category_objectId` key; the cursor only drops when the last one lets go. That is what makes
+  overlapping hover regions and the click-through settings behave.
+- **`setClickSettings()`'s `TODO(AS3)` is closed by construction.** It had been waiting for
+  exactly this list: turning click-through on has to drop the owners the now-unclickable objects
+  registered, because nothing will ever send their hover-out.
+- **The rights gate is AS3's, and it is surprising.** Over a floor or wall item the hand only
+  appears for someone with `roomControllerLevel >= 1`; avatars are unconditional. Ported as
+  written.
+- **The client was clobbering the cursor, and would have made this invisible.**
+  `App.onMouseMove()` set `canvas.style.cursor = 'default'` whenever no window was hit — a canvas
+  rule that wins over the document one for the entire room area. It now *clears* the rule in that
+  case (`''`), so the document cursor shows through, and still sets it when a window is hit so the
+  hand cannot bleed onto the UI.
+
+Two notes on the seams:
+
+- **`update()` is dead in this port**, as its own comment says — nothing calls it, the ticker set
+  by `setTicker()` is what runs. `updateMouseCursor()` is called from both; it is a dirty-flag
+  check, so the second call site costs nothing and is the one that actually fires.
+- **The document cursor has two writers, in AS3 too.** `MouseCursorControl.change()` writes it
+  every frame *when dirty*, and AS3's RoomEngine writes Flash's `Mouse.cursor` directly — the same
+  global. Last dirty writer wins in both. The port reproduces the arrangement rather than
+  inventing an arbitrator; in the common case (pointer over the room, no window hit) the window
+  side is not dirty and does not write.
+
+**Not exercised at runtime.** Needs the emulator, a room and a furni. `tsc` (both packages),
+`eslint` and the production build are clean.
+
 ### Trace hygiene, 2026-08-20
 
 `audit-as3-traces.mjs` is the forward direction and now exits 0. Three passes that day:

@@ -1895,10 +1895,15 @@ export class VortexApp
             this.forwardToRoomEngine(x, y, 'mouse_move', e);
         }
 
-        // Update cursor: pointer on mouse-event-enabled windows
-        if(this._canvas) 
+        // Update cursor: pointer on mouse-event-enabled windows.
+        //
+        // With nothing hit, the rule is *cleared* rather than set to 'default': the room engine
+        // writes the document cursor (RoomEngine.updateMouseCursor(), the hand over a usable
+        // furni or an avatar) and a canvas rule of its own would win over it across the whole
+        // room area. A window that is hit still wins, so the hand cannot bleed onto the UI.
+        if(this._canvas)
         {
-            this._canvas.style.cursor = (hit && hit.testParamFlag(1)) ? 'pointer' : 'default';
+            this._canvas.style.cursor = hit ? (hit.testParamFlag(1) ? 'pointer' : 'default') : '';
         }
     };
 
