@@ -730,7 +730,7 @@ export class VortexMain implements IVortexMain
         ctx.attachComponent(this._sessionDataManager, [IID_SessionDataManager]);
 
         // 8. Navigator (legacy)
-        this._navigator = new HabboNavigator(ctx);
+        this._navigator = new HabboNavigator(ctx, 0, this._assets);
         ctx.attachComponent(this._navigator, [IID_HabboNavigator]);
 
         // 9. New Navigator
@@ -825,7 +825,7 @@ export class VortexMain implements IVortexMain
         // quest/achievement system (and consumers like HabboLandingView's optional
         // IID_HabboQuestEngine) stayed dormant. Attached after the toolbar so its optional
         // IID_HabboToolbar dependency resolves.
-        this._questEngine = new HabboQuestEngine(ctx);
+        this._questEngine = new HabboQuestEngine(ctx, 0, this._assets);
         ctx.attachComponent(this._questEngine, [IID_HabboQuestEngine]);
 
         // 12k. FreeFlowChat

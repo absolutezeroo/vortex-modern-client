@@ -553,6 +553,51 @@ declare global
  *   Tab headers (hdr_*), the category arrows, the footer buttons and the row buttons.
  */
 const LIBRARY_IMAGE_NAMES: ReadonlySet<string> = new Set([
+    // Second sweep, over `refreshButton(container, name, ...)` rather than
+    // `getAssetByName('<literal>')`. The prescribed grep cannot see these: the
+    // name is an argument that HabboNavigator.getButtonImage() resolves, so no
+    // literal lookup exists to grep. Every icon in the in-room room-info view
+    // is in here.
+    'create_room',
+    'doormode_doorbell_small',
+    'doormode_invisible_small',
+    'doormode_password_small',
+    'favourite',
+    'group_base_icon',
+    'home',
+    'icon_weblink',
+    'make_favourite',
+    'make_home',
+    'navi_room_icon',
+    'popup_arrow_down',
+    'remove_rights',
+
+    // Found by the sweep this file's own comment prescribes — every literal
+    // getAssetByName() in the monorepo, intersected with the images bundle,
+    // minus what was already listed. Twenty names came back: each of them had
+    // a PNG shipping, a call site reading it, and no library entry, so each
+    // rendered nothing at all. The infostand's house icon is what exposed them.
+    'breed_pets_preview_bg',
+    'camera_fx_slider_bottom_active',
+    'camera_fx_slider_button',
+    'dimmer_color_button',
+    'dimmer_color_frame',
+    'dimmer_color_selected',
+    'dimmer_info',
+    'extend_hilite',
+    'gift_icon_background',
+    'gift_incognito',
+    'icon_home',
+    'inventory_furni_icon_credits',
+    'memenu_settings_slider_base',
+    'memenu_settings_slider_button',
+    'small_pen',
+    'sounds_off_color',
+    'sounds_off_white',
+    'sounds_on_color',
+    'sounds_on_white',
+    'use_product_preview_bg',
+
     'dimmer_slider_base',
     'dimmer_slider_button',
     'icon_nft',

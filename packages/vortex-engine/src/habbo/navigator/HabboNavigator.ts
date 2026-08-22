@@ -1,4 +1,5 @@
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
+import type {IAssetLibrary} from '@core/assets';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
@@ -12,6 +13,7 @@ import {IID_HabboNewNavigator} from '@iid/IIDHabboNewNavigator';
 import type {IWindow} from '@core/window/IWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboNavigator} from './IHabboNavigator';
 import type {IHabboNewNavigator} from './IHabboNewNavigator';
@@ -82,9 +84,17 @@ export class HabboNavigator extends Component implements IHabboNavigator
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_avatarManager
     private _avatarManager: IAvatarRenderManager | null = null;
 
-    constructor(context: IContext) 
+    /**
+     * AS3 takes `(context, flags, assetLibrary)` like every other component, and
+     * this port dropped the last two. Nothing noticed until `getButtonImage()`
+     * was implemented: `Component.assets` stayed null, so every navigator button
+     * resolved to no image — silently, since a null bitmap just leaves the
+     * window empty.
+     */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::HabboNavigator()
+    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
     {
-        super(context);
+        super(context, flags, assetLibrary);
         this._data = new NavigatorData(this);
     }
 
@@ -577,23 +587,96 @@ export class HabboNavigator extends Component implements IHabboNavigator
     }
 
     /**
-     * Refreshes a button's visibility and callback.
-     * Stub — no-op until window system is wired.
+     * Shows or hides one of a navigator view's icon buttons, and fills it the
+     * first time it is shown.
+     *
+     * This was a `// Stub` with a "no-op until window system is wired" note,
+     * long after the window system was wired. It is the single function behind
+     * every icon in the in-room room-info view — the web-link icon, the
+     * make-home and remove-rights markers, the favourite pair, the rating
+     * thumb — so all seven were empty windows at the right size, drawable,
+     * with nothing in them.
+     *
+     * `assetName` defaults to the child's own name, which is what every caller
+     * relies on.
      */
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::refreshButton()
-    refreshButton(_container: IWindowContainer, _name: string, _visible: boolean, _callback: (event: WindowEvent, window: IWindow) => void, _index: number, _tooltip: string | null = null): void
+    refreshButton(container: IWindowContainer, name: string, visible: boolean, callback: ((event: WindowEvent, window: IWindow) => void) | null, index: number, assetName: string | null = null): void
     {
-        // Stub
+        const child = container.findChildByName(name) as unknown as IBitmapWrapperWindow | null;
+
+        if(!child)
+        {
+            // AS3 logs this and then dereferences the null anyway, which throws
+            // one line later. Returning instead keeps a missing icon a missing
+            // icon rather than taking the whole view down with it.
+            log.warn(`Could not locate button in navigator: ${name}`);
+
+            return;
+        }
+
+        if(!visible)
+        {
+            child.visible = false;
+
+            return;
+        }
+
+        this.prepareButton(child, assetName ?? name, callback, index);
+        child.visible = true;
+    }
+
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::prepareButton()
+    private prepareButton(window: IBitmapWrapperWindow, assetName: string, callback: ((event: WindowEvent, window: IWindow) => void) | null, index: number): void
+    {
+        window.id = index;
+
+        if(callback) window.procedure = callback;
+
+        // AS3 bails here rather than re-fetching: the bitmap is shared with the
+        // asset library (disposesBitmap false below), so refreshing a view must
+        // not swap it out from under another button holding the same one.
+        if(window.bitmap != null) return;
+
+        const bitmap = this.getButtonImage(assetName);
+
+        if(!bitmap)
+        {
+            // Two very different failures, and one message for both is what made
+            // the first round of this unreadable: no library at all (the
+            // component was constructed without one) against a library that
+            // does not carry the name.
+            if(!this.assets) log.warn(`No asset library on the navigator when filling "${assetName}"`);
+            else log.warn(`Navigator button "${assetName}" is not in the asset library`);
+
+            return;
+        }
+
+        window.bitmap = bitmap;
+        window.disposesBitmap = false;
+        window.width = bitmap.width;
+        window.height = bitmap.height;
     }
 
     /**
-     * Gets a button image bitmap.
-     * Stub — returns null until asset system is wired.
+     * The bitmap behind a navigator button.
+     *
+     * AS3 appends `_png` because that is what the Flash embed identifier
+     * carried; this port ships its images under the bare name. The suffix is
+     * still tried as a fallback rather than dropped, because guessing wrong
+     * here returns null in silence and renders nothing — which is exactly how
+     * these seven icons went unnoticed.
      */
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::getButtonImage()
-    getButtonImage(_assetName: string, _suffix: string = '_png'): unknown | null 
+    getButtonImage(assetName: string, suffix: string = '_png'): ImageBitmap | null
     {
-        return null;
+        const library = this.assets;
+
+        if(!library) return null;
+
+        const asset = library.getAssetByName(assetName) ?? library.getAssetByName(assetName + suffix);
+
+        return (asset?.content ?? null) as ImageBitmap | null;
     }
 
     /**

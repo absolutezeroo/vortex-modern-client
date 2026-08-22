@@ -16,16 +16,23 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
+import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {RelationshipStatusEnum} from '@habbo/friendlist/RelationshipStatusEnum';
 import type {RelationshipStatusInfo} from '@habbo/communication/messages/incoming/users/RelationshipStatusInfo';
-import {GetExtendedProfileMessageComposer} from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
+import {
+    GetExtendedProfileMessageComposer
+} from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget';
 import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
 import {RoomWidgetOpenProfileMessage} from '../messages/RoomWidgetOpenProfileMessage';
+import {RoomWidgetUserActionMessage} from '../messages/RoomWidgetUserActionMessage';
 import type {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUpdateEvent';
 import type {InfoStandWidget} from './InfoStandWidget';
+import {Logger} from '@core/utils/Logger';
+
+const log = Logger.getLogger('habbo.ui.widget.infostand.InfoStandUserView');
 
 export class InfoStandUserView
 {
@@ -104,6 +111,31 @@ export class InfoStandUserView
         }
 
         window.name = name;
+
+        // AS3 fills this one through the bitmap wrapper's own API, not an
+        // asset_uri: `user_view` declares it as `<bitmap>`, which has no
+        // assetUri at all. Nothing in this port ever assigned it, so the house
+        // icon in the infostand was simply absent — the window was there, the
+        // right size, drawable, with no pixels in it.
+        const homeIcon = this._infoBorder?.findChildByName('home_icon') as IBitmapWrapperWindow | null;
+
+        if(!homeIcon) log.warn('infostand: no home_icon in the layout');
+        else
+        {
+            const asset = this._widget.assets?.getAssetByName('icon_home') ?? null;
+            const bitmap = (asset?.content ?? null) as ImageBitmap | null;
+
+            // Both misses are silent otherwise: a null library and a key the
+            // library does not carry look identical from here, and the icon is
+            // simply absent either way.
+            if(!this._widget.assets) log.warn('infostand: no asset library on the widget when filling home_icon');
+            else if(!asset) log.warn('infostand: asset "icon_home" not in the widget library');
+            else if(!bitmap) log.warn('infostand: asset "icon_home" has no bitmap content');
+            else homeIcon.bitmap = bitmap;
+
+            homeIcon.procedure = this.onHomeIconClicked;
+        }
+
         this._widget.mainContainer.addChild(window);
 
         const closeButton = this._infoBorder?.findChildByTag('close');
@@ -161,11 +193,26 @@ export class InfoStandUserView
     }
 
     /**
-	 * Clicking the name link (profile_link) or the avatar image
-	 * (avatar_image_profile_link, wired in createWindow()) both open the
-	 * clicked user's extended profile — matches AS3's InfoStandUserView.as
-	 * wiring both regions to this same procedure.
-	 */
+     * AS3 wires every icon in this view to one `onButtonClicked`, which reads
+     * the clicked window's name to pick a message; `home_icon` is the only name
+     * it answers to. Split out here rather than reproducing the name switch for
+     * a single case — add the switch back if a second icon ever joins it.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::onButtonClicked()
+    private onHomeIconClicked = (event: WindowEvent): void =>
+    {
+        if(event.type !== WindowMouseEvent.CLICK) return;
+
+        // TODO(AS3): AS3 also calls HabboTracking.getInstance().trackEventLog("InfoStand",
+        // "click", "RWUAM_OPEN_HOME_PAGE") here. This port has no tracking layer.
+        this._widget.messageListener?.processWidgetMessage(
+            new RoomWidgetUserActionMessage(
+                RoomWidgetUserActionMessage.OPEN_HOME_PAGE,
+                this._widget.userData.userId
+            )
+        );
+    };
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::onProfileLink()
     private onProfileLink = (event: WindowEvent, window: IWindow): void =>
     {

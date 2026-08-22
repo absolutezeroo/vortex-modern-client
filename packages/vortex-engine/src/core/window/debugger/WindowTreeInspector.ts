@@ -1,6 +1,6 @@
 import type {IWindow} from '../IWindow';
 import type {IWindowContainer} from '../IWindowContainer';
-import {TYPE_CODE_TO_NAME} from '../enum/WindowType';
+import {TYPE_CODE_TO_NAME, WindowType} from '../enum/WindowType';
 
 export interface IWindowDebugRect {
     x: number;
@@ -99,6 +99,13 @@ export class WindowTreeInspector
             flipY?: boolean;
         };
         const hasAssetUri = typeof bmp.assetUri === 'string';
+        // A `bitmap` window takes its pixels from code, never from a layout
+        // URI, so gating the bitmap fields on `assetUri` reported nothing at
+        // all for it — an icon nobody ever filled looked identical to one
+        // drawn correctly.
+        const isBitmapWindow = hasAssetUri
+            || window.type === WindowType.BITMAP_WRAPPER
+            || window.type === WindowType.STATIC_BITMAP_WRAPPER;
 
         const txt = window as unknown as {
             _textStyleName?: string;
@@ -132,7 +139,7 @@ export class WindowTreeInspector
                 dynamicStyle: window.dynamicStyle,
                 tags: [...window.tags],
                 assetUri: hasAssetUri ? (bmp.assetUri as string) : null,
-                bitmapLoaded: hasAssetUri ? (bmp.bitmapData != null) : null,
+                bitmapLoaded: isBitmapWindow ? (bmp.bitmapData != null) : null,
                 bitmapSize: bmp.bitmapData != null
                     ? {width: bmp.bitmapData.width, height: bmp.bitmapData.height}
                     : null,

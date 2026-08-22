@@ -1400,7 +1400,7 @@ function formatNodeText(node: IWindowDebugNode, depth: number, overlaps: IOverla
         : '';
     const assetInfo = node.assetUri !== null
         ? ` assetUri="${node.assetUri}" bitmapLoaded=${node.bitmapLoaded}${bmpSize}${bmpParams}`
-        : '';
+        : (node.bitmapLoaded !== null ? ` bitmapLoaded=${node.bitmapLoaded}${bmpSize}` : '');
     const textInfo = node.textStyle ? ` ${formatTextStyle(node.textStyle)}` : '';
 
     // Mirrors WindowRendererItem.render()'s own dispatch check: a window whose
@@ -1791,6 +1791,14 @@ function collectProblems(root: IWindowDebugNode, canvas: HTMLCanvasElement): IWi
         {
             if(problems.length < MAX_PROBLEMS) problems.push({node, kind, detail});
         };
+
+        // A bitmap window with no URI takes its pixels from code. Nothing here
+        // can say which code, but it can say that nothing arrived — which is
+        // all an invisible icon leaves behind.
+        if(effectivelyVisible && node.assetUri === null && node.bitmapLoaded === false)
+        {
+            push('no-bitmap', 'a bitmap window with no asset_uri and no bitmapData - nothing ever assigned it any pixels');
+        }
 
         // The asset key was accepted but nothing ever loaded behind it — the
         // shape a wrong or unregistered asset name takes, since a miss returns

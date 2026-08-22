@@ -53,6 +53,7 @@ import {AchievementsResolutionController} from './AchievementsResolutionControll
 import {RoomCompetitionController} from './RoomCompetitionController';
 import {QuestMessageHandler} from './QuestMessageHandler';
 import {Logger} from '@core/utils/Logger';
+import type {IAssetLibrary} from '@core/assets';
 
 const log = Logger.getLogger('habbo.quest.HabboQuestEngine');
 
@@ -133,9 +134,18 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
         }
     };
 
-    constructor(context: IContext)
+    /**
+     * Same omission as HabboNavigator had: AS3 takes `(context, flags,
+     * assetLibrary)` and this port dropped the last two, leaving
+     * `Component.assets` null. Everything downstream reads through it —
+     * getAssetByName() below, and the two controllers built in
+     * initialize() are handed `this.assets` directly — so all of it
+     * resolved to nothing without a word.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::HabboQuestEngine()
+    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
     {
-        super(context);
+        super(context, flags, assetLibrary);
     }
 
     private _communicationManager: IHabboCommunicationManager | null = null;
