@@ -26,14 +26,19 @@ import type {AvatarInfoWidget} from './AvatarInfoWidget';
 
 export class OwnAvatarMenuView extends AvatarContextInfoButtonView
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/OwnAvatarMenuView.as::MODE_NORMAL
     private static readonly MODE_NORMAL: number = 0;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/OwnAvatarMenuView.as::MODE_CLUB_DANCES
     private static readonly MODE_CLUB_DANCES: number = 1;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/OwnAvatarMenuView.as::MODE_NAME_CHANGE
     private static readonly MODE_NAME_CHANGE: number = 2;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/OwnAvatarMenuView.as::MODE_EXPRESSIONS
     private static readonly MODE_EXPRESSIONS: number = 3;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/OwnAvatarMenuView.as::MODE_SIGNS
     private static readonly MODE_SIGNS: number = 4;
 
     private static _receptionShown: boolean = false;

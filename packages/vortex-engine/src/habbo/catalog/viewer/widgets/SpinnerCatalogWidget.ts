@@ -16,8 +16,12 @@ import {CatalogWidget} from './CatalogWidget';
  */
 export class SpinnerCatalogWidget extends CatalogWidget
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::SPIN_BUTTONDOWN_HOLD_VALUE_STEP_DELAY_MS
     private static readonly SPIN_BUTTONDOWN_HOLD_VALUE_STEP_DELAY_MS = 75;
 
+    // Derived name: `_SafeStr_11611` is obfuscated in every tree. The compiler inlined it:
+    // the AS3 body spells `> 35` at both sites (SpinnerCatalogWidget.as:155,163).
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::SPIN_ACCELERATE_AFTER_STEPS
     private static readonly SPIN_ACCELERATE_AFTER_STEPS = 35;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::_catalog

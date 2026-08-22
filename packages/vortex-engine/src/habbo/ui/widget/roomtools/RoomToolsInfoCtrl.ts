@@ -24,10 +24,13 @@ import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 
 export class RoomToolsInfoCtrl extends RoomToolsCtrlBase 
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::MARGIN
     private static readonly MARGIN = 12;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::TAG_COLOR
     private static readonly TAG_COLOR = 1800619;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::TAG_COLOR_HOVER
     private static readonly TAG_COLOR_HOVER = 4696294;
 
     private _tags: string[] = [];

@@ -45,8 +45,10 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
     // AS3: GENDER_MALE / GENDER_FEMALE / GENDER_UNISEX
     public static readonly GENDER_MALE = 'M';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/onBoardingHcSteps/AvatarEditor.as::GENDER_FEMALE
     public static readonly GENDER_FEMALE = 'F';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/onBoardingHcSteps/AvatarEditor.as::GENDER_UNISEX
     public static readonly GENDER_UNISEX = 'U';
 
     // AS3: NORMAL_ITEMS_TO_SHOW

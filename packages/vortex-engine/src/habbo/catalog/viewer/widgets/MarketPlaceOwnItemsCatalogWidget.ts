@@ -29,6 +29,7 @@ import {CatalogWidget} from './CatalogWidget';
  */
 export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements IMarketPlaceVisualization, IGetImageListener
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::ITEM_POOL_MAX_SIZE
     private static readonly ITEM_POOL_MAX_SIZE = 2000;
 
     private static readonly STATUS_SEARCHING = 1;

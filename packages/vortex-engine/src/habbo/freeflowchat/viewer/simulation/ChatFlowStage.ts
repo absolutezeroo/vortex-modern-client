@@ -26,6 +26,7 @@ import {ChatFlowGravity} from './ChatFlowGravity';
  */
 export class ChatFlowStage implements IUpdateReceiver, IDisposable
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::CLEANUP_TIMER_DELAY
     private static readonly CLEANUP_TIMER_DELAY = 5000;
 
     /**
@@ -36,12 +37,16 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
     * effective default is roomChatSettings.scrollSpeed's own default (1/normal),
     * which refreshSettings() below immediately resolves to 6000ms.
     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::MOVE_UP_TIMER_DEFAULT
     private static readonly MOVE_UP_TIMER_DEFAULT = 10000;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::MAX_ITERATIONS
     private static readonly MAX_ITERATIONS = 20;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::MAX_COLLISION_SIDEWAYS_IMPULSE
     private static readonly MAX_COLLISION_SIDEWAYS_IMPULSE = 15;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::MOVE_UP_IMPULSE_LIMIT
     private static readonly MOVE_UP_IMPULSE_LIMIT = 8;
 
     private static readonly MINIMUM_COLLIDER_WIDTH = 240;

@@ -8,49 +8,75 @@ import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBi
  */
 export class RecyclerEngineAnimator implements IDisposable
 {
+    // Derived name: `_SafeStr_10746` is obfuscated in every tree; named after its role.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::MIN_ANGLE
     private static readonly MIN_ANGLE = -88;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::MAX_ANGLE
     private static readonly MAX_ANGLE = 88;
 
+    // Derived name: `_SafeStr_10736` is obfuscated in every tree; named after its role.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::SHAKE_THRESHOLD_ANGLE
     private static readonly SHAKE_THRESHOLD_ANGLE = 82;
 
+    // Derived name: `_SafeStr_11050` is obfuscated in every tree; named after its role.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::PRE_FINISH_ANGLE_THRESHOLD
     private static readonly PRE_FINISH_ANGLE_THRESHOLD = 68;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::ANGLE_BUFFER
     private static readonly ANGLE_BUFFER = 5;
 
+    // Derived name: `_SafeStr_10851` is obfuscated in every tree; named after its role.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::RANDOM_BIAS_SLOPE
     private static readonly RANDOM_BIAS_SLOPE = 0.00008;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::BASE_BIAS
     private static readonly BASE_BIAS = 0.35;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::FIRST_BIAS
     private static readonly FIRST_BIAS = 0.2;
 
+    // Derived name: `_SafeStr_11512` is obfuscated in every tree; named after its role.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::TICK_INTERVAL_MS
     private static readonly TICK_INTERVAL_MS = 16;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::RESET_TIME
     private static readonly RESET_TIME = 250;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::SHAKE_TIMEOUT
     private static readonly SHAKE_TIMEOUT = 50;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::SHAKE_PIXELS
     private static readonly SHAKE_PIXELS = 3;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::MIN_TIME_ACTIVE
     private static readonly MIN_TIME_ACTIVE = 3000;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::SHAKE_PIXELS_E
     // (and STEP_SIZE_E / STEP_DURATION_E / TOTAL_DURATION_E) — the `_E` suffix is AS3's own
     // spelling for the easter-egg variants, read only when `_easterEggMode` is set.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::SHAKE_PIXELS_E
     private static readonly SHAKE_PIXELS_E = 24;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::STEP_SIZE_E
     private static readonly STEP_SIZE_E = 70;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::STEP_DURATION_E
     private static readonly STEP_DURATION_E = 20;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::TOTAL_DURATION_E
     private static readonly TOTAL_DURATION_E = 5000;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::STEP_DURATION_MIN
     private static readonly STEP_DURATION_MIN = 400;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::STEP_DURATION_MAX
     private static readonly STEP_DURATION_MAX = 200;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::STEP_SIZE_MIN
     private static readonly STEP_SIZE_MIN = 20;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::STEP_SIZE_MAX
     private static readonly STEP_SIZE_MAX = 55;
 
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::_arrow

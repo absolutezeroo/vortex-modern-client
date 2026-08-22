@@ -88,14 +88,19 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     // TS-only: see `RoomCullingMode`.
     private static readonly AVATAR_CULLABLE_TYPES: ReadonlySet<string> = new Set(Object.values(RoomObjectUserTypes));
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL
     private static readonly SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL = 50;
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::FRAME_COUNT_FOR_UPDATE_INTERVAL
     private static readonly FRAME_COUNT_FOR_UPDATE_INTERVAL = 50;
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::SLOW_FRAME_UPDATE_INTERVAL
     private static readonly SLOW_FRAME_UPDATE_INTERVAL = 60;
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::FAST_FRAME_UPDATE_INTERVAL
     private static readonly FAST_FRAME_UPDATE_INTERVAL = 50;
 
+    // AS3: sources/win63_version/room/renderer/class_3523.as::MAXIMUM_VALID_FRAME_UPDATE_INTERVAL
     private static readonly MAXIMUM_VALID_FRAME_UPDATE_INTERVAL = 1000;
 
     private static readonly REALLY_SLOW_FRAME_UPDATE_INTERVAL = 60 * 3;

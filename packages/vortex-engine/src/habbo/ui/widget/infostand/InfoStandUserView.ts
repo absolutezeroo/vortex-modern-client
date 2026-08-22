@@ -30,9 +30,10 @@ import type {InfoStandWidget} from './InfoStandWidget';
 export class InfoStandUserView
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::LINK_COLOR_ACTIONS_HOVER
-    private static readonly LINK_COLOR_HOVER = 0x91C2FF;
+    private static readonly LINK_COLOR_ACTIONS_HOVER = 0x91C2FF;
 
-    private static readonly LINK_COLOR_DEFAULT = 0xFFFFFF;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::LINK_COLOR_ACTIONS_DEFAULT (decimal 16777215)
+    private static readonly LINK_COLOR_ACTIONS_DEFAULT = 0xFFFFFF;
 
     private static readonly BADGE_SLOT_COUNT = 5;
 
@@ -185,8 +186,8 @@ export class InfoStandUserView
 
             if(!nameText) return;
 
-            if(event.type === WindowMouseEvent.OVER) nameText.textColor = InfoStandUserView.LINK_COLOR_HOVER;
-            if(event.type === WindowMouseEvent.OUT) nameText.textColor = InfoStandUserView.LINK_COLOR_DEFAULT;
+            if(event.type === WindowMouseEvent.OVER) nameText.textColor = InfoStandUserView.LINK_COLOR_ACTIONS_HOVER;
+            if(event.type === WindowMouseEvent.OUT) nameText.textColor = InfoStandUserView.LINK_COLOR_ACTIONS_DEFAULT;
         }
     };
 

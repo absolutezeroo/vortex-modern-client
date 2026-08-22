@@ -42,18 +42,25 @@ export class CollectiblesView
     /** AS3: CollectiblesView.as::TAB_* — each is the *window name* of its tab button. */
     private static readonly TAB_COLLECTIONS = 'top_view_collections_button';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/collectibles/CollectiblesView.as::TAB_MINT
     private static readonly TAB_MINT = 'top_view_minting_button';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/collectibles/CollectiblesView.as::TAB_INFO
     private static readonly TAB_INFO = 'top_view_info_button';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/collectibles/CollectiblesView.as::TAB_TRANSFER
     private static readonly TAB_TRANSFER = 'top_view_transfer_button';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/collectibles/CollectiblesView.as::TAB_SHOP
     private static readonly TAB_SHOP = 'top_view_shop_button';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/collectibles/CollectiblesView.as::TAB_REWARDS
     private static readonly TAB_REWARDS = 'top_view_rewards_button';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/collectibles/CollectiblesView.as::TAB_COLLECTOR_PROFILE
     private static readonly TAB_COLLECTOR_PROFILE = 'top_view_profile_button';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/collectibles/CollectiblesView.as::TAB_LEVELS
     private static readonly TAB_LEVELS = 'top_view_levels_button';
 
     private static readonly ALL_TABS = [

@@ -39,10 +39,13 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     *
     * @see AS3 RoomContentLoader lines 42-46
     */
+    // AS3: sources/win63_version/habbo/room/class_1835.as::STATE_CREATED
     private static readonly STATE_CREATED = 0;
 
+    // AS3: sources/win63_version/habbo/room/class_1835.as::STATE_INITIALIZING
     private static readonly STATE_INITIALIZING = 1;
 
+    // AS3: sources/win63_version/habbo/room/class_1835.as::STATE_READY
     private static readonly STATE_READY = 2;
 
     /**

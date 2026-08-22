@@ -63,6 +63,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
     * Level 1 = can skip frames if behind
     * Level 2 = lowest priority (most frame skipping)
     */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/CoreComponentContext.as::NUM_UPDATE_RECEIVER_LEVELS
     private static readonly NUM_UPDATE_RECEIVER_LEVELS = 3;
 
     /** Static file proxy instance (AS3: var_1203) */

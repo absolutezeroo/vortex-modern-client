@@ -37,14 +37,18 @@ export class PooledChatBubble extends Container
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::MAX_HEIGHT
     // The compiler inlined it: both readers below spell the literal 108.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::MAX_HEIGHT
     private static readonly MAX_HEIGHT = 108;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::DESKTOP_MARGIN_LEFT
     private static readonly DESKTOP_MARGIN_LEFT = 85;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::DESKTOP_MARGIN_RIGHT
     private static readonly DESKTOP_MARGIN_RIGHT = 190;
 
     // AS3: PooledChatBubble.as:23 — the hard content-width cap and the fallback when there
     // are no room chat settings. Distinct from ChatBubbleWidth.NORMAL (350).
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::MAX_WIDTH_DEFAULT
     public static readonly MAX_WIDTH_DEFAULT = 300;
 
     private _chatFlow: IHabboFreeFlowChat | null;

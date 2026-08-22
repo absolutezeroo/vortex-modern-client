@@ -266,12 +266,12 @@ export class RoomEngine extends Component implements IRoomEngine,
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::OBJECT_TYPE_ROOM_HIGHLIGHTER
     private static readonly OBJECT_TYPE_ROOM_HIGHLIGHTER: string = 'tile_cursor';
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::OBJECT_ID_SELECTION_ARROW
     // Derived name: `_SafeStr_10894` is obfuscated in every tree; named after the type string below.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::OBJECT_ID_SELECTION_ARROW
     private static readonly OBJECT_ID_SELECTION_ARROW: number = -3;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::OBJECT_TYPE_SELECTION_ARROW
     // Derived name: `_SafeStr_11037` is obfuscated in every tree; named after its value.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::OBJECT_TYPE_SELECTION_ARROW
     private static readonly OBJECT_TYPE_SELECTION_ARROW: string = 'selection_arrow';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::ROOM_DRAG_THRESHOLD

@@ -24,6 +24,7 @@ import {CatalogWidgetName} from './CatalogWidgetName';
  */
 export class RecyclerPrizesCatalogWidget extends CatalogWidget implements IItemGrid
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/RecyclerPrizesCatalogWidget.as::STAR_LEVELS
     private static readonly STAR_LEVELS = ['bronze', 'silver', 'gold', 'diamond', 'ruby', 'pink', 'green', 'grey'];
 
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerPrizesCatalogWidget.as::_prizes

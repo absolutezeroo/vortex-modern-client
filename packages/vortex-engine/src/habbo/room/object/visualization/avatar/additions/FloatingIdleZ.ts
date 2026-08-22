@@ -12,14 +12,19 @@ import type {AvatarVisualization} from '../AvatarVisualization';
 
 export class FloatingIdleZ implements IAvatarAddition 
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::DELAY_BEFORE_ANIMATION
     private static readonly DELAY_BEFORE_ANIMATION: number = 2000;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::DELAY_PER_FRAME
     private static readonly DELAY_PER_FRAME: number = 2000;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::STATE_DELAY
     private static readonly STATE_DELAY: number = 0;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::STATE_FRAME_A
     private static readonly STATE_FRAME_A: number = 1;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::STATE_FRAME_B
     private static readonly STATE_FRAME_B: number = 2;
 
     protected _visualization: AvatarVisualization;

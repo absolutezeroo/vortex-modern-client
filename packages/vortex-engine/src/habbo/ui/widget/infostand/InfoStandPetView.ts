@@ -42,46 +42,64 @@ export class InfoStandPetView
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_WIDTH
     private static readonly STATUS_BAR_WIDTH = 162;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_HEIGTH
     private static readonly STATUS_BAR_HEIGTH = 16;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_HIGHLIGHT_HEIGHT
     private static readonly STATUS_BAR_HIGHLIGHT_HEIGHT = 4;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_BORDER_COLOR
     private static readonly STATUS_BAR_BORDER_COLOR = 14342874;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_BG_COLOR
     private static readonly STATUS_BAR_BG_COLOR = 3815994;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_HAPPINESS_HIGHLIGHT_COLOR
     private static readonly STATUS_BAR_HAPPINESS_HIGHLIGHT_COLOR = 2085362;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_HAPPINESS_CONTENT_COLOR
     private static readonly STATUS_BAR_HAPPINESS_CONTENT_COLOR = 39616;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_EXPERIENCE_HIGHLIGHT_COLOR
     private static readonly STATUS_BAR_EXPERIENCE_HIGHLIGHT_COLOR = 10513106;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_EXPERIENCE_CONTENT_COLOR
     private static readonly STATUS_BAR_EXPERIENCE_CONTENT_COLOR = 8734654;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_ENERGY_HIGHLIGHT_COLOR
     private static readonly STATUS_BAR_ENERGY_HIGHLIGHT_COLOR = 9094430;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_ENERGY_CONTENT_COLOR
     private static readonly STATUS_BAR_ENERGY_CONTENT_COLOR = 6200576;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_WELLBEING_HIGHLIGHT_COLOR
     private static readonly STATUS_BAR_WELLBEING_HIGHLIGHT_COLOR = 9094430;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_WELLBEING_CONTENT_COLOR
     private static readonly STATUS_BAR_WELLBEING_CONTENT_COLOR = 6200576;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATE_HAPPINESS
     private static readonly STATE_HAPPINESS = 'happiness';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATE_EXPERIENCE
     private static readonly STATE_EXPERIENCE = 'experience';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATE_ENERGY
     private static readonly STATE_ENERGY = 'energy';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATE_WELLBEING
     private static readonly STATE_WELLBEING = 'wellbeing';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATE_GROWTH
     private static readonly STATE_GROWTH = 'growth';
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::BUTTONS_MAX_WIDTH
     private static readonly BUTTONS_MAX_WIDTH = 250;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::BUTTON_HEIGHT
     private static readonly BUTTON_HEIGHT = 25;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::BUTTON_MARGIN
     private static readonly BUTTON_MARGIN = 5;
 
     // The monsterplant is the one pet type with a growth/well-being panel instead of the standard

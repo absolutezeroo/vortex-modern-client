@@ -23,10 +23,13 @@ const log = Logger.getLogger('habbo.ui.RoomDesktopLayoutManager');
 
 export class RoomDesktopLayoutManager
 {
+    // AS3: sources/win63_version/habbo/ui/class_3019.as::ROOM_VIEW
     private static readonly ROOM_VIEW = 'room_view';
 
+    // AS3: sources/win63_version/habbo/ui/class_3019.as::ROOM_NEW_CHAT
     private static readonly ROOM_NEW_CHAT = 'room_new_chat';
 
+    // AS3: sources/win63_version/habbo/ui/class_3019.as::BOTTOM_MARGIN
     private static readonly BOTTOM_MARGIN = 47;
 
     // AS3: sources/win63_version/habbo/ui/class_3019.as::_layoutContainer

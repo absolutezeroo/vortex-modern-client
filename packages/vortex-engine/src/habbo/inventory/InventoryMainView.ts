@@ -22,6 +22,7 @@ import {Util} from './Util';
  */
 export class InventoryMainView 
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::COUNTER_MARGIN
     private static readonly COUNTER_MARGIN = 3;
 
     private static readonly DEFAULT_VIEW_LOCATION = {x: 120, y: 150};

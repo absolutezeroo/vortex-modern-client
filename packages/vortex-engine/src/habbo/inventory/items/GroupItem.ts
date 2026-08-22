@@ -27,8 +27,10 @@ import {SongInfoReceivedEvent} from '@habbo/sound/events/SongInfoReceivedEvent';
  */
 export class GroupItem implements IGetImageListener 
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::THUMB_COLOR_NORMAL
     private static readonly THUMB_COLOR_NORMAL = 13421772;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::THUMB_COLOR_UNSEEN
     private static readonly THUMB_COLOR_UNSEEN = 10275685;
 
     // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::_items

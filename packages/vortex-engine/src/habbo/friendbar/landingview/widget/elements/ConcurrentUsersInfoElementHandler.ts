@@ -23,14 +23,19 @@ import type {TextElementHandler} from './TextElementHandler';
  */
 export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisposable
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::STATE_DISABLED
     private static readonly STATE_DISABLED = 0;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::STATE_ACTIVE
     private static readonly STATE_ACTIVE = 1;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::STATE_REDEEM
     private static readonly STATE_REDEEM = 2;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::STATE_REWARDED
     private static readonly STATE_REWARDED = 3;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::UPDATE_INTERVAL_MS
     private static readonly UPDATE_INTERVAL_MS = 5000;
 
     // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::_landingView

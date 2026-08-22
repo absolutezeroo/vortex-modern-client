@@ -33,17 +33,22 @@ export class PetCommandTool
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/PetCommandTool.as::STATUS_BAR_WIDTH
     private static readonly STATUS_BAR_WIDTH = 162;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/PetCommandTool.as::STATUS_BAR_HEIGHT
     private static readonly STATUS_BAR_HEIGHT = 16;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/PetCommandTool.as::STATUS_BAR_HIGHLIGHT_HEIGHT
     private static readonly STATUS_BAR_HIGHLIGHT_HEIGHT = 4;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/PetCommandTool.as::STATUS_BAR_BORDER_COLOR
     private static readonly STATUS_BAR_BORDER_COLOR = 14342874;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/PetCommandTool.as::STATUS_BAR_BG_COLOR
     private static readonly STATUS_BAR_BG_COLOR = 3815994;
 
     // AS3: .../PetCommandTool.as::STATUS_BAR_SKILL_HIGHLIGHT_COLOR / STATUS_BAR_SKILL_CONTENT_COLOR
     private static readonly STATUS_BAR_SKILL_HIGHLIGHT_COLOR = 10513106;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/PetCommandTool.as::STATUS_BAR_SKILL_CONTENT_COLOR
     private static readonly STATUS_BAR_SKILL_CONTENT_COLOR = 8734654;
 
     // AS3: .../PetCommandTool.as::STATE_SKILL

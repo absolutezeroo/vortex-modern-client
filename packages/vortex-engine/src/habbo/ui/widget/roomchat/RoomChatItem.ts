@@ -31,6 +31,7 @@ import type {RoomChatWidget} from './RoomChatWidget';
 
 export class RoomChatItem
 {
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::RESPECT_ICON_MARGIN_RIGHT
     private static readonly RESPECT_ICON_MARGIN_RIGHT = 35;
 
     private static readonly NAME_ICON_MARGIN = 26;

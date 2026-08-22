@@ -32,6 +32,7 @@ import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 
 export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase 
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::TOOLBAR_EXPAND_TARGET_X
     private static readonly TOOLBAR_EXPAND_TARGET_X = 1;
 
     private static readonly TOOLBAR_COLLAPSE_TARGET_X = -130;

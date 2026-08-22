@@ -17,8 +17,10 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class RoomToolsHistory
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::PADDING
     private static readonly PADDING = 5;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::SPACING
     private static readonly SPACING = 2;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::_windowManager

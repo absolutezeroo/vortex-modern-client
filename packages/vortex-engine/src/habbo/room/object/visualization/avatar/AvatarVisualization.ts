@@ -45,15 +45,19 @@ import {ExpressionAdditionFactory} from './additions/ExpressionAdditionFactory';
 export class AvatarVisualization extends RoomObjectSpriteVisualization implements IAvatarImageListener, IAvatarEffectListener 
 {
     /** String tag for the main avatar sprite data container. */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::AVATAR
     private static readonly AVATAR: string = 'avatar';
 
     /** Default depth offset for avatar sprites. */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::AVATAR_SPRITE_DEFAULT_DEPTH
     private static readonly AVATAR_SPRITE_DEFAULT_DEPTH: number = -0.01;
 
     /** Additional depth adjustment for the player's own avatar. */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::AVATAR_OWN_DEPTH_ADJUST
     private static readonly AVATAR_OWN_DEPTH_ADJUST: number = 0.001;
 
     /** Depth offset when the avatar is laying down. */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::AVATAR_SPRITE_LAYING_DEPTH
     private static readonly AVATAR_SPRITE_LAYING_DEPTH: number = -0.409;
 
     /**
@@ -70,6 +74,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     private static readonly BASE_Y_SCALE: number = 1000;
 
     /** Maximum number of avatars with effect cached by the visualization. */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::MAX_AVATARS_WITH_EFFECT
     private static readonly MAX_AVATARS_WITH_EFFECT: number = 3;
 
     /** AS3 animation frame update interval. */
@@ -82,31 +87,41 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     private static readonly FREEZE_EFFECT: number = 218;
 
     /** Sprite index for the main avatar composite image. */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::SPRITE_INDEX_AVATAR
     private static readonly SPRITE_INDEX_AVATAR: number = 0;
 
     /** Default canvas offsets when none are provided. */
     private static readonly DEFAULT_CANVAS_OFFSETS: number[] = [0, 0, 0];
 
     /** Sprite index for the shadow. */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::SPRITE_INDEX_SHADOW
     private static readonly SPRITE_INDEX_SHADOW: number = 1;
 
     /** Initial number of reserved sprites (avatar image + shadow). */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::INITIAL_RESERVED_SPRITES
     private static readonly INITIAL_RESERVED_SPRITES: number = 2;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_IDLE_BUBBLE (and siblings, l.65-79)
     // ADDITION_ID_HABBICON_BUBBLE (8) is declared there too; nothing in this port reads it yet.
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_IDLE_BUBBLE
     private static readonly ADDITION_ID_IDLE_BUBBLE: number = 1;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_TYPING_BUBBLE
     private static readonly ADDITION_ID_TYPING_BUBBLE: number = 2;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_EXPRESSION
     private static readonly ADDITION_ID_EXPRESSION: number = 3;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_NUMBER_BUBBLE
     private static readonly ADDITION_ID_NUMBER_BUBBLE: number = 4;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_GAME_CLICK_TARGET
     private static readonly ADDITION_ID_GAME_CLICK_TARGET: number = 5;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_MUTED_BUBBLE
     private static readonly ADDITION_ID_MUTED_BUBBLE: number = 6;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_GUIDE_STATUS_BUBBLE
     private static readonly ADDITION_ID_GUIDE_STATUS_BUBBLE: number = 7;
 
     /** Minimum time between geometry updates in milliseconds. */

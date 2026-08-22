@@ -13,14 +13,19 @@ import {ExpressionAddition} from './ExpressionAddition';
 
 export class FloatingHeart extends ExpressionAddition 
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingHeart.as::DELAY_BEFORE_ANIMATION
     private static readonly DELAY_BEFORE_ANIMATION: number = 300;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingHeart.as::STATE_DELAY
     private static readonly STATE_DELAY: number = 0;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingHeart.as::STATE_FADE_IN
     private static readonly STATE_FADE_IN: number = 1;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingHeart.as::STATE_FLOAT
     private static readonly STATE_FLOAT: number = 2;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingHeart.as::STATE_COMPLETE
     private static readonly STATE_COMPLETE: number = 3;
 
     private _assetName: string | null = null;

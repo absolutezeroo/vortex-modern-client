@@ -49,6 +49,7 @@ export const SEARCHTYPE_NO_FRIENDS_FILTER = 23;
  */
 export class Tabs
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/domain/Tabs.as::TAB_NAMES
     private static readonly TAB_NAMES: Record<string, number> = {
         popular: 2,
         official: 4,

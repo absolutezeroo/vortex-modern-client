@@ -51,14 +51,19 @@ let sharedChatBubbleFactory: ChatBubbleFactory | null = null;
 
 export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
 {
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::CHAT_AREA_MARGIN_BOTTOM
     private static readonly CHAT_AREA_MARGIN_BOTTOM = 23;
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::ANIMATION_STEP_INTERVAL_MS
     private static readonly ANIMATION_STEP_INTERVAL_MS = 25;
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::ANIMATION_STEP_PIXELS
     private static readonly ANIMATION_STEP_PIXELS = 3;
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::ANIMATION_TIMEOUT_MS
     private static readonly ANIMATION_TIMEOUT_MS = 4000;
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::ANIMATION_TIMEOUT_SLOW_MS
     private static readonly ANIMATION_TIMEOUT_SLOW_MS = 6000;
 
     // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::_timeoutTime

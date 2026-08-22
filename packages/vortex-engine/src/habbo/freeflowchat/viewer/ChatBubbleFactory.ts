@@ -39,6 +39,7 @@ const log = Logger.getLogger('habbo.freeflowchat.viewer.ChatBubbleFactory');
  */
 export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListener
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::MAX_DISPOSABLE_BITMAPS
     private static readonly MAX_DISPOSABLE_BITMAPS = 30;
 
     private _chatFlow: IHabboFreeFlowChat | null;

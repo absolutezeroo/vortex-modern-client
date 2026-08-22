@@ -13,12 +13,16 @@ import {Texture} from 'pixi.js';
 
 export class GameClickTarget implements IAvatarAddition
 {
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/GameClickTarget.as::WIDTH
     private static readonly WIDTH: number = 46;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/GameClickTarget.as::HEIGHT
     private static readonly HEIGHT: number = 60;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/GameClickTarget.as::OFFSET_X
     private static readonly OFFSET_X: number = -23;
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/GameClickTarget.as::OFFSET_Y
     private static readonly OFFSET_Y: number = -48;
 
     constructor(id: number)

@@ -34,12 +34,16 @@ import {MapStuffData} from '@habbo/room/object/data/MapStuffData';
  */
 export class FurniView
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::STATE_NULL
     private static readonly STATE_NULL = 0;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::STATE_INITIALIZING
     private static readonly STATE_INITIALIZING = 1;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::STATE_EMPTY
     private static readonly STATE_EMPTY = 2;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::STATE_CONTENT
     private static readonly STATE_CONTENT = 3;
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/inventory/furni/FurniView.as::_model

@@ -31,10 +31,13 @@ const log = Logger.getLogger('habbo.friendbar.landingview.layout.WidgetContainer
  */
 export class WidgetContainerLayout implements IUpdateReceiver
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::DEFAULT_LAYOUT
     private static readonly DEFAULT_LAYOUT: string = 'landing_view_default_dynamic_layout';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::GENERIC_RECEPTION_LAYOUT
     private static readonly GENERIC_RECEPTION_LAYOUT: string = 'landing_view_generic_reception';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::WIDGET_PLACEHOLDER_PREFIX
     private static readonly WIDGET_PLACEHOLDER_PREFIX: string = 'widget_placeholder_';
 
     private static readonly BACKGROUND_ELEMENT_NAMES: string[] = [

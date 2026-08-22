@@ -46,6 +46,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     *
     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::CONTENT_PROCESSING_TIME_LIMIT_MILLISECONDS
     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::CONTENT_PROCESSING_TIME_LIMIT_MILLISECONDS
     private static readonly CONTENT_PROCESSING_TIME_LIMIT_MILLISECONDS = 40;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::_rooms

@@ -37,8 +37,10 @@ export class NavigatorView implements IUpdateReceiver
 {
     private static readonly LAYOUT_NAME = 'navigator_frame_2_xml';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/NavigatorView.as::MAX_WINDOW_WIDTH
     private static readonly MAX_WINDOW_WIDTH = 578;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/NavigatorView.as::STARTING_TAB_POSITION
     private static readonly STARTING_TAB_POSITION = 115;
 
     private static readonly LEFT_PANE_MARGIN_CONST = 7;

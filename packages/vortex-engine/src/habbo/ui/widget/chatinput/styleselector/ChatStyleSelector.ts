@@ -51,6 +51,7 @@ function clampFontSize(value: number): number
  */
 export class ChatStyleSelector implements IDisposable 
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::FONT_SIZE_LABELS
     private static readonly FONT_SIZE_LABELS = ['S', 'M', 'L', 'XL', 'XXL'];
 
     private static readonly HOVER_COLOR = 4291875024;

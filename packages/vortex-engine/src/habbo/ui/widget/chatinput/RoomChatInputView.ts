@@ -25,6 +25,7 @@ import type {RoomChatInputWidget} from './RoomChatInputWidget';
 
 export class RoomChatInputView
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::MARGIN_H
     private static readonly MARGIN_H = 12;
 
     private static readonly NFT_CHAT_STYLE_MIN = 1000;
