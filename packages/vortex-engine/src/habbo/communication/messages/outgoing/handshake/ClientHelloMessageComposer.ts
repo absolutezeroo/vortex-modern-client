@@ -11,7 +11,7 @@ export class ClientHelloMessageComposer extends PreEncryptionMessageComposer<Con
     private _data: ConstructorParameters<typeof ClientHelloMessageComposer>;
 
     constructor(
-        releaseVersion: string = 'WIN63-202601121721-391685409',
+        releaseVersion: string = 'WIN63-202607011411-782849652',
         type: string = 'FLASH20',
         platform: number = 6,
         category: number = 4
