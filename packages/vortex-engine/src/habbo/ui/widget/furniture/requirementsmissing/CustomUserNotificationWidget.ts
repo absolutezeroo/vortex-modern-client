@@ -1,4 +1,5 @@
 import type {IWindow} from '@core/window/IWindow';
+import {AvatarEditorIdEnum} from '@habbo/avatar/enum/AvatarEditorIdEnum';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
@@ -236,15 +237,18 @@ export class CustomUserNotificationWidget extends RoomWidgetBase
                     }
                 }
 
+                // Owning the costume already: the answer is the wardrobe, not the shop. The
+                // editor opens straight on its effects tab, which is what the missing costume
+                // would have been worn from.
                 if(ownsCostume)
                 {
-                    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/furniture/requirementsmissing/CustomUserNotificationWidget.as::eventProc()
-                    // — AS3 calls `container.avatarEditor.openEditor(0, null, null, true, null, "effects")`
-                    // then `loadOwnAvatarInEditor(0)`. `IRoomWidgetHandlerContainer` declares
-                    // `avatarEditor` in AS3 but not in this port, because HabboAvatarEditor has no
-                    // ported manager or interface yet (same gap already marked in HabboCatalog and
-                    // HabboLandingView). Owning a costume therefore closes the dialog without
-                    // opening anything.
+                    const editor = container?.avatarEditor ?? null;
+
+                    if(editor !== null)
+                    {
+                        editor.openEditor(AvatarEditorIdEnum.MAIN_EDITOR, null, null, true, null, 'effects');
+                        editor.loadOwnAvatarInEditor(AvatarEditorIdEnum.MAIN_EDITOR);
+                    }
                 }
                 else
                 {

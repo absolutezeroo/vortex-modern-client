@@ -9,6 +9,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
+import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
 import {ContextInfoView} from './ContextInfoView';
 
 export class ButtonMenuView extends ContextInfoView
@@ -38,17 +39,31 @@ export class ButtonMenuView extends ContextInfoView
 
     protected _buttons: IItemListWindow | null = null;
 
+    /**
+     * Shows or hides one grid of icon buttons, and repaints every cell's icon.
+     *
+     * The icon's *asset name is its window name* — AS3 passes `icon.name` straight back into
+     * `setImageAsset()`. That is what makes the sign grid work: thirteen cells, each named after
+     * the sign it shows, all filled from one loop.
+     */
     // AS3: ButtonMenuView.as::showButtonGrid()
-    // AS3 adaptation: only toggles the grid's visibility; the per-cell icon
-    // bitmaps ship in the own_avatar_menu layout already.
-    // TODO(AS3): re-derive each sign icon via setImageAsset(cell.icon).
     protected showButtonGrid(name: string, visible: boolean = true): void
     {
         if(!this._buttons) return;
 
-        const grid = this._buttons.getListItemByName(name);
+        const grid = this._buttons.getListItemByName(name) as unknown as IItemGridWindow | null;
 
-        if(grid) grid.visible = visible;
+        if(!grid) return;
+
+        (grid as unknown as IWindow).visible = visible;
+
+        for(let i = 0; i < grid.numGridItems; i++)
+        {
+            const cell = grid.getGridItemAt(i) as unknown as IWindowContainer | null;
+            const icon = cell?.findChildByTag('icon') ?? null;
+
+            if(icon !== null) this.setImageAsset(icon, icon.name, true);
+        }
     }
 
     // AS3: ButtonMenuView.as::showButton()

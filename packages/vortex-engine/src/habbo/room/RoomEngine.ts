@@ -6159,8 +6159,10 @@ export class RoomEngine extends Component implements IRoomEngine,
             }
             else if(isUserCategory)
             {
+                // Whole tile coordinates, not the half-tile centre the furniture arms use: an
+                // avatar stands *on* a tile, and AS3 declares this arm's two parameters as `int`.
                 success = tileEvent !== null
-                    && this.handleUserPlace(object, tileEvent.tileX + 0.5, tileEvent.tileY + 0.5, stackingMap);
+                    && this.handleUserPlace(object, Math.floor(tileEvent.tileX), Math.floor(tileEvent.tileY), this.getLegacyGeometry(roomId));
 
                 if(!success) this.disposeObjectUser(roomId, data.id);
             }
@@ -6260,26 +6262,26 @@ export class RoomEngine extends Component implements IRoomEngine,
         return Vector3d.sum(wallLocation, offset);
     }
 
+    /**
+     * Drops a pet or bot ghost onto a tile.
+     *
+     * The *wall geometry* answers both questions here, not the furniture stacking map: a pet stands
+     * on the floor, so its height is the floor's own altitude and not whatever is stacked on the
+     * tile. Using the stacking map put a pet on top of a table it was only being dragged across.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleUserPlace()
-    // TODO(AS3): AS3 takes both coordinates as `int` and reads tile validity and height off the
-    // room's LegacyWallGeometry (`roomEngine.getLegacyGeometry()` — no longer missing here), so the
-    // ghost lands on the tile corner at the floor's own altitude. This arm keeps the fractional tile
-    // centre and FurniStackingHeightMap, whose height includes whatever furniture is stacked there.
     private handleUserPlace(
         object: IRoomObjectController,
         x: number,
         y: number,
-        stackingMap: FurniStackingHeightMap | null
+        geometry: LegacyWallGeometry | null
     ): boolean
     {
-        const tileX = Math.floor(x);
-        const tileY = Math.floor(y);
+        if(geometry === null) return false;
 
-        if(stackingMap === null) return false;
+        if(!geometry.isRoomTile(x, y)) return false;
 
-        if(!stackingMap.getIsRoomTile(tileX, tileY)) return false;
-
-        object.setLocation(new Vector3d(x, y, stackingMap.getTileHeight(tileX, tileY)));
+        object.setLocation(new Vector3d(x, y, geometry.getTileHeight(x, y)));
 
         return true;
     }
