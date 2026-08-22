@@ -911,7 +911,8 @@ export class RoomEngine extends Component implements IRoomEngine,
                 roomData.doorX ?? undefined,
                 roomData.doorY ?? undefined,
                 roomData.doorZ ?? undefined,
-                roomData.doorDir ?? undefined
+                roomData.doorDir ?? undefined,
+                roomData.cameraInitPosition
             );
         }
     }
@@ -3394,8 +3395,9 @@ export class RoomEngine extends Component implements IRoomEngine,
         doorX?: number,
         doorY?: number,
         doorZ?: number,
-        doorDir?: number
-    ): void 
+        doorDir?: number,
+        cameraInitPosition: IVector3d | null = null
+    ): void
     {
         // Guard against double initialization (server can send height map twice)
         if(this._initializedRooms.has(roomId))
@@ -3429,12 +3431,17 @@ export class RoomEngine extends Component implements IRoomEngine,
                 floorType = pending.floorType;
                 wallType = pending.wallType;
                 landscapeType = pending.landscapeType;
+
+                // Guarded, unlike the three types above: a re-park that brings no camera position
+                // keeps the one already stored. AS3 is asymmetrical here in exactly this way.
+                if(cameraInitPosition === null) cameraInitPosition = pending.cameraInitPosition;
             }
 
             pending = new RoomData(roomId, planeParser);
             pending.floorType = floorType;
             pending.wallType = wallType;
             pending.landscapeType = landscapeType;
+            pending.cameraInitPosition = cameraInitPosition;
             pending.setDoor(doorX, doorY, doorZ, doorDir);
 
             this._roomDatas.set(roomIdentifier, pending);
@@ -3469,6 +3476,8 @@ export class RoomEngine extends Component implements IRoomEngine,
             if(pending.wallType !== null && pending.wallType.length > 0) wallType = pending.wallType;
 
             if(pending.landscapeType !== null && pending.landscapeType.length > 0) landscapeType = pending.landscapeType;
+
+            if(pending.cameraInitPosition !== null) cameraInitPosition = pending.cameraInitPosition;
         }
 
         // Create room instance if it doesn't exist
@@ -3479,9 +3488,19 @@ export class RoomEngine extends Component implements IRoomEngine,
             room = this.createRoomInstance(roomId);
         }
 
-        if(!room) 
+        if(!room)
         {
             return;
+        }
+
+        // Where the server wants the camera parked when the room opens. Written onto the room
+        // instance rather than acted on here: `RoomDesktop.initCameraLocation()` reads the three
+        // back and drives `updateRoomCamera()` with them, which is the spectator-entry path.
+        if(cameraInitPosition !== null)
+        {
+            room.setNumber(RoomVariableEnum.CAMERA_INIT_X, cameraInitPosition.x);
+            room.setNumber(RoomVariableEnum.CAMERA_INIT_Y, cameraInitPosition.y);
+            room.setNumber(RoomVariableEnum.CAMERA_INIT_Z, cameraInitPosition.z);
         }
 
         // If we have plane data, store it for rendering

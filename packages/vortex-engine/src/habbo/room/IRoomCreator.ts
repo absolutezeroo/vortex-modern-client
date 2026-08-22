@@ -43,7 +43,8 @@ export interface IRoomCreator
         doorX?: number,
         doorY?: number,
         doorZ?: number,
-        doorDir?: number
+        doorDir?: number,
+        cameraInitPosition?: IVector3d | null
     ): void;
 
     /**

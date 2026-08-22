@@ -232,6 +232,7 @@ import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import type {RoomEngineObjectPlacedEvent} from '@habbo/room/events/RoomEngineObjectPlacedEvent';
 import type {RoomEngineObjectPlacedOnUserEvent} from '@habbo/room/events/RoomEngineObjectPlacedOnUserEvent';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {AssetBitmap} from '@core/assets/AssetBitmap';
 import {RequestRoomPropertySetComposer} from '@habbo/communication/messages/outgoing/inventory/RequestRoomPropertySetComposer';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
@@ -2280,29 +2281,56 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return productCount;
     }
 
+    /**
+     * The icon for a wearable effect, by effect id.
+     *
+     * AS3 reads it out of the *inventory's* asset library, not the catalog's; this port has one
+     * library behind `getAssetByName()`, so the distinction does not survive. AS3 also asks for
+     * `fx_icon_N_png` — the `_png` suffix is the AS3 field name, and this port registers images
+     * under the bare basename (see `App.ts::readImageAssets`).
+     *
+     * AS3 answers a missing icon with a 1x1 white bitmap; null is the equivalent here, and every
+     * caller in the port already null-checks.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getPixelEffectIcon()
-    // TODO(AS3): see getMintTokenProductIcon()'s note below - same Texture-vs-ImageBitmap mismatch.
-    public getPixelEffectIcon(_effectId: number): ImageBitmap | null
+    public getPixelEffectIcon(effectId: number): ImageBitmap | null
     {
-        return null;
+        return this.getIconBitmap(`fx_icon_${effectId}`);
     }
 
+    /**
+     * The Habbo Club icon, shown for every subscription product.
+     *
+     * `productId` is accepted and unused — AS3 takes it and looks up the one `icon_hc` asset
+     * regardless.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getSubscriptionProductIcon()
-    // TODO(AS3): see getMintTokenProductIcon()'s note below - same Texture-vs-ImageBitmap mismatch.
     public getSubscriptionProductIcon(_productId: number): ImageBitmap | null
     {
-        return null;
+        return this.getIconBitmap('icon_hc');
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getMintTokenProductIcon()
-    // TODO(AS3): AS3 looks up the "minting_token_large" asset and clones its BitmapData, falling
-    // back to a blank bitmap when missing. findAssetByName() would return a PixiJS Texture here,
-    // not an ImageBitmap - the same type mismatch already affects the two sibling methods above
-    // (getPixelEffectIcon/getSubscriptionProductIcon), so simplified to null for consistency rather
-    // than fixing one of the three one-off.
     public getMintTokenProductIcon(): ImageBitmap | null
     {
-        return null;
+        return this.getIconBitmap('minting_token_large');
+    }
+
+    // TS-only: the shared body of the three icon getters above. AS3 clones the BitmapData at each
+    // of them because a BitmapData is mutable and the caller may draw on it; an ImageBitmap is
+    // immutable, so the library's own object is handed out directly.
+    private getIconBitmap(assetName: string): ImageBitmap | null
+    {
+        const asset = this.assets?.getAssetByName(assetName) ?? null;
+
+        if(asset === null)
+        {
+            log.warn(`Catalog icon "${assetName}" is not in the asset library`);
+
+            return null;
+        }
+
+        return AssetBitmap.resolveSync(asset.content);
     }
 
     /**
@@ -2526,10 +2554,42 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         if(!target) return;
 
-        // TODO(AS3): AS3 hands the bitmap to `setElementImageCentered()`, which also positions it;
-        // this port assigns it directly, so an image smaller than its element sits top-left
-        // instead of centred.
-        (target as { bitmap: ImageBitmap | null }).bitmap = asset.content as ImageBitmap;
+        HabboCatalog.setElementImageCentered(target as IWindow, AssetBitmap.resolveSync(asset.content));
+    }
+
+    /**
+     * Puts a bitmap in the middle of a window rather than in its top-left corner.
+     *
+     * AS3 allocates a BitmapData the size of the element, clears it and `copyPixels()` the source
+     * into the centre; the same thing here is an OffscreenCanvas plus
+     * `transferToImageBitmap()`, which is what keeps it synchronous — `createImageBitmap()` would
+     * make every caller async for a blit that is already in CPU memory.
+     *
+     * `height` overrides the element's own when the caller knows the box is taller than the
+     * window reports, and AS3 also uses it as the "rebuild the backing bitmap" flag.
+     *
+     * AS3's second branch — `setDisplayObject(new Bitmap(...))` on a display-object wrapper — has
+     * no counterpart: this port's element types do not include that wrapper.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::setElementImageCentered()
+    public static setElementImageCentered(element: IWindow | null, bitmap: ImageBitmap | null, height: number = 0): void
+    {
+        if(bitmap === null || element === null || element.disposed) return;
+
+        const boxHeight = height > 0 ? height : element.height;
+        const x = Math.trunc((element.width - bitmap.width) / 2);
+        const y = Math.trunc((boxHeight - bitmap.height) / 2);
+        const canvas = new OffscreenCanvas(Math.max(1, element.width), Math.max(1, boxHeight));
+        const ctx = canvas.getContext('2d');
+
+        if(ctx === null) return;
+
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(bitmap, x, y);
+
+        (element as unknown as {bitmap: ImageBitmap | null}).bitmap = canvas.transferToImageBitmap();
+
+        element.invalidate();
     }
 
     /**

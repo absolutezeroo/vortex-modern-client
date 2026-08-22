@@ -747,16 +747,43 @@ export class HabboFriendList extends Component implements IHabboFriendList, IAva
     /**
      * Builds a standalone bitmap button sized to its own image.
      *
-     * TODO(AS3): AS3 calls `_windowManager.createWindow(name, "", 21, 0, 1 | 0x10, rect,
-     * procedure, id)`. This port's window manager has no `createWindow()` of that shape -
-     * windows come from layouts - so nothing in the ported friend list can build one, and
-     * no ported caller needs it (the AS3 method is itself unused inside the class).
-     * AS3: HabboFriendList.as::getButton().
+     * Window type 21 is the bitmap-wrapper controller and the param flags are AS3's own
+     * `1 | 0x10` — "receives mouse events" plus "shares its parent's graphic context". The
+     * rectangle takes its size from the image, which is why the asset has to be resolved first.
+     *
+     * Nothing inside the class calls it, in AS3 either; it is part of the friend list's public
+     * surface for whoever wants a button drawn from one of its own images.
      */
     // AS3: .../HabboFriendList.as::getButton()
-    getButton(_name: string, _imageName: string, _procedure: ((event: WindowEvent, window: IWindow) => void) | null, _x: number = 0, _y: number = 0, _id: number = 0): IBitmapWrapperWindow | null
+    getButton(
+        name: string,
+        imageName: string,
+        procedure: ((event: WindowEvent, window: IWindow) => void) | null,
+        x: number = 0,
+        y: number = 0,
+        id: number = 0
+    ): IBitmapWrapperWindow | null
     {
-        return null;
+        const image = this.getButtonImage(imageName);
+
+        if(image === null || this._windowManager === null) return null;
+
+        const window = this._windowManager.createWindow(
+            name,
+            '',
+            21,
+            0,
+            1 | 0x10,
+            {x, y, width: image.width, height: image.height},
+            procedure as ((event: unknown, window: IWindow) => void) | null,
+            id
+        ) as unknown as IBitmapWrapperWindow | null;
+
+        if(window === null) return null;
+
+        window.bitmap = image;
+
+        return window;
     }
 
     // AS3: .../HabboFriendList.as::trackFriendListEvent()

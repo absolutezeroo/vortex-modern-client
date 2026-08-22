@@ -601,6 +601,12 @@ const LIBRARY_IMAGE_NAMES: ReadonlySet<string> = new Set([
     'dimmer_slider_base',
     'dimmer_slider_button',
     'icon_nft',
+
+    // HabboCatalog.getSubscriptionProductIcon() / getMintTokenProductIcon(): the two icons every
+    // subscription and mint-token product renders with. `fx_icon_*` (its third sibling) is
+    // already covered by the prefix rule above.
+    'icon_hc',
+    'minting_token_large',
     'stickie_blanco',
     'stickie_close',
     'stickie_remove',

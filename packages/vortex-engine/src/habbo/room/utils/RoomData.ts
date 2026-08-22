@@ -134,10 +134,8 @@ export class RoomData
     }
 
     /**
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as
-     * ::initializeRoom() — AS3 takes `cameraInitPosition` as its third argument and replays it out
-     * of here. This port's `initializeRoom()` has no such parameter, so nothing writes this yet;
-     * the accessor exists so the member is not silently missing when that argument is ported.
+     * Where the server asked the camera to start, parked with the rest of the room until the
+     * engine is ready to build it.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1852.as::get cameraInitPosition()
     get cameraInitPosition(): IVector3d | null

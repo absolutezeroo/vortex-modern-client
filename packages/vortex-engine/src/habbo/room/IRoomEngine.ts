@@ -237,7 +237,8 @@ export interface IRoomEngine extends IDisposable {
         doorX?: number,
         doorY?: number,
         doorZ?: number,
-        doorDir?: number
+        doorDir?: number,
+        cameraInitPosition?: IVector3d | null
     ): void;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::disposeObjectFurniture()

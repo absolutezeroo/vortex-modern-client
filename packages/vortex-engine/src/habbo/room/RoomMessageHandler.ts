@@ -698,7 +698,8 @@ export class RoomMessageHandler implements IRoomMessageHandler
                 doorFound ? doorX : undefined,
                 doorFound ? doorY : undefined,
                 doorFound ? doorZ : undefined,
-                doorFound ? doorDir : undefined
+                doorFound ? doorDir : undefined,
+                new Vector3d(parser.cameraInitX, parser.cameraInitY, parser.cameraInitZ)
             );
         }
     }
