@@ -19,6 +19,9 @@ import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
+import {RoomWidgetChangeMottoMessage} from '../messages/RoomWidgetChangeMottoMessage';
 import {RelationshipStatusEnum} from '@habbo/friendlist/RelationshipStatusEnum';
 import type {RelationshipStatusInfo} from '@habbo/communication/messages/incoming/users/RelationshipStatusInfo';
 import {
@@ -252,14 +255,18 @@ export class InfoStandUserView
     }
 
     /**
-	 * TODO(AS3): motto editing itself (WKE_KEY_UP/WME_CLICK handlers, the
-	 * RoomWidgetChangeMottoMessage send) is not ported — displays read-only,
-	 * matching the Phase 1 scope cut. The "crikey" croco-sticker swap below
-	 * IS ported: it's not display polish, it's the only AS3 mechanism that
-	 * ever sets avatar_image.visible (the layout defaults it to false).
+	 * Shows the motto, and — on your own infostand — lets you edit it.
+	 *
+	 * `editable` is what separates the two: it reveals the pencil, enables the field and attaches
+	 * the two handlers. The grey placeholder ("click to change") doubles as the sentinel
+	 * `onMottoKeyboard()` refuses to send, so an untouched field cannot overwrite a real motto
+	 * with the prompt text.
+	 *
+	 * The "crikey" croco-sticker swap is the only AS3 mechanism that ever sets
+	 * `avatar_image.visible` — the layout defaults it to false.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setMotto()
-    public setMotto(motto: string, _editable: boolean): void
+    public setMotto(motto: string, editable: boolean): void
     {
         const mottoContainer = this._elementList?.getListItemByName('motto_container') as IWindowContainer | null;
         const mottoText = mottoContainer?.findChildByName('motto_text') as ITextWindow | null;
@@ -267,14 +274,54 @@ export class InfoStandUserView
 
         if(!mottoText) return;
 
-        if(changeIcon) changeIcon.visible = false;
+        let caption = motto ?? '';
 
-        mottoText.text = motto ?? '';
-        mottoText.textColor = 0xFFFFFF;
+        if(editable)
+        {
+            if(changeIcon) changeIcon.visible = true;
+
+            if(caption === '')
+            {
+                caption = this._widget.localizations?.getLocalization('infostand.motto.change') ?? '';
+                mottoText.textColor = 0xAAAAAA;
+            }
+            else
+            {
+                mottoText.textColor = 0xFFFFFF;
+            }
+
+            mottoText.enable();
+        }
+        else
+        {
+            if(changeIcon) changeIcon.visible = false;
+
+            mottoText.textColor = 0xFFFFFF;
+            mottoText.disable();
+        }
+
+        // The hotel can switch motto editing off wholesale, on top of the per-user answer above.
+        if(!(this._widget.config?.getBoolean('infostand.motto.change.enabled') ?? false)) mottoText.disable();
+
+        mottoText.text = caption;
         mottoText.height = Math.min(mottoText.textHeight + 5, 50);
         mottoText.height = Math.max(mottoText.height, 23);
 
         if(mottoContainer) mottoContainer.height = mottoText.height + 3;
+
+        // AS3's `else` removes WKE_KEY_UP with `onMottoClicked` as the listener — a mismatched
+        // pair that removes nothing. Both are removed here: an infostand is reused for the next
+        // avatar clicked, and a stale editable handler would send *your* motto for *their* field.
+        if(editable)
+        {
+            mottoText.addEventListener(WindowKeyboardEvent.KEY_UP, this.onMottoKeyboard);
+            mottoText.addEventListener(WindowMouseEvent.CLICK, this.onMottoClicked);
+        }
+        else
+        {
+            mottoText.removeEventListener(WindowKeyboardEvent.KEY_UP, this.onMottoKeyboard);
+            mottoText.removeEventListener(WindowMouseEvent.CLICK, this.onMottoClicked);
+        }
 
         const isCrikeyEasterEgg = !!mottoText.text && mottoText.text.toLowerCase().indexOf('crikey') >= 0;
         const stickerCroco = this._infoBorder?.findChildByName('sticker_croco');
@@ -285,6 +332,70 @@ export class InfoStandUserView
 
         this.updateWindow();
     }
+
+    /**
+     * Enter commits the motto.
+     *
+     * The two-second gate is AS3's own flood guard, and it is measured from the last *accepted*
+     * send, so holding Enter cannot spam the server. Any other key just re-measures the field, so
+     * a motto that grows past one line pushes the container open as it is typed.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::onMottoKeyboard()
+    protected onMottoKeyboard = (event: WindowEvent): void =>
+    {
+        const mottoContainer = this._elementList?.getListItemByName('motto_container') as IWindowContainer | null;
+        const mottoText = mottoContainer?.findChildByName('motto_text') as ITextFieldWindow | null;
+
+        if(!mottoText) return;
+
+        const text = mottoText.text;
+
+        if((event as WindowKeyboardEvent).keyCode === 13)
+        {
+            const now = performance.now();
+            const placeholder = this._widget.localizations?.getLocalization('infostand.motto.change') ?? '';
+
+            if(now - this._lastMottoSentAt > 2000 && text !== placeholder)
+            {
+                this._widget.messageListener?.processWidgetMessage(new RoomWidgetChangeMottoMessage(text));
+
+                this._lastMottoSentAt = now;
+                mottoText.textColor = 0xFFFFFF;
+                mottoText.unfocus();
+            }
+        }
+        else
+        {
+            mottoText.textColor = 0xAAAAAA;
+        }
+
+        mottoText.height = Math.min(mottoText.textHeight + 5, 50);
+        mottoText.height = Math.max(mottoText.height, 23);
+
+        if(mottoContainer) mottoContainer.height = mottoText.height + 3;
+    };
+
+    /** Clicking the placeholder clears it, so typing does not start after "click to change". */
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::onMottoClicked()
+    protected onMottoClicked = (): void =>
+    {
+        const mottoContainer = this._elementList?.getListItemByName('motto_container') as IWindowContainer | null;
+        const mottoText = mottoContainer?.findChildByName('motto_text') as ITextWindow | null;
+
+        if(!mottoText) return;
+
+        if(mottoText.text === (this._widget.localizations?.getLocalization('infostand.motto.change') ?? ''))
+        {
+            mottoText.text = '';
+        }
+
+        mottoText.textColor = 0xAAAAAA;
+    };
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_8947
+    // Name DERIVED: obfuscated in every tree; the two-second window in onMottoKeyboard() is what
+    // identifies it.
+    private _lastMottoSentAt: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::set achievementScore()
     public set achievementScore(value: number)

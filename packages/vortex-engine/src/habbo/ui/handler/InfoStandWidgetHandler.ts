@@ -34,6 +34,7 @@ import {
 import {RoomWidgetMessage} from '@habbo/ui/widget/messages/RoomWidgetMessage';
 import {RoomWidgetRoomObjectNameEvent} from '@habbo/ui/widget/events/RoomWidgetRoomObjectNameEvent';
 import {RoomWidgetRoomObjectMessage} from '@habbo/ui/widget/messages/RoomWidgetRoomObjectMessage';
+import {RoomWidgetChangeMottoMessage} from '@habbo/ui/widget/messages/RoomWidgetChangeMottoMessage';
 import {RoomWidgetFurniActionMessage} from '@habbo/ui/widget/messages/RoomWidgetFurniActionMessage';
 import {RoomWidgetGetBadgeDetailsMessage} from '@habbo/ui/widget/messages/RoomWidgetGetBadgeDetailsMessage';
 import {RoomWidgetOpenProfileMessage} from '@habbo/ui/widget/messages/RoomWidgetOpenProfileMessage';
@@ -476,6 +477,14 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
             {
                 this._container.roomSession?.sendChatMessage(message.value);
             }
+
+            return null;
+        }
+
+        // AS3: .../InfoStandWidgetHandler.as::processWidgetMessage() ("RWVM_CHANGE_MOTTO_MESSAGE")
+        if(message instanceof RoomWidgetChangeMottoMessage)
+        {
+            this._container.roomSession?.sendChangeMottoMessage(message.motto);
 
             return null;
         }

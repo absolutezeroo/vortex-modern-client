@@ -13,6 +13,8 @@ import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocaliza
 import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
 import type {IProductDisplayInfo} from '@habbo/window/widgets/IProductDisplayInfo';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import type {HabboCatalog} from '@habbo/catalog/HabboCatalog';
+import {PurseEvent} from '@habbo/catalog/purse/PurseEvent';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
@@ -214,11 +216,37 @@ export class CollectiblesController extends Component implements ICollectorHub, 
         this.addMessageEvent(new RedeemNftLootBoxStateMessageEvent(this.onRedeemLootBoxStateEvent));
         this.addMessageEvent(new RedeemNftLootBoxResultMessageEvent(this.onRedeemLootBoxResultEvent));
 
-        // TODO(AS3): AS3 also listens on the catalog's purse for
-        // "catalog_purse_emerald_balance"/"catalog_purse_silver_balance" and calls updateView(),
-        // whose whole body is `_view.updateBalances(catalog.getPurse())`. Nothing to update until
-        // CollectiblesView is ported, so the two listeners are left off rather than wired to a
-        // no-op.
+        // The hub prints both balances in its header; without these two the numbers only ever
+        // showed what the purse held when the window was built.
+        this._catalog?.events.on(PurseEvent.EMERALD_BALANCE, this.onPurseBalance);
+        this._catalog?.events.on(PurseEvent.SILVER_BALANCE, this.onPurseBalance);
+    }
+
+    // AS3: CollectiblesController.as::onEmeraldBalance() / onSilverBalance()
+    // Two identically-bodied handlers in AS3 (`updateView()` each); one here, registered twice.
+    private onPurseBalance = (): void =>
+    {
+        this.updateView();
+    };
+
+    /**
+     * The chat style library's own selector swatch for a style id, wrapped as an `ImageResult`.
+     *
+     * TS-only helper: AS3 writes the same lookup out at both preview sites. The id arrives as a
+     * string because `IProductDisplayInfo.itemTypeId` is one for every product type.
+     */
+    private static chatStyleSwatch(catalog: IHabboCatalog | null, itemTypeId: string): ImageResult
+    {
+        const result = new ImageResult();
+
+        // Cast for the same reason PurchaseConfirmationDialog and PrizeGridItem cast: the chat
+        // library hangs off the concrete catalog, and AS3's IHabboCatalog does not declare it
+        // either.
+        const chat = (catalog as HabboCatalog | null)?.freeFlowChat ?? null;
+
+        result.data = chat?.chatStyleLibrary?.getStyle(parseInt(itemTypeId, 10))?.selectorPreview ?? null;
+
+        return result;
     }
 
     // AS3: CollectiblesController.as::get localizationManager()
@@ -550,11 +578,7 @@ export class CollectiblesController extends Component implements ICollectorHub, 
                 previewer.badgeResult = product.itemTypeId;
                 break;
             case 10:
-                // TODO(AS3): AS3 draws the chat-style swatch from
-                // `_freeFlowChat.chatStyleLibrary.getStyle(id).selectorPreview`. The port's
-                // IChatStyleLibrary exposes no `selectorPreview`, so there is nothing to hand over
-                // yet — cleared rather than left showing the previous product.
-                previewer.clearPreviewer();
+                previewer.imageResult = CollectiblesController.chatStyleSwatch(this._catalog, product.itemTypeId);
                 break;
             case 11:
                 previewer.petResult = product.petFigureString;
@@ -646,10 +670,11 @@ export class CollectiblesController extends Component implements ICollectorHub, 
                 previewer.badgeResult = product.itemTypeId;
                 break;
             case 10:
-                // TODO(AS3): the chat-bubble preview — see `previewIcon()`'s case 10. AS3 renders a
-                // whole PooledChatBubble to a BitmapData here (`createChatItemPreview()`), which is
-                // Flash display-list drawing with no direct equivalent in this port.
-                previewer.clearPreviewer();
+                // TODO(AS3): the *large* preview is a different thing from the swatch above: AS3
+                // renders a whole PooledChatBubble with sample text to a BitmapData
+                // (`createChatItemPreview()`), which needs the chat display list. The selector
+                // swatch stands in until that exists — it is the right style, just not a bubble.
+                previewer.imageResult = CollectiblesController.chatStyleSwatch(this._catalog, product.itemTypeId);
                 break;
             case 11:
                 previewer.petResult = product.petFigureString;
@@ -777,6 +802,9 @@ export class CollectiblesController extends Component implements ICollectorHub, 
         }
 
         this._controllerDisposed = true;
+
+        this._catalog?.events.off(PurseEvent.EMERALD_BALANCE, this.onPurseBalance);
+        this._catalog?.events.off(PurseEvent.SILVER_BALANCE, this.onPurseBalance);
 
         if(this._rewardBoxView !== null)
         {
