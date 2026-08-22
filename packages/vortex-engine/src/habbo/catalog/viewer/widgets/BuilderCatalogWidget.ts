@@ -16,11 +16,10 @@ import {CatalogWidget} from './CatalogWidget';
  * when the player currently can't place builder furniture (over the limit, not in a room,
  * not a controller, etc).
  *
- * TODO(AS3): the button-enabled state always reflects "placeable" (see
- * HabboCatalog.getBuilderFurniPlaceableStatusForOffer()'s own TODO) since room-session state
- * isn't wired into the catalog yet, and the actual place action
- * (HabboCatalog.requestSelectedItemToMover()) is itself a CatalogObjectMover-blocked stub -
- * so this widget renders and reacts correctly, but the buttons don't yet place furniture.
+ * Both halves are live: `HabboCatalog.getBuilderFurniPlaceableStatusForOffer()` reads the real
+ * room session for its five refusal codes, and `requestSelectedItemToMover()` hands the offer to
+ * the room engine's object inserter — AS3 never involves `CatalogObjectMover` there either; that
+ * class is the drag *icon*, not the placement.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/BuilderCatalogWidget.as
  */

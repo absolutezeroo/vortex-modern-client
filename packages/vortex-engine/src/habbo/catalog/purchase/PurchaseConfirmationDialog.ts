@@ -1,4 +1,6 @@
 import type {IDisposable} from '@core/runtime/IDisposable';
+import {MintTokenPurchaseOffer} from '@habbo/catalog/collectibles/tabs/MintTokenPurchaseOffer';
+import {NftStorePurchaseOffer} from '@habbo/catalog/collectibles/tabs/NftStorePurchaseOffer';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
@@ -34,9 +36,10 @@ const log = Logger.getLogger('habbo.catalog.purchase.PurchaseConfirmationDialog'
  * - the gift flow (`showGiftDialog()` and everything under it: the `gift_wrapping` layout, receiver
  *   name lookup with suggestions, box/ribbon selectors, `giveGift()`). `isGift` is accepted and
  *   remembered but only ever takes the plain purchase path.
- * - GameTokensOffer / MintTokenPurchaseOffer / NftStorePurchaseOffer, and with them the
- *   `nft_image` widget branch, the dark window colour and `purchaseGameTokensOffer()` /
- *   `purchaseMintTokens()` / `purchaseNftOffer()`.
+ * - GameTokensOffer (snow-war tokens) and `purchaseGameTokensOffer()`. Its two siblings —
+ *   MintTokenPurchaseOffer and NftStorePurchaseOffer — are handled: dark window, mint-token icon
+ *   and their own buy composers. The `nft_image` widget branch is still missing, so an NFT shows
+ *   no preview.
  * - the LTD raffle container (`hideRaffle()`'s notification half needs the raffle timer).
  * - `CatalogProductImages.hasProductImage()` / `PRODUCT_IMAGES`, the named-asset override that
  *   wins over a rendered preview for a handful of localization ids.
@@ -49,6 +52,19 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
 {
     // AS3: PurchaseConfirmationDialog.as::_window.color — the light (non-collectible) header tint.
     private static readonly WINDOW_COLOR: number = 4296112;
+
+    // AS3: PurchaseConfirmationDialog.as::showConfirmationDialog() — the dark one a mint-token or
+    // NFT purchase gets instead.
+    private static readonly WINDOW_COLOR_COLLECTIBLE: number = 2763306;
+
+    // AS3: PurchaseConfirmationDialog.as::_SafeStr_4977, the two collectible product types. They
+    // are not product types the server sends — the dialog invents them so the preview switch can
+    // tell a mint token and an NFT apart from the letter codes everything else uses.
+    private static readonly PRODUCT_TYPE_MINT_TOKEN: string = 'MINT_TOKEN';
+    private static readonly PRODUCT_TYPE_NFT: string = 'n';
+
+    // AS3: PurchaseConfirmationDialog.as::_nftProductCode
+    private _nftProductCode: string = '';
 
     // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::_catalog
     private _catalog: HabboCatalog | null;
@@ -161,10 +177,19 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         {
             this._productType = 'h';
         }
+        else if(offer instanceof MintTokenPurchaseOffer)
+        {
+            this._productType = PurchaseConfirmationDialog.PRODUCT_TYPE_MINT_TOKEN;
+        }
+        else if(offer instanceof NftStorePurchaseOffer)
+        {
+            this._productType = PurchaseConfirmationDialog.PRODUCT_TYPE_NFT;
+            this._nftProductCode = offer.productCode;
+        }
         else
         {
-            // AS3 falls through to the three collectible offer classes here and returns when the
-            // offer is none of them; without those classes ported, every remaining offer returns.
+            // AS3's remaining class is GameTokensOffer (snow-war tokens), which has no port; every
+            // other offer returns here in AS3 too.
             log.warn(`Unsupported offer class for the purchase confirmation: ${offer.localizationId}`);
 
             return;
@@ -186,7 +211,9 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
 
         if(!this._window) return;
 
-        this._window.color = PurchaseConfirmationDialog.WINDOW_COLOR;
+        this._window.color = (offer instanceof MintTokenPurchaseOffer || offer instanceof NftStorePurchaseOffer)
+            ? PurchaseConfirmationDialog.WINDOW_COLOR_COLLECTIBLE
+            : PurchaseConfirmationDialog.WINDOW_COLOR;
 
         this.updateLocalizations(offer);
 
@@ -341,6 +368,10 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
                 break;
             case 'h':
                 image = catalog.getSubscriptionProductIcon(classId);
+
+                break;
+            case PurchaseConfirmationDialog.PRODUCT_TYPE_MINT_TOKEN:
+                image = catalog.getMintTokenProductIcon();
 
                 break;
             case 'r':
@@ -520,6 +551,22 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         this.safeDisable('buy_button');
         this.safeDisable('cancel_button');
         this.safeDisable('publish_check');
+
+        // The two collectible purchases are their own composers and do not touch the catalog
+        // page: they are bought from the collectibles hub, which has no `currentPage` to notify.
+        if(this._productType === PurchaseConfirmationDialog.PRODUCT_TYPE_MINT_TOKEN)
+        {
+            catalog.purchaseMintTokens(this._offerId, this._extraParam);
+
+            return;
+        }
+
+        if(this._productType === PurchaseConfirmationDialog.PRODUCT_TYPE_NFT)
+        {
+            catalog.purchaseNftOffer(this._nftProductCode, this._extraParam);
+
+            return;
+        }
 
         catalog.purchaseProduct(this._pageId, this._offerId, this._extraParam, this._quantity);
         catalog.currentPage?.dispatchWidgetEvent(new CatalogWidgetEvent('PURCHASE'));

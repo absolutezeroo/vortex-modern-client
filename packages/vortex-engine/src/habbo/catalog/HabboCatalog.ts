@@ -37,6 +37,8 @@ import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_HabboInventory} from '@iid/IIDHabboInventory';
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
+import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
+import type {IHabboQuestEngine} from '@habbo/quest/IHabboQuestEngine';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
@@ -244,6 +246,8 @@ import {HabboCatalogUtils} from './HabboCatalogUtils';
 import {WindowToggle} from '@habbo/utils/WindowToggle';
 import {FriendlyTime} from '@habbo/utils/FriendlyTime';
 import {CatalogUserEvent} from '@habbo/catalog/event/CatalogUserEvent';
+import {MintTokenPurchaseOffer} from '@habbo/catalog/collectibles/tabs/MintTokenPurchaseOffer';
+import {NftStorePurchaseOffer} from '@habbo/catalog/collectibles/tabs/NftStorePurchaseOffer';
 import {CatalogEvent} from './event/CatalogEvent';
 import type {IEarningsController} from './earnings/IEarningsController';
 import {Purse} from './purse/Purse';
@@ -410,6 +414,15 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_questEngine
+    private _questEngine: IHabboQuestEngine | null = null;
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get questEngine()
+    get questEngine(): IHabboQuestEngine | null
+    {
+        return this._questEngine;
+    }
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get localization()
     get localization(): IHabboLocalizationManager | null 
@@ -803,9 +816,19 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             ),
             new ComponentDependency(
                 IID_AvatarRenderManager,
-                (manager: IAvatarRenderManager | null) => 
+                (manager: IAvatarRenderManager | null) =>
                 {
                     this._avatarRenderManager = manager;
+                },
+                false
+            ),
+            // Optional, as AS3 declares it: the only thing the catalog asks of the quest engine is
+            // to open the achievements window from the `info_pixels` page's link.
+            new ComponentDependency(
+                IID_HabboQuestEngine,
+                (engine: IHabboQuestEngine | null) =>
+                {
+                    this._questEngine = engine;
                 },
                 false
             ),
@@ -1744,9 +1767,14 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         // AS3 splits here: furniture-shaped offers get the generic dialog, a ClubBuyOfferData goes
         // to the club buy controller instead. Note a gift always takes the generic path, even for a
         // club offer — that is why _purchaseWillBeGift is part of the first test, not a separate one.
-        // TODO(AS3): AS3 also admits GameTokensOffer, MintTokenPurchaseOffer and
-        // NftStorePurchaseOffer into the first branch; none of the three is ported yet.
-        if(offer instanceof Offer || this._purchaseWillBeGift)
+        // AS3 admits five offer classes here. Two of them — MintTokenPurchaseOffer and
+        // NftStorePurchaseOffer — are ported and the collectibles shop builds them, so without
+        // them in the test a mint-token or NFT purchase reached neither branch and simply did
+        // nothing. GameTokensOffer is the one that is still unported (snow-war tokens).
+        if(offer instanceof Offer
+            || this._purchaseWillBeGift
+            || offer instanceof MintTokenPurchaseOffer
+            || offer instanceof NftStorePurchaseOffer)
         {
             if(this._purchaseConfirmationDialog == null || this._purchaseConfirmationDialog.disposed)
             {

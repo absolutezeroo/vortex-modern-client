@@ -124,11 +124,12 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         ];
     }
 
-    // TODO(AS3): AS3 (_SafeCls_582.as:589-606) tracks every created AvatarImage in
-    // _activeImages and exposes resetAssetManager()/resetAllCaches(), the latter calling
-    // .resetCache() (now ported - see AvatarImage.ts) on each still-live instance. This
-    // port doesn't track created images, so there is no equivalent call site yet -
-    // AvatarImage.resetCache()/AvatarImageCache.reset() are correct and ready for one.
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::_activeImages
+    // Only the *real* images are tracked, not the placeholders: a placeholder is thrown away as
+    // soon as the figure downloads, and its cache holds one figure nobody will look at again.
+    private readonly _activeImages: AvatarImage[] = [];
+
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::createAvatarImage()
     public createAvatarImage(
         figureString: string,
         scale: string,
@@ -151,9 +152,9 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
             this.validateAvatarFigure(figureContainer, gender);
         }
 
-        if(this._avatarAssetDownloadManager.isReady(figureContainer)) 
+        if(this._avatarAssetDownloadManager.isReady(figureContainer))
         {
-            return new AvatarImage(
+            const avatarImage = new AvatarImage(
                 this._structure,
                 this._aliasCollection,
                 figureContainer,
@@ -161,6 +162,10 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
                 this._effectAssetDownloadManager,
                 effectListener
             );
+
+            this._activeImages.push(avatarImage);
+
+            return avatarImage;
         }
 
         if(this._placeholderFigure === null) 
@@ -177,6 +182,49 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
             scale,
             this._effectAssetDownloadManager
         );
+    }
+
+    /**
+     * Forgets one image, so a later `resetAllCaches()` does not walk it.
+     *
+     * Not required for correctness — `resetAllCaches()` drops disposed images on its own pass —
+     * but an image that unregisters on disposal keeps the list from growing with the room.
+     */
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::unregisterImage()
+    public unregisterImage(avatarImage: AvatarImage): void
+    {
+        const index = this._activeImages.indexOf(avatarImage);
+
+        if(index >= 0) this._activeImages.splice(index, 1);
+    }
+
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::resetAssetManager()
+    public resetAssetManager(): void
+    {
+        this._aliasCollection.reset();
+    }
+
+    /**
+     * Throws away every live avatar's render cache.
+     *
+     * The reason it also *rebuilds* the list is AS3's: the pass is the only place disposed images
+     * are noticed, so it doubles as the sweep that lets them be collected.
+     */
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::resetAllCaches()
+    public resetAllCaches(): void
+    {
+        const surviving: AvatarImage[] = [];
+
+        for(const avatarImage of this._activeImages)
+        {
+            if(avatarImage === null || avatarImage.disposed) continue;
+
+            avatarImage.resetCache();
+            surviving.push(avatarImage);
+        }
+
+        this._activeImages.length = 0;
+        this._activeImages.push(...surviving);
     }
 
     // Derived name: `getAssetByName` is declared in no AS3 tree — the trace points

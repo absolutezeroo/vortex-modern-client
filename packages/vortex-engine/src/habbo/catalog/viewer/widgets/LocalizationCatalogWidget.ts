@@ -4,6 +4,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import {TextWindowUtils} from '@habbo/utils/TextWindowUtils';
+import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import type {IHTMLTextWindow} from '@core/window/components/IHTMLTextWindow';
 import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {type AssetLoaderEvent, AssetLoaderEventType} from '@core/assets/loaders/AssetLoaderEvent';
@@ -18,12 +19,11 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.LocalizationCatalogWi
  * Applies a page's PageLocalization text/image fields (and the catalog main window's
  * category header title/description/icon) to the actual window elements.
  *
- * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::
- * initLinks()'s per-layoutCode click-handler switch (frontpage3/info_pixels/club_buy/monkey/...)
- * isn't ported - link elements get click-armed (setParamFlag/mouseThreshold) but clicking them
- * does nothing yet, since none of those legacy special pages are exercised by the ported catalog
- * pages. setLinkStyle() also isn't ported (needs flash.text.StyleSheet-equivalent CSS-in-caption
- * support on ITextWindow/IHTMLTextWindow).
+ * Its second job is the link switch: a handful of hand-built catalog pages carry named link
+ * elements whose destination is decided by the page's `layoutCode`, not by the link itself. Two
+ * of them read the destination out of the page's own localization text — `frontpage3`'s two links
+ * are the front page's editorial slots, and their target changes with whatever the hotel put
+ * there this week.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as
  */
@@ -66,8 +66,6 @@ export class LocalizationCatalogWidget extends CatalogWidget
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::initLinks()
-    // TODO(AS3): the per-layoutCode click destination switch (onClickLink()) isn't ported - see
-    // class doc comment.
     private initLinks(): void
     {
         if(!this.page.hasLinks) return;
@@ -85,12 +83,109 @@ export class LocalizationCatalogWidget extends CatalogWidget
         }
     }
 
+    /**
+     * Where a named link on a hand-built page goes.
+     *
+     * The two `frontpage3` cases check the caption first: an empty slot still has its link window,
+     * and clicking blank space must not open whatever the *previous* week's text pointed at.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::onClickLink()
     private onClickLink = (event: WindowMouseEvent): void =>
     {
-        const target = event.target as unknown as IWindow;
+        const target = event.target as unknown as IWindow | null;
+        const name = target?.name ?? '';
+        const catalog = this._catalog;
 
-        log.debug(`Unhandled link clicked ${[this.page.layoutCode, target?.name]}`);
+        if(catalog === null) return;
+
+        switch(this.page.layoutCode)
+        {
+            case 'frontpage3':
+                if(name === 'ctlg_txt3' && target?.caption !== '')
+                {
+                    catalog.openCatalogPage(this.page.localization.getTextElementContent(6));
+                }
+                else if(name === 'ctlg_txt7' && target?.caption !== '')
+                {
+                    const destination = this.page.localization.getTextElementContent(10);
+
+                    // Three kinds of destination behind one slot: an external URL, the literal
+                    // "credits" (the web shop), or a catalog page name.
+                    if(destination.indexOf('http') >= 0) this.openExternalLink(destination);
+                    else if(destination === 'credits') HabboWebTools.openWebPageAndMinimizeClient(catalog.getProperty('web.shop.relativeUrl'));
+                    else catalog.openCatalogPage(destination);
+                }
+
+                break;
+            case 'info_pixels':
+                if(name === 'ctlg_text_5') catalog.questEngine?.showAchievements();
+                else if(name === 'ctlg_text_7') catalog.openCatalogPage(this.page.localization.getTextElementContent(7));
+
+                break;
+            case 'info_credits':
+                if(name === 'ctlg_text_5') HabboWebTools.openWebPageAndMinimizeClient(catalog.getProperty('web.shop.relativeUrl'));
+                else if(name === 'ctlg_text_7') catalog.openCatalogPage(this.page.localization.getTextElementContent(7));
+
+                break;
+            case 'collectibles':
+                if(name === 'ctlg_collectibles_link') this.openExternalLink(catalog.getProperty('link.format.collectibles'));
+
+                break;
+            case 'club1':
+                if(name === 'ctlg_text_5') catalog.openCatalogPage('hc_membership');
+
+                break;
+            case 'club_buy':
+                if(name === 'club_link') this.openExternalLink(catalog.getProperty('link.format.club'));
+
+                break;
+            case 'mad_money':
+                if(name === 'ctlg_madmoney_button') this.openExternalLink(catalog.getProperty('link.format.madmoney'));
+
+                break;
+            // Two App Store teasers from the Flash era. The defaults are AS3's own, hard-coded
+            // fallbacks — they are what ships when the hotel defines no override.
+            case 'monkey':
+                if(name === 'ctlg_teaserimg_1_region' || name === 'ctlg_special_img_region')
+                {
+                    this.openExternalLink(catalog.localization?.getLocalization('link.format.monkey', 'http://store.apple.com/') ?? '');
+                }
+
+                break;
+            case 'niko':
+                if(name === 'ctlg_teaserimg_1_region' || name === 'ctlg_special_img_region')
+                {
+                    this.openExternalLink(
+                        catalog.localization?.getLocalization('link.format.niko', 'http://itunes.apple.com/us/app/niko/id481670205?mt=8') ?? ''
+                    );
+                }
+
+                break;
+            default:
+                log.debug(`Unhandled link clicked ${[this.page.layoutCode, name]}`);
+        }
     };
+
+    /**
+     * Opens a link outside the client, behind a confirmation.
+     *
+     * The alert and the navigation happen *together* in AS3, not one after the other: the page is
+     * opened immediately and the alert is the notice, not a gate. Transcribed as found.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::openExternalLink()
+    private openExternalLink(url: string): void
+    {
+        if(url === '') return;
+
+        this._catalog?.windowManager?.alert(
+            '${catalog.alert.external.link.title}',
+            '${catalog.alert.external.link.desc}',
+            0,
+            (dialog) => dialog.dispose()
+        );
+
+        HabboWebTools.navigateToURL(url, HabboWebTools.WINDOW_HABBO_MAIN);
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::initStaticImages()
     private initStaticImages(): void
