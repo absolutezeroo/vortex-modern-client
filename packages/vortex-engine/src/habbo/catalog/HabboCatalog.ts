@@ -97,6 +97,7 @@ import {PurchaseRoomAdMessageComposer} from '@habbo/communication/messages/outgo
 import {RoomAdPurchaseInitiatedMessageComposer} from '@habbo/communication/messages/outgoing/catalog/RoomAdPurchaseInitiatedMessageComposer';
 import {AssetLoaderEvent} from '@core/assets/loaders/AssetLoaderEvent';
 import {LtdRaffleResultMessageEvent} from '@habbo/communication/messages/incoming/catalog/LtdRaffleResultMessageEvent';
+import {LtdRaffleEnteredMessageEvent} from '@habbo/communication/messages/incoming/catalog/LtdRaffleEnteredMessageEvent';
 import type {LtdRaffleResultMessageParser} from '@habbo/communication/messages/parser/catalog/LtdRaffleResultMessageParser';
 import {SilverBalanceMessageEvent} from '@habbo/communication/messages/incoming/collectibles/SilverBalanceMessageEvent';
 import {EmeraldBalanceMessageEvent} from '@habbo/communication/messages/incoming/collectibles/EmeraldBalanceMessageEvent';
@@ -3263,7 +3264,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         // elsewhere, so disposing it here would take it out from under another owner.
         this._marketPlace = null;
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::dispose()
+        // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::dispose()
         // AS3 never releases its ClubGiftController (_SafeStr_7444) or its recycler — neither
         // appears anywhere in dispose(). Left leaking to match, rather than "fixing" AS3 on a
         // guess: both hold windows, and taking them down here may be exactly what AS3 avoids.
@@ -3337,6 +3338,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.addMessageEvent(new BuildersClubSubscriptionStatusMessageEvent(this.onBuildersClubSubscriptionStatus.bind(this)));
         this.addMessageEvent(new BuildersClubFurniCountMessageEvent(this.onBuildersClubFurniCount.bind(this)));
         this.addMessageEvent(new ScrSendUserInfoEvent(this.onSubscriptionInfo.bind(this)));
+        this.addMessageEvent(new LtdRaffleEnteredMessageEvent(this.onLtdRaffleEntered.bind(this)));
         this.addMessageEvent(new PurchaseOKMessageEvent(this.onPurchaseOK.bind(this)));
         this.addMessageEvent(new PurchaseErrorMessageEvent(this.onPurchaseError.bind(this)));
         this.addMessageEvent(new PurchaseNotAllowedMessageEvent(this.onPurchaseNotAllowed.bind(this)));
@@ -3354,14 +3356,13 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.addMessageEvent(new MarketplaceClearOwnHistoryResultEvent(this.onMarketPlaceClearOwnHistoryResult.bind(this)));
         this.addMessageEvent(new MarketplaceMakeOfferResultEvent(this.onMarketplaceMakeOfferResult.bind(this)));
 
-        // Four headers AS3's HabboCatalog/VideoOfferManager subscribe and this port deliberately does
-        // not, so `sweep-unwired` keeps reporting them — each for its own reason:
+        // Three headers AS3's HabboCatalog/VideoOfferManager subscribe and this port deliberately
+        // does not, so `sweep-unwired` keeps reporting them — each for its own reason (2901
+        // LtdRaffleEntered used to be a fourth; it is registered above):
         //   3404 CloseConnection    — AS3's `onRoomExit(param1:IMessageEvent)` body is **empty**.
         //                             Subscribing it would register a no-op.
         //   448  NftStorePurchase   — needs `PurchaseConfirmationDialog.getNftImage()`, which returns
         //                             the `_SafeCls_2029` NFT image widget; that widget is unported.
-        //   2901 LtdRaffleEntered   — needs `PurchaseConfirmationDialog.ltdRaffleStarted()` and the
-        //                             raffle dot animation with it (the dialog is 636 TS / 1771 AS3).
         //   3599 UserRights         — belongs to `catalog/VideoOfferManager.as` (210 l.), unported.
         this.addMessageEvent(new MarketplaceConfigurationEvent(this.onMarketplaceConfiguration.bind(this)));
         this.addMessageEvent(new MarketplaceItemStatsEvent(this.onMarketplaceItemStats.bind(this)));
@@ -4205,6 +4206,18 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         this.events.emit(PurseEvent.CREDIT_BALANCE, new PurseEvent(PurseEvent.CREDIT_BALANCE, parser.balance, 0));
         this.events.emit(PurseUpdateEvent.UPDATE, new PurseUpdateEvent());
+    }
+
+    /**
+     * The server accepted the entry into a limited-edition raffle.
+     *
+     * The parser's `className` goes unread, in AS3 too: the dialog already knows which product it
+     * is showing, so all this does is switch its panel over to the "raffling..." animation.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::onLtdRaffleEntered()
+    private onLtdRaffleEntered(_event: IMessageEvent): void
+    {
+        this._purchaseConfirmationDialog?.ltdRaffleStarted();
     }
 
     /**

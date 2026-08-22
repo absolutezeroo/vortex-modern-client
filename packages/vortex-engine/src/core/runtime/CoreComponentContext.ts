@@ -161,7 +161,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
                 this._frameUpdateHandler = this.complexFrameUpdateHandler.bind(this);
                 break;
             // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_58.as::<init>
-            // TODO(AS3): AS3 also constructs a Profiler component (attachComponent + IIDProfiler)
+            // AS3 also constructs a Profiler component (attachComponent + IIDProfiler)
             // and adds a ProfilerViewer overlay to the stage here - neither class is ported (a
             // Flash-native dev profiling UI; this port's target platform has browser devtools
             // instead). Falls back to the simple handler, same as the unhandled-mode default below.

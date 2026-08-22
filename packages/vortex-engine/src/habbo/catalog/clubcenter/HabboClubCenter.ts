@@ -155,7 +155,7 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
 
         this.context.addLinkEventTracker(this);
 
-        // TODO(AS3): sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::initComponent()
+        // sources/win63_version/habbo/catalog/clubcenter/HabboClubCenter.as::initComponent()
         // AS3 gates the "earn credits via video" offer button behind
         // `offers.enabled`+`offers.habboclub.enabled` and wires a real
         // IOfferCenter via `catalog.getOfferCenter(this)`. The offer center

@@ -27,5 +27,6 @@ export * from './SellablePetPalettesMessageEventParser';
 export * from './RoomAdPurchaseInfoMessageParser';
 export * from './TargetedOfferMessageParser';
 export * from './TargetedOfferNotFoundMessageParser';
+export * from './LtdRaffleEnteredMessageParser';
 export * from './LtdRaffleResultMessageParser';
 export {SeasonalCalendarDailyOfferMessageEventParser} from './SeasonalCalendarDailyOfferMessageEventParser';

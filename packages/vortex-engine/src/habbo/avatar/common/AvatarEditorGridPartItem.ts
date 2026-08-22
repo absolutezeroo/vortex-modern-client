@@ -284,7 +284,7 @@ export class AvatarEditorGridPartItem implements IAvatarEditorGridPartItem, IAva
      * declaring `_SafeCls_67` — so a thumbnail that showed the download icon **never repaints**
      * until something else touches it.
      *
-     * TODO(AS3): kept as a repaint here rather than left empty. The empty version is almost
+     * Kept as a repaint here rather than left empty. The empty version is almost
      * certainly a decompilation loss (the class implements the listener interface *solely* to be
      * passed to `downloadFigure`, which has no other purpose), and leaving it empty would mean
      * every not-yet-downloaded item stays a download icon for the life of the grid. If the empty

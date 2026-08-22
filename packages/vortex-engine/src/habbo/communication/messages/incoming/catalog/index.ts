@@ -36,5 +36,6 @@ export * from './RoomAdPurchaseInfoMessageEvent';
 export * from './TargetedOfferData';
 export * from './TargetedOfferMessageEvent';
 export * from './TargetedOfferNotFoundMessageEvent';
+export * from './LtdRaffleEnteredMessageEvent';
 export * from './LtdRaffleResultMessageEvent';
 export {SeasonalCalendarDailyOfferMessageEvent} from './SeasonalCalendarDailyOfferMessageEvent';

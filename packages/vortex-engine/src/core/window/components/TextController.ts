@@ -1,6 +1,6 @@
 import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
-import type {ITextWindow, ITextFormat} from './ITextWindow';
+import type {ITextWindow, ITextFormat, ITextLineMetrics} from './ITextWindow';
 import type {IMargins} from '../utils/IMargins';
 import {WindowController} from '../WindowController';
 import {WindowEvent} from '../events/WindowEvent';
@@ -663,9 +663,10 @@ export class TextController extends WindowController implements ITextWindow
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get embedFonts()
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get/set embedFonts() reads and writes `TextField.embedFonts`, which picks
-    // between an [Embed]ed font and a device one. This port renders through the glyph atlas with
-    // web fonts only, so the flag is stored and inert — there is nothing to switch to.
+    // AS3 reads and writes `TextField.embedFonts`, which picks between an [Embed]ed font and a
+    // device one. This port renders through the glyph atlas with web fonts only, so the flag is
+    // stored and inert: there is no second font source to switch to. Kept because ported callers
+    // set it.
     public get embedFonts(): boolean
     {
         return this._embedFonts;
@@ -678,11 +679,10 @@ export class TextController extends WindowController implements ITextWindow
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get kerning()
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get/set kerning() maps to `TextField.kerning`. Canvas 2D does expose
-    // `ctx.fontKerning`, but measured on this client's own fonts it moves nothing: 'auto',
-    // 'normal' and 'none' all give 104.33px for the same string in 13px Ubuntu. The flag is
-    // stored and inert because wiring it through the renderer would change no pixels, not
-    // because the platform lacks the switch.
+    // AS3 maps this to `TextField.kerning`. Canvas 2D does expose `ctx.fontKerning`, but measured
+    // on this client's own fonts it moves nothing: 'auto', 'normal' and 'none' all give 104.33px
+    // for the same string in 13px Ubuntu. Stored and inert because wiring it through the renderer
+    // would change no pixels — not because the platform lacks the switch.
     public get kerning(): boolean
     {
         return this._kerning;
@@ -695,19 +695,31 @@ export class TextController extends WindowController implements ITextWindow
         this._explicitStyle.kerning = value;
     }
 
+    /**
+     * The field-wide base format, as `flash.text.TextFormat` is in AS3.
+     *
+     * `ITextFormat` is that TextFormat's portable subset, so this pair is the same exchange the
+     * original does — the getter hands back the whole-field format, the setter writes each present
+     * field onto the individual accessor behind it. Absent keys are left alone, which is Flash's
+     * own rule: a TextFormat property set to `null` means "do not change this one".
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get defaultTextFormat()
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get/set defaultTextFormat() exchanges a `flash.text.TextFormat` with the
-    // field. The port has no TextFormat type — the same settings live as the individual accessors
-    // (fontFace, fontSize, bold, italic, textColor, spacing…), which is what every ported caller
-    // uses. Returns null rather than inventing a shape.
-    public get defaultTextFormat(): unknown
+    public get defaultTextFormat(): ITextFormat
     {
-        return null;
+        return this.getTextFormat();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set defaultTextFormat()
-    public set defaultTextFormat(_value: unknown)
+    public set defaultTextFormat(value: ITextFormat)
     {
+        if(value == null) return;
+
+        if(value.font != null) this.fontFace = value.font;
+        if(value.size != null) this.fontSize = value.size;
+        if(value.color != null) this.textColor = value.color;
+        if(value.bold != null) this.bold = value.bold;
+        if(value.italic != null) this.italic = value.italic;
+        if(value.underline != null) this.underline = value.underline;
     }
 
     // TS-only: AS3 keeps a `flash.text.StyleSheet` object; this port keeps the CSS text it would
@@ -829,21 +841,77 @@ export class TextController extends WindowController implements ITextWindow
         return index >= 0 && index < this._numLinesCache ? index : -1;
     }
 
+    /**
+     * One line's box, as Flash's `TextLineMetrics`.
+     *
+     * The baseline pair comes from the same measure context the renderer draws with, so ascent and
+     * descent describe the glyphs actually on screen rather than the font's nominal box. `leading`
+     * is whatever the line height has left over once those two are accounted for — Flash reports it
+     * the same way, which is why it can read 0 on a tightly-set style.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getLineMetrics()
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getLineMetrics() returns a `flash.text.TextLineMetrics` (ascent, descent,
-    // leading, width, height, x). The port measures a line's width and height through the glyph
-    // atlas but tracks no baseline metrics, and no ported caller asks for one.
-    public getLineMetrics(_lineIndex: number): unknown
+    public getLineMetrics(lineIndex: number): ITextLineMetrics | null
     {
-        return null;
+        if(lineIndex < 0 || lineIndex >= this._linesCache.length) return null;
+
+        const ctx = TextController.getMeasureContext();
+
+        ctx.font = this.buildCanvasFontString();
+
+        const line = this._linesCache[lineIndex];
+        const metrics = ctx.measureText(line);
+        const ascent = metrics.actualBoundingBoxAscent || metrics.fontBoundingBoxAscent || this._fontSize;
+        const descent = metrics.actualBoundingBoxDescent || metrics.fontBoundingBoxDescent || 0;
+        const height = this.getLineHeight();
+
+        return {
+            x: this._marginLeft,
+            width: metrics.width + this._spacing * line.length,
+            height,
+            ascent,
+            descent,
+            leading: Math.max(0, height - ascent - descent),
+        };
     }
 
+    /**
+     * One character's rectangle in field coordinates — the inverse of `getCharIndexAtPoint()`.
+     *
+     * It walks the same per-character advances that method walks rather than reading back a stored
+     * layout, so the two agree by construction, and it inherits the same caveat: `getLineOffset()`
+     * charges one character per line break, which runs a break short when a wrap fell mid-word.
+     * Flash returns `null` for an out-of-range index, and so does this.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getCharBoundaries()
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getCharBoundaries() returns one character's rectangle. That needs per-glyph
-    // advance positions, which the atlas renderer does not retain.
-    public getCharBoundaries(_charIndex: number): {x: number; y: number; width: number; height: number} | null
+    public getCharBoundaries(charIndex: number): {x: number; y: number; width: number; height: number} | null
     {
-        return null;
+        if(charIndex < 0 || !this._text) return null;
+
+        const lineIndex = this.getLineIndexOfChar(charIndex);
+
+        if(lineIndex < 0 || lineIndex >= this._linesCache.length) return null;
+
+        const line = this._linesCache[lineIndex];
+        const column = charIndex - this.getLineOffset(lineIndex);
+
+        if(column < 0 || column >= line.length) return null;
+
+        const ctx = TextController.getMeasureContext();
+
+        ctx.font = this.buildCanvasFontString();
+
+        const lineHeight = this.getLineHeight();
+
+        let x = this._marginLeft;
+
+        for(let i = 0; i < column; i++) x += ctx.measureText(line.charAt(i)).width + this._spacing;
+
+        return {
+            x,
+            y: this._marginTop + TextController.FLASH_TEXT_FIELD_TOP_GUTTER + lineIndex * lineHeight,
+            width: ctx.measureText(line.charAt(column)).width + this._spacing,
+            height: lineHeight,
+        };
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getImageReference()
@@ -1650,7 +1718,7 @@ export class TextController extends WindowController implements ITextWindow
      * style cannot move it. That is AS3's behaviour, quirk included.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setTextFormatting()
-    // TODO(AS3): AS3's `_loc6_.indent = 0` line has no counterpart here — this port
+    // AS3's `_loc6_.indent = 0` line has no counterpart here — this port
     // models no text indent at all (TextStyle parses `text-indent`, TextController has
     // no field for it), so there is nothing to reset.
     protected applyTextStyleDefaults(style: TextStyle): void
@@ -2086,11 +2154,11 @@ export class TextController extends WindowController implements ITextWindow
                 ctrl.refreshTextImage();
             },
             // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setDefaultTextFormat()
-            // TODO(AS3): AS3 assigns a whole flash.text.TextFormat object (`_field.defaultTextFormat
-            // = value`) in one shot. This port has no TextFormat-equivalent bulk type - formatting
-            // is split into the granular properties already handled elsewhere in this table
-            // (bold/font_face/font_size/italic/etc.), so there is nothing to assign wholesale here.
-            // No shipped layout emits this key, so it is currently unreachable either way.
+            // AS3 assigns a whole flash.text.TextFormat object (`_field.defaultTextFormat = value`) in
+            // one shot, and the port's `defaultTextFormat` accessor now takes the same exchange. The key
+            // is still not handled here because a layout property arrives as a *string*: there is no
+            // syntax for a TextFormat literal in the XML, and no shipped layout emits this key. The
+            // granular keys in this table (bold/font_face/font_size/italic/...) are how a layout says it.
             'default_text_format': (ctrl) =>
             {
                 ctrl.refreshTextImage();

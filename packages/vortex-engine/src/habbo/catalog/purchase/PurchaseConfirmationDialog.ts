@@ -1,3 +1,4 @@
+import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import {MintTokenPurchaseOffer} from '@habbo/catalog/collectibles/tabs/MintTokenPurchaseOffer';
 import {NftStorePurchaseOffer} from '@habbo/catalog/collectibles/tabs/NftStorePurchaseOffer';
@@ -40,7 +41,6 @@ const log = Logger.getLogger('habbo.catalog.purchase.PurchaseConfirmationDialog'
  *   MintTokenPurchaseOffer and NftStorePurchaseOffer — are handled: dark window, mint-token icon
  *   and their own buy composers. The `nft_image` widget branch is still missing, so an NFT shows
  *   no preview.
- * - the LTD raffle container (`hideRaffle()`'s notification half needs the raffle timer).
  * - `CatalogProductImages.hasProductImage()` / `PRODUCT_IMAGES`, the named-asset override that
  *   wins over a rendered preview for a handful of localization ids.
  *
@@ -507,15 +507,74 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
     /**
      * AS3: PurchaseConfirmationDialog.as::hideRaffle()
      *
-     * TODO(AS3): AS3 also raises the "${notification.raffle.ongoing}" notification when a raffle
-     * timer was running. The LTD raffle timer is not ported, so only the hide half exists.
+     * The notification fires on the *timer*, not on the container: this runs from `dispose()` too,
+     * and a player who closes the dialog mid-draw is still in the raffle — the notice is what tells
+     * them so. A finished draw has already cleared the timer in `ltdRaffleEnded()`, so it stays
+     * quiet there.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::hideRaffle()
     private hideRaffle(): void
     {
         const raffle = this._window?.findChildByName('raffle_container');
 
-        if(raffle != null && raffle.visible) raffle.visible = false;
+        if(raffle != null && raffle.visible)
+        {
+            raffle.visible = false;
+
+            if(this._raffleTimer !== null) this._catalog?.notifications?.addItem('${notification.raffle.ongoing}', 'ltd');
+        }
+    }
+
+    // AS3: PurchaseConfirmationDialog.as::_raffleTimer
+    // Name DERIVED (`_SafeStr_5045`): obfuscated in every tree, named after what it drives. AS3
+    // holds a repeating `Timer(150)`, which is `setInterval` here.
+    private _raffleTimer: ReturnType<typeof setInterval> | null = null;
+
+    // AS3: PurchaseConfirmationDialog.as::_raffleDotCount
+    // Name DERIVED (`_SafeStr_5961`): the number of dots currently trailing the "raffling" caption.
+    private _raffleDotCount: number = 0;
+
+    /**
+     * The server has taken the entry: show the "raffling…" panel and start its dots.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::ltdRaffleStarted()
+    ltdRaffleStarted(): void
+    {
+        if(this._disposed || this._window == null) return;
+
+        const raffle = this._window.findChildByName('raffle_container');
+
+        if(raffle != null) raffle.visible = true;
+
+        this._raffleDotCount = 1;
+        this.updateDots();
+
+        if(this._raffleTimer === null) this._raffleTimer = setInterval(this.onRaffleTimerTick, 150);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onRaffleTimerTick()
+    private onRaffleTimerTick = (): void =>
+    {
+        if(this._disposed) return;
+
+        this._raffleDotCount += 1;
+
+        // AS3 wraps back to 1, not to 0 — the caption never shows with no dot at all.
+        if(this._raffleDotCount > 14) this._raffleDotCount = 1;
+
+        this.updateDots();
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::updateDots()
+    private updateDots(): void
+    {
+        const text = this._window?.findChildByName('raffle_text') as ITextWindow | null;
+
+        if(text == null) return;
+
+        const caption = this._catalog?.localization?.getLocalization('catalog.purchase.confirmation.dialog.raffling') ?? '';
+
+        text.text = caption + '.'.repeat(this._raffleDotCount);
     }
 
     // AS3: PurchaseConfirmationDialog.as::setDisclaimerAccepted()
@@ -660,8 +719,9 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
     /**
      * AS3: PurchaseConfirmationDialog.as::ltdRaffleEnded()
      *
-     * TODO(AS3): AS3 also stops the raffle countdown timer; the timer is not ported, so only the
-     * container hide it shares with hideRaffle() is here.
+     * Hides the panel directly rather than through `hideRaffle()`: the draw is over, so the
+     * "you are still in the raffle" notice would be wrong. Clearing the timer first is what keeps
+     * a later `dispose()` quiet too.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::ltdRaffleEnded()
     ltdRaffleEnded(): void
@@ -671,6 +731,12 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         const raffle = this._window?.findChildByName('raffle_container');
 
         if(raffle != null) raffle.visible = false;
+
+        if(this._raffleTimer !== null)
+        {
+            clearInterval(this._raffleTimer);
+            this._raffleTimer = null;
+        }
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::dispose()
@@ -678,7 +744,16 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
     {
         if(this._disposed) return;
 
+        // hideRaffle() first, so a dialog closed mid-draw still raises the "still in the raffle"
+        // notice. Then kill the interval: AS3 leaves its Timer running here — harmless enough in
+        // Flash, a permanent 150ms wake-up in a browser tab.
         this.hideRaffle();
+
+        if(this._raffleTimer !== null)
+        {
+            clearInterval(this._raffleTimer);
+            this._raffleTimer = null;
+        }
 
         this._disposed = true;
         this._catalog = null;

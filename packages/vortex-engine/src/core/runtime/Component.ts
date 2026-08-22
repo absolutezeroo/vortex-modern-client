@@ -153,7 +153,7 @@ export class Component implements IDisposable
         this._flags = flags;
         this._events = new EventEmitter();
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::_SafeCls_50()
-        // TODO(AS3): AS3 defaults to `param3 ?? new AssetLibrary('_internal_asset_library')`, so
+        // AS3 defaults to `param3 ?? new AssetLibrary('_internal_asset_library')`, so
         // `assets` is never null there. This port cannot default the same way: AssetLibrary extends
         // Component here (AS3's extends EventDispatcherWrapper directly, no such cycle), so
         // constructing one here would itself construct another for ITS OWN `_assets` field,
@@ -349,7 +349,7 @@ export class Component implements IDisposable
         }
 
         this._disposed = true;
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::dispose()
+        // sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::dispose()
         // AS3 also sets `_context = null` here. This port's `_context` field is `readonly`, and
         // widening it to `IContext | null` would ripple through every call site that reads
         // `this._context.x` without a null-check (the overwhelming majority) - a change out of

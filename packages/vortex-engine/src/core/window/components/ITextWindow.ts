@@ -28,6 +28,23 @@ export interface ITextFormat
 }
 
 /**
+ * One line's box, mirroring `flash.text.TextLineMetrics`.
+ *
+ * TS-only shape: AS3 hands back the Flash class itself, which has no counterpart here.
+ *
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getLineMetrics()
+ */
+export interface ITextLineMetrics
+{
+    x: number;
+    width: number;
+    height: number;
+    ascent: number;
+    descent: number;
+    leading: number;
+}
+
+/**
  * Interface for text windows.
  *
  * Provides access to text content, formatting properties (font, size, bold,
@@ -137,7 +154,7 @@ export interface ITextWindow extends IWindow, IScrollableWindow
 	 * settings are the individual accessors on this interface — so it answers null.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get defaultTextFormat()
-    defaultTextFormat: unknown;
+    defaultTextFormat: ITextFormat;
 
     /**
 	 * AS3 picks between an embedded and a device font. Stored and inert here: the glyph atlas
@@ -225,7 +242,7 @@ export interface ITextWindow extends IWindow, IScrollableWindow
 	 * and height but tracks no baseline metrics.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::getLineMetrics()
-    getLineMetrics(lineIndex: number): unknown;
+    getLineMetrics(lineIndex: number): ITextLineMetrics | null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::getLineOffset()
     getLineOffset(lineIndex: number): number;

@@ -531,7 +531,7 @@ export class ShopTab implements IUpdateReceiver
      * Two spinners, one per state: the backdrop star turns while the shop is loaded, the loading
      * icon while it is not.
      *
-     * TODO(AS3): the loaded branch also calls `_SafeStr_5458.updateBonusProgressBar(false, ms)` on a
+     * The loaded branch also calls `_SafeStr_5458.updateBonusProgressBar(false, ms)` on a
      * `CollectionView` field — which AS3 **declares and never assigns**, so that call is dead there
      * too. It is left out rather than ported against a field that is always null; `CollectionView`
      * (596 l.) is unported anyway.

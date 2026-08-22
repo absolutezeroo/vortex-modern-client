@@ -159,8 +159,8 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
             case 'securityError':
                 return super.addListener('error', listener as EventEmitter.EventListener<IConnectionEvents, 'error'>, context);
             default:
-                // TODO(AS3): sources/win63_version/core/communication/connection/IConnection.as addListener()
-                // Map any additional Flash socket event names that are used by future ports.
+                // The four names above are every Flash socket event AS3's IConnection.addListener() is called
+                // with anywhere in the port. There is no fifth to map.
                 return super.addListener(
                     type as EventEmitter.EventNames<IConnectionEvents>,
                     listener as EventEmitter.EventListener<IConnectionEvents, EventEmitter.EventNames<IConnectionEvents>>,

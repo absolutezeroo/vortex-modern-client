@@ -99,8 +99,9 @@ export class HabboCatalogUtils implements IGetImageListener
 
     // AS3 loads this via assets.getAssetByName(name).content + buildFromXML(name, layer, vars);
     // this port pre-compiles window layouts into a named registry instead (see
-    // IHabboWindowManager buildWidgetLayout() doc). TODO(AS3): buildWidgetLayout() has no `vars`
-    // template-substitution parameter - not needed by any current caller (all pass vars=null).
+    // IHabboWindowManager buildWidgetLayout() doc). buildWidgetLayout() also has no `vars`
+    // template-substitution parameter, and gains nothing from one: every caller in the port passes
+    // vars=null, so it would only ever be threaded through unused.
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::createWindow()
     createWindow(name: string, layer: number = 1, _vars: Map<string, string> | null = null): IWindow | null
     {

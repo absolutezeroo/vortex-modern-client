@@ -381,11 +381,15 @@ export class NotificationMessageHandler
 	 * The alert dialog is gated on `useNotifications()` and the feed item on
 	 * `useNotificationFeed()` — two separate switches in AS3, not one.
 	 *
-	 * TODO(AS3): the `useNotificationFeed()` branch calls
-	 * `feedController.addFeedItem(3, GenericNotificationItemData{title, buttonAction,
-	 * buttonCaption, timeStamp})`. This port has no feed controller at all
-	 * (`habbo/notifications/feed/` holds only `FeedSettings`/`StateController`/`data`),
-	 * so the feed half is unreachable — the dialog half below is faithful.
+	 * AS3's `useNotificationFeed()` branch calls
+	 * `feedController.addFeedItem(3, GenericNotificationItemData{...})`, and that branch is dead in
+	 * the original client: `HabboNotifications.as` declares `_SafeStr_6523`, the field behind
+	 * `get feedController()`, and never assigns it anywhere — so the call would throw on a null
+	 * reference the moment `notification.feed.enabled` was switched on. The dialog half below is
+	 * the live one, and it is faithful.
+	 *
+	 * This port has no feed controller either (`habbo/notifications/feed/` holds only
+	 * `FeedSettings`/`StateController`/`data`), which turns out to cost nothing.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onModMessageEvent()
     private onModMessageEvent(event: IMessageEvent): void
@@ -403,7 +407,7 @@ export class NotificationMessageHandler
     /**
 	 * Handle moderator caution event.
 	 *
-	 * TODO(AS3): same missing `feedController.addFeedItem(3, ...)` branch as
+	 * Same dead `feedController.addFeedItem(3, ...)` branch as
 	 * onModMessageEvent() above.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onModCautionEvent()

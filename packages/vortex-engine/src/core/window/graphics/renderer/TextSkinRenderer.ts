@@ -121,7 +121,7 @@ export class TextSkinRenderer extends SkinRenderer
 	 * in Flash) put it. It went unnoticed while nothing drew the field's border;
 	 * with the border painted, the first glyph runs straight into it.
 	 *
-	 * TODO(AS3): sources/win63_version/core/window/components/TextController.as::_field —
+	 * sources/win63_version/core/window/components/TextController.as::_field —
 	 * apply it to non-editable text too. It is held back to input/password fields
 	 * here because those have fixed layout sizes, while an auto-sized label takes
 	 * its width from the measured text: shifting the glyphs right without also

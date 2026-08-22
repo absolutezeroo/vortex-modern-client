@@ -434,7 +434,7 @@ export class GraphicContext implements IGraphicContext
     }
 
     /**
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/GraphicContext.as::getDisplayObject() /
+      * sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/GraphicContext.as::getDisplayObject() /
      * setDisplayObject() / getAbsoluteMousePosition() / getRelativeMousePosition() /
      * set parent() are display-list members: they read `getChildAt(0)`,
      * `stage.mouseX` and `DisplayObjectContainer.addChild()`. The port has no

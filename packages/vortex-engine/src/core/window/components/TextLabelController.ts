@@ -359,7 +359,7 @@ export class TextLabelController extends WindowController implements ILabelWindo
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get embedFonts()
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/TextFieldCache.as::getTextFieldByStyle()
+    // sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/TextFieldCache.as::getTextFieldByStyle()
     // sets `TextField.embedFonts` from isEmbeddedFont(font), picking between an
     // [Embed]ed font and a device one. This port renders through the glyph atlas with
     // web fonts only, so there is no embedded-font registry to answer from — same
