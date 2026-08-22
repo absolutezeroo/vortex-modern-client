@@ -2,6 +2,10 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
+import type {ISelectorWindow} from '@core/window/components/ISelectorWindow';
+import {BackgroundController} from '@core/window/components/BackgroundController';
+import {BorderController} from '@core/window/components/BorderController';
+import {ButtonController} from '@core/window/components/ButtonController';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import {ColorConverter} from '@room/utils/ColorConverter';
 
@@ -13,11 +17,14 @@ import {WiredVariableType} from '@habbo/communication/messages/incoming/userdefi
  * children into a column), enable/disable a whole section with blend-based dimming, variable name/
  * value formatting, int parsing, and colour math.
  *
- * A handful of window-dimming branches key off obfuscated marker interfaces that could not be
- * resolved to a distinct port interface (`_SafeCls_2013` a button, `_SafeCls_2254`/`_SafeCls_2326`
- * a border/alpha-blended container, `_SafeCls_2116` a composite children holder). Where possible
- * the port duck-types them (`_SafeCls_2116` → any object with a `children` array); the rest carry a
- * documented approximation, exactly as `core/window/utils/WindowUtils.disableSection` already does.
+ * The window-dimming branches key off four marker interfaces that are obfuscated in every tree.
+ * Three are empty and were identified by their implementor: `_SafeCls_2013` is `IButtonWindow`
+ * (ButtonController), `_SafeCls_2254` `IBorderWindow` (BorderController) and `_SafeCls_2326`
+ * `IBackgroundWindow` (BackgroundController) - PRODUCTION declares all three with the same empty
+ * body and the same single implementor. Since the port has no marker interfaces of its own, the
+ * checks run against those controller classes, whose subclass chains match AS3's. `_SafeCls_2116`
+ * (a composite exposing `children` as an array) and `ISelectorWindow` stay duck-typed: neither maps
+ * to one class here.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/Util.as
  */
@@ -224,20 +231,37 @@ export class Util
         array.push(value);
     }
 
+    /**
+     * A background window has no `blend` of its own: it paints one flat ARGB fill, so its opacity
+     * *is* the alpha byte of `color`. Every other window type dims through the shared accessor.
+     *
+     * `_SafeCls_2326` is `IBackgroundWindow`: an empty interface over IWindowContainer, implemented
+     * by `BackgroundController` alone in both trees, which is what identifies it — PRODUCTION's
+     * `IBackgroundWindow.as` has the same empty body and the same single implementor.
+     */
     // AS3: Util.as::getBlend()
     private static getBlend(window: IWindow): number
     {
-        // TODO(AS3): AS3 special-cases an alpha-blended window type (`_SafeCls_2326`), reading the
-        // blend from the colour's alpha byte ((color >>> 24 & 0xFF) / 255). That interface has no
-        // members and no distinct port counterpart, so the general `blend` accessor is used.
+        if(window instanceof BackgroundController)
+        {
+            return (window.color >>> 24 & 0xFF) / 255;
+        }
+
         return window.blend;
     }
 
     // AS3: Util.as::setBlend()
     private static setBlend(window: IWindow, blend: number): void
     {
-        // TODO(AS3): see getBlend — for `_SafeCls_2326` windows AS3 packs the blend into the colour's
-        // alpha byte instead. Not identifiable here; the general `blend` accessor is used.
+        if(window instanceof BackgroundController)
+        {
+            const alpha = Math.max(0, Math.min(255, Math.trunc(blend * 255)));
+
+            window.color = window.color & 0xFFFFFF | alpha << 24;
+
+            return;
+        }
+
         window.blend = blend;
     }
 
@@ -316,45 +340,51 @@ export class Util
 
         const isIcon = window.tags.indexOf('#icon') !== -1;
 
-        // TODO(AS3): AS3 skips the whole recurse/blend block for a button type (`_SafeCls_2013`),
-        // which manages its own disabled visual. That marker interface has no members and no distinct
-        // port counterpart, so it is not special-cased here (buttons still get the leaf blend below).
-        const container = Util.asContainer(window);
-        const childrenHolder = window as unknown as { children?: IWindow[] };
-        const isItemList = Util.isItemList(window);
-
-        // TODO(AS3): the container-ish gate is `_SafeCls_1828 || IItemListWindow || ISelectorWindow`.
-        // ISelectorWindow is not separately duck-typed; in practice such windows are also containers.
-        if(container != null || isItemList)
+        // `_SafeCls_2013` is `IButtonWindow` (empty over IInteractiveWindow; `ButtonController` is
+        // its only direct implementor in both trees, and the port's subclass chain — DropMenuItem,
+        // SelectableButton, ToolTip — matches AS3's exactly). A button paints its own disabled
+        // state from `enable()`/`disable()` below, so blending it as well would dim it twice.
+        if(!(window instanceof ButtonController))
         {
-            if(Array.isArray(childrenHolder.children))
-            {
-                // _SafeCls_2116: a composite window exposing its children as an array.
-                for(const child of childrenHolder.children)
-                {
-                    Util.disableSection(child, disabled);
-                }
-            }
-            else if(container != null)
-            {
-                for(let i = 0; i < container.numChildren; i++)
-                {
-                    const child = container.getChildAt(i);
+            const container = Util.asContainer(window);
+            const childrenHolder = window as unknown as { children?: IWindow[] };
 
-                    if(child != null)
+            if(container != null || Util.isItemList(window) || Util.isSelector(window))
+            {
+                if(Array.isArray(childrenHolder.children))
+                {
+                    // _SafeCls_2116: a composite window exposing its children as an array.
+                    for(const child of childrenHolder.children)
                     {
                         Util.disableSection(child, disabled);
                     }
                 }
-            }
+                else if(container != null)
+                {
+                    for(let i = 0; i < container.numChildren; i++)
+                    {
+                        const child = container.getChildAt(i);
 
-            // TODO(AS3): AS3 additionally force-blends the container itself when it is a border/alpha
-            // window (`_SafeCls_2254 || _SafeCls_2326`). Neither is identifiable here, so the extra
-            // self-blend is omitted; child recursion above already dims the visible leaves.
-        }
-        else if(!isIcon)
-        {
-            Util.setBlend(window, target);
+                        if(child != null)
+                        {
+                            Util.disableSection(child, disabled);
+                        }
+                    }
+                }
+
+                // A border or a background *is* the visible surface of its container, not a frame
+                // around separately-dimmed children, so it takes the blend itself on top of the
+                // recursion above. `_SafeCls_2254` is `IBorderWindow` — same empty-interface
+                // identification as `IBackgroundWindow` in getBlend().
+                if(window instanceof BorderController || window instanceof BackgroundController)
+                {
+                    Util.setBlend(window, target);
+                }
+            }
+            else if(!isIcon)
+            {
+                Util.setBlend(window, target);
+            }
         }
 
         if(disabled)
@@ -383,6 +413,16 @@ export class Util
         const candidate = window as unknown as Partial<IItemListWindow>;
 
         return typeof candidate.numListItems === 'number' && typeof candidate.getListItemAt === 'function';
+    }
+
+    // Duck-types the AS3 `ISelectorWindow` branch of disableSection. Duck-typed rather than an
+    // `instanceof`: unlike the three marker interfaces above, ISelectorWindow has members and more
+    // than one implementor, and the port's selector controllers do not share a base class.
+    private static isSelector(window: IWindow): boolean
+    {
+        const candidate = window as unknown as Partial<ISelectorWindow>;
+
+        return typeof candidate.numSelectables === 'number' && typeof candidate.getSelectableAt === 'function';
     }
 
     // AS3: Util.as::variableCompare()
