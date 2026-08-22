@@ -210,7 +210,7 @@ export class TableCellView implements IDisposable
         {
             tooltip = this._cell!.tooltipText;
         }
-        else if(this._cell!.type === TableCell.TYPE_TEXT && textElement != null && (textElement as unknown as {isOverflown: boolean}).isOverflown)
+        else if(this._cell!.type === TableCell.TYPE_TEXT && textElement != null && textElement.isOverflown)
         {
             tooltip = this._cell!.contents as string;
         }
