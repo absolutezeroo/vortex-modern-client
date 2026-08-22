@@ -62,6 +62,8 @@ import type {
     BadgeReceivedEventParser
 } from '../communication/messages/parser/inventory/badges/BadgeReceivedEventParser';
 import {BadgesMessageEvent} from '../communication/messages/incoming/inventory/badges/BadgesMessageEvent';
+import {HabboUserBadgesMessageEvent} from '../communication/messages/incoming/users/HabboUserBadgesMessageEvent';
+import type {HabboUserBadgesMessageParser} from '../communication/messages/parser/users/HabboUserBadgesMessageParser';
 import type {
     BadgesMessageParser,
     IBadgeData
@@ -2178,15 +2180,42 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication.addMessageEvent(new FigureSetIdsMessageEvent(this.onFigureSetIds))
         );
 
-        // TODO(AS3): AS3 also registers 1292 (`HabboUserBadgesMessageEvent`) here, whose handler
-        // re-asserts every equipped badge with `updateBadge(code, true, 0, ownerCount,
-        // badgeRarityId)`. It is deliberately left out: the 2026 wire carries four fields per badge
-        // (slot, code, ownerCount, badgeRarityId) and **both this port's parser and
-        // vortex-emulator's `HabboUserBadgesMessageComposerSerializer` carry two**, so the two
-        // rarity fields do not exist to pass. Wiring it as it stands would call
-        // `Badge.updateMetadata(0, 0)` and wipe the rarity `onBadges` (3926) has already set —
-        // worse than not wiring it. Needs the parser widened and the emulator's serializer with it.
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as:180 registers 1292 alongside the rest. It is the only thing that marks a
+        // badge as worn: `onBadges` (3926) builds every badge inactive, so without this the
+        // active grid stays empty however many badges the player wears.
+        this._badgeMessageEvents.push(
+            this._communication.addMessageEvent(new HabboUserBadgesMessageEvent(this.onUserBadges))
+        );
     }
+
+    /**
+	 * The badges this user is wearing. Ignored for anyone but the local player, as AS3 does —
+	 * the same message carries other users' badges for their profile.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onUserBadges()
+    private onUserBadges = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as HabboUserBadgesMessageParser | null;
+
+        if(!parser || !this._badgesModel) return;
+
+        if(parser.userId !== this.sessionData?.userId) return;
+
+        for(const badge of parser.selectedBadges)
+        {
+            this._badgesModel.updateBadge(
+                badge.badgeCode,
+                true,
+                0,
+                badge.ownerCount,
+                badge.badgeRarityId,
+                (id: string) => this._localization?.getBadgeName(id) ?? '',
+                (id: string) => this._localization?.getBadgeDesc(id) ?? ''
+            );
+        }
+
+        this._badgesModel.updateView();
+    };
 
     /**
 	 * An achievement completed. The badge it grants is recorded not-in-use — the player has it but

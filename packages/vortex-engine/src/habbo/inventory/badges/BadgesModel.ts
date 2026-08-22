@@ -430,6 +430,11 @@ export class BadgesModel implements IBadgesModel, IInventoryModel, IBadgeSelecti
         {
             badge.isSelected = badge.badgeId === badgeId;
         }
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::setBadgeSelected() ends here, and
+        // without it clicking another badge repainted the thumbnails but left the name,
+        // description, rarity and wear button showing the previous one.
+        this.updateActionView();
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::forceSelection()
