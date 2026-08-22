@@ -140,7 +140,8 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         extraParam: string,
         quantity: number,
         stuffData: IStuffData | null,
-        isGift: boolean
+        isGift: boolean,
+        previewImage: ImageBitmap | null = null
     ): void
     {
         if(!this._catalog) return;
@@ -169,12 +170,12 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
             return;
         }
 
-        this.showConfirmationDialog(offer);
+        this.showConfirmationDialog(offer, previewImage);
         this._catalog.syncPlacedOfferWithPurchase(offer);
     }
 
     // AS3: PurchaseConfirmationDialog.as::showConfirmationDialog()
-    private showConfirmationDialog(offer: IPurchasableOffer): void
+    private showConfirmationDialog(offer: IPurchasableOffer, previewImage: ImageBitmap | null = null): void
     {
         const catalog = this._catalog;
 
@@ -265,7 +266,7 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
 
         if(nftImage) nftImage.visible = false;
 
-        this.showProductImage(offer);
+        this.showProductImage(offer, previewImage);
 
         RentUtils.updateBuyCaption(offer, this._window.findChildByName('buy_button'));
     }
@@ -285,11 +286,21 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
      * synchronously so the pet widgets' imageReady->updateImage chain would terminate).
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::showConfirmationDialog()
-    private showProductImage(offer: IPurchasableOffer): void
+    private showProductImage(offer: IPurchasableOffer, previewImage: ImageBitmap | null = null): void
     {
         const catalog = this._catalog;
 
         if(!catalog || this.getIconWrapper() == null) return;
+
+        // A caller that already rendered the item hands its own bitmap over, and the whole
+        // per-product-type switch below is skipped. The pet widgets are the ones that do it: they
+        // have a rendered pet portrait on screen already and the dialog has no way to make one.
+        if(previewImage !== null)
+        {
+            this.setImage(previewImage);
+
+            return;
+        }
 
         const product = offer instanceof Offer ? offer.product : null;
 

@@ -5,7 +5,8 @@ import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {IMeMenuView} from './IMeMenuView';
 import type {MeMenuWidget} from './MeMenuWidget';
-import type {PerkAllowancesMessageEvent} from '@habbo/communication/messages/incoming/perk/PerkAllowancesMessageEvent';
+import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import {PerkAllowancesMessageEvent} from '@habbo/communication/messages/incoming/perk/PerkAllowancesMessageEvent';
 import {Logger} from '@core/utils/Logger';
 import {AvatarExpressionEnum} from '../enums/AvatarExpressionEnum';
 import {GetTalentTrackMessageComposer} from '@habbo/communication/messages/outgoing/talent/GetTalentTrackMessageComposer';
@@ -112,17 +113,15 @@ export class MeMenuMainView implements IMeMenuView
 
         const connection = widget.handler?.container?.connection ?? null;
 
+        // A second subscription to a header the session manager already listens on is safe:
+        // `MessageRegistry.registerMessageEvent()` hands every later event the *first* one's
+        // parser, so the packet is parsed once and both callbacks see the same object. Without
+        // this the guide button only ever showed the perk state cached at open time.
         if(connection !== null)
         {
-            // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/
-            // memenu/MeMenuMainView.as::init() — AS3 constructs its own PerkAllowances message
-            // event here with `onPerkAllowances` as the callback and registers it on the
-            // connection. This port's `PerkAllowancesMessageEvent` is already registered globally
-            // by `HabboMessages` (header 1535) and its parser feeds `SessionDataManager`, so a
-            // second registration would double-parse the same packet. The guide button therefore
-            // uses the session manager's cached answer, read in `createWindow()`, and is not
-            // refreshed by a later perk push.
-            void connection;
+            this._perkAllowancesMessageEvent = new PerkAllowancesMessageEvent(this.onPerkAllowances);
+
+            connection.addMessageEvent(this._perkAllowancesMessageEvent);
         }
 
         this.createWindow(name);
@@ -642,15 +641,11 @@ export class MeMenuMainView implements IMeMenuView
         this.setElementImage(iconName, prefix + pair[index]);
     };
 
-    /**
-     * TODO(AS3): unreachable in this port — see the note in `init()`. The listener AS3 registers
-     * on the connection is not registered here, because `PerkAllowancesMessageEvent` is already
-     * bound globally. Kept so the guide-button refresh path stays visible.
-     */
+    /** A perk push arrived: the guide button appears or disappears with the guide-tool perk. */
     // AS3: .../widget/memenu/MeMenuMainView.as::onPerkAllowances()
-    private onPerkAllowances = (event: PerkAllowancesMessageEvent): void =>
+    private onPerkAllowances = (event: IMessageEvent): void =>
     {
-        const parser = event.getParser?.() ?? null;
+        const parser = (event as PerkAllowancesMessageEvent).getParser?.() ?? null;
 
         if(parser === null) return;
 

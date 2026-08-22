@@ -1659,17 +1659,21 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
+    /**
+     * Opens the buy dialog for one offer.
+     *
+     * `showConfirmation` is declared by AS3 and never read anywhere in its method body — a dead
+     * parameter in the original client, kept so the pet widgets' eight-argument call matches the
+     * real signature.
+     *
+     * `previewImage` is the opposite: a caller that has already rendered the thing being bought
+     * (the pet widgets render a real pet portrait) hands it over, and the dialog uses it instead
+     * of rendering its own preview.
+     *
+     * The gifting and LTD-raffle sub-flows are still missing from the dialog itself — see its own
+     * file header.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showPurchaseConfirmation()
-    // TODO(AS3): the dialog now builds the real `purchase_confirmation` layout; see its own file
-    // header for the sub-flows still missing (gifting/gift wrapping, the collectible offer classes,
-    // the LTD raffle).
-    // `showConfirmation` (param7) is declared by AS3 but never read anywhere in its method body -
-    // a dead parameter in the original client, kept here only so the pet widgets' 8-argument call
-    // matches the real signature.
-    // TODO(AS3): `previewImage` (param8) is accepted but not forwarded. AS3 passes it as
-    // showOffer()'s last argument, where it short-circuits the rendered preview; the pet widgets do
-    // supply a real rendered pet image, so wiring it through is what makes a pet offer show its own
-    // portrait instead of the "no preview for product type" path.
     showPurchaseConfirmation(
         offer: IPurchasableOffer,
         pageId: number,
@@ -1678,7 +1682,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         stuffData: IStuffData | null = null,
         _giftMessage: string | null = null,
         _showConfirmation: boolean = true,
-        _previewImage: ImageBitmap | null = null
+        previewImage: ImageBitmap | null = null
     ): void
     {
         if(pageId === -12345678) 
@@ -1747,7 +1751,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 this._purchaseConfirmationDialog = new PurchaseConfirmationDialog(this, this._windowManager!);
             }
 
-            this._purchaseConfirmationDialog.showOffer(offer, pageId, extraParam, quantity, stuffData, this._purchaseWillBeGift);
+            this._purchaseConfirmationDialog.showOffer(
+                offer, pageId, extraParam, quantity, stuffData, this._purchaseWillBeGift, previewImage
+            );
         }
         else if(offer instanceof ClubBuyOfferData)
         {

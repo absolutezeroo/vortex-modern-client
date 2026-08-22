@@ -13,6 +13,7 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 import {GuideSessionCreateMessageComposer} from '@habbo/communication/messages/outgoing/help/GuideSessionCreateMessageComposer';
 import {GuideSessionOnDutyUpdateMessageComposer} from '@habbo/communication/messages/outgoing/help/GuideSessionOnDutyUpdateMessageComposer';
+import {PerkAllowancesMessageEvent} from '@habbo/communication/messages/incoming/perk/PerkAllowancesMessageEvent';
 import {GuideSessionGuideDecidesMessageComposer} from '@habbo/communication/messages/outgoing/help/GuideSessionGuideDecidesMessageComposer';
 import {GuideSessionGetRequesterRoomMessageComposer} from '@habbo/communication/messages/outgoing/help/GuideSessionGetRequesterRoomMessageComposer';
 import {GuideSessionInviteRequesterMessageComposer} from '@habbo/communication/messages/outgoing/help/GuideSessionInviteRequesterMessageComposer';
@@ -267,10 +268,36 @@ export class GuideSessionController implements IDisposable, IIlluminaInputHandle
         communication?.addHabboConnectionMessageEvent(new GuideSessionInvitedToGuideRoomMessageEvent(this.onGuideSessionInvitedToGuideRoom));
         communication?.addHabboConnectionMessageEvent(new GuideSessionStartedMessageEvent(this.onGuideSessionStarted));
 
-        // TODO(AS3): AS3 also subscribes `_SafeCls_2036(onPerkAllowances)` here, which revokes the
-        // guide tool the moment the server withdraws the USE_GUIDE_TOOL perk. The port has no
-        // PerkAllowances event, so the tool stays open until the next state change closes it.
+        // Registered last here, first in AS3; order does not matter, and the perk push is
+        // already listened to elsewhere — `MessageRegistry` shares one parser between every
+        // subscriber of a header, so a second subscription costs nothing and parses nothing twice.
+        communication?.addHabboConnectionMessageEvent(new PerkAllowancesMessageEvent(this.onPerkAllowances));
     }
+
+    /**
+     * The server withdrew a perk. Only one matters here: losing USE_GUIDE_TOOL while the guide
+     * tool is open takes the guide off duty and closes the window under them.
+     *
+     * The off-duty message is sent with all four flags false rather than the current ones — AS3
+     * hard-codes them, and it is the same "you are not a guide any more" statement.
+     */
+    // AS3: .../guidehelp/GuideSessionController.as::onPerkAllowances()
+    private onPerkAllowances = (event: IMessageEvent): void =>
+    {
+        if(this._sessionData?.activeWindow !== 'guide_tool') return;
+
+        const parser = (event as PerkAllowancesMessageEvent).getParser?.() ?? null;
+
+        if(parser === null || parser.isPerkAllowed('USE_GUIDE_TOOL')) return;
+
+        if(this._onDuty)
+        {
+            this.setOnDuty(false);
+            this._habboHelp?.sendMessage(new GuideSessionOnDutyUpdateMessageComposer(false, false, false, false));
+        }
+
+        this.setStateClosed(false);
+    };
 
     /**
      * Maps a vote code onto an index into `STATUS_KEYS`/`RESULT_KEYS`.
