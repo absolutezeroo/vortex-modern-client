@@ -18,21 +18,21 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {MessengerHabbiconPickerEntry} from './MessengerHabbiconPickerEntry';
 import {MessengerHabbiconPickerTileView} from './MessengerHabbiconPickerTileView';
 
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerSectionView.as::GRID_COLUMNS
-const GRID_COLUMNS: number = 5;
-
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerSectionView.as::SLOT_SIZE
-const SLOT_SIZE: number = 45;
-
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerSectionView.as::SLOT_SPACING
-const SLOT_SPACING: number = 2;
-
-/** AS3's literal `20` — the title strip above the grid. */
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerSectionView.as::MessengerHabbiconPickerSectionView()
-const TITLE_HEIGHT: number = 20;
-
 export class MessengerHabbiconPickerSectionView
 {
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerSectionView.as::GRID_COLUMNS
+    private static readonly GRID_COLUMNS: number = 5;
+
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerSectionView.as::SLOT_SIZE
+    private static readonly SLOT_SIZE: number = 45;
+
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerSectionView.as::SLOT_SPACING
+    private static readonly SLOT_SPACING: number = 2;
+
+    /** AS3's literal `20` — the title strip above the grid. */
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerSectionView.as::MessengerHabbiconPickerSectionView()
+    private static readonly TITLE_HEIGHT: number = 20;
+
     // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerSectionView.as::_window
     private _window: IWindowContainer | null = null;
 
@@ -80,8 +80,8 @@ export class MessengerHabbiconPickerSectionView
         grid.removeGridItems();
 
         const entryCount = entries.length;
-        const rows = Math.max(1, Math.ceil(entryCount / GRID_COLUMNS));
-        const slots = rows * GRID_COLUMNS;
+        const rows = Math.max(1, Math.ceil(entryCount / MessengerHabbiconPickerSectionView.GRID_COLUMNS));
+        const slots = rows * MessengerHabbiconPickerSectionView.GRID_COLUMNS;
 
         for(let index = 0; index < slots; index++)
         {
@@ -97,8 +97,8 @@ export class MessengerHabbiconPickerSectionView
             if(tile.window) grid.addGridItem(tile.window);
         }
 
-        grid.height = rows * SLOT_SIZE + (rows - 1) * SLOT_SPACING;
-        this._window.height = TITLE_HEIGHT + grid.height + SLOT_SPACING;
+        grid.height = rows * MessengerHabbiconPickerSectionView.SLOT_SIZE + (rows - 1) * MessengerHabbiconPickerSectionView.SLOT_SPACING;
+        this._window.height = MessengerHabbiconPickerSectionView.TITLE_HEIGHT + grid.height + MessengerHabbiconPickerSectionView.SLOT_SPACING;
 
         tileTemplate?.dispose();
 

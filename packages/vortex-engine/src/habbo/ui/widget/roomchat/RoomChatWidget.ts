@@ -47,16 +47,20 @@ type UpdateReceiverContext = {
     removeUpdateReceiver(receiver: IUpdateReceiver): void;
 };
 
-const CHAT_AREA_MARGIN_BOTTOM = 23;
-const ANIMATION_STEP_INTERVAL_MS = 25;
-const ANIMATION_STEP_PIXELS = 3;
-const ANIMATION_TIMEOUT_MS = 4000;
-const ANIMATION_TIMEOUT_SLOW_MS = 6000;
-
 let sharedChatBubbleFactory: ChatBubbleFactory | null = null;
 
 export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
 {
+    private static readonly CHAT_AREA_MARGIN_BOTTOM = 23;
+
+    private static readonly ANIMATION_STEP_INTERVAL_MS = 25;
+
+    private static readonly ANIMATION_STEP_PIXELS = 3;
+
+    private static readonly ANIMATION_TIMEOUT_MS = 4000;
+
+    private static readonly ANIMATION_TIMEOUT_SLOW_MS = 6000;
+
     // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatWidget.as::_timeoutTime
     private _timeoutTime: number = 0;
     private _stepAccumulated: number = 0;
@@ -121,7 +125,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
             this._maxFastLevels = 12;
         }
 
-        this._chatAreaHeight = this._baseAreaHeight + CHAT_AREA_MARGIN_BOTTOM;
+        this._chatAreaHeight = this._baseAreaHeight + RoomChatWidget.CHAT_AREA_MARGIN_BOTTOM;
 
         this._container = windowManager.createWindow('chat_container', '', 4, 0, 0, {x: 0, y: 0, width: 200, height: this._chatAreaHeight + 39}, null, 0);
         this._container.background = true;
@@ -246,7 +250,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
 
         if(this._animating)
         {
-            let step = Math.floor(deltaTime / ANIMATION_STEP_INTERVAL_MS * ANIMATION_STEP_PIXELS);
+            let step = Math.floor(deltaTime / RoomChatWidget.ANIMATION_STEP_INTERVAL_MS * RoomChatWidget.ANIMATION_STEP_PIXELS);
 
             if(step + this._stepAccumulated > this._pendingSpacing)
             {
@@ -265,7 +269,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
                 this._stepAccumulated = 0;
                 this.animationStop();
                 this.processBuffer();
-                this._timeoutTime = now + ANIMATION_TIMEOUT_MS;
+                this._timeoutTime = now + RoomChatWidget.ANIMATION_TIMEOUT_MS;
             }
         }
     }
@@ -396,7 +400,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         if(canAdd)
         {
             this.activateItemFromBuffer();
-            this._timeoutTime = performance.now() + ANIMATION_TIMEOUT_MS;
+            this._timeoutTime = performance.now() + RoomChatWidget.ANIMATION_TIMEOUT_MS;
         }
         else
         {
@@ -495,7 +499,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
         if(!candidate || !last) return false;
         if(!last.view) return true;
 
-        if(this._activeContent.bottom - (this._activeContent.y + last.y + last.height) - CHAT_AREA_MARGIN_BOTTOM <= this.getItemSpacing(last, candidate))
+        if(this._activeContent.bottom - (this._activeContent.y + last.y + last.height) - RoomChatWidget.CHAT_AREA_MARGIN_BOTTOM <= this.getItemSpacing(last, candidate))
         {
             return false;
         }
@@ -576,7 +580,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
 
             if(item.view != null)
             {
-                if(item.screenLevel > 0 || item.screenLevel === lastLevel - 1 || now - item.timeStamp >= ANIMATION_TIMEOUT_SLOW_MS)
+                if(item.screenLevel > 0 || item.screenLevel === lastLevel - 1 || now - item.timeStamp >= RoomChatWidget.ANIMATION_TIMEOUT_SLOW_MS)
                 {
                     item.timeStamp = now;
                     lastLevel = item.screenLevel;
@@ -677,7 +681,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
 
         if(index === this._itemList.length - 1)
         {
-            item.y = this.getAreaBottom() - (levels + 1) * 19 - CHAT_AREA_MARGIN_BOTTOM;
+            item.y = this.getAreaBottom() - (levels + 1) * 19 - RoomChatWidget.CHAT_AREA_MARGIN_BOTTOM;
         }
         else
         {
@@ -881,7 +885,7 @@ export class RoomChatWidget extends RoomWidgetBase implements IUpdateReceiver
     public resetArea(realign: boolean = true): void
     {
         this.animationStop();
-        this._chatAreaHeight = this._baseAreaHeight + CHAT_AREA_MARGIN_BOTTOM;
+        this._chatAreaHeight = this._baseAreaHeight + RoomChatWidget.CHAT_AREA_MARGIN_BOTTOM;
         this._container.height = this._chatAreaHeight + 39;
         this._contentList.width = this._container.width;
         this._contentList.height = this._chatAreaHeight;

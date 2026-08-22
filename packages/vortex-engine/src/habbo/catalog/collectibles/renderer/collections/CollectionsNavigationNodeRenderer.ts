@@ -7,12 +7,6 @@ import type {NftCollection} from '@habbo/communication/messages/parser/collectib
 import type {CollectionsTab} from '../../tabs/CollectionsTab';
 import {CollectionProgressColor} from './CollectionProgressColor';
 
-/** AS3: CollectionsNavigationNodeRenderer.as::setActiveLook() — 0xFFFFFFFF, alpha byte included. */
-const SELECTED_TEXT_COLOR = 4294967295;
-
-/** AS3: CollectionsNavigationNodeRenderer.as::setProgressLook() — forces the hint fully opaque. */
-const OPAQUE_ALPHA_MASK = 0xFF000000;
-
 /**
  * One collection in the left-hand list: its name, and a progress tint that only appears once the
  * player has collected something.
@@ -25,6 +19,12 @@ const OPAQUE_ALPHA_MASK = 0xFF000000;
  */
 export class CollectionsNavigationNodeRenderer
 {
+    /** AS3: CollectionsNavigationNodeRenderer.as::setActiveLook() — 0xFFFFFFFF, alpha byte included. */
+    private static readonly SELECTED_TEXT_COLOR = 4294967295;
+
+    /** AS3: CollectionsNavigationNodeRenderer.as::setProgressLook() — forces the hint fully opaque. */
+    private static readonly OPAQUE_ALPHA_MASK = 0xFF000000;
+
     // AS3: CollectionsNavigationNodeRenderer.as::_SafeStr_4908 (the owning tab)
     private _tab: CollectionsTab;
     // AS3: CollectionsNavigationNodeRenderer.as::_SafeStr_4700 (from `get nftCollection()`)
@@ -107,7 +107,7 @@ export class CollectionsNavigationNodeRenderer
 
         const color = CollectionProgressColor.getColor(collected, total);
 
-        if(hint !== null) hint.color = color | OPAQUE_ALPHA_MASK;
+        if(hint !== null) hint.color = color | CollectionsNavigationNodeRenderer.OPAQUE_ALPHA_MASK;
 
         if(!showDetail) return;
 
@@ -204,7 +204,7 @@ export class CollectionsNavigationNodeRenderer
 
         if(label !== null)
         {
-            label.textColor = SELECTED_TEXT_COLOR;
+            label.textColor = CollectionsNavigationNodeRenderer.SELECTED_TEXT_COLOR;
             label.etchingColor = this._itemSelectedEtchingColor;
         }
 

@@ -7,8 +7,6 @@ import {CatalogWidgetBundleDisplayExtraInfoEvent} from './events/CatalogWidgetBu
 import {CatalogWidgetSpinnerEvent} from './events/CatalogWidgetSpinnerEvent';
 import {CatalogWidget} from './CatalogWidget';
 
-const PROMO_ITEM_DROP_DELAY_MS = 4000;
-
 /**
  * Shows the promo/discount/bundle-info overlay rows above the purchase spinner for
  * multi-purchase-enabled catalog offers.
@@ -17,6 +15,8 @@ const PROMO_ITEM_DROP_DELAY_MS = 4000;
  */
 export class BundlePurchaseExtraInfoWidget extends CatalogWidget
 {
+    private static readonly PROMO_ITEM_DROP_DELAY_MS = 4000;
+
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/BundlePurchaseExtraInfoWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
@@ -200,7 +200,7 @@ export class BundlePurchaseExtraInfoWidget extends CatalogWidget
 
         if(this._promoItemDropTimer != null) clearTimeout(this._promoItemDropTimer);
 
-        this._promoItemDropTimer = setTimeout(() => this.onPromoItemDropDownTimerEvent(), PROMO_ITEM_DROP_DELAY_MS);
+        this._promoItemDropTimer = setTimeout(() => this.onPromoItemDropDownTimerEvent(), BundlePurchaseExtraInfoWidget.PROMO_ITEM_DROP_DELAY_MS);
     };
 
     private onSpinnerEvent = (event: CatalogWidgetSpinnerEvent): void =>

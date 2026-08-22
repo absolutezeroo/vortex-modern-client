@@ -96,32 +96,32 @@ import type {InfoStandWidget} from '@habbo/ui/widget/infostand/InfoStandWidget';
 
 const log = Logger.getLogger('habbo.ui.handler.InfoStandWidgetHandler');
 
-// Every message type from getWidgetMessages() that processWidgetMessage() doesn't
-// yet implement — kept as one list so the switch's default branch can log which
-// unimplemented AS3 case fired, instead of a silent no-op.
-const UNIMPLEMENTED_WIDGET_MESSAGES = new Set<string>([
-    'RWUAM_SEND_FRIEND_REQUEST', 'RWUAM_RESPECT_USER', 'RWUAM_REPLENISH_RESPECT_USER',
-    // The leading space on RESPECT_PET is not a typo here: AS3 carries it in all four places the
-    // string appears — the declaration, the pet-target test, the switch case and both menu views
-    // that send it. Trimming it on this side alone would stop the message matching.
-    'RWUAM_OPEN_PROFILE', ' RWUAM_RESPECT_PET', 'RWUAM_WHISPER_USER', 'RWUAM_IGNORE_USER',
-    'RWUAM_UNIGNORE_USER', 'RWUAM_KICK_USER', 'RWUAM_BAN_USER_DAY', 'RWUAM_BAN_USER_HOUR',
-    'RWUAM_BAN_USER_PERM', 'RWUAM_MUTE_USER_2MIN', 'RWUAM_MUTE_USER_5MIN', 'RWUAM_MUTE_USER_10MIN',
-    'RWUAM_GIVE_RIGHTS', 'RWUAM_TAKE_RIGHTS', 'RWUAM_START_TRADING', 'RWUAM_OPEN_HOME_PAGE',
-    'RWUAM_PASS_CARRY_ITEM', 'RWUAM_DROP_CARRY_ITEM',
-    'RWRTSM_ROOM_TAG_SEARCH',
-    'RWGOI_MESSAGE_GET_BADGE_IMAGE', 'RWUAM_REPORT', 'RWUAM_PICKUP_PET', 'RWUAM_MOUNT_PET',
-    'RWUAM_TOGGLE_PET_RIDING_PERMISSION', 'RWUAM_TOGGLE_PET_BREEDING_PERMISSION', 'RWUAM_DISMOUNT_PET',
-    'RWUAM_SADDLE_OFF', 'RWUAM_TRAIN_PET', 'RWUAM_REQUEST_PET_UPDATE', 'RWVM_CHANGE_MOTTO_MESSAGE',
-    'RWPOM_OPEN_PRESENT',
-    'RWUAM_REPORT_CFH_OTHER', 'RWUAM_AMBASSADOR_ALERT_USER', 'RWUAM_AMBASSADOR_KICK_USER',
-    'RWUAM_AMBASSADOR_MUTE_2MIN', 'RWUAM_AMBASSADOR_MUTE_10MIN', 'RWUAM_AMBASSADOR_MUTE_15MIN',
-    'RWUAM_AMBASSADOR_MUTE_60MIN', 'RWUAM_AMBASSADOR_MUTE_18HOUR', 'RWUAM_AMBASSADOR_MUTE_36HOUR',
-    'RWUAM_AMBASSADOR_MUTE_72HOUR', 'RWUAM_AMBASSADOR_UNMUTE',
-]);
-
 export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageListener 
 {
+    // Every message type from getWidgetMessages() that processWidgetMessage() doesn't
+    // yet implement — kept as one list so the switch's default branch can log which
+    // unimplemented AS3 case fired, instead of a silent no-op.
+    private static readonly UNIMPLEMENTED_WIDGET_MESSAGES = new Set<string>([
+        'RWUAM_SEND_FRIEND_REQUEST', 'RWUAM_RESPECT_USER', 'RWUAM_REPLENISH_RESPECT_USER',
+        // The leading space on RESPECT_PET is not a typo here: AS3 carries it in all four places the
+        // string appears — the declaration, the pet-target test, the switch case and both menu views
+        // that send it. Trimming it on this side alone would stop the message matching.
+        'RWUAM_OPEN_PROFILE', ' RWUAM_RESPECT_PET', 'RWUAM_WHISPER_USER', 'RWUAM_IGNORE_USER',
+        'RWUAM_UNIGNORE_USER', 'RWUAM_KICK_USER', 'RWUAM_BAN_USER_DAY', 'RWUAM_BAN_USER_HOUR',
+        'RWUAM_BAN_USER_PERM', 'RWUAM_MUTE_USER_2MIN', 'RWUAM_MUTE_USER_5MIN', 'RWUAM_MUTE_USER_10MIN',
+        'RWUAM_GIVE_RIGHTS', 'RWUAM_TAKE_RIGHTS', 'RWUAM_START_TRADING', 'RWUAM_OPEN_HOME_PAGE',
+        'RWUAM_PASS_CARRY_ITEM', 'RWUAM_DROP_CARRY_ITEM',
+        'RWRTSM_ROOM_TAG_SEARCH',
+        'RWGOI_MESSAGE_GET_BADGE_IMAGE', 'RWUAM_REPORT', 'RWUAM_PICKUP_PET', 'RWUAM_MOUNT_PET',
+        'RWUAM_TOGGLE_PET_RIDING_PERMISSION', 'RWUAM_TOGGLE_PET_BREEDING_PERMISSION', 'RWUAM_DISMOUNT_PET',
+        'RWUAM_SADDLE_OFF', 'RWUAM_TRAIN_PET', 'RWUAM_REQUEST_PET_UPDATE', 'RWVM_CHANGE_MOTTO_MESSAGE',
+        'RWPOM_OPEN_PRESENT',
+        'RWUAM_REPORT_CFH_OTHER', 'RWUAM_AMBASSADOR_ALERT_USER', 'RWUAM_AMBASSADOR_KICK_USER',
+        'RWUAM_AMBASSADOR_MUTE_2MIN', 'RWUAM_AMBASSADOR_MUTE_10MIN', 'RWUAM_AMBASSADOR_MUTE_15MIN',
+        'RWUAM_AMBASSADOR_MUTE_60MIN', 'RWUAM_AMBASSADOR_MUTE_18HOUR', 'RWUAM_AMBASSADOR_MUTE_36HOUR',
+        'RWUAM_AMBASSADOR_MUTE_72HOUR', 'RWUAM_AMBASSADOR_UNMUTE',
+    ]);
+
     private _groupDetailsEvent: IMessageEvent | null = null;
     private readonly _pendingImageRequests: Map<number, {
         furniId: number;
@@ -479,7 +479,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
             return null;
         }
 
-        if(UNIMPLEMENTED_WIDGET_MESSAGES.has(message.type))
+        if(InfoStandWidgetHandler.UNIMPLEMENTED_WIDGET_MESSAGES.has(message.type))
         {
             log.debug(`TODO(AS3): unimplemented widget message ${message.type}`);
         }

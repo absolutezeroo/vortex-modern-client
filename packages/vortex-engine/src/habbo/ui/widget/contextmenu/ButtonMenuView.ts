@@ -11,21 +11,31 @@ import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import {ContextInfoView} from './ContextInfoView';
 
-// AS3 button/link/icon colors (uint constants from ContextInfoView/ButtonMenuView).
-const BUTTON_COLOR_DEFAULT: number = 4281149991;
-const BUTTON_COLOR_HOVER: number = 4282950861;
-const BUTTON_COLOR_MODERATE_HOVER: number = 4288230144;
-const LABEL_COLOR_ENABLED: number = 16777215;
-const LABEL_COLOR_DISABLED: number = 5789011;
-const ICON_COLOR_ENABLED: number = 13947341;
-const ICON_COLOR_DISABLED: number = 5789011;
-const LINK_COLOR_ACTIONS_DEFAULT: number = 16777215;
-const LINK_COLOR_ACTIONS_HOVER: number = 9552639;
-const LINK_COLOR_MODERATE_DEFAULT: number = 16744755;
-const LINK_COLOR_MODERATE_HOVER: number = 16756591;
-
 export class ButtonMenuView extends ContextInfoView
 {
+    // AS3 button/link/icon colors (uint constants from ContextInfoView/ButtonMenuView).
+    private static readonly BUTTON_COLOR_DEFAULT: number = 4281149991;
+
+    private static readonly BUTTON_COLOR_HOVER: number = 4282950861;
+
+    private static readonly BUTTON_COLOR_MODERATE_HOVER: number = 4288230144;
+
+    private static readonly LABEL_COLOR_ENABLED: number = 16777215;
+
+    private static readonly LABEL_COLOR_DISABLED: number = 5789011;
+
+    private static readonly ICON_COLOR_ENABLED: number = 13947341;
+
+    private static readonly ICON_COLOR_DISABLED: number = 5789011;
+
+    private static readonly LINK_COLOR_ACTIONS_DEFAULT: number = 16777215;
+
+    private static readonly LINK_COLOR_ACTIONS_HOVER: number = 9552639;
+
+    private static readonly LINK_COLOR_MODERATE_DEFAULT: number = 16744755;
+
+    private static readonly LINK_COLOR_MODERATE_HOVER: number = 16756591;
+
     protected _buttons: IItemListWindow | null = null;
 
     // AS3: ButtonMenuView.as::showButtonGrid()
@@ -71,14 +81,14 @@ export class ButtonMenuView extends ContextInfoView
 
         if(label)
         {
-            label.textColor = effectiveEnabled && !vipIcon ? LABEL_COLOR_ENABLED : LABEL_COLOR_DISABLED;
+            label.textColor = effectiveEnabled && !vipIcon ? ButtonMenuView.LABEL_COLOR_ENABLED : ButtonMenuView.LABEL_COLOR_DISABLED;
         }
 
         const icon = button.getChildByName('icon');
 
         if(icon)
         {
-            icon.color = effectiveEnabled ? ICON_COLOR_ENABLED : ICON_COLOR_DISABLED;
+            icon.color = effectiveEnabled ? ButtonMenuView.ICON_COLOR_ENABLED : ButtonMenuView.ICON_COLOR_DISABLED;
 
             if(label)
             {
@@ -131,8 +141,8 @@ export class ButtonMenuView extends ContextInfoView
         if(window.name === 'button')
         {
             window.color = isOver
-                ? (window.tags.indexOf('moderate') > -1 ? BUTTON_COLOR_MODERATE_HOVER : BUTTON_COLOR_HOVER)
-                : BUTTON_COLOR_DEFAULT;
+                ? (window.tags.indexOf('moderate') > -1 ? ButtonMenuView.BUTTON_COLOR_MODERATE_HOVER : ButtonMenuView.BUTTON_COLOR_HOVER)
+                : ButtonMenuView.BUTTON_COLOR_DEFAULT;
         }
         else if(window.tags.indexOf('link') > -1)
         {
@@ -142,11 +152,11 @@ export class ButtonMenuView extends ContextInfoView
             {
                 if(window.tags.indexOf('actions') > -1)
                 {
-                    text.textColor = isOver ? LINK_COLOR_ACTIONS_HOVER : LINK_COLOR_ACTIONS_DEFAULT;
+                    text.textColor = isOver ? ButtonMenuView.LINK_COLOR_ACTIONS_HOVER : ButtonMenuView.LINK_COLOR_ACTIONS_DEFAULT;
                 }
                 else if(window.tags.indexOf('moderate') > -1)
                 {
-                    text.textColor = isOver ? LINK_COLOR_MODERATE_HOVER : LINK_COLOR_MODERATE_DEFAULT;
+                    text.textColor = isOver ? ButtonMenuView.LINK_COLOR_MODERATE_HOVER : ButtonMenuView.LINK_COLOR_MODERATE_DEFAULT;
                 }
             }
         }
@@ -155,7 +165,7 @@ export class ButtonMenuView extends ContextInfoView
         {
             const nameText = (window as IWindowContainer).findChildByName('name') as ITextWindow | null;
 
-            if(nameText) nameText.textColor = isOver ? LINK_COLOR_ACTIONS_HOVER : LINK_COLOR_ACTIONS_DEFAULT;
+            if(nameText) nameText.textColor = isOver ? ButtonMenuView.LINK_COLOR_ACTIONS_HOVER : ButtonMenuView.LINK_COLOR_ACTIONS_DEFAULT;
         }
     };
 

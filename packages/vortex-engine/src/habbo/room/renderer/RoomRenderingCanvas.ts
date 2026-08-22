@@ -39,40 +39,6 @@ import {RoomObjectUserTypes} from '@habbo/room/object/RoomObjectUserTypes';
 
 export type {IRoomRenderingCanvasMouseListener};
 
-/**
- * How far outside the viewport an avatar's anchor may sit and still be updated, in canvas pixels.
- *
- * The anchor is a point, and the sprites hanging off it reach furthest upwards — an avatar's own
- * sprite sits at roughly `-height + scale/4`, and effects and additions go further still. This is
- * around four tiles at the default scale, chosen to be wrong in the safe direction: too large only
- * costs a few avatars' worth of updates, too small pops a limb at the edge of the screen.
- *
- * One figure per direction, because a single symmetric one was the first attempt and it culled only
- * a quarter of a two-thousand-avatar room. Four tiles of slack on every side of a *point* is mostly
- * spent below the avatar, where there is nothing to clip: everything hangs above the anchor, which
- * sits at its feet. Splitting keeps the same safety overhead, where clipping would actually show,
- * and stops paying for it in the three directions that never needed it.
- */
-// TS-only: see `RoomCullingMode`.
-const AVATAR_CULL_MARGIN_TOP = 192;
-
-// TS-only: see `AVATAR_CULL_MARGIN_TOP`.
-const AVATAR_CULL_MARGIN_BOTTOM = 64;
-
-// TS-only: see `AVATAR_CULL_MARGIN_TOP`.
-const AVATAR_CULL_MARGIN_SIDE = 96;
-
-/** The object types drawn by an avatar visualization, and so the ones `RoomCullingMode` covers. */
-// TS-only: see `RoomCullingMode`.
-const AVATAR_CULLABLE_TYPES: ReadonlySet<string> = new Set(Object.values(RoomObjectUserTypes));
-
-const SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL = 50;
-const FRAME_COUNT_FOR_UPDATE_INTERVAL = 50;
-const SLOW_FRAME_UPDATE_INTERVAL = 60;
-const FAST_FRAME_UPDATE_INTERVAL = 50;
-const MAXIMUM_VALID_FRAME_UPDATE_INTERVAL = 1000;
-const REALLY_SLOW_FRAME_UPDATE_INTERVAL = 60 * 3;
-
 interface IObjectSpriteCache {
     initialized: boolean;
     instanceId: number;
@@ -95,6 +61,45 @@ interface IObjectSpriteCache {
  */
 export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface 
 {
+    /**
+    * How far outside the viewport an avatar's anchor may sit and still be updated, in canvas pixels.
+    *
+    * The anchor is a point, and the sprites hanging off it reach furthest upwards — an avatar's own
+    * sprite sits at roughly `-height + scale/4`, and effects and additions go further still. This is
+    * around four tiles at the default scale, chosen to be wrong in the safe direction: too large only
+    * costs a few avatars' worth of updates, too small pops a limb at the edge of the screen.
+    *
+    * One figure per direction, because a single symmetric one was the first attempt and it culled only
+    * a quarter of a two-thousand-avatar room. Four tiles of slack on every side of a *point* is mostly
+    * spent below the avatar, where there is nothing to clip: everything hangs above the anchor, which
+    * sits at its feet. Splitting keeps the same safety overhead, where clipping would actually show,
+    * and stops paying for it in the three directions that never needed it.
+    */
+    // TS-only: see `RoomCullingMode`.
+    private static readonly AVATAR_CULL_MARGIN_TOP = 192;
+
+    // TS-only: see `AVATAR_CULL_MARGIN_TOP`.
+    private static readonly AVATAR_CULL_MARGIN_BOTTOM = 64;
+
+    // TS-only: see `AVATAR_CULL_MARGIN_TOP`.
+    private static readonly AVATAR_CULL_MARGIN_SIDE = 96;
+
+    /** The object types drawn by an avatar visualization, and so the ones `RoomCullingMode` covers. */
+    // TS-only: see `RoomCullingMode`.
+    private static readonly AVATAR_CULLABLE_TYPES: ReadonlySet<string> = new Set(Object.values(RoomObjectUserTypes));
+
+    private static readonly SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL = 50;
+
+    private static readonly FRAME_COUNT_FOR_UPDATE_INTERVAL = 50;
+
+    private static readonly SLOW_FRAME_UPDATE_INTERVAL = 60;
+
+    private static readonly FAST_FRAME_UPDATE_INTERVAL = 50;
+
+    private static readonly MAXIMUM_VALID_FRAME_UPDATE_INTERVAL = 1000;
+
+    private static readonly REALLY_SLOW_FRAME_UPDATE_INTERVAL = 60 * 3;
+
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_sortableSpriteList
     private _sortableSpriteList: SortableSprite[] = [];
     private _objectSpriteCaches: Map<string, IObjectSpriteCache> = new Map();
@@ -773,19 +778,19 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
         const updateInterval = time - this._renderTimeStamp;
 
-        if(updateInterval > REALLY_SLOW_FRAME_UPDATE_INTERVAL) 
+        if(updateInterval > RoomRenderingCanvas.REALLY_SLOW_FRAME_UPDATE_INTERVAL) 
         {
             this._haltedFrameInterval = updateInterval;
         }
 
-        if(updateInterval > MAXIMUM_VALID_FRAME_UPDATE_INTERVAL) 
+        if(updateInterval > RoomRenderingCanvas.MAXIMUM_VALID_FRAME_UPDATE_INTERVAL) 
         {
             return;
         }
 
         this._updateIntervalFrameCount++;
 
-        if(this._updateIntervalFrameCount === SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL + 1) 
+        if(this._updateIntervalFrameCount === RoomRenderingCanvas.SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL + 1) 
         {
             this._averageUpdateInterval = updateInterval;
             this._averageRenderTime = this._lastRenderTime;
@@ -793,25 +798,25 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             return;
         }
 
-        if(this._updateIntervalFrameCount <= SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL + 1) 
+        if(this._updateIntervalFrameCount <= RoomRenderingCanvas.SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL + 1) 
         {
             return;
         }
 
-        const frameCount = this._updateIntervalFrameCount - SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL;
+        const frameCount = this._updateIntervalFrameCount - RoomRenderingCanvas.SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL;
 
         this._averageUpdateInterval = this._averageUpdateInterval * (frameCount - 1) / frameCount + updateInterval / frameCount;
         this._averageRenderTime = this._averageRenderTime * (frameCount - 1) / frameCount + this._lastRenderTime / frameCount;
 
-        if(this._updateIntervalFrameCount > SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL + FRAME_COUNT_FOR_UPDATE_INTERVAL) 
+        if(this._updateIntervalFrameCount > RoomRenderingCanvas.SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL + RoomRenderingCanvas.FRAME_COUNT_FOR_UPDATE_INTERVAL) 
         {
-            this._updateIntervalFrameCount = SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL;
+            this._updateIntervalFrameCount = RoomRenderingCanvas.SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL;
 
-            if(!this._runningSlow && this._averageUpdateInterval > SLOW_FRAME_UPDATE_INTERVAL) 
+            if(!this._runningSlow && this._averageUpdateInterval > RoomRenderingCanvas.SLOW_FRAME_UPDATE_INTERVAL) 
             {
                 this._runningSlow = true;
             }
-            else if(this._runningSlow && this._averageUpdateInterval < FAST_FRAME_UPDATE_INTERVAL) 
+            else if(this._runningSlow && this._averageUpdateInterval < RoomRenderingCanvas.FAST_FRAME_UPDATE_INTERVAL) 
             {
                 this._runningSlow = false;
             }
@@ -950,7 +955,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         }
 
         if(RoomCullingMode.avatars
-            && AVATAR_CULLABLE_TYPES.has(object.getType())
+            && RoomRenderingCanvas.AVATAR_CULLABLE_TYPES.has(object.getType())
             && !this.avatarNearViewport(screenPos))
         {
             // Only when it still holds something. A persistently off-screen avatar would otherwise
@@ -1112,9 +1117,9 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     {
         let x = Math.floor(screenPos.x) + Math.floor(this._width / 2) + this._screenOffsetX;
         let y = Math.floor(screenPos.y) + Math.floor(this._height / 2) + this._screenOffsetY;
-        let top = AVATAR_CULL_MARGIN_TOP;
-        let bottom = AVATAR_CULL_MARGIN_BOTTOM;
-        let side = AVATAR_CULL_MARGIN_SIDE;
+        let top = RoomRenderingCanvas.AVATAR_CULL_MARGIN_TOP;
+        let bottom = RoomRenderingCanvas.AVATAR_CULL_MARGIN_BOTTOM;
+        let side = RoomRenderingCanvas.AVATAR_CULL_MARGIN_SIDE;
 
         if(this._scale !== 1)
         {

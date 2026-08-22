@@ -17,10 +17,10 @@ import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
 import type {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUpdateEvent';
 import type {InfoStandWidget} from './InfoStandWidget';
 
-const BADGE_SLOT_COUNT = 5;
-
 export class InfoStandBotView
 {
+    private static readonly BADGE_SLOT_COUNT = 5;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandBotView.as::_SafeStr_4549
     private _widget: InfoStandWidget;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandBotView.as::_window
@@ -172,7 +172,7 @@ export class InfoStandBotView
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandBotView.as::clearBadges()
     public clearBadges(): void
     {
-        for(let i = 0; i < BADGE_SLOT_COUNT; i++)
+        for(let i = 0; i < InfoStandBotView.BADGE_SLOT_COUNT; i++)
         {
             this.setBadge(i, '');
         }
@@ -204,7 +204,7 @@ export class InfoStandBotView
     {
         if(!badges) return;
 
-        for(let i = 0; i < badges.length && i < BADGE_SLOT_COUNT; i++)
+        for(let i = 0; i < badges.length && i < InfoStandBotView.BADGE_SLOT_COUNT; i++)
         {
             this.setBadge(i, badges[i]);
         }

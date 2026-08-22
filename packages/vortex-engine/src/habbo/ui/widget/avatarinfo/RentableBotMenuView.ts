@@ -31,13 +31,14 @@ import type {AvatarInfoWidget} from './AvatarInfoWidget';
 
 const log = Logger.getLogger('habbo.ui.widget.avatarinfo.RentableBotMenuView');
 
-// AS3: RentableBotMenuView.as::buttonEventProc() — the two name prefixes a cloned row carries, and
-// the offsets AS3 slices them at.
-const LINK_PREFIX = ':link ';
-const NUX_PROCEED_PREFIX = 'nux_proceed_';
-
 export class RentableBotMenuView extends AvatarContextInfoButtonView
 {
+    // AS3: RentableBotMenuView.as::buttonEventProc() — the two name prefixes a cloned row carries, and
+    // the offsets AS3 slices them at.
+    private static readonly LINK_PREFIX = ':link ';
+
+    private static readonly NUX_PROCEED_PREFIX = 'nux_proceed_';
+
     // AS3: RentableBotMenuView.as::_SafeStr_4556
     private _botData: RentableBotInfoData | null = null;
 
@@ -176,10 +177,10 @@ export class RentableBotMenuView extends AvatarContextInfoButtonView
             switch(skill.id)
             {
                 case BotSkillEnum.INCLIENT_LINK:
-                    this.addLinkRow(buttons, linkTemplate, skill.data, (link) => `${LINK_PREFIX}${link}`);
+                    this.addLinkRow(buttons, linkTemplate, skill.data, (link) => `${RentableBotMenuView.LINK_PREFIX}${link}`);
                     break;
                 case BotSkillEnum.NAVIGATOR_SEARCH:
-                    this.addLinkRow(buttons, linkTemplate, skill.data, (query) => `${LINK_PREFIX}navigator/search/${query}`);
+                    this.addLinkRow(buttons, linkTemplate, skill.data, (query) => `${RentableBotMenuView.LINK_PREFIX}navigator/search/${query}`);
                     break;
                 case BotSkillEnum.NUX_PROCEED:
                     this.addNuxRow(buttons, nuxTemplate, skill.data);
@@ -263,7 +264,7 @@ export class RentableBotMenuView extends AvatarContextInfoButtonView
         if(label) label.caption = parts[0];
 
         row.visible = true;
-        row.name = `${NUX_PROCEED_PREFIX}${index}`;
+        row.name = `${RentableBotMenuView.NUX_PROCEED_PREFIX}${index}`;
 
         const first = buttons.getListItemByName('nux_proceed_1');
 
@@ -357,17 +358,17 @@ export class RentableBotMenuView extends AvatarContextInfoButtonView
         // AS3 tests both prefixes with indexOf() != -1 rather than a start-of-string check, and
         // slices at a fixed offset — so the row name really is `":link <target>"` /
         // `"nux_proceed_<n>"` and nothing else.
-        if(name.indexOf(LINK_PREFIX) !== -1)
+        if(name.indexOf(RentableBotMenuView.LINK_PREFIX) !== -1)
         {
-            this.createLinkEvent(name.substr(LINK_PREFIX.length));
+            this.createLinkEvent(name.substr(RentableBotMenuView.LINK_PREFIX.length));
 
             return true;
         }
 
-        if(name.indexOf(NUX_PROCEED_PREFIX) !== -1)
+        if(name.indexOf(RentableBotMenuView.NUX_PROCEED_PREFIX) !== -1)
         {
             connection?.send(
-                new CommandBotComposer(data.id, BotSkillEnum.NUX_PROCEED, name.substr(NUX_PROCEED_PREFIX.length))
+                new CommandBotComposer(data.id, BotSkillEnum.NUX_PROCEED, name.substr(RentableBotMenuView.NUX_PROCEED_PREFIX.length))
             );
 
             return true;

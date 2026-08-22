@@ -27,14 +27,15 @@ import {RoomWidgetOpenProfileMessage} from '../messages/RoomWidgetOpenProfileMes
 import type {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUpdateEvent';
 import type {InfoStandWidget} from './InfoStandWidget';
 
-// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::LINK_COLOR_ACTIONS_HOVER
-const LINK_COLOR_HOVER = 0x91C2FF;
-const LINK_COLOR_DEFAULT = 0xFFFFFF;
-
-const BADGE_SLOT_COUNT = 5;
-
 export class InfoStandUserView
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::LINK_COLOR_ACTIONS_HOVER
+    private static readonly LINK_COLOR_HOVER = 0x91C2FF;
+
+    private static readonly LINK_COLOR_DEFAULT = 0xFFFFFF;
+
+    private static readonly BADGE_SLOT_COUNT = 5;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_4549
     protected _widget: InfoStandWidget;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_window
@@ -184,8 +185,8 @@ export class InfoStandUserView
 
             if(!nameText) return;
 
-            if(event.type === WindowMouseEvent.OVER) nameText.textColor = LINK_COLOR_HOVER;
-            if(event.type === WindowMouseEvent.OUT) nameText.textColor = LINK_COLOR_DEFAULT;
+            if(event.type === WindowMouseEvent.OVER) nameText.textColor = InfoStandUserView.LINK_COLOR_HOVER;
+            if(event.type === WindowMouseEvent.OUT) nameText.textColor = InfoStandUserView.LINK_COLOR_DEFAULT;
         }
     };
 
@@ -349,7 +350,7 @@ export class InfoStandUserView
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::clearBadges()
     public clearBadges(): void
     {
-        for(let i = 0; i < BADGE_SLOT_COUNT; i++)
+        for(let i = 0; i < InfoStandUserView.BADGE_SLOT_COUNT; i++)
         {
             this.setBadge(i, '');
         }
@@ -455,7 +456,7 @@ export class InfoStandUserView
 
         if(!badges) return;
 
-        for(let i = 0; i < badges.length && i < BADGE_SLOT_COUNT; i++)
+        for(let i = 0; i < badges.length && i < InfoStandUserView.BADGE_SLOT_COUNT; i++)
         {
             this.setBadge(i, badges[i]);
         }

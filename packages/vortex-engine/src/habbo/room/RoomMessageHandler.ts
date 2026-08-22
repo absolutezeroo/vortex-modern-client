@@ -199,11 +199,11 @@ import type {IRoomMessageHandler} from "@habbo/room/IRoomMessageHandler";
 
 const log = Logger.getLogger('habbo.room.RoomMessageHandler');
 
-// AS3: _SafeCls_1984.as::onSpecialRoomEvent() — `new Timer(1000, discoColours.length + 1)`
-const DISCO_TICK_MS = 1000;
-
 export class RoomMessageHandler implements IRoomMessageHandler 
 {
+    // AS3: _SafeCls_1984.as::onSpecialRoomEvent() — `new Timer(1000, discoColours.length + 1)`
+    private static readonly DISCO_TICK_MS = 1000;
+
     public static readonly EFFECT_NONE = 0;
     // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::EFFECT_ROOM_SHAKE
     public static readonly EFFECT_ROOM_SHAKE = 1;
@@ -1244,11 +1244,11 @@ export class RoomMessageHandler implements IRoomMessageHandler
 
             if(ticksLeft > 0)
             {
-                setTimeout(tick, DISCO_TICK_MS);
+                setTimeout(tick, RoomMessageHandler.DISCO_TICK_MS);
             }
         };
 
-        setTimeout(tick, DISCO_TICK_MS);
+        setTimeout(tick, RoomMessageHandler.DISCO_TICK_MS);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onBCPlacementWarning()

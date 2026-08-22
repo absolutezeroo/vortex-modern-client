@@ -10,389 +10,12 @@ import {TextStyle} from './TextStyle';
  */
 export class TextStyleManager 
 {
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::REGULAR
-    public static readonly REGULAR: string = 'regular';
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::ITALIC
-    public static readonly ITALIC: string = 'italic';
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::BOLD
-    public static readonly BOLD: string = 'bold';
-
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::TAG_OPEN
-    private static readonly TAG_OPEN: string = '{';
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::TAG_CLOSE
-    private static readonly TAG_CLOSE: string = '}';
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::CMT_OPEN
-    private static readonly CMT_OPEN: string = '/*';
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::CMT_CLOSE
-    private static readonly CMT_CLOSE: string = '*/';
-
-    private static _styles: Map<string, TextStyle> = new Map();
-    private static _styleNames: string[] = [];
-    private static _initialized: boolean = false;
-
     /**
-     * Ensures the style registry is initialized.
-     *
-     * Called automatically on first access. Registers 3 base defaults
-     * then parses the embedded Habbo CSS to register all named styles.
-     */
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::init()
-    public static init(): void 
-    {
-        if(TextStyleManager._initialized) return;
-
-        TextStyleManager._initialized = true;
-
-        // Base defaults (AS3 lines 38-64)
-        let style = new TextStyle();
-
-        style.name = TextStyleManager.REGULAR;
-        style.color = 0;
-        style.fontSize = 9;
-        style.fontFamily = 'Ubuntu, Arial, sans-serif';
-        style.fontStyle = 'normal';
-        style.fontWeight = 'normal';
-        TextStyleManager._styles.set(style.name, style);
-        TextStyleManager._styleNames.push(style.name);
-
-        style = new TextStyle();
-        style.name = TextStyleManager.ITALIC;
-        style.color = 0;
-        style.fontSize = 9;
-        style.fontFamily = 'Ubuntu, Arial, sans-serif';
-        style.fontStyle = 'italic';
-        style.fontWeight = 'normal';
-        TextStyleManager._styles.set(style.name, style);
-        TextStyleManager._styleNames.push(style.name);
-
-        style = new TextStyle();
-        style.name = TextStyleManager.BOLD;
-        style.color = 0;
-        style.fontSize = 9;
-        style.fontFamily = 'Ubuntu, Arial, sans-serif';
-        style.fontStyle = 'normal';
-        style.fontWeight = 'bold';
-        TextStyleManager._styles.set(style.name, style);
-        TextStyleManager._styleNames.push(style.name);
-
-        // Parse and register the embedded Habbo text styles CSS
-        const embeddedStyles = TextStyleManager.parseCSS(HABBO_TEXT_STYLES_CSS);
-
-        TextStyleManager.setStyles(embeddedStyles);
-    }
-
-    /**
-     * Retrieves a registered style by name.
-     *
-     * @param name - The style name (e.g. `"u_regular"`, `"id_frame_title"`)
-     * @returns The style, or null if not found
-     */
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::getStyle()
-    public static getStyle(name: string): TextStyle | null 
-    {
-        TextStyleManager.init();
-
-        return TextStyleManager._styles.get(name) ?? null;
-    }
-
-    /**
-     * Registers or overwrites a named style.
-     */
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::setStyle()
-    public static setStyle(name: string, style: TextStyle): void 
-    {
-        TextStyleManager.init();
-
-        style.name = name;
-        TextStyleManager._styles.set(name, style);
-
-        if(TextStyleManager._styleNames.indexOf(name) === -1) 
-        {
-            TextStyleManager._styleNames.push(name);
-        }
-    }
-
-    /**
-     * Batch-registers an array of styles.
-     */
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::setStyles()
-    public static setStyles(styles: TextStyle[]): void 
-    {
-        TextStyleManager.init();
-
-        for(const s of styles) 
-        {
-            TextStyleManager._styles.set(s.name, s);
-
-            if(TextStyleManager._styleNames.indexOf(s.name) === -1) 
-            {
-                TextStyleManager._styleNames.push(s.name);
-            }
-        }
-    }
-
-    /**
-     * Parses a CSS-like string into an array of TextStyle objects.
-     *
-     * The format is a simplified CSS variant where selectors are style names
-     * (no `.` prefix) and properties use Habbo-specific names like
-     * `etching-color`, `anti-alias-type`, etc.
-     *
-     * @param css - The CSS text to parse
-     * @returns Array of parsed TextStyle objects
-     */
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::parseCSS()
-    public static parseCSS(css: string): TextStyle[] 
-    {
-        const names = TextStyleManager.parseStyleNamesFromCSS(css);
-        const blocks = TextStyleManager.parseCSSBlocks(css);
-        const result: TextStyle[] = [];
-
-        for(let i = 0; i < names.length; i++) 
-        {
-            const name = names[i];
-            const block = blocks[i] || '';
-            const style = new TextStyle();
-
-            style.name = name;
-
-            const props = TextStyleManager.parseProperties(block);
-
-            if(props['color'] != null) 
-            {
-                style.color = parseInt(String(props['color']).replace('#', '0x'), 16);
-            }
-
-            if(props['font-family'] != null) 
-            {
-                const rawFamily = String(props['font-family']).trim();
-
-                style.fontFamily = TextStyleManager.mapFontFamily(rawFamily);
-
-                // "Volter Bold" is a separate font-family in AS3 — infer bold weight
-                if(rawFamily === 'Volter Bold' && style.fontWeight == null) 
-                {
-                    style.fontWeight = 'bold';
-                }
-            }
-
-            if(props['font-size'] != null) 
-            {
-                style.fontSize = parseInt(String(props['font-size']));
-            }
-
-            if(props['font-style'] != null) 
-            {
-                style.fontStyle = String(props['font-style']).trim();
-            }
-
-            if(props['font-weight'] != null) 
-            {
-                style.fontWeight = String(props['font-weight']).trim();
-            }
-
-            if(props['kerning'] != null) 
-            {
-                style.kerning = String(props['kerning']).trim() === 'true';
-            }
-
-            if(props['leading'] != null) 
-            {
-                style.leading = parseInt(String(props['leading']));
-            }
-
-            if(props['letter-spacing'] != null) 
-            {
-                style.letterSpacing = parseInt(String(props['letter-spacing']));
-            }
-
-            if(props['text-decoration'] != null) 
-            {
-                style.textDecoration = String(props['text-decoration']).trim();
-            }
-
-            if(props['text-indent'] != null) 
-            {
-                style.textIndent = parseInt(String(props['text-indent']));
-            }
-
-            if(props['anti-alias-type'] != null) 
-            {
-                style.antiAliasType = String(props['anti-alias-type']).trim();
-            }
-
-            if(props['sharpness'] != null) 
-            {
-                style.sharpness = parseInt(String(props['sharpness']));
-            }
-
-            if(props['thickness'] != null) 
-            {
-                style.thickness = parseInt(String(props['thickness']));
-            }
-
-            if(props['etching-color'] != null) 
-            {
-                style.etchingColor = parseInt(String(props['etching-color']).replace('#', '0x'), 16);
-            }
-
-            if(props['etching-position'] != null) 
-            {
-                style.etchingPosition = String(props['etching-position']).trim();
-            }
-
-            result.push(style);
-        }
-
-        return result;
-    }
-
-    /**
-     * Finds a registered style whose properties match a CSS snippet.
-     */
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::findMatchingTextStyle()
-    public static findMatchingTextStyle(css: string): TextStyle | null 
-    {
-        TextStyleManager.init();
-
-        const parsed = TextStyleManager.parseCSS(css);
-
-        if(parsed.length === 0) return null;
-
-        const candidate = parsed[0];
-        const existing = TextStyleManager._styles.get(candidate.name);
-
-        if(existing && existing.equals(candidate)) 
-        {
-            return existing;
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns all registered style names.
-     */
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::enumerateStyleNames()
-    public static enumerateStyleNames(): string[] 
-    {
-        TextStyleManager.init();
-
-        return [...TextStyleManager._styleNames];
-    }
-
-    /**
-     * Maps AS3 font family names to web-safe equivalents.
-     */
-    private static mapFontFamily(family: string): string 
-    {
-        switch(family) 
-        {
-            case 'Ubuntu':
-                return 'Ubuntu, Arial, sans-serif';
-            case 'UbuntuCondensed':
-                return 'Ubuntu Condensed, Ubuntu, Arial, sans-serif';
-            case 'Volter':
-                return 'Volter (Goldfish), Ubuntu, Arial, sans-serif';
-            case 'Volter Bold':
-                return 'Volter (Goldfish), Ubuntu, Arial, sans-serif';
-            case 'Courier':
-                return 'Ubuntu, Arial, sans-serif';
-            default:
-                return family + ', Arial, sans-serif';
-        }
-    }
-
-    /**
-     * Extracts style names from CSS text.
-     *
-     * Port of AS3 TextStyleManager.parseStyleNamesFromCSS().
-     */
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::parseStyleNamesFromCSS()
-    private static parseStyleNamesFromCSS(css: string): string[] 
-    {
-        const names: string[] = [];
-        const cleaned = css.replace(/\t/g, '').replace(/\n/g, '').replace(/\r/g, '');
-
-        const segments = cleaned.split(TextStyleManager.TAG_CLOSE);
-
-        for(let seg of segments) 
-        {
-            // Strip leading comments
-            while(seg.indexOf(TextStyleManager.CMT_OPEN) === 0) 
-            {
-                const closeIdx = seg.indexOf(TextStyleManager.CMT_CLOSE);
-
-                if(closeIdx === -1) break;
-
-                seg = seg.substring(closeIdx + 2);
-            }
-
-            const openIdx = seg.indexOf(TextStyleManager.TAG_OPEN);
-
-            if(openIdx === -1) continue;
-
-            const name = seg.substring(0, openIdx).replace(/\s/g, '');
-
-            if(name.length > 0) 
-            {
-                names.push(name);
-            }
-        }
-
-        return names;
-    }
-
-    /**
-     * Extracts the property blocks (content between `{` and `}`) from CSS.
-     */
-    private static parseCSSBlocks(css: string): string[] 
-    {
-        const blocks: string[] = [];
-        const regex = /\{([^}]*)\}/g;
-        let match: RegExpExecArray | null;
-
-        while((match = regex.exec(css)) !== null) 
-        {
-            blocks.push(match[1]);
-        }
-
-        return blocks;
-    }
-
-    /**
-     * Parses `property: value;` pairs from a CSS block string.
-     */
-    private static parseProperties(block: string): Record<string, string> 
-    {
-        const result: Record<string, string> = {};
-        const declarations = block.split(';');
-
-        for(const decl of declarations) 
-        {
-            const colonIdx = decl.indexOf(':');
-
-            if(colonIdx === -1) continue;
-
-            const key = decl.substring(0, colonIdx).trim();
-            const value = decl.substring(colonIdx + 1).trim();
-
-            if(key.length > 0 && value.length > 0) 
-            {
-                result[key] = value;
-            }
-        }
-
-        return result;
-    }
-}
-
-/**
- * Embedded Habbo text styles CSS.
- *
- * Source: HabboWindowManagerCom_text_styles_css.bin
- */
-const HABBO_TEXT_STYLES_CSS = `
+    * Embedded Habbo text styles CSS.
+    *
+    * Source: HabboWindowManagerCom_text_styles_css.bin
+    */
+    private static readonly HABBO_TEXT_STYLES_CSS = `
 u_regular {
     font-family: Ubuntu;
     font-size: 12;
@@ -931,3 +554,380 @@ tag {
     anti-alias-type: normal;
 }
 `;
+
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::REGULAR
+    public static readonly REGULAR: string = 'regular';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::ITALIC
+    public static readonly ITALIC: string = 'italic';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::BOLD
+    public static readonly BOLD: string = 'bold';
+
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::TAG_OPEN
+    private static readonly TAG_OPEN: string = '{';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::TAG_CLOSE
+    private static readonly TAG_CLOSE: string = '}';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::CMT_OPEN
+    private static readonly CMT_OPEN: string = '/*';
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::CMT_CLOSE
+    private static readonly CMT_CLOSE: string = '*/';
+
+    private static _styles: Map<string, TextStyle> = new Map();
+    private static _styleNames: string[] = [];
+    private static _initialized: boolean = false;
+
+    /**
+     * Ensures the style registry is initialized.
+     *
+     * Called automatically on first access. Registers 3 base defaults
+     * then parses the embedded Habbo CSS to register all named styles.
+     */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::init()
+    public static init(): void 
+    {
+        if(TextStyleManager._initialized) return;
+
+        TextStyleManager._initialized = true;
+
+        // Base defaults (AS3 lines 38-64)
+        let style = new TextStyle();
+
+        style.name = TextStyleManager.REGULAR;
+        style.color = 0;
+        style.fontSize = 9;
+        style.fontFamily = 'Ubuntu, Arial, sans-serif';
+        style.fontStyle = 'normal';
+        style.fontWeight = 'normal';
+        TextStyleManager._styles.set(style.name, style);
+        TextStyleManager._styleNames.push(style.name);
+
+        style = new TextStyle();
+        style.name = TextStyleManager.ITALIC;
+        style.color = 0;
+        style.fontSize = 9;
+        style.fontFamily = 'Ubuntu, Arial, sans-serif';
+        style.fontStyle = 'italic';
+        style.fontWeight = 'normal';
+        TextStyleManager._styles.set(style.name, style);
+        TextStyleManager._styleNames.push(style.name);
+
+        style = new TextStyle();
+        style.name = TextStyleManager.BOLD;
+        style.color = 0;
+        style.fontSize = 9;
+        style.fontFamily = 'Ubuntu, Arial, sans-serif';
+        style.fontStyle = 'normal';
+        style.fontWeight = 'bold';
+        TextStyleManager._styles.set(style.name, style);
+        TextStyleManager._styleNames.push(style.name);
+
+        // Parse and register the embedded Habbo text styles CSS
+        const embeddedStyles = TextStyleManager.parseCSS(TextStyleManager.HABBO_TEXT_STYLES_CSS);
+
+        TextStyleManager.setStyles(embeddedStyles);
+    }
+
+    /**
+     * Retrieves a registered style by name.
+     *
+     * @param name - The style name (e.g. `"u_regular"`, `"id_frame_title"`)
+     * @returns The style, or null if not found
+     */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::getStyle()
+    public static getStyle(name: string): TextStyle | null 
+    {
+        TextStyleManager.init();
+
+        return TextStyleManager._styles.get(name) ?? null;
+    }
+
+    /**
+     * Registers or overwrites a named style.
+     */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::setStyle()
+    public static setStyle(name: string, style: TextStyle): void 
+    {
+        TextStyleManager.init();
+
+        style.name = name;
+        TextStyleManager._styles.set(name, style);
+
+        if(TextStyleManager._styleNames.indexOf(name) === -1) 
+        {
+            TextStyleManager._styleNames.push(name);
+        }
+    }
+
+    /**
+     * Batch-registers an array of styles.
+     */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::setStyles()
+    public static setStyles(styles: TextStyle[]): void 
+    {
+        TextStyleManager.init();
+
+        for(const s of styles) 
+        {
+            TextStyleManager._styles.set(s.name, s);
+
+            if(TextStyleManager._styleNames.indexOf(s.name) === -1) 
+            {
+                TextStyleManager._styleNames.push(s.name);
+            }
+        }
+    }
+
+    /**
+     * Parses a CSS-like string into an array of TextStyle objects.
+     *
+     * The format is a simplified CSS variant where selectors are style names
+     * (no `.` prefix) and properties use Habbo-specific names like
+     * `etching-color`, `anti-alias-type`, etc.
+     *
+     * @param css - The CSS text to parse
+     * @returns Array of parsed TextStyle objects
+     */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::parseCSS()
+    public static parseCSS(css: string): TextStyle[] 
+    {
+        const names = TextStyleManager.parseStyleNamesFromCSS(css);
+        const blocks = TextStyleManager.parseCSSBlocks(css);
+        const result: TextStyle[] = [];
+
+        for(let i = 0; i < names.length; i++) 
+        {
+            const name = names[i];
+            const block = blocks[i] || '';
+            const style = new TextStyle();
+
+            style.name = name;
+
+            const props = TextStyleManager.parseProperties(block);
+
+            if(props['color'] != null) 
+            {
+                style.color = parseInt(String(props['color']).replace('#', '0x'), 16);
+            }
+
+            if(props['font-family'] != null) 
+            {
+                const rawFamily = String(props['font-family']).trim();
+
+                style.fontFamily = TextStyleManager.mapFontFamily(rawFamily);
+
+                // "Volter Bold" is a separate font-family in AS3 — infer bold weight
+                if(rawFamily === 'Volter Bold' && style.fontWeight == null) 
+                {
+                    style.fontWeight = 'bold';
+                }
+            }
+
+            if(props['font-size'] != null) 
+            {
+                style.fontSize = parseInt(String(props['font-size']));
+            }
+
+            if(props['font-style'] != null) 
+            {
+                style.fontStyle = String(props['font-style']).trim();
+            }
+
+            if(props['font-weight'] != null) 
+            {
+                style.fontWeight = String(props['font-weight']).trim();
+            }
+
+            if(props['kerning'] != null) 
+            {
+                style.kerning = String(props['kerning']).trim() === 'true';
+            }
+
+            if(props['leading'] != null) 
+            {
+                style.leading = parseInt(String(props['leading']));
+            }
+
+            if(props['letter-spacing'] != null) 
+            {
+                style.letterSpacing = parseInt(String(props['letter-spacing']));
+            }
+
+            if(props['text-decoration'] != null) 
+            {
+                style.textDecoration = String(props['text-decoration']).trim();
+            }
+
+            if(props['text-indent'] != null) 
+            {
+                style.textIndent = parseInt(String(props['text-indent']));
+            }
+
+            if(props['anti-alias-type'] != null) 
+            {
+                style.antiAliasType = String(props['anti-alias-type']).trim();
+            }
+
+            if(props['sharpness'] != null) 
+            {
+                style.sharpness = parseInt(String(props['sharpness']));
+            }
+
+            if(props['thickness'] != null) 
+            {
+                style.thickness = parseInt(String(props['thickness']));
+            }
+
+            if(props['etching-color'] != null) 
+            {
+                style.etchingColor = parseInt(String(props['etching-color']).replace('#', '0x'), 16);
+            }
+
+            if(props['etching-position'] != null) 
+            {
+                style.etchingPosition = String(props['etching-position']).trim();
+            }
+
+            result.push(style);
+        }
+
+        return result;
+    }
+
+    /**
+     * Finds a registered style whose properties match a CSS snippet.
+     */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::findMatchingTextStyle()
+    public static findMatchingTextStyle(css: string): TextStyle | null 
+    {
+        TextStyleManager.init();
+
+        const parsed = TextStyleManager.parseCSS(css);
+
+        if(parsed.length === 0) return null;
+
+        const candidate = parsed[0];
+        const existing = TextStyleManager._styles.get(candidate.name);
+
+        if(existing && existing.equals(candidate)) 
+        {
+            return existing;
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns all registered style names.
+     */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::enumerateStyleNames()
+    public static enumerateStyleNames(): string[] 
+    {
+        TextStyleManager.init();
+
+        return [...TextStyleManager._styleNames];
+    }
+
+    /**
+     * Maps AS3 font family names to web-safe equivalents.
+     */
+    private static mapFontFamily(family: string): string 
+    {
+        switch(family) 
+        {
+            case 'Ubuntu':
+                return 'Ubuntu, Arial, sans-serif';
+            case 'UbuntuCondensed':
+                return 'Ubuntu Condensed, Ubuntu, Arial, sans-serif';
+            case 'Volter':
+                return 'Volter (Goldfish), Ubuntu, Arial, sans-serif';
+            case 'Volter Bold':
+                return 'Volter (Goldfish), Ubuntu, Arial, sans-serif';
+            case 'Courier':
+                return 'Ubuntu, Arial, sans-serif';
+            default:
+                return family + ', Arial, sans-serif';
+        }
+    }
+
+    /**
+     * Extracts style names from CSS text.
+     *
+     * Port of AS3 TextStyleManager.parseStyleNamesFromCSS().
+     */
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/utils/TextStyleManager.as::parseStyleNamesFromCSS()
+    private static parseStyleNamesFromCSS(css: string): string[] 
+    {
+        const names: string[] = [];
+        const cleaned = css.replace(/\t/g, '').replace(/\n/g, '').replace(/\r/g, '');
+
+        const segments = cleaned.split(TextStyleManager.TAG_CLOSE);
+
+        for(let seg of segments) 
+        {
+            // Strip leading comments
+            while(seg.indexOf(TextStyleManager.CMT_OPEN) === 0) 
+            {
+                const closeIdx = seg.indexOf(TextStyleManager.CMT_CLOSE);
+
+                if(closeIdx === -1) break;
+
+                seg = seg.substring(closeIdx + 2);
+            }
+
+            const openIdx = seg.indexOf(TextStyleManager.TAG_OPEN);
+
+            if(openIdx === -1) continue;
+
+            const name = seg.substring(0, openIdx).replace(/\s/g, '');
+
+            if(name.length > 0) 
+            {
+                names.push(name);
+            }
+        }
+
+        return names;
+    }
+
+    /**
+     * Extracts the property blocks (content between `{` and `}`) from CSS.
+     */
+    private static parseCSSBlocks(css: string): string[] 
+    {
+        const blocks: string[] = [];
+        const regex = /\{([^}]*)\}/g;
+        let match: RegExpExecArray | null;
+
+        while((match = regex.exec(css)) !== null) 
+        {
+            blocks.push(match[1]);
+        }
+
+        return blocks;
+    }
+
+    /**
+     * Parses `property: value;` pairs from a CSS block string.
+     */
+    private static parseProperties(block: string): Record<string, string> 
+    {
+        const result: Record<string, string> = {};
+        const declarations = block.split(';');
+
+        for(const decl of declarations) 
+        {
+            const colonIdx = decl.indexOf(':');
+
+            if(colonIdx === -1) continue;
+
+            const key = decl.substring(0, colonIdx).trim();
+            const value = decl.substring(colonIdx + 1).trim();
+
+            if(key.length > 0 && value.length > 0) 
+            {
+                result[key] = value;
+            }
+        }
+
+        return result;
+    }
+}

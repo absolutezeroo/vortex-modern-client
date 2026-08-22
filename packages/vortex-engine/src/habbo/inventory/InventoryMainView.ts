@@ -13,10 +13,6 @@ import type {HabboInventory} from './HabboInventory';
 import {WindowToggle} from '@habbo/utils/WindowToggle';
 import {Util} from './Util';
 
-const COUNTER_MARGIN = 3;
-const DEFAULT_VIEW_LOCATION = {x: 120, y: 150};
-const LAYOUT_NAME = 'inventory_xml';
-
 /**
  * Inventory main window — the frame, tabs, and category-switching shell that
  * every inventory category (furni, pets, bots, badges, effects, trading,
@@ -26,6 +22,12 @@ const LAYOUT_NAME = 'inventory_xml';
  */
 export class InventoryMainView 
 {
+    private static readonly COUNTER_MARGIN = 3;
+
+    private static readonly DEFAULT_VIEW_LOCATION = {x: 120, y: 150};
+
+    private static readonly LAYOUT_NAME = 'inventory_xml';
+
     private _habboInventory: HabboInventory;
     private _window: IFrameWindow | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/InventoryMainView.as::_toolbar
@@ -502,12 +504,12 @@ export class InventoryMainView
 
             if(!windowManager) return null;
 
-            const built = windowManager.buildWidgetLayout(LAYOUT_NAME) as IFrameWindow | null;
+            const built = windowManager.buildWidgetLayout(InventoryMainView.LAYOUT_NAME) as IFrameWindow | null;
 
             if(built === null) return null;
 
             this._window = built;
-            this._window.position = DEFAULT_VIEW_LOCATION;
+            this._window.position = InventoryMainView.DEFAULT_VIEW_LOCATION;
             this._window.visible = false;
             this._window.procedure = this.windowEventProc;
             this._window.setParamFlag(65536, this._habboInventory.getBoolean('inventory.allow.scaling'));
@@ -813,8 +815,8 @@ export class InventoryMainView
             // this port's metrics can't guarantee that. Placing the counter at its final
             // (positive) corner first keeps the tab's faithful accommodate from ever
             // seeing the transient negative x.
-            counter.x = tabContainer.width - counter.width - COUNTER_MARGIN;
-            counter.y = COUNTER_MARGIN;
+            counter.x = tabContainer.width - counter.width - InventoryMainView.COUNTER_MARGIN;
+            counter.y = InventoryMainView.COUNTER_MARGIN;
             tabContainer.addChild(counter);
         }
 
@@ -848,7 +850,7 @@ export class InventoryMainView
             {
                 if(counter.visible) 
                 {
-                    title.margins.right = counter.width + 2 * COUNTER_MARGIN;
+                    title.margins.right = counter.width + 2 * InventoryMainView.COUNTER_MARGIN;
                 }
                 else 
                 {
@@ -856,7 +858,7 @@ export class InventoryMainView
                 }
 
                 tabContainer.width = title.width;
-                counter.x = tabContainer.width - counter.width - COUNTER_MARGIN;
+                counter.x = tabContainer.width - counter.width - InventoryMainView.COUNTER_MARGIN;
             }
         }
     }

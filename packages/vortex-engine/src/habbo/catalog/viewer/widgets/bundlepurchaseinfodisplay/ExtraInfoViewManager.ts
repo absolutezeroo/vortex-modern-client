@@ -9,9 +9,6 @@ import {ExtraInfoPromoItem} from './listitem/ExtraInfoPromoItem';
 import {ExtraInfoItemData} from './ExtraInfoItemData';
 import type {ExtraInfoListItem} from './ExtraInfoListItem';
 
-const SLIDE_ANIMATION_LENGTH = 0.5;
-const MAX_ANIM_Y_OFFSET = 28;
-
 /**
  * Owns and animates the stack of ExtraInfoListItem rows shown by BundlePurchaseExtraInfoWidget
  * (promo nudge, bundle-info explainer, discount-value breakdown).
@@ -20,6 +17,10 @@ const MAX_ANIM_Y_OFFSET = 28;
  */
 export class ExtraInfoViewManager implements IUpdateReceiver
 {
+    private static readonly SLIDE_ANIMATION_LENGTH = 0.5;
+
+    private static readonly MAX_ANIM_Y_OFFSET = 28;
+
     private _widget: BundlePurchaseExtraInfoWidget | null;
 
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::_catalog
@@ -178,7 +179,7 @@ export class ExtraInfoViewManager implements IUpdateReceiver
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::calculateBounce()
     private calculateBounce(since: number, cosine: boolean = false): number
     {
-        const elapsed = (this._elapsedSeconds - since) / SLIDE_ANIMATION_LENGTH * (Math.PI / 2);
+        const elapsed = (this._elapsedSeconds - since) / ExtraInfoViewManager.SLIDE_ANIMATION_LENGTH * (Math.PI / 2);
 
         return cosine ? 1 - Math.abs(Math.cos(elapsed)) : 1 - Math.abs(Math.sin(elapsed));
     }
@@ -197,7 +198,7 @@ export class ExtraInfoViewManager implements IUpdateReceiver
 
             let bounce = 0;
 
-            if(this._elapsedSeconds - SLIDE_ANIMATION_LENGTH <= item.creationSeconds)
+            if(this._elapsedSeconds - ExtraInfoViewManager.SLIDE_ANIMATION_LENGTH <= item.creationSeconds)
             {
                 bounce = this.calculateBounce(item.creationSeconds);
             }
@@ -206,7 +207,7 @@ export class ExtraInfoViewManager implements IUpdateReceiver
             {
                 bounce = this.calculateBounce(item.removalSeconds, true);
 
-                if(this._elapsedSeconds > item.removalSeconds + SLIDE_ANIMATION_LENGTH)
+                if(this._elapsedSeconds > item.removalSeconds + ExtraInfoViewManager.SLIDE_ANIMATION_LENGTH)
                 {
                     this.reallyRemoveItem(item.id);
 
@@ -216,12 +217,12 @@ export class ExtraInfoViewManager implements IUpdateReceiver
 
             if(item.alignment === 0)
             {
-                rendered.y = bottomY - bounce * Math.min(rendered.height, MAX_ANIM_Y_OFFSET);
+                rendered.y = bottomY - bounce * Math.min(rendered.height, ExtraInfoViewManager.MAX_ANIM_Y_OFFSET);
                 bottomY += rendered.height;
             }
             else if(item.alignment === 1)
             {
-                rendered.y = topRemaining - rendered.height + bounce * Math.min(rendered.height, MAX_ANIM_Y_OFFSET);
+                rendered.y = topRemaining - rendered.height + bounce * Math.min(rendered.height, ExtraInfoViewManager.MAX_ANIM_Y_OFFSET);
                 topRemaining -= rendered.height;
             }
             else if(item.alignment === 2)

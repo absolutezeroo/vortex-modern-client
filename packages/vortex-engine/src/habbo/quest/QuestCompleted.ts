@@ -10,8 +10,6 @@ import {OpenQuestTrackerMessageComposer} from '@habbo/communication/messages/out
 import {GetQuestsMessageComposer} from '@habbo/communication/messages/outgoing/quest/GetQuestsMessageComposer';
 import type {Animation} from './Animation';
 
-const PREPARE_TO_SHOW_DELAY_MS = 2000;
-
 /**
  * The "quest completed" congratulation dialog, shown ~2s after a QUEST_COMPLETED
  * message with showDialog=true.
@@ -20,6 +18,8 @@ const PREPARE_TO_SHOW_DELAY_MS = 2000;
  */
 export class QuestCompleted implements IDisposable
 {
+    private static readonly PREPARE_TO_SHOW_DELAY_MS = 2000;
+
     // AS3: QuestCompleted.as::_window
     private _window: IFrameWindow | null = null;
     // AS3: QuestCompleted.as::_questEngine
@@ -80,7 +80,7 @@ export class QuestCompleted implements IDisposable
         if(showDialog)
         {
             this.prepare(quest);
-            this._msecsUntilShow = PREPARE_TO_SHOW_DELAY_MS;
+            this._msecsUntilShow = QuestCompleted.PREPARE_TO_SHOW_DELAY_MS;
         }
     }
 

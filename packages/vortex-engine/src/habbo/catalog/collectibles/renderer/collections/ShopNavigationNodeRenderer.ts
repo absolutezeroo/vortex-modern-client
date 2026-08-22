@@ -5,13 +5,6 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {ShopTab} from '../../tabs/ShopTab';
 
 /**
- * AS3: ShopNavigationNodeRenderer.as::setActiveLook() — the selected label's colour, written as
- * `4294967295`, i.e. 0xFFFFFFFF: opaque white with the alpha byte set. Every sibling colour in this
- * package is a plain 0xRRGGBB, so the extra byte is this one literal's own.
- */
-const SELECTED_TEXT_COLOR = 4294967295;
-
-/**
  * One category button in the NFT store's left-hand list ("Furni", "Pets", "Clothes"…).
  *
  * Hover and selection share a look: `updateLook()` ORs the two flags, so hovering an unselected
@@ -21,6 +14,13 @@ const SELECTED_TEXT_COLOR = 4294967295;
  */
 export class ShopNavigationNodeRenderer
 {
+    /**
+    * AS3: ShopNavigationNodeRenderer.as::setActiveLook() — the selected label's colour, written as
+    * `4294967295`, i.e. 0xFFFFFFFF: opaque white with the alpha byte set. Every sibling colour in this
+    * package is a plain 0xRRGGBB, so the extra byte is this one literal's own.
+    */
+    private static readonly SELECTED_TEXT_COLOR = 4294967295;
+
     // AS3: ShopNavigationNodeRenderer.as::_SafeStr_7373 (the owning tab)
     private _tab: ShopTab;
     // AS3: ShopNavigationNodeRenderer.as::_SafeStr_4689 (from `get category()`)
@@ -156,7 +156,7 @@ export class ShopNavigationNodeRenderer
 
         if(label !== null)
         {
-            label.textColor = SELECTED_TEXT_COLOR;
+            label.textColor = ShopNavigationNodeRenderer.SELECTED_TEXT_COLOR;
             label.etchingColor = this._itemSelectedEtchingColor;
         }
 

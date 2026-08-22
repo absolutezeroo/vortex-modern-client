@@ -30,33 +30,43 @@ import {AvatarContextInfoButtonView} from './AvatarContextInfoButtonView';
 import type {PetInfoData} from './PetInfoData';
 import type {AvatarInfoWidget} from './AvatarInfoWidget';
 
-// AS3: OwnPetMenuView.as::MODE_NORMAL
-const MODE_NORMAL: number = 0;
-const MODE_SADDLED_UP: number = 1;
-const MODE_RIDING: number = 2;
-const MODE_MONSTERPLANT: number = 3;
-
-// Pet type ids AS3 tests inline. Names derived from the config keys guarding each branch
-// (`nest.breeding.<species>.enabled`) and from the saddle lookup — the ids themselves are
-// literals in the source with no named constant in any tree.
-const PET_TYPE_DOG: number = 0;
-const PET_TYPE_CAT: number = 1;
-const PET_TYPE_TERRIER: number = 3;
-const PET_TYPE_BEAR: number = 4;
-const PET_TYPE_PIG: number = 5;
-const PET_TYPE_HORSE: number = 15;
-const PET_TYPE_MONSTERPLANT: number = 16;
-
-// Furniture categories AS3 passes to findFurnitureData(): 16 = saddle, 20 = revive potion.
-const FURNI_CATEGORY_SADDLE: number = 16;
-const FURNI_CATEGORY_MONSTERPLANT_REVIVE: number = 20;
-
 export class OwnPetMenuView extends AvatarContextInfoButtonView
 {
+    // AS3: OwnPetMenuView.as::MODE_NORMAL
+    private static readonly MODE_NORMAL: number = 0;
+
+    private static readonly MODE_SADDLED_UP: number = 1;
+
+    private static readonly MODE_RIDING: number = 2;
+
+    private static readonly MODE_MONSTERPLANT: number = 3;
+
+    // Pet type ids AS3 tests inline. Names derived from the config keys guarding each branch
+    // (`nest.breeding.<species>.enabled`) and from the saddle lookup — the ids themselves are
+    // literals in the source with no named constant in any tree.
+    private static readonly PET_TYPE_DOG: number = 0;
+
+    private static readonly PET_TYPE_CAT: number = 1;
+
+    private static readonly PET_TYPE_TERRIER: number = 3;
+
+    private static readonly PET_TYPE_BEAR: number = 4;
+
+    private static readonly PET_TYPE_PIG: number = 5;
+
+    private static readonly PET_TYPE_HORSE: number = 15;
+
+    private static readonly PET_TYPE_MONSTERPLANT: number = 16;
+
+    // Furniture categories AS3 passes to findFurnitureData(): 16 = saddle, 20 = revive potion.
+    private static readonly FURNI_CATEGORY_SADDLE: number = 16;
+
+    private static readonly FURNI_CATEGORY_MONSTERPLANT_REVIVE: number = 20;
+
     // AS3: OwnPetMenuView.as::_petData (obfuscated `_SafeStr_4556`)
     private _petData: PetInfoData | null = null;
     // AS3: OwnPetMenuView.as::_mode
-    private _mode: number = MODE_NORMAL;
+    private _mode: number = OwnPetMenuView.MODE_NORMAL;
     // AS3: OwnPetMenuView.as::_saddleFurnitureData (obfuscated `_SafeStr_6269`; named from the
     // findFurnitureData(16, 15) that fills it and the buy_saddle button that reads it)
     private _saddleFurnitureData: IFurnitureData | null = null;
@@ -100,19 +110,19 @@ export class OwnPetMenuView extends AvatarContextInfoButtonView
 
         if(view.widget.isMonsterPlant())
         {
-            view._mode = MODE_MONSTERPLANT;
+            view._mode = OwnPetMenuView.MODE_MONSTERPLANT;
         }
         else if(hasFreeSaddle && !isRiding)
         {
-            view._mode = MODE_SADDLED_UP;
+            view._mode = OwnPetMenuView.MODE_SADDLED_UP;
         }
         else if(isRiding)
         {
-            view._mode = MODE_RIDING;
+            view._mode = OwnPetMenuView.MODE_RIDING;
         }
         else
         {
-            view._mode = MODE_NORMAL;
+            view._mode = OwnPetMenuView.MODE_NORMAL;
         }
 
         AvatarContextInfoButtonView.setupButtonView(view, userId, userName, roomIndex, userType, false);
@@ -194,45 +204,45 @@ export class OwnPetMenuView extends AvatarContextInfoButtonView
 
         switch(this._mode)
         {
-            case MODE_NORMAL:
+            case OwnPetMenuView.MODE_NORMAL:
                 this.showButton('respect', this._petData.petRespectLeft > 0);
                 this.showButton('train');
                 this.showButton('pick_up');
 
-                if(this._petData.petType === PET_TYPE_HORSE)
+                if(this._petData.petType === OwnPetMenuView.PET_TYPE_HORSE)
                 {
-                    this._saddleFurnitureData = this.findFurnitureData(FURNI_CATEGORY_SADDLE, PET_TYPE_HORSE);
+                    this._saddleFurnitureData = this.findFurnitureData(OwnPetMenuView.FURNI_CATEGORY_SADDLE, OwnPetMenuView.PET_TYPE_HORSE);
 
                     if(this._saddleFurnitureData) this.showButton('buy_saddle');
                 }
 
                 // AS3 tests each species against its own config flag, one branch per species.
-                if(config?.getBoolean('nest.breeding.bear.enabled') && this._petData.petType === PET_TYPE_BEAR)
+                if(config?.getBoolean('nest.breeding.bear.enabled') && this._petData.petType === OwnPetMenuView.PET_TYPE_BEAR)
                 {
                     this.showButton('breed');
                 }
 
-                if(config?.getBoolean('nest.breeding.terrier.enabled') && this._petData.petType === PET_TYPE_TERRIER)
+                if(config?.getBoolean('nest.breeding.terrier.enabled') && this._petData.petType === OwnPetMenuView.PET_TYPE_TERRIER)
                 {
                     this.showButton('breed');
                 }
 
-                if(config?.getBoolean('nest.breeding.cat.enabled') && this._petData.petType === PET_TYPE_CAT)
+                if(config?.getBoolean('nest.breeding.cat.enabled') && this._petData.petType === OwnPetMenuView.PET_TYPE_CAT)
                 {
                     this.showButton('breed');
                 }
 
-                if(config?.getBoolean('nest.breeding.dog.enabled') && this._petData.petType === PET_TYPE_DOG)
+                if(config?.getBoolean('nest.breeding.dog.enabled') && this._petData.petType === OwnPetMenuView.PET_TYPE_DOG)
                 {
                     this.showButton('breed');
                 }
 
-                if(config?.getBoolean('nest.breeding.pig.enabled') && this._petData.petType === PET_TYPE_PIG)
+                if(config?.getBoolean('nest.breeding.pig.enabled') && this._petData.petType === OwnPetMenuView.PET_TYPE_PIG)
                 {
                     this.showButton('breed');
                 }
                 break;
-            case MODE_SADDLED_UP:
+            case OwnPetMenuView.MODE_SADDLED_UP:
                 this.showButton('mount');
 
                 if(config?.getBoolean('sharedhorseriding.enabled'))
@@ -246,16 +256,16 @@ export class OwnPetMenuView extends AvatarContextInfoButtonView
                 this.showButton('pick_up');
                 this.showButton('saddle_off');
                 break;
-            case MODE_RIDING:
+            case OwnPetMenuView.MODE_RIDING:
                 this.showButton('dismount');
                 this.showButton('respect', this._petData.petRespectLeft > 0);
                 break;
-            case MODE_MONSTERPLANT:
+            case OwnPetMenuView.MODE_MONSTERPLANT:
                 this.showButton('pick_up');
 
                 if(this._petData.canRevive)
                 {
-                    this._reviveFurnitureData = this.findFurnitureData(FURNI_CATEGORY_MONSTERPLANT_REVIVE, PET_TYPE_MONSTERPLANT);
+                    this._reviveFurnitureData = this.findFurnitureData(OwnPetMenuView.FURNI_CATEGORY_MONSTERPLANT_REVIVE, OwnPetMenuView.PET_TYPE_MONSTERPLANT);
                     this.showButton('revive');
 
                     if(config?.getBoolean('monsterplants.composting.enabled') && container?.roomSession?.isRoomOwner)
@@ -450,7 +460,7 @@ export class OwnPetMenuView extends AvatarContextInfoButtonView
                     case 'breed':
                         // Normal pets breed by *saying* the localised breed command (id 46) — there is
                         // no breeding packet for them. Monsterplants use the real negotiation instead.
-                        if(this._mode === MODE_NORMAL && this._petData)
+                        if(this._mode === OwnPetMenuView.MODE_NORMAL && this._petData)
                         {
                             const key = `pet.command.${RoomWidgetPetCommandMessage.BREED_TRAIN_COMMAND_ID}`;
                             const command = this._widget.localizations?.getLocalization(key) ?? '';
@@ -459,7 +469,7 @@ export class OwnPetMenuView extends AvatarContextInfoButtonView
                                 RoomWidgetPetCommandMessage.PET_COMMAND, this._petData.id, `${this._petData.name} ${command}`
                             );
                         }
-                        else if(this._mode === MODE_MONSTERPLANT)
+                        else if(this._mode === OwnPetMenuView.MODE_MONSTERPLANT)
                         {
                             message = new RoomWidgetUserActionMessage(RoomWidgetUserActionMessage.REQUEST_BREED_PET, this.petId);
                         }

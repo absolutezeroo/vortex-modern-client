@@ -31,9 +31,6 @@ import {DailyTasksView} from './DailyTasksView';
 
 const log = Logger.getLogger('habbo.quest.dailytasks.DailyTasksController');
 
-// AS3: DailyTasksController.as::REQUEST_TASKS_TIMEOUT_MS
-const REQUEST_TASKS_TIMEOUT_MS = 10000;
-
 /**
  * The daily-tasks board: holds the active tasks, keeps the toolbar's unclaimed badge in step, and
  * sends the two requests the server answers.
@@ -49,6 +46,9 @@ const REQUEST_TASKS_TIMEOUT_MS = 10000;
  */
 export class DailyTasksController extends Component implements IDailyTasksController, ILinkEventTracker
 {
+    // AS3: DailyTasksController.as::REQUEST_TASKS_TIMEOUT_MS
+    public static readonly REQUEST_TASKS_TIMEOUT_MS = 10000;
+
     // AS3: DailyTasksController.as::_questEngine
     private _questEngine: HabboQuestEngine;
     // AS3: DailyTasksController.as::_communicationManager
@@ -428,7 +428,7 @@ export class DailyTasksController extends Component implements IDailyTasksContro
     {
         const now = performance.now();
 
-        if(now <= this._lastRequestTime + REQUEST_TASKS_TIMEOUT_MS) return;
+        if(now <= this._lastRequestTime + DailyTasksController.REQUEST_TASKS_TIMEOUT_MS) return;
 
         this._lastRequestTime = now;
         this.send(new GetDailyTasksComposer());

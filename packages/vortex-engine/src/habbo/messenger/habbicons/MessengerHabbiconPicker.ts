@@ -38,42 +38,42 @@ import {MessengerHabbiconPickerEntry} from './MessengerHabbiconPickerEntry';
 import {MessengerHabbiconPickerSection} from './MessengerHabbiconPickerSection';
 import {MessengerHabbiconPickerSectionView} from './MessengerHabbiconPickerSectionView';
 
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::SECTION_FAVORITES
-const SECTION_FAVORITES: string = 'favorites';
-
-/** Derived name — `_SafeStr_10952`. */
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::_SafeStr_10952
-const SECTION_RECENT: string = 'recent';
-
-/** Derived name — `_SafeStr_10466`. */
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::_SafeStr_10466
-const SECTION_COLLECTION: string = 'collection';
-
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::SECTION_SEARCH
-const SECTION_SEARCH: string = 'search';
-
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::MENU_MIN_HEIGHT
-const MENU_MIN_HEIGHT: number = 94;
-
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::MENU_MAX_HEIGHT
-const MENU_MAX_HEIGHT: number = 304;
-
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::TOP_BAR_HEIGHT
-const TOP_BAR_HEIGHT: number = 42;
-
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::BOTTOM_PADDING
-const BOTTOM_PADDING: number = 6;
-
-/** AS3's literal `46` in `updateHeight()` — the shortest the section list is allowed to get. */
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::updateHeight()
-const SECTION_LIST_MIN_HEIGHT: number = 46;
-
-/** AS3's literal `27` in `onSearchKeyDown()` — Escape. */
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::onSearchKeyDown()
-const KEY_ESCAPE: number = 27;
-
 export class MessengerHabbiconPicker
 {
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::SECTION_FAVORITES
+    private static readonly SECTION_FAVORITES: string = 'favorites';
+
+    /** Derived name — `_SafeStr_10952`. */
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::_SafeStr_10952
+    private static readonly SECTION_RECENT: string = 'recent';
+
+    /** Derived name — `_SafeStr_10466`. */
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::_SafeStr_10466
+    private static readonly SECTION_COLLECTION: string = 'collection';
+
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::SECTION_SEARCH
+    private static readonly SECTION_SEARCH: string = 'search';
+
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::MENU_MIN_HEIGHT
+    private static readonly MENU_MIN_HEIGHT: number = 94;
+
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::MENU_MAX_HEIGHT
+    private static readonly MENU_MAX_HEIGHT: number = 304;
+
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::TOP_BAR_HEIGHT
+    private static readonly TOP_BAR_HEIGHT: number = 42;
+
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::BOTTOM_PADDING
+    private static readonly BOTTOM_PADDING: number = 6;
+
+    /** AS3's literal `46` in `updateHeight()` — the shortest the section list is allowed to get. */
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::updateHeight()
+    private static readonly SECTION_LIST_MIN_HEIGHT: number = 46;
+
+    /** AS3's literal `27` in `onSearchKeyDown()` — Escape. */
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::onSearchKeyDown()
+    private static readonly KEY_ESCAPE: number = 27;
+
     // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::_window
     private _window: IWindowContainer | null = null;
 
@@ -422,8 +422,8 @@ export class MessengerHabbiconPicker
         if(favorites.length > 0)
         {
             this._sections.push(new MessengerHabbiconPickerSection(
-                SECTION_FAVORITES,
-                SECTION_FAVORITES,
+                MessengerHabbiconPicker.SECTION_FAVORITES,
+                MessengerHabbiconPicker.SECTION_FAVORITES,
                 this.localize('habbicons.favourites.title', 'Favorites'),
                 favorites
             ));
@@ -432,8 +432,8 @@ export class MessengerHabbiconPicker
         if(recent.length > 0)
         {
             this._sections.push(new MessengerHabbiconPickerSection(
-                SECTION_RECENT,
-                SECTION_RECENT,
+                MessengerHabbiconPicker.SECTION_RECENT,
+                MessengerHabbiconPicker.SECTION_RECENT,
                 this.localize('habbicon.recently.used', 'Recently used'),
                 recent
             ));
@@ -485,8 +485,8 @@ export class MessengerHabbiconPicker
             if(entries.length > 0)
             {
                 this._sections.push(new MessengerHabbiconPickerSection(
-                    SECTION_COLLECTION,
-                    `${SECTION_COLLECTION}:${collection.collectionId}`,
+                    MessengerHabbiconPicker.SECTION_COLLECTION,
+                    `${MessengerHabbiconPicker.SECTION_COLLECTION}:${collection.collectionId}`,
                     this.resolveCollectionTitle(collection),
                     entries
                 ));
@@ -656,8 +656,8 @@ export class MessengerHabbiconPicker
         }
 
         this._sections.splice(this.recentInsertIndex(), 0, new MessengerHabbiconPickerSection(
-            SECTION_RECENT,
-            SECTION_RECENT,
+            MessengerHabbiconPicker.SECTION_RECENT,
+            MessengerHabbiconPicker.SECTION_RECENT,
             this.localize('habbicon.recently.used', 'Recently used'),
             recent
         ));
@@ -680,7 +680,7 @@ export class MessengerHabbiconPicker
             return;
         }
 
-        if(index < this._sectionViews.length && this._sectionViews[index].key === SECTION_RECENT)
+        if(index < this._sectionViews.length && this._sectionViews[index].key === MessengerHabbiconPicker.SECTION_RECENT)
         {
             this._sectionViews[index].dispose();
             this._sectionViews.splice(index, 1);
@@ -708,7 +708,7 @@ export class MessengerHabbiconPicker
         {
             const view = this._sectionViews[index];
 
-            if(view.key === SECTION_RECENT)
+            if(view.key === MessengerHabbiconPicker.SECTION_RECENT)
             {
                 view.dispose();
                 this._sectionViews.splice(index, 1);
@@ -731,7 +731,7 @@ export class MessengerHabbiconPicker
     {
         for(let index = 0; index < this._sections.length; index++)
         {
-            if(this._sections[index].type === SECTION_RECENT)
+            if(this._sections[index].type === MessengerHabbiconPicker.SECTION_RECENT)
             {
                 return index;
             }
@@ -746,7 +746,7 @@ export class MessengerHabbiconPicker
     {
         const first = this._sections.length > 0 ? this._sections[0] : null;
 
-        return first != null && first.type === SECTION_FAVORITES ? 1 : 0;
+        return first != null && first.type === MessengerHabbiconPicker.SECTION_FAVORITES ? 1 : 0;
     }
 
     // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::sameEntries()
@@ -907,7 +907,7 @@ export class MessengerHabbiconPicker
         }
 
         this.addSection(
-            SECTION_SEARCH, SECTION_SEARCH, this.localize('habbicon.search.results', 'Search results'), matches
+            MessengerHabbiconPicker.SECTION_SEARCH, MessengerHabbiconPicker.SECTION_SEARCH, this.localize('habbicon.search.results', 'Search results'), matches
         );
 
         return 1;
@@ -996,11 +996,11 @@ export class MessengerHabbiconPicker
         if(this._window == null || sectionList == null) return;
 
         const contentHeight = Math.trunc(sectionList.scrollableRegion.height);
-        const available = MENU_MAX_HEIGHT - TOP_BAR_HEIGHT - BOTTOM_PADDING;
-        const listHeight = Math.min(Math.max(SECTION_LIST_MIN_HEIGHT, contentHeight + 2), available);
+        const available = MessengerHabbiconPicker.MENU_MAX_HEIGHT - MessengerHabbiconPicker.TOP_BAR_HEIGHT - MessengerHabbiconPicker.BOTTOM_PADDING;
+        const listHeight = Math.min(Math.max(MessengerHabbiconPicker.SECTION_LIST_MIN_HEIGHT, contentHeight + 2), available);
 
         sectionList.height = listHeight;
-        this._window.height = Math.max(MENU_MIN_HEIGHT, TOP_BAR_HEIGHT + listHeight + BOTTOM_PADDING);
+        this._window.height = Math.max(MessengerHabbiconPicker.MENU_MIN_HEIGHT, MessengerHabbiconPicker.TOP_BAR_HEIGHT + listHeight + MessengerHabbiconPicker.BOTTOM_PADDING);
         this._window.invalidate();
     }
 
@@ -1022,7 +1022,7 @@ export class MessengerHabbiconPicker
     // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPicker.as::onSearchKeyDown()
     private onSearchKeyDown = (event: WindowKeyboardEvent): void =>
     {
-        if(event.keyCode === KEY_ESCAPE && (this.searchInput?.text.length ?? 0) > 0)
+        if(event.keyCode === MessengerHabbiconPicker.KEY_ESCAPE && (this.searchInput?.text.length ?? 0) > 0)
         {
             this.clearSearch();
         }

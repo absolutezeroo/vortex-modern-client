@@ -20,13 +20,13 @@ import type {UseProductItem} from '../events/UseProductItem';
 import {AvatarContextInfoButtonView} from './AvatarContextInfoButtonView';
 import type {AvatarInfoWidget} from './AvatarInfoWidget';
 
-// AS3: BreedPetView.as::MODE_NORMAL — the only mode resolveMode() ever produces.
-const MODE_NORMAL: number = 0;
-
 export class BreedPetView extends AvatarContextInfoButtonView
 {
+    // AS3: BreedPetView.as::MODE_NORMAL — the only mode resolveMode() ever produces.
+    private static readonly MODE_NORMAL: number = 0;
+
     // AS3: BreedPetView.as::_mode
-    private _mode: number = MODE_NORMAL;
+    private _mode: number = BreedPetView.MODE_NORMAL;
     // AS3: BreedPetView.as::_item (obfuscated `_SafeStr_5258`)
     private _item: UseProductItem | null = null;
     // AS3: BreedPetView.as::_canBreed (obfuscated `_SafeStr_8845`; named from the setup()
@@ -82,7 +82,7 @@ export class BreedPetView extends AvatarContextInfoButtonView
     // effect, so only the assignment is kept.
     private resolveMode(): void
     {
-        this._mode = MODE_NORMAL;
+        this._mode = BreedPetView.MODE_NORMAL;
     }
 
     // AS3: BreedPetView.as::updateWindow()
@@ -143,7 +143,7 @@ export class BreedPetView extends AvatarContextInfoButtonView
             if(item) item.visible = false;
         }
 
-        if(this._mode === MODE_NORMAL && this._canBreed)
+        if(this._mode === BreedPetView.MODE_NORMAL && this._canBreed)
         {
             this.showButton('breed');
         }

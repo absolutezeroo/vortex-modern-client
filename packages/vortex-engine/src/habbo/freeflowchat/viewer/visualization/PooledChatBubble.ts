@@ -7,15 +7,6 @@ import {ChatBubbleWidth} from '../enum/ChatBubbleWidth';
 import type {IChatStyleInternal} from './style/IChatStyleInternal';
 import {buildChatTextRuns, layoutChatText, drawChatText} from './ChatTextLayout';
 
-/** AS3: ChatBubble.as::LINEAR_INTERPOLATION_MS */
-const LINEAR_INTERPOLATION_MS = 150;
-const MAX_TEXT_HEIGHT_BASE = 108;
-const DESKTOP_MARGIN_LEFT = 85;
-const DESKTOP_MARGIN_RIGHT = 190;
-// AS3: PooledChatBubble.as:23 — the hard content-width cap and the fallback when there
-// are no room chat settings. Distinct from ChatBubbleWidth.NORMAL (350).
-const MAX_WIDTH_DEFAULT = 300;
-
 function clamp(value: number, min: number, max: number): number
 {
     return Math.min(Math.max(value, min), max);
@@ -41,6 +32,21 @@ function lerp(a: number, b: number, t: number): number
  */
 export class PooledChatBubble extends Container
 {
+    /** AS3: ChatBubble.as::LINEAR_INTERPOLATION_MS */
+    private static readonly LINEAR_INTERPOLATION_MS = 150;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::MAX_HEIGHT
+    // The compiler inlined it: both readers below spell the literal 108.
+    private static readonly MAX_HEIGHT = 108;
+
+    private static readonly DESKTOP_MARGIN_LEFT = 85;
+
+    private static readonly DESKTOP_MARGIN_RIGHT = 190;
+
+    // AS3: PooledChatBubble.as:23 — the hard content-width cap and the fallback when there
+    // are no room chat settings. Distinct from ChatBubbleWidth.NORMAL (350).
+    public static readonly MAX_WIDTH_DEFAULT = 300;
+
     private _chatFlow: IHabboFreeFlowChat | null;
     private _chatItem: ChatItem | null = null;
     // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::_style
@@ -161,12 +167,12 @@ export class PooledChatBubble extends Container
         const isShout = chatType === RoomSessionChatEvent.CHAT_TYPE_SHOUT;
         const italic = !isSpeak && !isShout && !style.isAnonymous;
 
-        const maxHeight = MAX_TEXT_HEIGHT_BASE * chatFlow.chatFontSizeScale;
+        const maxHeight = Math.trunc(PooledChatBubble.MAX_HEIGHT * chatFlow.chatFontSizeScale);
         // AS3 (PooledChatBubble.as:129) picks the text-field wrap width from the room chat
         // settings only (borderLimited plays no part here), falling back to MAX_WIDTH_DEFAULT.
         // The port gated on borderLimited, fell back to NORMAL (350), then subtracted an
         // invented 15 — all wrong.
-        let maxWidth = MAX_WIDTH_DEFAULT;
+        let maxWidth = PooledChatBubble.MAX_WIDTH_DEFAULT;
 
         if(chatFlow.roomChatSettings)
         {
@@ -189,7 +195,7 @@ export class PooledChatBubble extends Container
         // 4. Content box — AS3 (PooledChatBubble.as:182) hard-caps the background at
         // MAX_WIDTH_DEFAULT (300), independent of the wrap width above; the port capped at
         // maxWidth, so a WIDE (2000) setting let the bubble grow to ~1985px.
-        let contentWidth = Math.min(MAX_WIDTH_DEFAULT, layout.width + margins.x + margins.width);
+        let contentWidth = Math.min(PooledChatBubble.MAX_WIDTH_DEFAULT, layout.width + margins.x + margins.width);
         let contentHeight = layout.height + margins.y + margins.height;
 
         if(!style.isSystemStyle) contentHeight = Math.min(maxHeight, contentHeight);
@@ -356,9 +362,9 @@ export class PooledChatBubble extends Container
         {
             const elapsed = this._timeMs - this._moveBeginMs;
 
-            if(elapsed < LINEAR_INTERPOLATION_MS)
+            if(elapsed < PooledChatBubble.LINEAR_INTERPOLATION_MS)
             {
-                const t = elapsed / LINEAR_INTERPOLATION_MS;
+                const t = elapsed / PooledChatBubble.LINEAR_INTERPOLATION_MS;
 
                 this.proxyX = lerp(this._moveOriginX, this._moveTargetX, t);
                 this.y = lerp(this._moveOriginY, this._moveTargetY, t);
@@ -379,7 +385,7 @@ export class PooledChatBubble extends Container
         // there's no moveTo()-driven approach animation yet) never sets
         // _moveBeginMs, so gating visibility on the tween branch above would
         // leave every spawned bubble permanently invisible.
-        if(this._timeMs > LINEAR_INTERPOLATION_MS && !this.visible)
+        if(this._timeMs > PooledChatBubble.LINEAR_INTERPOLATION_MS && !this.visible)
         {
             this.visible = true;
         }
@@ -404,7 +410,7 @@ export class PooledChatBubble extends Container
         {
             const stageWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
             let target = value + this._roomPanOffsetX;
-            const max = stageWidth - DESKTOP_MARGIN_RIGHT - this.width;
+            const max = stageWidth - PooledChatBubble.DESKTOP_MARGIN_RIGHT - this.width;
 
             this._hasHitDesktopMargin = false;
 
@@ -414,9 +420,9 @@ export class PooledChatBubble extends Container
                 this._hasHitDesktopMargin = true;
             }
 
-            if(target < DESKTOP_MARGIN_LEFT)
+            if(target < PooledChatBubble.DESKTOP_MARGIN_LEFT)
             {
-                target = DESKTOP_MARGIN_LEFT;
+                target = PooledChatBubble.DESKTOP_MARGIN_LEFT;
                 this._hasHitDesktopMargin = true;
             }
 
@@ -488,7 +494,7 @@ export class PooledChatBubble extends Container
     {
         if(!this._style) return this.height;
 
-        return this._style.isSystemStyle ? this.height : Math.min(MAX_TEXT_HEIGHT_BASE * (this._chatFlow?.chatFontSizeScale ?? 1), this.height);
+        return this._style.isSystemStyle ? this.height : Math.min(Math.trunc(PooledChatBubble.MAX_HEIGHT * (this._chatFlow?.chatFontSizeScale ?? 1)), this.height);
     }
 
     // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get overlap()

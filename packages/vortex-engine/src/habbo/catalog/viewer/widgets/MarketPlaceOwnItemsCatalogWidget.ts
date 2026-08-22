@@ -22,11 +22,6 @@ import type {IRarityItemGridOverlayWidget} from '@habbo/window/widgets/IRarityIt
 import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 
-const ITEM_POOL_MAX_SIZE = 2000;
-const STATUS_SEARCHING = 1;
-const STATUS_LIST_AVAILABLE = 2;
-const MAX_SEARCH_STRING_LENGTH = 40;
-
 /**
  * The "my offers" (ongoing/sold/expired) marketplace widget.
  *
@@ -34,6 +29,14 @@ const MAX_SEARCH_STRING_LENGTH = 40;
  */
 export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements IMarketPlaceVisualization, IGetImageListener
 {
+    private static readonly ITEM_POOL_MAX_SIZE = 2000;
+
+    private static readonly STATUS_SEARCHING = 1;
+
+    private static readonly STATUS_LIST_AVAILABLE = 2;
+
+    private static readonly MAX_SEARCH_STRING_LENGTH = 40;
+
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceOwnItemsCatalogWidget.as::_itemTemplates
     private _itemTemplates: OrderedMap<number, IWindowContainer> = new OrderedMap();
 
@@ -223,11 +226,11 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
 
         let text = '';
 
-        if(status === STATUS_SEARCHING)
+        if(status === MarketPlaceOwnItemsCatalogWidget.STATUS_SEARCHING)
         {
             text = localization.getLocalization('catalog.marketplace.searching');
         }
-        else if(status === STATUS_LIST_AVAILABLE)
+        else if(status === MarketPlaceOwnItemsCatalogWidget.STATUS_LIST_AVAILABLE)
         {
             text = count > 0
                 ? localization.getLocalization('catalog.marketplace.items_found').replace('%count%', count.toString())
@@ -378,7 +381,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
 
         if(!this.marketPlace.localization) return;
 
-        this.updateStatusDisplay(STATUS_LIST_AVAILABLE, this._offers.length);
+        this.updateStatusDisplay(MarketPlaceOwnItemsCatalogWidget.STATUS_LIST_AVAILABLE, this._offers.length);
         this.showRedeemInfo(true);
         this.updateBottomActionButtons(this._allOffers.length > 0);
     }
@@ -494,7 +497,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
 
             if(!field || field.name !== 'search_input') return;
 
-            if(field.text.length > MAX_SEARCH_STRING_LENGTH) field.text = field.text.substring(0, MAX_SEARCH_STRING_LENGTH);
+            if(field.text.length > MarketPlaceOwnItemsCatalogWidget.MAX_SEARCH_STRING_LENGTH) field.text = field.text.substring(0, MarketPlaceOwnItemsCatalogWidget.MAX_SEARCH_STRING_LENGTH);
 
             field.scrollH = 0;
             this.updateSearchUiState();
@@ -665,7 +668,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         this._offers?.dispose();
         this._offers = null;
         this._allOffers = null;
-        this.updateStatusDisplay(STATUS_SEARCHING);
+        this.updateStatusDisplay(MarketPlaceOwnItemsCatalogWidget.STATUS_SEARCHING);
         this.showRedeemInfo(false);
     }
 
@@ -729,7 +732,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         const status = this.getStatusForWindow(window);
         const pool = this.getItemPool(status);
 
-        if(pool == null || pool.length >= ITEM_POOL_MAX_SIZE)
+        if(pool == null || pool.length >= MarketPlaceOwnItemsCatalogWidget.ITEM_POOL_MAX_SIZE)
         {
             window.dispose();
 

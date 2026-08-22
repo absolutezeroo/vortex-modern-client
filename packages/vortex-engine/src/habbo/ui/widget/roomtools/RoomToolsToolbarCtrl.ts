@@ -30,11 +30,12 @@ import type {RoomToolsWidget} from './RoomToolsWidget';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 
-const TOOLBAR_EXPAND_TARGET_X = 1;
-const TOOLBAR_COLLAPSE_TARGET_X = -130;
-
 export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase 
 {
+    private static readonly TOOLBAR_EXPAND_TARGET_X = 1;
+
+    private static readonly TOOLBAR_COLLAPSE_TARGET_X = -130;
+
     private _history: RoomToolsHistory | null = null;
 
     // AS3: .../src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::_disposed
@@ -347,7 +348,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         if(this._collapsed) 
         {
             const motion = new Queue(
-                new EaseOut(new MoveTo(windowBg, 100, TOOLBAR_COLLAPSE_TARGET_X, windowBg.y), 1),
+                new EaseOut(new MoveTo(windowBg, 100, RoomToolsToolbarCtrl.TOOLBAR_COLLAPSE_TARGET_X, windowBg.y), 1),
                 new Callback(this.motionComplete)
             );
 
@@ -355,10 +356,10 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         }
         else 
         {
-            windowBg.x = TOOLBAR_COLLAPSE_TARGET_X;
+            windowBg.x = RoomToolsToolbarCtrl.TOOLBAR_COLLAPSE_TARGET_X;
             this.updateVisuals();
 
-            const motion = new EaseOut(new MoveTo(windowBg, 100, TOOLBAR_EXPAND_TARGET_X, windowBg.y), 1);
+            const motion = new EaseOut(new MoveTo(windowBg, 100, RoomToolsToolbarCtrl.TOOLBAR_EXPAND_TARGET_X, windowBg.y), 1);
 
             Motions.runMotion(motion);
         }

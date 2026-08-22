@@ -4,10 +4,6 @@ import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import type {ChatFlowStage} from './simulation/ChatFlowStage';
 import type {PooledChatBubble} from './visualization/PooledChatBubble';
 
-const VIEW_BOTTOM_DEFAULT = 230;
-/** AS3: ChatFlowViewer.as::_SafeStr_10384 (view-bottom as a fraction of stage height) */
-const VIEW_BOTTOM_RATIO = 0.25;
-
 /**
  * ChatFlowViewer
  *
@@ -19,6 +15,11 @@ const VIEW_BOTTOM_RATIO = 0.25;
  */
 export class ChatFlowViewer implements IUpdateReceiver, IDisposable
 {
+    private static readonly VIEW_BOTTOM_DEFAULT = 230;
+
+    /** AS3: ChatFlowViewer.as::_SafeStr_10384 (view-bottom as a fraction of stage height) */
+    private static readonly VIEW_BOTTOM_RATIO = 0.25;
+
     private _chatFlow: IHabboFreeFlowChat | null;
     private readonly _chatFlowStage: ChatFlowStage;
     // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::_rootDisplayObject
@@ -128,7 +129,7 @@ export class ChatFlowViewer implements IUpdateReceiver, IDisposable
     {
         const stageHeight = typeof window !== 'undefined' ? window.innerHeight : 0;
 
-        return stageHeight > 0 ? stageHeight * VIEW_BOTTOM_RATIO : VIEW_BOTTOM_DEFAULT;
+        return stageHeight > 0 ? stageHeight * ChatFlowViewer.VIEW_BOTTOM_RATIO : ChatFlowViewer.VIEW_BOTTOM_DEFAULT;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatFlowViewer.as::resize()

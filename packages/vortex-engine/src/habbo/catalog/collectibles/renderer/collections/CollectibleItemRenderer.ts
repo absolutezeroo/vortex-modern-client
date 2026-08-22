@@ -12,10 +12,6 @@ import {CollectionItemWrapper} from '../model/CollectionItemWrapper';
 import {AbstractCollectibleItemRenderer} from '../AbstractCollectibleItemRenderer';
 import type {CollectionView} from '../../tabs/subviews/CollectionView';
 
-/** AS3: CollectibleItemRenderer.as::updateVisuals() — the amount label's two background colours. */
-const AMOUNT_BORDER_OWNED = 3374080;
-const AMOUNT_BORDER_MISSING = 7441834;
-
 /**
  * One slot in a collection's grid: the product, how many the player owns, and a checkmark once
  * they own any.
@@ -27,6 +23,11 @@ const AMOUNT_BORDER_MISSING = 7441834;
  */
 export class CollectibleItemRenderer extends AbstractCollectibleItemRenderer
 {
+    /** AS3: CollectibleItemRenderer.as::updateVisuals() — the amount label's two background colours. */
+    private static readonly AMOUNT_BORDER_OWNED = 3374080;
+
+    private static readonly AMOUNT_BORDER_MISSING = 7441834;
+
     /**
      * Assigned after `super()`, as AS3 does — safe here because this class's `updateVisuals()`
      * reads only `item`, `isComplete` and its own windows, all of which the base has set up by
@@ -68,7 +69,7 @@ export class CollectibleItemRenderer extends AbstractCollectibleItemRenderer
 
         if(border !== null)
         {
-            border.color = this.isComplete ? AMOUNT_BORDER_OWNED : AMOUNT_BORDER_MISSING;
+            border.color = this.isComplete ? CollectibleItemRenderer.AMOUNT_BORDER_OWNED : CollectibleItemRenderer.AMOUNT_BORDER_MISSING;
         }
 
         if(checkmark !== null) checkmark.visible = this.isComplete;

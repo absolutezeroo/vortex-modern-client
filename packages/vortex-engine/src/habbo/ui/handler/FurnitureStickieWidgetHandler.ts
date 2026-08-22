@@ -13,16 +13,16 @@ import {RoomWidgetStickieDataUpdateEvent} from '@habbo/ui/widget/events/RoomWidg
 import {RoomWidgetFurniToWidgetMessage} from '@habbo/ui/widget/messages/RoomWidgetFurniToWidgetMessage';
 import {RoomWidgetStickieSendUpdateMessage} from '@habbo/ui/widget/messages/RoomWidgetStickieSendUpdateMessage';
 
-/**
- * AS3: FurnitureStickieWidgetHandler.as::processWidgetMessage()
- *
- * AS3 passes the literal 20 to both engine calls. It is the wall-item category, and the engine
- * gates on exactly that value.
- */
-const STICKIE_CATEGORY: number = RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL;
-
 export class FurnitureStickieWidgetHandler implements IRoomWidgetHandler
 {
+    /**
+    * AS3: FurnitureStickieWidgetHandler.as::processWidgetMessage()
+    *
+    * AS3 passes the literal 20 to both engine calls. It is the wall-item category, and the engine
+    * gates on exactly that value.
+    */
+    private static readonly STICKIE_CATEGORY: number = RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL;
+
     // AS3: FurnitureStickieWidgetHandler.as::_SafeStr_5769
     private _disposed: boolean = false;
 
@@ -67,14 +67,14 @@ export class FurnitureStickieWidgetHandler implements IRoomWidgetHandler
                 const update = message as RoomWidgetStickieSendUpdateMessage;
 
                 this._container?.roomEngine?.modifyRoomObjectData(
-                    update.objectId, STICKIE_CATEGORY, update.colorHex, update.text
+                    update.objectId, FurnitureStickieWidgetHandler.STICKIE_CATEGORY, update.colorHex, update.text
                 );
                 break;
             }
             case RoomWidgetStickieSendUpdateMessage.STICKIE_SEND_DELETE: {
                 const remove = message as RoomWidgetStickieSendUpdateMessage;
 
-                this._container?.roomEngine?.deleteRoomObject(remove.objectId, STICKIE_CATEGORY);
+                this._container?.roomEngine?.deleteRoomObject(remove.objectId, FurnitureStickieWidgetHandler.STICKIE_CATEGORY);
                 break;
             }
         }

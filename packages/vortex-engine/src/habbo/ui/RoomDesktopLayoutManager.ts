@@ -21,12 +21,14 @@ import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfig
 
 const log = Logger.getLogger('habbo.ui.RoomDesktopLayoutManager');
 
-const ROOM_VIEW = 'room_view';
-const ROOM_NEW_CHAT = 'room_new_chat';
-const BOTTOM_MARGIN = 47;
-
 export class RoomDesktopLayoutManager
 {
+    private static readonly ROOM_VIEW = 'room_view';
+
+    private static readonly ROOM_NEW_CHAT = 'room_new_chat';
+
+    private static readonly BOTTOM_MARGIN = 47;
+
     // AS3: sources/win63_version/habbo/ui/class_3019.as::_layoutContainer
     private _layoutContainer: IWindowContainer | null = null;
 
@@ -81,7 +83,7 @@ export class RoomDesktopLayoutManager
 
         if(infostandContainer)
         {
-            infostandContainer.y -= BOTTOM_MARGIN;
+            infostandContainer.y -= RoomDesktopLayoutManager.BOTTOM_MARGIN;
         }
 
         for(let i = 0; i < this._layoutContainer.numChildren; i++)
@@ -212,7 +214,7 @@ export class RoomDesktopLayoutManager
     {
         if(!this._layoutContainer) return false;
 
-        const roomViewContainer = this._layoutContainer.findChildByTag(ROOM_VIEW) as IWindowContainer | null;
+        const roomViewContainer = this._layoutContainer.findChildByTag(RoomDesktopLayoutManager.ROOM_VIEW) as IWindowContainer | null;
 
         if(!roomViewContainer)
         {
@@ -234,7 +236,7 @@ export class RoomDesktopLayoutManager
     {
         if(!this._layoutContainer) return null;
 
-        const roomViewContainer = this._layoutContainer.findChildByTag(ROOM_VIEW) as IWindowContainer | null;
+        const roomViewContainer = this._layoutContainer.findChildByTag(RoomDesktopLayoutManager.ROOM_VIEW) as IWindowContainer | null;
 
         if(!roomViewContainer || roomViewContainer.numChildren === 0) return null;
 
@@ -249,7 +251,7 @@ export class RoomDesktopLayoutManager
     {
         if(!this._layoutContainer) return null;
 
-        const roomViewContainer = this._layoutContainer.findChildByTag(ROOM_VIEW);
+        const roomViewContainer = this._layoutContainer.findChildByTag(RoomDesktopLayoutManager.ROOM_VIEW);
 
         if(!roomViewContainer) return null;
 
@@ -276,7 +278,7 @@ export class RoomDesktopLayoutManager
     {
         if(!this._layoutContainer) return null;
 
-        return this._layoutContainer.findChildByTag(ROOM_NEW_CHAT) as IDisplayObjectWrapper | null;
+        return this._layoutContainer.findChildByTag(RoomDesktopLayoutManager.ROOM_NEW_CHAT) as IDisplayObjectWrapper | null;
     }
 
     /**

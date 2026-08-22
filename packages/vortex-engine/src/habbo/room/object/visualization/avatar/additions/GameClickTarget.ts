@@ -11,13 +11,16 @@ import type {IAvatarAddition} from './IAvatarAddition';
 import {AlphaTolerance} from '@room/object/enum/AlphaTolerance';
 import {Texture} from 'pixi.js';
 
-const WIDTH: number = 46;
-const HEIGHT: number = 60;
-const OFFSET_X: number = -23;
-const OFFSET_Y: number = -48;
-
 export class GameClickTarget implements IAvatarAddition
 {
+    private static readonly WIDTH: number = 46;
+
+    private static readonly HEIGHT: number = 60;
+
+    private static readonly OFFSET_X: number = -23;
+
+    private static readonly OFFSET_Y: number = -48;
+
     constructor(id: number)
     {
         this._id = id;
@@ -75,13 +78,13 @@ export class GameClickTarget implements IAvatarAddition
 
         if(!this._texture)
         {
-            this._texture = Texture.from(new OffscreenCanvas(WIDTH, HEIGHT).transferToImageBitmap());
+            this._texture = Texture.from(new OffscreenCanvas(GameClickTarget.WIDTH, GameClickTarget.HEIGHT).transferToImageBitmap());
         }
 
         sprite.visible = true;
         sprite.texture = this._texture;
-        sprite.offsetX = OFFSET_X;
-        sprite.offsetY = OFFSET_Y;
+        sprite.offsetX = GameClickTarget.OFFSET_X;
+        sprite.offsetY = GameClickTarget.OFFSET_Y;
         sprite.alphaTolerance = AlphaTolerance.MATCH_ALL_PIXELS;
     }
 

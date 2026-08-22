@@ -19,12 +19,14 @@ import {RoomWidgetBase} from '@habbo/ui/widget/RoomWidgetBase';
 import type {EffectsWidgetHandler} from '@habbo/ui/handler/EffectsWidgetHandler';
 import {EffectView} from './EffectView';
 
-const LIST_HEIGHT_MAX: number = 320;
-const LIST_HEIGHT_MIN: number = 48;
-const TOOLBAR_MARGIN: number = 2;
-
 export class EffectsWidget extends RoomWidgetBase
 {
+    private static readonly LIST_HEIGHT_MAX: number = 320;
+
+    private static readonly LIST_HEIGHT_MIN: number = 48;
+
+    private static readonly TOOLBAR_MARGIN: number = 2;
+
     private _window: IWindowContainer | null = null;
     private _list: IScrollableListWindow | null = null;
     private _effectViews: Map<number, EffectView> = new Map();
@@ -61,7 +63,7 @@ export class EffectsWidget extends RoomWidgetBase
 
             if(rect)
             {
-                this._window.x = rect.x + rect.width + TOOLBAR_MARGIN;
+                this._window.x = rect.x + rect.width + EffectsWidget.TOOLBAR_MARGIN;
                 this._window.y = rect.y + rect.height - this._window.height;
             }
 
@@ -117,7 +119,7 @@ export class EffectsWidget extends RoomWidgetBase
 
         const regionHeight = this._list.scrollableRegion?.height ?? 0;
 
-        this._list.height = Math.max(Math.min(regionHeight, LIST_HEIGHT_MAX), LIST_HEIGHT_MIN);
+        this._list.height = Math.max(Math.min(regionHeight, EffectsWidget.LIST_HEIGHT_MAX), EffectsWidget.LIST_HEIGHT_MIN);
 
         const noEffects = this._window.findChildByName('no_effects');
 

@@ -15,11 +15,12 @@ import type {GuestRoomData} from '@habbo/communication/messages/incoming/navigat
 import type {RoomToolsWidgetHandler} from '@habbo/ui/handler/RoomToolsWidgetHandler';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
-const PADDING = 5;
-const SPACING = 2;
-
 export class RoomToolsHistory
 {
+    private static readonly PADDING = 5;
+
+    private static readonly SPACING = 2;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::_windowManager
     private _windowManager: IHabboWindowManager | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::_assets
@@ -58,8 +59,8 @@ export class RoomToolsHistory
 
             if(nameLabel) nameLabel.caption = room.roomName;
 
-            item.y = previous ? previous.bottom + SPACING : PADDING;
-            item.x = PADDING;
+            item.y = previous ? previous.bottom + RoomToolsHistory.SPACING : RoomToolsHistory.PADDING;
+            item.x = RoomToolsHistory.PADDING;
             item.id = room.flatId;
             item.procedure = this.onClick;
 
@@ -69,7 +70,7 @@ export class RoomToolsHistory
 
         if(previous)
         {
-            this._window.height = previous.bottom + 2 * PADDING;
+            this._window.height = previous.bottom + 2 * RoomToolsHistory.PADDING;
         }
     }
 

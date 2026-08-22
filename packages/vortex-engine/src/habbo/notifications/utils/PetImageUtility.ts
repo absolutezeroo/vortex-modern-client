@@ -13,11 +13,11 @@ import {Logger} from '@core/utils/Logger';
 
 const logger = Logger.getLogger('habbo.notifications.utils.PetImageUtility');
 
-// AS3 multiplies the direction index by 45 to get the angle it hands to getPetImage().
-const DEGREES_PER_DIRECTION: number = 45;
-
 export class PetImageUtility
 {
+    // AS3 multiplies the direction index by 45 to get the angle it hands to getPetImage().
+    private static readonly DEGREES_PER_DIRECTION: number = 45;
+
     // AS3: PetImageUtility.as::_roomEngine (static there; an instance field here — the AS3
     // static is shared by every instance and nulled by whichever one is disposed first).
     private _roomEngine: IRoomEngine | null;
@@ -51,7 +51,7 @@ export class PetImageUtility
 
         const result = this._roomEngine.getPetImage(
             typeId, paletteId, parseInt(color, 16),
-            new Vector3d(DEGREES_PER_DIRECTION * direction), scale, null, headOnly, 0, null, posture
+            new Vector3d(PetImageUtility.DEGREES_PER_DIRECTION * direction), scale, null, headOnly, 0, null, posture
         );
 
         return result?.data ?? null;

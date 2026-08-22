@@ -15,13 +15,6 @@ import type {IPurchasableOffer} from './IPurchasableOffer';
 import {ActivityPointTypeEnum} from './purse/ActivityPointTypeEnum';
 import {VipBenefitsWindow} from './club/VipBenefitsWindow';
 
-// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::BADGE_CHATSTYLE_WIDGET_NAME
-const BADGE_CHATSTYLE_WIDGET_NAME = 'HCU_dynamic_badge';
-
-// AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as — the bare 9032648 both
-// showPriceOnProduct() and getSeasonalCurrencyPriceColor() fall back to. Name DERIVED.
-const DEFAULT_PRICE_BOX_COLOR = 9032648;
-
 interface IPriceEntry
 {
     amount: number;
@@ -35,6 +28,13 @@ interface IPriceEntry
  */
 export class HabboCatalogUtils implements IGetImageListener
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::BADGE_CHATSTYLE_WIDGET_NAME
+    private static readonly BADGE_CHATSTYLE_WIDGET_NAME = 'HCU_dynamic_badge';
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as — the bare 9032648 both
+    // showPriceOnProduct() and getSeasonalCurrencyPriceColor() fall back to. Name DERIVED.
+    private static readonly DEFAULT_PRICE_BOX_COLOR = 9032648;
+
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::_disposed
     private _disposed: boolean = false;
 
@@ -325,7 +325,7 @@ export class HabboCatalogUtils implements IGetImageListener
                 }
                 else
                 {
-                    priceBox.color = DEFAULT_PRICE_BOX_COLOR;
+                    priceBox.color = HabboCatalogUtils.DEFAULT_PRICE_BOX_COLOR;
                 }
             }
 
@@ -350,15 +350,15 @@ export class HabboCatalogUtils implements IGetImageListener
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalogUtils.as::getSeasonalCurrencyPriceColor()
     private getSeasonalCurrencyPriceColor(activityPointType: number): number
     {
-        if(!ActivityPointTypeEnum.isSeasonal(activityPointType)) return DEFAULT_PRICE_BOX_COLOR;
+        if(!ActivityPointTypeEnum.isSeasonal(activityPointType)) return HabboCatalogUtils.DEFAULT_PRICE_BOX_COLOR;
 
         const currencyId = this._catalog?.getProperty(`seasonalcurrency.id.${activityPointType}`) ?? '';
 
-        if(currencyId === '') return DEFAULT_PRICE_BOX_COLOR;
+        if(currencyId === '') return HabboCatalogUtils.DEFAULT_PRICE_BOX_COLOR;
 
         const preset = this._catalog?.getProperty(`seasonalcurrency.${currencyId}.color`) ?? '';
 
-        if(preset === '') return DEFAULT_PRICE_BOX_COLOR;
+        if(preset === '') return HabboCatalogUtils.DEFAULT_PRICE_BOX_COLOR;
 
         return ColorConverter.hexToUint(this._catalog?.getProperty(`seasonalcurrency.preset.${preset}.border`) ?? '');
     }
@@ -521,12 +521,12 @@ export class HabboCatalogUtils implements IGetImageListener
     // preview (type 9). `code` is the badge name in the first case, the style id in the second.
     showExtraOnProduct(type: number, code: string, container: IWindowContainer, xOffset: number, yOffset: number, alignTop: boolean = true, alignLeft: boolean = true): void
     {
-        let widgetWindow = container.findChildByName(BADGE_CHATSTYLE_WIDGET_NAME) as unknown as IWindowContainer | null;
+        let widgetWindow = container.findChildByName(HabboCatalogUtils.BADGE_CHATSTYLE_WIDGET_NAME) as unknown as IWindowContainer | null;
 
         if(widgetWindow == null)
         {
             widgetWindow = this.createWindow('badgeDisplayWidget') as unknown as IWindowContainer;
-            widgetWindow.name = BADGE_CHATSTYLE_WIDGET_NAME;
+            widgetWindow.name = HabboCatalogUtils.BADGE_CHATSTYLE_WIDGET_NAME;
         }
 
         const assetImage = widgetWindow.findChildByName('asset_image') as unknown as IStaticBitmapWrapperWindow;
@@ -561,7 +561,7 @@ export class HabboCatalogUtils implements IGetImageListener
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::hideExtraFromProduct()
     hideExtraFromProduct(container: IWindowContainer): void
     {
-        const widgetWindow = container.findChildByName(BADGE_CHATSTYLE_WIDGET_NAME);
+        const widgetWindow = container.findChildByName(HabboCatalogUtils.BADGE_CHATSTYLE_WIDGET_NAME);
 
         if(widgetWindow != null)
         {
@@ -572,12 +572,12 @@ export class HabboCatalogUtils implements IGetImageListener
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::showAssetImageAsBadgeOnProduct()
     showAssetImageAsBadgeOnProduct(assetName: string, container: IWindowContainer, xOffset: number, yOffset: number, alignTop: boolean = true, alignLeft: boolean = true): void
     {
-        let widgetWindow = container.findChildByName(BADGE_CHATSTYLE_WIDGET_NAME) as unknown as IWindowContainer | null;
+        let widgetWindow = container.findChildByName(HabboCatalogUtils.BADGE_CHATSTYLE_WIDGET_NAME) as unknown as IWindowContainer | null;
 
         if(widgetWindow == null)
         {
             widgetWindow = this.createWindow('badgeDisplayWidget') as unknown as IWindowContainer;
-            widgetWindow.name = BADGE_CHATSTYLE_WIDGET_NAME;
+            widgetWindow.name = HabboCatalogUtils.BADGE_CHATSTYLE_WIDGET_NAME;
         }
 
         widgetWindow.findChildByName('chat_style')!.visible = false;

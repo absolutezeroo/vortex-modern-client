@@ -13,35 +13,6 @@ import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('habbo.quest.QuestTracker');
 
-// AS3: QuestTracker.as animation status constants
-const STATUS_NONE = 0;
-const STATUS_SLIDE_IN = 1;
-const STATUS_SLIDE_OUT = 2;
-const STATUS_COMPLETED_ANIMATION = 3;
-const STATUS_PROGRESS_NUDGE = 4;
-const STATUS_CLOSE_WAIT = 5;
-const STATUS_PROMPT_ANIMATION = 6;
-
-const PROMPT_SEQUENCE_REPEATS = 4;
-const PROMPT_SEQUENCE_REPEATS_QUEST_OPEN = 2;
-const PROMPT_FRAME_LENGTH_IN_MSECS = 200;
-const PROMPT_DELAY_IN_MSECS = 10000;
-const PROMPT_DELAY_ON_QUEST_OPEN_IN_MSECS = 0;
-const NO_PROMPT_DELAY = -1;
-const PROGRESS_BAR_WIDTH = 162;
-const TRACKER_SLIDE_IN_SPEED = 0.01;
-const TRACKER_SLIDE_OUT_SPEED = 100;
-const COMPLETION_CLOSE_DELAY_IN_MSECS = 1000;
-
-const NUDGE_OFFSETS: number[] = [-2, -3, -2, 0, 2, 3, 2, 0, 2, 1, 0, 1];
-// AS3: QuestTracker.as::_SafeStr_8468 - success-sprite frame sequence (frame 4 repeats at the end).
-const SUCCESS_FRAME_SEQUENCE: number[] = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 4];
-const PROMPT_FRAMES: string[] = ['a', 'b', 'c', 'd'];
-const PROGRESS_BAR_LOC = {x: 10, y: 87};
-
-// AS3: QuestTracker.as::hasBlockingWindowInLayer() - "as IFrameWindow" runtime check.
-const FRAME_WINDOW_TYPES: number[] = [WindowType.FRAME, WindowType.FRAME_THIN, WindowType.FRAME_THICK, WindowType.FRAME_NOTIFY];
-
 /**
  * The floating "current quest" HUD widget - one instance per active campaign chain,
  * attached to the toolbar's extension view. Drives the slide-in/out animation, a
@@ -51,6 +22,53 @@ const FRAME_WINDOW_TYPES: number[] = [WindowType.FRAME, WindowType.FRAME_THIN, W
  */
 export class QuestTracker implements IDisposable
 {
+    // AS3: QuestTracker.as animation status constants
+    private static readonly STATUS_NONE = 0;
+
+    private static readonly STATUS_SLIDE_IN = 1;
+
+    private static readonly STATUS_SLIDE_OUT = 2;
+
+    private static readonly STATUS_COMPLETED_ANIMATION = 3;
+
+    private static readonly STATUS_PROGRESS_NUDGE = 4;
+
+    private static readonly STATUS_CLOSE_WAIT = 5;
+
+    private static readonly STATUS_PROMPT_ANIMATION = 6;
+
+    private static readonly PROMPT_SEQUENCE_REPEATS = 4;
+
+    private static readonly PROMPT_SEQUENCE_REPEATS_QUEST_OPEN = 2;
+
+    private static readonly PROMPT_FRAME_LENGTH_IN_MSECS = 200;
+
+    private static readonly PROMPT_DELAY_IN_MSECS = 10000;
+
+    private static readonly PROMPT_DELAY_ON_QUEST_OPEN_IN_MSECS = 0;
+
+    private static readonly NO_PROMPT_DELAY = -1;
+
+    private static readonly PROGRESS_BAR_WIDTH = 162;
+
+    private static readonly TRACKER_SLIDE_IN_SPEED = 0.01;
+
+    private static readonly TRACKER_SLIDE_OUT_SPEED = 100;
+
+    private static readonly COMPLETION_CLOSE_DELAY_IN_MSECS = 1000;
+
+    private static readonly NUDGE_OFFSETS: number[] = [-2, -3, -2, 0, 2, 3, 2, 0, 2, 1, 0, 1];
+
+    // AS3: QuestTracker.as::_SafeStr_8468 - success-sprite frame sequence (frame 4 repeats at the end).
+    private static readonly SUCCESS_FRAME_SEQUENCE: number[] = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 4];
+
+    private static readonly PROMPT_FRAMES: string[] = ['a', 'b', 'c', 'd'];
+
+    private static readonly PROGRESS_BAR_LOC = {x: 10, y: 87};
+
+    // AS3: QuestTracker.as::hasBlockingWindowInLayer() - "as IFrameWindow" runtime check.
+    private static readonly FRAME_WINDOW_TYPES: number[] = [WindowType.FRAME, WindowType.FRAME_THIN, WindowType.FRAME_THICK, WindowType.FRAME_NOTIFY];
+
     // AS3: QuestTracker.as::_SafeStr_8731
     private static _nextInstanceIndex: number = 0;
 
@@ -74,7 +92,7 @@ export class QuestTracker implements IDisposable
     private _startQuestDelayMs: number = 0;
 
     // AS3: QuestTracker.as::_trackerAnimationStatus
-    private _trackerAnimationStatus: number = STATUS_NONE;
+    private _trackerAnimationStatus: number = QuestTracker.STATUS_NONE;
     // AS3: QuestTracker.as::_SafeStr_5942
     private _nudgeStep: number = 0;
     // AS3: QuestTracker.as::_remainingWait
@@ -148,7 +166,7 @@ export class QuestTracker implements IDisposable
             this._nudgeStep = 0;
             this.refreshTrackerDetails();
             this._successFrame = 0;
-            this._trackerAnimationStatus = STATUS_COMPLETED_ANIMATION;
+            this._trackerAnimationStatus = QuestTracker.STATUS_COMPLETED_ANIMATION;
             this._getNextQuestWhenCompletionAnimationFinishes = !showDialog;
         }
     }
@@ -162,7 +180,7 @@ export class QuestTracker implements IDisposable
         {
             this.clearPrompt();
             this._progressBar?.refresh(0, 100, -1, 0);
-            this._trackerAnimationStatus = STATUS_SLIDE_OUT;
+            this._trackerAnimationStatus = QuestTracker.STATUS_SLIDE_OUT;
         }
     }
 
@@ -238,18 +256,18 @@ export class QuestTracker implements IDisposable
 
         if(wasVisible)
         {
-            if(this._trackerAnimationStatus === STATUS_SLIDE_OUT)
+            if(this._trackerAnimationStatus === QuestTracker.STATUS_SLIDE_OUT)
             {
-                this._trackerAnimationStatus = STATUS_SLIDE_IN;
+                this._trackerAnimationStatus = QuestTracker.STATUS_SLIDE_IN;
             }
 
-            this.setupPrompt(this._msecsUntilPrompt, PROMPT_SEQUENCE_REPEATS, false);
+            this.setupPrompt(this._msecsUntilPrompt, QuestTracker.PROMPT_SEQUENCE_REPEATS, false);
         }
         else if(this._window)
         {
             this._window.x = this.getOutScreenLocationX();
-            this._trackerAnimationStatus = STATUS_SLIDE_IN;
-            this.setupPrompt(PROMPT_DELAY_ON_QUEST_OPEN_IN_MSECS, PROMPT_SEQUENCE_REPEATS_QUEST_OPEN, false);
+            this._trackerAnimationStatus = QuestTracker.STATUS_SLIDE_IN;
+            this.setupPrompt(QuestTracker.PROMPT_DELAY_ON_QUEST_OPEN_IN_MSECS, QuestTracker.PROMPT_SEQUENCE_REPEATS_QUEST_OPEN, false);
         }
     }
 
@@ -261,7 +279,7 @@ export class QuestTracker implements IDisposable
 
         if(!engine || !quest || !this._window || !engine.isQuestWithPrompts(quest)) return;
 
-        for(const frame of PROMPT_FRAMES)
+        for(const frame of QuestTracker.PROMPT_FRAMES)
         {
             engine.setupPromptFrameImage(this._window, quest, frame);
         }
@@ -290,7 +308,7 @@ export class QuestTracker implements IDisposable
 
         if(contentContainer)
         {
-            this._progressBar = new ProgressBar(engine, contentContainer, PROGRESS_BAR_WIDTH, 'quests.tracker.progress', false, PROGRESS_BAR_LOC);
+            this._progressBar = new ProgressBar(engine, contentContainer, QuestTracker.PROGRESS_BAR_WIDTH, 'quests.tracker.progress', false, QuestTracker.PROGRESS_BAR_LOC);
         }
     }
 
@@ -308,7 +326,7 @@ export class QuestTracker implements IDisposable
     // AS3: QuestTracker.as::hidePromptFrames()
     private hidePromptFrames(): void
     {
-        for(const frame of PROMPT_FRAMES)
+        for(const frame of QuestTracker.PROMPT_FRAMES)
         {
             const window = this.getPromptFrame(frame);
 
@@ -373,7 +391,7 @@ export class QuestTracker implements IDisposable
     // AS3: QuestTracker.as::forceWindowCloseAfterAnimationsFinished()
     forceWindowCloseAfterAnimationsFinished(): void
     {
-        if(this._trackerAnimationStatus === STATUS_NONE)
+        if(this._trackerAnimationStatus === QuestTracker.STATUS_NONE)
         {
             this.setWindowVisible(false);
             this._forceCloseRequested = false;
@@ -393,14 +411,14 @@ export class QuestTracker implements IDisposable
 
         switch(this._trackerAnimationStatus)
         {
-            case STATUS_NONE:
-                if(this._msecsUntilPrompt !== NO_PROMPT_DELAY)
+            case QuestTracker.STATUS_NONE:
+                if(this._msecsUntilPrompt !== QuestTracker.NO_PROMPT_DELAY)
                 {
                     this._msecsUntilPrompt -= deltaTime;
 
                     if(this._msecsUntilPrompt < 0)
                     {
-                        this._msecsUntilPrompt = NO_PROMPT_DELAY;
+                        this._msecsUntilPrompt = QuestTracker.NO_PROMPT_DELAY;
 
                         if(this._currentQuest !== null && this._engine?.isQuestWithPrompts(this._currentQuest))
                         {
@@ -410,96 +428,96 @@ export class QuestTracker implements IDisposable
                                 break;
                             }
 
-                            this._trackerAnimationStatus = STATUS_PROMPT_ANIMATION;
+                            this._trackerAnimationStatus = QuestTracker.STATUS_PROMPT_ANIMATION;
                             this._promptFrame = 0;
-                            this._msecsUntilNextPromptFrame = PROMPT_FRAME_LENGTH_IN_MSECS;
+                            this._msecsUntilNextPromptFrame = QuestTracker.PROMPT_FRAME_LENGTH_IN_MSECS;
                         }
                     }
                 }
 
                 break;
 
-            case STATUS_SLIDE_IN:
+            case QuestTracker.STATUS_SLIDE_IN:
             {
                 const targetX = this.getDefaultLocationX();
                 const distance = this._window.x - targetX;
 
                 if(distance > 0)
                 {
-                    const step = Math.max(1, Math.round(distance * deltaTime * TRACKER_SLIDE_IN_SPEED));
+                    const step = Math.max(1, Math.round(distance * deltaTime * QuestTracker.TRACKER_SLIDE_IN_SPEED));
 
                     this._window.x -= step;
 
                     break;
                 }
 
-                this._trackerAnimationStatus = STATUS_NONE;
+                this._trackerAnimationStatus = QuestTracker.STATUS_NONE;
                 this._window.x = targetX;
 
                 break;
             }
 
-            case STATUS_SLIDE_OUT:
+            case QuestTracker.STATUS_SLIDE_OUT:
             {
                 const targetX = this.getOutScreenLocationX();
                 const distance = this._window.width - this._window.x;
 
                 if(distance > 0)
                 {
-                    const step = Math.max(1, Math.round(deltaTime * TRACKER_SLIDE_OUT_SPEED / distance));
+                    const step = Math.max(1, Math.round(deltaTime * QuestTracker.TRACKER_SLIDE_OUT_SPEED / distance));
 
                     this._window.x += step;
 
                     break;
                 }
 
-                this._trackerAnimationStatus = STATUS_NONE;
+                this._trackerAnimationStatus = QuestTracker.STATUS_NONE;
                 this._window.x = targetX;
                 this.setWindowVisible(false);
 
                 break;
             }
 
-            case STATUS_COMPLETED_ANIMATION:
+            case QuestTracker.STATUS_COMPLETED_ANIMATION:
                 this.hideSuccessFrames();
 
                 {
-                    const frame = this.getSuccessFrame(SUCCESS_FRAME_SEQUENCE[this._successFrame]);
+                    const frame = this.getSuccessFrame(QuestTracker.SUCCESS_FRAME_SEQUENCE[this._successFrame]);
 
                     if(frame) frame.visible = true;
                 }
 
                 this._successFrame += 1;
 
-                if(this._successFrame >= SUCCESS_FRAME_SEQUENCE.length)
+                if(this._successFrame >= QuestTracker.SUCCESS_FRAME_SEQUENCE.length)
                 {
-                    this._trackerAnimationStatus = STATUS_CLOSE_WAIT;
-                    this._remainingWait = COMPLETION_CLOSE_DELAY_IN_MSECS;
+                    this._trackerAnimationStatus = QuestTracker.STATUS_CLOSE_WAIT;
+                    this._remainingWait = QuestTracker.COMPLETION_CLOSE_DELAY_IN_MSECS;
                 }
 
                 break;
 
-            case STATUS_PROGRESS_NUDGE:
-                if(this._nudgeStep >= NUDGE_OFFSETS.length - 1)
+            case QuestTracker.STATUS_PROGRESS_NUDGE:
+                if(this._nudgeStep >= QuestTracker.NUDGE_OFFSETS.length - 1)
                 {
                     this._window.x = this.getDefaultLocationX();
-                    this._trackerAnimationStatus = STATUS_NONE;
-                    this.setupPrompt(PROMPT_DELAY_IN_MSECS, PROMPT_SEQUENCE_REPEATS, false);
+                    this._trackerAnimationStatus = QuestTracker.STATUS_NONE;
+                    this.setupPrompt(QuestTracker.PROMPT_DELAY_IN_MSECS, QuestTracker.PROMPT_SEQUENCE_REPEATS, false);
 
                     break;
                 }
 
-                this._window.x = this.getDefaultLocationX() + NUDGE_OFFSETS[this._nudgeStep];
+                this._window.x = this.getDefaultLocationX() + QuestTracker.NUDGE_OFFSETS[this._nudgeStep];
                 this._nudgeStep += 1;
 
                 break;
 
-            case STATUS_CLOSE_WAIT:
+            case QuestTracker.STATUS_CLOSE_WAIT:
                 this._remainingWait -= deltaTime;
 
                 if(this._remainingWait < 0)
                 {
-                    this._trackerAnimationStatus = STATUS_NONE;
+                    this._trackerAnimationStatus = QuestTracker.STATUS_NONE;
 
                     if(this._getNextQuestWhenCompletionAnimationFinishes && !this._forceCloseRequested)
                     {
@@ -515,31 +533,31 @@ export class QuestTracker implements IDisposable
 
                 break;
 
-            case STATUS_PROMPT_ANIMATION:
+            case QuestTracker.STATUS_PROMPT_ANIMATION:
                 this.setQuestImageVisible(false);
                 this.hidePromptFrames();
                 this._msecsUntilNextPromptFrame -= deltaTime;
 
                 {
-                    const frame = this.getPromptFrame(PROMPT_FRAMES[this._promptFrame]);
+                    const frame = this.getPromptFrame(QuestTracker.PROMPT_FRAMES[this._promptFrame]);
 
                     if(frame) frame.visible = true;
                 }
 
                 if(this._msecsUntilNextPromptFrame < 0)
                 {
-                    this._msecsUntilNextPromptFrame = PROMPT_FRAME_LENGTH_IN_MSECS;
+                    this._msecsUntilNextPromptFrame = QuestTracker.PROMPT_FRAME_LENGTH_IN_MSECS;
                     this._promptFrame += 1;
 
-                    if(this._promptFrame >= PROMPT_FRAMES.length)
+                    if(this._promptFrame >= QuestTracker.PROMPT_FRAMES.length)
                     {
                         this._promptFrame = 0;
                         this._promptRepeatsRemaining -= 1;
 
                         if(this._promptRepeatsRemaining < 1)
                         {
-                            this.setupPrompt(PROMPT_DELAY_IN_MSECS, PROMPT_SEQUENCE_REPEATS, true);
-                            this._trackerAnimationStatus = STATUS_NONE;
+                            this.setupPrompt(QuestTracker.PROMPT_DELAY_IN_MSECS, QuestTracker.PROMPT_SEQUENCE_REPEATS, true);
+                            this._trackerAnimationStatus = QuestTracker.STATUS_NONE;
                         }
                     }
                 }
@@ -614,7 +632,7 @@ export class QuestTracker implements IDisposable
 
             if(child && child.visible)
             {
-                if(FRAME_WINDOW_TYPES.indexOf(child.type) > -1)
+                if(QuestTracker.FRAME_WINDOW_TYPES.indexOf(child.type) > -1)
                 {
                     if(child.name !== 'mod_start_panel' && child.name !== '_frame')
                     {
@@ -642,7 +660,7 @@ export class QuestTracker implements IDisposable
     // AS3: QuestTracker.as::clearPrompt()
     private clearPrompt(): void
     {
-        this.setupPrompt(NO_PROMPT_DELAY, 0, false);
+        this.setupPrompt(QuestTracker.NO_PROMPT_DELAY, 0, false);
     }
 
     // AS3: QuestTracker.as::setupPrompt()
@@ -659,7 +677,7 @@ export class QuestTracker implements IDisposable
     private startNudge(): void
     {
         this._nudgeStep = 0;
-        this._trackerAnimationStatus = STATUS_PROGRESS_NUDGE;
+        this._trackerAnimationStatus = QuestTracker.STATUS_PROGRESS_NUDGE;
     }
 
     // AS3: QuestTracker.as::setWindowVisible()
@@ -692,6 +710,6 @@ export class QuestTracker implements IDisposable
     {
         if(this._currentQuest === null) return true;
 
-        return !!this._window && !this._window.visible && this._trackerAnimationStatus === STATUS_NONE;
+        return !!this._window && !this._window.visible && this._trackerAnimationStatus === QuestTracker.STATUS_NONE;
     }
 }

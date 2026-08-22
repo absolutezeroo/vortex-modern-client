@@ -38,11 +38,11 @@ import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('habbo.ui.widget.infostand.InfoStandFurniView');
 
-// AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::const_389
-const OWNER_BC_MARKER = -12345678;
-
 export class InfoStandFurniView
 {
+    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::const_389
+    private static readonly OWNER_BC_MARKER = -12345678;
+
     private static readonly PICKUP_MODE_NONE = 0;
     private static readonly PICKUP_MODE_EJECT = 1;
     private static readonly PICKUP_MODE_PICKUP = 2;
@@ -445,7 +445,7 @@ export class InfoStandFurniView
         const ownerLink = ownerRegion?.findChildByName('owner_link') ?? null;
         const bcwIcon = ownerRegion?.findChildByName('bcw_icon') ?? null;
 
-        if(this._ownerId !== OWNER_BC_MARKER)
+        if(this._ownerId !== InfoStandFurniView.OWNER_BC_MARKER)
         {
             if(ownerNameText) ownerNameText.text = ownerName;
 
@@ -571,7 +571,7 @@ export class InfoStandFurniView
     {
         if(event.type === WindowMouseEvent.CLICK)
         {
-            if(this._ownerId === OWNER_BC_MARKER)
+            if(this._ownerId === InfoStandFurniView.OWNER_BC_MARKER)
             {
                 if(this._widget.furniData?.availableForBuildersClub && this._widget.furniData.purchaseOfferId >= 0)
                 {
@@ -691,7 +691,7 @@ export class InfoStandFurniView
         this.expiration = event.expiration;
         this.isNft = event.isNft;
         this.setOwnerInfo(
-            BuilderClubUtils.isBuilderClubId(event.id) ? OWNER_BC_MARKER : event.ownerId,
+            BuilderClubUtils.isBuilderClubId(event.id) ? InfoStandFurniView.OWNER_BC_MARKER : event.ownerId,
             event.ownerName
         );
 

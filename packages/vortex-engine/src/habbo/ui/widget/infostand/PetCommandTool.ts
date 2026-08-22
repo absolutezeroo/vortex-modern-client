@@ -22,39 +22,6 @@ import {RoomWidgetUserActionMessage} from '../messages/RoomWidgetUserActionMessa
 import type {CommandConfiguration} from './CommandConfiguration';
 import type {InfoStandWidget} from './InfoStandWidget';
 
-// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/PetCommandTool.as::STATUS_BAR_WIDTH
-const STATUS_BAR_WIDTH = 162;
-const STATUS_BAR_HEIGHT = 16;
-const STATUS_BAR_HIGHLIGHT_HEIGHT = 4;
-const STATUS_BAR_BORDER_COLOR = 14342874;
-const STATUS_BAR_BG_COLOR = 3815994;
-
-// AS3: .../PetCommandTool.as::STATUS_BAR_SKILL_HIGHLIGHT_COLOR / STATUS_BAR_SKILL_CONTENT_COLOR
-const STATUS_BAR_SKILL_HIGHLIGHT_COLOR = 10513106;
-const STATUS_BAR_SKILL_CONTENT_COLOR = 8734654;
-
-// AS3: .../PetCommandTool.as::STATE_SKILL
-const STATE_SKILL = 'skill';
-
-// AS3: .../PetCommandTool.as::PET_TYPE_HORSE
-const PET_TYPE_HORSE = 15;
-
-// AS3: .../PetCommandTool.as::DEFAULT_LOCATION
-const DEFAULT_LOCATION = {x: 100, y: 70};
-
-// AS3: .../PetCommandTool.as::BUTTONS_DISABLED_MS
-const BUTTONS_DISABLED_MS = 1100;
-
-// AS3 lays the command buttons out in two columns; the second column starts at x = 86 and each pair
-// advances one row. Both numbers are AS3's own literals in updateCommandButtonsViewState().
-const COMMAND_BUTTON_COLUMN_X = 86;
-const COMMAND_BUTTON_ROW_HEIGHT = 25;
-
-// AS3 sizes the window as the command grid's height plus a fixed chrome allowance, larger when pet
-// enhancements add the skill bar.
-const WINDOW_CHROME_HEIGHT_WITH_ENHANCEMENTS = 180;
-const WINDOW_CHROME_HEIGHT = 160;
-
 // AS3 keeps its colours as uint literals for BitmapData.fillRect(); a canvas needs the CSS form.
 function toCssColor(value: number): string
 {
@@ -63,6 +30,46 @@ function toCssColor(value: number): string
 
 export class PetCommandTool
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/PetCommandTool.as::STATUS_BAR_WIDTH
+    private static readonly STATUS_BAR_WIDTH = 162;
+
+    private static readonly STATUS_BAR_HEIGHT = 16;
+
+    private static readonly STATUS_BAR_HIGHLIGHT_HEIGHT = 4;
+
+    private static readonly STATUS_BAR_BORDER_COLOR = 14342874;
+
+    private static readonly STATUS_BAR_BG_COLOR = 3815994;
+
+    // AS3: .../PetCommandTool.as::STATUS_BAR_SKILL_HIGHLIGHT_COLOR / STATUS_BAR_SKILL_CONTENT_COLOR
+    private static readonly STATUS_BAR_SKILL_HIGHLIGHT_COLOR = 10513106;
+
+    private static readonly STATUS_BAR_SKILL_CONTENT_COLOR = 8734654;
+
+    // AS3: .../PetCommandTool.as::STATE_SKILL
+    private static readonly STATE_SKILL = 'skill';
+
+    // AS3: .../PetCommandTool.as::PET_TYPE_HORSE
+    private static readonly PET_TYPE_HORSE = 15;
+
+    // AS3: .../PetCommandTool.as::DEFAULT_LOCATION
+    private static readonly DEFAULT_LOCATION = {x: 100, y: 70};
+
+    // AS3: .../PetCommandTool.as::BUTTONS_DISABLED_MS
+    private static readonly BUTTONS_DISABLED_MS = 1100;
+
+    // AS3 lays the command buttons out in two columns; the second column starts at x = 86 and each pair
+    // advances one row. Both numbers are AS3's own literals in updateCommandButtonsViewState().
+    private static readonly COMMAND_BUTTON_COLUMN_X = 86;
+
+    private static readonly COMMAND_BUTTON_ROW_HEIGHT = 25;
+
+    // AS3 sizes the window as the command grid's height plus a fixed chrome allowance, larger when pet
+    // enhancements add the skill bar.
+    private static readonly WINDOW_CHROME_HEIGHT_WITH_ENHANCEMENTS = 180;
+
+    private static readonly WINDOW_CHROME_HEIGHT = 160;
+
     private _widget: InfoStandWidget | null;
 
     private _window: IWindow | null = null;
@@ -122,25 +129,25 @@ export class PetCommandTool
         if(value > max) value = max;
 
         const ratio = value / max;
-        const canvas = new OffscreenCanvas(STATUS_BAR_WIDTH, STATUS_BAR_HEIGHT);
+        const canvas = new OffscreenCanvas(PetCommandTool.STATUS_BAR_WIDTH, PetCommandTool.STATUS_BAR_HEIGHT);
         const context = canvas.getContext('2d');
 
         if(!context) return null;
 
-        context.fillStyle = toCssColor(STATUS_BAR_BORDER_COLOR);
-        context.fillRect(0, 0, STATUS_BAR_WIDTH, STATUS_BAR_HEIGHT);
+        context.fillStyle = toCssColor(PetCommandTool.STATUS_BAR_BORDER_COLOR);
+        context.fillRect(0, 0, PetCommandTool.STATUS_BAR_WIDTH, PetCommandTool.STATUS_BAR_HEIGHT);
 
-        context.fillStyle = toCssColor(STATUS_BAR_BG_COLOR);
-        context.fillRect(1, 1, STATUS_BAR_WIDTH - 2, STATUS_BAR_HEIGHT - 2);
+        context.fillStyle = toCssColor(PetCommandTool.STATUS_BAR_BG_COLOR);
+        context.fillRect(1, 1, PetCommandTool.STATUS_BAR_WIDTH - 2, PetCommandTool.STATUS_BAR_HEIGHT - 2);
 
         context.fillStyle = toCssColor(contentColor);
         context.fillRect(
-            1, 1 + STATUS_BAR_HIGHLIGHT_HEIGHT,
-            ratio * (STATUS_BAR_WIDTH - 2), STATUS_BAR_HEIGHT - 2 - STATUS_BAR_HIGHLIGHT_HEIGHT
+            1, 1 + PetCommandTool.STATUS_BAR_HIGHLIGHT_HEIGHT,
+            ratio * (PetCommandTool.STATUS_BAR_WIDTH - 2), PetCommandTool.STATUS_BAR_HEIGHT - 2 - PetCommandTool.STATUS_BAR_HIGHLIGHT_HEIGHT
         );
 
         context.fillStyle = toCssColor(highlightColor);
-        context.fillRect(1, 1, ratio * (STATUS_BAR_WIDTH - 2), STATUS_BAR_HIGHLIGHT_HEIGHT);
+        context.fillRect(1, 1, ratio * (PetCommandTool.STATUS_BAR_WIDTH - 2), PetCommandTool.STATUS_BAR_HIGHLIGHT_HEIGHT);
 
         return canvas.transferToImageBitmap();
     }
@@ -177,11 +184,11 @@ export class PetCommandTool
         if(this._window === null) return;
 
         this.updateStateElement(
-            STATE_SKILL,
+            PetCommandTool.STATE_SKILL,
             (levelInSkill + experienceRatio) * 100,
             skillRange * 100,
-            STATUS_BAR_SKILL_CONTENT_COLOR,
-            STATUS_BAR_SKILL_HIGHLIGHT_COLOR,
+            PetCommandTool.STATUS_BAR_SKILL_CONTENT_COLOR,
+            PetCommandTool.STATUS_BAR_SKILL_HIGHLIGHT_COLOR,
             petType
         );
 
@@ -345,7 +352,7 @@ export class PetCommandTool
         // layout already binds that icon through its own `bitmap_asset_name` variable in this port,
         // so there is nothing to assign.
 
-        this._window.position = {x: DEFAULT_LOCATION.x, y: DEFAULT_LOCATION.y};
+        this._window.position = {x: PetCommandTool.DEFAULT_LOCATION.x, y: PetCommandTool.DEFAULT_LOCATION.y};
     }
 
     // AS3: .../PetCommandTool.as::updateCommandButtonsViewState()
@@ -399,8 +406,8 @@ export class PetCommandTool
             // drops a row.
             if(i % 2 === 1)
             {
-                y += COMMAND_BUTTON_ROW_HEIGHT;
-                button.x = COMMAND_BUTTON_COLUMN_X;
+                y += PetCommandTool.COMMAND_BUTTON_ROW_HEIGHT;
+                button.x = PetCommandTool.COMMAND_BUTTON_COLUMN_X;
             }
             else
             {
@@ -409,7 +416,7 @@ export class PetCommandTool
         }
 
         const enhancementsEnabled = widget.config?.getBoolean('pet.enhancements.enabled') ?? false;
-        const chromeHeight = enhancementsEnabled ? WINDOW_CHROME_HEIGHT_WITH_ENHANCEMENTS : WINDOW_CHROME_HEIGHT;
+        const chromeHeight = enhancementsEnabled ? PetCommandTool.WINDOW_CHROME_HEIGHT_WITH_ENHANCEMENTS : PetCommandTool.WINDOW_CHROME_HEIGHT;
 
         commandsContainer.height = PetCommandTool.getLowestPoint(commandsContainer);
         this._window.height = commandsContainer.height + chromeHeight;
@@ -494,7 +501,7 @@ export class PetCommandTool
 
         if(container === null) return;
 
-        container.visible = (widget.config?.getBoolean('pet.enhancements.enabled') ?? false) && petType === PET_TYPE_HORSE;
+        container.visible = (widget.config?.getBoolean('pet.enhancements.enabled') ?? false) && petType === PetCommandTool.PET_TYPE_HORSE;
 
         const valueText = container.findChildByName(`status_${state}_value_text`) as ITextWindow | null;
 
@@ -526,7 +533,7 @@ export class PetCommandTool
     {
         this.stopButtonDisableTimer();
 
-        this._buttonDisableTimeout = setTimeout(this.onButtonDisableTimeout, BUTTONS_DISABLED_MS);
+        this._buttonDisableTimeout = setTimeout(this.onButtonDisableTimeout, PetCommandTool.BUTTONS_DISABLED_MS);
     }
 
     // TS-only: no AS3 counterpart; see startButtonDisableTimer().

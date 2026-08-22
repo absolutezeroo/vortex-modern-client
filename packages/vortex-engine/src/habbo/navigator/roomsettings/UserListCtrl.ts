@@ -7,8 +7,6 @@ import { AssignRightsMessageComposer } from '@habbo/communication/messages/outgo
 import { RemoveRightsMessageComposer } from '@habbo/communication/messages/outgoing/room/action/RemoveRightsMessageComposer';
 import { GetExtendedProfileMessageComposer } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 
-const DISPLAY_LIMIT = 200;
-
 /** Minimal user data from room settings (class_2565). */
 export interface IRoomSettingsUserData
 {
@@ -25,7 +23,7 @@ export interface IRoomSettingsUserData
 export class UserListCtrl
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/UserListCtrl.as::DISPLAY_LIMIT
-    private static readonly DISPLAY_LIMIT: number = DISPLAY_LIMIT;
+    private static readonly DISPLAY_LIMIT: number = 200;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/UserListCtrl.as::_navigator
     protected _navigator: IHabboTransitionalNavigator;
@@ -62,7 +60,7 @@ export class UserListCtrl
                 filtered.push(user);
             }
 
-            if(filtered.length >= DISPLAY_LIMIT) break;
+            if(filtered.length >= UserListCtrl.DISPLAY_LIMIT) break;
         }
 
         list.autoArrangeItems = false;

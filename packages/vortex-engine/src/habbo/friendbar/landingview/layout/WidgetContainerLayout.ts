@@ -19,23 +19,6 @@ import type {CurrentTimingCodeMessageEventParser} from '@habbo/communication/mes
 
 const log = Logger.getLogger('habbo.friendbar.landingview.layout.WidgetContainerLayout');
 
-const DEFAULT_LAYOUT: string = 'landing_view_default_dynamic_layout';
-const GENERIC_RECEPTION_LAYOUT: string = 'landing_view_generic_reception';
-const WIDGET_PLACEHOLDER_PREFIX: string = 'widget_placeholder_';
-
-const BACKGROUND_ELEMENT_NAMES: string[] = [
-    'background_back', 'background_front', 'background_gradient_top', 'background_hotel_top',
-    'background_gradient', 'background_right', 'background_horizon', 'background_left', 'background_left_bottom'
-];
-
-const FIXED_WIDGET_TYPES: string[] = [
-    'avatarimage', 'expiringcatalogpage', 'expiringcatalogpagesmall', 'communitygoal', 'catalogpromo',
-    'achievementcompetition_hall_of_fame', 'achievementcompetition_prizes', 'dailyquest', 'nextlimitedrarecountdown',
-    'habbomoderationpromo', 'habbotalentspromo', 'habbowaypromo', 'safetyquizpromo', 'generic', 'widgetcontainer'
-];
-
-const DYNAMIC_SLOT_COUNT = 6;
-
 /**
  * WidgetContainerLayout
  *
@@ -48,6 +31,25 @@ const DYNAMIC_SLOT_COUNT = 6;
  */
 export class WidgetContainerLayout implements IUpdateReceiver
 {
+    private static readonly DEFAULT_LAYOUT: string = 'landing_view_default_dynamic_layout';
+
+    private static readonly GENERIC_RECEPTION_LAYOUT: string = 'landing_view_generic_reception';
+
+    private static readonly WIDGET_PLACEHOLDER_PREFIX: string = 'widget_placeholder_';
+
+    private static readonly BACKGROUND_ELEMENT_NAMES: string[] = [
+        'background_back', 'background_front', 'background_gradient_top', 'background_hotel_top',
+        'background_gradient', 'background_right', 'background_horizon', 'background_left', 'background_left_bottom'
+    ];
+
+    private static readonly FIXED_WIDGET_TYPES: string[] = [
+        'avatarimage', 'expiringcatalogpage', 'expiringcatalogpagesmall', 'communitygoal', 'catalogpromo',
+        'achievementcompetition_hall_of_fame', 'achievementcompetition_prizes', 'dailyquest', 'nextlimitedrarecountdown',
+        'habbomoderationpromo', 'habbotalentspromo', 'habbowaypromo', 'safetyquizpromo', 'generic', 'widgetcontainer'
+    ];
+
+    private static readonly DYNAMIC_SLOT_COUNT = 6;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::getColorizableElements()
     private static getColorizableElements(container: IWindowContainer | null): ITextWindow[]
     {
@@ -358,13 +360,13 @@ export class WidgetContainerLayout implements IUpdateReceiver
             return this._landingView.getProperty('landing.view.layoutxml');
         }
 
-        return DEFAULT_LAYOUT;
+        return WidgetContainerLayout.DEFAULT_LAYOUT;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::isGenericReceptionLayout()
     private isGenericReceptionLayout(): boolean
     {
-        return this.getLayout() === GENERIC_RECEPTION_LAYOUT;
+        return this.getLayout() === WidgetContainerLayout.GENERIC_RECEPTION_LAYOUT;
     }
 
     /**
@@ -450,7 +452,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
 
         const prefix = code === null || code === '' ? '' : code + '.';
 
-        for(const name of BACKGROUND_ELEMENT_NAMES)
+        for(const name of WidgetContainerLayout.BACKGROUND_ELEMENT_NAMES)
         {
             const element = this._window.findChildByName(name) as IStaticBitmapWrapperWindow | null;
 
@@ -477,7 +479,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::registerFixedWidgets()
     private registerFixedWidgets(): void
     {
-        for(const type of FIXED_WIDGET_TYPES)
+        for(const type of WidgetContainerLayout.FIXED_WIDGET_TYPES)
         {
             this.registerPlaceholderAnchoredWidget(type);
         }
@@ -499,7 +501,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
 
         if(!widget) return;
 
-        this._widgetContainers.push(new WidgetContainer(widget, WIDGET_PLACEHOLDER_PREFIX + type, this._settings));
+        this._widgetContainers.push(new WidgetContainer(widget, WidgetContainerLayout.WIDGET_PLACEHOLDER_PREFIX + type, this._settings));
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::registerDynamicWidgets()
@@ -515,7 +517,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
 
         this._dynamicWidgetLayout = new DynamicLayoutManager(this, this._settings);
 
-        for(let i = 0; i < DYNAMIC_SLOT_COUNT; i++)
+        for(let i = 0; i < WidgetContainerLayout.DYNAMIC_SLOT_COUNT; i++)
         {
             const widgetType = this._landingView.getProperty(`landing.view.dynamic.slot.${i + 1}.widget`);
             const widget = LandingViewWidgetType.getWidgetForType(widgetType, this._landingView);

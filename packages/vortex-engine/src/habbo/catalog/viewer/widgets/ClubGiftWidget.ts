@@ -17,8 +17,6 @@ import type {ClubGiftEligibilityData} from '@habbo/communication/messages/parser
 import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 
-const DAYS_IN_MONTH = 31;
-
 /**
  * "Gift Habbo Club to a friend" widget - lists redeemable offers and confirms a selection via
  * ClubGiftController.
@@ -27,6 +25,8 @@ const DAYS_IN_MONTH = 31;
  */
 export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
 {
+    private static readonly DAYS_IN_MONTH = 31;
+
     private _controller: ClubGiftController | null;
 
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::_offers
@@ -142,10 +142,10 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
         if(pastClubDays)
         {
             const total = purse.pastClubDays + purse.pastVipDays;
-            const totalKey = total >= DAYS_IN_MONTH ? 'catalog.club_gift.past_club.long' : 'catalog.club_gift.past_club';
+            const totalKey = total >= ClubGiftWidget.DAYS_IN_MONTH ? 'catalog.club_gift.past_club.long' : 'catalog.club_gift.past_club';
 
-            localization?.registerParameter(totalKey, 'days', (total % DAYS_IN_MONTH).toString());
-            localization?.registerParameter(totalKey, 'months', Math.trunc(total / DAYS_IN_MONTH).toString());
+            localization?.registerParameter(totalKey, 'days', (total % ClubGiftWidget.DAYS_IN_MONTH).toString());
+            localization?.registerParameter(totalKey, 'months', Math.trunc(total / ClubGiftWidget.DAYS_IN_MONTH).toString());
             pastClubDays.caption = localization?.getLocalization(totalKey) ?? '';
         }
 
@@ -153,10 +153,10 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
 
         if(pastVipDays)
         {
-            const vipKey = purse.pastVipDays >= DAYS_IN_MONTH ? 'catalog.club_gift.past_vip.long' : 'catalog.club_gift.past_vip';
+            const vipKey = purse.pastVipDays >= ClubGiftWidget.DAYS_IN_MONTH ? 'catalog.club_gift.past_vip.long' : 'catalog.club_gift.past_vip';
 
-            localization?.registerParameter(vipKey, 'days', (purse.pastVipDays % DAYS_IN_MONTH).toString());
-            localization?.registerParameter(vipKey, 'months', Math.trunc(purse.pastVipDays / DAYS_IN_MONTH).toString());
+            localization?.registerParameter(vipKey, 'days', (purse.pastVipDays % ClubGiftWidget.DAYS_IN_MONTH).toString());
+            localization?.registerParameter(vipKey, 'months', Math.trunc(purse.pastVipDays / ClubGiftWidget.DAYS_IN_MONTH).toString());
             pastVipDays.caption = localization?.getLocalization(vipKey) ?? '';
         }
     }
@@ -248,10 +248,10 @@ export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
         {
             monthsRequiredKey = eligibility.isVip ? 'catalog.club_gift.vip_missing' : 'catalog.club_gift.club_missing';
 
-            if(daysMissing >= DAYS_IN_MONTH) monthsRequiredKey += '.long';
+            if(daysMissing >= ClubGiftWidget.DAYS_IN_MONTH) monthsRequiredKey += '.long';
 
-            this._controller?.localization?.registerParameter(monthsRequiredKey, 'days', (daysMissing % DAYS_IN_MONTH).toString());
-            this._controller?.localization?.registerParameter(monthsRequiredKey, 'months', Math.trunc(daysMissing / DAYS_IN_MONTH).toString());
+            this._controller?.localization?.registerParameter(monthsRequiredKey, 'days', (daysMissing % ClubGiftWidget.DAYS_IN_MONTH).toString());
+            this._controller?.localization?.registerParameter(monthsRequiredKey, 'months', Math.trunc(daysMissing / ClubGiftWidget.DAYS_IN_MONTH).toString());
         }
         else if((this._controller?.giftsAvailable ?? 0) > 0)
         {

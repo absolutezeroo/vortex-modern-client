@@ -35,33 +35,47 @@ import type {AvatarInfoWidget} from './AvatarInfoWidget';
 
 const logger = Logger.getLogger('habbo.ui.widget.avatarinfo.UseProductConfirmationView');
 
-// AS3: UseProductConfirmationView.as::PRODUCT_PAGE_UKNOWN (AS3's own spelling)
-const PRODUCT_PAGE_UKNOWN: number = -1;
-const PRODUCT_PAGE_SHAMPOO: number = 0;
-const PRODUCT_PAGE_CUSTOM_PART: number = 1;
-const PRODUCT_PAGE_CUSTOM_PART_SHAMPOO: number = 2;
-const PRODUCT_PAGE_SADDLE: number = 3;
-const PRODUCT_PAGE_REVIVE: number = 4;
-const PRODUCT_PAGE_REBREED: number = 5;
-const PRODUCT_PAGE_FERTILIZE: number = 6;
-
-// Furniture categories, as in UseProductView (AS3 writes them as `category - 13` offsets).
-const CATEGORY_SHAMPOO: number = 13;
-const CATEGORY_CUSTOM_PART: number = 14;
-const CATEGORY_CUSTOM_PART_SHAMPOO: number = 15;
-const CATEGORY_SADDLE: number = 16;
-const CATEGORY_REVIVE: number = 20;
-const CATEGORY_REBREED: number = 21;
-const CATEGORY_FERTILIZE: number = 22;
-
-const PREVIEW_DIRECTION: number = 90;
-const PREVIEW_SCALE: number = 64;
-
-// Below this level a revived monsterplant is shown mid-growth (`grw<level>`) rather than `std`.
-const MONSTERPLANT_GROWN_LEVEL: number = 7;
-
 export class UseProductConfirmationView implements IDisposable, IGetImageListener
 {
+    // AS3: UseProductConfirmationView.as::PRODUCT_PAGE_UKNOWN (AS3's own spelling)
+    private static readonly PRODUCT_PAGE_UKNOWN: number = -1;
+
+    private static readonly PRODUCT_PAGE_SHAMPOO: number = 0;
+
+    private static readonly PRODUCT_PAGE_CUSTOM_PART: number = 1;
+
+    private static readonly PRODUCT_PAGE_CUSTOM_PART_SHAMPOO: number = 2;
+
+    private static readonly PRODUCT_PAGE_SADDLE: number = 3;
+
+    private static readonly PRODUCT_PAGE_REVIVE: number = 4;
+
+    private static readonly PRODUCT_PAGE_REBREED: number = 5;
+
+    private static readonly PRODUCT_PAGE_FERTILIZE: number = 6;
+
+    // Furniture categories, as in UseProductView (AS3 writes them as `category - 13` offsets).
+    private static readonly CATEGORY_SHAMPOO: number = 13;
+
+    private static readonly CATEGORY_CUSTOM_PART: number = 14;
+
+    private static readonly CATEGORY_CUSTOM_PART_SHAMPOO: number = 15;
+
+    private static readonly CATEGORY_SADDLE: number = 16;
+
+    private static readonly CATEGORY_REVIVE: number = 20;
+
+    private static readonly CATEGORY_REBREED: number = 21;
+
+    private static readonly CATEGORY_FERTILIZE: number = 22;
+
+    private static readonly PREVIEW_DIRECTION: number = 90;
+
+    private static readonly PREVIEW_SCALE: number = 64;
+
+    // Below this level a revived monsterplant is shown mid-growth (`grw<level>`) rather than `std`.
+    private static readonly MONSTERPLANT_GROWN_LEVEL: number = 7;
+
     // AS3: UseProductConfirmationView.as::_window
     private _window: IFrameWindow | null = null;
     // AS3: UseProductConfirmationView.as::disposed (obfuscated `_SafeStr_5769`; named from its getter)
@@ -136,30 +150,30 @@ export class UseProductConfirmationView implements IDisposable, IGetImageListene
 
         if(!this._furnitureData) return;
 
-        let page = PRODUCT_PAGE_UKNOWN;
+        let page = UseProductConfirmationView.PRODUCT_PAGE_UKNOWN;
 
         switch(this._furnitureData.category)
         {
-            case CATEGORY_SHAMPOO:
-                page = PRODUCT_PAGE_SHAMPOO;
+            case UseProductConfirmationView.CATEGORY_SHAMPOO:
+                page = UseProductConfirmationView.PRODUCT_PAGE_SHAMPOO;
                 break;
-            case CATEGORY_CUSTOM_PART:
-                page = PRODUCT_PAGE_CUSTOM_PART;
+            case UseProductConfirmationView.CATEGORY_CUSTOM_PART:
+                page = UseProductConfirmationView.PRODUCT_PAGE_CUSTOM_PART;
                 break;
-            case CATEGORY_CUSTOM_PART_SHAMPOO:
-                page = PRODUCT_PAGE_CUSTOM_PART_SHAMPOO;
+            case UseProductConfirmationView.CATEGORY_CUSTOM_PART_SHAMPOO:
+                page = UseProductConfirmationView.PRODUCT_PAGE_CUSTOM_PART_SHAMPOO;
                 break;
-            case CATEGORY_SADDLE:
-                page = PRODUCT_PAGE_SADDLE;
+            case UseProductConfirmationView.CATEGORY_SADDLE:
+                page = UseProductConfirmationView.PRODUCT_PAGE_SADDLE;
                 break;
-            case CATEGORY_REVIVE:
-                page = PRODUCT_PAGE_REVIVE;
+            case UseProductConfirmationView.CATEGORY_REVIVE:
+                page = UseProductConfirmationView.PRODUCT_PAGE_REVIVE;
                 break;
-            case CATEGORY_REBREED:
-                page = PRODUCT_PAGE_REBREED;
+            case UseProductConfirmationView.CATEGORY_REBREED:
+                page = UseProductConfirmationView.PRODUCT_PAGE_REBREED;
                 break;
-            case CATEGORY_FERTILIZE:
-                page = PRODUCT_PAGE_FERTILIZE;
+            case UseProductConfirmationView.CATEGORY_FERTILIZE:
+                page = UseProductConfirmationView.PRODUCT_PAGE_FERTILIZE;
                 break;
             default:
                 logger.warn(`[UseProductConfirmationView.open()] Unsupported furniture category: ${this._furnitureData.category}`);
@@ -197,13 +211,13 @@ export class UseProductConfirmationView implements IDisposable, IGetImageListene
 
             switch(page)
             {
-                case PRODUCT_PAGE_REVIVE:
+                case UseProductConfirmationView.PRODUCT_PAGE_REVIVE:
                     frameName = 'use_product_widget_frame_monsterplant_xml';
                     break;
-                case PRODUCT_PAGE_REBREED:
+                case UseProductConfirmationView.PRODUCT_PAGE_REBREED:
                     frameName = 'use_product_widget_frame_monsterplant_rebreed_xml';
                     break;
-                case PRODUCT_PAGE_FERTILIZE:
+                case UseProductConfirmationView.PRODUCT_PAGE_FERTILIZE:
                     frameName = 'use_product_widget_frame_monsterplant_fertilize_xml';
                     break;
                 default:
@@ -232,7 +246,7 @@ export class UseProductConfirmationView implements IDisposable, IGetImageListene
 
         this._window.resizeToFitContent();
 
-        if(page === PRODUCT_PAGE_UKNOWN)
+        if(page === UseProductConfirmationView.PRODUCT_PAGE_UKNOWN)
         {
             // AS3 throws here; an unknown category has already been logged in open(), and the
             // dialog is left as built rather than taking the client down.
@@ -257,25 +271,25 @@ export class UseProductConfirmationView implements IDisposable, IGetImageListene
 
         switch(page)
         {
-            case PRODUCT_PAGE_SHAMPOO:
+            case UseProductConfirmationView.PRODUCT_PAGE_SHAMPOO:
                 assetName = 'use_product_controller_shampoo_xml';
                 break;
-            case PRODUCT_PAGE_CUSTOM_PART:
+            case UseProductConfirmationView.PRODUCT_PAGE_CUSTOM_PART:
                 assetName = 'use_product_controller_custom_part_xml';
                 break;
-            case PRODUCT_PAGE_CUSTOM_PART_SHAMPOO:
+            case UseProductConfirmationView.PRODUCT_PAGE_CUSTOM_PART_SHAMPOO:
                 assetName = 'use_product_controller_custom_part_shampoo_xml';
                 break;
-            case PRODUCT_PAGE_SADDLE:
+            case UseProductConfirmationView.PRODUCT_PAGE_SADDLE:
                 assetName = 'use_product_controller_saddle_xml';
                 break;
-            case PRODUCT_PAGE_REVIVE:
+            case UseProductConfirmationView.PRODUCT_PAGE_REVIVE:
                 assetName = 'use_product_controller_revive_monsterplant_xml';
                 break;
-            case PRODUCT_PAGE_REBREED:
+            case UseProductConfirmationView.PRODUCT_PAGE_REBREED:
                 assetName = 'use_product_controller_rebreed_monsterplant_xml';
                 break;
-            case PRODUCT_PAGE_FERTILIZE:
+            case UseProductConfirmationView.PRODUCT_PAGE_FERTILIZE:
                 assetName = 'use_product_controller_fertilize_monsterplant_xml';
                 break;
             default:
@@ -307,7 +321,7 @@ export class UseProductConfirmationView implements IDisposable, IGetImageListene
 
         switch(furnitureData.category)
         {
-            case CATEGORY_SHAMPOO:
+            case UseProductConfirmationView.CATEGORY_SHAMPOO:
             {
                 if(params.length < 2)
                 {
@@ -334,11 +348,11 @@ export class UseProductConfirmationView implements IDisposable, IGetImageListene
 
                 result = roomEngine.getPetImage(
                     figureData.typeId, paletteId, figureData.color,
-                    new Vector3d(PREVIEW_DIRECTION), PREVIEW_SCALE, this, true, 0, figureData.customParts
+                    new Vector3d(UseProductConfirmationView.PREVIEW_DIRECTION), UseProductConfirmationView.PREVIEW_SCALE, this, true, 0, figureData.customParts
                 );
                 break;
             }
-            case CATEGORY_CUSTOM_PART:
+            case UseProductConfirmationView.CATEGORY_CUSTOM_PART:
             {
                 if(params.length < 4)
                 {
@@ -362,11 +376,11 @@ export class UseProductConfirmationView implements IDisposable, IGetImageListene
 
                 result = roomEngine.getPetImage(
                     figureData.typeId, figureData.paletteId, figureData.color,
-                    new Vector3d(PREVIEW_DIRECTION), PREVIEW_SCALE, this, true, 0, customParts
+                    new Vector3d(UseProductConfirmationView.PREVIEW_DIRECTION), UseProductConfirmationView.PREVIEW_SCALE, this, true, 0, customParts
                 );
                 break;
             }
-            case CATEGORY_CUSTOM_PART_SHAMPOO:
+            case UseProductConfirmationView.CATEGORY_CUSTOM_PART_SHAMPOO:
             {
                 if(params.length < 3)
                 {
@@ -389,11 +403,11 @@ export class UseProductConfirmationView implements IDisposable, IGetImageListene
 
                 result = roomEngine.getPetImage(
                     figureData.typeId, figureData.paletteId, figureData.color,
-                    new Vector3d(PREVIEW_DIRECTION), PREVIEW_SCALE, this, true, 0, customParts
+                    new Vector3d(UseProductConfirmationView.PREVIEW_DIRECTION), UseProductConfirmationView.PREVIEW_SCALE, this, true, 0, customParts
                 );
                 break;
             }
-            case CATEGORY_SADDLE:
+            case UseProductConfirmationView.CATEGORY_SADDLE:
             {
                 if(params.length < 4)
                 {
@@ -420,13 +434,13 @@ export class UseProductConfirmationView implements IDisposable, IGetImageListene
 
                 result = roomEngine.getPetImage(
                     figureData.typeId, figureData.paletteId, figureData.color,
-                    new Vector3d(PREVIEW_DIRECTION), PREVIEW_SCALE, this, true, 0, customParts
+                    new Vector3d(UseProductConfirmationView.PREVIEW_DIRECTION), UseProductConfirmationView.PREVIEW_SCALE, this, true, 0, customParts
                 );
                 break;
             }
-            case CATEGORY_REVIVE:
-            case CATEGORY_REBREED:
-            case CATEGORY_FERTILIZE:
+            case UseProductConfirmationView.CATEGORY_REVIVE:
+            case UseProductConfirmationView.CATEGORY_REBREED:
+            case UseProductConfirmationView.CATEGORY_FERTILIZE:
             {
                 // A dead plant would render as `rip`; the preview shows what it will look like
                 // once revived, which is its growth stage for its level.
@@ -439,13 +453,13 @@ export class UseProductConfirmationView implements IDisposable, IGetImageListene
 
                     if(posture === 'rip')
                     {
-                        posture = pet.petLevel < MONSTERPLANT_GROWN_LEVEL ? `grw${pet.petLevel}` : 'std';
+                        posture = pet.petLevel < UseProductConfirmationView.MONSTERPLANT_GROWN_LEVEL ? `grw${pet.petLevel}` : 'std';
                     }
                 }
 
                 result = roomEngine.getPetImage(
                     figureData.typeId, figureData.paletteId, figureData.color,
-                    new Vector3d(PREVIEW_DIRECTION), PREVIEW_SCALE, this, true, 0, figureData.customParts, posture
+                    new Vector3d(UseProductConfirmationView.PREVIEW_DIRECTION), UseProductConfirmationView.PREVIEW_SCALE, this, true, 0, figureData.customParts, posture
                 );
                 break;
             }

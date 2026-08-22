@@ -8,9 +8,6 @@ import type {DailyTaskData} from '@habbo/communication/messages/parser/quest/Dai
 import type {DailyTasksController} from './DailyTasksController';
 import {DailyTaskView} from './tasks/DailyTaskView';
 
-// AS3: DailyTasksView.as::DESKTOP_WINDOW_LAYER — the same layer both daily-task windows live on.
-const DESKTOP_WINDOW_LAYER = 1;
-
 /**
  * The secondary window listing tasks that lapsed before they were claimed.
  *
@@ -23,6 +20,9 @@ const DESKTOP_WINDOW_LAYER = 1;
  */
 export class UnclaimedTasksView
 {
+    // AS3: DailyTasksView.as::DESKTOP_WINDOW_LAYER — the same layer both daily-task windows live on.
+    private static readonly DESKTOP_WINDOW_LAYER = 1;
+
     // AS3: UnclaimedTasksView.as::_disposed
     private _disposed: boolean = false;
     // AS3: UnclaimedTasksView.as::_windowManager
@@ -113,7 +113,7 @@ export class UnclaimedTasksView
 
         if(this._window.parent === null)
         {
-            const desktop = this._windowManager.getDesktop(DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
+            const desktop = this._windowManager.getDesktop(UnclaimedTasksView.DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
 
             desktop?.addChild(this._window);
         }
@@ -126,7 +126,7 @@ export class UnclaimedTasksView
     {
         if(this._window === null || this._windowManager === null || this._window.parent === null) return;
 
-        const desktop = this._windowManager.getDesktop(DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
+        const desktop = this._windowManager.getDesktop(UnclaimedTasksView.DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
 
         desktop?.removeChild(this._window);
     }

@@ -28,13 +28,15 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {BreedingRarityCategoryData} from '../events/BreedingRarityCategoryData';
 import type {AvatarInfoWidget} from './AvatarInfoWidget';
 
-// Preview render parameters (ConfirmPetBreedingView.as::resolvePreviewImage()).
-const PREVIEW_DIRECTION: number = 90;
-const PREVIEW_SCALE: number = 64;
-const PREVIEW_POSTURE: string = 'std';
-
 export class ConfirmPetBreedingView implements IDisposable, IGetImageListener
 {
+    // Preview render parameters (ConfirmPetBreedingView.as::resolvePreviewImage()).
+    private static readonly PREVIEW_DIRECTION: number = 90;
+
+    private static readonly PREVIEW_SCALE: number = 64;
+
+    private static readonly PREVIEW_POSTURE: string = 'std';
+
     // AS3: ConfirmPetBreedingView.as::_window
     private _window: IFrameWindow | null = null;
     // AS3: ConfirmPetBreedingView.as::disposed (obfuscated `_SafeStr_5769`; named from its getter)
@@ -117,7 +119,7 @@ export class ConfirmPetBreedingView implements IDisposable, IGetImageListener
     }
 
     // AS3: ConfirmPetBreedingView.as::resolvePreviewImage()
-    private resolvePreviewImage(figure: string, targetName: string, scale: number = PREVIEW_SCALE): ImageBitmap | null
+    private resolvePreviewImage(figure: string, targetName: string, scale: number = ConfirmPetBreedingView.PREVIEW_SCALE): ImageBitmap | null
     {
         const roomEngine = this._widget.handler?.container?.roomEngine ?? null;
 
@@ -126,8 +128,8 @@ export class ConfirmPetBreedingView implements IDisposable, IGetImageListener
         const figureData = new PetFigureData(figure);
         const result = roomEngine.getPetImage(
             figureData.typeId, figureData.paletteId, figureData.color,
-            new Vector3d(PREVIEW_DIRECTION), scale, this, true, 0,
-            figureData.customParts, PREVIEW_POSTURE
+            new Vector3d(ConfirmPetBreedingView.PREVIEW_DIRECTION), scale, this, true, 0,
+            figureData.customParts, ConfirmPetBreedingView.PREVIEW_POSTURE
         );
 
         if(!result) return null;

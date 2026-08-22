@@ -24,17 +24,20 @@ import {LocalizedSprite} from './LocalizedSprite';
 import type {LocalizedTextField} from './LocalizedTextField';
 import {LoginAssets} from './LoginAssets';
 
-/** TS-only: the four visual states AS3 encodes as bare 1..4 locals in `refresh()`. */
-const STATE_DEFAULT = 1;
-const STATE_PRESSED = 2;
-const STATE_INACTIVE = 3;
-const STATE_EDITING = 4;
-
 /** AS3: the action callback signature — `_action(this)`. */
 export type ButtonAction = (button: Button) => void;
 
 export class Button extends LocalizedSprite
 {
+    /** TS-only: the four visual states AS3 encodes as bare 1..4 locals in `refresh()`. */
+    private static readonly STATE_DEFAULT = 1;
+
+    private static readonly STATE_PRESSED = 2;
+
+    private static readonly STATE_INACTIVE = 3;
+
+    private static readonly STATE_EDITING = 4;
+
     // AS3: _caption
     private _caption: string;
 
@@ -343,37 +346,37 @@ export class Button extends LocalizedSprite
         if(this._background == null) return;
 
         let state = this._active
-            ? ((this._pressed && this._hover) || this._selected ? STATE_PRESSED : STATE_DEFAULT)
-            : STATE_INACTIVE;
+            ? ((this._pressed && this._hover) || this._selected ? Button.STATE_PRESSED : Button.STATE_DEFAULT)
+            : Button.STATE_INACTIVE;
 
         if(this._currentlyEditing)
         {
-            state = STATE_EDITING;
+            state = Button.STATE_EDITING;
         }
 
         if(this._defaultBackground)
         {
-            this._defaultBackground.visible = state === STATE_DEFAULT && (this._rolloverBackground == null || !this._hover);
+            this._defaultBackground.visible = state === Button.STATE_DEFAULT && (this._rolloverBackground == null || !this._hover);
         }
 
         if(this._pressedBackground)
         {
-            this._pressedBackground.visible = state === STATE_PRESSED;
+            this._pressedBackground.visible = state === Button.STATE_PRESSED;
         }
 
         if(this._inactiveBackground)
         {
-            this._inactiveBackground.visible = state === STATE_INACTIVE;
+            this._inactiveBackground.visible = state === Button.STATE_INACTIVE;
         }
 
         if(this._editingBackground)
         {
-            this._editingBackground.visible = state === STATE_EDITING;
+            this._editingBackground.visible = state === Button.STATE_EDITING;
         }
 
         if(this._rolloverBackground != null)
         {
-            this._rolloverBackground.visible = state === STATE_DEFAULT && this._hover;
+            this._rolloverBackground.visible = state === Button.STATE_DEFAULT && this._hover;
             this.filters = [];
         }
         else

@@ -194,27 +194,11 @@ import {
     SpinWheelOfFortuneMessageComposer,
     ThrowDiceMessageComposer
 } from '@habbo/communication/messages/outgoing/room/furniture';
+import {RoomUserData} from '@habbo/communication/messages/incoming/room/engine/RoomUserData';
 import {RoomObjectMouseEvent} from '@room/events/RoomObjectMouseEvent';
 import {OrderedMap} from '@core/utils/OrderedMap';
 
 const log = Logger.getLogger('habbo.room.RoomEngine');
-
-// AS3: _SafeCls_1821.as::placeObject() compares the selected object's typeId against these literals
-// to pick the placement composer. They are the same numeric user types addObjectUser() switches on.
-const USER_TYPE_PET = 2;
-const USER_TYPE_RENTABLE_BOT = 4;
-
-// Room identifier prefix
-const ROOM_ID_PREFIX = 'room_';
-const OBJECT_ID_ROOM = -1;
-const OBJECT_TYPE_ROOM = 'room';
-const OBJECT_ID_TILE_CURSOR = -2;
-const OBJECT_TYPE_TILE_CURSOR = 'tile_cursor';
-const OBJECT_ID_SELECTION_ARROW = -3;
-const OBJECT_TYPE_SELECTION_ARROW = 'selection_arrow';
-const ROOM_DRAG_THRESHOLD = 15;
-// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getGenericRoomObjectImage() ("temporary_room")
-const TEMPORARY_ROOM_ID = 'temporary_room';
 
 interface IRoomEngineRoomInstanceData {
     // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get roomCamera()
@@ -266,6 +250,32 @@ export class RoomEngine extends Component implements IRoomEngine,
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::initializeRoom()
     private static readonly DEFAULT_LANDSCAPE_TYPE: string = '1';
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::ROOM_TEMP_ID
+    private static readonly ROOM_TEMP_ID: string = 'temporary_room';
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::OBJECT_ID_ROOM
+    public static readonly OBJECT_ID_ROOM: number = -1;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::OBJECT_TYPE_ROOM
+    private static readonly OBJECT_TYPE_ROOM: string = 'room';
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::OBJECT_ID_ROOM_HIGHLIGHTER
+    private static readonly OBJECT_ID_ROOM_HIGHLIGHTER: number = -2;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::OBJECT_TYPE_ROOM_HIGHLIGHTER
+    private static readonly OBJECT_TYPE_ROOM_HIGHLIGHTER: string = 'tile_cursor';
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::OBJECT_ID_SELECTION_ARROW
+    // Derived name: `_SafeStr_10894` is obfuscated in every tree; named after the type string below.
+    private static readonly OBJECT_ID_SELECTION_ARROW: number = -3;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::OBJECT_TYPE_SELECTION_ARROW
+    // Derived name: `_SafeStr_11037` is obfuscated in every tree; named after its value.
+    private static readonly OBJECT_TYPE_SELECTION_ARROW: string = 'selection_arrow';
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::ROOM_DRAG_THRESHOLD
+    private static readonly ROOM_DRAG_THRESHOLD: number = 15;
 
     private _roomObjectFactory: RoomObjectFactory;
     private _visualizationFactory: RoomObjectVisualizationFactory;
@@ -780,7 +790,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             return null;
         }
 
-        return room.getObject(OBJECT_ID_TILE_CURSOR, RoomObjectCategoryEnum.OBJECT_CATEGORY_CURSOR) as IRoomObjectController | null;
+        return room.getObject(RoomEngine.OBJECT_ID_ROOM_HIGHLIGHTER, RoomObjectCategoryEnum.OBJECT_CATEGORY_CURSOR) as IRoomObjectController | null;
     }
 
     getSelectionArrow(roomId: number): IRoomObjectController | null 
@@ -791,7 +801,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             return null;
         }
 
-        return room.getObject(OBJECT_ID_SELECTION_ARROW, RoomObjectCategoryEnum.OBJECT_CATEGORY_CURSOR) as IRoomObjectController | null;
+        return room.getObject(RoomEngine.OBJECT_ID_SELECTION_ARROW, RoomObjectCategoryEnum.OBJECT_CATEGORY_CURSOR) as IRoomObjectController | null;
     }
 
     getIsPlayingGame(_roomId: number): boolean 
@@ -1209,7 +1219,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         // (RoomManager.initialize() -> getPlaceHolderTypes()), which reports back
         // exclusively through this IRoomManagerListener callback — never through
         // _contentLoaderEvents (that path is furniture-only, see loadFurnitureContent()).
-        if(success && type === OBJECT_TYPE_ROOM) 
+        if(success && type === RoomEngine.OBJECT_TYPE_ROOM) 
         {
             this.onRoomContentReady();
         }
@@ -1612,11 +1622,11 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(!this._roomManager || type === null) return result;
 
-        let room = this._roomManager.getRoom(TEMPORARY_ROOM_ID);
+        let room = this._roomManager.getRoom(RoomEngine.ROOM_TEMP_ID);
 
         if(room === null)
         {
-            room = this._roomManager.createRoom(TEMPORARY_ROOM_ID, null);
+            room = this._roomManager.createRoom(RoomEngine.ROOM_TEMP_ID, null);
 
             if(room === null) return result;
         }
@@ -1782,12 +1792,12 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         // Create room object and cursors.
         // These go through RoomManager.createRoomObject which handles the internal creation.
-        room.createRoomObject(OBJECT_ID_ROOM, OBJECT_TYPE_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM);
-        room.createRoomObject(OBJECT_ID_TILE_CURSOR, OBJECT_TYPE_TILE_CURSOR, RoomObjectCategoryEnum.OBJECT_CATEGORY_CURSOR);
+        room.createRoomObject(RoomEngine.OBJECT_ID_ROOM, RoomEngine.OBJECT_TYPE_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM);
+        room.createRoomObject(RoomEngine.OBJECT_ID_ROOM_HIGHLIGHTER, RoomEngine.OBJECT_TYPE_ROOM_HIGHLIGHTER, RoomObjectCategoryEnum.OBJECT_CATEGORY_CURSOR);
 
         if(this._configurationManager?.getBoolean('avatar.widget.enabled') !== true) 
         {
-            room.createRoomObject(OBJECT_ID_SELECTION_ARROW, OBJECT_TYPE_SELECTION_ARROW, RoomObjectCategoryEnum.OBJECT_CATEGORY_CURSOR);
+            room.createRoomObject(RoomEngine.OBJECT_ID_SELECTION_ARROW, RoomEngine.OBJECT_TYPE_SELECTION_ARROW, RoomObjectCategoryEnum.OBJECT_CATEGORY_CURSOR);
         }
 
         this.getRoomInstanceData(roomId);
@@ -2919,7 +2929,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             return;
         }
 
-        const roomObject = room.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController;
+        const roomObject = room.getObject(RoomEngine.OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController;
 
         if(roomObject) 
         {
@@ -2948,7 +2958,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     updateObjectRoom(roomId: number, floorType?: string | null, wallType?: string | null, landscapeType?: string | null, skipModelUpdate: boolean = false): boolean
     {
         const room = this.getRoomInstance(roomId);
-        const roomObject = room?.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController | null;
+        const roomObject = room?.getObject(RoomEngine.OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController | null;
 
         if(!roomObject)
         {
@@ -3003,7 +3013,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     updateObjectRoomVisibilities(roomId: number, wallsVisible: boolean, floorVisible: boolean = true): boolean 
     {
         const room = this.getRoomInstance(roomId);
-        const roomObject = room?.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController | null;
+        const roomObject = room?.getObject(RoomEngine.OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController | null;
         const eventHandler = roomObject?.getEventHandler();
 
         if(!eventHandler) return false;
@@ -3018,7 +3028,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     updateObjectRoomPlaneThicknesses(roomId: number, wallThicknessMultiplier: number, floorThicknessMultiplier: number): boolean 
     {
         const room = this.getRoomInstance(roomId);
-        const roomObject = room?.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController | null;
+        const roomObject = room?.getObject(RoomEngine.OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController | null;
         const eventHandler = roomObject?.getEventHandler();
 
         if(!eventHandler) return false;
@@ -3065,7 +3075,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             return;
         }
 
-        const roomObject = room.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController;
+        const roomObject = room.getObject(RoomEngine.OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController;
 
         if(roomObject) 
         {
@@ -3179,7 +3189,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         {
             log.debug(`Initializing room ${roomId} with ${planeParser.planeCount} planes`);
 
-            const roomObject = room.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController;
+            const roomObject = room.getObject(RoomEngine.OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController;
 
             if(roomObject) 
             {
@@ -3295,7 +3305,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             }
 
             // Create room visualization
-            const roomVisualization = this.createVisualizationForObject(roomId, OBJECT_ID_ROOM, OBJECT_TYPE_ROOM);
+            const roomVisualization = this.createVisualizationForObject(roomId, RoomEngine.OBJECT_ID_ROOM, RoomEngine.OBJECT_TYPE_ROOM);
 
             if(roomVisualization) 
             {
@@ -3303,7 +3313,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             }
 
             // Load tile cursor content (.nitro bundle) — goes through the same content loading pipeline as furniture
-            this.loadFurnitureContent(roomId, OBJECT_ID_TILE_CURSOR, OBJECT_TYPE_TILE_CURSOR, RoomObjectCategoryEnum.OBJECT_CATEGORY_CURSOR);
+            this.loadFurnitureContent(roomId, RoomEngine.OBJECT_ID_ROOM_HIGHLIGHTER, RoomEngine.OBJECT_TYPE_ROOM_HIGHLIGHTER, RoomObjectCategoryEnum.OBJECT_CATEGORY_CURSOR);
         }
 
         this._initializedRooms.add(roomId);
@@ -3910,7 +3920,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     {
         return this.getRoomObject(
             roomId,
-            OBJECT_ID_ROOM,
+            RoomEngine.OBJECT_ID_ROOM,
             RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM
         ) as IRoomObjectController | null;
     }
@@ -5035,7 +5045,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     {
         if(this._pendingImageListeners.size === 0 || !this._contentLoader) return;
 
-        const room = this._roomManager?.getRoom(TEMPORARY_ROOM_ID) ?? null;
+        const room = this._roomManager?.getRoom(RoomEngine.ROOM_TEMP_ID) ?? null;
 
         if(room === null) return;
 
@@ -5302,7 +5312,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         // rendered at scale 64 facing 180.
         if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
         {
-            if(id === USER_TYPE_PET && extra !== null)
+            if(id === RoomUserData.USER_TYPE_PET && extra !== null)
             {
                 const figureData = new AvatarPetFigureData(extra);
 
@@ -5951,14 +5961,14 @@ export class RoomEngine extends Component implements IRoomEngine,
             // `getRoom(roomId).getObjectCountForType('free_placement_room', 10) > 1`.
             if(this._connection !== null && this._objectPlacementSource === 'inventory')
             {
-                if(data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER && data.typeId === USER_TYPE_PET)
+                if(data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER && data.typeId === RoomUserData.USER_TYPE_PET)
                 {
                     // AS3 wraps both coordinates in `int(...)` at every one of these three send
                     // sites. The ghost sits at the tile centre (tileX + 0.5), so sending the raw
                     // location would put a fractional tile on the wire.
                     this._connection.send(new PlacePetComposer(sentId, Math.trunc(x), Math.trunc(y)));
                 }
-                else if(data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER && data.typeId === USER_TYPE_RENTABLE_BOT)
+                else if(data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER && data.typeId === RoomUserData.USER_TYPE_BOT)
                 {
                     this._connection.send(new PlaceBotMessageComposer(sentId, Math.trunc(x), Math.trunc(y)));
                 }
@@ -6396,7 +6406,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             canvas.geometry.z_scale = roomZScale;
         }
 
-        const roomObject = room.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM);
+        const roomObject = room.getObject(RoomEngine.OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM);
         const model = roomObject?.getModel();
 
         if(!model) return;
@@ -6492,10 +6502,10 @@ export class RoomEngine extends Component implements IRoomEngine,
                     deltaX = x - this._roomDragStartX;
                     deltaY = y - this._roomDragStartY;
 
-                    if(deltaX <= -ROOM_DRAG_THRESHOLD ||
-                        deltaX >= ROOM_DRAG_THRESHOLD ||
-                        deltaY <= -ROOM_DRAG_THRESHOLD ||
-                        deltaY >= ROOM_DRAG_THRESHOLD) 
+                    if(deltaX <= -RoomEngine.ROOM_DRAG_THRESHOLD ||
+                        deltaX >= RoomEngine.ROOM_DRAG_THRESHOLD ||
+                        deltaY <= -RoomEngine.ROOM_DRAG_THRESHOLD ||
+                        deltaY >= RoomEngine.ROOM_DRAG_THRESHOLD) 
                     {
                         this._roomDragStarted = true;
                         this.events.emit(
@@ -6585,7 +6595,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         // direct-name lookup resolves regardless of which form it sees.
         const canvasTextures = new Map<string, HTMLCanvasElement>();
         const textures: Map<string, Texture> = asset.textures;
-        const libraryPrefix = `${OBJECT_TYPE_ROOM}_`;
+        const libraryPrefix = `${RoomEngine.OBJECT_TYPE_ROOM}_`;
         const conversionStart = performance.now();
 
         this._blittedTextureCount = 0;
@@ -6726,9 +6736,10 @@ export class RoomEngine extends Component implements IRoomEngine,
         return location;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomIdentifier()
     private getRoomIdentifier(roomId: number): string 
     {
-        return `${ROOM_ID_PREFIX}${roomId}`;
+        return String(roomId);
     }
 
     private onRoomObjectEvent(event: unknown): void
@@ -8071,7 +8082,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
 
         // Initialize room visualization with texture data (rasterizers)
-        if(type === OBJECT_TYPE_ROOM && this._roomVisualizationData !== null) 
+        if(type === RoomEngine.OBJECT_TYPE_ROOM && this._roomVisualizationData !== null) 
         {
             spriteVisualization.initialize(this._roomVisualizationData);
         }
@@ -8442,7 +8453,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     {
         return this.getRoomObjectBoundingRectangle(
             this._activeRoomId,
-            OBJECT_ID_ROOM,
+            RoomEngine.OBJECT_ID_ROOM,
             RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM,
             canvasId
         );

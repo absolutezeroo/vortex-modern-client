@@ -25,30 +25,43 @@ import type {AvatarInfoWidget} from './AvatarInfoWidget';
 
 const logger = Logger.getLogger('habbo.ui.widget.avatarinfo.UseProductView');
 
-// AS3: UseProductView.as::MODE_NORMAL
-const MODE_NORMAL: number = 0;
-const MODE_SHAMPOO: number = 1;
-const MODE_CUSTOM_PART: number = 2;
-const MODE_CUSTOM_PART_SHAMPOO: number = 3;
-const MODE_SADDLE: number = 4;
-const MODE_REVIVE: number = 5;
-const MODE_REBREED: number = 6;
-const MODE_FERTILIZE: number = 7;
-
-// Furniture categories the modes above map to. AS3 writes them as `category - 13` switch
-// offsets; the names come from the mode each one selects.
-const CATEGORY_SHAMPOO: number = 13;
-const CATEGORY_CUSTOM_PART: number = 14;
-const CATEGORY_CUSTOM_PART_SHAMPOO: number = 15;
-const CATEGORY_SADDLE: number = 16;
-const CATEGORY_REVIVE: number = 20;
-const CATEGORY_REBREED: number = 21;
-const CATEGORY_FERTILIZE: number = 22;
-
 export class UseProductView extends AvatarContextInfoButtonView
 {
+    // AS3: UseProductView.as::MODE_NORMAL
+    private static readonly MODE_NORMAL: number = 0;
+
+    private static readonly MODE_SHAMPOO: number = 1;
+
+    private static readonly MODE_CUSTOM_PART: number = 2;
+
+    private static readonly MODE_CUSTOM_PART_SHAMPOO: number = 3;
+
+    private static readonly MODE_SADDLE: number = 4;
+
+    private static readonly MODE_REVIVE: number = 5;
+
+    private static readonly MODE_REBREED: number = 6;
+
+    private static readonly MODE_FERTILIZE: number = 7;
+
+    // Furniture categories the modes above map to. AS3 writes them as `category - 13` switch
+    // offsets; the names come from the mode each one selects.
+    private static readonly CATEGORY_SHAMPOO: number = 13;
+
+    private static readonly CATEGORY_CUSTOM_PART: number = 14;
+
+    private static readonly CATEGORY_CUSTOM_PART_SHAMPOO: number = 15;
+
+    private static readonly CATEGORY_SADDLE: number = 16;
+
+    private static readonly CATEGORY_REVIVE: number = 20;
+
+    private static readonly CATEGORY_REBREED: number = 21;
+
+    private static readonly CATEGORY_FERTILIZE: number = 22;
+
     // AS3: UseProductView.as::_mode
-    private _mode: number = MODE_NORMAL;
+    private _mode: number = UseProductView.MODE_NORMAL;
     // AS3: UseProductView.as::_item (obfuscated `_SafeStr_5258`)
     private _item: UseProductItem | null = null;
 
@@ -118,30 +131,30 @@ export class UseProductView extends AvatarContextInfoButtonView
 
         if(!furniData) return;
 
-        this._mode = MODE_NORMAL;
+        this._mode = UseProductView.MODE_NORMAL;
 
         switch(furniData.category)
         {
-            case CATEGORY_SHAMPOO:
-                this._mode = MODE_SHAMPOO;
+            case UseProductView.CATEGORY_SHAMPOO:
+                this._mode = UseProductView.MODE_SHAMPOO;
                 break;
-            case CATEGORY_CUSTOM_PART:
-                this._mode = MODE_CUSTOM_PART;
+            case UseProductView.CATEGORY_CUSTOM_PART:
+                this._mode = UseProductView.MODE_CUSTOM_PART;
                 break;
-            case CATEGORY_CUSTOM_PART_SHAMPOO:
-                this._mode = MODE_CUSTOM_PART_SHAMPOO;
+            case UseProductView.CATEGORY_CUSTOM_PART_SHAMPOO:
+                this._mode = UseProductView.MODE_CUSTOM_PART_SHAMPOO;
                 break;
-            case CATEGORY_SADDLE:
-                this._mode = MODE_SADDLE;
+            case UseProductView.CATEGORY_SADDLE:
+                this._mode = UseProductView.MODE_SADDLE;
                 break;
-            case CATEGORY_REVIVE:
-                this._mode = MODE_REVIVE;
+            case UseProductView.CATEGORY_REVIVE:
+                this._mode = UseProductView.MODE_REVIVE;
                 break;
-            case CATEGORY_REBREED:
-                this._mode = MODE_REBREED;
+            case UseProductView.CATEGORY_REBREED:
+                this._mode = UseProductView.MODE_REBREED;
                 break;
-            case CATEGORY_FERTILIZE:
-                this._mode = MODE_FERTILIZE;
+            case UseProductView.CATEGORY_FERTILIZE:
+                this._mode = UseProductView.MODE_FERTILIZE;
                 break;
             default:
                 logger.warn(`[UseProductView.open()] Unsupported furniture category: ${furniData.category}`);
@@ -208,30 +221,30 @@ export class UseProductView extends AvatarContextInfoButtonView
 
         switch(this._mode)
         {
-            case MODE_NORMAL:
+            case UseProductView.MODE_NORMAL:
                 this.showButton('use_product');
                 break;
-            case MODE_SHAMPOO:
+            case UseProductView.MODE_SHAMPOO:
                 this.showButton('use_product_shampoo');
                 break;
-            case MODE_CUSTOM_PART:
+            case UseProductView.MODE_CUSTOM_PART:
                 this.showButton('use_product_custom_part');
                 break;
-            case MODE_CUSTOM_PART_SHAMPOO:
+            case UseProductView.MODE_CUSTOM_PART_SHAMPOO:
                 this.showButton('use_product_custom_part_shampoo');
                 break;
-            case MODE_SADDLE:
+            case UseProductView.MODE_SADDLE:
                 // A pet that already wears a saddle gets the "replace" caption instead.
                 if(this._item?.replace) this.showButton('replace_product_saddle');
                 else this.showButton('use_product_saddle');
                 break;
-            case MODE_REVIVE:
+            case UseProductView.MODE_REVIVE:
                 this.showButton('revive_monsterplant');
                 break;
-            case MODE_REBREED:
+            case UseProductView.MODE_REBREED:
                 this.showButton('rebreed_monsterplant');
                 break;
-            case MODE_FERTILIZE:
+            case UseProductView.MODE_FERTILIZE:
                 this.showButton('fertilize_monsterplant');
                 break;
         }

@@ -20,15 +20,15 @@ import {RoomObjectFurnitureActionEvent} from '@habbo/room/events/RoomObjectFurni
 import {RoomObjectWidgetRequestEvent} from '@habbo/room/events/RoomObjectWidgetRequestEvent';
 import {RoomObjectItemDataUpdateMessage} from '@habbo/room/messages/RoomObjectItemDataUpdateMessage';
 
-/**
- * AS3: FurnitureStickieLogic.as::setColorIndexFromItemData()
- *
- * The eight authored note colours, in the order the widget's colour buttons use.
- */
-const STICKIE_COLORS: readonly string[] = ['9CCEFF', 'FF9CFF', '9CFF9C', 'FFFF33', 'FFFFFF', 'FF9C9C', 'FFCC66', '9CFFFF'];
-
 export class FurnitureStickieLogic extends FurnitureLogic
 {
+    /**
+    * AS3: FurnitureStickieLogic.as::setColorIndexFromItemData()
+    *
+    * The eight authored note colours, in the order the widget's colour buttons use.
+    */
+    private static readonly STICKIE_COLORS: readonly string[] = ['9CCEFF', 'FF9CFF', '9CFF9C', 'FFFF33', 'FFFFFF', 'FF9C9C', 'FFCC66', '9CFFFF'];
+
     // AS3: FurnitureStickieLogic.as::getEventTypes()
     override getEventTypes(): string[]
     {
@@ -84,7 +84,7 @@ export class FurnitureStickieLogic extends FurnitureLogic
         if(this.object === null) return;
 
         const color = this.object.getModel().getString('furniture_data');
-        let index = STICKIE_COLORS.indexOf(color);
+        let index = FurnitureStickieLogic.STICKIE_COLORS.indexOf(color);
 
         if(index < 0)
         {

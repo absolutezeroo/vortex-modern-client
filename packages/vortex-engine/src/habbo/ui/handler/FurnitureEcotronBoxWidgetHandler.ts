@@ -21,11 +21,11 @@ import {RoomWidgetEcotronBoxDataUpdateEvent} from '@habbo/ui/widget/events/RoomW
 import {RoomWidgetEcotronBoxOpenMessage} from '@habbo/ui/widget/messages/RoomWidgetEcotronBoxOpenMessage';
 import {RoomWidgetFurniToWidgetMessage} from '@habbo/ui/widget/messages/RoomWidgetFurniToWidgetMessage';
 
-// AS3: FurnitureEcotronBoxWidgetHandler.as::processEvent() — the session event it subscribes to.
-const PRESENT_OPENED: string = 'RSPE_PRESENT_OPENED';
-
 export class FurnitureEcotronBoxWidgetHandler implements IRoomWidgetHandler, IGetImageListener
 {
+    // AS3: FurnitureEcotronBoxWidgetHandler.as::processEvent() — the session event it subscribes to.
+    private static readonly PRESENT_OPENED: string = 'RSPE_PRESENT_OPENED';
+
     // AS3: FurnitureEcotronBoxWidgetHandler.as::_SafeStr_5769
     private _disposed: boolean = false;
 
@@ -162,7 +162,7 @@ export class FurnitureEcotronBoxWidgetHandler implements IRoomWidgetHandler, IGe
     // AS3: FurnitureEcotronBoxWidgetHandler.as::getProcessedEvents()
     public getProcessedEvents(): string[]
     {
-        return [PRESENT_OPENED];
+        return [FurnitureEcotronBoxWidgetHandler.PRESENT_OPENED];
     }
 
     /**
@@ -175,7 +175,7 @@ export class FurnitureEcotronBoxWidgetHandler implements IRoomWidgetHandler, IGe
     {
         const presentEvent = event as RoomSessionPresentEvent | null;
 
-        if(presentEvent === null || presentEvent.type !== PRESENT_OPENED) return;
+        if(presentEvent === null || presentEvent.type !== FurnitureEcotronBoxWidgetHandler.PRESENT_OPENED) return;
 
         this._name = '';
 

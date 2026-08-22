@@ -22,18 +22,6 @@ import {ShopCollectibleItemRenderer} from '../renderer/ShopCollectibleItemRender
 import {ShopNavigationNodeRenderer} from '../renderer/collections/ShopNavigationNodeRenderer';
 import {NftStorePurchaseOffer} from './NftStorePurchaseOffer';
 
-// AS3: ShopTab.as::BG_STAR_ROTATE_SPEED — degrees per second for the backdrop star.
-const BG_STAR_ROTATE_SPEED = 20;
-/**
- * AS3: ShopTab.as::_SafeStr_7248 — degrees per second for the loading spinner. This is the
- * *original* of the constant `RewardClaimsTab` and `TransferNftsTab` reach for through
- * `CollectionsTab`, which declares its own copy with the same value.
- */
-const LOADING_ICON_ROTATE_SPEED = 90;
-
-/** AS3: ShopTab.as::onClickBuy() — the activity-point type the not-enough alert is raised with. */
-const EMERALD_ACTIVITY_POINT_TYPE = 1001;
-
 /**
  * The NFT store: a category list down the left, a grid of offers, and a preview panel that buys.
  *
@@ -46,6 +34,19 @@ const EMERALD_ACTIVITY_POINT_TYPE = 1001;
  */
 export class ShopTab implements IUpdateReceiver
 {
+    // AS3: ShopTab.as::BG_STAR_ROTATE_SPEED — degrees per second for the backdrop star.
+    private static readonly BG_STAR_ROTATE_SPEED = 20;
+
+    /**
+    * AS3: ShopTab.as::_SafeStr_7248 — degrees per second for the loading spinner. This is the
+    * *original* of the constant `RewardClaimsTab` and `TransferNftsTab` reach for through
+    * `CollectionsTab`, which declares its own copy with the same value.
+    */
+    private static readonly LOADING_ICON_ROTATE_SPEED = 90;
+
+    /** AS3: ShopTab.as::onClickBuy() — the activity-point type the not-enough alert is raised with. */
+    private static readonly EMERALD_ACTIVITY_POINT_TYPE = 1001;
+
     // AS3: ShopTab.as::_disposed
     private _disposed: boolean = false;
     // AS3: ShopTab.as::_SafeStr_5556 (the hub view)
@@ -375,7 +376,7 @@ export class ShopTab implements IUpdateReceiver
 
         if(catalog.getPurse().emeraldBalance < offer.priceInEmerald)
         {
-            catalog.showNotEnoughActivityPointsAlert(EMERALD_ACTIVITY_POINT_TYPE);
+            catalog.showNotEnoughActivityPointsAlert(ShopTab.EMERALD_ACTIVITY_POINT_TYPE);
 
             return;
         }
@@ -542,7 +543,7 @@ export class ShopTab implements IUpdateReceiver
         {
             if(this._backgroundStar === null) return;
 
-            this._backgroundStar.rotation += BG_STAR_ROTATE_SPEED * (elapsedMs / 1000);
+            this._backgroundStar.rotation += ShopTab.BG_STAR_ROTATE_SPEED * (elapsedMs / 1000);
             this._backgroundStar.rotation %= 360;
             this._backgroundStar.invalidate();
 
@@ -551,7 +552,7 @@ export class ShopTab implements IUpdateReceiver
 
         if(this._loadingIcon === null) return;
 
-        this._loadingIcon.rotation += LOADING_ICON_ROTATE_SPEED * (elapsedMs / 1000);
+        this._loadingIcon.rotation += ShopTab.LOADING_ICON_ROTATE_SPEED * (elapsedMs / 1000);
         this._loadingIcon.rotation %= 360;
         this._loadingIcon.invalidate();
     }

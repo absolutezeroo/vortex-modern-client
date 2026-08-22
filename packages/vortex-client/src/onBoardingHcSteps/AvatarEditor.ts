@@ -40,83 +40,85 @@ import {RandomAvatarCloudsAnimation} from './RandomAvatarCloudsAnimation';
 
 const log = Logger.getLogger('client.onBoardingHcSteps.AvatarEditor');
 
-// AS3: GENDER_MALE / GENDER_FEMALE / GENDER_UNISEX
-const GENDER_MALE = 'M';
-const GENDER_FEMALE = 'F';
-const GENDER_UNISEX = 'U';
-
-// AS3: NORMAL_ITEMS_TO_SHOW
-const NORMAL_ITEMS_TO_SHOW = 5;
-
-// AS3: COLORS_PER_ROW
-const COLORS_PER_ROW = 4;
-
-// AS3: CATEGORIES
-const CATEGORIES = ['hr', 'hd', 'ch', 'lg', 'sh'];
-
-// AS3: EXTRA_CATEGORIES — empty in the 701 build; the loops over it are dead but ported.
-const EXTRA_CATEGORIES: string[] = [];
-
-// AS3: RANDOM_MALE_FIGURES
-const RANDOM_MALE_FIGURES = [
-    'hr-891-34.hd-209-10.ch-255-71.lg-280-81',
-    'hr-893-42.hd-209-19.ch-230-80.lg-3290-82.sh-906-64',
-    'hr-889-34.hd-200-1.ch-3030-73.lg-3023-88.sh-300-64',
-    'hr-145-42.hd-185-1.ch-230-66.lg-270-82.sh-290-81',
-    'hr-110-38.hd-190-1.ch-3030-85.lg-275-84.sh-290-74',
-    'hr-891-42.hd-190-14.ch-230-64.lg-3290-64.sh-906-64',
-    'hr-110-35.hd-185-1.ch-3110-80-25.lg-270-84.sh-905-80',
-    'hr-145-43.hd-209-1.ch-809-80.lg-275-82.sh-906-64',
-    'hr-889-42.hd-207-1370.ch-230-80.lg-280-80.sh-906-64',
-    'hr-891-48.hd-200-1370.ch-809-84.lg-3290-84.sh-300-84',
-    'hd-190-30.ch-230-82.lg-275-72.sh-905-88',
-    'hd-185-10.ch-3110-85-25.lg-275-82.sh-300-84',
-    'hr-893-40.hd-200-14.ch-255-75.lg-280-75.sh-906-75',
-    'hr-889-45.hd-190-1370.ch-255-68.lg-3023-88.sh-906-68',
-    'hr-110-45.hd-200-1371.ch-255-85.lg-280-84.sh-3068-85-25',
-    'hr-893-35.hd-185-10.ch-230-1408.lg-275-72',
-    'hr-145-42.hd-200-10.ch-255-64.lg-3290-64.sh-906-64',
-    'hr-889-42.hd-209-10.ch-809-81.lg-3290-64.sh-300-64',
-    'hr-110-39.hd-190-1371.ch-3110-80-25.lg-275-81.sh-3068-83-25',
-    'hr-891-48.hd-185-20.ch-3030-71.lg-3023-80.sh-300-81',
-    'hr-145-37.hd-200-1.ch-3030-75.lg-270-80.sh-3068-83-25',
-    'hr-891-44.hd-207-1.ch-809-76.lg-270-76.sh-3068-76-25',
-    'hr-145-48.hd-185-20.ch-3110-76-25.lg-270-74.sh-290-75',
-    'hr-110-44.hd-200-30.ch-809-83.lg-270-84.sh-300-64',
-    'hr-891-34.hd-207-14.ch-230-81.lg-270-76.sh-290-80',
-];
-
-// AS3: RANDOM_FEMALE_FIGURES
-const RANDOM_FEMALE_FIGURES = [
-    'hr-891-40.hd-627-1371.ch-665-66.lg-700-82.sh-3068-68-25',
-    'hr-515-48.hd-628-1.ch-635-73.lg-695-81.sh-735-83',
-    'hr-891-35.hd-625-8.ch-685-73.lg-715-73.sh-907-73',
-    'hr-837-45.hd-627-14.ch-670-76.lg-695-71.sh-907-73',
-    'hr-892-48.hd-605-14.ch-685-64.lg-700-72.sh-906-64',
-    'hr-893-32.hd-628-20.ch-823-76.lg-710-82.sh-735-76',
-    'hr-892-32.hd-628-1.ch-665-81.lg-700-80.sh-3068-81-25',
-    'hr-893-40.hd-610-12.ch-670-81.lg-716-81-25.sh-725-83',
-    'hr-891-42.hd-625-10.ch-635-64.lg-695-64.sh-906-64',
-    'hd-625-1370.ch-823-72.lg-710-74.sh-725-74',
-    'hr-515-45.hd-628-1.ch-823-75.lg-710-73.sh-3068-84-25',
-    'hr-893-34.hd-605-19.ch-685-84.lg-695-85.sh-906-85',
-    'hr-837-39.hd-610-1.ch-685-91.lg-695-90.sh-906-80',
-    'hr-891-34.hd-610-1369.ch-635-74.lg-695-82.sh-906-71',
-    'hr-892-39.hd-628-1370.ch-670-64.lg-716-64-25.sh-907-64',
-    'hr-837-46.hd-627-20.ch-665-76.lg-716-68-25',
-    'hr-892-37.hd-605-10.ch-665-88.lg-700-88',
-    'hr-892-48.hd-628-1371.ch-823-82.lg-700-71.sh-725-81',
-    'hr-891-36.hd-625-8.ch-670-80.lg-715-80.sh-907-80',
-    'hr-891-48.hd-628-12.ch-823-64.lg-715-64.sh-907-76',
-    'hr-837-48.hd-627-14.ch-685-73.lg-695-76.sh-907-82',
-    'hr-893-48.hd-605-1371.ch-665-74.lg-700-72.sh-725-74',
-    'hr-515-35.hd-625-10.ch-665-72.lg-695-72.sh-906-64',
-    'hr-837-35.hd-628-1.ch-635-81.lg-710-75.sh-735-81',
-    'hr-893-44.hd-628-30.ch-670-76.lg-715-76.sh-907-76',
-];
-
 export class AvatarEditor extends Sprite implements IAvatarImageListener
 {
+    // AS3: GENDER_MALE / GENDER_FEMALE / GENDER_UNISEX
+    public static readonly GENDER_MALE = 'M';
+
+    public static readonly GENDER_FEMALE = 'F';
+
+    public static readonly GENDER_UNISEX = 'U';
+
+    // AS3: NORMAL_ITEMS_TO_SHOW
+    private static readonly NORMAL_ITEMS_TO_SHOW = 5;
+
+    // AS3: COLORS_PER_ROW
+    private static readonly COLORS_PER_ROW = 4;
+
+    // AS3: CATEGORIES
+    private static readonly CATEGORIES = ['hr', 'hd', 'ch', 'lg', 'sh'];
+
+    // AS3: EXTRA_CATEGORIES — empty in the 701 build; the loops over it are dead but ported.
+    private static readonly EXTRA_CATEGORIES: string[] = [];
+
+    // AS3: RANDOM_MALE_FIGURES
+    private static readonly RANDOM_MALE_FIGURES = [
+        'hr-891-34.hd-209-10.ch-255-71.lg-280-81',
+        'hr-893-42.hd-209-19.ch-230-80.lg-3290-82.sh-906-64',
+        'hr-889-34.hd-200-1.ch-3030-73.lg-3023-88.sh-300-64',
+        'hr-145-42.hd-185-1.ch-230-66.lg-270-82.sh-290-81',
+        'hr-110-38.hd-190-1.ch-3030-85.lg-275-84.sh-290-74',
+        'hr-891-42.hd-190-14.ch-230-64.lg-3290-64.sh-906-64',
+        'hr-110-35.hd-185-1.ch-3110-80-25.lg-270-84.sh-905-80',
+        'hr-145-43.hd-209-1.ch-809-80.lg-275-82.sh-906-64',
+        'hr-889-42.hd-207-1370.ch-230-80.lg-280-80.sh-906-64',
+        'hr-891-48.hd-200-1370.ch-809-84.lg-3290-84.sh-300-84',
+        'hd-190-30.ch-230-82.lg-275-72.sh-905-88',
+        'hd-185-10.ch-3110-85-25.lg-275-82.sh-300-84',
+        'hr-893-40.hd-200-14.ch-255-75.lg-280-75.sh-906-75',
+        'hr-889-45.hd-190-1370.ch-255-68.lg-3023-88.sh-906-68',
+        'hr-110-45.hd-200-1371.ch-255-85.lg-280-84.sh-3068-85-25',
+        'hr-893-35.hd-185-10.ch-230-1408.lg-275-72',
+        'hr-145-42.hd-200-10.ch-255-64.lg-3290-64.sh-906-64',
+        'hr-889-42.hd-209-10.ch-809-81.lg-3290-64.sh-300-64',
+        'hr-110-39.hd-190-1371.ch-3110-80-25.lg-275-81.sh-3068-83-25',
+        'hr-891-48.hd-185-20.ch-3030-71.lg-3023-80.sh-300-81',
+        'hr-145-37.hd-200-1.ch-3030-75.lg-270-80.sh-3068-83-25',
+        'hr-891-44.hd-207-1.ch-809-76.lg-270-76.sh-3068-76-25',
+        'hr-145-48.hd-185-20.ch-3110-76-25.lg-270-74.sh-290-75',
+        'hr-110-44.hd-200-30.ch-809-83.lg-270-84.sh-300-64',
+        'hr-891-34.hd-207-14.ch-230-81.lg-270-76.sh-290-80',
+    ];
+
+    // AS3: RANDOM_FEMALE_FIGURES
+    private static readonly RANDOM_FEMALE_FIGURES = [
+        'hr-891-40.hd-627-1371.ch-665-66.lg-700-82.sh-3068-68-25',
+        'hr-515-48.hd-628-1.ch-635-73.lg-695-81.sh-735-83',
+        'hr-891-35.hd-625-8.ch-685-73.lg-715-73.sh-907-73',
+        'hr-837-45.hd-627-14.ch-670-76.lg-695-71.sh-907-73',
+        'hr-892-48.hd-605-14.ch-685-64.lg-700-72.sh-906-64',
+        'hr-893-32.hd-628-20.ch-823-76.lg-710-82.sh-735-76',
+        'hr-892-32.hd-628-1.ch-665-81.lg-700-80.sh-3068-81-25',
+        'hr-893-40.hd-610-12.ch-670-81.lg-716-81-25.sh-725-83',
+        'hr-891-42.hd-625-10.ch-635-64.lg-695-64.sh-906-64',
+        'hd-625-1370.ch-823-72.lg-710-74.sh-725-74',
+        'hr-515-45.hd-628-1.ch-823-75.lg-710-73.sh-3068-84-25',
+        'hr-893-34.hd-605-19.ch-685-84.lg-695-85.sh-906-85',
+        'hr-837-39.hd-610-1.ch-685-91.lg-695-90.sh-906-80',
+        'hr-891-34.hd-610-1369.ch-635-74.lg-695-82.sh-906-71',
+        'hr-892-39.hd-628-1370.ch-670-64.lg-716-64-25.sh-907-64',
+        'hr-837-46.hd-627-20.ch-665-76.lg-716-68-25',
+        'hr-892-37.hd-605-10.ch-665-88.lg-700-88',
+        'hr-892-48.hd-628-1371.ch-823-82.lg-700-71.sh-725-81',
+        'hr-891-36.hd-625-8.ch-670-80.lg-715-80.sh-907-80',
+        'hr-891-48.hd-628-12.ch-823-64.lg-715-64.sh-907-76',
+        'hr-837-48.hd-627-14.ch-685-73.lg-695-76.sh-907-82',
+        'hr-893-48.hd-605-1371.ch-665-74.lg-700-72.sh-725-74',
+        'hr-515-35.hd-625-10.ch-665-72.lg-695-72.sh-906-64',
+        'hr-837-35.hd-628-1.ch-635-81.lg-710-75.sh-735-81',
+        'hr-893-44.hd-628-30.ch-670-76.lg-715-76.sh-907-76',
+    ];
+
     // AS3: _colorGrid
     private _colorGrid: Sprite | null = null;
 
@@ -124,7 +126,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
     private _currentButton: Button | null = null;
 
     // AS3: _gender
-    private _gender: string = GENDER_MALE;
+    private _gender: string = AvatarEditor.GENDER_MALE;
 
     // AS3: _thumbs
     private _thumbs: Map<string, string[]> = new Map();
@@ -218,7 +220,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
         super();
 
         this._context = context;
-        this._gender = GENDER_MALE;
+        this._gender = AvatarEditor.GENDER_MALE;
         this.addEventListener('addedToStage', this._onAddedToStage);
         this.addEventListener('removedFromStage', this._onRemovedFromStage);
     }
@@ -590,7 +592,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
             boy,
             8231575
         );
-        this._maleButton.name = GENDER_MALE;
+        this._maleButton.name = AvatarEditor.GENDER_MALE;
         this._femaleButton = new RadioButton(
             this._context.getLocalization('gender.female', 'Female'),
             this._genderButtonGroup,
@@ -599,7 +601,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
             girl,
             8231575
         );
-        this._femaleButton.name = GENDER_FEMALE;
+        this._femaleButton.name = AvatarEditor.GENDER_FEMALE;
         holder.addChild(this._maleButton);
         holder.addChild(this._femaleButton);
         holder.x = nameAreaX + 120;
@@ -699,7 +701,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
         if(selected == null) return;
 
         this._gender = selected.name;
-        this._context.setIsFemale(this._gender === GENDER_FEMALE);
+        this._context.setIsFemale(this._gender === AvatarEditor.GENDER_FEMALE);
         this.selectionsForGender();
         this.colorIdsForGender();
         this.setRandomFigure();
@@ -737,9 +739,9 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
         this.clearGrids();
         this.populateThumbs();
 
-        for(let categoryIndex = 0; categoryIndex < CATEGORIES.length; categoryIndex++)
+        for(let categoryIndex = 0; categoryIndex < AvatarEditor.CATEGORIES.length; categoryIndex++)
         {
-            const category = CATEGORIES[categoryIndex];
+            const category = AvatarEditor.CATEGORIES[categoryIndex];
             const thumbs = this._thumbs.get(category) ?? [];
             const categoryColors = this.colorIdsForGender().get(category);
 
@@ -748,7 +750,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
                 this._hairButtons = [];
             }
 
-            const count = Math.min(thumbs.length, NORMAL_ITEMS_TO_SHOW);
+            const count = Math.min(thumbs.length, AvatarEditor.NORMAL_ITEMS_TO_SHOW);
 
             for(let i = 0; i < count; i++)
             {
@@ -793,7 +795,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
         // EXTRA_CATEGORIES is empty in this build; the loop is kept because the source has it.
         let extraX = 0;
 
-        for(const category of EXTRA_CATEGORIES)
+        for(const category of AvatarEditor.EXTRA_CATEGORIES)
         {
             const thumbs = this._thumbs.get(category) ?? [];
             const categoryColors = this.colorIdsForGender().get(category);
@@ -859,7 +861,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
     // AS3: getRandomFigureData():String
     private getRandomFigureData(): string
     {
-        const figures = this._gender === GENDER_MALE ? RANDOM_MALE_FIGURES : RANDOM_FEMALE_FIGURES;
+        const figures = this._gender === AvatarEditor.GENDER_MALE ? AvatarEditor.RANDOM_MALE_FIGURES : AvatarEditor.RANDOM_FEMALE_FIGURES;
         const index = Math.trunc(Math.random() * (figures.length - 1));
 
         return figures[index];
@@ -870,7 +872,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
     {
         this._thumbs = new Map();
 
-        for(const category of CATEGORIES)
+        for(const category of AvatarEditor.CATEGORIES)
         {
             this._thumbs.set(category, this.populateCategory(category));
         }
@@ -914,7 +916,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
                 allowed = this._showHcItems;
             }
 
-            if(allowed && partSet.isPreSelectable && (partSet.gender === this._gender || partSet.gender === GENDER_UNISEX))
+            if(allowed && partSet.isPreSelectable && (partSet.gender === this._gender || partSet.gender === AvatarEditor.GENDER_UNISEX))
             {
                 // AS3 measures the part's colour-layer count and picks a random selectable colour
                 // here, then discards both — the pushed entry carries no colour. Kept as-is.
@@ -922,7 +924,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
 
                 taken++;
 
-                if(taken === NORMAL_ITEMS_TO_SHOW) break;
+                if(taken === AvatarEditor.NORMAL_ITEMS_TO_SHOW) break;
             }
         }
 
@@ -1047,8 +1049,8 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
         {
             this._colorGrid.addChild(button);
 
-            const column = index % COLORS_PER_ROW;
-            const row = Math.trunc(index / COLORS_PER_ROW);
+            const column = index % AvatarEditor.COLORS_PER_ROW;
+            const row = Math.trunc(index / AvatarEditor.COLORS_PER_ROW);
 
             button.x = column * 50 + column * 2;
             button.y = row * 53 + row * 10;
@@ -1062,12 +1064,12 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
         const selections = this.selectionsForGender();
         const result: string[] = [];
 
-        for(const category of CATEGORIES)
+        for(const category of AvatarEditor.CATEGORIES)
         {
             result.push(`${selections.get(category)}`);
         }
 
-        for(const category of EXTRA_CATEGORIES)
+        for(const category of AvatarEditor.EXTRA_CATEGORIES)
         {
             result.push(`${selections.get(category)}`);
         }
@@ -1117,7 +1119,7 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
 
         this._currentButton = button;
 
-        if(category === 'hd' || category === 'lg' || (this._gender === GENDER_FEMALE && category === 'ch'))
+        if(category === 'hd' || category === 'lg' || (this._gender === AvatarEditor.GENDER_FEMALE && category === 'ch'))
         {
             remove = false;
         }

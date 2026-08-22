@@ -18,27 +18,28 @@ import type {HabboCatalog} from '../../HabboCatalog';
 import {SelectProductEvent} from './events/SelectProductEvent';
 import {ProductViewCatalogWidget} from './ProductViewCatalogWidget';
 
-/**
- * SongDiskProductViewCatalogWidget — the product view for a catalog song-disk page.
- *
- * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SongDiskProductViewCatalogWidget.as
- *
- * The normal product view plus a "listen" button and a track-length caption. Selecting an offer
- * resolves which song it is by one of two routes: the product's `extraParam` is either the numeric
- * song id already, or an *official song code*, which has to be resolved by the server. AS3 tells
- * the two apart by `parseInt(extraParam) == 0` — an official code is a non-numeric string, and
- * AS3's `parseInt` yields 0 for it.
- *
- * Preview playback runs at priority 3, and both the room's music (priority 0) and any previous
- * preview have their fade-out zeroed first so the new track starts immediately.
- */
-// AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/SongDiskProductViewCatalogWidget.as::PREVIEW_PRIORITY
-// Name DERIVED: AS3 inlines 3 at every call. 0 is the room-music priority it also has to silence.
-const PREVIEW_PRIORITY = 3;
-const ROOM_MUSIC_PRIORITY = 0;
-
 export class SongDiskProductViewCatalogWidget extends ProductViewCatalogWidget
 {
+    /**
+    * SongDiskProductViewCatalogWidget — the product view for a catalog song-disk page.
+    *
+    * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SongDiskProductViewCatalogWidget.as
+    *
+    * The normal product view plus a "listen" button and a track-length caption. Selecting an offer
+    * resolves which song it is by one of two routes: the product's `extraParam` is either the numeric
+    * song id already, or an *official song code*, which has to be resolved by the server. AS3 tells
+    * the two apart by `parseInt(extraParam) == 0` — an official code is a non-numeric string, and
+    * AS3's `parseInt` yields 0 for it.
+    *
+    * Preview playback runs at priority 3, and both the room's music (priority 0) and any previous
+    * preview have their fade-out zeroed first so the new track starts immediately.
+    */
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/SongDiskProductViewCatalogWidget.as::PREVIEW_PRIORITY
+    // Name DERIVED: AS3 inlines 3 at every call. 0 is the room-music priority it also has to silence.
+    private static readonly PREVIEW_PRIORITY = 3;
+
+    private static readonly ROOM_MUSIC_PRIORITY = 0;
+
     // AS3: .../SongDiskProductViewCatalogWidget.as::_soundManager
     private _soundManager: IHabboSoundManager | null;
 
@@ -114,7 +115,7 @@ export class SongDiskProductViewCatalogWidget extends ProductViewCatalogWidget
     {
         super.closed();
 
-        this._soundManager?.musicController?.stop(PREVIEW_PRIORITY);
+        this._soundManager?.musicController?.stop(SongDiskProductViewCatalogWidget.PREVIEW_PRIORITY);
     }
 
     // AS3: .../SongDiskProductViewCatalogWidget.as::onClickPlay()
@@ -122,9 +123,9 @@ export class SongDiskProductViewCatalogWidget extends ProductViewCatalogWidget
     {
         if(!this._soundManager?.musicController) return;
 
-        this.forceNoFadeoutOnPlayingSong(ROOM_MUSIC_PRIORITY);
-        this.forceNoFadeoutOnPlayingSong(PREVIEW_PRIORITY);
-        this._soundManager.musicController.playSong(this._songId, PREVIEW_PRIORITY, 15, 40, 0.5, 2);
+        this.forceNoFadeoutOnPlayingSong(SongDiskProductViewCatalogWidget.ROOM_MUSIC_PRIORITY);
+        this.forceNoFadeoutOnPlayingSong(SongDiskProductViewCatalogWidget.PREVIEW_PRIORITY);
+        this._soundManager.musicController.playSong(this._songId, SongDiskProductViewCatalogWidget.PREVIEW_PRIORITY, 15, 40, 0.5, 2);
     };
 
     /**
@@ -265,7 +266,7 @@ export class SongDiskProductViewCatalogWidget extends ProductViewCatalogWidget
         // AS3 nests every teardown below inside `if(_soundManager && _soundManager.musicController)`,
         // so a widget disposed before the sound manager resolved would leak its connection listener
         // and never stop the preview. Flattened here: each step guards only itself.
-        this._soundManager?.musicController?.stop(PREVIEW_PRIORITY);
+        this._soundManager?.musicController?.stop(SongDiskProductViewCatalogWidget.PREVIEW_PRIORITY);
         this._soundManager?.events.off(SongInfoReceivedEvent.TRAX_SONG_INFO_RECEIVED, this.onSongInfoReceived);
         this._soundManager = null;
 

@@ -6,21 +6,6 @@ import {ChatBubbleSimulationWithLimitedWideRect} from './ChatBubbleSimulationWit
 import {ChatBubbleCollisionEvent} from './ChatBubbleCollisionEvent';
 import {ChatFlowGravity} from './ChatFlowGravity';
 
-const CLEANUP_TIMER_DELAY = 5000;
-/**
- * AS3: ChatFlowStage.as::MOVE_UP_TIMER_DEFAULT - a fallback only reachable if
- * refreshSettings() runs before roomChatSettings exists at all. In practice
- * this never happens (HabboFreeFlowChat self-initializes roomChatSettings in
- * its own constructor, before any ChatFlowStage is ever built) - the real
- * effective default is roomChatSettings.scrollSpeed's own default (1/normal),
- * which refreshSettings() below immediately resolves to 6000ms.
- */
-const MOVE_UP_TIMER_DEFAULT = 10000;
-const MAX_ITERATIONS = 20;
-const MAX_COLLISION_SIDEWAYS_IMPULSE = 15;
-const MOVE_UP_IMPULSE_LIMIT = 8;
-const MINIMUM_COLLIDER_WIDTH = 240;
-
 /**
  * ChatFlowStage
  *
@@ -41,6 +26,26 @@ const MINIMUM_COLLIDER_WIDTH = 240;
  */
 export class ChatFlowStage implements IUpdateReceiver, IDisposable
 {
+    private static readonly CLEANUP_TIMER_DELAY = 5000;
+
+    /**
+    * AS3: ChatFlowStage.as::MOVE_UP_TIMER_DEFAULT - a fallback only reachable if
+    * refreshSettings() runs before roomChatSettings exists at all. In practice
+    * this never happens (HabboFreeFlowChat self-initializes roomChatSettings in
+    * its own constructor, before any ChatFlowStage is ever built) - the real
+    * effective default is roomChatSettings.scrollSpeed's own default (1/normal),
+    * which refreshSettings() below immediately resolves to 6000ms.
+    */
+    private static readonly MOVE_UP_TIMER_DEFAULT = 10000;
+
+    private static readonly MAX_ITERATIONS = 20;
+
+    private static readonly MAX_COLLISION_SIDEWAYS_IMPULSE = 15;
+
+    private static readonly MOVE_UP_IMPULSE_LIMIT = 8;
+
+    private static readonly MINIMUM_COLLIDER_WIDTH = 240;
+
     /** AS3: ChatFlowStage.as::MOVE_UP_AMOUNT_PIXELS */
     // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::MOVE_UP_AMOUNT_PIXELS
     static readonly MOVE_UP_AMOUNT_PIXELS = 19;
@@ -60,7 +65,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
     // referenced anywhere in the class - dead in the source itself, not ported.
     // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::_lineByLineMode
     private _lineByLineMode: boolean = false;
-    private _scrollIntervalMs: number = MOVE_UP_TIMER_DEFAULT;
+    private _scrollIntervalMs: number = ChatFlowStage.MOVE_UP_TIMER_DEFAULT;
     private _gravityEnabled: boolean = true;
     private _viewBottom: number = 0;
 
@@ -118,7 +123,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
 
         bubble.roomPanOffsetX = offset?.x ?? 0;
 
-        const entity = !this._lineByLineMode && bubble.width < MINIMUM_COLLIDER_WIDTH
+        const entity = !this._lineByLineMode && bubble.width < ChatFlowStage.MINIMUM_COLLIDER_WIDTH
             ? new ChatBubbleSimulationWithLimitedWideRect(bubble)
             : new ChatBubbleSimulationEntity(bubble, this._lineByLineMode);
 
@@ -137,7 +142,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
 
         if(this._gravityEnabled && !this._lineByLineMode)
         {
-            for(let i = 0; i < MAX_ITERATIONS / 2; i++)
+            for(let i = 0; i < ChatFlowStage.MAX_ITERATIONS / 2; i++)
             {
                 let pull = 0;
 
@@ -224,7 +229,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
             }
         }
 
-        if(this._lastCleanupTime + CLEANUP_TIMER_DELAY < this._simulationTime)
+        if(this._lastCleanupTime + ChatFlowStage.CLEANUP_TIMER_DELAY < this._simulationTime)
         {
             this.cleanup();
             this._lastCleanupTime = this._simulationTime;
@@ -243,7 +248,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/simulation/ChatFlowStage.as::simulate()
     private simulate(): void
     {
-        for(let round = 0; round < MAX_ITERATIONS; round++)
+        for(let round = 0; round < ChatFlowStage.MAX_ITERATIONS; round++)
         {
             const collisions: ChatBubbleCollisionEvent[] = [];
 
@@ -303,7 +308,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
                             : collision.left.visualRect.width;
                         const sidewaysOverlap = Math.abs(leftX + leftWidth - rightX) / 2;
 
-                        if(sidewaysOverlap <= MAX_COLLISION_SIDEWAYS_IMPULSE)
+                        if(sidewaysOverlap <= ChatFlowStage.MAX_COLLISION_SIDEWAYS_IMPULSE)
                         {
                             collision.left.addHorizontalImpulse(-sidewaysOverlap);
                             collision.right.addHorizontalImpulse(sidewaysOverlap + 1);
@@ -323,7 +328,7 @@ export class ChatFlowStage implements IUpdateReceiver, IDisposable
                 }
             }
 
-            for(const entity of this._bubbles) entity.applyImpulseForces(MOVE_UP_IMPULSE_LIMIT);
+            for(const entity of this._bubbles) entity.applyImpulseForces(ChatFlowStage.MOVE_UP_IMPULSE_LIMIT);
         }
     }
 

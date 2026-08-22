@@ -22,10 +22,10 @@ import {WiredAchievementsUpdatedEvent} from '@habbo/roomevents/events/WiredAchie
 import {RoomToolsInfoCtrl} from './RoomToolsInfoCtrl';
 import {RoomToolsToolbarCtrl} from './RoomToolsToolbarCtrl';
 
-const ROOM_HISTORY_MAX_LENGTH = 10;
-
 export class RoomToolsWidget extends RoomWidgetBase
 {
+    private static readonly ROOM_HISTORY_MAX_LENGTH = 10;
+
     private static _currentRoomIndex: number = 0;
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::_visitedRooms
     private static _visitedRooms: GuestRoomData[] = [];
@@ -134,7 +134,7 @@ export class RoomToolsWidget extends RoomWidgetBase
 
         RoomToolsWidget._visitedRooms.push(data);
 
-        if(RoomToolsWidget._visitedRooms.length > ROOM_HISTORY_MAX_LENGTH)
+        if(RoomToolsWidget._visitedRooms.length > RoomToolsWidget.ROOM_HISTORY_MAX_LENGTH)
         {
             RoomToolsWidget._visitedRooms.shift();
         }

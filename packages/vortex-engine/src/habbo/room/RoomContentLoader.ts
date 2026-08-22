@@ -32,17 +32,19 @@ import {Logger} from '@core';
 
 const log = Logger.getLogger('habbo.room.RoomContentLoader');
 
-/**
- * RoomContentLoader states.
- *
- * @see AS3 RoomContentLoader lines 42-46
- */
-const STATE_CREATED = 0;
-const STATE_INITIALIZING = 1;
-const STATE_READY = 2;
-
 export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 {
+    /**
+    * RoomContentLoader states.
+    *
+    * @see AS3 RoomContentLoader lines 42-46
+    */
+    private static readonly STATE_CREATED = 0;
+
+    private static readonly STATE_INITIALIZING = 1;
+
+    private static readonly STATE_READY = 2;
+
     /**
 	 * Event emitted on stateEvents when content loader is ready.
 	 *
@@ -202,7 +204,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 
     // --- AS3 var_149: state ---
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomContentLoader.as::_state
-    private _state: number = STATE_CREATED;
+    private _state: number = RoomContentLoader.STATE_CREATED;
 
     get state(): number
     {
@@ -290,7 +292,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
         this._petDownloadUrl = configurationManager.getProperty('pet.dynamic.download.url');
         this._petDownloadNameTemplate = configurationManager.getProperty('pet.dynamic.download.name.template');
 
-        this._state = STATE_INITIALIZING;
+        this._state = RoomContentLoader.STATE_INITIALIZING;
 
         this.initFurnitureData();
         this.initPetData(configurationManager);
@@ -1176,7 +1178,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     {
         if(this._furniDataReady)
         {
-            this._state = STATE_READY;
+            this._state = RoomContentLoader.STATE_READY;
 
             if(this._stateEvents !== null)
             {

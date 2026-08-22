@@ -19,18 +19,6 @@ import type {CollectiblesView} from '../CollectiblesView';
 import {RewardCollectibleItemRenderer} from '../renderer/RewardCollectibleItemRenderer';
 
 /**
- * AS3: RewardClaimsTab.as::update() reads `CollectionsTab._SafeStr_7248`, which is 90 — degrees per
- * second for the loading spinner. Duplicated here rather than imported, because CollectionsTab is
- * unported; when it lands, this should point at its constant instead.
- */
-const LOADING_ICON_ROTATE_SPEED = 90;
-
-/**
- * AS3: RewardClaimsTab.as — one wallet is queried every 600 ms, not all at once.
- */
-const WALLET_REQUEST_INTERVAL_MS = 600;
-
-/**
  * The "claim your rewards" tab: everything the player is owed across all their wallets, and one
  * button that claims the lot.
  *
@@ -44,6 +32,18 @@ const WALLET_REQUEST_INTERVAL_MS = 600;
  */
 export class RewardClaimsTab implements IUpdateReceiver
 {
+    /**
+    * AS3: RewardClaimsTab.as::update() reads `CollectionsTab._SafeStr_7248`, which is 90 — degrees per
+    * second for the loading spinner. Duplicated here rather than imported, because CollectionsTab is
+    * unported; when it lands, this should point at its constant instead.
+    */
+    private static readonly LOADING_ICON_ROTATE_SPEED = 90;
+
+    /**
+    * AS3: RewardClaimsTab.as — one wallet is queried every 600 ms, not all at once.
+    */
+    private static readonly WALLET_REQUEST_INTERVAL_MS = 600;
+
     // AS3: RewardClaimsTab.as::_disposed
     private _disposed: boolean = false;
     // AS3: RewardClaimsTab.as::_messageEvents
@@ -131,7 +131,7 @@ export class RewardClaimsTab implements IUpdateReceiver
 
         if(this._requestTimer === null)
         {
-            this._requestTimer = setInterval(this.processNextRequest, WALLET_REQUEST_INTERVAL_MS);
+            this._requestTimer = setInterval(this.processNextRequest, RewardClaimsTab.WALLET_REQUEST_INTERVAL_MS);
         }
     }
 
@@ -315,7 +315,7 @@ export class RewardClaimsTab implements IUpdateReceiver
     {
         if(this.isReady || this._loadingIcon === null) return;
 
-        this._loadingIcon.rotation += LOADING_ICON_ROTATE_SPEED * (elapsedMs / 1000);
+        this._loadingIcon.rotation += RewardClaimsTab.LOADING_ICON_ROTATE_SPEED * (elapsedMs / 1000);
         this._loadingIcon.rotation %= 360;
         this._loadingIcon.invalidate();
     }

@@ -130,14 +130,14 @@ import {
 
 const log = Logger.getLogger('habbo.ui.RoomDesktop');
 
-// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as:71 (var_4627)
-const REUSABLE_WIDGET_TYPES = new Set([
-    'RWE_INFOSTAND', 'RWE_CHAT_INPUT_WIDGET', 'RWE_ME_MENU', 'RWE_CHAT_WIDGET',
-    'RWE_EXTERNAL_IMAGE', 'RWE_CAMERA', 'RWE_ROOM_TOOLS', 'RWE_FURNITURE_CONTEXT_MENU',
-]);
-
 export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IRoomWidgetHandlerContainer 
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as:71 (var_4627)
+    private static readonly REUSABLE_WIDGET_TYPES = new Set([
+        'RWE_INFOSTAND', 'RWE_CHAT_INPUT_WIDGET', 'RWE_ME_MENU', 'RWE_CHAT_WIDGET',
+        'RWE_EXTERNAL_IMAGE', 'RWE_CAMERA', 'RWE_ROOM_TOOLS', 'RWE_FURNITURE_CONTEXT_MENU',
+    ]);
+
     public static readonly ROOM_VIEW_CREATED = 'ROOM_VIEW_CREATED';
     public static readonly ROOM_BACKGROUND_COLOR_CHANGED = 'ROOM_BACKGROUND_COLOR_CHANGED';
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/RoomDesktop.as::_session
@@ -1324,7 +1324,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         // instead of reconstructing. That cross-room caching isn't ported yet — this
         // only sets the flag correctly per AS3 (currently inert since nothing reads it
         // besides this assignment) so it's ready when that follow-up lands.
-        widget.reusable = REUSABLE_WIDGET_TYPES.has(type);
+        widget.reusable = RoomDesktop.REUSABLE_WIDGET_TYPES.has(type);
         widget.widgetType = type;
 
         this._widgets.set(type, widget);

@@ -25,28 +25,6 @@ import {ShopTab} from './tabs/ShopTab';
 import {MintInventoryListTab} from './tabs/MintInventoryListTab';
 import {CollectionsTab} from './tabs/CollectionsTab';
 
-// AS3: CollectiblesView.as::DESKTOP_WINDOW_LAYER
-const DESKTOP_WINDOW_LAYER = 1;
-
-/** AS3: CollectiblesView.as::TAB_* — each is the *window name* of its tab button. */
-const TAB_COLLECTIONS = 'top_view_collections_button';
-const TAB_MINT = 'top_view_minting_button';
-const TAB_INFO = 'top_view_info_button';
-const TAB_TRANSFER = 'top_view_transfer_button';
-const TAB_SHOP = 'top_view_shop_button';
-const TAB_REWARDS = 'top_view_rewards_button';
-const TAB_COLLECTOR_PROFILE = 'top_view_profile_button';
-const TAB_LEVELS = 'top_view_levels_button';
-
-const ALL_TABS = [
-    TAB_COLLECTOR_PROFILE, TAB_COLLECTIONS, TAB_LEVELS, TAB_MINT,
-    TAB_INFO, TAB_TRANSFER, TAB_SHOP, TAB_REWARDS,
-];
-
-/** AS3: CollectiblesView.as::onCollectionsScoreMessage() — one colour per five collector levels. */
-const LEVEL_BAND_COLORS = [8162450, 2529547, 32234, 13828339];
-const LEVEL_BAND_COLOR_MAX = 15571457;
-
 /**
  * The collectibles hub window: the eight-tab frame, the collector score header, the currency
  * balances and the wallet list every tab reads from.
@@ -58,6 +36,38 @@ const LEVEL_BAND_COLOR_MAX = 15571457;
  */
 export class CollectiblesView
 {
+    // AS3: CollectiblesView.as::DESKTOP_WINDOW_LAYER
+    private static readonly DESKTOP_WINDOW_LAYER = 1;
+
+    /** AS3: CollectiblesView.as::TAB_* — each is the *window name* of its tab button. */
+    private static readonly TAB_COLLECTIONS = 'top_view_collections_button';
+
+    private static readonly TAB_MINT = 'top_view_minting_button';
+
+    private static readonly TAB_INFO = 'top_view_info_button';
+
+    private static readonly TAB_TRANSFER = 'top_view_transfer_button';
+
+    private static readonly TAB_SHOP = 'top_view_shop_button';
+
+    private static readonly TAB_REWARDS = 'top_view_rewards_button';
+
+    private static readonly TAB_COLLECTOR_PROFILE = 'top_view_profile_button';
+
+    private static readonly TAB_LEVELS = 'top_view_levels_button';
+
+    private static readonly ALL_TABS = [
+        CollectiblesView.TAB_COLLECTOR_PROFILE, CollectiblesView.TAB_COLLECTIONS,
+        CollectiblesView.TAB_LEVELS, CollectiblesView.TAB_MINT,
+        CollectiblesView.TAB_INFO, CollectiblesView.TAB_TRANSFER,
+        CollectiblesView.TAB_SHOP, CollectiblesView.TAB_REWARDS,
+    ];
+
+    /** AS3: CollectiblesView.as::onCollectionsScoreMessage() — one colour per five collector levels. */
+    private static readonly LEVEL_BAND_COLORS = [8162450, 2529547, 32234, 13828339];
+
+    private static readonly LEVEL_BAND_COLOR_MAX = 15571457;
+
     // AS3: CollectiblesView.as::STARDUST_WALLET_DISPLAY_NAME
     public static readonly STARDUST_WALLET_DISPLAY_NAME: string = 'Collector Wallet';
 
@@ -68,7 +78,7 @@ export class CollectiblesView
     // AS3: CollectiblesView.as::_window
     private _window: IWindowContainer | null = null;
     // AS3: CollectiblesView.as::_currentTab
-    private _currentTab: string = TAB_REWARDS;
+    private _currentTab: string = CollectiblesView.TAB_REWARDS;
     // AS3: CollectiblesView.as::_SafeStr_6174 (the rewards tab)
     private _rewardClaimsTab: RewardClaimsTab | null = null;
     // AS3: CollectiblesView.as::_SafeStr_5031 (the transfer tab)
@@ -98,11 +108,11 @@ export class CollectiblesView
 
         // AS3 reads the layout via `assets.getAssetByName(...).content` + `buildFromXML(xml, 1)`;
         // `buildWidgetLayout()` is those two steps behind one call, layer included.
-        this._window = windowManager.buildWidgetLayout('collectible_view_xml', DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
+        this._window = windowManager.buildWidgetLayout('collectible_view_xml', CollectiblesView.DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
 
         if(this._window === null) return;
 
-        for(const tab of ALL_TABS)
+        for(const tab of CollectiblesView.ALL_TABS)
         {
             const button = this._window.findChildByName(tab);
 
@@ -111,20 +121,20 @@ export class CollectiblesView
 
         // The captions are localization placeholders the window system resolves; AS3 sets six of
         // the eight and leaves the profile and levels tabs with whatever the layout carries.
-        this.setTabCaption(TAB_COLLECTIONS, '${collectibles.collections.title}');
-        this.setTabCaption(TAB_SHOP, '${collectibles.shop.title}');
-        this.setTabCaption(TAB_MINT, '${shop.minting.title}');
-        this.setTabCaption(TAB_TRANSFER, '${collectibles.transfer}');
-        this.setTabCaption(TAB_INFO, '${collectibles.info.title}');
-        this.setTabCaption(TAB_REWARDS, '${collectibles.claim.title}');
+        this.setTabCaption(CollectiblesView.TAB_COLLECTIONS, '${collectibles.collections.title}');
+        this.setTabCaption(CollectiblesView.TAB_SHOP, '${collectibles.shop.title}');
+        this.setTabCaption(CollectiblesView.TAB_MINT, '${shop.minting.title}');
+        this.setTabCaption(CollectiblesView.TAB_TRANSFER, '${collectibles.transfer}');
+        this.setTabCaption(CollectiblesView.TAB_INFO, '${collectibles.info.title}');
+        this.setTabCaption(CollectiblesView.TAB_REWARDS, '${collectibles.claim.title}');
 
         this.addMessageEvents();
         this.refresh();
         this.requestWalletAddresses();
 
-        this.setTabVisible(TAB_MINT, controller.getBoolean('nft.minting.enabled'));
-        this.setTabVisible(TAB_TRANSFER, controller.getBoolean('collectibles.transfer.enabled'));
-        this.setTabVisible(TAB_SHOP, controller.getBoolean('nft.shop.enabled'));
+        this.setTabVisible(CollectiblesView.TAB_MINT, controller.getBoolean('nft.minting.enabled'));
+        this.setTabVisible(CollectiblesView.TAB_TRANSFER, controller.getBoolean('collectibles.transfer.enabled'));
+        this.setTabVisible(CollectiblesView.TAB_SHOP, controller.getBoolean('nft.shop.enabled'));
 
         const title = this.levelTitle;
 
@@ -178,7 +188,7 @@ export class CollectiblesView
     {
         if(this._windowManager === null || this._window === null || this._window.parent === null) return;
 
-        const desktop = this._windowManager.getDesktop(DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
+        const desktop = this._windowManager.getDesktop(CollectiblesView.DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
 
         desktop?.removeChild(this._window);
     }
@@ -188,7 +198,7 @@ export class CollectiblesView
     {
         if(this._windowManager === null || this._window === null || this._window.parent !== null) return;
 
-        const desktop = this._windowManager.getDesktop(DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
+        const desktop = this._windowManager.getDesktop(CollectiblesView.DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
 
         desktop?.addChild(this._window);
     }
@@ -281,7 +291,7 @@ export class CollectiblesView
         if(hiscore !== null) hiscore.text = String(parser.highestScore);
 
         const band = Math.max(0, Math.trunc((parser.level - 1) / 5));
-        const color = band < LEVEL_BAND_COLORS.length ? LEVEL_BAND_COLORS[band] : LEVEL_BAND_COLOR_MAX;
+        const color = band < CollectiblesView.LEVEL_BAND_COLORS.length ? CollectiblesView.LEVEL_BAND_COLORS[band] : CollectiblesView.LEVEL_BAND_COLOR_MAX;
 
         const bg = this.collectorLevelBg;
         const bg2 = this.collectorLevelBg2;
@@ -388,10 +398,10 @@ export class CollectiblesView
 
         switch(this._currentTab)
         {
-            case TAB_COLLECTOR_PROFILE:
+            case CollectiblesView.TAB_COLLECTOR_PROFILE:
                 this.setContainerVisible('collectorProfileContainer', true);
                 break;
-            case TAB_COLLECTIONS:
+            case CollectiblesView.TAB_COLLECTIONS:
                 this.setContainerVisible('collectionsContainer', true);
 
                 if(this._collectionsTab === null && this._controller !== null)
@@ -400,10 +410,10 @@ export class CollectiblesView
                 }
 
                 break;
-            case TAB_LEVELS:
+            case CollectiblesView.TAB_LEVELS:
                 this.setContainerVisible('levelsContainer', true);
                 break;
-            case TAB_MINT:
+            case CollectiblesView.TAB_MINT:
                 this.setContainerVisible('mintingContainer', true);
 
                 if(this._mintTab === null && this._controller !== null)
@@ -412,7 +422,7 @@ export class CollectiblesView
                 }
 
                 break;
-            case TAB_TRANSFER:
+            case CollectiblesView.TAB_TRANSFER:
                 this.setContainerVisible('transferContainer', true);
 
                 if(this._transferTab === null && this._controller !== null)
@@ -421,10 +431,10 @@ export class CollectiblesView
                 }
 
                 break;
-            case TAB_INFO:
+            case CollectiblesView.TAB_INFO:
                 this.setContainerVisible('infoContainer', true);
                 break;
-            case TAB_SHOP:
+            case CollectiblesView.TAB_SHOP:
                 this.setContainerVisible('shopContainer', true);
 
                 if(this._shopTab === null && this._controller !== null)
@@ -433,7 +443,7 @@ export class CollectiblesView
                 }
 
                 break;
-            case TAB_REWARDS:
+            case CollectiblesView.TAB_REWARDS:
                 this.setContainerVisible('rewardsContainer', true);
 
                 if(this._rewardClaimsTab === null && this._controller !== null)

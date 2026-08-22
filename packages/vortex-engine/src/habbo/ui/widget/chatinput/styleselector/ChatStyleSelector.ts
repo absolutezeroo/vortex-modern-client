@@ -11,12 +11,6 @@ import {ChatStyleGridEntry} from './ChatStyleGridEntry';
 /** AS3: ChatStyleSelector.as::MAX_GRID_COLUMNS */
 export const MAX_GRID_COLUMNS = 6;
 
-const FONT_SIZE_LABELS = ['S', 'M', 'L', 'XL', 'XXL'];
-const HOVER_COLOR = 4291875024;
-const DEFAULT_COLOR = 4294967295;
-const SELECTED_LABEL_COLOR = 3355443;
-const UNSELECTED_LABEL_COLOR = 10066329;
-
 function isWindowInTree(window: IWindow | null, ancestor: IWindow | null): boolean 
 {
     let current = window;
@@ -57,6 +51,16 @@ function clampFontSize(value: number): number
  */
 export class ChatStyleSelector implements IDisposable 
 {
+    private static readonly FONT_SIZE_LABELS = ['S', 'M', 'L', 'XL', 'XXL'];
+
+    private static readonly HOVER_COLOR = 4291875024;
+
+    private static readonly DEFAULT_COLOR = 4294967295;
+
+    private static readonly SELECTED_LABEL_COLOR = 3355443;
+
+    private static readonly UNSELECTED_LABEL_COLOR = 10066329;
+
     // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::_container
     private _container: IWindowContainer | null;
     private _gridView: ChatStyleGridView | null;
@@ -298,9 +302,9 @@ export class ChatStyleSelector implements IDisposable
 
         if(!fontSizeList || !this._fontSizeTemplateWindow) return;
 
-        for(let i = 0; i < FONT_SIZE_LABELS.length; i++) 
+        for(let i = 0; i < ChatStyleSelector.FONT_SIZE_LABELS.length; i++) 
         {
-            const item = this.getFontSizeItemWindowWrapper(FONT_SIZE_LABELS[i], i);
+            const item = this.getFontSizeItemWindowWrapper(ChatStyleSelector.FONT_SIZE_LABELS[i], i);
 
             if(item) fontSizeList.addListItem(item);
         }
@@ -392,14 +396,14 @@ export class ChatStyleSelector implements IDisposable
         {
             const background = (window as IWindowContainer).findChildByName('background_color');
 
-            if(background) background.color = HOVER_COLOR;
+            if(background) background.color = ChatStyleSelector.HOVER_COLOR;
         }
 
         if(event.type === 'WME_OUT') 
         {
             const background = (window as IWindowContainer).findChildByName('background_color');
 
-            if(background) background.color = DEFAULT_COLOR;
+            if(background) background.color = ChatStyleSelector.DEFAULT_COLOR;
         }
     };
 
@@ -432,14 +436,14 @@ export class ChatStyleSelector implements IDisposable
         {
             const background = item.findChildByName('background_color');
 
-            if(background) background.color = HOVER_COLOR;
+            if(background) background.color = ChatStyleSelector.HOVER_COLOR;
         }
 
         if(event.type === 'WME_OUT') 
         {
             const background = item.findChildByName('background_color');
 
-            if(background) background.color = DEFAULT_COLOR;
+            if(background) background.color = ChatStyleSelector.DEFAULT_COLOR;
         }
     };
 
@@ -486,7 +490,7 @@ export class ChatStyleSelector implements IDisposable
             const isSelected = item.id === this._fontSizeMode;
 
             if(background) background.visible = isSelected;
-            if(label) label.textColor = isSelected ? SELECTED_LABEL_COLOR : UNSELECTED_LABEL_COLOR;
+            if(label) label.textColor = isSelected ? ChatStyleSelector.SELECTED_LABEL_COLOR : ChatStyleSelector.UNSELECTED_LABEL_COLOR;
         }
     }
 

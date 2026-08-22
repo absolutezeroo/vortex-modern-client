@@ -14,12 +14,6 @@ import {AcceptQuestMessageComposer} from '@habbo/communication/messages/outgoing
 import {RejectQuestMessageComposer} from '@habbo/communication/messages/outgoing/quest/RejectQuestMessageComposer';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 
-// AS3: QuestDetails.as::_SafeStr_9914 - quest types with an in-room prompt, matching
-// HabboQuestEngine.QUESTS_WITH_PROMPTS but this class only uses it to gate the catalog link.
-const CATALOG_LINK_QUEST_TYPES: string[] = ['PLACE_ITEM', 'PLACE_FLOOR', 'PLACE_WALLPAPER', 'PET_DRINK', 'PET_EAT'];
-
-const ENTRY_LOCATION = {x: 8, y: 8};
-
 /**
  * The single-quest "read more" popup - embeds one live QuestEntry row (reusing
  * QuestsList.createListEntry()) plus a hint and a context-sensitive link
@@ -29,6 +23,12 @@ const ENTRY_LOCATION = {x: 8, y: 8};
  */
 export class QuestDetails implements IDisposable
 {
+    // AS3: QuestDetails.as::_SafeStr_9914 - quest types with an in-room prompt, matching
+    // HabboQuestEngine.QUESTS_WITH_PROMPTS but this class only uses it to gate the catalog link.
+    private static readonly CATALOG_LINK_QUEST_TYPES: string[] = ['PLACE_ITEM', 'PLACE_FLOOR', 'PLACE_WALLPAPER', 'PET_DRINK', 'PET_EAT'];
+
+    private static readonly ENTRY_LOCATION = {x: 8, y: 8};
+
     // AS3: QuestDetails.as::_questEngine
     private _engine: HabboQuestEngine | null;
     // AS3: QuestDetails.as::_window
@@ -154,8 +154,8 @@ export class QuestDetails implements IDisposable
 
             if(newEntry)
             {
-                newEntry.x = ENTRY_LOCATION.x;
-                newEntry.y = ENTRY_LOCATION.y;
+                newEntry.x = QuestDetails.ENTRY_LOCATION.x;
+                newEntry.y = QuestDetails.ENTRY_LOCATION.y;
                 this._window.content.addChild(newEntry);
             }
 
@@ -255,7 +255,7 @@ export class QuestDetails implements IDisposable
     {
         const quest = this._currentQuest;
 
-        return !!quest && quest.waitPeriodSeconds < 1 && CATALOG_LINK_QUEST_TYPES.indexOf(quest.type) > -1;
+        return !!quest && quest.waitPeriodSeconds < 1 && QuestDetails.CATALOG_LINK_QUEST_TYPES.indexOf(quest.type) > -1;
     }
 
     // AS3: QuestDetails.as::hasNavigatorLink()

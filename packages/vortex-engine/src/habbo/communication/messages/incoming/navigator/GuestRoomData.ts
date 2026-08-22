@@ -22,22 +22,27 @@ export const RoomTradeMode = {
 } as const;
 
 /**
- * Bitflags for room data
- */
-const ROOM_FLAG_THUMBNAIL = 1;
-const ROOM_FLAG_GROUP = 2;
-const ROOM_FLAG_PROMOTION = 4;
-const ROOM_FLAG_SHOW_OWNER = 8;
-const ROOM_FLAG_ALLOW_PETS = 16;
-const ROOM_FLAG_DISPLAY_AD = 32;
-
-/**
  * Guest room data containing all room information
  *
  * Based on AS3 com.sulake.habbo.communication.messages.incoming.navigator.class_1675
  */
 export class GuestRoomData
 {
+    /**
+    * Bitflags for room data
+    */
+    private static readonly ROOM_FLAG_THUMBNAIL = 1;
+
+    private static readonly ROOM_FLAG_GROUP = 2;
+
+    private static readonly ROOM_FLAG_PROMOTION = 4;
+
+    private static readonly ROOM_FLAG_SHOW_OWNER = 8;
+
+    private static readonly ROOM_FLAG_ALLOW_PETS = 16;
+
+    private static readonly ROOM_FLAG_DISPLAY_AD = 32;
+
     constructor(wrapper: IMessageDataWrapper)
     {
         this._flatId = wrapper.readInt();
@@ -61,28 +66,28 @@ export class GuestRoomData
 
         const flags = wrapper.readInt();
 
-        if((flags & ROOM_FLAG_THUMBNAIL) > 0)
+        if((flags & GuestRoomData.ROOM_FLAG_THUMBNAIL) > 0)
         {
             this._officialRoomPicRef = wrapper.readString();
         }
 
-        if((flags & ROOM_FLAG_GROUP) > 0)
+        if((flags & GuestRoomData.ROOM_FLAG_GROUP) > 0)
         {
             this._habboGroupId = wrapper.readInt();
             this._groupName = wrapper.readString();
             this._groupBadgeCode = wrapper.readString();
         }
 
-        if((flags & ROOM_FLAG_PROMOTION) > 0)
+        if((flags & GuestRoomData.ROOM_FLAG_PROMOTION) > 0)
         {
             this._roomAdName = wrapper.readString();
             this._roomAdDescription = wrapper.readString();
             this._roomAdExpiresInMin = wrapper.readInt();
         }
 
-        this._showOwner = (flags & ROOM_FLAG_SHOW_OWNER) > 0;
-        this._allowPets = (flags & ROOM_FLAG_ALLOW_PETS) > 0;
-        this._displayRoomEntryAd = (flags & ROOM_FLAG_DISPLAY_AD) > 0;
+        this._showOwner = (flags & GuestRoomData.ROOM_FLAG_SHOW_OWNER) > 0;
+        this._allowPets = (flags & GuestRoomData.ROOM_FLAG_ALLOW_PETS) > 0;
+        this._displayRoomEntryAd = (flags & GuestRoomData.ROOM_FLAG_DISPLAY_AD) > 0;
 
         this._thumbnail = new RoomThumbnailData(null);
         this._thumbnail.setDefaults();

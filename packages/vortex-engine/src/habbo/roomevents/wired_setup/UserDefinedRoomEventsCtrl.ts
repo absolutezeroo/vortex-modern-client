@@ -64,39 +64,39 @@ import type {CheckboxGroupPreset} from './uibuilder/presets/CheckboxGroupPreset'
 
 const log = Logger.getLogger('habbo.roomevents.wired_setup.UserDefinedRoomEventsCtrl');
 
-/**
- * UserDefinedRoomEventsCtrl — the core wired-setup controller ("wiredCtrl"): owns the wired
- * configuration dialog (pick furni, triggers/actions/conditions/selectors/variables/addons), the
- * registries, the UI builder and the show/close flow.
- *
- * This is the Bloc C DISPLAY PATH: `prepareForUpdate(def)` resolves the def's registry, gets the
- * matching element by code, builds the dialog via WiredUIBuilder (header + inputs + selector options
- * + furni picks + delay + footer) and shows the FramePreset on desktop layer 1. onEditStart seeds the
- * form from the def.
- *
- * Every behaviour AS3 specifies here is ported: the furni-selection highlighter, the variable
- * synchronizer's deferred reopen, the advanced input-source rows and the condition quantifier
- * section, the copy/paste clipboard, paste-into mode, dual furni picking, and the configuration
- * cache. What is left are the two visual editors this class only *hosts* — `RoomAreaSelectionManager`
- * (tile highlight) and `FloorDrawingPreset` (bitmap tile canvas), each carrying its own `TODO(AS3)`
- * — plus the `time_display` notification key, which has no reader in this port yet.
- *
- * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/UserDefinedRoomEventsCtrl.as
- */
-/**
- * AS3 builds this object inline at each of the three wired notification call sites
- * (`{time_display: 2500}`), which is 2.5s rather than the type's configured default.
- *
- * TODO(AS3): the key has no reader in this port yet — `HabboNotificationItemView.displayTime`,
- * which consumes it, is not ported, so a wired notification still shows for the default duration.
- * The value now reaches the style's `extraData` where AS3 puts it, so wiring the view is the only
- * step left.
- */
-// AS3: UserDefinedRoomEventsCtrl.as::onSaveSuccess() / createClipboardCopy() / prepareForUpdate()
-const WIRED_NOTIFICATION_OPTIONS: Record<string, unknown> = {[NotificationExtraDataKey.TIME_DISPLAY]: 2500};
-
 export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
 {
+    /**
+    * UserDefinedRoomEventsCtrl — the core wired-setup controller ("wiredCtrl"): owns the wired
+    * configuration dialog (pick furni, triggers/actions/conditions/selectors/variables/addons), the
+    * registries, the UI builder and the show/close flow.
+    *
+    * This is the Bloc C DISPLAY PATH: `prepareForUpdate(def)` resolves the def's registry, gets the
+    * matching element by code, builds the dialog via WiredUIBuilder (header + inputs + selector options
+    * + furni picks + delay + footer) and shows the FramePreset on desktop layer 1. onEditStart seeds the
+    * form from the def.
+    *
+    * Every behaviour AS3 specifies here is ported: the furni-selection highlighter, the variable
+    * synchronizer's deferred reopen, the advanced input-source rows and the condition quantifier
+    * section, the copy/paste clipboard, paste-into mode, dual furni picking, and the configuration
+    * cache. What is left are the two visual editors this class only *hosts* — `RoomAreaSelectionManager`
+    * (tile highlight) and `FloorDrawingPreset` (bitmap tile canvas), each carrying its own `TODO(AS3)`
+    * — plus the `time_display` notification key, which has no reader in this port yet.
+    *
+    * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/UserDefinedRoomEventsCtrl.as
+    */
+    /**
+    * AS3 builds this object inline at each of the three wired notification call sites
+    * (`{time_display: 2500}`), which is 2.5s rather than the type's configured default.
+    *
+    * TODO(AS3): the key has no reader in this port yet — `HabboNotificationItemView.displayTime`,
+    * which consumes it, is not ported, so a wired notification still shows for the default duration.
+    * The value now reaches the style's `extraData` where AS3 puts it, so wiring the view is the only
+    * step left.
+    */
+    // AS3: UserDefinedRoomEventsCtrl.as::onSaveSuccess() / createClipboardCopy() / prepareForUpdate()
+    private static readonly WIRED_NOTIFICATION_OPTIONS: Record<string, unknown> = {[NotificationExtraDataKey.TIME_DISPLAY]: 2500};
+
     // AS3: UserDefinedRoomEventsCtrl.as::STYLE_DEFAULT
     public static readonly STYLE_DEFAULT: string = 'illumina';
 
@@ -283,7 +283,7 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
             else
             {
                 this._roomEvents.notifications.addItem(
-                    '${notification.wired.pasted_into_fail}', 'wired', null, null, WIRED_NOTIFICATION_OPTIONS
+                    '${notification.wired.pasted_into_fail}', 'wired', null, null, UserDefinedRoomEventsCtrl.WIRED_NOTIFICATION_OPTIONS
                 );
             }
 
@@ -1329,7 +1329,7 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         this._clipboard.set(key, entry);
         this._frame?.updateButtonDisabledStates();
         this._roomEvents.notifications.addItem(
-            '${notification.wired.copied}', 'wired', null, null, WIRED_NOTIFICATION_OPTIONS
+            '${notification.wired.copied}', 'wired', null, null, UserDefinedRoomEventsCtrl.WIRED_NOTIFICATION_OPTIONS
         );
     }
 
@@ -1468,13 +1468,13 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         else if(this._updateMode === 1)
         {
             this._roomEvents.notifications.addItem(
-                '${notification.wired.saved}', 'wired', null, null, WIRED_NOTIFICATION_OPTIONS
+                '${notification.wired.saved}', 'wired', null, null, UserDefinedRoomEventsCtrl.WIRED_NOTIFICATION_OPTIONS
             );
         }
         else if(this._updateMode === 2)
         {
             this._roomEvents.notifications.addItem(
-                '${notification.wired.pasted_into}', 'wired', null, null, WIRED_NOTIFICATION_OPTIONS
+                '${notification.wired.pasted_into}', 'wired', null, null, UserDefinedRoomEventsCtrl.WIRED_NOTIFICATION_OPTIONS
             );
         }
 

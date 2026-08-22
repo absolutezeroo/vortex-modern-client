@@ -23,17 +23,17 @@ import {SetRoomBackgroundColorDataMessageComposer} from '@habbo/communication/me
 import {UseFurnitureMessageComposer} from '@habbo/communication/messages/outgoing/room/furniture/UseFurnitureMessageComposer';
 import {BackgroundColorWidgetSlider} from './BackgroundColorWidgetSlider';
 
-// AS3: BackgroundColorFurniWidget.as::PARAMETER_HUE
-const PARAMETER_HUE: string = 'hue';
-
-// AS3: BackgroundColorFurniWidget.as::PARAMETER_SATURATION
-const PARAMETER_SATURATION: string = 'saturation';
-
-// AS3: BackgroundColorFurniWidget.as::PARAMETER_LIGHTNESS
-const PARAMETER_LIGHTNESS: string = 'lightness';
-
 export class BackgroundColorFurniWidget extends RoomWidgetBase
 {
+    // AS3: BackgroundColorFurniWidget.as::PARAMETER_HUE
+    private static readonly PARAMETER_HUE: string = 'hue';
+
+    // AS3: BackgroundColorFurniWidget.as::PARAMETER_SATURATION
+    private static readonly PARAMETER_SATURATION: string = 'saturation';
+
+    // AS3: BackgroundColorFurniWidget.as::PARAMETER_LIGHTNESS
+    private static readonly PARAMETER_LIGHTNESS: string = 'lightness';
+
     // AS3: BackgroundColorFurniWidget.as::_window
     private _window: IWindowContainer | null = null;
 
@@ -95,13 +95,13 @@ export class BackgroundColorFurniWidget extends RoomWidgetBase
     {
         switch(parameter)
         {
-            case PARAMETER_HUE:
+            case BackgroundColorFurniWidget.PARAMETER_HUE:
                 this._hue = value;
                 break;
-            case PARAMETER_SATURATION:
+            case BackgroundColorFurniWidget.PARAMETER_SATURATION:
                 this._saturation = value;
                 break;
-            case PARAMETER_LIGHTNESS:
+            case BackgroundColorFurniWidget.PARAMETER_LIGHTNESS:
                 this._lightness = value;
                 break;
         }
@@ -126,13 +126,13 @@ export class BackgroundColorFurniWidget extends RoomWidgetBase
         this._window.center();
 
         this._sliders.push(new BackgroundColorWidgetSlider(
-            this, PARAMETER_HUE, this._window.findChildByName('hue_container') as IWindowContainer | null, this._hue
+            this, BackgroundColorFurniWidget.PARAMETER_HUE, this._window.findChildByName('hue_container') as IWindowContainer | null, this._hue
         ));
         this._sliders.push(new BackgroundColorWidgetSlider(
-            this, PARAMETER_SATURATION, this._window.findChildByName('saturation_container') as IWindowContainer | null, this._saturation
+            this, BackgroundColorFurniWidget.PARAMETER_SATURATION, this._window.findChildByName('saturation_container') as IWindowContainer | null, this._saturation
         ));
         this._sliders.push(new BackgroundColorWidgetSlider(
-            this, PARAMETER_LIGHTNESS, this._window.findChildByName('lightness_container') as IWindowContainer | null, this._lightness
+            this, BackgroundColorFurniWidget.PARAMETER_LIGHTNESS, this._window.findChildByName('lightness_container') as IWindowContainer | null, this._lightness
         ));
     }
 

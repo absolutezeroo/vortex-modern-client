@@ -44,11 +44,11 @@ import {FurnitureContextInfoView} from './FurnitureContextInfoView';
 
 const log = Logger.getLogger('habbo.ui.widget.furniture.contextmenu.FurnitureContextMenuWidget');
 
-// AS3: FurnitureContextMenuWidget.as::showMysteryBoxContextMenu() etc. — the update priority.
-const UPDATE_RECEIVER_PRIORITY: number = 10;
-
 export class FurnitureContextMenuWidget extends RoomWidgetBase implements IContextMenuParentWidget, IUpdateReceiver
 {
+    // AS3: FurnitureContextMenuWidget.as::showMysteryBoxContextMenu() etc. — the update priority.
+    private static readonly UPDATE_RECEIVER_PRIORITY: number = 10;
+
     // AS3: FurnitureContextMenuWidget.as::_SafeStr_4550 (the active view)
     private _activeView: FurnitureContextInfoView | null = null;
 
@@ -457,7 +457,7 @@ export class FurnitureContextMenuWidget extends RoomWidgetBase implements IConte
     {
         if(this._updateRegistered) return;
 
-        this.windowManager.registerUpdateReceiver(this, UPDATE_RECEIVER_PRIORITY);
+        this.windowManager.registerUpdateReceiver(this, FurnitureContextMenuWidget.UPDATE_RECEIVER_PRIORITY);
         this._updateRegistered = true;
     }
 

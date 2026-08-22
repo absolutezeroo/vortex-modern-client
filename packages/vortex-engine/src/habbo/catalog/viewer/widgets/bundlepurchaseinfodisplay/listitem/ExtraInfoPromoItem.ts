@@ -11,8 +11,6 @@ import {CatalogWidgetBundleDisplayExtraInfoEvent} from '../../events/CatalogWidg
 import type {ExtraInfoItemData} from '../ExtraInfoItemData';
 import {UpdateableExtraInfoListItem} from '../UpdateableExtraInfoListItem';
 
-const DISCOUNT_PROMO_KEY = 'catalog.bundlewidget.discount.promo';
-
 /**
  * Promo row nudging the buyer toward the next bundle-discount quantity threshold; pulses a
  * highlight effect whenever the target threshold changes.
@@ -21,6 +19,8 @@ const DISCOUNT_PROMO_KEY = 'catalog.bundlewidget.discount.promo';
  */
 export class ExtraInfoPromoItem extends UpdateableExtraInfoListItem
 {
+    private static readonly DISCOUNT_PROMO_KEY = 'catalog.bundlewidget.discount.promo';
+
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoPromoItem.as::_window
     private _window: IWindowContainer | null = null;
 
@@ -117,10 +117,10 @@ export class ExtraInfoPromoItem extends UpdateableExtraInfoListItem
     {
         const localization = this._catalog.localization;
 
-        localization?.registerParameter(DISCOUNT_PROMO_KEY, 'quantity', this._nextDiscountLevel.toString());
-        localization?.registerParameter(DISCOUNT_PROMO_KEY, 'discount', (this._nextDiscountMap.get(this._nextDiscountLevel) ?? 0).toString());
+        localization?.registerParameter(ExtraInfoPromoItem.DISCOUNT_PROMO_KEY, 'quantity', this._nextDiscountLevel.toString());
+        localization?.registerParameter(ExtraInfoPromoItem.DISCOUNT_PROMO_KEY, 'discount', (this._nextDiscountMap.get(this._nextDiscountLevel) ?? 0).toString());
 
-        const text = localization?.getLocalizationRaw(DISCOUNT_PROMO_KEY)?.value ?? '';
+        const text = localization?.getLocalizationRaw(ExtraInfoPromoItem.DISCOUNT_PROMO_KEY)?.value ?? '';
 
         this._window!.findChildByName('promo_text')!.caption = text;
         this._window!.findChildByName('promo_text_effect')!.caption = text;

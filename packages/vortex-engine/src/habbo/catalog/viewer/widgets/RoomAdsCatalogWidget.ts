@@ -15,8 +15,6 @@ import {SelectProductEvent} from './events/SelectProductEvent';
 import type {CatalogWidgetEvent} from './events/CatalogWidgetEvent';
 import {CatalogWidget} from './CatalogWidget';
 
-const ROOM_NAME_MAX_LENGTH = 25;
-
 /**
  * The room-ad ("advertise your event") catalog page.
  *
@@ -34,6 +32,8 @@ const ROOM_NAME_MAX_LENGTH = 25;
  */
 export class RoomAdsCatalogWidget extends CatalogWidget
 {
+    private static readonly ROOM_NAME_MAX_LENGTH = 25;
+
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RoomAdsCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
@@ -182,8 +182,8 @@ export class RoomAdsCatalogWidget extends CatalogWidget
 
             if(repopulate)
             {
-                captions.push(room.roomName.length > ROOM_NAME_MAX_LENGTH
-                    ? `${room.roomName.substring(0, ROOM_NAME_MAX_LENGTH)}...`
+                captions.push(room.roomName.length > RoomAdsCatalogWidget.ROOM_NAME_MAX_LENGTH
+                    ? `${room.roomName.substring(0, RoomAdsCatalogWidget.ROOM_NAME_MAX_LENGTH)}...`
                     : room.roomName);
             }
 

@@ -42,15 +42,6 @@ export const SEARCHTYPE_CATEGORIES = 21;
 export const SEARCHTYPE_RECOMMENDED_ROOMS = 22;
 export const SEARCHTYPE_NO_FRIENDS_FILTER = 23;
 
-const TAB_NAMES: Record<string, number> = {
-    popular: 2,
-    official: 4,
-    me: 3,
-    events: 1,
-    search: 5,
-    categories: 6,
-};
-
 /**
  * Collection of all tabs and their decorators for the old navigator.
  *
@@ -58,6 +49,15 @@ const TAB_NAMES: Record<string, number> = {
  */
 export class Tabs
 {
+    private static readonly TAB_NAMES: Record<string, number> = {
+        popular: 2,
+        official: 4,
+        me: 3,
+        events: 1,
+        search: 5,
+        categories: 6,
+    };
+
     private _tabs: Tab[];
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/domain/Tabs.as::_navigator
     private _navigator: ITabNavigator;
@@ -80,7 +80,7 @@ export class Tabs
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/domain/Tabs.as::tabIdFromName()
     static tabIdFromName(name: string, fallback: number): number
     {
-        return name in TAB_NAMES ? TAB_NAMES[name] : fallback;
+        return name in Tabs.TAB_NAMES ? Tabs.TAB_NAMES[name] : fallback;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/domain/Tabs.as::onFrontPage()

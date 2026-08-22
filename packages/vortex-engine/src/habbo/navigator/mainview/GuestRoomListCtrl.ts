@@ -13,8 +13,6 @@ import { Util } from '../Util';
 import { AddFavouriteRoomMessageComposer } from '../../communication/messages/outgoing/navigator/AddFavouriteRoomMessageComposer';
 import { DeleteFavouriteRoomMessageComposer } from '../../communication/messages/outgoing/navigator/DeleteFavouriteRoomMessageComposer';
 
-const HILITE_COLOR = 0xFFB8B2EA;
-
 /**
  * Displays a scrollable list of guest rooms with hover popups, favourite icons, and door-mode icons.
  *
@@ -22,6 +20,8 @@ const HILITE_COLOR = 0xFFB8B2EA;
  */
 export class GuestRoomListCtrl implements IViewCtrl
 {
+    private static readonly HILITE_COLOR = 0xFFB8B2EA;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/GuestRoomListCtrl.as::_navigator
     protected _navigator: IHabboTransitionalNavigator;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/GuestRoomListCtrl.as::_content
@@ -356,7 +356,7 @@ export class GuestRoomListCtrl implements IViewCtrl
         }
 
         this._lastHovered = entry;
-        entry.color = HILITE_COLOR;
+        entry.color = GuestRoomListCtrl.HILITE_COLOR;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/GuestRoomListCtrl.as::checkFastHorizontalMove()

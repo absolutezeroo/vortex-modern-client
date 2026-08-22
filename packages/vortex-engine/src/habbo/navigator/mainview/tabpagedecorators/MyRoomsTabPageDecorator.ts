@@ -5,17 +5,6 @@ import type { ITabPageDecorator } from './ITabPageDecorator';
 import type { ITabNavigator } from '../../domain/Tab';
 import { CanCreateRoomMessageComposer } from '../../../communication/messages/outgoing/navigator/CanCreateRoomMessageComposer';
 
-const SUB_ITEMS: [number, string][] = [
-    [5,  'navigator.navisel.myrooms'],
-    [4,  'navigator.navisel.wherearemyfriends'],
-    [3,  'navigator.navisel.myfriendsrooms'],
-    [18, 'navigator.navisel.roomswithrights'],
-    [19, 'navigator.navisel.mygroups'],
-    [6,  'navigator.navisel.myfavourites'],
-    [7,  'navigator.navisel.visitedrooms'],
-    [23, ''],
-];
-
 /**
  * Tab page decorator for the "Me" (My Rooms) tab.
  *
@@ -26,6 +15,17 @@ const SUB_ITEMS: [number, string][] = [
  */
 export class MyRoomsTabPageDecorator implements ITabPageDecorator
 {
+    private static readonly SUB_ITEMS: [number, string][] = [
+        [5,  'navigator.navisel.myrooms'],
+        [4,  'navigator.navisel.wherearemyfriends'],
+        [3,  'navigator.navisel.myfriendsrooms'],
+        [18, 'navigator.navisel.roomswithrights'],
+        [19, 'navigator.navisel.mygroups'],
+        [6,  'navigator.navisel.myfavourites'],
+        [7,  'navigator.navisel.visitedrooms'],
+        [23, ''],
+    ];
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::_navigator
     private _navigator: ITabNavigator;
     private _filter: IDropMenuWindow | null = null;
@@ -107,7 +107,7 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
 
         for(let i = 0; i < count; i++)
         {
-            if(SUB_ITEMS[i]?.[0] === value)
+            if(MyRoomsTabPageDecorator.SUB_ITEMS[i]?.[0] === value)
             {
                 this._filter.selection = i;
                 return;
@@ -128,7 +128,7 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
     {
         if(!this._filter || (this._filter as unknown as { disposed?: boolean }).disposed) return;
 
-        const items = SUB_ITEMS.map(([, key]) => this._navigator.getText(key));
+        const items = MyRoomsTabPageDecorator.SUB_ITEMS.map(([, key]) => this._navigator.getText(key));
 
         this._filter.populate(items);
         this._filter.selection = 0;
@@ -165,6 +165,6 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::getSearchTypeForIndex()
     private getSearchTypeForIndex(index: number): number
     {
-        return SUB_ITEMS[index]?.[0] ?? SUB_ITEMS[0][0];
+        return MyRoomsTabPageDecorator.SUB_ITEMS[index]?.[0] ?? MyRoomsTabPageDecorator.SUB_ITEMS[0][0];
     }
 }

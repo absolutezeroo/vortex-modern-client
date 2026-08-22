@@ -12,11 +12,6 @@ import type {DailyTasksController} from './DailyTasksController';
 import {DailyTaskView} from './tasks/DailyTaskView';
 import {UnclaimedTasksView} from './UnclaimedTasksView';
 
-// AS3: DailyTasksView.as::_SafeStr_11637 (name DERIVED: the only use is the title-refresh throttle)
-const TITLE_UPDATE_INTERVAL_MS = 500;
-// AS3: DailyTasksView.as::DESKTOP_WINDOW_LAYER
-const DESKTOP_WINDOW_LAYER = 1;
-
 /**
  * The daily-tasks board.
  *
@@ -29,6 +24,12 @@ const DESKTOP_WINDOW_LAYER = 1;
  */
 export class DailyTasksView
 {
+    // AS3: DailyTasksView.as::_SafeStr_11637 (name DERIVED: the only use is the title-refresh throttle)
+    private static readonly TITLE_UPDATE_INTERVAL_MS = 500;
+
+    // AS3: DailyTasksView.as::DESKTOP_WINDOW_LAYER
+    public static readonly DESKTOP_WINDOW_LAYER = 1;
+
     // AS3: DailyTasksView.as::_windowManager
     private _windowManager: IHabboWindowManager | null;
     // AS3: DailyTasksView.as::_SafeStr_4593 (the controller)
@@ -56,7 +57,7 @@ export class DailyTasksView
 
         // AS3 reads the layout via `assets.getAssetByName(...).content` + `buildFromXML(xml, 1)`;
         // `buildWidgetLayout()` is those two steps behind one call, layer included.
-        this._window = windowManager.buildWidgetLayout('daily_tasks_xml', DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
+        this._window = windowManager.buildWidgetLayout('daily_tasks_xml', DailyTasksView.DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
 
         if(this._window === null) return;
 
@@ -87,7 +88,7 @@ export class DailyTasksView
     {
         if(this._windowManager === null || this._window === null || this._window.parent !== null) return;
 
-        const desktop = this._windowManager.getDesktop(DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
+        const desktop = this._windowManager.getDesktop(DailyTasksView.DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
 
         desktop?.addChild(this._window);
     }
@@ -103,7 +104,7 @@ export class DailyTasksView
     {
         if(!this.isShowing() || this._windowManager === null || this._window === null) return;
 
-        const desktop = this._windowManager.getDesktop(DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
+        const desktop = this._windowManager.getDesktop(DailyTasksView.DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
 
         desktop?.removeChild(this._window);
     }
@@ -266,7 +267,7 @@ export class DailyTasksView
         }
 
         const now = performance.now();
-        const mayRetitle = now > this._lastTitleUpdateTime + TITLE_UPDATE_INTERVAL_MS;
+        const mayRetitle = now > this._lastTitleUpdateTime + DailyTasksView.TITLE_UPDATE_INTERVAL_MS;
 
         if(this.isShowing() && mayRetitle && this._window !== null)
         {

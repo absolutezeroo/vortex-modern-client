@@ -23,58 +23,6 @@ const splashModules = import.meta.glob('./assets/images/splash_img*.png') as Rec
 }>>;
 
 /**
- * AS3 constants from HabboLoadingScreen.
- *
- * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboLoadingScreen.as lines 27-30
- */
-const LOADING_BAR_WIDTH = 400;
-const LOADING_BAR_HEIGHT = 25;
-const LOADING_BAR_BORDER_WIDTH = 2;
-const LOADING_BAR_BORDER_SPACING = 2;
-
-/**
- * AS3 color constants — properly converted from decimal.
- *
- * 922908  → 0x0E151C (background)
- * 12241619 → 0xBACAD3 (bar fill top half)
- * 9216429  → 0x8CA1AD (bar fill bottom half)
- * 2500143  → 0x26262F (bar background)
- */
-const COLOR_BACKGROUND = '#0E151C';
-const COLOR_BAR_FILL_TOP = '#BACAD3';
-const COLOR_BAR_FILL_BOTTOM = '#8CA1AD';
-const COLOR_BAR_BG = '#000000';
-const COLOR_TEXT_WHITE = '#FFFFFF';
-const COLOR_TEXT_GREY = '#999999';
-
-/** Spacing between elements (AS3 _local_3 = 10). */
-const ELEMENT_SPACING = 10;
-
-/** Gap between splash and text (AS3 line 345: _local_1 + 50). */
-const SPLASH_TEXT_GAP = 50;
-
-/** Inner fill dimensions derived from AS3 constants. */
-const BAR_INSET = LOADING_BAR_BORDER_WIDTH + LOADING_BAR_BORDER_SPACING; // 4
-const BAR_INNER_HEIGHT = LOADING_BAR_HEIGHT - (BAR_INSET * 2);           // 17
-const BAR_INNER_WIDTH = LOADING_BAR_WIDTH - (BAR_INSET * 2);             // 392
-const BAR_TOP_HALF = Math.floor(BAR_INNER_HEIGHT / 2);                   // 8
-const BAR_BOTTOM_HALF = BAR_TOP_HALF + 1;                                // 9
-
-/** Revolving loading texts (replaces AS3 "client.starting.revolving" localization). */
-const LOADING_TEXTS: string[] = [
-    'Reticulating splines...',
-    'Adjusting bellhops...',
-    'Herding cats...',
-    'Warming up pixels...',
-    'Sewing plushies...',
-    'Polishing dance floors...',
-    'Inflating pool toys...',
-    'Tuning boomboxes...',
-    'Feeding Franks...',
-    'Stacking furniture...',
-];
-
-/**
  * DOM-based Habbo loading screen.
  *
  * Port of AS3 HabboLoadingScreen → VortexLoadingScreen.
@@ -86,6 +34,70 @@ const LOADING_TEXTS: string[] = [
  */
 export class VortexLoadingScreen implements IVortexLoadingScreen 
 {
+    /**
+    * AS3 constants from HabboLoadingScreen.
+    *
+    * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboLoadingScreen.as lines 27-30
+    */
+    private static readonly LOADING_BAR_WIDTH = 400;
+
+    private static readonly LOADING_BAR_HEIGHT = 25;
+
+    private static readonly LOADING_BAR_BORDER_WIDTH = 2;
+
+    private static readonly LOADING_BAR_BORDER_SPACING = 2;
+
+    /** Inner fill dimensions derived from AS3 constants. */
+    private static readonly BAR_INSET = VortexLoadingScreen.LOADING_BAR_BORDER_WIDTH + VortexLoadingScreen.LOADING_BAR_BORDER_SPACING; // 4
+
+    private static readonly BAR_INNER_HEIGHT = VortexLoadingScreen.LOADING_BAR_HEIGHT - (VortexLoadingScreen.BAR_INSET * 2); // 17
+
+    /**
+    * AS3 color constants — properly converted from decimal.
+    *
+    * 922908  → 0x0E151C (background)
+    * 12241619 → 0xBACAD3 (bar fill top half)
+    * 9216429  → 0x8CA1AD (bar fill bottom half)
+    * 2500143  → 0x26262F (bar background)
+    */
+    private static readonly COLOR_BACKGROUND = '#0E151C';
+
+    private static readonly COLOR_BAR_FILL_TOP = '#BACAD3';
+
+    private static readonly COLOR_BAR_FILL_BOTTOM = '#8CA1AD';
+
+    private static readonly COLOR_BAR_BG = '#000000';
+
+    private static readonly COLOR_TEXT_WHITE = '#FFFFFF';
+
+    private static readonly COLOR_TEXT_GREY = '#999999';
+
+    /** Spacing between elements (AS3 _local_3 = 10). */
+    private static readonly ELEMENT_SPACING = 10;
+
+    /** Gap between splash and text (AS3 line 345: _local_1 + 50). */
+    private static readonly SPLASH_TEXT_GAP = 50;
+
+    private static readonly BAR_INNER_WIDTH = VortexLoadingScreen.LOADING_BAR_WIDTH - (VortexLoadingScreen.BAR_INSET * 2); // 392
+
+    private static readonly BAR_TOP_HALF = Math.floor(VortexLoadingScreen.BAR_INNER_HEIGHT / 2); // 8
+
+    private static readonly BAR_BOTTOM_HALF = VortexLoadingScreen.BAR_TOP_HALF + 1; // 9
+
+    /** Revolving loading texts (replaces AS3 "client.starting.revolving" localization). */
+    private static readonly LOADING_TEXTS: string[] = [
+        'Reticulating splines...',
+        'Adjusting bellhops...',
+        'Herding cats...',
+        'Warming up pixels...',
+        'Sewing plushies...',
+        'Polishing dance floors...',
+        'Inflating pool toys...',
+        'Tuning boomboxes...',
+        'Feeding Franks...',
+        'Stacking furniture...',
+    ];
+
     private _root: HTMLDivElement;
     private _splashContainer: HTMLDivElement;
     private _textLabel: HTMLDivElement;
@@ -109,7 +121,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
 
     constructor() 
     {
-        this._textIndex = this.randomNumber(0, LOADING_TEXTS.length - 1);
+        this._textIndex = this.randomNumber(0, VortexLoadingScreen.LOADING_TEXTS.length - 1);
 
         // Root overlay — fullscreen, absolute, on top of everything
         this._root = document.createElement('div');
@@ -120,7 +132,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
             left: '0',
             width: '100%',
             height: '100%',
-            background: COLOR_BACKGROUND,
+            background: VortexLoadingScreen.COLOR_BACKGROUND,
             zIndex: '9999',
             overflow: 'hidden',
             userSelect: 'none',
@@ -301,12 +313,12 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
     {
         const el = document.createElement('div');
 
-        el.textContent = LOADING_TEXTS[this._textIndex];
+        el.textContent = VortexLoadingScreen.LOADING_TEXTS[this._textIndex];
         Object.assign(el.style, {
             position: 'absolute',
             fontFamily: 'Arial, Helvetica, sans-serif',
             fontSize: '28px',
-            color: COLOR_TEXT_WHITE,
+            color: VortexLoadingScreen.COLOR_TEXT_WHITE,
             textAlign: 'center',
             whiteSpace: 'nowrap',
             fontWeight: 'bold',
@@ -339,10 +351,10 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
 
         Object.assign(outer.style, {
             position: 'absolute',
-            width: LOADING_BAR_WIDTH + 'px',
-            height: LOADING_BAR_HEIGHT + 'px',
+            width: VortexLoadingScreen.LOADING_BAR_WIDTH + 'px',
+            height: VortexLoadingScreen.LOADING_BAR_HEIGHT + 'px',
             boxSizing: 'border-box',
-            border: '1px solid ' + COLOR_TEXT_WHITE,
+            border: '1px solid ' + VortexLoadingScreen.COLOR_TEXT_WHITE,
         } as Partial<CSSStyleDeclaration>);
 
         // Black inner track — AS3: drawRect(-1, -1, 396, 21) at sprite (4,4)
@@ -353,9 +365,9 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
             position: 'absolute',
             left: '2px',
             top: '2px',
-            width: (LOADING_BAR_WIDTH - (LOADING_BAR_BORDER_WIDTH * 2)) + 'px',   // 396
-            height: (LOADING_BAR_HEIGHT - (LOADING_BAR_BORDER_SPACING * 2)) + 'px', // 21
-            background: COLOR_BAR_BG,
+            width: (VortexLoadingScreen.LOADING_BAR_WIDTH - (VortexLoadingScreen.LOADING_BAR_BORDER_WIDTH * 2)) + 'px',   // 396
+            height: (VortexLoadingScreen.LOADING_BAR_HEIGHT - (VortexLoadingScreen.LOADING_BAR_BORDER_SPACING * 2)) + 'px', // 21
+            background: VortexLoadingScreen.COLOR_BAR_BG,
         } as Partial<CSSStyleDeclaration>);
 
         outer.appendChild(track);
@@ -369,8 +381,8 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
             left: '3px',
             top: '3px',
             width: '0px',
-            height: BAR_TOP_HALF + 'px',  // 8
-            background: COLOR_BAR_FILL_TOP,
+            height: VortexLoadingScreen.BAR_TOP_HALF + 'px',  // 8
+            background: VortexLoadingScreen.COLOR_BAR_FILL_TOP,
         } as Partial<CSSStyleDeclaration>);
 
         outer.appendChild(fillTop);
@@ -381,10 +393,10 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
         Object.assign(fillBottom.style, {
             position: 'absolute',
             left: '3px',
-            top: (3 + BAR_TOP_HALF) + 'px',  // 11
+            top: (3 + VortexLoadingScreen.BAR_TOP_HALF) + 'px',  // 11
             width: '0px',
-            height: BAR_BOTTOM_HALF + 'px',   // 9
-            background: COLOR_BAR_FILL_BOTTOM,
+            height: VortexLoadingScreen.BAR_BOTTOM_HALF + 'px',   // 9
+            background: VortexLoadingScreen.COLOR_BAR_FILL_BOTTOM,
         } as Partial<CSSStyleDeclaration>);
 
         outer.appendChild(fillBottom);
@@ -405,7 +417,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
             position: 'absolute',
             fontFamily: 'Arial, Helvetica, sans-serif',
             fontSize: '14px',
-            color: COLOR_TEXT_GREY,
+            color: VortexLoadingScreen.COLOR_TEXT_GREY,
             textAlign: 'center',
             whiteSpace: 'nowrap',
         } as Partial<CSSStyleDeclaration>);
@@ -426,7 +438,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
             position: 'absolute',
             fontFamily: 'Arial, Helvetica, sans-serif',
             fontSize: '12px',
-            color: COLOR_TEXT_GREY,
+            color: VortexLoadingScreen.COLOR_TEXT_GREY,
             textAlign: 'right',
             whiteSpace: 'nowrap',
         } as Partial<CSSStyleDeclaration>);
@@ -460,12 +472,12 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
 
         // --- First pass: compute total for centering (AS3 lines 292-325) ---
         // AS3 only uses splash.height + bar.height for the centering calculation
-        let local1 = splashH + LOADING_BAR_HEIGHT;
+        let local1 = splashH + VortexLoadingScreen.LOADING_BAR_HEIGHT;
 
         // --- Vertical centering (AS3 lines 336-337) ---
         // startY = int((stageH - (splashH + barH)) / 2) - spacing*2
         local1 = Math.floor((stageH - local1) / 2);
-        local1 = local1 - (ELEMENT_SPACING * 2);
+        local1 = local1 - (VortexLoadingScreen.ELEMENT_SPACING * 2);
 
         // --- Second pass: position sequentially (AS3 lines 338-356) ---
 
@@ -476,13 +488,13 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
 
         // Text — centered, +50px gap below splash (AS3 lines 343-347)
         this._textLabel.style.left = Math.floor((stageW - textW) / 2) + 'px';
-        this._textLabel.style.top = (local1 + SPLASH_TEXT_GAP) + 'px';
-        local1 = (local1 + SPLASH_TEXT_GAP) + textH + ELEMENT_SPACING;
+        this._textLabel.style.top = (local1 + VortexLoadingScreen.SPLASH_TEXT_GAP) + 'px';
+        local1 = (local1 + VortexLoadingScreen.SPLASH_TEXT_GAP) + textH + VortexLoadingScreen.ELEMENT_SPACING;
 
         // Loading bar — centered (AS3 lines 348-352)
-        this._barOuter.style.left = Math.floor((stageW - LOADING_BAR_WIDTH) / 2) + 'px';
+        this._barOuter.style.left = Math.floor((stageW - VortexLoadingScreen.LOADING_BAR_WIDTH) / 2) + 'px';
         this._barOuter.style.top = local1 + 'px';
-        local1 = Math.floor(local1 + LOADING_BAR_HEIGHT + (ELEMENT_SPACING / 2));
+        local1 = Math.floor(local1 + VortexLoadingScreen.LOADING_BAR_HEIGHT + (VortexLoadingScreen.ELEMENT_SPACING / 2));
 
         // Percentage label — centered (AS3 lines 353-356)
         this._percentLabel.style.left = Math.floor((stageW - percentW) / 2) + 'px';
@@ -513,7 +525,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
             // AS3 lines 170-186: change text if flagged, then reset
             if(this._shouldChangeText) 
             {
-                this._textLabel.textContent = LOADING_TEXTS[this._textIndex];
+                this._textLabel.textContent = VortexLoadingScreen.LOADING_TEXTS[this._textIndex];
                 this._shouldChangeText = false;
 
                 // Re-center text after content change (AS3 line 179)
@@ -540,7 +552,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
         if(this._barProgression === 100) 
         {
             this._shouldChangeText = true;
-            this._textIndex = (this._textIndex + 1) % LOADING_TEXTS.length;
+            this._textIndex = (this._textIndex + 1) % VortexLoadingScreen.LOADING_TEXTS.length;
         }
 
         this.updateLoadingBarProgression(this._barProgression / 100);
@@ -559,7 +571,7 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
     // AS3: .../src/binaryData/HabboLoadingScreen.as::updateLoadingBarProgression()
     private updateLoadingBarProgression(ratio: number): void 
     {
-        const fillWidth = Math.floor(BAR_INNER_WIDTH * ratio);
+        const fillWidth = Math.floor(VortexLoadingScreen.BAR_INNER_WIDTH * ratio);
 
         this._barFillTop.style.width = fillWidth + 'px';
         this._barFillBottom.style.width = fillWidth + 'px';

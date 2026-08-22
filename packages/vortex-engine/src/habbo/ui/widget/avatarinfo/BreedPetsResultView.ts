@@ -31,15 +31,16 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {BreedPetsResultData} from './BreedPetsResultData';
 import type {AvatarInfoWidget} from './AvatarInfoWidget';
 
-// Seed preview render parameters (BreedPetsResultView.as::resolvePreviewImage()).
-const PREVIEW_DIRECTION: number = 90;
-const PREVIEW_SCALE: number = 64;
-
-// AS3: BreedPetsResultView.as::modifyRoomObject(..., "OBJECT_PICKUP")
-const OBJECT_PICKUP: string = 'OBJECT_PICKUP';
-
 export class BreedPetsResultView implements IDisposable, IGetImageListener
 {
+    // Seed preview render parameters (BreedPetsResultView.as::resolvePreviewImage()).
+    private static readonly PREVIEW_DIRECTION: number = 90;
+
+    private static readonly PREVIEW_SCALE: number = 64;
+
+    // AS3: BreedPetsResultView.as::modifyRoomObject(..., "OBJECT_PICKUP")
+    private static readonly OBJECT_PICKUP: string = 'OBJECT_PICKUP';
+
     // AS3: BreedPetsResultView.as::_window
     private _window: IFrameWindow | null = null;
     // AS3: BreedPetsResultView.as::disposed (obfuscated `_SafeStr_5769`; named from its getter)
@@ -96,7 +97,7 @@ export class BreedPetsResultView implements IDisposable, IGetImageListener
         if(!roomEngine) return null;
 
         const result = roomEngine.getFurnitureImage(
-            classId, new Vector3d(PREVIEW_DIRECTION, 0, 0), PREVIEW_SCALE, this, 0, null, -1, -1, null
+            classId, new Vector3d(BreedPetsResultView.PREVIEW_DIRECTION, 0, 0), BreedPetsResultView.PREVIEW_SCALE, this, 0, null, -1, -1, null
         );
 
         if(!result) return null;
@@ -406,7 +407,7 @@ export class BreedPetsResultView implements IDisposable, IGetImageListener
 
         if(roomObject && roomEngine)
         {
-            roomEngine.modifyRoomObject(roomObject.getId(), RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE, OBJECT_PICKUP);
+            roomEngine.modifyRoomObject(roomObject.getId(), RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE, BreedPetsResultView.OBJECT_PICKUP);
 
             return true;
         }

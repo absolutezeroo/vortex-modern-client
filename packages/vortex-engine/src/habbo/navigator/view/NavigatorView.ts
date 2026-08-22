@@ -23,11 +23,6 @@ import type {IUpdateReceiver} from "@core";
 
 const log = Logger.getLogger('habbo.navigator.view.NavigatorView');
 
-const LAYOUT_NAME = 'navigator_frame_2_xml';
-const MAX_WINDOW_WIDTH = 578;
-const STARTING_TAB_POSITION = 115;
-const LEFT_PANE_MARGIN_CONST = 7;
-
 /**
  * Navigator view — manages the navigator window via the window manager.
  *
@@ -40,6 +35,14 @@ const LEFT_PANE_MARGIN_CONST = 7;
  */
 export class NavigatorView implements IUpdateReceiver
 {
+    private static readonly LAYOUT_NAME = 'navigator_frame_2_xml';
+
+    private static readonly MAX_WINDOW_WIDTH = 578;
+
+    private static readonly STARTING_TAB_POSITION = 115;
+
+    private static readonly LEFT_PANE_MARGIN_CONST = 7;
+
     // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::_navigator
     private _navigator: HabboNewNavigator;
     // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::_window
@@ -66,7 +69,7 @@ export class NavigatorView implements IUpdateReceiver
     private _lastPreferencesSaveTime: number = 0;
     private _rightPane: IWindow | null = null;
     private _rightPaneOriginalX: number = 0;
-    private _leftPaneMarginConst: number = LEFT_PANE_MARGIN_CONST;
+    private _leftPaneMarginConst: number = NavigatorView.LEFT_PANE_MARGIN_CONST;
     // AS3: .../src/com/sulake/habbo/navigator/view/NavigatorView.as::_leftPaneMargin
     private _leftPaneMargin: number = 0;
     private _roomInfoGlobalRectangle: { x: number; y: number; width: number; height: number } = {
@@ -548,7 +551,7 @@ export class NavigatorView implements IUpdateReceiver
 
         if(!leftPane) return;
 
-        const offset = this._rightPaneOriginalX - this._leftPaneMargin + LEFT_PANE_MARGIN_CONST;
+        const offset = this._rightPaneOriginalX - this._leftPaneMargin + NavigatorView.LEFT_PANE_MARGIN_CONST;
 
         // Temporarily enable manual positioning
         this._rightPane.setParamFlag(0, true);
@@ -571,7 +574,7 @@ export class NavigatorView implements IUpdateReceiver
             this._rightPane.x = this._rightPaneOriginalX;
 
             const newWidth = this._window.width + offset - this._leftPaneMarginConst;
-            const clampedWidth = newWidth > MAX_WINDOW_WIDTH ? MAX_WINDOW_WIDTH : newWidth;
+            const clampedWidth = newWidth > NavigatorView.MAX_WINDOW_WIDTH ? NavigatorView.MAX_WINDOW_WIDTH : newWidth;
 
             this._window.limits.minWidth = clampedWidth;
             this._window.limits.maxWidth = clampedWidth;
@@ -588,7 +591,7 @@ export class NavigatorView implements IUpdateReceiver
         if(hideContainer) hideContainer.visible = visible;
         if(showContainer) showContainer.visible = !visible;
 
-        const tabPosition = visible ? STARTING_TAB_POSITION : STARTING_TAB_POSITION - offset / 2;
+        const tabPosition = visible ? NavigatorView.STARTING_TAB_POSITION : NavigatorView.STARTING_TAB_POSITION - offset / 2;
         const tabContext = this._window.findChildByName('top_view_select_tab_context');
 
         if(tabContext)
@@ -683,13 +686,13 @@ export class NavigatorView implements IUpdateReceiver
 
         if(!windowManager) return;
 
-        log.debug(`Building layout: ${LAYOUT_NAME}`);
+        log.debug(`Building layout: ${NavigatorView.LAYOUT_NAME}`);
 
-        const built = windowManager.buildWidgetLayout(LAYOUT_NAME);
+        const built = windowManager.buildWidgetLayout(NavigatorView.LAYOUT_NAME);
 
         if(!built)
         {
-            log.warn(`Layout not found: ${LAYOUT_NAME}`);
+            log.warn(`Layout not found: ${NavigatorView.LAYOUT_NAME}`);
 
             return;
         }
@@ -854,7 +857,7 @@ export class NavigatorView implements IUpdateReceiver
         }
 
         // Left pane show/hide toggle
-        this._leftPaneMarginConst = LEFT_PANE_MARGIN_CONST;
+        this._leftPaneMarginConst = NavigatorView.LEFT_PANE_MARGIN_CONST;
 
         const tempBack = windowContainer.findChildByName('temp_back');
 

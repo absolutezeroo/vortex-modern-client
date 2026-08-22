@@ -11,11 +11,11 @@ import {BitmapData} from './display/BitmapData';
 import {Sprite} from './display/DisplayObjectContainer';
 import {ColorTransform, Rectangle} from './display/Geom';
 
-// AS3: DOT_COUNT
-const DOT_COUNT = 8;
-
 export class WaitIndicator extends Sprite
 {
+    // AS3: DOT_COUNT
+    private static readonly DOT_COUNT = 8;
+
     // AS3: _disposed
     private _disposed: boolean = false;
 
@@ -48,14 +48,14 @@ export class WaitIndicator extends Sprite
             0, white, white, 0,
         ]);
 
-        for(let i = 0; i < DOT_COUNT; i++)
+        for(let i = 0; i < WaitIndicator.DOT_COUNT; i++)
         {
             const bitmap = new Bitmap(dot);
             const radius = style === 1 ? 12 : 8;
 
             this.addChild(bitmap);
-            bitmap.x = Math.trunc(radius * Math.sin((i * Math.PI * 2) / DOT_COUNT)) - 3;
-            bitmap.y = Math.trunc(radius * Math.cos((i * Math.PI * 2) / DOT_COUNT)) - 3;
+            bitmap.x = Math.trunc(radius * Math.sin((i * Math.PI * 2) / WaitIndicator.DOT_COUNT)) - 3;
+            bitmap.y = Math.trunc(radius * Math.cos((i * Math.PI * 2) / WaitIndicator.DOT_COUNT)) - 3;
             this._shades.push(new ColorTransform());
         }
 
@@ -74,7 +74,7 @@ export class WaitIndicator extends Sprite
     // AS3: .../src/onBoardingHcUi/WaitIndicator.as::circleShade()
     private circleShade(index: number): ColorTransform
     {
-        let phase = index / DOT_COUNT - (performance.now() - this._startTime) * 0.001;
+        let phase = index / WaitIndicator.DOT_COUNT - (performance.now() - this._startTime) * 0.001;
 
         phase -= Math.floor(phase);
 
@@ -98,7 +98,7 @@ export class WaitIndicator extends Sprite
     // AS3: onEnterFrame(_arg_1:Event)
     private _onEnterFrame = (): void =>
     {
-        for(let i = 0; i < DOT_COUNT; i++)
+        for(let i = 0; i < WaitIndicator.DOT_COUNT; i++)
         {
             const shade = this.circleShade(i);
             const dot = this.getChildAt(i);

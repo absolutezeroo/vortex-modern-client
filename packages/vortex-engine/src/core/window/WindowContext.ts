@@ -25,8 +25,6 @@ type WindowContextResizeHost = {
     removeEventListener(type: string, listener: (event?: Event) => void): void;
 };
 
-const MIN_DESKTOP_SIZE = 10;
-
 /**
  * Window context implementation.
  *
@@ -38,6 +36,8 @@ const MIN_DESKTOP_SIZE = 10;
  */
 export class WindowContext implements IWindowContext 
 {
+    private static readonly MIN_DESKTOP_SIZE = 10;
+
     // AS3: .../src/com/sulake/core/window/WindowContext.as::INPUT_MODE_MOUSE
     public static readonly INPUT_MODE_MOUSE: number = 0;
     // AS3: .../src/com/sulake/core/window/WindowContext.as::INPUT_MODE_TOUCH
@@ -224,7 +224,7 @@ export class WindowContext implements IWindowContext
             return;
         }
 
-        if(width < MIN_DESKTOP_SIZE || height < MIN_DESKTOP_SIZE) 
+        if(width < WindowContext.MIN_DESKTOP_SIZE || height < WindowContext.MIN_DESKTOP_SIZE) 
         {
             return;
         }

@@ -13,17 +13,18 @@ import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperW
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {BackgroundColorFurniWidget} from './BackgroundColorFurniWidget';
 
-/**
- * AS3: BackgroundColorWidgetSlider.as::_SafeStr_6132 / _SafeStr_6583
- *
- * Both obfuscated. They are the slider's value range, 0..255 — the names are DERIVED from how
- * `getSliderPosition()` and `getValue()` use them.
- */
-const VALUE_MIN: number = 0;
-const VALUE_MAX: number = 255;
-
 export class BackgroundColorWidgetSlider
 {
+    /**
+    * AS3: BackgroundColorWidgetSlider.as::_SafeStr_6132 / _SafeStr_6583
+    *
+    * Both obfuscated. They are the slider's value range, 0..255 — the names are DERIVED from how
+    * `getSliderPosition()` and `getValue()` use them.
+    */
+    private static readonly VALUE_MIN: number = 0;
+
+    private static readonly VALUE_MAX: number = 255;
+
     // AS3: BackgroundColorWidgetSlider.as::_SafeStr_4549
     private _widget: BackgroundColorFurniWidget | null;
 
@@ -76,13 +77,13 @@ export class BackgroundColorWidgetSlider
     // AS3: BackgroundColorWidgetSlider.as::getSliderPosition()
     private getSliderPosition(value: number): number
     {
-        return Math.trunc(this._referenceWidth * ((value - VALUE_MIN) / (VALUE_MAX - VALUE_MIN)));
+        return Math.trunc(this._referenceWidth * ((value - BackgroundColorWidgetSlider.VALUE_MIN) / (BackgroundColorWidgetSlider.VALUE_MAX - BackgroundColorWidgetSlider.VALUE_MIN)));
     }
 
     // AS3: BackgroundColorWidgetSlider.as::getValue()
     private getValue(position: number): number
     {
-        return Math.trunc(position / this._referenceWidth * (VALUE_MAX - VALUE_MIN)) + VALUE_MIN;
+        return Math.trunc(position / this._referenceWidth * (BackgroundColorWidgetSlider.VALUE_MAX - BackgroundColorWidgetSlider.VALUE_MIN)) + BackgroundColorWidgetSlider.VALUE_MIN;
     }
 
     /**

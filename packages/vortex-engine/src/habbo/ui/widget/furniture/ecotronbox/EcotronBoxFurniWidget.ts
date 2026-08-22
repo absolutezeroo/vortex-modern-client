@@ -23,20 +23,21 @@ import {RoomWidgetPresentDataUpdateEvent} from '@habbo/ui/widget/events/RoomWidg
 import {RoomWidgetRoomObjectUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetRoomObjectUpdateEvent';
 import {RoomWidgetEcotronBoxOpenMessage} from '@habbo/ui/widget/messages/RoomWidgetEcotronBoxOpenMessage';
 
-/**
- * AS3: EcotronBoxFurniWidget.as::_SafeStr_10523 / _SafeStr_10928
- *
- * Both obfuscated and both 100 — the x and y AS3 passes to `createWindow()`'s Rectangle. Names
- * DERIVED from that call site, same pair as the stickie's and the credit furni's.
- */
-const WINDOW_X: number = 100;
-const WINDOW_Y: number = 100;
-
-// AS3: EcotronBoxFurniWidget.as::showInterface() — the window's own name.
-const WINDOW_NAME: string = 'ecotronboxcardui_container';
-
 export class EcotronBoxFurniWidget extends RoomWidgetBase
 {
+    /**
+    * AS3: EcotronBoxFurniWidget.as::_SafeStr_10523 / _SafeStr_10928
+    *
+    * Both obfuscated and both 100 — the x and y AS3 passes to `createWindow()`'s Rectangle. Names
+    * DERIVED from that call site, same pair as the stickie's and the credit furni's.
+    */
+    private static readonly WINDOW_X: number = 100;
+
+    private static readonly WINDOW_Y: number = 100;
+
+    // AS3: EcotronBoxFurniWidget.as::showInterface() — the window's own name.
+    private static readonly WINDOW_NAME: string = 'ecotronboxcardui_container';
+
     // AS3: EcotronBoxFurniWidget.as::_window
     private _window: IWindowContainer | null = null;
 
@@ -215,9 +216,9 @@ export class EcotronBoxFurniWidget extends RoomWidgetBase
 
         if(this._window === null) return;
 
-        this._window.name = WINDOW_NAME;
-        this._window.x = WINDOW_X;
-        this._window.y = WINDOW_Y;
+        this._window.name = EcotronBoxFurniWidget.WINDOW_NAME;
+        this._window.x = EcotronBoxFurniWidget.WINDOW_X;
+        this._window.y = EcotronBoxFurniWidget.WINDOW_Y;
 
         const date = this._window.findChildByName('ecotronbox_card_date') as ITextWindow | null;
 

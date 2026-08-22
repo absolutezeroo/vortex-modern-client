@@ -26,15 +26,6 @@ import type {IRarityItemGridOverlayWidget} from '@habbo/window/widgets/IRarityIt
 import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 
-const STATUS_SEARCHING = 1;
-const STATUS_LIST_AVAILABLE = 2;
-const MAX_SEARCH_STRING_LENGTH = 40;
-const MAX_PRICE_STRING_LENGTH = 10;
-const USABLE_USED_TEXT_COLOR = 4291559424;
-const USABLE_UNUSED_TEXT_COLOR = 4280195897;
-const POPULATE_BATCH_SIZE = 5;
-const POPULATE_INTERVAL_MS = 25;
-
 /**
  * The public marketplace search/browse/buy widget.
  *
@@ -42,6 +33,22 @@ const POPULATE_INTERVAL_MS = 25;
  */
 export class MarketPlaceCatalogWidget extends CatalogWidget implements IMarketPlaceVisualization, IGetImageListener
 {
+    private static readonly STATUS_SEARCHING = 1;
+
+    private static readonly STATUS_LIST_AVAILABLE = 2;
+
+    private static readonly MAX_SEARCH_STRING_LENGTH = 40;
+
+    private static readonly MAX_PRICE_STRING_LENGTH = 10;
+
+    private static readonly USABLE_USED_TEXT_COLOR = 4291559424;
+
+    private static readonly USABLE_UNUSED_TEXT_COLOR = 4280195897;
+
+    private static readonly POPULATE_BATCH_SIZE = 5;
+
+    private static readonly POPULATE_INTERVAL_MS = 25;
+
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::_sortTypes
     private _sortTypes: number[] = [];
 
@@ -295,7 +302,7 @@ export class MarketPlaceCatalogWidget extends CatalogWidget implements IMarketPl
 
         let text: string;
 
-        if(status === STATUS_SEARCHING)
+        if(status === MarketPlaceCatalogWidget.STATUS_SEARCHING)
         {
             text = localization.getLocalization('catalog.marketplace.searching');
         }
@@ -338,7 +345,7 @@ export class MarketPlaceCatalogWidget extends CatalogWidget implements IMarketPl
 
         const keys = offers.getKeys();
 
-        this.updateStatusDisplay(STATUS_LIST_AVAILABLE, keys.length, total);
+        this.updateStatusDisplay(MarketPlaceCatalogWidget.STATUS_LIST_AVAILABLE, keys.length, total);
 
         if(this._populationTimer === null)
         {
@@ -349,7 +356,7 @@ export class MarketPlaceCatalogWidget extends CatalogWidget implements IMarketPl
                     clearInterval(this._populationTimer);
                     this._populationTimer = null;
                 }
-            }, POPULATE_INTERVAL_MS);
+            }, MarketPlaceCatalogWidget.POPULATE_INTERVAL_MS);
         }
 
         this._populateIndex = 0;
@@ -361,7 +368,7 @@ export class MarketPlaceCatalogWidget extends CatalogWidget implements IMarketPl
     {
         if(!this._offers) return true;
 
-        for(let i = 0; i < POPULATE_BATCH_SIZE; i++)
+        for(let i = 0; i < MarketPlaceCatalogWidget.POPULATE_BATCH_SIZE; i++)
         {
             if(this._populateIndex >= this._offers.length) return true;
 
@@ -417,7 +424,7 @@ export class MarketPlaceCatalogWidget extends CatalogWidget implements IMarketPl
             {
                 usageState.visible = true;
                 usageState.caption = localization.getLocalization(offer.isUsed ? 'catalog.marketplace.offer.used' : 'catalog.marketplace.offer.unused');
-                usageState.textColor = offer.isUsed ? USABLE_USED_TEXT_COLOR : USABLE_UNUSED_TEXT_COLOR;
+                usageState.textColor = offer.isUsed ? MarketPlaceCatalogWidget.USABLE_USED_TEXT_COLOR : MarketPlaceCatalogWidget.USABLE_UNUSED_TEXT_COLOR;
             }
             else
             {
@@ -711,7 +718,7 @@ export class MarketPlaceCatalogWidget extends CatalogWidget implements IMarketPl
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/MarketPlaceCatalogWidget.as::doSearch()
     private doSearch(): void
     {
-        this.updateStatusDisplay(STATUS_SEARCHING);
+        this.updateStatusDisplay(MarketPlaceCatalogWidget.STATUS_SEARCHING);
 
         let minPrice = -1;
         let maxPrice = -1;
@@ -826,10 +833,10 @@ export class MarketPlaceCatalogWidget extends CatalogWidget implements IMarketPl
             {
                 case 'min_price_input':
                 case 'max_price_input':
-                    maxLength = MAX_PRICE_STRING_LENGTH;
+                    maxLength = MarketPlaceCatalogWidget.MAX_PRICE_STRING_LENGTH;
                     break;
                 case 'search_input':
-                    maxLength = MAX_SEARCH_STRING_LENGTH;
+                    maxLength = MarketPlaceCatalogWidget.MAX_SEARCH_STRING_LENGTH;
                     break;
                 default:
                     return;

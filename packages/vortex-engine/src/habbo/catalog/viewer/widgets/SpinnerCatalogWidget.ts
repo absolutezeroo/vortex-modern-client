@@ -9,9 +9,6 @@ import {CatalogWidgetSpinnerEvent} from './events/CatalogWidgetSpinnerEvent';
 import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 
-const SPIN_BUTTONDOWN_HOLD_VALUE_STEP_DELAY_MS = 75;
-const SPIN_ACCELERATE_AFTER_STEPS = 35;
-
 /**
  * The purchase-quantity spinner shown for bundle offers (buy N units of a discount bundle).
  *
@@ -19,6 +16,10 @@ const SPIN_ACCELERATE_AFTER_STEPS = 35;
  */
 export class SpinnerCatalogWidget extends CatalogWidget
 {
+    private static readonly SPIN_BUTTONDOWN_HOLD_VALUE_STEP_DELAY_MS = 75;
+
+    private static readonly SPIN_ACCELERATE_AFTER_STEPS = 35;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
@@ -155,7 +156,7 @@ export class SpinnerCatalogWidget extends CatalogWidget
         {
             this.increaseValue();
 
-            if(this._value - this._holdStartedAt > SPIN_ACCELERATE_AFTER_STEPS)
+            if(this._value - this._holdStartedAt > SpinnerCatalogWidget.SPIN_ACCELERATE_AFTER_STEPS)
             {
                 this.increaseValue();
             }
@@ -165,7 +166,7 @@ export class SpinnerCatalogWidget extends CatalogWidget
         {
             this.decreaseValue();
 
-            if(this._holdStartedAt - this._value > SPIN_ACCELERATE_AFTER_STEPS)
+            if(this._holdStartedAt - this._value > SpinnerCatalogWidget.SPIN_ACCELERATE_AFTER_STEPS)
             {
                 this.decreaseValue();
             }
@@ -286,7 +287,7 @@ export class SpinnerCatalogWidget extends CatalogWidget
     private startSpinTimer(): void
     {
         this.stopSpinTimer();
-        this._spinTimer = setInterval(this.onSpinnerTimerEvent, SPIN_BUTTONDOWN_HOLD_VALUE_STEP_DELAY_MS);
+        this._spinTimer = setInterval(this.onSpinnerTimerEvent, SpinnerCatalogWidget.SPIN_BUTTONDOWN_HOLD_VALUE_STEP_DELAY_MS);
     }
 
     private stopSpinTimer(): void

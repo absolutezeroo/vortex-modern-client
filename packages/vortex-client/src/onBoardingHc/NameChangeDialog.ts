@@ -38,11 +38,11 @@ import {CheckUserNameMessageComposer} from '@habbo/communication/messages/outgoi
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IOnBoardingHcContext} from './IOnBoardingHcContext';
 
-// AS3: IDLE_TIME_MS
-const IDLE_TIME_MS = 500;
-
 export class NameChangeDialog
 {
+    // AS3: IDLE_TIME_MS
+    private static readonly IDLE_TIME_MS = 500;
+
     // AS3: _style
     protected _style: number = 1;
 
@@ -129,7 +129,7 @@ export class NameChangeDialog
             );
         }
 
-        this._idleTimer = new Timer(IDLE_TIME_MS, 1);
+        this._idleTimer = new Timer(NameChangeDialog.IDLE_TIME_MS, 1);
         this._idleTimer.addEventListener('timer', this._onIdleTimer);
     }
 

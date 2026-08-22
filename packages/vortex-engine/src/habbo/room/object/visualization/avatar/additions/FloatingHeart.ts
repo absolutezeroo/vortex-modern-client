@@ -11,14 +11,18 @@ import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSpri
 import type {AvatarVisualization} from '../AvatarVisualization';
 import {ExpressionAddition} from './ExpressionAddition';
 
-const DELAY_BEFORE_ANIMATION: number = 300;
-const STATE_DELAY: number = 0;
-const STATE_FADE_IN: number = 1;
-const STATE_FLOAT: number = 2;
-const STATE_COMPLETE: number = 3;
-
 export class FloatingHeart extends ExpressionAddition 
 {
+    private static readonly DELAY_BEFORE_ANIMATION: number = 300;
+
+    private static readonly STATE_DELAY: number = 0;
+
+    private static readonly STATE_FADE_IN: number = 1;
+
+    private static readonly STATE_FLOAT: number = 2;
+
+    private static readonly STATE_COMPLETE: number = 3;
+
     private _assetName: string | null = null;
     // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingHeart.as::_startTime
     private _startTime: number;
@@ -35,7 +39,7 @@ export class FloatingHeart extends ExpressionAddition
     {
         super(id, type, visualization);
         this._startTime = performance.now();
-        this._state = STATE_DELAY;
+        this._state = FloatingHeart.STATE_DELAY;
     }
 
     /**
@@ -58,14 +62,14 @@ export class FloatingHeart extends ExpressionAddition
 
         const now = performance.now();
 
-        if(this._state === STATE_DELAY) 
+        if(this._state === FloatingHeart.STATE_DELAY) 
         {
-            if((now - this._startTime) < DELAY_BEFORE_ANIMATION) 
+            if((now - this._startTime) < FloatingHeart.DELAY_BEFORE_ANIMATION) 
             {
                 return false;
             }
 
-            this._state = STATE_FADE_IN;
+            this._state = FloatingHeart.STATE_FADE_IN;
             sprite.alpha = 0;
             sprite.visible = true;
             this._delta = 0;
@@ -73,7 +77,7 @@ export class FloatingHeart extends ExpressionAddition
             return true;
         }
 
-        if(this._state === STATE_FADE_IN) 
+        if(this._state === FloatingHeart.STATE_FADE_IN) 
         {
             this._delta = this._delta + 0.1;
             sprite.offsetY = this._offsetY;
@@ -83,13 +87,13 @@ export class FloatingHeart extends ExpressionAddition
             {
                 this._delta = 0;
                 sprite.alpha = 255;
-                this._state = STATE_FLOAT;
+                this._state = FloatingHeart.STATE_FLOAT;
             }
 
             return true;
         }
 
-        if(this._state === STATE_FLOAT) 
+        if(this._state === FloatingHeart.STATE_FLOAT) 
         {
             const eased = Math.pow(this._delta, 0.9);
             this._delta = this._delta + 0.05;
@@ -101,7 +105,7 @@ export class FloatingHeart extends ExpressionAddition
             if(sprite.alpha <= 0) 
             {
                 sprite.visible = false;
-                this._state = STATE_COMPLETE;
+                this._state = FloatingHeart.STATE_COMPLETE;
             }
 
             return true;

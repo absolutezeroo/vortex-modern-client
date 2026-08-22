@@ -44,10 +44,10 @@ import {Logger} from '@core/utils/Logger';
 import type {HabboGroupsManager} from './HabboGroupsManager';
 
 const log = Logger.getLogger('habbo.groups.ExtendedProfileWindowCtrl');
-const BADGE_SLOT_COUNT = 5;
-
 export class ExtendedProfileWindowCtrl
 {
+    private static readonly BADGE_SLOT_COUNT = 5;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_4571
     private _groupsManager: HabboGroupsManager | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_window
@@ -332,7 +332,7 @@ export class ExtendedProfileWindowCtrl
 
         this.clearSelectedBadges();
 
-        for(let i = 0; i < badges.length && i < BADGE_SLOT_COUNT; i++)
+        for(let i = 0; i < badges.length && i < ExtendedProfileWindowCtrl.BADGE_SLOT_COUNT; i++)
         {
             this.setSelectedBadge(i, badges[i]);
         }
@@ -360,7 +360,7 @@ export class ExtendedProfileWindowCtrl
     {
         if(!this._window) return;
 
-        for(let i = 0; i < BADGE_SLOT_COUNT; i++)
+        for(let i = 0; i < ExtendedProfileWindowCtrl.BADGE_SLOT_COUNT; i++)
         {
             this.setSelectedBadge(i, '');
         }

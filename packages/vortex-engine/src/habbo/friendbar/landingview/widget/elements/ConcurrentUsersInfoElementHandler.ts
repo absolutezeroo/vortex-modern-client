@@ -14,12 +14,6 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {TextElementHandler} from './TextElementHandler';
 
-const STATE_DISABLED = 0;
-const STATE_ACTIVE = 1;
-const STATE_REDEEM = 2;
-const STATE_REWARDED = 3;
-const UPDATE_INTERVAL_MS = 5000;
-
 /**
  * Concurrent-users challenge info card: shows progress toward a concurrent
  * users goal, polls for updates while the landing view is visible, and lets
@@ -29,6 +23,16 @@ const UPDATE_INTERVAL_MS = 5000;
  */
 export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisposable
 {
+    private static readonly STATE_DISABLED = 0;
+
+    private static readonly STATE_ACTIVE = 1;
+
+    private static readonly STATE_REDEEM = 2;
+
+    private static readonly STATE_REWARDED = 3;
+
+    private static readonly UPDATE_INTERVAL_MS = 5000;
+
     // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/elements/ConcurrentUsersInfoElementHandler.as::_landingView
     private _landingView: HabboLandingView | null = null;
     private _ownerWidget: GenericWidget | null = null;
@@ -44,7 +48,7 @@ export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisp
 
     constructor()
     {
-        this._updateIntervalId = setInterval(this.onUpdateTimer, UPDATE_INTERVAL_MS);
+        this._updateIntervalId = setInterval(this.onUpdateTimer, ConcurrentUsersInfoElementHandler.UPDATE_INTERVAL_MS);
     }
 
     private onUpdateTimer = (): void =>
@@ -132,14 +136,14 @@ export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisp
 
         switch(this._state)
         {
-            case STATE_DISABLED:
-            case STATE_ACTIVE:
+            case ConcurrentUsersInfoElementHandler.STATE_DISABLED:
+            case ConcurrentUsersInfoElementHandler.STATE_ACTIVE:
             {
                 this.setVisible('state.active', true);
                 this.setVisible('state.achieved', false);
                 break;
             }
-            case STATE_REDEEM:
+            case ConcurrentUsersInfoElementHandler.STATE_REDEEM:
             {
                 if(this._updateIntervalId !== null)
                 {
@@ -155,7 +159,7 @@ export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisp
                 this.setVisible('action_button', true);
                 break;
             }
-            case STATE_REWARDED:
+            case ConcurrentUsersInfoElementHandler.STATE_REWARDED:
             {
                 if(this._updateIntervalId !== null)
                 {

@@ -44,16 +44,6 @@ import {MintTokenPurchaseOffer} from './MintTokenPurchaseOffer';
 
 const log = Logger.getLogger('habbo.catalog.collectibles.MintInventoryListTab');
 
-// AS3: MintInventoryListTab.as::PROGRESS_BAR_UPDATE_THRESHOLD — ms between countdown repaints.
-const PROGRESS_BAR_UPDATE_THRESHOLD = 1000;
-
-/** AS3: MintInventoryListTab.as::update() reads these two off CollectionsTab; both 20 and 90. */
-const BG_STAR_ROTATE_SPEED = 20;
-const LOADING_ICON_ROTATE_SPEED = 90;
-
-/** AS3: MintInventoryListTab.as::onCollectClicked() — the confirmation dialog's title bar. */
-const CONFIRM_TITLE_BAR_COLOR = 2763306;
-
 /**
  * The minting tab: pick a furni you own, spend mint tokens, get a collectible.
  *
@@ -66,6 +56,17 @@ const CONFIRM_TITLE_BAR_COLOR = 2763306;
  */
 export class MintInventoryListTab implements IUpdateReceiver
 {
+    // AS3: MintInventoryListTab.as::PROGRESS_BAR_UPDATE_THRESHOLD — ms between countdown repaints.
+    private static readonly PROGRESS_BAR_UPDATE_THRESHOLD = 1000;
+
+    /** AS3: MintInventoryListTab.as::update() reads these two off CollectionsTab; both 20 and 90. */
+    private static readonly BG_STAR_ROTATE_SPEED = 20;
+
+    private static readonly LOADING_ICON_ROTATE_SPEED = 90;
+
+    /** AS3: MintInventoryListTab.as::onCollectClicked() — the confirmation dialog's title bar. */
+    private static readonly CONFIRM_TITLE_BAR_COLOR = 2763306;
+
     // AS3: MintInventoryListTab.as::_disposed
     private _disposed: boolean = false;
     // AS3: MintInventoryListTab.as::_messageEvents
@@ -605,7 +606,7 @@ export class MintInventoryListTab implements IUpdateReceiver
             this.onCollectConfirmDialogConfirm
         ) ?? null;
 
-        if(dialog !== null) dialog.titleBarColor = CONFIRM_TITLE_BAR_COLOR;
+        if(dialog !== null) dialog.titleBarColor = MintInventoryListTab.CONFIRM_TITLE_BAR_COLOR;
     };
 
     /**
@@ -673,7 +674,7 @@ export class MintInventoryListTab implements IUpdateReceiver
     {
         this._progressBarElapsed += elapsedMs;
 
-        const due = force || this._progressBarElapsed >= PROGRESS_BAR_UPDATE_THRESHOLD;
+        const due = force || this._progressBarElapsed >= MintInventoryListTab.PROGRESS_BAR_UPDATE_THRESHOLD;
 
         if(!due || this._selectedItem === null) return;
 
@@ -769,7 +770,7 @@ export class MintInventoryListTab implements IUpdateReceiver
         {
             if(this._backgroundStar !== null)
             {
-                this._backgroundStar.rotation += BG_STAR_ROTATE_SPEED * (elapsedMs / 1000);
+                this._backgroundStar.rotation += MintInventoryListTab.BG_STAR_ROTATE_SPEED * (elapsedMs / 1000);
                 this._backgroundStar.rotation %= 360;
                 this._backgroundStar.invalidate();
             }
@@ -781,7 +782,7 @@ export class MintInventoryListTab implements IUpdateReceiver
 
         if(this._loadingIcon === null) return;
 
-        this._loadingIcon.rotation += LOADING_ICON_ROTATE_SPEED * (elapsedMs / 1000);
+        this._loadingIcon.rotation += MintInventoryListTab.LOADING_ICON_ROTATE_SPEED * (elapsedMs / 1000);
         this._loadingIcon.rotation %= 360;
         this._loadingIcon.invalidate();
     }

@@ -11,12 +11,6 @@ type WritableTextWindow = ITextWindow & {underline: boolean};
 import {WindowMouseEvent as WindowMouseEventClass} from '@core/window/events/WindowMouseEvent';
 import type {GroupItem} from '../items/GroupItem';
 
-const PLACEMENT_ANYWHERE = 0;
-const PLACEMENT_IN_ROOM = 1;
-const PLACEMENT_NOT_IN_ROOM = 2;
-const PAGE_COLOR_ACTIVE = 16711680;
-const PAGE_COLOR_INACTIVE = 0;
-
 /**
  * Manages the paginated furniture grid (filtering, sorting, paging).
  *
@@ -29,6 +23,16 @@ const PAGE_COLOR_INACTIVE = 0;
  */
 export class FurniGridView
 {
+    private static readonly PLACEMENT_ANYWHERE = 0;
+
+    private static readonly PLACEMENT_IN_ROOM = 1;
+
+    private static readonly PLACEMENT_NOT_IN_ROOM = 2;
+
+    private static readonly PAGE_COLOR_ACTIVE = 16711680;
+
+    private static readonly PAGE_COLOR_INACTIVE = 0;
+
     private _grid: IItemGridWindow;
     private _pageList: IItemListWindow | null;
     private _pageTemplate: IRegionWindow | null = null;
@@ -48,7 +52,7 @@ export class FurniGridView
     private _showingRentedItems: boolean = false;
     private _mergeRentFurni: boolean = false;
     private _showingNfts: boolean = true;
-    private _placementFilter: number = PLACEMENT_ANYWHERE;
+    private _placementFilter: number = FurniGridView.PLACEMENT_ANYWHERE;
     private _searchText: string = '';
 
     private _itemsPerPage: number = 200;
@@ -276,12 +280,12 @@ export class FurniGridView
             if(i === this._currentPage)
             {
                 pageText.underline = true;
-                pageText.textColor = PAGE_COLOR_ACTIVE;
+                pageText.textColor = FurniGridView.PAGE_COLOR_ACTIVE;
             }
             else
             {
                 pageText.underline = false;
-                pageText.textColor = PAGE_COLOR_INACTIVE;
+                pageText.textColor = FurniGridView.PAGE_COLOR_INACTIVE;
             }
         }
     }
@@ -303,10 +307,10 @@ export class FurniGridView
                 this.updatePaging();
                 break;
             case WindowMouseEventClass.OVER:
-                if(pageText) pageText.textColor = PAGE_COLOR_ACTIVE;
+                if(pageText) pageText.textColor = FurniGridView.PAGE_COLOR_ACTIVE;
                 break;
             case WindowMouseEventClass.OUT:
-                if(pageText && page !== this._currentPage) pageText.textColor = PAGE_COLOR_INACTIVE;
+                if(pageText && page !== this._currentPage) pageText.textColor = FurniGridView.PAGE_COLOR_INACTIVE;
                 break;
         }
     };
@@ -322,9 +326,9 @@ export class FurniGridView
 
         if(!this._showingNfts && item.isNft()) return false;
 
-        if(this._placementFilter === PLACEMENT_IN_ROOM && item.flatId === -1) return false;
+        if(this._placementFilter === FurniGridView.PLACEMENT_IN_ROOM && item.flatId === -1) return false;
 
-        if(this._placementFilter === PLACEMENT_NOT_IN_ROOM && item.flatId > -1) return false;
+        if(this._placementFilter === FurniGridView.PLACEMENT_NOT_IN_ROOM && item.flatId > -1) return false;
 
         if(this._searchText.length > 0)
         {

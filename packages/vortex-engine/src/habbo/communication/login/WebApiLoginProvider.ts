@@ -29,14 +29,14 @@ import type {ILoginViewer} from './ILoginViewer';
 
 const log = Logger.getLogger('habbo.communication.login.WebApiLoginProvider');
 
-// AS3: POCKET_MODE_LOGIN_AND_REGISTER
-const POCKET_MODE_LOGIN_AND_REGISTER = 1;
-
-// AS3: POCKET_MODE_SSO — obfuscated as _SafeStr_11598 in the 701 tree; named from its use.
-const POCKET_MODE_SSO = 2;
-
 export class WebApiLoginProvider extends EventEmitter implements ILoginProvider, IHabboWebApiListener, ICaptchaHandler
 {
+    // AS3: POCKET_MODE_LOGIN_AND_REGISTER
+    private static readonly POCKET_MODE_LOGIN_AND_REGISTER = 1;
+
+    // AS3: POCKET_MODE_SSO — obfuscated as _SafeStr_11598 in the 701 tree; named from its use.
+    private static readonly POCKET_MODE_SSO = 2;
+
     // AS3: ERROR_TYPE_IO_ERROR
     public static readonly ERROR_TYPE_IO_ERROR: string = 'ioError';
 
@@ -62,7 +62,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
     private _autoLogin: boolean = false;
 
     // AS3: _pocketSessionMode
-    private _pocketSessionMode: number = POCKET_MODE_LOGIN_AND_REGISTER;
+    private _pocketSessionMode: number = WebApiLoginProvider.POCKET_MODE_LOGIN_AND_REGISTER;
 
     // AS3: _name
     private _name: string = '';
@@ -352,7 +352,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
                 break;
 
             case '/api/user/avatars/select':
-                if(this._pocketSessionMode !== POCKET_MODE_SSO)
+                if(this._pocketSessionMode !== WebApiLoginProvider.POCKET_MODE_SSO)
                 {
                     session.ssoToken();
                 }
@@ -374,7 +374,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
 
             case '/api/user/avatars':
             {
-                if(this._pocketSessionMode === POCKET_MODE_SSO) break;
+                if(this._pocketSessionMode === WebApiLoginProvider.POCKET_MODE_SSO) break;
 
                 const avatars: AvatarData[] = [];
 
@@ -411,7 +411,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
 
             case '/api/ssotoken':
                 this._ssoToken = data['ssoToken'] as string;
-                this._pocketSessionMode = POCKET_MODE_SSO;
+                this._pocketSessionMode = WebApiLoginProvider.POCKET_MODE_SSO;
                 this.emit(WebApiLoginProvider.SSO_TOKEN_AVAILABLE, this._ssoToken);
                 break;
 
@@ -613,7 +613,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
             return;
         }
 
-        if(this._pocketSessionMode === POCKET_MODE_LOGIN_AND_REGISTER)
+        if(this._pocketSessionMode === WebApiLoginProvider.POCKET_MODE_LOGIN_AND_REGISTER)
         {
             this._session.avatars();
         }

@@ -22,12 +22,14 @@ import type {RoomToolsWidget} from './RoomToolsWidget';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 
-const MARGIN = 12;
-const TAG_COLOR = 1800619;
-const TAG_COLOR_HOVER = 4696294;
-
 export class RoomToolsInfoCtrl extends RoomToolsCtrlBase 
 {
+    private static readonly MARGIN = 12;
+
+    private static readonly TAG_COLOR = 1800619;
+
+    private static readonly TAG_COLOR_HOVER = 4696294;
+
     private _tags: string[] = [];
     private _motion: Motion | null = null;
 
@@ -100,14 +102,14 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
     {
         if(!this._window) return;
 
-        const x = (this._collapsed ? -this._window.width : 0) + (this._widget?.getRoomToolbarRight() ?? 0) + MARGIN;
+        const x = (this._collapsed ? -this._window.width : 0) + (this._widget?.getRoomToolbarRight() ?? 0) + RoomToolsInfoCtrl.MARGIN;
         let y = (this._window.desktop?.height ?? 0) - RoomToolsCtrlBase.DISTANCE_FROM_BOTTOM - this._window.height;
 
         const chatInputY = this._widget?.getChatInputY() ?? 0;
 
         if(chatInputY < y + this._window.height) 
         {
-            y = chatInputY - this._window.height - MARGIN;
+            y = chatInputY - this._window.height - RoomToolsInfoCtrl.MARGIN;
         }
 
         this._window.position = {x, y};
@@ -142,7 +144,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
 
         this._window.visible = true;
 
-        const x = (this._collapsed ? -this._window.width : 0) + (this._widget?.getRoomToolbarRight() ?? 0) + MARGIN;
+        const x = (this._collapsed ? -this._window.width : 0) + (this._widget?.getRoomToolbarRight() ?? 0) + RoomToolsInfoCtrl.MARGIN;
 
         this.cancelCurrentMotion();
         this._motion = new Queue(new EaseOut(new MoveTo(this._window, 100, x, this._window.y), 1), new Callback(this.motionComplete));
@@ -157,7 +159,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
         this.setCollapsed(value);
         this.cancelCurrentMotion();
 
-        this._motion = new EaseOut(new MoveTo(this._window, 100, (this._widget?.getRoomToolbarRight() ?? 0) + MARGIN, this._window.y), 1);
+        this._motion = new EaseOut(new MoveTo(this._window, 100, (this._widget?.getRoomToolbarRight() ?? 0) + RoomToolsInfoCtrl.MARGIN, this._window.y), 1);
         Motions.runMotion(this._motion);
     }
 
@@ -238,10 +240,10 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
         switch(event.type) 
         {
             case WindowMouseEvent.OVER:
-                tagLabel.textColor = TAG_COLOR_HOVER;
+                tagLabel.textColor = RoomToolsInfoCtrl.TAG_COLOR_HOVER;
                 break;
             case WindowMouseEvent.OUT:
-                tagLabel.textColor = TAG_COLOR;
+                tagLabel.textColor = RoomToolsInfoCtrl.TAG_COLOR;
                 break;
             case WindowMouseEvent.CLICK:
                 this.handler?.navigator?.performTagSearch(tagValue);

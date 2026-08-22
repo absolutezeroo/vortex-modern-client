@@ -23,18 +23,21 @@ import {AvatarContextInfoButtonView} from './AvatarContextInfoButtonView';
 import type {PetInfoData} from './PetInfoData';
 import type {AvatarInfoWidget} from './AvatarInfoWidget';
 
-// AS3: PetMenuView.as::MODE_NORMAL
-const MODE_NORMAL: number = 0;
-const MODE_SADDLED_UP: number = 1;
-const MODE_RIDING: number = 2;
-const MODE_MONSTER_PLANT: number = 3;
-
 export class PetMenuView extends AvatarContextInfoButtonView
 {
+    // AS3: PetMenuView.as::MODE_NORMAL
+    private static readonly MODE_NORMAL: number = 0;
+
+    private static readonly MODE_SADDLED_UP: number = 1;
+
+    private static readonly MODE_RIDING: number = 2;
+
+    private static readonly MODE_MONSTER_PLANT: number = 3;
+
     // AS3: PetMenuView.as::_petData (obfuscated `_SafeStr_4556`)
     private _petData: PetInfoData | null = null;
     // AS3: PetMenuView.as::_mode
-    private _mode: number = MODE_NORMAL;
+    private _mode: number = PetMenuView.MODE_NORMAL;
 
     // AS3: PetMenuView.as::PetMenuView()
     constructor(widget: AvatarInfoWidget)
@@ -62,19 +65,19 @@ export class PetMenuView extends AvatarContextInfoButtonView
 
         if(view.widget.isMonsterPlant())
         {
-            view._mode = MODE_MONSTER_PLANT;
+            view._mode = PetMenuView.MODE_MONSTER_PLANT;
         }
         else if(hasFreeSaddle && !isRiding)
         {
-            view._mode = MODE_SADDLED_UP;
+            view._mode = PetMenuView.MODE_SADDLED_UP;
         }
         else if(isRiding)
         {
-            view._mode = MODE_RIDING;
+            view._mode = PetMenuView.MODE_RIDING;
         }
         else
         {
-            view._mode = MODE_NORMAL;
+            view._mode = PetMenuView.MODE_NORMAL;
         }
 
         AvatarContextInfoButtonView.setupButtonView(view, userId, userName, roomIndex, userType, false);
@@ -156,24 +159,24 @@ export class PetMenuView extends AvatarContextInfoButtonView
 
         switch(this._mode)
         {
-            case MODE_NORMAL:
+            case PetMenuView.MODE_NORMAL:
                 this.showButton('respect', this._petData.petRespectLeft > 0);
                 break;
-            case MODE_SADDLED_UP:
+            case PetMenuView.MODE_SADDLED_UP:
                 if(this.widget.configuration?.getBoolean('sharedhorseriding.enabled'))
                 {
                     this.showButton('mount');
                 }
                 this.showButton('respect', this._petData.petRespectLeft > 0);
                 break;
-            case MODE_RIDING:
+            case PetMenuView.MODE_RIDING:
                 if(this.widget.configuration?.getBoolean('sharedhorseriding.enabled'))
                 {
                     this.showButton('dismount');
                 }
                 this.showButton('respect', this._petData.petRespectLeft > 0);
                 break;
-            case MODE_MONSTER_PLANT:
+            case PetMenuView.MODE_MONSTER_PLANT:
                 if(!this._petData.canRevive)
                 {
                     this.showButton('respect', false);

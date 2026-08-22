@@ -10,10 +10,6 @@ import {WiredAchievementsUpdatedEvent} from './events/WiredAchievementsUpdatedEv
 import {WiredUserClickHandledEvent} from './events/WiredUserClickHandledEvent';
 import {NotificationExtraDataKey} from '@habbo/notifications/NotificationExtraDataKey';
 
-// AS3: WiredEnvironment.as — the literal "wired_click_settings_toggle", spelled at all three
-// removeNotificationById() call sites. Name DERIVED; AS3 inlines the string.
-const CLICK_SETTINGS_TOGGLE_NOTIFICATION_ID = 'wired_click_settings_toggle';
-
 /**
  * WiredEnvironment — room-wide wired state that is not tied to a single furni: the click-behaviour
  * settings (how clicking a user / furni is routed), whether a "click user" wired is active, and the
@@ -41,7 +37,7 @@ export class WiredEnvironment
     // AS3: WiredEnvironment.as::CLICK_FURNI_PASS_THROUGH
     static readonly CLICK_FURNI_PASS_THROUGH: number = 1;
 
-    // AS3: WiredEnvironment.as::CLICK_SETTINGS_NOTIFICATION_TOGGLE_ID
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/WiredEnvironment.as::CLICK_SETTINGS_NOTIFICATION_TOGGLE_ID
     private static readonly CLICK_SETTINGS_NOTIFICATION_TOGGLE_ID: string = 'wired_click_settings_toggle';
 
     // AS3: .../src/com/sulake/habbo/roomevents/WiredEnvironment.as::_disposed
@@ -91,7 +87,7 @@ export class WiredEnvironment
         if(!this.hasActiveClickSettings())
         {
             this._clickSettingsIgnored = false;
-            this._roomEvents?.notifications.removeNotificationById(CLICK_SETTINGS_TOGGLE_NOTIFICATION_ID);
+            this._roomEvents?.notifications.removeNotificationById(WiredEnvironment.CLICK_SETTINGS_NOTIFICATION_TOGGLE_ID);
         }
     }
 
@@ -107,7 +103,7 @@ export class WiredEnvironment
         {
             this._clickSettingsIgnored = false;
             changed = true;
-            this._roomEvents.notifications.removeNotificationById(CLICK_SETTINGS_TOGGLE_NOTIFICATION_ID);
+            this._roomEvents.notifications.removeNotificationById(WiredEnvironment.CLICK_SETTINGS_NOTIFICATION_TOGGLE_ID);
         }
 
         if(changed)
@@ -140,7 +136,7 @@ export class WiredEnvironment
                 // A room owner gets the toggle form: it stays up, and its button flips whether the
                 // click settings are honoured. The plain call below is the read-only visitor's.
                 this._roomEvents.notifications.addItem('${notification.click_settings}', 'wired', null, null, {
-                    [NotificationExtraDataKey.ID]: CLICK_SETTINGS_TOGGLE_NOTIFICATION_ID,
+                    [NotificationExtraDataKey.ID]: WiredEnvironment.CLICK_SETTINGS_NOTIFICATION_TOGGLE_ID,
                     [NotificationExtraDataKey.STAY]: true,
                     [NotificationExtraDataKey.TOGGLE_BUTTON_CALLBACK]:
                         (ignored: boolean) => this.onToggleClickSettingsNotification(ignored)
@@ -162,7 +158,7 @@ export class WiredEnvironment
     // AS3: WiredEnvironment.as::leaveRoom()
     leaveRoom(): void
     {
-        this._roomEvents?.notifications.removeNotificationById(CLICK_SETTINGS_TOGGLE_NOTIFICATION_ID);
+        this._roomEvents?.notifications.removeNotificationById(WiredEnvironment.CLICK_SETTINGS_NOTIFICATION_TOGGLE_ID);
         this._clickSettingsIgnored = false;
         if(this._hideTimeoutId !== null) clearTimeout(this._hideTimeoutId);
 

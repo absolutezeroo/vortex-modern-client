@@ -21,8 +21,6 @@ import {Vector3d} from '@room/utils/Vector3d';
 
 const log = Logger.getLogger('habbo.freeflowchat.viewer.ChatBubbleFactory');
 
-const MAX_DISPOSABLE_BITMAPS = 30;
-
 /**
  * ChatBubbleFactory
  *
@@ -41,6 +39,8 @@ const MAX_DISPOSABLE_BITMAPS = 30;
  */
 export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListener
 {
+    private static readonly MAX_DISPOSABLE_BITMAPS = 30;
+
     private _chatFlow: IHabboFreeFlowChat | null;
     private _chatStyleLibrary: ChatStyleLibrary | null = null;
 
@@ -380,7 +380,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
             this._disposableBitmaps.push(cached);
         }
 
-        if(this._disposableBitmaps.length > MAX_DISPOSABLE_BITMAPS)
+        if(this._disposableBitmaps.length > ChatBubbleFactory.MAX_DISPOSABLE_BITMAPS)
         {
             this.discardOldBitmaps();
         }
@@ -397,7 +397,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
             this._disposableBitmaps.push(cached);
         }
 
-        if(this._disposableBitmaps.length > MAX_DISPOSABLE_BITMAPS)
+        if(this._disposableBitmaps.length > ChatBubbleFactory.MAX_DISPOSABLE_BITMAPS)
         {
             this.discardOldBitmaps();
         }

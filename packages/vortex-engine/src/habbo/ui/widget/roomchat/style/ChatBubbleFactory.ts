@@ -15,24 +15,24 @@ import {ChatBubbleStyle} from './ChatBubbleStyle';
 
 const log = Logger.getLogger('habbo.ui.widget.roomchat.style.ChatBubbleFactory');
 
-const NORMAL_STYLE_DESCRIPTOR = {
-    id: 0,
-    styleName: 'normal',
-    isSystemStyle: false,
-    isStaffOverrideable: false,
-    speakLayout: 'roomchat_bubble_speak',
-    whisperLayout: null,
-    shoutLayout: 'roomchat_bubble_shout',
-    leftBitmap: 'roomchat_styles_normal_chat_bubble_left',
-    leftColorBitmap: 'roomchat_styles_normal_chat_bubble_left_color',
-    middleBitmap: 'roomchat_styles_normal_chat_bubble_middle',
-    rightBitmap: 'roomchat_styles_normal_chat_bubble_right',
-    pointerBitmap: 'roomchat_styles_normal_chat_bubble_pointer',
-    previewIconBitmap: 'roomchat_styles_normal_selector_preview',
-};
-
 export class ChatBubbleFactory
 {
+    private static readonly NORMAL_STYLE_DESCRIPTOR = {
+        id: 0,
+        styleName: 'normal',
+        isSystemStyle: false,
+        isStaffOverrideable: false,
+        speakLayout: 'roomchat_bubble_speak',
+        whisperLayout: null,
+        shoutLayout: 'roomchat_bubble_shout',
+        leftBitmap: 'roomchat_styles_normal_chat_bubble_left',
+        leftColorBitmap: 'roomchat_styles_normal_chat_bubble_left_color',
+        middleBitmap: 'roomchat_styles_normal_chat_bubble_middle',
+        rightBitmap: 'roomchat_styles_normal_chat_bubble_right',
+        pointerBitmap: 'roomchat_styles_normal_chat_bubble_pointer',
+        previewIconBitmap: 'roomchat_styles_normal_selector_preview',
+    };
+
     // AS3: sources/win63_version/habbo/ui/widget/roomchat/style/ChatBubbleFactory.as::_styles
     private _styles: Map<number, ChatBubbleStyle> = new Map();
 
@@ -41,7 +41,7 @@ export class ChatBubbleFactory
     {
         try
         {
-            this._styles.set(0, new ChatBubbleStyle(assets, windowManager, NORMAL_STYLE_DESCRIPTOR));
+            this._styles.set(0, new ChatBubbleStyle(assets, windowManager, ChatBubbleFactory.NORMAL_STYLE_DESCRIPTOR));
         }
         catch (error)
         {

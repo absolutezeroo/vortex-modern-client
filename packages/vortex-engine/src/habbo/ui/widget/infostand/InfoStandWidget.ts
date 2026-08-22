@@ -51,9 +51,10 @@ import {InfoStandPetData} from './InfoStandPetData';
 import {InfoStandRentableBotData} from './InfoStandRentableBotData';
 import type {RoomWidgetRentableBotInfoUpdateEvent} from '../events/RoomWidgetRentableBotInfoUpdateEvent';
 
-// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::USER_VIEW / const_529 / PET_VIEW / ...
-const VIEW_NAME =
-    {
+export class InfoStandWidget extends RoomWidgetBase
+{
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::USER_VIEW / const_529 / PET_VIEW / ...
+    private static readonly VIEW_NAME = {
         USER: 'infostand_user_view',
         FURNI: 'infostand_furni_view',
         PET: 'infostand_pet_view',
@@ -64,17 +65,17 @@ const VIEW_NAME =
         SONGDISK: 'infostand_songdisk_view',
     } as const;
 
-// AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::InfoStandWidget() — `new Timer(3000)`
-const UPDATE_TIMER_INTERVAL = 3000;
+    // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::InfoStandWidget() — `new Timer(3000)`
+    private static readonly UPDATE_TIMER_INTERVAL = 3000;
 
-// The three species AS3 gates the breeding-train command on in onPetCommands(). The values are the
-// pet type ids it compares against directly (0, 1, 5); the names are this port's.
-const PET_TYPE_DOG = 0;
-const PET_TYPE_CAT = 1;
-const PET_TYPE_PIG = 5;
+    // The three species AS3 gates the breeding-train command on in onPetCommands(). The values are the
+    // pet type ids it compares against directly (0, 1, 5); the names are this port's.
+    private static readonly PET_TYPE_DOG = 0;
 
-export class InfoStandWidget extends RoomWidgetBase
-{
+    private static readonly PET_TYPE_CAT = 1;
+
+    private static readonly PET_TYPE_PIG = 5;
+
     private readonly _furniView: InfoStandFurniView;
     private readonly _userView: InfoStandUserView;
     private readonly _petView: InfoStandPetView;
@@ -106,14 +107,14 @@ export class InfoStandWidget extends RoomWidgetBase
         super(handler, windowManager, assets, localizations);
 
         this._config = config;
-        this._furniView = new InfoStandFurniView(this, VIEW_NAME.FURNI, catalog);
-        this._userView = new InfoStandUserView(this, VIEW_NAME.USER);
-        this._petView = new InfoStandPetView(this, VIEW_NAME.PET, catalog);
-        this._botView = new InfoStandBotView(this, VIEW_NAME.BOT);
-        this._rentableBotView = new InfoStandRentableBotView(this, VIEW_NAME.RENTABLE_BOT);
-        this._jukeboxView = new InfoStandJukeboxView(this, VIEW_NAME.JUKEBOX, catalog);
-        this._crackableFurniView = new InfoStandCrackableFurniView(this, VIEW_NAME.CRACKABLE_FURNI, catalog);
-        this._songDiskView = new InfoStandSongDiskView(this, VIEW_NAME.SONGDISK, catalog);
+        this._furniView = new InfoStandFurniView(this, InfoStandWidget.VIEW_NAME.FURNI, catalog);
+        this._userView = new InfoStandUserView(this, InfoStandWidget.VIEW_NAME.USER);
+        this._petView = new InfoStandPetView(this, InfoStandWidget.VIEW_NAME.PET, catalog);
+        this._botView = new InfoStandBotView(this, InfoStandWidget.VIEW_NAME.BOT);
+        this._rentableBotView = new InfoStandRentableBotView(this, InfoStandWidget.VIEW_NAME.RENTABLE_BOT);
+        this._jukeboxView = new InfoStandJukeboxView(this, InfoStandWidget.VIEW_NAME.JUKEBOX, catalog);
+        this._crackableFurniView = new InfoStandCrackableFurniView(this, InfoStandWidget.VIEW_NAME.CRACKABLE_FURNI, catalog);
+        this._songDiskView = new InfoStandSongDiskView(this, InfoStandWidget.VIEW_NAME.SONGDISK, catalog);
         this._userData = new InfoStandUserData();
         this._furniData = new InfoStandFurniData();
         this._petData = new InfoStandPetData();
@@ -137,7 +138,7 @@ export class InfoStandWidget extends RoomWidgetBase
     {
         if(this._updateTimer !== null) return;
 
-        this._updateTimer = setInterval(() => this.onUpdateTimer(), UPDATE_TIMER_INTERVAL);
+        this._updateTimer = setInterval(() => this.onUpdateTimer(), InfoStandWidget.UPDATE_TIMER_INTERVAL);
     }
 
     // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::_updateTimer.stop()
@@ -208,7 +209,7 @@ export class InfoStandWidget extends RoomWidgetBase
     {
         if(this._userData.userRoomId !== userRoomId) return;
 
-        const userViewWindow = this._mainContainer?.findChildByName(VIEW_NAME.USER);
+        const userViewWindow = this._mainContainer?.findChildByName(InfoStandWidget.VIEW_NAME.USER);
 
         if(!userViewWindow || !userViewWindow.visible) return;
 
@@ -343,7 +344,7 @@ export class InfoStandWidget extends RoomWidgetBase
         if(this.handler.container?.sessionDataManager?.isBlocked(event.webID)) return;
 
         this._userView.update(event);
-        this.selectView(VIEW_NAME.USER);
+        this.selectView(InfoStandWidget.VIEW_NAME.USER);
         this.stopUpdateTimer();
     };
 
@@ -352,7 +353,7 @@ export class InfoStandWidget extends RoomWidgetBase
     {
         this._userData.setData(event);
         this._botView.update(event);
-        this.selectView(VIEW_NAME.BOT);
+        this.selectView(InfoStandWidget.VIEW_NAME.BOT);
         this.stopUpdateTimer();
     };
 
@@ -361,7 +362,7 @@ export class InfoStandWidget extends RoomWidgetBase
     {
         this._rentableBotData.setData(event);
         this._rentableBotView.update(event);
-        this.selectView(VIEW_NAME.RENTABLE_BOT);
+        this.selectView(InfoStandWidget.VIEW_NAME.RENTABLE_BOT);
         this.stopUpdateTimer();
     };
 
@@ -373,22 +374,22 @@ export class InfoStandWidget extends RoomWidgetBase
         if(event.extraParam === RoomWidgetInfostandExtraParamEnum.INFOSTAND_EXTRAPARAM_JUKEBOX)
         {
             this._jukeboxView.update(event);
-            this.selectView(VIEW_NAME.JUKEBOX);
+            this.selectView(InfoStandWidget.VIEW_NAME.JUKEBOX);
         }
         else if(event.extraParam.indexOf(RoomWidgetInfostandExtraParamEnum.INFOSTAND_EXTRAPARAM_SONGDISK) !== -1)
         {
             this._songDiskView.update(event);
-            this.selectView(VIEW_NAME.SONGDISK);
+            this.selectView(InfoStandWidget.VIEW_NAME.SONGDISK);
         }
         else if(event.extraParam.indexOf(RoomWidgetInfostandExtraParamEnum.INFOSTAND_EXTRAPARAM_CRACKABLE_FURNI) !== -1)
         {
             this._crackableFurniView.update(event);
-            this.selectView(VIEW_NAME.CRACKABLE_FURNI);
+            this.selectView(InfoStandWidget.VIEW_NAME.CRACKABLE_FURNI);
         }
         else
         {
             this._furniView.update(event);
-            this.selectView(VIEW_NAME.FURNI);
+            this.selectView(InfoStandWidget.VIEW_NAME.FURNI);
         }
 
         this.stopUpdateTimer();
@@ -400,7 +401,7 @@ export class InfoStandWidget extends RoomWidgetBase
         this._petData.setData(event);
         this._userData.petRespectLeft = event.petRespectLeft;
         this._petView.update(this._petData);
-        this.selectView(VIEW_NAME.PET);
+        this.selectView(InfoStandWidget.VIEW_NAME.PET);
         this.startUpdateTimer();
     };
 
@@ -423,9 +424,9 @@ export class InfoStandWidget extends RoomWidgetBase
         const type = this._petData.type;
 
         const breedingDisabled =
-            (type === PET_TYPE_DOG && !(this._config?.getBoolean('nest.breeding.dog.enabled') ?? false)) ||
-            (type === PET_TYPE_CAT && !(this._config?.getBoolean('nest.breeding.cat.enabled') ?? false)) ||
-            (type === PET_TYPE_PIG && !(this._config?.getBoolean('nest.breeding.pig.enabled') ?? false));
+            (type === InfoStandWidget.PET_TYPE_DOG && !(this._config?.getBoolean('nest.breeding.dog.enabled') ?? false)) ||
+            (type === InfoStandWidget.PET_TYPE_CAT && !(this._config?.getBoolean('nest.breeding.cat.enabled') ?? false)) ||
+            (type === InfoStandWidget.PET_TYPE_PIG && !(this._config?.getBoolean('nest.breeding.pig.enabled') ?? false));
 
         if(breedingDisabled)
         {
@@ -636,7 +637,7 @@ export class InfoStandWidget extends RoomWidgetBase
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::isFurniViewVisible()
     public isFurniViewVisible(): boolean
     {
-        const child = this._mainContainer?.getChildByName(VIEW_NAME.FURNI);
+        const child = this._mainContainer?.getChildByName(InfoStandWidget.VIEW_NAME.FURNI);
 
         return child?.visible ?? false;
     }

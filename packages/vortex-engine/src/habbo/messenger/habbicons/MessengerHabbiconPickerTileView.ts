@@ -25,18 +25,6 @@ import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager
 import type {MessengerHabbiconPickerEntry} from './MessengerHabbiconPickerEntry';
 
 /**
- * AS3's `uint` literals: 0xFFFFFFFF, 0xFFDDDDDD and 0xFFEEEEEE.
- */
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerTileView.as::SLOT_FILLED_COLOR
-const SLOT_FILLED_COLOR: number = 0xFFFFFFFF;
-
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerTileView.as::SLOT_EMPTY_COLOR
-const SLOT_EMPTY_COLOR: number = 0xFFDDDDDD;
-
-// AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerTileView.as::SLOT_FILLED_HOVER_COLOR
-const SLOT_FILLED_HOVER_COLOR: number = 0xFFEEEEEE;
-
-/**
  * AS3 fills a transparent 40x40 `BitmapData` while the habbicon spritesheet is still loading, so
  * the slot holds its size. `createImageBitmap` is async, so this port builds that placeholder once
  * and shares it rather than allocating one per tile.
@@ -64,6 +52,18 @@ function getBlankPreview(): Promise<ImageBitmap>
 
 export class MessengerHabbiconPickerTileView
 {
+    /**
+    * AS3's `uint` literals: 0xFFFFFFFF, 0xFFDDDDDD and 0xFFEEEEEE.
+    */
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerTileView.as::SLOT_FILLED_COLOR
+    private static readonly SLOT_FILLED_COLOR: number = 0xFFFFFFFF;
+
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerTileView.as::SLOT_EMPTY_COLOR
+    private static readonly SLOT_EMPTY_COLOR: number = 0xFFDDDDDD;
+
+    // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerTileView.as::SLOT_FILLED_HOVER_COLOR
+    private static readonly SLOT_FILLED_HOVER_COLOR: number = 0xFFEEEEEE;
+
     // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerTileView.as::_window
     private _window: IWindowContainer | null = null;
 
@@ -113,7 +113,7 @@ export class MessengerHabbiconPickerTileView
 
         if(background)
         {
-            background.color = filled ? SLOT_FILLED_COLOR : SLOT_EMPTY_COLOR;
+            background.color = filled ? MessengerHabbiconPickerTileView.SLOT_FILLED_COLOR : MessengerHabbiconPickerTileView.SLOT_EMPTY_COLOR;
             background.blend = filled ? 0.85 : 0.4;
         }
 
@@ -274,7 +274,7 @@ export class MessengerHabbiconPickerTileView
     {
         const background = this.background;
 
-        if(background) background.color = SLOT_FILLED_HOVER_COLOR;
+        if(background) background.color = MessengerHabbiconPickerTileView.SLOT_FILLED_HOVER_COLOR;
     };
 
     // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerTileView.as::onOut()
@@ -282,7 +282,7 @@ export class MessengerHabbiconPickerTileView
     {
         const background = this.background;
 
-        if(background) background.color = SLOT_FILLED_COLOR;
+        if(background) background.color = MessengerHabbiconPickerTileView.SLOT_FILLED_COLOR;
     };
 
     // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerTileView.as::addWheelListener()

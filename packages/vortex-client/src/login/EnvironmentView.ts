@@ -29,11 +29,11 @@ import type {LoginFlow} from './LoginFlow';
 
 const log = Logger.getLogger('client.login.EnvironmentView');
 
-// AS3: ITEMS_PER_ROW
-const ITEMS_PER_ROW = 9;
-
 export class EnvironmentView extends Sprite
 {
+    // AS3: ITEMS_PER_ROW
+    private static readonly ITEMS_PER_ROW = 9;
+
     // AS3: _environmentImages
     private _environmentImages: Bitmap[] = [];
 
@@ -191,8 +191,8 @@ export class EnvironmentView extends Sprite
 
             const size = 80;
             const spacing = 5;
-            const column = i % ITEMS_PER_ROW;
-            const row = Math.trunc(i / ITEMS_PER_ROW);
+            const column = i % EnvironmentView.ITEMS_PER_ROW;
+            const row = Math.trunc(i / EnvironmentView.ITEMS_PER_ROW);
 
             holder.x = column * size + column * spacing;
             holder.y = 100 + (row * size + row * spacing);

@@ -29,15 +29,17 @@ import type {IChatLink} from '@habbo/communication/messages/parser/room/chat/Cha
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import type {RoomChatWidget} from './RoomChatWidget';
 
-const RESPECT_ICON_MARGIN_RIGHT = 35;
-const NAME_ICON_MARGIN = 26;
-
-// AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::renderView() (links branch, switch(styleId - 2))
-const LINK_COLOR_STYLE_2 = 0xDDDDDD; // AS3 decimal 14540253
-const LINK_COLOR_DEFAULT = 0x295BA6; // AS3 decimal 2710438
-
 export class RoomChatItem
 {
+    private static readonly RESPECT_ICON_MARGIN_RIGHT = 35;
+
+    private static readonly NAME_ICON_MARGIN = 26;
+
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::renderView() (links branch, switch(styleId - 2))
+    private static readonly LINK_COLOR_STYLE_2 = 0xDDDDDD; // AS3 decimal 14540253
+
+    private static readonly LINK_COLOR_DEFAULT = 0x295BA6; // AS3 decimal 2710438
+
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::_widget
     private _widget: RoomChatWidget | null;
     // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::_windowManager
@@ -294,7 +296,7 @@ export class RoomChatItem
         this._originalBackgroundYOffset = (background as unknown as IWindow).y;
 
         const messageXField = messageText as unknown as IWindow;
-        const nameMargin = messageXField.x <= NAME_ICON_MARGIN ? 0 : messageXField.x - NAME_ICON_MARGIN;
+        const nameMargin = messageXField.x <= RoomChatItem.NAME_ICON_MARGIN ? 0 : messageXField.x - RoomChatItem.NAME_ICON_MARGIN;
 
         if(this._senderImage)
         {
@@ -419,22 +421,22 @@ export class RoomChatItem
         {
             case 3:
                 messageText.text = this._localizations?.registerParameter('widgets.chatbubble.respect', 'username', this._senderName) ?? this._message;
-                this._width = RESPECT_ICON_MARGIN_RIGHT;
+                this._width = RoomChatItem.RESPECT_ICON_MARGIN_RIGHT;
                 break;
             case 4:
                 messageText.text = this._localizations?.registerParameter('widget.chatbubble.petrespect', 'petname', this._senderName) ?? this._message;
-                this._width = RESPECT_ICON_MARGIN_RIGHT;
+                this._width = RoomChatItem.RESPECT_ICON_MARGIN_RIGHT;
                 break;
             case 6:
                 messageText.text = this._localizations?.registerParameter('widget.chatbubble.pettreat', 'petname', this._senderName) ?? this._message;
-                this._width = RESPECT_ICON_MARGIN_RIGHT;
+                this._width = RoomChatItem.RESPECT_ICON_MARGIN_RIGHT;
                 break;
             case 7:
             case 8:
             case 9:
             case 5:
                 messageText.text = this._message;
-                this._width = RESPECT_ICON_MARGIN_RIGHT;
+                this._width = RoomChatItem.RESPECT_ICON_MARGIN_RIGHT;
                 break;
             default:
                 this.applyMessageLinks(messageText);
@@ -472,7 +474,7 @@ export class RoomChatItem
 
         const format = messageText.getTextFormat();
 
-        format.color = this._styleId === 2 ? LINK_COLOR_STYLE_2 : LINK_COLOR_DEFAULT;
+        format.color = this._styleId === 2 ? RoomChatItem.LINK_COLOR_STYLE_2 : RoomChatItem.LINK_COLOR_DEFAULT;
         format.underline = true;
 
         // A malformed link (placeholder missing from the text) yields

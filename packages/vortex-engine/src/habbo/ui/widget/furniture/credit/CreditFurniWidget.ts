@@ -19,21 +19,23 @@ import {RoomWidgetCreditFurniUpdateEvent} from '@habbo/ui/widget/events/RoomWidg
 import {RoomWidgetCreditFurniRedeemMessage} from '@habbo/ui/widget/messages/RoomWidgetCreditFurniRedeemMessage';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 
-/**
- * AS3: CreditFurniWidget.as::_SafeStr_10523 / _SafeStr_10928
- *
- * Both obfuscated and both 100 — the x and y AS3 passes to `createWindow()`'s Rectangle. Names
- * DERIVED from that call site, same pair as StickieFurniWidget's.
- */
-const WINDOW_X: number = 100;
-const WINDOW_Y: number = 100;
-
-// AS3: CreditFurniWidget.as::showInterface() — the window's own name and background tint.
-const WINDOW_NAME: string = 'creditfurniui_container';
-const WINDOW_COLOR: number = 33554431;
-
 export class CreditFurniWidget extends RoomWidgetBase
 {
+    /**
+    * AS3: CreditFurniWidget.as::_SafeStr_10523 / _SafeStr_10928
+    *
+    * Both obfuscated and both 100 — the x and y AS3 passes to `createWindow()`'s Rectangle. Names
+    * DERIVED from that call site, same pair as StickieFurniWidget's.
+    */
+    private static readonly WINDOW_X: number = 100;
+
+    private static readonly WINDOW_Y: number = 100;
+
+    // AS3: CreditFurniWidget.as::showInterface() — the window's own name and background tint.
+    private static readonly WINDOW_NAME: string = 'creditfurniui_container';
+
+    private static readonly WINDOW_COLOR: number = 33554431;
+
     // AS3: CreditFurniWidget.as::_window
     private _window: IWindowContainer | null = null;
 
@@ -121,11 +123,11 @@ export class CreditFurniWidget extends RoomWidgetBase
 
         if(this._window === null) return;
 
-        this._window.name = WINDOW_NAME;
-        this._window.x = WINDOW_X;
-        this._window.y = WINDOW_Y;
+        this._window.name = CreditFurniWidget.WINDOW_NAME;
+        this._window.x = CreditFurniWidget.WINDOW_X;
+        this._window.y = CreditFurniWidget.WINDOW_Y;
         this._window.background = true;
-        this._window.color = WINDOW_COLOR;
+        this._window.color = CreditFurniWidget.WINDOW_COLOR;
 
         const exchangeText = this._window.findChildByName('exchange_text');
 

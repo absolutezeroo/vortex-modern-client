@@ -93,56 +93,56 @@ import {RoomWidgetFactory} from './RoomWidgetFactory';
 
 const log = Logger.getLogger('habbo.ui.RoomUI');
 
-// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as — the entries of the
-// listener table whose callback is roomSessionDialogEventHandler, in the source's own order.
-const ROOM_SESSION_DIALOG_EVENTS: readonly string[] = [
-    RoomSessionErrorMessageEvent.KICKED_BY_OWNER,
-    RoomSessionErrorMessageEvent.PETS_FORBIDDEN_IN_HOTEL,
-    RoomSessionErrorMessageEvent.PETS_FORBIDDEN_IN_FLAT,
-    RoomSessionErrorMessageEvent.MAX_NUMBER_OF_PETS,
-    RoomSessionErrorMessageEvent.MAX_NUMBER_OF_OWN_PETS,
-    RoomSessionErrorMessageEvent.NO_FREE_TILES_FOR_PET,
-    RoomSessionErrorMessageEvent.SELECTED_TILE_NOT_FREE_FOR_PET,
-    RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_HOTEL,
-    RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_FLAT,
-    RoomSessionErrorMessageEvent.BOT_LIMIT_REACHED,
-    'RSEME_SELECTED_TILE_NOT_FREE_FOR_BOT',
-    'RSEME_BOT_NAME_NOT_ACCEPTED',
-];
-
-// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as — the entries of the
-// same listener table whose callback is roomSessionEventHandler, in the source's own order.
-//
-// These are the session events that reach the room desktop, and through it every widget handler
-// that claimed them in `getProcessedEvents()`. Without this list a handler is registered and never
-// called: the doorbell and the room queue were both in that state until the poll slice needed the
-// same route and exposed it.
-const ROOM_SESSION_DESKTOP_EVENTS: readonly string[] = [
-    'RSCE_CHAT_EVENT',
-    'RSCE_FLOOD_EVENT',
-    'RSUBE_BADGES',
-    RoomSessionDoorbellEvent.RSDE_DOORBELL,
-    RoomSessionDoorbellEvent.RSDE_REJECTED,
-    RoomSessionDoorbellEvent.RSDE_ACCEPTED,
-    'RSPE_PRESENT_OPENED',
-    'RSOPPE_OPEN_PET_PACKAGE_REQUESTED',
-    'RSOPPE_OPEN_PET_PACKAGE_RESULT',
-    RoomSessionQueueEvent.QUEUE_STATUS,
-    RoomSessionPollEvent.CONTENT,
-    RoomSessionPollEvent.ERROR,
-    RoomSessionPollEvent.OFFER,
-    // The three question events keep AS3's `RWPUW_` prefix and its two typos
-    // ("QUESION", "FINSIHED") — they are matched literally on both sides.
-    'RWPUW_QUESTION_ANSWERED',
-    'RWPUW_QUESION_FINSIHED',
-    'RWPUW_NEW_QUESTION',
-    'RSDPE_PRESETS',
-    'RSFRE_FRIEND_REQUEST',
-    'RSDE_DANCE',
-];
-
 export class RoomUI extends Component implements IRoomUI, IUpdateReceiver 
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as — the entries of the
+    // listener table whose callback is roomSessionDialogEventHandler, in the source's own order.
+    private static readonly ROOM_SESSION_DIALOG_EVENTS: readonly string[] = [
+        RoomSessionErrorMessageEvent.KICKED_BY_OWNER,
+        RoomSessionErrorMessageEvent.PETS_FORBIDDEN_IN_HOTEL,
+        RoomSessionErrorMessageEvent.PETS_FORBIDDEN_IN_FLAT,
+        RoomSessionErrorMessageEvent.MAX_NUMBER_OF_PETS,
+        RoomSessionErrorMessageEvent.MAX_NUMBER_OF_OWN_PETS,
+        RoomSessionErrorMessageEvent.NO_FREE_TILES_FOR_PET,
+        RoomSessionErrorMessageEvent.SELECTED_TILE_NOT_FREE_FOR_PET,
+        RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_HOTEL,
+        RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_FLAT,
+        RoomSessionErrorMessageEvent.BOT_LIMIT_REACHED,
+        'RSEME_SELECTED_TILE_NOT_FREE_FOR_BOT',
+        'RSEME_BOT_NAME_NOT_ACCEPTED',
+    ];
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as — the entries of the
+    // same listener table whose callback is roomSessionEventHandler, in the source's own order.
+    //
+    // These are the session events that reach the room desktop, and through it every widget handler
+    // that claimed them in `getProcessedEvents()`. Without this list a handler is registered and never
+    // called: the doorbell and the room queue were both in that state until the poll slice needed the
+    // same route and exposed it.
+    private static readonly ROOM_SESSION_DESKTOP_EVENTS: readonly string[] = [
+        'RSCE_CHAT_EVENT',
+        'RSCE_FLOOD_EVENT',
+        'RSUBE_BADGES',
+        RoomSessionDoorbellEvent.RSDE_DOORBELL,
+        RoomSessionDoorbellEvent.RSDE_REJECTED,
+        RoomSessionDoorbellEvent.RSDE_ACCEPTED,
+        'RSPE_PRESENT_OPENED',
+        'RSOPPE_OPEN_PET_PACKAGE_REQUESTED',
+        'RSOPPE_OPEN_PET_PACKAGE_RESULT',
+        RoomSessionQueueEvent.QUEUE_STATUS,
+        RoomSessionPollEvent.CONTENT,
+        RoomSessionPollEvent.ERROR,
+        RoomSessionPollEvent.OFFER,
+        // The three question events keep AS3's `RWPUW_` prefix and its two typos
+        // ("QUESION", "FINSIHED") — they are matched literally on both sides.
+        'RWPUW_QUESTION_ANSWERED',
+        'RWPUW_QUESION_FINSIHED',
+        'RWPUW_NEW_QUESTION',
+        'RSDPE_PRESETS',
+        'RSFRE_FRIEND_REQUEST',
+        'RSDE_DANCE',
+    ];
+
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_roomEngine
     private _roomEngine: IRoomEngine | null = null;
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_roomSessionManager
@@ -442,13 +442,13 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
                         // AS3: RoomUI.as's listener table routes all of these to
                         // roomSessionDialogEventHandler.
-                        for(const type of ROOM_SESSION_DIALOG_EVENTS)
+                        for(const type of RoomUI.ROOM_SESSION_DIALOG_EVENTS)
                         {
                             mgr.sessionEvents.on(type, this.roomSessionDialogEventHandler, this);
                         }
 
                         // AS3: the same table's roomSessionEventHandler entries.
-                        for(const type of ROOM_SESSION_DESKTOP_EVENTS)
+                        for(const type of RoomUI.ROOM_SESSION_DESKTOP_EVENTS)
                         {
                             mgr.sessionEvents.on(type, this.roomSessionEventHandler, this);
                         }
@@ -941,7 +941,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this.roomSessionStateEventHandler, this);
             this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this.roomSessionStateEventHandler, this);
 
-            for(const type of ROOM_SESSION_DIALOG_EVENTS)
+            for(const type of RoomUI.ROOM_SESSION_DIALOG_EVENTS)
             {
                 this._roomSessionManager.sessionEvents.off(type, this.roomSessionDialogEventHandler, this);
             }

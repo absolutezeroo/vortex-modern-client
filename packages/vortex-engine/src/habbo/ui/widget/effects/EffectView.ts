@@ -15,10 +15,10 @@ import type {BitmapDataAsset} from '@core/assets/BitmapDataAsset';
 import type {Effect} from '@habbo/inventory/effects/Effect';
 import type {EffectsWidget} from './EffectsWidget';
 
-const UPDATE_TIMER_MS: number = 1000;
-
 export class EffectView
 {
+    private static readonly UPDATE_TIMER_MS: number = 1000;
+
     private _widget: EffectsWidget;
     // AS3: .../src/com/sulake/habbo/ui/widget/effects/EffectView.as::_window
     private _window: IWindowContainer | null = null;
@@ -279,7 +279,7 @@ export class EffectView
     {
         if(this._timer !== null) return;
 
-        this._timer = setInterval(this.onUpdate, UPDATE_TIMER_MS);
+        this._timer = setInterval(this.onUpdate, EffectView.UPDATE_TIMER_MS);
     }
 
     private stopTimer(): void

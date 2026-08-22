@@ -13,13 +13,6 @@ import type {IBotsModel} from './IBotsModel';
 import type {Bot} from './Bot';
 import {BotsView} from './BotsView';
 
-// AS3: BotsModel.as::placeItemToRoom() passes 4 — `rentable_bot` in RoomObjectUserTypes, the same
-// slot RoomEngine.placeObject() tests to pick PlaceBotMessageComposer over PlacePetComposer.
-const USER_TYPE_RENTABLE_BOT = 4;
-
-// Unseen-item tracker category for bots (AS3 uses category 5).
-const UNSEEN_CATEGORY_BOTS = 5;
-
 /**
  * BotsModel — the bots-inventory tab controller (an IInventoryModel).
  *
@@ -31,6 +24,13 @@ const UNSEEN_CATEGORY_BOTS = 5;
  */
 export class BotsModel implements IBotsModel
 {
+    // AS3: BotsModel.as::placeItemToRoom() passes 4 — `rentable_bot` in RoomObjectUserTypes, the same
+    // slot RoomEngine.placeObject() tests to pick PlaceBotMessageComposer over PlacePetComposer.
+    private static readonly USER_TYPE_RENTABLE_BOT = 4;
+
+    // Unseen-item tracker category for bots (AS3 uses category 5).
+    private static readonly UNSEEN_CATEGORY_BOTS = 5;
+
     // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::_SafeStr_4593
     private _controller: HabboInventory;
     // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::_communication
@@ -226,7 +226,7 @@ export class BotsModel implements IBotsModel
                 'inventory',
                 id * -1,
                 RoomObjectCategoryEnum.OBJECT_CATEGORY_USER,
-                USER_TYPE_RENTABLE_BOT,
+                BotsModel.USER_TYPE_RENTABLE_BOT,
                 data.figure
             );
             this._controller.closeView();
@@ -257,7 +257,7 @@ export class BotsModel implements IBotsModel
     // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::resetUnseenItems()
     resetUnseenItems(): void
     {
-        this._controller.unseenItemTracker.resetCategory(UNSEEN_CATEGORY_BOTS);
+        this._controller.unseenItemTracker.resetCategory(BotsModel.UNSEEN_CATEGORY_BOTS);
         this._controller.updateUnseenItemCounts();
         this._view.update();
     }
@@ -265,7 +265,7 @@ export class BotsModel implements IBotsModel
     // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::isUnseen()
     isUnseen(id: number): boolean
     {
-        return this._controller.unseenItemTracker.isUnseen(UNSEEN_CATEGORY_BOTS, id);
+        return this._controller.unseenItemTracker.isUnseen(BotsModel.UNSEEN_CATEGORY_BOTS, id);
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::selectItemById()

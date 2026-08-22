@@ -10,8 +10,6 @@ import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('habbo.friendbar.landingview.layout.DynamicLayoutManager');
 
-const SLOT_COUNT = 6;
-
 /**
  * The 6-slot dynamic grid layout engine for the landing view.
  *
@@ -24,6 +22,8 @@ const SLOT_COUNT = 6;
  */
 export class DynamicLayoutManager implements IDisposable
 {
+    private static readonly SLOT_COUNT = 6;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::PLACEHOLDER_NAME
     public static readonly PLACEHOLDER_NAME: string = 'placeholder_dynamic_widget_slots';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::CONTENT_AREA_START_X
@@ -48,7 +48,7 @@ export class DynamicLayoutManager implements IDisposable
     private _separatorTemplate: IWindow;
     // AS3: .../src/com/sulake/habbo/friendbar/landingview/layout/DynamicLayoutManager.as::_window
     private _window: IWindowContainer | null;
-    private _slots: Array<IWindowContainer | null> = new Array(SLOT_COUNT).fill(null);
+    private _slots: Array<IWindowContainer | null> = new Array(DynamicLayoutManager.SLOT_COUNT).fill(null);
     private _ignoreBottomRightSlot: boolean = false;
     private _settings: CommonWidgetSettings | null;
 
@@ -88,7 +88,7 @@ export class DynamicLayoutManager implements IDisposable
         this._bottomRightSlotList = this._window.findChildByName('widget_slot_5_root') as IItemListWindow;
         this._separatorTemplate = layout.landingView!.getXmlWindow('dynamic_widget_grid_separator')!;
 
-        for(let i = 0; i < SLOT_COUNT; i++)
+        for(let i = 0; i < DynamicLayoutManager.SLOT_COUNT; i++)
         {
             const slot = this._window.findChildByName('widget_slot_' + (i + 1)) as IWindowContainer | null;
 
@@ -118,7 +118,7 @@ export class DynamicLayoutManager implements IDisposable
     {
         if(this.disposed) return;
 
-        for(let i = 0; i < SLOT_COUNT; i++)
+        for(let i = 0; i < DynamicLayoutManager.SLOT_COUNT; i++)
         {
             if(this._slots[i])
             {
@@ -242,7 +242,7 @@ export class DynamicLayoutManager implements IDisposable
 
         if(!this._verticalSizeApplied)
         {
-            for(let i = 0; i < SLOT_COUNT; i++)
+            for(let i = 0; i < DynamicLayoutManager.SLOT_COUNT; i++)
             {
                 this._slots[i]?.addEventListener(WindowEvent.WE_RESIZED, this.updateLayout);
             }

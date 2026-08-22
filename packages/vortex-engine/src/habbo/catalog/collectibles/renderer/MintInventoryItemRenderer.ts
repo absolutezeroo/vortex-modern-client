@@ -13,10 +13,6 @@ import type {ICollectibleColoring} from './AbstractCollectibleItemRenderer';
 import {AbstractCollectibleItemRenderer} from './AbstractCollectibleItemRenderer';
 import type {MintInventoryListTab} from '../tabs/MintInventoryListTab';
 
-/** AS3: MintInventoryItemRenderer.as::updateVisuals() — the amount label's two background colours. */
-const AMOUNT_BORDER_OWNED = 3374080;
-const AMOUNT_BORDER_MISSING = 7441834;
-
 /**
  * One cell in the mint tab's grid: a furni type the player may mint, with how many they own.
  *
@@ -29,6 +25,11 @@ const AMOUNT_BORDER_MISSING = 7441834;
  */
 export class MintInventoryItemRenderer extends AbstractCollectibleItemRenderer
 {
+    /** AS3: MintInventoryItemRenderer.as::updateVisuals() — the amount label's two background colours. */
+    private static readonly AMOUNT_BORDER_OWNED = 3374080;
+
+    private static readonly AMOUNT_BORDER_MISSING = 7441834;
+
     /**
      * Assigned after `super()`, as AS3 does — and safe, unlike its shop and reward siblings,
      * because this class's `updateVisuals()` reads only `renderableItem` and `isComplete`, both of
@@ -71,7 +72,7 @@ export class MintInventoryItemRenderer extends AbstractCollectibleItemRenderer
 
         if(border !== null)
         {
-            border.color = this.isComplete ? AMOUNT_BORDER_OWNED : AMOUNT_BORDER_MISSING;
+            border.color = this.isComplete ? MintInventoryItemRenderer.AMOUNT_BORDER_OWNED : MintInventoryItemRenderer.AMOUNT_BORDER_MISSING;
         }
     }
 

@@ -36,22 +36,22 @@ import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('habbo.inventory.marketplace.MarketplaceView');
 
-/**
- * AS3 passes this as a bare `4293848814` to both image getters — the dialog's own background, so
- * the rendered furni is composited against it rather than against transparency. Name DERIVED; the
- * literal is unnamed in AS3.
- */
-// AS3: .../inventory/marketplace/MarketplaceView.as::showMakeOffer()
-const PREVIEW_BACKGROUND_COLOR: number = 4293848814;
-
-// AS3: .../inventory/marketplace/MarketplaceView.as::showMakeOffer() — the preview render scale.
-const PREVIEW_SCALE: number = 64;
-
-// AS3: .../inventory/marketplace/MarketplaceView.as::showResult() — 1 is the only success code.
-const RESULT_SUCCESS: number = 1;
-
 export class MarketplaceView implements IGetImageListener
 {
+    /**
+    * AS3 passes this as a bare `4293848814` to both image getters — the dialog's own background, so
+    * the rendered furni is composited against it rather than against transparency. Name DERIVED; the
+    * literal is unnamed in AS3.
+    */
+    // AS3: .../inventory/marketplace/MarketplaceView.as::showMakeOffer()
+    private static readonly PREVIEW_BACKGROUND_COLOR: number = 4293848814;
+
+    // AS3: .../inventory/marketplace/MarketplaceView.as::showMakeOffer() — the preview render scale.
+    private static readonly PREVIEW_SCALE: number = 64;
+
+    // AS3: .../inventory/marketplace/MarketplaceView.as::showResult() — 1 is the only success code.
+    private static readonly RESULT_SUCCESS: number = 1;
+
     // AS3: .../inventory/marketplace/MarketplaceView.as::_windowManager
     private _windowManager: IHabboWindowManager | null;
 
@@ -180,11 +180,11 @@ export class MarketplaceView implements IGetImageListener
         // AS3 renders the furni at direction 90 — the catalogue-style three-quarter view.
         const result = item.isWallItem
             ? this._roomEngine.getWallItemImage(
-                item.type, new Vector3d(90, 0, 0), PREVIEW_SCALE, this, PREVIEW_BACKGROUND_COLOR,
+                item.type, new Vector3d(90, 0, 0), MarketplaceView.PREVIEW_SCALE, this, MarketplaceView.PREVIEW_BACKGROUND_COLOR,
                 item.stuffData?.getLegacyString() ?? null
             )
             : this._roomEngine.getFurnitureImage(
-                item.type, new Vector3d(90, 0, 0), PREVIEW_SCALE, this, PREVIEW_BACKGROUND_COLOR, String(item.extra)
+                item.type, new Vector3d(90, 0, 0), MarketplaceView.PREVIEW_SCALE, this, MarketplaceView.PREVIEW_BACKGROUND_COLOR, String(item.extra)
             );
 
         if(result == null) return;
@@ -256,7 +256,7 @@ export class MarketplaceView implements IGetImageListener
     // AS3: .../inventory/marketplace/MarketplaceView.as::showResult()
     showResult(result: number): void
     {
-        const title = result === RESULT_SUCCESS
+        const title = result === MarketplaceView.RESULT_SUCCESS
             ? '${inventory.marketplace.result.title.success}'
             : '${inventory.marketplace.result.title.failure}';
 

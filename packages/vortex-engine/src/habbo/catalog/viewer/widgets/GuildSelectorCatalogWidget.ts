@@ -21,8 +21,6 @@ import {SetRoomPreviewerStuffDataEvent} from './events/SetRoomPreviewerStuffData
 
 const log = Logger.getLogger('habbo.catalog.viewer.widgets.GuildSelectorCatalogWidget');
 
-const CWE_EXTRA_PARAM_REQUIRED_FOR_BUY = 'CWE_EXTRA_PARAM_REQUIRED_FOR_BUY';
-
 /**
  * Lets the user pick which of their groups to act on (buy a guild-related item for) via a
  * drop-list, and drives the room previewer + purchase-parameter plumbing to match the selection.
@@ -31,6 +29,8 @@ const CWE_EXTRA_PARAM_REQUIRED_FOR_BUY = 'CWE_EXTRA_PARAM_REQUIRED_FOR_BUY';
  */
 export class GuildSelectorCatalogWidget extends CatalogWidget
 {
+    private static readonly CWE_EXTRA_PARAM_REQUIRED_FOR_BUY = 'CWE_EXTRA_PARAM_REQUIRED_FOR_BUY';
+
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/GuildSelectorCatalogWidget.as::GUILD_COLORS_BMP_BORDER_COLOR
     private static readonly GUILD_COLORS_BMP_BORDER_COLOR: number = 0;
 
@@ -128,7 +128,7 @@ export class GuildSelectorCatalogWidget extends CatalogWidget
     private onWidgetsInitialized = (_event: CatalogWidgetEvent): void =>
     {
         this._controller?.registerGuildSelectorWidget(this);
-        this.events.emit(CWE_EXTRA_PARAM_REQUIRED_FOR_BUY, new CatalogWidgetEvent(CWE_EXTRA_PARAM_REQUIRED_FOR_BUY));
+        this.events.emit(GuildSelectorCatalogWidget.CWE_EXTRA_PARAM_REQUIRED_FOR_BUY, new CatalogWidgetEvent(GuildSelectorCatalogWidget.CWE_EXTRA_PARAM_REQUIRED_FOR_BUY));
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/GuildSelectorCatalogWidget.as::populateAndSelectFavorite()

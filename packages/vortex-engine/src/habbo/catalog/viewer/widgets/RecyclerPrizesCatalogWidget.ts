@@ -17,8 +17,6 @@ import type {IItemGrid} from '../IItemGrid';
 import {CatalogWidget} from './CatalogWidget';
 import {CatalogWidgetName} from './CatalogWidgetName';
 
-const STAR_LEVELS = ['bronze', 'silver', 'gold', 'diamond', 'ruby', 'pink', 'green', 'grey'];
-
 /**
  * Recycler prize table widget: browsable star-tier grids of everything the recycler can award.
  *
@@ -26,6 +24,8 @@ const STAR_LEVELS = ['bronze', 'silver', 'gold', 'diamond', 'ruby', 'pink', 'gre
  */
 export class RecyclerPrizesCatalogWidget extends CatalogWidget implements IItemGrid
 {
+    private static readonly STAR_LEVELS = ['bronze', 'silver', 'gold', 'diamond', 'ruby', 'pink', 'green', 'grey'];
+
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/RecyclerPrizesCatalogWidget.as::_prizes
     private _prizes: PrizeLevelContainer[] | null = null;
 
@@ -127,7 +127,7 @@ export class RecyclerPrizesCatalogWidget extends CatalogWidget implements IItemG
 
         const starIcon = levelItemWindow.findChildByName('star_icon') as unknown as IStaticBitmapWrapperWindow | null;
 
-        if(starIcon != null) starIcon.assetUri = `star_small_${STAR_LEVELS[level.prizeLevelId - 1]}`;
+        if(starIcon != null) starIcon.assetUri = `star_small_${RecyclerPrizesCatalogWidget.STAR_LEVELS[level.prizeLevelId - 1]}`;
 
         const itemGrid = levelItemWindow.findChildByName('itemGrid') as unknown as IItemGridWindow | null;
 

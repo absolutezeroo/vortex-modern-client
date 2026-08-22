@@ -19,20 +19,6 @@ import {Vector3d} from '@room/utils/Vector3d';
 import {RoomWidgetPetPackageUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetPetPackageUpdateEvent';
 import {RoomWidgetOpenPetPackageMessage} from '@habbo/ui/widget/messages/RoomWidgetOpenPetPackageMessage';
 
-// AS3: PetPackageFurniWidgetHandler.as::getProcessedEvents()
-const OPEN_PET_PACKAGE_REQUESTED: string = 'RSOPPE_OPEN_PET_PACKAGE_REQUESTED';
-const OPEN_PET_PACKAGE_RESULT: string = 'RSOPPE_OPEN_PET_PACKAGE_RESULT';
-
-/**
- * AS3: PetPackageFurniWidgetHandler.as::getPetImage()
- *
- * The preview is rendered head-on at 64px. AS3 passes these literally; they are named here so the
- * call reads.
- */
-const PET_IMAGE_DIRECTION: number = 90;
-const PET_IMAGE_SCALE: number = 64;
-const PET_IMAGE_HEAD_ONLY: boolean = true;
-
 /**
  * The pet figure carried by RSOPPE_OPEN_PET_PACKAGE_REQUESTED.
  *
@@ -52,6 +38,23 @@ interface IPetFigureData
 
 export class PetPackageFurniWidgetHandler implements IRoomWidgetHandler, IGetImageListener
 {
+    // AS3: PetPackageFurniWidgetHandler.as::getProcessedEvents()
+    private static readonly OPEN_PET_PACKAGE_REQUESTED: string = 'RSOPPE_OPEN_PET_PACKAGE_REQUESTED';
+
+    private static readonly OPEN_PET_PACKAGE_RESULT: string = 'RSOPPE_OPEN_PET_PACKAGE_RESULT';
+
+    /**
+    * AS3: PetPackageFurniWidgetHandler.as::getPetImage()
+    *
+    * The preview is rendered head-on at 64px. AS3 passes these literally; they are named here so the
+    * call reads.
+    */
+    private static readonly PET_IMAGE_DIRECTION: number = 90;
+
+    private static readonly PET_IMAGE_SCALE: number = 64;
+
+    private static readonly PET_IMAGE_HEAD_ONLY: boolean = true;
+
     // AS3: PetPackageFurniWidgetHandler.as::_SafeStr_5769
     private _disposed: boolean = false;
 
@@ -100,7 +103,7 @@ export class PetPackageFurniWidgetHandler implements IRoomWidgetHandler, IGetIma
     // AS3: PetPackageFurniWidgetHandler.as::getProcessedEvents()
     public getProcessedEvents(): string[]
     {
-        return [OPEN_PET_PACKAGE_REQUESTED, OPEN_PET_PACKAGE_RESULT];
+        return [PetPackageFurniWidgetHandler.OPEN_PET_PACKAGE_REQUESTED, PetPackageFurniWidgetHandler.OPEN_PET_PACKAGE_RESULT];
     }
 
     // AS3: PetPackageFurniWidgetHandler.as::processEvent()
@@ -112,7 +115,7 @@ export class PetPackageFurniWidgetHandler implements IRoomWidgetHandler, IGetIma
 
         switch(sessionEvent.type)
         {
-            case OPEN_PET_PACKAGE_REQUESTED: {
+            case PetPackageFurniWidgetHandler.OPEN_PET_PACKAGE_REQUESTED: {
                 this._objectId = sessionEvent.objectId;
 
                 const figureData = sessionEvent.figureData as IPetFigureData | null;
@@ -126,7 +129,7 @@ export class PetPackageFurniWidgetHandler implements IRoomWidgetHandler, IGetIma
                 );
                 break;
             }
-            case OPEN_PET_PACKAGE_RESULT:
+            case PetPackageFurniWidgetHandler.OPEN_PET_PACKAGE_RESULT:
                 this._objectId = sessionEvent.objectId;
 
                 this._container?.desktopEvents.emit(
@@ -153,7 +156,7 @@ export class PetPackageFurniWidgetHandler implements IRoomWidgetHandler, IGetIma
 
         const image = this._container?.roomEngine?.getPetImage(
             figureData.typeId, figureData.paletteId, color,
-            new Vector3d(PET_IMAGE_DIRECTION), PET_IMAGE_SCALE, this, PET_IMAGE_HEAD_ONLY, 0
+            new Vector3d(PetPackageFurniWidgetHandler.PET_IMAGE_DIRECTION), PetPackageFurniWidgetHandler.PET_IMAGE_SCALE, this, PetPackageFurniWidgetHandler.PET_IMAGE_HEAD_ONLY, 0
         ) ?? null;
 
         return image?.data ?? null;

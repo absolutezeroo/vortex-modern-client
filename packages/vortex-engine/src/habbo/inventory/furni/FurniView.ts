@@ -20,11 +20,6 @@ import {Vector3d} from '@room/utils/Vector3d';
 import {FurniGridView} from './FurniGridView';
 import {MapStuffData} from '@habbo/room/object/data/MapStuffData';
 
-const STATE_NULL = 0;
-const STATE_INITIALIZING = 1;
-const STATE_EMPTY = 2;
-const STATE_CONTENT = 3;
-
 /**
  * Furni tab content window: item grid, filters, and action buttons.
  *
@@ -39,6 +34,14 @@ const STATE_CONTENT = 3;
  */
 export class FurniView
 {
+    private static readonly STATE_NULL = 0;
+
+    private static readonly STATE_INITIALIZING = 1;
+
+    private static readonly STATE_EMPTY = 2;
+
+    private static readonly STATE_CONTENT = 3;
+
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/inventory/furni/FurniView.as::_model
     private _model: FurniModel;
     // AS3: .../src/com/sulake/habbo/ui/widget/chooser/furni/FurniView.as::_window
@@ -47,7 +50,7 @@ export class FurniView
     private _grid: FurniGridView | null = null;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/inventory/furni/FurniView.as::_isInitialized
     private _isInitialized: boolean = false;
-    private _state: number = STATE_NULL;
+    private _state: number = FurniView.STATE_NULL;
     private _currentFilterCategory: string = '';
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/inventory/furni/FurniView.as::_rentablesPlacementSelection
     private _rentablesPlacementSelection: number = 2;
@@ -136,15 +139,15 @@ export class FurniView
 
         if(!this._model.isListInited())
         {
-            state = STATE_INITIALIZING;
+            state = FurniView.STATE_INITIALIZING;
         }
         else if(!this._model.furniData || this._model.furniData.length === 0)
         {
-            state = STATE_EMPTY;
+            state = FurniView.STATE_EMPTY;
         }
         else
         {
-            state = STATE_CONTENT;
+            state = FurniView.STATE_CONTENT;
         }
 
         if(this._state === state) return;
@@ -651,21 +654,21 @@ export class FurniView
 
         switch(this._state)
         {
-            case STATE_INITIALIZING:
+            case FurniView.STATE_INITIALIZING:
                 if(loadingContainer) loadingContainer.visible = true;
                 if(emptyContainer) emptyContainer.visible = false;
                 if(gridContainer) gridContainer.visible = false;
                 if(previewContainer) previewContainer.visible = false;
                 if(optionsContainer) optionsContainer.visible = false;
                 break;
-            case STATE_EMPTY:
+            case FurniView.STATE_EMPTY:
                 if(loadingContainer) loadingContainer.visible = false;
                 if(emptyContainer) emptyContainer.visible = true;
                 if(gridContainer) gridContainer.visible = false;
                 if(previewContainer) previewContainer.visible = false;
                 if(optionsContainer) optionsContainer.visible = false;
                 break;
-            case STATE_CONTENT:
+            case FurniView.STATE_CONTENT:
                 if(loadingContainer) loadingContainer.visible = false;
                 if(emptyContainer) emptyContainer.visible = false;
                 if(gridContainer) gridContainer.visible = true;

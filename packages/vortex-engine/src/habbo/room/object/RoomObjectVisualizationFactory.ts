@@ -70,40 +70,40 @@ import {AnimatedFurnitureVisualizationData} from './visualization/furniture/Anim
 import {AnimatedPetVisualization} from './visualization/pet/AnimatedPetVisualization';
 import {AnimatedPetVisualizationData} from './visualization/pet/AnimatedPetVisualizationData';
 
-/**
- * Visualization types that use AnimatedFurnitureVisualizationData.
- * All others use FurnitureVisualizationData.
- *
- * @see AS3 RoomObjectVisualizationFactory.getRoomObjectVisualizationData() lines 232-283
- */
-const ANIMATED_VIZ_DATA_TYPES = new Set([
-    'furniture_animated',
-    'furniture_resetting_animated',
-    'furniture_poster',
-    'furniture_habbowheel',
-    'furniture_val_randomizer',
-    'furniture_bottle',
-    'furniture_planet_system',
-    'furniture_queue_tile',
-    'furniture_party_beamer',
-    'furniture_counter_clock',
-    'furniture_water_area',
-    'furniture_score_board',
-    'furniture_fireworks',
-    'furniture_gift_wrapped_fireworks',
-    'furniture_guild_customized',
-    'furniture_guild_isometric_badge',
-    'furniture_vote_counter',
-    'furniture_vote_majority',
-    'furniture_soundblock',
-    'furniture_badge_display',
-    'furniture_external_image',
-    'furniture_youtube',
-    'tile_cursor',
-]);
-
 export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationFactory
 {
+    /**
+    * Visualization types that use AnimatedFurnitureVisualizationData.
+    * All others use FurnitureVisualizationData.
+    *
+    * @see AS3 RoomObjectVisualizationFactory.getRoomObjectVisualizationData() lines 232-283
+    */
+    private static readonly ANIMATED_VIZ_DATA_TYPES = new Set([
+        'furniture_animated',
+        'furniture_resetting_animated',
+        'furniture_poster',
+        'furniture_habbowheel',
+        'furniture_val_randomizer',
+        'furniture_bottle',
+        'furniture_planet_system',
+        'furniture_queue_tile',
+        'furniture_party_beamer',
+        'furniture_counter_clock',
+        'furniture_water_area',
+        'furniture_score_board',
+        'furniture_fireworks',
+        'furniture_gift_wrapped_fireworks',
+        'furniture_guild_customized',
+        'furniture_guild_isometric_badge',
+        'furniture_vote_counter',
+        'furniture_vote_majority',
+        'furniture_soundblock',
+        'furniture_badge_display',
+        'furniture_external_image',
+        'furniture_youtube',
+        'tile_cursor',
+    ]);
+
     private _visualizationDataCache: Map<string, IRoomObjectVisualizationData> = new Map();
     private _disposed: boolean = false;
 
@@ -352,7 +352,7 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
         // Create the appropriate visualization data based on type
         let vizData: FurnitureVisualizationData;
 
-        if(ANIMATED_VIZ_DATA_TYPES.has(type))
+        if(RoomObjectVisualizationFactory.ANIMATED_VIZ_DATA_TYPES.has(type))
         {
             vizData = new AnimatedFurnitureVisualizationData();
         }

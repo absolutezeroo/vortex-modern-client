@@ -23,13 +23,16 @@ import {RoomWidgetChatTypingMessage} from '@habbo/ui/widget/messages/RoomWidgetC
 import {ChatStyleSelector} from './styleselector/ChatStyleSelector';
 import type {RoomChatInputWidget} from './RoomChatInputWidget';
 
-const MARGIN_H = 12;
-const NFT_CHAT_STYLE_MIN = 1000;
-const NFT_CHAT_STYLE_MAX = 9999;
-const STATIC_CHAT_STYLE_MAX = 1000;
-
 export class RoomChatInputView
 {
+    private static readonly MARGIN_H = 12;
+
+    private static readonly NFT_CHAT_STYLE_MIN = 1000;
+
+    private static readonly NFT_CHAT_STYLE_MAX = 9999;
+
+    private static readonly STATIC_CHAT_STYLE_MAX = 1000;
+
     private _widget: RoomChatInputWidget | null;
     // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::_window
     private _window: IWindowContainer | null = null;
@@ -183,14 +186,14 @@ export class RoomChatInputView
 
         const toolbarWidth = this._widget.getToolBarWidth();
         const friendBarWidth = this._widget.getFriendBarWidth();
-        const requiredWidth = this._bubbleCont.width + MARGIN_H;
+        const requiredWidth = this._bubbleCont.width + RoomChatInputView.MARGIN_H;
 
         let centeredX = desktop.width / 2 - this._bubbleCont.width / 2;
         let leftBound: number;
 
         if(desktop.width - toolbarWidth - friendBarWidth > requiredWidth)
         {
-            leftBound = toolbarWidth + MARGIN_H;
+            leftBound = toolbarWidth + RoomChatInputView.MARGIN_H;
             this._bubbleCont.y = desktop.height - 104;
 
             if(centeredX + this._bubbleCont.width > desktop.width - friendBarWidth)
@@ -200,7 +203,7 @@ export class RoomChatInputView
         }
         else
         {
-            leftBound = this._widget.getRoomToolsWidth() + MARGIN_H;
+            leftBound = this._widget.getRoomToolsWidth() + RoomChatInputView.MARGIN_H;
             this._bubbleCont.y = desktop.height - 160;
         }
 
@@ -463,14 +466,14 @@ export class RoomChatInputView
 
                 if(!style || style.isSystemStyle) continue;
 
-                if(styleId >= NFT_CHAT_STYLE_MIN && styleId <= NFT_CHAT_STYLE_MAX)
+                if(styleId >= RoomChatInputView.NFT_CHAT_STYLE_MIN && styleId <= RoomChatInputView.NFT_CHAT_STYLE_MAX)
                 {
                     if(sessionDataManager.hasNftChatStyle(styleId)) allowed.push(styleId);
 
                     continue;
                 }
 
-                if(styleId < STATIC_CHAT_STYLE_MAX && !style.purchasable)
+                if(styleId < RoomChatInputView.STATIC_CHAT_STYLE_MAX && !style.purchasable)
                 {
                     if(style.isStaffOverrideable && isStaff) { allowed.push(styleId); continue; }
                     if(style.isAmbassadorOnly && (isStaff || sessionDataManager.isAmbassador)) { allowed.push(styleId); continue; }

@@ -24,26 +24,6 @@ import {CollectionItemWrapper} from '../../renderer/model/CollectionItemWrapper'
 import {CollectionProgressColor} from '../../renderer/collections/CollectionProgressColor';
 import {CollectibleItemRenderer} from '../../renderer/collections/CollectibleItemRenderer';
 
-/** AS3: CollectionView.as::PREVIEW_STATUS_* — what the right-hand panel is currently showing. */
-const PREVIEW_STATUS_NONE = 0;
-const PREVIEW_STATUS_BONUS = 1;
-const PREVIEW_STATUS_REWARD = 2;
-const PREVIEW_STATUS_COLLECTION = 3;
-const PREVIEW_STATUS_ITEM = 4;
-
-/** AS3: CollectionView.as — the bonus timer's two colour pairs. The expired ones carry alpha. */
-const BONUS_PROGRESS_ACTIVE_TOP_COLOR = 37130;
-const BONUS_PROGRESS_ACTIVE_BOTTOM_COLOR = 228352;
-const BONUS_PROGRESS_EXPIRED_TOP_COLOR = 4294913325;
-const BONUS_PROGRESS_EXPIRED_BOTTOM_COLOR = 4289724416;
-
-// AS3: CollectionView.as::PROGRESS_BAR_UPDATE_THRESHOLD — ms between countdown repaints.
-const PROGRESS_BAR_UPDATE_THRESHOLD = 1000;
-
-/** AS3: CollectionView.as::initRewardItem() — the header grows to fit the bonus timer. */
-const HEADER_HEIGHT_WITH_TIMER = 60;
-const HEADER_HEIGHT_WITHOUT_TIMER = 38;
-
 /**
  * The right-hand panel of the collections tab: one collection's grid, its progress, and whichever
  * claimable reward it currently offers.
@@ -57,6 +37,34 @@ const HEADER_HEIGHT_WITHOUT_TIMER = 38;
  */
 export class CollectionView
 {
+    /** AS3: CollectionView.as::PREVIEW_STATUS_* — what the right-hand panel is currently showing. */
+    private static readonly PREVIEW_STATUS_NONE = 0;
+
+    private static readonly PREVIEW_STATUS_BONUS = 1;
+
+    private static readonly PREVIEW_STATUS_REWARD = 2;
+
+    private static readonly PREVIEW_STATUS_COLLECTION = 3;
+
+    private static readonly PREVIEW_STATUS_ITEM = 4;
+
+    /** AS3: CollectionView.as — the bonus timer's two colour pairs. The expired ones carry alpha. */
+    private static readonly BONUS_PROGRESS_ACTIVE_TOP_COLOR = 37130;
+
+    private static readonly BONUS_PROGRESS_ACTIVE_BOTTOM_COLOR = 228352;
+
+    private static readonly BONUS_PROGRESS_EXPIRED_TOP_COLOR = 4294913325;
+
+    private static readonly BONUS_PROGRESS_EXPIRED_BOTTOM_COLOR = 4289724416;
+
+    // AS3: CollectionView.as::PROGRESS_BAR_UPDATE_THRESHOLD — ms between countdown repaints.
+    private static readonly PROGRESS_BAR_UPDATE_THRESHOLD = 1000;
+
+    /** AS3: CollectionView.as::initRewardItem() — the header grows to fit the bonus timer. */
+    private static readonly HEADER_HEIGHT_WITH_TIMER = 60;
+
+    private static readonly HEADER_HEIGHT_WITHOUT_TIMER = 38;
+
     // AS3: CollectionView.as::_SafeStr_5769 (the disposed flag)
     private _disposed: boolean = false;
     // AS3: CollectionView.as::_SafeStr_4908 (the owning tab)
@@ -66,7 +74,7 @@ export class CollectionView
     // AS3: CollectionView.as::_SafeStr_4700 (from `get nftCollection()`)
     private _nftCollection: NftCollection;
     // AS3: CollectionView.as::_previewStatus
-    private _previewStatus: number = PREVIEW_STATUS_NONE;
+    private _previewStatus: number = CollectionView.PREVIEW_STATUS_NONE;
     // AS3: CollectionView.as::_SafeStr_7449 (ms accumulated since the last countdown repaint)
     private _progressBarElapsed: number = 0;
     // AS3: CollectionView.as::_gridItems
@@ -226,7 +234,7 @@ export class CollectionView
             return collection.rewardItem;
         }
 
-        this._previewStatus = PREVIEW_STATUS_COLLECTION;
+        this._previewStatus = CollectionView.PREVIEW_STATUS_COLLECTION;
 
         const completion = this.completionContainer;
 
@@ -238,7 +246,7 @@ export class CollectionView
     // AS3: CollectionView.as::initRewardItem()
     private initRewardItem(item: CollectibleCollectionItem | null, canClaim: boolean, isBonus: boolean): void
     {
-        this._previewStatus = isBonus ? PREVIEW_STATUS_BONUS : PREVIEW_STATUS_REWARD;
+        this._previewStatus = isBonus ? CollectionView.PREVIEW_STATUS_BONUS : CollectionView.PREVIEW_STATUS_REWARD;
 
         const completion = this.completionContainer;
         const nameText = this.completionRewardNameText;
@@ -255,7 +263,7 @@ export class CollectionView
         }
 
         if(progressBar !== null) progressBar.visible = isBonus;
-        if(header !== null) header.height = isBonus ? HEADER_HEIGHT_WITH_TIMER : HEADER_HEIGHT_WITHOUT_TIMER;
+        if(header !== null) header.height = isBonus ? CollectionView.HEADER_HEIGHT_WITH_TIMER : CollectionView.HEADER_HEIGHT_WITHOUT_TIMER;
 
         if(isBonus) this.updateBonusProgressBar();
 
@@ -288,7 +296,7 @@ export class CollectionView
 
         if(wallet === null) return;
 
-        if(this._previewStatus === PREVIEW_STATUS_BONUS)
+        if(this._previewStatus === CollectionView.PREVIEW_STATUS_BONUS)
         {
             this._nftCollection.claimBonusAwaiting();
             this._tab.controller.send(new NftCollectiblesClaimBonusItemComposer(this._nftCollection.collectionId, wallet));
@@ -296,7 +304,7 @@ export class CollectionView
         }
         else
         {
-            if(this._previewStatus !== PREVIEW_STATUS_REWARD) return;
+            if(this._previewStatus !== CollectionView.PREVIEW_STATUS_REWARD) return;
 
             this._nftCollection.claimRewardAwaiting();
             this._tab.controller.send(new NftCollectiblesClaimRewardItemComposer(this._nftCollection.collectionId, wallet));
@@ -313,7 +321,7 @@ export class CollectionView
     // AS3: CollectionView.as::claimingFinished()
     claimingFinished(_finished: boolean, _success: boolean): void
     {
-        if(this._previewStatus === PREVIEW_STATUS_REWARD || this._previewStatus === PREVIEW_STATUS_BONUS)
+        if(this._previewStatus === CollectionView.PREVIEW_STATUS_REWARD || this._previewStatus === CollectionView.PREVIEW_STATUS_BONUS)
         {
             this.initCollectionPreview();
         }
@@ -331,14 +339,14 @@ export class CollectionView
     {
         this._progressBarElapsed += elapsedMs;
 
-        if(this._previewStatus !== PREVIEW_STATUS_BONUS) return;
+        if(this._previewStatus !== CollectionView.PREVIEW_STATUS_BONUS) return;
 
         const releasedTime = this._nftCollection.releasedTime;
         const snapshotTime = this._nftCollection.snapshotTime;
         const now = Date.now();
 
         const due = force
-            || this._progressBarElapsed >= PROGRESS_BAR_UPDATE_THRESHOLD
+            || this._progressBarElapsed >= CollectionView.PROGRESS_BAR_UPDATE_THRESHOLD
             || (CollectionView.hasBonusClaimWindow(releasedTime, snapshotTime)
                 && now >= snapshotTime
                 && !this._expiredStatePainted);
@@ -355,13 +363,13 @@ export class CollectionView
             this._expiredStatePainted = false;
 
             if(progressBar !== null) progressBar.visible = false;
-            if(header !== null) header.height = HEADER_HEIGHT_WITHOUT_TIMER;
+            if(header !== null) header.height = CollectionView.HEADER_HEIGHT_WITHOUT_TIMER;
 
             return;
         }
 
         if(progressBar !== null) progressBar.visible = true;
-        if(header !== null) header.height = HEADER_HEIGHT_WITH_TIMER;
+        if(header !== null) header.height = CollectionView.HEADER_HEIGHT_WITH_TIMER;
 
         if(now >= snapshotTime)
         {
@@ -390,8 +398,8 @@ export class CollectionView
         const top = this.completionProgressBarTop;
         const bottom = this.completionProgressBarBottom;
 
-        if(top !== null) top.color = BONUS_PROGRESS_ACTIVE_TOP_COLOR;
-        if(bottom !== null) bottom.color = BONUS_PROGRESS_ACTIVE_BOTTOM_COLOR;
+        if(top !== null) top.color = CollectionView.BONUS_PROGRESS_ACTIVE_TOP_COLOR;
+        if(bottom !== null) bottom.color = CollectionView.BONUS_PROGRESS_ACTIVE_BOTTOM_COLOR;
 
         const remaining = Math.max(0, snapshotTime - now);
         const total = snapshotTime - releasedTime;
@@ -430,14 +438,14 @@ export class CollectionView
 
         if(top !== null)
         {
-            top.color = BONUS_PROGRESS_EXPIRED_TOP_COLOR;
+            top.color = CollectionView.BONUS_PROGRESS_EXPIRED_TOP_COLOR;
             top.width = fullWidth;
             top.invalidate();
         }
 
         if(bottom !== null)
         {
-            bottom.color = BONUS_PROGRESS_EXPIRED_BOTTOM_COLOR;
+            bottom.color = CollectionView.BONUS_PROGRESS_EXPIRED_BOTTOM_COLOR;
             bottom.width = fullWidth;
             bottom.invalidate();
         }
@@ -461,7 +469,7 @@ export class CollectionView
     // AS3: CollectionView.as::initMintedItemPreview()
     private initMintedItemPreview(item: CollectibleCollectionItem): void
     {
-        this._previewStatus = PREVIEW_STATUS_ITEM;
+        this._previewStatus = CollectionView.PREVIEW_STATUS_ITEM;
 
         const completion = this.completionContainer;
         const collectionProgress = this.collectionProgressContainer;

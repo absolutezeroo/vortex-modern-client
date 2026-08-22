@@ -52,26 +52,30 @@ import type {IRoomWidgetHandlerContainer} from '@habbo/ui/IRoomWidgetHandlerCont
 import type {FurnitureContextMenuWidget} from '@habbo/ui/widget/furniture/contextmenu/FurnitureContextMenuWidget';
 import {MysteryBoxToolbarExtension} from '@habbo/ui/widget/furniture/mysterybox/MysteryBoxToolbarExtension';
 
-/**
- * AS3: FurnitureContextMenuWidgetHandler.as::PENDING_PURCHASABLE_CLOTHING_TIMEOUT_MS
- *
- * Kept even though the clothing flow is a stub — the constant is readable in AS3 and belongs with
- * the fields it guards.
- */
-const PENDING_PURCHASABLE_CLOTHING_TIMEOUT_MS: number = 5000;
-
-/**
- * AS3: FurnitureContextMenuWidgetHandler.as::processEvent() — the `contextMenu` names a furniture
- * logic returns from `get contextMenu()`, which is what the widget switches on.
- */
-const CONTEXT_MENU_FRIEND_FURNITURE: string = 'FRIEND_FURNITURE';
-const CONTEXT_MENU_MONSTERPLANT_SEED: string = 'MONSTERPLANT_SEED';
-const CONTEXT_MENU_MYSTERY_BOX: string = 'MYSTERY_BOX';
-const CONTEXT_MENU_RANDOM_TELEPORT: string = 'RANDOM_TELEPORT';
-const CONTEXT_MENU_PURCHASABLE_CLOTHING: string = 'PURCHASABLE_CLOTHING';
-
 export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
 {
+    /**
+    * AS3: FurnitureContextMenuWidgetHandler.as::PENDING_PURCHASABLE_CLOTHING_TIMEOUT_MS
+    *
+    * Kept even though the clothing flow is a stub — the constant is readable in AS3 and belongs with
+    * the fields it guards.
+    */
+    private static readonly PENDING_PURCHASABLE_CLOTHING_TIMEOUT_MS: number = 5000;
+
+    /**
+    * AS3: FurnitureContextMenuWidgetHandler.as::processEvent() — the `contextMenu` names a furniture
+    * logic returns from `get contextMenu()`, which is what the widget switches on.
+    */
+    private static readonly CONTEXT_MENU_FRIEND_FURNITURE: string = 'FRIEND_FURNITURE';
+
+    private static readonly CONTEXT_MENU_MONSTERPLANT_SEED: string = 'MONSTERPLANT_SEED';
+
+    private static readonly CONTEXT_MENU_MYSTERY_BOX: string = 'MYSTERY_BOX';
+
+    private static readonly CONTEXT_MENU_RANDOM_TELEPORT: string = 'RANDOM_TELEPORT';
+
+    private static readonly CONTEXT_MENU_PURCHASABLE_CLOTHING: string = 'PURCHASABLE_CLOTHING';
+
     // AS3: .../src/com/sulake/habbo/ui/handler/FurnitureContextMenuWidgetHandler.as::_disposed
     private _disposed: boolean = false;
 
@@ -306,16 +310,16 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
             case RoomEngineToWidgetEvent.REQUEST_OPEN_FURNI_CONTEXT_MENU:
                 switch(widgetEvent.contextMenu)
                 {
-                    case CONTEXT_MENU_MYSTERY_BOX:
+                    case FurnitureContextMenuWidgetHandler.CONTEXT_MENU_MYSTERY_BOX:
                         this._widget.showMysteryBoxContextMenu(object);
                         break;
-                    case CONTEXT_MENU_FRIEND_FURNITURE:
+                    case FurnitureContextMenuWidgetHandler.CONTEXT_MENU_FRIEND_FURNITURE:
                         this._widget.showFriendFurnitureContextMenu(object);
                         break;
-                    case CONTEXT_MENU_RANDOM_TELEPORT:
+                    case FurnitureContextMenuWidgetHandler.CONTEXT_MENU_RANDOM_TELEPORT:
                         this._widget.showRandomTeleportContextMenu(object, widgetEvent.category);
                         break;
-                    case CONTEXT_MENU_MONSTERPLANT_SEED:
+                    case FurnitureContextMenuWidgetHandler.CONTEXT_MENU_MONSTERPLANT_SEED:
                         // AS3 gates this one on ownership: a visitor gets no seed menu.
                         if(this._container?.isOwnerOfFurniture(object) ?? false)
                         {
@@ -325,7 +329,7 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
                     // AS3 opens the *generic usable* menu here, not the confirmation dialog — that
                     // one belongs to the double-click path below. AS3 also leaves this case without
                     // a `break`; it is last in the switch, so it falls out either way.
-                    case CONTEXT_MENU_PURCHASABLE_CLOTHING:
+                    case FurnitureContextMenuWidgetHandler.CONTEXT_MENU_PURCHASABLE_CLOTHING:
                         this._widget.showUsableFurnitureContextMenu(object, widgetEvent.category);
                         break;
                 }
@@ -502,7 +506,7 @@ export class FurnitureContextMenuWidgetHandler implements IRoomWidgetHandler
             return false;
         }
 
-        return (performance.now() - this._pendingPurchasableClothingTime) <= PENDING_PURCHASABLE_CLOTHING_TIMEOUT_MS;
+        return (performance.now() - this._pendingPurchasableClothingTime) <= FurnitureContextMenuWidgetHandler.PENDING_PURCHASABLE_CLOTHING_TIMEOUT_MS;
     }
 
     // AS3: FurnitureContextMenuWidgetHandler.as::clearPendingPurchasableClothingRequest()

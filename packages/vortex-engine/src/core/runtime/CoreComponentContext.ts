@@ -14,15 +14,6 @@ import {Logger} from '@core/utils/Logger';
 const log = Logger.getLogger('core.runtime.CoreComponentContext');
 
 /**
- * Number of update receiver priority levels.
- *
- * Level 0 = highest priority (always runs)
- * Level 1 = can skip frames if behind
- * Level 2 = lowest priority (most frame skipping)
- */
-const NUM_UPDATE_RECEIVER_LEVELS = 3;
-
-/**
  * Core setup constants — determines which frame update handler is used.
  *
  * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/CoreComponentContext.as
@@ -65,6 +56,15 @@ export const CoreSetup =
  */
 export class CoreComponentContext extends ComponentContext implements ICore
 {
+    /**
+    * Number of update receiver priority levels.
+    *
+    * Level 0 = highest priority (always runs)
+    * Level 1 = can skip frames if behind
+    * Level 2 = lowest priority (most frame skipping)
+    */
+    private static readonly NUM_UPDATE_RECEIVER_LEVELS = 3;
+
     /** Static file proxy instance (AS3: var_1203) */
     private static _fileProxy: IFileProxy | null = null;
 
@@ -138,7 +138,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
         this._arguments = args ?? new Map();
 
         // Initialize priority-level receiver arrays
-        for(let i = 0; i < NUM_UPDATE_RECEIVER_LEVELS; i++)
+        for(let i = 0; i < CoreComponentContext.NUM_UPDATE_RECEIVER_LEVELS; i++)
         {
             this._updateReceiversByPriority.push([]);
             this._frameSkipCounters.push(0);
@@ -685,7 +685,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
         this.removeUpdateReceiver(receiver);
 
         // Clamp priority
-        priority = Math.max(0, Math.min(priority, NUM_UPDATE_RECEIVER_LEVELS - 1));
+        priority = Math.max(0, Math.min(priority, CoreComponentContext.NUM_UPDATE_RECEIVER_LEVELS - 1));
 
         const receivers = this._updateReceiversByPriority[priority];
 
@@ -706,7 +706,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
     {
         if(this.disposed) return;
 
-        for(let level = 0; level < NUM_UPDATE_RECEIVER_LEVELS; level++)
+        for(let level = 0; level < CoreComponentContext.NUM_UPDATE_RECEIVER_LEVELS; level++)
         {
             const receivers = this._updateReceiversByPriority[level];
 
@@ -817,7 +817,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 
         try
         {
-            for(let level = 0; level < NUM_UPDATE_RECEIVER_LEVELS; level++)
+            for(let level = 0; level < CoreComponentContext.NUM_UPDATE_RECEIVER_LEVELS; level++)
             {
                 const receivers = this._updateReceiversByPriority[level];
                 receivers.length = 0;
@@ -848,7 +848,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
     // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::get maxPriority()
     private get maxPriority(): number
     {
-        return this.hibernating ? this._hibernationLevel + 1 : NUM_UPDATE_RECEIVER_LEVELS;
+        return this.hibernating ? this._hibernationLevel + 1 : CoreComponentContext.NUM_UPDATE_RECEIVER_LEVELS;
     }
 
     /**
@@ -1012,7 +1012,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
     // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::experimentalFrameUpdateHandler()
     private experimentalFrameUpdateHandler(_timeMs: number, _deltaMs: number): void
     {
-        for(let level = 0; level < NUM_UPDATE_RECEIVER_LEVELS; level++)
+        for(let level = 0; level < CoreComponentContext.NUM_UPDATE_RECEIVER_LEVELS; level++)
         {
             const receivers = this._updateReceiversByPriority[level];
 

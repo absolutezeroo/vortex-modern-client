@@ -14,13 +14,6 @@ import {HabboCatalogUtils} from '../HabboCatalogUtils';
 import type {ClubExtendController} from './ClubExtendController';
 import type {ClubExtendOfferData} from './ClubExtendOfferData';
 
-const CREDIT_IMAGE_COUNT = 7;
-const ANIMATION_TRIGGER_INTERVAL_MS = 2000;
-const ANIMATION_FRAME_INTERVAL_MS = 75;
-const LINK_COLOR_DEFAULT = 0;
-const LINK_COLOR_HOVER = 9552639;
-const TEASER_IMAGE_URL_TEMPLATE = '${image.library.catalogue.url}catalogue/vip_extend_tsr.png';
-
 /**
  * Club/VIP membership extension (renewal) confirmation dialog: shows the original vs. discounted
  * price breakdown, a remote "teaser" image, and an animated credit-icon flourish.
@@ -29,6 +22,18 @@ const TEASER_IMAGE_URL_TEMPLATE = '${image.library.catalogue.url}catalogue/vip_e
  */
 export class ClubExtendConfirmationDialog
 {
+    private static readonly CREDIT_IMAGE_COUNT = 7;
+
+    private static readonly ANIMATION_TRIGGER_INTERVAL_MS = 2000;
+
+    private static readonly ANIMATION_FRAME_INTERVAL_MS = 75;
+
+    private static readonly LINK_COLOR_DEFAULT = 0;
+
+    private static readonly LINK_COLOR_HOVER = 9552639;
+
+    private static readonly TEASER_IMAGE_URL_TEMPLATE = '${image.library.catalogue.url}catalogue/vip_extend_tsr.png';
+
     private _controller: ClubExtendController | null;
 
     private _window: IWindowContainer | null = null;
@@ -43,7 +48,7 @@ export class ClubExtendConfirmationDialog
     private _creditIconElement: IBitmapWrapperWindow | null = null;
 
     // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::_creditImages
-    private _creditImages: (ImageBitmap | null)[] = new Array(CREDIT_IMAGE_COUNT).fill(null);
+    private _creditImages: (ImageBitmap | null)[] = new Array(ClubExtendConfirmationDialog.CREDIT_IMAGE_COUNT).fill(null);
 
     private _animationTriggerTimer: ReturnType<typeof setInterval> | null = null;
 
@@ -84,7 +89,7 @@ export class ClubExtendConfirmationDialog
 
         this._laterLink = null;
         this._creditIconElement = null;
-        this._creditImages = new Array(CREDIT_IMAGE_COUNT).fill(null);
+        this._creditImages = new Array(ClubExtendConfirmationDialog.CREDIT_IMAGE_COUNT).fill(null);
 
         this._window?.dispose();
         this._window = null;
@@ -179,7 +184,7 @@ export class ClubExtendConfirmationDialog
         }
 
         const configuration = this._controller.config;
-        let teaserUrl = configuration?.interpolate(TEASER_IMAGE_URL_TEMPLATE) ?? TEASER_IMAGE_URL_TEMPLATE;
+        let teaserUrl = configuration?.interpolate(ClubExtendConfirmationDialog.TEASER_IMAGE_URL_TEMPLATE) ?? ClubExtendConfirmationDialog.TEASER_IMAGE_URL_TEMPLATE;
 
         if(configuration) teaserUrl = configuration.updateUrlProtocol(teaserUrl);
 
@@ -203,7 +208,7 @@ export class ClubExtendConfirmationDialog
 
         if(this._creditIconElement == null) return;
 
-        for(let i = 0; i < CREDIT_IMAGE_COUNT; i++)
+        for(let i = 0; i < ClubExtendConfirmationDialog.CREDIT_IMAGE_COUNT; i++)
         {
             this._creditImages[i] = this.getBitmapFromAsset(`icon_credit_${i}`);
         }
@@ -232,12 +237,12 @@ export class ClubExtendConfirmationDialog
 
     private onMouseOutLaterRegion = (_event: WindowMouseEvent): void =>
     {
-        if(this._laterLink) this._laterLink.textColor = LINK_COLOR_DEFAULT;
+        if(this._laterLink) this._laterLink.textColor = ClubExtendConfirmationDialog.LINK_COLOR_DEFAULT;
     };
 
     private onMouseOverLaterRegion = (_event: WindowMouseEvent): void =>
     {
-        if(this._laterLink) this._laterLink.textColor = LINK_COLOR_HOVER;
+        if(this._laterLink) this._laterLink.textColor = ClubExtendConfirmationDialog.LINK_COLOR_HOVER;
     };
 
     // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::startAnimation()
@@ -246,7 +251,7 @@ export class ClubExtendConfirmationDialog
         if(this._animationTriggerTimer != null) this.clearAnimation();
 
         this.setAnimationFrame();
-        this._animationTriggerTimer = setInterval(() => this.onAnimationTrigger(), ANIMATION_TRIGGER_INTERVAL_MS);
+        this._animationTriggerTimer = setInterval(() => this.onAnimationTrigger(), ClubExtendConfirmationDialog.ANIMATION_TRIGGER_INTERVAL_MS);
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::clearAnimation()
@@ -273,7 +278,7 @@ export class ClubExtendConfirmationDialog
     {
         if(!this._creditIconElement) return;
 
-        if(this._animationFrame < CREDIT_IMAGE_COUNT)
+        if(this._animationFrame < ClubExtendConfirmationDialog.CREDIT_IMAGE_COUNT)
         {
             const frame = this._creditImages[this._animationFrame];
 
@@ -291,7 +296,7 @@ export class ClubExtendConfirmationDialog
             ticks++;
             this.onAnimationFrame();
 
-            if(ticks >= CREDIT_IMAGE_COUNT - 1)
+            if(ticks >= ClubExtendConfirmationDialog.CREDIT_IMAGE_COUNT - 1)
             {
                 if(this._animationFrameTimer != null)
                 {
@@ -301,7 +306,7 @@ export class ClubExtendConfirmationDialog
 
                 this.onAnimationFrameComplete();
             }
-        }, ANIMATION_FRAME_INTERVAL_MS);
+        }, ClubExtendConfirmationDialog.ANIMATION_FRAME_INTERVAL_MS);
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/club/ClubExtendConfirmationDialog.as::onAnimationTrigger()

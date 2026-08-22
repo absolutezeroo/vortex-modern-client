@@ -30,38 +30,6 @@ import {PetCommandTool} from './PetCommandTool';
 import type {InfoStandPetData} from './InfoStandPetData';
 import type {InfoStandWidget} from './InfoStandWidget';
 
-// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_WIDTH
-const STATUS_BAR_WIDTH = 162;
-const STATUS_BAR_HEIGTH = 16;
-const STATUS_BAR_HIGHLIGHT_HEIGHT = 4;
-const STATUS_BAR_BORDER_COLOR = 14342874;
-const STATUS_BAR_BG_COLOR = 3815994;
-const STATUS_BAR_HAPPINESS_HIGHLIGHT_COLOR = 2085362;
-const STATUS_BAR_HAPPINESS_CONTENT_COLOR = 39616;
-const STATUS_BAR_EXPERIENCE_HIGHLIGHT_COLOR = 10513106;
-const STATUS_BAR_EXPERIENCE_CONTENT_COLOR = 8734654;
-const STATUS_BAR_ENERGY_HIGHLIGHT_COLOR = 9094430;
-const STATUS_BAR_ENERGY_CONTENT_COLOR = 6200576;
-const STATUS_BAR_WELLBEING_HIGHLIGHT_COLOR = 9094430;
-const STATUS_BAR_WELLBEING_CONTENT_COLOR = 6200576;
-
-// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATE_HAPPINESS
-const STATE_HAPPINESS = 'happiness';
-const STATE_EXPERIENCE = 'experience';
-const STATE_ENERGY = 'energy';
-const STATE_WELLBEING = 'wellbeing';
-const STATE_GROWTH = 'growth';
-
-// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::BUTTONS_MAX_WIDTH
-const BUTTONS_MAX_WIDTH = 250;
-const BUTTON_HEIGHT = 25;
-const BUTTON_MARGIN = 5;
-
-// The monsterplant is the one pet type with a growth/well-being panel instead of the standard
-// happiness/experience/energy one; type 15 is the one with the enhancement skill indicator.
-const PET_TYPE_MONSTERPLANT = 16;
-const PET_TYPE_ENHANCEABLE = 15;
-
 // AS3 keeps its colours as uint literals and hands them to BitmapData.fillRect(); a canvas needs
 // the CSS form, and going through toString(16) avoids hand-converting each constant.
 function toCssColor(value: number): string
@@ -71,6 +39,57 @@ function toCssColor(value: number): string
 
 export class InfoStandPetView
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_WIDTH
+    private static readonly STATUS_BAR_WIDTH = 162;
+
+    private static readonly STATUS_BAR_HEIGTH = 16;
+
+    private static readonly STATUS_BAR_HIGHLIGHT_HEIGHT = 4;
+
+    private static readonly STATUS_BAR_BORDER_COLOR = 14342874;
+
+    private static readonly STATUS_BAR_BG_COLOR = 3815994;
+
+    private static readonly STATUS_BAR_HAPPINESS_HIGHLIGHT_COLOR = 2085362;
+
+    private static readonly STATUS_BAR_HAPPINESS_CONTENT_COLOR = 39616;
+
+    private static readonly STATUS_BAR_EXPERIENCE_HIGHLIGHT_COLOR = 10513106;
+
+    private static readonly STATUS_BAR_EXPERIENCE_CONTENT_COLOR = 8734654;
+
+    private static readonly STATUS_BAR_ENERGY_HIGHLIGHT_COLOR = 9094430;
+
+    private static readonly STATUS_BAR_ENERGY_CONTENT_COLOR = 6200576;
+
+    private static readonly STATUS_BAR_WELLBEING_HIGHLIGHT_COLOR = 9094430;
+
+    private static readonly STATUS_BAR_WELLBEING_CONTENT_COLOR = 6200576;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATE_HAPPINESS
+    private static readonly STATE_HAPPINESS = 'happiness';
+
+    private static readonly STATE_EXPERIENCE = 'experience';
+
+    private static readonly STATE_ENERGY = 'energy';
+
+    private static readonly STATE_WELLBEING = 'wellbeing';
+
+    private static readonly STATE_GROWTH = 'growth';
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::BUTTONS_MAX_WIDTH
+    private static readonly BUTTONS_MAX_WIDTH = 250;
+
+    private static readonly BUTTON_HEIGHT = 25;
+
+    private static readonly BUTTON_MARGIN = 5;
+
+    // The monsterplant is the one pet type with a growth/well-being panel instead of the standard
+    // happiness/experience/energy one; type 15 is the one with the enhancement skill indicator.
+    private static readonly PET_TYPE_MONSTERPLANT = 16;
+
+    private static readonly PET_TYPE_ENHANCEABLE = 15;
+
     private readonly _widget: InfoStandWidget;
     // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::_catalog
     private readonly _catalog: IHabboCatalog | null;
@@ -121,23 +140,23 @@ export class InfoStandPetView
         this.setBreedText(
             this._widget.localizations?.getLocalization(this.getBreedLocalizationKey(petData.type, petData.breedId)) ?? ''
         );
-        this.updatePetRespect(petData.petRespect, petData.type !== PET_TYPE_MONSTERPLANT);
+        this.updatePetRespect(petData.petRespect, petData.type !== InfoStandPetView.PET_TYPE_MONSTERPLANT);
         this.setAgeText(petData.age);
-        this.setLevelText(petData.level, petData.levelMax, petData.type !== PET_TYPE_MONSTERPLANT);
+        this.setLevelText(petData.level, petData.levelMax, petData.type !== InfoStandPetView.PET_TYPE_MONSTERPLANT);
         this.setSpecialSkillLevel(petData.level, petData.skillTresholds, petData.type);
         this.setRarityLevel(petData.rarityLevel, petData.type);
 
-        if(petData.type === PET_TYPE_MONSTERPLANT)
+        if(petData.type === InfoStandPetView.PET_TYPE_MONSTERPLANT)
         {
             this.showStatusContainer('default', false);
             this.showStatusContainer('monsterplant', true);
 
             this.updateStateElement(
-                STATE_WELLBEING, petData.remainingWellBeingSeconds, petData.maxWellBeingSeconds,
-                STATUS_BAR_WELLBEING_CONTENT_COLOR, STATUS_BAR_WELLBEING_HIGHLIGHT_COLOR,
+                InfoStandPetView.STATE_WELLBEING, petData.remainingWellBeingSeconds, petData.maxWellBeingSeconds,
+                InfoStandPetView.STATUS_BAR_WELLBEING_CONTENT_COLOR, InfoStandPetView.STATUS_BAR_WELLBEING_HIGHLIGHT_COLOR,
                 SecondsFormatter.formatSeconds(petData.remainingWellBeingSeconds)
             );
-            this.updateStateWidget(STATE_GROWTH, petData.remainingGrowingSeconds);
+            this.updateStateWidget(InfoStandPetView.STATE_GROWTH, petData.remainingGrowingSeconds);
 
             this.showButton('petrespect', false);
 
@@ -163,16 +182,16 @@ export class InfoStandPetView
             this.showButton('kick', petData.canRemovePet);
 
             this.updateStateElement(
-                STATE_HAPPINESS, petData.nutrition, petData.nutritionMax,
-                STATUS_BAR_HAPPINESS_CONTENT_COLOR, STATUS_BAR_HAPPINESS_HIGHLIGHT_COLOR
+                InfoStandPetView.STATE_HAPPINESS, petData.nutrition, petData.nutritionMax,
+                InfoStandPetView.STATUS_BAR_HAPPINESS_CONTENT_COLOR, InfoStandPetView.STATUS_BAR_HAPPINESS_HIGHLIGHT_COLOR
             );
             this.updateStateElement(
-                STATE_EXPERIENCE, petData.experience, petData.experienceMax,
-                STATUS_BAR_EXPERIENCE_CONTENT_COLOR, STATUS_BAR_EXPERIENCE_HIGHLIGHT_COLOR
+                InfoStandPetView.STATE_EXPERIENCE, petData.experience, petData.experienceMax,
+                InfoStandPetView.STATUS_BAR_EXPERIENCE_CONTENT_COLOR, InfoStandPetView.STATUS_BAR_EXPERIENCE_HIGHLIGHT_COLOR
             );
             this.updateStateElement(
-                STATE_ENERGY, petData.energy, petData.energyMax,
-                STATUS_BAR_ENERGY_CONTENT_COLOR, STATUS_BAR_ENERGY_HIGHLIGHT_COLOR
+                InfoStandPetView.STATE_ENERGY, petData.energy, petData.energyMax,
+                InfoStandPetView.STATUS_BAR_ENERGY_CONTENT_COLOR, InfoStandPetView.STATUS_BAR_ENERGY_HIGHLIGHT_COLOR
             );
             this.updateRespectButton();
         }
@@ -184,8 +203,8 @@ export class InfoStandPetView
         const canMove = !isPlayTestMode && (roomControllerLevel >= 1 || petData.isOwnPet || isAnyRoomController);
 
         // Only the monsterplant is a furniture-like object you can move/rotate.
-        this.showButton('move', canMove && petData.type === PET_TYPE_MONSTERPLANT);
-        this.showButton('rotate', canMove && petData.type === PET_TYPE_MONSTERPLANT);
+        this.showButton('move', canMove && petData.type === InfoStandPetView.PET_TYPE_MONSTERPLANT);
+        this.showButton('rotate', canMove && petData.type === InfoStandPetView.PET_TYPE_MONSTERPLANT);
 
         this.updateWindow();
 
@@ -441,7 +460,7 @@ export class InfoStandPetView
         if(!container) return;
 
         const enhancementsEnabled = (this._widget.config?.getBoolean('pet.enhancements.enabled') ?? false)
-            && petType === PET_TYPE_ENHANCEABLE;
+            && petType === InfoStandPetView.PET_TYPE_ENHANCEABLE;
         const skillText = container.findChildByName('status_skill_text') as ITextWindow | null;
 
         if(skillText)
@@ -470,7 +489,7 @@ export class InfoStandPetView
     {
         // AS3's literal list: only these two pet types display a rarity line.
         const rarityPetTypes = [16, 26];
-        const container = this.getStatusContainer(petType !== PET_TYPE_MONSTERPLANT ? 'default' : 'monsterplant');
+        const container = this.getStatusContainer(petType !== InfoStandPetView.PET_TYPE_MONSTERPLANT ? 'default' : 'monsterplant');
         const text = container?.getListItemByName('status_rarity_level') as ITextWindow | null;
 
         if(!text) return;
@@ -556,7 +575,7 @@ export class InfoStandPetView
     // state name — preserved rather than collapsed into an unconditional body.
     private updateStateWidget(state: string, seconds: number): void
     {
-        if(state !== STATE_GROWTH) return;
+        if(state !== InfoStandPetView.STATE_GROWTH) return;
 
         const container = this._elementList?.getListItemByName('status_container') as IWindowContainer | null;
 
@@ -634,25 +653,25 @@ export class InfoStandPetView
         if(value > max) value = max;
 
         const ratio = value / max;
-        const canvas = new OffscreenCanvas(STATUS_BAR_WIDTH, STATUS_BAR_HEIGTH);
+        const canvas = new OffscreenCanvas(InfoStandPetView.STATUS_BAR_WIDTH, InfoStandPetView.STATUS_BAR_HEIGTH);
         const context = canvas.getContext('2d');
 
         if(!context) return null;
 
-        context.fillStyle = toCssColor(STATUS_BAR_BORDER_COLOR);
-        context.fillRect(0, 0, STATUS_BAR_WIDTH, STATUS_BAR_HEIGTH);
+        context.fillStyle = toCssColor(InfoStandPetView.STATUS_BAR_BORDER_COLOR);
+        context.fillRect(0, 0, InfoStandPetView.STATUS_BAR_WIDTH, InfoStandPetView.STATUS_BAR_HEIGTH);
 
-        context.fillStyle = toCssColor(STATUS_BAR_BG_COLOR);
-        context.fillRect(1, 1, STATUS_BAR_WIDTH - 2, STATUS_BAR_HEIGTH - 2);
+        context.fillStyle = toCssColor(InfoStandPetView.STATUS_BAR_BG_COLOR);
+        context.fillRect(1, 1, InfoStandPetView.STATUS_BAR_WIDTH - 2, InfoStandPetView.STATUS_BAR_HEIGTH - 2);
 
         context.fillStyle = toCssColor(contentColor);
         context.fillRect(
-            1, 1 + STATUS_BAR_HIGHLIGHT_HEIGHT,
-            ratio * (STATUS_BAR_WIDTH - 2), STATUS_BAR_HEIGTH - 2 - STATUS_BAR_HIGHLIGHT_HEIGHT
+            1, 1 + InfoStandPetView.STATUS_BAR_HIGHLIGHT_HEIGHT,
+            ratio * (InfoStandPetView.STATUS_BAR_WIDTH - 2), InfoStandPetView.STATUS_BAR_HEIGTH - 2 - InfoStandPetView.STATUS_BAR_HIGHLIGHT_HEIGHT
         );
 
         context.fillStyle = toCssColor(highlightColor);
-        context.fillRect(1, 1, ratio * (STATUS_BAR_WIDTH - 2), STATUS_BAR_HIGHLIGHT_HEIGHT);
+        context.fillRect(1, 1, ratio * (InfoStandPetView.STATUS_BAR_WIDTH - 2), InfoStandPetView.STATUS_BAR_HIGHLIGHT_HEIGHT);
 
         return canvas.transferToImageBitmap();
     }
@@ -699,13 +718,13 @@ export class InfoStandPetView
     {
         if(!this._buttonsContainer) return;
 
-        this._buttonsContainer.width = BUTTONS_MAX_WIDTH;
+        this._buttonsContainer.width = InfoStandPetView.BUTTONS_MAX_WIDTH;
 
         const regions: IWindow[] = [];
 
         this._buttonsContainer.groupChildrenWithTag('CMD_BUTTON_REGION', regions, -1);
 
-        let cursor = BUTTONS_MAX_WIDTH;
+        let cursor = InfoStandPetView.BUTTONS_MAX_WIDTH;
         let row = 0;
 
         for(const region of regions)
@@ -714,16 +733,16 @@ export class InfoStandPetView
 
             if(cursor - region.width < 0)
             {
-                cursor = BUTTONS_MAX_WIDTH;
-                row += BUTTON_HEIGHT + BUTTON_MARGIN;
+                cursor = InfoStandPetView.BUTTONS_MAX_WIDTH;
+                row += InfoStandPetView.BUTTON_HEIGHT + InfoStandPetView.BUTTON_MARGIN;
             }
 
             region.x = cursor - region.width;
             region.y = row;
-            cursor = region.x - BUTTON_MARGIN;
+            cursor = region.x - InfoStandPetView.BUTTON_MARGIN;
         }
 
-        this._buttonsContainer.height = row + BUTTON_HEIGHT;
+        this._buttonsContainer.height = row + InfoStandPetView.BUTTON_HEIGHT;
         this.updateWindow();
     }
 

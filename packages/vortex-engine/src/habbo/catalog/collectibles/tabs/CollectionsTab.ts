@@ -26,22 +26,6 @@ import {CollectionView} from './subviews/CollectionView';
 
 const log = Logger.getLogger('habbo.catalog.collectibles.tabs.CollectionsTab');
 
-/** AS3: CollectionsTab.as — the two rotation speeds every sibling tab borrows from this class. */
-const BG_STAR_ROTATE_SPEED = 20;
-const LOADING_ICON_ROTATE_SPEED = 90;
-
-/** AS3: CollectionsTab.as::initializeWallets() — the dropdown's two background colours. */
-const WALLET_SELECTION_COLOR_DISABLED = 13421772;
-const WALLET_SELECTION_COLOR_ENABLED = 16777215;
-
-/** AS3: CollectionsTab.as::set activeWallet() — a wallet caption longer than this is elided. */
-const WALLET_CAPTION_MAX_LENGTH = 19;
-
-/** AS3: CollectionsTab.as::onSortSelectAction() — the sort dropdown's three entries. */
-const SORT_DEFAULT = 0;
-const SORT_PROGRESS = 1;
-const SORT_SCORE = 2;
-
 /**
  * The collections tab: every NFT collection this wallet holds, sorted and searchable, with one
  * `CollectionView` panel beside the list.
@@ -56,6 +40,26 @@ const SORT_SCORE = 2;
  */
 export class CollectionsTab implements IUpdateReceiver
 {
+    /** AS3: CollectionsTab.as — the two rotation speeds every sibling tab borrows from this class. */
+    private static readonly BG_STAR_ROTATE_SPEED = 20;
+
+    private static readonly LOADING_ICON_ROTATE_SPEED = 90;
+
+    /** AS3: CollectionsTab.as::initializeWallets() — the dropdown's two background colours. */
+    private static readonly WALLET_SELECTION_COLOR_DISABLED = 13421772;
+
+    private static readonly WALLET_SELECTION_COLOR_ENABLED = 16777215;
+
+    /** AS3: CollectionsTab.as::set activeWallet() — a wallet caption longer than this is elided. */
+    private static readonly WALLET_CAPTION_MAX_LENGTH = 19;
+
+    /** AS3: CollectionsTab.as::onSortSelectAction() — the sort dropdown's three entries. */
+    private static readonly SORT_DEFAULT = 0;
+
+    private static readonly SORT_PROGRESS = 1;
+
+    private static readonly SORT_SCORE = 2;
+
     // AS3: CollectionsTab.as::_disposed
     private _disposed: boolean = false;
     // AS3: CollectionsTab.as::_SafeStr_5556 (the hub view)
@@ -207,13 +211,13 @@ export class CollectionsTab implements IUpdateReceiver
 
         if(wallets.length === 0)
         {
-            dropdown.color = WALLET_SELECTION_COLOR_DISABLED;
+            dropdown.color = CollectionsTab.WALLET_SELECTION_COLOR_DISABLED;
             dropdown.disable();
 
             return;
         }
 
-        dropdown.color = WALLET_SELECTION_COLOR_ENABLED;
+        dropdown.color = CollectionsTab.WALLET_SELECTION_COLOR_ENABLED;
         dropdown.enable();
 
         const stardust = this._view?.stardustWallet ?? '';
@@ -241,14 +245,14 @@ export class CollectionsTab implements IUpdateReceiver
     {
         this.clearNavigationList();
 
-        const selection = this.sortSelection?.selection ?? SORT_DEFAULT;
+        const selection = this.sortSelection?.selection ?? CollectionsTab.SORT_DEFAULT;
         let sorted: NftCollection[];
 
-        if(selection === SORT_PROGRESS)
+        if(selection === CollectionsTab.SORT_PROGRESS)
         {
             sorted = CollectionsTab.sortCollectionsByProgress(this._collections);
         }
-        else if(selection === SORT_SCORE)
+        else if(selection === CollectionsTab.SORT_SCORE)
         {
             sorted = CollectionsTab.sortCollectionsByScore(this._collections);
         }
@@ -366,9 +370,9 @@ export class CollectionsTab implements IUpdateReceiver
 
         const caption = dropdown?.enumerateSelection()[index];
 
-        if(dropdown !== null && caption !== undefined && caption.length > WALLET_CAPTION_MAX_LENGTH)
+        if(dropdown !== null && caption !== undefined && caption.length > CollectionsTab.WALLET_CAPTION_MAX_LENGTH)
         {
-            dropdown.caption = `${caption.substring(0, WALLET_CAPTION_MAX_LENGTH)}...`;
+            dropdown.caption = `${caption.substring(0, CollectionsTab.WALLET_CAPTION_MAX_LENGTH)}...`;
         }
     }
 
@@ -393,7 +397,7 @@ export class CollectionsTab implements IUpdateReceiver
 
         const sort = this.sortSelection;
 
-        if(sort !== null) sort.selection = SORT_DEFAULT;
+        if(sort !== null) sort.selection = CollectionsTab.SORT_DEFAULT;
 
         if(this._renderableItems.length > 0) this.activateCollection(this._renderableItems[0]);
 
@@ -696,7 +700,7 @@ export class CollectionsTab implements IUpdateReceiver
         {
             if(this._backgroundStar !== null)
             {
-                this._backgroundStar.rotation += BG_STAR_ROTATE_SPEED * (elapsedMs / 1000);
+                this._backgroundStar.rotation += CollectionsTab.BG_STAR_ROTATE_SPEED * (elapsedMs / 1000);
                 this._backgroundStar.rotation %= 360;
                 this._backgroundStar.invalidate();
             }
@@ -708,7 +712,7 @@ export class CollectionsTab implements IUpdateReceiver
 
         if(this._loadingIcon === null) return;
 
-        this._loadingIcon.rotation += LOADING_ICON_ROTATE_SPEED * (elapsedMs / 1000);
+        this._loadingIcon.rotation += CollectionsTab.LOADING_ICON_ROTATE_SPEED * (elapsedMs / 1000);
         this._loadingIcon.rotation %= 360;
         this._loadingIcon.invalidate();
     }

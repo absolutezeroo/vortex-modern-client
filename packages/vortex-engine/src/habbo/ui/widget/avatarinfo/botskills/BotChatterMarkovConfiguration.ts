@@ -9,10 +9,6 @@ import type {AvatarInfoWidget} from '../AvatarInfoWidget';
 import {BotSkillConfigurationViewBase} from './BotSkillConfigurationViewBase';
 import {BotSkillEnum} from './BotSkillEnum';
 
-// AS3: BotChatterMarkovConfiguration.as::botCommandString() — the field separator the bot chatter
-// configuration is packed with. The single ";" form is the older one, still accepted on read.
-const FIELD_SEPARATOR = ';#;';
-
 /**
  * BotChatterMarkovConfiguration — the "what does this bot say" editor: the chat lines, whether it
  * talks on its own, how often, and whether the server may recombine the lines (markov).
@@ -21,6 +17,10 @@ const FIELD_SEPARATOR = ';#;';
  */
 export class BotChatterMarkovConfiguration extends BotSkillConfigurationViewBase
 {
+    // AS3: BotChatterMarkovConfiguration.as::botCommandString() — the field separator the bot chatter
+    // configuration is packed with. The single ";" form is the older one, still accepted on read.
+    private static readonly FIELD_SEPARATOR = ';#;';
+
     // AS3: .../BotChatterMarkovConfiguration.as::BotChatterMarkovConfiguration()
     constructor(widget: AvatarInfoWidget)
     {
@@ -31,7 +31,7 @@ export class BotChatterMarkovConfiguration extends BotSkillConfigurationViewBase
     // The separator cannot survive inside a chat line, so it is flattened to a space on the way out.
     private static sanitizeBotChatString(value: string): string
     {
-        return value.split(FIELD_SEPARATOR).join(' ');
+        return value.split(BotChatterMarkovConfiguration.FIELD_SEPARATOR).join(' ');
     }
 
     // AS3: .../BotChatterMarkovConfiguration.as::get windowAssetName()
@@ -63,7 +63,7 @@ export class BotChatterMarkovConfiguration extends BotSkillConfigurationViewBase
      */
     public override parseConfiguration(data: string): void
     {
-        const fields = data.indexOf(FIELD_SEPARATOR) === -1 ? data.split(';') : data.split(FIELD_SEPARATOR);
+        const fields = data.indexOf(BotChatterMarkovConfiguration.FIELD_SEPARATOR) === -1 ? data.split(';') : data.split(BotChatterMarkovConfiguration.FIELD_SEPARATOR);
 
         if(this._window === null) return;
 
@@ -180,7 +180,7 @@ export class BotChatterMarkovConfiguration extends BotSkillConfigurationViewBase
             String(this.autoChat),
             String(this.chatDelay),
             String(this.markovEnabled)
-        ].join(FIELD_SEPARATOR);
+        ].join(BotChatterMarkovConfiguration.FIELD_SEPARATOR);
     }
 
     // AS3: .../BotChatterMarkovConfiguration.as::procedure()

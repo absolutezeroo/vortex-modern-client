@@ -20,21 +20,6 @@ import type {CollectiblesModel} from './CollectiblesModel';
 import {CollectibleGroupedItem} from './CollectibleGroupedItem';
 import {CollectiblesGridView} from './CollectiblesGridView';
 
-const STATE_NULL = 0;
-const STATE_INITIALIZING = 1;
-const STATE_EMPTY = 2;
-const STATE_CONTENT = 3;
-
-// AS3: .../CollectiblesView.as::IMAGE_UPDATE_DELAY_MS
-const IMAGE_UPDATE_DELAY_MS = 30;
-
-/**
- * The product-type ids the filter dropdown offers, in the dropdown's own order. Index 0 of the menu
- * is "Everything", so the dropdown selection is offset by one against this array.
- */
-// AS3: .../CollectiblesView.as::FILTER_OPTIONS
-const FILTER_OPTIONS: number[] = [1, 0, 11, 9, 4, 2, 10];
-
 /**
  * The collectibles (NFT) inventory tab: a filtered grid of owned collectibles, plus a preview panel
  * that offers the selected one into an open trade.
@@ -47,6 +32,24 @@ const FILTER_OPTIONS: number[] = [1, 0, 11, 9, 4, 2, 10];
  */
 export class CollectiblesView implements IInventoryView, IAvatarImageListener
 {
+    private static readonly STATE_NULL = 0;
+
+    private static readonly STATE_INITIALIZING = 1;
+
+    private static readonly STATE_EMPTY = 2;
+
+    private static readonly STATE_CONTENT = 3;
+
+    // AS3: .../CollectiblesView.as::IMAGE_UPDATE_DELAY_MS
+    private static readonly IMAGE_UPDATE_DELAY_MS = 30;
+
+    /**
+    * The product-type ids the filter dropdown offers, in the dropdown's own order. Index 0 of the menu
+    * is "Everything", so the dropdown selection is offset by one against this array.
+    */
+    // AS3: .../CollectiblesView.as::FILTER_OPTIONS
+    private static readonly FILTER_OPTIONS: number[] = [1, 0, 11, 9, 4, 2, 10];
+
     // AS3: .../CollectiblesView.as::_windowManager
     private _windowManager: IHabboWindowManager | null;
     // AS3: .../CollectiblesView.as::_SafeStr_4550 (the tab's window container)
@@ -62,7 +65,7 @@ export class CollectiblesView implements IInventoryView, IAvatarImageListener
     // AS3: .../CollectiblesView.as::_groupedItems (product code -> group)
     private _groupedItems: OrderedMap<string, CollectibleGroupedItem> = new OrderedMap<string, CollectibleGroupedItem>();
     // AS3: .../CollectiblesView.as::_SafeStr_6499 (the current STATE_*)
-    private _state: number = STATE_NULL;
+    private _state: number = CollectiblesView.STATE_NULL;
     // AS3: .../CollectiblesView.as::_SafeStr_5802 (the 30 ms image-update timer)
     private _imageTimer: ReturnType<typeof setInterval> | null = null;
 
@@ -76,7 +79,7 @@ export class CollectiblesView implements IInventoryView, IAvatarImageListener
     {
         this._model = model;
         this._windowManager = windowManager;
-        this._imageTimer = setInterval(this.onImageUpdateTimerEvent, IMAGE_UPDATE_DELAY_MS);
+        this._imageTimer = setInterval(this.onImageUpdateTimerEvent, CollectiblesView.IMAGE_UPDATE_DELAY_MS);
     }
 
     // AS3: .../CollectiblesView.as::get disposed()
@@ -189,7 +192,7 @@ export class CollectiblesView implements IInventoryView, IAvatarImageListener
         if(this._window === null || this._window.disposed) return;
 
         const selection = this.filterOptions?.selection ?? 0;
-        const productTypeId = selection <= 0 ? -1 : FILTER_OPTIONS[selection - 1];
+        const productTypeId = selection <= 0 ? -1 : CollectiblesView.FILTER_OPTIONS[selection - 1];
 
         this._grid?.setFilter(productTypeId, this.filterText?.text ?? '');
     }
@@ -317,7 +320,7 @@ export class CollectiblesView implements IInventoryView, IAvatarImageListener
             localization?.getLocalization('inventory.filter.option.everything', 'Everything') ?? 'Everything',
         ];
 
-        for(const productTypeId of FILTER_OPTIONS)
+        for(const productTypeId of CollectiblesView.FILTER_OPTIONS)
         {
             captions.push(this.localizedProductType(productTypeId));
         }
@@ -370,15 +373,15 @@ export class CollectiblesView implements IInventoryView, IAvatarImageListener
 
         if(!this._model.isListInitialized())
         {
-            state = STATE_INITIALIZING;
+            state = CollectiblesView.STATE_INITIALIZING;
         }
         else if(this._model.items.length === 0)
         {
-            state = STATE_EMPTY;
+            state = CollectiblesView.STATE_EMPTY;
         }
         else
         {
-            state = STATE_CONTENT;
+            state = CollectiblesView.STATE_CONTENT;
         }
 
         if(this._state === state) return;
@@ -403,21 +406,21 @@ export class CollectiblesView implements IInventoryView, IAvatarImageListener
 
         switch(this._state)
         {
-            case STATE_INITIALIZING:
+            case CollectiblesView.STATE_INITIALIZING:
                 if(loadingContainer) loadingContainer.visible = true;
                 if(emptyContainer) emptyContainer.visible = false;
                 if(gridContainer) gridContainer.visible = false;
                 if(optionsContainer) optionsContainer.visible = false;
                 if(previewContainer) previewContainer.visible = false;
                 break;
-            case STATE_EMPTY:
+            case CollectiblesView.STATE_EMPTY:
                 if(loadingContainer) loadingContainer.visible = false;
                 if(emptyContainer) emptyContainer.visible = true;
                 if(gridContainer) gridContainer.visible = false;
                 if(optionsContainer) optionsContainer.visible = false;
                 if(previewContainer) previewContainer.visible = false;
                 break;
-            case STATE_CONTENT:
+            case CollectiblesView.STATE_CONTENT:
                 if(loadingContainer) loadingContainer.visible = false;
                 if(emptyContainer) emptyContainer.visible = false;
                 if(gridContainer) gridContainer.visible = true;

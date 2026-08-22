@@ -10,14 +10,18 @@ import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSpri
 import type {IAvatarAddition} from './IAvatarAddition';
 import type {AvatarVisualization} from '../AvatarVisualization';
 
-const DELAY_BEFORE_ANIMATION: number = 2000;
-const DELAY_PER_FRAME: number = 2000;
-const STATE_DELAY: number = 0;
-const STATE_FRAME_A: number = 1;
-const STATE_FRAME_B: number = 2;
-
 export class FloatingIdleZ implements IAvatarAddition 
 {
+    private static readonly DELAY_BEFORE_ANIMATION: number = 2000;
+
+    private static readonly DELAY_PER_FRAME: number = 2000;
+
+    private static readonly STATE_DELAY: number = 0;
+
+    private static readonly STATE_FRAME_A: number = 1;
+
+    private static readonly STATE_FRAME_B: number = 2;
+
     protected _visualization: AvatarVisualization;
     private _assetName: string | null = null;
     // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::_startTime
@@ -34,7 +38,7 @@ export class FloatingIdleZ implements IAvatarAddition
         this._id = id;
         this._visualization = visualization;
         this._startTime = performance.now();
-        this._state = STATE_DELAY;
+        this._state = FloatingIdleZ.STATE_DELAY;
     }
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/additions/FloatingIdleZ.as::_id
@@ -68,31 +72,31 @@ export class FloatingIdleZ implements IAvatarAddition
 
         const now = performance.now();
 
-        if(this._state === STATE_DELAY) 
+        if(this._state === FloatingIdleZ.STATE_DELAY) 
         {
-            if((now - this._startTime) >= DELAY_BEFORE_ANIMATION) 
+            if((now - this._startTime) >= FloatingIdleZ.DELAY_BEFORE_ANIMATION) 
             {
-                this._state = STATE_FRAME_A;
+                this._state = FloatingIdleZ.STATE_FRAME_A;
                 this._startTime = now;
                 this._assetName = this.getAssetNameForFrame(1);
             }
         }
 
-        if(this._state === STATE_FRAME_A) 
+        if(this._state === FloatingIdleZ.STATE_FRAME_A) 
         {
-            if((now - this._startTime) >= DELAY_PER_FRAME) 
+            if((now - this._startTime) >= FloatingIdleZ.DELAY_PER_FRAME) 
             {
-                this._state = STATE_FRAME_B;
+                this._state = FloatingIdleZ.STATE_FRAME_B;
                 this._startTime = now;
                 this._assetName = this.getAssetNameForFrame(2);
             }
         }
 
-        if(this._state === STATE_FRAME_B) 
+        if(this._state === FloatingIdleZ.STATE_FRAME_B) 
         {
-            if((now - this._startTime) >= DELAY_PER_FRAME) 
+            if((now - this._startTime) >= FloatingIdleZ.DELAY_PER_FRAME) 
             {
-                this._state = STATE_FRAME_A;
+                this._state = FloatingIdleZ.STATE_FRAME_A;
                 this._startTime = now;
                 this._assetName = this.getAssetNameForFrame(1);
             }
@@ -129,7 +133,7 @@ export class FloatingIdleZ implements IAvatarAddition
         let offsetX: number;
 
         this._scale = scale;
-        this._assetName = this.getAssetNameForFrame((this._state === STATE_FRAME_A) ? 1 : 2);
+        this._assetName = this.getAssetNameForFrame((this._state === FloatingIdleZ.STATE_FRAME_A) ? 1 : 2);
 
         let fullSize = 64;
 

@@ -12,15 +12,6 @@ import type {CollectiblesController} from './CollectiblesController';
 import type {BaseItemWrapper} from './renderer/model/BaseItemWrapper';
 import {CollectibleRarity} from './util/CollectibleRarity';
 
-// AS3: CollectiblesRewardBoxView.as::BG_STAR_ROTATE_SPEED — degrees per second.
-const BG_STAR_ROTATE_SPEED = 20;
-
-/**
- * AS3: CollectiblesRewardBoxView.as — the window is built on desktop layer **2**, not 1 like the
- * rest of the collectibles UI. It is a celebration popup and sits above everything.
- */
-const DESKTOP_WINDOW_LAYER = 2;
-
 /**
  * "You got this!" — the popup that reveals what came out of an NFT reward box.
  *
@@ -32,6 +23,15 @@ const DESKTOP_WINDOW_LAYER = 2;
  */
 export class CollectiblesRewardBoxView implements IUpdateReceiver
 {
+    // AS3: CollectiblesRewardBoxView.as::BG_STAR_ROTATE_SPEED — degrees per second.
+    private static readonly BG_STAR_ROTATE_SPEED = 20;
+
+    /**
+    * AS3: CollectiblesRewardBoxView.as — the window is built on desktop layer **2**, not 1 like the
+    * rest of the collectibles UI. It is a celebration popup and sits above everything.
+    */
+    private static readonly DESKTOP_WINDOW_LAYER = 2;
+
     // AS3: CollectiblesRewardBoxView.as::_windowManager
     private _windowManager: IHabboWindowManager | null;
     // AS3: CollectiblesRewardBoxView.as::_SafeStr_4593 (the controller)
@@ -51,7 +51,7 @@ export class CollectiblesRewardBoxView implements IUpdateReceiver
 
         // AS3 reads the layout via `assets.getAssetByName(...).content` + `buildFromXML(xml, 2)`;
         // `buildWidgetLayout()` is those two steps behind one call, layer included.
-        this._window = windowManager.buildWidgetLayout('collectible_reward_xml', DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
+        this._window = windowManager.buildWidgetLayout('collectible_reward_xml', CollectiblesRewardBoxView.DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
 
         if(this._window === null) return;
 
@@ -77,7 +77,7 @@ export class CollectiblesRewardBoxView implements IUpdateReceiver
 
         if(this._windowManager !== null && this._window !== null && this._window.parent === null)
         {
-            const desktop = this._windowManager.getDesktop(DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
+            const desktop = this._windowManager.getDesktop(CollectiblesRewardBoxView.DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
 
             desktop?.addChild(this._window);
 
@@ -140,7 +140,7 @@ export class CollectiblesRewardBoxView implements IUpdateReceiver
     {
         if(this._windowManager === null || this._window === null || this._window.parent === null) return;
 
-        const desktop = this._windowManager.getDesktop(DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
+        const desktop = this._windowManager.getDesktop(CollectiblesRewardBoxView.DESKTOP_WINDOW_LAYER) as IWindowContainer | null;
 
         desktop?.removeChild(this._window);
     }
@@ -159,7 +159,7 @@ export class CollectiblesRewardBoxView implements IUpdateReceiver
     {
         if(this._rotatingStar === null) return;
 
-        this._rotatingStar.rotation += BG_STAR_ROTATE_SPEED * (elapsedMs / 1000);
+        this._rotatingStar.rotation += CollectiblesRewardBoxView.BG_STAR_ROTATE_SPEED * (elapsedMs / 1000);
         this._rotatingStar.rotation %= 360;
         this._rotatingStar.invalidate();
     }

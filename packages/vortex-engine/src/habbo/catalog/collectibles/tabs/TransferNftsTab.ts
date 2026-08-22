@@ -20,23 +20,6 @@ import type {CollectiblesController} from '../CollectiblesController';
 import type {CollectiblesView} from '../CollectiblesView';
 
 /**
- * AS3: TransferNftsTab.as::update() reads `CollectionsTab._SafeStr_7248`, which is 90 — degrees per
- * second for the loading spinner. Duplicated here rather than imported, because CollectionsTab is
- * unported; when it lands, this should point at its constant instead.
- */
-const LOADING_ICON_ROTATE_SPEED = 90;
-
-/** AS3: TransferNftsTab.as::onSelectWallet() — a wallet address longer than this is elided. */
-const WALLET_CAPTION_MAX_LENGTH = 32;
-
-/** AS3: TransferNftsTab.as::initializeTransferWallets() — the dropdown's two background colours. */
-const WALLET_SELECTION_COLOR_DISABLED = 13421772;
-const WALLET_SELECTION_COLOR_ENABLED = 16777215;
-
-/** AS3: TransferNftsTab.as::onTransferClicked() — the confirmation dialog's title bar. */
-const CONFIRM_TITLE_BAR_COLOR = 2763306;
-
-/**
  * The "move my NFTs out" tab: pick an external wallet, pay the silver fee, confirm.
  *
  * Readiness is two independent waits ANDed together — the fee reply and the wallet list — and each
@@ -47,6 +30,24 @@ const CONFIRM_TITLE_BAR_COLOR = 2763306;
  */
 export class TransferNftsTab implements IUpdateReceiver
 {
+    /**
+    * AS3: TransferNftsTab.as::update() reads `CollectionsTab._SafeStr_7248`, which is 90 — degrees per
+    * second for the loading spinner. Duplicated here rather than imported, because CollectionsTab is
+    * unported; when it lands, this should point at its constant instead.
+    */
+    private static readonly LOADING_ICON_ROTATE_SPEED = 90;
+
+    /** AS3: TransferNftsTab.as::onSelectWallet() — a wallet address longer than this is elided. */
+    private static readonly WALLET_CAPTION_MAX_LENGTH = 32;
+
+    /** AS3: TransferNftsTab.as::initializeTransferWallets() — the dropdown's two background colours. */
+    private static readonly WALLET_SELECTION_COLOR_DISABLED = 13421772;
+
+    private static readonly WALLET_SELECTION_COLOR_ENABLED = 16777215;
+
+    /** AS3: TransferNftsTab.as::onTransferClicked() — the confirmation dialog's title bar. */
+    private static readonly CONFIRM_TITLE_BAR_COLOR = 2763306;
+
     // AS3: TransferNftsTab.as::_disposed
     private _disposed: boolean = false;
     // AS3: TransferNftsTab.as::_messageEvents
@@ -111,9 +112,9 @@ export class TransferNftsTab implements IUpdateReceiver
             {
                 const wallet = dropdown.enumerateSelection()[index];
 
-                if(wallet !== undefined && wallet.length > WALLET_CAPTION_MAX_LENGTH)
+                if(wallet !== undefined && wallet.length > TransferNftsTab.WALLET_CAPTION_MAX_LENGTH)
                 {
-                    dropdown.caption = `${wallet.substring(0, WALLET_CAPTION_MAX_LENGTH)}...`;
+                    dropdown.caption = `${wallet.substring(0, TransferNftsTab.WALLET_CAPTION_MAX_LENGTH)}...`;
                 }
             }
         }
@@ -218,7 +219,7 @@ export class TransferNftsTab implements IUpdateReceiver
             this.onTransferConfirm
         ) ?? null;
 
-        if(dialog !== null) dialog.titleBarColor = CONFIRM_TITLE_BAR_COLOR;
+        if(dialog !== null) dialog.titleBarColor = TransferNftsTab.CONFIRM_TITLE_BAR_COLOR;
     };
 
     // AS3: TransferNftsTab.as::onTransferConfirm()
@@ -279,12 +280,12 @@ export class TransferNftsTab implements IUpdateReceiver
         {
             if(wallets.length === 0)
             {
-                dropdown.color = WALLET_SELECTION_COLOR_DISABLED;
+                dropdown.color = TransferNftsTab.WALLET_SELECTION_COLOR_DISABLED;
                 dropdown.disable();
             }
             else
             {
-                dropdown.color = WALLET_SELECTION_COLOR_ENABLED;
+                dropdown.color = TransferNftsTab.WALLET_SELECTION_COLOR_ENABLED;
                 dropdown.enable();
                 dropdown.selection = 0;
             }
@@ -353,7 +354,7 @@ export class TransferNftsTab implements IUpdateReceiver
     {
         if(this.isReady || this._loadingIcon === null) return;
 
-        this._loadingIcon.rotation += LOADING_ICON_ROTATE_SPEED * (elapsedMs / 1000);
+        this._loadingIcon.rotation += TransferNftsTab.LOADING_ICON_ROTATE_SPEED * (elapsedMs / 1000);
         this._loadingIcon.rotation %= 360;
         this._loadingIcon.invalidate();
     }

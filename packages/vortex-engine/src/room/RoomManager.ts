@@ -39,15 +39,15 @@ export const RoomManagerState = {
     INITIALIZED: 3,
 } as const;
 
-/**
- * Content processing time limit per frame (ms).
- *
- * @see AS3 RoomManager line 32
- */
-const CONTENT_PROCESSING_TIME_LIMIT = 40;
-
 export class RoomManager extends Component implements IRoomManager, IRoomInstanceContainer
 {
+    /**
+    * Content processing time limit per frame (ms).
+    *
+    * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::CONTENT_PROCESSING_TIME_LIMIT_MILLISECONDS
+    */
+    private static readonly CONTENT_PROCESSING_TIME_LIMIT_MILLISECONDS = 40;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::_rooms
     private _rooms: Map<string, IRoomInstance> = new Map();
     private _contentLoader: IRoomContentLoader | null = null;
@@ -727,7 +727,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
             }
 
             // Throttle: defer to next frame if over budget
-            if(this._limitContentProcessing && (performance.now() - startTime) >= CONTENT_PROCESSING_TIME_LIMIT)
+            if(this._limitContentProcessing && (performance.now() - startTime) >= RoomManager.CONTENT_PROCESSING_TIME_LIMIT_MILLISECONDS)
             {
                 this._skipContentProcessing = true;
 

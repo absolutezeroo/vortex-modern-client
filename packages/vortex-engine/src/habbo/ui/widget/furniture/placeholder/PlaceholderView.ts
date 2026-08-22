@@ -13,22 +13,24 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 
-/**
- * AS3: PlaceholderView.as::createWindow()
- *
- * AS3 names the window `habbohelp_window`, tags it `habbo_help_window` and paints it with the
- * colour below. The placeholder reuses the help window's chrome wholesale — the names are AS3's,
- * not a copy/paste slip.
- */
-const WINDOW_NAME: string = 'habbohelp_window';
-const WINDOW_TAG: string = 'habbo_help_window';
-const WINDOW_COLOR: number = 33554431;
-
-// AS3: PlaceholderView.as::showWindow() — the x it is pinned to every time it is shown.
-const WINDOW_X: number = 200;
-
 export class PlaceholderView
 {
+    /**
+    * AS3: PlaceholderView.as::createWindow()
+    *
+    * AS3 names the window `habbohelp_window`, tags it `habbo_help_window` and paints it with the
+    * colour below. The placeholder reuses the help window's chrome wholesale — the names are AS3's,
+    * not a copy/paste slip.
+    */
+    private static readonly WINDOW_NAME: string = 'habbohelp_window';
+
+    private static readonly WINDOW_TAG: string = 'habbo_help_window';
+
+    private static readonly WINDOW_COLOR: number = 33554431;
+
+    // AS3: PlaceholderView.as::showWindow() — the x it is pinned to every time it is shown.
+    private static readonly WINDOW_X: number = 200;
+
     // AS3: PlaceholderView.as::_SafeStr_5517
     private _assets: IAssetLibrary | null;
 
@@ -73,7 +75,7 @@ export class PlaceholderView
         if(this._window === null) return;
 
         this._window.visible = true;
-        this._window.x = WINDOW_X;
+        this._window.x = PlaceholderView.WINDOW_X;
     }
 
     /**
@@ -90,10 +92,10 @@ export class PlaceholderView
 
         if(this._window === null) return;
 
-        this._window.name = WINDOW_NAME;
-        this._window.tags.push(WINDOW_TAG);
+        this._window.name = PlaceholderView.WINDOW_NAME;
+        this._window.tags.push(PlaceholderView.WINDOW_TAG);
         this._window.background = true;
-        this._window.color = WINDOW_COLOR;
+        this._window.color = PlaceholderView.WINDOW_COLOR;
 
         // AS3 finds the close button by tag, not by name.
         const close = this._window.findChildByTag('close');

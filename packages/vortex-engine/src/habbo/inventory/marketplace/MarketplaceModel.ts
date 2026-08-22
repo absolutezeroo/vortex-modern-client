@@ -42,20 +42,25 @@ import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('habbo.inventory.marketplace.MarketplaceModel');
 
-/**
- * AS3 declares these as bare numbers in `proceedOfferMaking()`'s switch. Names DERIVED from the
- * localization key each branch shows — the codes themselves are the server's.
- */
-// AS3: .../inventory/marketplace/MarketplaceModel.as::proceedOfferMaking()
-const CAN_MAKE_OFFER_OK: number = 1;
-const CAN_MAKE_OFFER_NO_TRADING_PRIVILEGE: number = 2;
-const CAN_MAKE_OFFER_NO_TRADING_PASS: number = 3;
-const CAN_MAKE_OFFER_NEEDS_TOKENS: number = 4;
-const CAN_MAKE_OFFER_CANCELLED: number = 5;
-const CAN_MAKE_OFFER_TRADING_LOCK: number = 6;
-
 export class MarketplaceModel implements IInventoryModel
 {
+    /**
+    * AS3 declares these as bare numbers in `proceedOfferMaking()`'s switch. Names DERIVED from the
+    * localization key each branch shows — the codes themselves are the server's.
+    */
+    // AS3: .../inventory/marketplace/MarketplaceModel.as::proceedOfferMaking()
+    private static readonly CAN_MAKE_OFFER_OK: number = 1;
+
+    private static readonly CAN_MAKE_OFFER_NO_TRADING_PRIVILEGE: number = 2;
+
+    private static readonly CAN_MAKE_OFFER_NO_TRADING_PASS: number = 3;
+
+    private static readonly CAN_MAKE_OFFER_NEEDS_TOKENS: number = 4;
+
+    private static readonly CAN_MAKE_OFFER_CANCELLED: number = 5;
+
+    private static readonly CAN_MAKE_OFFER_TRADING_LOCK: number = 6;
+
     // AS3: .../inventory/marketplace/MarketplaceModel.as::DEFAULT_BULK_OFFER_LIMIT
     private static readonly DEFAULT_BULK_OFFER_LIMIT: number = 500;
 
@@ -434,7 +439,7 @@ export class MarketplaceModel implements IInventoryModel
 
         switch(resultCode)
         {
-            case CAN_MAKE_OFFER_OK:
+            case MarketplaceModel.CAN_MAKE_OFFER_OK:
             {
                 if(this._offerGroup == null)
                 {
@@ -456,27 +461,27 @@ export class MarketplaceModel implements IInventoryModel
 
                 break;
             }
-            case CAN_MAKE_OFFER_NO_TRADING_PRIVILEGE:
+            case MarketplaceModel.CAN_MAKE_OFFER_NO_TRADING_PRIVILEGE:
                 this._view.showAlert(
                     '${inventory.marketplace.no_trading_privilege.title}',
                     '${inventory.marketplace.no_trading_privilege.info}'
                 );
                 break;
-            case CAN_MAKE_OFFER_NO_TRADING_PASS:
+            case MarketplaceModel.CAN_MAKE_OFFER_NO_TRADING_PASS:
                 this._view.showAlert(
                     '${inventory.marketplace.no_trading_pass.title}',
                     '${inventory.marketplace.no_trading_pass.info}'
                 );
                 break;
-            case CAN_MAKE_OFFER_NEEDS_TOKENS:
+            case MarketplaceModel.CAN_MAKE_OFFER_NEEDS_TOKENS:
                 // Note AS3 shows the *stored* batch price/size, not the token count this reply
                 // carried — the count is only used by the server-side check.
                 this._view.showBuyTokens(this._tokenBatchPrice, this._tokenBatchSize);
                 break;
-            case CAN_MAKE_OFFER_CANCELLED:
+            case MarketplaceModel.CAN_MAKE_OFFER_CANCELLED:
                 this.releaseItems();
                 break;
-            case CAN_MAKE_OFFER_TRADING_LOCK:
+            case MarketplaceModel.CAN_MAKE_OFFER_TRADING_LOCK:
                 this._view.showAlert(
                     '${inventory.marketplace.trading_lock.title}',
                     '${inventory.marketplace.trading_lock.info}'

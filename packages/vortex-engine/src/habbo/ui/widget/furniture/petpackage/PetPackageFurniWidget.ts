@@ -29,18 +29,20 @@ import {RoomWidgetOpenPetPackageMessage} from '@habbo/ui/widget/messages/RoomWid
  */
 export const GNOME_SPECIES_TYPE_ID: number = 26;
 
-/**
- * AS3: PetPackageFurniWidget.as::onObjectUpdate() — the nameValidationStatus switch.
- *
- * 0 means the name was accepted and the dialog simply closes; every other value maps to a
- * `catalog.alert.petname.*` key, with anything unrecognised falling back to "bobba".
- */
-const NAME_VALIDATION_OK: number = 0;
-const NAME_ERROR_BY_STATUS: Readonly<Record<number, string>> = {1: 'long', 2: 'short', 3: 'chars'};
-const NAME_ERROR_FALLBACK: string = 'bobba';
-
 export class PetPackageFurniWidget extends RoomWidgetBase
 {
+    /**
+    * AS3: PetPackageFurniWidget.as::onObjectUpdate() — the nameValidationStatus switch.
+    *
+    * 0 means the name was accepted and the dialog simply closes; every other value maps to a
+    * `catalog.alert.petname.*` key, with anything unrecognised falling back to "bobba".
+    */
+    private static readonly NAME_VALIDATION_OK: number = 0;
+
+    private static readonly NAME_ERROR_BY_STATUS: Readonly<Record<number, string>> = {1: 'long', 2: 'short', 3: 'chars'};
+
+    private static readonly NAME_ERROR_FALLBACK: string = 'bobba';
+
     // AS3: PetPackageFurniWidget.as::_window
     private _window: IWindowContainer | null = null;
 
@@ -120,14 +122,14 @@ export class PetPackageFurniWidget extends RoomWidgetBase
 
                 this._waitingForResult = false;
 
-                if(event.nameValidationStatus === NAME_VALIDATION_OK)
+                if(event.nameValidationStatus === PetPackageFurniWidget.NAME_VALIDATION_OK)
                 {
                     this.hideInterface();
 
                     return;
                 }
 
-                const error = NAME_ERROR_BY_STATUS[event.nameValidationStatus] ?? NAME_ERROR_FALLBACK;
+                const error = PetPackageFurniWidget.NAME_ERROR_BY_STATUS[event.nameValidationStatus] ?? PetPackageFurniWidget.NAME_ERROR_FALLBACK;
 
                 this.windowManager.alert(
                     '${widgets.petpackage.alert.petname.title}',

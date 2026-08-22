@@ -23,13 +23,6 @@ import type {FurnitureContextMenuWidgetHandler} from '@habbo/ui/handler/Furnitur
 
 const log = Logger.getLogger('habbo.ui.widget.furniture.mysterybox.MysteryBoxToolbarExtension');
 
-// AS3: MysteryBoxToolbarExtension.as::_SafeStr_11315
-const MINIMISED_CONFIG_KEY: string = 'mystery_box_toolbar_extension_minimised';
-
-// AS3: MysteryBoxToolbarExtension.as::createWindow() / setMinimised() — the two window heights.
-const HEIGHT_MINIMISED: number = 25;
-const HEIGHT_EXPANDED: number = 137;
-
 /**
  * AS3: MysteryBoxToolbarExtension.as::KEY_COLORS
  *
@@ -50,6 +43,14 @@ export const KEY_COLORS: Record<string, number> = {
 
 export class MysteryBoxToolbarExtension
 {
+    // AS3: MysteryBoxToolbarExtension.as::_SafeStr_11315
+    private static readonly MINIMISED_CONFIG_KEY: string = 'mystery_box_toolbar_extension_minimised';
+
+    // AS3: MysteryBoxToolbarExtension.as::createWindow() / setMinimised() — the two window heights.
+    private static readonly HEIGHT_MINIMISED: number = 25;
+
+    private static readonly HEIGHT_EXPANDED: number = 137;
+
     // AS3: .../src/com/sulake/habbo/ui/widget/furniture/mysterybox/MysteryBoxToolbarExtension.as::_disposed
     private _disposed: boolean = false;
 
@@ -185,7 +186,7 @@ export class MysteryBoxToolbarExtension
     // AS3: MysteryBoxToolbarExtension.as::get minimised()
     private get minimised(): boolean
     {
-        return this._handler?.container?.config?.getBoolean(MINIMISED_CONFIG_KEY) ?? false;
+        return this._handler?.container?.config?.getBoolean(MysteryBoxToolbarExtension.MINIMISED_CONFIG_KEY) ?? false;
     }
 
     // AS3: MysteryBoxToolbarExtension.as::setMinimised()
@@ -201,7 +202,7 @@ export class MysteryBoxToolbarExtension
             this.setChildVisible('maximize_region', true);
             this.setChildVisible('small_box', window.findChildByName('box_colour')?.visible ?? false);
             this.setChildVisible('small_key', window.findChildByName('key_colour')?.visible ?? false);
-            window.height = HEIGHT_MINIMISED;
+            window.height = MysteryBoxToolbarExtension.HEIGHT_MINIMISED;
         }
         else
         {
@@ -209,10 +210,10 @@ export class MysteryBoxToolbarExtension
             this.setChildVisible('maximize_region', false);
             this.setChildVisible('small_box', false);
             this.setChildVisible('small_key', false);
-            window.height = HEIGHT_EXPANDED;
+            window.height = MysteryBoxToolbarExtension.HEIGHT_EXPANDED;
         }
 
-        this._handler.container?.config?.setProperty(MINIMISED_CONFIG_KEY, value ? 'true' : 'false');
+        this._handler.container?.config?.setProperty(MysteryBoxToolbarExtension.MINIMISED_CONFIG_KEY, value ? 'true' : 'false');
     }
 
     private setChildVisible(name: string, visible: boolean): void

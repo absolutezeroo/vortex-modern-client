@@ -27,17 +27,20 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {AvatarInfoWidget} from './AvatarInfoWidget';
 
-// AS3: BreedMonsterPlantsConfirmationView.as::STATE_NORMAL
-const STATE_NORMAL: number = 0;
-const STATE_REQUESTED: number = 1;
-
-// Preview render parameters (BreedMonsterPlantsConfirmationView.as::resolvePreviewImage()).
-const PREVIEW_DIRECTION: number = 90;
-const PREVIEW_SCALE: number = 64;
-const PREVIEW_POSTURE: string = 'std';
-
 export class BreedMonsterPlantsConfirmationView implements IDisposable, IGetImageListener
 {
+    // AS3: BreedMonsterPlantsConfirmationView.as::STATE_NORMAL
+    private static readonly STATE_NORMAL: number = 0;
+
+    private static readonly STATE_REQUESTED: number = 1;
+
+    // Preview render parameters (BreedMonsterPlantsConfirmationView.as::resolvePreviewImage()).
+    private static readonly PREVIEW_DIRECTION: number = 90;
+
+    private static readonly PREVIEW_SCALE: number = 64;
+
+    private static readonly PREVIEW_POSTURE: string = 'std';
+
     // AS3: BreedMonsterPlantsConfirmationView.as::_window
     private _window: IFrameWindow | null = null;
     // AS3: BreedMonsterPlantsConfirmationView.as::disposed (obfuscated `_SafeStr_5769`; named from its getter)
@@ -64,7 +67,7 @@ export class BreedMonsterPlantsConfirmationView implements IDisposable, IGetImag
     private _petData2: IUserData | null = null;
     // AS3: BreedMonsterPlantsConfirmationView.as::_state (obfuscated `_SafeStr_4597`; named from
     // the STATE_NORMAL/STATE_REQUESTED pair it switches on)
-    private _state: number = STATE_NORMAL;
+    private _state: number = BreedMonsterPlantsConfirmationView.STATE_NORMAL;
 
     // AS3: BreedMonsterPlantsConfirmationView.as::BreedMonsterPlantsConfirmationView()
     constructor(widget: AvatarInfoWidget)
@@ -95,7 +98,7 @@ export class BreedMonsterPlantsConfirmationView implements IDisposable, IGetImag
         this._targetRoomObjectId = targetRoomObjectId;
         this._petData = userDataManager?.getUserDataByIndex(requestRoomObjectId) ?? null;
         this._petData2 = userDataManager?.getUserDataByIndex(targetRoomObjectId) ?? null;
-        this._state = requested ? STATE_REQUESTED : STATE_NORMAL;
+        this._state = requested ? BreedMonsterPlantsConfirmationView.STATE_REQUESTED : BreedMonsterPlantsConfirmationView.STATE_NORMAL;
 
         this.setWindowContent();
 
@@ -112,8 +115,8 @@ export class BreedMonsterPlantsConfirmationView implements IDisposable, IGetImag
         const figureData = new PetFigureData(figure);
         const result = roomEngine.getPetImage(
             figureData.typeId, figureData.paletteId, figureData.color,
-            new Vector3d(PREVIEW_DIRECTION), PREVIEW_SCALE, this, true, 0,
-            figureData.customParts, PREVIEW_POSTURE
+            new Vector3d(BreedMonsterPlantsConfirmationView.PREVIEW_DIRECTION), BreedMonsterPlantsConfirmationView.PREVIEW_SCALE, this, true, 0,
+            figureData.customParts, BreedMonsterPlantsConfirmationView.PREVIEW_POSTURE
         );
 
         if(!result) return null;
@@ -182,11 +185,11 @@ export class BreedMonsterPlantsConfirmationView implements IDisposable, IGetImag
 
         switch(this._state)
         {
-            case STATE_NORMAL:
+            case BreedMonsterPlantsConfirmationView.STATE_NORMAL:
                 this.enableElement('description', true);
                 this.enableElement('save_button', true);
                 break;
-            case STATE_REQUESTED:
+            case BreedMonsterPlantsConfirmationView.STATE_REQUESTED:
                 this.enableElement('request', true);
                 this.enableElement('accept_button', true);
                 break;

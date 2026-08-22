@@ -24,26 +24,27 @@ import {RoomWidgetBase} from '@habbo/ui/widget/RoomWidgetBase';
 import {RoomWidgetStickieDataUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetStickieDataUpdateEvent';
 import {RoomWidgetStickieSendUpdateMessage} from '@habbo/ui/widget/messages/RoomWidgetStickieSendUpdateMessage';
 
-// AS3: StickieFurniWidget.as::FIELD_MAX_LINES
-const FIELD_MAX_LINES: number = 14;
-
-// AS3: StickieFurniWidget.as::FIELD_MAX_CHARS
-const FIELD_MAX_CHARS: number = 500;
-
-/**
- * AS3: StickieFurniWidget.as::_SafeStr_10523 / _SafeStr_10928
- *
- * Both obfuscated and both 100 — the x and y AS3 passes to `createWindow()`'s Rectangle. The names
- * are DERIVED from that call site.
- */
-const WINDOW_X: number = 100;
-const WINDOW_Y: number = 100;
-
-// AS3: StickieFurniWidget.as::COLOR_BUTTON_NAMES
-const COLOR_BUTTON_NAMES: readonly string[] = ['blue', 'purple', 'green', 'yellow', 'white', 'red', 'orange', 'cyan'];
-
 export class StickieFurniWidget extends RoomWidgetBase
 {
+    // AS3: StickieFurniWidget.as::FIELD_MAX_LINES
+    private static readonly FIELD_MAX_LINES: number = 14;
+
+    // AS3: StickieFurniWidget.as::FIELD_MAX_CHARS
+    private static readonly FIELD_MAX_CHARS: number = 500;
+
+    /**
+    * AS3: StickieFurniWidget.as::_SafeStr_10523 / _SafeStr_10928
+    *
+    * Both obfuscated and both 100 — the x and y AS3 passes to `createWindow()`'s Rectangle. The names
+    * are DERIVED from that call site.
+    */
+    private static readonly WINDOW_X: number = 100;
+
+    private static readonly WINDOW_Y: number = 100;
+
+    // AS3: StickieFurniWidget.as::COLOR_BUTTON_NAMES
+    private static readonly COLOR_BUTTON_NAMES: readonly string[] = ['blue', 'purple', 'green', 'yellow', 'white', 'red', 'orange', 'cyan'];
+
     // AS3: StickieFurniWidget.as::_window
     private _stickieWindow: IWindowContainer | null = null;
 
@@ -152,8 +153,8 @@ export class StickieFurniWidget extends RoomWidgetBase
             if(this._stickieWindow === null) return;
 
             this._stickieWindow.name = this._windowName;
-            this._stickieWindow.x = WINDOW_X;
-            this._stickieWindow.y = WINDOW_Y;
+            this._stickieWindow.x = StickieFurniWidget.WINDOW_X;
+            this._stickieWindow.y = StickieFurniWidget.WINDOW_Y;
         }
 
         const textField = this._stickieWindow.findChildByName('text') as ITextFieldWindow | null;
@@ -245,7 +246,7 @@ export class StickieFurniWidget extends RoomWidgetBase
     {
         if(this._stickieWindow === null) return;
 
-        for(const name of COLOR_BUTTON_NAMES)
+        for(const name of StickieFurniWidget.COLOR_BUTTON_NAMES)
         {
             const button = this._stickieWindow.findChildByName(name);
 
@@ -358,9 +359,9 @@ export class StickieFurniWidget extends RoomWidgetBase
 
         if(textField === null) return;
 
-        textField.maxChars = FIELD_MAX_CHARS;
+        textField.maxChars = StickieFurniWidget.FIELD_MAX_CHARS;
 
-        if(textField.numLines < FIELD_MAX_LINES) return;
+        if(textField.numLines < StickieFurniWidget.FIELD_MAX_LINES) return;
 
         textField.text = textField.text.slice(0, textField.text.length - 1);
         textField.maxChars = textField.length;

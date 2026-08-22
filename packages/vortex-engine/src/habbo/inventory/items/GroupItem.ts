@@ -19,9 +19,6 @@ import type {FurnitureItem} from './FurnitureItem';
 import {FurnitureCategory} from '../enum';
 import {SongInfoReceivedEvent} from '@habbo/sound/events/SongInfoReceivedEvent';
 
-const THUMB_COLOR_NORMAL = 13421772;
-const THUMB_COLOR_UNSEEN = 10275685;
-
 /**
  * Groups identical furniture items together
  *
@@ -30,6 +27,10 @@ const THUMB_COLOR_UNSEEN = 10275685;
  */
 export class GroupItem implements IGetImageListener 
 {
+    private static readonly THUMB_COLOR_NORMAL = 13421772;
+
+    private static readonly THUMB_COLOR_UNSEEN = 10275685;
+
     // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::_items
     private _items: Map<number, FurnitureItem> = new Map();
     // `protected`, not private: AS3's CreditTradingItem reads `_SafeStr_4570` (the model) and
@@ -1076,7 +1077,7 @@ export class GroupItem implements IGetImageListener
 
         if(this._bgColorWindow) 
         {
-            this._bgColorWindow.color = this._hasUnseenItems ? THUMB_COLOR_UNSEEN : THUMB_COLOR_NORMAL;
+            this._bgColorWindow.color = this._hasUnseenItems ? GroupItem.THUMB_COLOR_UNSEEN : GroupItem.THUMB_COLOR_NORMAL;
         }
     }
 

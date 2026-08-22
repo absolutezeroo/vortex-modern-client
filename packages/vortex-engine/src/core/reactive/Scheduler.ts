@@ -8,13 +8,6 @@ const log = Logger.getLogger('core.reactive.Scheduler');
 // views are hand-wired.
 
 /**
- * Iterations the flush loop may take before it declares the effect graph
- * non-convergent and drops the queue rather than hanging the frame.
- */
-// TS-only: convergence cap for effects that keep writing signals.
-const MAX_FLUSH_ITERATIONS: number = 100;
-
-/**
  * The minimal emitter surface {@link ReactiveScheduler.attach} needs — kept
  * structural so the core depends on no event library.
  */
@@ -40,6 +33,13 @@ export interface IFlushEmitter
 // TS-only: the frame-boundary scheduler of the reactive layer.
 export class ReactiveScheduler
 {
+    /**
+    * Iterations the flush loop may take before it declares the effect graph
+    * non-convergent and drops the queue rather than hanging the frame.
+    */
+    // TS-only: convergence cap for effects that keep writing signals.
+    private static readonly MAX_FLUSH_ITERATIONS: number = 100;
+
     private readonly _queue: Set<EffectComputation> = new Set();
     private _flushing: boolean = false;
     private _attached: boolean = false;
@@ -99,9 +99,9 @@ export class ReactiveScheduler
 
             while(this._queue.size > 0)
             {
-                if(++iterations > MAX_FLUSH_ITERATIONS)
+                if(++iterations > ReactiveScheduler.MAX_FLUSH_ITERATIONS)
                 {
-                    log.error(`effect queue failed to settle after ${MAX_FLUSH_ITERATIONS} iterations — dropping ${this._queue.size} queued effect(s)`);
+                    log.error(`effect queue failed to settle after ${ReactiveScheduler.MAX_FLUSH_ITERATIONS} iterations — dropping ${this._queue.size} queued effect(s)`);
                     this._queue.clear();
                     break;
                 }

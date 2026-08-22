@@ -11,9 +11,6 @@ import type {ExtraInfoItemData} from '../ExtraInfoItemData';
 import {ExtraInfoListItem} from '../ExtraInfoListItem';
 import {UpdateableExtraInfoListItem} from '../UpdateableExtraInfoListItem';
 
-const STRIKETHROUGH_LEFT_MARGIN = 4;
-const STRIKETHROUGH_RIGHT_MARGIN = 20;
-
 /**
  * Shows "was X, now Y" bundle-quantity discount pricing, split into a credits and/or
  * activity-point column depending on the offer's pricing model.
@@ -22,6 +19,10 @@ const STRIKETHROUGH_RIGHT_MARGIN = 20;
  */
 export class ExtraInfoDiscountValueItem extends UpdateableExtraInfoListItem
 {
+    private static readonly STRIKETHROUGH_LEFT_MARGIN = 4;
+
+    private static readonly STRIKETHROUGH_RIGHT_MARGIN = 20;
+
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::_window
     private _window: IWindowContainer | null = null;
 
@@ -181,15 +182,15 @@ export class ExtraInfoDiscountValueItem extends UpdateableExtraInfoListItem
         const strikeLeftX = totalLeft.x + totalLeft.width - totalLeft.textWidth;
         const strikeLeft = window.findChildByName('striketrough_total_currency_left')!;
 
-        strikeLeft.x = strikeLeftX - STRIKETHROUGH_LEFT_MARGIN;
-        strikeLeft.width = STRIKETHROUGH_LEFT_MARGIN + totalLeft.textWidth + STRIKETHROUGH_RIGHT_MARGIN;
+        strikeLeft.x = strikeLeftX - ExtraInfoDiscountValueItem.STRIKETHROUGH_LEFT_MARGIN;
+        strikeLeft.width = ExtraInfoDiscountValueItem.STRIKETHROUGH_LEFT_MARGIN + totalLeft.textWidth + ExtraInfoDiscountValueItem.STRIKETHROUGH_RIGHT_MARGIN;
 
         const totalRight = window.findChildByName('total_currency_value_right') as unknown as ITextWindow;
         const strikeRightX = totalRight.x + totalRight.width - totalRight.textWidth;
         const strikeRight = window.findChildByName('striketrough_total_currency_right')!;
 
-        strikeRight.x = strikeRightX - STRIKETHROUGH_LEFT_MARGIN;
-        strikeRight.width = STRIKETHROUGH_LEFT_MARGIN + totalRight.textWidth + STRIKETHROUGH_RIGHT_MARGIN;
+        strikeRight.x = strikeRightX - ExtraInfoDiscountValueItem.STRIKETHROUGH_LEFT_MARGIN;
+        strikeRight.width = ExtraInfoDiscountValueItem.STRIKETHROUGH_LEFT_MARGIN + totalRight.textWidth + ExtraInfoDiscountValueItem.STRIKETHROUGH_RIGHT_MARGIN;
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/listitem/ExtraInfoDiscountValueItem.as::setElementText()

@@ -14,9 +14,6 @@ import type {CollectiblesView} from './CollectiblesView';
 // interface only declares it read-only. Same shim FurniGridView uses.
 type WritableTextWindow = ITextWindow & {underline: boolean};
 
-const PAGE_COLOR_ACTIVE = 16711680;
-const PAGE_COLOR_INACTIVE = 0;
-
 /**
  * The paginated collectibles grid: filter by product type and by name, 200 cells to a page.
  *
@@ -28,6 +25,10 @@ const PAGE_COLOR_INACTIVE = 0;
  */
 export class CollectiblesGridView
 {
+    private static readonly PAGE_COLOR_ACTIVE = 16711680;
+
+    private static readonly PAGE_COLOR_INACTIVE = 0;
+
     // AS3: .../CollectiblesGridView.as::_SafeStr_4550 (the owning view)
     private _view: CollectiblesView | null;
     // AS3: .../CollectiblesGridView.as::_SafeStr_5211 (the grid window)
@@ -244,12 +245,12 @@ export class CollectiblesGridView
             if(i === this._currentPage)
             {
                 pageText.underline = true;
-                pageText.textColor = PAGE_COLOR_ACTIVE;
+                pageText.textColor = CollectiblesGridView.PAGE_COLOR_ACTIVE;
             }
             else
             {
                 pageText.underline = false;
-                pageText.textColor = PAGE_COLOR_INACTIVE;
+                pageText.textColor = CollectiblesGridView.PAGE_COLOR_INACTIVE;
             }
         }
     }
@@ -271,10 +272,10 @@ export class CollectiblesGridView
                 this.updatePaging();
                 break;
             case WindowMouseEventClass.OVER:
-                if(pageText) pageText.textColor = PAGE_COLOR_ACTIVE;
+                if(pageText) pageText.textColor = CollectiblesGridView.PAGE_COLOR_ACTIVE;
                 break;
             case WindowMouseEventClass.OUT:
-                if(pageText && page !== this._currentPage) pageText.textColor = PAGE_COLOR_INACTIVE;
+                if(pageText && page !== this._currentPage) pageText.textColor = CollectiblesGridView.PAGE_COLOR_INACTIVE;
                 break;
         }
     };

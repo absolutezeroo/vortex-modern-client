@@ -36,16 +36,17 @@ import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('habbo.catalog.purchase.RentConfirmationWindow');
 
-/**
- * AS3 renders the preview at direction 90 and scale 64 — the same three-quarter view the catalogue
- * uses. Names DERIVED; both are bare literals in AS3.
- */
-// AS3: .../catalog/purchase/RentConfirmationWindow.as::onFurniRentOrBuyoutOffer()
-const PREVIEW_DIRECTION: number = 90;
-const PREVIEW_SCALE: number = 64;
-
 export class RentConfirmationWindow implements IDisposable, IGetImageListener
 {
+    /**
+    * AS3 renders the preview at direction 90 and scale 64 — the same three-quarter view the catalogue
+    * uses. Names DERIVED; both are bare literals in AS3.
+    */
+    // AS3: .../catalog/purchase/RentConfirmationWindow.as::onFurniRentOrBuyoutOffer()
+    private static readonly PREVIEW_DIRECTION: number = 90;
+
+    private static readonly PREVIEW_SCALE: number = 64;
+
     // AS3: .../catalog/purchase/RentConfirmationWindow.as::MODE_INFOSTAND
     private static readonly MODE_INFOSTAND: number = 1;
 
@@ -209,14 +210,14 @@ export class RentConfirmationWindow implements IDisposable, IGetImageListener
 
         if(roomEngine === null || this._furniData === null) return;
 
-        const direction = new Vector3d(PREVIEW_DIRECTION, 0, 0);
+        const direction = new Vector3d(RentConfirmationWindow.PREVIEW_DIRECTION, 0, 0);
 
         // AS3 leaves the result null for any other type, which then throws on `.data`; guarded here
         // instead, since a furni with neither type simply has no preview to show.
         const result = this._furniData.type === 's'
-            ? roomEngine.getFurnitureImage(this._furniData.id, direction, PREVIEW_SCALE, this)
+            ? roomEngine.getFurnitureImage(this._furniData.id, direction, RentConfirmationWindow.PREVIEW_SCALE, this)
             : this._furniData.type === 'i'
-                ? roomEngine.getWallItemImage(this._furniData.id, direction, PREVIEW_SCALE, this)
+                ? roomEngine.getWallItemImage(this._furniData.id, direction, RentConfirmationWindow.PREVIEW_SCALE, this)
                 : null;
 
         if(result === null) return;

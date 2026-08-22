@@ -16,8 +16,6 @@ import {RentUtils} from './utils/RentUtils';
 import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 
-const CWE_EXTRA_PARAM_REQUIRED_FOR_BUY = 'CWE_EXTRA_PARAM_REQUIRED_FOR_BUY';
-
 /**
  * The buy/gift button bar for the currently selected offer.
  *
@@ -35,6 +33,8 @@ const CWE_EXTRA_PARAM_REQUIRED_FOR_BUY = 'CWE_EXTRA_PARAM_REQUIRED_FOR_BUY';
  */
 export class PurchaseCatalogWidget extends CatalogWidget
 {
+    private static readonly CWE_EXTRA_PARAM_REQUIRED_FOR_BUY = 'CWE_EXTRA_PARAM_REQUIRED_FOR_BUY';
+
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::_catalog
     private _catalog: HabboCatalog | null;
 
@@ -126,7 +126,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
         this.events.on(CatalogWidgetInitPurchaseEvent.INIT_PURCHASE, this.initPurchase);
         this.events.on(SetRoomPreviewerStuffDataEvent.CWE_SET_PREVIEWER_STUFFDATA, this.onSetPreviewerStuffData);
         this.events.on(CatalogWidgetSpinnerEvent.VALUE_CHANGED, this.onSpinnerValueChanged);
-        this.events.on(CWE_EXTRA_PARAM_REQUIRED_FOR_BUY, this.onExtraParamRequired);
+        this.events.on(PurchaseCatalogWidget.CWE_EXTRA_PARAM_REQUIRED_FOR_BUY, this.onExtraParamRequired);
         this.events.on(CatalogWidgetToggleEvent.CWE_TOGGLE, this.onToggleWidget);
 
         return true;

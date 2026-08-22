@@ -11,13 +11,6 @@ import type {IPetsModel} from './IPetsModel';
 import type {Pet} from './Pet';
 import {PetsView} from './PetsView';
 
-// AS3: PetsModel.as::placePetToRoom() compares against these literals directly (16 and 7).
-const PET_TYPE_MONSTERPLANT = 16;
-const MONSTERPLANT_FULLY_GROWN_LEVEL = 7;
-
-// Unseen-item tracker category for pets (AS3 uses category 3).
-const UNSEEN_CATEGORY_PETS = 3;
-
 /**
  * PetsModel — the pets-inventory tab controller (an IInventoryModel).
  *
@@ -28,6 +21,14 @@ const UNSEEN_CATEGORY_PETS = 3;
  */
 export class PetsModel implements IPetsModel
 {
+    // AS3: PetsModel.as::placePetToRoom() compares against these literals directly (16 and 7).
+    private static readonly PET_TYPE_MONSTERPLANT = 16;
+
+    private static readonly MONSTERPLANT_FULLY_GROWN_LEVEL = 7;
+
+    // Unseen-item tracker category for pets (AS3 uses category 3).
+    private static readonly UNSEEN_CATEGORY_PETS = 3;
+
     private _controller: HabboInventory;
     // AS3: .../src/com/sulake/habbo/inventory/pets/PetsModel.as::_communication
     private _communication: IHabboCommunicationManager;
@@ -215,9 +216,9 @@ export class PetsModel implements IPetsModel
         // stage rather than full grown, so the ghost is given a posture.
         let posture: string | null = null;
 
-        if(pet.typeId === PET_TYPE_MONSTERPLANT)
+        if(pet.typeId === PetsModel.PET_TYPE_MONSTERPLANT)
         {
-            posture = pet.level >= MONSTERPLANT_FULLY_GROWN_LEVEL ? 'std' : `grw${pet.level}`;
+            posture = pet.level >= PetsModel.MONSTERPLANT_FULLY_GROWN_LEVEL ? 'std' : `grw${pet.level}`;
         }
 
         if(roomSession !== null && roomSession.isRoomOwner)
@@ -266,7 +267,7 @@ export class PetsModel implements IPetsModel
     // AS3: PetsModel.as::resetUnseenItems()
     resetUnseenItems(): void
     {
-        this._controller.unseenItemTracker.resetCategory(UNSEEN_CATEGORY_PETS);
+        this._controller.unseenItemTracker.resetCategory(PetsModel.UNSEEN_CATEGORY_PETS);
         this._controller.updateUnseenItemCounts();
         this._view.update();
     }
@@ -274,7 +275,7 @@ export class PetsModel implements IPetsModel
     // AS3: PetsModel.as::isUnseen()
     isUnseen(id: number): boolean
     {
-        return this._controller.unseenItemTracker.isUnseen(UNSEEN_CATEGORY_PETS, id);
+        return this._controller.unseenItemTracker.isUnseen(PetsModel.UNSEEN_CATEGORY_PETS, id);
     }
 
     // AS3: PetsModel.as::selectItemById()

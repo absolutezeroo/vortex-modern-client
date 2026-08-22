@@ -45,15 +45,15 @@ import {
 
 const logger = Logger.getLogger('habbo.ui.handler.AvatarInfoWidgetHandler');
 
-// IUserData.type for a pet — the literal AS3 passes to getUserDataByType()/its type checks.
-const USER_TYPE_PET: number = 2;
-
-// Monsterplant level at which the plant is fully grown; below it the rebreed product is refused
-// and above it the fertilizer is (AvatarInfoWidgetHandler.as::activateUseProductMenuForPets()).
-const MONSTERPLANT_GROWN_LEVEL: number = 7;
-
 export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
 {
+    // IUserData.type for a pet — the literal AS3 passes to getUserDataByType()/its type checks.
+    private static readonly USER_TYPE_PET: number = 2;
+
+    // Monsterplant level at which the plant is fully grown; below it the rebreed product is refused
+    // and above it the fertilizer is (AvatarInfoWidgetHandler.as::activateUseProductMenuForPets()).
+    private static readonly MONSTERPLANT_GROWN_LEVEL: number = 7;
+
     // AS3: .../src/com/sulake/habbo/ui/handler/AvatarInfoWidgetHandler.as::_disposed
     private _disposed: boolean = false;
     // AS3: .../src/com/sulake/habbo/ui/handler/AvatarInfoWidgetHandler.as::_container
@@ -400,7 +400,7 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
 
         const roomId = container.roomSession.roomId;
         const ownUserId = container.sessionDataManager?.userId ?? -1;
-        const petData = container.roomSession.userDataManager.getUserDataByType(petRoomIndex, USER_TYPE_PET);
+        const petData = container.roomSession.userDataManager.getUserDataByType(petRoomIndex, AvatarInfoWidgetHandler.USER_TYPE_PET);
 
         if(!petData) return;
 
@@ -474,7 +474,7 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
 
             const userData = container.roomSession.userDataManager.getUserDataByIndex(object.getId());
 
-            if(!userData || userData.type !== USER_TYPE_PET || userData.ownerId !== ownerId) continue;
+            if(!userData || userData.type !== AvatarInfoWidgetHandler.USER_TYPE_PET || userData.ownerId !== ownerId) continue;
 
             // A saddle offered to a pet that already wears one becomes a "replace".
             const replace = userData.hasSaddle && category === FurnitureCategory.PET_SADDLE;
@@ -484,10 +484,10 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
             if(category === FurnitureCategory.MONSTERPLANT_REVIVAL && !userData.canRevive) continue;
 
             if(category === FurnitureCategory.MONSTERPLANT_REBREED
-                && (userData.petLevel < MONSTERPLANT_GROWN_LEVEL || userData.canRevive || userData.canBreed)) continue;
+                && (userData.petLevel < AvatarInfoWidgetHandler.MONSTERPLANT_GROWN_LEVEL || userData.canRevive || userData.canBreed)) continue;
 
             if(category === FurnitureCategory.MONSTERPLANT_FERTILIZE
-                && (userData.petLevel >= MONSTERPLANT_GROWN_LEVEL || userData.canRevive)) continue;
+                && (userData.petLevel >= AvatarInfoWidgetHandler.MONSTERPLANT_GROWN_LEVEL || userData.canRevive)) continue;
 
             items.push(new UseProductItem(
                 userData.roomObjectId, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER, userData.name,
@@ -524,7 +524,7 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
 
             const userData = container.roomSession.userDataManager.getUserDataByIndex(object.getId());
 
-            if(!userData || userData.type !== USER_TYPE_PET || !userData.canBreed) continue;
+            if(!userData || userData.type !== AvatarInfoWidgetHandler.USER_TYPE_PET || !userData.canBreed) continue;
 
             if(!userData.hasBreedingPermission && userData.ownerId !== ownUserId) continue;
 
@@ -563,7 +563,7 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
 
             const userData = container.roomSession.userDataManager.getUserDataByIndex(object.getId());
 
-            if(userData && userData.type === USER_TYPE_PET && userData.webID === webId) return userData;
+            if(userData && userData.type === AvatarInfoWidgetHandler.USER_TYPE_PET && userData.webID === webId) return userData;
         }
 
         return null;

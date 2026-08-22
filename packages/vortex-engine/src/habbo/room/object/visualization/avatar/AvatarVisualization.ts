@@ -42,69 +42,76 @@ import {GameClickTarget} from './additions/GameClickTarget';
 import {NumberBubble} from './additions/NumberBubble';
 import {ExpressionAdditionFactory} from './additions/ExpressionAdditionFactory';
 
-/** String tag for the main avatar sprite data container. */
-const AVATAR: string = 'avatar';
-
-/** Default depth offset for avatar sprites. */
-const AVATAR_SPRITE_DEFAULT_DEPTH: number = -0.01;
-
-/** Additional depth adjustment for the player's own avatar. */
-const AVATAR_OWN_DEPTH_ADJUST: number = 0.001;
-
-/** Depth offset when the avatar is laying down. */
-const AVATAR_SPRITE_LAYING_DEPTH: number = -0.409;
-
-/**
- * Depth between two consecutive parts of one avatar.
- *
- * Large enough to beat the renderer's own `3.7e-11` index tiebreak by orders of magnitude, small
- * enough that a whole avatar spans far less than the `0.01` separating it from anything else in the
- * room — so parts order among themselves and never reorder against furniture.
- */
-// TS-only: no AS3 counterpart; see `updatePartSprites()`.
-const PART_DEPTH_STEP: number = 1e-6;
-
-/** AS3 base Y scale used for figure_vertical_offset. */
-const BASE_Y_SCALE: number = 1000;
-
-/** Maximum number of avatars with effect cached by the visualization. */
-const MAX_AVATARS_WITH_EFFECT: number = 3;
-
-/** AS3 animation frame update interval. */
-const ANIMATION_FRAME_UPDATE_INTERVAL: number = 2;
-
-/** Snowboarding effect id; hides the regular shadow. */
-const SNOWBOARDING_EFFECT: number = 97;
-
-/** Freeze effect id; hides the regular shadow. */
-const FREEZE_EFFECT: number = 218;
-
-/** Sprite index for the main avatar composite image. */
-const SPRITE_INDEX_AVATAR: number = 0;
-
-/** Default canvas offsets when none are provided. */
-const DEFAULT_CANVAS_OFFSETS: number[] = [0, 0, 0];
-
-/** Sprite index for the shadow. */
-const SPRITE_INDEX_SHADOW: number = 1;
-
-/** Initial number of reserved sprites (avatar image + shadow). */
-const INITIAL_RESERVED_SPRITES: number = 2;
-
-/** Addition map keys for each addition type. */
-const ADDITION_KEY_IDLE: number = 1;
-const ADDITION_KEY_TYPING: number = 2;
-const ADDITION_KEY_EXPRESSION: number = 3;
-const ADDITION_KEY_NUMBER: number = 4;
-const ADDITION_KEY_GAME_CLICK: number = 5;
-const ADDITION_KEY_MUTED: number = 6;
-const ADDITION_KEY_GUIDE_STATUS: number = 7;
-
-/** Minimum time between geometry updates in milliseconds. */
-const GEOMETRY_UPDATE_INTERVAL_MS: number = 41;
-
 export class AvatarVisualization extends RoomObjectSpriteVisualization implements IAvatarImageListener, IAvatarEffectListener 
 {
+    /** String tag for the main avatar sprite data container. */
+    private static readonly AVATAR: string = 'avatar';
+
+    /** Default depth offset for avatar sprites. */
+    private static readonly AVATAR_SPRITE_DEFAULT_DEPTH: number = -0.01;
+
+    /** Additional depth adjustment for the player's own avatar. */
+    private static readonly AVATAR_OWN_DEPTH_ADJUST: number = 0.001;
+
+    /** Depth offset when the avatar is laying down. */
+    private static readonly AVATAR_SPRITE_LAYING_DEPTH: number = -0.409;
+
+    /**
+    * Depth between two consecutive parts of one avatar.
+    *
+    * Large enough to beat the renderer's own `3.7e-11` index tiebreak by orders of magnitude, small
+    * enough that a whole avatar spans far less than the `0.01` separating it from anything else in the
+    * room — so parts order among themselves and never reorder against furniture.
+    */
+    // TS-only: no AS3 counterpart; see `updatePartSprites()`.
+    private static readonly PART_DEPTH_STEP: number = 1e-6;
+
+    /** AS3 base Y scale used for figure_vertical_offset. */
+    private static readonly BASE_Y_SCALE: number = 1000;
+
+    /** Maximum number of avatars with effect cached by the visualization. */
+    private static readonly MAX_AVATARS_WITH_EFFECT: number = 3;
+
+    /** AS3 animation frame update interval. */
+    private static readonly ANIMATION_FRAME_UPDATE_INTERVAL: number = 2;
+
+    /** Snowboarding effect id; hides the regular shadow. */
+    private static readonly SNOWBOARDING_EFFECT: number = 97;
+
+    /** Freeze effect id; hides the regular shadow. */
+    private static readonly FREEZE_EFFECT: number = 218;
+
+    /** Sprite index for the main avatar composite image. */
+    private static readonly SPRITE_INDEX_AVATAR: number = 0;
+
+    /** Default canvas offsets when none are provided. */
+    private static readonly DEFAULT_CANVAS_OFFSETS: number[] = [0, 0, 0];
+
+    /** Sprite index for the shadow. */
+    private static readonly SPRITE_INDEX_SHADOW: number = 1;
+
+    /** Initial number of reserved sprites (avatar image + shadow). */
+    private static readonly INITIAL_RESERVED_SPRITES: number = 2;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_IDLE_BUBBLE (and siblings, l.65-79)
+    // ADDITION_ID_HABBICON_BUBBLE (8) is declared there too; nothing in this port reads it yet.
+    private static readonly ADDITION_ID_IDLE_BUBBLE: number = 1;
+
+    private static readonly ADDITION_ID_TYPING_BUBBLE: number = 2;
+
+    private static readonly ADDITION_ID_EXPRESSION: number = 3;
+
+    private static readonly ADDITION_ID_NUMBER_BUBBLE: number = 4;
+
+    private static readonly ADDITION_ID_GAME_CLICK_TARGET: number = 5;
+
+    private static readonly ADDITION_ID_MUTED_BUBBLE: number = 6;
+
+    private static readonly ADDITION_ID_GUIDE_STATUS_BUBBLE: number = 7;
+
+    /** Minimum time between geometry updates in milliseconds. */
+    private static readonly GEOMETRY_UPDATE_INTERVAL_MS: number = 41;
+
     // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_lastAnimationUpdateTime
     private _lastAnimationUpdateTime: number = -1000;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_visualizationData
@@ -249,7 +256,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     override initialize(data: IRoomObjectVisualizationData): boolean 
     {
         this._visualizationData = data as unknown as AvatarVisualizationData;
-        this.createSprites(INITIAL_RESERVED_SPRITES);
+        this.createSprites(AvatarVisualization.INITIAL_RESERVED_SPRITES);
 
         return true;
     }
@@ -271,15 +278,15 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
         if(geometry == null) return;
         if(this._visualizationData == null) return;
 
-        const animationFrameDue = time >= (this._lastAnimationUpdateTime + GEOMETRY_UPDATE_INTERVAL_MS);
+        const animationFrameDue = time >= (this._lastAnimationUpdateTime + AvatarVisualization.GEOMETRY_UPDATE_INTERVAL_MS);
 
         if(animationFrameDue) 
         {
-            this._lastAnimationUpdateTime = this._lastAnimationUpdateTime + GEOMETRY_UPDATE_INTERVAL_MS;
+            this._lastAnimationUpdateTime = this._lastAnimationUpdateTime + AvatarVisualization.GEOMETRY_UPDATE_INTERVAL_MS;
 
-            if((this._lastAnimationUpdateTime + GEOMETRY_UPDATE_INTERVAL_MS) < time) 
+            if((this._lastAnimationUpdateTime + AvatarVisualization.GEOMETRY_UPDATE_INTERVAL_MS) < time) 
             {
-                this._lastAnimationUpdateTime = time - GEOMETRY_UPDATE_INTERVAL_MS;
+                this._lastAnimationUpdateTime = time - AvatarVisualization.GEOMETRY_UPDATE_INTERVAL_MS;
             }
         }
 
@@ -383,7 +390,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
 
         if(needsSpriteUpdate || needsNewImage) 
         {
-            this._pendingFrameUpdates = ANIMATION_FRAME_UPDATE_INTERVAL;
+            this._pendingFrameUpdates = AvatarVisualization.ANIMATION_FRAME_UPDATE_INTERVAL;
         }
 
         if(needsSpriteUpdate || shouldAnimate || needsNewImage) 
@@ -402,10 +409,10 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             this._activeAvatarImage.updateAnimationByFrames(1);
-            this._updatesUntilFrameUpdate = ANIMATION_FRAME_UPDATE_INTERVAL;
+            this._updatesUntilFrameUpdate = AvatarVisualization.ANIMATION_FRAME_UPDATE_INTERVAL;
 
             const canvasOffsets = this._activeAvatarImage.getCanvasOffsets();
-            const offsets = (canvasOffsets == null || canvasOffsets.length < 3) ? DEFAULT_CANVAS_OFFSETS : canvasOffsets;
+            const offsets = (canvasOffsets == null || canvasOffsets.length < 3) ? AvatarVisualization.DEFAULT_CANVAS_OFFSETS : canvasOffsets;
 
             this.updateMainSprite(model, geometry, offsets, needsSpriteUpdate);
             this.updateExtraSprites(offsets);
@@ -611,7 +618,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             // Vertical offset
-            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_VERTICAL_OFFSET) * BASE_Y_SCALE;
+            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_VERTICAL_OFFSET) * AvatarVisualization.BASE_Y_SCALE;
 
             if(numValue !== this._verticalOffset) 
             {
@@ -683,13 +690,13 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             // Sleeping idle Z addition
-            const idleAddition = this.getAddition(ADDITION_KEY_IDLE) as FloatingIdleZ | null;
+            const idleAddition = this.getAddition(AvatarVisualization.ADDITION_ID_IDLE_BUBBLE) as FloatingIdleZ | null;
 
             if(this._isSleeping) 
             {
                 if(!idleAddition) 
                 {
-                    this.addAddition(new FloatingIdleZ(ADDITION_KEY_IDLE, this));
+                    this.addAddition(new FloatingIdleZ(AvatarVisualization.ADDITION_ID_IDLE_BUBBLE, this));
                 }
 
                 changed = true;
@@ -698,41 +705,41 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             {
                 if(idleAddition) 
                 {
-                    this.removeAddition(ADDITION_KEY_IDLE);
+                    this.removeAddition(AvatarVisualization.ADDITION_ID_IDLE_BUBBLE);
                 }
             }
 
             // Muted bubble addition
             boolValue = model.getNumber(RoomObjectVariableEnum.AVATAR_IS_MUTED) > 0;
-            const mutedAddition = this.getAddition(ADDITION_KEY_MUTED) as MutedBubble | null;
+            const mutedAddition = this.getAddition(AvatarVisualization.ADDITION_ID_MUTED_BUBBLE) as MutedBubble | null;
 
             if(boolValue) 
             {
                 if(!mutedAddition) 
                 {
-                    this.addAddition(new MutedBubble(ADDITION_KEY_MUTED, this));
+                    this.addAddition(new MutedBubble(AvatarVisualization.ADDITION_ID_MUTED_BUBBLE, this));
                 }
 
-                this.removeAddition(ADDITION_KEY_TYPING);
+                this.removeAddition(AvatarVisualization.ADDITION_ID_TYPING_BUBBLE);
                 changed = true;
             }
             else 
             {
                 if(mutedAddition) 
                 {
-                    this.removeAddition(ADDITION_KEY_MUTED);
+                    this.removeAddition(AvatarVisualization.ADDITION_ID_MUTED_BUBBLE);
                     changed = true;
                 }
 
                 // Typing bubble addition (only if not muted)
                 boolValue = model.getNumber(RoomObjectVariableEnum.AVATAR_IS_TYPING) > 0;
-                const typingAddition = this.getAddition(ADDITION_KEY_TYPING) as TypingBubble | null;
+                const typingAddition = this.getAddition(AvatarVisualization.ADDITION_ID_TYPING_BUBBLE) as TypingBubble | null;
 
                 if(boolValue) 
                 {
                     if(!typingAddition) 
                     {
-                        this.addAddition(new TypingBubble(ADDITION_KEY_TYPING, this));
+                        this.addAddition(new TypingBubble(AvatarVisualization.ADDITION_ID_TYPING_BUBBLE, this));
                     }
 
                     changed = true;
@@ -741,7 +748,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
                 {
                     if(typingAddition) 
                     {
-                        this.removeAddition(ADDITION_KEY_TYPING);
+                        this.removeAddition(AvatarVisualization.ADDITION_ID_TYPING_BUBBLE);
                     }
                 }
             }
@@ -751,28 +758,28 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
 
             if(numValue !== AvatarGuideStatus.NONE) 
             {
-                this.removeAddition(ADDITION_KEY_GUIDE_STATUS);
-                this.addAddition(new GuideStatusBubble(ADDITION_KEY_GUIDE_STATUS, this, numValue));
+                this.removeAddition(AvatarVisualization.ADDITION_ID_GUIDE_STATUS_BUBBLE);
+                this.addAddition(new GuideStatusBubble(AvatarVisualization.ADDITION_ID_GUIDE_STATUS_BUBBLE, this, numValue));
                 changed = true;
             }
             else 
             {
-                if(this.getAddition(ADDITION_KEY_GUIDE_STATUS) as GuideStatusBubble | null) 
+                if(this.getAddition(AvatarVisualization.ADDITION_ID_GUIDE_STATUS_BUBBLE) as GuideStatusBubble | null) 
                 {
-                    this.removeAddition(ADDITION_KEY_GUIDE_STATUS);
+                    this.removeAddition(AvatarVisualization.ADDITION_ID_GUIDE_STATUS_BUBBLE);
                     changed = true;
                 }
             }
 
             // Game click target addition
             boolValue = model.getNumber(RoomObjectVariableEnum.AVATAR_IS_PLAYING_GAME) > 0;
-            const gameAddition = this.getAddition(ADDITION_KEY_GAME_CLICK) as GameClickTarget | null;
+            const gameAddition = this.getAddition(AvatarVisualization.ADDITION_ID_GAME_CLICK_TARGET) as GameClickTarget | null;
 
             if(boolValue) 
             {
                 if(!gameAddition) 
                 {
-                    this.addAddition(new GameClickTarget(ADDITION_KEY_GAME_CLICK));
+                    this.addAddition(new GameClickTarget(AvatarVisualization.ADDITION_ID_GAME_CLICK_TARGET));
                 }
 
                 changed = true;
@@ -781,19 +788,19 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             {
                 if(gameAddition) 
                 {
-                    this.removeAddition(ADDITION_KEY_GAME_CLICK);
+                    this.removeAddition(AvatarVisualization.ADDITION_ID_GAME_CLICK_TARGET);
                 }
             }
 
             // Number bubble addition
             numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_NUMBER_VALUE);
-            const numberAddition = this.getAddition(ADDITION_KEY_NUMBER) as NumberBubble | null;
+            const numberAddition = this.getAddition(AvatarVisualization.ADDITION_ID_NUMBER_BUBBLE) as NumberBubble | null;
 
             if(numValue > 0) 
             {
                 if(!numberAddition) 
                 {
-                    this.addAddition(new NumberBubble(ADDITION_KEY_NUMBER, numValue, this));
+                    this.addAddition(new NumberBubble(AvatarVisualization.ADDITION_ID_NUMBER_BUBBLE, numValue, this));
                 }
 
                 changed = true;
@@ -802,19 +809,19 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             {
                 if(numberAddition) 
                 {
-                    this.removeAddition(ADDITION_KEY_NUMBER);
+                    this.removeAddition(AvatarVisualization.ADDITION_ID_NUMBER_BUBBLE);
                 }
             }
 
             // Expression addition
             numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_EXPRESSION);
-            const expressionAddition = this.getAddition(ADDITION_KEY_EXPRESSION);
+            const expressionAddition = this.getAddition(AvatarVisualization.ADDITION_ID_EXPRESSION);
 
             if(numValue > 0) 
             {
                 if(!expressionAddition) 
                 {
-                    const newExpression = ExpressionAdditionFactory.make(ADDITION_KEY_EXPRESSION, numValue, this);
+                    const newExpression = ExpressionAdditionFactory.make(AvatarVisualization.ADDITION_ID_EXPRESSION, numValue, this);
 
                     if(newExpression) 
                     {
@@ -826,7 +833,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             {
                 if(expressionAddition) 
                 {
-                    this.removeAddition(ADDITION_KEY_EXPRESSION);
+                    this.removeAddition(AvatarVisualization.ADDITION_ID_EXPRESSION);
                 }
             }
 
@@ -945,7 +952,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
         this._avatarImagesWithEffect.clear();
         this._activeAvatarImage = null;
 
-        const mainSprite = this.getSprite(SPRITE_INDEX_AVATAR);
+        const mainSprite = this.getSprite(AvatarVisualization.SPRITE_INDEX_AVATAR);
 
         if(mainSprite != null) 
         {
@@ -1032,7 +1039,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
                 }
                 else 
                 {
-                    if(this._avatarImagesWithEffect.size >= MAX_AVATARS_WITH_EFFECT) 
+                    if(this._avatarImagesWithEffect.size >= AvatarVisualization.MAX_AVATARS_WITH_EFFECT) 
                     {
                         const firstKey = this._avatarImagesWithEffect.keys().next().value;
 
@@ -1141,7 +1148,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::updateShadow()
     private updateShadow(scale: number): void 
     {
-        const shadowSprite = this.getSprite(SPRITE_INDEX_SHADOW);
+        const shadowSprite = this.getSprite(AvatarVisualization.SPRITE_INDEX_SHADOW);
 
         this._shadowAssetName = null;
 
@@ -1151,7 +1158,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             (this._posture === 'sit' && this._effectJustApplied)
         );
 
-        if(this._effectType === SNOWBOARDING_EFFECT || this._effectType === FREEZE_EFFECT) 
+        if(this._effectType === AvatarVisualization.SNOWBOARDING_EFFECT || this._effectType === AvatarVisualization.FREEZE_EFFECT) 
         {
             // Don't show shadow for specific effect type
             shadowSprite!.visible = false;
@@ -1278,11 +1285,11 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
         this._isAnimating = avatarImage.isAnimating();
 
         // Count needed sprites for extra animation layers
-        let spriteCount = INITIAL_RESERVED_SPRITES;
+        let spriteCount = AvatarVisualization.INITIAL_RESERVED_SPRITES;
 
         for(const spriteData of this._activeAvatarImage!.getSprites()) 
         {
-            if(spriteData.id !== AVATAR) 
+            if(spriteData.id !== AvatarVisualization.AVATAR) 
             {
                 spriteCount++;
             }
@@ -1374,17 +1381,17 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
             else 
             {
-                mainSprite.relativeDepth = AVATAR_SPRITE_LAYING_DEPTH + offsets[2];
+                mainSprite.relativeDepth = AvatarVisualization.AVATAR_SPRITE_LAYING_DEPTH + offsets[2];
             }
         }
         else 
         {
-            mainSprite.relativeDepth = AVATAR_SPRITE_DEFAULT_DEPTH + offsets[2];
+            mainSprite.relativeDepth = AvatarVisualization.AVATAR_SPRITE_DEFAULT_DEPTH + offsets[2];
         }
 
         if(this._isOwnAvatar) 
         {
-            mainSprite.relativeDepth = mainSprite.relativeDepth - AVATAR_OWN_DEPTH_ADJUST;
+            mainSprite.relativeDepth = mainSprite.relativeDepth - AvatarVisualization.AVATAR_OWN_DEPTH_ADJUST;
             mainSprite.spriteType = RoomObjectSpriteType.AVATAR_OWN;
         }
         else 
@@ -1406,17 +1413,17 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
         }
 
         // Update typing bubble depth
-        const typingAddition = this.getAddition(ADDITION_KEY_TYPING) as TypingBubble | null;
+        const typingAddition = this.getAddition(AvatarVisualization.ADDITION_ID_TYPING_BUBBLE) as TypingBubble | null;
 
         if(typingAddition) 
         {
             if(!this._isSittingManual) 
             {
-                typingAddition.relativeDepth = (AVATAR_SPRITE_DEFAULT_DEPTH - 0.01) + offsets[2];
+                typingAddition.relativeDepth = (AvatarVisualization.AVATAR_SPRITE_DEFAULT_DEPTH - 0.01) + offsets[2];
             }
             else 
             {
-                typingAddition.relativeDepth = (AVATAR_SPRITE_LAYING_DEPTH - 0.01) + offsets[2];
+                typingAddition.relativeDepth = (AvatarVisualization.AVATAR_SPRITE_LAYING_DEPTH - 0.01) + offsets[2];
             }
         }
     }
@@ -1463,7 +1470,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             // Alpha is 0..255 here, and the anchor already carries the placeholder fade.
             sprite.alpha = Math.round(mainSprite.alpha * part.alpha);
             sprite.spriteType = mainSprite.spriteType;
-            sprite.relativeDepth = mainSprite.relativeDepth - (i * PART_DEPTH_STEP);
+            sprite.relativeDepth = mainSprite.relativeDepth - (i * AvatarVisualization.PART_DEPTH_STEP);
         }
     }
 
@@ -1478,12 +1485,12 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
         if(!this._activeAvatarImage) return;
 
         const scale = this._scale;
-        let spriteIndex = INITIAL_RESERVED_SPRITES;
+        let spriteIndex = AvatarVisualization.INITIAL_RESERVED_SPRITES;
         const direction = this._activeAvatarImage.getDirection();
 
         for(const spriteData of this._activeAvatarImage.getSprites()) 
         {
-            if(spriteData.id === AVATAR) 
+            if(spriteData.id === AvatarVisualization.AVATAR) 
             {
                 // Avatar container offsets applied to main sprite
                 const mainSprite = this.getSprite(0);
@@ -1576,7 +1583,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
 
                     if(spriteData.hasStaticY) 
                     {
-                        sprite.offsetY = sprite.offsetY + ((this._verticalOffset * scale) / (2 * BASE_Y_SCALE));
+                        sprite.offsetY = sprite.offsetY + ((this._verticalOffset * scale) / (2 * AvatarVisualization.BASE_Y_SCALE));
                     }
                     else 
                     {
@@ -1585,11 +1592,11 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
 
                     if(this._isSittingManual) 
                     {
-                        sprite.relativeDepth = AVATAR_SPRITE_LAYING_DEPTH - ((0.001 * this.spriteCount) * dz);
+                        sprite.relativeDepth = AvatarVisualization.AVATAR_SPRITE_LAYING_DEPTH - ((0.001 * this.spriteCount) * dz);
                     }
                     else 
                     {
-                        sprite.relativeDepth = AVATAR_SPRITE_DEFAULT_DEPTH - ((0.001 * this.spriteCount) * dz);
+                        sprite.relativeDepth = AvatarVisualization.AVATAR_SPRITE_DEFAULT_DEPTH - ((0.001 * this.spriteCount) * dz);
                     }
 
                     if(spriteData.ink === 33) 

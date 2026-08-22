@@ -89,21 +89,23 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {AvatarInfoWidgetHandler} from '@habbo/ui/handler/AvatarInfoWidgetHandler';
 
-// figure_effect ids that mean "in water" / "riding" (AvatarInfoWidget.as).
-const SWIM_EFFECTS: number[] = [29, 30, 185];
-const RIDE_EFFECT: number = 77;
-
-// IUserData.type for a pet — the literal AS3 passes to PetMenuView.setup()/getUserDataByType().
-const USER_TYPE_PET: number = 2;
-// AS3: AvatarInfoWidget.as::updateRentableBotView() compares `userType != 4` directly — the
-// `rentable_bot` slot of RoomObjectUserTypes, the same literal BotsModel places with.
-const USER_TYPE_RENTABLE_BOT: number = 4;
-
-// PetInfoData.petType for a monsterplant (AvatarInfoWidget.as::isMonsterPlant()).
-const PET_TYPE_MONSTERPLANT: number = 16;
-
 export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuParentWidget, IUpdateReceiver
 {
+    // figure_effect ids that mean "in water" / "riding" (AvatarInfoWidget.as).
+    private static readonly SWIM_EFFECTS: number[] = [29, 30, 185];
+
+    private static readonly RIDE_EFFECT: number = 77;
+
+    // IUserData.type for a pet — the literal AS3 passes to PetMenuView.setup()/getUserDataByType().
+    private static readonly USER_TYPE_PET: number = 2;
+
+    // AS3: AvatarInfoWidget.as::updateRentableBotView() compares `userType != 4` directly — the
+    // `rentable_bot` slot of RoomObjectUserTypes, the same literal BotsModel places with.
+    private static readonly USER_TYPE_RENTABLE_BOT: number = 4;
+
+    // PetInfoData.petType for a monsterplant (AvatarInfoWidget.as::isMonsterPlant()).
+    private static readonly PET_TYPE_MONSTERPLANT: number = 16;
+
     private _config: IHabboConfigurationManager | null;
     // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::_catalog
     private _catalog: IHabboCatalog | null;
@@ -421,7 +423,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
             || this._activeView.userId !== petId
             || this._activeView.userName !== userName
             || this._activeView.roomIndex !== roomIndex
-            || this._activeView.userType !== USER_TYPE_PET)
+            || this._activeView.userType !== AvatarInfoWidget.USER_TYPE_PET)
         {
             if(this._activeView) this.removeView(this._activeView, false);
 
@@ -440,7 +442,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
                     if(!view) return;
 
                     this._activeView = view;
-                    OwnPetMenuView.setup(view, petId, userName, roomIndex, USER_TYPE_PET, petData);
+                    OwnPetMenuView.setup(view, petId, userName, roomIndex, AvatarInfoWidget.USER_TYPE_PET, petData);
                 };
             }
             else
@@ -454,7 +456,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
                     if(!view) return;
 
                     this._activeView = view;
-                    PetMenuView.setup(view, petId, userName, roomIndex, USER_TYPE_PET, petData);
+                    PetMenuView.setup(view, petId, userName, roomIndex, AvatarInfoWidget.USER_TYPE_PET, petData);
                 };
             }
 
@@ -536,7 +538,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
 
         const roomId = this.container?.roomEngine?.activeRoomId ?? -1;
         const session = this.container?.roomSessionManager?.getSession(roomId) ?? null;
-        const userData = session?.userDataManager.getUserDataByType(event.botId, USER_TYPE_RENTABLE_BOT) ?? null;
+        const userData = session?.userDataManager.getUserDataByType(event.botId, AvatarInfoWidget.USER_TYPE_RENTABLE_BOT) ?? null;
 
         if(userData === null) return;
 
@@ -595,7 +597,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
             && current.userId === botId
             && current.userName === userName
             && current.roomIndex === roomIndex
-            && current.userType === USER_TYPE_RENTABLE_BOT;
+            && current.userType === AvatarInfoWidget.USER_TYPE_RENTABLE_BOT;
 
         // AS3's condition verbatim: a click on the bot already showing (and not keepClosed) rebuilds
         // the bubble, which is what makes a second click on the same bot close it below.
@@ -621,7 +623,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
                 if(!view) return;
 
                 this._activeView = view;
-                RentableBotMenuView.setup(view, botId, userName, roomIndex, USER_TYPE_RENTABLE_BOT, data);
+                RentableBotMenuView.setup(view, botId, userName, roomIndex, AvatarInfoWidget.USER_TYPE_RENTABLE_BOT, data);
             };
 
             this.maybeSetupMenuView(roomIndex);
@@ -741,7 +743,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
 
         const view = new UseProductView(this);
 
-        UseProductView.setup(view, userData.webID, userData.name, -1, USER_TYPE_PET, item);
+        UseProductView.setup(view, userData.webID, userData.name, -1, AvatarInfoWidget.USER_TYPE_PET, item);
         this._useProductBubbles.set(key, view);
         this.checkUpdateNeed();
     }
@@ -755,7 +757,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
 
         const view = new BreedPetView(this);
 
-        BreedPetView.setup(view, userData.webID, userData.name, -1, USER_TYPE_PET, item, userData.canBreed);
+        BreedPetView.setup(view, userData.webID, userData.name, -1, AvatarInfoWidget.USER_TYPE_PET, item, userData.canBreed);
         this._breedPetBubbles.set(key, view);
         this.checkUpdateNeed();
     }
@@ -920,7 +922,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
 
             const userData = container.roomSession.userDataManager.getUserDataByIndex(object.getId());
 
-            if(userData && userData.type === USER_TYPE_PET && userData.webID === webId) return object.getId();
+            if(userData && userData.type === AvatarInfoWidget.USER_TYPE_PET && userData.webID === webId) return object.getId();
         }
 
         return -1;
@@ -1288,13 +1290,13 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     // AS3: AvatarInfoWidget.as::get isSwimming()
     public get isSwimming(): boolean
     {
-        return SWIM_EFFECTS.indexOf(this.getOwnModelNumber('figure_effect')) !== -1;
+        return AvatarInfoWidget.SWIM_EFFECTS.indexOf(this.getOwnModelNumber('figure_effect')) !== -1;
     }
 
     // AS3: AvatarInfoWidget.as::get isCurrentUserRiding()
     public get isCurrentUserRiding(): boolean
     {
-        return this.getOwnModelNumber('figure_effect') === RIDE_EFFECT;
+        return this.getOwnModelNumber('figure_effect') === AvatarInfoWidget.RIDE_EFFECT;
     }
 
     // AS3: AvatarInfoWidget.as::get hasFreeSaddle()
@@ -1312,7 +1314,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     // AS3: AvatarInfoWidget.as::isMonsterPlant()
     public isMonsterPlant(): boolean
     {
-        return this._petData.petType === PET_TYPE_MONSTERPLANT;
+        return this._petData.petType === AvatarInfoWidget.PET_TYPE_MONSTERPLANT;
     }
 
     // AS3: AvatarInfoWidget.as::openTrainingView()

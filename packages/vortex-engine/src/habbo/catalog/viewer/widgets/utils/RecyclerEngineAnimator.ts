@@ -1,28 +1,6 @@
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 
-const MIN_ANGLE = -88;
-const MAX_ANGLE = 88;
-const SHAKE_THRESHOLD_ANGLE = 82;
-const PRE_FINISH_ANGLE_THRESHOLD = 68;
-const ANGLE_BUFFER = 5;
-const RANDOM_BIAS_SLOPE = 0.00008;
-const BASE_BIAS = 0.35;
-const FIRST_BIAS = 0.2;
-const TICK_INTERVAL_MS = 16;
-const RESET_TIME = 250;
-const SHAKE_TIMEOUT = 50;
-const SHAKE_PIXELS = 3;
-const MIN_TIME_ACTIVE = 3000;
-const SHAKE_PIXELS_EASTER_EGG = 24;
-const STEP_SIZE_EASTER_EGG = 70;
-const STEP_DURATION_EASTER_EGG = 20;
-const TOTAL_DURATION_EASTER_EGG = 5000;
-const STEP_DURATION_MIN = 400;
-const STEP_DURATION_MAX = 200;
-const STEP_SIZE_MIN = 20;
-const STEP_SIZE_MAX = 55;
-
 /**
  * Drives the recycler machine's pointer-arrow spin animation (normal + "easter egg" mode).
  *
@@ -30,6 +8,51 @@ const STEP_SIZE_MAX = 55;
  */
 export class RecyclerEngineAnimator implements IDisposable
 {
+    private static readonly MIN_ANGLE = -88;
+
+    private static readonly MAX_ANGLE = 88;
+
+    private static readonly SHAKE_THRESHOLD_ANGLE = 82;
+
+    private static readonly PRE_FINISH_ANGLE_THRESHOLD = 68;
+
+    private static readonly ANGLE_BUFFER = 5;
+
+    private static readonly RANDOM_BIAS_SLOPE = 0.00008;
+
+    private static readonly BASE_BIAS = 0.35;
+
+    private static readonly FIRST_BIAS = 0.2;
+
+    private static readonly TICK_INTERVAL_MS = 16;
+
+    private static readonly RESET_TIME = 250;
+
+    private static readonly SHAKE_TIMEOUT = 50;
+
+    private static readonly SHAKE_PIXELS = 3;
+
+    private static readonly MIN_TIME_ACTIVE = 3000;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::SHAKE_PIXELS_E
+    // (and STEP_SIZE_E / STEP_DURATION_E / TOTAL_DURATION_E) — the `_E` suffix is AS3's own
+    // spelling for the easter-egg variants, read only when `_easterEggMode` is set.
+    private static readonly SHAKE_PIXELS_E = 24;
+
+    private static readonly STEP_SIZE_E = 70;
+
+    private static readonly STEP_DURATION_E = 20;
+
+    private static readonly TOTAL_DURATION_E = 5000;
+
+    private static readonly STEP_DURATION_MIN = 400;
+
+    private static readonly STEP_DURATION_MAX = 200;
+
+    private static readonly STEP_SIZE_MIN = 20;
+
+    private static readonly STEP_SIZE_MAX = 55;
+
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::_arrow
     private _arrow: IStaticBitmapWrapperWindow | null;
 
@@ -115,7 +138,7 @@ export class RecyclerEngineAnimator implements IDisposable
         this.setRotation(this._fromAngle % 360);
         this._toAngle = 0;
         this._stepBeginTime = performance.now();
-        this._animationTime = RESET_TIME;
+        this._animationTime = RecyclerEngineAnimator.RESET_TIME;
         this.setShake(0, 0);
         this.startTimer();
     }
@@ -123,7 +146,7 @@ export class RecyclerEngineAnimator implements IDisposable
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::startTimer()
     private startTimer(): void
     {
-        this._timer = setInterval(() => this.onTimerTick(), TICK_INTERVAL_MS);
+        this._timer = setInterval(() => this.onTimerTick(), RecyclerEngineAnimator.TICK_INTERVAL_MS);
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::stopTimer()
@@ -164,11 +187,11 @@ export class RecyclerEngineAnimator implements IDisposable
 
         this.setRotation(angle);
 
-        if(this.isBusy() && now > this._shakeLastTime + SHAKE_TIMEOUT)
+        if(this.isBusy() && now > this._shakeLastTime + RecyclerEngineAnimator.SHAKE_TIMEOUT)
         {
             this._shakeLastTime = now;
 
-            const shakePixels = this._easterEggMode ? SHAKE_PIXELS_EASTER_EGG : SHAKE_PIXELS;
+            const shakePixels = this._easterEggMode ? RecyclerEngineAnimator.SHAKE_PIXELS_E : RecyclerEngineAnimator.SHAKE_PIXELS;
 
             this.setShake(RecyclerEngineAnimator.rand(-shakePixels, shakePixels), RecyclerEngineAnimator.rand(-shakePixels, shakePixels));
         }
@@ -180,8 +203,8 @@ export class RecyclerEngineAnimator implements IDisposable
                 this.stopTimer();
                 this._resetting = false;
             }
-            else if((angle >= SHAKE_THRESHOLD_ANGLE && !this._easterEggMode && now - this._startTime > MIN_TIME_ACTIVE)
-                || (this._easterEggMode && now - this._startTime > TOTAL_DURATION_EASTER_EGG))
+            else if((angle >= RecyclerEngineAnimator.SHAKE_THRESHOLD_ANGLE && !this._easterEggMode && now - this._startTime > RecyclerEngineAnimator.MIN_TIME_ACTIVE)
+                || (this._easterEggMode && now - this._startTime > RecyclerEngineAnimator.TOTAL_DURATION_E))
             {
                 this.stopTimer();
                 this.setShake(0, 0);
@@ -189,7 +212,7 @@ export class RecyclerEngineAnimator implements IDisposable
             }
             else
             {
-                this.nextStep(angle >= PRE_FINISH_ANGLE_THRESHOLD && now - this._startTime > MIN_TIME_ACTIVE - 300 && !this._easterEggMode);
+                this.nextStep(angle >= RecyclerEngineAnimator.PRE_FINISH_ANGLE_THRESHOLD && now - this._startTime > RecyclerEngineAnimator.MIN_TIME_ACTIVE - 300 && !this._easterEggMode);
             }
         }
     }
@@ -202,38 +225,38 @@ export class RecyclerEngineAnimator implements IDisposable
 
         if(finishStep)
         {
-            this._toAngle = MAX_ANGLE;
+            this._toAngle = RecyclerEngineAnimator.MAX_ANGLE;
         }
         else if(this._easterEggMode)
         {
-            this._toAngle = this._fromAngle - STEP_SIZE_EASTER_EGG;
+            this._toAngle = this._fromAngle - RecyclerEngineAnimator.STEP_SIZE_E;
         }
         else
         {
             const elapsedSinceStart = performance.now() - this._startTime;
             let reverse: boolean;
 
-            if(this._fromAngle <= MIN_ANGLE + ANGLE_BUFFER)
+            if(this._fromAngle <= RecyclerEngineAnimator.MIN_ANGLE + RecyclerEngineAnimator.ANGLE_BUFFER)
             {
                 reverse = false;
             }
-            else if(this._fromAngle >= MAX_ANGLE - ANGLE_BUFFER)
+            else if(this._fromAngle >= RecyclerEngineAnimator.MAX_ANGLE - RecyclerEngineAnimator.ANGLE_BUFFER)
             {
                 reverse = true;
             }
             else
             {
-                const bias = firstStep ? FIRST_BIAS : BASE_BIAS + elapsedSinceStart * RANDOM_BIAS_SLOPE;
+                const bias = firstStep ? RecyclerEngineAnimator.FIRST_BIAS : RecyclerEngineAnimator.BASE_BIAS + elapsedSinceStart * RecyclerEngineAnimator.RANDOM_BIAS_SLOPE;
 
                 reverse = Math.random() > bias;
             }
 
-            const step = (reverse ? -1 : 1) * RecyclerEngineAnimator.rand(STEP_SIZE_MIN, STEP_SIZE_MAX);
+            const step = (reverse ? -1 : 1) * RecyclerEngineAnimator.rand(RecyclerEngineAnimator.STEP_SIZE_MIN, RecyclerEngineAnimator.STEP_SIZE_MAX);
 
-            this._toAngle = Math.max(MIN_ANGLE, Math.min(MAX_ANGLE, this._fromAngle + step));
+            this._toAngle = Math.max(RecyclerEngineAnimator.MIN_ANGLE, Math.min(RecyclerEngineAnimator.MAX_ANGLE, this._fromAngle + step));
         }
 
-        this._animationTime = this._easterEggMode ? STEP_DURATION_EASTER_EGG : RecyclerEngineAnimator.rand(STEP_DURATION_MIN, STEP_DURATION_MAX);
+        this._animationTime = this._easterEggMode ? RecyclerEngineAnimator.STEP_DURATION_E : RecyclerEngineAnimator.rand(RecyclerEngineAnimator.STEP_DURATION_MIN, RecyclerEngineAnimator.STEP_DURATION_MAX);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/utils/RecyclerEngineAnimator.as::isBusy()

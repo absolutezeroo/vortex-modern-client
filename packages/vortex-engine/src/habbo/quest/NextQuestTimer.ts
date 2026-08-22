@@ -7,9 +7,6 @@ import type {HabboQuestEngine} from './HabboQuestEngine';
 import type {QuestMessageData} from '@habbo/communication/messages/parser/quest/QuestMessageData';
 import {FriendlyTime} from '@habbo/utils/FriendlyTime';
 
-const REFRESH_PERIOD_IN_MSECS = 1000;
-const TOOLBAR_EXTENSION_ID = 'next_quest';
-
 /**
  * The "come back later" HUD widget for a delayed quest (waitPeriodSeconds > 0),
  * toolbar-extension-hosted like QuestTracker. Collapsed by default; expands to show
@@ -19,6 +16,10 @@ const TOOLBAR_EXTENSION_ID = 'next_quest';
  */
 export class NextQuestTimer implements IDisposable
 {
+    private static readonly REFRESH_PERIOD_IN_MSECS = 1000;
+
+    private static readonly TOOLBAR_EXTENSION_ID = 'next_quest';
+
     // AS3: NextQuestTimer.as::_questEngine
     private _engine: HabboQuestEngine | null;
     // AS3: NextQuestTimer.as::_SafeStr_4677
@@ -41,7 +42,7 @@ export class NextQuestTimer implements IDisposable
     {
         if(this._engine)
         {
-            this._engine.toolbar?.extensionView?.detachExtension(TOOLBAR_EXTENSION_ID);
+            this._engine.toolbar?.extensionView?.detachExtension(NextQuestTimer.TOOLBAR_EXTENSION_ID);
         }
 
         this._engine = null;
@@ -97,7 +98,7 @@ export class NextQuestTimer implements IDisposable
         if(this._window)
         {
             this._window.visible = true;
-            this._engine?.toolbar?.extensionView?.attachExtension(TOOLBAR_EXTENSION_ID, this._window);
+            this._engine?.toolbar?.extensionView?.attachExtension(NextQuestTimer.TOOLBAR_EXTENSION_ID, this._window);
         }
     }
 
@@ -218,7 +219,7 @@ export class NextQuestTimer implements IDisposable
 
         if(this._msecsToRefresh > 0) return;
 
-        this._msecsToRefresh = REFRESH_PERIOD_IN_MSECS;
+        this._msecsToRefresh = NextQuestTimer.REFRESH_PERIOD_IN_MSECS;
         this.refresh();
     }
 
@@ -240,7 +241,7 @@ export class NextQuestTimer implements IDisposable
         if(this._window && this._window.visible)
         {
             this._window.visible = false;
-            this._engine?.toolbar?.extensionView?.detachExtension(TOOLBAR_EXTENSION_ID);
+            this._engine?.toolbar?.extensionView?.detachExtension(NextQuestTimer.TOOLBAR_EXTENSION_ID);
         }
     }
 

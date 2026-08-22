@@ -24,19 +24,23 @@ import {AvatarContextInfoButtonView} from './AvatarContextInfoButtonView';
 import type {AvatarInfoData} from './AvatarInfoData';
 import type {AvatarInfoWidget} from './AvatarInfoWidget';
 
-const MODE_NORMAL: number = 0;
-const MODE_CLUB_DANCES: number = 1;
-const MODE_NAME_CHANGE: number = 2;
-const MODE_EXPRESSIONS: number = 3;
-const MODE_SIGNS: number = 4;
-
 export class OwnAvatarMenuView extends AvatarContextInfoButtonView
 {
+    private static readonly MODE_NORMAL: number = 0;
+
+    private static readonly MODE_CLUB_DANCES: number = 1;
+
+    private static readonly MODE_NAME_CHANGE: number = 2;
+
+    private static readonly MODE_EXPRESSIONS: number = 3;
+
+    private static readonly MODE_SIGNS: number = 4;
+
     private static _receptionShown: boolean = false;
 
     private _data: AvatarInfoData | null = null;
     // AS3: .../src/com/sulake/habbo/ui/widget/avatarinfo/OwnAvatarMenuView.as::_mode
-    private _mode: number = MODE_NORMAL;
+    private _mode: number = OwnAvatarMenuView.MODE_NORMAL;
 
     // AS3: OwnAvatarMenuView.as::OwnAvatarMenuView()
     constructor(widget: AvatarInfoWidget)
@@ -65,20 +69,20 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
             && (config?.getInteger('new.identity', 0) ?? 0) > 0
             && (config?.getBoolean('new.user.reception.enabled') ?? false))
         {
-            view._mode = MODE_NORMAL;
+            view._mode = OwnAvatarMenuView.MODE_NORMAL;
             OwnAvatarMenuView._receptionShown = true;
         }
         else if(view.widget.isDancing && view.widget.hasClub && !view.widget.hasEffectOn)
         {
-            view._mode = MODE_CLUB_DANCES;
+            view._mode = OwnAvatarMenuView.MODE_CLUB_DANCES;
         }
         else if(data.allowNameChange && view.widget.useMinimizedOwnAvatarMenu)
         {
-            view._mode = MODE_NAME_CHANGE;
+            view._mode = OwnAvatarMenuView.MODE_NAME_CHANGE;
         }
         else
         {
-            view._mode = MODE_NORMAL;
+            view._mode = OwnAvatarMenuView.MODE_NORMAL;
         }
 
         AvatarContextInfoButtonView.setupButtonView(view, userId, userName, roomIndex, userType, false);
@@ -177,7 +181,7 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
 
         switch(this._mode)
         {
-            case MODE_NORMAL:
+            case OwnAvatarMenuView.MODE_NORMAL:
                 this.showButton('change_name', this._data.allowNameChange);
                 this.showButton('decorate', this.decorateModeSupported() && (this._data.myRoomControllerLevel >= 1 || this._data.amIOwner));
                 this.showButton('change_looks');
@@ -192,7 +196,7 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
                 this.showButton((this.widget.configuration?.getBoolean('avatar.expressions_menu.enabled') ?? false) ? 'expressions' : 'wave');
                 this.showButton('signs', this.widget.configuration?.getBoolean('avatar.signs.enabled') ?? false);
                 break;
-            case MODE_CLUB_DANCES:
+            case OwnAvatarMenuView.MODE_CLUB_DANCES:
                 this.showButton('dance_stop', true, this.widget.isDancing);
                 this.showButton('dance_1');
                 this.showButton('dance_2');
@@ -200,11 +204,11 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
                 this.showButton('dance_4');
                 this.showButton('back');
                 break;
-            case MODE_NAME_CHANGE:
+            case OwnAvatarMenuView.MODE_NAME_CHANGE:
                 this.showButton('change_name');
                 this.showButton('more');
                 break;
-            case MODE_EXPRESSIONS:
+            case OwnAvatarMenuView.MODE_EXPRESSIONS:
                 this.showButton('wave', true, !this.widget.isSwimming);
                 this.showButton('laugh', true, !this.widget.hasEffectOn && !this.widget.isSwimming && this.widget.hasVip, !this.widget.hasVip);
                 this.showButton('blow', true, !this.widget.hasEffectOn && !this.widget.isSwimming && this.widget.hasVip, !this.widget.hasVip);
@@ -218,7 +222,7 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
                 }
                 this.showButton('back');
                 break;
-            case MODE_SIGNS:
+            case OwnAvatarMenuView.MODE_SIGNS:
                 this.showButtonGrid('signs_grid');
                 this.showButton('back');
                 break;
@@ -367,20 +371,20 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
         switch(action)
         {
             case 'expressions':
-                this.changeMode(MODE_EXPRESSIONS);
+                this.changeMode(OwnAvatarMenuView.MODE_EXPRESSIONS);
                 break;
             case 'dance_menu':
-                this.changeMode(MODE_CLUB_DANCES);
+                this.changeMode(OwnAvatarMenuView.MODE_CLUB_DANCES);
                 break;
             case 'signs':
-                this.changeMode(MODE_SIGNS);
+                this.changeMode(OwnAvatarMenuView.MODE_SIGNS);
                 break;
             case 'back':
-                this.changeMode(MODE_NORMAL);
+                this.changeMode(OwnAvatarMenuView.MODE_NORMAL);
                 break;
             case 'more':
                 this.widget.useMinimizedOwnAvatarMenu = false;
-                this.changeMode(MODE_NORMAL);
+                this.changeMode(OwnAvatarMenuView.MODE_NORMAL);
                 break;
             case 'change_looks':
                 this.widget.openAvatarEditor();

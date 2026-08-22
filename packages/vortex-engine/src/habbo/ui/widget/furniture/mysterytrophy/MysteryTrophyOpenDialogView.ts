@@ -20,13 +20,15 @@ import type {FurnitureContextMenuWidget} from '@habbo/ui/widget/furniture/contex
 
 const log = Logger.getLogger('habbo.ui.widget.furniture.mysterytrophy.MysteryTrophyOpenDialogView');
 
-// AS3: MysteryTrophyOpenDialogView.as::_SafeStr_10490 / _SafeStr_10615 / _SafeStr_10470
-const BUTTON_CLOSE: string = 'header_button_close';
-const BUTTON_CANCEL: string = 'cancel';
-const BUTTON_OK: string = 'ok';
-
 export class MysteryTrophyOpenDialogView
 {
+    // AS3: MysteryTrophyOpenDialogView.as::_SafeStr_10490 / _SafeStr_10615 / _SafeStr_10470
+    private static readonly BUTTON_CLOSE: string = 'header_button_close';
+
+    private static readonly BUTTON_CANCEL: string = 'cancel';
+
+    private static readonly BUTTON_OK: string = 'ok';
+
     // AS3: .../src/com/sulake/habbo/ui/widget/furniture/mysterytrophy/MysteryTrophyOpenDialogView.as::_disposed
     private _disposed: boolean = false;
 
@@ -79,9 +81,9 @@ export class MysteryTrophyOpenDialogView
             return;
         }
 
-        this.addClickListener(BUTTON_OK);
-        this.addClickListener(BUTTON_CANCEL);
-        this.addClickListener(BUTTON_CLOSE);
+        this.addClickListener(MysteryTrophyOpenDialogView.BUTTON_OK);
+        this.addClickListener(MysteryTrophyOpenDialogView.BUTTON_CANCEL);
+        this.addClickListener(MysteryTrophyOpenDialogView.BUTTON_CLOSE);
 
         this._window.center();
     }
@@ -107,11 +109,11 @@ export class MysteryTrophyOpenDialogView
 
         switch(window.name)
         {
-            case BUTTON_CLOSE:
-            case BUTTON_CANCEL:
+            case MysteryTrophyOpenDialogView.BUTTON_CLOSE:
+            case MysteryTrophyOpenDialogView.BUTTON_CANCEL:
                 this.close();
                 break;
-            case BUTTON_OK:
+            case MysteryTrophyOpenDialogView.BUTTON_OK:
                 this.connection?.send(new OpenMysteryTrophyMessageComposer(
                     this._objectId, this.getTrophyInscription() ?? ''
                 ));

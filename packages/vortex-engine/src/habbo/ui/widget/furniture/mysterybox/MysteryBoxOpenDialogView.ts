@@ -38,24 +38,28 @@ import {KEY_COLORS} from './MysteryBoxToolbarExtension';
 
 const log = Logger.getLogger('habbo.ui.widget.furniture.mysterybox.MysteryBoxOpenDialogView');
 
-/**
- * AS3: MysteryBoxOpenDialogView.as::showRewardWindow() — the direction and scale it renders the
- * prize preview at.
- */
-const PREVIEW_DIRECTION_X: number = 90;
-const PREVIEW_SCALE: number = 64;
-
-/**
- * AS3: MysteryBoxOpenDialogView.as::showRewardWindow() — the product-type codes the switch reads.
- * Same one-letter vocabulary the catalog uses.
- */
-const CONTENT_TYPE_FLOOR_ITEM: string = 's';
-const CONTENT_TYPE_WALL_ITEM: string = 'i';
-const CONTENT_TYPE_EFFECT: string = 'e';
-const CONTENT_TYPE_SUBSCRIPTION: string = 'h';
-
 export class MysteryBoxOpenDialogView implements IGetImageListener
 {
+    /**
+    * AS3: MysteryBoxOpenDialogView.as::showRewardWindow() — the direction and scale it renders the
+    * prize preview at.
+    */
+    private static readonly PREVIEW_DIRECTION_X: number = 90;
+
+    private static readonly PREVIEW_SCALE: number = 64;
+
+    /**
+    * AS3: MysteryBoxOpenDialogView.as::showRewardWindow() — the product-type codes the switch reads.
+    * Same one-letter vocabulary the catalog uses.
+    */
+    private static readonly CONTENT_TYPE_FLOOR_ITEM: string = 's';
+
+    private static readonly CONTENT_TYPE_WALL_ITEM: string = 'i';
+
+    private static readonly CONTENT_TYPE_EFFECT: string = 'e';
+
+    private static readonly CONTENT_TYPE_SUBSCRIPTION: string = 'h';
+
     // AS3: .../src/com/sulake/habbo/ui/widget/furniture/mysterybox/MysteryBoxOpenDialogView.as::_disposed
     private _disposed: boolean = false;
 
@@ -254,23 +258,23 @@ export class MysteryBoxOpenDialogView implements IGetImageListener
         this._imageId = -1;
 
         const roomEngine = container.roomEngine;
-        const direction = new Vector3d(PREVIEW_DIRECTION_X, 0, 0);
+        const direction = new Vector3d(MysteryBoxOpenDialogView.PREVIEW_DIRECTION_X, 0, 0);
 
         let image: ImageResult | null;
 
         switch(contentType)
         {
-            case CONTENT_TYPE_FLOOR_ITEM:
-                image = roomEngine?.getFurnitureImage(classId, direction, PREVIEW_SCALE, this, 0) ?? null;
+            case MysteryBoxOpenDialogView.CONTENT_TYPE_FLOOR_ITEM:
+                image = roomEngine?.getFurnitureImage(classId, direction, MysteryBoxOpenDialogView.PREVIEW_SCALE, this, 0) ?? null;
                 break;
-            case CONTENT_TYPE_WALL_ITEM:
-                image = roomEngine?.getWallItemImage(classId, direction, PREVIEW_SCALE, this, 0) ?? null;
+            case MysteryBoxOpenDialogView.CONTENT_TYPE_WALL_ITEM:
+                image = roomEngine?.getWallItemImage(classId, direction, MysteryBoxOpenDialogView.PREVIEW_SCALE, this, 0) ?? null;
                 break;
-            case CONTENT_TYPE_EFFECT:
+            case MysteryBoxOpenDialogView.CONTENT_TYPE_EFFECT:
                 this.setRewardBitmap(container.catalog?.getPixelEffectIcon(classId) ?? null);
 
                 return;
-            case CONTENT_TYPE_SUBSCRIPTION:
+            case MysteryBoxOpenDialogView.CONTENT_TYPE_SUBSCRIPTION:
                 this.setRewardBitmap(container.catalog?.getSubscriptionProductIcon(classId) ?? null);
 
                 return;

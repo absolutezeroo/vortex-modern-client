@@ -4,9 +4,6 @@ import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {RoomChatInputView} from '../RoomChatInputView';
 
-/** AS3: ChatStyleGridView.as::CHAT_BAR_POPUP_OFFSET */
-const CHAT_BAR_POPUP_OFFSET = 55;
-
 /**
  * ChatStyleGridView
  *
@@ -17,6 +14,9 @@ const CHAT_BAR_POPUP_OFFSET = 55;
  */
 export class ChatStyleGridView implements IDisposable 
 {
+    /** AS3: ChatStyleGridView.as::CHAT_BAR_POPUP_OFFSET */
+    private static readonly CHAT_BAR_POPUP_OFFSET = 55;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleGridView.as::ChatStyleGridView()
     constructor(chatInputView: RoomChatInputView) 
     {
@@ -77,6 +77,6 @@ export class ChatStyleGridView implements IDisposable
         const popupParent = this._window.parent as IWindowContainer;
 
         popupParent.x = selectorRect.x;
-        popupParent.y = selectorRect.y + selectorRect.height - CHAT_BAR_POPUP_OFFSET - this._window.height;
+        popupParent.y = selectorRect.y + selectorRect.height - ChatStyleGridView.CHAT_BAR_POPUP_OFFSET - this._window.height;
     }
 }
