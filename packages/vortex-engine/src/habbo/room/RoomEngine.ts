@@ -166,6 +166,7 @@ import {RoomObjectTileMouseEvent} from './events/RoomObjectTileMouseEvent';
 import {RoomObjectWallMouseEvent} from './events/RoomObjectWallMouseEvent';
 import {RoomObjectStateChangeEvent} from './events/RoomObjectStateChangeEvent';
 import {RoomObjectWidgetRequestEvent} from './events/RoomObjectWidgetRequestEvent';
+import {RoomObjectFloorHoleEvent} from './events/RoomObjectFloorHoleEvent';
 import {RoomObjectFurnitureActionEvent} from './events/RoomObjectFurnitureActionEvent';
 import {RoomEngineToWidgetEvent} from './events/RoomEngineToWidgetEvent';
 import {
@@ -950,6 +951,40 @@ export class RoomEngine extends Component implements IRoomEngine,
 	 * environment is the only caller: while it holds the flag, clicks on avatars or furni are
 	 * ignored by the room and fall through to the floor.
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addFloorHole()
+    addFloorHole(roomId: number, objectId: number): void
+    {
+        if(objectId < 0) return;
+
+        const room = this.getObjectRoom(roomId);
+        const furniture = this.getRoomObject(roomId, objectId, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) as IRoomObjectController | null;
+
+        if(!furniture || !furniture.getModel() || !room || !room.getEventHandler()) return;
+
+        const location = furniture.getLocation();
+
+        room.getEventHandler()!.processUpdateMessage(new RoomObjectRoomFloorHoleUpdateMessage(
+            RoomObjectRoomFloorHoleUpdateMessage.ADD_HOLE,
+            objectId,
+            Math.trunc(location.x),
+            Math.trunc(location.y),
+            Math.trunc(furniture.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_SIZE_X)),
+            Math.trunc(furniture.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_SIZE_Y))
+        ));
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::removeFloorHole()
+    removeFloorHole(roomId: number, objectId: number): void
+    {
+        if(objectId < 0) return;
+
+        const room = this.getObjectRoom(roomId);
+
+        room?.getEventHandler()?.processUpdateMessage(
+            new RoomObjectRoomFloorHoleUpdateMessage(RoomObjectRoomFloorHoleUpdateMessage.REMOVE_HOLE, objectId)
+        );
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setClickSettings()
     setClickSettings(owner: string, throughUsers: boolean, throughFurni: boolean): void
     {
@@ -6622,6 +6657,14 @@ export class RoomEngine extends Component implements IRoomEngine,
         else if(event instanceof RoomObjectWidgetRequestEvent)
         {
             this.handleObjectWidgetRequestEvent(event, this._activeRoomId);
+        }
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectFloorHoleEvent(). Same dead-signal shape as the
+        // ROWRE_* branch above: FurnitureFloorHoleLogic emits ADD_HOLE/REMOVE_HOLE, RoomLogic
+        // knows how to apply the resulting update message, and nothing joined the two.
+        else if(event instanceof RoomObjectFloorHoleEvent)
+        {
+            if(event.type === RoomObjectFloorHoleEvent.ADD_HOLE) this.addFloorHole(this._activeRoomId, event.objectId);
+            else if(event.type === RoomObjectFloorHoleEvent.REMOVE_HOLE) this.removeFloorHole(this._activeRoomId, event.objectId);
         }
 
         // Forward object events
