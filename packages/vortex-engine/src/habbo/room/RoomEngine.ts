@@ -167,6 +167,9 @@ import {RoomObjectWallMouseEvent} from './events/RoomObjectWallMouseEvent';
 import {RoomObjectStateChangeEvent} from './events/RoomObjectStateChangeEvent';
 import {RoomObjectWidgetRequestEvent} from './events/RoomObjectWidgetRequestEvent';
 import {RoomObjectFloorHoleEvent} from './events/RoomObjectFloorHoleEvent';
+import {RoomObjectDataRequestEvent} from './events/RoomObjectDataRequestEvent';
+import {RoomObjectHSLColorEnableEvent} from './events/RoomObjectHSLColorEnableEvent';
+import {RoomEngineHSLColorEnableEvent} from './events/RoomEngineHSLColorEnableEvent';
 import {RoomObjectFurnitureActionEvent} from './events/RoomObjectFurnitureActionEvent';
 import {RoomEngineToWidgetEvent} from './events/RoomEngineToWidgetEvent';
 import {
@@ -6657,6 +6660,45 @@ export class RoomEngine extends Component implements IRoomEngine,
         else if(event instanceof RoomObjectWidgetRequestEvent)
         {
             this.handleObjectWidgetRequestEvent(event, this._activeRoomId);
+        }
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectDataRequestEvent(). A furni logic asking the
+        // engine who the local user is, or what the asset URL prefix is; the engine answers by
+        // writing the value onto the object's own model.
+        else if(event instanceof RoomObjectDataRequestEvent)
+        {
+            // AS3 casts getModel() to the writable IRoomObjectModelController; the port keeps
+            // the two apart, so read the controller directly.
+            const model = (event.object as IRoomObjectController | null)?.getModelController() ?? null;
+
+            if(model !== null)
+            {
+                if(event.type === RoomObjectDataRequestEvent.CURRENT_USER_ID)
+                {
+                    model.setNumber(RoomObjectVariableEnum.SESSION_CURRENT_USER_ID, this.sessionDataManager?.userId ?? 0);
+                }
+                else if(event.type === RoomObjectDataRequestEvent.URL_PREFIX)
+                {
+                    model.setString(RoomObjectVariableEnum.SESSION_URL_PREFIX,
+                        this._configurationManager?.getProperty('url.prefix') ?? '');
+                }
+            }
+        }
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectHSLColorEnableEvent(). Straight relay of the
+        // background-colour furni's state to whoever listens on the engine.
+        else if(event instanceof RoomObjectHSLColorEnableEvent)
+        {
+            if(event.type === RoomObjectHSLColorEnableEvent.ROOM_BACKGROUND_COLOR)
+            {
+                this.events.emit(RoomEngineHSLColorEnableEvent.ROOM_BACKGROUND_COLOR,
+                    new RoomEngineHSLColorEnableEvent(
+                        RoomEngineHSLColorEnableEvent.ROOM_BACKGROUND_COLOR,
+                        this._activeRoomId,
+                        event.enable,
+                        event.hue,
+                        event.saturation,
+                        event.lightness
+                    ));
+            }
         }
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectFloorHoleEvent(). Same dead-signal shape as the
         // ROWRE_* branch above: FurnitureFloorHoleLogic emits ADD_HOLE/REMOVE_HOLE, RoomLogic
