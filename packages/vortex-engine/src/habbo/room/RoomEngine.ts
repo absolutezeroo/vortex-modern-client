@@ -216,6 +216,8 @@ interface IRoomEngineRoomInstanceData {
     // message and the wall-item paths read it back.
     legacyGeometry: LegacyWallGeometry;
     selectedObjectData: SelectedRoomObjectData | null;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get placedObject()
+    placedObjectData: SelectedRoomObjectData | null;
     /**
 	 * AS3 keeps this on RoomInstanceData behind `addButtonMouseCursorOwner()`,
 	 * `removeButtonMouseCursorOwner()` and `hasButtonMouseCursorOwners()` — three one-line array
@@ -1599,6 +1601,33 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.resetSelectedObjectData(this._activeRoomId);
     }
 
+    /**
+	 * What was last dropped into the room, and is waiting for the server to confirm it.
+	 *
+	 * It is not the selection: `placeObject()` records the item here and clears the selection in
+	 * the same breath, so that when the real object arrives from the server `addObjectFurniture()`
+	 * can recognise it and select it — which is what keeps a just-placed furni under the mover.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setPlacedObjectData()
+    setPlacedObjectData(roomId: number, data: SelectedRoomObjectData | null): void
+    {
+        const instanceData = this.getRoomInstanceData(roomId);
+
+        // AS3's `set placedObject` disposes whatever it replaces.
+        if(instanceData.placedObjectData !== null && instanceData.placedObjectData !== data)
+        {
+            instanceData.placedObjectData.dispose();
+        }
+
+        instanceData.placedObjectData = data;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPlacedObjectData()
+    getPlacedObjectData(roomId: number): ISelectedRoomObjectData | null
+    {
+        return this._roomInstanceData.get(roomId)?.placedObjectData ?? null;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::getSelectedObjectData()
     getSelectedObjectData(roomId: number): ISelectedRoomObjectData | null 
     {
@@ -2095,6 +2124,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             instanceData.tileObjectMap?.dispose();
             instanceData.legacyGeometry.dispose();
             instanceData.selectedObjectData?.dispose();
+            instanceData.placedObjectData?.dispose();
             this._roomInstanceData.delete(roomId);
         }
 
@@ -3663,6 +3693,16 @@ export class RoomEngine extends Component implements IRoomEngine,
             new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_ADDED, roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
         );
 
+        // The furni we just dropped has come back from the server with its real id: pick it up
+        // again, so the mover stays on it. `Math.abs` because the placed id is the inventory
+        // one, which is negative.
+        const placed = this.getPlacedObjectData(roomId);
+
+        if(placed !== null && Math.abs(placed.id) === id && placed.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+        {
+            this.selectRoomObject(roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE);
+        }
+
         return true;
     }
 
@@ -3948,9 +3988,9 @@ export class RoomEngine extends Component implements IRoomEngine,
         ownerId: number,
         ownerName: string,
         secondsToExpiration: number
-    ): boolean 
+    ): boolean
     {
-        return this.addRoomObjectWallItem(
+        if(!this.addRoomObjectWallItem(
             roomId,
             id,
             typeId,
@@ -3962,7 +4002,24 @@ export class RoomEngine extends Component implements IRoomEngine,
             usagePolicy,
             ownerId,
             ownerName
+        )) return false;
+
+        // AS3 dispatches REOE_ADDED for wall items too, and this port did not — so
+        // RoomAreaSelectionManager, which explicitly wants category 20, never saw one.
+        this.events.emit(
+            RoomEngineObjectEvent.REOE_ADDED,
+            new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_ADDED, roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
         );
+
+        // Same re-selection as the floor path — without `Math.abs`, as AS3 has it here.
+        const placed = this.getPlacedObjectData(roomId);
+
+        if(placed !== null && placed.id === id && placed.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+        {
+            this.selectRoomObject(roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL);
+        }
+
+        return true;
     }
 
     updateObjectWallItem(
@@ -5445,8 +5502,15 @@ export class RoomEngine extends Component implements IRoomEngine,
     {
         this.resetSelectedObjectData(roomId);
 
-        this.getRoomInstanceData(roomId).selectedObjectData =
+        const data = this.getRoomInstanceData(roomId);
+
+        data.selectedObjectData =
             new SelectedRoomObjectData(id, category, operation, loc, dir, typeId, instanceData, stuffData, state, animFrame, posture);
+
+        // AS3: _SafeCls_90.as::setSelectedObjectData() drops the placed object whenever a
+        // selection is set. Both of _SafeCls_1821's setters route through it; this port merged the
+        // two classes, so the line lives at each writer instead.
+        this.setPlacedObjectData(roomId, null);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::updateSelectedObjectData()
@@ -5456,8 +5520,13 @@ export class RoomEngine extends Component implements IRoomEngine,
         state: number = -1, animFrame: number = -1, posture: string | null = null
     ): void 
     {
-        this.getRoomInstanceData(roomId).selectedObjectData =
+        const data = this.getRoomInstanceData(roomId);
+
+        data.selectedObjectData =
             new SelectedRoomObjectData(id, category, operation, loc, dir, typeId, instanceData, stuffData, state, animFrame, posture);
+
+        // AS3: _SafeCls_90.as::setSelectedObjectData() — see setSelectedObjectData() above.
+        this.setPlacedObjectData(roomId, null);
     }
 
     /**
@@ -6290,10 +6359,10 @@ export class RoomEngine extends Component implements IRoomEngine,
             objectId = -objectId;
         }
 
-        // AS3 records what was just placed before clearing the selection — the pickup/undo paths
-        // read it back through getPlacedObjectData(). Neither is ported, so this is only noted.
-        // TODO(AS3): _SafeCls_1821.as::placeObject() calls
-        // `_roomEngine.setPlacedObjectData(roomId, new SelectedRoomObjectData(id, category, ...))`.
+        // AS3 records what was just placed *before* clearing the selection — note the raw
+        // `data.id`, negative for an inventory item, which is what the add paths match on.
+        // resetSelectedObjectData() only clears the selection, so the record survives it.
+        this.setPlacedObjectData(roomId, new SelectedRoomObjectData(data.id, data.category, null, null, null));
         this.resetSelectedObjectData(roomId);
 
         this.events.emit(
@@ -6424,6 +6493,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                 tileObjectMap: null,
                 legacyGeometry: new LegacyWallGeometry(),
                 selectedObjectData: null,
+                placedObjectData: null,
                 mouseButtonCursorOwners: []
             };
 

@@ -17,6 +17,7 @@ import type {PetColorResult} from './PetColorResult';
 import type {IGetImageListener} from './IGetImageListener';
 import type {ImageResult} from './ImageResult';
 import type {ISelectedRoomObjectData} from './ISelectedRoomObjectData';
+import type {SelectedRoomObjectData} from './utils/SelectedRoomObjectData';
 import type {IRoomAreaSelectionManager} from './IRoomAreaSelectionManager';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
 import type {IRoomEngineRectangle} from './RoomEngine';
@@ -481,6 +482,12 @@ export interface IRoomEngine extends IDisposable {
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::createScreenShot()
     createScreenShot(roomId: number, canvasId: number, name: string): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::setPlacedObjectData()
+    setPlacedObjectData(roomId: number, data: SelectedRoomObjectData | null): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::getPlacedObjectData()
+    getPlacedObjectData(roomId: number): ISelectedRoomObjectData | null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::requestMouseCursor()
     requestMouseCursor(type: string, objectId: number, objectType: string): void;

@@ -2992,6 +2992,40 @@ Two notes on the seams:
 **Not exercised at runtime.** Needs the emulator, a room and a furni. `tsc` (both packages),
 `eslint` and the production build are clean.
 
+### The furni you just placed forgot it had been placed (2026-08-22)
+
+Fifth `habbo/room` slice: **84 -> 80** absent public/protected members, global **532 -> 528**.
+
+`RoomInstanceData` carries two object slots, not one — `selectedObject` and `placedObject` — and
+the port only ever had the first. The second is what a placement leaves behind: `placeObject()`
+records the item it just dropped, clears the selection, and sends the message; when the server
+echoes the real object back, `addObjectFurniture()` recognises it and re-selects it. That is what
+keeps a just-placed furni under the mover instead of dropping it the moment it materialises.
+
+Ported: `placedObjectData` on the room-instance record (disposed with it), `setPlacedObjectData()`
+/ `getPlacedObjectData()`, the `placeObject()` write, the re-selection in `addObjectFurniture()` and
+`addObjectWallItem()`, and the consumer in `HabboUserDefinedRoomEvents.stuffSelected()`. Two
+`TODO(AS3)` markers close with it — one in `placeObject()`, one in the wired events.
+
+Four things the slice turned up:
+
+- **Wall items never dispatched `REOE_ADDED` at all.** AS3 dispatches it for category 20 exactly as
+  for 10; `addObjectWallItem()` returned without it. `RoomAreaSelectionManager.onRoomObjectAdded()`
+  explicitly filters for `CATEGORY_WALL` — and had never once been handed one.
+- **`Math.abs` on one path and not the other, and that is AS3's.** The floor path matches
+  `Math.abs(placed.id) === id` because an inventory item's id arrives negative; the wall path
+  compares them raw. Copied as written rather than made symmetric.
+- **Selecting anything clears the placed record**, which in AS3 lives in
+  `_SafeCls_90.setSelectedObjectData()` — the single engine-level setter both of
+  `_SafeCls_1821`'s selection setters route through. This port merged those two classes, so the
+  line now sits in each of the two writers, traced back to the AS3 method that owned it.
+- **`SelectedRoomObjectData`'s constructor had to accept nulls**, because AS3's `placeObject()`
+  passes three: `new _SafeCls_1738(id, category, null, null, null)`. `Vector3d.assign(null)` was
+  already a no-op; the null operation is stored as the empty string the AS3 field is initialised
+  to, since every consumer only ever compares it against `OBJECT_MOVE` / `OBJECT_PLACE`.
+
+**Not exercised at runtime.** Needs the emulator, a room and an inventory item to drop.
+
 ### Trace hygiene, 2026-08-20
 
 `audit-as3-traces.mjs` is the forward direction and now exits 0. Three passes that day:

@@ -12,12 +12,19 @@ import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 
 export class SelectedRoomObjectData
 {
+    /**
+	 * `operation`, `loc` and `dir` are nullable because AS3's constructor is called that way:
+	 * `placeObject()` builds a record of what was just dropped with all three null. `Vector3d
+	 * .assign(null)` is already a no-op, and the null operation is stored as the empty string the
+	 * AS3 field is initialised to — no consumer distinguishes the two, they all compare against
+	 * OBJECT_MOVE / OBJECT_PLACE.
+	 */
     constructor(
         id: number,
         category: number,
-        operation: string,
-        loc: IVector3d,
-        dir: IVector3d,
+        operation: string | null,
+        loc: IVector3d | null,
+        dir: IVector3d | null,
         typeId: number = 0,
         instanceData: string | null = null,
         stuffData: IStuffData | null = null,
@@ -28,7 +35,7 @@ export class SelectedRoomObjectData
     {
         this._id = id;
         this._category = category;
-        this._operation = operation;
+        this._operation = operation ?? '';
         this._loc = new Vector3d();
         this._loc.assign(loc);
         this._dir = new Vector3d();

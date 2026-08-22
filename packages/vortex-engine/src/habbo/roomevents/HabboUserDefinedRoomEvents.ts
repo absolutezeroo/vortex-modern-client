@@ -408,10 +408,18 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     // AS3: HabboUserDefinedRoomEvents.as::stuffSelected()
     stuffSelected(id: number): void
     {
-        // TODO(AS3): AS3 first checks (roomEngine as IRoomEngine-ext).getPlacedObjectData(roomId): if
-        // it holds this furni (data.id == -id) it clears it via setPlacedObjectData(roomId, null) and
-        // returns. The port's RoomEngine exposes neither get/setPlacedObjectData yet, so the
-        // placed-object early-return is skipped.
+        // A furni that has just been placed is not a wired selection — the click that dropped it
+        // would otherwise open the wired picker on it. Clearing the record consumes the placement,
+        // so the next click on the same furni does select it.
+        const placed = this._roomEngine?.getPlacedObjectData(this.roomId) ?? null;
+
+        if(placed !== null && placed.id === -id)
+        {
+            this._roomEngine?.setPlacedObjectData(this.roomId, null);
+
+            return;
+        }
+
         this._wiredCtrl.stuffSelected(id);
         this._wiredMenu.furniSelected(id);
     }
