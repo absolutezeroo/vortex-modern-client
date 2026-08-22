@@ -10,7 +10,14 @@ import {Badge} from './Badge';
  *
  * Based on AS3 com.sulake.habbo.inventory.badges.BadgesModel (ENGINE only)
  */
-export class BadgesModel implements IBadgesModel
+import type {HabboInventory} from '../HabboInventory';
+import type {IInventoryModel} from '../IInventoryModel';
+import type {IBadgeSelectionTarget} from './IBadgeSelectionTarget';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
+import {BadgesView} from './BadgesView';
+import {GetBadgesComposer} from '@habbo/communication/messages/outgoing/inventory/GetBadgesComposer';
+
+export class BadgesModel implements IBadgesModel, IInventoryModel, IBadgeSelectionTarget
 {
     // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::MAX_ACTIVE_BADGE_COUNT
     private static readonly MAX_ACTIVE_BADGE_COUNT = 5;
@@ -38,10 +45,25 @@ export class BadgesModel implements IBadgesModel
     private _isUncommonBadgeRarityEnabled: () => boolean;
 
     // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::BadgesModel()
-    constructor(connection: IConnection | null = null, isUncommonBadgeRarityEnabled: () => boolean = () => false)
+    constructor(
+        controller: HabboInventory | null = null,
+        connection: IConnection | null = null,
+        isUncommonBadgeRarityEnabled: () => boolean = () => false
+    )
     {
+        this._controller = controller;
         this._connection = connection;
         this._isUncommonBadgeRarityEnabled = isUncommonBadgeRarityEnabled;
+    }
+
+    // Derived name: obfuscated in the primary tree; named for what it holds.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::_controller
+    private _controller: HabboInventory | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::get controller()
+    get controller(): HabboInventory | null
+    {
+        return this._controller;
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::_disposed
@@ -62,6 +84,16 @@ export class BadgesModel implements IBadgesModel
     dispose(): void
     {
         if(this._disposed) return;
+
+        // AS3 disposes the shared thumbnail template here.
+        if(Badge.template !== null)
+        {
+            Badge.template.dispose();
+            Badge.template = null;
+        }
+
+        this._view?.dispose();
+        this._view = null;
 
         this.resetBadges();
         this._disposed = true;
@@ -96,6 +128,10 @@ export class BadgesModel implements IBadgesModel
             const desc = getDesc(data.badgeId);
 
             const badge = new Badge(data.badgeId, name, desc, isUnseen, data.ownerCount, data.badgeRarityId);
+
+            // AS3 threads the model through Badge's constructor; here the thumbnail gets its
+            // click target attached right after construction instead.
+            badge.setSelectionTarget(this);
 
             if(isUnseen)
             {
@@ -165,6 +201,10 @@ export class BadgesModel implements IBadgesModel
             const desc = getDesc(badgeId);
 
             badge = new Badge(badgeId, name, desc, isUnseen, ownerCount, badgeRarityId);
+
+            // AS3 threads the model through Badge's constructor; here the thumbnail gets its
+            // click target attached right after construction instead.
+            badge.setSelectionTarget(this);
 
             if(isUnseen)
             {
@@ -522,10 +562,85 @@ export class BadgesModel implements IBadgesModel
         badge.isInUse = false;
     }
 
+    // Derived name: obfuscated in the primary tree; named for what it holds.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::_view
+    private _view: BadgesView | null = null;
+
+    // TS-only: the view is built on first use rather than in the constructor, because the
+    // inventory layout it reads is not parsed yet when the models are created.
+    private get view(): BadgesView
+    {
+        if(this._view === null)
+        {
+            this._view = new BadgesView(this);
+            this.initBadgeWindowAsset();
+        }
+
+        return this._view;
+    }
+
+    /**
+	 * Builds the one `inventory_thumb_xml` window every badge thumbnail is cloned from.
+	 *
+	 * AS3 does this in the constructor; here it waits for the first view access, because the
+	 * models are built before the window manager has the inventory layout.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::initBadgeWindowAsset()
+    private initBadgeWindowAsset(): void
+    {
+        if(Badge.template !== null) return;
+
+        Badge.template = this._controller?.windowManager?.buildWidgetLayout('inventory_thumb_xml') as IWindowContainer | null ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::getWindowContainer()
+    getWindowContainer(): IWindowContainer | null
+    {
+        return this.view.getWindowContainer();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::requestInitialization()
+    requestInitialization(): void
+    {
+        this._connection?.send(new GetBadgesComposer());
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::categorySwitch()
+    categorySwitch(category: string): void
+    {
+        if(category === 'badges' && (this._controller?.isVisible ?? false))
+        {
+            this._controller?.events.emit('HABBO_INVENTORY_TRACKING_EVENT_BADGES');
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::subCategorySwitch()
+    // Empty in AS3: the badges tab has no sub-categories.
+    subCategorySwitch(_category: string): void
+    {
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::closingInventoryView()
+    closingInventoryView(): void
+    {
+        if(this.view.isVisible) this.resetUnseenItems();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::selectItemById()
+    selectItemById(itemId: string): void
+    {
+        this.setBadgeSelected(itemId);
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::updateView()
-    // TODO(AS3): no-op until BadgesView (habbo/inventory/badges/BadgesView.as) is ported.
     updateView(): void
     {
-        // Intentional no-op — matches AS3's `if(var_18 != null)` guard.
+        this._view?.updateAll(null);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::updateActionView()
+    updateActionView(): void
+    {
+        this._view?.updateActionView();
     }
 }

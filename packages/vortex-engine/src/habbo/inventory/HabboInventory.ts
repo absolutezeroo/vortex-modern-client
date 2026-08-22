@@ -360,9 +360,9 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
      * `getCategoryWindowContainer()`, `getCategorySubWindowContainer()` and `updateView()` through
      * it rather than switching on the name, which is how the trading sub-window finds its host.
      *
-      * TODO(AS3): AS3 registers eleven models here. Two are still missing (`collectibles`,
-     * `wired_trading`), and `badges`/`effects` are ported but do not implement `IInventoryModel`
-     * yet — they have no view to hand back.
+      * TODO(AS3): AS3 registers eleven models here. `effects` is ported but does not implement
+     * `IInventoryModel` yet — it has no view to hand back. `badges` did not either until its two
+     * views landed; it is registered now.
      */
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_inventories
     private _inventories: OrderedMap<string, IInventoryModel> = new OrderedMap<string, IInventoryModel>();
@@ -1104,6 +1104,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         // AS3's BadgesModel reads `inventory.getBoolean("badge_rarity.uncommon")` off the
         // component it is given; this port hands it the lookup instead of the component.
         this._badgesModel = new BadgesModel(
+            this,
             this._communication?.connection ?? null,
             () => this.getBoolean('badge_rarity.uncommon')
         );
@@ -1185,6 +1186,9 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._inventories.add('recycler', this._recyclerModel);
         this._inventories.add('pets', this._petsModel);
         this._inventories.add('bots', this._botsModel);
+        // AS3 registers badges here too; it was left out while BadgesView was unported, which is
+        // why the tab had no content at all.
+        this._inventories.add('badges', this._badgesModel);
 
         // The marketplace model was already being built above but never registered, so
         // `getCategoryWindowContainer('marketplace')` and `updateView('marketplace')` resolved to

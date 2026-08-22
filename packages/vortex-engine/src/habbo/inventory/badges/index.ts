@@ -7,3 +7,6 @@ export {BadgeFilter} from './IBadgesModel';
 
 // Types
 export type {BadgeFilterType, IBadgeData, IBadgesModel,} from './IBadgesModel';
+export {BadgesView} from './BadgesView';
+export {BadgeGridView} from './BadgeGridView';
+export type {IBadgeSelectionTarget} from './IBadgeSelectionTarget';

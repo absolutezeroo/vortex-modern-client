@@ -2,10 +2,25 @@
  * Badge data model
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/Badge.as
- * (engine-only: AS3's `_window`/`_badgeImage` half belongs to `BadgesView`, unported)
  */
+import type {IWindow} from '@core/window/IWindow';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
+import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
+import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+
+import type {IBadgeSelectionTarget} from './IBadgeSelectionTarget';
+
 export class Badge
 {
+    /**
+	 * The one `inventory_thumb_xml` window every badge thumbnail is cloned from. AS3 keeps it
+	 * as a static on this class and `BadgesModel` fills it in; same here.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/Badge.as::_template
+    // Derived name: obfuscated in the primary tree.
+    public static template: IWindowContainer | null = null;
     // AS3: .../src/com/sulake/habbo/inventory/badges/Badge.as::Badge()
     // AS3 takes the owning model first and `(ownerCount, badgeRarityId)` last; the model is not
     // threaded here because this port's `Badge` has no view half to call back into.
@@ -78,6 +93,15 @@ export class Badge
     set isSelected(value: boolean)
     {
         this._isSelected = value;
+
+        if(this._backgroundColor === null || this._window === null) return;
+
+        // AS3's two literals: a lilac tint while the badge is unseen, plain grey once seen.
+        this._backgroundColor.color = this._isUnseen ? 10275685 : 13421772;
+
+        const outline = this._window.findChildByName('outline');
+
+        if(outline !== null) outline.visible = value;
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/badges/Badge.as::_isUnseen
@@ -91,7 +115,11 @@ export class Badge
     // AS3: .../src/com/sulake/habbo/inventory/badges/Badge.as::set isUnseen()
     set isUnseen(value: boolean)
     {
+        if(this._isUnseen === value) return;
+
         this._isUnseen = value;
+        // Re-applies the tint above through the selected setter, as AS3 does.
+        this.isSelected = this._isSelected;
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/badges/Badge.as::_ownerCount
@@ -131,9 +159,69 @@ export class Badge
         this._badgeRarityId = badgeRarityId;
     }
 
-    // AS3: .../src/com/sulake/habbo/inventory/badges/Badge.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/Badge.as::_window
+    private _window: IWindowContainer | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/Badge.as::_backgroundColor
+    // Derived name: obfuscated in the primary tree — the child tagged BG_COLOR.
+    private _backgroundColor: IWindow | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/Badge.as::_initialized
+    private _initialized: boolean = false;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/Badge.as::_model
+    // Only used to report a click back as a selection; typed to the narrow contract so the
+    // data model and its view do not become mutually recursive imports.
+    private _selectionTarget: IBadgeSelectionTarget | null = null;
+
+    // TS-only: AS3 threads the owning model through the constructor; this port's Badge is
+    // built by the model before the view exists, so the target is attached afterwards.
+    setSelectionTarget(target: IBadgeSelectionTarget | null): void
+    {
+        this._selectionTarget = target;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/Badge.as::get window()
+    get window(): IWindowContainer | null
+    {
+        if(!this._initialized) this.initWindow();
+
+        return this._window;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/Badge.as::initWindow()
+    private initWindow(): void
+    {
+        if(Badge.template === null) return;
+
+        this._window = Badge.template.clone() as IWindowContainer;
+
+        const badgeWindow = this._window.findChildByName('badge');
+
+        if(badgeWindow !== null)
+        {
+            const widget = (badgeWindow as unknown as IWidgetWindow).widget as IBadgeImageWidget | null;
+
+            if(widget) widget.badgeId = this._badgeId;
+
+            badgeWindow.visible = true;
+        }
+
+        this._backgroundColor = this._window.findChildByTag('BG_COLOR');
+        this._initialized = true;
+        this._window.procedure = this.itemEventProc;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/Badge.as::itemEventProc()
+    private itemEventProc = (event: WindowEvent, _target: IWindow): void =>
+    {
+        if(event.type === WindowMouseEvent.CLICK) this._selectionTarget?.setBadgeSelected(this._badgeId);
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/Badge.as::dispose()
     dispose(): void
     {
-        // Nothing to clean up for ENGINE-only version
+        if(this._window !== null)
+        {
+            this._window.dispose();
+            this._window = null;
+        }
     }
 }
