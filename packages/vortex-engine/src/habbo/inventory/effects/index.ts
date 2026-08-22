@@ -7,3 +7,5 @@ export {EffectFilter} from './IEffectsModel';
 
 // Types
 export type {EffectFilterType, IEffectsModel,} from './IEffectsModel';
+export {EffectsView} from './EffectsView';
+export {EffectListProxy} from './EffectListProxy';

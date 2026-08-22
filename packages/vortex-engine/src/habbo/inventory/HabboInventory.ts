@@ -360,9 +360,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
      * `getCategoryWindowContainer()`, `getCategorySubWindowContainer()` and `updateView()` through
      * it rather than switching on the name, which is how the trading sub-window finds its host.
      *
-      * TODO(AS3): AS3 registers eleven models here. `effects` is ported but does not implement
-     * `IInventoryModel` yet — it has no view to hand back. `badges` did not either until its two
-     * views landed; it is registered now.
+      * TODO(AS3): AS3 registers eleven models here; all eleven are registered now. `effects`
+     * hands back no window, which is what AS3 does too — its view field is never assigned.
      */
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_inventories
     private _inventories: OrderedMap<string, IInventoryModel> = new OrderedMap<string, IInventoryModel>();
@@ -1189,6 +1188,10 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         // AS3 registers badges here too; it was left out while BadgesView was unported, which is
         // why the tab had no content at all.
         this._inventories.add('badges', this._badgesModel);
+        // AS3 (HabboInventory.as:496) registers effects too, with a model whose view field it
+        // never assigns — see EffectsModel._view. Registered here for the same reason: so the
+        // tab exists and reports no window, rather than being absent from the map.
+        this._inventories.add('effects', this._effectsModel);
 
         // The marketplace model was already being built above but never registered, so
         // `getCategoryWindowContainer('marketplace')` and `updateView('marketplace')` resolved to

@@ -1,5 +1,4 @@
 import type {EffectFilterType, IEffectsModel} from './IEffectsModel';
-import {EffectFilter} from './IEffectsModel';
 import type {Effect} from './Effect';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import {AvatarEffectActivatedComposer} from '../../communication/messages/outgoing/inventory/AvatarEffectActivatedComposer';
@@ -21,7 +20,13 @@ import {AvatarEffectSelectedComposer} from '../../communication/messages/outgoin
  * live UI (the me-menu EffectsWidget) refreshes via
  * HabboInventory.notifyChangedEffects() ("HIEE_EFFECTS_CHANGED") instead.
  */
-export class EffectsModel implements IEffectsModel
+import type {IInventoryModel} from '../IInventoryModel';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
+import {EffectListProxy} from './EffectListProxy';
+import type {EffectsView} from './EffectsView';
+import {EffectFilter} from './IEffectsModel';
+
+export class EffectsModel implements IEffectsModel, IInventoryModel
 {
     // AS3: EffectsModel.as::_communication (used as .connection.send(...))
     private _connection: IConnection | null;
@@ -320,5 +325,70 @@ export class EffectsModel implements IEffectsModel
                 return;
             }
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/effects/EffectsModel.as::_activeListProxy
+    // Derived name: obfuscated in the primary tree.
+    private _activeListProxy: EffectListProxy = new EffectListProxy(this, EffectFilter.ACTIVE);
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/effects/EffectsModel.as::_inactiveListProxy
+    // Derived name: obfuscated in the primary tree.
+    private _inactiveListProxy: EffectListProxy = new EffectListProxy(this, EffectFilter.INACTIVE);
+
+    /**
+	 * Never assigned — and that is AS3's behaviour, not an omission.
+	 *
+	 * `EffectsModel.as` declares the field and never writes it, so `getWindowContainer()`
+	 * answers null and `updateView()` does nothing in the 2026 client either: the effects UI
+	 * moved to the me-menu widget and the inventory tab was left registered but empty.
+	 * `EffectsView` is ported and ready if that is ever deliberately deviated from — assigning
+	 * it here is the whole change — but the port does not invent a tab Sulake retired.
+	 */
+    // Derived name: obfuscated in the primary tree; named for what it holds.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/effects/EffectsModel.as::_view
+    private _view: EffectsView | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/effects/EffectsModel.as::getWindowContainer()
+    getWindowContainer(): IWindowContainer | null
+    {
+        return this._view ? this._view.getWindowContainer() : null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/effects/EffectsModel.as::requestInitialization()
+    // Empty in AS3: the effects list arrives unsolicited.
+    requestInitialization(): void
+    {
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/effects/EffectsModel.as::categorySwitch()
+    // Empty in AS3.
+    categorySwitch(_category: string): void
+    {
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/effects/EffectsModel.as::subCategorySwitch()
+    // Empty in AS3.
+    subCategorySwitch(_category: string): void
+    {
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/effects/EffectsModel.as::closingInventoryView()
+    // Empty in AS3.
+    closingInventoryView(): void
+    {
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/effects/EffectsModel.as::updateView()
+    updateView(): void
+    {
+        if(this._view === null || this._view.disposed) return;
+
+        this._view.updateListViews();
+        this._view.updateActionView();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/effects/EffectsModel.as::selectItemById()
+    selectItemById(itemId: string): void
+    {
+        this.setEffectSelected(parseInt(itemId, 10));
     }
 }
