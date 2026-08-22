@@ -1344,12 +1344,9 @@ export class VortexMain implements IVortexMain
         {
             const locMgr = this._localizationManager;
 
-            WindowParser.localizationResolver = (key: string) => 
-            {
-                const value = locMgr.getLocalization(key, '');
-
-                return value !== '' ? value : null;
-            };
+            // Resolved-only: an entry that is just a listener stand-in carries its own key as its
+            // value, and treating that as a hit is what bakes the key into a window's caption.
+            WindowParser.localizationResolver = (key: string) => locMgr.getResolvedLocalization(key);
         }
 
         this._completedInitSteps++;

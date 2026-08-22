@@ -294,8 +294,14 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
                 (manager: IHabboLocalizationManager | null) => 
                 {
                     this._localization = manager;
+
+                    // The default has to be empty, not the key: this resolver is the one in force
+                    // between the manager being injected and its texts finishing their download,
+                    // which is exactly when the early-built windows read it. Handing back the key
+                    // reports a hit, and `resolveLocalizationTokens()` then bakes it in instead of
+                    // leaving the `${...}` for the text child's listener to pick up later.
                     WindowParser.localizationResolver = manager
-                        ? ((key: string) => manager.getLocalization(key, key))
+                        ? ((key: string) => manager.getResolvedLocalization(key))
                         : null;
 
                     for(const context of this._windowContextArray) 

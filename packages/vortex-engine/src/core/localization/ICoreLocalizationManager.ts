@@ -57,6 +57,12 @@ export interface ICoreLocalizationManager
 	 * Get a localized string value
 	 */
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/localization/ICoreLocalizationManager.as::getLocalization()
+    /**
+     * The text for a key, or null when there is none yet — a listener stand-in counts as absent.
+     */
+    // TS-only: no AS3 counterpart.
+    getResolvedLocalization(key: string): string | null;
+
     getLocalization(key: string, defaultValue?: string): string;
 
     /**

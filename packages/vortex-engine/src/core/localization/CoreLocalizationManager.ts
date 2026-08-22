@@ -258,13 +258,34 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         {
             this._nonExistingKeys.push(key);
 
-            localization = new Localization(this, key, key);
+            // Marked as a stand-in: it exists only so this listener has something to receive now,
+            // and it must not answer a later `${key}` lookup as though the text had arrived.
+            localization = new Localization(this, key, key, true);
 
             this._localizations.set(key, localization);
         }
 
         localization.registerListener(listener);
         return true;
+    }
+
+    /**
+	 * The text for a key, or null when there is none *yet*.
+	 *
+	 * Unlike `getLocalization()`, an entry that is only a listener stand-in counts as absent — it
+	 * carries its own key as its value, and answering with that is what painted `wiredchests.withdraw`
+	 * on a button. Callers that resolve `${key}` tokens into a window want this one.
+	 */
+    // TS-only: no AS3 counterpart; AS3 resolves no tokens through this table.
+    public getResolvedLocalization(key: string): string | null
+    {
+        const localization = this._localizations.get(key);
+
+        if(!localization || localization.isPlaceholder) return null;
+
+        const value = localization.value;
+
+        return value !== '' ? value : null;
     }
 
     public removeLocalizationListener(key: string, listener: ILocalizable): boolean 

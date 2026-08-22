@@ -25,11 +25,36 @@ export class Localization implements ILocalization
     // AS3: .../src/com/sulake/core/localization/Localization.as::_listeners
     private _listeners: Set<ILocalizable> | null = null;
 
-    constructor(manager: ICoreLocalizationManager, key: string, value: string | null = null)
+    constructor(
+        manager: ICoreLocalizationManager,
+        key: string,
+        value: string | null = null,
+        placeholder: boolean = false
+    )
     {
         this._manager = manager;
         this._key = key;
         this._value = value;
+        this._placeholder = placeholder;
+    }
+
+    /**
+	 * True while the only value this entry has is its own key.
+	 *
+	 * `registerListener()` creates such an entry so a listener has something to receive before the
+	 * texts arrive — AS3 does the same (`new Localization(this, param1, param1)`), and it is
+	 * harmless there because nothing reads captions back out of the table. This port does: it
+	 * resolves `${key}` tokens eagerly when a window is parsed, and a stand-in entry answered that
+	 * lookup as a hit — so the *second* window to use a key got the key painted on it, permanently.
+	 * The wired chest's Withdraw button was the second one.
+	 */
+    // TS-only: AS3 has no equivalent, because AS3 never resolves a caption through this table.
+    private _placeholder: boolean;
+
+    // TS-only: see `_placeholder`.
+    get isPlaceholder(): boolean
+    {
+        return this._placeholder;
     }
 
     // AS3: sources/win63_version/core/localization/Localization.as::_value
@@ -57,6 +82,7 @@ export class Localization implements ILocalization
     setValue(value: string): void
     {
         this._value = value;
+        this._placeholder = false;
         this.updateListeners();
     }
 

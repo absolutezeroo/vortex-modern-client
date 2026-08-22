@@ -1102,20 +1102,32 @@ function escapeXml(value: string): string
 /**
  * Resolves `${key}` localization tokens in a string.
  *
+ * **A token that does not resolve is left as it was written.** It used to collapse to the bare
+ * key, and that is what put `wiredchests.withdraw` on a button: a window built before its texts
+ * had downloaded — the wired chest's is built the moment its window manager arrives, long before
+ * `onLocalizationComplete()` — read an empty table, baked the key into `_caption`, and nothing
+ * ever asked again. Keeping the token lets `ButtonController.set caption()` hand it to the
+ * `_CAPTION_TEXT` child, whose `TextLabelController.set text()` registers a localization listener
+ * for exactly this case: the value is delivered when the texts land, and again on a language
+ * change.
+ *
+ * A key genuinely absent from the texts now shows as `${key}` rather than `key` — the louder of
+ * the two failures, and the one that says which it is.
+ *
  * @param value - The string potentially containing `${key}` tokens
- * @returns The resolved string, or the original if no resolver or no match
+ * @returns The resolved string, with unresolved tokens left intact
  */
-export function resolveLocalizationTokens(value: string): string 
+export function resolveLocalizationTokens(value: string): string
 {
-    if(!value || !WindowParser.localizationResolver) 
+    if(!value || !WindowParser.localizationResolver)
     {
         return value;
     }
 
-    return value.replace(/\$\{([^}]+)\}/g, (_match, key) => 
+    return value.replace(/\$\{([^}]+)\}/g, (match, key) =>
     {
         const resolved = WindowParser.localizationResolver!(key);
 
-        return resolved ?? key;
+        return resolved ?? match;
     });
 }

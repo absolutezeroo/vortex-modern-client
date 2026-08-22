@@ -3026,6 +3026,48 @@ Four things the slice turned up:
 
 **Not exercised at runtime.** Needs the emulator, a room and an inventory item to drop.
 
+### `wiredchests.withdraw` on a button, and the three faults behind it (2026-08-23)
+
+A window built before its texts have downloaded painted the raw localization key on itself, for
+good. Three separate faults stacked into it, and each one alone was enough — which is why the
+first two fixes moved the symptom around without clearing it.
+
+The port added something AS3 does not have: `WindowController.set caption()` resolves `${key}`
+tokens eagerly (AS3's setter is a plain assignment, `WindowController.as:415`). AS3 localizes a
+caption the other way round — the caption reaches the button's `_CAPTION_TEXT` child, and
+`TextLabelController.set text()` *registers a localization listener* for it, which is what
+delivers the value when the texts land and again on a language change. That machinery is ported
+and was working; the eager pass simply consumed the token before it could arm.
+
+1. **An unresolved token collapsed to the bare key.** `resolveLocalizationTokens()` did
+   `resolved ?? key`, so a miss produced `wiredchests.withdraw` — a plain string with no token
+   left for the child to register. It now returns the token untouched.
+2. **`HabboWindowManager`'s resolver never missed.** It called `getLocalization(key, key)`, whose
+   default *is* the key, so every lookup read as a hit. It is `getResolvedLocalization()` now,
+   like `VortexMain`'s.
+3. **Registering a listener poisoned the table for the next window.**
+   `CoreLocalizationManager.registerLocalizationListener()` inserts
+   `new Localization(this, key, key)` so the listener has something to receive immediately —
+   faithful to AS3 (`CoreLocalizationManager.as:303`), and harmless there because nothing reads
+   captions back out of that table. Here the *second* window to use a key found that stand-in and
+   took it for the real text. `Localization` now knows it is a stand-in (`isPlaceholder`, cleared
+   by `setValue()`), and `getResolvedLocalization()` treats one as absent.
+
+**Only the third explains the shape of it**, and only a trace found it: two buttons parsed
+microseconds apart, from the same layout family, through the same resolver — the first kept its
+token and resolved later, the second came out as the bare key. The first one's registration is
+what changed the table in between.
+
+`WiredChestWrapperView` is the window that exposed it: `WiredChestController` builds it the moment
+its window manager dependency arrives, and its sub-controllers build theirs in `initComponent()` —
+both long before `onLocalizationComplete()`. Any window built that early had the same exposure.
+
+**Found on the way, not fixed:** the external texts are downloaded and parsed **twice, into two
+different `CoreLocalizationManager` instances** — 11,626 entries at the login screen
+(`LoginFlow` -> `requestLocalizationInit`), then 123,020 after authentication
+(`onAuthenticated` -> `requestLocalizationInit`). Two round trips of ~1 MB and two tables of truth
+for the same thing.
+
 ### Trace hygiene, 2026-08-20
 
 `audit-as3-traces.mjs` is the forward direction and now exits 0. Three passes that day:
