@@ -1,10 +1,13 @@
 import {Vortex} from 'vortex-engine';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
-import type {IWindowDebugNode} from '@core/window/debugger';
+import type {IWindowDebugNode, IWindowDebugRect} from '@core/window/debugger';
 import {SkinPreviewRenderer, WindowTreeInspector} from '@core/window/debugger';
+import {TextStyleManager} from '@core/window/utils/TextStyleManager';
+import {GlyphAtlas} from '@core/window/utils/GlyphAtlas';
 import {TYPE_CODE_TO_NAME, WindowType} from '@core/window/enum/WindowType';
-import {Logger} from '@core/utils/Logger';
+import type {ILogRecord} from '@core/utils/Logger';
+import {Logger, LogLevel} from '@core/utils/Logger';
 import type {IElementDescriptor} from '@habbo/window/IElementDescriptor';
 
 const log = Logger.getLogger('client.debugger.WindowDebuggerOverlay');
@@ -26,6 +29,11 @@ const log = Logger.getLogger('client.debugger.WindowDebuggerOverlay');
 const HOTKEY_CODE = 'KeyD';
 const CASCADE_OFFSET = 24;
 const CONTEXT_LAYER_COUNT = 4;
+// A full-region dump of anything bigger than a small icon is unpasteable;
+// the alpha-coverage line in the header carries the "did it draw at all"
+// answer that the rows were really being read for.
+const MAX_PIXEL_DUMP_ROWS = 24;
+const MAX_PIXEL_DUMP_RUNS = 12;
 
 interface IOpenWindowEntry {
     id: number;
@@ -69,15 +77,98 @@ export function installWindowDebugger(canvas: HTMLCanvasElement): () => void
 
     window.addEventListener('keydown', onKeyDown);
 
+    // Both capture buffers arm here rather than when the panel opens: the
+    // warnings that explain a broken layout (missing asset, unregistered
+    // layout) are emitted during boot, and an exception thrown mid-build
+    // leaves the half-drawn UI that gets reported as "a visual bug".
+    const removeErrorCapture = installErrorCapture();
+
+    if(isLogCaptureEnabled()) Logger.onRecord(onLogRecord);
+
     const toggleButton = createToggleButton(toggle);
 
-    return () => 
+    return () =>
     {
         window.removeEventListener('keydown', onKeyDown);
+        removeErrorCapture();
+        Logger.onRecord(null);
         toggleButton.remove();
         panel?.dispose();
         panel = null;
     };
+}
+
+/**
+ * Flips the glyph atlas off and back on, so the two rasterisation paths can be
+ * compared on the same widget without a rebuild.
+ *
+ * With it on, `antiAliasType="normal"` text is baked into an atlas and
+ * centre-sampled — a deliberate binary coverage, on the reading that Flash's
+ * pre-Flash-8 rasteriser was near-binary on a pixel font at its design size.
+ * Measured against a real client capture of the same menu, that reading does
+ * not hold: the reference has 65-91 distinct luminances per line of text where
+ * this port has 5, and several lines with no intermediate pixel at all. With
+ * the atlas off, the same text goes through `ctx.fillText()` like the
+ * "advanced" path already does.
+ *
+ * The switch itself is not new — GlyphAtlas has always read
+ * `globalThis.__vortexTextAtlas`. This only puts it a click away, and redraws
+ * so the change is visible without reopening every window.
+ */
+function createAtlasButton(): HTMLButtonElement
+{
+    const button = document.createElement('button');
+
+    const paint = (): void =>
+    {
+        const on = GlyphAtlas.enabled;
+
+        button.textContent = `Atlas: ${on ? 'ON' : 'off'}`;
+        button.classList.toggle('hwd-copy-btn-armed', !on);
+    };
+
+    button.className = 'hwd-copy-btn';
+    button.title = 'Glyph atlas for antiAliasType="normal" text. Off routes it through ctx.fillText() like "advanced" — reopen a window if some text does not repaint.';
+    button.addEventListener('click', () =>
+    {
+        GlyphAtlas.enabled = !GlyphAtlas.enabled;
+        GlyphAtlas.invalidateAll();
+        paint();
+    });
+
+    paint();
+
+    return button;
+}
+
+/**
+ * Arms or disarms warn/error capture.A toggle rather than a plain action:
+ * the setting outlives the panel, and the label has to show which way it is
+ * currently pointing.
+ */
+function createLogCaptureButton(): HTMLButtonElement
+{
+    const button = document.createElement('button');
+
+    const paint = (): void =>
+    {
+        const on = isLogCaptureEnabled();
+
+        button.textContent = `Logs: ${on ? 'ON' : 'off'} (${logBuffer.length})`;
+        button.classList.toggle('hwd-copy-btn-armed', on);
+    };
+
+    button.className = 'hwd-copy-btn';
+    button.title = 'Capture warn/error log records into the report. Costs DevTools call-site attribution on every console line, so it is off by default; reload once armed to catch boot-time warnings.';
+    button.addEventListener('click', () =>
+    {
+        setLogCapture(!isLogCaptureEnabled());
+        paint();
+    });
+
+    paint();
+
+    return button;
 }
 
 function createToggleButton(onToggle: () => void): HTMLButtonElement 
@@ -116,6 +207,7 @@ class WindowDebuggerPanel
     private _pickModeActive: boolean = false;
     private _rafId: number = 0;
     private _lastTreeRefresh: number = 0;
+    private _suppressRefreshUntil: number = 0;
 
     public constructor(canvas: HTMLCanvasElement, onClosed: () => void) 
     {
@@ -149,6 +241,17 @@ class WindowDebuggerPanel
         this._pickBtn.className = 'hwd-pick-btn';
         this._pickBtn.addEventListener('click', () => this.togglePickMode());
         toolbar.appendChild(this._pickBtn);
+
+        // The two switches that are not about the selected window live here
+        // rather than in the tree toolbar below, which only exists once
+        // something has been picked — a global toggle you cannot reach until
+        // you have selected a window is a toggle nobody finds.
+        const globals = document.createElement('div');
+
+        globals.className = 'hwd-toolbar-globals';
+        globals.appendChild(createLogCaptureButton());
+        globals.appendChild(createAtlasButton());
+        toolbar.appendChild(globals);
 
         const tabs = document.createElement('div');
 
@@ -408,10 +511,10 @@ class WindowDebuggerPanel
         }
     }
 
-    private selectWindow(window: IWindow): void 
+    private selectWindow(window: IWindow, node: IWindow | null = null): void
     {
         this._selectedWindow = window;
-        this._selectedNodeWindow = null;
+        this._selectedNodeWindow = node;
         this.refreshTree();
         this.renderOpenList();
     }
@@ -441,101 +544,64 @@ class WindowDebuggerPanel
 
         const overlappingWindows = new Set<IWindow>();
 
-        for(const overlap of overlaps ?? []) 
+        for(const overlap of overlaps ?? [])
         {
             overlappingWindows.add(overlap.a.window);
             overlappingWindows.add(overlap.b.window);
         }
 
+        let problems: IWindowProblem[] = [];
+
+        try
+        {
+            problems = collectProblems(snapshot, this._canvas);
+        }
+        catch (error)
+        {
+            log.warn('Problem detection failed', error);
+        }
+
+        const problemKinds = problemsByWindow(problems);
+
         const toolbar = document.createElement('div');
 
         toolbar.className = 'hwd-tree-toolbar';
 
-        const copyBtn = document.createElement('button');
+        const selectedNode = this._selectedNodeWindow ? findNodeByWindow(snapshot, this._selectedNodeWindow) : null;
 
-        copyBtn.className = 'hwd-copy-btn';
-        copyBtn.textContent = 'Copy tree as text';
-        copyBtn.addEventListener('click', () => 
-        {
-            let report: string;
+        toolbar.appendChild(this.createActionButton(
+            'Copy report',
+            'Problems, overlaps, layout source, ancestor chain, full tree and captured warnings - everything a bug report needs, in one paste',
+            () => navigator.clipboard.writeText(buildDiagnosticReport(snapshot, this._canvas, selectedNode)).then(() => 'Copied!')));
 
-            try 
+        toolbar.appendChild(this.createActionButton(
+            'Copy PNG',
+            'Copies the live canvas pixels under the selected node as an image (falls back to a download when the browser refuses clipboard images)',
+            () =>
             {
-                report = buildTreeReport(snapshot);
-            }
-            catch (error) 
+                const target = this._selectedNodeWindow ?? this._selectedWindow;
+
+                if(!target) return Promise.resolve('No node selected');
+
+                return copyWindowImage(target, this._canvas, (selectedNode ?? snapshot).name);
+            }));
+
+        toolbar.appendChild(this.createActionButton(
+            'Layout source',
+            'Which registered layout XML declares the selected node, scored across its whole ancestor chain',
+            () => navigator.clipboard.writeText(findLayoutSources((selectedNode ?? snapshot).window)).then(() => 'Copied!')));
+
+        toolbar.appendChild(this.createActionButton(
+            'Copy pixels',
+            'Reads the real on-screen canvas at the selected node global rect, plus the node own pre-composite render buffer',
+            () =>
             {
-                log.warn('Failed to build tree report', error);
-                copyBtn.textContent = 'Copy failed';
+                const target = this._selectedNodeWindow ?? this._selectedWindow;
 
-                return;
-            }
+                if(!target) return Promise.resolve('No node selected');
 
-            navigator.clipboard.writeText(report).then(() => 
-            {
-                copyBtn.textContent = 'Copied!';
-                setTimeout(() => 
-                {
-                    copyBtn.textContent = 'Copy tree as text';
-                }, 1200);
-            }).catch(() => 
-            {
-                copyBtn.textContent = 'Copy failed';
-            });
-        });
-        toolbar.appendChild(copyBtn);
-
-        const pixelBtn = document.createElement('button');
-
-        pixelBtn.className = 'hwd-copy-btn';
-        pixelBtn.textContent = 'Copy selected node pixels';
-        pixelBtn.title = 'Reads the real on-screen canvas at the selected node\'s global rect (top/last row + full-row summary)';
-        pixelBtn.addEventListener('click', () =>
-        {
-            const target = this._selectedNodeWindow ?? this._selectedWindow;
-
-            if(!target)
-            {
-                pixelBtn.textContent = 'No node selected';
-                setTimeout(() =>
-                {
-                    pixelBtn.textContent = 'Copy selected node pixels';
-                }, 1200);
-
-                return;
-            }
-
-            let report: string;
-
-            try
-            {
-                report = dumpWindowPixels(target, this._canvas);
-            }
-            catch (error)
-            {
-                log.warn('Failed to dump pixels', error);
-                pixelBtn.textContent = 'Dump failed';
-                setTimeout(() =>
-                {
-                    pixelBtn.textContent = 'Copy selected node pixels';
-                }, 1200);
-
-                return;
-            }
-
-            navigator.clipboard.writeText(report).then(() =>
-            {
-                pixelBtn.textContent = 'Copied!';
-                setTimeout(() =>
-                {
-                    pixelBtn.textContent = 'Copy selected node pixels';
-                }, 1200);
-            }).catch(() =>
-            {
-                pixelBtn.textContent = 'Copy failed';
-            });
-        });
-        toolbar.appendChild(pixelBtn);
+                return navigator.clipboard.writeText(dumpWindowPixels(target, this._canvas)).then(() => 'Copied!');
+            }));
 
         if(overlaps === null)
         {
@@ -554,24 +620,60 @@ class WindowDebuggerPanel
             toolbar.appendChild(warning);
         }
 
+        if(problems.length > 0)
+        {
+            const chip = document.createElement('span');
+
+            chip.className = 'hwd-problem-count';
+            chip.textContent = `\u26D4 ${problems.length} problem${problems.length > 1 ? 's' : ''}`;
+            toolbar.appendChild(chip);
+        }
+
         this._treeEl.appendChild(toolbar);
+
+        // The whole point of the panel: the nodes that cannot be drawing what
+        // they claim to, listed above the tree instead of hidden inside it.
+        if(problems.length > 0)
+        {
+            const problemList = document.createElement('div');
+
+            problemList.className = 'hwd-problem-list';
+
+            for(const problem of problems)
+            {
+                const row = document.createElement('div');
+
+                row.className = 'hwd-problem-row';
+                row.textContent = `[${problem.kind}] "${problem.node.name}" ${problem.detail}`;
+                row.title = problem.detail;
+                row.addEventListener('click', () =>
+                {
+                    this._selectedNodeWindow = problem.node.window;
+                    this.showDetailPanel(problem.node);
+                    this.positionHighlight(this._selectedHighlight, problem.node.globalRect);
+                });
+                row.addEventListener('mouseenter', () => this.positionHighlight(this._hoverHighlight, problem.node.globalRect));
+                row.addEventListener('mouseleave', () => this.hideHighlight(this._hoverHighlight));
+                problemList.appendChild(row);
+            }
+
+            this._treeEl.appendChild(problemList);
+        }
 
         const list = document.createElement('div');
 
         list.className = 'hwd-tree-list';
-        this.appendTreeNode(list, snapshot, 0, overlappingWindows);
+        this.appendTreeNode(list, snapshot, 0, overlappingWindows, problemKinds);
         this._treeEl.appendChild(list);
 
-        if(this._selectedNodeWindow) 
+        if(this._selectedNodeWindow)
         {
-            const selectedNode = findNodeByWindow(snapshot, this._selectedNodeWindow);
-
-            if(selectedNode) 
+            if(selectedNode)
             {
                 this.showDetailPanel(selectedNode);
                 this.positionHighlight(this._selectedHighlight, selectedNode.globalRect);
             }
-            else 
+            else
             {
                 this._selectedNodeWindow = null;
                 this.hideHighlight(this._selectedHighlight);
@@ -579,16 +681,67 @@ class WindowDebuggerPanel
         }
     }
 
-    private appendTreeNode(parentEl: HTMLElement, node: IWindowDebugNode, depth: number, overlappingWindows: Set<IWindow>): void 
+    /**
+     * One button whose label reports what its own action returned. Every
+     * toolbar action is a clipboard write that fails silently otherwise, and
+     * each had grown its own copy of the same success/failure/restore dance.
+     */
+    private createActionButton(label: string, title: string, action: () => Promise<string>): HTMLButtonElement
+    {
+        const button = document.createElement('button');
+
+        button.className = 'hwd-copy-btn';
+        button.textContent = label;
+        button.title = title;
+        button.addEventListener('click', () =>
+        {
+            const restore = (result: string): void =>
+            {
+                // Hold the periodic rebuild off until the result has been read:
+                // it recreates this very button, taking the label with it.
+                this._suppressRefreshUntil = performance.now() + 1400;
+                button.textContent = result;
+                setTimeout(() =>
+                {
+                    button.textContent = label;
+                }, 1400);
+            };
+
+            try
+            {
+                action().then(restore).catch((error) =>
+                {
+                    log.warn(`Debugger action "${label}" failed`, error);
+                    restore('Failed');
+                });
+            }
+            catch (error)
+            {
+                log.warn(`Debugger action "${label}" failed`, error);
+                restore('Failed');
+            }
+        });
+
+        return button;
+    }
+
+    private appendTreeNode(parentEl: HTMLElement, node: IWindowDebugNode, depth: number, overlappingWindows: Set<IWindow>, problemKinds: Map<IWindow, string[]>): void
     {
         const row = document.createElement('div');
         const isOverlapping = overlappingWindows.has(node.window);
+        const kinds = problemKinds.get(node.window) ?? null;
 
         row.className = 'hwd-tree-row';
         row.style.paddingLeft = `${depth * 14}px`;
-        row.textContent = `${isOverlapping ? '⚠ ' : ''}${node.typeName} "${node.name}" (${node.rect.width}x${node.rect.height})`;
+        row.textContent = `${kinds ? '⛔ ' : ''}${isOverlapping ? '⚠ ' : ''}${node.typeName} "${node.name}" (${node.rect.width}x${node.rect.height})`;
 
-        if(!node.visible) 
+        if(kinds)
+        {
+            row.title = kinds.join(', ');
+            row.classList.add('hwd-tree-row-problem');
+        }
+
+        if(!node.visible)
         {
             row.classList.add('hwd-tree-row-hidden');
         }
@@ -611,9 +764,9 @@ class WindowDebuggerPanel
 
         parentEl.appendChild(row);
 
-        for(const child of node.children) 
+        for(const child of node.children)
         {
-            this.appendTreeNode(parentEl, child, depth + 1, overlappingWindows);
+            this.appendTreeNode(parentEl, child, depth + 1, overlappingWindows, problemKinds);
         }
     }
 
@@ -632,6 +785,7 @@ class WindowDebuggerPanel
             `style: ${node.style}  state: ${node.state}  param: ${node.param}`,
             `rect: ${node.rect.x}, ${node.rect.y}, ${node.rect.width}x${node.rect.height}`,
             `dynamicStyle: ${node.dynamicStyle || '(none)'}`,
+            ...(node.textStyle ? [`text: ${formatTextStyle(node.textStyle)}`] : []),
             `tags: ${node.tags.join(', ') || '(none)'}`,
             '',
             'ancestor chain (root first):',
@@ -769,15 +923,22 @@ class WindowDebuggerPanel
         this.showPickMenu(matches, event.clientX, event.clientY);
     }
 
-    private pickWindow(hit: IWindow): void 
+    private pickWindow(hit: IWindow): void
     {
-        if(!this._openWindows.some(entry => entry.window === hit)) 
+        // Root the tree at the window the element belongs to, not at the
+        // element: picking a 49x20 bitmap used to snapshot only that bitmap,
+        // so the report came back "PROBLEMS (0)" having looked at one node.
+        // The hit stays selected, so the detail panel, the highlight and
+        // every per-node action still point at what was actually clicked.
+        const root = enclosingWindow(hit);
+
+        if(!this._openWindows.some(entry => entry.window === root))
         {
-            this._openWindows.push({id: nextOpenId++, label: hit.name || hit.caption || '(unnamed)', window: hit});
+            this._openWindows.push({id: nextOpenId++, label: root.name || root.caption || '(unnamed)', window: root});
         }
 
         this.setTab('layouts');
-        this.selectWindow(hit);
+        this.selectWindow(root, root === hit ? null : hit);
     }
 
     private showPickMenu(matches: IWindow[], clientX: number, clientY: number): void 
@@ -997,7 +1158,7 @@ class WindowDebuggerPanel
 
         const now = performance.now();
 
-        if(now - this._lastTreeRefresh > 1000) 
+        if(now - this._lastTreeRefresh > 1000 && now >= this._suppressRefreshUntil)
         {
             this._lastTreeRefresh = now;
 
@@ -1036,6 +1197,54 @@ function buildAncestorChainText(window: IWindow): string
     return chain
         .map((win, depth) => `${'  '.repeat(depth)}${TYPE_CODE_TO_NAME[win.type] ?? win.type} "${win.name || win.caption || '(unnamed)'}" (${win.x}, ${win.y}, ${win.width}x${win.height}) visible=${win.visible}`)
         .join('\n');
+}
+
+// The frame-ish types a user would point at and call "the window". Walking
+// all the way to the desktop instead would root the tree at a container with
+// thousands of children; stopping at the frame keeps the scope bounded to the
+// thing that was opened.
+const WINDOW_ROOT_TYPES = new Set<number>([
+    WindowType.FRAME,
+    WindowType.FRAME_THIN,
+    WindowType.FRAME_THICK,
+    WindowType.FRAME_NOTIFY,
+    WindowType.BUBBLE,
+    WindowType.BUBBLE_POINTER_UP,
+    WindowType.BUBBLE_POINTER_RIGHT,
+    WindowType.BUBBLE_POINTER_DOWN,
+    WindowType.BUBBLE_POINTER_LEFT,
+    WindowType.TOOLTIP,
+    WindowType.NOTIFY,
+]);
+
+// Falls back to the window itself when nothing frame-like encloses it - a
+// toolbar button parented straight to a desktop has no window to widen to.
+function enclosingWindow(window: IWindow): IWindow
+{
+    let current: IWindow | null = window;
+    let guard = 0;
+
+    while(current && guard++ < 64)
+    {
+        if(WINDOW_ROOT_TYPES.has(current.type)) return current;
+
+        current = current.parent;
+    }
+
+    return window;
+}
+
+// `textWidth`/`textHeight` are what the controller measured; the rect next to
+// them is the box that came out of it. The two disagreeing, or antiAliasType
+// not being the value the layout declared, is what separates "this text is
+// styled wrong" from "this text is positioned wrong" - and neither is visible
+// from the rect alone.
+function formatTextStyle(style: NonNullable<IWindowDebugNode['textStyle']>): string
+{
+    return `style="${style.styleName}" font="${style.fontFace}" size=${style.fontSize}${style.bold ? ' bold' : ''}${style.italic ? ' italic' : ''}`
+        + ` aa=${style.antiAliasType} autoSize=${style.autoSize} leading=${style.leading}`
+        + ` color=#${(style.textColor >>> 0).toString(16).padStart(6, '0')}`
+        + ` measured=${Math.round(style.textWidth)}x${Math.round(style.textHeight)}`;
 }
 
 function findNodeByWindow(node: IWindowDebugNode, window: IWindow): IWindowDebugNode | null
@@ -1096,10 +1305,15 @@ interface IOverlapWarning {
     b: IWindowDebugNode;
 }
 
-// Flags sibling-ish nodes (neither is an ancestor of the other) that both
-// draw content and whose *global* rects intersect by more than a couple
-// pixels. A child overlapping inside its own parent's bounds is normal
-// containment, not a bug, so ancestor/descendant pairs are excluded.
+// Flags text that collides with other text: two labels sharing pixels is
+// the one overlap that always looks broken on screen.
+//
+// Every other pairing was noise. Across two real windows the geometric
+// version produced thirteen warnings and not one bug: an icon straddling two
+// background panels, a counter pill sitting on the artwork it belongs to, an
+// arrow deliberately poking into the panel it points at. Ancestor/descendant
+// pairs and full containment are excluded for the same reason - a child
+// inside its parent is layering, not collision.
 const MIN_OVERLAP_PX = 3;
 // The comparison below is O(n^2) over every node in the selected subtree —
 // fine for a dialog, not for something like the whole desktop or a room
@@ -1140,21 +1354,27 @@ function findOverlaps(root: IWindowDebugNode): IOverlapWarning[] | null
     {
         const a = flat[i];
 
-        if(!a.effectivelyVisible || !hasVisualContent(a.node)) continue;
+        if(!a.effectivelyVisible || !TEXT_LIKE_TYPES.has(a.node.type) || !hasVisualContent(a.node)) continue;
 
-        for(let j = i + 1; j < flat.length; j++) 
+        for(let j = i + 1; j < flat.length; j++)
         {
             const b = flat[j];
 
             if(a.ancestors.has(b.node.window) || b.ancestors.has(a.node.window)) continue;
-            if(!b.effectivelyVisible || !hasVisualContent(b.node)) continue;
+            if(!b.effectivelyVisible || !TEXT_LIKE_TYPES.has(b.node.type) || !hasVisualContent(b.node)) continue;
+
+            // One rect wholly inside the other is how every layout stacks a
+            // label or an icon on its own background - normal layering, and
+            // it was drowning the real collisions: a quest tile reported five
+            // overlaps, all of them content sitting on its own backdrop.
+            if(contains(a.node.globalRect, b.node.globalRect) || contains(b.node.globalRect, a.node.globalRect)) continue;
 
             const overlapW = Math.min(a.node.globalRect.x + a.node.globalRect.width, b.node.globalRect.x + b.node.globalRect.width)
                 - Math.max(a.node.globalRect.x, b.node.globalRect.x);
             const overlapH = Math.min(a.node.globalRect.y + a.node.globalRect.height, b.node.globalRect.y + b.node.globalRect.height)
                 - Math.max(a.node.globalRect.y, b.node.globalRect.y);
 
-            if(overlapW >= MIN_OVERLAP_PX && overlapH >= MIN_OVERLAP_PX) 
+            if(overlapW >= MIN_OVERLAP_PX && overlapH >= MIN_OVERLAP_PX)
             {
                 warnings.push({a: a.node, b: b.node});
             }
@@ -1164,11 +1384,12 @@ function findOverlaps(root: IWindowDebugNode): IOverlapWarning[] | null
     return warnings;
 }
 
-function formatNodeText(node: IWindowDebugNode, depth: number, overlaps: IOverlapWarning[] | null): string 
+function formatNodeText(node: IWindowDebugNode, depth: number, overlaps: IOverlapWarning[] | null, marks: Map<IWindow, string[]> | null = null): string 
 {
     const indent = '  '.repeat(depth);
     const isInvolved = overlaps?.some(o => o.a.window === node.window || o.b.window === node.window) ?? false;
-    const marker = isInvolved ? '  [OVERLAP]' : '';
+    const problemKinds = marks?.get(node.window) ?? null;
+    const marker = (isInvolved ? '  [OVERLAP]' : '') + (problemKinds ? `  [${problemKinds.join('] [')}]` : '');
     const r = node.rect;
     const g = node.globalRect;
     const bmpSize = node.bitmapSize ? ` bitmapSize=${node.bitmapSize.width}x${node.bitmapSize.height}` : '';
@@ -1180,6 +1401,7 @@ function formatNodeText(node: IWindowDebugNode, depth: number, overlaps: IOverla
     const assetInfo = node.assetUri !== null
         ? ` assetUri="${node.assetUri}" bitmapLoaded=${node.bitmapLoaded}${bmpSize}${bmpParams}`
         : '';
+    const textInfo = node.textStyle ? ` ${formatTextStyle(node.textStyle)}` : '';
 
     // Mirrors WindowRendererItem.render()'s own dispatch check: a window whose
     // (type, style) has no registered skin renderer - or whose renderer can't
@@ -1203,45 +1425,11 @@ function formatNodeText(node: IWindowDebugNode, depth: number, overlaps: IOverla
 
     let text = `${indent}${node.typeName} "${node.name}" rect=(${r.x},${r.y},${r.width}x${r.height}) `
         + `global=(${g.x},${g.y},${g.width}x${g.height}) style=${node.style} state=${node.state} `
-        + `param=${node.param} visible=${node.visible}${assetInfo}${rendererInfo}${marker}\n`;
+        + `param=${node.param} visible=${node.visible}${node.clipping ? ' clipping' : ''}${assetInfo}${textInfo}${rendererInfo}${marker}\n`;
 
     for(const child of node.children) 
     {
-        text += formatNodeText(child, depth + 1, overlaps);
-    }
-
-    return text;
-}
-
-function buildTreeReport(root: IWindowDebugNode): string
-{
-    let overlaps: IOverlapWarning[] | null = null;
-
-    try
-    {
-        overlaps = findOverlaps(root);
-    }
-    catch (error)
-    {
-        log.warn('Overlap detection failed', error);
-    }
-
-    let text = `ancestor chain (root first):\n${buildAncestorChainText(root.window)}\n\n`;
-
-    text += formatNodeText(root, 0, overlaps);
-
-    if(overlaps === null) 
-    {
-        text += '\nOverlap check skipped (tree too large).\n';
-    }
-    else if(overlaps.length > 0) 
-    {
-        text += `\nOverlap warnings (${overlaps.length}):\n`;
-
-        for(const overlap of overlaps) 
-        {
-            text += `  - "${overlap.a.name}" (${overlap.a.typeName}) overlaps "${overlap.b.name}" (${overlap.b.typeName})\n`;
-        }
+        text += formatNodeText(child, depth + 1, overlaps, marks);
     }
 
     return text;
@@ -1305,26 +1493,64 @@ function dumpWindowPixels(window: IWindow, canvas: HTMLCanvasElement): string
 
         const data = cctx.getImageData(0, 0, w, h).data;
 
+        // Run-length: a UI row is mostly flat, so listing every pixel spent
+        // hundreds of columns restating one colour. Lossless, and short
+        // exactly where there is nothing to see.
         function rowText(row: number): string
         {
             const parts: string[] = [];
+            let run = 1;
 
-            for(let px = 0; px < w; px++)
+            for(let px = 1; px <= w; px++)
             {
                 const i = (row * w + px) * 4;
+                const prev = (row * w + px - 1) * 4;
+                const same = px < w
+                    && data[i] === data[prev]
+                    && data[i + 1] === data[prev + 1]
+                    && data[i + 2] === data[prev + 2]
+                    && data[i + 3] === data[prev + 3];
 
-                parts.push(`${data[i]},${data[i + 1]},${data[i + 2]},${data[i + 3]}`);
+                if(same)
+                {
+                    run++;
+
+                    continue;
+                }
+
+                const colour = `${data[prev]},${data[prev + 1]},${data[prev + 2]},${data[prev + 3]}`;
+
+                parts.push(run > 1 ? `${colour} x${run}` : colour);
+                run = 1;
+
+                if(parts.length >= MAX_PIXEL_DUMP_RUNS)
+                {
+                    parts.push(`... to x=${w - 1}`);
+
+                    break;
+                }
             }
 
             return parts.join(' | ');
         }
 
-        let out = `${label} (${sx},${sy},${w}x${h}):\n`;
+        let opaque = 0;
 
-        for(let row = 0; row < h; row++)
+        for(let i = 3; i < data.length; i += 4)
+        {
+            if(data[i] > 0) opaque++;
+        }
+
+        const rows = Math.min(h, MAX_PIXEL_DUMP_ROWS);
+
+        let out = `${label} (${sx},${sy},${w}x${h}): ${Math.round((opaque / (w * h)) * 100)}% of pixels have alpha > 0\n`;
+
+        for(let row = 0; row < rows; row++)
         {
             out += `y${row}: ${rowText(row)}\n`;
         }
+
+        if(rows < h) out += `... ${h - rows} further row(s) omitted\n`;
 
         return out;
     }
@@ -1408,6 +1634,8 @@ function injectStyles(): void
 .hwd-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #2a2a2a; font-weight: bold; border-bottom: 1px solid #444; border-radius: 6px 6px 0 0; cursor: move; user-select: none; }
 .hwd-close { background: none; border: none; color: #ddd; font-size: 16px; cursor: pointer; line-height: 1; }
 .hwd-toolbar { padding: 6px 8px; border-bottom: 1px solid #444; }
+.hwd-toolbar-globals { display: flex; gap: 6px; margin-top: 6px; }
+.hwd-toolbar-globals button { flex: 1; }
 .hwd-tabs { display: flex; border-bottom: 1px solid #444; }
 .hwd-tabs button { flex: 1; background: #262626; color: #aaa; border: none; padding: 6px; cursor: pointer; }
 .hwd-tabs button.hwd-tab-active { background: #1e1e1e; color: #fff; border-bottom: 2px solid #4a9eff; }
@@ -1430,7 +1658,13 @@ function injectStyles(): void
 .hwd-tree-row:hover { background: #2f3d52; }
 .hwd-tree-row-hidden { color: #777; font-style: italic; }
 .hwd-tree-row-overlap { color: #ff9d4d; }
-.hwd-tree-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.hwd-tree-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.hwd-copy-btn.hwd-copy-btn-armed { background: #35506e; border-color: #4a9eff; color: #fff; }
+.hwd-tree-row-problem { color: #ff6b6b; }
+.hwd-problem-count { color: #ff6b6b; font-weight: bold; }
+.hwd-problem-list { border: 1px solid #5a2a2a; background: #2a1414; border-radius: 4px; margin-bottom: 6px; max-height: 160px; overflow-y: auto; }
+.hwd-problem-row { padding: 3px 6px; cursor: pointer; color: #ffb0b0; border-bottom: 1px solid #3a1c1c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hwd-problem-row:hover { background: #3d1e1e; }
 .hwd-copy-btn { padding: 4px 8px; background: #2a2a2a; color: #ddd; border: 1px solid #555; border-radius: 4px; cursor: pointer; }
 .hwd-copy-btn:hover { border-color: #4a9eff; }
 .hwd-overlap-count { color: #ff9d4d; font-weight: bold; }
@@ -1447,4 +1681,903 @@ function injectStyles(): void
 .hwd-pick-menu-row:hover { background: #2f3d52; }
 `;
     document.head.appendChild(style);
+}
+
+/* ------------------------------------------------------------------------ *
+ * Diagnostics: problem detection, log capture, image export, layout lookup.
+ *
+ * All of it exists for one reason: a visual bug in this port almost never
+ * throws. The tree builds, every rect is plausible, and the pixels simply
+ * never arrive — so a raw tree dump makes the reader hunt for the one node
+ * that is wrong. The rules below each encode one of the ways that actually
+ * happens, so a report can name the cause instead of only describing the
+ * scene. No AS3 equivalent — debug-only.
+ * ------------------------------------------------------------------------ */
+
+interface IWindowProblem
+{
+    node: IWindowDebugNode;
+    kind: string;
+    detail: string;
+}
+
+const MAX_PROBLEMS = 80;
+// Layouts routinely round a child a pixel or two past its parent; only a
+// clip big enough to eat a glyph is worth a line in the report.
+const MIN_OVERFLOW_PX = 2;
+
+function rectsIntersect(a: IWindowDebugRect, b: IWindowDebugRect): boolean
+{
+    return a.x < b.x + b.width
+        && b.x < a.x + a.width
+        && a.y < b.y + b.height
+        && b.y < a.y + a.height;
+}
+
+function contains(outer: IWindowDebugRect, inner: IWindowDebugRect): boolean
+{
+    return inner.x >= outer.x
+        && inner.y >= outer.y
+        && inner.x + inner.width <= outer.x + outer.width
+        && inner.y + inner.height <= outer.y + outer.height;
+}
+
+// Types that are supposed to paint nothing: a region is a hit area, an
+// activator an interaction layer. Flagging them as "draws nothing" was
+// reporting them working as designed.
+const NON_DRAWING_TYPES = new Set<number>([WindowType.NULL, WindowType.REGION, WindowType.ACTIVATOR]);
+
+// An item list's own inner container goes negative by exactly one spacing when
+// every item is hidden, and that is Flash's arithmetic, not a port bug:
+// ItemListController accumulates only visible children, then subtracts the
+// trailing spacing under `if(numChildren > 0)` - the total count, not the
+// visible one. The primary tree has the same guard, so an empty horizontal
+// list lands at -spacing there too and this must not be "fixed".
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::updateScrollArea()
+const ITEM_LIST_TYPES = new Set<number>([
+    WindowType.ITEMLIST,
+    WindowType.ITEMLIST_HORIZONTAL,
+    WindowType.ITEMGRID,
+    WindowType.ITEMGRID_VERTICAL,
+    WindowType.ITEMGRID_HORIZONTAL,
+    WindowType.SCROLLABLE_ITEMLIST,
+    WindowType.SCROLLABLE_ITEMLIST_VERTICAL,
+    WindowType.SCROLLABLE_ITEMLIST_HORIZONTAL,
+    WindowType.SCROLLABLE_ITEMGRID_VERTICAL,
+]);
+
+function isEmptyListContainer(node: IWindowDebugNode, parent: IWindowDebugNode | null): boolean
+{
+    return parent !== null
+        && ITEM_LIST_TYPES.has(parent.type)
+        && !node.children.some(child => child.visible);
+}
+
+// A caption that is still a localization key: dotted, lowercase, no spaces.
+// getString() returns the key itself on a miss instead of throwing, so an
+// absent translation reaches the screen looking like a rendered label -
+// which is exactly what a quest tile was showing as "quests.identity.nam".
+const LOCALIZATION_KEY = /^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/;
+
+// Whether anything in this subtree would actually be seen if it were shown.
+// Hiding an empty node is the normal way a counter badge or an optional line
+// switches itself off, and reporting that as a bug buries the cases where a
+// node with real content is sitting under a hidden parent.
+function subtreeHasContent(node: IWindowDebugNode): boolean
+{
+    // A hidden descendant is not content: an empty timer list still holds the
+    // caption of the last quest that had one, and counting that made a list
+    // that had correctly collapsed to nothing look like a broken layout.
+    if(!node.visible) return false;
+
+    if(typeof node.caption === 'string' && node.caption.trim() !== '') return true;
+
+    if(node.bitmapLoaded === true) return true;
+
+    return node.children.some(subtreeHasContent);
+}
+
+function collectProblems(root: IWindowDebugNode, canvas: HTMLCanvasElement): IWindowProblem[]
+{
+    const problems: IWindowProblem[] = [];
+    const canvasRect: IWindowDebugRect = {x: 0, y: 0, width: canvas.width, height: canvas.height};
+
+    const walk = (node: IWindowDebugNode, parent: IWindowDebugNode | null, parentVisible: boolean, clippingAncestors: IWindowDebugNode[]): void =>
+    {
+        if(problems.length >= MAX_PROBLEMS) return;
+
+        const effectivelyVisible = parentVisible && node.visible;
+        const push = (kind: string, detail: string): void =>
+        {
+            if(problems.length < MAX_PROBLEMS) problems.push({node, kind, detail});
+        };
+
+        // The asset key was accepted but nothing ever loaded behind it — the
+        // shape a wrong or unregistered asset name takes, since a miss returns
+        // null instead of throwing.
+        if(node.assetUri !== null && node.bitmapLoaded === false)
+        {
+            push('asset-missing', `assetUri="${node.assetUri}" never loaded (wrong key, or the asset was registered after bootstrap)`);
+        }
+
+        // No hidden-by-ancestor rule: hiding a container and leaving its
+        // children's own flags alone is how every optional panel in this UI
+        // switches off, so it fired on all four it ever found and on nothing
+        // else. The tree already prints the hidden parent in grey.
+
+        if(effectivelyVisible && (node.rect.width < 0 || node.rect.height < 0) && !isEmptyListContainer(node, parent))
+        {
+            push('negative-size', `rect is ${node.rect.width}x${node.rect.height} - a negative dimension with no empty-list explanation`);
+        }
+        // A list that auto-sizes to zero because everything in it is hidden is
+        // working, not broken; only a collapse with something left to show is.
+        else if(effectivelyVisible && (node.rect.width === 0 || node.rect.height === 0) && subtreeHasContent(node))
+        {
+            push('zero-size', `rect is ${node.rect.width}x${node.rect.height} while still carrying content`);
+        }
+
+        if(effectivelyVisible && parent && node.rect.width > 0 && node.rect.height > 0 && !rectsIntersect(node.globalRect, parent.globalRect))
+        {
+            push('outside-parent', `global=(${node.globalRect.x},${node.globalRect.y},${node.globalRect.width}x${node.globalRect.height}) lies entirely outside parent "${parent.name}" (${parent.globalRect.x},${parent.globalRect.y},${parent.globalRect.width}x${parent.globalRect.height})`);
+        }
+
+        if(effectivelyVisible && node.rect.width > 0 && node.rect.height > 0 && !rectsIntersect(node.globalRect, canvasRect))
+        {
+            push('off-canvas', `global=(${node.globalRect.x},${node.globalRect.y},${node.globalRect.width}x${node.globalRect.height}) is off the ${canvas.width}x${canvas.height} canvas`);
+        }
+
+        if(effectivelyVisible && TEXT_LIKE_TYPES.has(node.type) && typeof node.caption === 'string' && LOCALIZATION_KEY.test(node.caption.trim()))
+        {
+            push('untranslated', `caption is "${node.caption.trim()}" - a localization key with no translation behind it`);
+        }
+
+        // Clipped content — measured against the nearest ancestor that actually
+        // clips, not against the immediate parent.
+        //
+        // WindowComposite narrows the clip rectangle only at a window whose
+        // `clipping` flag is set; a plain container passes its parent's clip
+        // straight through. Testing the parent instead reported every button
+        // in the me-menu, whose skin deliberately draws its border 3px outside
+        // the content box and is never cut.
+        if(effectivelyVisible && subtreeHasContent(node) && node.rect.width > 0 && node.rect.height > 0)
+        {
+            const clipper = clippingAncestors.length > 0 ? clippingAncestors[clippingAncestors.length - 1] : null;
+
+            if(clipper && rectsIntersect(node.globalRect, clipper.globalRect))
+            {
+                const worst = Math.max(
+                    (node.globalRect.x + node.globalRect.width) - (clipper.globalRect.x + clipper.globalRect.width),
+                    (node.globalRect.y + node.globalRect.height) - (clipper.globalRect.y + clipper.globalRect.height),
+                    clipper.globalRect.x - node.globalRect.x,
+                    clipper.globalRect.y - node.globalRect.y);
+
+                if(worst > MIN_OVERFLOW_PX)
+                {
+                    push('overflows-parent', `${node.rect.width}x${node.rect.height} sticks ${worst}px outside the clip of "${clipper.name}" (${clipper.typeName}, ${clipper.rect.width}x${clipper.rect.height}) and is cut`);
+                }
+            }
+        }
+
+        // A visible leaf with real size that no code path can paint: no skin
+        // renderer for its (type, style), no background, no bitmap, no text.
+        if(effectivelyVisible && node.children.length === 0 && node.rect.width > 0 && node.rect.height > 0 && !NON_DRAWING_TYPES.has(node.type) && !hasVisualContent(node))
+        {
+            push('draws-nothing', `visible leaf with nothing to draw (no renderer for type=${node.type}/style=${node.style}, no background, no bitmap, no caption)`);
+        }
+
+        const childClippers = node.clipping ? [...clippingAncestors, node] : clippingAncestors;
+
+        for(const child of node.children)
+        {
+            walk(child, node, effectivelyVisible, childClippers);
+        }
+    };
+
+    walk(root, null, true, []);
+
+    return problems;
+}
+
+function problemsByWindow(problems: IWindowProblem[]): Map<IWindow, string[]>
+{
+    const map = new Map<IWindow, string[]>();
+
+    for(const problem of problems)
+    {
+        const kinds = map.get(problem.node.window);
+
+        if(kinds) kinds.push(problem.kind);
+        else map.set(problem.node.window, [problem.kind]);
+    }
+
+    return map;
+}
+
+/* ---------------------------------------------------------------- *
+ * Log capture.
+ *
+ * Logger.onRecord() forces the logger out of bound-console mode, which
+ * costs DevTools call-site attribution on every line — so it is opt-in
+ * and remembered in localStorage: the warnings worth having (missing
+ * assets, unregistered layouts) are emitted during boot, long before the
+ * panel is ever opened, so arming it has to survive a reload. Uncaught
+ * errors are captured unconditionally — that listener costs nothing.
+ * ---------------------------------------------------------------- */
+
+const LOG_BUFFER_LIMIT = 200;
+const LOG_CAPTURE_KEY = 'hwd-capture-logs';
+
+const logBuffer: string[] = [];
+
+function pushLogLine(line: string): void
+{
+    logBuffer.push(line);
+
+    if(logBuffer.length > LOG_BUFFER_LIMIT) logBuffer.shift();
+}
+
+function formatLogArg(value: unknown): string
+{
+    if(typeof value === 'string') return value;
+
+    if(value instanceof Error) return `${value.name}: ${value.message}`;
+
+    try
+    {
+        return JSON.stringify(value) ?? String(value);
+    }
+    catch
+    {
+        return String(value);
+    }
+}
+
+function onLogRecord(record: ILogRecord): void
+{
+    if(record.level < LogLevel.WARN) return;
+
+    pushLogLine(`[${record.level === LogLevel.ERROR ? 'ERR' : 'WRN'}] ${record.name}: ${record.args.map(formatLogArg).join(' ')}`);
+}
+
+function isLogCaptureEnabled(): boolean
+{
+    try
+    {
+        return localStorage.getItem(LOG_CAPTURE_KEY) === '1';
+    }
+    catch
+    {
+        return false;
+    }
+}
+
+function setLogCapture(enabled: boolean): void
+{
+    try
+    {
+        localStorage.setItem(LOG_CAPTURE_KEY, enabled ? '1' : '0');
+    }
+    catch
+    {
+        // Private mode: the listener still applies for this session, it just
+        // will not survive the reload that boot-time capture needs.
+    }
+
+    Logger.onRecord(enabled ? onLogRecord : null);
+}
+
+function installErrorCapture(): () => void
+{
+    const onError = (event: ErrorEvent): void =>
+    {
+        pushLogLine(`[UNCAUGHT] ${event.message} (${event.filename}:${event.lineno})`);
+    };
+
+    const onRejection = (event: PromiseRejectionEvent): void =>
+    {
+        pushLogLine(`[UNHANDLED REJECTION] ${formatLogArg(event.reason)}`);
+    };
+
+    window.addEventListener('error', onError);
+    window.addEventListener('unhandledrejection', onRejection);
+
+    return () =>
+    {
+        window.removeEventListener('error', onError);
+        window.removeEventListener('unhandledrejection', onRejection);
+    };
+}
+
+/* ---------------------------------------------------------------- *
+ * Layout lookup.
+ *
+ * Answers the first question any picked element raises — which XML
+ * declared it — by scanning the registered layouts for the node's own
+ * name attribute. Nothing links a live window back to its source, so
+ * this is a text match: it can return several candidates, and none at
+ * all for a window built in code rather than from XML.
+ * ---------------------------------------------------------------- */
+
+const MAX_LAYOUT_HITS = 3;
+
+// A name has to be able to identify a layout on its own. Habbo layouts number
+// their repeated children ("0", "1", "2"), so matching on one of those returns
+// whichever unrelated layout happens to use the same index — a picked quest
+// tile named "1" was confidently reported as coming from the group forum
+// settings dialog.
+function isDistinctiveName(name: string): boolean
+{
+    return name.length >= 3 && !/^\d+$/.test(name);
+}
+
+function excerptAround(xml: string, needle: string): string
+{
+    const at = xml.indexOf(needle);
+
+    if(at === -1) return '';
+
+    return xml.slice(Math.max(0, at - 120), at + 200).replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Which registered layout XML declares the picked window.
+ *
+ * Nothing links a live window back to its source, so this is a text match —
+ * and matching the picked node's own name alone is not enough to trust. The
+ * whole ancestor chain is scored instead, and the answer reports which names
+ * corroborated it so a weak match is visible as one.
+ */
+function findLayoutSources(window: IWindow): string
+{
+    const chain: string[] = [];
+    let current: IWindow | null = window;
+    let guard = 0;
+
+    while(current && guard++ < 64)
+    {
+        if(isDistinctiveName(current.name)) chain.push(current.name);
+
+        current = current.parent;
+    }
+
+    const ownName = window.name;
+
+    if(chain.length === 0) return `layout source: nothing in the chain up from "${ownName}" has a name distinctive enough to match on\n`;
+
+    const windowManager = Vortex.instance.windowManager;
+    let scored: Array<{layout: string; matched: string[]; excerpt: string}> = [];
+
+    for(const layoutName of windowManager.getRegisteredWidgetLayoutNames())
+    {
+        let xml: string;
+
+        try
+        {
+            xml = windowManager.requireWidgetLayout(layoutName, 'window debugger');
+        }
+        catch
+        {
+            continue;
+        }
+
+        const matched = chain.filter(name => xml.includes(`name="${name}"`));
+
+        if(matched.length === 0) continue;
+
+        scored.push({
+            layout: layoutName,
+            matched,
+            excerpt: excerptAround(xml, `name="${matched[0]}"`),
+        });
+    }
+
+    if(scored.length === 0) return `layout source for "${ownName}": no registered layout declares any of ${chain.join(', ')} (built in code?)\n`;
+
+    // The node is declared by whichever layout names IT, full stop — a widget
+    // built from its own small layout and dropped into a big window would
+    // otherwise lose to that window's layout, which matches more of the
+    // ancestor chain without declaring the node at all. Ancestors only break
+    // ties, or answer at all when the node's own name is a bare index.
+    const declaring = scored.filter(hit => hit.matched[0] === ownName);
+    const narrowed = declaring.length > 0;
+
+    if(narrowed) scored = declaring;
+
+    scored.sort((a, b) => b.matched.length - a.matched.length);
+
+    const best = scored[0].matched.length;
+    const hits = scored.filter(hit => hit.matched.length === best).slice(0, MAX_LAYOUT_HITS);
+    const confidence = narrowed
+        ? ''
+        : ` - "${ownName}" itself is declared by no layout, so this is the enclosing window's layout, not the node's`;
+
+    let text = `layout source for "${ownName}" (chain: ${chain.join(' < ')})${confidence}:\n`;
+
+    for(const hit of hits)
+    {
+        text += `  ${hit.layout}  [matched ${hit.matched.join(', ')}]\n      ...${hit.excerpt}...\n`;
+    }
+
+    if(scored.length > hits.length) text += `  (${scored.length - hits.length} weaker candidate(s) not listed)\n`;
+
+    return text;
+}
+
+/* ---------------------------------------------------------------- *
+ * Image export — a crop of the live canvas at the window's true
+ * composite position, put on the clipboard so it can be pasted straight
+ * into a bug report, and downloaded instead when the browser refuses
+ * clipboard images.
+ * ---------------------------------------------------------------- */
+
+function windowScreenRect(window: IWindow): {x: number; y: number; w: number; h: number; mismatch: boolean}
+{
+    const rect = {x: 0, y: 0, width: 0, height: 0};
+
+    window.getGlobalRectangle(rect);
+
+    const truePos = computeTrueCompositePosition(window);
+    const mismatch = truePos.x !== rect.x || truePos.y !== rect.y;
+
+    return {
+        x: Math.round(mismatch ? truePos.x : rect.x),
+        y: Math.round(mismatch ? truePos.y : rect.y),
+        w: Math.max(1, Math.round(rect.width)),
+        h: Math.max(1, Math.round(rect.height)),
+        mismatch,
+    };
+}
+
+function cropCanvas(source: CanvasImageSource, x: number, y: number, w: number, h: number): HTMLCanvasElement
+{
+    const crop = document.createElement('canvas');
+
+    crop.width = w;
+    crop.height = h;
+
+    const ctx = crop.getContext('2d');
+
+    if(!ctx) throw new Error('Could not get a 2D context for the crop');
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(source, x, y, w, h, 0, 0, w, h);
+
+    return crop;
+}
+
+async function copyWindowImage(window: IWindow, canvas: HTMLCanvasElement, label: string): Promise<string>
+{
+    const {x, y, w, h} = windowScreenRect(window);
+    const crop = cropCanvas(canvas, x, y, w, h);
+    const blob = new Promise<Blob>((resolve, reject) => crop.toBlob(
+        result => result ? resolve(result) : reject(new Error('toBlob() produced nothing')),
+        'image/png'));
+
+    try
+    {
+        // The pending blob, not an awaited one: awaiting first spends the user
+        // gesture that the clipboard write needs.
+        await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+
+        return 'Copied!';
+    }
+    catch
+    {
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(await blob);
+
+        link.href = url;
+        link.download = `hwd-${label.replace(/[^\w.-]+/g, '_') || 'window'}-${w}x${h}.png`;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+
+        return 'Downloaded';
+    }
+}
+
+/* ---------------------------------------------------------------- *
+ * Report assembly — everything a visual bug report needs, in one paste.
+ * ---------------------------------------------------------------- */
+
+function buildDiagnosticReport(root: IWindowDebugNode, canvas: HTMLCanvasElement, selected: IWindowDebugNode | null): string
+{
+    const problems = collectProblems(root, canvas);
+    const marks = problemsByWindow(problems);
+    const cssRect = canvas.getBoundingClientRect();
+
+    let overlaps: IOverlapWarning[] | null = null;
+
+    try
+    {
+        overlaps = findOverlaps(root);
+    }
+    catch (error)
+    {
+        log.warn('Overlap detection failed', error);
+    }
+
+    let text = '=== WINDOW DEBUGGER REPORT ===\n';
+
+    text += `canvas: ${canvas.width}x${canvas.height} backing, ${Math.round(cssRect.width)}x${Math.round(cssRect.height)} css, dpr ${window.devicePixelRatio}\n`;
+    text += `root: ${root.typeName} "${root.name}" ${root.rect.width}x${root.rect.height} at global (${root.globalRect.x},${root.globalRect.y})\n`;
+
+    if(selected)
+    {
+        text += `selected: ${selected.typeName} "${selected.name}" ${selected.rect.width}x${selected.rect.height} at global (${selected.globalRect.x},${selected.globalRect.y})\n`;
+    }
+
+    text += `\n--- PROBLEMS (${problems.length}${problems.length >= MAX_PROBLEMS ? ', truncated' : ''}) ---\n`;
+
+    if(problems.length === 0) text += '  none detected\n';
+
+    for(const problem of problems)
+    {
+        text += `  [${problem.kind}] ${problem.node.typeName} "${problem.node.name}": ${problem.detail}\n`;
+    }
+
+    if(overlaps === null)
+    {
+        text += '\n--- OVERLAPS ---\n  check skipped (tree too large)\n';
+    }
+    else if(overlaps.length > 0)
+    {
+        text += `\n--- OVERLAPS (${overlaps.length}) ---\n`;
+
+        for(const overlap of overlaps)
+        {
+            text += `  "${overlap.a.name}" (${overlap.a.typeName}) overlaps "${overlap.b.name}" (${overlap.b.typeName})\n`;
+        }
+    }
+
+    text += '\n--- DECLARED vs LIVE ---\n';
+
+    try
+    {
+        const declared = findDeclaredMismatches(root);
+
+        if(declared.mismatches.length > 0) text += `  ${declared.mismatches.length} value(s) the layout declares and the window does not have:\n`;
+        else if(declared.checked > 0) text += `  ${declared.checked} text node(s) match their layout\n`;
+        else text += '  nothing checked - no text node could be matched to a layout\n';
+
+        for(const mismatch of declared.mismatches)
+        {
+            text += `  [${mismatch.key}] ${mismatch.node.typeName} "${mismatch.node.name}": ${mismatch.layout} declares ${mismatch.declared}, window has ${mismatch.live}\n`;
+        }
+
+        if(declared.unresolved > 0) text += `  (${declared.unresolved} text node(s) skipped - no layout declares that name, or two declare it equally well)\n`;
+
+        text += `\n--- TEXT BOX HEIGHT: PORT vs FLASH ---\n`;
+
+        if(declared.heights.length === 0) text += '  no auto-sized text node could be matched to an authored height\n';
+        else
+        {
+            const buckets = new Map<string, {sample: IBoxHeightSample; count: number}>();
+
+            for(const sample of declared.heights)
+            {
+                const key = `${sample.fontSize}|${sample.authored}|${sample.live}`;
+                const bucket = buckets.get(key);
+
+                if(bucket) bucket.count++;
+                else buckets.set(key, {sample, count: 1});
+            }
+
+            let shorter = 0;
+            let taller = 0;
+            let exact = 0;
+            let totalDelta = 0;
+
+            for(const sample of declared.heights)
+            {
+                const delta = sample.live - sample.authored;
+
+                totalDelta += delta;
+
+                if(delta < 0) shorter++;
+                else if(delta > 0) taller++;
+                else exact++;
+            }
+
+            for(const {sample, count} of [...buckets.values()].sort((a, b) => b.count - a.count))
+            {
+                const delta = sample.live - sample.authored;
+
+                text += `  size ${sample.fontSize}: Flash ${sample.authored}, port ${sample.live} (${delta >= 0 ? '+' : ''}${delta})`
+                    + ` x${count}  e.g. "${sample.name}"\n`;
+            }
+
+            text += `  ${declared.heights.length} sampled: ${exact} exact, ${shorter} shorter, ${taller} taller,`
+                + ` mean ${(totalDelta / declared.heights.length).toFixed(2)}px\n`;
+        }
+    }
+    catch (error)
+    {
+        log.warn('Declared-vs-live check failed', error);
+        text += '  check failed\n';
+    }
+
+    text += `\n--- LAYOUT SOURCE ---\n${findLayoutSources((selected ?? root).window)}`;
+    text += `\n--- ANCESTOR CHAIN (root first) ---\n${buildAncestorChainText(root.window)}\n`;
+    text += `\n--- TREE ---\n${formatNodeText(root, 0, overlaps, marks)}`;
+    text += `\n--- LOGS (${logBuffer.length}) ---\n`;
+
+    if(!isLogCaptureEnabled())
+    {
+        text += '  warn/error capture is OFF - arm it in the debugger toolbar and reload to catch boot-time warnings\n';
+    }
+
+    text += logBuffer.length === 0 ? '  (empty)\n' : logBuffer.map(line => `  ${line}\n`).join('');
+
+    return text;
+}
+
+/* ---------------------------------------------------------------- *
+ * Declared vs live.
+ *
+ * The check that was missing. Every other rule here asks whether a
+ * window is internally consistent; none asked whether it is the window
+ * the layout asked for. A text field rendering in the theme's font at
+ * the theme's size reports perfectly healthy on every other field -
+ * right rect, right renderer, drawable at its state - and looks wrong
+ * on screen, which is how a `font_size="13"` shipped as 9.
+ *
+ * Element names are reused across layouts (2,505 names carry variables
+ * across 784 layouts, and 361 of those names are declared more than
+ * once), so a flat name lookup answers with the wrong layout's values.
+ * A reused name is resolved the same way findLayoutSources() resolves
+ * one - by how much of the ancestor chain the candidate layout also
+ * declares - and a genuine tie is skipped rather than guessed at.
+ *
+ * Indexed once and cached: the registered layouts do not change at
+ * runtime, and this parses all of them.
+ * ---------------------------------------------------------------- */
+
+interface ILayoutVarIndex
+{
+    /** element name -> every layout declaring it with variables (null = that layout declares it inconsistently). */
+    byName: Map<string, Array<{layout: string; vars: Map<string, string> | null; height: number | null}>>;
+    /** layout -> every element name in it, for chain scoring. */
+    namesByLayout: Map<string, Set<string>>;
+}
+
+let layoutVarIndex: ILayoutVarIndex | null = null;
+
+function buildLayoutVarIndex(): ILayoutVarIndex
+{
+    if(layoutVarIndex) return layoutVarIndex;
+
+    const byName = new Map<string, Array<{layout: string; vars: Map<string, string> | null; height: number | null}>>();
+    const namesByLayout = new Map<string, Set<string>>();
+    const windowManager = Vortex.instance.windowManager;
+    const parser = new DOMParser();
+
+    for(const layout of windowManager.getRegisteredWidgetLayoutNames())
+    {
+        let doc: Document;
+
+        try
+        {
+            doc = parser.parseFromString(windowManager.requireWidgetLayout(layout, 'window debugger'), 'text/xml');
+        }
+        catch
+        {
+            continue;
+        }
+
+        if(doc.querySelector('parsererror')) continue;
+
+        const names = new Set<string>();
+
+        namesByLayout.set(layout, names);
+
+        for(const element of Array.from(doc.querySelectorAll('[name]')))
+        {
+            const name = element.getAttribute('name');
+
+            if(!name) continue;
+
+            names.add(name);
+
+            const vars = new Map<string, string>();
+
+            for(const child of Array.from(element.children))
+            {
+                if(child.tagName !== 'variables') continue;
+
+                for(const entry of Array.from(child.children))
+                {
+                    const key = entry.getAttribute('key');
+                    const value = entry.getAttribute('value');
+
+                    if(key !== null && value !== null) vars.set(key, value);
+                }
+            }
+
+            if(vars.size === 0) continue;
+
+            const authored = Number(element.getAttribute('height'));
+            const height = Number.isFinite(authored) && authored > 0 ? authored : null;
+            const bucket = byName.get(name);
+            const existing = bucket?.find(entry => entry.layout === layout);
+
+            if(!existing)
+            {
+                if(bucket) bucket.push({layout, vars, height});
+                else byName.set(name, [{layout, vars, height}]);
+
+                continue;
+            }
+
+            if(existing.height !== height) existing.height = null;
+
+            // Same name again in the same layout: usable only while every copy
+            // declares the same thing. own_avatar_menu names 25 elements
+            // "label" and they agree; nothing says which one built a given
+            // window, so a disagreement makes the whole name unusable there.
+            if(existing.vars === null) continue;
+
+            const same = existing.vars.size === vars.size
+                && [...vars].every(([key, value]) => existing.vars?.get(key) === value);
+
+            if(!same) existing.vars = null;
+        }
+    }
+
+    layoutVarIndex = {byName, namesByLayout};
+
+    return layoutVarIndex;
+}
+
+/** Every name in a window's subtree — the fingerprint that identifies its layout. */
+function subtreeNames(node: IWindowDebugNode, into: Set<string> = new Set()): Set<string>
+{
+    if(node.name) into.add(node.name);
+
+    for(const child of node.children) subtreeNames(child, into);
+
+    return into;
+}
+
+/**
+ * Which layout declared this node.
+ *
+ * Scored on the whole window's names rather than the one chain up from the
+ * node, because sibling layouts of the same widget share that chain: the
+ * me-menu's `label < button < decorate < buttons < border` matches
+ * own_avatar_menu and own_avatar_decorating equally well, and every one of its
+ * 26 text nodes came back unresolved. The full name set separates them at
+ * once — one declares `dance_menu`, `signs`, `effects`; the other does not.
+ */
+function resolveDeclaredVars(node: IWindowDebugNode, index: ILayoutVarIndex, windowNames: Set<string>): {layout: string; vars: Map<string, string>; height: number | null} | null
+{
+    const candidates = index.byName.get(node.name);
+
+    if(!candidates || candidates.length === 0) return null;
+
+    const usable = candidates.filter(candidate => candidate.vars !== null) as Array<{layout: string; vars: Map<string, string>; height: number | null}>;
+
+    if(usable.length === 0) return null;
+
+    if(usable.length === 1) return usable[0];
+
+    const scored = usable
+        .map(candidate =>
+        {
+            const names = index.namesByLayout.get(candidate.layout);
+            let score = 0;
+
+            if(names) for(const name of windowNames) if(names.has(name)) score++;
+
+            return {candidate, score};
+        })
+        .sort((a, b) => b.score - a.score);
+
+    // A tie means nothing here can tell them apart, and reporting either one's
+    // values would be inventing a source.
+    if(scored.length > 1 && scored[0].score === scored[1].score) return null;
+
+    return scored[0].candidate;
+}
+
+interface IDeclaredMismatch
+{
+    node: IWindowDebugNode;
+    layout: string;
+    key: string;
+    declared: string;
+    live: string;
+}
+
+/** The port stores a CSS family list, so only the first family is the answer. */
+function firstFontFamily(fontFace: string): string
+{
+    return (fontFace.split(',')[0] ?? '').trim().replace(/^["']|["']$/g, '');
+}
+
+/**
+ * A layout declares a Flash font name ("Volter Bold"); the window stores the
+ * CSS list that name resolves to. Comparing the two raw reports every styled
+ * text field as a mismatch, so the declared side is resolved the same way the
+ * window resolved it.
+ */
+function declaredFontFamily(declared: string): string
+{
+    return firstFontFamily(TextStyleManager.mapFontFamily(declared));
+}
+
+interface IBoxHeightSample
+{
+    name: string;
+    fontSize: number;
+    authored: number;
+    live: number;
+}
+
+function findDeclaredMismatches(root: IWindowDebugNode): {mismatches: IDeclaredMismatch[]; checked: number; unresolved: number; heights: IBoxHeightSample[]}
+{
+    const index = buildLayoutVarIndex();
+    const windowNames = subtreeNames(root);
+    const mismatches: IDeclaredMismatch[] = [];
+    const heights: IBoxHeightSample[] = [];
+    let checked = 0;
+    let unresolved = 0;
+
+    const walk = (node: IWindowDebugNode): void =>
+    {
+        const style = node.textStyle;
+
+        if(style && node.name)
+        {
+            const hit = resolveDeclaredVars(node, index, windowNames);
+
+            if(!hit) unresolved++;
+            else
+            {
+                checked++;
+
+                const compare = (key: string, live: string, matches: (declaredValue: string) => boolean): void =>
+                {
+                    const declared = hit.vars.get(key);
+
+                    if(declared === undefined || matches(declared.trim())) return;
+
+                    mismatches.push({node, layout: hit.layout, key, declared, live});
+                };
+
+                compare('font_face', firstFontFamily(style.fontFace), v => firstFontFamily(style.fontFace) === declaredFontFamily(v));
+                compare('font_size', String(style.fontSize), v => Number(v) === style.fontSize);
+                compare('antialias_type', style.antiAliasType, v => v === style.antiAliasType);
+                compare('auto_size', style.autoSize, v => v === style.autoSize);
+                compare('bold', String(style.bold), v => (v === 'true') === style.bold);
+                compare('italic', String(style.italic), v => (v === 'true') === style.italic);
+                compare('leading', String(style.leading), v => Number(v) === style.leading);
+
+                // Flash's own answer for this box against the port's.
+                //
+                // Only auto-sized fields carry information: with auto_size
+                // "none" the port simply keeps the authored rect, so the two
+                // agree by construction and say nothing. Where the field
+                // auto-sizes, the authored height is what the Flash IDE
+                // computed from the player's line metrics and the live height
+                // is what measureFontLineHeight() computed from the browser's.
+                const autoSize = hit.vars.get('auto_size');
+
+                if(hit.height !== null && autoSize !== undefined && autoSize.trim() !== 'none')
+                {
+                    heights.push({
+                        name: node.name,
+                        fontSize: style.fontSize,
+                        authored: hit.height,
+                        live: node.rect.height,
+                    });
+                }
+            }
+        }
+
+        for(const child of node.children) walk(child);
+    };
+
+    walk(root);
+
+    return {mismatches, checked, unresolved, heights};
 }

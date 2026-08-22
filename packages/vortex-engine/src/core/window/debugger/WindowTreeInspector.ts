@@ -21,6 +21,15 @@ export interface IWindowDebugNode {
     rect: IWindowDebugRect;
     globalRect: IWindowDebugRect;
     visible: boolean;
+    /**
+     * Whether this window narrows the clip for itself and its descendants.
+     * WindowComposite only intersects the clip rectangle at a window with this
+     * set, so a child drawing outside its parent is cut only when some ancestor
+     * has it — without this field there is no way to tell an overhanging skin
+     * border from content that is actually being lost.
+     */
+    // TS-only: mirrors IWindow.clipping for the debugger; no AS3 counterpart.
+    clipping: boolean;
     dynamicStyle: string;
     tags: string[];
     /** For static_bitmap windows: the configured asset_uri, if any. */
@@ -38,6 +47,29 @@ export interface IWindowDebugNode {
         pivotPoint: number;
         flipX: boolean;
         flipY: boolean;
+    } | null;
+    /**
+     * For text-like windows: the style actually in force, and what the
+     * controller measured the text at. A rendered glyph that disagrees with
+     * `fontSize` — or an `antiAliasType` that is not the one the layout asked
+     * for — is invisible in every other field here, and both decide which of
+     * the two text paths draws the window.
+     */
+    // TS-only: no AS3 counterpart; the visual window debugger reads it to tell a
+    // wrongly-styled text window from a wrongly-placed one.
+    textStyle: {
+        /** The named style in force — the thing that decided the family and size. */
+        styleName: string;
+        fontFace: string;
+        fontSize: number;
+        bold: boolean;
+        italic: boolean;
+        antiAliasType: string;
+        autoSize: string;
+        leading: number;
+        textColor: number;
+        textWidth: number;
+        textHeight: number;
     } | null;
     children: IWindowDebugNode[];
 }
@@ -68,6 +100,21 @@ export class WindowTreeInspector
         };
         const hasAssetUri = typeof bmp.assetUri === 'string';
 
+        const txt = window as unknown as {
+            _textStyleName?: string;
+            fontFace?: string;
+            fontSize?: number;
+            bold?: boolean;
+            italic?: boolean;
+            antiAliasType?: string;
+            autoSize?: string;
+            leading?: number;
+            textColor?: number;
+            textWidth?: number;
+            textHeight?: number;
+        };
+        const hasTextStyle = typeof txt.fontFace === 'string' && typeof txt.fontSize === 'number';
+
         const node: IWindowDebugNode =
             {
                 window,
@@ -81,6 +128,7 @@ export class WindowTreeInspector
                 rect: {x: window.x, y: window.y, width: window.width, height: window.height},
                 globalRect,
                 visible: window.visible,
+                clipping: window.clipping,
                 dynamicStyle: window.dynamicStyle,
                 tags: [...window.tags],
                 assetUri: hasAssetUri ? (bmp.assetUri as string) : null,
@@ -97,6 +145,21 @@ export class WindowTreeInspector
                         pivotPoint: bmp.pivotPoint ?? 0,
                         flipX: bmp.flipX ?? false,
                         flipY: bmp.flipY ?? false,
+                    }
+                    : null,
+                textStyle: hasTextStyle
+                    ? {
+                        styleName: txt._textStyleName ?? '(none)',
+                        fontFace: txt.fontFace as string,
+                        fontSize: txt.fontSize as number,
+                        bold: txt.bold ?? false,
+                        italic: txt.italic ?? false,
+                        antiAliasType: txt.antiAliasType ?? '(unset)',
+                        autoSize: txt.autoSize ?? '(unset)',
+                        leading: txt.leading ?? 0,
+                        textColor: txt.textColor ?? 0,
+                        textWidth: txt.textWidth ?? 0,
+                        textHeight: txt.textHeight ?? 0,
                     }
                     : null,
                 children: []
