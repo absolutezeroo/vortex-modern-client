@@ -14,6 +14,7 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {Logger} from '@core/utils/Logger';
 
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
+import type {FurnitureItem} from '@habbo/inventory/items/FurnitureItem';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
@@ -499,13 +500,11 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
     };
 
     /**
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/furniture/present/PresentFurniWidget.as::onPlaceInRoom()
-     * takes the item out of the inventory and hands it to the furniture mover:
-     * `_inventory.getFloorItemById(-id)` / `getWallItemById(id)` / `placePetToRoom(id, false)`,
-     * then `removeUnseenFurniCounter()` / `removeUnseenPetCounter()`. `IHabboInventory`
-     * exposes none of those five members in this port (`placePetToRoom` lives on `IPetsModel`,
-     * `requestSelectedFurniToMover` on `FurniModel`), so the button closes the dialog without
-     * placing anything. Porting them is an inventory-side job, not a widget one.
+     * Puts the opened present's contents straight into the room.
+     *
+     * The floor lookup negates the id, and the wall one does not — that asymmetry is AS3's, and it
+     * is how the inventory tells its two furniture maps apart. Placing counts as seeing, so the
+     * item's "new" mark goes with it.
      */
     // AS3: .../present/PresentFurniWidget.as::onPlaceInRoom()
     private onPlaceInRoom = (event: WindowEvent, window: IWindow): void =>
@@ -514,22 +513,52 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
 
         if(this._placedItemId > 0 && !this._placedInRoom)
         {
-            log.warn(`place_in_room for item ${this._placedItemId} (${this._placedItemType}): inventory placement API is not ported - nothing placed`);
+            const inventory = this._inventory;
+
+            switch(this._placedItemType)
+            {
+                case 's':
+                    if(inventory !== null && this.requestSelectedFurniPlacement(inventory.getFloorItemById(-this._placedItemId)))
+                    {
+                        inventory.removeUnseenFurniCounter(this._placedItemId);
+                    }
+
+                    break;
+                case 'i':
+                    if(inventory !== null && this.requestSelectedFurniPlacement(inventory.getWallItemById(this._placedItemId)))
+                    {
+                        inventory.removeUnseenFurniCounter(this._placedItemId);
+                    }
+
+                    break;
+                case 'p':
+                    if(inventory?.placePetToRoom(this._placedItemId, false) ?? false)
+                    {
+                        inventory?.removeUnseenPetCounter(this._placedItemId);
+                    }
+
+                    break;
+            }
         }
 
         this.resetAndHideInterface();
     };
 
     /**
-     * TODO(AS3): AS3's `requestSelectedFurniPlacement()` refuses categories 2, 3 and 4 and
-     * otherwise calls `_inventory.requestSelectedFurniToMover(item)`. Unreachable until the
-     * inventory members above exist; kept as the documented gap rather than a stub that
-     * silently returns false from somewhere else.
+     * Hands one item to the furniture mover, unless it is a decoration.
+     *
+     * Wallpaper, floor and landscape (categories 2, 3 and 4) are refused outright here rather than
+     * applied: a present containing one is opened, and the item goes to the inventory for the
+     * player to apply from there.
      */
     // AS3: .../present/PresentFurniWidget.as::requestSelectedFurniPlacement()
-    public requestSelectedFurniPlacement(): boolean
+    public requestSelectedFurniPlacement(item: FurnitureItem | null): boolean
     {
-        return false;
+        if(item === null) return false;
+
+        if(item.category === 2 || item.category === 3 || item.category === 4) return false;
+
+        return this._inventory?.requestSelectedFurniToMover(item) ?? false;
     }
 
     /**

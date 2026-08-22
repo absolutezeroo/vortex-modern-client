@@ -1122,6 +1122,32 @@ export class FurniModel implements IFurniModel
         }
     }
 
+    /**
+     * Clears the "new" mark on one item, and the tab badge with it when nothing is left unseen.
+     *
+     * Called when an item leaves the inventory into the room — placing it *is* seeing it. The
+     * category is the same rentables/normal split `resetUnseenItems()` makes, because the tracker
+     * counts the two tabs separately.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::removeUnseenFurniCounter()
+    removeUnseenFurniCounter(itemId: number): boolean
+    {
+        const tracker = this._habboInventory.unseenItemTracker;
+
+        if(tracker === null) return false;
+        if(this.getItemById(itemId) === null) return false;
+
+        const category = this._currentCategory === 'rentables' ? 2 : 1;
+
+        if(!tracker.isUnseen(category, itemId)) return false;
+
+        const removed = tracker.removeUnseen(category, itemId);
+
+        if(removed) tracker.resetCategoryIfEmpty(category);
+
+        return removed;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::resetUnseenItems()
     resetUnseenItems(): number[]
     {

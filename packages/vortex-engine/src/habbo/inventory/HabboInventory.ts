@@ -1411,6 +1411,33 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return groupItem.getNonRentedFurnitureIds();
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::placePetToRoom()
+    placePetToRoom(id: number, skipServer: boolean = false): boolean
+    {
+        return this._petsModel?.placePetToRoom(id, skipServer) ?? false;
+    }
+
+    /** Both of these redraw the tab badges after clearing, which is the point of going through here. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::removeUnseenFurniCounter()
+    removeUnseenFurniCounter(itemId: number): boolean
+    {
+        const removed = this._furniModel?.removeUnseenFurniCounter(itemId) ?? false;
+
+        if(removed) this.updateUnseenItemCounts();
+
+        return removed;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::removeUnseenPetCounter()
+    removeUnseenPetCounter(itemId: number): boolean
+    {
+        const removed = this._petsModel?.removeUnseenFurniCounter(itemId) ?? false;
+
+        if(removed) this.updateUnseenItemCounts();
+
+        return removed;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::updateUnseenItemCounts()
     updateUnseenItemCounts(): void
     {

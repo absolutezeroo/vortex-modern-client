@@ -272,6 +272,22 @@ export class PetsModel implements IPetsModel
         this._view.update();
     }
 
+    /**
+     * The pet equivalent of `FurniModel.removeUnseenFurniCounter()` — and it keeps that name in
+     * AS3 too, on the pets model, which is why the trace below says `removeUnseenFurniCounter`.
+     */
+    // AS3: PetsModel.as::removeUnseenFurniCounter()
+    removeUnseenFurniCounter(id: number): boolean
+    {
+        if(!this.isUnseen(id)) return false;
+
+        const removed = this._controller.unseenItemTracker.removeUnseen(PetsModel.UNSEEN_CATEGORY_PETS, id);
+
+        if(removed) this._controller.unseenItemTracker.resetCategoryIfEmpty(PetsModel.UNSEEN_CATEGORY_PETS);
+
+        return removed;
+    }
+
     // AS3: PetsModel.as::isUnseen()
     isUnseen(id: number): boolean
     {
