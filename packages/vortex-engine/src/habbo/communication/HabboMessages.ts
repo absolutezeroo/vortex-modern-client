@@ -598,6 +598,7 @@ import {
     SelfDonationResultMessageEvent
 } from './messages/incoming/userdefinedroomevents/misc/SelfDonationResultMessageEvent';
 import {RoomChatSettingsMessageEvent} from './messages/incoming/roomsettings/RoomChatSettingsMessageEvent';
+import {MarkCatalogNewAdditionsPageOpenedComposer} from './messages/outgoing/catalog/MarkCatalogNewAdditionsPageOpenedComposer';
 import {
     WiredTransactionSuccessMessageEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTransactionSuccessMessageEvent';
@@ -3284,6 +3285,9 @@ export class HabboMessages implements IMessageConfiguration
         // The request behind BadgePointLimits (3510). Nothing sent it, so the levelled-badge
         // progress table the localization manager reads stayed empty.
         this._composers.set(2944, GetBadgePointLimitsComposer);
+        // Acknowledges the new-additions badge. Without it the server re-flags new additions
+        // on every login, however many times the catalog was opened.
+        this._composers.set(3835, MarkCatalogNewAdditionsPageOpenedComposer);
         this._composers.set(540, GetCreditsInfoComposer);
         // AS3: WIN63's registry, `_composers[2069]`/`[394]` — two of the few composer classes that
         // kept their real names through obfuscation. `HabboInventory.initComponent()` sends both at

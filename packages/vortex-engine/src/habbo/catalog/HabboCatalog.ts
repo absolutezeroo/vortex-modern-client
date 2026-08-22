@@ -233,6 +233,7 @@ import type {RoomEngineObjectPlacedEvent} from '@habbo/room/events/RoomEngineObj
 import type {RoomEngineObjectPlacedOnUserEvent} from '@habbo/room/events/RoomEngineObjectPlacedOnUserEvent';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 import {AssetBitmap} from '@core/assets/AssetBitmap';
+import {MarkCatalogNewAdditionsPageOpenedComposer} from '@habbo/communication/messages/outgoing/catalog/MarkCatalogNewAdditionsPageOpenedComposer';
 import {RequestRoomPropertySetComposer} from '@habbo/communication/messages/outgoing/inventory/RequestRoomPropertySetComposer';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
@@ -962,6 +963,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     furniDataReady(): void
     {
         this._furnitureDataCache = this._sessionDataManager?.getFurniData(this) ?? null;
+        this._newItemsNotificationEnabled = this.isNewItemsNotificationEnabled();
         this._searchIndexStale = true;
         this._pagesVisibleInBuilderMode = null;
     }
@@ -2012,12 +2014,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.connection?.send(new RecycleItemsMessageComposer(items));
     }
 
-    // TODO(AS3): two secondary effects are still missing, each because their backing system is not
-    // ported: new-additions badge clearing (markNewAdditionPageOpened() needs
-    // MarkCatalogNewAdditionsPageOpenedComposer) and refreshBuilderStatus() (Builders Club
-    // membership timers are not tracked). The recycler activate/cancel pair used to be listed here
-    // too, on the grounds that "Recycler isn't ported" — it was, catalog-side; only the inventory
-    // model was missing, and it landed on 2026-08-12. That branch is live at the end of the method.
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::toggleCatalog()
     public toggleCatalog(catalogType: string, forceOpen: boolean = false, showMainWindow: boolean = true): void 
     {
@@ -2068,8 +2064,18 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             desktop?.removeChild(previousState.mainContainer);
         }
 
-        if(!this.mainWindowVisible() || forceOpen || catalogTypeChanged) 
+        if(!this.mainWindowVisible() || forceOpen || catalogTypeChanged)
         {
+            // Opening the catalog is what "seeing" the new additions means: the badge goes out
+            // here and the server is told, so it does not come back on the next login.
+            if(this._newAdditionsAvailable)
+            {
+                this._newAdditionsAvailable = false;
+
+                this.events.emit(CatalogEvent.CATALOG_NEW_ITEMS_HIDE, new CatalogEvent(CatalogEvent.CATALOG_NEW_ITEMS_HIDE));
+                this.markNewAdditionPageOpened();
+            }
+
             this.showMainWindow();
         }
         else if(!WindowToggle.isHiddenByOtherWindows(this._mainWindow!)) 
@@ -3957,10 +3963,8 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     };
 
-    // TODO(AS3): the new-additions auto-open branch (var_2609/var_4292/newAdditionsPageOpenDisabled)
-    // isn't ported - always falls through to loadFrontPage() for a fresh index.
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::onCatalogIndex()
-    private onCatalogIndex(event: IMessageEvent): void 
+    private onCatalogIndex(event: IMessageEvent): void
     {
         const parser = event.parser as CatalogIndexMessageEventParser | null;
 
@@ -3970,6 +3974,10 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         if(navigator == null) return;
 
+        // Set before the index is built, and read again by `toggleCatalog()` — the server sends
+        // this with *every* index, so it is the authority on whether the badge should be on.
+        this._newAdditionsAvailable = parser.newAdditionsAvailable;
+
         navigator.buildCatalogIndex(parser.root);
 
         if(parser.catalogType === this._catalogType) 
@@ -3977,7 +3985,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             navigator.showIndex();
         }
 
-        switch(this._requestedPage.requestType) 
+        switch(this._requestedPage.requestType)
         {
             case RequestedPage.REQUEST_TYPE_ID:
                 navigator.openPageById(this._requestedPage.requestId, this._requestedPage.requestedOfferId);
@@ -3988,8 +3996,48 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 this._requestedPage.resetRequest();
                 break;
             default:
+                // Four conditions, and all four are needed: something new to show, the hotel's
+                // notification switch on, the auto-open not separately disabled, and the NORMAL
+                // catalog — the Builders Club index never opens on new additions.
+                if(this._newAdditionsAvailable
+                    && this._newItemsNotificationEnabled
+                    && !this.newAdditionsPageOpenDisabled
+                    && parser.catalogType === 'NORMAL')
+                {
+                    this.events.emit(CatalogEvent.CATALOG_NEW_ITEMS_SHOW, new CatalogEvent(CatalogEvent.CATALOG_NEW_ITEMS_SHOW));
+                    this.openCatalogPage('new_additions');
+
+                    break;
+                }
+
                 navigator.loadFrontPage();
         }
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::markNewAdditionPageOpened()
+    private markNewAdditionPageOpened(): void
+    {
+        this.connection?.send(new MarkCatalogNewAdditionsPageOpenedComposer());
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_7503
+    // Name DERIVED: obfuscated in every tree; `parser.newAdditionsAvailable` is what identifies it.
+    private _newAdditionsAvailable: boolean = false;
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_9410
+    // Read once at initComponent, as AS3 does — a config change mid-session does not move it.
+    private _newItemsNotificationEnabled: boolean = false;
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::isNewItemsNotificationEnabled()
+    private isNewItemsNotificationEnabled(): boolean
+    {
+        return this.getBoolean('toolbar.new_additions.notification.enabled');
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get newAdditionsPageOpenDisabled()
+    get newAdditionsPageOpenDisabled(): boolean
+    {
+        return this.getBoolean('catalog.new.additions.page.open.disabled');
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onCatalogPage()
