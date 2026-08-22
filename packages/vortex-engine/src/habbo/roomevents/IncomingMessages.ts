@@ -189,7 +189,7 @@ export class IncomingMessages implements IDisposable
     // AS3: _SafeCls_1951.as::onGuildMemberships()
     private onGuildMemberships(event: IMessageEvent): void
     {
-        this._roomEvents?.wiredCtrl.onGuildMemberships(event);
+        this._roomEvents?.wiredCtrl.onGuildMemberships(event as GuildMembershipsMessageEvent);
     }
 
     // AS3: _SafeCls_1951.as::dispose()

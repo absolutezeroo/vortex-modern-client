@@ -1,4 +1,5 @@
 import type {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroomevents/Triggerable';
+import type {GuildMembershipsMessageEvent} from '@habbo/communication/messages/incoming/users/GuildMembershipsMessageEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from './uibuilder/PresetManager';
@@ -103,8 +104,7 @@ export interface IWiredElement
     readonly usingCustomAdvancedSettings: boolean;
 
     // AS3: _SafeCls_2869.as::onGuildMemberships()
-    // TODO(AS3): param real type is the guild-memberships event (_SafePkg_1731._SafeCls_1876) — not ported.
-    onGuildMemberships(event: unknown): void;
+    onGuildMemberships(event: GuildMembershipsMessageEvent): void;
 
     // AS3: _SafeCls_2869.as::get requireConfirmation()
     // AS3 returns Object (null when no confirmation is required).

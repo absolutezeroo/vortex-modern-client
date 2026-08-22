@@ -1,4 +1,5 @@
 import type {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroomevents/Triggerable';
+import type {GuildMembershipsMessageEvent} from '@habbo/communication/messages/incoming/users/GuildMembershipsMessageEvent';
 import type {WiredStyle} from './uibuilder/styles/WiredStyle';
 import type {PresetManager} from './uibuilder/PresetManager';
 
@@ -93,8 +94,7 @@ export interface IUserDefinedRoomEventsCtrl
     update(a?: number, b?: number): void;
 
     // AS3: _SafeCls_2147.as::onGuildMemberships()
-    // TODO(AS3): param real type is the guild-memberships event (_SafePkg_1731._SafeCls_1876) — not ported here.
-    onGuildMemberships(event: unknown): void;
+    onGuildMemberships(event: GuildMembershipsMessageEvent): void;
 
     // AS3: _SafeCls_2147.as::clearCache()
     clearCache(): void;

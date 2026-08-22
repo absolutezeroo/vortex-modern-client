@@ -30,10 +30,10 @@ const log = Logger.getLogger('habbo.freeflowchat.viewer.ChatBubbleFactory');
  * messages (respect, handitem, mutetime, ping, pet events...) along the way.
  *
  * `getUserImage()` builds the bubble's avatar head-crop via
- * `avatarRenderManager.createAvatarImage()` + `HabboFaceFocuser.focusUserFace()`.
- * TODO(AS3): `getPetImage()` still always returns null — same gap documented
- * in @habbo/ui/handler/ChatWidgetHandler.ts: `IRoomEngine.getPetImage()`/
- * `PetFigureData` don't exist yet.
+ * `avatarRenderManager.createAvatarImage()` + `HabboFaceFocuser.focusUserFace()`; `getPetImage()`
+ * goes through `IRoomEngine.getPetImage()`, which answers synchronously for a cached pet and
+ * through `imageReady()` otherwise. Both faces are cached per figure; the *disposable* bitmaps the
+ * bubbles draw with are the ones trimmed at `MAX_DISPOSABLE_BITMAPS`.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as
  */

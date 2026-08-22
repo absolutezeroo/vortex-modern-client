@@ -1,4 +1,5 @@
 import type {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroomevents/Triggerable';
+import type {GuildMembershipsMessageEvent} from '@habbo/communication/messages/incoming/users/GuildMembershipsMessageEvent';
 import type {IVariableType} from './variables/IVariableType';
 import {WriteToLog} from './actiontypes/WriteToLog';
 import {NotificationExtraDataKey} from '@habbo/notifications/NotificationExtraDataKey';
@@ -1634,7 +1635,7 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
 
     // AS3: UserDefinedRoomEventsCtrl.as::onGuildMemberships() — forward the guild-memberships event to
     // the element currently being edited (the group condition/selector refills its dropdown from it).
-    onGuildMemberships(event: unknown): void
+    onGuildMemberships(event: GuildMembershipsMessageEvent): void
     {
         if(this._currentElement !== null)
         {

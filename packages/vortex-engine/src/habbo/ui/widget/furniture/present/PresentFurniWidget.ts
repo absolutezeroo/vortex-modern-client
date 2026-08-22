@@ -1,4 +1,5 @@
 import type {EventEmitter} from 'eventemitter3';
+import {avatarImageToBitmap} from '@habbo/avatar/AvatarImageSnapshot';
 import type {BitmapDataAsset} from '@core/assets/BitmapDataAsset';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {XmlAsset} from '@core/assets/XmlAsset';
@@ -873,21 +874,35 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
     };
 
     /**
-     * The sender's head, cropped out of a full avatar render.
+     * Renders the sender's head onto the card.
      *
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/furniture/present/PresentFurniWidget.as::getAvatarFaceBitmap()
-     * reads `container.avatarRenderManager` and does
-     * `createAvatarImage(figure, "h", null, this).getCroppedImage("head")`.
-     * `IRoomWidgetHandlerContainer` does not expose the render manager in this port — the
-     * same gap `ChatWidgetHandler` already documents — so the card shows its layout's
-     * placeholder instead of the sender's face. Everything else on the card works.
+     * AS3 returns the cropped bitmap; here the crop is a PixiJS `Texture` and turning one into the
+     * `ImageBitmap` a bitmap window takes is asynchronous, so the render is *applied* rather than
+     * returned. The figure is re-checked afterwards for the same reason `avatarImageReady()`
+     * checks it: a second present can be opened while the first render is in flight.
+     *
+     * A figure whose assets are still downloading comes back empty and is repainted by
+     * `avatarImageReady()`, which is why `createAvatarImage()` is handed `this` as its listener.
      */
     // AS3: .../present/PresentFurniWidget.as::getAvatarFaceBitmap()
-    public getAvatarFaceBitmap(figure: string | null): ImageBitmap | null
+    public async renderAvatarFace(figure: string | null): Promise<void>
     {
-        if(figure === null || figure.length === 0) return null;
+        if(figure === null || figure.length === 0) return;
 
-        return null;
+        const avatarImage = this.presentHandler?.container?.avatarRenderManager?.createAvatarImage(
+            figure, 'h', null, this, null
+        ) ?? null;
+
+        if(avatarImage === null) return;
+
+        const bitmap = await avatarImageToBitmap(avatarImage, 'head');
+
+        avatarImage.dispose();
+
+        if(bitmap === null || this._window === null || this._window.disposed) return;
+        if(figure !== this._senderFigure) return;
+
+        this.updateAvatarImageContainer(bitmap);
     }
 
     /** The render finished later; redraw only if it is still the figure being shown. */
@@ -922,12 +937,7 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
     // AS3: .../present/PresentFurniWidget.as::updateGiftDialogAvatarImage()
     private updateGiftDialogAvatarImage(figure: string | null): void
     {
-        const bitmap = this.getAvatarFaceBitmap(figure);
-
-        if(bitmap !== null)
-        {
-            this.updateAvatarImageContainer(bitmap);
-        }
+        void this.renderAvatarFace(figure);
     }
 
     // AS3: .../present/PresentFurniWidget.as::updateUnknownSenderAvatarImage()

@@ -724,16 +724,17 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 * Dispatches the appropriate toolbar event when an icon is clicked.
 	 * Also sends an event log to the server for tracking.
 	 *
-	 * TODO(AS3): this only emits the click event — matching AS3, where a
-	 * separate module subscribes and reacts. NAVIGATOR/ROOMINFO/HOME/INVENTORY/
-	 * MEMENU/GAMES already have subscribers (HabboNavigator/HabboInventory/
-	 * MeMenuController). CATALOGUE, QUESTS, ACHIEVEMENTS, HELP, and CAMERA have
-	 * no subscriber yet (habbo/catalog, habbo/quest, habbo/help are partial
-	 * modules that don't listen to TOOLBAR_CLICK; there is no camera widget).
-	 * WIRED_MENU has no subscriber either but is also force-hidden already
-	 * (BottomBarLeft.ts). GUIDE/BUILDER/STORIES/RECEPTION have no module at all
-	 * (no habbo/guide, habbo/builder, habbo/stories, habbo/reception directory).
-	 * See docs/IMPLEMENTATION_STATUS.md.
+	 * Emitting the click *is* the whole method: in AS3 too, a separate module subscribes and
+	 * decides what to open. CATALOGUE and BUILDER reach HabboCatalog, ACHIEVEMENTS the quest
+	 * engine, NAVIGATOR/ROOMINFO/HOME the navigator, INVENTORY the inventory, MEMENU/GAMES the
+	 * me-menu controller, and the landing view listens for its own.
+	 *
+	 * CAMERA is the one icon that does not emit a click at all: AS3 raises `CAMERA_TOGGLE`
+	 * instead, carrying where the camera was launched from, because the camera is opened by the
+	 * room UI rather than by a window-owning module.
+	 *
+	 * Icons whose module does not exist at all — GUIDE, STORIES, RECEPTION — still emit; nothing
+	 * listens, which is also what happens in AS3 on a hotel where those features are off.
 	 *
 	 * @param iconName Icon name to toggle
 	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as toggleWindowVisibility()
