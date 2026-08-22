@@ -291,13 +291,15 @@ export class TargetedOfferDialogView extends OfferView
     };
 
     /**
-     * AS3 attaches a `flash.text.StyleSheet` that underlines `a:link`. This port's `ITextWindow`
-     * has no StyleSheet equivalent, so links in an offer description render without the underline.
-     * Text and click behaviour are unaffected.
+     * Underline only, with no colour — so a link in an offer description keeps whatever colour the
+     * layout gives the surrounding text.
      */
-    // TODO(AS3): .../src/com/sulake/habbo/catalog/targetedoffers/TargetedOfferDialogView.as::setLinkStyle() — no StyleSheet in this port.
-    private setLinkStyle(_field: ITextWindow): void
+    // AS3: .../src/com/sulake/habbo/catalog/targetedoffers/TargetedOfferDialogView.as::setLinkStyle()
+    private setLinkStyle(field: ITextWindow): void
     {
+        if(!field) return;
+
+        field.styleSheet = 'a:link { text-decoration: underline; }';
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/targetedoffers/TargetedOfferDialogView.as::getPreviewImageOverride()

@@ -3,6 +3,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
+import {TextWindowUtils} from '@habbo/utils/TextWindowUtils';
 import type {IHTMLTextWindow} from '@core/window/components/IHTMLTextWindow';
 import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {type AssetLoaderEvent, AssetLoaderEventType} from '@core/assets/loaders/AssetLoaderEvent';
@@ -203,12 +204,17 @@ export class LocalizationCatalogWidget extends CatalogWidget
     {
     };
 
+    /**
+     * The catalog's own link palette — dark grey rather than the blue
+     * `HTMLTextController.initializeLinkStyle()` paints, because these links sit on the page's
+     * light background.
+     */
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::setLinkStyle()
-    private setLinkStyle(_target: IHTMLTextWindow): void
+    private setLinkStyle(target: IHTMLTextWindow): void
     {
-        // TODO(AS3): sources/win63_version/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::setLinkStyle()
-        // Needs flash.text.StyleSheet-equivalent CSS-in-caption support on ITextWindow/IHTMLTextWindow,
-        // which isn't ported.
+        if(!target) return;
+
+        TextWindowUtils.setHTMLLinkStyle(target, 0x336A95, 0x333333, 0x41B7D9);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::setElementImage()

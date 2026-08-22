@@ -16,6 +16,8 @@ import type {ILimitedItemPreviewOverlayWidget} from '@habbo/window/widgets/ILimi
 import type {IRarityItemPreviewOverlayWidget} from '@habbo/window/widgets/IRarityItemPreviewOverlayWidget';
 import type {IRoomPreviewerWidget} from '@habbo/window/widgets/IRoomPreviewerWidget';
 import type {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
+import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
+import type {HabboCatalog} from '@habbo/catalog/HabboCatalog';
 import {Vector3d} from '@room/utils/Vector3d';
 import {FurniGridView} from './FurniGridView';
 import {MapStuffData} from '@habbo/room/object/data/MapStuffData';
@@ -270,13 +272,13 @@ export class FurniView
         }
     }
 
+    // TS-only: AS3 writes `x = x && x.length > 0 ? x : "default"` inline three times over.
+    private static orDefault(value: string | null, fallback: string): string
+    {
+        return value !== null && value.length > 0 ? value : fallback;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::updateActionView()
-    // TODO(AS3): skips the RoomPreviewer panel (unique/rarity preview overlay,
-    // 3D object preview) — see the class doc comment. Keeps selection-driven
-    // button availability and the name/description captions.
-    // TODO(AS3): skips the unique/rarity item overlay widgets in the big
-    // preview panel (unique_limited_item_overlay_widget/rarity_item_overlay_widget)
-    // — the grid thumbnail already shows these (see GroupItem.updateItemImageVisual()).
     updateActionView(): void
     {
         if(!this._window || this._window.disposed) return;
@@ -358,12 +360,48 @@ export class FurniView
 
             if(this._roomPreviewer && item)
             {
+                // The preview room wears the *player's own* room decoration, so a chair is shown
+                // against the floor it would actually stand on. The three fallbacks are AS3's own
+                // literals, and note the landscape default is "1.1" where floor and wall are "101".
+                const roomEngine = this._model.roomEngine;
+                const activeRoomId = roomEngine.activeRoomId;
+                const roomWall = FurniView.orDefault(roomEngine.getRoomStringValue(activeRoomId, RoomObjectVariableEnum.ROOM_WALL_TYPE), '101');
+                const roomFloor = FurniView.orDefault(roomEngine.getRoomStringValue(activeRoomId, RoomObjectVariableEnum.ROOM_FLOOR_TYPE), '101');
+                const roomLandscape = FurniView.orDefault(roomEngine.getRoomStringValue(activeRoomId, RoomObjectVariableEnum.ROOM_LANDSCAPE_TYPE), '1.1');
+
                 this._roomPreviewer.reset(false);
-                this._roomPreviewer.updateObjectRoom(null, null, null);
+                this._roomPreviewer.updateObjectRoom(roomFloor, roomWall, roomLandscape);
 
                 if(item.category === 2 || item.category === 3 || item.category === 4)
                 {
+                    // A decoration has no object to place: the preview room *becomes* the preview,
+                    // with the selected item's own type substituted for the one category it covers
+                    // and the room's current types left on the other two.
                     this._roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
+
+                    const legacy = groupItem.stuffData?.getLegacyString() ?? '';
+
+                    this._roomPreviewer.updateObjectRoom(
+                        item.category === 3 ? legacy : roomFloor,
+                        item.category === 2 ? legacy : roomWall,
+                        item.category === 4 ? legacy : roomLandscape
+                    );
+
+                    // A landscape is only visible *through* a window, so AS3 drops a specific one
+                    // into the preview room — the same trick ProductViewCatalogWidget uses.
+                    if(item.category === 4)
+                    {
+                        // Cast for the same reason ProductViewCatalogWidget casts:
+                        // `getFurnitureDataByName()` is on the concrete catalog, not on
+                        // IHabboCatalog — AS3's interface does not declare it either.
+                        const catalog = this._model.controller.catalog as HabboCatalog | null;
+                        const window = catalog?.getFurnitureDataByName('ads_twi_windw', 'i') ?? null;
+
+                        if(window !== null)
+                        {
+                            this._roomPreviewer.addWallItemIntoRoom(window.id, new Vector3d(90, 0, 0), window.customParams ?? '');
+                        }
+                    }
                 }
                 else if(groupItem.isWallItem)
                 {

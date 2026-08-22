@@ -710,11 +710,35 @@ export class TextController extends WindowController implements ITextWindow
     {
     }
 
+    // TS-only: AS3 keeps a `flash.text.StyleSheet` object; this port keeps the CSS text it would
+    // have been built from, because that is also the shape the `html_stylesheet` layout property
+    // arrives in.
+    protected _styleSheet: string | null = null;
+
+    /**
+	 * The stylesheet the text is rendered against.
+	 *
+	 * AS3 takes a `flash.text.StyleSheet`; this port takes the CSS as a string, which is what
+	 * every caller builds anyway (`TextWindowUtils.setHTMLLinkStyle()`,
+	 * `HTMLTextController.initializeLinkStyle()` and the two catalog widgets all assemble the same
+	 * four `a:link`/`a:hover`/`a:active`/`.visited` rules).
+	 *
+	 * Only `HTMLTextController` reads it, and only for `a:link` — see its `linkColor`. A plain
+	 * text window has no anchors to style, so storing it there is inert, exactly as it is in AS3
+	 * when the field holds no markup.
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set styleSheet()
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setStyleSheet() hands a `flash.text.StyleSheet` to the field and refreshes.
-    // The port's HTML text path (`HtmlFormatting`) has no stylesheet layer.
-    public set styleSheet(_value: unknown)
+    public set styleSheet(value: unknown)
     {
+        this._styleSheet = typeof value === 'string' ? value : null;
+
+        this.refreshTextImage();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get styleSheet()
+    public get styleSheet(): unknown
+    {
+        return this._styleSheet;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::resetExplicitStyle()

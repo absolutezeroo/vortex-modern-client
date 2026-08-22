@@ -3,6 +3,7 @@ import type {IWindowParser} from './utils/IWindowParser';
 import type {IResourceManager} from './IResourceManager';
 import type {IDisposable} from "../runtime/IDisposable";
 import type {IInputEventTracker} from './IInputEventTracker';
+import type {ILinkEventTracker} from '../runtime/events/ILinkEventTracker';
 import type {IInternalWindowServices} from './services/IInternalWindowServices';
 import type {IWindowFactory} from './IWindowFactory';
 import type {IWidgetFactory} from './IWidgetFactory';
@@ -19,6 +20,15 @@ import type {ICoreLocalizationManager} from '../localization/ICoreLocalizationMa
 export interface IWindowContext extends IDisposable
 {
     inputEventTrackers: IInputEventTracker[];
+
+    /**
+	 * Everyone who asked to be told when a link inside a window is followed.
+	 *
+	 * `HTMLTextController.update()` walks it on every anchor click; a tracker whose `linkPattern`
+	 * is empty hears about every link, the rest only about their own prefix.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowContext.as::get linkEventTrackers()
+    readonly linkEventTrackers: ILinkEventTracker[];
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/IWindowContext.as::getWindowServices()
     getWindowServices(): IInternalWindowServices;

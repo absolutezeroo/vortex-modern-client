@@ -13,13 +13,11 @@ export class TextWindowUtils
      * Builds Flash's four link styles — `a:link`, `a:hover`, `a:active` and `.visited` — and
      * assigns them to the text window's `styleSheet`.
      *
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/TextWindowUtils.as::setHTMLLinkStyle()
-     * — the assignment cannot be made: this port's `ITextWindow` has no `styleSheet` member and
-     * the Canvas2D text renderer has no notion of a `flash.text.StyleSheet`, so nothing carries
-     * per-state link colours. Porting it needs (1) `styleSheet` on `ITextWindow` /
-     * `TextController`, (2) the renderer honouring `a:link` / `a:hover` / `a:active` / `.visited`
-     * while drawing HTML text, and (3) hover/active state tracking per anchor. Until then the
-     * colours are computed and dropped, and links render in the layout's own text colour.
+     * Only `a:link` reaches a pixel: `HTMLTextController` paints its anchors with it. The other
+     * three are states this port cannot be in — nothing tracks a visited link, and hover/active
+     * would need per-anchor mouse tracking the text layout does not do — but they are assembled
+     * anyway so the rule set stays whole rather than trimmed to what is read today.
+     *
      * The one caller is `PhoneNumberCollectView.createWindow()` (`collect_summary`).
      */
     // AS3: .../src/com/sulake/habbo/utils/TextWindowUtils.as::setHTMLLinkStyle()
@@ -36,23 +34,15 @@ export class TextWindowUtils
             return;
         }
 
-        const hoverStyle: Record<string, string> = {color: TextWindowUtils.toHexString(hoverColor)};
-        const linkStyle: Record<string, string> = {};
+        const link = (underlineLinks ? 'text-decoration: underline; ' : '')
+            + `color: ${TextWindowUtils.toHexString(linkColor)};`;
 
-        if(underlineLinks)
-        {
-            linkStyle.textDecoration = 'underline';
-        }
-
-        linkStyle.color = TextWindowUtils.toHexString(linkColor);
-
-        const activeStyle: Record<string, string> = {color: TextWindowUtils.toHexString(activeColor)};
-        const visitedStyle: Record<string, string> = {textDecoration: 'underline'};
-
-        void hoverStyle;
-        void linkStyle;
-        void activeStyle;
-        void visitedStyle;
+        textWindow.styleSheet = [
+            `a:link { ${link} }`,
+            `a:hover { color: ${TextWindowUtils.toHexString(hoverColor)}; }`,
+            `a:active { color: ${TextWindowUtils.toHexString(activeColor)}; }`,
+            '.visited { text-decoration: underline; }',
+        ].join(' ');
     }
 
     /**

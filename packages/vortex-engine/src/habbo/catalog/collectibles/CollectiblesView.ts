@@ -7,6 +7,7 @@ import type {ISelectableWindow} from '@core/window/components/ISelectableWindow'
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import type {IHTMLTextWindow} from '@core/window/components/IHTMLTextWindow';
 import {WindowLinkEvent} from '@core/window/events/WindowLinkEvent';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboCatalogPurse} from '@habbo/catalog/purse/IHabboCatalogPurse';
@@ -159,11 +160,11 @@ export class CollectiblesView
         for(const link of [this.infoLink, this.transferLink])
         {
             link?.addEventListener(WindowLinkEvent.WE_LINK, this.onClickHtmlLink as unknown as (...args: unknown[]) => void);
-        }
 
-        // TODO(AS3): AS3 also calls `initializeLinkStyle()` on both links, which paints them as
-        // links rather than plain text. The port's IHTMLTextWindow declares no such member — only
-        // `html` and `linkTarget` — so the two descriptions render unstyled.
+            // Both descriptions are HTML text windows in the layout; the cast is what the rest of
+            // this class already does for them (`findChildByName()` answers `IWindow`).
+            (link as unknown as IHTMLTextWindow | null)?.initializeLinkStyle?.();
+        }
     }
 
     // TS-only: AS3 repeats `findChildByName(tab).caption = ...` eight times inline.

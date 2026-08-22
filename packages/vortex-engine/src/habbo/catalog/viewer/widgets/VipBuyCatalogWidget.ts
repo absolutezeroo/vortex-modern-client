@@ -143,11 +143,16 @@ export class VipBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalog
         }
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::setLinkStyle()
-    // Needs a flash.text.StyleSheet-equivalent (CSS-in-caption rendering) - same pre-existing gap
-    // already documented in LocalizationCatalogWidget.ts's own setLinkStyle() note.
-    private setLinkStyle(_field: ITextWindow): void
+    /**
+     * Underline only: AS3 sets a single `a:link` rule with no colour here, so the link keeps the
+     * layout's own text colour and only gains the underline.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::setLinkStyle()
+    private setLinkStyle(field: ITextWindow): void
     {
+        if(!field) return;
+
+        field.styleSheet = 'a:link { text-decoration: underline; }';
     }
 
     private onBenefits = (_event: WindowMouseEvent): void =>

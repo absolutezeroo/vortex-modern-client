@@ -5,6 +5,9 @@ import {TextFieldController} from './TextFieldController';
 import {InteractiveController} from './InteractiveController';
 import type {WindowEvent} from '../events/WindowEvent';
 import type {PropertyStruct} from '../utils/PropertyStruct';
+import type {WindowController} from '../WindowController';
+import {WindowLinkEvent} from '../events/WindowLinkEvent';
+import {WindowMouseEvent} from '../events/WindowMouseEvent';
 
 /**
  * Controller for HTML text windows with link support.
@@ -18,7 +21,21 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/HTMLTextController.as::HTML_STYLESHEET_KEY
     private static readonly HTML_STYLESHEET_KEY: string = 'html_stylesheet';
+
+    /** The `a:link` colour `initializeLinkStyle()` sets, used when the stylesheet names none. */
+    private static readonly DEFAULT_LINK_COLOR: number = 0x006DE0;
+
     private _htmlContent: string = '';
+
+    /**
+	 * TS-only: where the `<a>` runs ended up in the plain text `_text` holds.
+	 *
+	 * Flash renders `htmlText` itself and reports a click through a `TextEvent` carrying the href.
+	 * This port lays out plain strings, so the anchors have to be remembered as ranges over that
+	 * string: the same ranges drive both the link colouring (through `setTextFormat()`) and the
+	 * hit test in `update()`.
+	 */
+    private _linkRuns: Array<{start: number; end: number; href: string}> = [];
 
     constructor(
         name: string,
@@ -112,14 +129,12 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
 	 *
 	 * AS3 builds a `flash.text.StyleSheet` and assigns it to the field the text engine reads. This
 	 * port has no `StyleSheet` type, and `htmlStyleSheetString` is the field that stands in for it,
-	 * so the same four rules are written there as CSS text.
+	 * so the same four rules are written there as CSS text — and `linkColor` below reads `a:link`
+	 * back out of them, which is what makes calling this change a pixel.
 	 *
-	 * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/HTMLTextController.as::initializeLinkStyle()
-	 * **Nothing reads `htmlStyleSheetString` yet.** Its getter/setter store the value and no renderer
-	 * consults it, so calling this records the intent without changing a pixel — links render in
-	 * whatever colour the text pipeline already gives them. That gap is upstream of this method and
-	 * predates it; the colours are captured here so applying them later needs no second trip to the
-	 * AS3.
+	 * Only `a:link` is applied. The other three are states this port cannot be in: nothing tracks
+	 * a visited link, and hover/active would need per-run mouse tracking the layout does not do.
+	 * They are stored so the rule set stays whole rather than edited down to what is used.
 	 *
 	 * Note `.visited` is a plain class rather than the `a:visited` pseudo-class its three siblings
 	 * use, and carries an underline but no colour. That asymmetry is AS3's, transcribed as found.
@@ -127,12 +142,33 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/HTMLTextController.as::initializeLinkStyle()
     public initializeLinkStyle(): void
     {
-        this._htmlStyleSheetString = [
+        this.styleSheet = [
             'a:link { text-decoration: underline; color: #006de0; }',
             'a:hover { color: #0051a4; }',
             'a:active { color: #0053ad; }',
             '.visited { text-decoration: underline; }',
         ].join(' ');
+    }
+
+    /**
+	 * The colour anchors are painted in: `a:link`'s from the stylesheet, or Habbo's blue.
+	 *
+	 * TS-only: Flash resolves this inside the text engine from the assigned StyleSheet, so no AS3
+	 * member corresponds. Parsed rather than stored because `htmlStyleSheetString` also arrives
+	 * from a layout's `html_stylesheet` property, not only from `initializeLinkStyle()`.
+	 */
+    private get linkColor(): number
+    {
+        // `styleSheet` is what code assigns (initializeLinkStyle(), TextWindowUtils); the
+        // `html_stylesheet` layout property lands in `_htmlStyleSheetString` instead. Code wins,
+        // matching AS3, where a later `styleSheet =` replaces whatever the layout set.
+        const sheet = this._styleSheet ?? this._htmlStyleSheetString;
+
+        if(sheet === null) return HTMLTextController.DEFAULT_LINK_COLOR;
+
+        const match = /a:link[^}]*color\s*:\s*#([0-9a-f]{6})/i.exec(sheet);
+
+        return match === null ? HTMLTextController.DEFAULT_LINK_COLOR : parseInt(match[1], 16);
     }
 
     /**
@@ -166,11 +202,7 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
 
         this._htmlContent = value;
 
-        const plainText = HTMLTextController.convertHtmlToPlainText(HTMLTextController.convertLinksToEvents(value));
-
-        this._text = plainText;
-        this._htmlText = plainText;
-        this.refreshTextImage();
+        this.applyHtml(value);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/HTMLTextController.as::set localization()
@@ -180,10 +212,32 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
 
         this._htmlContent = value;
 
-        const plainText = HTMLTextController.convertHtmlToPlainText(HTMLTextController.convertLinksToEvents(this.limitStringLength(value)));
+        this.applyHtml(this.limitStringLength(value));
+    }
 
-        this._text = plainText;
-        this._htmlText = plainText;
+    /**
+	 * Reduces markup to the plain string the layout engine can lay out, and paints the anchors.
+	 *
+	 * The order matters: `setTextFormat()` records ranges over `_text`, and assigning `_text`
+	 * clears them (Flash resets character formatting on content replacement, and this port copies
+	 * that), so the runs have to be applied *after* the assignment.
+	 */
+    // TS-only: Flash assigns `_field.htmlText` and the text engine does all of this.
+    private applyHtml(html: string): void
+    {
+        const parsed = HTMLTextController.parseHtml(HTMLTextController.convertLinksToEvents(html));
+
+        this._linkRuns = parsed.links;
+        this._text = parsed.text;
+        this._htmlText = parsed.text;
+
+        const color = this.linkColor;
+
+        for(const run of parsed.links)
+        {
+            this.setTextFormat({color, underline: true}, run.start, run.end);
+        }
+
         this.refreshTextImage();
     }
 
@@ -238,11 +292,55 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
     // TextController only lays out plain strings (splitting on literal "\n" —
     // see TextController.ts::buildMeasureLines()), so HTML has to be reduced
     // to that before it reaches _text, or tags show up as literal characters.
-    private static convertHtmlToPlainText(html: string): string
+    //
+    // The anchors are the one tag whose position has to survive that reduction: their character
+    // ranges over the stripped string are what `applyHtml()` colours and `update()` hit-tests.
+    private static parseHtml(html: string): {text: string; links: Array<{start: number; end: number; href: string}>}
     {
-        return html
-            .replace(/<br\s*\/?>/gi, '\n')
-            .replace(/<[^>]+>/g, '');
+        const links: Array<{start: number; end: number; href: string}> = [];
+        const tag = /<(\/?)([a-z]+)([^>]*)>/gi;
+
+        let text = '';
+        let cursor = 0;
+        let openHref: string | null = null;
+        let openStart = 0;
+        let match: RegExpExecArray | null;
+
+        while((match = tag.exec(html)) !== null)
+        {
+            text += html.substring(cursor, match.index);
+            cursor = match.index + match[0].length;
+
+            const closing = match[1] === '/';
+            const name = match[2].toLowerCase();
+
+            if(name === 'br')
+            {
+                text += '\n';
+                continue;
+            }
+
+            if(name !== 'a') continue;
+
+            if(!closing)
+            {
+                const href = /href\s*=\s*["']([^"']*)["']/i.exec(match[3]);
+
+                openHref = href === null ? '' : href[1];
+                openStart = text.length;
+            }
+            else if(openHref !== null)
+            {
+                // A zero-length anchor is dropped: it would colour nothing and can never be hit.
+                if(text.length > openStart) links.push({start: openStart, end: text.length, href: openHref});
+
+                openHref = null;
+            }
+        }
+
+        text += html.substring(cursor);
+
+        return {text, links};
     }
 
     /**
@@ -261,11 +359,72 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
     {
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/HTMLTextController.as::immediateClickHandler() takes the Flash
-    // TextField "link" event, allocates a WindowLinkEvent for the href, dispatches it and walks
-    // `context.linkEventTrackers` calling linkReceived() on every tracker whose linkPattern
-    // prefixes the link. WindowLinkEvent and the tracker list are both ported already
-    // (core/runtime/ComponentContext.ts); what is missing is upstream — this port renders HTML
-    // text through the glyph atlas and never hit-tests `<a href>` runs, so nothing could call the
-    // handler. Porting it alone would add a method no code can reach.
+    /**
+     * Turns a click that landed on an `<a>` run into a link event.
+     *
+     * AS3 gets here from Flash's own `TextEvent`, which already knows which anchor was hit; this
+     * port has to find it, which is what `_linkRuns` plus `getCharIndexAtPoint()` are for.
+     *
+     * The three consumers AS3 feeds are all kept: any listener on the window, every
+     * `linkEventTracker` whose `linkPattern` prefixes the href (a tracker with an empty pattern
+     * takes everything), and the window's own `procedure` — the last two both gated on nothing
+     * having called `preventWindowOperation()` first. Opening an external web page is the one
+     * thing left out: AS3's `openWebPage()` has no port.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/HTMLTextController.as::immediateClickHandler()
+    public override update(source: WindowController, event: WindowEvent): boolean
+    {
+        const result = super.update(source, event);
+
+        if(event.type !== WindowMouseEvent.CLICK || source !== (this as unknown as WindowController)) return result;
+
+        const mouse = event as WindowMouseEvent;
+        const href = this.linkAtPoint(mouse.localX, mouse.localY);
+
+        if(href === null) return result;
+
+        const linkEvent = WindowLinkEvent.allocateLink(href, this, null);
+
+        this._eventDispatcher?.dispatchEvent(linkEvent);
+
+        for(const tracker of this._context.linkEventTrackers)
+        {
+            if(tracker.linkPattern.length === 0 || href.substring(0, tracker.linkPattern.length) === tracker.linkPattern)
+            {
+                tracker.linkReceived(href);
+            }
+        }
+
+        if(!linkEvent.isWindowOperationPrevented())
+        {
+            this.procedure?.(linkEvent, this);
+        }
+
+        linkEvent.recycle();
+
+        return result;
+    }
+
+    /**
+     * The href of the anchor under a point in this window's own coordinates, or null.
+     *
+     * `getCharIndexAtPoint()` answers -1 past the end of a line, so a click in the empty space
+     * after the last word of a line correctly hits nothing.
+     */
+    // TS-only: Flash's TextField reports the anchor itself; see update()'s note.
+    private linkAtPoint(localX: number, localY: number): string | null
+    {
+        if(this._linkRuns.length === 0) return null;
+
+        const index = this.getCharIndexAtPoint(localX, localY);
+
+        if(index < 0) return null;
+
+        for(const run of this._linkRuns)
+        {
+            if(index >= run.start && index < run.end) return run.href;
+        }
+
+        return null;
+    }
 }
