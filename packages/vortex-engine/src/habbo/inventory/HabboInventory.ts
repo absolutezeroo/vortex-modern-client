@@ -1178,10 +1178,17 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         // model documents that at its constructor.
         this._recyclerModel = new RecyclerModel(this);
 
-        // AS3: HabboInventory.as:499 — `new WiredTradingModel(this, _windowManager, _communication,
-        // assets, _roomEngine, _localization, _soundManager, _notifications)`. The five the view
-        // needs are left out until WiredTradingView is ported, as TradingModel does for its own.
-        this._wiredTradingModel = new WiredTradingModel(this, this._communication, this._localization);
+        // AS3: HabboInventory.as:499
+        this._wiredTradingModel = new WiredTradingModel(
+            this,
+            this._windowManager,
+            this._communication,
+            this.assets,
+            this._roomEngine,
+            this._localization,
+            this._soundManager,
+            this._notifications
+        );
 
         this._inventories.add('collectibles', this._collectiblesModel);
         this._inventories.add('trading', this._tradingModel);

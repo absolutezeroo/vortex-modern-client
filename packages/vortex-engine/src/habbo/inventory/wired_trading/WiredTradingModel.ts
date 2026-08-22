@@ -16,7 +16,12 @@ import type {ITradingModel} from '../trading/ITradingModel';
 import type {GroupItem} from '../items/GroupItem';
 import {WiredTradeRequirementsModel} from './requirements/WiredTradeRequirementsModel';
 import type {IWiredTradingView} from './IWiredTradingView';
-import {WiredTradingViewStub} from './WiredTradingViewStub';
+import {WiredTradingView} from './WiredTradingView';
+import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import type {IAssetLibrary} from '@core/assets';
+import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
+import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
 
 const log = Logger.getLogger('habbo.inventory.wired_trading.WiredTradingModel');
 
@@ -105,26 +110,44 @@ export class WiredTradingModel implements IInventoryModel, ITradingModel
     private _localization: IHabboLocalizationManager | null;
 
     /**
-     * AS3 also takes the window manager, assets, the room engine, the sound manager and
-     * notifications — all five for the view it builds here, or stored and never read. Left out
-     * until `WiredTradingView` is ported, exactly as `TradingModel` documents for its own view.
-     *
-     * The view is still built in the constructor, as AS3 does, so `running` and `getWindowContainer()`
-     * are answerable from the moment the model exists.
+     * The view is built here, as AS3 does, so `running` and `getWindowContainer()` are answerable
+     * from the moment the model exists — the inventory asks for the sub-page container long before
+     * any trade opens.
      */
     // AS3: WiredTradingModel.as::WiredTradingModel()
     constructor(
         inventory: HabboInventory | null,
+        windowManager: IHabboWindowManager | null,
         communication: IHabboCommunicationManager | null,
-        localization: IHabboLocalizationManager | null
+        assets: IAssetLibrary | null,
+        roomEngine: IRoomEngine | null,
+        localization: IHabboLocalizationManager | null,
+        soundManager: IHabboSoundManager | null,
+        notifications: IHabboNotifications | null
     )
     {
         this._inventory = inventory;
         this._communication = communication;
+        this._assets = assets;
+        this._roomEngine = roomEngine;
         this._localization = localization;
-        this._view = new WiredTradingViewStub();
+        this._soundManager = soundManager;
+        this._notifications = notifications;
+        this._view = new WiredTradingView(this, windowManager, assets, roomEngine, localization, soundManager);
         this._requirementsModel = new WiredTradeRequirementsModel(this);
     }
+
+    // AS3: WiredTradingModel.as::_SafeStr_5517 (the asset library)
+    private _assets: IAssetLibrary | null;
+
+    // AS3: WiredTradingModel.as::_roomEngine
+    private _roomEngine: IRoomEngine | null;
+
+    // AS3: WiredTradingModel.as::_soundManager
+    private _soundManager: IHabboSoundManager | null;
+
+    // AS3: WiredTradingModel.as::_notifications
+    private _notifications: IHabboNotifications | null;
 
     /**
      * The server opening a trade.
