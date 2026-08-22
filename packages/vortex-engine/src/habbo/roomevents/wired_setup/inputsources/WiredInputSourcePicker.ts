@@ -107,6 +107,29 @@ export class WiredInputSourcePicker implements ISourceTypeListener
         return '';
     }
 
+    /**
+     * AS3's `int()` cast: truncate toward zero, and anything non-numeric —
+     * `undefined` from a short array included — becomes 0.
+     *
+     * onChangeInputSource() applies it six times and this port applied it none.
+     * That is not cosmetic: a selection pair shorter than two entries gave
+     * Flash slot 0 and gives TypeScript `undefined`, which then indexes an
+     * array as `arr[undefined]` and reads back `undefined` instead of throwing
+     * — so the failure surfaces a line later, on `.indexOf` of nothing, with
+     * no hint of where the undefined came from.
+     *
+     * VariableLevelUp carries a string-typed twin of this; kept local rather
+     * than shared until a third caller needs it.
+     */
+    // TS-only: AS3 writes this inline as the language's own `int()` cast; TypeScript has no
+    // equivalent, so the cast becomes a named helper. No AS3 member to trace.
+    private static asInt(value: unknown): number
+    {
+        const parsed = Number(value);
+
+        return Number.isFinite(parsed) ? Math.trunc(parsed) : 0;
+    }
+
     // AS3: WiredInputSourcePicker.as::onChangeInputSource()
     onChangeInputSource(forward: boolean): void
     {
@@ -125,24 +148,25 @@ export class WiredInputSourcePicker implements ISourceTypeListener
         if(this._sourceType === WiredInputSourcePicker.FURNI_SOURCE)
         {
             allowed = conf.getAllowedFurniSources(this._id);
-            index = allowed.indexOf(this._def.furniSourceTypes[this._id]);
+            index = allowed.indexOf(WiredInputSourcePicker.asInt(this._def.furniSourceTypes[this._id]));
         }
         else if(this._sourceType === WiredInputSourcePicker.USER_SOURCE)
         {
             allowed = conf.getAllowedUserSources(this._id);
-            index = allowed.indexOf(this._def.userSourceTypes[this._id]);
+            index = allowed.indexOf(WiredInputSourcePicker.asInt(this._def.userSourceTypes[this._id]));
         }
         else
         {
             const selection = this._element.mergedSelections()[this._id];
-            furniSlot = selection[0];
-            userSlot = selection[1];
+
+            furniSlot = WiredInputSourcePicker.asInt(selection[0]);
+            userSlot = WiredInputSourcePicker.asInt(selection[1]);
             mergedType = this._element.getMergedType(this._id);
 
             if(mergedType === WiredInputSourcePicker.FURNI_SOURCE)
             {
                 allowed = conf.getAllowedFurniSources(furniSlot);
-                index = allowed.indexOf(this._def.furniSourceTypes[furniSlot]);
+                index = allowed.indexOf(WiredInputSourcePicker.asInt(this._def.furniSourceTypes[furniSlot]));
             }
             else
             {
@@ -152,7 +176,7 @@ export class WiredInputSourcePicker implements ISourceTypeListener
                 }
 
                 allowed = conf.getAllowedUserSources(userSlot);
-                index = allowed.indexOf(this._def.userSourceTypes[userSlot]);
+                index = allowed.indexOf(WiredInputSourcePicker.asInt(this._def.userSourceTypes[userSlot]));
             }
         }
 
@@ -200,8 +224,8 @@ export class WiredInputSourcePicker implements ISourceTypeListener
         const previousType = this._element.getMergedType(this._id);
         this._element.setMergedType(this._id, type);
         const selection = this._element.mergedSelections()[this._id];
-        const furniSlot = selection[0];
-        const userSlot = selection[1];
+        const furniSlot = WiredInputSourcePicker.asInt(selection[0]);
+        const userSlot = WiredInputSourcePicker.asInt(selection[1]);
 
         if(previousType === WiredInputSourcePicker.FURNI_SOURCE)
         {
@@ -216,12 +240,16 @@ export class WiredInputSourcePicker implements ISourceTypeListener
 
         if(type === WiredInputSourcePicker.FURNI_SOURCE)
         {
-            const value = this._selectionCache.has(type) ? this._selectionCache.get(type)! : conf.getAllowedFurniSources(furniSlot)[0];
+            const value = WiredInputSourcePicker.asInt(
+                this._selectionCache.has(type) ? this._selectionCache.get(type) : conf.getAllowedFurniSources(furniSlot)[0]);
+
             this._def.furniSourceTypes[furniSlot] = value;
         }
         else if(type === WiredInputSourcePicker.USER_SOURCE)
         {
-            const value = this._selectionCache.has(type) ? this._selectionCache.get(type)! : conf.getAllowedUserSources(userSlot)[0];
+            const value = WiredInputSourcePicker.asInt(
+                this._selectionCache.has(type) ? this._selectionCache.get(type) : conf.getAllowedUserSources(userSlot)[0]);
+
             this._def.userSourceTypes[userSlot] = value;
         }
 
@@ -249,29 +277,29 @@ export class WiredInputSourcePicker implements ISourceTypeListener
         if(this._sourceType === WiredInputSourcePicker.FURNI_SOURCE)
         {
             typeName = 'furni';
-            sourceValue = def.furniSourceTypes[this._id];
+            sourceValue = WiredInputSourcePicker.asInt(def.furniSourceTypes[this._id]);
         }
         else if(this._sourceType === WiredInputSourcePicker.USER_SOURCE)
         {
             typeName = 'users';
-            sourceValue = def.userSourceTypes[this._id];
+            sourceValue = WiredInputSourcePicker.asInt(def.userSourceTypes[this._id]);
         }
         else
         {
             const selection = element.mergedSelections()[this._id];
-            const furniSlot = selection[0];
-            const userSlot = selection[1];
+            const furniSlot = WiredInputSourcePicker.asInt(selection[0]);
+            const userSlot = WiredInputSourcePicker.asInt(selection[1]);
             const mergedType = element.getMergedType(this._id);
 
             if(mergedType === WiredInputSourcePicker.FURNI_SOURCE)
             {
                 typeName = 'furni';
-                sourceValue = def.furniSourceTypes[furniSlot];
+                sourceValue = WiredInputSourcePicker.asInt(def.furniSourceTypes[furniSlot]);
             }
             else if(mergedType === WiredInputSourcePicker.USER_SOURCE)
             {
                 typeName = 'users';
-                sourceValue = def.userSourceTypes[userSlot];
+                sourceValue = WiredInputSourcePicker.asInt(def.userSourceTypes[userSlot]);
             }
             else
             {
