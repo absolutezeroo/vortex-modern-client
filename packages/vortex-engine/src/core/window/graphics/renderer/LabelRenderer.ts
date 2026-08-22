@@ -62,6 +62,26 @@ interface ILabelWindowShape
  */
 export class LabelRenderer extends TextSkinRenderer
 {
+    /**
+     * No top gutter on a label.
+     *
+     * A label IS a TextField in Flash and does carry the gutter, but this
+     * port's TextLabelController extends WindowController, not TextController,
+     * so it never grew the box by the two gutters the way text windows did —
+     * `caption` in the friend list is authored 13px tall and measures a 13px
+     * line. Offsetting into that pushes the descenders straight out of the
+     * bottom, which is what happened the moment the gate came off.
+     *
+     * The offset stays off here until the label boxes are measured against
+     * their authored heights the same way the text ones were
+     * (scripts/extract-flash-text-metrics.mjs), rather than assumed to follow
+     * the same rule.
+     */
+    protected override get topGutter(): number
+    {
+        return 0;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/LabelRenderer.as::isStateDrawable()
     public override isStateDrawable(state: number): boolean
     {

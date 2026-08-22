@@ -1,3 +1,5 @@
+import {flashLineBox} from './FlashTextMetrics';
+
 /**
  * Shared helper for building Canvas 2D `ctx.font` strings.
  *
@@ -70,6 +72,15 @@ export function measureFontLineHeight(
     leading: number = 0
 ): number
 {
+    // Flash's own number first, where the layouts pinned it down. The browser
+    // metric below is the whole font face's box — Ubuntu's runs 3px past the
+    // em at size 12 — and it is not what the player advanced by. Measured over
+    // three unrelated windows, every auto-sized box came out exactly 2px short
+    // of the authored one, which is this difference plus the missing gutter.
+    const flash = flashLineBox(fontSize);
+
+    if(flash !== null) return flash + Math.max(0, leading);
+
     const metrics = ctx.measureText('Mg');
     const ascent = metrics.fontBoundingBoxAscent;
     const descent = metrics.fontBoundingBoxDescent;

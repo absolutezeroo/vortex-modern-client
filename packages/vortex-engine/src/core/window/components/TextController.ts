@@ -36,6 +36,33 @@ export interface ITextFormatRange
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as
  */
+/**
+ * The subset of a text style that can be posted directly onto one window.
+ *
+ * AS3 reuses the style struct itself for this, under an identifier that is
+ * obfuscated in every tree (`_SafeStr_4862` here, `_Str_3808` in the 2016
+ * build) — but the public `resetExplicitStyle()` sitting beside it is not
+ * obfuscated, and is where this name comes from.
+ */
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::resetExplicitStyle()
+export interface IExplicitTextStyle
+{
+    fontFamily?: string;
+    fontSize?: number;
+    color?: number;
+    fontWeight?: string;
+    fontStyle?: string;
+    textDecoration?: string;
+    leading?: number;
+    kerning?: boolean;
+    letterSpacing?: number;
+    antiAliasType?: string;
+    sharpness?: number;
+    thickness?: number;
+    etchingColor?: number;
+    etchingPosition?: string;
+}
+
 export class TextController extends WindowController implements ITextWindow
 {
     private static readonly _propertySetters: Record<string, (ctrl: TextController, value: unknown) => void> = TextController.createPropertySetterTable();
@@ -68,6 +95,27 @@ export class TextController extends WindowController implements ITextWindow
     protected _maxChars: number = 0;
     // AS3: .../src/com/sulake/core/window/components/TextController.as::_maxLines
     protected _maxLines: number = 0;
+
+    /**
+     * Every value posted directly onto this window - a layout `<var>`, a public
+     * setter - as opposed to inherited from its named style. AS3 keeps a style
+     * struct here and lets {@link applyTextStyle} fill a field from the named
+     * style ONLY where this one is empty, which is what makes a layout's
+     * `font_size="13"` survive a theme that says 9.
+     *
+     * A field is "set" by AS3's own falsy test, not by presence: `letterSpacing`
+     * of 0 or `kerning` of false read as unset there, and this port keeps that
+     * rather than tightening it. The two etching fields are the exception - AS3
+     * tests those with `== null`.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::resetExplicitStyle()
+    //      (the field itself is obfuscated in every tree; that member names it)
+    protected _explicitStyle: IExplicitTextStyle = {};
+
+    // TS-only: AS3 keeps the style name out of its explicit-style struct because
+    // nothing in the player re-resolves it after construction. This port's
+    // finalize() does, so it needs to know whether it may.
+    protected _hasExplicitTextStyle: boolean = false;
 
     protected _textColor: number = 0;
     protected _bold: boolean = false;
@@ -174,7 +222,21 @@ export class TextController extends WindowController implements ITextWindow
         super.finalize();
 
         this._hasVisualContent = true;
-        this._textStyleName = this.resolveThemeTextStyle(this._context, this._style);
+
+        // Only fall back to the theme's style when the window was not given one.
+        //
+        // completeConstruction() runs applyProperties() — where a layout's
+        // `text_style` variable lands — and THEN finalize(), so resolving
+        // unconditionally here overwrote what the layout had just asked for.
+        // The me-menu declares `text_style="u_regular"` (Ubuntu 12) on every
+        // entry and rendered in `regular` (Volter 11) instead: a pixel font two
+        // sizes above its design size, which is why the menu did not look like
+        // the same typeface as the real client's at all.
+        if(!this._hasExplicitTextStyle)
+        {
+            this._textStyleName = this.resolveThemeTextStyle(this._context, this._style);
+        }
+
         this.applyTextStyle();
     }
 
@@ -241,6 +303,7 @@ export class TextController extends WindowController implements ITextWindow
     {
         this._textColor = value;
         this.refreshTextImage();
+        this._explicitStyle.color = value;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set background()
@@ -287,6 +350,9 @@ export class TextController extends WindowController implements ITextWindow
     {
         this._bold = value;
         this.refreshTextImage();
+        // AS3's setBold() writes "bold" whatever the argument is, so turning
+        // bold off still marks the weight explicitly set. Ported as written.
+        this._explicitStyle.fontWeight = 'bold';
     }
 
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get italic()
@@ -300,6 +366,7 @@ export class TextController extends WindowController implements ITextWindow
     {
         this._italic = value;
         this.refreshTextImage();
+        this._explicitStyle.fontStyle = value ? 'italic' : 'normal';
     }
 
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get underline()
@@ -313,6 +380,7 @@ export class TextController extends WindowController implements ITextWindow
     {
         this._underline = value;
         this.refreshTextImage();
+        this._explicitStyle.textDecoration = value ? 'underline' : 'none';
     }
 
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get fontFace()
@@ -322,10 +390,16 @@ export class TextController extends WindowController implements ITextWindow
     }
 
     // AS3: .../src/com/sulake/core/window/components/TextController.as::set fontFace()
+    // A layout's `font_face` is a Flash font name ("Volter Bold"), not a CSS
+    // family — no such family is registered, and the browser silently falls
+    // back to its default. The stylesheet path has always resolved the name
+    // through mapFontFamily(); this one had not, which stayed invisible only
+    // while applyTextStyle() was overwriting the field on every window.
     public set fontFace(value: string)
     {
-        this._fontFace = value;
+        this._fontFace = TextStyleManager.mapFontFamily(value);
         this.refreshTextImage();
+        this._explicitStyle.fontFamily = this._fontFace;
     }
 
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get fontSize()
@@ -339,6 +413,7 @@ export class TextController extends WindowController implements ITextWindow
     {
         this._fontSize = value;
         this.refreshTextImage();
+        this._explicitStyle.fontSize = value;
     }
 
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get etchingColor()
@@ -352,6 +427,7 @@ export class TextController extends WindowController implements ITextWindow
     {
         this._etchingColor = value;
         this.refreshTextImage();
+        this._explicitStyle.etchingColor = this._etchingColor;
     }
 
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get etchingPosition()
@@ -365,6 +441,7 @@ export class TextController extends WindowController implements ITextWindow
     {
         this._etchingPosition = value;
         this.refreshTextImage();
+        this._explicitStyle.etchingPosition = this._etchingPosition;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get antiAliasType()
@@ -380,6 +457,7 @@ export class TextController extends WindowController implements ITextWindow
     {
         this._antiAliasType = value === 'normal' ? 'normal' : 'advanced';
         this.refreshTextImage();
+        this._explicitStyle.antiAliasType = this._antiAliasType;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get gridFitType()
@@ -406,6 +484,7 @@ export class TextController extends WindowController implements ITextWindow
     {
         this._sharpness = value;
         this.refreshTextImage();
+        this._explicitStyle.sharpness = value;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get thickness()
@@ -419,6 +498,7 @@ export class TextController extends WindowController implements ITextWindow
     {
         this._thickness = value;
         this.refreshTextImage();
+        this._explicitStyle.thickness = value;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get border()
@@ -578,6 +658,7 @@ export class TextController extends WindowController implements ITextWindow
         if(value === null) return;
 
         this._textStyleName = value.name;
+        this._hasExplicitTextStyle = true;
         this.refreshTextImage();
     }
 
@@ -597,8 +678,11 @@ export class TextController extends WindowController implements ITextWindow
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get kerning()
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get/set kerning() maps to `TextField.kerning`. Canvas 2D applies the font's
-    // own kerning and exposes no switch, so the flag is stored and inert.
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get/set kerning() maps to `TextField.kerning`. Canvas 2D does expose
+    // `ctx.fontKerning`, but measured on this client's own fonts it moves nothing: 'auto',
+    // 'normal' and 'none' all give 104.33px for the same string in 13px Ubuntu. The flag is
+    // stored and inert because wiring it through the renderer would change no pixels, not
+    // because the platform lacks the switch.
     public get kerning(): boolean
     {
         return this._kerning;
@@ -608,6 +692,7 @@ export class TextController extends WindowController implements ITextWindow
     public set kerning(value: boolean)
     {
         this._kerning = value;
+        this._explicitStyle.kerning = value;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get defaultTextFormat()
@@ -633,10 +718,9 @@ export class TextController extends WindowController implements ITextWindow
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::resetExplicitStyle()
-    // TODO(AS3): drops the per-instance overrides so the named style applies again. The port has
-    // no explicit-override layer to drop — style writes go straight to the fields.
     public resetExplicitStyle(): void
     {
+        this._explicitStyle = {};
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getLineText()
@@ -902,6 +986,7 @@ export class TextController extends WindowController implements ITextWindow
     {
         this._spacing = value;
         this.refreshTextImage();
+        this._explicitStyle.letterSpacing = value;
     }
 
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get leading()
@@ -915,6 +1000,7 @@ export class TextController extends WindowController implements ITextWindow
     {
         this._leading = value;
         this.refreshTextImage();
+        this._explicitStyle.leading = value;
     }
 
     // AS3: .../src/com/sulake/core/window/components/TextController.as::set localization()
@@ -969,11 +1055,15 @@ export class TextController extends WindowController implements ITextWindow
 	 * Maps a point local to this window (0,0 = top-left) to a character
 	 * index in `text`, or -1 if the point isn't over any character.
 	 *
-	 * TODO(AS3): word-wrapped continuation lines aren't reverse-mapped here —
-	 * only explicit '\n' breaks are accounted for. The only current caller
-	 * (chat-bubble message links, see RoomChatItem.testMessageLinkMouseClick())
-	 * always renders single-line, unwrapped text, so this doesn't affect real
-	 * behavior yet.
+	 * Walks the laid-out lines, not the source paragraphs: with word wrap on,
+	 * a click three visual lines down lands in paragraph 0, and splitting the
+	 * source on '\n' picked the wrong line entirely.
+	 *
+	 * The offset comes from getLineOffset(), which charges one character per
+	 * line break. That is exact for a '\n' and for a wrap that consumed a
+	 * space; a wrap that broke mid-word has no character to charge, so the
+	 * index runs one short per such break. Reproducing that exactly would mean
+	 * the layout recording where each line came from, which nothing needs yet.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getCharIndexAtPoint()
     public getCharIndexAtPoint(localX: number, localY: number): number
@@ -981,19 +1071,12 @@ export class TextController extends WindowController implements ITextWindow
         if(!this._text) return -1;
 
         const lineHeight = this.getLineHeight();
-        const paragraphs = this._text.split('\n');
         const lineIndex = Math.floor((localY - this._marginTop - TextController.FLASH_TEXT_FIELD_TOP_GUTTER) / lineHeight);
 
-        if(lineIndex < 0 || lineIndex >= paragraphs.length) return -1;
+        if(lineIndex < 0 || lineIndex >= this._linesCache.length) return -1;
 
-        let charOffset = 0;
-
-        for(let i = 0; i < lineIndex; i++)
-        {
-            charOffset += paragraphs[i].length + 1;
-        }
-
-        const line = paragraphs[lineIndex];
+        const charOffset = this.getLineOffset(lineIndex);
+        const line = this._linesCache[lineIndex];
         const ctx = TextController.getMeasureContext();
 
         ctx.font = this.buildCanvasFontString();
@@ -1149,6 +1232,11 @@ export class TextController extends WindowController implements ITextWindow
     {
         const cloned = super.clone() as TextController;
 
+        // Carried with the resolved fields it explains: without it the copy
+        // looks identical until something re-runs applyTextStyle() on it, at
+        // which point every value the layout set reverts to the theme's.
+        cloned._explicitStyle = {...this._explicitStyle};
+        cloned._hasExplicitTextStyle = this._hasExplicitTextStyle;
         cloned._textStyleName = this._textStyleName;
         cloned._text = this._text;
         cloned._htmlText = this._htmlText;
@@ -1400,20 +1488,17 @@ export class TextController extends WindowController implements ITextWindow
             this._fieldWidth = Math.ceil(measured.width);
             this._fieldHeight = Math.ceil(measured.height);
 
-            // AS3/Flash: a flash.text.TextField reserves a 2px gutter ABOVE and BELOW the
-            // text, so its height - and thus the rect its `background` fills - is
-            // textHeight + 4, not the bare line height measured here. The renderer already
-            // offsets glyphs down by the top gutter (TextSkinRenderer.FLASH_TEXT_FIELD_TOP_GUTTER)
-            // but the box height omitted both gutters, leaving the background fill ~4px short.
-            // For a background-filled auto-sized field this exposed a strip of the parent below
-            // the text - e.g. the inventory count badge showed the teal `number_container` under
-            // the white `number` field (11px text box in a 15px container = 4px of teal). Only
-            // widen background fields, where the gutter is visible, so the many auto-sized labels
-            // with no background keep their exact box height and do not shift.
-            if(this._background)
-            {
-                this._fieldHeight += 2 * TextController.FLASH_TEXT_FIELD_TOP_GUTTER;
-            }
+            // A flash.text.TextField reserves a 2px gutter above AND below its text, so
+            // its height is the line box + 4. This used to be added only to background
+            // fields, on the reasoning that the gutter is invisible without a fill and
+            // widening the rest would shift them.
+            //
+            // It shifts them into place. Measured against the authored layouts across
+            // three unrelated windows — the chat font-size picker, the quest list, the
+            // achievement browser — every auto-sized box was short by exactly 2px at
+            // every font size, background or not: the line box above now returns Flash's
+            // own, and the remaining gap was this gutter going unapplied.
+            this._fieldHeight += 2 * TextController.FLASH_TEXT_FIELD_TOP_GUTTER;
         }
 
         const fieldWidthWithBorder = Math.floor(this._fieldWidth) + borderPadding;
@@ -1482,26 +1567,89 @@ export class TextController extends WindowController implements ITextWindow
         }
     }
 
+    /**
+     * Fills in from the named style every field this window has NOT set for
+     * itself.
+     *
+     * The direction is the whole point, and it used to be the other way round:
+     * the named style was copied over the fields unconditionally, so a layout
+     * that asked for `font_face="Ubuntu" font_size="13" antialias_type="advanced"`
+     * rendered in whatever the theme's style for its `style` number said — the
+     * theme won every time, on every text window in the client. AS3 guards each
+     * assignment on the *instance* override being empty, never on the style
+     * having a value.
+     *
+     * The emptiness test is AS3's own falsiness, not a null check, so a
+     * `letterSpacing` of 0 or a `kerning` of false read as "not set" and take
+     * the style's value. The two etching fields are the exception AS3 makes -
+     * it tests those with `== null`.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setTextFormatting()
     protected applyTextStyle(): void
     {
         const style = TextStyleManager.getStyle(this._textStyleName) ?? TextStyleManager.getStyle('regular');
 
         if(!style) return;
 
-        if(style.fontFamily != null) this._fontFace = style.fontFamily;
-        if(style.fontSize != null) this._fontSize = style.fontSize;
-        if(style.color != null) this._textColor = style.color;
-        if(style.fontWeight != null) this._bold = style.fontWeight === 'bold';
-        if(style.fontStyle != null) this._italic = style.fontStyle === 'italic';
-        if(style.textDecoration != null) this._underline = style.textDecoration === 'underline';
-        if(style.letterSpacing != null) this._spacing = style.letterSpacing;
-        if(style.leading != null) this._leading = style.leading;
-        if(style.kerning != null) this._kerning = style.kerning;
-        if(style.etchingColor != null) this._etchingColor = style.etchingColor;
-        if(style.etchingPosition != null) this._etchingPosition = style.etchingPosition;
-        if(style.antiAliasType != null) this._antiAliasType = style.antiAliasType;
-        if(style.sharpness != null) this._sharpness = style.sharpness;
-        if(style.thickness != null) this._thickness = style.thickness;
+        const explicit = this._explicitStyle;
+
+        if(!explicit.fontFamily && style.fontFamily != null) this._fontFace = style.fontFamily;
+        if(!explicit.fontSize && style.fontSize != null) this._fontSize = style.fontSize;
+        if(!explicit.color && style.color != null) this._textColor = style.color;
+        if(!explicit.fontWeight && style.fontWeight != null) this._bold = style.fontWeight === 'bold';
+        if(!explicit.fontStyle && style.fontStyle != null) this._italic = style.fontStyle === 'italic';
+        if(!explicit.textDecoration && style.textDecoration != null) this._underline = style.textDecoration === 'underline';
+        if(!explicit.letterSpacing && style.letterSpacing != null) this._spacing = style.letterSpacing;
+        if(!explicit.leading && style.leading != null) this._leading = style.leading;
+        if(!explicit.kerning && style.kerning != null) this._kerning = style.kerning;
+        if(explicit.etchingColor == null && style.etchingColor != null) this._etchingColor = style.etchingColor;
+        if(explicit.etchingPosition == null && style.etchingPosition != null) this._etchingPosition = style.etchingPosition;
+        if(!explicit.antiAliasType && style.antiAliasType != null) this._antiAliasType = style.antiAliasType;
+        if(!explicit.sharpness && style.sharpness != null) this._sharpness = style.sharpness;
+        if(!explicit.thickness && style.thickness != null) this._thickness = style.thickness;
+
+        this.applyTextStyleDefaults(style);
+    }
+
+    /**
+     * setTextFormatting()'s second pass: every field that NEITHER the named
+     * style NOR this window set falls back to a hard default.
+     *
+     * Field initialisers cover this for a freshly built window, which is why
+     * the port could go without it — but not after a style change, where a
+     * field still carries the previous style's value and neither the new style
+     * nor the window has an opinion on it.
+     *
+     * The two etching lines go through their setters, not the backing fields,
+     * because AS3's do (`param1.etchingColor = 0`) and those setters record an
+     * explicit override — so defaulting etching here also pins it, and a later
+     * style cannot move it. That is AS3's behaviour, quirk included.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setTextFormatting()
+    // TODO(AS3): AS3's `_loc6_.indent = 0` line has no counterpart here — this port
+    // models no text indent at all (TextStyle parses `text-indent`, TextController has
+    // no field for it), so there is nothing to reset.
+    protected applyTextStyleDefaults(style: TextStyle): void
+    {
+        const explicit = this._explicitStyle;
+
+        if(!style.fontWeight && !explicit.fontWeight) this._bold = false;
+        if(!style.fontStyle && !explicit.fontStyle) this._italic = false;
+        if(!style.textDecoration && !explicit.textDecoration) this._underline = false;
+        if(!style.leading && !explicit.leading) this._leading = 0;
+        if(!style.kerning && !explicit.kerning) this._kerning = false;
+        if(!style.letterSpacing && !explicit.letterSpacing) this._spacing = 0;
+
+        if(!style.antiAliasType && !explicit.antiAliasType)
+        {
+            this._antiAliasType = 'advanced';
+            this._gridFitType = 'pixel';
+        }
+
+        if(!style.sharpness && !explicit.sharpness) this._sharpness = 0;
+        if(!style.thickness && !explicit.thickness) this._thickness = 0;
+        if(style.etchingColor == null && explicit.etchingColor == null) this.etchingColor = 0;
+        if(style.etchingPosition == null && explicit.etchingPosition == null) this.etchingPosition = 'bottom';
     }
 
     protected resolveThemeTextStyle(context: IWindowContext, style: number): string
@@ -1879,8 +2027,7 @@ export class TextController extends WindowController implements ITextWindow
             },
             'antialias_type': (ctrl, v) =>
             {
-                ctrl._antiAliasType = String(v) === 'normal' ? 'normal' : 'advanced';
-                ctrl.refreshTextImage();
+                ctrl.antiAliasType = String(v);
             },
             'auto_size': (ctrl, v) =>
             {
@@ -1897,7 +2044,7 @@ export class TextController extends WindowController implements ITextWindow
             },
             'bold': (ctrl, v) =>
             {
-                ctrl._bold = !!v;
+                ctrl.bold = !!v;
             },
             'border': (ctrl, v) =>
             {
@@ -1926,23 +2073,19 @@ export class TextController extends WindowController implements ITextWindow
             },
             'etching_color': (ctrl, v) =>
             {
-                ctrl._etchingColor = Number(v);
-                ctrl.refreshTextImage();
+                ctrl.etchingColor = Number(v);
             },
             'etching_position': (ctrl, v) =>
             {
-                ctrl._etchingPosition = String(v);
-                ctrl.refreshTextImage();
+                ctrl.etchingPosition = String(v);
             },
             'font_face': (ctrl, v) =>
             {
-                ctrl._fontFace = String(v);
-                ctrl.refreshTextImage();
+                ctrl.fontFace = String(v);
             },
             'font_size': (ctrl, v) =>
             {
-                ctrl._fontSize = Number(v);
-                ctrl.refreshTextImage();
+                ctrl.fontSize = Number(v);
             },
             'grid_fit_type': (ctrl, v) =>
             {
@@ -1951,16 +2094,15 @@ export class TextController extends WindowController implements ITextWindow
             },
             'italic': (ctrl, v) =>
             {
-                ctrl._italic = !!v;
+                ctrl.italic = !!v;
             },
             'kerning': (ctrl, v) =>
             {
-                ctrl._kerning = !!v;
+                ctrl.kerning = !!v;
             },
             'leading': (ctrl, v) =>
             {
-                ctrl._leading = Number(v);
-                ctrl.refreshTextImage();
+                ctrl.leading = Number(v);
             },
             'margin_left': (ctrl, v) =>
             {
@@ -2029,33 +2171,30 @@ export class TextController extends WindowController implements ITextWindow
             },
             'sharpness': (ctrl, v) =>
             {
-                ctrl._sharpness = Number(v);
-                ctrl.refreshTextImage();
+                ctrl.sharpness = Number(v);
             },
             'spacing': (ctrl, v) =>
             {
-                ctrl._spacing = Number(v);
-                ctrl.refreshTextImage();
+                ctrl.spacing = Number(v);
             },
             'text_color': (ctrl, v) =>
             {
-                ctrl._textColor = Number(v);
-                ctrl.refreshTextImage();
+                ctrl.textColor = Number(v);
             },
             'text_style': (ctrl, v) =>
             {
                 ctrl._textStyleName = String(v);
+                ctrl._hasExplicitTextStyle = true;
                 ctrl.applyTextStyle();
                 ctrl.refreshTextImage();
             },
             'thickness': (ctrl, v) =>
             {
-                ctrl._thickness = Number(v);
-                ctrl.refreshTextImage();
+                ctrl.thickness = Number(v);
             },
             'underline': (ctrl, v) =>
             {
-                ctrl._underline = !!v;
+                ctrl.underline = !!v;
             },
             'word_wrap': (ctrl, v) =>
             {

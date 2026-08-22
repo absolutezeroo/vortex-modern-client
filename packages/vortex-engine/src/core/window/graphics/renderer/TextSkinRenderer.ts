@@ -172,6 +172,23 @@ export class TextSkinRenderer extends SkinRenderer
         return state === 0;
     }
 
+    /**
+     * How far below the box top the first line sits.
+     *
+     * Only meaningful when the box has room for it: the offset costs the
+     * bottom gutter, and a field authored exactly as tall as its line box has
+     * none to give. TextController sizes its fields as line box + both
+     * gutters, so text windows do; LabelRenderer overrides this to 0 because
+     * TextLabelController does not size that way.
+     */
+    // TS-only: Flash's TextField owns its gutters, so AS3 never had to expose
+    // one — the port splits the box and the glyph placement across two classes
+    // and needs them to agree on it.
+    protected get topGutter(): number
+    {
+        return TextSkinRenderer.FLASH_TEXT_FIELD_TOP_GUTTER;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/TextSkinRenderer.as::draw()
     public override draw(
         window: IWindow,
@@ -255,17 +272,19 @@ export class TextSkinRenderer extends SkinRenderer
             : 0;
         const textLeft = absX + marginL + flashTextFieldLeftGutter;
         const maxWidth = w - marginL - marginR - flashTextFieldLeftGutter;
-        // Editable fields only, exactly like FLASH_TEXT_FIELD_LEFT_GUTTER above — the two describe
-        // the same Flash gutter and had no business being gated differently.
+        // Every text window, as Flash does — no longer editable-only.
         //
-        // Applied to every text window it pushed all non-editable captions 2px down. The layouts are
-        // authored so the line box exactly fills the text window (boxH 15, lineHeight 15 at font
-        // size 9), so those 2px came straight off the bottom and took the descenders with them:
-        // "ring" read "rina", "Settings" read "Settinas". Measured over ros_room_settings_xml, 42 of
-        // its 79 text windows were clipped, every one of them by exactly 2px.
-        const flashTextFieldTopGutter = (type === WindowType.TEXTFIELD || type === WindowType.PASSWORD)
-            ? TextSkinRenderer.FLASH_TEXT_FIELD_TOP_GUTTER
-            : 0;
+        // It WAS editable-only, and for a good reason at the time: applied to every window it
+        // pushed non-editable captions 2px down, and since the box was only as tall as the line
+        // box those 2px came off the bottom and took the descenders with them ("Settings" read
+        // "Settinas", 42 of ros_room_settings_xml's 79 text windows clipped by exactly 2px).
+        //
+        // That was half the model. The box is now the line box plus BOTH gutters — Flash's own
+        // line metrics, recovered from the authored layouts by
+        // scripts/extract-flash-text-metrics.mjs — so offsetting by the top gutter leaves the
+        // bottom one intact instead of eating it. Measured over three windows, every auto-sized
+        // box now matches its authored height exactly, which is the room this offset needs.
+        const flashTextFieldTopGutter = this.topGutter;
 
         if(maxWidth <= 0) return;
 

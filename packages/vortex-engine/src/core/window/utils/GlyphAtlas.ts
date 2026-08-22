@@ -67,13 +67,41 @@ export class GlyphAtlas
     private static readonly LOGGER = Logger.getLogger('core.window.utils.GlyphAtlas');
 
     /**
-     * Global kill switch, so the previous `ctx.fillText()` behaviour stays one
-     * assignment away: `globalThis.__vortexTextAtlas = false` (then redraw, or
-     * call `invalidateAll()`).
+     * Off by default — measured, not assumed.
+     *
+     * The atlas exists to reproduce Flash's `"normal"` anti-aliasing, on the
+     * reading that the pre-Flash-8 rasteriser produced near-binary coverage on
+     * a pixel font at its design size (see {@link handles}). A capture of the
+     * real client's own avatar menu says otherwise. Comparing the fraction of
+     * partially-covered pixels against solid ink — the anti-aliasing signature,
+     * and the one measure that survives a different capture size, palette and
+     * background:
+     *
+     *     line        atlas on   atlas off   real client
+     *     1             0.00       0.37        0.41
+     *     2             0.00       0.42        0.50
+     *     3             0.00       0.47        0.51
+     *     4             0.00       0.41        0.37
+     *
+     * Off lands on the reference; on produces no partial pixels at all on four
+     * lines out of six. Glyph heights are identical either way, so nothing is
+     * traded for it — turning the atlas off hands rasterisation back to the
+     * browser rather than averaging supersamples, which is the failure mode
+     * the centre-sampling was guarding against.
+     *
+     * What the atlas still buys is speed: one `drawImage()` per glyph instead
+     * of a `fillText()` with per-draw measuring. `globalThis.__vortexTextAtlas
+     * = true` turns it back on (then redraw, or call `invalidateAll()`), and
+     * the window debugger has a button for it.
      */
+    // TS-only: the atlas has no AS3 counterpart, so neither does its default.
+    private static readonly ENABLED_BY_DEFAULT: boolean = false;
+
     public static get enabled(): boolean
     {
-        return (globalThis as unknown as { __vortexTextAtlas?: boolean }).__vortexTextAtlas !== false;
+        const override = (globalThis as unknown as { __vortexTextAtlas?: boolean }).__vortexTextAtlas;
+
+        return override === undefined ? GlyphAtlas.ENABLED_BY_DEFAULT : override;
     }
 
     public static set enabled(value: boolean)

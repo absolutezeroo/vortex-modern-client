@@ -828,8 +828,16 @@ tag {
 
     /**
      * Maps AS3 font family names to web-safe equivalents.
+     *
+     * Public because the stylesheet is no longer the only way a Flash font
+     * name reaches a window: a layout's `font_face` variable carries one too,
+     * and until both paths resolve it the same way the field means one thing
+     * on one path and another on the other.
      */
-    private static mapFontFamily(family: string): string 
+    // TS-only: AS3 hands the Flash font name straight to `TextFormat.font` and the player
+    // resolves it against the SWF's embedded fonts; a browser has no such registry, so the
+    // name has to be translated to a CSS family list. No AS3 counterpart.
+    public static mapFontFamily(family: string): string
     {
         switch(family) 
         {
