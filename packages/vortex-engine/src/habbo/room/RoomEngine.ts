@@ -106,6 +106,13 @@ import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
+import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
+import {BadgeImageReadyEvent} from '@habbo/session/events/BadgeImageReadyEvent';
+import {RoomObjectGroupBadgeUpdateMessage} from './messages/RoomObjectGroupBadgeUpdateMessage';
+import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import {RoomObjectRoomAdEvent} from './events/RoomObjectRoomAdEvent';
+import {RoomObjectBadgeAssetEvent} from './events/RoomObjectBadgeAssetEvent';
+import {RoomEngineRoomAdEvent} from './events/RoomEngineRoomAdEvent';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import {EventEmitter} from 'eventemitter3';
 import {RoomContentLoader} from './RoomContentLoader';
@@ -167,6 +174,11 @@ import {RoomObjectWallMouseEvent} from './events/RoomObjectWallMouseEvent';
 import {RoomObjectStateChangeEvent} from './events/RoomObjectStateChangeEvent';
 import {RoomObjectWidgetRequestEvent} from './events/RoomObjectWidgetRequestEvent';
 import {RoomObjectFloorHoleEvent} from './events/RoomObjectFloorHoleEvent';
+import {RoomObjectPlaySoundIdEvent} from './events/RoomObjectPlaySoundIdEvent';
+import {RoomObjectSamplePlaybackEvent} from './events/RoomObjectSamplePlaybackEvent';
+import {RoomObjectMoveEvent} from './events/RoomObjectMoveEvent';
+import {RoomEngineObjectPlaySoundEvent} from './events/RoomEngineObjectPlaySoundEvent';
+import {RoomEngineObjectSamplePlaybackEvent} from './events/RoomEngineObjectSamplePlaybackEvent';
 import {RoomObjectDataRequestEvent} from './events/RoomObjectDataRequestEvent';
 import {RoomObjectHSLColorEnableEvent} from './events/RoomObjectHSLColorEnableEvent';
 import {RoomEngineHSLColorEnableEvent} from './events/RoomEngineHSLColorEnableEvent';
@@ -270,6 +282,14 @@ export class RoomEngine extends Component implements IRoomEngine,
     private _configurationManager: IHabboConfigurationManager | null = null;
     private _sessionDataManager: ISessionDataManager | null = null;
     private _toolbar: IHabboToolbar | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_catalog
+    // Derived name: obfuscated in the primary tree; the getter it backs is readable.
+    private _catalog: IHabboCatalog | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_pendingBadgeObjects
+    // Derived name: obfuscated in the primary tree. Objects waiting on a badge image,
+    // keyed by badge id; the BADGE_IMAGE_READY listener is attached only while it is
+    // non-empty, exactly as AS3 does.
+    private _pendingBadgeObjects: Map<string, {object: IRoomObjectController; groupBadge: boolean}[]> = new Map();
     private _contentLoader: RoomContentLoader;
     private _contentLoaderEvents: EventEmitter = new EventEmitter();
     private _roomInstanceData: Map<number, IRoomEngineRoomInstanceData>;
@@ -608,6 +628,14 @@ export class RoomEngine extends Component implements IRoomEngine,
                     this._toolbar = toolbar;
                 },
                 false // Optional - needed for the pickup-to-inventory icon animation
+            ),
+            new ComponentDependency(
+                IID_HabboCatalog,
+                (catalog: IHabboCatalog | null) => 
+                {
+                    this._catalog = catalog;
+                },
+                false // Optional - only used to open a CATALOG_PAGE: room-ad link
             ),
             new ComponentDependency(
                 IID_HabboUserDefinedRoomEvents,
@@ -987,6 +1015,98 @@ export class RoomEngine extends Component implements IRoomEngine,
             new RoomObjectRoomFloorHoleUpdateMessage(RoomObjectRoomFloorHoleUpdateMessage.REMOVE_HOLE, objectId)
         );
     }
+
+    /**
+	 * A furni logic asking for a badge image. If the session already has it, the graphic
+	 * assets go straight onto the object's asset collection; otherwise the object is parked
+	 * against the badge id and the placeholder name is sent, and `onBadgeLoaded()` finishes
+	 * the job when the image arrives.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::requestBadgeImageAsset()
+    requestBadgeImageAsset(roomId: number, objectId: number, category: number, badgeId: string, groupBadge: boolean = true): void
+    {
+        const object = roomId === 0
+            ? (this._roomManager?.getRoom('temporary_room')?.getObject(objectId, category) as IRoomObjectController | null ?? null)
+            : (this.getRoomObject(roomId, objectId, category) as IRoomObjectController | null);
+
+        if(!object || !object.getEventHandler() || !this._sessionDataManager) return;
+
+        let assetName = groupBadge
+            ? this._sessionDataManager.getGroupBadgeAssetName(badgeId)
+            : this._sessionDataManager.getBadgeImageAssetName(badgeId);
+
+        if(!assetName)
+        {
+            assetName = 'loading_icon';
+
+            if(this._pendingBadgeObjects.size === 0)
+            {
+                this._sessionDataManager.events.on(BadgeImageReadyEvent.BADGE_IMAGE_READY, this.onBadgeLoaded);
+            }
+
+            const waiting = this._pendingBadgeObjects.get(badgeId) ?? [];
+
+            waiting.push({object, groupBadge});
+            this._pendingBadgeObjects.set(badgeId, waiting);
+        }
+        else
+        {
+            this.addBadgeGraphicAssets(object, badgeId, groupBadge);
+        }
+
+        object.getEventHandler()!.processUpdateMessage(new RoomObjectGroupBadgeUpdateMessage(badgeId, assetName));
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addBadgeGraphicAssets()
+    private addBadgeGraphicAssets(object: IRoomObjectController, badgeId: string, groupBadge: boolean = false): void
+    {
+        const session = this._sessionDataManager;
+
+        if(!session) return;
+
+        const name = groupBadge ? session.getGroupBadgeAssetName(badgeId) : session.getBadgeImageAssetName(badgeId);
+        const image = groupBadge ? session.getGroupBadgeImage(badgeId) : session.getBadgeImage(badgeId);
+
+        if(name && image) this._contentLoader.addGraphicAsset(object.getType(), name, Texture.from(image), false);
+
+        const smallName = groupBadge ? session.getGroupBadgeSmallAssetName(badgeId) : session.getBadgeImageSmallAssetName(badgeId);
+        const smallImage = groupBadge ? session.getGroupBadgeSmallImage(badgeId) : session.getBadgeSmallImage(badgeId);
+
+        if(smallName && smallImage) this._contentLoader.addGraphicAsset(object.getType(), smallName, Texture.from(smallImage), false);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::onBadgeLoaded()
+    private onBadgeLoaded = (event: BadgeImageReadyEvent): void =>
+    {
+        const waiting = this._pendingBadgeObjects.get(event.badgeId);
+        const session = this._sessionDataManager;
+
+        if(!waiting || !session)
+        {
+            log.warn(`Could not find matching objects for group badge asset request ${event.badgeId}`);
+
+            return;
+        }
+
+        for(const entry of waiting)
+        {
+            this.addBadgeGraphicAssets(entry.object, event.badgeId, entry.groupBadge);
+
+            const assetName = entry.groupBadge
+                ? session.getGroupBadgeAssetName(event.badgeId)
+                : session.getBadgeImageAssetName(event.badgeId);
+
+            entry.object.getEventHandler()?.processUpdateMessage(
+                new RoomObjectGroupBadgeUpdateMessage(event.badgeId, assetName ?? ''));
+        }
+
+        this._pendingBadgeObjects.delete(event.badgeId);
+
+        if(this._pendingBadgeObjects.size === 0)
+        {
+            session.events.off(BadgeImageReadyEvent.BADGE_IMAGE_READY, this.onBadgeLoaded);
+        }
+    };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setClickSettings()
     setClickSettings(owner: string, throughUsers: boolean, throughFurni: boolean): void
@@ -6660,6 +6780,124 @@ export class RoomEngine extends Component implements IRoomEngine,
         else if(event instanceof RoomObjectWidgetRequestEvent)
         {
             this.handleObjectWidgetRequestEvent(event, this._activeRoomId);
+        }
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectGroupBadgeEvent()
+        else if(event instanceof RoomObjectBadgeAssetEvent)
+        {
+            if(event.type === RoomObjectBadgeAssetEvent.LOAD_BADGE)
+            {
+                this.requestBadgeImageAsset(this._activeRoomId, event.objectId,
+                    this.getRoomObjectCategory(event.objectType ?? ''), event.badgeId, event.groupBadge);
+            }
+        }
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectRoomAdEvent()
+        else if(event instanceof RoomObjectRoomAdEvent)
+        {
+            const category = this.getRoomObjectCategory(event.objectType ?? '');
+            let engineType: string | null = null;
+
+            switch(event.type)
+            {
+                case RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_CLICK:
+                    this.events.emit(event.type, event);
+
+                    if(this._toolbar !== null)
+                    {
+                        if(event.clickUrl === 'NAVIGATOR_GAMES') this._toolbar.toggleWindowVisibility('GAMES');
+                        else if(event.clickUrl) this.context?.createLinkEvent(event.clickUrl);
+                    }
+
+                    engineType = RoomEngineRoomAdEvent.FURNI_CLICK;
+                    break;
+
+                case RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_DOUBLE_CLICK:
+                {
+                    const prefix = 'CATALOG_PAGE:';
+
+                    if(this._catalog !== null && event.clickUrl?.startsWith(prefix))
+                    {
+                        this._catalog.openCatalogPage(event.clickUrl.substring(prefix.length));
+                    }
+
+                    engineType = RoomEngineRoomAdEvent.FURNI_DOUBLE_CLICK;
+                    break;
+                }
+
+                case RoomObjectRoomAdEvent.RORAE_ROOM_AD_TOOLTIP_SHOW:
+                    engineType = RoomEngineRoomAdEvent.TOOLTIP_SHOW;
+                    break;
+
+                case RoomObjectRoomAdEvent.RORAE_ROOM_AD_TOOLTIP_HIDE:
+                    engineType = RoomEngineRoomAdEvent.TOOLTIP_HIDE;
+                    break;
+
+                // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectRoomAdEvent()'s
+                // RORAE_ROOM_AD_LOAD_IMAGE case calls RoomEngine.requestRoomAdImage(), which
+                // forwards to the ad manager (`_adManager`). This port has no ad manager at all,
+                // so the image half of room ads cannot be served yet — the four interaction
+                // cases above are independent of it and work without one.
+            }
+
+            if(engineType !== null)
+            {
+                this.events.emit(engineType, new RoomEngineObjectEvent(engineType, this._activeRoomId, event.objectId, category));
+            }
+        }
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectPlaySoundEvent()
+        else if(event instanceof RoomObjectPlaySoundIdEvent)
+        {
+            if(this.connection !== null)
+            {
+                const category = this.getRoomObjectCategory(event.objectType ?? '');
+
+                this.events.emit(event.type, new RoomEngineObjectPlaySoundEvent(
+                    event.type === RoomObjectPlaySoundIdEvent.PLAY_SOUND
+                        ? RoomEngineObjectPlaySoundEvent.PLAY_SOUND
+                        : RoomEngineObjectPlaySoundEvent.PLAY_SOUND_AT_PITCH,
+                    this._activeRoomId, event.objectId, category, event.soundId, event.pitch));
+            }
+        }
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectSamplePlaybackEvent()
+        else if(event instanceof RoomObjectSamplePlaybackEvent)
+        {
+            if(this.connection !== null)
+            {
+                const category = this.getRoomObjectCategory(event.objectType ?? '');
+                // The four ROPSPE_* types map onto the four REOSPE_* ones by the same suffix.
+                const engineType = event.type.replace('ROPSPE_', 'REOSPE_');
+
+                this.events.emit(engineType, new RoomEngineObjectSamplePlaybackEvent(
+                    engineType, this._activeRoomId, event.objectId, category,
+                    event.sampleId, event.pitch));
+            }
+        }
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleSelectedObjectMove() / handleSelectedObjectRemove() /
+        // handleObjectSlide() — the selection arrow follows the object it is attached to, a
+        // removed object clears the avatar selection, and a sliding wall item repaints its window.
+        else if(event instanceof RoomObjectMoveEvent)
+        {
+            const roomId = this._activeRoomId;
+            const category = this.getRoomObjectCategory(event.objectType ?? '');
+
+            if(event.type === RoomObjectMoveEvent.ROME_POSITION_CHANGED)
+            {
+                const object = this.getRoomObject(roomId, event.objectId, category) as IRoomObjectController | null;
+                const arrow = this.getSelectionArrow(roomId);
+
+                if(object && arrow && arrow.getEventHandler())
+                {
+                    arrow.getEventHandler()!.processUpdateMessage(new RoomObjectUpdateMessage(object.getLocation(), null));
+                }
+            }
+            else if(event.type === RoomObjectMoveEvent.ROME_OBJECT_REMOVED)
+            {
+                this.setSelectedAvatar(roomId, 0, false);
+            }
+            else if(event.type === RoomObjectMoveEvent.ROME_SLIDE_ANIMATION
+                && category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+            {
+                this.updateObjectRoomWindow(roomId, event.objectId);
+            }
         }
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectDataRequestEvent(). A furni logic asking the
         // engine who the local user is, or what the asset URL prefix is; the engine answers by
