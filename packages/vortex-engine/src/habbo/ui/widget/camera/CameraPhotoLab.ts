@@ -532,12 +532,27 @@ export class CameraPhotoLab
         // bitmap to encode and no file-save bridge.
     }
 
+    /**
+     * One tracking entry per effect the player left switched on, sent when the photo is kept.
+     *
+     * The effect's own name rides in the extra field, so the entries are per effect rather than
+     * one summary — that is how the hotel counts which filters people actually use.
+     */
     // AS3: .../ui/widget/camera/CameraPhotoLab.as::logChosenEffects()
     logChosenEffects(): void
     {
-        // TODO(AS3): .../CameraPhotoLab.as::logChosenEffects()
-        // AS3 sends one `stories.photo.effect.chosen` entry per active effect through
-        // HabboTracking; the port has no tracking sink for the Stories category.
+        if(this._effectButtons === null) return;
+
+        // AS3 reaches the tracking singleton; this port has none, and the widget handler's
+        // container already carries the same component.
+        const tracking = this._widget?.container?.habboTracking ?? null;
+
+        if(tracking === null) return;
+
+        for(const effect of this._effectButtons.values())
+        {
+            if(effect.isOn) tracking.trackEventLog('Stories', 'camera', 'stories.photo.effect.chosen', effect.name);
+        }
     }
 
     // AS3: .../ui/widget/camera/CameraPhotoLab.as::windowEventHandler()

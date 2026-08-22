@@ -1,4 +1,7 @@
 import type {IWindow} from '@core/window/IWindow';
+import {TextWindowUtils} from '@habbo/utils/TextWindowUtils';
+import {HabboToolbarIconEnum} from '@habbo/toolbar/HabboToolbarIconEnum';
+import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {StringUtil} from '@habbo/utils/StringUtil';
@@ -86,9 +89,12 @@ export class PhotoPurchaseConfirmationDialog
         // resized to whatever survives.
         if(widget.component?.getBoolean('camera.competition.enabled'))
         {
-            // TODO(AS3): .../PhotoPurchaseConfirmationDialog.as::PhotoPurchaseConfirmationDialog()
-            // AS3 calls TextWindowUtils.setHTMLLinkStyle(competition_info, 0xFFFFFF x3) here; the
-            // port has no TextWindowUtils, so the competition blurb keeps its default link colours.
+            // White in all three states: the competition blurb sits on a dark panel, so the usual
+            // blue link would be unreadable there.
+            TextWindowUtils.setHTMLLinkStyle(
+                this._window?.findChildByName('competition_info') as unknown as ITextWindow | null,
+                0xFFFFFF, 0xFFFFFF, 0xFFFFFF
+            );
         }
         else
         {
@@ -245,11 +251,8 @@ export class PhotoPurchaseConfirmationDialog
             return;
         }
 
-        // TODO(AS3): .../PhotoPurchaseConfirmationDialog.as::animateIconToToolbar()
-        // AS3 scales the rendered photo into a 120x120 BitmapData and hands it to
-        // `component.toolbar.createTransitionToIcon('HTIE_ICON_INVENTORY', bmp, x, y)`. Both the
-        // mutable bitmap and that toolbar method are absent from this port, so the flight animation
-        // is skipped; every caption update below is the real AS3 behaviour and does run.
+        this.flyPhotoToInventoryIcon();
+
         const localizations = this._widget?.localizations ?? null;
         const status = this._window.findChildByName('status_info');
         const buyButton = this._window.findChildByName('buy_button');
@@ -581,6 +584,40 @@ export class PhotoPurchaseConfirmationDialog
         }
     };
 
+    /**
+     * Flies a thumbnail of the bought photo into the inventory button.
+     *
+     * The 120x120 box is AS3's, and so is the *uniform* scale taken from the width alone: a photo
+     * is square in this client, and a non-square one would be scaled by its width and cropped at
+     * the bottom rather than squashed. `transferToImageBitmap()` is what keeps this synchronous —
+     * `createImageBitmap()` would leave the toolbar to animate a bitmap that arrives a frame late.
+     */
+    // AS3: .../ui/widget/camera/PhotoPurchaseConfirmationDialog.as::animateIconToToolbar()
+    private flyPhotoToInventoryIcon(): void
+    {
+        const image = this._image;
+        const productImage = this._window?.findChildByName('product_image') ?? null;
+        const toolbar = this._widget?.component?.toolbar ?? null;
+
+        if(image === null || productImage === null || toolbar === null || image.width === 0) return;
+
+        const canvas = new OffscreenCanvas(120, 120);
+        const ctx = canvas.getContext('2d');
+
+        if(ctx === null) return;
+
+        const scale = canvas.width / image.width;
+
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(image, 0, 0, image.width * scale, image.height * scale);
+
+        const position = {x: 0, y: 0};
+
+        productImage.getGlobalPosition(position);
+
+        toolbar.createTransitionToIcon(HabboToolbarIconEnum.INVENTORY, canvas.transferToImageBitmap(), position.x, position.y);
+    }
+
     // AS3: .../ui/widget/camera/PhotoPurchaseConfirmationDialog.as::setDisclaimerAccepted()
     private setDisclaimerAccepted(accepted: boolean): void
     {
@@ -617,7 +654,7 @@ export class PhotoPurchaseConfirmationDialog
         if(child) child.caption = caption;
     }
 
-    // TS-only: see setCaption() above � the same inlined pattern in AS3.
+    // TS-only: see setCaption() above — the same inlined pattern in AS3.
     private setVisible(name: string, visible: boolean): void
     {
         const child = this._window?.findChildByName(name);
