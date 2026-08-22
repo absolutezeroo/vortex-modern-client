@@ -49,5 +49,11 @@ export {WithdrawCreditVaultMessageComposer} from './WithdrawCreditVaultMessageCo
 export {IncomeRewardStatusMessageComposer} from './IncomeRewardStatusMessageComposer';
 export {IncomeRewardClaimMessageComposer} from './IncomeRewardClaimMessageComposer';
 
+// Badges
+export {GetBadgePointLimitsComposer} from './GetBadgePointLimitsComposer';
+
+// Room decoration
+export {RequestRoomPropertySetComposer} from './RequestRoomPropertySetComposer';
+
 // Purse
 export {GetCreditsInfoComposer} from './purse';

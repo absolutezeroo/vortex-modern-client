@@ -232,6 +232,7 @@ import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import type {RoomEngineObjectPlacedEvent} from '@habbo/room/events/RoomEngineObjectPlacedEvent';
 import type {RoomEngineObjectPlacedOnUserEvent} from '@habbo/room/events/RoomEngineObjectPlacedOnUserEvent';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {RequestRoomPropertySetComposer} from '@habbo/communication/messages/outgoing/inventory/RequestRoomPropertySetComposer';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
 import {Vector3d} from '@room/utils/Vector3d';
@@ -3042,15 +3043,17 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         switch(category)
         {
+            // A decoration is applied, not placed. The read-back is the whole point of the branch:
+            // if the room already wears the type that was just bought, nothing is sent — buying a
+            // second copy of the wallpaper you are already using must not re-apply it.
             case FurnitureCategory.WALL_PAPER:
+                this.sendRoomPropertyIfChanged(RoomObjectVariableEnum.ROOM_WALL_TYPE, itemId);
+                break;
             case FurnitureCategory.FLOOR:
+                this.sendRoomPropertyIfChanged(RoomObjectVariableEnum.ROOM_FLOOR_TYPE, itemId);
+                break;
             case FurnitureCategory.LANDSCAPE:
-                // TODO(AS3): each of these three reads the room's matching decoration type back
-                // (`room_wall_type` / `room_floor_type` / `room_landscape_type`) and, when the
-                // placed item's extraParameter differs, sends `_SafePkg_2324._SafeCls_2323`
-                // (a single-int "apply this decoration item" composer, header 2292 in WIN63's
-                // registry). That composer has no port, and the reference server has no handler
-                // for 2292 either. Unreachable regardless — see the note above.
+                this.sendRoomPropertyIfChanged(RoomObjectVariableEnum.ROOM_LANDSCAPE_TYPE, itemId);
                 break;
             default:
                 this.connection?.send(new PlaceObjectMessageComposer(
@@ -3064,6 +3067,25 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
 
         this.resetPlacedOfferData();
+    }
+
+    /**
+     * Applies a freshly bought decoration to the active room, unless the room already wears it.
+     *
+     * AS3 writes the same three lines out per category with a different room variable each time;
+     * folded into one helper here because the only thing that varies is which variable to compare
+     * against.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::itemAddedToInventory()
+    private sendRoomPropertyIfChanged(roomVariable: string, itemId: number): void
+    {
+        if(this._roomEngine === null || this._placedOfferData === null) return;
+
+        const current = this._roomEngine.getRoomStringValue(this._roomEngine.activeRoomId, roomVariable);
+
+        if(this._placedOfferData.extraParameter === current) return;
+
+        this.connection?.send(new RequestRoomPropertySetComposer(itemId));
     }
 
     // AS3 loads this via assets.getAssetByName(name).content + buildFromXML(); this port

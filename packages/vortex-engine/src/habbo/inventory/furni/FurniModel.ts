@@ -2,6 +2,8 @@ import {OpenFlatConnectionMessageComposer} from '@habbo/communication/messages/o
 import {
     RequestFurniInventoryWhenNotInRoomComposer
 } from '@habbo/communication/messages/outgoing/inventory/RequestFurniInventoryWhenNotInRoomComposer';
+import {RequestRoomPropertySetComposer} from '@habbo/communication/messages/outgoing/inventory/RequestRoomPropertySetComposer';
+
 import type {IFurniModel} from './IFurniModel';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
@@ -372,13 +374,11 @@ export class FurniModel implements IFurniModel
     // `useLastSelectedIndex` instead. Harmless in that path (the index is set just before the call)
     // but wrong, and it hid the fact that the first argument was never ported at all.
     //
-    // TODO(AS3): with `refuseRoomProperties` false, AS3 sends RequestRoomPropertySet for categories
-    // 2/3/4 (wallpaper/floor/landscape) rather than routing them to the mover. That composer is not
-    // ported, so both values of the flag still report failure for those categories.
+    // `refuseRoomProperties` is what tells the three decoration categories apart from everything
+    // else: with it set the call simply fails for them (the caller wants a *placement*, and a
+    // wallpaper cannot be placed), and without it they are applied to the room instead.
     requestSelectedFurniPlacement(refuseRoomProperties: boolean = false, useLastSelectedIndex: boolean = true): boolean
     {
-        void refuseRoomProperties;
-
         const groupItem = this.getSelectedItem();
 
         if(groupItem === null) return false;
@@ -398,10 +398,15 @@ export class FurniModel implements IFurniModel
 
         if(([FurnitureCategory.WALL_PAPER, FurnitureCategory.FLOOR, FurnitureCategory.LANDSCAPE] as number[]).includes(item.category))
         {
-            return false;
+            if(refuseRoomProperties) return false;
+
+            this._communication.connection?.send(new RequestRoomPropertySetComposer(item.id));
+        }
+        else
+        {
+            this.requestSelectedFurniToMover(item);
         }
 
-        this.requestSelectedFurniToMover(item);
         this._view.updateActionView();
 
         return true;

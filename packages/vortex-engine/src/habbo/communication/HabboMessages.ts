@@ -1524,6 +1524,8 @@ import {
     RequestABadgeComposer,
     RequestFurniInventoryComposer,
     RequestFurniInventoryWhenNotInRoomComposer,
+    RequestRoomPropertySetComposer,
+    GetBadgePointLimitsComposer,
     GetSilverMessageComposer,
     GetNftCreditsMessageComposer,
     ResetUnseenItemIdsComposer,
@@ -3272,6 +3274,12 @@ export class HabboMessages implements IMessageConfiguration
         // on `_isInRoom`; nothing registered this one, so opening the inventory from the hotel view
         // sent the in-room request.
         this._composers.set(3862, RequestFurniInventoryWhenNotInRoomComposer);
+        // Wallpaper/floor/landscape are applied, never placed: FurniModel and HabboCatalog
+        // both route those three categories here instead of to the object mover.
+        this._composers.set(2292, RequestRoomPropertySetComposer);
+        // The request behind BadgePointLimits (3510). Nothing sent it, so the levelled-badge
+        // progress table the localization manager reads stayed empty.
+        this._composers.set(2944, GetBadgePointLimitsComposer);
         this._composers.set(540, GetCreditsInfoComposer);
         // AS3: WIN63's registry, `_composers[2069]`/`[394]` — two of the few composer classes that
         // kept their real names through obfuscation. `HabboInventory.initComponent()` sends both at

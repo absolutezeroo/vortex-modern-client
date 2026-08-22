@@ -167,6 +167,8 @@ import {
     GetNftCreditsMessageComposer,
 } from '../communication/messages/outgoing/inventory';
 import {ScrGetUserInfoMessageComposer} from '../communication/messages/outgoing/users/ScrGetUserInfoMessageComposer';
+import {GetBadgePointLimitsComposer} from '@habbo/communication/messages/outgoing/inventory/GetBadgePointLimitsComposer';
+import {GetCreditsInfoComposer} from '@habbo/communication/messages/outgoing/inventory/purse/GetCreditsInfoComposer';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {FurniListMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListMessageEvent';
 import {
@@ -362,8 +364,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
      * `getCategoryWindowContainer()`, `getCategorySubWindowContainer()` and `updateView()` through
      * it rather than switching on the name, which is how the trading sub-window finds its host.
      *
-      * TODO(AS3): AS3 registers eleven models here; all eleven are registered now. `effects`
-     * hands back no window, which is what AS3 does too — its view field is never assigned.
+     * All eleven of AS3's models are registered. `effects` hands back no window, which is what
+     * AS3 does too — its view field is never assigned.
      */
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_inventories
     private _inventories: OrderedMap<string, IInventoryModel> = new OrderedMap<string, IInventoryModel>();
@@ -1277,10 +1279,6 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::closingInventoryView()
-    // TODO(AS3): AS3 registers BadgesModel and EffectsModel in `_inventories` too, so they receive
-    // this and the two callbacks above. Neither implements IInventoryModel in this port, so neither
-    // is registered and neither is reached — a separate gap from the collectibles one this loop
-    // closes.
     closingInventoryView(): void
     {
         for(const model of this._inventories.getValues()) model.closingInventoryView();
@@ -1587,19 +1585,16 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._unseenItemTracker = new UnseenItemTracker(this._communication!, this.events, this);
         this._view = new InventoryMainView(this);
 
-        // AS3: HabboInventory.as::initComponent() sends five composers here, in this order:
-        // 540 (GetCreditsInfo), 2069, 394, ScrGetUserInfo("habbo_club") and _SafeCls_2019.
-        // Only these two are added: neither existed in this port at all, so the NFT-credit and
-        // silver balances were never requested once.
-        //
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::initComponent()
-        // The other three are deliberately NOT added here yet. This port reaches 540 through
-        // `requestFurni()` and `habbo_club` through `onPurseTimer()`, on demand rather than at
-        // boot, and adding the boot sends without first checking those paths would double every
-        // request rather than fix a gap. Whether the lazy scheme is a correct deviation or a
-        // second gap is its own check — `_SafeCls_2019` has no port equivalent under any name.
+        // AS3: HabboInventory.as::initComponent() sends these five, in this order. The port used
+        // to send only the two middle ones and reach 540 through `requestFurni()` and habbo_club
+        // through `onPurseTimer()` — but AS3 has those same lazy paths *as well*, so the boot
+        // sends were a gap and not a duplicate: the purse showed no credit balance until the first
+        // inventory open, and the levelled-badge point limits were never asked for at all.
+        this._communication?.connection?.send(new GetCreditsInfoComposer());
         this._communication?.connection?.send(new GetNftCreditsMessageComposer());
         this._communication?.connection?.send(new GetSilverMessageComposer());
+        this._communication?.connection?.send(new ScrGetUserInfoMessageComposer('habbo_club'));
+        this._communication?.connection?.send(new GetBadgePointLimitsComposer());
 
         this.registerFurniMessageEvents();
         this.registerPetMessageEvents();
