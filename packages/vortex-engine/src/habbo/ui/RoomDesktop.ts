@@ -878,22 +878,20 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     /**
      * AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::init()
      *
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as
-     * ::init() / ::onRoomContentLoaded() / ::checkInterrupts() — the loading bar's trigger.
-     * The widget and its handler are ported (`RWE_LOADINGBAR`), but nothing raises
-     * `RoomWidgetLoadingBarUpdateEvent` yet, so the bar never appears.
+     * The loading bar has no trigger, and that is faithful. AS3's mechanism is a pending-resource
+     * list: `init()` fills `_pendingResources`, and while it is non-empty it clears
+     * `_resourcesReady` and dispatches `RoomWidgetLoadingBarUpdateEvent.SHOW`;
+     * `onRoomContentLoaded()` removes each content type as it arrives and, once the list empties,
+     * calls `checkInterrupts()`, which dispatches HIDE.
      *
-     * The AS3 mechanism is a pending-resource list: `init()` fills `_pendingResources`, and while
-     * it is non-empty it clears `_resourcesReady` and dispatches SHOW; `onRoomContentLoaded()`
-     * removes each content type as it arrives and, when the list empties, raises the flag and
-     * calls `checkInterrupts()`, which starts the room session and dispatches HIDE.
-     *
-     * It is not ported because the decompilation lost the fill: `init()` reads
-     * `_pendingResources = []` immediately followed by `if(_pendingResources.length > 0)`, so the
-     * branch is dead in the source and there is no intact sibling to recover the list from. The
-     * remaining half — `checkInterrupts()` — also owns `roomSessionManager.startSession()`, which
-     * this port drives from elsewhere; wiring it here would start the session twice. Both halves
-     * need the same follow-up, so neither is guessed at here.
+     * Nothing ever fills that list. `init()` reads `_pendingResources = []` immediately followed by
+     * `if(_pendingResources.length > 0)`, so the branch cannot be entered — and this is not the
+     * 2026 decompiler dropping a statement: `PRODUCTION-201601012205-226667486/.../RoomDesktop.as`
+     * lines 689-690 are `this._pendingResources = new Array();` then the same
+     * `if (this._pendingResources.length > 0)`, in a tree with no obfuscation at all. Two
+     * independent builds, ten years apart, agree. The bar never shows in the real client either,
+     * so there is nothing here to port — the widget and its `RWE_LOADINGBAR` handler are ported and
+     * ready should a caller ever appear.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::init()
     public init(): void

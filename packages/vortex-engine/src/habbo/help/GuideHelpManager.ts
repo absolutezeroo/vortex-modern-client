@@ -4,6 +4,7 @@ import {GuideSessionController} from './guidehelp/GuideSessionController';
 import {GuideSessionData} from './GuideSessionData';
 import type {PendingGuideTicket} from '@habbo/communication/messages/parser/help/PendingGuideTicket';
 import {Logger} from '@core/utils/Logger';
+import {RoomEntryInfoMessageEvent} from '@habbo/communication/messages/incoming/room/engine/RoomEntryInfoMessageEvent';
 
 import type {HabboHelp} from './HabboHelp';
 
@@ -32,8 +33,6 @@ export class GuideHelpManager
     private _habboHelp: HabboHelp | null;
 
     // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::GuideHelpManager()
-    // AS3 also subscribes `onRoomEnter` (the new-user tour timer) here; that one still waits on a
-    // room-session hook, see `openTourPopup()` below.
     constructor(habboHelp: HabboHelp)
     {
         this._habboHelp = habboHelp;
@@ -42,7 +41,61 @@ export class GuideHelpManager
         this._helpController = new HelpController(this);
         this._guideSessionController = new GuideSessionController(this);
 
+        // The manager makes exactly one subscription of its own, as AS3 does — `HabboHelp` already
+        // listens to the same event for its own `_currentRoomId`, and the registry hands both
+        // subscribers the first one's parser rather than parsing twice.
+        habboHelp.communicationManager?.addHabboConnectionMessageEvent(
+            new RoomEntryInfoMessageEvent(this.onRoomEnter)
+        );
+
         log.debug('GuideHelpManager initialized');
+    }
+
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::_tourPopupTimer
+    // Name DERIVED (`_SafeStr_6162`): obfuscated in every tree, named after what it starts. AS3
+    // holds a `Timer(delay, 1)` — a one-shot, which is `setTimeout` here.
+    private _tourPopupTimer: ReturnType<typeof setTimeout> | null = null;
+
+    /**
+     * Arm the new-user tour popup on room entry.
+     *
+     * Four conditions, all of which have to hold: the hotel enables the tour, the identity is new,
+     * it has not already been offered this session, and the player is not a *real* noob — that last
+     * one is inverted on purpose, `isRealNoob` means the server is already running its own
+     * onboarding and the client must not talk over it.
+     */
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::onRoomEnter()
+    private onRoomEnter = (): void =>
+    {
+        const habboHelp = this._habboHelp;
+
+        if(habboHelp === null) return;
+        if(!habboHelp.newUserTourEnabled || !habboHelp.newIdentity) return;
+        if(this._tourPopupShown || habboHelp.sessionDataManager?.isRealNoob) return;
+
+        const delay = this.getTourPopupDelay();
+
+        this._tourPopupTimer = setTimeout(this.onTourPopup, delay);
+        habboHelp.tracking?.trackEventLog('Help', '', 'tour.new_user.create', '', delay);
+        habboHelp.trackGoogle('newbieTourWindow', 'timer_popupCreated');
+    };
+
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::onTourPopup()
+    private onTourPopup = (): void =>
+    {
+        this._tourPopupTimer = null;
+
+        if(this._disposed) return;
+
+        this._habboHelp?.tracking?.trackEventLog('Help', '', 'tour.new_user.show', '', this.getTourPopupDelay());
+        this._habboHelp?.trackGoogle('newbieTourWindow', 'timer_popupShown');
+        this.openTourPopup();
+    };
+
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::getTourPopupDelay()
+    private getTourPopupDelay(): number
+    {
+        return (this._habboHelp?.getInteger('guide.help.new.user.tour.popup.delay', 30) ?? 30) * 1000;
     }
 
     // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::_SafeStr_6054
@@ -145,10 +198,6 @@ export class GuideHelpManager
 	 * Open the tour popup
 	 */
     // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::openTourPopup()
-    // TODO(AS3): AS3 also opens this on a timer started from `onRoomEnter()` when the new-user
-    // tour is enabled, the identity is new and the session is not a real noob. That timer is not
-    // wired here: this manager makes no subscriptions of its own, since every help subscription in
-    // this port lives in `HelpMessageHandler`.
     openTourPopup(): void
     {
         this._helpController?.openTourPopup();
@@ -188,7 +237,12 @@ export class GuideHelpManager
     {
         if(this._disposed) return;
 
-        // AS3 also resets the tour timer here; that one is still unported (see openTourPopup()).
+        if(this._tourPopupTimer !== null)
+        {
+            clearTimeout(this._tourPopupTimer);
+            this._tourPopupTimer = null;
+        }
+
         if(this._guideSessionController)
         {
             this._guideSessionController.dispose();

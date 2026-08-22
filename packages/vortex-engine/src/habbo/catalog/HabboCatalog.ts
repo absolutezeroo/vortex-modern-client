@@ -2647,7 +2647,11 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         if(!loader) return;
 
-        if(onAssetReady != null) loader.addEventListener(AssetLoaderEvent.COMPLETE, onAssetReady);
+        // AS3's listener reads `event.target` to get the loader back, and this port's event
+        // carries no target — so the loader is handed over as the callback's own argument. Every
+        // caller wants the same one thing from it: `assetName`, to look the asset up now that it
+        // is in the library.
+        if(onAssetReady != null) loader.addEventListener(AssetLoaderEvent.COMPLETE, () => onAssetReady(loader));
     }
 
     public getPurse(): Purse

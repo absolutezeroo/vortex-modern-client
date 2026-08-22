@@ -37,15 +37,25 @@ export class SingleProductContainer extends ProductContainer
         this._view!.findChildByName('unique_item_sold_out_bitmap')!.visible = this.firstProduct!.uniqueLimitedItemsLeft === 0;
     }
 
+    /**
+     * A preview image the catalog had to download has arrived.
+     *
+     * `setImageFromAsset()` is called a second time on purpose: the first call, from
+     * `Product.initIcon()`, missed the library and started this download, and only now can it
+     * find the asset. The disposed check matters because the download outlives the page — a
+     * player who clicks past the product before it lands must not repaint a dead window.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/SingleProductContainer.as::onPreviewImageReady()
-    // TODO(AS3): the asset-loader preview-ready callback path this feeds
-    // (Product.initIcon()'s "i" room-preview branch) isn't wired up yet - see Product.ts.
-    private onPreviewImageReady(_event: unknown): void
+    private onPreviewImageReady(loader: unknown): void
     {
-        if(!this.disposed && this.offer.page?.viewer?.catalog != null)
-        {
-            // Not reachable until the preview-asset retrieval path is ported.
-        }
+        if(this.disposed) return;
+
+        const catalog = this.offer.page?.viewer?.catalog ?? null;
+        const assetName = (loader as {assetName?: string} | null)?.assetName ?? null;
+
+        if(catalog === null || assetName === null) return;
+
+        catalog.setImageFromAsset(this.targetIcon, assetName, null);
     }
 
     override set view(view: IWindowContainer)

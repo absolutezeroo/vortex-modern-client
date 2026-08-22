@@ -41,21 +41,17 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.ProductViewCatalogWid
  * interaction controls (rotate_avatar_left/right, toggle_preview_magic - avatar pose cycling,
  * toggle_preview_zoom).
  *
- * TODO(AS3): the following AS3 sub-paths are not ported (each noted again at its call site):
+ * TODO(AS3): two AS3 sub-paths are still not ported, each noted again at its call site:
  * - "e" (avatar effect) preview rendering - it needs pixel-level sprite compositing
  *   (addEffectSprites()) onto a canvas, which requires bridging PixiJS Texture output to
  *   ImageBitmap the way ProductGridItem.renderAvatarImage() does, but for a multi-layer composite
  *   rather than a single crop. ("r" used to be listed here as a rentable avatar effect; it is a
  *   bot offer, a single cropped avatar render, and is implemented — see renderBotPreview().)
  * - class_3172/ProductImageConfiguration's pre-rendered special-product image table.
- * - ProductDisplayWrapper (the generic default-case product renderer).
- * - furniture/wall-item preview ROTATION specifically: RoomPreviewer.canRotatePreviewFurniture()/
- *   rotatePreviewFurniture()/canRotatePreviewWallItem()/rotatePreviewWallItem() are stubbed to
- *   always report "not rotatable" - they need the previewed room object's allowed-direction set,
- *   which the ported room engine doesn't expose yet. The rotate buttons show up correctly for
- *   these modes but stay disabled. Avatar-mode rotation, pose-cycling ("preview magic"), and zoom
- *   are fully implemented (they only depend on RoomPreviewer.updateAvatarDirectionAndLocation(),
- *   which is real).
+ *
+ * Two more used to be on that list and are not any more: ProductDisplayWrapper drives the generic
+ * default case, and furniture/wall-item rotation is real — `canRotatePreviewFurniture()` reads the
+ * object's allowed-direction set and `canRotatePreviewWallItem()` answers for the two walls.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as
  */
