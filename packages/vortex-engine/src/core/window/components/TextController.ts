@@ -6,6 +6,7 @@ import {WindowController} from '../WindowController';
 import {WindowEvent} from '../events/WindowEvent';
 import {PropertyStruct} from '../utils/PropertyStruct';
 import {TextStyleManager} from '../utils/TextStyleManager';
+import type {TextStyle} from '../utils/TextStyle';
 import {TextMargins} from '../utils/TextMargins';
 import {quoteFontFamilyList, measureFontLineHeight} from '../utils/CanvasFontString';
 import {GlyphAtlas} from '../utils/GlyphAtlas';
@@ -107,6 +108,13 @@ export class TextController extends WindowController implements ITextWindow
     protected _textWidthCache: number = 0;
     protected _textHeightCache: number = 0;
     protected _numLinesCache: number = 1;
+    // TS-only: the wrapped lines behind `_numLinesCache`, kept so getLineText() and its
+    // siblings can answer without a Flash TextField.
+    protected _linesCache: string[] = [''];
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::_embedFonts
+    // Derived name: obfuscated in the primary tree; AS3 keeps the flag on the TextField.
+    protected _embedFonts: boolean = false;
+
     protected _maxScrollHCache: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::_field
@@ -534,6 +542,208 @@ export class TextController extends WindowController implements ITextWindow
     public get length(): number
     {
         return this._text.length;
+    }
+
+    /**
+	 * Index of the last line currently visible. AS3 reads `TextField.bottomScrollV`; here it is
+	 * the scroll position plus however many lines fit in the field.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get bottomScrollV()
+    public get bottomScrollV(): number
+    {
+        const lineHeight = this._numLinesCache > 0 ? this._textHeightCache / this._numLinesCache : 0;
+        const visible = lineHeight > 0 ? Math.max(1, Math.floor(this._fieldHeight / lineHeight)) : 1;
+
+        return Math.min(this._numLinesCache, this._scrollV + visible);
+    }
+
+    /**
+	 * Whether the text does not fit the field — what drives the `overflowReplace` ellipsis.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get isOverflown()
+    public get isOverflown(): boolean
+    {
+        return this._textWidthCache > this._fieldWidth || this._textHeightCache > this._fieldHeight;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get textStyle()
+    public get textStyle(): TextStyle | null
+    {
+        return TextStyleManager.getStyle(this._textStyleName);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set textStyle()
+    public set textStyle(value: TextStyle | null)
+    {
+        if(value === null) return;
+
+        this._textStyleName = value.name;
+        this.refreshTextImage();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get embedFonts()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get/set embedFonts() reads and writes `TextField.embedFonts`, which picks
+    // between an [Embed]ed font and a device one. This port renders through the glyph atlas with
+    // web fonts only, so the flag is stored and inert — there is nothing to switch to.
+    public get embedFonts(): boolean
+    {
+        return this._embedFonts;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set embedFonts()
+    public set embedFonts(value: boolean)
+    {
+        this._embedFonts = value;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get kerning()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get/set kerning() maps to `TextField.kerning`. Canvas 2D applies the font's
+    // own kerning and exposes no switch, so the flag is stored and inert.
+    public get kerning(): boolean
+    {
+        return this._kerning;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set kerning()
+    public set kerning(value: boolean)
+    {
+        this._kerning = value;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get defaultTextFormat()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get/set defaultTextFormat() exchanges a `flash.text.TextFormat` with the
+    // field. The port has no TextFormat type — the same settings live as the individual accessors
+    // (fontFace, fontSize, bold, italic, textColor, spacing…), which is what every ported caller
+    // uses. Returns null rather than inventing a shape.
+    public get defaultTextFormat(): unknown
+    {
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set defaultTextFormat()
+    public set defaultTextFormat(_value: unknown)
+    {
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set styleSheet()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setStyleSheet() hands a `flash.text.StyleSheet` to the field and refreshes.
+    // The port's HTML text path (`HtmlFormatting`) has no stylesheet layer.
+    public set styleSheet(_value: unknown)
+    {
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::resetExplicitStyle()
+    // TODO(AS3): drops the per-instance overrides so the named style applies again. The port has
+    // no explicit-override layer to drop — style writes go straight to the fields.
+    public resetExplicitStyle(): void
+    {
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getLineText()
+    public getLineText(lineIndex: number): string
+    {
+        return this._linesCache[lineIndex] ?? '';
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getLineLength()
+    public getLineLength(lineIndex: number): number
+    {
+        return this.getLineText(lineIndex).length;
+    }
+
+    /**
+	 * Character offset a line starts at, counting the newline each earlier line ends with.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getLineOffset()
+    public getLineOffset(lineIndex: number): number
+    {
+        let offset = 0;
+
+        for(let i = 0; i < lineIndex && i < this._linesCache.length; i++) offset += this._linesCache[i].length + 1;
+
+        return offset;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getLineIndexOfChar()
+    public getLineIndexOfChar(charIndex: number): number
+    {
+        if(charIndex < 0) return -1;
+
+        let offset = 0;
+
+        for(let i = 0; i < this._linesCache.length; i++)
+        {
+            offset += this._linesCache[i].length + 1;
+
+            if(charIndex < offset) return i;
+        }
+
+        return -1;
+    }
+
+    /**
+	 * A paragraph is what the *source* text separates with a newline, not what wrapping split.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getFirstCharInParagraph()
+    public getFirstCharInParagraph(charIndex: number): number
+    {
+        const text = this.text;
+
+        if(charIndex < 0 || charIndex > text.length) return -1;
+
+        const start = text.lastIndexOf('\n', Math.max(0, charIndex - 1));
+
+        return start === -1 ? 0 : start + 1;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getParagraphLength()
+    public getParagraphLength(charIndex: number): number
+    {
+        const text = this.text;
+        const start = this.getFirstCharInParagraph(charIndex);
+
+        if(start < 0) return -1;
+
+        const end = text.indexOf('\n', start);
+
+        return (end === -1 ? text.length : end + 1) - start;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getLineIndexAtPoint()
+    public getLineIndexAtPoint(_x: number, y: number): number
+    {
+        const lineHeight = this._numLinesCache > 0 ? this._textHeightCache / this._numLinesCache : 0;
+
+        if(lineHeight <= 0) return -1;
+
+        const index = Math.floor(y / lineHeight);
+
+        return index >= 0 && index < this._numLinesCache ? index : -1;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getLineMetrics()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getLineMetrics() returns a `flash.text.TextLineMetrics` (ascent, descent,
+    // leading, width, height, x). The port measures a line's width and height through the glyph
+    // atlas but tracks no baseline metrics, and no ported caller asks for one.
+    public getLineMetrics(_lineIndex: number): unknown
+    {
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getCharBoundaries()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getCharBoundaries() returns one character's rectangle. That needs per-glyph
+    // advance positions, which the atlas renderer does not retain.
+    public getCharBoundaries(_charIndex: number): {x: number; y: number; width: number; height: number} | null
+    {
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getImageReference()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getImageReference() hands back the DisplayObject an `<img>` in HTML text was
+    // loaded into. The port renders those inline and keeps no per-id handle.
+    public getImageReference(_id: string): unknown
+    {
+        return null;
     }
 
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get numLines()
@@ -1256,6 +1466,9 @@ export class TextController extends WindowController implements ITextWindow
         this._textWidthCache = measured.width;
         this._textHeightCache = measured.height;
         this._numLinesCache = measured.lines.length;
+        // AS3 asks its TextField for a line's text on demand; this port measures the wrapped
+        // lines here and nowhere else, so the getLine* family reads them off this cache.
+        this._linesCache = measured.lines;
         this._maxScrollHCache = Math.max(0, Math.ceil(measured.width - Math.max(0, this._fieldWidth)));
 
         this._drawing = false;
@@ -1852,10 +2065,4 @@ export class TextController extends WindowController implements ITextWindow
         };
     }
     /* eslint-enable @typescript-eslint/naming-convention */
-
-    // AS3: .../src/com/sulake/core/window/components/TextController.as::resetExplicitStyle()
-    public resetExplicitStyle(): void
-    {
-        // Kept for AS3 API parity.
-    }
 }

@@ -110,4 +110,133 @@ export interface ITextWindow extends IWindow, IScrollableWindow
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setTextFormat()
     setTextFormat(format: ITextFormat, beginIndex?: number, endIndex?: number): void;
+
+    /**
+	 * Font-smoothing mode. Stored; the canvas renderer has no equivalent switch.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get antiAliasType()
+    antiAliasType: string;
+
+    /**
+	 * Colour of the one-pixel border `border` draws.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get borderColor()
+    borderColor: number;
+
+    /**
+	 * Index of the last line currently visible.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get bottomScrollV()
+    readonly bottomScrollV: number;
+
+    /**
+	 * AS3 exchanges a `flash.text.TextFormat` here. This port has no such type — the same
+	 * settings are the individual accessors on this interface — so it answers null.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get defaultTextFormat()
+    defaultTextFormat: unknown;
+
+    /**
+	 * AS3 picks between an embedded and a device font. Stored and inert here: the glyph atlas
+	 * renders web fonts only.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get embedFonts()
+    embedFonts: boolean;
+
+    /**
+	 * Pixel-grid fitting mode. Stored; no canvas equivalent.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get gridFitType()
+    gridFitType: string;
+
+    /**
+	 * Stored and inert: Canvas 2D applies the font's own kerning and exposes no switch.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get kerning()
+    kerning: boolean;
+
+    /**
+	 * Glyph-edge sharpness. Stored; no canvas equivalent.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get sharpness()
+    sharpness: number;
+
+    /**
+	 * Extra spacing between characters.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get spacing()
+    spacing: number;
+
+    /**
+	 * The named style this field draws with, resolved through `TextStyleManager`.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get textStyle()
+    textStyle: unknown;
+
+    /**
+	 * Stroke thickness. Stored; no canvas equivalent.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get thickness()
+    thickness: number;
+
+    /**
+	 * Whether the text does not fit the field — what drives the `overflowReplace` ellipsis.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get isOverflown()
+    readonly isOverflown: boolean;
+
+    /**
+	 * AS3 hands a `flash.text.StyleSheet` to the field. The port's HTML text path has no
+	 * stylesheet layer, so writing it does nothing.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::set styleSheet()
+    styleSheet: unknown;
+
+    /**
+	 * One character's rectangle. Null here: the atlas renderer keeps no per-glyph advances.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::getCharBoundaries()
+    getCharBoundaries(charIndex: number): {x: number; y: number; width: number; height: number} | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::getFirstCharInParagraph()
+    getFirstCharInParagraph(charIndex: number): number;
+
+    /**
+	 * The object an `<img>` in HTML text was loaded into. Null here: images render inline and
+	 * no per-id handle is kept.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::getImageReference()
+    getImageReference(id: string): unknown;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::getLineIndexAtPoint()
+    getLineIndexAtPoint(x: number, y: number): number;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::getLineIndexOfChar()
+    getLineIndexOfChar(charIndex: number): number;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::getLineLength()
+    getLineLength(lineIndex: number): number;
+
+    /**
+	 * AS3 returns a `flash.text.TextLineMetrics`. Null here: the port measures a line's width
+	 * and height but tracks no baseline metrics.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::getLineMetrics()
+    getLineMetrics(lineIndex: number): unknown;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::getLineOffset()
+    getLineOffset(lineIndex: number): number;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::getLineText()
+    getLineText(lineIndex: number): string;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::getParagraphLength()
+    getParagraphLength(charIndex: number): number;
+
+    /**
+	 * Drops per-instance style overrides so the named style applies again. No-op here: the port
+	 * has no override layer — style writes go straight to the fields.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::resetExplicitStyle()
+    resetExplicitStyle(): void;
 }
