@@ -31,6 +31,7 @@ export class WireFormatter implements IWireFormatter
 	 * Kept finite, and well under any real message, because it is still the guard that turns a
 	 * desynced stream into one thrown error instead of a multi-megabyte allocation.
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/communication/wireformat/_SafeCls_3863.as::splitMessages()
     private static readonly MAX_DATA_SIZE = 1048576;
 
     private _disposed: boolean = false;
