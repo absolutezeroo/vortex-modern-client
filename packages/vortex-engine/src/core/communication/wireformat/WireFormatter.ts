@@ -13,8 +13,25 @@ import type {IConnection} from '../connection/IConnection';
  */
 export class WireFormatter implements IWireFormatter
 {
-    /** Maximum message data size (256KB) */
-    private static readonly MAX_DATA_SIZE = 262144;
+    /**
+	 * Maximum message data size.
+	 *
+	 * AS3 (`.../core/communication/wireformat/_SafeCls_3863.as::splitMessages()`) caps this at
+	 * 262144 and throws past it. That number is a Flash Player ByteArray budget, not a rule of the
+	 * protocol - nothing downstream of here cares how big a message is - so this port raises it,
+	 * and this is the one deliberate divergence in this file.
+	 *
+	 * It has to: `CatalogIndexMessageComposer` (3666) writes the whole page tree with every page's
+	 * offer ids inline, 4 bytes each. The emulator's catalog carries 78,312 visible offers across
+	 * 2,165 pages, which is ~313KB of ids plus ~29KB of pages - 342,380 bytes on the wire, and the
+	 * AS3 cap turned opening the catalog into a hard disconnect. Trimming it server-side would mean
+	 * dropping the ids, and those are what `CatalogNavigator.getNodesByOfferId()` is built from
+	 * (open-catalog-on-this-offer deep links), so the data is wanted; only the ceiling was wrong.
+	 *
+	 * Kept finite, and well under any real message, because it is still the guard that turns a
+	 * desynced stream into one thrown error instead of a multi-megabyte allocation.
+	 */
+    private static readonly MAX_DATA_SIZE = 1048576;
 
     private _disposed: boolean = false;
 
@@ -87,7 +104,31 @@ export class WireFormatter implements IWireFormatter
             // Validate length
             if(length < 2 || length > WireFormatter.MAX_DATA_SIZE)
             {
-                throw new Error(`Invalid message length: ${length}`);
+                // A bad length has two opposite causes: the server sent a genuinely oversized
+                // packet (AS3 caps a message at 256KB and so does this port), or the byte stream
+                // desynced and these 4 bytes were never a length field. The 2 bytes that follow
+                // are the message id whenever the framing is still aligned, so deciphering them
+                // here tells the two apart - a known header means "one composer is too big",
+                // garbage means "the stream is lost". Reading them advances the RC4 keystream,
+                // which costs nothing: SocketConnection.processReceivedData() tears the
+                // connection down on this throw regardless.
+                let nextMessageId = -1;
+
+                if(buffer.bytesAvailable >= 2)
+                {
+                    const idBytes = new ByteArray(2);
+                    buffer.readBytes(idBytes, 0, 2);
+                    idBytes.position = 0;
+                    encryption?.decipher(idBytes);
+                    idBytes.position = 0;
+                    nextMessageId = idBytes.readShort();
+                }
+
+                throw new Error(
+                    `Invalid message length: ${length}`
+                    + ` (nextMessageId=${nextMessageId}, framePosition=${startPosition}`
+                    + `, buffered=${buffer.length}, encrypted=${encryption !== null})`
+                );
             }
 
             // Check if we have enough data
