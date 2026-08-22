@@ -174,7 +174,20 @@ export class RoomDesktopLayoutManager
 
         if(!container)
         {
-            log.warn(`No container found for widget: ${name}`);
+            // AS3 returns false here without a word, and for most widgets that is
+            // the ordinary answer rather than a fault: a window with no
+            // `room_widget*` tag is not asking to dock at all. The me-menu is one
+            // — `own_avatar_menu` declares no tags, it is a free bubble on the
+            // desktop — and it warned on every open.
+            //
+            // The warning still earns its place for a window that IS asking:
+            // that is how RWE_HIGH_SCORE_DISPLAY's missing container was caught
+            // (see getWidgetContainer above). So it now fires only when a
+            // `room_widget*` tag went unmatched.
+            if(window.tags.some(tag => tag.indexOf('room_widget') === 0))
+            {
+                log.warn(`No container found for widget: ${name}`);
+            }
 
             return false;
         }
