@@ -1,4 +1,5 @@
 import {ColorMatrixFilter} from 'pixi.js';
+import {GlowFilter} from '@core/utils/GlowFilter';
 
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IUpdateReceiver} from '@core/runtime';
@@ -20,10 +21,8 @@ import {VariableInfoBubbleView} from './VariableInfoBubbleView';
  * visualization reads. Bubbles are pooled and reused; removed holders are un-highlighted and their
  * bubbles recycled.
  *
- * Port note: AS3 tints with a ColorMatrixFilter + a GlowFilter. The port has no GlowFilter (no
- * pixi-filters dependency), so only the ColorMatrixFilter is applied — the same secondary-effect gap
- * already documented for the wall glow in RoomObjectHighLighter. TODO(AS3): add the GlowFilter once a
- * PixiJS glow is available.
+ * The tint is two filters stacked, as in AS3: a ColorMatrixFilter that pulls the holder towards
+ * cyan, and an *inner* GlowFilter that lines its edge in the same colour.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_menu/tabs/tab_variable_overview/VariableHoldersHighlighter.as
  */
@@ -69,9 +68,9 @@ export class VariableHoldersHighlighter implements IDisposable, IUpdateReceiver
             0, 0, 0, 0.85, 0
         ];
 
-        // TODO(AS3): AS3 also stacks a GlowFilter(12318714,1,4,4,4,1,true,false); the port has no
-        // GlowFilter, so it is dropped (only the ColorMatrixFilter tints holders).
-        this._filters = [colorMatrix];
+        // AS3's own eight arguments, `inner` included — an outer halo would bleed onto the tiles
+        // around the furni, where this one traces its silhouette.
+        this._filters = [colorMatrix, new GlowFilter(0xBBF7FA, 1, 4, 4, 4, 1, true, false)];
 
         this._roomEvents.roomEngine?.events.on(RoomEngineObjectEvent.REOE_REMOVED, this._onRoomObjectRemoved);
     }
