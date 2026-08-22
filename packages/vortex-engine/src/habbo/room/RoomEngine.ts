@@ -150,6 +150,7 @@ import {MovePetMessageComposer} from '@habbo/communication/messages/outgoing/roo
 import {
     GetGuildFurniContextMenuInfoMessageComposer
 } from '@habbo/communication/messages/outgoing/room/furniture/GetGuildFurniContextMenuInfoMessageComposer';
+import {GetResolutionAchievementsMessageComposer} from '@habbo/communication/messages/outgoing/quest/GetResolutionAchievementsMessageComposer';
 import {MoveObjectMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveObjectMessageComposer';
 import {
     MoveWallItemMessageComposer
@@ -2608,20 +2609,26 @@ export class RoomEngine extends Component implements IRoomEngine,
         return success;
     }
 
+    /**
+     * The one entry point for "the user asked to change this object": rotate, pick up, eject or
+     * start a move.
+     *
+     * TODO(AS3): there is still no cancel/right-click binding onto the move it starts — a shared
+     * gap with the unbuilt furniture-context-menu widget.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::modifyRoomObject()
-    // TODO(AS3): OBJECT_MOVE only covers floor furniture (category 10), matching the existing
-    // wall-item scope cut in initializeRoomObjectInsert(). It also skips
-    // FurniStackingHeightMap.validateFurnitureLocation() — every hovered tile is treated as valid
-    // client-side, the same simplification the catalog-placement flow makes, and the server is
-    // authoritative and would reject an illegal spot — and there is no cancel/right-click binding
-    // yet (a shared gap with the unbuilt furniture-context-menu widget). Rotation skips AS3's
-    // `furniture_allowed_directions` validation too, so furniture that may only face a subset of
-    // the eight compass directions can be turned to one it should refuse.
     modifyRoomObject(objectId: number, category: number, action: string): boolean
     {
         const object = this.getRoomObject(this._activeRoomId, objectId, category);
 
-        switch(action) 
+        // Play-test mode owns the room's furniture: nothing may be rotated, picked up or moved
+        // while it is on. The free-furni-movement half is the same escape hatch
+        // `changeRoomObjectState()` uses — a room in that mode is exempt from the whole check.
+        const session = this._roomSessionManager?.getSession(this._activeRoomId) ?? null;
+
+        if(session !== null && !this.activeRoomHasFreeFurniMovementsMode && session.playTestMode) return false;
+
+        switch(action)
         {
             // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_ROTATE_POSITIVE"/"OBJECT_ROTATE_NEGATIVE" case
             case 'OBJECT_ROTATE_POSITIVE':
@@ -2644,8 +2651,6 @@ export class RoomEngine extends Component implements IRoomEngine,
                 // getType() here even though only category 100 can carry those two types.
                 if(controller.getType() === 'monsterplant' || controller.getType() === 'rentable_bot')
                 {
-                    const session = this._roomSessionManager?.getSession(this._activeRoomId) ?? null;
-
                     return this.sendMoveUserObjectMessage(
                         session, controller, objectId,
                         Math.trunc(location.x), Math.trunc(location.y), nextDirection / 45
@@ -2659,7 +2664,6 @@ export class RoomEngine extends Component implements IRoomEngine,
             // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_PICKUP_PET" case — pick up a
             // monsterplant, sent via roomSession.pickUpPet(webID) resolved from the room index.
             case 'OBJECT_PICKUP_PET': {
-                const session = this._roomSessionManager?.getSession(this._activeRoomId) ?? null;
                 const userData = session?.userDataManager?.getUserDataByIndex(objectId) ?? null;
 
                 if(session === null || userData === null) return false;
@@ -2677,7 +2681,6 @@ export class RoomEngine extends Component implements IRoomEngine,
                 // into the hand.
                 if(this._connection === null) return false;
 
-                const session = this._roomSessionManager?.getSession(this._activeRoomId) ?? null;
                 const userData = session?.userDataManager?.getUserDataByIndex(objectId) ?? null;
 
                 if(session === null || userData === null) return false;
@@ -5215,14 +5218,51 @@ export class RoomEngine extends Component implements IRoomEngine,
         // (`_SafeCls_3073.as::setScale()`), so `_unusedFlag` stops here on purpose.
         canvas.setScale(scale, _point, _offset);
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as
-        // ::syncRoomCameraLocationToCanvasOffset() runs here — the camera-location half of the
-        // zoom is not ported, so a zoom does not carry the camera with it.
+        this.syncRoomCameraLocationToCanvasOffset(roomId, canvas);
 
         this.events.emit(
             RoomEngineEvent.REE_ROOM_ZOOMED,
             new RoomEngineEvent(RoomEngineEvent.REE_ROOM_ZOOMED, roomId)
         );
+    }
+
+    /**
+     * Re-anchors the room camera onto the canvas offset after a zoom.
+     *
+     * Only offset scrolling needs it: in that mode the canvas moves the whole scene by
+     * `screenOffsetX/Y` and the camera's location is the negated copy of that offset, so a change
+     * of scale that leaves the offset alone silently desynchronises the two — the next camera
+     * update then snaps the room back to where the camera still thinks it is.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::syncRoomCameraLocationToCanvasOffset()
+    private syncRoomCameraLocationToCanvasOffset(roomId: number, canvas: RoomRenderingCanvas): void
+    {
+        if(!this.useOffsetScrolling || canvas === null || canvas.scale <= 0) return;
+
+        const instanceData = this._roomInstanceData.get(roomId);
+
+        if(instanceData === undefined || instanceData.roomCamera === null) return;
+
+        instanceData.roomCamera.resetLocation(new Vector3d(
+            -RoomEngine.normalizeScreenOffsetForScale(canvas.screenOffsetX, canvas.width, canvas.scale),
+            -RoomEngine.normalizeScreenOffsetForScale(canvas.screenOffsetY, canvas.height, canvas.scale)
+        ));
+    }
+
+    /**
+     * Converts a screen offset measured at scale 1 into the same visual offset at `scale`.
+     *
+     * The identity at scale 0 and 1 is AS3's own early-out, and it is what makes the unzoomed case
+     * cost nothing.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::normalizeScreenOffsetForScale()
+    private static normalizeScreenOffsetForScale(offset: number, size: number, scale: number): number
+    {
+        if(scale === 0 || scale === 1) return offset;
+
+        const half = (size / scale) / 2;
+
+        return half - (half - offset) / scale;
     }
 
     /**
@@ -6284,6 +6324,23 @@ export class RoomEngine extends Component implements IRoomEngine,
             // used to round it. Identical for every real furniture direction (all multiples of 45).
             rotation = Math.trunc(((degrees / 45) % 8 + 8) % 8);
 
+            // A room may hold exactly one `free_placement_room` furni, and the ghost being placed is
+            // already counted — hence `> 1` rather than `> 0`. The two strings are AS3's own, in
+            // English and unlocalised: this is a staff-only furni and the alert is written for the
+            // person who has the intraweb page open.
+            if(object.getType() === 'free_placement_room'
+                && (this.getRoom(roomId)?.getObjectCountForType('free_placement_room', RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) ?? 0) > 1)
+            {
+                this._windowManager?.alert(
+                    'One free placement furni already in room!',
+                    'There can be only one free_placement_room furni in a room. See intraweb for instructions on how to use it.',
+                    0,
+                    null
+                );
+
+                return;
+            }
+
             // AS3: _SafeCls_1821.as::placeObject() — the id is un-negated *before* the composer is
             // built, not after. Pets and bots arrive here with a negative id (PetsModel passes
             // `id * -1` so the ghost cannot collide with a real room object), so sending first would
@@ -6292,9 +6349,6 @@ export class RoomEngine extends Component implements IRoomEngine,
 
             if(sentId < 0 && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) sentId *= -1;
 
-            // TODO(AS3): the free_placement_room guard sits here — AS3 alerts "One free placement
-            // furni already in room!" and returns without sending when
-            // `getRoom(roomId).getObjectCountForType('free_placement_room', 10) > 1`.
             if(this._connection !== null && this._objectPlacementSource === 'inventory')
             {
                 if(data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER && data.typeId === RoomUserData.USER_TYPE_PET)
@@ -7064,19 +7118,37 @@ export class RoomEngine extends Component implements IRoomEngine,
         return canvas;
     }
 
-    private fixedUserLocation(roomId: number, location: IVector3d | null): IVector3d | null 
+    /**
+     * Snaps an avatar's z onto the floor when it is standing on bare tile.
+     *
+     * The three-way agreement test is the whole point: the server's z, the stacking map's tile
+     * height and the wall geometry's tile height all matching (within 0.02) means nothing is
+     * stacked under the avatar, so its height is the *floor's* and should come from
+     * `getFloorAltitude()` — which is the stair-aware value, and the reason an avatar walking up a
+     * staircase rises smoothly instead of stepping through it. Any disagreement means the avatar is
+     * standing on top of furniture, and the server's z is kept untouched.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::fixedUserLocation()
+    private fixedUserLocation(roomId: number, location: IVector3d | null): IVector3d | null
     {
-        void roomId;
+        if(location === null) return null;
 
-        if(location === null) 
+        const stackingHeightMap = this.getFurniStackingHeightMap(roomId);
+        const legacyGeometry = this.getLegacyGeometry(roomId);
+
+        if(stackingHeightMap === null || legacyGeometry === null) return location;
+
+        let z = location.z;
+
+        const stackingHeight = stackingHeightMap.getTileHeight(location.x, location.y);
+        const geometryHeight = legacyGeometry.getTileHeight(location.x, location.y);
+
+        if(Math.abs(z - stackingHeight) < 0.02 && Math.abs(stackingHeight - geometryHeight) < 0.02)
         {
-            return null;
+            z = legacyGeometry.getFloorAltitude(location.x, location.y);
         }
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as
-        // RoomEngine.fixedUserLocation must adjust avatar z using FurniStackingHeightMap
-        // and LegacyWallGeometry when those per-room maps are stored on RoomEngine.
-        return location;
+        return new Vector3d(location.x, location.y, z);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomIdentifier()
@@ -7569,15 +7641,49 @@ export class RoomEngine extends Component implements IRoomEngine,
                     roomId, objectId, category
                 );
                 break;
+            // AS3: _SafeCls_1821.as:1473-1478
+            case RoomObjectWidgetRequestEvent.ROWRE_PLAYLIST_EDITOR:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_PLAYLIST_EDITOR, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_MANNEQUIN:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_MANNEQUIN, roomId, objectId, category);
+                break;
+            // AS3: _SafeCls_1821.as:1502-1503
+            case RoomObjectWidgetRequestEvent.ROWRE_EFFECTBOX_OPEN_DIALOG:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_EFFECTBOX_OPEN_DIALOG, roomId, objectId, category);
+                break;
+            // The second of the two cases here that talk to the server directly instead of raising
+            // a widget event (the guild-furni one above is the other). Achievement id 0 means "just
+            // send me the list" — the same composer with a real id is what commits a choice, so the
+            // zero is load-bearing, not a placeholder.
+            // AS3: _SafeCls_1821.as:1508-1509
+            case RoomObjectWidgetRequestEvent.ROWRE_ACHIEVEMENT_RESOLUTION_OPEN:
+                this.connection?.send(new GetResolutionAchievementsMessageComposer(objectId, 0));
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_ACHIEVEMENT_RESOLUTION_ENGRAVING:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_ACHIEVEMENT_RESOLUTION_ENGRAVING, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_ACHIEVEMENT_RESOLUTION_FAILED:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_ACHIEVEMENT_RESOLUTION_FAILED, roomId, objectId, category);
+                break;
+            // AS3: _SafeCls_1821.as:1518-1523
+            case RoomObjectWidgetRequestEvent.ROWRE_FRIEND_FURNITURE_CONFIRM:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_FRIEND_FURNITURE_CONFIRM, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_FRIEND_FURNITURE_ENGRAVING:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_FRIEND_FURNITURE_ENGRAVING, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_BADGE_DISPLAY_ENGRAVING:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_BADGE_DISPLAY_ENGRAVING, roomId, objectId, category);
+                break;
+            // AS3: _SafeCls_1821.as:1533-1534 — the last case, and the only one AS3 leaves without
+            // a trailing `break`.
+            case RoomObjectWidgetRequestEvent.ROWRE_ROOM_LINK:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_ROOM_LINK, roomId, objectId, category);
+                break;
             default:
-                // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectWidgetRequestEvent()
-                // continues past ROWRE_CLOTHING_CHANGE with the playlist-editor, mannequin,
-                // area-hide, effectbox dialog, achievement-resolution, friend-furni,
-                // badge-display, high-score and link cases (the mysterybox and mysterytrophy
-                // dialogs above are done). Their RETWE_* constants already exist on
-                // RoomEngineToWidgetEvent;
-                // each is one line here once the widget behind it is ported. Left unmapped
-                // rather than emitted, so no event fires that nothing can service.
+                // Every `ROWRE_*` AS3 answers to is now mapped, so reaching this means the object
+                // raised a request type that exists in neither client.
                 log.warn(`Unmapped room-object widget request: ${event.type}`);
                 break;
         }

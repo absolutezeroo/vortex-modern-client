@@ -415,9 +415,9 @@ export class Util
         return typeof candidate.numListItems === 'number' && typeof candidate.getListItemAt === 'function';
     }
 
-    // Duck-types the AS3 `ISelectorWindow` branch of disableSection. Duck-typed rather than an
-    // `instanceof`: unlike the three marker interfaces above, ISelectorWindow has members and more
-    // than one implementor, and the port's selector controllers do not share a base class.
+    // TS-only: duck-types the AS3 `param1 is ISelectorWindow` branch of disableSection(). Unlike
+    // the three marker interfaces above, ISelectorWindow has members and more than one
+    // implementor, and the port's selector controllers share no base class to test against.
     private static isSelector(window: IWindow): boolean
     {
         const candidate = window as unknown as Partial<ISelectorWindow>;
