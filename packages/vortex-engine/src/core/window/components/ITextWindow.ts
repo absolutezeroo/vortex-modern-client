@@ -1,5 +1,6 @@
 import type {IWindow} from '../IWindow';
 import type {IScrollableWindow} from './IScrollableWindow';
+import type {IMargins} from '../utils/IMargins';
 
 /**
  * A per-range text format override, mirroring the subset of Flash's
@@ -40,6 +41,8 @@ export interface ITextWindow extends IWindow, IScrollableWindow
     // callers that need it (the mannequin's name field, SearchView's placeholder, and now every
     // forum row, which bolds an unread thread) had to cast around the type. The same was already
     // true of `italic` below.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ITextWindow.as::get margins()
+    readonly margins: IMargins;
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get bold()
     bold: boolean;
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get italic()

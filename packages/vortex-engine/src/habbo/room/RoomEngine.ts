@@ -7668,7 +7668,10 @@ export class RoomEngine extends Component implements IRoomEngine,
             }
         }
 
-        // TODO(AS3): session.trackEventLogOncePerSession('Achievements', 'interaction', 'furniture.use').
+        // Outside the `selectedObjectData` branch in AS3 too: placing a furni still counts as a
+        // use for the achievement, even though no use message went out.
+        session?.trackEventLogOncePerSession('Achievements', 'interaction', 'furniture.use');
+
         return true;
     }
 

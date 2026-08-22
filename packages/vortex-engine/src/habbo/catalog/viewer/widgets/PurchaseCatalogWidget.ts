@@ -25,9 +25,7 @@ import {CatalogWidget} from './CatalogWidget';
  *   run the normal (non-stub) path.
  * - sendRoomAdPurchaseInitiatedEvent()/roomAdPurchaseData room-ad checks resolve through
  *   HabboCatalog stubs that are always false/null (see that class's own TODOs).
- * - onBuyClub()/HabboTracking analytics calls aren't wired (PurchaseCatalogWidget isn't a DI
- *   Component, so it has no path to the tracking service; this matches AS3's *behaviour*, just
- *   not the analytics side-effect).
+ * - onBuyClub() isn't wired to any button, matching AS3 (see its own note).
  *
  * @see sources/win63_version/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as
  */
@@ -320,9 +318,10 @@ export class PurchaseCatalogWidget extends CatalogWidget
     private onGift = (event: WindowMouseEvent): void =>
     {
         this.onPurchase(event, true);
-        // TODO(AS3): HabboTracking.getInstance().trackEventLog("Catalog", "click",
-        // "client.buy_as_gift.clicked") - PurchaseCatalogWidget has no DI path to the tracking
-        // service (see class doc comment).
+
+        // AS3 reaches the tracking singleton; this port has no singleton, and the catalog that
+        // owns the widget already holds the same component (`HabboCatalog.tracking`).
+        this._catalog?.tracking?.trackEventLog('Catalog', 'click', 'client.buy_as_gift.clicked');
     };
 
     private initPurchase = (_event: CatalogWidgetInitPurchaseEvent): void =>

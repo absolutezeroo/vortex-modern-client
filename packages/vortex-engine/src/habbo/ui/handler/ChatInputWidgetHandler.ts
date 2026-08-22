@@ -482,15 +482,12 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
 
                 return true;
 
-            // TODO(AS3): AS3 reads `habboTracking.latencyPingMs` for the extraParam; `IHabboTracking`
-            // has no such member in this port, so the round trip always reports -1 — which is AS3's
-            // own fallback when tracking is absent, so the event shape is right and only the number
-            // is missing.
             case ':ping':
                 container.roomSessionManager?.sessionEvents.emit(
                     'RSCE_CHAT_EVENT',
                     new RoomSessionChatEvent(
-                        'RSCE_CHAT_EVENT', session, session.ownUserRoomId, '', 11, 1, null, -1
+                        'RSCE_CHAT_EVENT', session, session.ownUserRoomId, '', 11, 1, null,
+                        container.habboTracking?.latencyPingMs ?? -1
                     )
                 );
 

@@ -280,6 +280,13 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
         }
     }
 
+    /** The last round trip measured, in ms; -1 while the latency tracker is not up. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/tracking/HabboTracking.as::get latencyPingMs()
+    get latencyPingMs(): number
+    {
+        return this._latencyTracker !== null ? this._latencyTracker.latestLatency : -1;
+    }
+
     /**
 	 * Track a toolbar button click
 	 *

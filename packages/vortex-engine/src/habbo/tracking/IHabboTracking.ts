@@ -9,6 +9,15 @@
 export interface IHabboTracking
 {
     /**
+	 * The last round trip measured against the server, in milliseconds.
+	 *
+	 * -1 when no latency tracker is running — the value `:ping` and the room-session chat event
+	 * both report in that case.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/tracking/_SafeCls_72.as::get latencyPingMs()
+    readonly latencyPingMs: number;
+
+    /**
 	 * Track an event via Google Analytics
 	 *
 	 * @param category The event category

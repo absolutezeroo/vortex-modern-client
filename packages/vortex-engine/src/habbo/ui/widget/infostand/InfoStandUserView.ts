@@ -203,8 +203,10 @@ export class InfoStandUserView
     {
         if(event.type !== WindowMouseEvent.CLICK) return;
 
-        // TODO(AS3): AS3 also calls HabboTracking.getInstance().trackEventLog("InfoStand",
-        // "click", "RWUAM_OPEN_HOME_PAGE") here. This port has no tracking layer.
+        // AS3 reaches the tracking singleton; this port has none, and the handler's container
+        // already carries the same component as `habboTracking`.
+        this._widget.handler.container?.habboTracking?.trackEventLog('InfoStand', 'click', RoomWidgetUserActionMessage.OPEN_HOME_PAGE);
+
         this._widget.messageListener?.processWidgetMessage(
             new RoomWidgetUserActionMessage(
                 RoomWidgetUserActionMessage.OPEN_HOME_PAGE,

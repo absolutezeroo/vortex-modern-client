@@ -24,6 +24,7 @@ import type {IHabboMusicController} from './IHabboMusicController';
 import {TraxSampleManager} from './music/TraxSampleManager';
 import {FurniSamplePlaybackManager} from './furni/FurniSamplePlaybackManager';
 import {TraxSequencer} from './trax/TraxSequencer';
+import {TraxSongLoadEvent} from './events/TraxSongLoadEvent';
 import {TraxData} from './trax/TraxData';
 import {OrderedMap} from '@core/utils/OrderedMap';
 import {HabboMusicController} from './music/HabboMusicController';
@@ -74,10 +75,7 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
             });
         }
 
-        // TODO(AS3): AS3 also listens for "TSLE_TRAX_LOAD_COMPLETE" here
-        // (`onTraxLoadComplete`), which finishes a queued Trax download and tells the music
-        // controller the song is ready. `trax/` and `music/` are unported, so nothing
-        // dispatches that event yet.
+        this.events.on(TraxSongLoadEvent.TRAX_LOAD_COMPLETE, this._onTraxLoadComplete);
         this.registerUpdateReceiver(this, 1);
 
         log.debug('Sound manager 10 init');
@@ -133,13 +131,27 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
     // Name DERIVED (`_SafeStr_6944`): songs built while that download is in flight.
     private _queuedSongs: OrderedMap<number, TraxSequencer> = new OrderedMap<number, TraxSequencer>();
 
+    /**
+     * A sample of the song currently downloading failed.
+     *
+     * AS3 only drops the download slot — the half-loaded sequencer is left unready and is never
+     * retried. Freeing the slot is what matters: `update()` calls `loadNextSong()` every frame,
+     * so the next queued song starts on the following tick instead of waiting forever behind a
+     * download that will never complete.
+     */
     // AS3: .../sound/HabboSoundManagerFlash10.as::onSampleLoadError()
-    // TODO(AS3): AS3 clears the failed download and moves on to the next queued song
-    // (`loadNextSong()`); that queue drain is not ported, so a failed sample leaves its song
-    // waiting rather than skipping to the next one.
     private onSampleLoadError = (): void =>
     {
-        log.warn('A Trax sample failed to download; the song it belongs to stays unready');
+        log.warn(`A Trax sample failed to download; song ${this._loadingSongId} stays unready`);
+
+        this._loadingSongId = -1;
+        this._downloadingSong = null;
+    };
+
+    // TS-only: bound listener, kept so `dispose()` unregisters the same reference.
+    private readonly _onTraxLoadComplete = (event: TraxSongLoadEvent): void =>
+    {
+        this.onTraxLoadComplete(event);
     };
 
     // AS3: .../sound/HabboSoundManagerFlash10.as::_SafeStr_9792
@@ -370,11 +382,71 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
         this._notifications?.addSongPlayingNotification(songName, songAuthor);
     }
 
+    /**
+     * The song whose samples were downloading is complete.
+     *
+     * AS3 marks the sequencer ready and tells the music controller, then frees the download slot
+     * so `loadNextSong()` can take the next queued song on the following tick. Note it returns
+     * *before* freeing the slot when there is no music controller — that early return is AS3's,
+     * and it is what makes the queue stall while the controller is still coming up.
+     */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::onTraxLoadComplete()
+    private onTraxLoadComplete(event: TraxSongLoadEvent): void
+    {
+        if(event == null) return;
+        if(this._downloadingSong === null) return;
+
+        this._downloadingSong.ready = true;
+
+        if(this._musicController === null) return;
+
+        this._musicController.onSongLoaded(event.id);
+
+        this._downloadingSong = null;
+        this._loadingSongId = -1;
+    }
+
+    /**
+     * Starts the next queued song, if the single download slot is free.
+     *
+     * A song whose samples all turned out to be cached comes back ready from
+     * `validateSampleAvailability()` and is announced immediately — it never occupies the slot.
+     */
+    // AS3: .../sound/HabboSoundManagerFlash10.as::loadNextSong()
+    private loadNextSong(): void
+    {
+        if(this._downloadingSong !== null || this._queuedSongs.length === 0) return;
+
+        const songId = this._queuedSongs.getKey(0);
+
+        if(songId === null) return;
+
+        const sequencer = this._queuedSongs.remove(songId);
+
+        if(sequencer === null || sequencer.disposed) return;
+
+        this.validateSampleAvailability(sequencer, true);
+
+        if(sequencer.ready)
+        {
+            this.events.emit(
+                TraxSongLoadEvent.TRAX_LOAD_COMPLETE,
+                new TraxSongLoadEvent(TraxSongLoadEvent.TRAX_LOAD_COMPLETE, songId)
+            );
+
+            return;
+        }
+
+        this._downloadingSong = sequencer;
+        this._loadingSongId = songId;
+    }
+
     // AS3: .../sound/HabboSoundManagerFlash10.as::update()
     // The sample manager decodes on this tick, under its own time budget.
     update(delta: number): void
     {
         this._traxSampleManager?.update(delta);
+        this.loadNextSong();
     }
 
     // AS3: .../sound/HabboSoundManagerFlash10.as::get events()
@@ -653,6 +725,8 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
 
         this._accountPreferencesEvent = null;
         this._connection = null;
+
+        this.events.off(TraxSongLoadEvent.TRAX_LOAD_COMPLETE, this._onTraxLoadComplete);
 
         if(this._musicController !== null)
         {

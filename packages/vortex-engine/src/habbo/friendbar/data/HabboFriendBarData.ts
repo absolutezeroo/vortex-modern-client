@@ -7,6 +7,8 @@ import {OrderedMap} from '@core/utils/OrderedMap';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IHabboMessenger} from '@habbo/messenger/IHabboMessenger';
+import {ActiveConversationEvent} from '@habbo/messenger/events/ActiveConversationEvent';
+import {ActiveConversationsCountEvent} from '@habbo/friendbar/events/ActiveConversationsCountEvent';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import {FriendRequestEvent} from '@habbo/friendlist/events/FriendRequestEvent';
 import {FriendListTabEnum} from '@habbo/friendlist/FriendListTabEnum';
@@ -558,17 +560,30 @@ export class HabboFriendBarData extends Component implements IHabboFriendBarData
     // === Message handlers ===
 
     /**
-     * TODO(AS3): AS3 subscribes to the messenger's own `ACCE_changed` event here
-     * (`_habboMessengerComponent.events.addEventListener("ACCE_changed", ...)`) to relay
-     * the active-conversation count as `ActiveConversationsCountEvent`. This port's
-     * `IHabboMessenger` exposes no event bus, so the messenger token's counter never
-     * updates. AS3: HabboFriendBarData.as::onMessengerInitialized().
+     * The messenger is up: start relaying its conversation count to the bar.
+     *
+     * The subscription lives here rather than in the view because the count crosses two event
+     * buses — the messenger raises `ACCE_changed` on its own, and `HabboFriendBarView` listens
+     * for `AMC_EVENT` on *this* component's bus. `onUpdateActiveConversationCount()` is the
+     * hop between them.
      */
     // AS3: .../data/HabboFriendBarData.as::onMessengerInitialized()
     private onMessengerInitialized(_event: IMessageEvent): void
     {
-        // Intentionally empty until IHabboMessenger carries an event bus - see above.
+        this._habboMessengerComponent?.events.on(
+            ActiveConversationEvent.ACTIVE_CONVERSATION_COUNT_CHANGED,
+            this.onUpdateActiveConversationCount
+        );
     }
+
+    // AS3: .../data/HabboFriendBarData.as::onUpdateActiveConversationCount()
+    private onUpdateActiveConversationCount = (event: ActiveConversationEvent): void =>
+    {
+        this.events.emit(
+            ActiveConversationsCountEvent.ACTIVE_MESSENGER_CONVERSATION_EVENT,
+            new ActiveConversationsCountEvent(event.activeConversationsCount, event.hasUnread)
+        );
+    };
 
     // AS3: .../data/HabboFriendBarData.as::onFriendsListFragment()
     private onFriendsListFragment(event: IMessageEvent): void
@@ -999,6 +1014,11 @@ export class HabboFriendBarData extends Component implements IHabboFriendBarData
             this._habboFriendListComponent.events.off(FriendRequestEvent.ACCEPTED, this.onFriendRequestEvent);
             this._habboFriendListComponent.events.off(FriendRequestEvent.DECLINED, this.onFriendRequestEvent);
         }
+
+        this._habboMessengerComponent?.events.off(
+            ActiveConversationEvent.ACTIVE_CONVERSATION_COUNT_CHANGED,
+            this.onUpdateActiveConversationCount
+        );
 
         if(this._habboCommunicationManager)
         {

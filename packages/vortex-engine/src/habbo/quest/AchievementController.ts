@@ -11,6 +11,7 @@ import {AchievementCategories} from './AchievementCategories';
 import type {AchievementCategory, AchievementData} from './AchievementCategory';
 import {ProgressBar} from './ProgressBar';
 import {UnseenAchievementsCountUpdateEvent} from './events/UnseenAchievementsCountUpdateEvent';
+import {EventLogMessageComposer} from '@habbo/communication/messages/outgoing/tracking/EventLogMessageComposer';
 import {GetAchievementsComposer} from '@habbo/communication/messages/outgoing/inventory/achievements/GetAchievementsComposer';
 import {Logger} from '@core/utils/Logger';
 
@@ -944,9 +945,9 @@ export class AchievementController implements IDisposable
 
         this.refresh();
 
-        // TODO(AS3): AS3 also sends new _SafeCls_2175("Achievements", category.code,
-        // "Category selected") — a UI-tracking composer whose obfuscated class isn't
-        // resolvable in the current source trees; tracking ping only, no functional effect.
+        // `_SafeCls_2175` is EventLogMessageComposer: same five fields, same order, and the
+        // composer registry maps both to header 3809.
+        this._engine?.send(new EventLogMessageComposer('Achievements', category.code, 'Category selected'));
     }
 
     // AS3: AchievementController.as::refreshMouseOver()
@@ -984,8 +985,12 @@ export class AchievementController implements IDisposable
         this._selectedAchievement = this._selectedCategory.achievements[window.id] ?? null;
         this.refresh();
 
-        // TODO(AS3): AS3 also sends new _SafeCls_2175("Achievements", achievementId,
-        // "Achievement selected") — same unresolvable tracking composer as pickCategory().
+        // AS3 reads the id off the *newly* selected achievement, after the assignment above.
+        this._engine?.send(new EventLogMessageComposer(
+            'Achievements',
+            String(this._selectedAchievement?.achievementId ?? 0),
+            'Achievement selected'
+        ));
     }
 
     // AS3: AchievementController.as::onBack()

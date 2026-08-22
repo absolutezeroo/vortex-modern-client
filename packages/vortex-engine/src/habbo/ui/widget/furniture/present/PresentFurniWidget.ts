@@ -785,9 +785,9 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
     {
         this.openGiftShop();
 
-        // TODO(AS3): AS3 also calls `HabboTracking.getInstance().trackEventLog("Catalog",
-        // "click", "client.return_gift_from_open_giftcard.clicked")`. This port has no
-        // `HabboTracking` singleton — tracking is a DI component the widget is not given.
+        // AS3 reaches the tracking singleton; this port has none, and the handler's container
+        // already carries the same component as `habboTracking`.
+        this.presentHandler?.container?.habboTracking?.trackEventLog('Catalog', 'click', 'client.return_gift_from_open_giftcard.clicked');
     };
 
     // AS3: .../present/PresentFurniWidget.as::onGiveGiftOpened()
@@ -795,7 +795,7 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
     {
         this.openGiftShop();
 
-        // TODO(AS3): as above, with "client.return_gift_from_opened_present.clicked".
+        this.presentHandler?.container?.habboTracking?.trackEventLog('Catalog', 'click', 'client.return_gift_from_opened_present.clicked');
     };
 
     /** Opens the catalog pre-addressed to whoever sent the gift. */

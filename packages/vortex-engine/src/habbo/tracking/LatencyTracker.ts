@@ -32,6 +32,9 @@ export class LatencyTracker
     private _lastAverageLatency: number = 0;
     private _latencies: number[] = [];
     private _latencyMap: Map<number, number> = new Map();
+    // AS3: .../src/com/sulake/habbo/tracking/LatencyTracker.as::_latestLatency
+    // Name DERIVED (`_SafeStr_9926`): the last measured round trip, in ms.
+    private _latestLatency: number = 0;
     // AS3: .../src/com/sulake/habbo/tracking/LatencyTracker.as::_habboTracking
     private _habboTracking: HabboTracking | null;
 
@@ -46,6 +49,13 @@ export class LatencyTracker
     get disposed(): boolean
     {
         return this._habboTracking === null;
+    }
+
+    /** The last round trip measured, in ms — 0 until the first ping comes back. */
+    // AS3: .../src/com/sulake/habbo/tracking/LatencyTracker.as::get latestLatency()
+    get latestLatency(): number
+    {
+        return this._latestLatency;
     }
 
     /**
@@ -112,7 +122,11 @@ export class LatencyTracker
 
         this._latencyMap.delete(parser.requestId);
 
-        const latency = performance.now() - requestTime;
+        // AS3 stores this as an `int` of milliseconds (`getTimer()` is integral); rounding here
+        // keeps `latestLatency` reporting whole milliseconds like the client it came from.
+        const latency = Math.round(performance.now() - requestTime);
+
+        this._latestLatency = latency;
         this._latencies.push(latency);
 
         if(this._latencies.length === this._reportIndex && this._reportIndex > 0)

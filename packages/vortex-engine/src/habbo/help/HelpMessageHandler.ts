@@ -33,6 +33,7 @@ import type {CallForHelpPendingCallsMessageParser} from '@habbo/communication/me
 import type {CallForHelpReplyMessageParser} from '@habbo/communication/messages/parser/help/CallForHelpReplyMessageParser';
 import type {CallForHelpResultMessageParser} from '@habbo/communication/messages/parser/help/CallForHelpResultMessageParser';
 import type {SanctionStatusMessageParser} from '@habbo/communication/messages/parser/help/SanctionStatusMessageParser';
+import {SanctionStatusMessageEvent} from '@habbo/communication/messages/incoming/help/SanctionStatusMessageEvent';
 import type {CfhTopicsInitMessageParser} from '@habbo/communication/messages/parser/help/CfhTopicsInitMessageParser';
 import type {GuideReportingStatusMessageParser} from '@habbo/communication/messages/parser/help/GuideReportingStatusMessageParser';
 import type {GuideTicketCreationResultMessageParser} from '@habbo/communication/messages/parser/help/GuideTicketCreationResultMessageParser';
@@ -131,18 +132,13 @@ export class HelpMessageHandler
         this.addMessageEvent(new QuizResultsMessageEvent(this.onQuizResults.bind(this)));
 
         // Sanction and topics
-        // TODO(AS3): `SanctionStatusMessageEvent` has no header in `HabboMessages` on purpose. It
-        // was ported from win63_version, where the message is one flat sanction (name, length,
-        // reason, probation, …). The 2026 client's message in that position (`_SafeCls_1807`,
-        // header 1746) carries a `sanctions()` **list** instead — a different shape, so
-        // registering the old reader against the new id would misparse the wire. Porting the
-        // current shape is the fix; the header is 1746 when it is done.
         //
-        // The comment above used to end "deliberately left unregistered, so this subscription
-        // never fires" — while the line below subscribed anyway. `MessageRegistry` then logged
-        // "Unknown message event class: SanctionStatusMessageEvent" on every boot, because an
-        // event class with no header cannot be registered. Subscribing is what the comment says
-        // is wrong, so the call is gone; the handler stays for when the parser is re-ported.
+        // The sanction subscription was withdrawn while `SanctionStatusMessageParser` still read
+        // `win63_version`'s flat thirteen-field shape against 2026's counted list — an event class
+        // with no header cannot be registered, and `MessageRegistry` logged that on every boot.
+        // The parser now reads the 2026 shape and `HabboMessages` maps it to 1746, so the
+        // subscription is back and `SanctionInfo` finally receives a window to open.
+        this.addMessageEvent(new SanctionStatusMessageEvent(this.onSanctionStatus.bind(this)));
         this.addMessageEvent(new CfhTopicsInitMessageEvent(this.onCfhTopicsInit.bind(this)));
         this.addMessageEvent(new GuideReportingStatusMessageEvent(this.onGuideReportingStatus.bind(this)));
 

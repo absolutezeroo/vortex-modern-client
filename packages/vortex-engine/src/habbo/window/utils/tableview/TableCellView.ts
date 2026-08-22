@@ -287,9 +287,7 @@ export class TableCellView implements IDisposable
             input.visible = true;
             input.text = this._cell.textFieldValue ?? '';
             input.editable = this._cell.isEditable;
-            // AS3: input.focus(); the port's ITextFieldWindow has no focus(), so call it duck-typed.
-            // TODO(AS3): route keyboard focus to the input once the window system exposes focus().
-            (input as unknown as {focus?: () => void}).focus?.();
+            input.focus();
         }
     };
 

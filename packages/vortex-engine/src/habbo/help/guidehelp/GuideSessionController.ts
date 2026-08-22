@@ -828,9 +828,7 @@ export class GuideSessionController implements IDisposable, IIlluminaInputHandle
 
                 (descriptionField as unknown as IWindow).x = title.x;
 
-                // TODO(AS3): AS3 also sets `margins.top = 10` on the description. This port's
-                // IWindow exposes no margins, so the lifted-out description sits flush against the
-                // title instead of ten pixels below it.
+                descriptionField.margins.top = 10;
                 descriptionField.caption = description;
 
                 const oldHeight = itemList.height;
