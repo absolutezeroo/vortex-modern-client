@@ -1483,7 +1483,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     {
         if(this._badgeImageManager !== null) return;
 
-        this._badgeImageManager = new BadgeImageManager(this.events, this);
+        this._badgeImageManager = new BadgeImageManager(this.assets, this.events, this);
     }
 
     /**
@@ -1495,7 +1495,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     {
         if(this._furniIconImageManager !== null) return;
 
-        this._furniIconImageManager = new FurniIconImageManager(this.events, this, this);
+        this._furniIconImageManager = new FurniIconImageManager(this.assets, this.events, this, this);
     }
 
     protected override initComponent(): void

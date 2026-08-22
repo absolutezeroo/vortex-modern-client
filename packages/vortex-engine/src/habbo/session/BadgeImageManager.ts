@@ -1,4 +1,6 @@
 import type {EventEmitter} from 'eventemitter3';
+import type {IAssetLibrary} from '@core/assets';
+import {AssetBitmap} from '@core/assets/AssetBitmap';
 import {Logger} from '@core/utils/Logger';
 import {BadgeInfo} from './BadgeInfo';
 import {BadgeImageReadyEvent} from './events/BadgeImageReadyEvent';
@@ -50,8 +52,14 @@ export class BadgeImageManager
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BadgeImageManager.as::ASSET_SMALL_POSTFIX
     private static readonly ASSET_SMALL_POSTFIX: string = '_32';
 
-    // TS-only: stands in for AS3's `_assets` AssetLibrary — see the class doc for why.
+    // TS-only: the per-badge image cache. AS3 keeps these inside its own `_assets` library; here
+    // they are a plain Map, for the type reason in the class doc.
     private _images: Map<string, HTMLImageElement> = new Map();
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BadgeImageManager.as::_assets
+    // Only the placeholder comes out of it in this port — the badge images themselves are cached
+    // in `_images` above rather than added to the library.
+    private _assets: IAssetLibrary | null;
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/BadgeImageManager.as::_events
     private _events: EventEmitter | null;
@@ -67,8 +75,10 @@ export class BadgeImageManager
     private _requestedGroupBadges: Set<string> = new Set();
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BadgeImageManager.as::BadgeImageManager()
-    constructor(events: EventEmitter, configuration: IBadgeImageConfiguration)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BadgeImageManager.as::BadgeImageManager()
+    constructor(assets: IAssetLibrary | null, events: EventEmitter, configuration: IBadgeImageConfiguration)
     {
+        this._assets = assets;
         this._events = events;
         this._configuration = configuration;
     }
@@ -274,15 +284,35 @@ export class BadgeImageManager
         return scaled;
     }
 
+    // TS-only: AS3 clones the BitmapData on every call, so each caller owns its copy. Here the
+    // conversion out of the asset library costs a canvas round trip, and nothing mutates the
+    // placeholder, so one element is built on first use and shared.
+    private _placeholder: HTMLImageElement | null = null;
+
     /**
-	 * TODO(AS3): AS3 returns a clone of the "loading_icon" asset. This port's asset library
-	 * hands back a PixiJS Texture, which is not an HTMLImageElement, so there is nothing to
-	 * return here — callers passing useplaceholder=true get null instead of a spinner.
+	 * The spinner shown in place of a badge whose image has not arrived yet.
+	 *
+	 * AS3 clones the `loading_icon` asset's BitmapData directly; this port's library stores a
+	 * PixiJS `Texture`, so it goes through `AssetBitmap` to reach the `HTMLImageElement` the rest
+	 * of this class is typed in.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BadgeImageManager.as::getPlaceholder()
     private getPlaceholder(): HTMLImageElement | null
     {
-        return null;
+        if(this._placeholder !== null) return this._placeholder;
+
+        const asset = this._assets?.getAssetByName('loading_icon') ?? null;
+
+        if(asset === null)
+        {
+            log.warn('No "loading_icon" asset - badges load with no placeholder');
+
+            return null;
+        }
+
+        this._placeholder = AssetBitmap.resolveImageElementSync(asset.content);
+
+        return this._placeholder;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/BadgeImageManager.as::dispose()

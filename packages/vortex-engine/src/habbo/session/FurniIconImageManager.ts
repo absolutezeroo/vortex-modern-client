@@ -1,4 +1,6 @@
 import type {EventEmitter} from 'eventemitter3';
+import type {IAssetLibrary} from '@core/assets';
+import {AssetBitmap} from '@core/assets/AssetBitmap';
 import {Logger} from '@core/utils/Logger';
 import type {IFurnitureData} from './furniture/IFurnitureData';
 import {FurniIconImageReadyEvent} from './events/FurniIconImageReadyEvent';
@@ -49,8 +51,13 @@ export class FurniIconImageManager
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/FurniIconImageManager.as::ASSET_PREFIX
     private static readonly ASSET_PREFIX: string = 'furni_icon_';
 
-    // TS-only: stands in for AS3's `_assets` AssetLibrary — see the class doc for why.
+    // TS-only: the per-icon image cache. AS3 keeps these inside its own `_assets` library; here
+    // they are a plain Map, for the type reason in the class doc.
     private _images: Map<string, HTMLImageElement> = new Map();
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/FurniIconImageManager.as::_assets
+    // Only the placeholder comes out of it in this port.
+    private _assets: IAssetLibrary | null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/FurniIconImageManager.as::_SafeStr_4546
     private _events: EventEmitter | null;
@@ -69,8 +76,15 @@ export class FurniIconImageManager
     private _loadingInfo: Map<string, [boolean, number, string]> = new Map();
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/FurniIconImageManager.as::FurniIconImageManager()
-    constructor(events: EventEmitter, configuration: IFurniIconConfiguration, sessionDataManager: IFurniIconDataSource)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/FurniIconImageManager.as::FurniIconImageManager()
+    constructor(
+        assets: IAssetLibrary | null,
+        events: EventEmitter,
+        configuration: IFurniIconConfiguration,
+        sessionDataManager: IFurniIconDataSource
+    )
     {
+        this._assets = assets;
         this._events = events;
         this._configuration = configuration;
         this._sessionDataManager = sessionDataManager;
@@ -222,15 +236,30 @@ export class FurniIconImageManager
         );
     }
 
+    // TS-only: see BadgeImageManager.getPlaceholder() - one shared element instead of AS3's
+    // per-call BitmapData clone, because the conversion is not free here and nothing mutates it.
+    private _placeholder: HTMLImageElement | null = null;
+
     /**
-	 * TODO(AS3): AS3 returns a clone of the "loading_icon" asset. This port's asset library
-	 * hands back a PixiJS Texture, which is not an HTMLImageElement — same gap as
-	 * `BadgeImageManager.getPlaceholder()`, so callers passing usePlaceholder=true get null.
+	 * The spinner shown in place of a furniture icon that has not arrived yet.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/FurniIconImageManager.as::getPlaceholder()
     private getPlaceholder(): HTMLImageElement | null
     {
-        return null;
+        if(this._placeholder !== null) return this._placeholder;
+
+        const asset = this._assets?.getAssetByName('loading_icon') ?? null;
+
+        if(asset === null)
+        {
+            log.warn('No "loading_icon" asset - furni icons load with no placeholder');
+
+            return null;
+        }
+
+        this._placeholder = AssetBitmap.resolveImageElementSync(asset.content);
+
+        return this._placeholder;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/FurniIconImageManager.as::dispose()

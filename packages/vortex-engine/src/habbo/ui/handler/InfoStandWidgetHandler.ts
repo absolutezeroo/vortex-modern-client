@@ -32,6 +32,7 @@ import {
     GetHabboGroupDetailsMessageComposer
 } from '@habbo/communication/messages/outgoing/users/GetHabboGroupDetailsMessageComposer';
 import {RoomWidgetMessage} from '@habbo/ui/widget/messages/RoomWidgetMessage';
+import {RoomWidgetRoomObjectNameEvent} from '@habbo/ui/widget/events/RoomWidgetRoomObjectNameEvent';
 import {RoomWidgetRoomObjectMessage} from '@habbo/ui/widget/messages/RoomWidgetRoomObjectMessage';
 import {RoomWidgetFurniActionMessage} from '@habbo/ui/widget/messages/RoomWidgetFurniActionMessage';
 import {RoomWidgetGetBadgeDetailsMessage} from '@habbo/ui/widget/messages/RoomWidgetGetBadgeDetailsMessage';
@@ -1086,11 +1087,88 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         container.roomEngine.modifyRoomObject(furniId, furniCategory, 'OBJECT_PICKUP');
     }
 
-    // TODO(AS3): category 100 (user) branch dispatches RoomWidgetRoomObjectNameEvent —
-    // not ported (user view is a stub).
+    /**
+     * Answers "what is this object called?" for a floor item, a wall item or an avatar.
+     *
+     * The event's five fields mean different things per category, which is AS3's own reuse: for
+     * furniture the id slot carries the *furniture type id* and the index slot the room object id,
+     * and the user-type slot is left at 0. Nothing is dispatched when no name could be resolved —
+     * an unknown furniture type answers with silence rather than an empty bubble.
+     *
+     * A poster is the one furniture type with no entry in the furniture data: its name is built
+     * from the number in its own type string (`poster123` → `${poster_123_name}`), and its id slot
+     * is -1 because there is no type id to put there.
+     */
     // AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectNameMessage()
-    private handleGetObjectNameMessage(_message: RoomWidgetRoomObjectMessage): void 
+    private handleGetObjectNameMessage(message: RoomWidgetRoomObjectMessage): void
     {
+        const container = this._container;
+
+        if(!container) return;
+
+        const roomId = container.roomSession.roomId;
+
+        let name: string | null = null;
+        let userType = 0;
+        let roomIndex = 0;
+        let id = 0;
+
+        switch(message.category)
+        {
+            case 10:
+            case 20:
+            {
+                if(!container.desktopEvents || !container.roomEngine) return;
+
+                const object = container.roomEngine.getRoomObject(roomId, message.id, message.category);
+
+                if(!object) return;
+
+                const type = object.getType();
+
+                if(type.indexOf('poster') === 0)
+                {
+                    name = `\${poster_${parseInt(type.replace('poster', ''), 10)}_name}`;
+                    roomIndex = object.getId();
+                    id = -1;
+                    break;
+                }
+
+                const typeId = object.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_TYPE_ID);
+                const furnitureData = message.category === 10
+                    ? container.sessionDataManager?.getFloorItemData(typeId) ?? null
+                    : container.sessionDataManager?.getWallItemData(typeId) ?? null;
+
+                if(!furnitureData) return;
+
+                name = furnitureData.localizedName;
+                roomIndex = object.getId();
+                id = furnitureData.id;
+                break;
+            }
+            case 100:
+            {
+                if(!container.roomSession || !container.sessionDataManager || !container.desktopEvents
+                    || !container.roomEngine || !container.friendList) return;
+
+                const userData = container.roomSession.userDataManager.getUserDataByIndex(message.id);
+
+                if(!userData) return;
+
+                name = userData.name;
+                userType = userData.type;
+                roomIndex = userData.roomObjectId;
+                id = userData.webID;
+                break;
+            }
+        }
+
+        if(name === null) return;
+
+        container.desktopEvents?.emit(
+            RoomWidgetRoomObjectNameEvent.OBJECT_NAME,
+            new RoomWidgetRoomObjectNameEvent(id, message.category, name, userType, roomIndex)
+        );
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectInfoMessage()

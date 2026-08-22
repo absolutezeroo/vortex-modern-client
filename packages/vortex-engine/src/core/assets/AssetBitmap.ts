@@ -87,6 +87,53 @@ export class AssetBitmap
         return createImageBitmap(canvas);
     }
 
+    /**
+	 * The frame of `content` as an `HTMLImageElement`.
+	 *
+	 * Needed because the two image managers (`BadgeImageManager`,
+	 * `FurniIconImageManager`) are typed in `HTMLImageElement` end to end — AS3 hands them
+	 * `BitmapData` and they scale, cache and hand it back, and this port picked `HTMLImageElement`
+	 * as the closest thing at every one of those points.
+	 *
+	 * The element is returned before its pixels have decoded: `src` is set from a data URL, and
+	 * the browser fills it in on its own. That is fine for the one thing it is used for — a
+	 * placeholder that is drawn every frame until the real image lands — and is what lets this be
+	 * synchronous, which the AS3 signature it stands in for requires.
+	 */
+    public static resolveImageElementSync(content: unknown): HTMLImageElement | null
+    {
+        if(typeof HTMLImageElement === 'undefined' || typeof document === 'undefined') return null;
+
+        const texture = AssetBitmap.asTexture(content);
+        const resource = texture ? AssetBitmap.resourceOf(texture) : null;
+
+        // The library loads PNGs through `BitmapFileLoader`, which builds from an `ImageBitmap`,
+        // so this fast path rarely hits — but a texture built from an `<img>` needs no copy.
+        if(resource instanceof HTMLImageElement) return resource;
+
+        const bitmap = AssetBitmap.resolveSync(content);
+
+        if(!bitmap) return null;
+
+        const canvas = document.createElement('canvas');
+
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+
+        const ctx = canvas.getContext('2d');
+
+        if(!ctx) return null;
+
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(bitmap, 0, 0);
+
+        const image = new Image(bitmap.width, bitmap.height);
+
+        image.src = canvas.toDataURL();
+
+        return image;
+    }
+
     // Duck-typed rather than `instanceof Texture`: this module must not depend
     // on which Texture class the asset was built with.
     private static asTexture(content: unknown): Texture | null

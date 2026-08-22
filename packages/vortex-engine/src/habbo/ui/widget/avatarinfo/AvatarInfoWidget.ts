@@ -550,11 +550,9 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
             )
         );
 
-        // TODO(AS3): AS3 follows with `roomEngine.selectAvatar(roomId, roomObjectId)`, which is
-        // `RoomObjectEventHandler.setSelectedAvatar()` — neither is ported (IRoomEngine has no
-        // selectAvatar and the event handler has no setSelectedAvatar). The panel still opens: the
-        // object-info message above is what brings the info event back. Only the room-side
-        // selection highlight is missing.
+        // The object-info message above is what fills the panel; this is the room-side half —
+        // it highlights the bot and drops the selection arrow onto it.
+        this.container?.roomEngine?.selectAvatar(roomId, userData.roomObjectId);
     };
 
     /**

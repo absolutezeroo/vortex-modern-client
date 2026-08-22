@@ -701,17 +701,11 @@ export class MeMenuWidgetHandler implements IRoomWidgetHandler
 
         if(userData === null) return null;
 
-        /**
-         * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::selectAvatar()
-         * — AS3 calls `roomEngine.selectAvatar(0, userData.roomObjectId)` here, reading a local
-         * initialised to 0 as the room id rather than the session's own. It delegates to
-         * `RoomObjectEventHandler.setSelectedAvatar()`, which deselects the previously selected
-         * avatar, sends `RoomObjectAvatarSelectedMessage(true)` to the new one and consults the
-         * wired click handlers — none of which this port has yet, so the whole avatar-selection
-         * mechanism is a slice of its own. Its only effect here is highlighting your own avatar
-         * while the menu is open.
-         */
-        void userData.roomObjectId;
+        // The room id really is a hard 0, not the session's: AS3 assigns `_loc8_ = 0` on the line
+        // before the call. Rooms are keyed by that id in `_roomInstanceData`, so a room whose id
+        // is not 0 finds nothing and no avatar lights up — transcribed as found rather than
+        // "corrected", because a fix would change which avatar gets selected.
+        this._container.roomEngine.selectAvatar(0, userData.roomObjectId);
 
         return null;
     }
