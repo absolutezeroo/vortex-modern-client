@@ -7,3 +7,4 @@ export * from './RoomSettingsSavedEvent';
 export * from './RoomSettingsSaveErrorEvent';
 export * from './ShowEnforceRoomCategoryDialogEvent';
 export * from './UserUnbannedFromRoomEvent';
+export * from './RoomChatSettingsMessageEvent';

@@ -597,6 +597,7 @@ import {
 import {
     SelfDonationResultMessageEvent
 } from './messages/incoming/userdefinedroomevents/misc/SelfDonationResultMessageEvent';
+import {RoomChatSettingsMessageEvent} from './messages/incoming/roomsettings/RoomChatSettingsMessageEvent';
 import {
     WiredTransactionSuccessMessageEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTransactionSuccessMessageEvent';
@@ -1659,6 +1660,9 @@ export class HabboMessages implements IMessageConfiguration
         // there is really onPetFigureUpdate (_SafeCls_2731), an unrelated, unported message.
         this._events.set(3081, FavouriteChangedMessageEvent);
         this._events.set(3042, GetGuestRoomResultMessageEvent);
+        // The room's flood sensitivity on its own. `vortex-emulator` sends it from the room
+        // settings dialog; nothing here listened, so the chat flow kept the default forever.
+        this._events.set(594, RoomChatSettingsMessageEvent);
         // AS3: header corrected 1265 -> 160 (_SafeCls_3509, whose parser _SafeCls_4150 builds the
         // searchType/searchParam/rooms/ad data class _SafeCls_3104 — WIN63 registry _SafeCls_2046.as
         // l.1262). 1265 is really the Wired furni-trigger push (_SafeCls_3224, registered below at

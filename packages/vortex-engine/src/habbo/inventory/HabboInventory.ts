@@ -1956,10 +1956,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
      * *whole* parser is handed on, not just the item list, because the accept flag and `extra` ride
      * on the outer message.
      *
-     * TODO(AS3): AS3 prepends a credits tile to the room's side when it staked credits
-     * (`furniModel.createCreditGroupItem()` under the key `credit_groupitem_type_id`). Same gap as
-     * `onTradingItemList()` above: neither the factory nor `inventory/items/CreditTradingItem` is
-     * ported.
+     * The room's staked credits come first in its map, as a tile of their own — and unlike the
+     * player-to-player case there is no `trading.warning.enabled` gate on it.
      */
     // AS3: .../src/com/sulake/habbo/inventory/_SafeCls_1951.as::onWiredTradeItemsUpdate()
     private onWiredTradeItemsUpdate = (event: IMessageEvent): void =>
@@ -1971,6 +1969,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         const items = parser.tradingItems;
         const ownUserItems = new OrderedMap<string, GroupItem>();
         const wiredItems = new OrderedMap<string, GroupItem>();
+
+        // Added before the furniture so the tile heads the grid; the key is AS3's own literal and
+        // can never collide with a furniture group's (those key on type ids).
+        if(items.secondUserNumCredits > 0)
+        {
+            wiredItems.add('credit_groupitem_type_id', this._furniModel.createCreditGroupItem(items.secondUserNumCredits));
+        }
 
         this.populateItemGroups(items.firstUserItemArray, ownUserItems, true);
         this.populateItemGroups(items.secondUserItemArray, wiredItems, false);
@@ -2086,11 +2091,9 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     /**
      * AS3: .../_SafeCls_1951.as::onTradingItemList()
      *
-     * TODO(AS3): AS3 opens by prepending a credits tile to the *second* user's list when
-     * `trading.warning.enabled` is on and they staked credits
-     * (`furniModel.createCreditGroupItem()` → `CreditTradingItem`). Neither the factory nor
-     * `inventory/items/CreditTradingItem` is ported — it is a view-side item (it carries its own
-     * tooltip text and icon) and belongs with TradingView.
+     * The *second* user's staked credits get a tile of their own at the head of their offer, and
+     * only when `trading.warning.enabled` is on: it is a scam warning, so it is shown for the
+     * other side's credits and not for your own.
      */
     private onTradingItemList = (event: IMessageEvent): void =>
     {
@@ -2105,6 +2108,11 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         const firstUserItems = new OrderedMap<string, GroupItem>();
         const secondUserItems = new OrderedMap<string, GroupItem>();
         const ownUserId = this._sessionDataManager?.userId ?? -1;
+
+        if(this.getBoolean('trading.warning.enabled') && parser.secondUserNumCredits > 0)
+        {
+            secondUserItems.add('credit_groupitem_type_id', furniModel.createCreditGroupItem(parser.secondUserNumCredits));
+        }
 
         this.populateItemGroups(parser.firstUserItemArray, firstUserItems, parser.firstUserId === ownUserId);
         this.populateItemGroups(parser.secondUserItemArray, secondUserItems, parser.secondUserId === ownUserId);

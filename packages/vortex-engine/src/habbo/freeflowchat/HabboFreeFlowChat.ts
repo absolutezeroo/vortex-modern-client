@@ -16,6 +16,10 @@ import type {IAssetLibrary} from '@core/assets';
 import {Logger} from '@core/utils/Logger';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import {RoomChatSettingsMessageEvent} from '@habbo/communication/messages/incoming/roomsettings/RoomChatSettingsMessageEvent';
+import {GetGuestRoomResultMessageEvent} from '@habbo/communication/messages/incoming/navigator/GetGuestRoomResultMessageEvent';
+import type {GetGuestRoomResultMessageParser} from '@habbo/communication/messages/parser/navigator/GetGuestRoomResultMessageParser';
+import type {RoomChatSettingsMessageParser} from '@habbo/communication/messages/parser/roomsettings/RoomChatSettingsMessageParser';
 import {AccountPreferencesEvent} from '@habbo/communication/messages/incoming/preferences/AccountPreferencesEvent';
 import type {AccountPreferencesParser} from '@habbo/communication/messages/parser/preferences/AccountPreferencesParser';
 import {SetChatStylePreferenceComposer} from '@habbo/communication/messages/outgoing/preferences/SetChatStylePreferenceComposer';
@@ -201,7 +205,61 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
             mode: this._chatMode,
             bubbleWidth: this._chatBubbleWidth,
             scrollSpeed: this._chatScrollSpeed,
+            floodSensitivity: this._floodSensitivity,
         };
+    }
+
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_SafeStr_7573
+    // Name DERIVED: obfuscated in every tree; `fromFloodSensitivity()` is what identifies it.
+    // Starts at 1 (normal), which is also what a room that sends no chat settings leaves it at.
+    private _floodSensitivity: number = 1;
+
+    /**
+     * Entering a room brings its chat settings along with everything else about it.
+     *
+     * Only the sensitivity is taken, and only when the message carries settings at all — a room
+     * result without them leaves the current value alone, which is the opposite of what
+     * `onRoomChatSettings()` does with an empty message. Both asymmetries are AS3's.
+     *
+     * AS3 also inserts a room-change divider into the chat history here; that history panel
+     * (`ChatHistoryScrollView`) is unported, and its own gap is documented on `chatHistory` below.
+     */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::onGuestRoomData()
+    private onGuestRoomData(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as GetGuestRoomResultMessageParser | null;
+        const chatSettings = parser?.chatSettings ?? null;
+
+        if(chatSettings !== null)
+        {
+            this._floodSensitivity = chatSettings.floodSensitivity;
+
+            this.refreshEffectiveChatSettings();
+        }
+
+        this._chatFlowStage?.refreshSettings();
+    }
+
+    /**
+     * The room pushed a new flood sensitivity.
+     *
+     * A message with no settings resets to 1 rather than keeping the previous room's — AS3 writes
+     * that fallback out, and it matters because this arrives per room.
+     */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::onRoomChatSettings()
+    private onRoomChatSettings(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as RoomChatSettingsMessageParser | null;
+
+        this._floodSensitivity = parser?.chatSettings?.floodSensitivity ?? 1;
+
+        this.refreshEffectiveChatSettings();
+
+        if(this._isInRoom) this._chatFlowStage?.refreshSettings();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::sanitizeChatMode()
@@ -307,11 +365,8 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::onAccountPreferences()
-    // TODO(AS3): onRoomChatSettings()/onGuestRoomData() (the two other AS3 call sites that
-    // also touch refreshEffectiveChatSettings()) aren't wired - both only ever update
-    // floodSensitivity, a field this port's roomChatSettings doesn't expose yet (nothing
-    // reads it - ChatFlowStage only needs mode/bubbleWidth/scrollSpeed, which only
-    // onAccountPreferences ever changes). See IRoomChatSettings for the same note.
+    // The account's own three display settings; the room's flood sensitivity comes in through
+    // onRoomChatSettings() instead, and both end up in refreshEffectiveChatSettings().
     private onAccountPreferences(event: IMessageEvent): void
     {
         if(!event) return;
@@ -884,6 +939,8 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         this._isInitialized = true;
 
         this._communication?.addHabboConnectionMessageEvent(new AccountPreferencesEvent(this.onAccountPreferences.bind(this)));
+        this._communication?.addHabboConnectionMessageEvent(new RoomChatSettingsMessageEvent(this.onRoomChatSettings.bind(this)));
+        this._communication?.addHabboConnectionMessageEvent(new GetGuestRoomResultMessageEvent(this.onGuestRoomData.bind(this)));
 
         log.debug('HabboFreeFlowChat initialized');
 

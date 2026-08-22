@@ -12,3 +12,4 @@ export * from './RoomSettingsSavedEventParser';
 export * from './RoomSettingsSaveErrorEventParser';
 export * from './ShowEnforceRoomCategoryDialogEventParser';
 export * from './UserUnbannedFromRoomEventParser';
+export * from './RoomChatSettingsMessageParser';

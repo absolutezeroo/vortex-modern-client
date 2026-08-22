@@ -20,6 +20,7 @@ import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocaliza
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {RoomEngineObjectPlacedEvent} from '@habbo/room/events/RoomEngineObjectPlacedEvent';
 import {GroupItem} from '../items/GroupItem';
+import {CreditTradingItem} from '../items/CreditTradingItem';
 import {HabboInventoryCategoryInitializeEvent} from '../events/HabboInventoryCategoryInitializeEvent';
 import {FurnitureItem} from '../items/FurnitureItem';
 import {FurnitureCategory, UnseenItemCategory} from '../enum';
@@ -1380,6 +1381,21 @@ export class FurniModel implements IFurniModel
         }
 
         return {groupItem, isNewGroup: true};
+    }
+
+    /**
+     * The "and N credits" tile that heads a trade offer.
+     *
+     * It is a `GroupItem` only in shape: it holds no furniture, and carries its own tooltip text
+     * and icon instead of resolving them from furni data. AS3 reads the library off the window
+     * manager (`_windowManager.assets`) and also passes the room engine; this port's window
+     * manager exposes no library and `CreditTradingItem` never renders a room object, so the
+     * inventory's own library is used and the engine is not passed.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::createCreditGroupItem()
+    createCreditGroupItem(creditValue: number): GroupItem
+    {
+        return new CreditTradingItem(this, this._habboInventory.assets, creditValue);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::createGroupItem()

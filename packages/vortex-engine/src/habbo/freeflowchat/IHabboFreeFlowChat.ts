@@ -23,10 +23,9 @@ import type {ChatFlowViewer} from './viewer/ChatFlowViewer';
  * preferences message (onAccountPreferences()) is the only thing that
  * updates these three away from that default once a real session connects.
  *
- * TODO(AS3): AS3's struct also carries `floodSensitivity`, set from two other
- * message handlers (onRoomChatSettings()/onGuestRoomData()) neither of which
- * are wired here - omitted from this interface since nothing in this port
- * reads it yet (only mode/bubbleWidth/scrollSpeed feed ChatFlowStage/PooledChatBubble).
+ * `floodSensitivity` comes from a different place than the other three: the account preferences
+ * carry the display settings, while the sensitivity is the *room's* and arrives with the guest
+ * room data or on its own (header 594). Only the chat input reads it.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatSettings()
  */
@@ -35,6 +34,7 @@ export interface IRoomChatSettings
     readonly mode: number;
     readonly bubbleWidth: number;
     readonly scrollSpeed: number;
+    readonly floodSensitivity: number;
 }
 
 /**
