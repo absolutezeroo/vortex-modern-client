@@ -29,6 +29,10 @@ export class ItemListController extends WindowController implements IItemListWin
     protected _isResizing: boolean = false;
     protected _isUpdating: boolean = false;
     protected _isHorizontal: boolean = false;
+    // TS-only: set once the list has actually held an item, so the empty-list
+    // reflect mask in updateScrollAreaRegion() applies to a list that was never
+    // populated and never to one that was emptied. See the comment there.
+    private _hasHeldItems: boolean = false;
     // Declared without a non-default initializer: WindowController's
     // applyProperties() phase dispatches to our `set properties()` override
     // (which can write `auto_arrange_items` directly to this field) before
@@ -503,6 +507,7 @@ export class ItemListController extends WindowController implements IItemListWin
         if(!this._container) return item;
 
         this._isUpdating = true;
+        this._hasHeldItems = true;
 
         if(this._isHorizontal) 
         {
@@ -539,6 +544,7 @@ export class ItemListController extends WindowController implements IItemListWin
     {
         if(!this._container) return item;
 
+        this._hasHeldItems = true;
         item = this._container.addChildAt(item, index);
         this.updateScrollAreaRegion();
 
@@ -737,6 +743,8 @@ export class ItemListController extends WindowController implements IItemListWin
     {
         if(this._container)
         {
+            if(items.length > 0) this._hasHeldItems = true;
+
             (this._container as unknown as WindowController).populate(items);
         }
 
@@ -983,11 +991,18 @@ export class ItemListController extends WindowController implements IItemListWin
         // asked for 279px and got 224 - exactly 279 minus its layout width - which cost it a column
         // and left it with six overlapping ones.
         //
-        // An empty list has no content, so a content resize of one is not a content change. Mask
-        // the bits for that case only, using the same save/mask/restore idiom AS3 itself applies
-        // when a window sizes itself initially (WindowController.as:109-115). With children
-        // present nothing is masked and resize_on_item_update behaves exactly as before.
-        const suppressReflect = numChildren === 0;
+        // A list that never held an item has no content, so a content resize of one is not a
+        // content change. Mask the bits for that case only, using the same save/mask/restore idiom
+        // AS3 itself applies when a window sizes itself initially (WindowController.as:109-115).
+        //
+        // `_hasHeldItems` is what keeps the mask to that case. A list that HAD items and was then
+        // emptied - destroyListItems() on a layout template, say - must charge the collapse, exactly
+        // as AS3 does: the navigator's `category_content` was cleared of its 146px tile-container
+        // template with the delta suppressed, kept that 146 as a phantom, and the five room rows
+        // added on top made the category 246 instead of 100 - which `category_content_background`
+        // and `category_container` then grew to accommodate (both RESIZE_TO_ACCOMMODATE_CHILDREN),
+        // stretching the white block to the bottom of the window.
+        const suppressReflect = numChildren === 0 && !this._hasHeldItems;
         const savedContainerParam = containerWin.param;
 
         if(suppressReflect) containerWin.param = savedContainerParam & ~0xC00000;
