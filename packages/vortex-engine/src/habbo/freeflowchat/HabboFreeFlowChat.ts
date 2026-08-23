@@ -13,6 +13,7 @@ import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum'
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import type {IAssetLibrary} from '@core/assets';
+import {AssetBitmap} from '@core/assets/AssetBitmap';
 import {Logger} from '@core/utils/Logger';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
@@ -37,7 +38,10 @@ import type {IFreeFlowChatRoomSessionManager, IHabboFreeFlowChat, IRoomChatSetti
 import {ChatEventHandler} from './data/ChatEventHandler';
 import {RoomSessionEventHandler} from './data/RoomSessionEventHandler';
 import {ChatHistoryBuffer} from './history/ChatHistoryBuffer';
-import type {ChatItem} from './data/ChatItem';
+import {ChatItem} from './data/ChatItem';
+import {ChatBubble} from './viewer/visualization/ChatBubble';
+import {RoomSessionChatEvent} from '@habbo/session/events/RoomSessionChatEvent';
+import type {IRoomSession} from '@habbo/session/IRoomSession';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 import {ManualNineSliceSprite} from './viewer/visualization/ManualNineSliceSprite';
 import {ChatBubbleFactory} from './viewer/ChatBubbleFactory';
@@ -669,6 +673,50 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 	 *
 	 * @returns A string in HH:MM:SS format
 	 */
+    /**
+     * One chat bubble rendered on its own, for a preview: the catalog's chat-style swatches and the
+     * collectibles hub's large style preview both ask for this.
+     *
+     * The bubble is built from a *synthetic* chat item — an empty RoomSessionChatEvent, no session,
+     * user id -1 — because there is no message and no speaker here, only a style being shown off.
+     * The user name doubles as the bubble's text, which is AS3's own trick: a style preview reads
+     * as the player saying their own name.
+     */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::createPreviewBitmap()
+    createPreviewBitmap(userName: string, styleId: number): ImageBitmap | null
+    {
+        const style = this.chatStyleLibrary?.getStyle(styleId) ?? null;
+
+        if(style === null) return null;
+
+        const event = new RoomSessionChatEvent('RSCE_CHAT_EVENT', null as unknown as IRoomSession, -1, '', 0, styleId);
+        const item = new ChatItem(event, Date.now(), null, 0, null, null, null, userName);
+        // The library hands back the public `IChatStyle`; the bubble needs the internal view of the
+        // same object, which is what ChatBubbleFactory casts to as well.
+        const bubble = new ChatBubble(item, style as unknown as IChatStyleInternal, null, userName, 0, this);
+
+        try
+        {
+            return bubble.toImageBitmapSync();
+        }
+        finally
+        {
+            bubble.dispose();
+        }
+    }
+
+    /**
+     * The little "you moved room" separator drawn between two rooms' history.
+     *
+     * Shipped as `room_change.png`; the asset build strips the `_png` linkage suffix AS3's own
+     * `getAssetByName("room_change")` already omits, so the name is the same on both sides.
+     */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::getRoomChangeBitmap()
+    getRoomChangeBitmap(): ImageBitmap | null
+    {
+        return AssetBitmap.resolveSync(this.assets?.getAssetByName('room_change')?.content ?? null);
+    }
+
     // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::getTimeStampNow()
     static getTimeStampNow(): string
     {

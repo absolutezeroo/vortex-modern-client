@@ -22,6 +22,7 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
 import {HabboInventoryCategoryInitializeEvent} from '@habbo/inventory/events/HabboInventoryCategoryInitializeEvent';
 import {ImageResult} from '@habbo/room/ImageResult';
+import {WiredDebugCommandMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/WiredDebugCommandMessageComposer';
 import {Vector3d} from '@room/utils/Vector3d';
 import {RedeemNftLootBoxStateMessageEvent} from '@habbo/communication/messages/incoming/collectibles/RedeemNftLootBoxStateMessageEvent';
 import {RedeemNftLootBoxResultMessageEvent} from '@habbo/communication/messages/incoming/collectibles/RedeemNftLootBoxResultMessageEvent';
@@ -598,6 +599,96 @@ export class CollectiblesController extends Component implements ICollectorHub, 
      * icon, and type 11 (case 12) resolves an avatar figure out of the product's figure set rather
      * than falling in with the floor items.
      */
+    // AS3: CollectiblesController.as::_lastEasterEggProductTypeId
+    // Name DERIVED (`_SafeStr_9633`): obfuscated in every tree, named for what it remembers.
+    private _lastEasterEggProductTypeId: number = -1;
+
+    // AS3: CollectiblesController.as::_lastEasterEggItemTypeId
+    // Name DERIVED (`_SafeStr_9632`).
+    private _lastEasterEggItemTypeId: string = '';
+
+    // AS3: CollectiblesController.as::_easterEggRepeatCount
+    // Name DERIVED (`_SafeStr_5413`).
+    private _easterEggRepeatCount: number = 0;
+
+    /**
+     * Preview the same chat style enough times in a row and it starts speaking under a different
+     * name — the same seven thresholds `ProductImageWidget` carries.
+     *
+     * This copy has one thing that one does not: at 22 previews of item type 1020 it sends a
+     * `wf15` developer command carrying "Wac" five times over. That looks arbitrary until the
+     * condition is read literally — AS3 tests `name.indexOf("red") == 8`, and of the seven names
+     * only "Wacky Wired" has "red" at index 8. So the send fires on exactly one name, at exactly
+     * one count, on exactly one product, which is what an easter egg is.
+     *
+     * Returning true means the preview is done; false lets the normal switch run.
+     */
+    // AS3: CollectiblesController.as::handlePreviewImageEasterEgg()
+    private handlePreviewImageEasterEgg(product: IProductDisplayInfo, previewer: ICollectibleProductPreviewer): boolean
+    {
+        if(product.productTypeId === this._lastEasterEggProductTypeId
+            && product.itemTypeId === this._lastEasterEggItemTypeId)
+        {
+            this._easterEggRepeatCount += 1;
+        }
+        else
+        {
+            this._easterEggRepeatCount = 1;
+        }
+
+        this._lastEasterEggProductTypeId = product.productTypeId;
+        this._lastEasterEggItemTypeId = product.itemTypeId;
+
+        if(product.productTypeId !== 9) return false;
+
+        let name = '';
+
+        switch(this._easterEggRepeatCount)
+        {
+            case 7: name = 'Evil Frank'; break;
+            case 10: name = 'Bonne Blonde'; break;
+            case 15: name = 'Furni fairy'; break;
+            case 22: name = 'Wacky Wired'; break;
+            case 35: name = 'Quacky duck'; break;
+            case 70: name = 'Pixel poo'; break;
+            case 100: name = 'Bobba filtered'; break;
+        }
+
+        if(name === '') return false;
+
+        const bubble = this.createChatItemPreview(parseInt(product.itemTypeId, 10), name);
+
+        if(bubble === null) return false;
+
+        const result = new ImageResult();
+
+        result.data = bubble;
+        previewer.imageResult = result;
+
+        const prefix = name.substr(0, 3);
+
+        if(name.indexOf('red') === 8 && product.itemTypeId === '1020')
+        {
+            this.send(new WiredDebugCommandMessageComposer('wf15', prefix.repeat(5)));
+        }
+
+        return true;
+    }
+
+    /**
+     * One chat bubble in the given style, with `name` — or the player's own — as its text.
+     */
+    // AS3: CollectiblesController.as::createChatItemPreview()
+    private createChatItemPreview(styleId: number, name: string | null = null): ImageBitmap | null
+    {
+        const userName = name ?? this._sessionDataManager?.userName ?? '';
+        // Cast for the same reason `chatStyleSwatch()` below casts: the chat component hangs off
+        // the concrete catalog, and AS3's IHabboCatalog does not declare it either.
+        const chat = (this._catalog as HabboCatalog | null)?.freeFlowChat ?? null;
+
+        return chat?.createPreviewBitmap(userName, styleId) ?? null;
+    }
+
     // AS3: CollectiblesController.as::previewImage()
     previewImage(product: IProductDisplayInfo | null, previewer: ICollectibleProductPreviewer): void
     {
@@ -608,11 +699,7 @@ export class CollectiblesController extends Component implements ICollectorHub, 
             return;
         }
 
-        // TODO(AS3): AS3 first calls `handlePreviewImageEasterEgg()`, which counts repeat previews
-        // of the same product and, at a threshold, sends a `wf15` developer command. It reads
-        // `_SafeStr_9632`/`_SafeStr_9633`/`_SafeStr_5413` — all obfuscated, and the trigger
-        // condition depends on a string index this port cannot verify. Left out deliberately
-        // rather than guessed: it sends a message.
+        if(this.handlePreviewImageEasterEgg(product, previewer)) return;
 
         const session = this._sessionDataManager;
 
@@ -670,12 +757,24 @@ export class CollectiblesController extends Component implements ICollectorHub, 
                 previewer.badgeResult = product.itemTypeId;
                 break;
             case 10:
-                // TODO(AS3): the *large* preview is a different thing from the swatch above: AS3
-                // renders a whole PooledChatBubble with sample text to a BitmapData
-                // (`createChatItemPreview()`), which needs the chat display list. The selector
-                // swatch stands in until that exists — it is the right style, just not a bubble.
-                previewer.imageResult = CollectiblesController.chatStyleSwatch(this._catalog, product.itemTypeId);
+            {
+                // The *large* preview is a different thing from the swatch: a whole bubble with the
+                // player's name in it, not the style's own selector thumbnail. It falls back to the
+                // swatch when the bubble cannot be rendered, which is the right style either way.
+                const bubble = this.createChatItemPreview(parseInt(product.itemTypeId, 10));
+
+                if(bubble === null)
+                {
+                    previewer.imageResult = CollectiblesController.chatStyleSwatch(this._catalog, product.itemTypeId);
+                    break;
+                }
+
+                const result = new ImageResult();
+
+                result.data = bubble;
+                previewer.imageResult = result;
                 break;
+            }
             case 11:
                 previewer.petResult = product.petFigureString;
                 break;

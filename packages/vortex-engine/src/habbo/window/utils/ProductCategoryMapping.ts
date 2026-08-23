@@ -9,6 +9,8 @@
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/_SafeCls_4273.as::categoryMapping()
  */
+import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+
 export class ProductCategoryMapping 
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/_SafeCls_4273.as::categoryMapping()
@@ -32,17 +34,23 @@ export class ProductCategoryMapping
     }
 
     /**
-     * Creates a preview bitmap of a chat item (chat bubble style rendered with
-     * sample text) for catalog/inventory product previews.
+     * A chat bubble in one style, rendered with the player's own name as its text — the swatch a
+     * chat-style product shows in the catalog and the inventory.
      *
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/_SafeCls_4273.as::createChatItemPreview()
-     * delegates to `windowManager.freeFlowChat.createPreviewBitmap(username, styleId)`,
-     * which isn't ported yet (IHabboFreeFlowChat has no createPreviewBitmap()). Always
-     * returns null until that lands; callers already treat null as "can't preview this".
+     * The name defaults to the player's, which is what makes the preview read as "this is what
+     * *you* would look like saying something".
      */
     // AS3: .../src/com/sulake/habbo/window/utils/_SafeCls_4273.as::createChatItemPreview()
-    public static createChatItemPreview(_windowManager: unknown, _styleId: number, _username: string | null = null): ImageBitmap | null 
+    public static createChatItemPreview(
+        windowManager: IHabboWindowManager | null,
+        styleId: number,
+        username: string | null = null
+    ): ImageBitmap | null
     {
-        return null;
+        if(windowManager === null) return null;
+
+        const name = username ?? windowManager.sessionDataManager?.userName ?? '';
+
+        return windowManager.freeFlowChat?.createPreviewBitmap(name, styleId) ?? null;
     }
 }

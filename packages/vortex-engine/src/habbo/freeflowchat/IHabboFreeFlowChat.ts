@@ -94,6 +94,12 @@ export interface IHabboFreeFlowChat
 	 */
     readonly assets: IAssetLibrary | null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::getRoomChangeBitmap()
+    getRoomChangeBitmap(): ImageBitmap | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::createPreviewBitmap()
+    createPreviewBitmap(userName: string, styleId: number): ImageBitmap | null;
+
     /**
 	 * Room engine, used to resolve room objects for pet figures / room-user names.
 	 */

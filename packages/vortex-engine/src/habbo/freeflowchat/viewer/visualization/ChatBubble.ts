@@ -76,6 +76,31 @@ export class ChatBubble
         return createImageBitmap(canvas as unknown as CanvasImageSource);
     }
 
+    /**
+     * The same picture as `toImageBitmap()`, without the await.
+     *
+     * `extract.canvas()` is already synchronous; only `createImageBitmap()` is not. Drawing the
+     * extracted canvas into an OffscreenCanvas and calling `transferToImageBitmap()` gets the same
+     * result on the spot, which is what a caller inside a constructor or a getter needs.
+     */
+    // TS-only: AS3's `bitmapData.draw(this)` is synchronous and has no async twin to name.
+    toImageBitmapSync(): ImageBitmap | null
+    {
+        if(!this._bubble) return null;
+
+        const source = Vortex.instance.application.renderer.extract.canvas(this._bubble);
+        const width = Math.max(1, Math.ceil(source.width));
+        const height = Math.max(1, Math.ceil(source.height));
+        const canvas = new OffscreenCanvas(width, height);
+        const ctx = canvas.getContext('2d');
+
+        if(ctx === null) return null;
+
+        ctx.drawImage(source as unknown as CanvasImageSource, 0, 0);
+
+        return canvas.transferToImageBitmap();
+    }
+
     // AS3: .../src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::get overlap()
     get overlap(): Rectangle | null
     {

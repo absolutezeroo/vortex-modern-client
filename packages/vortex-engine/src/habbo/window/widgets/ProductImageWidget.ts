@@ -306,12 +306,14 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         }
     }
 
+    /**
+     * Preview the same chat style enough times in a row and it starts speaking under a different
+     * name. Seven thresholds, none of them documented anywhere but here.
+     *
+     * Returning false means "I did nothing, carry on with the normal preview" — which is also what
+     * happens when the bubble fails to render, exactly as AS3 does.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::handlePreviewImageEasterEgg()
-    // TODO(AS3): the special-name reveal at each repeat-count threshold depends on
-    // ProductCategoryMapping.createChatItemPreview(), which is stubbed to null until
-    // IHabboFreeFlowChat.createPreviewBitmap() is ported - so this always falls through
-    // to normal handling (returns false) for now, exactly like AS3 does when its own
-    // preview creation fails.
     private handlePreviewImageEasterEgg(info: IProductDisplayInfo): boolean
     {
         if(info.productTypeId === this._lastEasterEggProductTypeId && info.itemTypeId === this._lastEasterEggItemTypeId)
