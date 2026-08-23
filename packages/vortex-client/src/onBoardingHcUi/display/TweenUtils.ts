@@ -11,11 +11,11 @@
  * This is the subset those two calls need. The engine has no counterpart to borrow — the animation
  * package is unported — so it lives with the login display list, which is its only consumer.
  *
- * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/animation/Transitions.as —
- * only "linear" is implemented. `alphaTweenBlink()` ("easeOutBack") and every eased call site
- * elsewhere in the client would need the full transition table.
+ * The easing curves live in `Transitions.ts` next door, ported whole from AS3's own table.
  */
 import type {DisplayObject} from './DisplayObject';
+import {Transitions} from './Transitions';
+import type {TransitionFunction} from './Transitions';
 
 /** AS3: IAnimatable (_SafeCls_1977) — what a juggler can advance. */
 export interface IAnimatable
@@ -49,16 +49,17 @@ export class Tween implements IAnimatable
     private readonly _startValues: number[] = [];
     private readonly _endValues: number[] = [];
 
+    // AS3: _transition — the curve, resolved once at construction as AS3 does.
+    private readonly _transition: TransitionFunction;
+
     // AS3: Tween(_arg_1:Object, _arg_2:Number, _arg_3:String="linear")
     constructor(target: DisplayObject, totalTime: number, transition: string = 'linear')
     {
         this._target = target;
         this._totalTime = Math.max(0.0001, totalTime);
-
-        if(transition !== 'linear')
-        {
-            // See the TODO in the file header — anything but linear runs linear here.
-        }
+        // An unregistered name gives `undefined` in AS3 too, where calling it would throw. Linear
+        // is the honest reading of "no curve".
+        this._transition = Transitions.getTransition(transition) ?? Transitions.getTransition('linear')!;
     }
 
     // AS3: animate(_arg_1:String, _arg_2:Number)
@@ -86,7 +87,7 @@ export class Tween implements IAnimatable
 
         if(elapsed < 0) return;
 
-        const ratio = Math.min(1, elapsed / this._totalTime);
+        const ratio = this._transition(Math.min(1, elapsed / this._totalTime));
         const target = this._target as unknown as Record<string, number>;
 
         for(let i = 0; i < this._properties.length; i++)
