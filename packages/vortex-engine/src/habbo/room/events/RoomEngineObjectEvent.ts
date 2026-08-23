@@ -34,8 +34,9 @@ export class RoomEngineObjectEvent extends RoomEngineEvent
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::REQUEST_ROTATE
     public static readonly REOE_REQUEST_ROTATE = 'REOE_REQUEST_ROTATE';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::REQUEST_PICKUP
-    // TODO(AS3): no current emitter for the furni-pickup request flow - added for interface
-    // completeness (see RoomEngine.ts's own TODOs around furni pickup).
+    // Nothing dispatches this yet. In AS3 it comes from the furniture context menu, by way of
+    // `_SafeCls_1821.as:767`, and that widget is the gap — recorded on
+    // `RoomEngine.modifyRoomObject()`, not here. The constant itself is complete.
     public static readonly REOE_REQUEST_PICKUP = 'REOE_REQUEST_PICKUP';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::MOUSE_ENTER
     public static readonly REOE_MOUSE_ENTER = 'REOE_MOUSE_ENTER';

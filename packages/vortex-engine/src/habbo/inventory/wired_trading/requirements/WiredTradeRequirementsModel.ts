@@ -4,7 +4,7 @@ import type {GroupItem} from '@habbo/inventory/items/GroupItem';
 import type {WiredTradingModel} from '../WiredTradingModel';
 import type {IWiredTradeRequirementsView} from './IWiredTradeRequirementsView';
 import {TradeRequirementWrapper} from './TradeRequirementWrapper';
-import {WiredTradeRequirementsViewStub} from './WiredTradeRequirementsViewStub';
+import {WiredTradeRequirementsView} from './WiredTradeRequirementsView';
 
 /**
  * Owns the contract behind a wired trade and answers the one question the furni grid asks of it:
@@ -30,7 +30,7 @@ export class WiredTradeRequirementsModel implements IDisposable
     constructor(tradingModel: WiredTradingModel)
     {
         this._tradingModel = tradingModel;
-        this._view = new WiredTradeRequirementsViewStub();
+        this._view = new WiredTradeRequirementsView(this);
     }
 
     // AS3: WiredTradeRequirementsModel.as::get tradingModel()

@@ -550,6 +550,12 @@ export class WiredTradingModel implements IInventoryModel, ITradingModel
         return this._wiredNumCredits;
     }
 
+    // AS3: WiredTradingModel.as::get localization()
+    get localization(): IHabboLocalizationManager | null
+    {
+        return this._localization;
+    }
+
     // AS3: WiredTradingModel.as::get canAccept()
     get canAccept(): boolean
     {

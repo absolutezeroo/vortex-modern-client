@@ -6094,9 +6094,9 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectPlace()
-    // TS scope: category 10 (floor furniture) only — see initializeRoomObjectInsert()'s
-    // TODO(AS3) for why wall/avatar categories never reach this (their SelectedRoomObjectData
-    // never gets created in the first place).
+    // TS scope: category 10 (floor furniture) only — see initializeRoomObjectInsert()'s own
+    // marker for why wall/avatar categories never reach this (their SelectedRoomObjectData never
+    // gets created in the first place).
     //
     // AS3 takes the RoomObjectMouseEvent itself and casts it twice — `as RoomObjectTileMouseEvent`
     // and `as RoomObjectWallMouseEvent` — then uses which of the two came back non-null to decide

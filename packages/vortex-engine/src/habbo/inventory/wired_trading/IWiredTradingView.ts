@@ -1,5 +1,6 @@
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IWindow} from '@core/window/IWindow';
 
 /**
  * The six calls `WiredTradingModel` makes into its view, plus disposal.
@@ -15,6 +16,10 @@ export interface IWiredTradingView extends IDisposable
     /** The inventory asks for this to host the wired-trading sub-page. */
     // AS3: .../wired_trading/WiredTradingView.as::getWindowContainer()
     getWindowContainer(): IWindowContainer | null;
+
+    // AS3: WiredTradingView.as::get requirementsButton()
+    // The requirements bubble hangs off this button and positions itself beside it.
+    readonly requirementsButton: IWindow | null;
 
     /** Repaints everything: both offers, the counts, the accept button. */
     // AS3: .../wired_trading/WiredTradingView.as::updateAllUI()

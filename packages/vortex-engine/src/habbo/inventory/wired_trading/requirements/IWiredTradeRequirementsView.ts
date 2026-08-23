@@ -4,9 +4,10 @@ import type {TradeRequirement} from '@habbo/communication/messages/parser/userde
 /**
  * The three calls `WiredTradeRequirementsModel` makes into its view, plus disposal.
  *
- * AS3 declares no such interface — the model holds a concrete `WiredTradeRequirementsView`. It
- * exists here so the model can be ported and reviewed against the source without the view's 418
- * lines being written blind; see `WiredTradeRequirementsViewStub` for what is standing in.
+ * AS3 declares no such interface — the model holds a concrete `WiredTradeRequirementsView`. It was
+ * introduced so the model could be ported and reviewed against the source while the view was still
+ * a stub, and is kept because the model reads better against three named calls than against a
+ * 400-line class.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/wired_trading/requirements/WiredTradeRequirementsView.as
  */
