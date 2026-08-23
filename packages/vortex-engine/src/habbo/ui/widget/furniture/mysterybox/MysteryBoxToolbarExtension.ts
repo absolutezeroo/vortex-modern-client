@@ -73,6 +73,7 @@ export class MysteryBoxToolbarExtension
     // every time the panel folds, so the last one is kept.
     private _boxColor: string = '';
 
+    // TS-only: the key half of the pair above.
     private _keyColor: string = '';
 
     // AS3: MysteryBoxToolbarExtension.as::MysteryBoxToolbarExtension()
@@ -148,6 +149,7 @@ export class MysteryBoxToolbarExtension
      * runs over `box_region`/`box_colour`/`box_overlay`/`small_box`, then the same four for the
      * key; AS3 spells both blocks out.
      */
+    // TS-only: no AS3 counterpart; AS3 paints from setMinimised()/setKeyColors() directly.
     private refresh(): void
     {
         const window = this._window;
