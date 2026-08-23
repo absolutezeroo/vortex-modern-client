@@ -122,6 +122,7 @@ export class WindowToolbar
     private build(): void
     {
         this.layoutDropdown();
+        this.button('New', () => this.newFile());
         this.button('Open', () => this.importFile());
         this.button('Reload', () => this.reload());
         this.button('Save', () => void this.save());
@@ -424,6 +425,23 @@ export class WindowToolbar
     private saveScreenshot(): void
     {
         void downloadLayoutPng(this._state);
+    }
+
+    /**
+     * Starts an empty layout — no root, nothing on the canvas. The name is the
+     * file Save writes, so it is held to the same `[A-Za-z0-9_]` charset the
+     * save middleware accepts.
+     */
+    private newFile(): void
+    {
+        const name = (window.prompt('New layout name', 'my_layout') ?? '').replace(/[^A-Za-z0-9_]/g, '_');
+
+        if(!name || name === '_')
+        {
+            return;
+        }
+
+        this._state.newBlankLayout(name);
     }
 
     private importFile(): void

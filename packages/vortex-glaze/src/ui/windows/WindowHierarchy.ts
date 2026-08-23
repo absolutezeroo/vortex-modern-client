@@ -392,12 +392,17 @@ export class WindowHierarchy
         row.getGlobalRectangle(rect);
 
         const ratio = rect.height > 0 ? (point.y - rect.y) / rect.height : 0.5;
-        const insideAllowed = canHaveChildren(target) && target !== this._state.rootWindow;
+        const insideAllowed = canHaveChildren(target);
 
         this._dropTarget = target;
-        this._dropPosition = ratio < 0.3 ? 'before'
-            : ratio > 0.7 ? 'after'
-                : (insideAllowed ? 'inside' : (ratio < 0.5 ? 'before' : 'after'));
+        // The root row only ever takes `inside`: before/after would make the node
+        // a sibling of the root under the desktop, which is not part of the
+        // layout. Rejecting the row outright was the reason a nested node could
+        // never be lifted back out to the top level.
+        this._dropPosition = target === this._state.rootWindow ? 'inside'
+            : ratio < 0.3 ? 'before'
+                : ratio > 0.7 ? 'after'
+                    : (insideAllowed ? 'inside' : (ratio < 0.5 ? 'before' : 'after'));
 
         // A collapsed container springs open when hovered, so a node can be
         // dropped into a branch without leaving the drag.
@@ -423,11 +428,6 @@ export class WindowHierarchy
         this.endRowDrag();
 
         if(!dragged || !source || !target || source.disposed || target.disposed)
-        {
-            return;
-        }
-
-        if(target === this._state.rootWindow && position !== 'inside')
         {
             return;
         }

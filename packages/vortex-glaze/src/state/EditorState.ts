@@ -92,6 +92,37 @@ export class EditorState
     }
 
     /**
+     * Starts an empty layout: no root window at all, the canvas blank, the name
+     * set so Save knows the file. The first widget created becomes the root
+     * (see `addWidget`) — a blank page has nothing on it, so seeding one with a
+     * container or a frame just makes the author delete something first.
+     */
+    public newBlankLayout(name: string): void
+    {
+        this.destroyRoot();
+
+        this._currentLayoutName = name;
+        this._rootOrigin = {x: 0, y: 0};
+        this._variables = new VariablesModel('');
+        this._history.onLayoutOpened();
+
+        this.events.emit(EditorEvents.LAYOUT_CHANGED, null);
+        this.events.emit(EditorEvents.SELECTION_CHANGED, null);
+    }
+
+    /**
+     * Points the editor at a replacement root, the old one having already been
+     * swapped out in the live tree (Convert/Wrap on the root, or the first widget
+     * of an empty layout). `null` when the root was deleted. Not `openLayout`:
+     * the tree, the variables model and the history stacks all stay as they are.
+     */
+    public setRootWindow(window: IWindow | null): void
+    {
+        this._rootWindow = window;
+        this.events.emit(EditorEvents.LAYOUT_CHANGED, window);
+    }
+
+    /**
      * The primary selection — the node the inspector edits and the one carrying
      * the resize handles. It is the last node added to the selection.
      */

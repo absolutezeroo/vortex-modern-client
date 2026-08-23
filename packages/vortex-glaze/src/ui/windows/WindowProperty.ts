@@ -2,16 +2,20 @@ import type {IWindow} from '@core/window/IWindow';
 import type {WindowController} from '@core/window/WindowController';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
-import {TYPE_CODE_TO_NAME} from '@core/window/enum/WindowType';
+import {TYPE_CODE_TO_NAME, TYPE_NAME_TO_CODE} from '@core/window/enum/WindowType';
 import {WindowParam} from '@core/window/enum/WindowParam';
 import {signal, computed, effect, type Scope, type SignalReader} from '@core/reactive';
 import {createWindowScope, bind, on, each, type IReconcilableList} from '@core/window/reactive';
 import {type EditorState} from '../../state/EditorState';
 import {signalsOf, type EditorSignals} from '../../state/EditorSignals';
+import {Logger} from '@core/utils/Logger';
 import {themeNames} from '../../ops/ThemeOps';
+import {convertSelected} from '../../ops/StructuralOps';
 import {applyVariablesLive} from '../../ops/VariableOps';
 import type {WindowColorPicker} from './WindowColorPicker';
 import {slotsOf} from '../LayoutSlots';
+
+const log = Logger.getLogger('glaze.ui.windows.WindowProperty');
 
 const GROUP_ROW = slotsOf('glaze_prop_group_xml');
 const INPUT_ROW = slotsOf('glaze_prop_input_xml');
@@ -131,7 +135,20 @@ export class WindowProperty
         const out: IRowDesc[] = [];
 
         out.push({id: 'group:common', kind: 'group', label: 'Common Properties'});
-        out.push(this.input('type', '', () => `${TYPE_CODE_TO_NAME[win.type] ?? 'null'} (${win.type})`, null));
+        // Writable: retyping a window in place is otherwise reachable only from
+        // the hierarchy strip's Convert, and the layout root — the one node most
+        // often authored as the wrong type — had no route at all. `historyKey:
+        // null` because `convertSelected` records its own restore point.
+        out.push({
+            id: 'input:type',
+            kind: 'input',
+            label: 'type',
+            type: '',
+            live: false,
+            historyKey: null,
+            read: () => `${TYPE_CODE_TO_NAME[win.type] ?? 'null'} (${win.type})`,
+            write: (v) => this.convertTo(v),
+        });
         out.push(this.input('name', 'string', () => win.name, (v) => { win.name = v; }));
         out.push(this.input('caption', 'string', () => win.caption, (v) => { win.caption = v; }));
         out.push(this.input('tags', 'string', () => win.tags.join(', '), (v) =>
@@ -305,6 +322,27 @@ export class WindowProperty
         return {id: `input:${label}`, kind: 'input', label, type, live, historyKey: write ? `prop:${label}` : null, read, write};
     }
 
+    /**
+     * Retypes the selected window from the `type` field. Accepts the name alone
+     * (`container`), the numeric code (`4`), or the field's own display form
+     * (`container (4)`) — whatever the field shows has to be valid input, or
+     * re-committing it unchanged would be rejected.
+     */
+    private convertTo(value: string): void
+    {
+        const text = value.replace(/\(\s*\d+\s*\)\s*$/, '').trim();
+        const name = TYPE_NAME_TO_CODE[text] !== undefined ? text : TYPE_CODE_TO_NAME[Number(text)];
+
+        if(!name)
+        {
+            log.warn(`Unknown window type '${value}'`);
+
+            return;
+        }
+
+        convertSelected(this._state, name);
+    }
+
     private check(label: string, read: () => boolean, write: (b: boolean) => void): IRowDesc
     {
         return {id: `check:${label}`, kind: 'check', label, read, write};
@@ -387,8 +425,10 @@ export class WindowProperty
 
                 if(d.kind !== 'input' || !d.write) return;
 
-                // Coalesce per-field so typing several chars = one undo step.
-                this._state.pushHistory(d.historyKey);
+                // Coalesce per-field so typing several chars = one undo step. A
+                // null key means the write pushes its own restore point.
+                if(d.historyKey !== null) this._state.pushHistory(d.historyKey);
+
                 d.write(input.text);
                 this._state.notifyTreeChanged();
             });

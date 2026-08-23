@@ -5,7 +5,7 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {effect, signal, type Scope, type SignalReader} from '@core/reactive';
 import {createWindowScope} from '@core/window/reactive';
 import {type EditorState} from '../../state/EditorState';
-import {addChildOfType, cloneSelected, convertSelected, deleteSelected, reorderSelected} from '../../ops/StructuralOps';
+import {addChildOfType, cloneSelected, convertSelected, deleteSelected, reorderSelected, wrapSelected} from '../../ops/StructuralOps';
 import {specFor, type IWidgetSpec} from '../../ops/WidgetCatalog';
 import {GLAZE_THEMES, setTheme} from '../../ops/ThemeOps';
 import type {WindowHierarchy} from './WindowHierarchy';
@@ -83,12 +83,14 @@ export class WindowHierarchyControls
         this.button('Create', 188, 4, 54, () => addChildOfType(this._state, this._type().type));
         this.button('Convert', 246, 4, 56, () => convertSelected(this._state, this._type().type));
 
-        // Row 2: delete + move + clone + expand
-        this.button('Del', 4, 32, 36, () => deleteSelected(this._state));
-        this.button('↑', 44, 32, 22, () => reorderSelected(this._state, -1));
-        this.button('↓', 70, 32, 22, () => reorderSelected(this._state, 1));
-        this.button('Clone', 96, 32, 46, () => cloneSelected(this._state));
-        this.button('Expand', 146, 32, 56, () => this._hierarchy?.expandAll());
+        // Row 2: wrap + delete + move + clone + expand. Wrap is the only op that
+        // goes *up* the tree — it inserts the armed type above the selection.
+        this.button('Wrap', 4, 32, 44, () => wrapSelected(this._state, this._type().type));
+        this.button('Del', 52, 32, 36, () => deleteSelected(this._state));
+        this.button('↑', 92, 32, 22, () => reorderSelected(this._state, -1));
+        this.button('↓', 118, 32, 22, () => reorderSelected(this._state, 1));
+        this.button('Clone', 144, 32, 46, () => cloneSelected(this._state));
+        this.button('Expand', 194, 32, 56, () => this._hierarchy?.expandAll());
 
         // Row 3: theme dropdown + Set Theme
         this._themeDrop = this.dropdown(4, 60, 96, GLAZE_THEMES);

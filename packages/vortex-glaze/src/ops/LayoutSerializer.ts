@@ -8,10 +8,15 @@ import type {EditorState} from '../state/EditorState';
  * `WindowParser.windowToXMLString` (walking the live window tree); the source
  * `<variables>` blocks — which the live tree faithfully discards — are re-injected
  * per named node from the {@link VariablesModel}, replacing any block the engine
- * serializer emitted for that node. Round-trip caveat (R1): the
- * engine serializer emits raw children via `numChildren`/`getChildAt`, so windows
- * whose children are inserted through list/grid iterators may not reproduce
- * byte-for-byte; simple container/region/text/border trees round-trip cleanly.
+ * serializer emitted for that node.
+ *
+ * Round-trip caveat (R1): what comes back is only ever as complete as the live
+ * tree. `serializeChildren` now walks the layout child target (matching AS3's
+ * `IIterable.get iterator`), so frames, tab contexts and scrollable lists keep
+ * their content — that fix alone restored 249 of the 805 shipped layouts. What
+ * it cannot restore is a layout whose tree never built its children in the first
+ * place (`furni_view`: 68 source elements, one live window); those save as the
+ * stub they actually are.
  */
 export function serializeLayout(state: EditorState): string
 {

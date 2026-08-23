@@ -45,17 +45,17 @@ export function addChildOfType(state: EditorState, typeName: string): IWindow | 
 export function addWidget(state: EditorState, spec: IWidgetSpec): IWindow | null
 {
     const parent = (state.selected ?? state.rootWindow) as IWindow | null;
-
-    if(!parent || parent.disposed)
-    {
-        return null;
-    }
-
     const type = TYPE_NAME_TO_CODE[spec.type];
 
     if(type === undefined)
     {
         return null;
+    }
+
+    // An empty layout (New) has no root at all — the first widget created is it.
+    if(!parent || parent.disposed)
+    {
+        return addRoot(state, spec, type);
     }
 
     state.pushHistory();
@@ -74,6 +74,36 @@ export function addWidget(state: EditorState, spec: IWidgetSpec): IWindow | null
     return created;
 }
 
+/**
+ * Creates the root of an empty layout, attached to the layer-1 desktop the same
+ * way {@link EditorState.openLayout} attaches a built one — parentless windows
+ * have no graphic context and never render.
+ */
+function addRoot(state: EditorState, spec: IWidgetSpec, type: number): IWindow | null
+{
+    const desktop = state.runtime.windowManager.getDesktop(1);
+
+    if(!desktop)
+    {
+        return null;
+    }
+
+    state.pushHistory();
+
+    const created = desktop.context.create(
+        `${spec.type}_${counter++}`, spec.caption ?? '', type, spec.style ?? 0, spec.params ?? 0,
+        {x: 0, y: 0, width: spec.width, height: spec.height},
+        null, desktop, 0, null, '', null
+    );
+
+    created.center();
+    state.setRootWindow(created);
+    state.notifyTreeChanged();
+    state.select(created);
+
+    return created;
+}
+
 /** The deletable/clonable part of the selection: live nodes, never the root. */
 function editableSelection(state: EditorState): WindowController[]
 {
@@ -82,10 +112,16 @@ function editableSelection(state: EditorState): WindowController[]
         .map((win) => win as unknown as WindowController);
 }
 
-/** Destroys every selected node (never the root) and selects the last parent. */
+/**
+ * Destroys every selected node and selects the last parent. The root goes too:
+ * an empty layout is a valid state now (New starts there), so refusing to delete
+ * it only meant a layout could never be rebuilt from its root down.
+ */
 export function deleteSelected(state: EditorState): void
 {
-    const nodes = editableSelection(state);
+    const nodes = state.selection
+        .filter((win) => !win.disposed)
+        .map((win) => win as unknown as WindowController);
 
     if(nodes.length === 0)
     {
@@ -94,7 +130,9 @@ export function deleteSelected(state: EditorState): void
 
     state.pushHistory();
 
+    const root = state.rootWindow;
     let fallback: IWindow | null = null;
+    let rootGone = false;
 
     for(const win of nodes)
     {
@@ -103,11 +141,24 @@ export function deleteSelected(state: EditorState): void
             continue; // already gone with an ancestor deleted earlier in this pass
         }
 
-        fallback = win.parent ?? fallback;
+        if((win as unknown as IWindow) === root)
+        {
+            rootGone = true; // its parent is the desktop, never a selectable fallback
+        }
+        else
+        {
+            fallback = win.parent ?? fallback;
+        }
+
         win.destroy();
     }
 
-    state.select(fallback ?? state.rootWindow);
+    if(rootGone)
+    {
+        state.setRootWindow(null);
+    }
+
+    state.select(rootGone ? null : (fallback ?? state.rootWindow));
     state.notifyTreeChanged();
 }
 
@@ -194,12 +245,17 @@ export function reorderSelected(state: EditorState, delta: number): void
 /**
  * Converts the selected node to a different window type, preserving geometry,
  * name, style, params and re-parenting its children into the new window.
+ *
+ * The layout root converts too: it is a normal window attached to the desktop,
+ * so the swap is the same one, plus pointing the editor at the replacement.
+ * Excluding it meant a layout authored as a `border` could never become a
+ * `container` — the root is exactly the node whose type one gets wrong first.
  */
 export function convertSelected(state: EditorState, typeName: string): void
 {
     const win = state.selected as unknown as WindowController | null;
 
-    if(!win || win.disposed || (win as unknown as IWindow) === state.rootWindow)
+    if(!win || win.disposed)
     {
         return;
     }
@@ -214,6 +270,8 @@ export function convertSelected(state: EditorState, typeName: string): void
 
     state.pushHistory();
 
+    const isRoot = (win as unknown as IWindow) === state.rootWindow;
+    const index = childIndexOf(parent, win as unknown as IWindow);
     const target = parent.getLayoutChildTarget();
     const created = target.context.create(
         win.name, win.caption, type, win.style, win.param,
@@ -221,9 +279,14 @@ export function convertSelected(state: EditorState, typeName: string): void
         null, target, win.id, win.tags.slice(), win.dynamicStyle, null
     );
 
-    // Move the original's children into the new window.
-    const oldC = win as unknown as IContainerLike;
-    const newC = created as unknown as IContainerLike;
+    // Move the original's children into the new window — through the layout
+    // child target on both sides, which is what the XML serializer reads and
+    // what `addWidget` writes to. Using the windows themselves put a container's
+    // children *beside* a frame's content area instead of in it, and converting
+    // that frame back dragged the frame's own chrome (title bar, close button)
+    // into the replacement as if it were authored content.
+    const oldC = win.getLayoutChildTarget() as unknown as IContainerLike;
+    const newC = created.getLayoutChildTarget() as unknown as IContainerLike;
     const children: IWindow[] = [];
 
     for(let i = 0; i < (oldC.numChildren ?? 0); i++)
@@ -241,8 +304,88 @@ export function convertSelected(state: EditorState, typeName: string): void
 
     (created as unknown as WindowController).color = win.color;
     win.destroy();
+
+    // `create` appended the replacement; put it back where the original sat, or
+    // a converted node jumps to the top of its siblings' z-order.
+    if(index >= 0)
+    {
+        const container = target as unknown as IContainerLike;
+
+        container.removeChild(created);
+        container.addChildAt(created, Math.min(index, container.numChildren));
+    }
+
+    if(isRoot)
+    {
+        state.setRootWindow(created);
+    }
+
     state.notifyTreeChanged();
     state.select(created);
+}
+
+/**
+ * Inserts a new window of `typeName` **above** the selected node: the new window
+ * takes the node's slot and geometry, the node becomes its only child at 0,0.
+ *
+ * This is the one structural move the editor had no way to express — Create only
+ * ever went downwards and Convert replaces in place, so a layout whose root is a
+ * bare container could never gain a parent, and no node could grow one without
+ * hand-editing the XML. The root wraps too: the new window becomes the root.
+ */
+export function wrapSelected(state: EditorState, typeName: string): IWindow | null
+{
+    const win = state.selected as unknown as WindowController | null;
+
+    if(!win || win.disposed)
+    {
+        return null;
+    }
+
+    const type = TYPE_NAME_TO_CODE[typeName];
+    const parent = (win as unknown as IWindow).parent;
+
+    if(type === undefined || !parent)
+    {
+        return null;
+    }
+
+    state.pushHistory();
+
+    const isRoot = (win as unknown as IWindow) === state.rootWindow;
+    const index = childIndexOf(parent, win as unknown as IWindow);
+    const spec = specFor(typeName);
+    const target = parent.getLayoutChildTarget();
+    const container = target as unknown as IContainerLike;
+    const created = target.context.create(
+        `${typeName}_${counter++}`, spec?.caption ?? '', type, spec?.style ?? win.style, spec?.params ?? 0,
+        {x: win.x, y: win.y, width: win.width, height: win.height},
+        null, target, 0, null, '', null
+    );
+
+    // Move the node inside the wrapper, at the wrapper's origin: the wrapper
+    // took its box, so anything else would shift it on screen. Into the
+    // wrapper's layout child target, so wrapping in a frame lands in its
+    // content area rather than next to its title bar.
+    container.removeChild(win as unknown as IWindow);
+    (created.getLayoutChildTarget() as unknown as IContainerLike).addChild(win as unknown as IWindow);
+    win.rectangle = {x: 0, y: 0, width: win.width, height: win.height};
+
+    if(index >= 0)
+    {
+        container.removeChild(created);
+        container.addChildAt(created, Math.min(index, container.numChildren));
+    }
+
+    if(isRoot)
+    {
+        state.setRootWindow(created);
+    }
+
+    state.notifyTreeChanged();
+    state.select(created);
+
+    return created;
 }
 
 /** Distributes the selected node's direct children evenly along one axis. */
