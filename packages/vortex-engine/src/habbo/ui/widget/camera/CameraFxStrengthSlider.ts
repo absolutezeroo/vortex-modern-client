@@ -141,12 +141,10 @@ export class CameraFxStrengthSlider
         {
             this._sliderBaseWidth = sliderBase.width;
 
-            // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/camera/CameraFxStrengthSlider.as::displaySlider()
-            // AS3 allocates a transparent BitmapData and copyPixels() the asset into it so the
-            // shaft can later be *resized* by `buttonProcedure`. The port's bitmap windows take an
-            // immutable `ImageBitmap`, so the asset is assigned whole and the width change alone
-            // drives the fill. Restoring the exact behaviour needs a mutable bitmap target on
-            // IBitmapWrapperWindow.
+            // AS3 allocates a transparent BitmapData and copyPixels() the asset into it before
+            // assigning it. The copy buys nothing: `_activeBaseArea` is only ever touched again by
+            // `buttonProcedure`, which sets its `width` — a window property, not a bitmap
+            // operation — so the pixels are never mutated and the asset can be assigned whole.
             this._activeBaseArea = sliderBase;
         }
 

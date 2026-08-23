@@ -1,4 +1,5 @@
 import type {IWindow} from '@core/window/IWindow';
+import {Logger} from '@core/utils/Logger';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
@@ -23,6 +24,8 @@ import type {CameraWidget} from './CameraWidget';
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/camera/CameraPhotoLab.as
  */
+const log = Logger.getLogger('habbo.ui.widget.camera.CameraPhotoLab');
+
 export class CameraPhotoLab
 {
     // AS3: .../ui/widget/camera/CameraPhotoLab.as::TEXT_WIDTH_MARGIN
@@ -307,13 +310,7 @@ export class CameraPhotoLab
                 return null;
             }
 
-            // TODO(AS3): .../CameraPhotoLab.as::createFxButton()
-            // AS3 renders a live preview into the button: a scaled copy of the photo with this one
-            // effect applied (applyFilter for colormatrix, draw with the blend mode for composite,
-            // plain draw for frame). That needs a mutable bitmap target and a colour-matrix filter
-            // over BitmapData, neither of which the port's window components expose, so the button
-            // is built without its thumbnail. Everything else — the lock state, the tooltip, the
-            // click routing — is real.
+            this.renderFxButtonThumbnail(button as IWindowContainer, effect);
             button.procedure = this.effectButtonClick;
         }
         else
@@ -328,6 +325,74 @@ export class CameraPhotoLab
         this._effectButtons?.set(button.name, effect);
 
         return button;
+    }
+
+    /**
+     * Draws the button's thumbnail: this photo, with this one effect on it, scaled to fit.
+     *
+     * The colour matrix is taken at *full* strength here, not at the slider's — a picker showing
+     * every filter at whatever the slider happens to say would show several of them looking
+     * identical. Only the preview obeys the slider.
+     *
+     * Note what AS3 does to `param2`, the photo it was handed: it applies the effect to that
+     * BitmapData in place, so each button in the grid receives a copy the *previous* one has
+     * already filtered. This port passes the original untouched to each button, which is what the
+     * grid is plainly meant to show — a row of independent previews, not a cumulative one.
+     */
+    // AS3: .../ui/widget/camera/CameraPhotoLab.as::createFxButton()
+    private renderFxButtonThumbnail(button: IWindowContainer, effect: CameraEffect): void
+    {
+        const original = this._originalImage;
+        const content = button.findChildByName('content') as (IWindow & {bitmap?: ImageBitmap | null}) | null;
+
+        if(original === null || content === null || original.width === 0) return;
+
+        const source = new OffscreenCanvas(original.width, original.height);
+        const sourceCtx = source.getContext('2d');
+
+        if(sourceCtx === null) return;
+
+        sourceCtx.drawImage(original, 0, 0);
+
+        switch(effect.type)
+        {
+            case CameraEffect.TYPE_COLORMATRIX:
+                CameraPhotoLab.applyColorMatrix(sourceCtx, source.width, source.height, effect.getColorMatrixFilter(true));
+                break;
+            case CameraEffect.TYPE_COMPOSITE:
+            {
+                const image = CameraFxPreloader.getImage(effect.name);
+
+                if(image === null) return;
+
+                sourceCtx.save();
+                sourceCtx.globalCompositeOperation = (effect.blendmode ?? 'source-over') as GlobalCompositeOperation;
+                sourceCtx.drawImage(image, 0, 0);
+                sourceCtx.restore();
+                break;
+            }
+            case CameraEffect.TYPE_FRAME:
+            {
+                const image = CameraFxPreloader.getImage(effect.name);
+
+                if(image === null) return;
+
+                sourceCtx.drawImage(image, 0, 0);
+                break;
+            }
+        }
+
+        // AS3 scales by width alone and lets the height fall where it may, so a photo taller than
+        // the slot is cropped by the button rather than squashed into it.
+        const scale = content.width / original.width;
+        const target = new OffscreenCanvas(Math.max(1, content.width), Math.max(1, content.height));
+        const targetCtx = target.getContext('2d');
+
+        if(targetCtx === null) return;
+
+        targetCtx.drawImage(source, 0, 0, source.width * scale, source.height * scale);
+
+        content.bitmap = target.transferToImageBitmap();
     }
 
     // AS3: .../ui/widget/camera/CameraPhotoLab.as::openPhotoLab()
@@ -523,13 +588,60 @@ export class CameraPhotoLab
         CameraPhotoLab._purchaseDialog?.competitionStatus(event);
     }
 
+    /**
+     * Hands the edited photo to the browser as `Habbo_yyyy-MM-dd_HH-mm-ss.png`.
+     *
+     * AS3 PNG-encodes the BitmapData and calls `FileReference.save()`, which opens the OS save
+     * dialog. A browser has no equivalent that a script may open, so this is the download route
+     * instead: encode to a blob, hand it to an anchor with the same filename, click it. Where the
+     * file lands is the browser's business, not this dialog's.
+     *
+     * The whole thing is wrapped the way AS3 wraps its own: a failure here loses a download, and
+     * the player is looking at a photo they have not lost.
+     */
     // AS3: .../ui/widget/camera/CameraPhotoLab.as::offerSaveAsFile()
     private offerSaveAsFile(): void
     {
-        // TODO(AS3): .../CameraPhotoLab.as::offerSaveAsFile()
-        // AS3 PNG-encodes the edited BitmapData and hands it to `FileReference.save()` as
-        // `Habbo_yyyy-MM-dd_HH-mm-ss.png`. Both halves are missing here: the port has no mutable
-        // bitmap to encode and no file-save bridge.
+        const bitmap = this._imageWindow?.bitmap ?? null;
+
+        if(bitmap == null) return;
+
+        const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+        const ctx = canvas.getContext('2d');
+
+        if(ctx === null) return;
+
+        ctx.drawImage(bitmap, 0, 0);
+
+        void canvas.convertToBlob({type: 'image/png'})
+            .then((blob) =>
+            {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+
+                link.href = url;
+                link.download = CameraPhotoLab.photoFileName();
+                link.click();
+
+                // The object URL pins the blob in memory until it is revoked, and the click has
+                // already read it by the time the task queue drains.
+                URL.revokeObjectURL(url);
+            })
+            .catch(() => log.warn('The edited photo could not be encoded for download'));
+    }
+
+    /**
+     * `Habbo_yyyy-MM-dd_HH-mm-ss.png`, in local time, as AS3's DateTimeFormatter produces it.
+     */
+    // AS3: .../ui/widget/camera/CameraPhotoLab.as::offerSaveAsFile()
+    private static photoFileName(): string
+    {
+        const now = new Date();
+        const pad = (value: number): string => value.toString().padStart(2, '0');
+        const date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+        const time = `${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`;
+
+        return `Habbo_${date}_${time}.png`;
     }
 
     /**
@@ -681,18 +793,117 @@ export class CameraPhotoLab
         }
     }
 
+    /**
+     * Repaints the preview from the original photo and whatever effects are switched on.
+     *
+     * The order is AS3's and it matters: zoom first, then every colour matrix in list order, then
+     * every composite over the top with its own blend mode and strength, and frames last of all —
+     * a frame is meant to sit above the picture, not be tinted by it. Each stage reads the result
+     * of the one before it, which is why the colour matrices compose rather than replace.
+     *
+     * The one thing this cannot promise is that a browser's blend mode is pixel-identical to
+     * Flash's. The names line up (`multiply`, `screen`, `overlay`, …) and the CSS compositing spec
+     * defines the same formulae, but the server renders the final photo from `getEffectDataJson()`
+     * anyway, so this is the preview, not the product.
+     */
     // AS3: .../ui/widget/camera/CameraPhotoLab.as::renderAllEffects()
     private renderAllEffects(): void
     {
-        // TODO(AS3): .../CameraPhotoLab.as::renderAllEffects()
-        // The heart of the editor and the one part that cannot be ported yet. AS3 clones the
-        // original BitmapData, optionally 2x-zooms it through a Matrix, applies every active
-        // colormatrix effect with applyFilter(), draws every active composite with its blend mode
-        // and a ColorTransform alpha of the effect strength, then draws the frames last, and finally
-        // assigns the result to the preview window. All four primitives are missing here:
-        // BitmapData.clone/applyFilter/draw and ColorTransform. The effect *state* is fully tracked
-        // — `getEffectDataJson()` below reports it to the server correctly, so the photo the server
-        // renders does carry the chosen effects; only the local preview does not update.
+        const original = this._originalImage;
+
+        if(original === null || this._imageWindow === null) return;
+
+        const canvas = new OffscreenCanvas(original.width, original.height);
+        const ctx = canvas.getContext('2d');
+
+        if(ctx === null) return;
+
+        if(this._zoomed)
+        {
+            // AS3 scales by 2 about the *origin* and then translates by half the size, which lands
+            // the middle of the photo in the middle of the frame.
+            ctx.setTransform(2, 0, 0, 2, -original.width / 2, -original.height / 2);
+            ctx.drawImage(original, 0, 0);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
+        else
+        {
+            ctx.drawImage(original, 0, 0);
+        }
+
+        const effects = this._effectButtons?.values() ?? [];
+
+        for(const effect of effects)
+        {
+            if(!effect.isOn) continue;
+
+            if(effect.type === CameraEffect.TYPE_COLORMATRIX)
+            {
+                CameraPhotoLab.applyColorMatrix(ctx, canvas.width, canvas.height, effect.getColorMatrixFilter());
+            }
+
+            if(effect.type === CameraEffect.TYPE_COMPOSITE)
+            {
+                const image = CameraFxPreloader.getImage(effect.name);
+
+                if(image === null) continue;
+
+                ctx.save();
+                ctx.globalAlpha = effect.getEffectStrength();
+                ctx.globalCompositeOperation = (effect.blendmode ?? 'source-over') as GlobalCompositeOperation;
+                ctx.drawImage(image, 0, 0);
+                ctx.restore();
+            }
+        }
+
+        for(const effect of this._effectButtons?.values() ?? [])
+        {
+            if(!effect.isOn || effect.type !== CameraEffect.TYPE_FRAME) continue;
+
+            const image = CameraFxPreloader.getImage(effect.name);
+
+            if(image !== null) ctx.drawImage(image, 0, 0);
+        }
+
+        this._imageWindow.bitmap = canvas.transferToImageBitmap();
+        this._imageWindow.invalidate();
+    }
+
+    /**
+     * Flash's `ColorMatrixFilter` as a pixel loop.
+     *
+     * The matrix is the same 4x5 Flash takes — four rows of `[r, g, b, a, offset]` — and the
+     * offsets are in 0-255 units, not normalised, so they are added after the multiply without
+     * scaling. Canvas has no filter that takes an arbitrary matrix (`ctx.filter` only exposes the
+     * CSS shorthand set), so this reads the pixels back and writes them again.
+     */
+    // AS3: .../ui/widget/camera/CameraPhotoLab.as::renderAllEffects() — the `applyFilter()` call.
+    private static applyColorMatrix(
+        ctx: OffscreenCanvasRenderingContext2D,
+        width: number,
+        height: number,
+        matrix: number[]
+    ): void
+    {
+        if(matrix.length < 20) return;
+
+        const image = ctx.getImageData(0, 0, width, height);
+        const {data} = image;
+
+        for(let i = 0; i < data.length; i += 4)
+        {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const a = data[i + 3];
+
+            data[i] = matrix[0] * r + matrix[1] * g + matrix[2] * b + matrix[3] * a + matrix[4];
+            data[i + 1] = matrix[5] * r + matrix[6] * g + matrix[7] * b + matrix[8] * a + matrix[9];
+            data[i + 2] = matrix[10] * r + matrix[11] * g + matrix[12] * b + matrix[13] * a + matrix[14];
+            data[i + 3] = matrix[15] * r + matrix[16] * g + matrix[17] * b + matrix[18] * a + matrix[19];
+        }
+
+        ctx.putImageData(image, 0, 0);
     }
 
     // AS3: .../ui/widget/camera/CameraPhotoLab.as::setRenderedPhotoUrl()

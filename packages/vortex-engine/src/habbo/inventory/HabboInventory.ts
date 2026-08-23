@@ -2007,7 +2007,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     {
         const parser = event.parser as WiredTradeItemsUpdateMessageParser | null;
 
-        if(!parser || !this.furniModel || !this.wiredTradingModel) return;
+        // Through the accessor, which is what builds the models if the player has never opened the
+        // inventory; the furni one is then read off the field because `createCreditGroupItem()` is
+        // on the concrete model, not on `IFurniModel`.
+        const wiredTradingModel = this.wiredTradingModel;
+        const furniModel = this._furniModel;
+
+        if(!parser || !furniModel || !wiredTradingModel) return;
 
         const items = parser.tradingItems;
         const ownUserItems = new OrderedMap<string, GroupItem>();
@@ -2017,13 +2023,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         // can never collide with a furniture group's (those key on type ids).
         if(items.secondUserNumCredits > 0)
         {
-            wiredItems.add('credit_groupitem_type_id', this._furniModel.createCreditGroupItem(items.secondUserNumCredits));
+            wiredItems.add('credit_groupitem_type_id', furniModel.createCreditGroupItem(items.secondUserNumCredits));
         }
 
         this.populateItemGroups(items.firstUserItemArray, ownUserItems, true);
         this.populateItemGroups(items.secondUserItemArray, wiredItems, false);
 
-        this._wiredTradingModel.updateItemGroupMaps(items, ownUserItems, wiredItems, parser.canAccept, parser.extra);
+        wiredTradingModel.updateItemGroupMaps(items, ownUserItems, wiredItems, parser.canAccept, parser.extra);
     };
 
     // AS3: .../_SafeCls_1951.as::onTradingOpenFailed(), onTradingClose(), onTradingCompleted(),
