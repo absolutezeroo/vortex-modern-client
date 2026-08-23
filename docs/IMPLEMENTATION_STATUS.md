@@ -455,12 +455,16 @@ Two things the port had to get right:
   while it is being viewed. The lock buttons also go quiet for 500 ms after a click, so a double
   click cannot send the same command twice.
 
-**The server knows nothing about chests.** Unlike camera and crafting — which at least have handlers
-that accept and drop — vortex-emulator has **no constant at all** for 2910, 2016 or 1630, so they do
-not even register as send gaps in `wire-coverage`. The tab is complete client-side and mute in
-practice. That is a third category worth naming: *not implemented* is visible in the gap count,
-*stubbed* is visible once the script reads bodies, but *absent from the header table* is invisible
-to both.
+**The server knew nothing about chests** when this was written. Unlike camera and crafting — which
+at least have handlers that accept and drop — vortex-emulator had **no constant at all** for 2910,
+2016 or 1630, so they did not even register as send gaps in `wire-coverage`. The tab was complete
+client-side and mute in practice. That is a third category worth naming: *not implemented* is
+visible in the gap count, *stubbed* is visible once the script reads bodies, but *absent from the
+header table* is invisible to both.
+
+> Superseded 2026-08-23: chests are served now — contents, settings, logs, withdrawal, the furniture
+> deposit and the contract offer. See "The chest a player could look into but never fill" below.
+> What that closes is the *mute* half; the tab itself never changed.
 
 Names: `WiredTransactionInfo` and every accessor on it are recovered — that class survived
 obfuscation. Everything else here is **derived**, and says so: `win63_version` predates wired chests
@@ -3067,6 +3071,60 @@ different `CoreLocalizationManager` instances** — 11,626 entries at the login 
 (`LoginFlow` -> `requestLocalizationInit`), then 123,020 after authentication
 (`onAuthenticated` -> `requestLocalizationInit`). Two round trips of ~1 MB and two tables of truth
 for the same thing.
+
+### The chest a player could look into but never fill (2026-08-23)
+
+The chest window shipped complete on 2026-08-15 and its deposit button did nothing: the server had
+no message for it, and the client's own answer to one is not a dialog of its own — it waits for the
+inventory's wired-trade screen. Four rounds closed that, and the last of them is what makes a
+contract possible at all.
+
+**The deposit is a trade, so it went out as one.** `DepositToWiredChest` (in) now opens a
+server-side session and answers with `WiredTradeInitiate`; the screen then speaks the ordinary
+trading vocabulary — items-update, accept, cancel — over three messages this port had never sent.
+The items-update composer reuses the player trade's own `TradeItemSerializer` and side shape, which
+is not a convenience: the client parses both with the same code.
+
+**Three faults were in the way, and none of them was in the deposit.**
+
+- `HabboInventory`'s models are built lazily by `init()`, and the port read the private fields
+  instead of `getModel()`. Everything routed through the wired-trading model reached a null that
+  AS3 never sees, because AS3's accessor is what triggers the initialization.
+- Chest settings saved to the database and came back unchanged, one edit behind. `GetSnapshot()`
+  caches on a dirty flag and `PersistStuffDataAsync()` wrote the map without setting it — the
+  mannequin and the toner had the same bug and nobody had connected them.
+- Two clients looking into one chest never saw each other's withdrawals. The open-chest set was a
+  set of ids, not of viewers; it is a map of viewers now, and a player who disconnects has their
+  chest screens closed beside their trades.
+
+**The contract emitter — what a player is being asked to agree to.** `wf_act_init_transaction`
+recorded an offer and sent nothing, and the three `wf_contract_*` furni were decorative floor items
+with no form behind them, so there were no terms to send either. They are the add-on the client
+already builds a form for (code 20, `CustomContract`): payment and reward, each an enable checkbox,
+a coin/furni radio and an amount, with each side's accepted furni in its own picker. Offering a
+transaction reads that form and sends it.
+
+Two details the wire dictates rather than the design:
+
+- **The rules block is written only under requirement type 4.** `TradeRequirement` reads it on that
+  test alone, so a block under any other type lands every field after it at the wrong offset — and
+  the deposit, which is type 2, sends none. Four serializer tests walk the bytes in the order the
+  client's own parsers do.
+- **The two sides are not symmetric, and could not be.** The give side is a *list* of rules and the
+  receive side a single one, where rules are alternatives and the nodes inside one are a bundle. So
+  several furni to pay with are choices and several to receive are all of them; the format has no
+  way to say it the other way round.
+
+Two things are refused rather than guessed at, both for the same reason — a term at the wrong amount
+is worse than no offer. An amount held in a wired variable needs the execution context the offer no
+longer has, and the credits half of a deposit cannot be expressed by the client at all: the only
+message the trade screen sends carries item ids, and what the official server does for an amount is
+not readable off this client.
+
+**Not a gap, checked twice:** `ChestCount = 1` and `DepositCoinsCount = 0` on a transaction row are
+facts of the path, not placeholders. The client renders `chestCount` as its own column
+(`TransactionTableObject.getTableCell()`), the log entity carries a single chest foreign key so one
+row can only ever be about one chest, and no path deposits coins into a chest.
 
 ### Trace hygiene, 2026-08-20
 
