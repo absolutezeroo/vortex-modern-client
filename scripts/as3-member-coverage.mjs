@@ -152,6 +152,15 @@ function extractMembers(source)
 // Same shape as audit-as3-traces.mjs's REF, so the two scripts agree on what a citation is.
 const REF = /(sources\/[A-Za-z0-9_\-.]+\/[^\s)'"`,;]*?\.as)(?:::((?:get |set )?[A-Za-z_][A-Za-z0-9_]*(?:\(\))?))?/g;
 
+// Half the port writes its member traces short — `// AS3: TalentTrackController.as::createWindow()`
+// — with the full primary path given once in the file's own header `@see`. Reading only the long
+// form counted every one of those files as "cited at file level only", i.e. unmeasurable: all six
+// talent controllers, 182 member traces between them, read as a blank. So a short citation is
+// resolved against the full paths the *same file* cites, by basename. Same-file only, deliberately:
+// a repo-wide basename map would bind `IHabboTalent.as` to whichever tree happened to be indexed
+// first, and a wrong binding here silently mis-attributes gaps.
+const SHORT_REF = /AS3:\s*([A-Za-z0-9_]+\.as)::((?:get |set )?[A-Za-z_][A-Za-z0-9_]*(?:\(\))?)/g;
+
 function collectFiles(dir, ext, out)
 {
     for(const entry of readdirSync(dir))
@@ -190,10 +199,26 @@ function buildCitationIndex()
     for(const file of tsFiles)
     {
         const source = readFileSync(file, 'utf8');
+        const byBasename = new Map();
+        const cites = [];
 
         for(const match of source.matchAll(REF))
         {
             const [, path, member] = match;
+
+            byBasename.set(path.slice(path.lastIndexOf('/') + 1), path);
+            cites.push([path, member]);
+        }
+
+        for(const [, short, member] of source.matchAll(SHORT_REF))
+        {
+            const path = byBasename.get(short);
+
+            if(path !== undefined) cites.push([path, member]);
+        }
+
+        for(const [path, member] of cites)
+        {
             let entry = index.get(path);
 
             if(entry === undefined)
