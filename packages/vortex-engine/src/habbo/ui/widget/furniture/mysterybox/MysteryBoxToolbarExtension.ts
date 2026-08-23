@@ -10,6 +10,15 @@
  *
  * `KEY_COLORS` lives here in AS3 and MysteryBoxOpenDialogView reads it across; kept in the same
  * place so the two stay in step.
+ *
+ * The shipped `mystery_box_toolbar_extension` layout is the current client's, not the one this AS3
+ * was written against. It carries its two states as two sibling backgrounds (`mysterybox_bg` /
+ * `mysterybox_bg_contracted`) and folds on a click anywhere in `bg_region`, the way
+ * `iro_event_info` does — and none of its children draws into the parent graphic context, so
+ * shrinking the window no longer crops the body and every expanded-only child has to be hidden by
+ * hand. `refresh()` is the one place that paints, after `GroupRoomInfoCtrl.refresh()`, which
+ * renders the identical two-state toolbar panel; the AS3 setters keep their names, and their job
+ * is to record state and hand the drawing over.
  */
 import {Logger} from '@core/utils/Logger';
 import type {IWindow} from '@core/window/IWindow';
@@ -46,7 +55,7 @@ export class MysteryBoxToolbarExtension
     // AS3: MysteryBoxToolbarExtension.as::_SafeStr_11315
     private static readonly MINIMISED_CONFIG_KEY: string = 'mystery_box_toolbar_extension_minimised';
 
-    // AS3: MysteryBoxToolbarExtension.as::createWindow() / setMinimised() — the two window heights.
+    // AS3: MysteryBoxToolbarExtension.as::setMinimised() — the two window heights.
     private static readonly HEIGHT_MINIMISED: number = 25;
 
     private static readonly HEIGHT_EXPANDED: number = 137;
@@ -59,6 +68,12 @@ export class MysteryBoxToolbarExtension
 
     // AS3: MysteryBoxToolbarExtension.as::_SafeStr_4574 (the handler)
     private _handler: FurnitureContextMenuWidgetHandler | null;
+
+    // TS-only: AS3 paints straight out of setKeyColors()' arguments; refresh() needs the pair again
+    // every time the panel folds, so the last one is kept.
+    private _boxColor: string = '';
+
+    private _keyColor: string = '';
 
     // AS3: MysteryBoxToolbarExtension.as::MysteryBoxToolbarExtension()
     constructor(handler: FurnitureContextMenuWidgetHandler)
@@ -83,10 +98,6 @@ export class MysteryBoxToolbarExtension
             return;
         }
 
-        const faqLink = this._window.findChildByName('faq_link');
-
-        if(faqLink) faqLink.visible = (container.config?.getProperty('mysterybox.faq.url') ?? '') !== '';
-
         this._window.procedure = this.windowProcedure;
 
         container.toolbar?.extensionView?.attachExtension(ToolbarDisplayExtensionIds.MYSTERY_BOX, this._window);
@@ -95,13 +106,17 @@ export class MysteryBoxToolbarExtension
 
         sessionDataManager?.events.on(MysteryBoxKeysUpdateEvent.MYSTERY_BOX_KEYS_UPDATE, this.onKeysUpdated, this);
 
-        this.setMinimised(this.minimised);
+        // AS3 runs setMinimised(minimised), then setKeyColors(); both feed refresh() here, and the
+        // fold state already lives on the config, so the one pass covers both.
         this.setKeyColors(sessionDataManager?.mysteryBoxColor ?? '', sessionDataManager?.mysteryKeyColor ?? '');
     }
 
     /**
      * AS3 switches on `event.target.name`; this port's window manager passes the window that
      * raised the event as the procedure's second argument, which is the same window.
+     *
+     * `minimize_region`/`maximize_region` are the corner buttons of the layout this AS3 shipped
+     * with — kept because they are the AS3 branches; the current layout folds on `bg_region`.
      */
     // AS3: MysteryBoxToolbarExtension.as::windowProcedure()
     private windowProcedure = (event: WindowEvent, window: IWindow): void =>
@@ -116,61 +131,72 @@ export class MysteryBoxToolbarExtension
             case 'maximize_region':
                 this.setMinimised(false);
                 break;
+            case 'bg_region':
+                this.setMinimised(!this.minimised);
+                break;
             case 'faq_link':
-                HabboWebTools.openWebPage(
-                    this._handler?.container?.config?.getProperty('mysterybox.faq.url') ?? '',
-                    'habboMain'
-                );
+                HabboWebTools.openWebPage(this.faqUrl, 'habboMain');
                 break;
         }
     };
 
     /**
+     * TS-only: the one place that touches the window, after `GroupRoomInfoCtrl.refresh()`.
+     *
      * Either half can be empty — a user can hold a box with no key, or the reverse — so the two
-     * blocks are independent, and the small icons only ever show while minimised.
+     * slots are driven independently, and the small icons only ever show while folded. The loop
+     * runs over `box_region`/`box_colour`/`box_overlay`/`small_box`, then the same four for the
+     * key; AS3 spells both blocks out.
      */
-    // AS3: MysteryBoxToolbarExtension.as::setKeyColors()
-    private setKeyColors(boxColor: string, keyColor: string): void
+    private refresh(): void
     {
         const window = this._window;
 
         if(window === null) return;
 
-        const hasBox = boxColor !== null && boxColor !== '';
+        const expanded = !this.minimised;
 
-        this.setChildVisible('box_colour', hasBox);
-        this.setChildVisible('box_overlay', hasBox);
-        this.setChildVisible('small_box', hasBox && this.minimised);
+        this.setChildVisible('mysterybox_bg', expanded);
+        this.setChildVisible('mysterybox_bg_contracted', !expanded);
+        this.setChildVisible('desc_txt', expanded);
+        this.setChildVisible('faq_link', expanded && this.faqUrl !== '');
+        this.setChildVisible('minimize_region', expanded);
+        this.setChildVisible('maximize_region', !expanded);
 
-        const boxRegion = window.findChildByName('box_region') as IRegionWindow | null;
-
-        if(boxRegion) boxRegion.toolTipCaption = hasBox ? `\${mysterybox.tracker.box.${boxColor.toLowerCase()}}` : '';
-
-        if(hasBox)
+        for(const [slot, colorName] of [['box', this._boxColor], ['key', this._keyColor]] as const)
         {
-            const color = KEY_COLORS[boxColor.toLowerCase()] ?? 0;
+            const has = colorName !== '';
 
-            this.setChildColor('box_colour', color);
-            this.setChildColor('small_box', color);
+            this.setChildVisible(`${slot}_region`, expanded);
+            this.setChildVisible(`${slot}_colour`, has);
+            this.setChildVisible(`${slot}_overlay`, has);
+            this.setChildVisible(`small_${slot}`, has && !expanded);
+
+            const region = window.findChildByName(`${slot}_region`) as IRegionWindow | null;
+
+            if(region) region.toolTipCaption = has ? `\${mysterybox.tracker.${slot}.${colorName.toLowerCase()}}` : '';
+
+            if(has)
+            {
+                const color = KEY_COLORS[colorName.toLowerCase()] ?? 0;
+
+                this.setChildColor(`${slot}_colour`, color);
+                this.setChildColor(`small_${slot}`, color);
+            }
         }
 
-        const hasKey = keyColor !== null && keyColor !== '';
+        window.height = expanded
+            ? MysteryBoxToolbarExtension.HEIGHT_EXPANDED
+            : MysteryBoxToolbarExtension.HEIGHT_MINIMISED;
+    }
 
-        this.setChildVisible('key_colour', hasKey);
-        this.setChildVisible('key_overlay', hasKey);
-        this.setChildVisible('small_key', hasKey && this.minimised);
+    // AS3: MysteryBoxToolbarExtension.as::setKeyColors()
+    private setKeyColors(boxColor: string, keyColor: string): void
+    {
+        this._boxColor = boxColor ?? '';
+        this._keyColor = keyColor ?? '';
 
-        const keyRegion = window.findChildByName('key_region') as IRegionWindow | null;
-
-        if(keyRegion) keyRegion.toolTipCaption = hasKey ? `\${mysterybox.tracker.key.${keyColor.toLowerCase()}}` : '';
-
-        if(hasKey)
-        {
-            const color = KEY_COLORS[keyColor.toLowerCase()] ?? 0;
-
-            this.setChildColor('key_colour', color);
-            this.setChildColor('small_key', color);
-        }
+        this.refresh();
     }
 
     // AS3: MysteryBoxToolbarExtension.as::onKeysUpdated()
@@ -192,28 +218,17 @@ export class MysteryBoxToolbarExtension
     // AS3: MysteryBoxToolbarExtension.as::setMinimised()
     private setMinimised(value: boolean): void
     {
-        const window = this._window;
-
-        if(this._handler === null || window === null) return;
-
-        if(value)
-        {
-            this.setChildVisible('minimize_region', false);
-            this.setChildVisible('maximize_region', true);
-            this.setChildVisible('small_box', window.findChildByName('box_colour')?.visible ?? false);
-            this.setChildVisible('small_key', window.findChildByName('key_colour')?.visible ?? false);
-            window.height = MysteryBoxToolbarExtension.HEIGHT_MINIMISED;
-        }
-        else
-        {
-            this.setChildVisible('minimize_region', true);
-            this.setChildVisible('maximize_region', false);
-            this.setChildVisible('small_box', false);
-            this.setChildVisible('small_key', false);
-            window.height = MysteryBoxToolbarExtension.HEIGHT_EXPANDED;
-        }
+        if(this._handler === null || this._window === null) return;
 
         this._handler.container?.config?.setProperty(MysteryBoxToolbarExtension.MINIMISED_CONFIG_KEY, value ? 'true' : 'false');
+
+        this.refresh();
+    }
+
+    // TS-only: convenience accessor over the config property the AS3 reads inline twice.
+    private get faqUrl(): string
+    {
+        return this._handler?.container?.config?.getProperty('mysterybox.faq.url') ?? '';
     }
 
     private setChildVisible(name: string, visible: boolean): void
