@@ -80,9 +80,9 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     * Every behaviour AS3 specifies here is ported: the furni-selection highlighter, the variable
     * synchronizer's deferred reopen, the advanced input-source rows and the condition quantifier
     * section, the copy/paste clipboard, paste-into mode, dual furni picking, and the configuration
-    * cache. What is left are the two visual editors this class only *hosts* — `RoomAreaSelectionManager`
-    * (tile highlight) and `FloorDrawingPreset` (bitmap tile canvas), each carrying its own port-gap marker
-    * — plus the `time_display` notification key, which has no reader in this port yet.
+    * cache. What is left is one visual editor this class only *hosts* — `RoomAreaSelectionManager`
+    * (tile highlight), which carries its own port-gap marker — plus the `time_display` notification
+    * key, which has no reader in this port yet.
     *
     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/UserDefinedRoomEventsCtrl.as
     */

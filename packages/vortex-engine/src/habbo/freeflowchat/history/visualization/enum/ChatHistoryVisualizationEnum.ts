@@ -12,11 +12,15 @@
  */
 export interface IChatHistoryTextFormat
 {
-    // TS-only: the fields of `flash.text.TextFormat` these two formats actually set.
+    // TS-only: `flash.text.TextFormat.font`.
     font: string;
+    // TS-only: `flash.text.TextFormat.size`.
     size: number;
+    // TS-only: `flash.text.TextFormat.color`, as a CSS hex string rather than an ARGB number.
     color: string;
+    // TS-only: `flash.text.TextFormat.bold`.
     bold: boolean;
+    // TS-only: `flash.text.TextFormat.italic`.
     italic: boolean;
 }
 

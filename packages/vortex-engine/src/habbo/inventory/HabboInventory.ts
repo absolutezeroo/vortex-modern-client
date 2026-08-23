@@ -498,10 +498,27 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_inventories (the "wired_trading" entry)
     private _wiredTradingModel: WiredTradingModel | null = null;
 
+    /**
+	 * A model by name, building the inventory first if nobody has yet.
+	 *
+	 * This is what makes the lazy `init()` invisible in AS3: every model getter goes through here,
+	 * so *reading* a model is what creates it. The port read its private fields directly instead,
+	 * which turned the laziness into a hole — a message handler that arrived before the player had
+	 * ever opened the inventory found `null`, took its `?.` and did nothing, silently. That is how
+	 * a wired-chest deposit opened server-side and showed nothing at all on screen.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getModel()
+    getModel(name: string): IInventoryModel | null
+    {
+        if(!this._isInitialized) this.init();
+
+        return this._inventories.getValue(name) ?? null;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get wiredTradingModel()
     get wiredTradingModel(): WiredTradingModel | null
     {
-        return this._wiredTradingModel;
+        return this.disposed ? null : (this.getModel('wired_trading') as WiredTradingModel | null);
     }
 
     /**
@@ -584,7 +601,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get furniModel()
     get furniModel(): IFurniModel
     {
-        return this._furniModel;
+        return this.getModel('furni') as IFurniModel;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getFloorItemById()
@@ -724,7 +741,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get collectiblesModel()
     get collectiblesModel(): ICollectiblesModel | null
     {
-        return this.disposed ? null : this._collectiblesModel;
+        return this.disposed ? null : (this.getModel('collectibles') as ICollectiblesModel | null);
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_inventories (the "recycler" entry)
@@ -732,13 +749,12 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
     /**
      * AS3 resolves this through `getModel("recycler")` and casts, returning null once disposed.
-     * The port holds the reference directly; the disposed check is kept because callers test
-     * `recyclerModel?.running` during teardown.
+     * The disposed check is kept because callers test `recyclerModel?.running` during teardown.
      */
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::get recyclerModel()
     get recyclerModel(): IRecyclerModel | null
     {
-        return this.disposed ? null : this._recyclerModel;
+        return this.disposed ? null : (this.getModel('recycler') as IRecyclerModel | null);
     }
 
     /**
@@ -1952,7 +1968,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
         if(requirement == null) return;
 
-        this._wiredTradingModel?.onWiredTradeInitiate(
+        this.wiredTradingModel?.onWiredTradeInitiate(
             requirement,
             parser!.showRequirementsImmediate,
             parser!.overridePreviousTrade,
@@ -1965,13 +1981,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     {
         const parser = event.parser as WiredTradeCancelledMessageParser | null;
 
-        this._wiredTradingModel?.tradeIsCancelled(parser?.transactionFailureTypeId ?? 0);
+        this.wiredTradingModel?.tradeIsCancelled(parser?.transactionFailureTypeId ?? 0);
     };
 
     // AS3: .../src/com/sulake/habbo/inventory/_SafeCls_1951.as::onWiredTradeCompleted()
     private onWiredTradeCompleted = (): void =>
     {
-        this._wiredTradingModel?.tradeIsCompleted();
+        this.wiredTradingModel?.tradeIsCompleted();
     };
 
     /**
@@ -1991,7 +2007,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     {
         const parser = event.parser as WiredTradeItemsUpdateMessageParser | null;
 
-        if(!parser || !this._furniModel || !this._wiredTradingModel) return;
+        if(!parser || !this.furniModel || !this.wiredTradingModel) return;
 
         const items = parser.tradingItems;
         const ownUserItems = new OrderedMap<string, GroupItem>();

@@ -22,7 +22,7 @@ import {DefaultSelectorType} from './DefaultSelectorType';
  * the drawn floor occupancy follows as a spiral-ordered bitmask (SpiralUtils).
  *
  * It is abstract (no `code` override) and never registered. Note: the visual floor-drawing canvas is
- * inert (FloorDrawingPreset is stubbed — see its own marker); occupancy still (de)serializes faithfully
+ * live (FloorDrawingPreset paints and edits the grid); occupancy also (de)serializes faithfully
  * via NeighborhoodFloor + SpiralUtils, so saved neighborhoods round-trip.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/selectors/InNeighborhood.as
