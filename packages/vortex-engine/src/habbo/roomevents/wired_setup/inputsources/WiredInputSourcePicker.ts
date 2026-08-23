@@ -6,6 +6,9 @@ import {VariableExtraSourceTypes} from '../common/VariableExtraSourceTypes';
 import type {IWiredElement} from '../IWiredElement';
 import type {IUserDefinedRoomEventsCtrl} from '../IUserDefinedRoomEventsCtrl';
 import type {ISourceTypeListener} from './ISourceTypeListener';
+import {Logger} from '@core/utils/Logger';
+
+const log = Logger.getLogger('habbo.roomevents.wired_setup.inputsources.WiredInputSourcePicker');
 
 /**
  * WiredInputSourcePicker — the input-source cycler for a wired element: owns a source-type slot
@@ -130,6 +133,51 @@ export class WiredInputSourcePicker implements ISourceTypeListener
         return Number.isFinite(parsed) ? Math.trunc(parsed) : 0;
     }
 
+    /**
+     * `InputSourcesConf` holds one entry per selection slot, and both of these index it directly.
+     *
+     * AS3 does the same and has no guard: `getAllowedFurniSources(3)` on a two-slot conf hands back
+     * `null` and the next line throws `null.indexOf`. That is exactly what happened here — clicking
+     * a merged input-source arrow killed the whole wired form with
+     * "Cannot read properties of undefined (reading 'indexOf')".
+     *
+     * The divergence is deliberate, and the warning is the point: an empty list makes the arrow do
+     * nothing, and names the slot, the definition and the conf's real size so the short side can be
+     * found. It is a data disagreement between the server and the element's own selection table,
+     * not something this method can repair.
+     */
+    // TS-only: AS3 calls `conf.getAllowedFurniSources()` inline at three sites with no guard.
+    private allowedFurniSources(conf: InputSourcesConf, slot: number): number[]
+    {
+        // `getAllowedFurniSources()` is typed non-null and is not: it indexes an array, so an
+        // out-of-range slot reads back undefined. The cast is what makes that visible here.
+        const allowed = (conf.getAllowedFurniSources(slot) ?? null) as number[] | null;
+
+        if(allowed !== null) return allowed;
+
+        log.warn(
+            `Wired definition ${this._def?.code ?? -1} asked for furni source slot ${slot}, but its `
+            + `InputSourcesConf declares ${conf.amountFurniSelections}. The arrow is inert.`
+        );
+
+        return [];
+    }
+
+    // TS-only: the user-source twin of allowedFurniSources() above; see there for why it exists.
+    private allowedUserSources(conf: InputSourcesConf, slot: number): number[]
+    {
+        const allowed = (conf.getAllowedUserSources(slot) ?? null) as number[] | null;
+
+        if(allowed !== null) return allowed;
+
+        log.warn(
+            `Wired definition ${this._def?.code ?? -1} asked for user source slot ${slot}, but its `
+            + `InputSourcesConf declares ${conf.amountUserSelections}. The arrow is inert.`
+        );
+
+        return [];
+    }
+
     // AS3: WiredInputSourcePicker.as::onChangeInputSource()
     onChangeInputSource(forward: boolean): void
     {
@@ -147,17 +195,20 @@ export class WiredInputSourcePicker implements ISourceTypeListener
 
         if(this._sourceType === WiredInputSourcePicker.FURNI_SOURCE)
         {
-            allowed = conf.getAllowedFurniSources(this._id);
+            allowed = this.allowedFurniSources(conf, this._id);
             index = allowed.indexOf(WiredInputSourcePicker.asInt(this._def.furniSourceTypes[this._id]));
         }
         else if(this._sourceType === WiredInputSourcePicker.USER_SOURCE)
         {
-            allowed = conf.getAllowedUserSources(this._id);
+            allowed = this.allowedUserSources(conf, this._id);
             index = allowed.indexOf(WiredInputSourcePicker.asInt(this._def.userSourceTypes[this._id]));
         }
         else
         {
-            const selection = this._element.mergedSelections()[this._id];
+            // AS3 indexes this without a guard and would throw on a short list; the merged
+            // selections are a hard-coded table per element, so an element asking for a pair it
+            // does not have is a porting mistake rather than bad data.
+            const selection = this._element.mergedSelections()[this._id] ?? [];
 
             furniSlot = WiredInputSourcePicker.asInt(selection[0]);
             userSlot = WiredInputSourcePicker.asInt(selection[1]);
@@ -165,7 +216,7 @@ export class WiredInputSourcePicker implements ISourceTypeListener
 
             if(mergedType === WiredInputSourcePicker.FURNI_SOURCE)
             {
-                allowed = conf.getAllowedFurniSources(furniSlot);
+                allowed = this.allowedFurniSources(conf, furniSlot);
                 index = allowed.indexOf(WiredInputSourcePicker.asInt(this._def.furniSourceTypes[furniSlot]));
             }
             else
@@ -175,10 +226,14 @@ export class WiredInputSourcePicker implements ISourceTypeListener
                     return;
                 }
 
-                allowed = conf.getAllowedUserSources(userSlot);
+                allowed = this.allowedUserSources(conf, userSlot);
                 index = allowed.indexOf(WiredInputSourcePicker.asInt(this._def.userSourceTypes[userSlot]));
             }
         }
+
+        // Nothing to cycle through. Returning leaves the arrow inert instead of stepping `index`
+        // into an empty list and writing `undefined` back into the definition.
+        if(allowed.length === 0) return;
 
         if(index === -1)
         {
