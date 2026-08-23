@@ -37,10 +37,9 @@ const log = Logger.getLogger('habbo.catalog.purchase.PurchaseConfirmationDialog'
  * - the gift flow (`showGiftDialog()` and everything under it: the `gift_wrapping` layout, receiver
  *   name lookup with suggestions, box/ribbon selectors, `giveGift()`). `isGift` is accepted and
  *   remembered but only ever takes the plain purchase path.
- * - GameTokensOffer (snow-war tokens) and `purchaseGameTokensOffer()`. Its two siblings —
- *   MintTokenPurchaseOffer and NftStorePurchaseOffer — are handled: dark window, mint-token icon
- *   and their own buy composers. The `nft_image` widget branch is still missing, so an NFT shows
- *   no preview.
+ * - the `nft_image` widget branch, so an NFT shows no preview. Its three sibling offer classes —
+ *   GameTokensOffer, MintTokenPurchaseOffer and NftStorePurchaseOffer — are all handled: dark
+ *   window, mint-token icon, and their own buy composers.
  * - `CatalogProductImages.hasProductImage()` / `PRODUCT_IMAGES`, the named-asset override that
  *   wins over a rendered preview for a handful of localization ids.
  *

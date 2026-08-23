@@ -30,3 +30,5 @@ export * from './TargetedOfferNotFoundMessageParser';
 export * from './LtdRaffleEnteredMessageParser';
 export * from './LtdRaffleResultMessageParser';
 export {SeasonalCalendarDailyOfferMessageEventParser} from './SeasonalCalendarDailyOfferMessageEventParser';
+export * from './SnowWarGameTokenOffer';
+export * from './SnowWarGameTokensMessageParser';

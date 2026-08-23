@@ -268,6 +268,7 @@ import {
     RoomAdPurchaseInfoMessageEvent,
     LtdRaffleResultMessageEvent,
     LtdRaffleEnteredMessageEvent,
+    SnowWarGameTokensMessageEvent,
     TargetedOfferMessageEvent,
     TargetedOfferNotFoundMessageEvent,
     BundleDiscountRulesetMessageEvent,
@@ -708,6 +709,12 @@ import {
 import {
     RemoveNftFromTradeComposer
 } from './messages/outgoing/collectibles/RemoveNftFromTradeComposer';
+import {
+    GetSnowWarGameTokensOfferComposer
+} from './messages/outgoing/catalog/GetSnowWarGameTokensOfferComposer';
+import {
+    PurchaseSnowWarGameTokensOfferComposer
+} from './messages/outgoing/catalog/PurchaseSnowWarGameTokensOfferComposer';
 import {ClaimDailyTaskComposer} from './messages/outgoing/quest/ClaimDailyTaskComposer';
 import {
     RequestVariableHoldersComposer
@@ -2542,6 +2549,8 @@ export class HabboMessages implements IMessageConfiguration
         // The limited-edition raffle: entered (the dialog starts its "raffling..." animation) and
         // then drawn. Both read by HabboCatalog.
         this._events.set(2901, LtdRaffleEnteredMessageEvent);
+        // The snow-war token bundles, read by HabboCatalog.
+        this._events.set(904, SnowWarGameTokensMessageEvent);
         this._events.set(3526, LtdRaffleResultMessageEvent);
         this._events.set(2129, RemainingMutePeriodMessageEvent);
         // The badge-point limits table, read by HabboInventory into the localization manager.
@@ -2755,6 +2764,9 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1646, RequestNftAssetsComposer);
         this._composers.set(2481, AddNftToTradeComposer);
         this._composers.set(521, RemoveNftFromTradeComposer);
+        // Snow-war token bundles: ask, then buy.
+        this._composers.set(2447, GetSnowWarGameTokensOfferComposer);
+        this._composers.set(3243, PurchaseSnowWarGameTokensOfferComposer);
         this._composers.set(1749, NftTransferAssetsComposer);
         this._composers.set(3638, GetMintTokenOffersComposer);
         this._composers.set(1614, GetCollectorScoreComposer);
