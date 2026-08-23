@@ -22,6 +22,17 @@ export class WiredTradeRequirementsViewStub implements IWiredTradeRequirementsVi
     // TS-only: the stub tracks only whether it was disposed; the real view has no such field.
     private _disposed: boolean = false;
 
+    /**
+	 * Whether the last contract had terms worth showing.
+	 *
+	 * A payment-only contract — every chest deposit is one — has no "you give" rules and no "you
+	 * get" side, so the panel this stub replaces would draw nothing anyway. Warning about it on
+	 * every deposit taught the log to be ignored, which is the one thing that must not happen to
+	 * the case below it.
+	 */
+    // TS-only: the real view needs no such flag; it simply draws what it is given.
+    private _hidesTerms: boolean = false;
+
     // TS-only: the stub's own state; the real view tracks far more.
     get disposed(): boolean
     {
@@ -31,6 +42,10 @@ export class WiredTradeRequirementsViewStub implements IWiredTradeRequirementsVi
     // TODO(AS3): builds the requirements panel from the contract and opens it when showImmediate.
     requirementsUpdated(requirement: TradeRequirement, showImmediate: boolean): void
     {
+        this._hidesTerms = !requirement.isPaymentOnly();
+
+        if(!this._hidesTerms) return;
+
         log.warn(
             'WiredTradeRequirementsView is not ported: the contract terms cannot be shown '
             + `(type ${requirement.type}, layout "${requirement.layoutType}", showImmediate ${showImmediate}).`
@@ -40,12 +55,16 @@ export class WiredTradeRequirementsViewStub implements IWiredTradeRequirementsVi
     // TODO(AS3): repaints each rule row as the offered items change.
     requirementsStateUpdated(): void
     {
+        if(!this._hidesTerms) return;
+
         log.warn('WiredTradeRequirementsView is not ported: the requirements panel cannot refresh.');
     }
 
     // TODO(AS3): re-runs the "this item satisfies that rule" highlighting.
     highlightRefresh(): void
     {
+        if(!this._hidesTerms) return;
+
         log.warn('WiredTradeRequirementsView is not ported: rule highlighting is unavailable.');
     }
 
