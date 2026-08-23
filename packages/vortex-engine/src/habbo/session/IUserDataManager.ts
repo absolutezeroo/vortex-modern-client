@@ -1,6 +1,7 @@
 import type {IDisposable} from '@core/runtime';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IUserData} from './IUserData';
+import type {ISelectedBadge} from '@habbo/communication/messages/parser/users/HabboUserBadgesMessageParser';
 
 /**
  * Interface for user data manager
@@ -48,12 +49,6 @@ export interface IUserDataManager extends IDisposable
     getRentableBotUserData(webId: number): IUserData | null;
 
     /**
-	 * Pure cache read of a user's selected badges - no network request.
-	 */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/UserDataManager.as::getUserSelectedBadges()
-    getUserSelectedBadges(userId: number): string[];
-
-    /**
 	 * Request a user's selected badges from the server.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/UserDataManager.as::requestUserSelectedBadges()
@@ -69,6 +64,15 @@ export interface IUserDataManager extends IDisposable
 	 * Set user badges
 	 */
     setUserBadges(userId: number, badges: string[]): void;
+
+    /**
+	 * Pure cache read of a user's selected badges - no network request.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/UserDataManager.as::getUserSelectedBadges()
+    getUserSelectedBadges(userId: number): ISelectedBadge[];
+
+    // TS-only: the setter behind `getUserSelectedBadges()` — AS3 writes the map inline.
+    setUserSelectedBadges(userId: number, badges: ISelectedBadge[]): void;
 
     /**
 	 * Remove user data by room index

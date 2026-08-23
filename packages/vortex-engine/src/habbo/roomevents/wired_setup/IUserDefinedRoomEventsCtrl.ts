@@ -11,7 +11,7 @@ import type {PresetManager} from './uibuilder/PresetManager';
  * `wired_setup/UserDefinedRoomEventsCtrl`.
  *
  * Several members reference wired types that are not ported yet (Bloc B/C/D). Their signatures are
- * declared faithfully but typed loosely (`unknown`) with a TODO(AS3) pointing at the real AS3 type,
+ * declared faithfully but typed loosely (`unknown`) with a port-gap marker naming the real AS3 type,
  * rather than omitted — see .claude/rules/30-as3-traceability.md.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/_SafeCls_2147.as

@@ -7,8 +7,9 @@
  * AS3 parses these from the visualization XML; this port receives the same data already decoded
  * from the .nitro bundle, so the element handlers take decoded objects instead of XML nodes.
  *
- * TODO(AS3): `getZOffset()`/`getDirectionValue()`/`getTag()` below are still stubs (no AS3
- * counterpart on this class - they predate this pass).
+  * `getZOffset()`/`getDirectionValue()`/`getTag()` are inherited, not overridden here — see the
+ * note at the bottom of this class for what the three stub overrides that used to sit there did
+ * to every pet sprite lookup.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as
  */

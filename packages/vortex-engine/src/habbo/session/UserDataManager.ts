@@ -4,6 +4,7 @@ import {UserDataType} from './UserData';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import {GetSelectedBadgesMessageComposer} from '../communication/messages/outgoing/users/GetSelectedBadgesMessageComposer';
 import {GetPetInfoMessageComposer} from '../communication/messages/outgoing/room/pet/GetPetInfoMessageComposer';
+import type {ISelectedBadge} from '@habbo/communication/messages/parser/users/HabboUserBadgesMessageParser';
 
 /**
  * Room user data manager
@@ -102,13 +103,30 @@ export class UserDataManager implements IUserDataManager
         this._connection?.send(new GetSelectedBadgesMessageComposer(userId));
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/UserDataManager.as::_userSelectedBadges
+    private _userSelectedBadges: Map<number, ISelectedBadge[]> = new Map();
+
+    /**
+     * The badges a user wears, with their slots and rarities.
+     *
+     * A pure cache read, no side effect - AS3 keeps this strictly separate from
+     * requestUserSelectedBadges() above, which is the only one that sends the composer. The
+     * previous getUserBadges() fused both, so every read fired a fresh network request.
+     *
+     * Empty until the answer to that request lands, which is why the infostand also carries the
+     * plain code list: the first paint of a user's card happens before this can be populated.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/UserDataManager.as::getUserSelectedBadges()
-    // A pure cache read, no side effect - AS3 keeps this strictly separate from
-    // requestUserSelectedBadges() above, which is the only one that sends the composer.
-    // The previous getUserBadges() fused both, so every read fired a fresh network request.
-    getUserSelectedBadges(userId: number): string[]
+    getUserSelectedBadges(userId: number): ISelectedBadge[]
     {
-        return this._userBadges.get(userId) ?? [];
+        return this._userSelectedBadges.get(userId) ?? [];
+    }
+
+    // TS-only: AS3 writes `_userSelectedBadges` inline from its badges handler; this port routes
+    // every user-data write through a setter, as `setUserBadges()` below already does.
+    setUserSelectedBadges(userId: number, badges: ISelectedBadge[]): void
+    {
+        this._userSelectedBadges.set(userId, badges ?? []);
     }
 
     // AS3: .../src/com/sulake/habbo/session/UserDataManager.as::setUserData()

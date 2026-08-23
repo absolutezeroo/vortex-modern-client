@@ -181,7 +181,7 @@ export class SoundSettingsView
     }
 
     /**
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/settings/SoundSettingsView.as
+     * sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/settings/SoundSettingsView.as
      * also declares four `BitmapData` icon fields (`soundsOffIconColor`, `soundsOffIconWhite`,
      * `soundsOnIconColor`, `soundsOnIconWhite`) with public getters, and disposes them here.
      * Nothing in that file — nor in `SoundSettingsItem`, which loads its icons by `assetUri`

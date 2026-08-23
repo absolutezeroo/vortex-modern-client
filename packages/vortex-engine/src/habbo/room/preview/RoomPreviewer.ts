@@ -636,10 +636,12 @@ export class RoomPreviewer
     }
 
     /**
-     * TODO(AS3): AS3 passes a fifth `parameter` argument through to the engine
+          * AS3 passes a fifth `parameter` argument through to the engine
      * (`updateObjectUserAction(roomId, id, action, value, parameter)`); this port's engine method
-     * stops at four, so the parameter is accepted for signature parity and dropped. No current
-     * caller supplies it.
+     * stops at four, so the parameter is accepted for signature parity and dropped. Nothing is
+     * lost: no caller in the whole primary tree passes it, the one branch that would use it feeds
+     * `RoomObjectAvatarCarryObjectUpdateMessage.itemName`, and no AvatarLogic — nor anything else
+     * under `habbo/room/` — ever reads that field.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updateObjectUserAction()
     updateObjectUserAction(action: string, value: number, _parameter: string | null = null): void

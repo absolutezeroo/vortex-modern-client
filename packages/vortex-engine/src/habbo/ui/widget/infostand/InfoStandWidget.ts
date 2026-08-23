@@ -50,6 +50,7 @@ import {InfoStandUserData} from './InfoStandUserData';
 import {InfoStandPetData} from './InfoStandPetData';
 import {InfoStandRentableBotData} from './InfoStandRentableBotData';
 import type {RoomWidgetRentableBotInfoUpdateEvent} from '../events/RoomWidgetRentableBotInfoUpdateEvent';
+import type {ISelectedBadge} from '@habbo/communication/messages/parser/users/HabboUserBadgesMessageParser';
 
 export class InfoStandWidget extends RoomWidgetBase
 {
@@ -337,16 +338,166 @@ export class InfoStandWidget extends RoomWidgetBase
 	 * deferred as display polish, not needed for basic identity display.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onUserInfo()
+    /**
+     * A user's card, opened or refreshed.
+     *
+     * The two flags are the whole point of the comparison above them. A card can be re-sent for
+     * reasons that have nothing to do with badges — a motto edit, a figure change, a respect — and
+     * repainting the badge row then would restart every rarity glow. So: if this is the *same* card
+     * already on screen and its badges have not moved, the row is preserved and no glow plays.
+     *
+     * The one asymmetric case is a user whose slot-indexed badges arrive after the plain codes did:
+     * the incoming record is the poorer of the two, so the richer one already displayed is kept
+     * (`shouldPreserveDisplayedBadges`) and written back onto the record after `setData()`.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onUserInfo()
     private onUserInfo = (event: RoomWidgetUserInfoUpdateEvent): void =>
     {
+        const sameCardOpen = this._userView.window !== null
+            && this._userView.window.visible
+            && this._userData.userId === event.webID;
+        const shownBadges = this._userData.badges;
+        const shownSelected = this._userData.selectedBadges;
+        const preserve = InfoStandWidget.shouldPreserveDisplayedBadges(
+            sameCardOpen, shownBadges, shownSelected, event.badges, event.selectedBadges
+        );
+        const playGlow = InfoStandWidget.shouldPlayGlowForUserInfo(
+            sameCardOpen, shownBadges, shownSelected, event.badges, event.selectedBadges
+        );
+
         this._userData.setData(event);
+
+        if(preserve)
+        {
+            this._userData.badges = shownBadges;
+            this._userData.selectedBadges = shownSelected;
+        }
 
         if(this.handler.container?.sessionDataManager?.isBlocked(event.webID)) return;
 
-        this._userView.update(event);
+        this._userView.update(event, playGlow, preserve);
         this.selectView(InfoStandWidget.VIEW_NAME.USER);
         this.stopUpdateTimer();
     };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::shouldPreserveDisplayedBadges()
+    private static shouldPreserveDisplayedBadges(
+        sameCardOpen: boolean,
+        shownBadges: string[],
+        shownSelected: ISelectedBadge[],
+        badges: string[],
+        selected: ISelectedBadge[]
+    ): boolean
+    {
+        if(!sameCardOpen) return false;
+
+        if(InfoStandWidget.hasSelectedBadges(shownSelected) && !InfoStandWidget.hasSelectedBadges(selected)) return true;
+
+        return InfoStandWidget.areDisplayedBadgesEqual(shownBadges, shownSelected, badges, selected);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::shouldPlayGlowForUserInfo()
+    private static shouldPlayGlowForUserInfo(
+        sameCardOpen: boolean,
+        shownBadges: string[],
+        shownSelected: ISelectedBadge[],
+        badges: string[],
+        selected: ISelectedBadge[]
+    ): boolean
+    {
+        if(!sameCardOpen) return true;
+
+        if(InfoStandWidget.hasSelectedBadges(shownSelected) && !InfoStandWidget.hasSelectedBadges(selected)) return false;
+
+        return !InfoStandWidget.areDisplayedBadgesEqual(shownBadges, shownSelected, badges, selected);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::areDisplayedBadgesEqual()
+    // Once either side has slot-indexed badges, the plain code lists stop being comparable at all:
+    // one of them is derived and the other is not.
+    private static areDisplayedBadgesEqual(
+        shownBadges: string[],
+        shownSelected: ISelectedBadge[],
+        badges: string[],
+        selected: ISelectedBadge[]
+    ): boolean
+    {
+        const hadSelected = InfoStandWidget.hasSelectedBadges(shownSelected);
+        const hasSelected = InfoStandWidget.hasSelectedBadges(selected);
+
+        if(hadSelected || hasSelected)
+        {
+            return hadSelected && hasSelected && InfoStandWidget.areSelectedBadgesEqual(shownSelected, selected);
+        }
+
+        return InfoStandWidget.areBadgeCodesEqual(shownBadges, badges);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::hasSelectedBadges()
+    private static hasSelectedBadges(badges: ISelectedBadge[] | null): boolean
+    {
+        return badges != null && badges.length > 0;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::areBadgeCodesEqual()
+    private static areBadgeCodesEqual(a: string[] | null, b: string[] | null): boolean
+    {
+        const left = a ?? [];
+        const right = b ?? [];
+
+        if(left.length !== right.length) return false;
+
+        for(let i = 0; i < left.length; i++)
+        {
+            if(left[i] !== right[i]) return false;
+        }
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::areSelectedBadgesEqual()
+    // AS3 compares by slot rather than by position, because the wire does not promise an order.
+    private static areSelectedBadgesEqual(a: ISelectedBadge[] | null, b: ISelectedBadge[] | null): boolean
+    {
+        const left = a ?? [];
+        const right = b ?? [];
+
+        if(left.length !== right.length) return false;
+
+        for(let slot = 0; slot < 5; slot++)
+        {
+            const entryA = InfoStandWidget.getSelectedBadgeBySlot(left, slot);
+            const entryB = InfoStandWidget.getSelectedBadgeBySlot(right, slot);
+
+            if(!InfoStandWidget.areSelectedBadgeEntriesEqual(entryA, entryB)) return false;
+        }
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::areSelectedBadgeEntriesEqual()
+    private static areSelectedBadgeEntriesEqual(a: ISelectedBadge | null, b: ISelectedBadge | null): boolean
+    {
+        if(a === b) return true;
+
+        if(a === null || b === null) return false;
+
+        return a.slotId === b.slotId
+            && a.badgeCode === b.badgeCode
+            && a.ownerCount === b.ownerCount
+            && a.badgeRarityId === b.badgeRarityId;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::getSelectedBadgeBySlot()
+    private static getSelectedBadgeBySlot(badges: ISelectedBadge[] | null, slot: number): ISelectedBadge | null
+    {
+        for(const badge of badges ?? [])
+        {
+            if(badge != null && badge.slotId === slot) return badge;
+        }
+
+        return null;
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onBotInfo()
     private onBotInfo = (event: RoomWidgetUserInfoUpdateEvent): void =>

@@ -95,6 +95,7 @@ import {RoomWidgetInfostandExtraParamEnum} from '@habbo/ui/widget/enums/RoomWidg
 import {Vector3d} from '@room/utils/Vector3d';
 import type {IUserData} from '@habbo/session/IUserData';
 import type {InfoStandWidget} from '@habbo/ui/widget/infostand/InfoStandWidget';
+import type {ISelectedBadge} from '@habbo/communication/messages/parser/users/HabboUserBadgesMessageParser';
 
 const log = Logger.getLogger('habbo.ui.handler.InfoStandWidgetHandler');
 
@@ -491,7 +492,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         if(InfoStandWidgetHandler.UNIMPLEMENTED_WIDGET_MESSAGES.has(message.type))
         {
-            log.debug(`TODO(AS3): unimplemented widget message ${message.type}`);
+            log.debug(`Unimplemented widget message ${message.type}`);
         }
 
         return null;
@@ -591,7 +592,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
                 container.connection?.send(new DropCarryItemMessageComposer());
                 break;
             default:
-                log.debug(`TODO(AS3): unimplemented user-action message ${message.type}`);
+                log.debug(`Unimplemented user-action message ${message.type}`);
                 break;
         }
     }
@@ -1323,13 +1324,41 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         }
 
         // getUserSelectedBadges() is a pure cache read; requestUserSelectedBadges() is the
-        // one that sends the composer - kept as two calls (matching AS3's own split) instead
-        // of the old fused getUserBadges(), which fired a request on every read.
-        event.badges = container.roomSession.userDataManager.getUserSelectedBadges(userData.webID);
+        // one that sends the composer — kept as two calls (matching AS3's own split) instead
+        // of the old fused getUserBadges(), which fired a request on every read. AS3 asks first
+        // and reads second, so the first card a player opens shows an empty row and is repainted
+        // when the answer lands.
         container.roomSession.userDataManager.requestUserSelectedBadges(userData.webID);
+
+        const selectedBadges = container.roomSession.userDataManager.getUserSelectedBadges(userData.webID);
+
+        event.selectedBadges = selectedBadges;
+        event.badges = InfoStandWidgetHandler.getBadgeCodesFromSelectedBadges(selectedBadges);
         event.figure = userData.figure;
 
         container.desktopEvents.emit(event.type, event);
+    }
+
+    /**
+     * The badge codes, indexed by the slot each badge sits in.
+     *
+     * Note this is a *sparse* array in AS3 and here: a user wearing only slot 3 gets three empty
+     * holes before it, which is exactly what the view's fallback branch needs so the badge lands
+     * in the right box.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::getBadgeCodesFromSelectedBadges()
+    private static getBadgeCodesFromSelectedBadges(selectedBadges: ISelectedBadge[] | null): string[]
+    {
+        const codes: string[] = [];
+
+        for(const badge of selectedBadges ?? [])
+        {
+            if(badge == null || badge.slotId < 0) continue;
+
+            codes[badge.slotId] = badge.badgeCode;
+        }
+
+        return codes;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetBotInfoMessage()

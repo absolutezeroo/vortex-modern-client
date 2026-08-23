@@ -901,7 +901,10 @@ export class RoomUsersHandler extends BaseHandler
             return;
         }
 
+        // Both shapes: the codes for anything that only wants to draw them, and the full entries
+        // for the infostand, which needs each badge's slot and rarity.
         session.userDataManager.setUserBadges(parser.userId, parser.badges);
+        session.userDataManager.setUserSelectedBadges(parser.userId, parser.selectedBadges);
 
         if(this.listener.sessionEvents)
         {

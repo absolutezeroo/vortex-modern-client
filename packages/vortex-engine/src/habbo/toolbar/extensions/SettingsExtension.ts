@@ -186,7 +186,7 @@ export class SettingsExtension
     {
         if(window === null)
         {
-            log.warn('A settings view built no window - see its TODO(AS3); nothing was opened');
+            log.warn('A settings view built no window - see its own port-gap marker; nothing was opened');
 
             return;
         }

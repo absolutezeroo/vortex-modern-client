@@ -4,6 +4,7 @@
  * @see sources/win63_version/habbo/ui/widget/infostand/InfoStandUserData.as
  */
 import type {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUpdateEvent';
+import type {ISelectedBadge} from '@habbo/communication/messages/parser/users/HabboUserBadgesMessageParser';
 
 export class InfoStandUserData
 {
@@ -60,15 +61,18 @@ export class InfoStandUserData
     // AS3: .../src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::badgesRank
     public badgesRank: number = -1;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::selectedBadges
+    // Kept alongside `badges` because `InfoStandWidget.onUserInfo()` compares the *previous* record
+    // against the incoming one to decide whether to repaint and whether to glow.
+    public selectedBadges: ISelectedBadge[] = [];
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::setData()
-    // TODO(AS3): selectedBadges (badge glow/preserve tracking) is not carried here — deferred with
-    // the same Phase 1 display-polish scope cut as InfoStandWidget.onUserInfo()'s
-    // shouldPreserveDisplayedBadges().
     public setData(event: RoomWidgetUserInfoUpdateEvent): void
     {
         this.userId = event.webID;
         this.userName = event.name;
         this.badges = event.badges;
+        this.selectedBadges = event.selectedBadges;
         this.groupId = event.groupId;
         this.groupName = event.groupName;
         this.groupBadgeId = event.groupBadgeId;

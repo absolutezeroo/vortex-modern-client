@@ -493,7 +493,7 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
 
                 return true;
 
-            // TODO(AS3): `:fps` sets `stage.frameRate` in AS3. There is no equivalent reachable from
+            // `:fps` sets `stage.frameRate` in AS3. There is no equivalent reachable from
             // here — the PixiJS ticker lives in the client package and the engine must not import
             // from it. Consumed rather than spoken, which is what AS3 does.
             case ':fps':

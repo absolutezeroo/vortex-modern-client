@@ -31,7 +31,7 @@ import {FurniInNeighborhood} from './FurniInNeighborhood';
  * All AS3 selector types are now ported and registered. Two visual editors remain inert pending
  * room-engine/rendering infra (their leaves still (de)serialize faithfully): area selection needs the
  * room-engine RoomAreaSelectionManager (UsersInArea/FurniInArea) and the neighborhood floor-drawing
- * canvas needs a bitmap pixel layer (UsersInNeighborhood/FurniInNeighborhood) — see their TODO(AS3)s.
+ * canvas needs a bitmap pixel layer (UsersInNeighborhood/FurniInNeighborhood) — see their own markers.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/selectors/SelectorTypes.as
  */

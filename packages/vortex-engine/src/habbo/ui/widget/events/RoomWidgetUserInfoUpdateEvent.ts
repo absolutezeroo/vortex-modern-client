@@ -4,6 +4,7 @@
  * @see sources/win63_version/habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent.as
  */
 import {RoomWidgetUpdateEvent} from './RoomWidgetUpdateEvent';
+import type {ISelectedBadge} from '@habbo/communication/messages/parser/users/HabboUserBadgesMessageParser';
 
 export class RoomWidgetUserInfoUpdateEvent extends RoomWidgetUpdateEvent
 {
@@ -41,11 +42,9 @@ export class RoomWidgetUserInfoUpdateEvent extends RoomWidgetUpdateEvent
     // AS3: .../src/com/sulake/habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent.as::get badges()
     public badges: string[] = [];
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent.as::selectedBadges
-    // TODO(AS3): no producer sets this yet - AS3 populates it from
-    // requestUserSelectedBadges()'s async response (getBadgeCodesFromSelectedBadges()),
-    // deferred with the same Phase 1 display-polish scope cut noted in
-    // InfoStandUserData.ts's own selectedBadges/badgesRank TODO.
-    public selectedBadges: string[] = [];
+    // The slot-indexed form of `badges` above, and the richer one: it carries each badge's rarity,
+    // which is what decides the glow. `badges` is derived from it when it is present.
+    public selectedBadges: ISelectedBadge[] = [];
     // AS3: .../src/com/sulake/habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent.as::get groupId()
     public groupId: number = 0;
     // AS3: .../src/com/sulake/habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent.as::get groupName()

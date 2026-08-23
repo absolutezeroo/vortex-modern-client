@@ -55,7 +55,7 @@ const log = Logger.getLogger('habbo.session.RoomSessionManager');
  */
 export class RoomSessionManager extends Component implements IRoomSessionManager, IRoomHandlerListener
 {
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as
+    // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as
     // ::onRoomVisualizationSettings() — deliberately not subscribed, and this note is here so the
     // next unwired-code sweep stops re-flagging it as a missing registration.
     //

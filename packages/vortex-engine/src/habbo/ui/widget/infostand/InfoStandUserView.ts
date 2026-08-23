@@ -3,13 +3,15 @@
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as
  *
- * Phase 1 (identity only) port: name (with a working profile-link click/
- * hover), motto (read-only), avatar figure, badges, hand-item, and (when
- * enabled) achievement score. Deferred as explicit TODO(AS3), matching
- * InfoStandWidgetHandler's Phase 1 scope cut: badge glow/rarity/details
- * popup, relationship status display, motto editing, badges-rank
- * leaderboard link, home-page button, and group badge (the handler never
- * populates group data yet).
+ * Name (with a working profile-link click/hover), motto — editable for the player's own card —
+ * avatar figure, badges with their rarity glow colour, hand-item, relationship statuses, the
+ * badges-rank leaderboard link, and, when enabled, achievement score.
+ *
+ * Two things are still missing, each for its own reason. The badge *details* popup is unported.
+ * And `playGlow()` on the badge widget only records the colour: the animation writes Flash filters
+ * onto the window every 16ms, and this port's renderer does not read `GraphicContext.filters` at
+ * all — see BadgeImageWidget.playGlow()'s own marker. Rarity therefore reaches the widget
+ * correctly; it just does not shimmer.
  */
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
@@ -34,6 +36,8 @@ import {RoomWidgetUserActionMessage} from '../messages/RoomWidgetUserActionMessa
 import type {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUpdateEvent';
 import type {InfoStandWidget} from './InfoStandWidget';
 import {Logger} from '@core/utils/Logger';
+import type {ISelectedBadge} from '@habbo/communication/messages/parser/users/HabboUserBadgesMessageParser';
+import {BadgeRarityEnum} from '@habbo/communication/enum/BadgeRarityEnum';
 
 const log = Logger.getLogger('habbo.ui.widget.infostand.InfoStandUserView');
 
@@ -499,13 +503,36 @@ export class InfoStandUserView
         this.updateWindow();
     }
 
+    /**
+     * Puts one badge in one of the five slots.
+     *
+     * The glow colour is only set for a *standalone* rarity tier — the tiers that share a colour
+     * with a neighbour get -1, which is what `glowColor`'s setter reads as "no glow" and clears.
+     * `playGlow` is separate from having a colour: a card that is merely being repainted with the
+     * same badges must not re-animate, so the caller decides.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setBadge()
-    public setBadge(index: number, badgeId: string): void
+    public setBadge(index: number, badgeId: string, selected: ISelectedBadge | null = null, playGlow: boolean = false): void
     {
         const widgetWindow = this._infoBorder?.findChildByName(`badge_${index}`) as IWidgetWindow | null;
         const widget = (widgetWindow?.widget ?? null) as IBadgeImageWidget | null;
 
-        if(widget) widget.badgeId = badgeId;
+        if(!widget) return;
+
+        const uncommonEnabled = this.isUncommonBadgeRarityEnabled();
+
+        widget.badgeId = badgeId;
+        widget.glowColor = selected !== null && BadgeRarityEnum.isStandaloneTier(selected.badgeRarityId, uncommonEnabled)
+            ? BadgeRarityEnum.getGlowColor(selected.badgeRarityId, uncommonEnabled)
+            : -1;
+
+        if(badgeId !== '' && playGlow && widget.glowColor >= 0) widget.playGlow(widget.glowColor);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::isUncommonBadgeRarityEnabled()
+    private isUncommonBadgeRarityEnabled(): boolean
+    {
+        return this._widget.handler.container?.config?.getBoolean('badge_rarity.uncommon') ?? false;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::clearBadges()
@@ -586,34 +613,54 @@ export class InfoStandUserView
         this._widget.handler.container?.connection?.send(new GetExtendedProfileMessageComposer(target.id));
     };
 
+    /**
+     * `preserveBadges` is true when the card is being repainted with badges it is already showing —
+     * see `InfoStandWidget.onUserInfo()`, which works that out by comparing the two records. The
+     * badges are then left exactly as they are rather than cleared and rebuilt, which is what stops
+     * a re-render from restarting every glow.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::update()
-    // TODO(AS3): badge glow/preserve tracking (selectedBadges, playGlow) not
-    // carried — see InfoStandWidget.onUserInfo()'s same scope cut.
-    public update(event: RoomWidgetUserInfoUpdateEvent): void
+    public update(event: RoomWidgetUserInfoUpdateEvent, playGlow: boolean = true, preserveBadges: boolean = false): void
     {
         this.clearBadges();
         this.setGroupBadge(event.groupBadgeId);
-        this.updateInfo(event);
+        this.updateInfo(event, playGlow, !preserveBadges);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::updateInfo()
-    protected updateInfo(event: RoomWidgetUserInfoUpdateEvent): void
+    protected updateInfo(event: RoomWidgetUserInfoUpdateEvent, playGlow: boolean = true, updateBadges: boolean = true): void
     {
         this.name = event.name;
         this.setMotto(event.motto, event.type === 'RWUIUE_OWN_USER');
         this.achievementScore = event.achievementScore;
         this.carryItem = event.carryItem;
         this.setFigure(event.figure);
-        this.updateBadges(event.badges);
+
+        if(updateBadges) this.updateBadges(event.badges, event.selectedBadges, playGlow);
     }
 
+    /**
+     * The slot-indexed list wins when it has arrived, because it is the one that knows where each
+     * badge goes and how rare it is. The plain code list is the fallback for the first paint, when
+     * the answer to `requestUserSelectedBadges()` is still in flight — it fills the slots in wire
+     * order, with no rarity and therefore no glow.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::updateBadges()
-    // TODO(AS3): AS3 prefers `selectedBadges` (slot-indexed, rarity-aware) over
-    // the plain `badges` array when present — not tracked in Phase 1, always
-    // falls through to the plain-badges branch.
-    public updateBadges(badges: string[]): void
+    public updateBadges(badges: string[], selectedBadges: ISelectedBadge[] | null = null, playGlow: boolean = false): void
     {
         this.clearBadges();
+
+        if(selectedBadges !== null && selectedBadges.length > 0)
+        {
+            for(const selected of selectedBadges)
+            {
+                if(selected == null || selected.slotId < 0 || selected.slotId > 4) continue;
+
+                this.setBadge(selected.slotId, selected.badgeCode, selected, playGlow);
+            }
+
+            return;
+        }
 
         if(!badges) return;
 

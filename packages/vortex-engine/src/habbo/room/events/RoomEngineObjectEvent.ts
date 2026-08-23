@@ -42,7 +42,7 @@ export class RoomEngineObjectEvent extends RoomEngineEvent
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::MOUSE_LEAVE
     public static readonly REOE_MOUSE_LEAVE = 'REOE_MOUSE_LEAVE';
 
-    // TODO(AS3): AS3's constructor also takes bubbles/cancelable (forwarded to the Flash Event
+    // AS3's constructor also takes bubbles/cancelable (forwarded to the Flash Event
     // base class) - this port's event system is a plain EventEmitter with no DOM-style bubbling/
     // cancellation semantics, so there is nothing for those two params to control here; every
     // other RoomEngineEvent subclass has the same simplification.

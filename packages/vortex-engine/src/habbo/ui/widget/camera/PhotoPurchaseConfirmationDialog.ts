@@ -9,6 +9,7 @@ import type {CameraPublishStatusMessageEvent} from '@habbo/communication/message
 import type {CompetitionStatusMessageEvent} from '@habbo/communication/messages/incoming/camera/CompetitionStatusMessageEvent';
 import type {CameraPublishStatusMessageParser} from '@habbo/communication/messages/parser/camera/CameraPublishStatusMessageParser';
 import type {CompetitionStatusMessageParser} from '@habbo/communication/messages/parser/camera/CompetitionStatusMessageParser';
+import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import type {CameraWidget} from './CameraWidget';
 
 /**
@@ -569,11 +570,10 @@ export class PhotoPurchaseConfirmationDialog
             {
                 const userName = this._widget?.container?.sessionDataManager?.userName ?? '';
 
-                // TODO(AS3): .../PhotoPurchaseConfirmationDialog.as::windowEventHandler()
-                // AS3 hands `/profile/<user>/photo/<id>` to HabboWebTools.openPage(); the port has
-                // no HabboWebTools, so the deep link is opened directly. `globalThis` is spelt out
-                // because the procedure's own parameter is named `window`, as it is in AS3.
-                globalThis.open(`/profile/${userName}/photo/${this._extraDataId}`, '_blank');
+                // AS3: .../PhotoPurchaseConfirmationDialog.as::windowEventHandler()
+                // The relative path is deliberate: `openPage()` hands it to the hosting page,
+                // which is what knows the hotel's own domain.
+                HabboWebTools.openPage(`/profile/${userName}/photo/${this._extraDataId}`);
                 break;
             }
 
