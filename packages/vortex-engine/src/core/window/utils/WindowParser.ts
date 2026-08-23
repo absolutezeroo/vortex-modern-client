@@ -904,9 +904,27 @@ export class WindowParser implements IWindowParser
         return xml;
     }
 
+    /**
+     * The children `windowToXMLString` emits, taken from the window's layout
+     * child target rather than the window itself.
+     *
+     * AS3 branches on `window is IIterable`: an iterable window is walked through
+     * `IIterable.get iterator`, which `FrameController` overrides to
+     * `content.iterator`, `TabContextController` to `selector.iterator`, and so
+     * on — this port's `getLayoutChildTarget()` is that same redirect one level
+     * up (the target instead of an iterator over it), and the parse side already
+     * goes through it. Only AS3's non-iterable `else` branch had been ported, so
+     * a frame serialized its own chrome — all of which is `_EXCLUDE`-tagged —
+     * and emitted no `<children>` at all: every frame-rooted layout round-tripped
+     * to an empty `<frame/>`, its real content silently dropped.
+     *
+     * The `_EXCLUDE` filter stays: AS3 applies it on both branches, and it is
+     * what skips excluded items sitting *inside* a content container.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::windowToXMLString()
     private serializeChildren(window: IWindow): string 
     {
-        const container = window as unknown as { numChildren?: number; getChildAt?: (index: number) => IWindow | null };
+        const container = window.getLayoutChildTarget() as unknown as { numChildren?: number; getChildAt?: (index: number) => IWindow | null };
 
         if(typeof container.numChildren !== 'number' || typeof container.getChildAt !== 'function' || container.numChildren <= 0) 
         {
