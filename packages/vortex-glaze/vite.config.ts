@@ -128,6 +128,10 @@ function glazeSavePlugin(): Plugin
  */
 export default defineConfig({
     plugins: [glazeSavePlugin()],
+    server: {
+        port: 5174,
+        strictPort: true,
+    },
     publicDir: resolve(__dirname, '../vortex-client/public'),
     resolve: {
         alias: {

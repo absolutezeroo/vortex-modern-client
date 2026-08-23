@@ -37,6 +37,8 @@ export default defineConfig(({command}) => ({
         },
     },
     server: {
+        port: 5173,
+        strictPort: true,
         proxy: {
             '/webapi': {
                 target: 'http://localhost:8080',
