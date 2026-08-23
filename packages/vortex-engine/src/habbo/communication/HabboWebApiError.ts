@@ -15,6 +15,14 @@ export class HabboWebApiError
     public static readonly LOGIN_USER_BANNED = 'login.user_banned';
     public static readonly UNAUTHORIZED_STAFF_LOGIN = 'unauthorized-staff-login';
     public static readonly LOGIN_FAILED = 'pocket.auth.login_failed';
+    /**
+     * TS-only: the two second-factor answers `vortex-emulator` adds to this endpoint
+     * (`WebApiAuthService.LoginAsync`). Both ride a 401 with no session, exactly like
+     * `LOGIN_FAILED`, and the error string is the only thing telling them apart:
+     * MFA_REQUIRED means "right password, now send a code", INVALID_CODE means "that code is wrong".
+     */
+    public static readonly MFA_REQUIRED = 'pocket.auth.mfa_required';
+    public static readonly INVALID_CODE = 'pocket.auth.invalid_code';
     // AS3: .../src/com/sulake/habbo/communication/HabboWebApiError.as::LOGIN_NO_AVATARS
     public static readonly LOGIN_NO_AVATARS = 'pocket.auth.no_avatars';
     public static readonly VALID_EMAIL_REQUIRED = 'pocket.auth.valid_email_required';

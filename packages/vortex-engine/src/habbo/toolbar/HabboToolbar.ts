@@ -1,5 +1,5 @@
 import {EventEmitter} from 'eventemitter3';
-import {Component, ComponentDependency, type IContext,} from '@core/runtime';
+import {Component, ComponentDependency, type IContext, type ICore,} from '@core/runtime';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
@@ -788,21 +788,20 @@ export class HabboToolbar extends Component implements IHabboToolbar
     }
 
     /**
-	 * Reboots the client.
+	 * Reboots the client — this is what the toolbar's Log out button does.
 	 *
-	 * TODO(AS3): source_as_win63/core/runtime/class_20.as::reboot() sets a
-	 * `_rebootOnNextFrame` flag that, on the next enterFrame tick, dispatches a
-	 * "COMPONENT_EVENT_REBOOT" event - presumably handled by the top-level bootstrap to
-	 * tear down and reinitialize the whole client/connection. Not ported yet: this
-	 * client's bootstrap (VortexApp/App.ts) has no COMPONENT_EVENT_REBOOT listener, so
-	 * there's nothing to dispatch to.
+	 * `PurseAreaExtension.onClick()` maps `logout_button` to this and to nothing else: AS3 has no
+	 * separate logout path, because rebooting the AIR client IS logging out. The reboot itself is
+	 * three hops away — this sets `_rebootOnNextFrame` on the core, whose next frame dispatches
+	 * COMPONENT_EVENT_REBOOT, which `VortexMain.onCoreReboot()` turns into a restart.
 	 *
-	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as reboot()
+	 * The cast mirrors AS3's `(context as _SafeCls_58)`: `IContext` is the narrow view a component
+	 * gets, and `reboot()` is declared one level up on `ICore`.
 	 */
     // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::reboot()
     reboot(): void
     {
-        log.warn('HabboToolbar.reboot() is not implemented yet - client reboot is not wired up');
+        (this.context as ICore).reboot();
     }
 
     /**

@@ -135,8 +135,15 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
         this.initHabboWebApiSession();
     }
 
-    // AS3: loginWithCredentials(_arg_1:String, _arg_2:String, _arg_3:int=0)
-    public loginWithCredentials(email: string, password: string, loginMode: number = 0): void
+    /**
+     * AS3: loginWithCredentials(_arg_1:String, _arg_2:String, _arg_3:int=0)
+     *
+     * `code` is the TS-only second factor (see `IHabboWebApiSession.login()`). It is deliberately
+     * NOT kept in a field the way `_name`/`_password` are: the two survive so the unreachable
+     * `_autoLogin` re-login can replay them, and a TOTP code is single-use and expires, so replaying
+     * one would fail the very attempt it was meant to rescue.
+     */
+    public loginWithCredentials(email: string, password: string, loginMode: number = 0, code?: string): void
     {
         this._name = email;
         this._password = password;
@@ -144,7 +151,7 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider,
 
         if(this._session)
         {
-            this._session.login(email, password);
+            this._session.login(email, password, code);
 
             return;
         }

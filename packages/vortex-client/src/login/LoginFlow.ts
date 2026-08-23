@@ -335,10 +335,10 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
         this.layoutMainElements();
     }
 
-    // AS3: initLogin(_arg_1:String, _arg_2:String)
-    public initLogin(email: string, password: string): void
+    // AS3: initLogin(_arg_1:String, _arg_2:String) — `code` is TS-only, see `ILoginContext`.
+    public initLogin(email: string, password: string, code?: string): void
     {
-        this._provider.loginWithCredentials(email, password);
+        this._provider.loginWithCredentials(email, password, 0, code);
     }
 
     /**
@@ -860,6 +860,26 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
             case 'pocket.auth.login_failed':
                 key = 'connection.login.error.-3.desc';
                 break;
+
+            // TS-only: `vortex-emulator`'s two second-factor answers. Both arrive here rather than
+            // through a viewer callback of their own because the provider already funnels every
+            // `/api/public/authentication/login` failure into `showInvalidLoginError()` — the error
+            // string is all that separates them, and this switch is where it is read.
+            //
+            // Messages are literals for the same reason `RegisterView`'s are: no `pocket.auth`
+            // second-factor key exists in any of the twelve `default_localizations*` embeds, and
+            // those embeds are built from the dump, so adding one there would not survive.
+            case 'pocket.auth.mfa_required':
+                this._loginView?.requireCode();
+                this.showErrorMessage('Enter the 6-digit code from your authenticator app.');
+
+                return;
+
+            case 'pocket.auth.invalid_code':
+                this._loginView?.requireCode();
+                this.showErrorMessage('That code is not right. Try the current one.');
+
+                return;
 
             case 'pocket.auth.no_avatars':
                 key = 'connection.login.missing_avatars';

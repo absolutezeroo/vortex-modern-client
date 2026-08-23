@@ -49,6 +49,9 @@ export class LoginView extends Sprite
     // AS3: _passwordField
     private _passwordField: InputField | null = null;
 
+    // TS-only: the second-factor box. Null until the server asks for one — see `requireCode()`.
+    private _codeField: InputField | null = null;
+
     // AS3: _initialized
     private _initialized: boolean = false;
 
@@ -187,6 +190,37 @@ export class LoginView extends Sprite
         this.addChild(this._passwordField);
     }
 
+    /**
+     * TS-only: reveals the second-factor box, once, after `/api/public/authentication/login` has
+     * answered `pocket.auth.mfa_required` (or `invalid_code` on a retry).
+     *
+     * The field is built here rather than built hidden at `init()` because an `InputField` puts a
+     * real DOM `<input>` over the canvas: a hidden one is still a focusable, autofillable element
+     * the user can tab into, which is the same class of leak `unfocus()` exists to prevent. Nothing
+     * to hide is simpler than something hidden.
+     *
+     * The prompt is a literal for the reason `RegisterView`'s captions are — no second-factor key
+     * exists in the `default_localizations*` embeds, which are built from the dump.
+     */
+    public requireCode(): void
+    {
+        if(this._codeField || !this._passwordField) return;
+
+        this._codeField = new InputField(
+            this._context,
+            this._loginAreaWidth,
+            'Authentication code',
+            '',
+            '',
+            ''
+        );
+        // `InputField` assumes a non-password box is the login one and announces `username` to the
+        // browser; a one-time code is neither, and this is the setter that exists for that case.
+        this._codeField.autoComplete = 'one-time-code';
+        this.addChild(this._codeField);
+        this._onAlignElements();
+    }
+
     // AS3: onAddedToStage(_arg_1:Event)
     private _onAddedToStage = (): void =>
     {
@@ -205,6 +239,13 @@ export class LoginView extends Sprite
 
         LoaderUI.lineUpVertically(this._emailField, -20, this._passwordField);
         LoaderUI.alignAnchors(this._emailField, 0, 'l', this._passwordField);
+
+        // TS-only: the code box continues the same chain when it exists — see `requireCode()`.
+        if(this._codeField)
+        {
+            LoaderUI.lineUpVertically(this._passwordField, -20, this._codeField);
+            LoaderUI.alignAnchors(this._emailField, 0, 'l', this._codeField);
+        }
         LoaderUI.alignAnchors(this._emailField, 0, 'r', this._saveButton);
         LoaderUI.lineUpHorizontallyRevers(this._saveButton, 20, this._cancelButton);
 
@@ -224,7 +265,7 @@ export class LoginView extends Sprite
     {
         if(!this._emailField || !this._passwordField) return;
 
-        this._context.initLogin(this._emailField.text, this._passwordField.text);
+        this._context.initLogin(this._emailField.text, this._passwordField.text, this._codeField?.text);
     };
 
     // AS3: onCancel(_arg_1:Button)
@@ -246,5 +287,8 @@ export class LoginView extends Sprite
         this._saveButton?.dispose();
         this._cancelButton?.dispose();
         this._registerButton?.dispose();
+        // TS-only: an InputField owns a DOM <input>; the two AS3 ones are leaked here already, but
+        // this one is created mid-session and must not outlive the view that made it.
+        this._codeField?.dispose();
     }
 }

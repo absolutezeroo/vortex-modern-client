@@ -252,10 +252,16 @@ export class HabboWebApiSession implements IHabboWebApiSession, IApiListener
         this.executeRequest('activate', {token});
     }
 
-    // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::login()
-    public login(email: string, password: string): void 
+    /**
+     * AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::login()
+     *
+     * `code` is TS-only — see `IHabboWebApiSession.login()`. It is omitted from the body rather than
+     * sent empty: the emulator's `LoginRequest.Code` is nullable and a first attempt is meant to
+     * carry nothing, which is what makes the server answer `mfa_required` instead of `invalid_code`.
+     */
+    public login(email: string, password: string, code?: string): void
     {
-        this.executeRequest('login', {email, password});
+        this.executeRequest('login', code ? {email, password, code} : {email, password});
     }
 
     // AS3: .../src/com/sulake/habbo/communication/HabboWebApiSession.as::facebook()

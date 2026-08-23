@@ -115,7 +115,12 @@ export interface IHabboWebApiSession {
 
     hello(): void;
 
-    login(email: string, password: string): void;
+    /**
+     * TS-only third argument: `vortex-emulator`'s `/api/public/authentication/login` reads a `Code`
+     * off the body and answers 401 `pocket.auth.mfa_required` when the account has a second factor
+     * the request did not carry. AS3 has no such argument — the 701 client predates the factor.
+     */
+    login(email: string, password: string, code?: string): void;
 
     facebook(accessToken: string): void;
 

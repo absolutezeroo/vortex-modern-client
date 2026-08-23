@@ -20,10 +20,10 @@ export interface ILoginProvider
      * AS3: function loginWithCredentials(_arg_1:String, _arg_2:String, _arg_3:int=0):void
      *
      * `_arg_3` is stored and never read by the 701 provider; kept because it is part of the
-     * interface's shape.
+     * interface's shape. `code` is a TS-only fourth argument — see `IHabboWebApiSession.login()`.
      */
     // AS3: .../src/com/sulake/habbo/communication/login/ILoginProvider.as::loginWithCredentials()
-    loginWithCredentials(email: string, password: string, loginMode?: number): void;
+    loginWithCredentials(email: string, password: string, loginMode?: number, code?: string): void;
 
     // AS3: function loginWithCredentialsWeb(_arg_1:String):void
     loginWithCredentialsWeb(uniqueId: string): void;

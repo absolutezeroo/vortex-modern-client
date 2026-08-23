@@ -44,7 +44,7 @@ import {TextAsset} from '@core/assets/TextAsset';
 import {UnknownAsset} from '@core/assets/UnknownAsset';
 import {CoreCommunicationManager} from '@core/communication/CoreCommunicationManager';
 import type {CoreComponentContext} from '@core/runtime/CoreComponentContext';
-import {CoreSetup} from '@core/runtime/CoreComponentContext';
+import {CoreComponentContextEvents, CoreSetup} from '@core/runtime/CoreComponentContext';
 import {Logger} from '@core/utils/Logger';
 import {FrameTimings} from '@core/utils/FrameTimings';
 import type {IVortexConfig, IVortexWindowAssets} from './Vortex';
@@ -613,6 +613,12 @@ export class VortexMain implements IVortexMain
         const ctx = Core.instantiate(
             CoreSetup.FRAME_UPDATE_SIMPLE
         ) as CoreComponentContext;
+
+        // AS3: _loc1_.addEventListener("COMPONENT_EVENT_REBOOT", onCoreReboot), in prepareCore()
+        // right after Core.instantiate. Its sibling COMPONENT_EVENT_ERROR is not subscribed here
+        // because this port's core never emits it — `CoreComponentContextEvents` has RUNNING and
+        // REBOOT only, and `onCoreError()` is reached through `Vortex.reportCrash` instead.
+        ctx.events.on(CoreComponentContextEvents.REBOOT, this.onCoreReboot);
 
         // Set target FPS from ticker
         ctx.targetFps = this._application!.ticker.maxFPS || 60;
@@ -1447,15 +1453,34 @@ export class VortexMain implements IVortexMain
     }
 
     /**
-     * Handle a core component reboot request.
+     * Handle a core component reboot request — in practice, the toolbar's Log out button
+     * (`PurseAreaExtension` → `HabboToolbar.reboot()` → `ICore.reboot()`).
      *
-     * @see sources/PRODUCTION-201601012205-226667486/src/HabboMain.as onCoreReboot()
+     * AS3 does `shutdownCore(); NativeApplication.nativeApplication.exit(1)`: it does NOT restart
+     * in process. It kills the AIR process and leaves the relaunch to the launcher, which comes
+     * back up at the login flow because the SSO ticket died with the process.
+     *
+     * A page reload is that same thing in a browser, and it lands in the same place: `index.html`
+     * builds `window.VortexConfig` with no `ssoTicket`, the login flow only produces one at
+     * runtime, and `App.init()` gates on `if(!configuredTicket) showLoginFlow()`. So a fresh
+     * document has no ticket and opens on the login flow, exactly as AS3's relaunch does.
+     *
+     * The in-process alternative — dispose the core, the room engine, the window system and every
+     * manager, then re-run the boot — is not what AS3 does and would be the first time this port
+     * ever ran a full teardown; a single leaked listener, texture or socket would surface as a
+     * subtly broken second session. Reloading has no such failure mode.
+     *
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as::onCoreReboot()
      */
     // AS3: .../src/binaryData/HabboAir.as::onCoreReboot()
-    private onCoreReboot(): void 
+    private onCoreReboot = (): void =>
     {
-        log.warn('Core reboot requested');
+        log.warn('Reboot application!');
 
+        // Kept ahead of the reload for anything embedding the engine that wants to know; nothing
+        // in this client listens, and the reload wins either way.
         Vortex.instance.vortexEvents.emit('reboot');
-    }
+
+        window.location.reload();
+    };
 }

@@ -15,8 +15,15 @@ import type {IUIContext} from '../onBoardingHcUi/IUIContext';
 
 export interface ILoginContext extends IUIContext
 {
-    // AS3: function initLogin(_arg_1:String, _arg_2:String):void
-    initLogin(email: string, password: string): void;
+    /**
+     * AS3: function initLogin(_arg_1:String, _arg_2:String):void
+     *
+     * `code` is a TS-only third argument — the second factor `vortex-emulator` asks for. It is empty
+     * on a first attempt; `LoginView` only has a box for it once the server has answered
+     * `pocket.auth.mfa_required`.
+     */
+    // AS3: .../src/login/ILoginContext.as::initLogin()
+    initLogin(email: string, password: string, code?: string): void;
 
     // TS-only: no AS3 counterpart — the 701 dump has no screen that registers an account, so nothing
     // there ever needed to ask the flow for it. See `RegisterView`'s header.
