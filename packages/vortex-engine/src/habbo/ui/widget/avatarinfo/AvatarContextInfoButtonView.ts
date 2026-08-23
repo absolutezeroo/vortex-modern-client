@@ -9,6 +9,8 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import {ButtonMenuView} from '../contextmenu/ButtonMenuView';
 import type {IScreenRectangle} from '../contextmenu/ContextInfoView';
+import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
+import {RelationshipStatusEnum} from '@habbo/friendlist/RelationshipStatusEnum';
 
 export class AvatarContextInfoButtonView extends ButtonMenuView
 {
@@ -129,10 +131,25 @@ export class AvatarContextInfoButtonView extends ButtonMenuView
         return offset;
     }
 
+    /**
+     * The little heart/smile/bobba badge beside a friend's name.
+     *
+     * The asset name is built from the status rather than switched on, which is why an unset
+     * relationship still resolves — `statusAsString()` answers for every value including "none".
+     */
     // AS3: AvatarContextInfoButtonView.as::updateRelationshipStatus()
-    // TODO(AS3): render the friend relationship badge (needs IHabboFriendList
-    // status → asset uri + IStaticBitmapWrapperWindow.assetUri). Deferred.
     protected updateRelationshipStatus(): void
     {
+        const friendList = this._widget.friendList;
+
+        if(friendList === null) return;
+
+        const badge = this._window?.findChildByName('relationship_status') as IStaticBitmapWrapperWindow | null;
+
+        if(badge == null) return;
+
+        badge.assetUri = 'relationship_status_' + RelationshipStatusEnum.statusAsString(
+            friendList.getRelationshipStatus(this.userId)
+        );
     }
 }

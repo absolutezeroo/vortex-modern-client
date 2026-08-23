@@ -1072,14 +1072,19 @@ export class FurniModel implements IFurniModel
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::subCategorySwitch()
     // TODO(AS3): trading/empty subcategory NFT-tab toggle (_showingNfts flip + updateGridFilters())
     // depends on the web3tradeEnabled flow, not ported here yet.
-    // TODO(AS3): the wired_trading branch also calls view.resetFilterOption() (resets the
-    // filter.options dropdown to "all" and repopulates its type list) - FurniView.ts has no
-    // populateTypeFilterOptions()/resetFilterOption() of its own yet.
     subCategorySwitch(category: string): void
     {
         if(category === 'wired_trading' || category === 'trading')
         {
             this.cancelFurniInMover();
+        }
+
+        // Only the wired branch resets the filters: a plain trade shows the same inventory the
+        // player was just browsing, while a wired contract is about specific items a leftover
+        // filter may be hiding.
+        if(category === 'wired_trading')
+        {
+            this._view.resetFilterOption();
         }
         else if(category === 'empty')
         {

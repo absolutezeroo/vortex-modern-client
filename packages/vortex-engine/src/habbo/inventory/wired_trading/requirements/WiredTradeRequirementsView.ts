@@ -47,9 +47,11 @@ export class WiredTradeRequirementsView implements IWiredTradeRequirementsView
     /**
      * The highlight pulse: 500ms in 16ms steps, fading a border in and out again.
      */
-    // AS3: WiredTradeRequirementsView.as::highlight() — its four locals.
+    // AS3: WiredTradeRequirementsView.as::highlight() — its `transitionDuration` local.
     private static readonly HIGHLIGHT_DURATION_MS: number = 500;
+    // AS3: WiredTradeRequirementsView.as::highlight() — its `delay` local.
     private static readonly HIGHLIGHT_STEP_MS: number = 16;
+    // AS3: WiredTradeRequirementsView.as::highlight() — its `maxValue` local.
     private static readonly HIGHLIGHT_MAX_BLEND: number = 0.35;
 
     // AS3: WiredTradeRequirementsView.as::_disposed

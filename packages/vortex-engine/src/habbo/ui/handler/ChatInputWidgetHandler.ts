@@ -47,6 +47,7 @@ import {RoomStressTest} from '@habbo/room/utils/RoomStressTest';
 import {PerfMonitorWindow} from '@habbo/perf/PerfMonitorWindow';
 import {AvatarRenderMode} from '@habbo/avatar/AvatarRenderMode';
 import {RoomCullingMode} from '@habbo/room/renderer/RoomCullingMode';
+import {FriendBarResizeEvent} from '@habbo/friendbar/events/FriendBarResizeEvent';
 
 const log = Logger.getLogger('habbo.ui.handler.ChatInputWidgetHandler');
 
@@ -1005,14 +1006,15 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
     };
 
     /**
-     * TODO(AS3): AS3 also processes `FBE_BAR_RESIZE_EVENT` (which calls
-     * `widget.checkChatInputPosition()`), `SDTWE_PURCHASABLE_STYLES_UPDATED` (`refreshChatStyles()`)
-     * and `hrwe_hide_room_widget`. None of the three event buses is wired to this handler yet.
+     * TODO(AS3): AS3 processes two more events this port cannot raise yet —
+     * `SDTWE_PURCHASABLE_STYLES_UPDATED`, which calls a `refreshChatStyles()` the chat-input widget
+     * does not have, and `hrwe_hide_room_widget`, whose `HideRoomWidgetEvent` is unported. The
+     * friend-bar resize is wired: it is the one whose handler exists on both sides.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::getProcessedEvents()
     public getProcessedEvents(): string[]
     {
-        return ['RSCE_FLOOD_EVENT'];
+        return ['RSCE_FLOOD_EVENT', FriendBarResizeEvent.FRIENDBAR_RESIZE_EVENT];
     }
 
     // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::update()
@@ -1035,6 +1037,16 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
                 RoomWidgetFloodControlEvent.FLOOD_CONTROL,
                 new RoomWidgetFloodControlEvent(Number.isNaN(seconds) ? 0 : seconds)
             );
+
+            return;
+        }
+
+        // The friend bar sits above the chat input; when it grows or shrinks, the input has to move
+        // with it. AS3 casts the event and then ignores the cast — only the fact that it arrived
+        // matters.
+        if(typedEvent.type === FriendBarResizeEvent.FRIENDBAR_RESIZE_EVENT)
+        {
+            this._widget?.checkChatInputPosition();
         }
     }
 }

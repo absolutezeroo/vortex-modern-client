@@ -831,6 +831,26 @@ export class FurniView
         }
     };
 
+    /**
+     * Puts both filter dropdowns back to their defaults and re-applies them.
+     *
+     * Called when the inventory switches to the wired-trading sub-category: a filter left over from
+     * browsing hides items the contract may be asking for, and the player has no reason to connect
+     * the two.
+     *
+     * AS3 splits this across `resetFilterOption()` and `populateTypeFilterOptions("all", "any")`,
+     * because its type list depends on the main filter's value. This port's placement list is fixed,
+     * so re-populating both is the same thing said once.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::resetFilterOption()
+    resetFilterOption(): void
+    {
+        if(!this._window) return;
+
+        this.populateFilterOptions();
+        this.updateGridFilters();
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::populateFilterOptions()
     private populateFilterOptions(): void
     {
