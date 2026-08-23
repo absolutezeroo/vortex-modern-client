@@ -298,12 +298,20 @@ export class ExtendedProfileWindowCtrl
 
         if(levelValue) levelValue.caption = profile.accountLevel.toString();
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as:314-323
-        // sets `badgeCount.caption = totalBadges` and, when `totalBadgesRank >= 0`, shows
-        // `badgeRank` as "(#<rank>)". Both fields are on the 2026 wire but neither this port's
-        // parser nor `vortex-emulator` carries them — see the gap documented on
-        // `ExtendedProfileData`, which names the four trailing fields and the composer that has
-        // to grow them first. Until then both captions keep their layout defaults.
+        const badgeCount = window.findChildByName('badgeCount');
+
+        if(badgeCount) badgeCount.caption = profile.totalBadges.toString();
+
+        // The rank row hides entirely below zero rather than showing "(#-1)": a server that does
+        // not rank badges sends -1, and every profile would otherwise carry a nonsense rank.
+        const badgeRank = window.findChildByName('badgeRank');
+
+        if(badgeRank)
+        {
+            badgeRank.visible = profile.totalBadgesRank >= 0;
+
+            if(badgeRank.visible) badgeRank.caption = `(#${profile.totalBadgesRank})`;
+        }
 
         const blockedContainer = window.findChildByName('blocked_container');
 

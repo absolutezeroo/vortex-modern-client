@@ -61,6 +61,8 @@ import type {IRoomObjectVisualizationFactory} from '@room/object/IRoomObjectVisu
 import type {RoomRenderingCanvas} from './renderer/RoomRenderingCanvas';
 import type {IStuffData} from './object/data/IStuffData';
 import type {IGetImageListener} from './IGetImageListener';
+import {BuilderClubUtils} from '@habbo/utils/BuilderClubUtils';
+import {HabboToolbarIconEnum} from '@habbo/toolbar/HabboToolbarIconEnum';
 import {ImageResult} from './ImageResult';
 import type {ISelectedRoomObjectData} from './ISelectedRoomObjectData';
 
@@ -3959,28 +3961,22 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     /**
-     * TODO(AS3): AS3 plays the pickup animation here — when `pickerId` is the local user, it takes
-     * the furni's screen position, builds its icon
-     * (`getFurnitureIcon(typeId, null, extras, stuffData)`) and hands it to
-     * `toolbar.createTransitionToIcon(INVENTORY, …)` so the item visibly flies into the inventory.
-     * Skipped entirely when the model's `furniture_disable_picking_animation` is 1.
+     * Removes a floor item, and — when the local player is the one who picked it up — flies its
+     * icon into the inventory button on the way out.
      *
-     * Every collaborator now exists — `_toolbar`, `_sessionDataManager`,
-     * `getRoomObjectScreenLocation()`, `getFurnitureIcon()`, `StuffDataFactory`,
-     * `HabboToolbar.createTransitionToIcon()`. The one thing that does not is a *synchronous* icon:
-     * AS3 reads `getFurnitureIcon(...).data` on the spot, while this port's `ImageResult` always
-     * takes the pending path (Texture→ImageBitmap conversion is async — see `ImageResult.ts`), so
-     * `data` is null at this point. Wiring it needs an `IGetImageListener` that fires the transition
-     * from `imageReady()`, which is a port-specific structure, not a transcription.
+     * The animation has to be started *before* the object is disposed: both the screen position it
+     * flies from and the type/extras the icon is built from come off the room object's model.
      */
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::disposeObjectFurniture()
     disposeObjectFurniture(
         roomId: number,
         id: number,
-        _pickerId?: number,
+        pickerId: number = -1,
         refresh: boolean = false
     ): boolean
     {
+        this.playPickupAnimation(roomId, id, pickerId);
+
         const success = this.disposeRoomObject(roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE);
 
         // AS3 (_SafeCls_90.as:3238-3241) only refreshes the tile map when the caller
@@ -3993,6 +3989,69 @@ export class RoomEngine extends Component implements IRoomEngine,
         if(success && refresh) this.refreshTileObjectMap(roomId, 'RoomEngine.disposeObjectFurniture()');
 
         return success;
+    }
+
+    /**
+     * The "furni flies into your inventory" animation.
+     *
+     * Four things have to hold before it plays, and each rules out a case where it would be wrong:
+     * the picker is the local player (someone else's pickup goes into *their* inventory), the id is
+     * neither a Builders Club nor a wired temp id (those objects have no inventory item behind
+     * them), the object is still on screen, and its own model does not ask to be picked up
+     * silently.
+     *
+     * Where this necessarily differs from AS3: `getFurnitureIcon()` there returns a BitmapData that
+     * is readable on the spot, while this port's `ImageResult` converts a Texture to an ImageBitmap
+     * asynchronously, so `data` is null at this point for anything not already cached. The listener
+     * covers both — a warm icon comes back on `data` and starts the flight immediately, a cold one
+     * arrives at `imageReady()` a frame or two later and starts it then. The object is long gone by
+     * then, which is exactly why the *start position* is captured up front rather than looked up in
+     * the callback.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::disposeObjectFurniture()
+    private playPickupAnimation(roomId: number, id: number, pickerId: number): void
+    {
+        const toolbar = this._toolbar;
+
+        if(toolbar === null || this._sessionDataManager === null) return;
+        if(pickerId !== this._sessionDataManager.userId) return;
+        if(BuilderClubUtils.isBuilderClubId(id) || BuilderClubUtils.isTempId(id)) return;
+
+        const object = this.getRoomObject(roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE);
+
+        if(object === null) return;
+
+        const screenLocation = this.getRoomObjectScreenLocation(
+            roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE
+        );
+
+        if(screenLocation === null) return;
+
+        const model = object.getModel();
+
+        if(model === null) return;
+        if(model.getNumber(RoomObjectVariableEnum.FURNITURE_DISABLE_PICKING_ANIMATION) === 1) return;
+
+        const typeId = model.getNumber(RoomObjectVariableEnum.FURNITURE_TYPE_ID);
+        const extras = model.getString(RoomObjectVariableEnum.FURNITURE_EXTRAS);
+        const dataFormat = model.getNumber(RoomObjectVariableEnum.FURNITURE_DATA_FORMAT);
+        const stuffData = StuffDataFactory.getStuffDataForType(dataFormat);
+        const startX = screenLocation.x;
+        const startY = screenLocation.y;
+        const listener: IGetImageListener = {
+            imageReady: (_imageId: number, data: ImageBitmap | null): void =>
+            {
+                if(data !== null) toolbar.createTransitionToIcon(HabboToolbarIconEnum.INVENTORY, data, startX, startY);
+            },
+            imageFailed: (): void =>
+            {
+                // Nothing to do: a missing icon costs the animation, not the pickup.
+            },
+        };
+
+        const icon = this.getFurnitureIcon(typeId, listener, extras, stuffData);
+
+        if(icon.data !== null) toolbar.createTransitionToIcon(HabboToolbarIconEnum.INVENTORY, icon.data, startX, startY);
     }
 
     addObjectWallItem(

@@ -228,9 +228,9 @@ export class BottomBarLeft
     private _unseenRewardTrackRewardsCount: number = 0;
 
     /**
-     * TODO(AS3): nothing raises this yet. Its source is `qe_urtrcue`, dispatched by a
-     * RewardTrackController this port does not have — see HabboQuestEngine.update()'s own TODO.
-     * The setter exists so `unseenProgMenuCount` below sums the same three things AS3 does.
+     * Raised by `qe_urtrcue`, which `RewardTrackController` dispatches whenever the number of
+     * unclaimed rewards changes. `unseenProgMenuCount` below sums this with achievements and daily
+     * tasks into the single badge the progression icon carries.
      */
     // AS3: .../src/com/sulake/habbo/toolbar/BottomBarLeft.as::set unseenRewardTrackRewardsCount()
     set unseenRewardTrackRewardsCount(value: number)

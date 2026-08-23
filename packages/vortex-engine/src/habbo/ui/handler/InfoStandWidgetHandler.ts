@@ -9,8 +9,8 @@
  * `getWidgetMessages()` returns the full AS3 message-type list (so `RoomDesktop`
  * registers this handler for all of them, matching AS3 structure exactly), but
  * `processWidgetMessage()` only implements the furni/user/bot-relevant cases.
- * Every other case is a documented `TODO(AS3)` — no case from `getWidgetMessages()`
- * is silently dropped from the switch.
+ * Every other case carries its own port-gap marker — no case from `getWidgetMessages()` is
+ * silently dropped from the switch.
  */
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';

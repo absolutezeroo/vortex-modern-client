@@ -297,7 +297,7 @@ export class ItemTypeSelectionPreset extends WiredUIPreset
     /**
 	 * Filter the table against the search box.
 	 *
-	 * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/uibuilder/presets/contracts/ItemTypeSelectionPreset.as::updateFilters()
+	 * sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/uibuilder/presets/contracts/ItemTypeSelectionPreset.as::updateFilters()
 	 * **The AS3 body is mangled and this is a reconstruction.** The decompile reads:
 	 *
 	 *     for each(item in _allFurnis) {
