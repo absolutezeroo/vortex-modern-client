@@ -918,24 +918,59 @@ export class WindowParser implements IWindowParser
      * and emitted no `<children>` at all: every frame-rooted layout round-tripped
      * to an empty `<frame/>`, its real content silently dropped.
      *
+     * A list or grid target enumerates its *items*, not its raw children: AS3's
+     * `ItemListController.iterator` is `new ItemListIterator(this)` and
+     * `ItemGridController.iterator` is `new ItemGridIterator(this)`, both of
+     * which walk the items. Reading `numChildren` there yields only the
+     * `_EXCLUDE`-tagged `_container`, so an `itemlist`-rooted layout serialized
+     * as empty exactly like a frame did — `furni_view` has three list items and
+     * saved as one bare `<itemlist/>`. These three cases mirror the parse side's
+     * own `parentIsContainer` / `parentIsItemList` / `parentIsItemGrid` branches.
+     *
      * The `_EXCLUDE` filter stays: AS3 applies it on both branches, and it is
      * what skips excluded items sitting *inside* a content container.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::windowToXMLString()
     private serializeChildren(window: IWindow): string 
     {
-        const container = window.getLayoutChildTarget() as unknown as { numChildren?: number; getChildAt?: (index: number) => IWindow | null };
+        const target = window.getLayoutChildTarget() as unknown as {
+            numChildren?: number;
+            getChildAt?: (index: number) => IWindow | null;
+            numListItems?: number;
+            getListItemAt?: (index: number) => IWindow | null;
+            numGridItems?: number;
+            getGridItemAt?: (index: number) => IWindow | null;
+        };
 
-        if(typeof container.numChildren !== 'number' || typeof container.getChildAt !== 'function' || container.numChildren <= 0) 
+        let count = 0;
+        let at: ((index: number) => IWindow | null) | null = null;
+
+        if(typeof target.numListItems === 'number' && typeof target.getListItemAt === 'function') 
+        {
+            count = target.numListItems;
+            at = target.getListItemAt.bind(target);
+        }
+        else if(typeof target.numGridItems === 'number' && typeof target.getGridItemAt === 'function') 
+        {
+            count = target.numGridItems;
+            at = target.getGridItemAt.bind(target);
+        }
+        else if(typeof target.numChildren === 'number' && typeof target.getChildAt === 'function') 
+        {
+            count = target.numChildren;
+            at = target.getChildAt.bind(target);
+        }
+
+        if(!at || count <= 0) 
         {
             return '';
         }
 
         let xml = '';
 
-        for(let i = 0; i < container.numChildren; i++) 
+        for(let i = 0; i < count; i++) 
         {
-            const child = container.getChildAt(i);
+            const child = at(i);
 
             if(!child) 
             {
