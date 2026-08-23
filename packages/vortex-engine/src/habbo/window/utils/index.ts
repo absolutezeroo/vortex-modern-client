@@ -5,6 +5,7 @@ export {AlertDialogWithLink} from './AlertDialogWithLink';
 export {AnimatedColor} from './AnimatedColor';
 export {AnimatedScalar} from './AnimatedScalar';
 export {ConfirmDialog} from './ConfirmDialog';
+export {NumberPlaqueBitmap} from './NumberPlaqueBitmap';
 export {EffectPreviewer} from './EffectPreviewer';
 export {ElementPointerHandler} from './ElementPointerHandler';
 export {ModalDialog} from './ModalDialog';

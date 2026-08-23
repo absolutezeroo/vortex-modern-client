@@ -1,6 +1,7 @@
 import type {ILimitedItemGridOverlayWidget} from './ILimitedItemGridOverlayWidget';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
+import {NumberPlaqueBitmap} from '@habbo/window/utils/NumberPlaqueBitmap';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IWindow} from '@core/window/IWindow';
 import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
@@ -89,17 +90,16 @@ export class LimitedItemGridOverlayWidget implements ILimitedItemGridOverlayWidg
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::set serialNumber()
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::set serialNumber()
-    // also writes the number itself into the `unique_item_overlay_plaque_number_bitmap`
-    // child, built by `habbo/window/utils/_SafeCls_4213.as::createBitmap()` out of ten
-    // `unique_item_number_glyph_<n>` assets. Those are not standalone files: the WIN63
-    // manifest (`src/layouts/2614_manifest_xml$fb2a1694…xml`) declares them as named
-    // sub-rectangles of the one shipped `unique_item_label_number_glyphs.png`, and this
-    // port's asset pipeline does not read that manifest, so the ten names resolve to
-    // nothing. Registering manifest sub-assets is the prerequisite, not this widget.
     public set serialNumber(value: number)
     {
         this._serialNumber = value;
+
+        const plaque = this._root?.findChildByName('unique_item_overlay_plaque_number_bitmap') as
+            (IWindow & {bitmap?: ImageBitmap | null}) | null;
+
+        if(plaque == null) return;
+
+        plaque.bitmap = NumberPlaqueBitmap.createBitmap(this._windowManager, value, plaque.width, plaque.height);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::get seriesSize()

@@ -1,6 +1,7 @@
 import type {IChestItemGridOverlayWidget} from './IChestItemGridOverlayWidget';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
+import {NumberPlaqueBitmap} from '@habbo/window/utils/NumberPlaqueBitmap';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
@@ -72,15 +73,16 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::set contentsCount()
-    // TODO(AS3): AS3 also renders `contentsCount` as glyph bitmaps onto
-    // `chest_plaque_number_bitmap` via the (unported) shared
-    // `unique_item_number_glyph_*` bitmap-compositing helper also used by
-    // RarityItemGridOverlayWidget/LimitedItemGridOverlayWidget — IHabboWindowManager
-    // does not currently expose raw asset lookup to widgets, so only the numeric
-    // state is tracked here, matching the existing simplification in those siblings.
-    public set contentsCount(value: number) 
+    public set contentsCount(value: number)
     {
         this._contentsCount = value;
+
+        const plaque = this._root?.findChildByName('chest_plaque_number_bitmap') as
+            (IWindow & {bitmap?: ImageBitmap | null}) | null;
+
+        if(plaque == null) return;
+
+        plaque.bitmap = NumberPlaqueBitmap.createBitmap(this._windowManager, value, plaque.width, plaque.height);
     }
 
     // AS3: .../src/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::_color
