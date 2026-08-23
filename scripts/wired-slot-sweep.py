@@ -13,12 +13,16 @@ inherited, so this walks `extends`.
 
 Emulator side: each FurnitureWiredLogic declares GetAllowedFurniSources()/GetAllowedPlayerSources()
 with one entry per slot. Shorter than the client's highest slot + 1 is an arrow reading past the
-end of its list.
+end of its list. Both declaration shapes count (`=> [...]` and `{ return [...]; }`) and primary
+constructor bases are walked, the way the client side already walks `extends`: six of the first
+run's ten hits were neither gap but a shape this could not read — four thin filter add-ons and two
+neighbourhood selectors whose lists the compiler sees in full. A sweep that cries wolf gets
+ignored, so it now reads what the compiler reads.
 
 Matching is by wired code. Both sides are read as text — no build, no running server.
 
-Caveat: the emulator entry count is a regex over the list literal, so a logic that writes its
-sources in an unusual shape can be miscounted. Read the file before acting on a hit.
+Caveat: the entry count is still a regex over the list literal, so a logic writing its sources in
+a shape neither pattern covers can be miscounted. Read the file before acting on a hit.
 """
 import io, os, re
 
@@ -88,25 +92,57 @@ for fn in ('actiontypes/ActionTypeCodes.ts', 'conditions/ConditionCodes.ts'):
     for name, val in re.findall(r'readonly\s+([A-Z0-9_]+)\s*:\s*number\s*=\s*(\d+)', read(p)):
         codeval[name] = int(val)
 
-# --- emulator: wired code -> (furni entries, player entries) ---------------
-emu = {}
+# --- emulator: every logic class, its own counts, its base, and its code ---
+def count_sources(src, method):
+    """Entries in one GetAllowed*Sources() body, or None when the class does not declare it.
+
+    Both shapes appear in the tree: an expression body `=> [ ... ];` and a statement body
+    `{ return [ ... ]; }`. Reading only the first is what made four thin add-ons and two
+    neighbourhood selectors look like gaps when the compiler sees full lists.
+    """
+    m = re.search(method + r'\(\)\s*(?:=>|\{\s*return)\s*\[(.*?)\n\s*\];', src, re.S)
+    if m is None:
+        return None
+    # one entry per top-level "[...]" in the list literal
+    return len(re.findall(r'\[(?:\.\.|\s*Wired)', m.group(1)))
+
+
+def emu_count(cls, which, seen=None):
+    """The count the class actually has, walking its bases; 0 when nothing up the chain declares it."""
+    seen = seen or set()
+    if cls in seen or cls not in emu_raw:
+        return 0
+    seen.add(cls)
+    own = emu_raw[cls][which]
+    if own is not None:
+        return own
+    return emu_count(emu_raw[cls][2], which, seen)
+
+
+emu_raw = {}
 for dp, _, fns in os.walk(EMU):
     for fn in fns:
         if not fn.endswith('.cs'):
             continue
-        s = read(os.path.join(dp, fn))
-        wc = re.search(r'WiredCode\s*=>\s*\(int\)Wired\w+Type\.([A-Z0-9_]+)', s)
-        if not wc:
+        src = read(os.path.join(dp, fn))
+        decl = re.search(r'\b(?:class|record)\s+(\w+)\s*\(', src)
+        if not decl:
             continue
+        # The primary constructor's base list: `) : SomeBase(grainFactory, ...)`.
+        base = re.search(r'\)\s*:\s*(\w+)\s*\(', src)
+        wc = re.search(r'WiredCode\s*=>\s*\(int\)Wired\w+Type\.([A-Z0-9_]+)', src)
+        emu_raw[decl.group(1)] = (
+            count_sources(src, 'GetAllowedFurniSources'),
+            count_sources(src, 'GetAllowedPlayerSources'),
+            base.group(1) if base else None,
+            wc.group(1) if wc else None,
+            fn,
+        )
 
-        def count(method):
-            m = re.search(method + r'\(\)\s*=>\s*\[(.*?)\n\s*\];', s, re.S)
-            if not m:
-                return 0
-            # one entry per top-level "[...]" in the list literal
-            return len(re.findall(r'\[(?:\.\.|\s*Wired)', m.group(1)))
-
-        emu[wc.group(1)] = (count('GetAllowedFurniSources'), count('GetAllowedPlayerSources'), fn)
+emu = {}
+for cls, (_, _, _, code, fn) in emu_raw.items():
+    if code is not None:
+        emu[code] = (emu_count(cls, 0), emu_count(cls, 1), fn)
 
 print(f"client elements with mergedSelections(): {len(elements)}")
 print(f"emulator logics with a WiredCode:        {len(emu)}\n")
