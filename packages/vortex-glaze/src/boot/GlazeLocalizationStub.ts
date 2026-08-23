@@ -43,6 +43,16 @@ export class GlazeLocalizationStub extends Component
         return false;
     }
 
+    /**
+     * Null is "no text yet", which is what leaves `${...}` in the caption for Glaze to show raw —
+     * the same untranslated display the class comment describes. `WindowParser.localizationResolver`
+     * is wired to this the moment the manager is injected, so its absence took the whole boot down.
+     */
+    public getResolvedLocalization(_key: string): string | null
+    {
+        return null;
+    }
+
     public registerLocalizationListener(_key: string, _listener: ILocalizable): boolean
     {
         return false;

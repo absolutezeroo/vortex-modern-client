@@ -4732,9 +4732,18 @@ export class RoomEngine extends Component implements IRoomEngine,
      * bubbles) need this explicit mount point since their content has no
      * other path onto the stage.
      */
-    addStageChild(displayObject: Container): void 
+    addStageChild(displayObject: Container): void
     {
-        this._pixiStage?.addChild(displayObject);
+        if(!this._pixiStage) return;
+
+        // Insertion order alone does not hold the "above every room canvas" promise above:
+        // HabboFreeFlowChat mounts its bubble root once, at component init, and every room
+        // canvas created afterwards is appended over it - which is what put the chat bubbles
+        // behind the room. Room canvases keep the default zIndex 0, so one sorted layer above
+        // them is enough, and it survives any later addChild().
+        this._pixiStage.sortableChildren = true;
+        displayObject.zIndex = 1;
+        this._pixiStage.addChild(displayObject);
     }
 
     /**
