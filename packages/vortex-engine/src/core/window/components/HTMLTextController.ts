@@ -205,6 +205,54 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
         this.applyHtml(value);
     }
 
+    /**
+	 * The raw markup, assigned from code rather than from a layout caption.
+	 *
+	 * AS3 needs no override here: `TextController.setHtmlText()` ends in `_field.htmlText = ...`
+	 * and Flash's TextField parses the markup itself, anchors included. This port has no such
+	 * field — `parseHtml()` is what turns `<a href>` into link ranges — so the inherited setter,
+	 * which stores its argument straight into `_text`, put the markup on screen verbatim and left
+	 * `_linkRuns` empty, i.e. the text unclickable too.
+	 *
+	 * That is exactly what the group-forum shortcut row showed: `updateUnreadForumsCount()`
+	 * assigns `groupforum.view.shortcuts.my` this way and it read
+	 * `<a href="event:groupforum/list/my">My Forums</a>` in full, while `active` and `popular` —
+	 * same window type, but filled from their layout caption — were fine.
+	 *
+	 * The getter is redeclared with the setter on purpose: overriding one accessor of a pair in
+	 * TypeScript shadows the other, and `htmlText` would read back undefined.
+	 */
+    // TS-only: AS3 delegates this to flash.text.TextField, which has no counterpart here.
+    public override get htmlText(): string
+    {
+        return super.htmlText;
+    }
+
+    public override set htmlText(value: string)
+    {
+        if(value == null) return;
+
+        if(this._localized)
+        {
+            this.removeLocalizationListenerForCaption();
+            this._localized = false;
+        }
+
+        this._caption = value;
+
+        if(!this._displayRaw && this.isLocalizationKey(this._caption))
+        {
+            this._localized = true;
+            this.registerLocalizationListenerForCaption();
+
+            return;
+        }
+
+        this._htmlContent = value;
+
+        this.applyHtml(value);
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/HTMLTextController.as::set localization()
     public override set localization(value: string)
     {
@@ -325,8 +373,18 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
             if(!closing)
             {
                 const href = /href\s*=\s*["']([^"']*)["']/i.exec(match[3]);
+                const raw = href === null ? '' : href[1];
 
-                openHref = href === null ? '' : href[1];
+                // Stored without the scheme, because that is what AS3 receives: Flash hands
+                // `TextEvent.text` whatever FOLLOWS `event:`, and every consumer downstream was
+                // written against that. `GroupForumController.linkPattern` is `groupforum/`, so an
+                // href kept as `event:groupforum/list/my` matched no tracker and the click died
+                // silently. `HabboNotifications` strips the same six characters off its own
+                // `linkUrl` for the same reason.
+                //
+                // It is also what makes convertLinksToEvents() coherent: it rewrites `http://x`
+                // into `event:http://x` precisely so the scheme comes back off here as `http://x`.
+                openHref = raw.startsWith('event:') ? raw.substring(6) : raw;
                 openStart = text.length;
             }
             else if(openHref !== null)

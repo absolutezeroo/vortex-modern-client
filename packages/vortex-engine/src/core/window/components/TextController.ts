@@ -1114,13 +1114,31 @@ export class TextController extends WindowController implements ITextWindow
             return;
         }
 
+        // AS3 early-out this port had dropped: neither the left edge nor the width moved, so
+        // nothing can reflow and the mask below would only buy an extra measure pass.
+        if(this._x === x && this._width === width)
+        {
+            super.setRectangle(x, y, width, height);
+
+            return;
+        }
+
         this._settingRectangle = true;
 
-        const previousAutoSize = this._autoSize;
+        const previousAutoSize = this.autoSize;
 
-        this._autoSize = 'none';
+        // Through the ACCESSOR both times, exactly as AS3 does - and the restore is the half that
+        // matters. `super.setRectangle()` dispatches WE_RESIZED, which comes back through
+        // `update()` into `refreshTextImage()` while auto-sizing is still masked off: that pass
+        // remeasures the text at the new width but, with `autoSize === 'none'`, is forbidden to
+        // move the box. Writing the field directly here left that masked pass as the last word.
+        //
+        // Assigning through the setter runs one more pass with auto-sizing back on, and that is
+        // the pass that grows the box to the wrapped lines. Measured on the wired "pick furnis"
+        // note: 218x16 holding text that measures 182x36 - two of its three lines cut off.
+        this.autoSize = 'none';
         super.setRectangle(x, y, width, height);
-        this._autoSize = previousAutoSize;
+        this.autoSize = previousAutoSize;
 
         this._settingRectangle = false;
     }
@@ -1846,9 +1864,18 @@ export class TextController extends WindowController implements ITextWindow
             lines.length = this._maxLines;
         }
 
+        // The runs index into the text, so a line's width depends on where that line starts.
+        // `indexOf` from a running cursor recovers it for both split and wrapped lines, which are
+        // substrings of `text` in order. An unformatted field ignores the offset entirely.
+        let cursor = 0;
+
         for(const line of lines)
         {
-            const current = this.measureLineWidth(line);
+            const found = line.length > 0 ? text.indexOf(line, cursor) : -1;
+            const start = found === -1 ? cursor : found;
+            const current = this.measureLineWidth(line, start);
+
+            cursor = start + line.length;
 
             if(current > width)
             {
@@ -1870,6 +1897,9 @@ export class TextController extends WindowController implements ITextWindow
         const out: string[] = [];
         const baseLines = text.split('\n');
 
+        // Where this base line starts inside `text`, so wrapping can measure formatted runs.
+        let offset = 0;
+
         for(const baseLine of baseLines)
         {
             // Flash wraps whenever `wordWrap` and `multiline` are set; `autoSize` does not disable
@@ -1879,7 +1909,7 @@ export class TextController extends WindowController implements ITextWindow
             // and was clipped, which is the truncated body text.
             if(this._wordWrap && this._multiline)
             {
-                const wrapped = this.wrapLine(baseLine, maxWidth);
+                const wrapped = this.wrapLine(baseLine, maxWidth, offset);
 
                 for(const line of wrapped)
                 {
@@ -1890,40 +1920,47 @@ export class TextController extends WindowController implements ITextWindow
             {
                 out.push(baseLine);
             }
+
+            // +1 for the newline the split consumed.
+            offset += baseLine.length + 1;
         }
 
         return out.length > 0 ? out : [''];
     }
 
-    protected wrapLine(line: string, maxWidth: number): string[]
+    protected wrapLine(line: string, maxWidth: number, offset: number = 0): string[]
     {
         if(!line) return [''];
 
         const words = line.split(' ');
         const out: string[] = [];
         let current = '';
+        let currentOffset = offset;
 
         for(const word of words)
         {
             const candidate = current ? `${current} ${word}` : word;
 
-            if(this.measureLineWidth(candidate) <= maxWidth || !current)
+            if(this.measureLineWidth(candidate, currentOffset) <= maxWidth || !current)
             {
                 current = candidate;
             }
             else
             {
                 out.push(current);
+                // +1 for the space that separated the emitted line from this word.
+                currentOffset += current.length + 1;
                 current = word;
             }
 
-            if(this.measureLineWidth(current) > maxWidth)
+            if(this.measureLineWidth(current, currentOffset) > maxWidth)
             {
-                const broken = this.wrapLongWord(current, maxWidth);
+                const broken = this.wrapLongWord(current, maxWidth, currentOffset);
 
                 if(broken.length > 0)
                 {
                     out.push(...broken.slice(0, broken.length - 1));
+                    currentOffset += current.length - broken[broken.length - 1].length;
                     current = broken[broken.length - 1];
                 }
             }
@@ -1937,22 +1974,24 @@ export class TextController extends WindowController implements ITextWindow
         return out;
     }
 
-    protected wrapLongWord(word: string, maxWidth: number): string[]
+    protected wrapLongWord(word: string, maxWidth: number, offset: number = 0): string[]
     {
         const out: string[] = [];
         let current = '';
+        let currentOffset = offset;
 
         for(let i = 0; i < word.length; i++)
         {
             const next = current + word.charAt(i);
 
-            if(this.measureLineWidth(next) <= maxWidth || !current)
+            if(this.measureLineWidth(next, currentOffset) <= maxWidth || !current)
             {
                 current = next;
             }
             else
             {
                 out.push(current);
+                currentOffset += current.length;
                 current = word.charAt(i);
             }
         }
@@ -1977,11 +2016,23 @@ export class TextController extends WindowController implements ITextWindow
     // TS-only: no AS3 counterpart — Flash's TextField both measures and draws.
     protected getAtlas(): GlyphAtlas | null
     {
+        return this.atlasForFont(this.buildCanvasFontString());
+    }
+
+    /**
+	 * The atlas for one specific font string, which for a formatted run is not
+	 * this field's own — a bold run is a different face and therefore a
+	 * different atlas, exactly as `TextSkinRenderer.drawTextLineWithRuns()`
+	 * resolves it.
+	 */
+    // TS-only: no AS3 counterpart; see getAtlas().
+    protected atlasForFont(fontString: string, fontSize: number = this._fontSize): GlyphAtlas | null
+    {
         if(!GlyphAtlas.handles(this._antiAliasType)) return null;
 
         return GlyphAtlas.get(
-            this.buildCanvasFontString(),
-            this._fontSize,
+            fontString,
+            fontSize,
             this._antiAliasType,
             this._sharpness,
             this._thickness,
@@ -1989,7 +2040,7 @@ export class TextController extends WindowController implements ITextWindow
         );
     }
 
-    protected measureLineWidth(text: string): number
+    protected measureLineWidth(text: string, offset: number = 0): number
     {
         if(typeof text !== 'string')
         {
@@ -1997,6 +2048,11 @@ export class TextController extends WindowController implements ITextWindow
         }
 
         if(!text) return 0;
+
+        // A formatted field is drawn run by run, so it has to be measured run by run: see
+        // measureFormattedLineWidth(). `offset` is where `text` starts inside `_text`, which is
+        // the coordinate space the runs are expressed in.
+        if(this._formatRuns.length > 0) return this.measureFormattedLineWidth(text, offset);
 
         const atlas = this.getAtlas();
 
@@ -2006,23 +2062,92 @@ export class TextController extends WindowController implements ITextWindow
 
         ctx.font = this.buildCanvasFontString();
 
-        const baseWidth = ctx.measureText(text).width;
-
         if(this._spacing === 0 || text.length <= 1)
         {
-            return baseWidth;
+            return ctx.measureText(text).width;
+        }
+
+        // Per character, because that is how TextSkinRenderer.drawTextLine() walks a spaced line.
+        // A whole-string measureText() is kerned and therefore shorter than the advances actually
+        // walked, which sized the box narrower than the line drawn into it.
+        let baseWidth = 0;
+
+        for(let i = 0; i < text.length; i++)
+        {
+            baseWidth += ctx.measureText(text.charAt(i)).width;
         }
 
         return baseWidth + ((text.length - 1) * this._spacing);
     }
 
-    protected buildCanvasFontString(): string
+    /**
+	 * Width of one line of a *formatted* field, measured the way it is drawn.
+	 *
+	 * The doc on getAtlas() states the rule this restores: measurement has to come from the same
+	 * place as drawing. `TextSkinRenderer.drawTextLineWithRuns()` walks the line one character at a
+	 * time, swapping the canvas font for whichever run covers that index, and sums those advances.
+	 * This measured the whole string once in the field's *base* font instead, so every character a
+	 * run made bold was measured narrow.
+	 *
+	 * On an auto-sizing field that is not cosmetic: the box is sized to this number, and the
+	 * renderer clips the line to the box. `extendedprofile.username` is `<b>%username%</b>`, so
+	 * "Admin" was measured at 33px regular, boxed at 33px, and drawn at ~37px bold — the "n" and
+	 * half the "i" fell outside the clip. 93 of the 97 markup-carrying strings in
+	 * external_flash_texts.json format only *part* of their text, so this cannot be shortcut by
+	 * testing whether one run covers everything.
+	 *
+	 * Per character rather than per run on purpose: that is what the renderer does, and summing
+	 * whole-run widths would drift from it by the kerning at each run boundary.
+	 */
+    // TS-only: mirrors TextSkinRenderer.drawTextLineWithRuns(); Flash's TextField measured and drew
+    // its own formatted text, so AS3 has no counterpart.
+    protected measureFormattedLineWidth(text: string, offset: number): number
+    {
+        const ctx = TextController.getMeasureContext();
+        const baseFont = this.buildCanvasFontString();
+        const atlasInUse = GlyphAtlas.handles(this._antiAliasType);
+        let width = 0;
+        let currentFont = '';
+
+        for(let i = 0; i < text.length; i++)
+        {
+            const index = offset + i;
+            const run = this._formatRuns.find((r) => index >= r.start && index < r.end);
+            // `<font size>` sets its own size for the run; everything else keeps the field's.
+            const runFontSize = run?.format.size ?? this._fontSize;
+            const font = run
+                ? this.buildCanvasFontString(run.format.bold ?? this._bold, run.format.italic ?? this._italic, runFontSize)
+                : baseFont;
+            const atlas = atlasInUse ? this.atlasForFont(font, runFontSize) : null;
+
+            if(atlas)
+            {
+                width += atlas.measure(text.charAt(i), 0);
+
+                continue;
+            }
+
+            if(font !== currentFont)
+            {
+                ctx.font = font;
+                currentFont = font;
+            }
+
+            width += ctx.measureText(text.charAt(i)).width;
+        }
+
+        if(this._spacing !== 0 && text.length > 1) width += (text.length - 1) * this._spacing;
+
+        return width;
+    }
+
+    protected buildCanvasFontString(bold: boolean = this._bold, italic: boolean = this._italic, fontSize: number = this._fontSize): string
     {
         let font = '';
 
-        if(this._italic) font += 'italic ';
-        if(this._bold) font += 'bold ';
-        font += `${this._fontSize}px ${quoteFontFamilyList(this._fontFace || 'Ubuntu, Arial, sans-serif')}`;
+        if(italic) font += 'italic ';
+        if(bold) font += 'bold ';
+        font += `${fontSize}px ${quoteFontFamilyList(this._fontFace || 'Ubuntu, Arial, sans-serif')}`;
 
         return font;
     }
@@ -2031,9 +2156,20 @@ export class TextController extends WindowController implements ITextWindow
     {
         const ctx = TextController.getMeasureContext();
 
-        ctx.font = this.buildCanvasFontString();
+        // The tallest size any run asks for: a line has to clear its biggest glyph, and
+        // `achievements.levelup.reward` puts a `<font size="30">` amount inside a small field.
+        // Field-wide rather than per line, matching TextSkinRenderer.compositeTextMultiline() —
+        // roomier than Flash on a multiline field that mixes sizes, never shorter.
+        let fontSize = this._fontSize;
 
-        return Math.max(1, measureFontLineHeight(ctx, this._fontSize, this._leading));
+        for(const run of this._formatRuns)
+        {
+            if(run.format.size != null && run.format.size > fontSize) fontSize = run.format.size;
+        }
+
+        ctx.font = this.buildCanvasFontString(this._bold, this._italic, fontSize);
+
+        return Math.max(1, measureFontLineHeight(ctx, fontSize, this._leading));
     }
 
     // AS3: .../src/com/sulake/core/window/components/TextController.as::replaceNonRenderableCharacters()

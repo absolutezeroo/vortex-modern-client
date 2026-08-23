@@ -22,8 +22,43 @@ const TAG_FORMAT_KEY: Record<string, keyof ITextFormat> = {
     u: 'underline',
 };
 
-const RECOGNIZED_TAG_PATTERN = /<(\/?)(b|i|u)>/gi;
-const UNRECOGNIZED_TAG_PATTERN = /<(?!\/?(?:b|i|u)\b)[^>]+>/gi;
+// `<font>` carries its formatting in attributes, so unlike b/i/u it is matched with its tail and
+// parsed. Flash's own TextField accepts `size` and `color` there; `face` is deliberately left out
+// because this client ships one family and honouring it would silently break every measurement
+// that assumes the field's own face.
+const RECOGNIZED_TAG_PATTERN = /<(\/?)(b|i|u|font)((?:[^>"']|"[^"]*"|'[^']*')*)>/gi;
+const UNRECOGNIZED_TAG_PATTERN = /<(?!\/?(?:b|i|u|font)\b)[^>]+>/gi;
+const FONT_SIZE_PATTERN = /\bsize\s*=\s*["']?(\d+)/i;
+// Six digits BEFORE three: the other way round the alternation matches the first three of
+// `#7adde9` and expands them as shorthand, turning it into `#77aadd`.
+const FONT_COLOR_PATTERN = /\bcolor\s*=\s*["']?#?([0-9a-f]{6}|[0-9a-f]{3})/i;
+
+/**
+ * The format one opening tag contributes. b/i/u each flip their single flag; `<font>` reads its
+ * `size`/`color` attributes, and contributes nothing for the ones it does not carry.
+ */
+function formatForTag(tag: string, attributes: string): ITextFormat
+{
+    if(tag !== 'font') return {[TAG_FORMAT_KEY[tag]]: true} as ITextFormat;
+
+    const format: ITextFormat = {};
+    const size = FONT_SIZE_PATTERN.exec(attributes);
+    const color = FONT_COLOR_PATTERN.exec(attributes);
+
+    if(size) format.size = parseInt(size[1], 10);
+
+    if(color)
+    {
+        // `#abc` is Flash's shorthand for `#aabbcc`.
+        const hex = color[1].length === 3
+            ? color[1].split('').map((c) => c + c).join('')
+            : color[1];
+
+        format.color = parseInt(hex, 16);
+    }
+
+    return format;
+}
 
 /**
  * Parses a small, hardcoded subset of Flash's htmlText markup (<b>, <i>,
@@ -38,7 +73,7 @@ export function parseHtmlFormatting(html: string): IParsedHtmlText
 
     let text = '';
     let lastIndex = 0;
-    const openStack: Array<{ tag: string; start: number }> = [];
+    const openStack: Array<{ tag: string; start: number; format: ITextFormat }> = [];
     const runs: Array<{ start: number; end: number; format: ITextFormat }> = [];
     let match: RegExpExecArray | null;
 
@@ -54,7 +89,7 @@ export function parseHtmlFormatting(html: string): IParsedHtmlText
 
         if(!isClosing)
         {
-            openStack.push({tag, start: text.length});
+            openStack.push({tag, start: text.length, format: formatForTag(tag, match[3] ?? '')});
             continue;
         }
 
@@ -66,7 +101,7 @@ export function parseHtmlFormatting(html: string): IParsedHtmlText
 
             if(text.length > open.start)
             {
-                runs.push({start: open.start, end: text.length, format: {[TAG_FORMAT_KEY[tag]]: true} as ITextFormat});
+                runs.push({start: open.start, end: text.length, format: open.format});
             }
 
             break;
@@ -79,9 +114,60 @@ export function parseHtmlFormatting(html: string): IParsedHtmlText
     {
         if(text.length > open.start)
         {
-            runs.push({start: open.start, end: text.length, format: {[TAG_FORMAT_KEY[open.tag]]: true} as ITextFormat});
+            runs.push({start: open.start, end: text.length, format: open.format});
         }
     }
 
-    return {text, runs};
+    return {text, runs: flattenRuns(runs, text.length)};
+}
+
+/**
+ * Rewrites overlapping runs as one run per maximal segment, with the formats merged.
+ *
+ * Every consumer resolves a character's format with `runs.find()`, which keeps the FIRST run
+ * covering it and silently drops the rest. That was harmless while only b/i/u existed and nesting
+ * was rare; with `<font>` it is not — `wiredchests.big_fat_warning` is
+ * `<font color="#C42F3D"><b>Usage warning:</b> ...` and the bold half would have come out unred.
+ *
+ * Merged here rather than in the three call sites that read runs, so they keep their one-line
+ * lookup and cannot disagree about precedence. Outer tags are applied first and inner ones last,
+ * so the innermost tag wins any key the two both set.
+ */
+// TS-only: Flash's TextField resolved nested htmlText formatting internally.
+function flattenRuns(
+    runs: Array<{ start: number; end: number; format: ITextFormat }>,
+    length: number
+): Array<{ start: number; end: number; format: ITextFormat }>
+{
+    if(runs.length < 2) return runs;
+
+    const outerFirst = [...runs].sort((a, b) => (b.end - b.start) - (a.end - a.start));
+    const boundaries = new Set<number>([0, length]);
+
+    for(const run of runs)
+    {
+        boundaries.add(run.start);
+        boundaries.add(run.end);
+    }
+
+    const edges = [...boundaries].sort((a, b) => a - b);
+    const out: Array<{ start: number; end: number; format: ITextFormat }> = [];
+
+    for(let i = 0; i < edges.length - 1; i++)
+    {
+        const start = edges[i];
+        const end = edges[i + 1];
+        let format: ITextFormat | null = null;
+
+        for(const run of outerFirst)
+        {
+            if(run.start > start || run.end < end) continue;
+
+            format = {...(format ?? {}), ...run.format};
+        }
+
+        if(format !== null) out.push({start, end, format});
+    }
+
+    return out;
 }

@@ -62,6 +62,12 @@ export interface ITextWindowShape
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get leading()
     leading?: number;
     _leading?: number;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get maxLines()
+    maxLines?: number;
+    _maxLines?: number;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get condenseWhite()
+    condenseWhite?: boolean;
+    _condenseWhite?: boolean;
     marginLeft?: number;
     marginTop?: number;
     marginRight?: number;
@@ -79,7 +85,21 @@ interface ITextFormatRun
 {
     start: number;
     end: number;
-    format: { color?: number | null; underline?: boolean | null; bold?: boolean | null; italic?: boolean | null };
+    format: { color?: number | null; underline?: boolean | null; bold?: boolean | null; italic?: boolean | null; size?: number | null };
+}
+
+/**
+ * What drawing a formatted line needs beyond the line itself: the runs, and the base face they
+ * override. Bundled rather than passed loose because compositeTextMultiline() already carries
+ * thirteen positional arguments.
+ */
+interface IRunDrawContext
+{
+    runs: ReadonlyArray<ITextFormatRun>;
+    fontFace: string;
+    bold: boolean;
+    italic: boolean;
+    fillStyle: string;
 }
 
 /**
@@ -291,6 +311,16 @@ export class TextSkinRenderer extends SkinRenderer
         // Determine display text
         let displayText = text;
 
+        // TextController.measureLayout() collapses whitespace under this flag before it measures,
+        // so the box is sized for the collapsed string; drawing the raw one made the line wider
+        // than the box that was sized for it. One shipped layout sets it.
+        // Caveat, shared with the controller: collapsing shifts character indices, so a field that
+        // combined condense_white with format runs would misalign them. None does.
+        if(tw.condenseWhite ?? tw._condenseWhite ?? false)
+        {
+            displayText = displayText.replace(/\s+/g, ' ');
+        }
+
         if(type === WindowType.PASSWORD)
         {
             displayText = '•'.repeat(text.length);
@@ -305,6 +335,18 @@ export class TextSkinRenderer extends SkinRenderer
         // colour's alpha byte: `(etchingColor & 0xFF000000) != 0`.
         const etchColor = tw.etchingColor ?? 0;
         const hasEtching = etchColor !== 0 && ((etchColor >>> 24) & 0xFF) > 0;
+
+        // Duck-typed per-range TextFormat overrides from TextController (chat-message links, and
+        // <b>/<i>/<u> runs from FormattedTextController's HTML-lite parser).
+        //
+        // Read HERE rather than just before the single-line draw, which is where it used to sit:
+        // the link/underline branch and the multiline branch both `return` before that point, so
+        // both drew formatted text with no formatting at all. `catalog.search.results` is
+        // `<b>%count% items</b> were found...` in a wrapping field and rendered entirely regular.
+        const formatRuns = (window as unknown as { formatRuns?: ReadonlyArray<ITextFormatRun> }).formatRuns ?? [];
+        const runContext = formatRuns.length > 0
+            ? {runs: formatRuns, fontFace, bold: isBold, italic: isItalic, fillStyle: `rgb(${r},${g},${b})`}
+            : null;
 
         // Underline support for link windows
         if(type === WindowType.LINK || tw.underline)
@@ -321,7 +363,14 @@ export class TextSkinRenderer extends SkinRenderer
                 this.drawEtching(ctx, displayText, textX, textY, maxWidth, etchColor, tw.etchingPosition, spacing);
             }
 
-            this.drawTextLine(ctx, displayText, textX, textY, maxWidth, spacing);
+            if(runContext)
+            {
+                this.drawTextLineWithRuns(ctx, displayText, runContext.runs, textX, textY, maxWidth, spacing, fontSize, runContext.fontFace, runContext.bold, runContext.italic, runContext.fillStyle);
+            }
+            else
+            {
+                this.drawTextLine(ctx, displayText, textX, textY, maxWidth, spacing);
+            }
 
             // Draw underline
             const underlineY = textY + fontSize + 1;
@@ -361,7 +410,9 @@ export class TextSkinRenderer extends SkinRenderer
                 tw.etchingPosition,
                 spacing,
                 leading,
-                autoSize
+                autoSize,
+                runContext,
+                tw.maxLines ?? tw._maxLines ?? 0
             );
 
             return;
@@ -380,14 +431,9 @@ export class TextSkinRenderer extends SkinRenderer
             this.drawEtching(ctx, displayText, textX, textY, maxWidth, etchColor, tw.etchingPosition, spacing, clipY, clipHeight);
         }
 
-        // Duck-type per-range TextFormat overrides from TextController
-        // (chat-message links, and <b>/<i>/<u> runs from FormattedTextController's
-        // HTML-lite parser — see TextController.setTextFormat()).
-        const formatRuns = (window as unknown as { formatRuns?: ReadonlyArray<ITextFormatRun> }).formatRuns;
-
-        if(formatRuns && formatRuns.length > 0)
+        if(runContext)
         {
-            this.drawTextLineWithRuns(ctx, displayText, formatRuns, textX, textY, maxWidth, spacing, fontSize, fontFace, isBold, isItalic, `rgb(${r},${g},${b})`, clipY, clipHeight);
+            this.drawTextLineWithRuns(ctx, displayText, runContext.runs, textX, textY, maxWidth, spacing, fontSize, runContext.fontFace, runContext.bold, runContext.italic, runContext.fillStyle, clipY, clipHeight);
         }
         else
         {
@@ -448,7 +494,9 @@ export class TextSkinRenderer extends SkinRenderer
         etchingPosition?: string,
         spacing: number = 0,
         leading: number = 0,
-        autoSize: string = 'none'
+        autoSize: string = 'none',
+        runContext: IRunDrawContext | null = null,
+        maxLines: number = 0
     ): void
     {
         // Must be the SAME line height the controller sized the box with
@@ -459,51 +507,94 @@ export class TextSkinRenderer extends SkinRenderer
         // guess gave 11 — the controller sized a multiline box at 12px per line
         // and this loop then stacked them every 11px, drifting the text a pixel
         // per line up inside its own box.
-        const lineHeight = Math.max(1, measureFontLineHeight(ctx, fontSize, leading));
+        // The tallest size any run asks for, because a line has to clear its biggest glyph.
+        // Field-wide rather than per line: a multiline field that mixes sizes gets uniform lines
+        // at the largest, which is roomier than Flash but never cuts. TextController.getLineHeight()
+        // takes the same measure, and the two have to agree or the box holds the wrong count.
+        let runFontSize = fontSize;
+
+        for(const run of runContext?.runs ?? [])
+        {
+            if(run.format.size != null && run.format.size > runFontSize) runFontSize = run.format.size;
+        }
+
+        const lineHeight = Math.max(1, measureFontLineHeight(ctx, runFontSize, leading));
         const lines = text.split('\n');
         let currentY = y;
         const hasEtching = etchingColor !== 0 && ((etchingColor >>> 24) & 0xFF) > 0;
 
+        // Where the line about to be drawn starts inside `text`, which is the coordinate space the
+        // format runs are expressed in. Walked with indexOf from a cursor, the same way
+        // TextController.measureLayout() recovers it - split and wrapped lines are substrings of
+        // `text`, in order.
+        let cursor = 0;
+        const offsetOf = (line: string): number =>
+        {
+            const found = line.length > 0 ? text.indexOf(line, cursor) : -1;
+            const start = found === -1 ? cursor : found;
+
+            cursor = start + line.length;
+
+            return start;
+        };
+
+        // Lines already drawn, against `maxLines`. TextController.measureLayout() truncates its
+        // measured line list to this, so the box is sized for that many; without the same cap here
+        // the surplus lines were drawn anyway and merely cut by the box edge.
+        let drawn = 0;
+
+        const measureOne = (line: string, offset: number): number => runContext
+            ? this.measureRunTextWidth(ctx, line, spacing, runContext.runs, fontSize, runContext.fontFace, runContext.bold, runContext.italic, offset)
+            : this.measureTextWidth(ctx, line, spacing);
+
+        const drawOne = (line: string, offset: number): void =>
+        {
+            const measuredWidth = measureOne(line, offset);
+            const drawX = this.resolveAlignedTextX(x, maxWidth, measuredWidth, autoSize);
+
+            if(hasEtching)
+            {
+                this.drawEtching(ctx, line, drawX, currentY, maxWidth, etchingColor, etchingPosition, spacing);
+            }
+
+            if(runContext)
+            {
+                this.drawTextLineWithRuns(ctx, line, runContext.runs, drawX, currentY, maxWidth, spacing, fontSize, runContext.fontFace, runContext.bold, runContext.italic, runContext.fillStyle, undefined, undefined, offset);
+            }
+            else
+            {
+                this.drawTextLine(ctx, line, drawX, currentY, maxWidth, spacing);
+            }
+
+            currentY += lineHeight;
+            drawn++;
+        };
+
         for(const line of lines)
         {
-            if(this.isLineBelowBox(currentY, y, maxHeight))
+            if(this.isLineBelowBox(currentY, y, maxHeight) || (maxLines > 0 && drawn >= maxLines))
             {
                 break;
             }
 
-            if(wordWrap && this.measureTextWidth(ctx, line, spacing) > maxWidth)
+            // Peeked, not consumed: if the line wraps, its pieces claim the offsets instead.
+            const peeked = text.indexOf(line, cursor);
+
+            if(wordWrap && measureOne(line, peeked === -1 ? cursor : peeked) > maxWidth)
             {
                 for(const wrappedLine of this.wrapLine(ctx, line, maxWidth, spacing))
                 {
-                    if(this.isLineBelowBox(currentY, y, maxHeight))
+                    if(this.isLineBelowBox(currentY, y, maxHeight) || (maxLines > 0 && drawn >= maxLines))
                     {
                         break;
                     }
 
-                    const measuredWidth = this.measureTextWidth(ctx, wrappedLine, spacing);
-                    const drawX = this.resolveAlignedTextX(x, maxWidth, measuredWidth, autoSize);
-
-                    if(hasEtching)
-                    {
-                        this.drawEtching(ctx, wrappedLine, drawX, currentY, maxWidth, etchingColor, etchingPosition, spacing);
-                    }
-
-                    this.drawTextLine(ctx, wrappedLine, drawX, currentY, maxWidth, spacing);
-                    currentY += lineHeight;
+                    drawOne(wrappedLine, offsetOf(wrappedLine));
                 }
             }
             else
             {
-                const measuredWidth = this.measureTextWidth(ctx, line, spacing);
-                const drawX = this.resolveAlignedTextX(x, maxWidth, measuredWidth, autoSize);
-
-                if(hasEtching)
-                {
-                    this.drawEtching(ctx, line, drawX, currentY, maxWidth, etchingColor, etchingPosition, spacing);
-                }
-
-                this.drawTextLine(ctx, line, drawX, currentY, maxWidth, spacing);
-                currentY += lineHeight;
+                drawOne(line, offsetOf(line));
             }
         }
     }
@@ -628,14 +719,88 @@ export class TextSkinRenderer extends SkinRenderer
             return this._atlas.measure(text, spacing);
         }
 
-        const width = ctx.measureText(text).width;
-
         if(spacing === 0 || text.length <= 1)
         {
-            return width;
+            return ctx.measureText(text).width;
+        }
+
+        // With letter-spacing on, drawTextLine() walks the line one character at a time and adds
+        // `spacing` after each advance. Measuring `measureText(wholeLine)` instead asks the shaper
+        // for a kerned width, which is SHORTER than the sum of the individual advances - so the
+        // box came out narrower than the line drawn into it and the tail was clipped. Summing the
+        // same advances the draw walks is the only way the two agree.
+        // Real users of a non-zero spacing: catalog_promo_xml / campaign_promo_xml (-0.6).
+        let width = 0;
+
+        for(let i = 0; i < text.length; i++)
+        {
+            width += ctx.measureText(text.charAt(i)).width;
         }
 
         return width + ((text.length - 1) * spacing);
+    }
+
+    /**
+	 * Width of a formatted line, summed the way drawTextLineWithRuns() walks it.
+	 *
+	 * The plain measureTextWidth() above measures in the field's base font, which is narrower
+	 * wherever a run turns the text bold. Wrapping on that number breaks the lines in different
+	 * places than TextController.measureLayout() did when it sized the box, and the box then holds
+	 * the wrong number of lines.
+	 */
+    // TS-only: mirrors TextController.measureFormattedLineWidth(); Flash's TextField measured its
+    // own formatted text.
+    protected measureRunTextWidth(
+        ctx: OffscreenCanvasRenderingContext2D,
+        text: string,
+        spacing: number,
+        runs: ReadonlyArray<ITextFormatRun>,
+        fontSize: number,
+        fontFace: string,
+        baseBold: boolean,
+        baseItalic: boolean,
+        offset: number
+    ): number
+    {
+        if(!text) return 0;
+
+        const baseFontStr = buildCanvasFontString(fontSize, fontFace, baseBold, baseItalic);
+        let currentFontStr = baseFontStr;
+        let width = 0;
+
+        ctx.save();
+        ctx.font = currentFontStr;
+
+        for(let i = 0; i < text.length; i++)
+        {
+            const run = runs.find((r) => offset + i >= r.start && offset + i < r.end);
+            const runFontSize = run?.format.size ?? fontSize;
+            const runFontStr = run
+                ? buildCanvasFontString(runFontSize, fontFace, run.format.bold ?? baseBold, run.format.italic ?? baseItalic)
+                : baseFontStr;
+            const runAtlas = this._atlas ? this.atlasFor(runFontStr, runFontSize) : null;
+
+            if(runAtlas)
+            {
+                width += runAtlas.measure(text.charAt(i), 0);
+
+                continue;
+            }
+
+            if(runFontStr !== currentFontStr)
+            {
+                ctx.font = runFontStr;
+                currentFontStr = runFontStr;
+            }
+
+            width += ctx.measureText(text.charAt(i)).width;
+        }
+
+        ctx.restore();
+
+        if(spacing !== 0 && text.length > 1) width += (text.length - 1) * spacing;
+
+        return width;
     }
 
     // TS-only: compensates for Flash TextField's internal padding on the
@@ -769,7 +934,8 @@ export class TextSkinRenderer extends SkinRenderer
         baseItalic: boolean,
         baseFillStyle: string,
         clipY?: number,
-        clipHeight?: number
+        clipHeight?: number,
+        offset: number = 0
     ): void
     {
         if(!text) return;
@@ -792,9 +958,13 @@ export class TextSkinRenderer extends SkinRenderer
         for(let i = 0; i < text.length; i++)
         {
             const char = text.charAt(i);
-            const run = runs.find((r) => i >= r.start && i < r.end);
+            // The runs index into the whole text, not into this line: a wrapped line that starts
+            // 40 characters in has to look its formats up at 40 + i.
+            const run = runs.find((r) => offset + i >= r.start && offset + i < r.end);
+            // `<font size>` sets its own size for the run; everything else keeps the field's.
+            const runFontSize = run?.format.size ?? fontSize;
             const runFontStr = run
-                ? buildCanvasFontString(fontSize, fontFace, run.format.bold ?? baseBold, run.format.italic ?? baseItalic)
+                ? buildCanvasFontString(runFontSize, fontFace, run.format.bold ?? baseBold, run.format.italic ?? baseItalic)
                 : baseFontStr;
 
             if(runFontStr !== currentFontStr)
@@ -803,9 +973,9 @@ export class TextSkinRenderer extends SkinRenderer
                 currentFontStr = runFontStr;
             }
 
-            // A bold/italic run is a different face, so it is a different
+            // A bold/italic/resized run is a different face, so it is a different
             // atlas — resolved under the same quality settings as the base one.
-            const runAtlas = this._atlas ? this.atlasFor(runFontStr, fontSize) : null;
+            const runAtlas = this._atlas ? this.atlasFor(runFontStr, runFontSize) : null;
             const charWidth = runAtlas ? runAtlas.measure(char, 0) : ctx.measureText(char).width;
 
             if(drawX + charWidth > maxX) break;
