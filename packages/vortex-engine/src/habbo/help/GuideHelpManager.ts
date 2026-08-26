@@ -6,6 +6,9 @@ import type {PendingGuideTicket} from '@habbo/communication/messages/parser/help
 import {Logger} from '@core/utils/Logger';
 import {RoomEntryInfoMessageEvent} from '@habbo/communication/messages/incoming/room/engine/RoomEntryInfoMessageEvent';
 
+import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
+import {HabboToolbarIconEnum} from '@habbo/toolbar/HabboToolbarIconEnum';
+
 import type {HabboHelp} from './HabboHelp';
 
 const log = Logger.getLogger('habbo.help.GuideHelpManager');
@@ -227,6 +230,31 @@ export class GuideHelpManager
     showFeedback(localizationCode: string): void
     {
         this._reporterFeedbackCtrl?.show(localizationCode);
+    }
+
+    /**
+	 * Route a toolbar icon click to the window it opens
+	 *
+	 * The purse area's help button and the me-menu's guide entry both end up in
+	 * HabboToolbar.toggleWindowVisibility(), which only emits — the module that owns the window
+	 * is expected to subscribe. This is that subscriber for HELP and GUIDE; without it the help
+	 * button emitted its click into an empty room.
+	 */
+    // AS3: .../src/com/sulake/habbo/help/GuideHelpManager.as::onHabboToolbarEvent()
+    onHabboToolbarEvent(event: HabboToolbarEvent): void
+    {
+        if(event.type !== HabboToolbarEvent.TOOLBAR_CLICK) return;
+
+        switch(event.iconId)
+        {
+            case HabboToolbarIconEnum.HELP:
+                this._habboHelp?.toggleNewHelpWindow();
+                break;
+
+            case HabboToolbarIconEnum.GUIDE:
+                this.showGuideTool();
+                break;
+        }
     }
 
     /**

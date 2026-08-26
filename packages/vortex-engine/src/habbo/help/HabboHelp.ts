@@ -47,6 +47,7 @@ import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
+import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
 import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
@@ -326,6 +327,37 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     }
 
     /**
+	 * Hand a toolbar event to the two controllers that care about one
+	 *
+	 * AS3 registers this callback three times over on the toolbar dependency — once per event type
+	 * — and forwards every one of them to both controllers unfiltered; each decides for itself.
+	 * The welcome bubble follows the toolbar on RESIZED and closes on either click, and the guide
+	 * manager is what opens the help window when the purse area's help button is pressed.
+	 */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onHabboToolbarEvent()
+    private onHabboToolbarEvent = (event: HabboToolbarEvent): void =>
+    {
+        this._welcomeScreenController?.onHabboToolbarEvent(event);
+        this._guideManager?.onHabboToolbarEvent(event);
+    };
+
+    // TS-only: the three types AS3 lists inline on its toolbar ComponentDependency, kept in one
+    // place so subscribe and unsubscribe cannot drift apart.
+    private static readonly TOOLBAR_EVENTS: readonly string[] = [
+        HabboToolbarEvent.TOOLBAR_CLICK,
+        HabboToolbarEvent.GROUP_ROOM_INFO_CLICK,
+        HabboToolbarEvent.RESIZED
+    ];
+
+    // TS-only: AS3 unregisters through the component framework when the dependency is released.
+    private unbindToolbarEvents(): void
+    {
+        if(!this._toolbar) return;
+
+        for(const type of HabboHelp.TOOLBAR_EVENTS) this._toolbar.toolbarEvents.off(type, this.onHabboToolbarEvent);
+    }
+
+    /**
 	 * Toggle the new-flow help window
 	 */
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::toggleNewHelpWindow()
@@ -448,7 +480,14 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
                 IID_HabboToolbar,
                 (toolbar: IHabboToolbar | null) =>
                 {
+                    this.unbindToolbarEvents();
+
                     this._toolbar = toolbar;
+
+                    if(toolbar)
+                    {
+                        for(const type of HabboHelp.TOOLBAR_EVENTS) toolbar.toolbarEvents.on(type, this.onHabboToolbarEvent);
+                    }
                 },
                 false
             ),
@@ -1388,6 +1427,9 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
             this._imEventHandler.dispose();
             this._imEventHandler = null;
         }
+
+        this.unbindToolbarEvents();
+        this._toolbar = null;
 
         this._communication = null;
 

@@ -45,3 +45,6 @@ packages/vortex-client/.vortex-dev/
 # Anchored to the repo root: a bare `perf/` also swallows source directories named perf,
 # which is what hid packages/vortex-engine/src/habbo/perf from git.
 /perf/
+
+# Scratch self-check scripts: never committed.
+*.check.ts
