@@ -25,6 +25,27 @@ export class VariableManagementOverviewView extends PagedTableView
     // AS3: VariableManagementOverviewView.as::REQUEST_PAGE_RATELIMIT
     private static readonly REQUEST_PAGE_RATELIMIT: number = 280;
 
+    /**
+	 * The table's column keys, which double as the sort keys sent to the server
+	 *
+	 * `value` has no constant in AS3 — it is the one column written as a literal there — so it
+	 * stays a literal here too rather than inventing a name for it.
+	 */
+    // AS3: VariableManagementOverviewView.as::LOG_COLUMN_USERTYPE
+    public static readonly LOG_COLUMN_USERTYPE: string = 'usertype';
+
+    // AS3: VariableManagementOverviewView.as::LOG_COLUMN_NAME
+    public static readonly LOG_COLUMN_NAME: string = 'name';
+
+    // AS3: VariableManagementOverviewView.as::LOG_COLUMN_CREATION_TIME
+    public static readonly LOG_COLUMN_CREATION_TIME: string = 'creation_time';
+
+    // AS3: VariableManagementOverviewView.as::LOG_COLUMN_LAST_UPDATE_TIME
+    public static readonly LOG_COLUMN_LAST_UPDATE_TIME: string = 'last_update_time';
+
+    // AS3: VariableManagementOverviewView.as::LOG_COLUMN_MANAGE
+    public static readonly LOG_COLUMN_MANAGE: string = 'manage';
+
     // AS3: VariableManagementOverviewView.as::_SafeStr_4593 (name derived: the controller)
     private _controller: VariableManagementOverviewController;
 
@@ -79,12 +100,12 @@ export class VariableManagementOverviewView extends PagedTableView
     {
         this._table = new TableView(this._windowManager, this.tableViewContainer, true);
         const columns = [
-            new TableColumn('usertype', this.loc('wiredmenu.variable_management.col.usertype'), 0.1),
-            new TableColumn('name', this.loc('wiredmenu.variable_management.col.name'), 0.18),
-            new TableColumn('creation_time', this.loc('wiredmenu.variable_management.col.creation_time'), 0.21),
-            new TableColumn('last_update_time', this.loc('wiredmenu.variable_management.col.last_update_time'), 0.21),
+            new TableColumn(VariableManagementOverviewView.LOG_COLUMN_USERTYPE, this.loc('wiredmenu.variable_management.col.usertype'), 0.1),
+            new TableColumn(VariableManagementOverviewView.LOG_COLUMN_NAME, this.loc('wiredmenu.variable_management.col.name'), 0.18),
+            new TableColumn(VariableManagementOverviewView.LOG_COLUMN_CREATION_TIME, this.loc('wiredmenu.variable_management.col.creation_time'), 0.21),
+            new TableColumn(VariableManagementOverviewView.LOG_COLUMN_LAST_UPDATE_TIME, this.loc('wiredmenu.variable_management.col.last_update_time'), 0.21),
             new TableColumn('value', this.loc('wiredmenu.variable_management.col.value'), 0.18),
-            new TableColumn('manage', this.loc('wiredmenu.variable_management.col.manage'), 0.12)
+            new TableColumn(VariableManagementOverviewView.LOG_COLUMN_MANAGE, this.loc('wiredmenu.variable_management.col.manage'), 0.12)
         ];
         this._table.initialize(columns, true, true);
     }
