@@ -175,6 +175,16 @@ export interface ICrashReport
  */
 export class Vortex implements IVortex
 {
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as::reportCrashStack(),
+    // logError(), set errorLogger(), HabboCoreErrorReporter and the nine ERROR_VARIABLE_* keys they
+    // fill are one subsystem: AS3 POSTs a crash payload (throttled to one per 15s) to an external
+    // error logger, with Capabilities.version and the AIR process log attached. This build has no
+    // such endpoint, and the two halves that would survive the move — the payload keys and the
+    // categories — would be nine dead constants without it. ErrorReportStorage already collects
+    // the debug data such a report would carry, so the collection half is not what is missing.
+    // ERROR_CATEGORY_FINALIZE_PRELOADING (9) and ERROR_CATEGORY_DOWNLOAD_FONT (11) belong beside
+    // Core.ts's other categories if a reporter is ever built.
+
     // Engine orchestrator (= HabboAirMain)
     private _habboMain: VortexMain | null = null;
 

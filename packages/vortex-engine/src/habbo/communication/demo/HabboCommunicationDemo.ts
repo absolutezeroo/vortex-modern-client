@@ -2,6 +2,7 @@ import {Component, ComponentDependency} from '@core/runtime';
 import type {IContext} from '@core/runtime';
 import {Logger} from '@core/utils/Logger';
 import type {IConnection} from '@core/communication/connection/IConnection';
+import {isRoomViewerMode} from '@habbo/configuration/enum/HabboComponentFlags';
 import {IncomingMessages} from './IncomingMessages';
 import type {HabboCommunicationEventType} from '../enum/HabboCommunicationEvent';
 import {HabboCommunicationEvent} from '../enum/HabboCommunicationEvent';
@@ -30,9 +31,9 @@ const log = Logger.getLogger('habbo.communication.demo.HabboCommunicationDemo');
  */
 export class HabboCommunicationDemo extends Component implements IHabboCommunicationDemo
 {
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::ERROR_TYPE_IO_ERROR
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::ERROR_TYPE_IO_ERROR
     static readonly ERROR_TYPE_IO_ERROR: string = 'ioError';
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::ERROR_CODE_MAINTENANCE
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::ERROR_CODE_MAINTENANCE
     static readonly ERROR_CODE_MAINTENANCE: string = 'maintenance';
 
     private _incomingMessages: IncomingMessages | null = null;
@@ -45,13 +46,13 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
         super(context);
     }
 
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::_communication
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
 
     /**
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as communication
 	 */
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::get communication()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::get communication()
     get communication(): IHabboCommunicationManager | null
     {
         return this._communication;
@@ -63,7 +64,7 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
     /**
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as ssoTicket
 	 */
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::set ssoTicket()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::set ssoTicket()
     set ssoTicket(value: string)
     {
         this._ssoTicket = value;
@@ -83,7 +84,7 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
         ];
     }
 
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::initGameSocket()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::initGameSocket()
     initGameSocket(): void
     {
         if(!this._communication)
@@ -117,7 +118,42 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
         this._incomingMessages = new IncomingMessages(this, this._communication);
     }
 
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::setSSOTicket()
+    /**
+	 * Overrides the client URL reported in the version check
+	 *
+	 * AS3 keeps it in a field the host page sets before connecting; the property it otherwise
+	 * falls back to (`flash.client.url`) is the same value, so a hotel that does not set one gets
+	 * identical behaviour either way.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::set flashClientUrl()
+    set flashClientUrl(url: string)
+    {
+        this._flashClientUrl = url;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::_SafeStr_8194 (name derived: written by set flashClientUrl(), read by sendConnectionParameters())
+    private _flashClientUrl: string | null = null;
+
+    /**
+	 * Whether the client is running as a bare room viewer rather than a full hotel session
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::get isRoomViewerMode()
+    get isRoomViewerMode(): boolean
+    {
+        return isRoomViewerMode(this.flags);
+    }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::sendTryLoginDevelopmentOnly()
+    // sends a username/password login straight down the socket. Its composer is neutered in this
+    // build — `_SafeCls_1711.getMessageArray()` returns an empty array — so the message carries no
+    // credentials even in the original client, and porting it would send an empty packet.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::onUserList()
+    // auto-selects a developer account from the returned avatar list, matching it against a
+    // "useruniqueid" read out of a Flash local shared object and then firing the login on a 500ms
+    // Timer. Both halves are development-only, and the SOL it keys off does not exist here.
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::setSSOTicket()
     setSSOTicket(ticket: string): void
     {
         if(ticket && !this._ssoTicket)
@@ -245,12 +281,12 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
 	 *
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as sendConnectionParameters()
 	 */
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::sendConnectionParameters()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::sendConnectionParameters()
     sendConnectionParameters(connection: IConnection): void
     {
         connection.send(new VersionCheckMessageComposer(
             401,
-            this.getProperty('flash.client.url'),
+            this._flashClientUrl ?? this.getProperty('flash.client.url'),
             this.getProperty('external.variables.txt')
         ));
 
@@ -269,7 +305,7 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
         }
     }
 
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::loginOk()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::loginOk()
     loginOk(): void
     {
         this._authenticationStarted = false;
@@ -279,7 +315,7 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
         log.info('Login successful');
     }
 
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::disconnected()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::disconnected()
     disconnected(reason: number, reasonText: string): void
     {
         this._authenticationStarted = false;
@@ -306,7 +342,7 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
 	 *
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as handleErrorMessage()
 	 */
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::handleErrorMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::handleErrorMessage()
     handleErrorMessage(errorCode: number, messageId: number): void
     {
         switch(true)
@@ -343,7 +379,7 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
 	 *
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as handleLoginFailedHotelClosedMessage()
 	 */
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::handleLoginFailedHotelClosedMessage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::handleLoginFailedHotelClosedMessage()
     handleLoginFailedHotelClosedMessage(openHour: number, openMinute: number): void
     {
         log.warn(`Hotel is closed. Opens at ${openHour}:${String(openMinute).padStart(2, '0')}`);
@@ -358,7 +394,7 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
 	 *
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as dispatchLoginStepEvent()
 	 */
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::dispatchLoginStepEvent()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::dispatchLoginStepEvent()
     dispatchLoginStepEvent(step: HabboCommunicationEventType): void
     {
         if(!this._communication?.events) return;
@@ -380,7 +416,7 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
         this._communication = null;
     }
 
-    // AS3: sources/win63_version/habbo/communication/demo/class_467.as::initWithSSO()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::initWithSSO()
     initWithSSO(ticket: string): void
     {
         this._ssoTicket = ticket;

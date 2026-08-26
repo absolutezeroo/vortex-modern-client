@@ -1,5 +1,6 @@
 import type {IAsset} from '@core/assets/IAsset';
 import type EventEmitter from 'eventemitter3';
+import type {AnimationManager} from './animation/AnimationManager';
 import type {IAvatarFigureContainer} from './IAvatarFigureContainer';
 import type {IAvatarImage} from './IAvatarImage';
 import type {IAvatarImageListener} from './IAvatarImageListener';
@@ -93,4 +94,34 @@ export interface IAvatarRenderManager
 
     // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_581.as::get effectMap()
     get effectMap(): Map<string, any>;
+
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_581.as::getItemIds()
+    getItemIds(): string[];
+
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_581.as::getAnimationManager()
+    getAnimationManager(): AnimationManager | null;
+
+    /**
+	 * Clears the two caches, which are not the same cache
+	 *
+	 * `resetAllCaches()` drops what each live avatar has rendered; `resetAssetManager()` drops the
+	 * alias table behind those renders; `purgeAssets()` drops the downloaded libraries themselves.
+	 */
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_581.as::resetAllCaches()
+    resetAllCaches(): void;
+
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_581.as::resetAssetManager()
+    resetAssetManager(): void;
+
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_581.as::purgeAssets()
+    purgeAssets(): void;
+
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_581.as::get mode()
+    get mode(): string;
+
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_581.as::set mode()
+    set mode(value: string);
+
+    // TODO(AS3): .../src/com/sulake/habbo/avatar/_SafeCls_581.as::createBlockedAvatarImage() —
+    // see AvatarRenderManager.ts, the BlockedAvatarImage view it returns is not ported.
 }

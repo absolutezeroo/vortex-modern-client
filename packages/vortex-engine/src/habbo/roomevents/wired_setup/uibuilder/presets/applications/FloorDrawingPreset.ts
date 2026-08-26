@@ -48,6 +48,11 @@ export class FloorDrawingPreset extends WiredUIPreset
     /**
      * N, NE, E, SE, S, SW, W, NW — the order matters, `updateView()` indexes into it.
      */
+    // TODO(AS3): FloorDrawingPreset.as::floor_editor_border_N/NE/E/SE/S/SW/W/NW are eight
+    // `[Embed]` asset classes, and FLOOR_EDITOR_BORDERS instantiates each one to pull its
+    // bitmapData out. Embedded classes have no TypeScript counterpart — the same artwork ships as
+    // files here — so the array below names the assets instead and the eight classes are
+    // deliberately not reproduced.
     // AS3: FloorDrawingPreset.as::FLOOR_EDITOR_BORDERS
     private static readonly BORDER_ASSETS: readonly string[] = [
         'fp_border_N', 'fp_border_NE', 'fp_border_E', 'fp_border_SE',

@@ -17,6 +17,7 @@ import {AvatarFigureContainer} from './AvatarFigureContainer';
 import {AvatarImage} from './AvatarImage';
 import {PlaceholderAvatarImage} from './PlaceholderAvatarImage';
 import {AvatarAssetDownloadManager} from './AvatarAssetDownloadManager';
+import type {AnimationManager} from './animation/AnimationManager';
 import {EffectAssetDownloadManager} from './EffectAssetDownloadManager';
 import {AvatarRenderEvent} from './enum/AvatarRenderEvent';
 import {AvatarStructureDownload} from './structure/AvatarStructureDownload';
@@ -203,6 +204,56 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
     {
         this._aliasCollection.reset();
     }
+
+    /**
+	 * The carry-item ids the avatar structure knows about
+	 *
+	 * They come out of the `CarryItem` action's parameter list rather than a list of their own,
+	 * which is why this goes through the structure instead of being a field here.
+	 */
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::getItemIds()
+    public getItemIds(): string[]
+    {
+        return this._structure.getItemIds();
+    }
+
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::getAnimationManager()
+    public getAnimationManager(): AnimationManager | null
+    {
+        return this._structure?.animationManager ?? null;
+    }
+
+    /**
+	 * Drops every downloaded asset library that is not currently in use
+	 *
+	 * Distinct from resetAllCaches() above: that one clears what each live avatar has *rendered*,
+	 * this one clears what was *downloaded* to render it.
+	 */
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::purgeAssets()
+    public purgeAssets(): void
+    {
+        this._avatarAssetDownloadManager?.purge();
+    }
+
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::_mode
+    private _mode: string = '';
+
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::get mode()
+    public get mode(): string
+    {
+        return this._mode;
+    }
+
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::set mode()
+    public set mode(value: string)
+    {
+        this._mode = value;
+    }
+
+    // TODO(AS3): .../src/com/sulake/habbo/avatar/_SafeCls_582.as::createBlockedAvatarImage() builds a
+    // BlockedAvatarImage over the fixed figure "hd-99999-99999" — the silhouette shown in place of
+    // a blocked user. That subclass of AvatarImage is not ported, so there is nothing to construct;
+    // it is a whole view, not a missing accessor.
 
     /**
      * Throws away every live avatar's render cache.
