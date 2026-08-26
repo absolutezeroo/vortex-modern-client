@@ -214,6 +214,8 @@ interface IRoomEngineRoomInstanceData {
     furniStackingHeightMap: FurniStackingHeightMap | null;
     // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get tileObjectMap()
     tileObjectMap: TileObjectMap | null;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::worldType
+    worldType: string | null;
     // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get legacyGeometry()
     // AS3 constructs it eagerly in the RoomInstanceData constructor (_SafeCls_2223.as:35), so it is
     // never null for a live room — RoomMessageHandler fills its height map from the floor heightmap
@@ -835,6 +837,179 @@ export class RoomEngine extends Component implements IRoomEngine,
 	 * game mode (active room only), and the room instance's `is_playing_game` variable, which the
 	 * server sets on a real minigame.
 	 */
+    /**
+	 * The room's world type, as the server named it on entry
+	 *
+	 * `"public"` for a public space, `"private"` for a flat. Null when the room is not loaded —
+	 * callers use that to tell "not a public space" from "not known yet".
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getWorldType()
+    getWorldType(roomId: number): string | null
+    {
+        return this.getRoomInstanceData(roomId)?.worldType ?? null;
+    }
+
+    /**
+	 * Reads a numeric room variable, or NaN when the room has no value under that name
+	 *
+	 * NaN rather than 0 is the point: `is_playing_game` and friends are meaningfully absent, and
+	 * zero is a legitimate value for several of them.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomNumberValue()
+    getRoomNumberValue(roomId: number, key: string): number
+    {
+        const room = this.getRoomInstance(roomId);
+
+        if(room === null || !room.hasValueForName(key)) return NaN;
+
+        return room.getNumber(key);
+    }
+
+    /**
+	 * Every object of one category currently in the room
+	 *
+	 * Empty rather than null while the engine is not ready, so callers can iterate unguarded —
+	 * AS3 makes the same choice.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomObjects()
+    getRoomObjects(roomId: number, category: number): IRoomObject[]
+    {
+        if(!this._roomManagerInitialized) return [];
+
+        const room = this._roomManager?.getRoom(this.getRoomIdentifier(roomId)) ?? null;
+
+        return room?.getObjects(category) ?? [];
+    }
+
+    /**
+	 * The numeric pet type at the head of a pet figure string
+	 *
+	 * A pet figure is `"<typeId> <paletteId> <colour> …"`, so this is the first token. -1 when the
+	 * string is null or has no second token — AS3 requires the space to be there before trusting
+	 * the first field.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetTypeId()
+    getPetTypeId(figure: string | null): number
+    {
+        if(figure === null) return -1;
+
+        const parts = figure.split(' ');
+
+        if(parts.length <= 1) return -1;
+
+        return parseInt(parts[0], 10);
+    }
+
+    /**
+	 * Turns the room's background tint on or off
+	 *
+	 * The engine does not apply the colour itself — it checks the room object exists and then
+	 * announces it, and the UI layer listening for ROHSLCEE_ROOM_BACKGROUND_COLOR does the work.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectRoomBackgroundColor()
+    updateObjectRoomBackgroundColor(roomId: number, enable: boolean, hue: number, saturation: number, lightness: number): boolean
+    {
+        const room = this.getObjectRoom(roomId);
+
+        if(room === null || room.getEventHandler() === null) return false;
+
+        this.events.emit(
+            RoomEngineHSLColorEnableEvent.ROOM_BACKGROUND_COLOR,
+            new RoomEngineHSLColorEnableEvent(
+                RoomEngineHSLColorEnableEvent.ROOM_BACKGROUND_COLOR, roomId, enable, hue, saturation, lightness
+            )
+        );
+
+        return true;
+    }
+
+    /**
+	 * Marks an avatar as the one this client is driving
+	 *
+	 * The visualization uses it for everything that only applies to yourself — the own-avatar
+	 * bubble, the name colour, the click behaviour.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectUserOwnUserAvatar()
+    updateObjectUserOwnUserAvatar(roomId: number, roomIndex: number): boolean
+    {
+        const user = this.getRoomObject(roomId, roomIndex, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) as IRoomObjectController | null;
+
+        if(user === null || user.getEventHandler() === null) return false;
+
+        user.getEventHandler()?.processUpdateMessage(new RoomObjectAvatarOwnMessage());
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectUserGesture()
+    updateObjectUserGesture(roomId: number, roomIndex: number, gesture: number): boolean
+    {
+        const user = this.getRoomObject(roomId, roomIndex, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) as IRoomObjectController | null;
+
+        if(user === null || user.getEventHandler() === null) return false;
+
+        user.getEventHandler()?.processUpdateMessage(new RoomObjectAvatarGestureUpdateMessage(gesture));
+
+        return true;
+    }
+
+    /**
+	 * Puts an effect on your own avatar, wherever it currently is
+	 *
+	 * The caller knows the effect id and nothing else — this resolves the room and the index from
+	 * the active session, which is why the me-menu can ask for an effect without tracking either.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setAvatarEffect()
+    setAvatarEffect(effectId: number): void
+    {
+        if(this._sessionDataManager === null || this._roomSessionManager === null) return;
+
+        const session = this._roomSessionManager.getSession(this._activeRoomId);
+
+        if(session === null) return;
+
+        this.updateObjectUserEffect(this._activeRoomId, session.ownUserRoomId, effectId, 0);
+    }
+
+    /**
+	 * Hands a loaded asset library to the content loader as one object type's content
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::insertContentLibrary()
+    insertContentLibrary(typeId: number, category: number, assetLibrary: IAssetLibrary): boolean
+    {
+        return this._contentLoader.insertObjectContent(typeId, category, assetLibrary);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get roomContentLoader()
+    get roomContentLoader(): RoomContentLoader
+    {
+        return this._contentLoader;
+    }
+
+    /**
+	 * Registers an object with the room's tile map, so a walk can find what stands on a tile
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addObjectToTileMap()
+    protected addObjectToTileMap(roomId: number, object: IRoomObject): void
+    {
+        this.getRoomInstanceData(roomId)?.tileObjectMap?.addRoomObject(object);
+    }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get gameEngine(),
+    // addObjectSnowWar(), addObjectSnowSplash(), updateObjectSnowWar() and disposeObjectSnowWar()
+    // are the SnowWar half of the engine. `habbo/game` is 0/63 in this port and 58 of those files
+    // are snowwar/, so there is no game manager to return and no snowball logic to drive — see
+    // RoomObjectFactory.ts's note on the same two logic types.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::createRoomObjectEventHandlerInstance()
+    // is the hook AS3 leaves for a subclass to supply its own event handler. This port folded
+    // `_SafeCls_1821` into RoomEngine itself rather than keeping it a separate object, so there is
+    // no instance to create — see clickRoomObject() and the other handleRoomObject* members here.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::SETUP_WITHOUT_TOOLBAR
+    // and SETUP_WITHOUT_GAME_MANAGER are bit flags for a `setup()` overload this port does not
+    // have: the engine's dependencies are wired by the DI container, not by a flags argument.
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getIsPlayingGame()
     getIsPlayingGame(roomId: number): boolean
     {
@@ -3382,26 +3557,20 @@ export class RoomEngine extends Component implements IRoomEngine,
         this._contentLoader?.purge();
     }
 
-    setWorldType(roomId: number, worldType: string): void 
+    /**
+	 * Records what kind of room this is, for `getWorldType()` to read back
+	 *
+	 * AS3 stores the string on the room's own instance data and nowhere else. The port used to
+	 * push it into the room object's `room_world_type` model variable as a *number* instead —
+	 * `parseInt('public')` is NaN, so every room was recorded as 0, into a variable neither tree
+	 * reads.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setWorldType()
+    setWorldType(roomId: number, worldType: string): void
     {
-        const room = this.getRoomInstance(roomId);
+        const data = this.getRoomInstanceData(roomId);
 
-        if(!room) 
-        {
-            return;
-        }
-
-        const roomObject = room.getObject(RoomEngine.OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController;
-
-        if(roomObject) 
-        {
-            const model = roomObject.getModelController();
-
-            if(model) 
-            {
-                model.setNumber(RoomObjectVariableEnum.ROOM_WORLD_TYPE, parseInt(worldType, 10) || 0, true);
-            }
-        }
+        if(data !== null) data.worldType = worldType;
     }
 
     initializeRoom(
@@ -6648,6 +6817,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                 furniStackingHeightMap: null,
                 tileObjectMap: null,
                 legacyGeometry: new LegacyWallGeometry(),
+                worldType: null,
                 selectedObjectData: null,
                 placedObjectData: null,
                 mouseButtonCursorOwners: []
