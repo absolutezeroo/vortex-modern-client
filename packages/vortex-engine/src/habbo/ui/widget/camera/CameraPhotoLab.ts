@@ -1,6 +1,7 @@
 import type {IWindow} from '@core/window/IWindow';
 import {Logger} from '@core/utils/Logger';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IScrollableGridWindow} from '@core/window/components/IScrollableGridWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
@@ -62,7 +63,7 @@ export class CameraPhotoLab
     private _effectButtons: Map<string, CameraEffect> | null = new Map();
 
     // AS3: .../ui/widget/camera/CameraPhotoLab.as::_itemGrid
-    private _itemGrid: IWindowContainer | null = null;
+    private _itemGrid: IScrollableGridWindow | null = null;
 
     // AS3: .../ui/widget/camera/CameraPhotoLab.as::_SafeStr_6837
     private _typeButtons: Map<string, IWindow> | null = new Map();
@@ -414,7 +415,7 @@ export class CameraPhotoLab
             return;
         }
 
-        this._itemGrid = this._window.findChildByName('item_grid') as IWindowContainer | null;
+        this._itemGrid = this._window.findChildByName('item_grid') as unknown as IScrollableGridWindow | null;
         this._imageWindow = this._window.findChildByName('image') as (IWindow & { bitmap?: ImageBitmap | null }) | null;
         this._window.procedure = this.windowEventHandler;
 
@@ -769,12 +770,14 @@ export class CameraPhotoLab
 
         if(this._itemGrid === null || this._effectButtons === null) return;
 
-        // TODO(AS3): .../CameraPhotoLab.as::setFilterType()
-        // AS3 calls IScrollableGridWindow.removeGridItems()/addGridItem(); the port's containers
-        // have no grid API, so the buttons are shown/hidden in place instead of being re-flowed.
+        // Emptying and refilling the grid is what re-flows it: leaving the other types in place
+        // and merely hiding them would keep their cells, so the visible buttons would stay spread
+        // across the gaps the hidden ones left.
+        this._itemGrid.removeGridItems();
+
         for(const effect of this._effectButtons.values())
         {
-            if(effect.button) effect.button.visible = effect.type === type;
+            if(effect.type === type && effect.button) this._itemGrid.addGridItem(effect.button);
         }
 
         this.highlightSelectedButtonType(type);

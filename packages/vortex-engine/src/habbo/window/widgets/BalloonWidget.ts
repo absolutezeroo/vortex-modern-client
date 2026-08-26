@@ -7,6 +7,8 @@ import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowEventListener} from '@core/window/events/WindowEventDispatcher';
 import type {IIterator} from '@core/window/utils/IIterator';
+import {BalloonArrowPivot} from '../enum/BalloonArrowPivot';
+import {MathUtils} from '@habbo/utils/MathUtils';
 
 /**
  * Balloon / speech bubble widget.
@@ -37,10 +39,18 @@ export class BalloonWidget implements IWidget
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::ARROW_WIDTH
     private static readonly ARROW_WIDTH: number = 9;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::ARROW_ASSET_PREFIX
+    private static readonly ARROW_ASSET_PREFIX: string = 'illumina_light_balloon_arrow_';
+
     private static readonly PARAM_FLAG_131072: number = 131072;
     private static readonly PARAM_FLAG_147456: number = 147456;
 
     private _batchUpdate: boolean = false;
+
+    // Name DERIVED (`_SafeStr_5338`): obfuscated in every tree. Set while refresh() assigns sizes,
+    // so the resize events those assignments raise do not re-enter it.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::_SafeStr_5338
+    private _resizing: boolean = false;
 
     private _widgetWindow: IWidgetWindow | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::_windowManager
@@ -101,10 +111,21 @@ export class BalloonWidget implements IWidget
         return this._arrowPivot;
     }
 
+    /**
+	 * AS3 refreshes twice, with the border's size flags cleared in between: the first pass lets
+	 * the balloon shrink to what the new arrow direction needs, the second re-applies the flags
+	 * and settles the final size. Refreshing once leaves the balloon at whatever the previous
+	 * direction had grown it to.
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::set arrowPivot()
     public set arrowPivot(value: string)
     {
         this._arrowPivot = value;
+
+        this.clearFlags();
+        this.refresh();
+        this.syncFlags();
+        this.refresh();
     }
 
     private _arrowDisplacement: number = 0;
@@ -119,6 +140,8 @@ export class BalloonWidget implements IWidget
     public set arrowDisplacement(value: number)
     {
         this._arrowDisplacement = value;
+
+        this.refresh();
     }
 
     /**
@@ -165,6 +188,8 @@ export class BalloonWidget implements IWidget
         }
 
         this._batchUpdate = false;
+
+        this.refresh();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::dispose()
@@ -215,15 +240,11 @@ export class BalloonWidget implements IWidget
         const widgetWindow = this._widgetWindow as IWindow;
         const border = this._border as IWindow;
 
-        if(widgetWindow.getParamFlag(BalloonWidget.PARAM_FLAG_131072))
-        {
-            border.setParamFlag(BalloonWidget.PARAM_FLAG_131072, true);
-        }
-
-        if(widgetWindow.getParamFlag(BalloonWidget.PARAM_FLAG_147456))
-        {
-            border.setParamFlag(BalloonWidget.PARAM_FLAG_147456, true);
-        }
+        // AS3 assigns the widget's value straight across, so a flag that is off gets cleared on
+        // the border too. Only ever setting it true meant clearFlags() could never be undone and
+        // the balloon stayed stuck at its first-computed size.
+        border.setParamFlag(BalloonWidget.PARAM_FLAG_131072, widgetWindow.getParamFlag(BalloonWidget.PARAM_FLAG_131072));
+        border.setParamFlag(BalloonWidget.PARAM_FLAG_147456, widgetWindow.getParamFlag(BalloonWidget.PARAM_FLAG_147456));
     }
 
     /**
@@ -250,14 +271,116 @@ export class BalloonWidget implements IWidget
     }
 
     /**
-	 * Refresh arrow positioning.
+	 * Sizes the balloon around its border and puts the arrow on the right edge
 	 *
-	 * Complex arrow positioning logic from AS3 - stub for now,
-	 * the UI layer handles visual rendering.
+	 * Three sizing modes, taken from the widget window's own flags: 147456 sizes the balloon to
+	 * exactly what the border needs, 131072 lets it grow to that but never shrink below what the
+	 * caller asked for, and with neither the caller's size wins outright. The arrow's thickness is
+	 * added to whichever axis it grows along, which is why the two branches differ only in which
+	 * of width/height gets the extra.
+	 *
+	 * `_batchUpdate` guards re-entry: assigning width/height below fires the resize listeners that
+	 * call straight back into here.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BalloonWidget.as::refresh()
     private refresh(): void
     {
-        // TODO: Implement full arrow positioning logic from AS3
+        if(this._batchUpdate || this._resizing || this._disposed) return;
+        if(this._border === null || this._root === null || this._widgetWindow === null) return;
+
+        const border = this._border as unknown as IWindow;
+        const root = this._root as unknown as IWindow;
+        const widgetWindow = this._widgetWindow as unknown as IWindow;
+
+        const direction = BalloonArrowPivot.directionFromPivot(this._arrowPivot);
+        const vertical = direction === BalloonArrowPivot.UP || direction === BalloonArrowPivot.DOWN;
+
+        // The -1 is AS3's own: the arrow overlaps the border by a pixel so the two joins seamlessly.
+        const neededWidth = vertical ? border.width : border.width + BalloonWidget.ARROW_LENGTH - 1;
+        const neededHeight = vertical ? border.height + BalloonWidget.ARROW_LENGTH - 1 : border.height;
+
+        this._resizing = true;
+
+        if(widgetWindow.testParamFlag(BalloonWidget.PARAM_FLAG_147456))
+        {
+            root.width = neededWidth;
+            root.height = neededHeight;
+        }
+        else if(widgetWindow.testParamFlag(BalloonWidget.PARAM_FLAG_131072))
+        {
+            root.width = Math.max(widgetWindow.width, neededWidth);
+            root.height = Math.max(widgetWindow.height, neededHeight);
+        }
+        else
+        {
+            root.width = widgetWindow.width;
+            root.height = widgetWindow.height;
+        }
+
+        widgetWindow.width = root.width;
+        widgetWindow.height = root.height;
+
+        this._resizing = false;
+
+        if(this._arrowBitmap === null) return;
+
+        (this._arrowBitmap as IWindow & {assetUri: string}).assetUri = BalloonWidget.ARROW_ASSET_PREFIX + direction;
+
+        const position = BalloonArrowPivot.positionFromPivot(this._arrowPivot);
+        const along = vertical ? root.width : root.height;
+
+        let offset: number;
+
+        if(position === BalloonArrowPivot.MINIMUM) offset = BalloonWidget.ARROW_FREE_PADDING;
+        else if(position === BalloonArrowPivot.MAXIMUM) offset = along - BalloonWidget.ARROW_FREE_PADDING - BalloonWidget.ARROW_WIDTH;
+        else offset = (along - BalloonWidget.ARROW_WIDTH) / 2;
+
+        const slide = MathUtils.clamp(
+            offset + this._arrowDisplacement,
+            BalloonWidget.ARROW_FREE_PADDING,
+            along - BalloonWidget.ARROW_FREE_PADDING
+        );
+
+        this._resizing = true;
+
+        if(vertical)
+        {
+            border.rectangle = {
+                x: 0,
+                y: direction === BalloonArrowPivot.UP ? BalloonWidget.ARROW_LENGTH - 1 : 0,
+                width: root.width,
+                height: root.height + 1 - BalloonWidget.ARROW_LENGTH
+            };
+        }
+        else
+        {
+            border.rectangle = {
+                x: direction === BalloonArrowPivot.LEFT ? BalloonWidget.ARROW_LENGTH - 1 : 0,
+                y: 0,
+                width: root.width + 1 - BalloonWidget.ARROW_LENGTH,
+                height: root.height
+            };
+        }
+
+        this._resizing = false;
+
+        if(vertical)
+        {
+            this._arrowBitmap.rectangle = {
+                x: slide,
+                y: direction === BalloonArrowPivot.UP ? 0 : border.bottom - 1,
+                width: BalloonWidget.ARROW_WIDTH,
+                height: BalloonWidget.ARROW_LENGTH
+            };
+        }
+        else
+        {
+            this._arrowBitmap.rectangle = {
+                x: direction === BalloonArrowPivot.LEFT ? 0 : border.right - 1,
+                y: slide,
+                width: BalloonWidget.ARROW_LENGTH,
+                height: BalloonWidget.ARROW_WIDTH
+            };
+        }
     }
 }

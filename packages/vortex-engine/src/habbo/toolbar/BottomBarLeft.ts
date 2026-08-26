@@ -629,9 +629,10 @@ export class BottomBarLeft
      * AS3's own name for this method ("geIcon", not "getIcon") is kept in the
      * trace comment only - the TS method is spelled correctly.
      *
-     * TODO(AS3): AS3 falls back to memenu.getIcon()/progmenu.getIcon() when the
-     * direct window lookup misses - MeMenuNewController/ProgMenuController have
-     * no getIcon() in this port yet, so that inner fallback is not reproduced.
+     * Half the toolbar's icons live in the two sub-menus rather than on the bar itself, so a miss
+     * on the bar is not an answer — it is a reason to ask the me-menu and then the prog-menu.
+     * Their own `getIcon()` reveals the sub-menu window when it holds the icon, which is what
+     * makes an icon that has never been shown measurable by a caller positioning against it.
      *
      * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::geIcon()
      */
@@ -640,9 +641,15 @@ export class BottomBarLeft
     {
         const iconName = this.getIconChildName(iconId);
 
-        if(!iconName || !this._window) return null;
+        if(!iconName) return null;
 
-        return (this._window as IWindowContainer).findChildByName(iconName);
+        // AS3 passes the *raw* id to the sub-menus and the mapped child name only to the bar:
+        // a sub-menu names its children by the icon id itself.
+        const onBar = this._window === null
+            ? null
+            : (this._window as IWindowContainer).findChildByName(iconName);
+
+        return onBar ?? this._meMenuController?.getIcon(iconId) ?? this._progMenuController?.getIcon(iconId) ?? null;
     }
 
     /**

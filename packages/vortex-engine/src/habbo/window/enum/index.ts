@@ -14,6 +14,7 @@ export {WindowStyle} from './WindowStyle';
 
 // Habbo Exports
 export {BadgeImageType} from './BadgeImageType';
+export {BalloonArrowPivot} from './BalloonArrowPivot';
 export {HabboAlertDialogFlag} from './HabboAlertDialogFlag';
 export {HabboIconType} from './HabboIconType';
 export {HabboWindowParam} from './HabboWindowParam';
