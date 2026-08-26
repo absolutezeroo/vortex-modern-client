@@ -3711,7 +3711,67 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
-- 🆕 **The member-coverage worklist, continued — 643 → 507.** Another 136 across fourteen files,
+- 🆕 **The member-coverage worklist is closed — 749 → 18**, 2026-08-26/27. What remains is two
+  clusters left on purpose: `HabboAir`'s AIR crash reporter (11) and `FloorDrawingPreset`'s
+  `[Embed]` asset classes (7).
+
+  **Two thirds of the original 749 were never gaps, and finding that out was the main result.**
+
+  - **283 were inherited members the measure could not see.** AS3 has no shared base for composers
+    and parsers, so every one re-declares `dispose()` and `get disposed()`; this port declares both
+    once and 200-odd subclasses inherit them. The presence check searched only the citing file's own
+    body — 234 of one then-449 reported gaps were that single structural difference, plus ~50 from
+    other bases (`RoomWidgetBase.registerUpdateEvents` on every widget, and so on).
+    `scripts/as3-member-coverage.mjs` now follows the file's `extends` to its base, capped at four
+    hops. **Spot-check before trusting a measure change:** `AvatarInfoWidget` dropped 5 → 3 because
+    two members really are on `RoomWidgetBase`, and its three real gaps stayed reported.
+  - **A large share of the rest were renames.** The port's own name is usually the better one
+    (`roomIndex` for AS3's misleading `userId`, `texture` for `asset`); the fix is to point the
+    `AS3:` trace at the real AS3 member, not to rename working code. Note the measure reads a full
+    path or a bare `Foo.as::member()` — the elided `.../src/com/...` form is invisible unless the
+    file also cites a full path somewhere, which is how eight correct traces read as gaps.
+  - **And interfaces are where this port loses members it already has.** `IRoomEngineServices` hid
+    15, `IHabboInventory` 7, `IRoomCreator` 3, `IHabboToolbar` 1. Nothing errors: the consumer that
+    holds the interface simply cannot see the method and does without it.
+
+  **The real half, in rough order of what a player would notice.**
+
+  - **Equipped badges rendered one slot off.** The wire carries a 1-based slot; AS3's DTO converts
+    with `slotIndex = badgeIndex - 1` and the port read the raw value, so every badge sat one slot
+    over and whichever occupied wire slot 5 was dropped by the downstream bounds check.
+  - **`roomtools` was ported from a superseded revision.** It followed `win63_version`'s
+    `_visitedRooms` flat array; the primary tree had replaced that with the `RoomVisitHistory`
+    singleton, which had no TS counterpart at all. **And the primary tree's own decompile of
+    `onRoomEntered()` is corrupted** — a captured reference emitted as literal `null` — so
+    CLAUDE.md's "the primary tree settles it" has a known exception now. Reconstructed from the
+    sibling branch in the same method.
+  - **`setWorldType()` stored NaN.** AS3 puts the string on the room's instance data, which is what
+    `getWorldType()` reads back; the port pushed it into a model variable as a *number*, and
+    `parseInt('public')` is NaN, so `|| 0` recorded every room as 0 — into a variable neither tree
+    reads.
+  - **Four furnidata fields were parsed and dropped**: `furniDataCategory`, `canPutStuffOn`,
+    `height`, `recyclable`. Each is easy to confuse with a neighbour it is not — `canPutStuffOn` is
+    furniture stacking where `canStandOn` is avatars, `height` is where the next item sits and not
+    the footprint's z extent, and `recyclable` **defaults to true on an absent field**, so a
+    `=== '1'` test would have made everything unrecyclable.
+  - **Entering a room never reset the previous room's state** (`enterNewRoom()` neither ported nor
+    called), **a selected furni was never told it was selected** (so it never drew its outline),
+    **the catalog toolbar icon was never wired** to any of the four `CatalogEvent`s the catalog
+    dispatches, **a rename never reached the room** (21 of AS3's 22 message events registered), and
+    **the shake/rotate room effects moved nothing** because `RoomGeometry` had made AS3's public
+    `location`/`direction` setters private.
+
+  **A dozen members are dead in AS3 itself**, each verified by grepping every tree for callers —
+  `RoomSettingsCtrl` implements `ILinkEventTracker` and is never registered, so a `roomsettings/`
+  deep link could not have worked in the original client either; `Component._references` is reset
+  and printed and never incremented; both data parsers' `READY` constants are bypassed by the
+  literal AS3 itself dispatches with. Those are marked, not "fixed".
+
+  The last stretch ran as five parallel agents over disjoint module buckets, each doing the same
+  three-way triage (rename → fix the trace / absent → port / no counterpart → mark and say why),
+  with the parent verifying every load-bearing claim against the source before committing.
+
+- **The member-coverage worklist, continued — 643 → 507.** Another 136 across fourteen files,
   and the shape of the remainder changed: after this pass no file has more than eleven absent
   members and most have four or five, so the worklist stops being "six big classes" and becomes a
   long tail.
