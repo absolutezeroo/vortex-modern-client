@@ -155,6 +155,49 @@ export class FurniModel implements IFurniModel
         return this._isListInitialized;
     }
 
+    /**
+	 * Marks the furniture list as built, one way only
+	 *
+	 * FurniView and the inventory message handler both refuse to act on an uninitialised list, so
+	 * this is the gate that lets the first full inventory reply through. There is no reset — a
+	 * rebuild replaces the items, not the flag.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::setListInitialized()
+    setListInitialized(): void
+    {
+        this._isListInitialized = true;
+    }
+
+    /**
+	 * Remembers which group is selected in the category currently on screen
+	 *
+	 * Per-category, so switching tabs and coming back restores the selection rather than clearing
+	 * it — `selectItem()` writes the same map from inside.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::set categorySelection()
+    set categorySelection(item: GroupItem | null)
+    {
+        this._categorySelections.set(this._currentCategory, item);
+    }
+
+    /**
+	 * Asks the inventory to close the whole window
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::requestClose()
+    requestClose(): void
+    {
+        this._habboInventory.closeView();
+    }
+
+    // TODO(AS3): .../src/com/sulake/habbo/inventory/furni/FurniModel.as::createItemWindow() keeps a
+    // per-layout template window and hands out clones of it. This port builds each thumbnail
+    // through `windowManager.buildWidgetLayout()` instead — same layout, same result per window,
+    // the cache lives one layer down. See GroupItem.createWindow().
+
+    // TODO(AS3): .../src/com/sulake/habbo/inventory/furni/FurniModel.as::displayItemInfo() forwards
+    // to FurniView.displayItemInfo(), the panel describing the selected group. That panel is not
+    // ported on the view side, so there is nothing to forward to yet.
+
     private _showingNfts: boolean = true;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::get showingNfts()

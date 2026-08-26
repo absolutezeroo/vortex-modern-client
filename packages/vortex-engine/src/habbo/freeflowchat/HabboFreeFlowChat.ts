@@ -172,6 +172,22 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._chatBubbleFactory;
     }
 
+    // TODO(AS3): .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatHistoryScrollView()
+    // and set visible() both address the drag-down chat history panel. Neither
+    // ChatHistoryScrollView nor ChatHistoryTray is built here — see ChatViewController.ts's header
+    // for the scope cut — so there is no panel to hand back or hide.
+
+    // TODO(AS3): .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::isNotificationStyle()
+    // reads `isNotification` off the chat style. This port's ChatBubbleStyle carries no such flag:
+    // only style id 0 is registered until the chatstyles catalog XML is parsed (see
+    // ChatBubbleStyle.ts), so the answer would be a constant false rather than a lookup.
+
+    // TODO(AS3): .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get gameManager(),
+    // get windowManager() and get toolbar() hand callers three components this class holds as
+    // dependencies. It takes none of them here — the bubbles are drawn onto the room canvas rather
+    // than into windows, and there is no game manager at all (habbo/game is 0/63) — so the three
+    // accessors have no field to return.
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatBorderLimited()
     get roomChatBorderLimited(): boolean
     {

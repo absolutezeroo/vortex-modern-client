@@ -33,6 +33,16 @@ export class GroupItem implements IGetImageListener
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::THUMB_COLOR_UNSEEN
     private static readonly THUMB_COLOR_UNSEEN = 10275685;
 
+    /**
+	 * Opacity of the group thumbnail: full when at least one item can still be placed, faded to a
+	 * fifth once every copy is locked into a trade.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::THUMB_BLEND_ITEMS_AVAILABLE
+    public static readonly THUMB_BLEND_ITEMS_AVAILABLE = 1;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::THUMB_BLEND_ITEMS_NOT_AVAILABLE
+    public static readonly THUMB_BLEND_ITEMS_NOT_AVAILABLE = 0.2;
+
     // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::_items
     private _items: Map<number, FurnitureItem> = new Map();
     // `protected`, not private: AS3's CreditTradingItem reads `_SafeStr_4570` (the model) and
@@ -62,6 +72,28 @@ export class GroupItem implements IGetImageListener
     get iconCallbackId(): number
     {
         return this._iconCallbackId;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::_SafeStr_7581 (name derived: read back by previewCallbackId)
+    private _previewCallbackId: number = 0;
+
+    /**
+	 * The id of the *large preview* image request, which is not the thumbnail's
+	 *
+	 * `iconCallbackId` above tracks the grid thumbnail and is compared inside imageReady();
+	 * this one is written and read only from outside, by whichever view is showing the group at
+	 * full size. Two separate requests, two separate ids — AS3 keeps both fields for that reason.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::get previewCallbackId()
+    get previewCallbackId(): number
+    {
+        return this._previewCallbackId;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::set previewCallbackId()
+    set previewCallbackId(value: number)
+    {
+        this._previewCallbackId = value;
     }
 
     private _isImageInitAttempted: boolean = false;
@@ -398,10 +430,40 @@ export class GroupItem implements IGetImageListener
     }
 
     /**
+	 * Adds an item at the *front* of the group
+	 *
+	 * The distinction from push() is the position, and it is what makes a just-acquired item show
+	 * as the group's thumbnail. AS3 gets it from its ordered map's own `unshift`; a `Map` has no
+	 * such thing, so the entries are rebuilt with the newcomer first — the group holds a handful
+	 * of items, not a list worth optimising.
+	 */
+    // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::unshift()
+    unshift(item: FurnitureItem): void
+    {
+        const existing = this._items.get(item.id);
+
+        if(existing)
+        {
+            existing.locked = false;
+        }
+        else
+        {
+            const entries = Array.from(this._items.entries());
+
+            this._items.clear();
+            this._items.set(item.id, item);
+
+            for(const [id, existingItem] of entries) this._items.set(id, existingItem);
+        }
+
+        this.updateAllThumbDataVisuals();
+    }
+
+    /**
      * Add an item to the group
      */
     // AS3: .../src/com/sulake/habbo/inventory/items/GroupItem.as::push()
-    push(item: FurnitureItem, isUnseen: boolean = false): void 
+    push(item: FurnitureItem, isUnseen: boolean = false): void
     {
         const existing = this._items.get(item.id);
 

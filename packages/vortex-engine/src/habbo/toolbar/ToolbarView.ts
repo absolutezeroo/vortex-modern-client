@@ -54,6 +54,13 @@ export class ToolbarView
     private _position = {...ToolbarView.DEFAULT_LOCATION};
     private _visible: boolean = true;
 
+    // TODO(AS3): .../src/com/sulake/habbo/toolbar/ToolbarView.as::onCatalogEvent(), setIconBitmap(),
+    // getIconLocation(), getUnseenItemCounter() and animateToIcon() are the five members that need
+    // the toolbar *window*. AS3 declares each of them twice — once here and once on BottomBarLeft,
+    // the two bar variants — and this port builds only BottomBarLeft, so all five live there with
+    // traces to `BottomBarLeft.as`. Duplicating them here would give this class a window it does
+    // not own.
+
     constructor(toolbar: HabboToolbar)
     {
         this._toolbar = toolbar;
