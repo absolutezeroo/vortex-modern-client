@@ -1,6 +1,7 @@
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {HabboNotifications} from './HabboNotifications';
+import {MOTDNotification} from './singular/MOTDNotification';
 import {Logger} from '@core/utils/Logger';
 
 // Existing message events
@@ -60,7 +61,6 @@ import {
     PetRespectFailedEvent,
     RoomMessageNotificationMessageEvent
 } from "@habbo/communication";
-import {GenericNotificationItemData} from "@habbo/notifications/feed";
 import {ActivityPointTypeEnum} from '@habbo/catalog/purse/ActivityPointTypeEnum';
 
 // Moderation / safety-lock / club-gift events. These all live under
@@ -146,6 +146,11 @@ export class NotificationMessageHandler
 
     // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::_notifications
     private _notifications: HabboNotifications | null;
+
+    // AS3 lets each MOTD packet build a fresh dialog and drops the previous one on the floor; the
+    // reference is kept here so the old window is actually disposed instead of leaking.
+    // TS-only: AS3 keeps no field for it.
+    private _motdNotification: MOTDNotification | null = null;
     // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::_communication
     private _communication: IHabboCommunicationManager | null;
     // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::_messageEvents
@@ -483,15 +488,16 @@ export class NotificationMessageHandler
     private onMOTD(event: IMessageEvent): void
     {
         const parser = (event as MOTDNotificationEvent).parser as MOTDNotificationEventParser;
-        if(parser.messages && parser.messages.length > 0)
+
+        if(!parser.messages || parser.messages.length === 0) return;
+
+        // The feed half of AS3's body is deliberately absent: `notification.feed.enabled` is off
+        // and NotificationController is never constructed in either tree, so the loop that built
+        // GenericNotificationItemData here fed nothing. The dialog is the live half.
+        if(this.useNotifications())
         {
-            for(const message of parser.messages)
-            {
-                const data = new GenericNotificationItemData();
-                data.title = message;
-                data.timeStamp = performance.now();
-                // this._notifications.feedController?.addFeedItem(3, data);
-            }
+            this._motdNotification?.dispose();
+            this._motdNotification = new MOTDNotification(parser.messages, this._notifications?.windowManager ?? null);
         }
     }
 
