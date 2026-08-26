@@ -102,11 +102,17 @@ export class GameDataResources implements IGameDataResources
         }
         const resources = new GameDataResources();
 
-        for(const entry of parsed.hashes) 
+        for(const entry of parsed.hashes)
         {
             const url = entry.url;
 
-            switch(entry.name) 
+            // The primary tree keys everything by name and exposes only getResourceUrl/Hash; the
+            // four named pairs below are the ones this port already had accessors for, and keeping
+            // both shapes means a caller can ask for a resource the switch does not know about.
+            resources._resourceUrls.set(entry.name, url);
+            resources._resourceHashes.set(entry.name, entry.hash);
+
+            switch(entry.name)
             {
                 case 'external_texts':
                     resources._externalTextsUrl = url;
@@ -130,8 +136,33 @@ export class GameDataResources implements IGameDataResources
         return resources;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/localization/GameDataResources.as::_resourceUrls
+    private _resourceUrls: Map<string, string> = new Map();
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/localization/GameDataResources.as::_resourceHashes
+    private _resourceHashes: Map<string, string> = new Map();
+
+    /**
+	 * Any resource in the manifest, by the name it was published under
+	 *
+	 * The named accessors above cover the four the client always needs; this pair reaches the rest
+	 * without the switch having to know them. Empty when the manifest has no such entry — AS3
+	 * returns `undefined` from its dictionary, which its callers treat the same way.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/localization/GameDataResources.as::getResourceUrl()
+    getResourceUrl(name: string): string
+    {
+        return this._resourceUrls.get(name) ?? '';
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/localization/GameDataResources.as::getResourceHash()
+    getResourceHash(name: string): string
+    {
+        return this._resourceHashes.get(name) ?? '';
+    }
+
     // AS3: sources/win63_version/core/localization/class_2118.as::isValid()
-    isValid(): boolean 
+    isValid(): boolean
     {
         return !!(
             this._externalTextsUrl &&

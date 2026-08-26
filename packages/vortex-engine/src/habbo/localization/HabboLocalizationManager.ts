@@ -177,6 +177,22 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         return this.getGameDataResources()?.externalVariablesHash ?? '';
     }
 
+    /**
+	 * Any game-data resource by name, for the callers that need one the four named pairs above do
+	 * not cover.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/localization/HabboLocalizationManager.as::getGameDataResourceUrl()
+    getGameDataResourceUrl(name: string): string
+    {
+        return this.getGameDataResources()?.getResourceUrl(name) ?? '';
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/localization/HabboLocalizationManager.as::getGameDataResourceHash()
+    getGameDataResourceHash(name: string): string
+    {
+        return this.getGameDataResources()?.getResourceHash(name) ?? '';
+    }
+
     override getActiveEnvironmentId(): string
     {
         return super.getActiveEnvironmentId();
@@ -404,5 +420,15 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         fixedKey = fixedKey.replace('{', '$');
 
         return fixedKey.replace('}', '$');
+    }
+
+    /**
+	 * AS3 overrides dispose() only to call `super.dispose()` — it adds nothing and exists solely
+	 * because the class declares the override. The base's dispose is inherited here instead.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/localization/HabboLocalizationManager.as::dispose()
+    override dispose(): void
+    {
+        super.dispose();
     }
 }

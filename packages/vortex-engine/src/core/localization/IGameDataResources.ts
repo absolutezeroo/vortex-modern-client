@@ -28,4 +28,14 @@ export interface IGameDataResources
 	 */
     // AS3: sources/win63_version/core/localization/class_1959.as::isValid()
     isValid(): boolean;
+
+    /**
+	 * Any resource in the manifest, by the name it was published under — the named pairs above are
+	 * the four the client always needs, these reach the rest.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/localization/IGameDataResources.as::getResourceUrl()
+    getResourceUrl(name: string): string;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/localization/IGameDataResources.as::getResourceHash()
+    getResourceHash(name: string): string;
 }
