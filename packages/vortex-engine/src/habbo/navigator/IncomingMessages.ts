@@ -313,17 +313,32 @@ export class IncomingMessages
             this.data.enteredRoom = parser.data;
             this.data.currentRoomIsStaffPick = parser.staffPick;
 
-            if(parser.data.displayRoomEntryAd)
+            // AS3 suppresses the ad for the room you have just created — `createdFlatId` is set by
+            // onFlatCreated() and cleared two lines below, so it only matches on that first entry.
+            const isRoomJustCreated = this.data.createdFlatId === parser.data.flatId;
+
+            if(!isRoomJustCreated && parser.data.displayRoomEntryAd)
             {
-                // TODO: Port AS3 requestRoomEnterAd().
+                this.requestRoomEnterAd();
             }
 
             this.data.createdFlatId = 0;
 
             if(this.data.enteredGuestRoom !== null && this.data.enteredGuestRoom.habboGroupId > 0)
             {
-                // TODO: Port AS3 roomEventInfoCtrl expanded=false + refresh().
+                const roomEventInfoCtrl = this._navigator.transitionalNavigator?.roomEventInfoCtrl ?? null;
+
+                if(roomEventInfoCtrl !== null)
+                {
+                    roomEventInfoCtrl.expanded = false;
+                    roomEventInfoCtrl.refresh();
+                }
             }
+
+            // The tags the user picked before the room existed, replayed once the session is up.
+            const sessionTags = this.data.getAndResetSessionTags();
+
+            if(sessionTags !== null) this._navigator.send(sessionTags.getMsg());
         }
         else if(parser.roomForward)
         {
@@ -333,11 +348,11 @@ export class IncomingMessages
             }
             else if(parser.data.doorMode === 1 && (!parser.isGroupMember && this._navigator.sessionData?.userName !== parser.data.ownerName))
             {
-                // TODO: Port AS3 _navigator.doorbell.show(parser.data).
+                this._navigator.transitionalNavigator?.doorbell?.show(parser.data);
             }
             else if(parser.data.doorMode === 2 && (this._navigator.sessionData?.userName !== parser.data.ownerName && !parser.isGroupMember))
             {
-                // TODO: Port AS3 _navigator.passwordInput.show(parser.data).
+                this._navigator.transitionalNavigator?.passwordInput?.show(parser.data);
             }
             else
             {
@@ -357,10 +372,22 @@ export class IncomingMessages
             this.data.enteredRoom = parser.data;
             this.data.currentRoomIsStaffPick = parser.staffPick;
 
-            // TODO: Port AS3 _navigator.roomInfoViewCtrl.reload().
+            this._navigator.transitionalNavigator?.roomInfoViewCtrl?.reload();
         }
 
         log.debug(`Guest room result: ${parser.data.roomName} (${parser.data.flatId}), enterRoom=${parser.enterRoom}, forward=${parser.roomForward}`);
+    }
+
+    /**
+	 * Open the room-entry ad habblet, if the hotel has it switched on
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/_SafeCls_1951.as::requestRoomEnterAd()
+    private requestRoomEnterAd(): void
+    {
+        if(this._navigator.getProperty('roomenterad.habblet.enabled') === 'true')
+        {
+            HabboWebTools.openRoomEnterAd();
+        }
     }
 
     // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onRoomInfoUpdated()

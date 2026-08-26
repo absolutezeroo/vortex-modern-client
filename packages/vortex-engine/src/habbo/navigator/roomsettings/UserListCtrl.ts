@@ -6,6 +6,7 @@ import type { IHabboTransitionalNavigator } from '../IHabboTransitionalNavigator
 import { AssignRightsMessageComposer } from '@habbo/communication/messages/outgoing/room/action/AssignRightsMessageComposer';
 import { RemoveRightsMessageComposer } from '@habbo/communication/messages/outgoing/room/action/RemoveRightsMessageComposer';
 import { GetExtendedProfileMessageComposer } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
+import { UserInfoRegionUtil } from '@habbo/utils/UserInfoRegionUtil';
 
 /** Minimal user data from room settings (class_2565). */
 export interface IRoomSettingsUserData
@@ -162,13 +163,9 @@ export class UserListCtrl
             bg.addEventListener('WME_OUT', (e: WindowEvent) => this._onBgMouseOut(e));
         }
 
-        // TODO: wire user_info_region click via class_2323.setup() equivalent
-        const infoRegion = entry.findChildByName('user_info_region');
-
-        if(infoRegion)
-        {
-            infoRegion.addEventListener('WME_CLICK', (e: WindowEvent) => this._onUserInfoMouseClick(e));
-        }
+        // The helper adds the eye-icon hover swap alongside the click, which the hand-rolled
+        // WME_CLICK listener here was missing — the profile eye never lit on these rows.
+        UserInfoRegionUtil.setup(entry, (e: WindowEvent) => this._onUserInfoMouseClick(e));
 
         entry.id = index;
 

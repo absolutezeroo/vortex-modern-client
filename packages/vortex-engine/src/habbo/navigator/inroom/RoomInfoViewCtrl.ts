@@ -1,3 +1,4 @@
+import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
@@ -741,13 +742,22 @@ export class RoomInfoViewCtrl
         }
     };
 
-    private _onOwnerNameOver = (_event: WindowEvent): void =>
+    /**
+	 * AS3 binds one `procedure` to `owner_name_cont` and routes click, over and out through it;
+	 * this port splits them into three listeners, so both hover halves land here. `onEntry()`
+	 * swaps the eye pair on the *parent* of the window it is given — `room_details`, the same
+	 * container `_refreshRoomDetails()` resets — which is why the container itself is passed and
+	 * not the event target.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomInfoViewCtrl.as::onOwnerName()
+    private _onOwnerNameOver = (event: WindowEvent): void =>
     {
-        // TODO: class_2323.onEntry hover effect
+        UserInfoRegionUtil.onEntry(event, this._find('owner_name_cont') as unknown as IWindow);
     };
 
-    private _onOwnerNameOut = (_event: WindowEvent): void =>
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomInfoViewCtrl.as::onOwnerName()
+    private _onOwnerNameOut = (event: WindowEvent): void =>
     {
-        // TODO: class_2323.onEntry out effect
+        UserInfoRegionUtil.onEntry(event, this._find('owner_name_cont') as unknown as IWindow);
     };
 }

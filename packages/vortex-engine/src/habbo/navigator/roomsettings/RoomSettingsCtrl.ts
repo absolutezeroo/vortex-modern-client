@@ -1111,12 +1111,12 @@ export class RoomSettingsCtrl
 
         const controllers = this._originalData.controllersById;
 
-        if(controllers.size === 0) return [];
-
-        // TODO: access the friend list via the friend list manager when available
-        const friendList = (this._navigator as unknown as { friendListCtrl?: { list?: IRoomSettingsUserData[] } })?.friendListCtrl?.list ?? [];
-
-        return friendList.filter((friend) => !controllers.has(friend.userId));
+        // AS3 reads `_navigator.data.friendList.list` — the manager NavigatorData already holds
+        // here — and guards on `controllersById.length` first. That collection is a `Dictionary`,
+        // which has no `length`, so the guard never fires in Flash; reproducing it literally
+        // against a `Map` would empty the friends tab for every room that has no rights holders
+        // yet, which is the common case.
+        return this._navigator.data.friendList.list.filter((friend) => !controllers.has(friend.userId));
     }
 
     private _save(): void
