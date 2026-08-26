@@ -3711,7 +3711,46 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
-- 🆕 **The member-coverage worklist, 2026-08-26 — 749 absent public/protected members → 643.**
+- 🆕 **The member-coverage worklist, continued — 643 → 507.** Another 136 across fourteen files,
+  and the shape of the remainder changed: after this pass no file has more than eleven absent
+  members and most have four or five, so the worklist stops being "six big classes" and becomes a
+  long tail.
+
+  Closed with real members: `HabboCommunicationDemo` (16 — see below), `LegacyNavigator` (8),
+  `Component` (10), `ContextInfoView` (9), `AvatarRenderManager` + its interface (8),
+  `HabboInventory` + `IHabboInventory` (12), `RoomSessionChatEvent` (8), `GroupItem` (5),
+  `FurniModel` (5), `BadgesModel` (5), `ButtonMenuView` (5), `RoomManager` (5),
+  `RoomObjectVariableEnum` (4), `VariableManagementOverviewView` (5).
+
+  **`HabboCommunicationDemo` was tracing the wrong tree.** Fourteen of its traces pointed at
+  `win63_version/.../class_467.as` where the port actually comes from the primary tree's
+  `demo/_SafeCls_98.as` — the drift `30-as3-traceability.md` already warns about, and the reason
+  the measure counted a fully-ported class as sixteen gaps. Every member was verified present in
+  the primary file before repointing, per CLAUDE.md's caveat. Two real gaps fell out of it: the
+  `flashClientUrl` setter and `isRoomViewerMode`.
+
+  **Two members that are dead in AS3 itself**, both marked rather than ported.
+  `Component._references` is reset in `dispose()` and printed by `toString()` and never
+  incremented — the count that matters is per-interface, which this port already keeps.
+  `sendTryLoginDevelopmentOnly()`'s composer returns an empty message array in this build, so it
+  carries no credentials in the original client either.
+
+  **`ButtonMenuView` was redeclaring six of its base's colours privately.** AS3 declares
+  BUTTON_COLOR_DEFAULT/HOVER, ICON_COLOR_ENABLED/DISABLED and LINK_COLOR_ACTIONS_DEFAULT/HOVER
+  `protected` on `ContextInfoView`; the port had a private copy of each on the subclass. It
+  inherits them now, and the three it keeps are marked TS-only — AS3 writes those values as
+  literals at the call site.
+
+  **What the markers cover, and why the TODO count does not fall with the coverage count.**
+  Roughly a third of what was closed this pass was closed by *documenting* rather than porting:
+  the AIR crash reporter (nine payload keys with no endpoint to send to), `[Embed]` asset classes
+  (`FloorDrawingPreset`'s eight borders — the same artwork ships as files), Flash `stage`
+  listeners, `ToolbarView`'s five window members (AS3 declares them twice, once there and once on
+  `BottomBarLeft`, and this port builds only the latter), and everything reaching the game or ad
+  managers. Each names the AS3 member and the reason, which is what turns a silent absence into
+  something greppable.
+
+- **The member-coverage worklist, 2026-08-26 — 749 absent public/protected members → 643.**
   106 closed in six files, straight off `scripts/as3-member-coverage.mjs`. The same measure that
   took `habbo/window` from 92 to 0; the same lesson, too — a member missing from the port is
   usually missing because nothing forced it to exist, not because it was hard.
