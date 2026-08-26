@@ -52,8 +52,8 @@ export class RoomGeometry implements IRoomGeometry
         this._zScaleInternal = Math.sqrt(0.5) / Math.sqrt(0.75);
         this.z_scale = 1;
 
-        this.setLocation(new Vector3d(location.x, location.y, location.z));
-        this.setDirection(new Vector3d(direction.x, direction.y, direction.z));
+        this.location = new Vector3d(location.x, location.y, location.z);
+        this.direction = new Vector3d(direction.x, direction.y, direction.z);
 
         if(depthDirection !== null)
         {
@@ -249,7 +249,7 @@ export class RoomGeometry implements IRoomGeometry
             location.z + offset.z
         );
 
-        this.setLocation(newLocation);
+        this.location = newLocation;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/utils/RoomGeometry.as::getCoordinatePosition()
@@ -430,8 +430,12 @@ export class RoomGeometry implements IRoomGeometry
         }
     }
 
+    /**
+	 * AS3 declares this a public setter and the port had it private, so nothing outside the class
+	 * could move the camera — which is what left the room shake and rotate effects inert.
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/utils/RoomGeometry.as::set location()
-    private setLocation(location: IVector3d | null): void
+    set location(location: IVector3d | null)
     {
         if(location === null)
         {
@@ -459,7 +463,7 @@ export class RoomGeometry implements IRoomGeometry
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/utils/RoomGeometry.as::set direction()
-    private setDirection(direction: IVector3d | null): void
+    set direction(direction: IVector3d | null)
     {
         if(direction === null)
         {

@@ -29,6 +29,8 @@ import type {IRoomSpriteCanvasContainer} from '@room/renderer/IRoomSpriteCanvasC
 import {RoomGeometry} from '@room/utils/RoomGeometry';
 import {RoomSpriteMouseEvent} from '@room/events/RoomSpriteMouseEvent';
 import {Vector3d} from '@room/utils/Vector3d';
+import {RoomShakingEffect} from '@room/utils/RoomShakingEffect';
+import {RoomRotatingEffect} from '@room/utils/RoomRotatingEffect';
 import {RoomEnterEffect} from '@room/utils/RoomEnterEffect';
 import {RoomObjectSpriteType} from '@room/object/enum/RoomObjectSpriteType';
 import {ExtendedSprite} from './utils/ExtendedSprite';
@@ -252,6 +254,37 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
     // AS3: sources/win63_version/room/renderer/class_3523.as::_geometry
     private _geometry: RoomGeometry;
+
+    // The depth z AS3 passes to setDepthVector() while rotating. Literal in both call sites there.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::doMagic()
+    private static readonly ROTATION_DEPTH_Z: number = 5;
+
+    // Name DERIVED (`_SafeStr_6428`): obfuscated in every tree; true while the shake effect runs.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::_SafeStr_6428
+    private _shaking: boolean = false;
+
+    // Name DERIVED (`_SafeStr_4756`): obfuscated in every tree; 0 when not rotating, otherwise the
+    // per-frame yaw increment (the testing tools AS3 builds set it to other values).
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::_SafeStr_4756
+    private _rotationStep: number = 0;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::_rotationOrigin
+    private _rotationOrigin: Vector3d | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::_rotationRodLength
+    private _rotationRodLength: number = 0;
+
+    // Name DERIVED (`_SafeStr_5214`): obfuscated in every tree; the camera direction to restore.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::_SafeStr_5214
+    private _savedDirection: Vector3d | null = null;
+
+    // Name DERIVED (`_SafeStr_6854`): obfuscated in every tree; the camera location to restore.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::_SafeStr_6854
+    private _savedLocation: Vector3d | null = null;
+
+    // Name DERIVED (`_SafeStr_5069`): obfuscated in every tree; frames elapsed inside the shake.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::_SafeStr_5069
+    private _shakeTick: number = 0;
 
     // AS3: sources/win63_version/room/renderer/class_3523.as::get geometry()
     get geometry(): RoomGeometry 
@@ -486,15 +519,145 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      *
      * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as line 390
      */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::
-    // render() also polls RoomShakingEffect.isVisualizationOn() / RoomRotatingEffect
-    // .isVisualizationOn() here and calls changeShaking() / changeRotation(), which walk the
-    // geometry's location along a rod of length _rotationRodLength and add a per-frame sine offset
-    // to its direction. Neither method nor the rod field is ported, so headers 536's rotate (0) and
-    // shake (1) effects drive their state machines correctly but produce no visible motion. The zoom
-    // (2) and disco (3) branches are complete.
+    /**
+	 * Applies the room-wide shake and rotate effects to the geometry, once per frame
+	 *
+	 * Both are camera moves, not object moves: shaking adds a per-frame sine wobble to the
+	 * geometry's *direction*, and rotating swings its location around the point where its view
+	 * axis meets the floor plane — a rod of fixed length, so the room turns without the camera
+	 * drifting toward or away from it.
+	 *
+	 * The saved direction and location are what makes either reversible. They are captured when
+	 * the effect starts and written back when it stops, so a room that was shaken returns exactly
+	 * to the camera it had rather than to a default.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::doMagic()
+    private doMagic(): void
+    {
+        if(this._geometry === null) return;
+
+        if(this._rotationStep !== 0)
+        {
+            let direction = this._geometry.direction;
+
+            this._geometry.direction = new Vector3d(direction.x + this._rotationStep, direction.y, direction.z);
+            direction = this._geometry.direction;
+            this._geometry.setDepthVector(new Vector3d(direction.x, direction.y, RoomRenderingCanvas.ROTATION_DEPTH_Z));
+
+            const location = new Vector3d();
+
+            location.assign(this._rotationOrigin);
+
+            const yaw = (direction.x + 180) / 180 * Math.PI;
+            const pitch = direction.y / 180 * Math.PI;
+
+            location.x += this._rotationRodLength * Math.cos(yaw) * Math.cos(pitch);
+            location.y += this._rotationRodLength * Math.sin(yaw) * Math.cos(pitch);
+            location.z += this._rotationRodLength * Math.sin(pitch);
+
+            this._geometry.location = location;
+
+            this._savedLocation = new Vector3d();
+            this._savedLocation.assign(location);
+            this._savedDirection = new Vector3d();
+            this._savedDirection.assign(this._geometry.direction);
+        }
+
+        // Both edges of the flag matter: the effect turning off has to run changeShaking() too,
+        // because that is what restores the saved direction below.
+        if(RoomShakingEffect.isVisualizationOn() !== this._shaking) this.changeShaking();
+
+        if(RoomRotatingEffect.isVisualizationOn()) this.changeRotation();
+
+        if(this._shaking)
+        {
+            this._shakeTick++;
+
+            const wobble = new Vector3d(
+                Math.sin(this._shakeTick * 5 / 180 * Math.PI) * 2,
+                Math.sin(this._shakeTick / 180 * Math.PI) * 5,
+                Math.sin(this._shakeTick * 10 / 180 * Math.PI) * 2
+            );
+
+            this._geometry.direction = Vector3d.sum(this._savedDirection, wobble) ?? this._geometry.direction;
+        }
+        else
+        {
+            this._shakeTick = 0;
+
+            if(this._savedDirection !== null) this._geometry.direction = this._savedDirection;
+        }
+    }
+
+    /**
+	 * Toggles shaking, capturing the camera direction to wobble around on the way in
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::changeShaking()
+    private changeShaking(): void
+    {
+        this._shaking = !this._shaking;
+
+        if(!this._shaking || this._geometry === null) return;
+
+        const direction = this._geometry.direction;
+
+        this._savedDirection = new Vector3d(direction.x, direction.y, direction.z);
+    }
+
+    /**
+	 * Starts or stops the rotation, and computes the rod it turns on
+	 *
+	 * The pivot is where the camera's own view axis crosses the floor plane; the rod is the
+	 * distance from there to the camera. Turning is then a matter of walking that rod, which is
+	 * why `doMagic()` recomputes the location from the angle rather than accumulating offsets.
+	 * A room that is shaking is left alone — the two effects would fight over `direction`.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::changeRotation()
+    private changeRotation(): void
+    {
+        if(this._shaking || this._geometry === null) return;
+
+        if(this._rotationStep === 0)
+        {
+            const location = this._geometry.location;
+            const axis = this._geometry.directionAxis;
+
+            this._savedLocation = new Vector3d();
+            this._savedLocation.assign(location);
+            this._savedDirection = new Vector3d();
+            this._savedDirection.assign(this._geometry.direction);
+
+            const pivot = RoomGeometry.getIntersectionVector(
+                location, axis, new Vector3d(0, 0, 0), new Vector3d(0, 0, 1)
+            );
+
+            if(pivot === null) return;
+
+            this._rotationOrigin = new Vector3d(pivot.x, pivot.y, pivot.z);
+            this._rotationRodLength = Vector3d.dif(pivot, location)?.length ?? 0;
+            this._rotationStep = 1;
+
+            return;
+        }
+
+        this._rotationStep = 0;
+
+        if(this._savedLocation !== null) this._geometry.location = this._savedLocation;
+
+        if(this._savedDirection !== null)
+        {
+            this._geometry.direction = this._savedDirection;
+            this._geometry.setDepthVector(
+                new Vector3d(this._savedDirection.x, this._savedDirection.y, RoomRenderingCanvas.ROTATION_DEPTH_Z)
+            );
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::render()
     render(time: number, force: boolean = false): void
     {
+        this.doMagic();
+
         if(time === -1)
         {
             time = this._renderTimeStamp + 1;
