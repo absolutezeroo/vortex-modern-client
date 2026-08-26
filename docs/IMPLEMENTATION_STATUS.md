@@ -3711,6 +3711,52 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **The member-coverage worklist, 2026-08-26 — 749 absent public/protected members → 643.**
+  106 closed in six files, straight off `scripts/as3-member-coverage.mjs`. The same measure that
+  took `habbo/window` from 92 to 0; the same lesson, too — a member missing from the port is
+  usually missing because nothing forced it to exist, not because it was hard.
+
+  | file | before | after |
+  |---|---:|---:|
+  | `habbo/room/_SafeCls_90.as` (RoomEngine) | 19 | 0 |
+  | `habbo/room/_SafeCls_87.as` (IRoomEngineServices) | 15 | 0 |
+  | `habbo/navigator/HabboNavigator.as` | 12 | 0 |
+  | `habbo/ui/RoomDesktop.as` | 11 | 3 |
+  | `core/runtime/_SafeCls_56.as` (ComponentContext) | 18 | 0 |
+  | `core/assets/AssetLibrary.as` + `HabboProperty.as` | 21 | 0 |
+
+  **Three findings worth more than the count.**
+
+  - **`setWorldType()` never stored a world type.** AS3 puts the string on the room's instance
+    data, which is exactly what `getWorldType()` reads back. The port instead pushed it into the
+    room object's `room_world_type` model variable *as a number* — `parseInt('public')` is NaN, so
+    `|| 0` recorded every room as 0, into a variable neither tree reads anywhere. Both halves are
+    now AS3's.
+
+  - **Renamed is not absent, and the fix is the trace, not a rename.** `AssetLibrary`'s four event
+    constants and two static getters exist under port names (`libraryRefs`,
+    `numInstances`, an `AssetLibraryEvents` object). The measure joins on the AS3 member the trace
+    names, so pointing the trace at `get assetLibraryRefArray()` closes the gap honestly and
+    leaves the port's own naming alone. `HabboProperty` was the opposite case — two constants had
+    drifted *away* from AS3 (`PROCESSLOG_ENABLED`, `NEW_USER_FLOW_PAGE`) with no callers at all,
+    so those were renamed back.
+
+  - **Interfaces are where the port loses members.** `IRoomEngineServices` was missing 15
+    declarations for members `RoomEngine` already implemented — three map getters, three component
+    accessors — and three more that were private here and public on AS3's interface. Nothing
+    holding the services interface rather than the concrete engine could reach any of them.
+    Likewise `HabboNavigator`: AS3 holds nine controllers as its own fields, this port put them on
+    `LegacyNavigator`, and never added the accessors that reach back — see the note on
+    `transitionalNavigator`.
+
+  **What the "still absent" markers are for.** Roughly a third of each file's gap has no
+  counterpart here rather than being unfinished: SWF loading through `flash.display.Loader`, the
+  AIR filesystem cache, Flash `stage` listeners, and everything touching the game or ad managers
+  (`habbo/game` is 0/63; there is no ad manager at all). Those now carry `TODO(AS3)` markers
+  naming the AS3 member and the reason, which turns a silent absence into something greppable —
+  and is why the TODO count does not fall one-for-one with the coverage count.
+
+
 - 🆕 **The TODO sweep, 2026-08-26 — 155 markers → 136, and what the markers were hiding.**
   Seven commits. The theme is the one priority 0 has warned about since 2026-08-03: almost every
   marker named a dependency that had *since* been ported, so the marker outlived the gap and the
