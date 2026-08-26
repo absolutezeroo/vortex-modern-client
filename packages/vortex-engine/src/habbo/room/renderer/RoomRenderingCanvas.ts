@@ -116,6 +116,40 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     private _spriteCount: number = 0;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_activeSpriteCount
     private _activeSpriteCount: number = 0;
+
+    /**
+	 * How many pooled sprites the last render actually used
+	 *
+	 * Not the pool size: `_spriteCount` is what has been allocated, this is what is on screen.
+	 * Protected in AS3 because only a subclass's debug overlay reads it.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3073.as::get activeSpriteCount()
+    protected get activeSpriteCount(): number
+    {
+        return this._activeSpriteCount;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3073.as::_SafeStr_8663 (name derived: written by set pingMs)
+    private _pingMs: number = 0;
+
+    /**
+	 * Latest measured round-trip to the server, for the debug overlay to print
+	 *
+	 * The canvas only stores it — nothing here measures or draws it yet.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3073.as::set pingMs()
+    set pingMs(value: number)
+    {
+        this._pingMs = value;
+    }
+
+    // TS-only: AS3 declares the setter alone; exposed so the stored value is readable rather than
+    // write-only.
+    get pingMs(): number
+    {
+        return this._pingMs;
+    }
+
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/RoomSpriteCanvas.as::_mouseActiveObjects
     private _mouseActiveObjects: Map<string, ObjectMouseData> = new Map();
     // AS3: sources/win63_version/room/renderer/class_3523.as::_eventCache
@@ -386,11 +420,16 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * The display container (added to PixiJS stage).
      * AS3: get displayObject() returns _master.
      */
-    // AS3: sources/win63_version/room/renderer/class_3523.as::get container()
-    get container(): Container 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/IRoomRenderingCanvas.as::get displayObject()
+    get container(): Container
     {
         return this._master;
     }
+
+    // TODO(AS3): .../src/com/sulake/room/renderer/_SafeCls_3073.as::getPlaneSortableSprites(),
+    // getRoomObjectCacheItem() and getObjectId() all read `_roomObjectCache`, the per-object sprite
+    // cache AS3 keeps beside the sortable list. This port renders straight off `_sortableSpriteList`
+    // and keeps no such cache, so the three have nothing to look into.
 
     private static compareSortableSprites(a: SortableSprite, b: SortableSprite): number 
     {

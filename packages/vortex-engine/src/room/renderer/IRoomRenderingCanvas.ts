@@ -8,7 +8,7 @@
  *
  * @see sources/win63_version/room/renderer/IRoomRenderingCanvas.as
  */
-import type {Renderer} from 'pixi.js';
+import type {Container, Renderer} from 'pixi.js';
 import type {IRoomGeometry} from '../utils/IRoomGeometry';
 import type {IRoomRenderingCanvasMouseListener} from './IRoomRenderingCanvasMouseListener';
 
@@ -76,6 +76,25 @@ export interface IRoomRenderingCanvas
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/IRoomRenderingCanvas.as::resumeSpriteVisibilityChecking()
     resumeSpriteVisibilityChecking(): void;
+
+    /**
+	 * The container this canvas draws into — AS3's `displayObject`, a PixiJS Container here.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/IRoomRenderingCanvas.as::get displayObject()
+    readonly container: Container;
+
+    /**
+	 * Latest measured round-trip to the server, stored for a debug overlay to print.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/IRoomRenderingCanvas.as::set pingMs()
+    pingMs: number;
+
+    // TODO(AS3): .../src/com/sulake/room/renderer/IRoomRenderingCanvas.as::getSortableSpriteList()
+    // and getPlaneSortableSprites() both hand back sprite lists. Declaring the first here would
+    // pull `SortableSprite` — which lives in `habbo/room/renderer/utils/` — into this generic
+    // `room/` interface and invert the layering (see .claude/rules/room.md); AS3 gets away with it
+    // by returning an untyped Array. RoomRenderingCanvas implements it regardless. The second reads
+    // a per-object sprite cache this port does not keep.
 
     dispose(): void;
 }
