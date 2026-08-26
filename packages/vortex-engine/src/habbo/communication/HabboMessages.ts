@@ -1167,6 +1167,8 @@ import {
     PlacePostItMessageComposer,
 } from './messages/outgoing/room/engine';
 
+import {ClickCharacterComposer} from './messages/outgoing/room/ClickCharacterComposer';
+
 // Outgoing Composers - Room Chat
 import {
     CancelTypingMessageComposer,
@@ -3278,6 +3280,9 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1482, MoveObjectMessageComposer);
         // AS3: ClickFurniMessageComposer header 443 (win63 registry); sent on a plain furni click.
         this._composers.set(443, ClickFurniMessageComposer);
+        // AS3: _SafeCls_2046.as::_composers[3244] = _SafeCls_2770 — the avatar-category branch of
+        // the same clickRoomObject(); corroborated by vortex-emulator's ClickCharacterEvent = 3244.
+        this._composers.set(3244, ClickCharacterComposer);
         // AS3: header corrected 443 -> 1919 (sources/WIN63-202607011411-782849652
         // unknowns/_SafePkg_2136/_SafeCls_3412.as, real construction confirmed at
         // com/sulake/habbo/room/_SafeCls_1821.as:2329 and _SafeCls_1984.as:316).

@@ -1,3 +1,4 @@
+export * from './ClickCharacterComposer';
 export * from './RespectUserMessageComposer';
 export * from './RespectPetMessageComposer';
 export * from './session';

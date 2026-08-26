@@ -126,6 +126,7 @@ import {RoomContentLoadedEvent} from '@room/events/RoomContentLoadedEvent';
 import {RoomObjectTileCursorUpdateMessage} from './messages/RoomObjectTileCursorUpdateMessage';
 import {MoveAvatarMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveAvatarMessageComposer';
 import {ClickFurniMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/ClickFurniMessageComposer';
+import {ClickCharacterComposer} from '@habbo/communication/messages/outgoing/room/ClickCharacterComposer';
 import {
     UseFurnitureMessageComposer
 } from '@habbo/communication/messages/outgoing/room/furniture/UseFurnitureMessageComposer';
@@ -8311,8 +8312,8 @@ export class RoomEngine extends Component implements IRoomEngine,
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::clickRoomObject()
     // Sends the plain-click notification to the server: floor furni by object id, wall furni by its
-    // negation (the server tells the two apart by sign). Suppressed when any modifier is held, so a
-    // rotate/pickup/move gesture never doubles as a click.
+    // negation (the server tells the two apart by sign), and an avatar through its own composer.
+    // Suppressed when any modifier is held, so a rotate/pickup/move gesture never doubles as a click.
     private clickRoomObject(event: RoomObjectMouseEvent): void
     {
         if(event.altKey || event.ctrlKey || event.shiftKey) return;
@@ -8330,6 +8331,10 @@ export class RoomEngine extends Component implements IRoomEngine,
         else if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
         {
             this._connection.send(new ClickFurniMessageComposer(-obj.getId()));
+        }
+        else if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
+        {
+            this._connection.send(new ClickCharacterComposer(obj.getId()));
         }
     }
 
