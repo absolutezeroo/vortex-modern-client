@@ -221,6 +221,12 @@ interface IRoomEngineRoomInstanceData {
     // never null for a live room — RoomMessageHandler fills its height map from the floor heightmap
     // message and the wall-item paths read it back.
     legacyGeometry: LegacyWallGeometry;
+    /**
+	 * AS3 wraps this in a `selectedObject` accessor pair whose setter disposes the previous value.
+	 * The record holds it directly here and `resetSelectedObjectData()` does the disposing, which
+	 * is the only place AS3's setter is reached from either.
+	 */
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get selectedObject()
     selectedObjectData: SelectedRoomObjectData | null;
     // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get placedObject()
     placedObjectData: SelectedRoomObjectData | null;
@@ -233,6 +239,14 @@ interface IRoomEngineRoomInstanceData {
 	 */
     // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get mouseButtonCursorOwners()
     mouseButtonCursorOwners: string[];
+
+    // TODO(AS3): .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::addFurnitureData(),
+    // getFurnitureData(), getFurnitureDataWithId(), addWallItemData() and getWallItemDataWithId()
+    // are two keyed queues of furniture data waiting for its object to exist. Note the getters are
+    // *takes*, not reads — each one calls remove() and hands the entry over. This port drains the
+    // same wait differently: RoomMessageHandler applies furniture data as it arrives and
+    // `_pendingRoomObjectUpdates` holds what arrives too early, so there is no per-room queue on
+    // the instance data to accessorise.
 }
 
 export interface IRoomEngineRectangle {

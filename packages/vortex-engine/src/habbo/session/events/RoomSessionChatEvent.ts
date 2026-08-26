@@ -9,7 +9,9 @@ import {RoomSessionEvent} from './RoomSessionEvent';
  */
 export class RoomSessionChatEvent extends RoomSessionEvent
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::ROOM_SESSION_CHAT_EVENT
     public static readonly RSCE_CHAT_EVENT = 'RSCE_CHAT_EVENT';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::ROOM_SESSION_FLOODCONTROL_EVENT
     public static readonly RSCE_FLOOD_EVENT = 'RSCE_FLOOD_EVENT';
 
     // Chat types
@@ -21,12 +23,17 @@ export class RoomSessionChatEvent extends RoomSessionEvent
     public static readonly CHAT_TYPE_SHOUT = 2;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_RESPECT
     public static readonly CHAT_TYPE_RESPECT = 3;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_PETRESPECT
     public static readonly CHAT_TYPE_PET_RESPECT = 4;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_HAND_ITEM_RECEIVED
     public static readonly CHAT_TYPE_HAND_ITEM_RECEIVED = 5;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_PETTREAT
     public static readonly CHAT_TYPE_PET_TREAT = 6;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_PETREVIVE
     public static readonly CHAT_TYPE_PET_REVIVE = 7;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_PET_REBREED_FERTILIZE
     public static readonly CHAT_TYPE_PET_REBREED = 8;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_PET_SPEED_FERTILIZE
     public static readonly CHAT_TYPE_PET_SPEED = 9;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::CHAT_TYPE_MUTE_REMAINING
     public static readonly CHAT_TYPE_MUTE_REMAINING = 10;
@@ -85,6 +92,7 @@ export class RoomSessionChatEvent extends RoomSessionEvent
 
     private _styleId: number;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionChatEvent.as::get style()
     get styleId(): number
     {
         return this._styleId;

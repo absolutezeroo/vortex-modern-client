@@ -1693,6 +1693,100 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return null;
     }
 
+    /**
+	 * The same lookup as getFurnitureData(), keyed by the item's type name instead of its class id
+	 *
+	 * AS3 takes an unused third argument; it is dropped here rather than carried.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getFurnitureDataByName()
+    public getFurnitureDataByName(name: string, type: string): IFurnitureData | null
+    {
+        if(this._sessionDataManager === null) return null;
+
+        if(type === 's') return this._sessionDataManager.getFloorItemDataByName(name);
+
+        if(type === 'i') return this._sessionDataManager.getWallItemDataByName(name);
+
+        return null;
+    }
+
+    /**
+	 * Every badge the player owns, minus the ones already passed in
+	 *
+	 * The exclusion list is how a caller asks for "badges I could still equip" without filtering
+	 * afterwards. Requesting the badge list on a cold cache is part of the call: the first caller
+	 * gets an empty answer and the fetch it triggers, rather than nothing at all.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getAllMyBadgeIds()
+    public getAllMyBadgeIds(exclude: string[] | null): string[]
+    {
+        const badges = this._badgesModel.getBadges();
+
+        if(badges.length === 0 && !this._badgeInitializationRequested)
+        {
+            this._badgesModel.requestInitialization();
+            this._badgeInitializationRequested = true;
+        }
+
+        const ids: string[] = [];
+
+        for(const badge of badges)
+        {
+            if(exclude === null || exclude.indexOf(badge.badgeId) === -1) ids.push(badge.badgeId);
+        }
+
+        return ids;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::_SafeStr_9885 (name derived: guards the one-shot request in getAllMyBadgeIds())
+    private _badgeInitializationRequested: boolean = false;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get clubMinutesUntilExpiration()
+    get clubMinutesUntilExpiration(): number
+    {
+        return this._purse.minutesUntilExpiration;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get currentCategoryId()
+    get currentCategoryId(): string | null
+    {
+        return this._currentCategory;
+    }
+
+    /**
+	 * Whether the inventory window has been built yet
+	 *
+	 * The view object exists from construction; its main container does not until the layout is
+	 * built, which is what callers are really asking about.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get isMainViewInitialized()
+    get isMainViewInitialized(): boolean
+    {
+        return this._view.mainContainer !== null;
+    }
+
+    /**
+	 * Selects the furniture page without showing the inventory
+	 *
+	 * Used before opening something that wants the furni tab already current — the toggle would
+	 * otherwise leave the window visible, so AS3 hides it again immediately.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::initializeFurniturePage()
+    initializeFurniturePage(): void
+    {
+        this.toggleInventoryPage('furni');
+        this._view.hideInventory();
+    }
+
+    /**
+	 * Opens a trade with another user in the room
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::setupTrading()
+    setupTrading(userId: number): void
+    {
+        this._tradingModel?.requestOpenTrading(userId);
+    }
+
     // --- ILinkEventTracker ---
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get linkPattern()
