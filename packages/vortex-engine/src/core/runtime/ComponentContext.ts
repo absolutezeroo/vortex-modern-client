@@ -473,9 +473,10 @@ export class ComponentContext extends Component implements IContext
     // TODO(AS3): .../src/com/sulake/core/runtime/_SafeCls_56.as::loadFromFile(),
     // loadReadyHandler(), loadErrorHandler(), loadDebugHandler(), removeLibraryLoader() and
     // prepareComponent() load a component out of a SWF through `flash.display.Loader` and an
-    // `ApplicationDomain`, then read its `[Component]` metadata to register it. This port has no
-    // runtime code loading at all: components are imported and registered by `Vortex.bootstrap()`,
-    // so the whole path has no counterpart rather than being unfinished.
+    // `ApplicationDomain`, then read its `[Component]` metadata to register it, keeping the open
+    // loaders in `_SafeCls_56.as::_loaders`. This port has no runtime code loading at all:
+    // components are imported and registered by `Vortex.bootstrap()`, so the whole path — the
+    // field included — has no counterpart rather than being unfinished.
 
     // TODO(AS3): .../src/com/sulake/core/runtime/_SafeCls_56.as::toXMLString() dumps the context's
     // interface registrations as XML for debugging. It reads `_queuees` and each component's

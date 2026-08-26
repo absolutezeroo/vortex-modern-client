@@ -199,6 +199,19 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         if(index >= 0) this._activeImages.splice(index, 1);
     }
 
+    /**
+	 * The download manager reports the figure libraries the client cannot start without
+	 *
+	 * Public in AS3 because the download manager calls back into the render manager rather than
+	 * the other way round; the port passes it as a closure, which is the same call.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/_SafeCls_582.as::onMandatoryLibrariesReady()
+    public onMandatoryLibrariesReady(): void
+    {
+        this._mandatoryLibrariesReady = true;
+        this.checkReady();
+    }
+
     // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::resetAssetManager()
     public resetAssetManager(): void
     {
@@ -702,11 +715,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
                 this._assetLibrary,
                 this._aliasCollection,
                 () => this._isReady,
-                () => 
-                {
-                    this._mandatoryLibrariesReady = true;
-                    this.checkReady();
-                }
+                () => this.onMandatoryLibrariesReady()
             );
 
             this.loadFigureMap();

@@ -4,7 +4,10 @@
  * Provides static helper methods for common math operations
  * such as normalization, interpolation, clamping, and mapping.
  *
- * @see source_as_win63/habbo/utils/class_419.as
+ * The class name is obfuscated in every tree (`_SafeCls_2916` here, `class_419` in
+ * win63_version), so `MathUtils` is derived; the member names below are real.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/_SafeCls_2916.as
  */
 export class MathUtils
 {
