@@ -54,16 +54,38 @@ export const HabboProperty = {
     CLIENT_STARTING_LOADING: 'client.starting.revolving',
 
     // Logging
-    PROCESSLOG_ENABLED: 'processlog.enabled',
+    // AS3: .../src/com/sulake/habbo/configuration/enum/HabboProperty.as::PROCESSLOG_ENABLED_KEY
+    PROCESSLOG_ENABLED_KEY: 'processlog.enabled',
 
     // New user flow
     NEW_USER_FLOW_ENABLED: 'new.user.flow.enabled',
-    NEW_USER_FLOW_PAGE: 'new.user.flow.page',
+    // AS3: .../src/com/sulake/habbo/configuration/enum/HabboProperty.as::NEW_USER_ONBOARDING_PAGE_TO_SHOW
+    NEW_USER_ONBOARDING_PAGE_TO_SHOW: 'new.user.flow.page',
     NEW_USER_ONBOARDING_HC_FLOW_ENABLED: 'new.user.onboarding.hc.flow.enabled',
     NEW_USER_ONBOARDING_SHOW_HC_ITEMS: 'new.user.onboarding.show.hc.items',
 
     // Legal
     TERMS_OF_SERVICE_URL: 'web.terms_of_service.link',
+
+    // Connection — where the client opens its socket, read by HabboCommunicationManager.
+    // AS3: .../src/com/sulake/habbo/configuration/enum/HabboProperty.as::CONNECTION_INFO_HOST
+    CONNECTION_INFO_HOST: 'connection.info.host',
+    // AS3: .../src/com/sulake/habbo/configuration/enum/HabboProperty.as::CONNECTION_INFO_PORT
+    CONNECTION_INFO_PORT: 'connection.info.port',
+
+    // Error handling — how the core reacts to a critical error, read by CoreComponentContext.
+    // AS3: .../src/com/sulake/habbo/configuration/enum/HabboProperty.as::CRASH_ON_CRIT_ERROR
+    CRASH_ON_CRIT_ERROR: 'error_handling.crash_on_critical_error',
+    // AS3: .../src/com/sulake/habbo/configuration/enum/HabboProperty.as::SHOW_ERROR_WARNING
+    SHOW_ERROR_WARNING: 'error_handling.show_error',
+    // AS3: .../src/com/sulake/habbo/configuration/enum/HabboProperty.as::SHOW_ERROR_WARNING_INCLUDE_NONCRITICAL
+    SHOW_ERROR_WARNING_INCLUDE_NONCRITICAL: 'error_handling.show_error.include_non_critical',
+    // AS3: .../src/com/sulake/habbo/configuration/enum/HabboProperty.as::SHOW_ERROR_STACKTRACE
+    SHOW_ERROR_STACKTRACE: 'error_handling.show_stacktrace',
+    // AS3: .../src/com/sulake/habbo/configuration/enum/HabboProperty.as::EXCLUDE_CRASHING_FOR_CATEGORIES
+    EXCLUDE_CRASHING_FOR_CATEGORIES: 'error_handling.exclude_crashing',
+    // AS3: .../src/com/sulake/habbo/configuration/enum/HabboProperty.as::EXCLUDE_WARNINGS_FOR_CATEGORIES
+    EXCLUDE_WARNINGS_FOR_CATEGORIES: 'error_handling.exclude_warnings',
 } as const;
 
 export type HabboPropertyType = typeof HabboProperty;

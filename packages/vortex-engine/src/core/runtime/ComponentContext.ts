@@ -424,6 +424,71 @@ export class ComponentContext extends Component implements IContext
     }
 
     /**
+	 * The last message handed to `debug()`
+	 *
+	 * AS3 keeps one of each severity so a caller that reacts to `COMPONENT_EVENT_DEBUG` and
+	 * friends can read what caused it — the events themselves carry no payload there.
+	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::getLastDebugMessage()
+    getLastDebugMessage(): string
+    {
+        return this._lastDebug;
+    }
+
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::getLastWarningMessage()
+    getLastWarningMessage(): string
+    {
+        return this._lastWarning;
+    }
+
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::getLastErrorMessage()
+    getLastErrorMessage(): string
+    {
+        return this._lastError;
+    }
+
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::get linkEventTrackers()
+    get linkEventTrackers(): readonly ILinkEventTracker[]
+    {
+        return this._linkEventTrackers;
+    }
+
+    /**
+	 * Hands a manifest to the context's own asset library
+	 *
+	 * AS3 takes `(XML, Class)` — the second being the embedded resource class the manifest names
+	 * assets inside. The port's library takes the parsed manifest and whatever resource the
+	 * caller has, which is the same pair one layer of Flash embedding down.
+	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::prepareAssetLibrary()
+    prepareAssetLibrary(manifest: object, resourceData: unknown): boolean
+    {
+        return this.assets?.loadFromResource(manifest, resourceData) ?? false;
+    }
+
+    // TODO(AS3): .../src/com/sulake/core/runtime/_SafeCls_56.as::get displayObjectContainer() returns
+    // the `Sprite` every component in the context draws into. There is no Flash display list here —
+    // the port renders through PixiJS off the window system — so there is nothing honest to return.
+
+    // TODO(AS3): .../src/com/sulake/core/runtime/_SafeCls_56.as::loadFromFile(),
+    // loadReadyHandler(), loadErrorHandler(), loadDebugHandler(), removeLibraryLoader() and
+    // prepareComponent() load a component out of a SWF through `flash.display.Loader` and an
+    // `ApplicationDomain`, then read its `[Component]` metadata to register it. This port has no
+    // runtime code loading at all: components are imported and registered by `Vortex.bootstrap()`,
+    // so the whole path has no counterpart rather than being unfinished.
+
+    // TODO(AS3): .../src/com/sulake/core/runtime/_SafeCls_56.as::toXMLString() dumps the context's
+    // interface registrations as XML for debugging. It reads `_queuees` and each component's
+    // InterfaceStructList, neither of which this port has — see Component.ts's own note on why
+    // that storage is structured differently here.
+
+    // TODO(AS3): .../src/com/sulake/core/runtime/_SafeCls_56.as::_queuees,
+    // addQueueeForInterface(), hasQueueForInterface() and getQueueForInterface() are AS3's
+    // interface-queue storage. This port keeps the same information in `_interfaceQueues` (a Map
+    // keyed by IID) and reaches it through addToQueue() below, so these are a different shape of
+    // the same mechanism rather than missing behaviour.
+
+    /**
 	 * Get all attached components
 	 */
     getAttachedComponents(): readonly Component[]

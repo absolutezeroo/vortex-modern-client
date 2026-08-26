@@ -25,11 +25,19 @@ import {NitroBundleLoader} from './loaders/NitroBundleLoader';
 
 /**
  * Asset library events
+ *
+ * AS3 declares these as four static constants on `AssetLibrary` itself; they are grouped here so
+ * a listener can be typed against the set. The values are AS3's verbatim — they are what goes on
+ * the wire of the event system, so they cannot be shortened along with the names.
  */
 export const AssetLibraryEvents = {
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::ASSET_LIBRARY_READY
     READY: 'AssetLibraryReady',
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::ASSET_LIBRARY_LOADED
     LOADED: 'AssetLibraryLoaded',
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::ASSET_LIBRARY_UNLOADED
     UNLOADED: 'AssetLibraryUnloaded',
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::ASSET_LIBRARY_LOAD_ERROR
     LOAD_ERROR: 'AssetLibraryLoadError',
 } as const;
 
@@ -95,6 +103,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Get all library instances
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::get assetLibraryRefArray()
     static get libraryRefs(): AssetLibrary[] 
     {
         return AssetLibrary._libraryRefs;
@@ -103,10 +112,49 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Get the number of library instances
      */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::get numAssetLibraryInstances()
     static get numInstances(): number 
     {
         return AssetLibrary._instanceCount;
     }
+
+    /**
+	 * Prefixes every cache key this process writes
+	 *
+	 * AS3 uses it to keep two clients running side by side out of each other's cached game data.
+	 * Empty is the default and means "no prefix", which is why a null hand-in is not an error.
+	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::setCacheNamespace()
+    static setCacheNamespace(namespace: string | null): void
+    {
+        AssetLibrary._cacheNamespace = namespace ?? '';
+    }
+
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::_SafeStr_8375 (name derived: read only by setCacheNamespace)
+    private static _cacheNamespace: string = '';
+
+    // TS-only: nothing in the port reads the namespace yet — the browser cache is per-origin — so
+    // it is exposed rather than left write-only.
+    static get cacheNamespace(): string
+    {
+        return AssetLibrary._cacheNamespace;
+    }
+
+    // TODO(AS3): .../src/com/sulake/core/assets/AssetLibrary.as::enableGamedataCache() opens
+    // `File.applicationStorageDirectory` and sweeps stale temp files. That is the AIR filesystem
+    // API; the browser build caches through the HTTP layer instead and has no directory to sweep.
+
+    // TODO(AS3): .../src/com/sulake/core/assets/AssetLibrary.as::setDebugLogsEnabled() gates AS3's
+    // own static debug() on a flag. This port logs through `Logger`, whose level is configured
+    // centrally (see .claude/rules/10-conventions.md), so a per-class flag would fight it.
+
+    // TODO(AS3): .../src/com/sulake/core/assets/AssetLibrary.as::getClass() resolves a linkage name
+    // to a `Class` through the library's `ApplicationDomain`. There are no runtime-loaded SWF
+    // definitions here — assets arrive as files — so there is no domain to ask.
+
+    // TODO(AS3): .../src/com/sulake/core/assets/AssetLibrary.as::loadFromFile() loads a library
+    // from a URLRequest through `flash.display.Loader`. The port's loaders (see `loaders/`) take
+    // a URL directly; see `loadFromUrl()` below for the path that replaced it.
 
     private _url: string = '';
 
