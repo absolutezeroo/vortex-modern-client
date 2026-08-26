@@ -3,7 +3,11 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IMessageComposer} from '@core';
 import type {IUpdateReceiver} from '@core/runtime';
+import type {IID} from '@core/runtime/IID';
+import type {InterfaceCallback} from '@core/runtime/IContext';
 import type {IAssetLibrary} from '@core/assets';
+import type {IHabboLocalizationManager} from '../../localization/IHabboLocalizationManager';
+import type {IHabboTracking} from '../../tracking/IHabboTracking';
 import type {IHabboCommunicationManager} from '../../communication/IHabboCommunicationManager';
 import type {IHabboToolbar} from '../../toolbar/IHabboToolbar';
 import type {IRoomSessionManager} from '../../session/IRoomSessionManager';
@@ -487,6 +491,73 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
     isRoomHome(roomId: number): boolean
     {
         return this._oldNavigator?.isRoomHome(roomId) ?? false;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/LegacyNavigator.as::get localization()
+    get localization(): IHabboLocalizationManager | null
+    {
+        return this._oldNavigator?.localization ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/LegacyNavigator.as::get tracking()
+    get tracking(): IHabboTracking | null
+    {
+        return this._oldNavigator?.tracking ?? null;
+    }
+
+    /**
+	 * The same controller `roomSettingsCtrl` returns
+	 *
+	 * AS3 has both names because the wrapper answers one from the old navigator's field and the
+	 * other from its own; here they are the same object either way.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/LegacyNavigator.as::get roomSettingsControl()
+    get roomSettingsControl(): RoomSettingsCtrl
+    {
+        return this._roomSettingsCtrl;
+    }
+
+    /**
+	 * Enters a room the website asked to have reported
+	 *
+	 * The report flag rides along with the entry request rather than being a separate message —
+	 * see HabboNavigator.enterRoomWebRequest().
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/LegacyNavigator.as::reportRoomFromWeb()
+    reportRoomFromWeb(globalRoomId: string, reportedName: string | null = null): void
+    {
+        this._oldNavigator?.enterRoomWebRequest(globalRoomId, true, reportedName);
+    }
+
+    /**
+	 * Both are empty in AS3 too
+	 *
+	 * The toolbar hover they were meant to drive is handled by the toolbar itself; the wrapper
+	 * keeps the pair only because `IHabboTransitionalNavigator` declares it.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/LegacyNavigator.as::showToolbarHover()
+    showToolbarHover(_position: {x: number; y: number}): void
+    {
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/LegacyNavigator.as::hideToolbarHover()
+    hideToolbarHover(_immediate: boolean): void
+    {
+    }
+
+    /**
+	 * The component-framework pair, forwarded to the new navigator that actually owns them
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/LegacyNavigator.as::queueInterface()
+    queueInterface<T>(iid: IID<T>, callback?: InterfaceCallback<T>): T | null
+    {
+        return this._newNavigator?.queueInterface(iid, callback) ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/LegacyNavigator.as::release()
+    release<T>(iid: IID<T>): number
+    {
+        return this._newNavigator?.release(iid) ?? 0;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/LegacyNavigator.as::dispose()

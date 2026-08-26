@@ -491,6 +491,18 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * (`return _SafeStr_5440`). This port keeps it on the new navigator, so the same
      * accessor reaches it through `legacyWrapper` instead.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get localization()
+    get localization(): IHabboLocalizationManager | null
+    {
+        return this._localization;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get tracking()
+    get tracking(): IHabboTracking | null
+    {
+        return this._tracking;
+    }
+
     /**
 	 * The nine controllers AS3 holds as its own fields
 	 *
