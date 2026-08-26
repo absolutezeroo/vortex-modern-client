@@ -3711,6 +3711,86 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **The TODO sweep, 2026-08-26 — 155 markers → 136, and what the markers were hiding.**
+  Seven commits. The theme is the one priority 0 has warned about since 2026-08-03: almost every
+  marker named a dependency that had *since* been ported, so the marker outlived the gap and the
+  code behind it stayed dead.
+
+  - **A plain click on another player told the server nothing.** `RoomEngine.clickRoomObject()`
+    had two of AS3's three branches — floor furni by id, wall furni by its negation — and not the
+    category-100 one. `ClickCharacterComposer` (header 3244, name recovered from
+    `win63_version/.../outgoing/room/class_3165.as`, obfuscated in the primary tree) is one int,
+    and the emulator's `ClickCharacterMessageHandler` was implemented and waiting.
+
+  - **`habbo/navigator`, nine markers in one path.** Every target was ported and simply not
+    called: the room-entry ad, the group room-event panel collapse, the doorbell and password
+    prompts on a forwarded locked room, the room-info reload, and the profile-eye hover on three
+    different views (`UserInfoRegionUtil` was already in the port). Two behaviours the port had
+    dropped without marking came out with them — the `createdFlatId` guard that suppresses the ad
+    for a room you just created, and the session tags `NavigatorData` collects and AS3 replays on
+    entry. `RoomSettingsCtrl`'s friends tab read a `friendListCtrl` that does not exist, so it was
+    always empty; AS3's early return on `controllersById.length` is dead code in Flash (a
+    `Dictionary` has no `length`) and is deliberately not reproduced, because against a `Map` it
+    would empty the tab for every room with no rights holders.
+
+  - **`habbo/notifications/singular` was 6/10 files, and the four missing ones are all views.**
+    `ClubGiftNotification`, `SafetyLockedNotification`, `MOTDNotification` and
+    `NewFeatureNotification` (plus `maybeShowNewFeatureNotification()` and its condition
+    resolution) now ship. Every dependency they need was already here — the layouts, the toolbar
+    extension slot, `CountdownWidget`, `ColorConverter`, the seconds-until message pair. Two
+    dependencies AS3 declares and the port had not: `HabboNotifications.catalog` (the field
+    existed, typed `unknown`, with no getter) and `IID_RewardTrackController`. `onMOTD()` had been
+    building feed items for a controller that is never constructed — see "Notification feed is
+    dead code" — and showing nothing.
+
+  - **A rename never reached the room.** `RoomUsersHandler` registered 21 of AS3's 22 message
+    events; the missing one was `UserNameChangedMessageEvent`, so the nameplate kept the old name
+    until the next room entry. Its two class-level "implement additional handlers" TODOs were
+    stale in every other line.
+
+  - **Three stubs whose stated blocker was false.** `BalloonWidget.refresh()` was empty (balloons
+    never sized around their border, arrows never moved) — the algorithm needs a pivot enum,
+    obfuscated in all three trees, landed derived as `BalloonArrowPivot`. Three fidelity bugs came
+    out with it: `syncFlags()` only ever set the border's size flags *true*, so `clearFlags()` was
+    permanent; the `arrowPivot` setter refreshed neither side of that flag swap, which is the
+    entire point of AS3 refreshing twice; the `properties` setter never refreshed at all.
+    `BottomBarLeft.getIcon()` looked only on the bar, where half the toolbar's icons live in the
+    two sub-menus whose `getIcon()` `AbstractSubMenuController` has had all along.
+    `CameraPhotoLab.setFilterType()` hid the other filters in place "because the port's containers
+    have no grid API" — `IScrollableGridWindow` has `removeGridItems()`/`addGridItem()` and the
+    layout builds a `scrollable_itemgrid_vertical`, so the visible buttons were spread across the
+    gaps the hidden ones left.
+
+  - **The room shake and rotate effects moved nothing.** `RoomRenderingCanvas.render()` never
+    called AS3's `doMagic()`, so header 536's rotate (0) and shake (1) drove their state machines
+    and produced no motion, while zoom (2) and disco (3) worked. The real blocker was not the one
+    the marker described: both effect classes and the whole geometry API were present, but
+    `RoomGeometry` had made AS3's **public `location` and `direction` setters private**, so
+    nothing outside the class could move the camera. Ported with them public again.
+
+  - Also: `UpdatingTimeStampWidget` never wrote a caption (label, localization and `FriendlyTime`
+    all present); `RoomEngine.getIsPlayingGame()` returned a hardcoded `false` where AS3 answers
+    from the wired game mode and the room's `is_playing_game` variable;
+    `OpenPetPackageRequestedMessageEventParser` read the object id and dropped the figure, where
+    `parsePetFigureData()` already existed for the notification path. That DTO is also a fresh
+    example of the `win63_version` decompile rule — its copy reads `while(0 < count)` with the
+    counter never tested; the primary tree has `while(i < count)`.
+
+  **What the sweep says about the remaining markers.** 136 left, and they do not all represent
+  work that can be done: 45 are blocked on a module that is 0% ported (`habbo/game`, the seasonal
+  calendar, habbicon, the external-image pipeline), 11 are recorded decisions, 8 are Flash-only.
+  The honest closable remainder is roughly 25–30. The backlog that actually holds a hundred items
+  is the member-coverage worklist (`scripts/as3-member-coverage.mjs`, 749 absent public/protected
+  members), not the TODO markers.
+
+  **Two gaps this run measured rather than closed.** `GetOccupiedTilesMessageComposer` and
+  `GetRoomEntryTileMessageComposer` are the only other send gaps with a real emulator handler
+  behind them, and both are sent from exactly one place: `BCFloorPlanEditor`. That is 1,879 AS3
+  lines across five files **and** its window layout does not ship in
+  `src/assets/window-layouts/`, so the asset side is a prerequisite — see
+  `HabboWindowManager.displayFloorPlanEditor()`.
+
+
 - 🆕 **`habbo/moderation` — the mod-tool window cycle: the module is complete**, 2026-08-18.
   24 → 38 TS files. The eight remaining window controllers plus `IssueHandler` and the four
   held-back action classes, which form one dependency cycle and had to land together, along with the
